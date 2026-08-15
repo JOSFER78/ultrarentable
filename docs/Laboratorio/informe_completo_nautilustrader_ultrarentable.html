@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Sistema completo NautilusTrader — búsqueda de estrategias ultrarrentables</title>
+<style>
+:root{--bg:#07101d;--panel:#0d1a2d;--panel2:#11223a;--line:#28405f;--text:#edf5ff;--muted:#9eb3cc;--cyan:#35d8e8;--blue:#668fff;--violet:#b07aff;--green:#48da91;--amber:#ffc95d;--red:#ff6d7d;--nav:292px;--radius:18px;--shadow:0 18px 55px rgba(0,0,0,.32)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 76% -8%,#17365e 0,transparent 34%),var(--bg);color:var(--text);font:15.5px/1.62 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}a{color:#8debf3;text-decoration:none}a:hover{text-decoration:underline}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#c8f4f6}.layout{display:grid;grid-template-columns:var(--nav) 1fr;min-height:100vh}
+aside{position:fixed;inset:0 auto 0 0;width:var(--nav);padding:20px 17px;background:rgba(5,13,25,.95);border-right:1px solid var(--line);overflow:auto;z-index:20;backdrop-filter:blur(16px)}.brand{display:flex;gap:11px;align-items:center;padding:4px 7px 18px}.logo{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#06111c;font-weight:950}.brand strong{display:block}.brand small{color:var(--muted)}.search{width:100%;padding:10px 12px;margin-bottom:12px;border:1px solid var(--line);border-radius:11px;background:#0a1728;color:var(--text);outline:0}.search:focus{border-color:var(--cyan)}nav a{display:flex;gap:9px;align-items:center;padding:8px 10px;border-radius:10px;color:var(--muted);font-size:12.5px;margin:2px 0}nav a:hover,nav a.active{background:#152740;color:var(--text);text-decoration:none}.n{display:grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#0a1728;border:1px solid var(--line);font-size:10px}.foot{border-top:1px solid var(--line);margin-top:20px;padding:14px 8px;color:#7189a6;font-size:10.5px}
+main{grid-column:2;max-width:1540px;width:100%;padding:34px 4vw 80px;margin:auto}.hero{padding:38px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(18,37,63,.97),rgba(8,20,35,.97));box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:480px;height:480px;border-radius:50%;right:-130px;top:-260px;background:radial-gradient(circle,rgba(53,216,232,.18),transparent 65%)}.badges{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1}.badge,.pill{display:inline-flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:999px;background:#0b192b;padding:5px 10px;color:#bdcce0;font-size:11px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green)}h1{position:relative;z-index:1;font-size:clamp(36px,5vw,68px);line-height:1.02;letter-spacing:-.045em;margin:21px 0 14px;max-width:1100px}.gradient{background:linear-gradient(90deg,var(--cyan),#b7ddff 52%,var(--violet));-webkit-background-clip:text;color:transparent}.lead{position:relative;z-index:1;max-width:1000px;color:#c9d8ea;font-size:19px}.verdict{position:relative;z-index:1;display:grid;grid-template-columns:1.25fr .75fr;gap:15px;margin-top:26px}.box,.card{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(145deg,rgba(16,31,52,.96),rgba(9,22,39,.96));padding:20px}.box strong{font-size:21px}.kpi{font-size:29px;font-weight:900;letter-spacing:-.035em}.sub{font-size:11px;color:var(--muted)}
+section{scroll-margin-top:24px;margin-top:44px}.title{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:16px}.title h2{font-size:31px;line-height:1.13;letter-spacing:-.025em;margin:0}.title p{max-width:720px;color:var(--muted);margin:0}.grid{display:grid;gap:15px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.card h3{margin:0 0 8px;font-size:18px}.card p,.card li{color:#b8c9dc}.card ul,.card ol{padding-left:20px}.green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}.cyan{color:var(--cyan)}.note{padding:13px 15px;border-left:4px solid var(--cyan);border-radius:5px 12px 12px 5px;background:#0a1d30;color:#c9d8ea}.warn{border-left-color:var(--amber);background:#251f14}.danger{border-left-color:var(--red);background:#29151e}.goodnote{border-left-color:var(--green);background:#10251e}.pill.good{border-color:rgba(72,218,145,.45);color:#8aeeb8;background:rgba(72,218,145,.1)}.pill.warn{border-color:rgba(255,201,93,.45);color:#ffe29e;background:rgba(255,201,93,.1)}.pill.bad{border-color:rgba(255,109,125,.45);color:#ffadb6;background:rgba(255,109,125,.1)}
+.table{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#0a1728}.table table{width:100%;min-width:850px;border-collapse:collapse}.table th,.table td{padding:12px 13px;text-align:left;vertical-align:top;border-bottom:1px solid #203750}.table th{position:sticky;top:0;background:#152942;color:#dce8f7;text-transform:uppercase;letter-spacing:.05em;font-size:11px}.table td{color:#b9c9dc}.table tr:last-child td{border-bottom:0}
+.pipeline{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}.stage{padding:14px 11px;border:1px solid var(--line);border-radius:13px;background:#0a192b;cursor:pointer;transition:.18s;position:relative}.stage:hover,.stage.active{border-color:var(--cyan);transform:translateY(-3px);box-shadow:0 9px 26px rgba(53,216,232,.1)}.stage small{display:block;color:var(--cyan);font-size:10px}.stage strong{display:block;margin:4px 0}.stage span{color:var(--muted);font-size:11px}#stageDetail{min-height:138px;margin-top:14px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.tab{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#0a1728;color:var(--muted);cursor:pointer}.tab.active{background:#17324e;color:white;border-color:#3f7895}.panel{display:none}.panel.active{display:block}
+.controls{display:grid;gap:14px}.control label{display:flex;justify-content:space-between;color:#cbd8e9;margin-bottom:6px}.control input,.control select{width:100%}.control input[type=number],.control select{border:1px solid var(--line);background:#091728;color:var(--text);padding:10px;border-radius:10px}.control input[type=range]{accent-color:var(--cyan)}.result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.result>div{border:1px solid var(--line);background:#091728;border-radius:12px;padding:12px}.result strong{display:block;font-size:24px}.meter{height:10px;border-radius:99px;background:#07111e;overflow:hidden}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:.25s}.score{font-size:55px;font-weight:950;letter-spacing:-.05em}.checkgrid{display:grid;gap:8px}.check{display:flex;gap:9px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#0a1728}.check input{margin-top:5px;accent-color:var(--cyan)}
+pre{position:relative;overflow:auto;border:1px solid #203a57;background:#06101d;border-radius:14px;padding:18px;color:#c8e8ef;font:12.5px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.copy{position:absolute;right:9px;top:9px;border:1px solid var(--line);background:#122842;color:#d6e4f5;padding:5px 8px;border-radius:8px;cursor:pointer}.tree{white-space:pre;font:12.5px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;overflow:auto}.accordion{border:1px solid var(--line);border-radius:13px;background:#0a192b;margin:8px 0;overflow:hidden}.ah{width:100%;display:flex;justify-content:space-between;padding:14px 16px;border:0;background:transparent;color:var(--text);font-weight:800;text-align:left;cursor:pointer}.ab{display:none;padding:0 16px 15px;color:#b9cada}.accordion.open .ab{display:block}.accordion.open .ah span{transform:rotate(45deg)}.sources{display:grid;gap:9px}.source{display:grid;grid-template-columns:40px 1fr;gap:11px;padding:11px;border:1px solid var(--line);border-radius:11px;background:#091727}.source b{display:block}.sn{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#152b45;color:var(--cyan);font-weight:850}.small{font-size:11px;color:var(--muted)}.hidden{display:none!important}.action{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid var(--line);border-radius:10px;padding:9px 13px;background:#122842;color:var(--text);cursor:pointer}.btn.primary{background:linear-gradient(135deg,#166a78,#5b4ea7);border-color:#4f7b97}
+@media(max-width:1100px){:root{--nav:0px}.layout{display:block}aside{display:none}main{padding:22px 18px 65px}.pipeline{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.hero{padding:25px}.verdict,.g2,.g3,.g4,.result{grid-template-columns:1fr}.pipeline{grid-template-columns:repeat(2,1fr)}.title{display:block}.title p{margin-top:7px}.lead{font-size:17px}}
+@media print{aside{display:none}main{grid-column:1;padding:0}.hero,.card,.box{box-shadow:none}body{background:white;color:#111}.card,.box,.hero,.table,pre{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+ <div class="brand"><div class="logo">NT</div><div><strong>Ultra Strategy Lab</strong><small>NautilusTrader + buscador completo</small></div></div>
+ <input class="search" id="navSearch" placeholder="Buscar en el informe…">
+ <nav id="nav">
+  <a href="#resumen"><span class="n">00</span>Veredicto</a>
+  <a href="#objetivo"><span class="n">01</span>Objetivo 1000%</a>
+  <a href="#proceso"><span class="n">02</span>Proceso completo</a>
+  <a href="#stack"><span class="n">03</span>Stack recomendado</a>
+  <a href="#creacion"><span class="n">04</span>Crear y buscar estrategias</a>
+  <a href="#familias"><span class="n">05</span>Familias ultrarrentables</a>
+  <a href="#optimizacion"><span class="n">06</span>Optimización</a>
+  <a href="#datos"><span class="n">07</span>Datos Hyperliquid</a>
+  <a href="#nautilus"><span class="n">08</span>NautilusTrader</a>
+  <a href="#fiabilidad"><span class="n">09</span>Fiabilidad del backtest</a>
+  <a href="#validacion"><span class="n">10</span>Doble validación</a>
+  <a href="#produccion"><span class="n">11</span>Testnet y real</a>
+  <a href="#arquitectura"><span class="n">12</span>Arquitectura MVP</a>
+  <a href="#fases"><span class="n">13</span>Fases de construcción</a>
+  <a href="#costes"><span class="n">14</span>Costes y opciones</a>
+  <a href="#criterios"><span class="n">15</span>Criterios de aceptación</a>
+  <a href="#fuentes"><span class="n">16</span>Fuentes</a>
+ </nav>
+ <div class="foot">Investigación contrastada el 29 de julio de 2026. El objetivo de 1000% es un criterio de búsqueda, no una rentabilidad garantizada.</div>
+</aside>
+<main>
+<header class="hero" id="resumen" data-search="veredicto solución completa NautilusTrader estrategia 1000">
+ <div class="badges"><span class="badge"><i class="dot"></i>Investigación actualizada</span><span class="badge">Hyperliquid perps</span><span class="badge">Sin filtro de drawdown</span><span class="badge">Objetivo ≥1000%</span></div>
+ <h1>No necesitas una herramienta: necesitas una <span class="gradient">fábrica completa de estrategias</span></h1>
+ <p class="lead">NautilusTrader debe ser el motor canónico de simulación y ejecución, pero no es el buscador. La solución funcional combina investigación automática, generación de reglas, búsqueda evolutiva, optimización numérica, un motor rápido, validación L2 en NautilusTrader, un segundo comprobador independiente y una escalera testnet → shadow → micro-live.</p>
+ <div class="verdict">
+  <div class="box"><strong>Mejor arquitectura para tu caso</strong><p><b>RD-Agent/LLM investigador + DSL tipada + DEAP + VectorBT + Optuna + Ray + NautilusTrader + datos Hyperliquid/Tardis + validador independiente.</b> StrategyQuant X o Build Alpha pueden aportar semillas, pero no deben decidir qué estrategia es real.</p></div>
+  <div class="box"><span class="sub">Regla de selección</span><div class="kpi">Sobrevive + crece</div><p>Solo invalidan: equity ≤ 0, liquidación, datos futuros, fills imposibles o experimento irreproducible. El drawdown se observa, pero no filtra.</p></div>
+ </div>
+</header>
+
+<section id="objetivo" data-search="objetivo 1000 porcentaje capital multiplicador supervivencia">
+ <div class="title"><div><h2>1. Definir correctamente el objetivo de 1000%</h2></div><p>El buscador necesita un objetivo matemático exacto para que todos los motores midan lo mismo.</p></div>
+ <div class="grid g2">
+  <article class="card">
+   <h3>Calculadora del objetivo</h3>
+   <div class="controls">
+    <div class="control"><label>Capital inicial <span id="cashLabel">1.000 €</span></label><input id="cash" type="range" min="100" max="50000" step="100" value="1000"></div>
+    <div class="control"><label>Rentabilidad objetivo <span id="retLabel">1000%</span></label><input id="ret" type="range" min="100" max="5000" step="100" value="1000"></div>
+    <div class="control"><label>Ventana objetivo <span id="windowLabel">3 meses</span></label><input id="window" type="range" min="1" max="12" value="3"></div>
+   </div>
+   <div class="result" style="margin-top:14px"><div><span class="sub">Capital final</span><strong id="finalCash">11.000 €</strong></div><div><span class="sub">Multiplicador</span><strong id="multiple">11,0×</strong></div><div><span class="sub">CAGR equivalente</span><strong id="cagr">—</strong></div></div>
+   <p class="small">Una ganancia de +1000% convierte el capital en 11×. Multiplicar por 10 equivale a +900%.</p>
+  </article>
+  <article class="card">
+   <h3>Función objetivo recomendada</h3>
+   <pre><button class="copy">Copiar</button><code>valid = simulation_ok and min_equity &gt; 0 and not liquidated
+
+if not valid:
+    score = -infinity
+else:
+    score = log(final_equity / initial_equity)
+
+target_return_pct = 1000
+target_equity_multiple = 11.0</code></pre>
+   <div class="note goodnote"><b>No añadas Sharpe, drawdown o estabilidad al score principal.</b> Mantén un “nivel de evidencia” separado para saber si el 1000% proviene de una oportunidad reproducible, de un régimen concreto o de un artefacto.</div>
+  </article>
+ </div>
+</section>
+
+<section id="proceso" data-search="proceso pipeline completo buscar crear optimizar backtest testnet live">
+ <div class="title"><div><h2>2. Proceso completo: de internet a operativa real</h2></div><p>Pulsa cada etapa. Ninguna herramienta aislada cubre las doce.</p></div>
+ <div class="pipeline" id="pipeline"></div>
+ <div id="stageDetail" class="card"></div>
+</section>
+
+<section id="stack" data-search="stack herramientas recomendado StrategyQuant Build Alpha RD-Agent VectorBT Optuna Ray Nautilus LEAN">
+ <div class="title"><div><h2>3. Stack recomendado y papel exacto de cada herramienta</h2></div><p>La clave es no pedirle a una herramienta que haga algo para lo que no fue diseñada.</p></div>
+ <div class="table"><table><thead><tr><th>Herramienta</th><th>Qué aporta</th><th>Qué no aporta</th><th>Decisión</th></tr></thead><tbody>
+  <tr><td><b>RD-Agent(Q) / agente investigador</b></td><td>Propone factores e hipótesis, implementa experimentos y aprende del feedback.</td><td>No está preparado de serie para perps de Hyperliquid ni para tu DSL.</td><td><span class="pill good">Adaptar como cerebro de investigación</span></td></tr>
+  <tr><td><b>DSL propia + DEAP</b></td><td>Crea árboles de reglas válidos, cruces, mutaciones y linajes reproducibles.</td><td>Hay que construir los bloques y límites semánticos.</td><td><span class="pill good">Núcleo del generador</span></td></tr>
+  <tr><td><b>VectorBT</b></td><td>Criba enormes combinaciones sobre arrays con gran velocidad.</td><td>No certifica microestructura, liquidación exacta o fills L2.</td><td><span class="pill good">Motor rápido</span></td></tr>
+  <tr><td><b>Optuna</b></td><td>TPE para espacios mixtos; CMA-ES para parámetros continuos; búsqueda distribuida.</td><td>No inventa la estructura lógica de una estrategia por sí solo.</td><td><span class="pill good">Afinado numérico</span></td></tr>
+  <tr><td><b>Ray Tune</b></td><td>Paraleliza pruebas, reparte recursos, checkpoints y recuperación de fallos.</td><td>No mejora la lógica financiera.</td><td><span class="pill good">Orquestación de cómputo</span></td></tr>
+  <tr><td><b>NautilusTrader</b></td><td>Backtest event-driven, L1/L2/L3, margen, órdenes, live y adaptador Hyperliquid.</td><td>No genera ni optimiza estrategias automáticamente.</td><td><span class="pill good">Autoridad canónica</span></td></tr>
+  <tr><td><b>LEAN / verificador propio</b></td><td>Segundo cálculo independiente de PnL, fees, margen y secuencia de trades.</td><td>Hyperliquid requeriría modelos y datos personalizados.</td><td><span class="pill warn">Fase de doble validación</span></td></tr>
+  <tr><td><b>StrategyQuant X</b></td><td>Generación aleatoria/genética, Builder, Improver, Retester y workflows.</td><td>Motor cerrado y orientado a exportaciones tradicionales; no reproduce tu venue L2.</td><td><span class="pill warn">Semillas opcionales</span></td></tr>
+  <tr><td><b>Build Alpha</b></td><td>Generación genética, señales propias en Python, pruebas y exportación.</td><td>Backtest de barras; no es autoridad para perps ultraapalancados.</td><td><span class="pill warn">Semillas opcionales</span></td></tr>
+  <tr><td><b>Freqtrade Hyperopt</b></td><td>Prototipo cripto rápido, custom loss y Optuna.</td><td>Modelo de velas y limitaciones de ejecución; no reemplaza Nautilus L2.</td><td><span class="pill warn">Banco de ideas, no certificador</span></td></tr>
+ </tbody></table></div>
+ <div class="note" style="margin-top:14px"><b>Elección final:</b> para un sistema autónomo no compraría primero StrategyQuant ni Build Alpha. Construiría el núcleo abierto y añadiría uno de ellos solo si demuestra que aporta semillas nuevas que el generador propio no encuentra.</div>
+</section>
+
+<section id="creacion" data-search="crear buscar estrategias internet papers repos agentes DSL genética">
+ <div class="title"><div><h2>4. Cómo buscar y crear estrategias</h2></div><p>Se necesitan tres fábricas paralelas que entreguen el mismo formato de estrategia.</p></div>
+ <div class="tabs" data-tabs="factory"><button class="tab active" data-tab="f1">Investigación</button><button class="tab" data-tab="f2">Generación evolutiva</button><button class="tab" data-tab="f3">Importadores externos</button></div>
+ <div id="f1" class="panel active" data-group="factory"><div class="grid g3">
+  <article class="card"><h3>Agente de fuentes</h3><p>Busca papers, repositorios, competiciones, documentación, foros técnicos y estrategias públicas. Guarda fuente, fecha, mercado, inputs disponibles y posible fuga de información.</p></article>
+  <article class="card"><h3>Agente de formalización</h3><p>Convierte una idea narrativa en reglas exactas: entrada, salida, temporalidad, apalancamiento, tamaño, órdenes y datos requeridos.</p></article>
+  <article class="card"><h3>Agente replicador</h3><p>Implementa la versión base sin optimizar, la compara con lo publicado y documenta por qué coincide o difiere.</p></article>
+ </div><pre><button class="copy">Copiar</button><code>hypothesis_card:
+  source_url: "..."
+  published_at: "..."
+  market: "ETH perpetual"
+  mechanism: "liquidation cascade continuation"
+  required_inputs: [trades, l2, mark_price, open_interest]
+  entry_logic: "..."
+  exit_logic: "..."
+  falsification_test: "..."
+  leakage_risks: ["..."]
+  status: NEW</code></pre></div>
+ <div id="f2" class="panel" data-group="factory"><div class="grid g3">
+  <article class="card"><h3>Gramática tipada</h3><p>Bloques válidos por construcción: precio con precio, booleanos con booleanos y ventanas solo con valores anteriores.</p></article>
+  <article class="card"><h3>Programación genética</h3><p>DEAP permite árboles fuertemente tipados. Mutación de nodos, cruces de subárboles y límites de profundidad evitan código arbitrario.</p></article>
+  <article class="card"><h3>Novedad controlada</h3><p>El agente puede proponer nuevos bloques, pero deben pasar pruebas unitarias y de look-ahead antes de entrar en la gramática.</p></article>
+ </div><pre><button class="copy">Copiar</button><code>strategy_tree = AND(
+    BREAKOUT(high, lookback=36, lag=1),
+    GT(volume_ratio(30), 1.8),
+    REGIME(volatility_percentile(120), min=0.72)
+)
+
+mutation_space = {
+  lookback: 4..240,
+  threshold: 0.1..5.0,
+  leverage: 1..venue_max,
+  pyramiding_entries: 0..8,
+  exit_family: [time, atr, trailing, reverse, partial]
+}</code></pre></div>
+ <div id="f3" class="panel" data-group="factory"><div class="grid g2">
+  <article class="card"><h3>StrategyQuant X</h3><p>Importar OHLCV/funding como datos, generar poblaciones y exportar las reglas. Después traducirlas a la DSL y repetir todo en tus motores. Su resultado nunca entra directamente al ranking canónico.</p></article>
+  <article class="card"><h3>Build Alpha</h3><p>Útil para incorporar señales Python personalizadas, combinarlas mediante búsqueda genética y exportar estrategias. La mejor opción comercial para señales propias; sigue siendo un proveedor de semillas.</p></article>
+ </div><div class="note warn"><b>Regla:</b> toda estrategia importada pierde sus métricas originales. En el laboratorio comienza de cero y recibe nuevos resultados con tus datos, costes, liquidación y orden de eventos.</div></div>
+</section>
+
+<section id="familias" data-search="familias estrategia ultrarrentable momentum liquidaciones funding open interest volatilidad">
+ <div class="title"><div><h2>5. Familias que merece la pena explorar para retornos extremos</h2></div><p>No son promesas de rentabilidad; son espacios donde el payoff puede ser muy convexo.</p></div>
+ <div class="grid g4">
+  <article class="card"><span class="pill good">PRIORIDAD A</span><h3>Ruptura explosiva</h3><p>Compresión → expansión de volatilidad, volumen anómalo, confirmación L2 y piramidación solo a favor.</p></article>
+  <article class="card"><span class="pill good">PRIORIDAD A</span><h3>Cascadas de liquidación</h3><p>Continuación o reversión tras desequilibrio, trades agresores, caída de OI y desplazamiento del mark.</p></article>
+  <article class="card"><span class="pill good">PRIORIDAD A</span><h3>Momentum por régimen</h3><p>Activación temporal cuando volatilidad, dirección, funding y OI forman un régimen poco frecuente.</p></article>
+  <article class="card"><span class="pill good">PRIORIDAD A</span><h3>Piramidación convexa</h3><p>Añadir exposición únicamente cuando la posición ya está financiada por beneficio abierto y el flujo sigue confirmando.</p></article>
+  <article class="card"><span class="pill warn">PRIORIDAD B</span><h3>Extremos de funding</h3><p>Contrarian, continuación o carry direccional condicionado por precio, basis, OI y velocidad del funding.</p></article>
+  <article class="card"><span class="pill warn">PRIORIDAD B</span><h3>Microestructura L2</h3><p>Imbalance, agotamiento de niveles, spread, profundidad y aceleración de agresores. Requiere datos granulares.</p></article>
+  <article class="card"><span class="pill warn">PRIORIDAD B</span><h3>Eventos y horarios</h3><p>Ventanas recurrentes, anuncios, aperturas de sesiones o shocks de mercado; estrategias especializadas y apagadas fuera del evento.</p></article>
+  <article class="card"><span class="pill warn">PRIORIDAD B</span><h3>Ensemble adaptativo</h3><p>Varias estrategias kamikaze pequeñas; un selector de régimen elige cuál activar, sin promediar señales incompatibles.</p></article>
+ </div>
+ <div class="note danger" style="margin-top:14px"><b>No optimizar todo a la vez.</b> Primero mecanismo de entrada, después salida, luego ejecución y finalmente apalancamiento/compound. Si se mezclan desde el principio, el motor encontrará multiplicadores enormes sin que puedas saber qué los causa.</div>
+</section>
+
+<section id="optimizacion" data-search="optimización Optuna TPE CMA ES Ray evolución score campañas ventanas">
+ <div class="title"><div><h2>6. Motor de optimización y mejora</h2></div><p>La búsqueda debe alternar amplitud, explotación de ganadores y ataques adversariales.</p></div>
+ <div class="grid g3">
+  <article class="card"><div class="kpi">40%</div><h3>Exploración</h3><p>Random/QMC y generación genética para descubrir familias que no provienen de los ganadores actuales.</p></article>
+  <article class="card"><div class="kpi">40%</div><h3>Explotación</h3><p>TPE para espacios mixtos; CMA-ES para parámetros continuos alrededor de una familia prometedora.</p></article>
+  <article class="card"><div class="kpi">20%</div><h3>Mutaciones radicales</h3><p>Cambiar familia de salida, régimen, orden o sizing para escapar de máximos locales.</p></article>
+ </div>
+ <div class="grid g2" style="margin-top:15px">
+  <article class="card"><h3>Bucle recomendado</h3><pre><button class="copy">Copiar</button><code>for generation in campaign:
+    ideas = research_agent.propose(memory, failures, market_regimes)
+    population = gp_factory.create(ideas, parents, novelty_budget)
+
+    fast = vector_engine.run(population, discovery_windows)
+    top = rank(valid_survivors(fast), by="final_equity")
+
+    tuned = optuna_refine(top, samplers=["TPE", "CMA_ES"])
+    canonical = ray_map(nautilus_l2_backtest, tuned[:budget])
+
+    audited = independent_replay(canonical.top_n)
+    memory.store_all(population, fast, canonical, audited)
+    parents = select_by_return_and_novelty(canonical)</code></pre></article>
+  <article class="card"><h3>Memoria para no repetir errores</h3><ul><li>Hash de la estructura y parámetros.</li><li>Padres, mutación, fuente y agente.</li><li>Versión exacta de datos y motor.</li><li>Todas las ventanas probadas, también las malas.</li><li>Razón técnica de invalidación.</li><li>Huella de operaciones y equity curve.</li><li>Número total de candidatos probados: imprescindible para medir selección múltiple.</li></ul></article>
+ </div>
+ <div class="note"><b>Importante:</b> PBO, Deflated Sharpe, CPCV y sensibilidad no tienen que bloquear candidatos en tu modo Kamikaze. Deben mostrarse como evidencia separada para distinguir un 1000% creíble de un 1000% encontrado por probar millones de combinaciones.</div>
+</section>
+
+<section id="datos" data-search="datos Hyperliquid S3 Tardis L2 trades funding mark open interest Parquet">
+ <div class="title"><div><h2>7. Datos: ruta gratuita, barata y profesional</h2></div><p>La calidad del backtest depende más del dato y del modelo de fills que del nombre del motor.</p></div>
+ <div class="grid g3">
+  <article class="card"><span class="pill good">RUTA 0</span><h3>Archivo oficial Hyperliquid</h3><p>El bucket S3 oficial publica snapshots L2 aproximadamente una vez al mes. El requester paga transferencia; puede haber huecos y no se garantiza puntualidad.</p><p><b>Uso:</b> base L2 inicial y auditoría contra datos de terceros.</p></article>
+  <article class="card"><span class="pill good">RUTA 1</span><h3>Grabador propio 24/7</h3><p>WebSocket de trades, l2Book, mark, funding, OI y estado del venue. Guardar <code>ts_event</code> y <code>ts_init</code> para medir latencia real.</p><p><b>Uso:</b> shadow y mejora continua.</p></article>
+  <article class="card"><span class="pill warn">RUTA PRO</span><h3>Tardis → Nautilus</h3><p>Replay granular, snapshots/deltas L2, trades, funding, mark/index y OI normalizados directamente a Parquet de Nautilus.</p><p><b>Uso:</b> histórico limpio y cómodo; requiere suscripción salvo el primer día de cada mes.</p></article>
+ </div>
+ <div class="table" style="margin-top:15px"><table><thead><tr><th>Dato</th><th>Descubrimiento</th><th>Validación canónica</th><th>Por qué importa</th></tr></thead><tbody>
+  <tr><td>Velas 5m/15m</td><td class="green">Sí</td><td class="red">Insuficientes solas</td><td>Criba rápida de familias.</td></tr>
+  <tr><td>Trades con agresor</td><td>Opcional</td><td class="green">Recomendado</td><td>Evidencia de liquidez y activación de fills pasivos.</td></tr>
+  <tr><td>L2 snapshots + deltas</td><td>Opcional</td><td class="green">Obligatorio para finalistas</td><td>Market orders recorren niveles y permite limitar volumen disponible.</td></tr>
+  <tr><td>Funding</td><td class="green">Sí</td><td class="green">Obligatorio</td><td>Hyperliquid liquida funding cada hora.</td></tr>
+  <tr><td>Mark price</td><td>Recomendado</td><td class="green">Obligatorio</td><td>La liquidación usa mark, no simplemente el último trade.</td></tr>
+  <tr><td>Open interest</td><td>Señal</td><td>Señal/diagnóstico</td><td>Distingue apertura, cierre y cascadas.</td></tr>
+  <tr><td>Reglas históricas del instrumento</td><td>—</td><td class="green">Obligatorio</td><td>Leverage máximo, tiers, fees y precisiones cambian.</td></tr>
+ </tbody></table></div>
+ <div class="accordion open"><button class="ah">Esquema mínimo del catálogo <span>+</span></button><div class="ab"><pre><button class="copy">Copiar</button><code>catalog/
+  instruments/HYPERLIQUID/...
+  bars/ETH-USD-PERP.HYPERLIQUID/5-MINUTE/...
+  trades/ETH-USD-PERP.HYPERLIQUID/...
+  order_book_deltas/ETH-USD-PERP.HYPERLIQUID/...
+  funding_rate_updates/ETH-USD-PERP.HYPERLIQUID/...
+  mark_price_updates/ETH-USD-PERP.HYPERLIQUID/...
+  custom/open_interest/...
+  manifests/{date}.json   # checksum, huecos, fuente, versión</code></pre></div></div>
+ <div class="accordion"><button class="ah">Reglas de calidad <span>+</span></button><div class="ab"><ul><li>UTC, nanosegundos y separación entre tiempo del evento y recepción.</li><li>Snapshots antes de aplicar deltas; detección de secuencias rotas.</li><li>Duplicados eliminados por ID/huella determinista.</li><li>Los huecos se marcan; nunca se rellenan silenciosamente.</li><li>Comparar un muestreo del S3 oficial con Tardis o captura propia.</li><li>Versionar fees, funding, leverage máximo y margin tiers por fecha.</li></ul></div></div>
+</section>
+
+<section id="nautilus" data-search="NautilusTrader cómo funciona L2 L3 fill model latency Hyperliquid beta">
+ <div class="title"><div><h2>8. NautilusTrader: qué hará exactamente</h2></div><p>Última versión localizada: 1.227.0 Beta, publicada el 18 de mayo de 2026. Debe fijarse por versión y probarse antes de producción.</p></div>
+ <div class="grid g3">
+  <article class="card"><h3>Mismo modelo de sistema</h3><p>La estrategia, actores y algoritmos de ejecución pueden usarse en backtest y live sin reescribir la lógica principal.</p></article>
+  <article class="card"><h3>Matching L2/L3</h3><p>Las órdenes market recorren niveles; los límites descansan; se modelan parciales, latencia, cola y consumo de liquidez.</p></article>
+  <article class="card"><h3>Hyperliquid oficial</h3><p>Adaptador Rust con REST/WebSocket, datos live, cuenta y ejecución. Testnet y mainnet usan la misma arquitectura.</p></article>
+ </div>
+ <div class="grid g2" style="margin-top:15px">
+  <article class="card"><h3>Configuración canónica mínima</h3><pre><button class="copy">Copiar</button><code>venue = BacktestVenueConfig(
+    name="HYPERLIQUID_SIM",
+    oms_type="NETTING",
+    account_type="MARGIN",
+    book_type="L2_MBP",
+    starting_balances=["1000 USDC"],
+    trade_execution=True,
+    bar_execution=False,
+    liquidity_consumption=True,
+    queue_position=True,
+    random_seed=campaign.seed,
+    # fee, latency, margin and fill configs versioned
+)</code></pre></article>
+  <article class="card"><h3>Limitaciones que el informe no oculta</h3><ul><li>El histórico es inmutable; tus órdenes no cambian el mercado pasado.</li><li>La posición exacta en la cola nunca se conoce; se aproxima.</li><li>Si faltan deltas o trades, la simulación no puede inventarlos.</li><li>Testnet no replica la liquidez de mainnet.</li><li>La versión actual está etiquetada Beta.</li><li>Un fill model optimista puede inflar radicalmente una estrategia apalancada.</li></ul></article>
+ </div>
+ <div class="note danger"><b>Configuración obligatoria:</b> activar consumo de liquidez, usar L2 + trades para finalistas, modelar latencia medida, aplicar fees/funding y reproducir la liquidación de Hyperliquid con mark price y margin tiers.</div>
+</section>
+
+<section id="fiabilidad" data-search="fiabilidad backtest score barras L1 L2 testnet shadow live">
+ <div class="title"><div><h2>9. Escalera de fiabilidad del resultado</h2></div><p>Marca lo que tiene una estrategia para calcular su nivel de evidencia. Esto no cambia el ranking por retorno.</p></div>
+ <div class="grid g2">
+  <article class="card">
+   <div class="checkgrid" id="reliabilityChecks">
+    <label class="check"><input type="checkbox" data-points="5">Datos completos, checksums y sin huecos ocultos</label>
+    <label class="check"><input type="checkbox" data-points="8">Sin look-ahead, warm-up correcto y lag explícito</label>
+    <label class="check"><input type="checkbox" data-points="7">Fees y funding históricos</label>
+    <label class="check"><input type="checkbox" data-points="10">Mark price y liquidación de Hyperliquid</label>
+    <label class="check"><input type="checkbox" data-points="12">Trades + L2 con consumo de liquidez</label>
+    <label class="check"><input type="checkbox" data-points="8">Latencia y rechazos calibrados con logs reales</label>
+    <label class="check"><input type="checkbox" data-points="10">Ventanas ocultas y temporalmente separadas</label>
+    <label class="check"><input type="checkbox" data-points="8">PBO/selección múltiple documentada</label>
+    <label class="check"><input type="checkbox" data-points="10">Segundo motor reproduce operaciones y PnL</label>
+    <label class="check"><input type="checkbox" data-points="8">Shadow mainnet reproduce señales y órdenes</label>
+    <label class="check"><input type="checkbox" data-points="7">Testnet sin errores de estado/reconciliación</label>
+    <label class="check"><input type="checkbox" data-points="7">Micro-live coincide dentro de tolerancias</label>
+   </div>
+  </article>
+  <article class="card"><span class="sub">Nivel de evidencia</span><div class="score" id="relScore">0</div><div class="meter"><span id="relBar"></span></div><h3 id="relTitle" style="margin-top:18px">Solo una idea</h3><p id="relText">Aún no hay pruebas suficientes para interpretar el retorno.</p><div class="note warn"><b>Una cifra de 1000% puede existir en cualquier nivel.</b> El nivel indica cuánto se parece el experimento a las condiciones que encontrará el sistema real.</div></article>
+ </div>
+</section>
+
+<section id="validacion" data-search="doble motor validación independiente LEAN replay PBO CPCV walk forward">
+ <div class="title"><div><h2>10. Doble validación y depuración</h2></div><p>NautilusTrader reduce la distancia con live, pero no debe auditarse a sí mismo.</p></div>
+ <div class="grid g3">
+  <article class="card"><span class="pill good">A</span><h3>Nautilus canónico</h3><p>Produce órdenes, fills, PnL, margin calls, funding y equity con L2.</p></article>
+  <article class="card"><span class="pill good">B</span><h3>Replay independiente</h3><p>Motor pequeño que recibe los mismos eventos y decisiones, recalcula fills/fees/margen y compara operación a operación.</p></article>
+  <article class="card"><span class="pill warn">C</span><h3>LEAN opcional</h3><p>Para estrategias finalistas, importar datos y crear modelo de brokerage Hyperliquid. Es costoso, pero ofrece independencia de implementación.</p></article>
+ </div>
+ <div class="table" style="margin-top:15px"><table><thead><tr><th>Prueba</th><th>Resultado esperado</th><th>Si falla</th></tr></thead><tbody>
+  <tr><td>Repetición misma semilla</td><td>Hash idéntico de operaciones/equity</td><td>Bug de no determinismo o estado compartido.</td></tr>
+  <tr><td>Motor A vs B</td><td>Diferencia explicable por reglas documentadas</td><td>Bloquear la etiqueta “canónica”; no necesariamente borrar la estrategia.</td></tr>
+  <tr><td>1m vs L2</td><td>La dirección general puede coincidir; fills y retorno deben ajustarse</td><td>La ventaja depende del orden intrabar o de liquidez inexistente.</td></tr>
+  <tr><td>Sensibilidad ±10%</td><td>Mapa del mecanismo, no obligación de estabilidad</td><td>Etiquetar “pico paramétrico”; conservar si sigue siendo útil para un régimen.</td></tr>
+  <tr><td>Ventanas ocultas</td><td>Medir dónde sobrevive y dónde muere</td><td>Clasificar como estrategia de régimen, no descartarla automáticamente.</td></tr>
+  <tr><td>PBO/DSR</td><td>Cuantificar inflación por millones de pruebas</td><td>Reducir confianza narrativa, no el score de descubrimiento.</td></tr>
+ </tbody></table></div>
+</section>
+
+<section id="produccion" data-search="testnet shadow mainnet micro live Hyperliquid reconciliación">
+ <div class="title"><div><h2>11. Testnet, shadow y micro-live</h2></div><p>Esta fase mide la diferencia real entre el backtest y la operativa, no busca “proteger” la estrategia.</p></div>
+ <div class="grid g4">
+  <article class="card"><span class="pill good">PASO 1</span><h3>Replay live</h3><p>Consumir mainnet en tiempo real; decidir y simular órdenes localmente sin enviarlas.</p></article>
+  <article class="card"><span class="pill good">PASO 2</span><h3>Testnet</h3><p>Validar autenticación, tipos de orden, rejects, reconexiones, reconciliación y estado de cuenta.</p></article>
+  <article class="card"><span class="pill warn">PASO 3</span><h3>Shadow mainnet</h3><p>Comparar precio teórico, precio ejecutable, profundidad y latencia real. No confundir con testnet.</p></article>
+  <article class="card"><span class="pill bad">PASO 4</span><h3>Micro-live</h3><p>Orden mínima real para calibrar fills, fees, latencia, cancelaciones y diferencias de mark/funding.</p></article>
+ </div>
+ <div class="note"><b>Promoción automática correcta:</b> no exige drawdown bajo. Exige que el sistema técnico funcione, que las órdenes sean válidas y que la divergencia observada pueda incorporarse al modelo de simulación.</div>
+</section>
+
+<section id="arquitectura" data-search="arquitectura carpetas MVP servicios agentes postgres parquet dashboard">
+ <div class="title"><div><h2>12. Arquitectura funcional del MVP</h2></div><p>Separación estricta entre investigación, generación, evaluación y ejecución.</p></div>
+ <div class="card tree">ultra_strategy_lab/
+├── apps/
+│   ├── web/                         # campañas, ranking, linaje, equity, evidencia
+│   └── api/                         # FastAPI / REST + WebSocket de estado
+├── services/
+│   ├── research_agent/              # papers, repos, hipótesis, RD-Agent adapter
+│   ├── strategy_factory/            # DSL, DEAP, mutaciones, cruces
+│   ├── external_importers/          # StrategyQuant, Build Alpha, Pine/Python
+│   ├── fast_screen/                 # VectorBT/Numba
+│   ├── optimizer/                   # Optuna TPE/CMA-ES
+│   ├── orchestrator/                # Ray, colas, checkpoints, recursos
+│   ├── canonical_nautilus/          # BacktestNode + modelos Hyperliquid
+│   ├── independent_validator/       # replay propio / LEAN opcional
+│   ├── live_shadow/                 # mainnet sin envío
+│   └── execution_node/              # Nautilus + Hyperliquid testnet/mainnet
+├── data/
+│   ├── download_hyperliquid_s3/
+│   ├── record_live_feeds/
+│   ├── tardis_pipeline/
+│   └── catalog/                     # Parquet Nautilus
+├── packages/
+│   ├── strategy_dsl/
+│   ├── indicators_no_lookahead/
+│   ├── venue_rules/
+│   ├── experiment_contracts/
+│   └── evidence_metrics/
+├── configs/
+│   ├── campaigns/
+│   ├── venues/
+│   └── execution_models/
+├── tests/
+│   ├── leakage/
+│   ├── fill_engine/
+│   ├── margin_liquidation/
+│   ├── determinism/
+│   └── engine_parity/
+└── artifacts/
+    ├── strategies/
+    ├── results/
+    ├── equity/
+    └── audit_reports/</div>
+ <div class="grid g3" style="margin-top:15px">
+  <article class="card"><h3>PostgreSQL</h3><p>Metadatos, campañas, estrategias, linaje, ventanas, scores y estado.</p></article>
+  <article class="card"><h3>Parquet</h3><p>Mercado, trades, órdenes, fills, equity y resultados voluminosos.</p></article>
+  <article class="card"><h3>Redis opcional</h3><p>Colas y estado caliente; Ray puede manejar la ejecución distribuida.</p></article>
+ </div>
+</section>
+
+<section id="fases" data-search="fases implementación semana MVP orden construcción">
+ <div class="title"><div><h2>13. Orden de construcción que evita un MVP falso</h2></div><p>No se empieza por el agente ni por la interfaz; se empieza por los contratos y la verdad del simulador.</p></div>
+ <div class="table"><table><thead><tr><th>Fase</th><th>Construcción</th><th>Hito verificable</th></tr></thead><tbody>
+  <tr><td><b>0 — Contratos</b></td><td>DSL, ExperimentSpec, ResultSpec, DatasetManifest y hashes.</td><td>Mismo input produce el mismo ID y artefactos.</td></tr>
+  <tr><td><b>1 — Datos</b></td><td>S3 Hyperliquid, funding/mark, grabador live y catálogo Parquet.</td><td>Reconstrucción L2 sin secuencias rotas en una muestra.</td></tr>
+  <tr><td><b>2 — Verdad canónica</b></td><td>Nautilus L2, fees, latencia, margen, liquidación y tests unitarios.</td><td>Escenarios manuales calculados a mano coinciden.</td></tr>
+  <tr><td><b>3 — Motor rápido</b></td><td>Compilador DSL → VectorBT y comparación contra estrategias simples.</td><td>Se conocen y documentan las diferencias respecto a Nautilus.</td></tr>
+  <tr><td><b>4 — Generador</b></td><td>DEAP tipado, mutación, cruces, novedad y biblioteca de bloques.</td><td>10.000 estrategias válidas sin código libre.</td></tr>
+  <tr><td><b>5 — Optimizador</b></td><td>Optuna + Ray + checkpoints + campañas de ventanas aleatorias.</td><td>Campaña reanudable y linaje completo.</td></tr>
+  <tr><td><b>6 — Investigación</b></td><td>Agentes de hipótesis, replicación y memoria de fracasos.</td><td>Idea externa → DSL → backtest trazable.</td></tr>
+  <tr><td><b>7 — Doble motor</b></td><td>Replay independiente y comparador trade-by-trade.</td><td>Informe de diferencias automático.</td></tr>
+  <tr><td><b>8 — Web</b></td><td>Panel de campañas, ranking, familia, régimen y nivel de evidencia.</td><td>Ningún resultado sin links a datos/config/semilla.</td></tr>
+  <tr><td><b>9 — Testnet/live</b></td><td>Nautilus Hyperliquid, reconciliación, shadow y micro-live.</td><td>Se mide y realimenta la divergencia real.</td></tr>
+ </tbody></table></div>
+</section>
+
+<section id="costes" data-search="costes gratis barato profesional StrategyQuant Build Alpha Tardis hardware">
+ <div class="title"><div><h2>14. Tres versiones según presupuesto</h2></div><p>Precios comerciales observados el 29 de julio de 2026; pueden cambiar.</p></div>
+ <div class="grid g3">
+  <article class="card"><span class="pill good">LOW COST</span><h3>Núcleo abierto</h3><ul><li>NautilusTrader: open source LGPL.</li><li>VectorBT, Optuna, Ray, DEAP y RD-Agent: open source.</li><li>Hyperliquid S3 requester-pays.</li><li>Grabador propio en VPS.</li><li>Sin Tardis ni herramienta comercial.</li></ul><p><b>Recomendado para empezar.</b></p></article>
+  <article class="card"><span class="pill warn">INTERMEDIA</span><h3>Datos profesionales</h3><ul><li>Todo lo anterior.</li><li>Tardis para periodos L2/trades/funding elegidos.</li><li>Más almacenamiento NVMe.</li><li>Workers CPU adicionales.</li></ul><p>El dinero se gasta en datos, no en una interfaz de estrategias.</p></article>
+  <article class="card"><span class="pill bad">EXPANSIÓN</span><h3>Semillas comerciales</h3><ul><li>Build Alpha: sitio oficial muestra licencia vitalicia de 1.497 USD y opción trimestral de 447 USD.</li><li>StrategyQuant Professional: 1.490 USD pago único; Ultimate: 2.900 USD en la página consultada.</li><li>Usarlas solo tras medir su aportación marginal.</li></ul></article>
+ </div>
+ <div class="note warn" style="margin-top:14px"><b>Hardware:</b> la exploración de barras es CPU/RAM; el L2 es I/O, almacenamiento y CPU. Empieza con un equipo/VPS de 8–16 cores, 32–64 GB RAM y NVMe. Escala con Ray únicamente cuando la campaña y los datos ya sean correctos.</div>
+</section>
+
+<section id="criterios" data-search="criterios aceptación MVP completo 1000 supervivencia reproducible">
+ <div class="title"><div><h2>15. Cuándo el sistema puede llamarse “completo”</h2></div><p>Checklist guardada en tu navegador.</p></div>
+ <div class="grid g2">
+  <article class="card"><div class="checkgrid" id="projectChecklist">
+   <label class="check"><input type="checkbox">Descarga/normaliza datos y genera manifiestos.</label>
+   <label class="check"><input type="checkbox">Genera estrategias desde investigación, GP e importadores.</label>
+   <label class="check"><input type="checkbox">Compila una DSL única a motor rápido y Nautilus.</label>
+   <label class="check"><input type="checkbox">Optimiza reglas, parámetros, salida, ejecución y capital por capas.</label>
+   <label class="check"><input type="checkbox">Solo elimina quiebra, liquidación o experimento inválido.</label>
+   <label class="check"><input type="checkbox">Busca explícitamente +1000% neto y registra cada intento.</label>
+   <label class="check"><input type="checkbox">Repite finalistas con L2, trades, funding, mark y latencia.</label>
+   <label class="check"><input type="checkbox">Compara con un segundo motor independiente.</label>
+   <label class="check"><input type="checkbox">Mide PBO y sensibilidad sin usarlos como filtros obligatorios.</label>
+   <label class="check"><input type="checkbox">Ejecuta testnet, shadow y micro-live con reconciliación.</label>
+   <label class="check"><input type="checkbox">Realimenta las diferencias live al fill/latency model.</label>
+   <label class="check"><input type="checkbox">Panel muestra retorno rápido, canónico, independiente y real por separado.</label>
+  </div></article>
+  <article class="card"><span class="sub">Progreso del diseño</span><div class="score" id="projScore">0%</div><div class="meter"><span id="projBar"></span></div><h3>Prueba de aceptación final</h3><p>El MVP aprueba cuando puede tomar una hipótesis nueva, crear variantes, encontrar candidatos, repetirlos en Nautilus L2, explicar cualquier diferencia con el validador, ejecutar la misma estrategia en shadow/testnet y conservar toda la trazabilidad.</p><button class="btn" id="resetChecklist">Reiniciar checklist</button></article>
+ </div>
+</section>
+
+<section id="fuentes" data-search="fuentes documentación oficial papers investigación">
+ <div class="title"><div><h2>16. Fuentes verificadas</h2></div><p>Documentación oficial, repositorios originales y publicaciones primarias.</p></div>
+ <div class="sources" id="sources"></div>
+</section>
+
+<section>
+ <div class="card"><h2 style="margin-top:0">Conclusión ejecutiva</h2><p>La solución no es “NautilusTrader solo”. Es una fábrica abierta donde <b>los agentes y la programación genética crean estrategias</b>, VectorBT y Optuna exploran, Ray escala, <b>NautilusTrader decide qué ocurrió bajo una simulación granular</b>, un segundo motor busca errores y Hyperliquid testnet/mainnet mide la divergencia. El objetivo ≥1000% se mantiene como prioridad absoluta; la fiabilidad se informa en una dimensión separada, sin reintroducir filtros de drawdown.</p><div class="action"><button class="btn primary" onclick="window.print()">Imprimir / Guardar PDF</button><button class="btn" id="expandAll">Abrir todos los detalles</button></div></div>
+</section>
+</main>
+</div>
+<script>
+const stages=[
+["01","Datos","S3 + live + Tardis","Descargar datos oficiales, grabar feeds y crear un catálogo versionado. Sin esta capa, el resto optimiza ruido o huecos."],
+["02","Investigar","Agentes + fuentes","Buscar mecanismos, convertirlos en hipótesis falsables y replicar primero la versión base sin optimización."],
+["03","Crear","DSL + DEAP","Generar árboles de reglas tipados, mutaciones, cruces e ideas radicales sin permitir código libre dentro del motor."],
+["04","Cribar","VectorBT","Evaluar grandes poblaciones sobre barras y ventanas de tres meses. Esta capa solo localiza familias."],
+["05","Afinar","Optuna","TPE para parámetros mixtos y CMA-ES para continuos. Separar señal, salida, ejecución y capital."],
+["06","Escalar","Ray","Ejecutar workers, checkpoints, recuperación y presupuestos de cómputo por campaña."],
+["07","Certificar","Nautilus L2","Rehacer finalistas con trades, L2, funding, mark, margen, liquidación, latencia y consumo de liquidez."],
+["08","Auditar","Segundo motor","Comparar operaciones, fees, margen y equity con un replay independiente o LEAN personalizado."],
+["09","Diagnosticar","PBO + ventanas","Medir selección múltiple, ventanas ocultas, regímenes y sensibilidad. Etiquetar evidencia sin filtrar drawdown."],
+["10","Shadow","Mainnet sin órdenes","Recibir datos reales y simular decisiones/órdenes para medir la diferencia ejecutable."],
+["11","Testnet","Sistema operativo","Validar órdenes, rejects, reconexión, reconciliación, balances y persistencia de estado."],
+["12","Micro-live","Calibración real","Usar tamaño mínimo, medir fills/latencia/fees y realimentar el simulador antes de escalar."],
+];
+const pipe=document.getElementById('pipeline'); stages.forEach((s,i)=>{const el=document.createElement('div');el.className='stage'+(i===0?' active':'');el.innerHTML=`<small>${s[0]}</small><strong>${s[1]}</strong><span>${s[2]}</span>`;el.onclick=()=>{document.querySelectorAll('.stage').forEach(x=>x.classList.remove('active'));el.classList.add('active');showStage(i)};pipe.appendChild(el)});
+function showStage(i){const s=stages[i];document.getElementById('stageDetail').innerHTML=`<span class="pill good">ETAPA ${s[0]}</span><h3>${s[1]} — ${s[2]}</h3><p>${s[3]}</p>`}showStage(0);
+
+document.querySelectorAll('[data-tabs]').forEach(w=>{w.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{w.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll(`[data-group="${w.dataset.tabs}"]`).forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.tab).classList.add('active')})});
+document.querySelectorAll('.accordion .ah').forEach(b=>b.onclick=()=>b.parentElement.classList.toggle('open'));
+document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{const t=b.parentElement.querySelector('code').innerText;await navigator.clipboard.writeText(t);const old=b.textContent;b.textContent='Copiado';setTimeout(()=>b.textContent=old,1200)});
+
+const cash=document.getElementById('cash'),ret=document.getElementById('ret'),win=document.getElementById('window');
+function calc(){const c=+cash.value,r=+ret.value,m=1+r/100,months=+win.value;document.getElementById('cashLabel').textContent=c.toLocaleString('es-ES')+' €';document.getElementById('retLabel').textContent=r+'%';document.getElementById('windowLabel').textContent=months+' '+(months===1?'mes':'meses');document.getElementById('finalCash').textContent=(c*m).toLocaleString('es-ES',{maximumFractionDigits:0})+' €';document.getElementById('multiple').textContent=m.toLocaleString('es-ES',{maximumFractionDigits:1})+'×';const annual=Math.pow(m,12/months)-1;document.getElementById('cagr').textContent=annual>999?'Extremo':(annual*100).toLocaleString('es-ES',{maximumFractionDigits:0})+'%'}[cash,ret,win].forEach(x=>x.oninput=calc);calc();
+
+const relChecks=[...document.querySelectorAll('#reliabilityChecks input')];
+function rel(){const p=relChecks.filter(x=>x.checked).reduce((a,x)=>a+(+x.dataset.points),0);document.getElementById('relScore').textContent=p;document.getElementById('relBar').style.width=p+'%';let t,tx;if(p<25){t='Solo una idea';tx='Resultado exploratorio sobre supuestos débiles.'}else if(p<50){t='Backtest aproximado';tx='Útil para cribar, no para interpretar el 1000% como ejecutable.'}else if(p<75){t='Candidato canónico';tx='La simulación ya incluye gran parte de las fricciones críticas.'}else if(p<90){t='Candidato operativo';tx='Ha sobrevivido a doble motor y pruebas con mercado vivo.'}else{t='Evidencia alta';tx='Backtest, shadow y micro-live están calibrados; aún puede cambiar el mercado.'}document.getElementById('relTitle').textContent=t;document.getElementById('relText').textContent=tx}relChecks.forEach(x=>x.onchange=rel);rel();
+
+const pc=[...document.querySelectorAll('#projectChecklist input')];function proj(){const n=pc.filter(x=>x.checked).length,p=Math.round(n/pc.length*100);document.getElementById('projScore').textContent=p+'%';document.getElementById('projBar').style.width=p+'%';localStorage.setItem('ultra_project_checklist',JSON.stringify(pc.map(x=>x.checked)))}const saved=JSON.parse(localStorage.getItem('ultra_project_checklist')||'null');if(saved)pc.forEach((x,i)=>x.checked=!!saved[i]);pc.forEach(x=>x.onchange=proj);document.getElementById('resetChecklist').onclick=()=>{pc.forEach(x=>x.checked=false);proj()};proj();
+
+const src=[
+['NautilusTrader docs','Arquitectura event-driven, backtest/live y conceptos','https://nautilustrader.io/docs/latest/'],
+['Nautilus backtesting','L1/L2/L3, fills, latencia, cola y consumo de liquidez','https://nautilustrader.io/docs/latest/concepts/backtesting/'],
+['Nautilus Hyperliquid','Adaptador oficial de datos y ejecución','https://nautilustrader.io/docs/latest/integrations/hyperliquid/'],
+['Nautilus releases','1.227.0 Beta — 18 mayo 2026','https://github.com/nautechsystems/nautilus_trader/releases'],
+['Hyperliquid historical data','Bucket S3 oficial, L2 y advertencias de cobertura','https://hyperliquid.gitbook.io/hyperliquid-docs/historical-data'],
+['Hyperliquid liquidations','Mark price, maintenance margin y proceso de liquidación','https://hyperliquid.gitbook.io/hyperliquid-docs/trading/liquidations'],
+['Hyperliquid specifications','Funding horario, leverage y límites de órdenes','https://hyperliquid.gitbook.io/hyperliquid-docs/trading/contract-specifications'],
+['Tardis + Nautilus','Replay granular directo a catálogo Parquet','https://nautilustrader.io/docs/latest/integrations/tardis/'],
+['Tardis Hyperliquid','Canales y cobertura de datos','https://docs.tardis.dev/historical-data-details/hyperliquid'],
+['RD-Agent(Q)','Marco multiagente de investigación cuantitativa','https://www.microsoft.com/en-us/research/publication/rd-agent-quant-a-multi-agent-framework-for-data-centric-factors-and-model-joint-optimization/'],
+['DEAP GP','Programación genética tipada','https://deap.readthedocs.io/en/stable/api/gp.html'],
+['VectorBT','Criba vectorizada y combinaciones paramétricas','https://vectorbt.dev/'],
+['Optuna samplers','TPE, CMA-ES, GP, QMC y búsqueda distribuida','https://optuna.readthedocs.io/en/stable/reference/samplers/index.html'],
+['Ray Tune','Experimentos distribuidos y tolerancia a fallos','https://docs.ray.io/en/latest/tune/tutorials/tune-distributed.html'],
+['StrategyQuant workflow','Generación, retest, mejora y optimización','https://strategyquant.com/doc/strategyquant/workflow/'],
+['Build Alpha Python','Generación genética con señales Python','https://www.buildalpha.com/python-trading-strategy-builder/'],
+['Freqtrade Hyperopt','Optimización cripto mediante Optuna','https://www.freqtrade.io/en/stable/hyperopt/'],
+['LEAN Engine','Motor abierto y modelos personalizados','https://www.quantconnect.com/docs/v2/lean-engine'],
+['Probability of Backtest Overfitting','CSCV/PBO para selección múltiple','https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253'],
+['Deflated Sharpe Ratio','Sesgo de selección y no normalidad','https://doi.org/10.3905/jpm.2014.40.5.094']
+];const sl=document.getElementById('sources');src.forEach((s,i)=>{const d=document.createElement('div');d.className='source';d.innerHTML=`<div class="sn">${String(i+1).padStart(2,'0')}</div><div><b>${s[0]}</b><span class="small">${s[1]}</span><br><a href="${s[2]}" target="_blank" rel="noopener">Abrir fuente oficial ↗</a></div>`;sl.appendChild(d)});
+
+const search=document.getElementById('navSearch');search.oninput=()=>{const q=search.value.toLowerCase().trim();document.querySelectorAll('main section,main header').forEach(s=>{const txt=(s.innerText+' '+(s.dataset.search||'')).toLowerCase();s.classList.toggle('hidden',q&&!txt.includes(q))})};
+const navLinks=[...document.querySelectorAll('nav a')];const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-25% 0px -65% 0px'});document.querySelectorAll('main [id]').forEach(x=>obs.observe(x));
+document.getElementById('expandAll').onclick=()=>document.querySelectorAll('.accordion').forEach(x=>x.classList.add('open'));
+</script>
+</body>
+</html>

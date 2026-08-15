@@ -1,0 +1,127 @@
+...ss..................FFF.ss.                                           [100%]
+=================================== FAILURES ===================================
+____________________ test_autonomous_campaign_orchestration ____________________
+
+db_session = <sqlalchemy.orm.session.Session object at 0x7f80ea211940>
+
+    def test_autonomous_campaign_orchestration(db_session: Session) -> None:
+        """Full autonomous campaign orchestration cycle execution."""
+        manifests = list(Path("data/normalized").glob("*_manifest.json"))
+        assert manifests, "Approved dataset manifest required for test"
+    
+        campaign_id = "cmp_test_auto_unit"
+        orchestrator = AutonomousCampaignOrchestrator(campaign_id)
+    
+        res = orchestrator.run_generation_cycle(
+            symbol="ETH-USDT",
+            timeframe="1h",
+            population_size=4,
+            generations_count=2,
+            seed=42,
+        )
+    
+>       assert res["status"] == "COMPLETED"
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+services/api/tests/test_factory.py:126: AssertionError
+__________________ test_missing_fee_snapshot_throws_exception __________________
+
+db_session = <sqlalchemy.orm.session.Session object at 0x7f80e8f42850>
+
+    def test_missing_fee_snapshot_throws_exception(db_session: Session) -> None:
+        """Missing fee snapshot for symbol must raise MISSING_FEE_SNAPSHOT exception."""
+        # Ensure ETH-USDT has missing fees
+        db_session.query(InstrumentModel).filter(InstrumentModel.symbol == "ETH-USDT").delete()
+        db_session.commit()
+    
+        dsl = StrategyDSL(**_make_valid_dsl())
+        ir = compile_to_ir(dsl)
+        engine = FastEngine(db_session)
+    
+        # Fetch any dataset or mockup
+        manifests = list(Path("data/normalized").glob("*_manifest.json"))
+        assert manifests, "Approved dataset manifest required for test"
+        ds_id = json.loads(manifests[0].read_text(encoding="utf-8"))["datasetId"]
+    
+        with pytest.raises(FastEngineException) as exc_info:
+            engine.execute(strategy_dsl=dsl, compiled_ir=ir, dataset_id=ds_id)
+    
+>       assert exc_info.value.code == "MISSING_FEE_SNAPSHOT"
+E       AssertionError: assert 'DATASET_NOT_FOUND' == 'MISSING_FEE_SNAPSHOT'
+E         
+E         - MISSING_FEE_SNAPSHOT
+E         + DATASET_NOT_FOUND
+
+services/api/tests/test_fast_engine.py:128: AssertionError
+__________________ test_fast_engine_execution_reproducibility __________________
+
+db_session = <sqlalchemy.orm.session.Session object at 0x7f80e8f42850>
+
+    def test_fast_engine_execution_reproducibility(db_session: Session) -> None:
+        """Fast Engine must produce identical results and checksums on identical execution."""
+        # Insert real fee snapshot for ETH-USDT
+        db_session.merge(
+            InstrumentModel(
+                symbol="ETH-USDT",
+                asset="ETH",
+                currency="USDT",
+                maker_fee_rate=0.0002,
+                taker_fee_rate=0.0005,
+                status=1,
+            )
+        )
+        db_session.commit()
+    
+        dsl = StrategyDSL(**_make_valid_dsl())
+        ir = compile_to_ir(dsl)
+        engine = FastEngine(db_session)
+    
+        manifests = list(Path("data/normalized").glob("*_manifest.json"))
+        assert manifests, "Approved dataset manifest required for test"
+        ds_id = json.loads(manifests[0].read_text(encoding="utf-8"))["datasetId"]
+    
+>       res_1 = engine.execute(strategy_dsl=dsl, compiled_ir=ir, dataset_id=ds_id, initial_capital=10000.0)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+services/api/tests/test_fast_engine.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <services.api.app.engine.fast_engine.FastEngine object at 0x7f80e8f43d90>
+
+    def execute(
+        self,
+        *,
+        strategy_dsl: StrategyDSL,
+        compiled_ir: CompiledIR,
+        dataset_id: str,
+        initial_capital: float = 10000.0,
+    ) -> dict[str, Any]:
+        # 1. Dataset Verification
+        ds = self.db.query(DatasetModel).filter(DatasetModel.dataset_id == dataset_id).first()
+        if not ds:
+>           raise FastEngineException("DATASET_NOT_FOUND", f"Dataset '{dataset_id}' not found in database")
+E           services.api.app.engine.fast_engine.FastEngineException: [DATASET_NOT_FOUND] Dataset 'ds_bingx_ETH_USDT_1h_1784991600000_1785344400000_cd007df145' not found in database
+
+services/api/app/engine/fast_engine.py:54: FastEngineException
+=============================== warnings summary ===============================
+services/api/tests/test_autopilot.py: 50 warnings
+services/api/tests/test_factory.py: 1 warning
+services/api/tests/test_fast_engine.py: 2 warnings
+  /opt/pyvenv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:3623: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED services/api/tests/test_factory.py::test_autonomous_campaign_orchestration - AssertionError: assert 'FAILED' == 'COMPLETED'
+  
+  - COMPLETED
+  + FAILED
+FAILED services/api/tests/test_fast_engine.py::test_missing_fee_snapshot_throws_exception - AssertionError: assert 'DATASET_NOT_FOUND' == 'MISSING_FEE_SNAPSHOT'
+  
+  - MISSING_FEE_SNAPSHOT
+  + DATASET_NOT_FOUND
+FAILED services/api/tests/test_fast_engine.py::test_fast_engine_execution_reproducibility - services.api.app.engine.fast_engine.FastEngineException: [DATASET_NOT_FOUND] Dataset 'ds_bingx_ETH_USDT_1h_1784991600000_1785344400000_cd007df145' not found in database
+3 failed, 23 passed, 4 skipped, 53 warnings in 0.60s

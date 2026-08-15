@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Técnica Freeze + Cámara 3D en Google Flow (Omni Flash)</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --panel:#121829; --panel2:#1a2238; --line:#2a3658;
+    --txt:#e8edf7; --muted:#8b9bc4; --accent:#7c5cff; --accent2:#00e0c6;
+    --warn:#ffb347; --ok:#4ade80; --red:#ff6b6b; --glass:rgba(124,92,255,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:radial-gradient(1200px 800px at 80% -10%,#1b2545 0%,var(--bg) 55%);color:var(--txt);line-height:1.6;padding:0 0 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header{padding:60px 24px 40px;text-align:center;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(124,92,255,.12),transparent)}
+  h1{font-size:2.4rem;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+  .sub{color:var(--muted);font-size:1.05rem;max-width:680px;margin:0 auto}
+  .badge{display:inline-block;margin-top:18px;padding:6px 16px;border:1px solid var(--line);border-radius:99px;background:var(--glass);color:var(--accent2);font-size:.85rem;letter-spacing:.5px}
+  section{margin:48px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px 30px;margin:20px 0;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  .card h2{font-size:1.45rem;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:12px}
+  .card h2 .n{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0e1a;display:grid;place-items:center;font-weight:800;font-size:1rem}
+  .card h3{color:var(--accent2);font-size:1.05rem;margin:18px 0 8px}
+  p{color:var(--txt);margin:10px 0}
+  .muted{color:var(--muted)}
+  ul{margin:10px 0 10px 22px}
+  li{margin:6px 0}
+  code,.code{font-family:'JetBrains Mono','Fira Code',monospace;background:#0c1220;border:1px solid var(--line);border-radius:8px;padding:2px 7px;color:var(--accent2);font-size:.9rem}
+  pre{background:#080c16;border:1px solid var(--line);border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#cdd6f4;line-height:1.5;margin:12px 0;white-space:pre-wrap}
+  .tag{color:var(--accent);font-weight:700}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .red{color:var(--red)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}h1{font-size:1.8rem}}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px dashed var(--line)}
+  .step:last-child{border-bottom:none}
+  .step .num{flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:var(--glass);border:1px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+  .step .body{flex:1}
+  .pill{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.78rem;font-weight:600;margin:2px 4px 2px 0}
+  .pill.flow{background:rgba(0,224,198,.14);color:var(--accent2);border:1px solid rgba(0,224,198,.3)}
+  .pill.omni{background:rgba(124,92,255,.14);color:var(--accent);border:1px solid rgba(124,92,255,.3)}
+  .pill.warn{background:rgba(255,179,71,.14);color:var(--warn);border:1px solid rgba(255,179,71,.3)}
+  .callout{border-left:3px solid var(--accent);background:var(--glass);padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+  .callout.warn{border-color:var(--warn)} .callout.ok{border-color:var(--ok)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+  th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+  th{background:var(--panel2);color:var(--accent2)}
+  .copybtn{float:right;font-size:.75rem;padding:3px 10px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:6px;cursor:pointer}
+  .copybtn:hover{color:var(--accent2);border-color:var(--accent2)}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:60px;padding-top:24px;border-top:1px solid var(--line)}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Técnica Freeze + Cámara 3D en Google Flow</h1>
+  <p class="sub">Cómo recrear el efecto de Maciej Dobrodziej (foto 1968 + congelado total + cámara volando + 1 elemento móvil) usando <b>solo</b> Gemini Omni Flash dentro de Google Flow.</p>
+  <span class="badge">SOLO Google Flow · Omni Flash · Estándares oficiales Google</span>
+  <div class="legend">
+    <span class="pill flow">Google Flow UI</span>
+    <span class="pill omni">gemini-omni-flash-preview</span>
+    <span class="pill warn">Datos verificados en docs oficiales</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ========== RESUMEN ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">!</span>Lo que hace la técnica (y qué SÍ soporta Omni Flash)</h2>
+    <p>El tweet de <b>@M_Dobrodziej</b> usa <b>Seedance 2.5</b> con un truco: dibuja una línea roja a mano sobre la foto marcando el recorrido de cámara (1=inicio, 2=fin). Seedance interpreta esa línea como trayectoria. Luego <b>congela toda la escena</b> y deja que <b>un solo elemento</b> (el perro) se mueva.</p>
+    <div class="callout">
+      <p class="ok"><b>Buenas noticias para Flow:</b> Omni Flash SÍ tiene el concepto oficial de "una imagen/dibujo usada <span class="tag">solo como guía de movimiento</span> y que NO aparece en el vídeo final". Los docs lo muestran literalmente con el ejemplo del pez dibujado a mano.</p>
+    </div>
+    <div class="callout warn">
+      <p class="warn"><b>Matiz importante:</b> Omni Flash no tiene un parámetro literal "freeze frame" ni "time stop". El congelado se consigue <b>por prompt</b> (describir que todo está petrificado/suspendido) y el movimiento del perro describiéndolo como el único elemento vivo. Funciona, pero es menos determinista que el control explícito de Seedance.</p>
+    </div>
+    <table>
+      <tr><th>Capacidad</th><th>¿Soportado en Omni Flash?</th><th>Cómo se logra en Flow</th></tr>
+      <tr><td>Imagen base = primer frame</td><td class="ok">SÍ</td><td><code>&lt;FIRST_FRAME&gt;</code> o tag explícito</td></tr>
+      <tr><td>Varias referencias del mismo lugar</td><td class="ok">SÍ</td><td><code>&lt;IMAGE_REF_0&gt;</code> … <code>&lt;IMAGE_REF_N&gt;</code> (hasta 6+)</td></tr>
+      <tr><td>Dibujo/línea como guía de cámara (no sale en vídeo)</td><td class="ok">SÍ</td><td>Subir foto+línea roja como <code>IMAGE_REF</code> + "use only as camera path guide, do not show the line"</td></tr>
+      <tr><td>Congelado total de escena</td><td class="warn">POR PROMPT</td><td>Describir "time freezes, everything locked mid-motion"</td></tr>
+      <tr><td>1 elemento móvil (perro)</td><td class="warn">POR PROMPT</td><td>Describir perro como "the only living thing moving"</td></tr>
+      <tr><td>Audio atmosférico generado</td><td class="ok">SÍ</td><td>Omni genera audio del prompt de texto</td></tr>
+      <tr><td>Subir audio de referencia</td><td class="red">NO (aún)</td><td>Docs: audio ref no soportado inicialmente</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ========== WORKFLOW ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">1</span>Workflow paso a paso en Google Flow (UI)</h2>
+    <p class="muted">Esto es lo que haces en la interfaz web de flow.google — sin tocar código.</p>
+    <div class="step"><div class="num">1</div><div class="body"><b>Entra a Flow</b> → elige el modelo <span class="pill omni">Gemini Omni Flash</span> (no Veo 3, no otros).</div></div>
+    <div class="step"><div class="num">2</div><div class="body"><b>Prepara tus imágenes</b> (mira sección 2). Necesitas: la foto 1968 limpia + una copia con la línea roja dibujada + (opcional) vistas extra del mismo sitio.</div></div>
+    <div class="step"><div class="num">3</div><div class="body"><b>Sube la imagen principal</b> y márcarla como <span class="pill flow">First Frame</span> (ancla el frame 0 igual a tu foto).</div></div>
+    <div class="step"><div class="num">4</div><div class="body"><b>Sube las referencias</b> (vistas extra + la foto con línea roja). En Flow estas se enlazan con los tags <code>&lt;IMAGE_REF_0&gt;</code> … dentro del prompt de texto.</div></div>
+    <div class="step"><div class="num">5</div><div class="body"><b>Pega el prompt</b> (sección 4) en el cuadro de texto. Los tags <code>&lt;FIRST_FRAME&gt;</code> / <code>&lt;IMAGE_REF_N&gt;</code> le dicen a Omni qué imagen es qué.</div></div>
+    <div class="step"><div class="num">6</div><div class="body"><b>Ajusta formato:</b> <code>16:9</code> (paisaje, recomendado para esta toma) y duración máxima que permita Flow (intenta 8–10s; si pide menos, recorta el prompt proporcionalmente).</div></div>
+    <div class="step"><div class="num">7</div><div class="body"><b>Genera.</b> Omni Flash produce vídeo + audio juntos. Si el perro no sale o la cámara no sigue la línea, usa el modo <span class="pill flow">Conversational Edit</span> de Flow para refinar en lenguaje natural ("make the dog clearly visible walking left to right, keep everything else frozen").</div></div>
+    <div class="callout ok"><p class="ok"><b>Ventaja de Flow:</b> Omni Flash tiene edición conversacional (Interactions API). No generas desde cero cada vez — describes el cambio y Flow lo aplica preservando el resto.</p></div>
+  </div>
+</section>
+
+<!-- ========== IMAGENES ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">2</span>Preparar las imágenes (el "paquete" de referencias)</h2>
+    <p>Según la filosofía de las múltiples referencias de Omni (y tu informe de ayuda), lo ideal es dar <b>varias observaciones del mismo mundo</b>, no 7 fotos idénticas.</p>
+    <h3>Set mínimo recomendado (tú solo tienes 1 foto histórica)</h3>
+    <table>
+      <tr><th>#</th><th>Imagen</th><th>Rol en Flow</th><th>Cómo la consigues</th></tr>
+      <tr><td>1</td><td>Foto 1968 limpia (chica corriendo bajo la lluvia, Varsovia)</td><td><code>&lt;FIRST_FRAME&gt;</code></td><td>La que ya tienes</td></tr>
+      <tr><td>2</td><td>MISMA foto + línea roja curva dibujada (1 inicio → 2 fin)</td><td><code>&lt;IMAGE_REF_0&gt;</code> (camera path guide)</td><td>Edita con Paint/GIMP: traza curva suave, números 1 y 2</td></tr>
+    </table>
+    <h3>Set potenciado (si quieres más consistencia 3D)</h3>
+    <p class="muted">Añade 3–5 "vistas" del mismo sitio. Como no tienes fotos reales extra, puedes <b>generarlas con el propio Flow</b> (text-to-image) describiendo el mismo lugar desde otros ángulos, y usarlas como <code>IMAGE_REF_1…N</code>.</p>
+    <ul>
+      <li><code>IMAGE_REF_1</code>: plano de la calle hacia atrás (misma arquitectura, perspectiva opuesta)</li>
+      <li><code>IMAGE_REF_2</code>: detalle de fachadas / escaparates mojados</li>
+      <li><code>IMAGE_REF_3</code>: primer plano del empedrado反射ante (reflejos de lluvia)</li>
+      <li><code>IMAGE_REF_4</code>: encuadre más abierto para entender profundidad</li>
+    </ul>
+    <div class="callout warn"><p class="warn"><b>Regla de oro:</b> las imágenes 2–6 (del set potenciado) <b>NO</b> llevan flechas ni círculos. Solo la foto con línea roja (la guía de cámara) tiene anotación. Así Omni no confunde "arquitectura" con "instrucción".</p></div>
+  </div>
+</section>
+
+<!-- ========== SINTAXIS OFICIAL ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">3</span>Sintaxis oficial de Omni Flash (verificada en docs)</h2>
+    <p>Los tags que reconoce el modelo son estos (NO inventes otros):</p>
+    <h3>Forma simple (recomendada para Flow)</h3>
+    <pre><span class="tag">&lt;FIRST_FRAME&gt;</span> a woman is walking
+<span class="tag">&lt;IMAGE_REF_0&gt;</span> in the style of <span class="tag">&lt;IMAGE_REF_0&gt;</span> a woman <span class="tag">&lt;IMAGE_REF_1&gt;</span> is walking</pre>
+    <h3>Forma explícita (mejor para muchas imágenes)</h3>
+    <pre>[# Sources <span class="tag">&lt;FIRST_FRAME&gt;</span>@Image1]
+[# References <span class="tag">&lt;IMAGE_REF_0&gt;</span>@Image2 <span class="tag">&lt;IMAGE_REF_1&gt;</span>@Image3]
+
+a woman <span class="tag">&lt;IMAGE_REF_0&gt;</span> is walking.
+Use Image1 as the starting frame.
+Use Image2 and Image3 as references for the video generation.
+The images should not be used as literal initial frames.</pre>
+    <h3>Ejemplo oficial clave: dibujo como guía de movimiento</h3>
+    <pre>Input: [imagen: un dibujo a mano] + texto:
+"turn this into realistic footage, using the drawing only as a guide
+ for movement, do not show the drawing in the final video"</pre>
+    <div class="callout ok"><p class="ok">Esto es exactamente el mecanismo que usamos para la línea roja: subes la foto con la curva roja y le dices "use only as camera path guide, do not show the red line".</p></div>
+    <h3>Parámetro task (si Flow lo expone)</h3>
+    <pre>task = "image_to_video"   // fuerza imagen→vídeo en vez de dejarlo inferir</pre>
+    <p class="muted">Valores permitidos: <code>text_to_video</code>, <code>image_to_video</code>, <code>reference_to_video</code>, <code>edit</code>.</p>
+  </div>
+</section>
+
+<!-- ========== PROMPT FINAL ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">4</span>Prompt listo para pegar en Flow</h2>
+    <p class="muted">Copia este bloque completo en el cuadro de texto de Omni Flash. Reemplaza los nombres de archivo por el orden en que subiste las imágenes en Flow (la primera subida = Image1, etc.).</p>
+    <button class="copybtn" onclick="navigator.clipboard.writeText(document.getElementById('prompt').innerText)">Copiar</button>
+    <pre id="prompt">[# Sources &lt;FIRST_FRAME&gt;@Image1]
+[# References &lt;IMAGE_REF_0&gt;@Image2 &lt;IMAGE_REF_1&gt;@Image3 &lt;IMAGE_REF_2&gt;@Image4 &lt;IMAGE_REF_3&gt;@Image5]
+
+Image1 is the EXACT starting frame: a 1968 black-and-white photograph
+by Zbigniew Siemaszko — a young woman running in pouring rain on
+Puławska street, Warsaw. Wet dress clinging, reflections on wet asphalt,
+nostalgic Eastern-European atmosphere, 35mm film grain, slight sepia,
+documentary cinematic composition. INCLUDING a red hand-drawn curved
+line with "1" at start and "2" at end.
+
+Image2 is a CAMERA PATH GUIDE: the same photograph with a red trajectory
+line drawn on it. Use Image2 ONLY as a guide for camera movement.
+The red line represents the CAMERA POSITION over time, NOT an object.
+DO NOT reproduce the red line, the numbers, or any drawing in the
+final video. The line must never appear.
+
+Images3-5 are additional observations of the SAME physical location
+(different angles of the street, wet facades, reflective cobblestones).
+Use them only to understand architecture, depth, scale and geometry.
+They are NOT separate places. Do not cut between them.
+
+Reconstruct one coherent 3D frozen world from all references.
+
+Then perform ONE continuous camera shot, no cuts:
+The camera starts exactly from Image1, low and behind the woman,
+glides forward past her shoulder (her red dress frozen mid-swish,
+hair suspended, raindrops stopped in the air), then orbits once
+around her at chest height holding on her face in tight close-up,
+then follows her eyeline down the rain-slicked street toward marker 2.
+
+TIME FREEZES COMPLETELY: every person, raindrop, pigeon and strand
+of hair locks mid-motion like a sculpture for the entire shot.
+
+ONE exception — the only living thing: a small DOG in the background
+walking slowly left-to-right, wet fur, completely unbothered, the
+only moving element in the frozen world. The dog obeys real physics.
+
+The camera moves. The world stays frozen. Smooth gliding camera with
+weight, no whip pans, no shake, no speed ramps, no zoom, no 2D slide.
+Genuine spatial parallax: near architecture moves faster than far.
+
+Photorealistic documentary footage, natural overcast daylight,
+soft diffused light, rain falling visibly but suspended mid-air,
+wet pavement reflections, shallow depth of field. No CGI, no plastic
+surfaces, no excessive HDR, no bloom.
+
+AUDIO: the frozen world is muffled — a low dreamlike drone, soft
+airy whooshes as the camera passes objects, distant rain on stone.
+The dog carries his own sound: paws on wet pavement, a light
+melancholic piano motif that grows as the camera finds him.
+No other music. Final frame: footsteps fade into distance.
+
+One continuous 10-second shot. No cuts. No teleportation.</pre>
+    <div class="callout"><p><b>Si Flow solo acepta 1 imagen de referencia a la vez:</b> sube la foto 1968 como First Frame y la foto+línea roja como única <code>IMAGE_REF_0</code>. Quita las líneas de <code>IMAGE_REF_1…3</code>. El prompt funciona igual, solo con menos consistencia 3D.</p></div>
+  </div>
+</section>
+
+<!-- ========== AJUSTES ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">5</span>Ajustes y troubleshooting en Flow</h2>
+    <div class="grid2">
+      <div>
+        <h3 class="warn">Si la línea roja SÍ aparece</h3>
+        <p>Refuerza en el prompt: <code>"The red line and numbers are an instruction overlay. They are NOT part of the scene. Never render them."</code> O borra la línea de la imagen guía y descríbela en texto.</p>
+        <h3 class="warn">Si todo se mueve (no congela)</h3>
+        <p>Sube el énfasis: <code>"ABSOLUTE RULE: total temporal freeze, nothing moves except the dog."</code> Usa el edit conversacional de Flow para corregir.</p>
+      </div>
+      <div>
+        <h3 class="ok">Si el perro no sale</h3>
+        <p>Añade: <code>"Insert a small wet dog walking left-to-right in the background."</code> Puede tardar 2–3 generaciones. Flow recuerda el resto del encuadre.</p>
+        <h3 class="ok">Si la cámara no sigue la curva</h3>
+        <p>Quita las referencias extra y deja solo la guía de cámara. O describe la trayectoria en palabras en vez de dibujo.</p>
+      </div>
+    </div>
+    <div class="callout"><p><b>Duración:</b> Omni Flash en Flow suele limitar a ~8–10s por clip. Si quieres más, genera el tramo y usa <span class="pill flow">edit/extend</span> en Flow para continuar la toma.</p></div>
+  </div>
+</section>
+
+<!-- ========== FUENTES ========== -->
+<section>
+  <div class="card">
+    <h2><span class="n">i</span>Fuentes y verificación</h2>
+    <ul>
+      <li><b>Tweet original:</b> @M_Dobrodziej (2087425842313933171) — "Una foto + Seedance 2.5. Prompt abajo."</li>
+      <li><b>Prompt real de Seedance 2.5 vol.3:</b> Notion page enlazada por el autor (extraída vía scraper local Firecrawl).</li>
+      <li><b>Docs oficiales Omni Flash:</b> ai.google.dev/gemini-api/docs/omni — secciones "Using tags in prompts to set image roles", "Image to video generation", "Prompting the audio", "Limitations".</li>
+      <li><b>Sintaxis confirmada:</b> <code>&lt;FIRST_FRAME&gt;</code>, <code>&lt;IMAGE_REF_N&gt;</code>, <code>[# Sources ...]</code>, <code>[# References ...]</code>, parámetro <code>task</code>.</li>
+      <li><b>Audio de referencia:</b> NO soportado aún según docs (solo audio generado por prompt).</li>
+    </ul>
+    <p class="muted">Nota: los subagentes de investigación secundarios se colgaron en búsquedas externas (servicios de búsqueda caídos en el entorno); este informe se construyó con los docs oficiales verificados y el prompt real de Notion ya extraído.</p>
+  </div>
+</section>
+
+</div>
+<footer>
+  Informe generado para flujo de trabajo SOLO Google Flow · Gemini Omni Flash · Estándares oficiales Google AI for Developers<br>
+  Técnica base: @M_Dobrodziej (Seedance 2.5) adaptada a Omni Flash
+</footer>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "datasetId": "ds_bingx_ETH_USDT_1h_1785168000000_1785340800000",
+  "venue": "BINGX",
+  "symbol": "ETH-USDT",
+  "feedType": "kline_1h",
+  "startTime": 1785168000000,
+  "endTime": 1785340800000,
+  "recordCount": 49,
+  "gapCount": 0,
+  "duplicateCount": 0,
+  "checksumSha256": "a2f1c6b299ace6182f5a82d3098f6b9f4c87a4860fe51ad768a12ba23779c816",
+  "rawChecksumSha256": "65cf7121b2fa0385b52954ccd24d4055b5b8558650a8a174bcccf870b4a5ad1f",
+  "rawPath": "raw/rest/klines/ETH-USDT/1h/2026-07-29T17-52-18-376Z.json",
+  "normalizedPath": "normalized/ds_bingx_ETH_USDT_1h_1785168000000_1785340800000.json",
+  "createdAt": "2026-07-29T17:52:18.376Z",
+  "closedRecordsOnly": true,
+  "completeHistory": false,
+  "request": {
+    "endpoint": "/openApi/swap/v3/quote/klines",
+    "symbol": "ETH-USDT",
+    "interval": "1h",
+    "limit": 50
+  },
+  "timestampUnit": "milliseconds",
+  "interval": "1h",
+  "outOfOrderCount": 0,
+  "coveragePct": 100.0
+}
