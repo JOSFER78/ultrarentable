@@ -8,6 +8,7 @@ from services.api.app.api.candidates_router import candidates_router
 from services.api.app.api.execution_router import execution_router
 from services.api.app.api.audit_router import audit_router
 from services.api.app.api.system_health_router import system_health_router
+from services.api.app.api.search_router import router as search_router
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
@@ -37,6 +38,7 @@ app.include_router(candidates_router, prefix="/api/v1")
 app.include_router(execution_router, prefix="/api/v1")
 app.include_router(audit_router, prefix="/api/v1")
 app.include_router(system_health_router, prefix="/api/v1")
+app.include_router(search_router)
 
 
 @app.get("/")

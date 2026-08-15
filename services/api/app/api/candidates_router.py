@@ -24,6 +24,8 @@ class StatusUpdateSchema(BaseModel):
 def list_candidates(
     route: Optional[str] = Query(None, description="ULTRA, FONDEO"),
     status: Optional[str] = Query(None, description="Filter by candidate status"),
+    symbol: Optional[str] = Query(None, description="Filter by symbol (e.g. BTC-USDT, EURUSD, NQ)"),
+    timeframe: Optional[str] = Query(None, description="Filter by timeframe (e.g. 1m, 5m, 15m, 1h, 4h)"),
     db: Session = Depends(get_db)
 ) -> List[Dict[str, Any]]:
     """List strategy candidates with filters and scorecards."""
@@ -32,6 +34,10 @@ def list_candidates(
         query = query.filter(CandidateModel.route == route.upper())
     if status:
         query = query.filter(CandidateModel.status == status)
+    if symbol:
+        query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
+    if timeframe:
+        query = query.filter(CandidateModel.timeframe == timeframe)
         
     results = []
     for c in query.order_by(CandidateModel.created_at.desc()).all():
