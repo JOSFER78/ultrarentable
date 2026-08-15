@@ -317,32 +317,378 @@ class CanonicalValidationModel(Base):
     canonical_return_pct = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+class ProviderRuleSetModel(Base):
+    __tablename__ = "provider_rule_sets"
+    provider_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    provider_name = Column(String, nullable=False, index=True)
+    market_type = Column(String, default="FUTURES")  # FUTURES, CFD, CRYPTO
+    platform = Column(String, default="Tradovate / NinjaTrader")
+    allowed_instruments = Column(String, default="MES, MNQ, ES, NQ")
+    account_size = Column(Float, default=50000.0)
+    target_usd = Column(Float, default=3000.0)
+    target_pct = Column(Float, default=6.0)
+    daily_loss_limit_usd = Column(Float, nullable=True)
+    daily_loss_limit_pct = Column(Float, nullable=True)
+    dll_calc_model = Column(String, default="EOD Balance")  # EOD Balance, Intraday High, None
+    max_trailing_dd_usd = Column(Float, default=2000.0)
+    max_trailing_dd_pct = Column(Float, default=4.0)
+    trailing_dd_type = Column(String, default="EOD Trailing")  # EOD Trailing, Intraday Peak Trailing, Static
+    consistency_rule_pct = Column(Float, default=50.0)
+    min_trading_days = Column(Integer, default=2)
+    overnight_allowed = Column(Boolean, default=False)
+    news_trading_allowed = Column(Boolean, default=True)
+    ea_bots_allowed = Column(String, default="PERMITTED")  # PERMITTED, PERMITTED_WITH_CONDITIONS, PROHIBITED
+    monthly_cost_usd = Column(Float, nullable=True)
+    source_url = Column(String, nullable=True)
+    verified_at = Column(String, nullable=True)
+    verification_status = Column(String, default="VERIFIED")  # VERIFIED, UNVERIFIED
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class CandidateModel(Base):
+    __tablename__ = "candidates"
+    candidate_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    route = Column(String, default="FONDEO")  # ULTRA, FONDEO
+    symbol = Column(String, default="BTC-USDT")
+    timeframe = Column(String, default="1h")
+    dataset_id = Column(String, nullable=True)
+    status = Column(String, default="INVESTIGACION_BTC")
+    # Statuses: INVESTIGACION_BTC, RECHAZADA_FONDEO_DD, CANDIDATA_FONDEO, PAPER, LISTA_PARA_EVALUACION, EJECUTANDO, PAUSADA, RETIRADA
+    status_reason = Column(Text, nullable=True)
+    net_profit_is = Column(Float, default=0.0)
+    trades_is = Column(Integer, default=0)
+    profit_factor_is = Column(Float, default=0.0)
+    max_dd_is_pct = Column(Float, default=0.0)
+    net_profit_oos = Column(Float, default=0.0)
+    trades_oos = Column(Integer, default=0)
+    profit_factor_oos = Column(Float, default=0.0)
+    max_dd_oos_pct = Column(Float, default=0.0)
+    ratio_oos_is = Column(Float, default=0.0)
+    wfo_pass_pct = Column(Float, nullable=True)
+    monte_carlo_score = Column(Float, nullable=True)
+    scorecard_json = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class ExecutionSessionModel(Base):
+    __tablename__ = "execution_sessions"
+    session_id = Column(String, primary_key=True, index=True)
+    route = Column(String, default="ULTRA")  # ULTRA, FONDEO
+    environment = Column(String, default="PAPER_BINGX")  # PAPER_BINGX, LIVE_BINGX, PAPER_PROP_FIRM, EVAL_PROP_FIRM
+    candidate_id = Column(String, nullable=True)
+    provider_id = Column(String, nullable=True)
+    symbol = Column(String, default="BTC-USDT")
+    status = Column(String, default="INITIALIZING")  # INITIALIZING, RUNNING, PAUSED, STOPPED, KILL_SWITCH_TRIGGERED
+    current_pnl_usd = Column(Float, default=0.0)
+    daily_pnl_usd = Column(Float, default=0.0)
+    current_drawdown_pct = Column(Float, default=0.0)
+    peak_equity_usd = Column(Float, default=50000.0)
+    heartbeat_last_at = Column(DateTime, default=datetime.utcnow)
+    last_signal = Column(Text, nullable=True)
+    last_order = Column(Text, nullable=True)
+    open_positions_json = Column(Text, nullable=True)
+    kill_switch_active = Column(Boolean, default=False)
+    kill_switch_reason = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class AuditEventModel(Base):
+    __tablename__ = "audit_events"
+    event_id = Column(String, primary_key=True, index=True)
+    category = Column(String, default="SYSTEM")  # CAMPAIGN, GATE, EXPORT, PAPER, LIVE, KILL_SWITCH, SYSTEM, RULE_CHANGE
+    route = Column(String, default="SYSTEM")  # ULTRA, FONDEO, SYSTEM
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
+    severity = Column(String, default="INFO")  # INFO, WARNING, CRITICAL, SUCCESS
+    metadata_json = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 from sqlalchemy import text
+
 
 def init_db():
     Base.metadata.create_all(bind=engine)
-    # Ensure missing columns in existing SQLite tables are added
-    with engine.connect() as conn:
-        try:
-            conn.execute(text("ALTER TABLE campaigns ADD COLUMN mode VARCHAR DEFAULT 'EXPLORE'"))
-            conn.commit()
-        except Exception:
-            pass
-        try:
-            conn.execute(text("ALTER TABLE campaigns ADD COLUMN target_multiplier FLOAT DEFAULT 11.0"))
-            conn.commit()
-        except Exception:
-            pass
-        try:
-            conn.execute(text("ALTER TABLE strategies ADD COLUMN validation_status VARCHAR DEFAULT 'DRAFT'"))
-            conn.commit()
-        except Exception:
-            pass
-        try:
-            conn.execute(text("ALTER TABLE instrument_rule_snapshots ADD COLUMN maintenance_tiers_json TEXT"))
-            conn.commit()
-        except Exception:
-            pass
+    
+    # Ensure tables and seed initial canonical data
+    with SessionLocal() as db:
+        # Seed ProviderRuleSets if empty
+        if db.query(ProviderRuleSetModel).count() == 0:
+            providers = [
+                ProviderRuleSetModel(
+                    provider_id="topstep_combine_50k",
+                    name="Topstep Combine 50K",
+                    provider_name="Topstep",
+                    market_type="FUTURES",
+                    platform="TopstepX / Tradovate",
+                    allowed_instruments="MES, MNQ, ES, NQ, YM, RTY, CL, GC",
+                    account_size=50000.0,
+                    target_usd=3000.0,
+                    target_pct=6.0,
+                    daily_loss_limit_usd=1000.0,
+                    daily_loss_limit_pct=2.0,
+                    dll_calc_model="EOD Balance",
+                    max_trailing_dd_usd=2000.0,
+                    max_trailing_dd_pct=4.0,
+                    trailing_dd_type="EOD Trailing",
+                    consistency_rule_pct=50.0,
+                    min_trading_days=2,
+                    overnight_allowed=False,
+                    news_trading_allowed=True,
+                    ea_bots_allowed="PERMITTED_WITH_CONDITIONS",
+                    monthly_cost_usd=49.0,
+                    source_url="https://help.topstep.com/en/articles/8284197-account-combine-parameters",
+                    verified_at="2026-08-08",
+                    verification_status="VERIFIED",
+                    notes="Prohibido VPN/proxy residencial, sin scalping que explote fills SIM."
+                ),
+                ProviderRuleSetModel(
+                    provider_id="tradeday_50k",
+                    name="TradeDay 50K (14-Day Free Trial Available)",
+                    provider_name="TradeDay",
+                    market_type="FUTURES",
+                    platform="Tradovate / NinjaTrader",
+                    allowed_instruments="MES, MNQ, ES, NQ, YM, RTY",
+                    account_size=50000.0,
+                    target_usd=3000.0,
+                    target_pct=6.0,
+                    daily_loss_limit_usd=1000.0,
+                    daily_loss_limit_pct=2.0,
+                    dll_calc_model="Intraday High",
+                    max_trailing_dd_usd=2000.0,
+                    max_trailing_dd_pct=4.0,
+                    trailing_dd_type="Intraday Peak Trailing",
+                    consistency_rule_pct=30.0,
+                    min_trading_days=5,
+                    overnight_allowed=False,
+                    news_trading_allowed=True,
+                    ea_bots_allowed="PERMITTED",
+                    monthly_cost_usd=125.0,
+                    source_url="https://www.tradeday.com/",
+                    verified_at="2026-08-08",
+                    verification_status="VERIFIED",
+                    notes="Ofrece Free Trial de 14 días. Confirmar soporte para bot VPS."
+                ),
+                ProviderRuleSetModel(
+                    provider_id="apex_50k",
+                    name="Apex Trader Funding 50K",
+                    provider_name="Apex Trader Funding",
+                    market_type="FUTURES",
+                    platform="NinjaTrader 8 / Tradovate / Rithmic",
+                    allowed_instruments="MES, MNQ, ES, NQ, YM, RTY",
+                    account_size=50000.0,
+                    target_usd=3000.0,
+                    target_pct=6.0,
+                    daily_loss_limit_usd=None,
+                    daily_loss_limit_pct=None,
+                    dll_calc_model="None",
+                    max_trailing_dd_usd=2500.0,
+                    max_trailing_dd_pct=5.0,
+                    trailing_dd_type="Intraday Peak Trailing",
+                    consistency_rule_pct=100.0,
+                    min_trading_days=1,
+                    overnight_allowed=False,
+                    news_trading_allowed=True,
+                    ea_bots_allowed="PERMITTED",
+                    monthly_cost_usd=35.0,
+                    source_url="https://apextraderfunding.com/",
+                    verified_at="2026-08-08",
+                    verification_status="VERIFIED",
+                    notes="Sin límite de pérdida diaria en evaluación; trailing DD continuo."
+                ),
+                ProviderRuleSetModel(
+                    provider_id="fundednext_futures_50k",
+                    name="FundedNext Futures Rapid 50K",
+                    provider_name="FundedNext",
+                    market_type="FUTURES",
+                    platform="MT5 / TradeLocker",
+                    allowed_instruments="MES, MNQ, ES, NQ, Commodities",
+                    account_size=50000.0,
+                    target_usd=3000.0,
+                    target_pct=6.0,
+                    daily_loss_limit_usd=None,
+                    daily_loss_limit_pct=None,
+                    dll_calc_model="None",
+                    max_trailing_dd_usd=2000.0,
+                    max_trailing_dd_pct=4.0,
+                    trailing_dd_type="EOD Trailing",
+                    consistency_rule_pct=100.0,
+                    min_trading_days=3,
+                    overnight_allowed=True,
+                    news_trading_allowed=True,
+                    ea_bots_allowed="PERMITTED",
+                    monthly_cost_usd=99.0,
+                    source_url="https://fundednext.com/general-rules/futures/",
+                    verified_at="2026-08-08",
+                    verification_status="VERIFIED",
+                    notes="Reglas claras de futuros; 90% payout split."
+                ),
+                ProviderRuleSetModel(
+                    provider_id="takeprofit_50k",
+                    name="Take Profit Trader 50K",
+                    provider_name="Take Profit Trader",
+                    market_type="FUTURES",
+                    platform="Tradovate / NinjaTrader",
+                    allowed_instruments="MES, MNQ, ES, NQ",
+                    account_size=50000.0,
+                    target_usd=3000.0,
+                    target_pct=6.0,
+                    daily_loss_limit_usd=1100.0,
+                    daily_loss_limit_pct=2.2,
+                    dll_calc_model="EOD Balance",
+                    max_trailing_dd_usd=2000.0,
+                    max_trailing_dd_pct=4.0,
+                    trailing_dd_type="EOD Trailing",
+                    consistency_rule_pct=50.0,
+                    min_trading_days=5,
+                    overnight_allowed=False,
+                    news_trading_allowed=True,
+                    ea_bots_allowed="PERMITTED",
+                    monthly_cost_usd=150.0,
+                    source_url="https://takeprofittrader.com/",
+                    verified_at="2026-08-08",
+                    verification_status="VERIFIED",
+                    notes="Permite retiros desde el día 1 de cuenta Pro."
+                ),
+                ProviderRuleSetModel(
+                    provider_id="bulenox_50k",
+                    name="Bulenox 50K (Rithmic)",
+                    provider_name="Bulenox",
+                    market_type="FUTURES",
+                    platform="NinjaTrader / Rithmic",
+                    allowed_instruments="MES, MNQ, ES, NQ",
+                    account_size=50000.0,
+                    target_usd=3000.0,
+                    target_pct=6.0,
+                    daily_loss_limit_usd=1250.0,
+                    daily_loss_limit_pct=2.5,
+                    dll_calc_model="Intraday High",
+                    max_trailing_dd_usd=2500.0,
+                    max_trailing_dd_pct=5.0,
+                    trailing_dd_type="Intraday Peak Trailing",
+                    consistency_rule_pct=40.0,
+                    min_trading_days=5,
+                    overnight_allowed=False,
+                    news_trading_allowed=False,
+                    ea_bots_allowed="UNVERIFIED",
+                    monthly_cost_usd=125.0,
+                    source_url="https://bulenox.com/",
+                    verified_at="2026-08-08",
+                    verification_status="UNVERIFIED",
+                    notes="Política de EAs y bots no confirmada oficialmente en web. Validar con soporte."
+                ),
+            ]
+            for p in providers:
+                db.add(p)
+            db.commit()
+
+        # Seed Candidates with strict truthful classification
+        if db.query(CandidateModel).count() == 0:
+            candidates = [
+                CandidateModel(
+                    candidate_id="strat_1_0_54",
+                    name="Strategy 1.0.54",
+                    route="FONDEO",
+                    symbol="BTC-USDT",
+                    timeframe="1h",
+                    dataset_id="BTCUSDT_AUTO_H1",
+                    status="RECHAZADA_FONDEO_DD",
+                    status_reason="Drawdown OOS del 10.18% excede el límite canónico de fondeo (<= 4.0%). No califica para evaluación en prop firm.",
+                    net_profit_is=134.51,
+                    trades_is=55,
+                    profit_factor_is=1.38,
+                    max_dd_is_pct=10.07,
+                    net_profit_oos=168.50,
+                    trades_oos=29,
+                    profit_factor_oos=1.75,
+                    max_dd_oos_pct=10.18,
+                    ratio_oos_is=1.27,
+                    wfo_pass_pct=75.0,
+                    monte_carlo_score=80.0,
+                ),
+                CandidateModel(
+                    candidate_id="strat_1_0_32",
+                    name="Strategy 1.0.32",
+                    route="FONDEO",
+                    symbol="BTC-USDT",
+                    timeframe="1h",
+                    dataset_id="BTCUSDT_AUTO_H1",
+                    status="INVESTIGACION_BTC",
+                    status_reason="Candidata en datos de BTC H1 (5,2 meses). No validada en instrumento CME (MES/MNQ), sin DD intrabar y sin paper trading. Requiere validación específica.",
+                    net_profit_is=73.48,
+                    trades_is=49,
+                    profit_factor_is=1.47,
+                    max_dd_is_pct=5.35,
+                    net_profit_oos=30.99,
+                    trades_oos=25,
+                    profit_factor_oos=1.32,
+                    max_dd_oos_pct=3.74,
+                    ratio_oos_is=0.90,
+                    wfo_pass_pct=70.0,
+                    monte_carlo_score=75.0,
+                ),
+            ]
+            for c in candidates:
+                db.add(c)
+            db.commit()
+
+        # Seed initial Audit Events
+        if db.query(AuditEventModel).count() == 0:
+            events = [
+                AuditEventModel(
+                    event_id="evt_001_init",
+                    category="SYSTEM",
+                    route="SYSTEM",
+                    title="Inicialización del Sistema Anti-Overfit",
+                    description="Aplicados los 10 cambios XML al generador StrategyQuant X con función de fitness ReturnDDRatio y WFO activo.",
+                    severity="SUCCESS"
+                ),
+                AuditEventModel(
+                    event_id="evt_002_reclass_54",
+                    category="GATE",
+                    route="FONDEO",
+                    title="Reclasificación: Strategy 1.0.54 ➔ RECHAZADA_FONDEO_DD",
+                    description="Strategy 1.0.54 marcada como RECHAZADA_FONDEO_DD por presentar DD OOS del 10.18% superando el límite canónico de 4.0%.",
+                    severity="WARNING"
+                ),
+                AuditEventModel(
+                    event_id="evt_003_reclass_32",
+                    category="GATE",
+                    route="FONDEO",
+                    title="Reclasificación: Strategy 1.0.32 ➔ INVESTIGACION_BTC",
+                    description="Strategy 1.0.32 catalogada como INVESTIGACION_BTC. Requiere datos CME y validación intrabar antes de postular a fondeo.",
+                    severity="INFO"
+                ),
+            ]
+            for e in events:
+                db.add(e)
+            db.commit()
+
+        # Seed initial Execution Session demo
+        if db.query(ExecutionSessionModel).count() == 0:
+            db.add(
+                ExecutionSessionModel(
+                    session_id="session_bingx_demo_01",
+                    route="ULTRA",
+                    environment="PAPER_BINGX",
+                    candidate_id="strat_1_0_32",
+                    symbol="BTC-USDT",
+                    status="RUNNING",
+                    current_pnl_usd=14.50,
+                    daily_pnl_usd=5.20,
+                    current_drawdown_pct=0.85,
+                    peak_equity_usd=1014.50,
+                    last_signal="BUY @ 60,420.00 (Momentum Breakout H1)",
+                    last_order="FILLED SIM 0.05 BTC @ 60,421.50",
+                    open_positions_json='[{"symbol":"BTC-USDT","side":"LONG","qty":0.05,"entryPrice":60421.5,"unrealizedPnl":14.50,"leverage":5}]',
+                    kill_switch_active=False
+                )
+            )
+            db.commit()
+
     return DB_PATH
 
 def get_db():

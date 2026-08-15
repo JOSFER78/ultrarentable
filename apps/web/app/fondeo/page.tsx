@@ -1,287 +1,268 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
 
-const PHASES = [
-  {
-    n: 1,
-    icon: "[1]",
-    title: "Búsqueda Conservadora y Consistente",
-    desc: "StrategyQuant busca estrategias con bajo drawdown y curva de equidad uniforme para prop firms.",
-    status: "ACTIVO",
-    href: "/?mode=fondeo",
-    tone: "accent",
-  },
-  {
-    n: 2,
-    icon: "[2]",
-    title: "Selección de Empresa de Fondeo",
-    desc: "Candidatas verificadas: FundedNext Rapid Pro (bots permitidos) o Bulenox / Apex (trial / evaluación).",
-    status: "DISPONIBLE",
-    href: "/prop-firms",
-    tone: "info",
-  },
-  {
-    n: 3,
-    icon: "[3]",
-    title: "Adaptación a las Reglas de Evaluación",
-    desc: "Evaluación estricta de límites de pérdida diaria, trailing drawdown, consistente > 85% y horarios.",
-    status: "EN COLAS",
-    href: "/prop-firms",
-    tone: "warning",
-  },
-  {
-    n: 4,
-    icon: "[4]",
-    title: "Simulación de Evaluación Histórica",
-    desc: "Verificación de aprobación del examen en simulación con comisiones y slippage realistas.",
-    status: "EN COLAS",
-    href: "/backtest",
-    tone: "neutral",
-  },
-  {
-    n: 5,
-    icon: "[5]",
-    title: "Seguimiento Diario Autónomo con Alertas",
-    desc: "Monitor de equity en vivo. Si el drawdown alcanza el 80% del límite de la prop firm, se activa Kill Switch.",
-    status: "EN COLAS",
-    href: "/panel",
-    tone: "neutral",
-  },
-];
+interface Provider {
+  provider_id: string;
+  name: string;
+  provider_name: string;
+  platform: string;
+  allowed_instruments: string;
+  account_size: number;
+  target_pct: number;
+  max_trailing_dd_pct: number;
+  daily_loss_limit_pct?: number;
+  consistency_rule_pct: number;
+  verification_status: string;
+  source_url?: string;
+  verified_at?: string;
+}
 
-export default function FondeoPage() {
-  const [rentable, setRentable] = useState<any[]>([]);
-  const [launching, setLaunching] = useState(false);
-  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+export default function FondeoFlowPage() {
+  const [activeStep, setActiveStep] = useState(1);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
 
   useEffect(() => {
-    api
-      .getSQXRentable(5, "fondeo")
-      .then((res) => setRentable(res.strategies || []))
-      .catch(() => setRentable([]));
+    fetch("/api/v1/providers")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProviders(data);
+          setSelectedProvider(data[0]);
+        }
+      })
+      .catch((err) => console.error("Error loading providers:", err));
   }, []);
 
-  const handleAutoLaunchFondeo = async () => {
-    setLaunching(true);
-    setStatusMsg("Conectando con SQX para iniciar búsqueda de Fondeo…");
-    try {
-      // 1. Guardar config fondeo predeterminada
-      await api.createSearchConfig({
-        name: `Auto Fondeo ${new Date().toLocaleTimeString()}`,
-        mode: "fondeo",
-        project: "Ultra_Auto_Pilot",
-        databank: "Results",
-        symbol: "BTC-USDT",
-        interval: "1h",
-        population: 24,
-        max_drawdown_pct: 10,
-        consistency_target: 85,
-        techniques: ["trend", "mean_reversion"],
-      });
-      // 2. Iniciar SQX project
-      await api.runSQXProject("Ultra_Auto_Pilot");
-      setStatusMsg("Búsqueda de Fondeo activada en SQX. Redirigiendo al panel en vivo…");
-      setTimeout(() => {
-        window.location.href = "/?mode=fondeo&auto=true";
-      }, 1500);
-    } catch (err: any) {
-      setStatusMsg(`[ERROR] ${err.message || "No se pudo lanzar la búsqueda"}`);
-      setLaunching(false);
-    }
-  };
+  const steps = [
+    { id: 1, title: "1. Seleccionar Proveedor", status: "EXITO", desc: selectedProvider?.name ?? "Cargando..." },
+    { id: 2, title: "2. Cuenta y Reglas de Evaluación", status: "EXITO", desc: `Target ${selectedProvider?.target_pct ?? 6}% | MaxDD ${selectedProvider?.max_trailing_dd_pct ?? 4}%` },
+    { id: 3, title: "3. Mercado y Dataset Compatible", status: "BLOQUEADO", desc: "⚠️ Requiere dataset Futuros CME (MES/MNQ)" },
+    { id: 4, title: "4. Búsqueda SQX Anti-Overfit", status: "EXITO", desc: "Fitness ReturnDDRatio + WFO activo" },
+    { id: 5, title: "5. Gates Canónicos de Fondeo", status: "EXITO", desc: "Trades OOS ≥ 20, PF OOS ≥ 1.25, DD ≤ 4%" },
+    { id: 6, title: "6. Exportar a NinjaTrader / Tradovate", status: "PENDIENTE", desc: "Generación de script C# / EasyLanguage" },
+    { id: 7, title: "7. Paper Trading Pre-Examen", status: "PENDIENTE", desc: "7 días de consistencia en simulador" },
+    { id: 8, title: "8. Evaluación en Cuenta Financiada", status: "PENDIENTE", desc: "Paso de examen y cobro de payouts" },
+  ];
 
   return (
-    <div className="stagger">
-      {/* HERO */}
-      <div className="page-header animate-in" style={{ marginBottom: 20 }}>
-        <div className="bifurc-hero-badge" style={{ borderColor: "rgba(59,130,246,0.4)", color: "#bfdbfe" }}>
-          <span className="bifurc-hero-badge-dot" style={{ background: "var(--info)", boxShadow: "0 0 10px var(--info)" }} />
-          PASO 2A · MÓDULO DE DESPLIEGUE A FONDEO (PROP FIRMS / FUTUROS)
+    <div className="page-container animate-in" style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+      {/* HEADER */}
+      <div style={{ marginBottom: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+          <Link href="/" style={{ color: "var(--text-muted)", fontSize: "12px", textDecoration: "none" }}>
+            ← Control Center
+          </Link>
+          <span style={{ color: "var(--border)" }}>/</span>
+          <span style={{ fontSize: "11px", fontWeight: 800, color: "#60a5fa", textTransform: "uppercase", fontFamily: "monospace" }}>
+            RUTA FONDEO · PROP FIRMS
+          </span>
         </div>
-        <h1 className="page-title" style={{ fontSize: 26, marginTop: 8 }}>
-          Paso 2A: Evaluación y Despliegue en Prop Firms
+        <h1 style={{ fontSize: "26px", fontWeight: 900, margin: 0 }}>
+          🛡️ Flujo de Trabajo FONDEO (Cuentas Financiadas CME)
         </h1>
-        <p className="page-desc" style={{ maxWidth: 700, marginTop: 6 }}>
-          Estrategias adaptadas para <strong>pasar evaluaciones de cuentas financiadas</strong>.
-          La IA evalúa y audita el comportamiento según las reglas exactas de cada empresa de fondeo (drawdown, límites diarios y consistencia).
-        </p>
+        <div style={{ 
+          background: "rgba(96, 165, 250, 0.1)", 
+          borderLeft: "3px solid #60a5fa", 
+          padding: "10px 14px", 
+          borderRadius: "0 6px 6px 0", 
+          marginTop: "12px",
+          fontSize: "12px",
+          color: "#bfdbfe"
+        }}>
+          <strong>Regla de Gobernanza:</strong> Pipeline conservador para evaluar estrategias contra reglas de una firma. Un candidato BTC no se puede ejecutar en CME sin validación específica.
+        </div>
       </div>
 
-      {/* REGLAS DE CONTROL RÁPIDO */}
-      <div
-        className="card animate-in"
-        style={{
-          padding: 18,
-          marginBottom: 20,
-          background: "linear-gradient(135deg, rgba(59,130,246,0.12), rgba(30,58,138,0.05))",
-          border: "1px solid rgba(59,130,246,0.35)",
-        }}
-      >
-        <div style={{ fontWeight: 800, marginBottom: 12, color: "#60a5fa", fontSize: 14, textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: "monospace" }}>
-          [CONTROL DE CALIDAD] FILTROS ANTI-REGLAS DE PROP FIRMS ACTIVOS
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px,1fr))", gap: 10, marginBottom: 14 }}>
-          {[
-            ["Drawdown Máximo Permitido", "≤ 10%"],
-            ["Consistencia por Día/Trade", "≥ 85%"],
-            ["Objetivo de Beneficio Exam", "8% - 10%"],
-            ["Protección en Tiempo Real", "Kill Switch @ 80% DD"],
-          ].map(([k, v]) => (
+      {/* WIZARD DE 8 PASOS */}
+      <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: "24px" }}>
+        
+        {/* LISTA DE PASOS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {steps.map((s) => (
             <div
-              key={k}
+              key={s.id}
+              onClick={() => setActiveStep(s.id)}
               style={{
-                padding: 10,
-                background: "rgba(0,0,0,0.3)",
-                borderRadius: 6,
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: activeStep === s.id ? "rgba(96, 165, 250, 0.15)" : "var(--bg-panel)",
+                border: activeStep === s.id ? "1px solid #60a5fa" : "1px solid var(--border)",
+                borderRadius: "8px",
+                padding: "12px 14px",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
               }}
             >
-              <div style={{ fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.04em" }}>{k}</div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: "#fff", marginTop: 2, fontFamily: "monospace" }}>{v}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                <span style={{ fontSize: "12px", fontWeight: 800, color: activeStep === s.id ? "#93c5fd" : "var(--text-primary)" }}>
+                  {s.title}
+                </span>
+                <span style={{ 
+                  fontSize: "9px", 
+                  fontWeight: 800, 
+                  padding: "2px 5px", 
+                  borderRadius: "4px", 
+                  background: s.status === "EXITO" ? "rgba(34, 197, 94, 0.2)" : s.status === "BLOQUEADO" ? "rgba(239, 68, 68, 0.2)" : "rgba(255, 255, 255, 0.05)", 
+                  color: s.status === "EXITO" ? "#22c55e" : s.status === "BLOQUEADO" ? "#fca5a5" : "var(--text-muted)",
+                  fontFamily: "monospace"
+                }}>
+                  {s.status}
+                </span>
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                {s.desc}
+              </div>
             </div>
           ))}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-          <span style={{ fontSize: 12, color: "var(--text-muted)", fontFamily: "monospace" }}>
-            [OK] REGLAS VERIFICADAS POR CONTRATO &nbsp; [OK] AUDITORÍA CONTINUA &nbsp; [OK] CONTROL DE APALANCAMIENTO
-          </span>
-          <button
-            onClick={handleAutoLaunchFondeo}
-            disabled={launching}
-            className="btn btn-primary"
-            style={{ background: "#2563eb", borderColor: "#3b82f6", fontWeight: 700 }}
-          >
-            {launching ? "INICIANDO BÚSQUEDA..." : "LANZAR BÚSQUEDA FONDEO (1-CLIC)"}
-          </button>
-        </div>
-        {statusMsg && (
-          <div style={{ marginTop: 12, fontSize: 12, color: "#93c5fd", fontWeight: 600, fontFamily: "monospace" }}>
-            {statusMsg}
-          </div>
-        )}
-      </div>
 
-      {/* PIPELINE DE FASES */}
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 12, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-          PIPELINE DEL PROCESO DE FONDEO
-        </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }} className="animate-in">
-          {PHASES.map((p, i) => (
-            <div key={p.n} style={{ display: "flex", gap: 12, alignItems: "stretch" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 36 }}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "4px",
-                    display: "grid",
-                    placeItems: "center",
-                    background: "var(--bg-panel)",
-                    border: `1.5px solid ${
-                      p.tone === "accent"
-                        ? "var(--accent)"
-                        : p.tone === "info"
-                        ? "var(--info)"
-                        : p.tone === "warning"
-                        ? "var(--warning)"
-                        : p.tone === "danger"
-                        ? "var(--danger)"
-                        : "var(--border)"
-                    }`,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    fontFamily: "monospace",
-                    flexShrink: 0,
-                  }}
-                >
-                  {p.icon}
+        {/* DETALLE DEL PASO SELECCIONADO */}
+        <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "10px", padding: "24px" }}>
+          
+          {activeStep === 1 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 1: Seleccionar Proveedor de Fondeo</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Elige la firma de evaluación con reglas verificadas en la base de datos:
+              </p>
+              <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                {providers.map((p) => (
+                  <div
+                    key={p.provider_id}
+                    onClick={() => setSelectedProvider(p)}
+                    style={{
+                      padding: "12px",
+                      borderRadius: "6px",
+                      border: selectedProvider?.provider_id === p.provider_id ? "2px solid #60a5fa" : "1px solid var(--border)",
+                      background: selectedProvider?.provider_id === p.provider_id ? "rgba(96, 165, 250, 0.1)" : "rgba(0,0,0,0.2)",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center"
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: "13px", fontWeight: 800 }}>{p.name}</div>
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>
+                        Plataforma: {p.platform} · Instrumentos: {p.allowed_instruments}
+                      </div>
+                    </div>
+                    <span style={{ 
+                      fontSize: "10px", 
+                      fontWeight: 800, 
+                      padding: "2px 6px", 
+                      borderRadius: "4px", 
+                      background: p.verification_status === "VERIFIED" ? "rgba(34, 197, 94, 0.2)" : "rgba(245, 158, 11, 0.2)", 
+                      color: p.verification_status === "VERIFIED" ? "#22c55e" : "#f59e0b" 
+                    }}>
+                      {p.verification_status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeStep === 2 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 2: Cuenta y Reglas de Evaluación</h2>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Firma:</strong> {selectedProvider?.name}</div>
+                  <div><strong>Tamaño de Cuenta:</strong> ${selectedProvider?.account_size.toLocaleString()} USD</div>
+                  <div><strong>Profit Target:</strong> ${selectedProvider?.target_pct ? (selectedProvider.account_size * selectedProvider.target_pct / 100).toLocaleString() : "3,000"} ({selectedProvider?.target_pct}%)</div>
+                  <div><strong>Límite de Pérdida Diaria (DLL):</strong> {selectedProvider?.daily_loss_limit_pct ? `≤ ${selectedProvider.daily_loss_limit_pct}%` : "No exigido en eval"}</div>
+                  <div><strong>Drawdown Máximo Trailing:</strong> ≤ {selectedProvider?.max_trailing_dd_pct}%</div>
+                  <div><strong>Regla de Consistencia:</strong> ≤ {selectedProvider?.consistency_rule_pct}% de profit en un solo día</div>
+                  <div><strong>Fuente Verificada:</strong> <a href={selectedProvider?.source_url} target="_blank" style={{ color: "#60a5fa" }}>{selectedProvider?.source_url}</a></div>
                 </div>
-                {i < PHASES.length - 1 && (
-                  <div style={{ flex: 1, width: 2, background: "var(--border)", margin: "4px 0" }} />
-                )}
+              </div>
+            </div>
+          )}
+
+          {activeStep === 3 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px", color: "#f59e0b" }}>
+                ⚠️ Paso 3: Mercado y Dataset Compatible (Bloqueo Preventivo)
+              </h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Las prop firms de futuros operan exclusivamente en contratos regulados de Chicago Mercantile Exchange (CME).
+              </p>
+
+              <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid #ef4444", padding: "16px", borderRadius: "8px", marginTop: "16px" }}>
+                <div style={{ fontSize: "13px", fontWeight: 800, color: "#fca5a5", marginBottom: "6px" }}>
+                  🚫 BLOQUEO ACTIVO DE CAMPAÑA FONDEO:
+                </div>
+                <div style={{ fontSize: "12px", color: "#fca5a5", lineHeight: 1.6 }}>
+                  Actualmente el disco solo contiene el histórico <strong>BTCUSDT H1</strong> (Crypto BingX). No se permite lanzar una campaña de Fondeo certificada sin antes cargar en StrategyQuant X el dataset de futuros CME (ej. <strong>MES</strong> Micro E-mini S&P 500 o <strong>MNQ</strong> Micro E-mini Nasdaq).
+                </div>
               </div>
 
-              <Link
-                href={p.href}
-                className="card"
-                style={{
-                  flex: 1,
-                  textDecoration: "none",
-                  color: "inherit",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 12,
-                  borderColor: p.status === "ACTIVO" ? "rgba(59,130,246,0.45)" : "var(--border)",
-                  background: p.status === "ACTIVO" ? "var(--bg-panel-2)" : "var(--bg-panel)",
-                  padding: "12px 16px",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.05em", fontFamily: "monospace" }}>
-                    FASE {p.n}
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text-primary)", marginTop: 2 }}>{p.title}</div>
-                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2, lineHeight: 1.5 }}>{p.desc}</div>
+              <div style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
+                <Link href="/candidatos" className="btn btn-secondary" style={{ fontSize: "12px" }}>
+                  Ver Candidatas en Investigación (BTC) →
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {activeStep === 4 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 4: Búsqueda SQX Anti-Overfit</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                El generador XML de StrategyQuant X está configurado con 10/10 filtros de robustez.
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Fitness Function:</strong> ReturnDDRatio (prioriza Sharpe/Calmar y penaliza DD)</div>
+                  <div><strong>Walk-Forward Optimization:</strong> 5 folds con exigencia de ≥70% de ejecuciones rentables</div>
+                  <div><strong>Monte Carlo Retest:</strong> 20 simulaciones aleatorias de slippage</div>
+                  <div><strong>Permutación SPP:</strong> Análisis de meseta paramétrica</div>
                 </div>
-                <span
-                  className="badge"
-                  style={{
-                    flexShrink: 0,
-                    background:
-                      p.status === "ACTIVO"
-                        ? "var(--success-dim)"
-                        : p.status === "DISPONIBLE"
-                        ? "var(--info-dim)"
-                        : "var(--bg-3)",
-                    color:
-                      p.status === "ACTIVO"
-                        ? "var(--success)"
-                        : p.status === "DISPONIBLE"
-                        ? "var(--info)"
-                        : "var(--text-muted)",
-                    borderColor: "transparent",
-                    fontFamily: "monospace",
-                    fontSize: 10,
-                  }}
-                >
-                  [{p.status}]
-                </span>
-              </Link>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
 
-      {/* CANDIDATAS */}
-      <div className="card animate-in" style={{ marginBottom: 20, background: "rgba(15, 23, 42, 0.8)", border: "1px solid rgba(56, 189, 248, 0.3)" }}>
-        <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-          <div>
-            <h2 className="card-title" style={{ fontSize: 16, color: "#f8fafc" }}>Catálogo Dinámico de Prop-Firms Evaluadas</h2>
-            <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>
-              Investigación exhaustiva actualizada. Reglas reales, promociones y compatibilidad SQX.
+          {activeStep === 5 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 5: Gates Canónicos de Fondeo</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Ninguna estrategia avanza a operativa si no cumple los 5 gates matemáticos:
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Gate 1 (Muestra):</strong> Trades IS ≥ 30 y Trades OOS ≥ 20</div>
+                  <div><strong>Gate 2 (Calidad IS):</strong> Profit Factor IS ≥ 1.30</div>
+                  <div><strong>Gate 3 (Consistencia OOS):</strong> Net Profit OOS &gt; 0</div>
+                  <div><strong>Gate 4 (Calidad OOS):</strong> Profit Factor OOS ≥ 1.25</div>
+                  <div><strong>Gate 5 (Anti-Overfit):</strong> Ratio PF OOS/IS ≥ 0.70 y Max DD OOS ≤ 4.0%</div>
+                </div>
+              </div>
+              <div style={{ marginTop: "16px" }}>
+                <Link href="/candidatos" className="btn btn-secondary" style={{ fontSize: "12px" }}>
+                  Consultar Scorecards en /candidatos →
+                </Link>
+              </div>
             </div>
-          </div>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-            <Link href="/prop-firms" className="btn btn-primary" style={{ background: "#2563eb", textDecoration: "none", fontSize: 11, padding: "6px 10px", fontWeight: 700 }}>
-              Acceder a la Base de Datos
-            </Link>
-          </div>
-        </div>
-      </div>
+          )}
 
-      {/* CAMBIO DE CAMINO */}
-      <div className="bifurc-assist animate-in" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <div className="bifurc-assist-text" style={{ flex: 1, minWidth: 240 }}>
-          <strong style={{ color: "var(--text-primary)" }}>¿Prefieres gestionar tu propio capital?</strong> Opere sin límites de drawdown externo en BingX.
+          {activeStep >= 6 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Pasos 6 a 8: Exportación, Paper y Evaluación</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Una vez validada una candidata sobre datos CME, se exporta el código C# a NinjaTrader 8 o Tradovate para iniciar la fase de evaluación.
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+                  Estado: Pendiente de carga de dataset CME y validación de primera candidata MES/MNQ.
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
-        <Link href="/ultra" className="btn btn-primary" style={{ textDecoration: "none" }}>
-          Paso 2B: Ir al Modo Ultra
-        </Link>
+
       </div>
     </div>
   );

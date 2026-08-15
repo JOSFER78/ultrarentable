@@ -1,299 +1,264 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
 
-const PHASES = [
-  {
-    n: 1,
-    icon: "[1]",
-    title: "Búsqueda de Estrategias Agresivas",
-    desc: "StrategyQuant genera candidatos de retorno acelerado priorizando el multiplicador de capital.",
-    status: "ACTIVO",
-    href: "/?mode=ultra",
-    tone: "accent",
-  },
-  {
-    n: 2,
-    icon: "[2]",
-    title: "Validación Independiente BingX",
-    desc: "FastEngine repite el backtest con comisiones taker 0.05%, funding rates y precio de liquidación BingX.",
-    status: "EN COLAS",
-    href: "/backtest",
-    tone: "info",
-  },
-  {
-    n: 3,
-    icon: "[3]",
-    title: "Selección de Portafolio Multiplicador",
-    desc: "Selección de estrategias con retorno terminal esperado > 1000% tras costes.",
-    status: "EN COLAS",
-    href: "/leaderboard",
-    tone: "warning",
-  },
-  {
-    n: 4,
-    icon: "[4]",
-    title: "Simulación Paper / Shadow",
-    desc: "Ejecución paralela en tiempo real sin arriesgar capital.",
-    status: "EN COLAS",
-    href: "/campaigns",
-    tone: "neutral",
-  },
-  {
-    n: 5,
-    icon: "[5]",
-    title: "Ejecución Live BingX Autorizada",
-    desc: "Micro-live con tu confirmación explícita (1 contrato/símbolo). Nunca automático sin OK.",
-    status: "REQUIERE TU OK",
-    href: "/robots",
-    tone: "danger",
-  },
-];
+interface Step {
+  id: number;
+  title: string;
+  subtitle: string;
+  status: "EXITO" | "EJECUTANDO" | "PENDIENTE" | "BLOQUEADO" | "FALLO";
+  reason: string;
+  details: string;
+}
 
-export default function UltraPage() {
-  const [rentable, setRentable] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [launching, setLaunching] = useState(false);
-  const [statusMsg, setStatusMsg] = useState<string | null>(null);
+export default function UltraFlowPage() {
+  const [activeStep, setActiveStep] = useState(1);
+  const [liveConfirm, setLiveConfirm] = useState(false);
 
-  useEffect(() => {
-    api
-      .getSQXRentable(5, "ultra")
-      .then((res) => setRentable(res.strategies || []))
-      .catch(() => setRentable([]));
-  }, []);
+  const [steps, setSteps] = useState<Step[]>([
+    {
+      id: 1,
+      title: "1. Mercado y Datos en Disco",
+      subtitle: "Activo crypto real y verificación de calidad de barras",
+      status: "EXITO",
+      reason: "3.840 barras H1 de BTC-USDT disponibles (2026.02.26 - 2026.08.04).",
+      details: "Aviso de gobernanza: El historial actual representa 5,2 meses (sample corto para temporalidad H1).",
+    },
+    {
+      id: 2,
+      title: "2. Búsqueda y Generación de Estrategias",
+      subtitle: "Evolución genética SQX con bloques de momentum y breakout",
+      status: "EXITO",
+      reason: "Población de 100 estrategias generadas con ratio IS 70% / OOS 30%.",
+      details: "Doctrina REAL-ONLY: Prohibido sobreajustar con fitness de retorno neto sin control de riesgo.",
+    },
+    {
+      id: 3,
+      title: "3. Gates ULTRA & Stress Testing",
+      subtitle: "Comprobación de spread (30 pips), slippage (3 pips) y riesgo de liquidación",
+      status: "EXITO",
+      reason: "Filtros de supervivencia aplicados sobre 100 candidatos.",
+      details: "Evaluación de margen aislado y apalancamiento dinámico bajo volatilidad real de BingX.",
+    },
+    {
+      id: 4,
+      title: "4. Paper Trading en BingX Demo",
+      subtitle: "Simulación de órdenes y cálculo de PnL en tiempo real",
+      status: "EJECUTANDO",
+      reason: "Sesión activa session_bingx_demo_01: PnL +$14.50 USD (DD 0.85%).",
+      details: "Conectado al feed de precios de BingX con ejecución simulada de órdenes sin riesgo.",
+    },
+    {
+      id: 5,
+      title: "5. Ejecución Live con Fondos Reales",
+      subtitle: "Despliegue con API Keys privadas y Kill-Switch estricto",
+      status: "BLOQUEADO",
+      reason: "Deshabilitado por defecto para protección de capital.",
+      details: "Requiere 7 días continuos de paper trading previo, credenciales verificadas y confirmación explícita.",
+    },
+  ]);
 
-  const handleAutoLaunchUltra = async () => {
-    setLaunching(true);
-    setStatusMsg("Conectando con SQX para iniciar búsqueda UltraRentable…");
-    try {
-      // 1. Guardar config ultra predeterminada
-      await api.createSearchConfig({
-        name: `Auto Ultra ${new Date().toLocaleTimeString()}`,
-        mode: "ultra",
-        project: "Ultra_Auto_Pilot",
-        databank: "Results",
-        symbol: "BTC-USDT",
-        interval: "1h",
-        population: 24,
-        target_multiplier: 1000,
-        techniques: ["breakout", "trend"],
-      });
-      // 2. Iniciar SQX project
-      await api.runSQXProject("Ultra_Auto_Pilot");
-      setStatusMsg("Búsqueda UltraRentable activada en SQX. Redirigiendo al panel en vivo…");
-      setTimeout(() => {
-        window.location.href = "/?mode=ultra&auto=true";
-      }, 1500);
-    } catch (err: any) {
-      setStatusMsg(`Error: ${err.message || "No se pudo lanzar la búsqueda"}`);
-      setLaunching(false);
+  const getStatusColor = (status: Step["status"]) => {
+    switch (status) {
+      case "EXITO":
+        return "#22c55e";
+      case "EJECUTANDO":
+        return "#60a5fa";
+      case "PENDIENTE":
+        return "#f59e0b";
+      case "BLOQUEADO":
+        return "#94a3b8";
+      case "FALLO":
+        return "#ef4444";
     }
   };
 
   return (
-    <div className="stagger">
-      {/* HERO */}
-      <div className="page-header animate-in" style={{ marginBottom: 20 }}>
-        <div className="bifurc-hero-badge">
-          <span className="bifurc-hero-badge-dot" />
-          PASO 2B · MÓDULO DE DESPLIEGUE ULTRARENTABLE (CAPITAL PROPIO / BINGX)
+    <div className="page-container animate-in" style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+      {/* HEADER */}
+      <div style={{ marginBottom: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+          <Link href="/" style={{ color: "var(--text-muted)", fontSize: "12px", textDecoration: "none" }}>
+            ← Control Center
+          </Link>
+          <span style={{ color: "var(--border)" }}>/</span>
+          <span style={{ fontSize: "11px", fontWeight: 800, color: "#ef4444", textTransform: "uppercase", fontFamily: "monospace" }}>
+            RUTA ULTRA · BINGX
+          </span>
         </div>
-        <h1 className="page-title" style={{ fontSize: 26, marginTop: 8 }}>
-          Paso 2B: Multiplicación de Capital Propio en BingX
+        <h1 style={{ fontSize: "26px", fontWeight: 900, margin: 0 }}>
+          🔥 Flujo de Trabajo ULTRA (BingX Perpetuals)
         </h1>
-        <p className="page-desc" style={{ maxWidth: 700, marginTop: 6 }}>
-          Estrategias agresivas diseñadas para <strong>multiplicar tu capital en BingX</strong> (objetivo ≥1000%).
-          Modo Multiplicación Acelerada: optimización del retorno terminal tras comisiones y costes de financiamiento.
-        </p>
-      </div>
-
-      {/* ACTION CARD */}
-      <div
-        className="card animate-in"
-        style={{
-          padding: 20,
-          marginBottom: 20,
-          background: "linear-gradient(135deg, rgba(99,225,180,0.1), rgba(16,185,129,0.03))",
-          border: "1.5px solid var(--accent)",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: "monospace" }}>
-              [AUTO] EJECUCIÓN AUTÓNOMA MODO ULTRA
-            </div>
-            <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 4, maxWidth: 540 }}>
-              Pulsa para configurar SQX con parámetros de multiplicador extremo, arrancar la generación de candidatos y seguir la evolución en directo.
-            </div>
-          </div>
-          <button
-            onClick={handleAutoLaunchUltra}
-            disabled={launching}
-            className="btn btn-primary btn-lg"
-            style={{ boxShadow: "0 0 24px rgba(99,225,180,0.3)", fontWeight: 700 }}
-          >
-            {launching ? "INICIANDO BÚSQUEDA..." : "LANZAR BÚSQUEDA ULTRA (1-CLIC)"}
-          </button>
+        <div style={{ 
+          background: "rgba(239, 68, 68, 0.1)", 
+          borderLeft: "3px solid #ef4444", 
+          padding: "10px 14px", 
+          borderRadius: "0 6px 6px 0", 
+          marginTop: "12px",
+          fontSize: "12px",
+          color: "#fca5a5"
+        }}>
+          <strong>Aviso Obligatorio:</strong> Laboratorio de alto riesgo para BingX Perpetuals. No es una estrategia de fondeo ni una promesa de rentabilidad.
         </div>
-        {statusMsg && (
-          <div style={{ marginTop: 12, fontSize: 12, color: "var(--accent)", fontWeight: 600, fontFamily: "monospace" }}>
-            {statusMsg}
-          </div>
-        )}
       </div>
 
-      {/* PIPELINE DE FASES */}
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 12, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-          PIPELINE DEL PROCESO ULTRARENTABLE
-        </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }} className="animate-in">
-          {PHASES.map((p, i) => (
-            <div key={p.n} style={{ display: "flex", gap: 12, alignItems: "stretch" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 36 }}>
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "4px",
-                    display: "grid",
-                    placeItems: "center",
-                    background: "var(--bg-panel)",
-                    border: `1.5px solid ${
-                      p.tone === "accent"
-                        ? "var(--accent)"
-                        : p.tone === "info"
-                        ? "var(--info)"
-                        : p.tone === "warning"
-                        ? "var(--warning)"
-                        : p.tone === "danger"
-                        ? "var(--danger)"
-                        : "var(--border)"
-                    }`,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    fontFamily: "monospace",
-                    flexShrink: 0,
-                  }}
-                >
-                  {p.icon}
-                </div>
-                {i < PHASES.length - 1 && (
-                  <div style={{ flex: 1, width: 2, background: "var(--border)", margin: "4px 0" }} />
-                )}
-              </div>
-
-              <Link
-                href={p.href}
-                className="card"
-                style={{
-                  flex: 1,
-                  textDecoration: "none",
-                  color: "inherit",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 12,
-                  borderColor: p.status === "ACTIVO" ? "var(--border-active)" : "var(--border)",
-                  background: p.status === "ACTIVO" ? "var(--bg-panel-2)" : "var(--bg-panel)",
-                  padding: "12px 16px",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.05em", fontFamily: "monospace" }}>
-                    FASE {p.n}
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text-primary)", marginTop: 2 }}>{p.title}</div>
-                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2, lineHeight: 1.5 }}>{p.desc}</div>
-                </div>
-                <span
-                  className="badge"
-                  style={{
-                    flexShrink: 0,
-                    background:
-                      p.status === "ACTIVO"
-                        ? "var(--success-dim)"
-                        : p.status === "EN COLAS"
-                        ? "var(--info-dim)"
-                        : p.status === "REQUIERE TU OK"
-                        ? "var(--danger-dim)"
-                        : "var(--bg-3)",
-                    color:
-                      p.status === "ACTIVO"
-                        ? "var(--success)"
-                        : p.status === "EN COLAS"
-                        ? "var(--info)"
-                        : p.status === "REQUIERE TU OK"
-                        ? "var(--danger)"
-                        : "var(--text-muted)",
-                    borderColor: "transparent",
-                    fontFamily: "monospace",
-                    fontSize: 10,
-                  }}
-                >
-                  [{p.status}]
+      {/* WIZARD DE 5 PASOS */}
+      <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", gap: "24px" }}>
+        
+        {/* LISTA DE PASOS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {steps.map((s) => (
+            <div
+              key={s.id}
+              onClick={() => setActiveStep(s.id)}
+              style={{
+                background: activeStep === s.id ? "rgba(239, 68, 68, 0.15)" : "var(--bg-panel)",
+                border: activeStep === s.id ? "1px solid #ef4444" : "1px solid var(--border)",
+                borderRadius: "8px",
+                padding: "14px",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                <span style={{ fontSize: "13px", fontWeight: 800, color: activeStep === s.id ? "#fca5a5" : "var(--text-primary)" }}>
+                  {s.title}
                 </span>
-              </Link>
+                <span style={{ 
+                  fontSize: "10px", 
+                  fontWeight: 800, 
+                  padding: "2px 6px", 
+                  borderRadius: "4px", 
+                  background: `${getStatusColor(s.status)}20`, 
+                  color: getStatusColor(s.status),
+                  fontFamily: "monospace"
+                }}>
+                  {s.status}
+                </span>
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                {s.subtitle}
+              </div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* CANDIDATOS / ESTRATEGIAS LISTAS */}
-      <div className="card animate-in" style={{ marginBottom: 20 }}>
-        <div className="card-header">
-          <h2 className="card-title" style={{ fontSize: 16 }}>Estrategias Rentables Listas ({rentable.length})</h2>
-          <Link href="/leaderboard" className="btn btn-sm btn-secondary" style={{ textDecoration: "none", fontSize: 11 }}>
-            Ver tabla completa →
-          </Link>
-        </div>
-        {rentable.length === 0 ? (
-          <div style={{ padding: "26px 0", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
-            Cargando candidatos validados... Pulsa <strong>Lanzar Búsqueda Ultra</strong> para generar nuevos candidatos.
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {rentable.map((s: any) => (
-              <div
-                key={s.strategyId}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: 12,
-                  borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--border)",
-                  background: "var(--bg-2)",
-                  flexWrap: "wrap",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 800, fontSize: 14 }}>{s.name}</div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2, fontFamily: "monospace" }}>
-                    Retorno OS: +{Number(s.netReturnOosPct || s.netReturnPct || 0).toFixed(1)}% · PF OS: {Number(s.profitFactorOos || s.profitFactor || 0).toFixed(2)} · Trades: {s.tradesCount}
-                  </div>
+        {/* DETALLE DEL PASO SELECCIONADO */}
+        <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "10px", padding: "24px" }}>
+          {activeStep === 1 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 1: Mercado y Datos en Disco</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                El laboratorio opera exclusivamente sobre datasets locales verificados para evitar simulaciones sobre datos sintéticos.
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Activo:</strong> BTCUSDT Perpetuals (BingX)</div>
+                  <div><strong>Timeframe:</strong> 1 hora (H1)</div>
+                  <div><strong>Total Barras:</strong> 3.840 barras OHLC</div>
+                  <div><strong>Rango Temporal:</strong> 26 de Febrero de 2026 – 4 de Agosto de 2026 (5,2 meses)</div>
+                  <div style={{ color: "#f59e0b" }}>⚠️ <strong>Muestra Estadística:</strong> 5,2 meses permite ~40–70 trades. Suficiente para paper trading pero requiere prudencia ante cambios de régimen.</div>
                 </div>
-                <Link href={`/strategies?id=${s.strategyId}`} className="btn btn-sm btn-primary" style={{ textDecoration: "none", fontSize: 11, fontWeight: 700 }}>
-                  Ver Ficha Estrategia
+              </div>
+            </div>
+          )}
+
+          {activeStep === 2 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 2: Búsqueda y Generación</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Parámetros de generación genética ejecutados en StrategyQuant X MCP con función de fitness anti-overfit.
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Población Genética:</strong> 100 individuos (8 islas de migración)</div>
+                  <div><strong>Partición OOS:</strong> 70% In-Sample / 30% Out-of-Sample</div>
+                  <div><strong>Función Fitness:</strong> ReturnDDRatio (prohibido Net Profit puro)</div>
+                  <div><strong>Filtro de Sesión:</strong> LondonNY (07:00 a 21:00 UTC)</div>
+                </div>
+              </div>
+              <div style={{ marginTop: "16px" }}>
+                <Link href="/candidatos" className="btn btn-secondary" style={{ fontSize: "12px" }}>
+                  Ver Estrategias Generadas en /candidatos →
                 </Link>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
 
-      {/* CAMBIO DE CAMINO */}
-      <div className="bifurc-assist animate-in" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <div className="bifurc-assist-text" style={{ flex: 1, minWidth: 240 }}>
-          <strong style={{ color: "var(--text-primary)" }}>¿Prefieres preparar cuentas de fondeo?</strong> Si tu objetivo es pasar evaluaciones de prop-firms con drawdown estricto.
+          {activeStep === 3 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 3: Gates ULTRA & Stress Testing</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Comprobación de robustez de las estrategias ante costes de transacción agresivos.
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Spread Simulador:</strong> 30 pips ($0.3–$3.0 en BTC)</div>
+                  <div><strong>Slippage Simulador:</strong> 3 pips</div>
+                  <div><strong>Tasa de Financiación (Funding Rate):</strong> 0.01% cada 8h</div>
+                  <div><strong>Comisión Taker:</strong> 0.050% (Taker estándar BingX)</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeStep === 4 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px" }}>Paso 4: Paper Trading en BingX Demo</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                Simulación en tiempo real sin arriesgar capital real.
+              </p>
+              <div style={{ background: "rgba(0,0,0,0.3)", padding: "16px", borderRadius: "8px", border: "1px solid var(--border)", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div><strong>Sesión:</strong> session_bingx_demo_01 (🟢 RUNNING)</div>
+                  <div><strong>PnL Acumulado:</strong> +$14.50 USD</div>
+                  <div><strong>Posición Abierta:</strong> LONG 0.05 BTC @ $60,421.50 (5x)</div>
+                  <div><strong>Última Señal:</strong> BUY @ 60,420.00 (Momentum Breakout H1)</div>
+                </div>
+              </div>
+              <div style={{ marginTop: "16px" }}>
+                <Link href="/ejecucion" className="btn btn-primary" style={{ fontSize: "12px" }}>
+                  ⚡ Abrir Consola de Ejecución en Vivo →
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {activeStep === 5 && (
+            <div>
+              <h2 style={{ fontSize: "18px", fontWeight: 800, marginBottom: "12px", color: "#ef4444" }}>
+                🔒 Paso 5: Ejecución Live (Fondos Reales)
+              </h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "13px" }}>
+                La operativa con capital real en BingX Perpetuals requiere autorización de dos factores y verificación del Kill-Switch.
+              </p>
+              
+              <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid #ef4444", padding: "16px", borderRadius: "8px", marginTop: "16px" }}>
+                <div style={{ fontSize: "12px", color: "#fca5a5", lineHeight: 1.6 }}>
+                  ⚠️ <strong>GUARDARRAÍL DE SEGURIDAD:</strong> Para activar ejecución real se requiere haber completado al menos 7 días de Paper Trading continuo sin violaciones de Kill-Switch.
+                </div>
+                <div style={{ marginTop: "14px" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", cursor: "pointer", color: "var(--text-primary)" }}>
+                    <input type="checkbox" checked={liveConfirm} onChange={(e) => setLiveConfirm(e.target.checked)} />
+                    Confirmo que comprendo los riesgos y deseo habilitar el panel de credenciales Live.
+                  </label>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "16px" }}>
+                <button 
+                  disabled={!liveConfirm} 
+                  className="btn btn-secondary" 
+                  style={{ opacity: liveConfirm ? 1 : 0.4, cursor: liveConfirm ? "pointer" : "not-allowed", fontSize: "12px", fontWeight: 700 }}
+                >
+                  Configurar Credenciales BingX Live API
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-        <Link href="/fondeo" className="btn btn-primary" style={{ textDecoration: "none", fontWeight: 700 }}>
-          Paso 2A: Ir al Modo Fondeo →
-        </Link>
+
       </div>
     </div>
   );

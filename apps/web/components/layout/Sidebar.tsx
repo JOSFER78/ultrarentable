@@ -14,29 +14,31 @@ interface NavItem {
 
 const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
-    label: "FLUJO PRINCIPAL PASO A PASO",
+    label: "CENTRO DE CONTROL",
     items: [
-      { code: "01", label: "Paso 1: Buscador SQX Remoto", href: "/", isPhase: true },
-      { code: "02A", label: "Paso 2A: Modo Fondeo", href: "/fondeo", isPhase: true },
-      { code: "02B", label: "Paso 2B: Modo Ultrarentable", href: "/ultra", isPhase: true },
-      { code: "03", label: "Paso 3: Monitor Bots en Vivo", href: "/robots", isPhase: true },
+      { code: "CC", label: "Control Center", href: "/" },
     ],
   },
   {
-    label: "CATÁLOGOS Y TABLAS",
+    label: "RUTAS DE TRADING",
     items: [
-      { code: "DB", label: "Empresas de Fondeo (34)", href: "/prop-firms", badge: "34 FIRMAS" },
-      { code: "TST", label: "Motor de Backtesting", href: "/backtest" },
-      { code: "PF", label: "Métricas de Portfolio", href: "/portfolio" },
-      { code: "PNL", label: "Estado del Sistema", href: "/panel" },
+      { code: "BX", label: "ULTRA · BingX", href: "/ultra", badge: "LAB" },
+      { code: "FD", label: "FONDEO · Prop Firms", href: "/fondeo", badge: "CME" },
+    ],
+  },
+  {
+    label: "GESTIÓN Y ANÁLISIS",
+    items: [
+      { code: "PF", label: "Proveedores & Reglas", href: "/prop-firms", badge: "REGLAS" },
+      { code: "CD", label: "Candidatos & Scorecards", href: "/candidatos", badge: "AUDIT" },
+      { code: "RUN", label: "Ejecución & Kill-Switches", href: "/ejecucion", badge: "LIVE" },
+      { code: "LOG", label: "Seguimiento & Timeline", href: "/seguimiento" },
     ],
   },
   {
     label: "INFRAESTRUCTURA",
     items: [
-      { code: "SQX", label: "Servidor SQX (MCP)", href: "/strategyquant" },
-      { code: "LOG", label: "Alertas y Telemetría", href: "/alertas" },
-      { code: "CFG", label: "Ajustes de Seguridad", href: "/seguridad" },
+      { code: "SYS", label: "Sistema & Salud", href: "/sistema", badge: "8081" },
     ],
   },
 ];

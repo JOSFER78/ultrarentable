@@ -2,17 +2,23 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from services.api.app.api.routes import router
+from services.api.app.api.sqx_router import sqx_router
+from services.api.app.api.providers_router import providers_router
+from services.api.app.api.candidates_router import candidates_router
+from services.api.app.api.execution_router import execution_router
+from services.api.app.api.audit_router import audit_router
+from services.api.app.api.system_health_router import system_health_router
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
 init_db()
 
 app = FastAPI(
-    title="BingX Ultra Strategy Lab — Local Backend",
-    version="3.0.0-reviewed",
+    title="Ultrarentable Dual-Engine Strategy Lab — Local Backend",
+    version="3.1.0",
     description=(
-        "Backend local REAL-ONLY sin Docker. FastAPI + SQLite WAL + filesystem local. "
-        "Incluye DSL validado, backtest determinista, juez de evidencia y campañas evolutivas multirronda."
+        "Backend local REAL-ONLY sin Docker. FastAPI + SQLite WAL + StrategyQuant X MCP Bridge. "
+        "Dos flujos completamente desacoplados: ULTRA (BingX Crypto Perps) y FONDEO (Prop Firms CME)."
     ),
 )
 
@@ -25,6 +31,12 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix="/api/v1")
+app.include_router(sqx_router, prefix="/api/v1")
+app.include_router(providers_router, prefix="/api/v1")
+app.include_router(candidates_router, prefix="/api/v1")
+app.include_router(execution_router, prefix="/api/v1")
+app.include_router(audit_router, prefix="/api/v1")
+app.include_router(system_health_router, prefix="/api/v1")
 
 
 @app.get("/")
