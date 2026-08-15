@@ -674,9 +674,14 @@ def list_search_configs(db: Session = Depends(get_db)):
 
 @router.post("/search-configs")
 def create_search_config(payload: dict[str, Any], db: Session = Depends(get_db)) -> dict[str, Any]:
-    mode = str(payload.get("mode", "ultra")).lower()
-    if mode not in {"ultra", "fondeo"}:
-        raise HTTPException(status_code=422, detail="MODE_MUST_BE_ULTRA_OR_FONDEO")
+    mode = str(payload.get("mode", "fondeo")).lower()
+    if mode == "ultra":
+        raise HTTPException(
+            status_code=422,
+            detail="MODE_ULTRA_FROZEN: El modo Ultra (kamikaze) ha sido congelado por la doctrina Fondeo Primero. Utiliza mode='fondeo'."
+        )
+    if mode != "fondeo":
+        raise HTTPException(status_code=422, detail="MODE_MUST_BE_FONDEO")
     project = str(payload.get("project", "Ultra_Auto_Pilot")).strip() or "Ultra_Auto_Pilot"
     databank = str(payload.get("databank", "Results")).strip() or "Results"
     symbol = payload.get("symbol")

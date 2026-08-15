@@ -1,71 +1,37 @@
-# 📊 ESTADO.md — Estado vivo del proyecto Ultrarentable
+# 📊 ESTADO.md — Mapa Único y Estado Vivo del Proyecto
 
-> **Última actualización:** 2026-08-09
-> **Próxima acción:** ver sección "Próximo paso".
-> Este archivo se actualiza al final de cada sesión de trabajo.
-
----
-
-## Resumen ejecutivo
-
-El laboratorio está **operativo**: servicios 24/7, web funcional, SQX generando candidatos reales. La investigación teórica y el framework de validación están completos. **El cuello de botella actual es que no se ha encontrado ninguna estrategia de miles de %** — el mejor candidato real tiene ~2.24% IS retorno. Hay que afinar la búsqueda kamikaze (fitness, universo de indicadores, generaciones).
+> **Última actualización:** 2026-08-15 (Sesión Fase 0 y Fase 1)  
+> **Doctrina:** REAL-ONLY · **Prioridad:** FONDEO-PRIMERO (Modo ULTRA congelado)
 
 ---
 
-## ✅ Hecho
+## 1. Resumen Ejecutivo y Realidad Verificada
 
-| Qué | Fecha | Detalle |
-|-----|-------|---------|
-| Investigación consolidada | 2026-07 | Catálogo de 28 técnicas de trading algorítmico, informe máster de bots, corroboración de hechos clave |
-| Blueprint controlador de estrategias | 2026-08 | Protocolo completo para validar estrategias de miles de % (`plan_implementacion/BLUEPRINT_CONTROLADOR_ESTRATEGIAS_MUNDIAL.md`) |
-| Guía de uso experto de SQX | 2026-08 | Flujo kamikaze y fondeo documentado como lo haría un experto (`plan_implementacion/GUIA_EXPERTO_USAR_SQUANT.md`) |
-| Auditoría de candidatos kamikaze | 2026-08-09 | Scorecard de calidad con criterios cuantitativos. Resultado: 0 candidatos válidos de miles de %; las 24 estrategias viejas eran mediocres (`plan_implementacion/AUDITORIA_CANDIDATOS_KAMIKAZE.md`) |
-| Core backend Ultra/Fondeo | 2026-07 | Configurador con modos Ultra y Fondeo, 125 tests passing en `services/api/tests/` |
-| Panel configurador IA (web) | 2026-07 | Frontend Next.js con panel de configuración de búsqueda de estrategias |
-| SQX desbloqueado | 2026-08-09 | SQX generando candidatos nuevos reales (serie 4.1.x) vía MCP. Databank desbloqueado |
-| Servicios 24/7 desplegados | 2026-07 | API FastAPI (:8000), Web Next.js (:3000), SQX (:8080 MCP) corriendo como systemd --user |
-| Acceso Obsidian vía Tailscale | 2026-08-08 | REST API funcional desde VPS al PC del usuario (`http://100.106.212.23:27123`) |
-| Plan de orquestación motor de búsqueda | 2026-08-09 | Documento de orquestación del controlador creado (`plan_implementacion/ORQUESTACION_MOTOR_BUSQUEDA_20260809.md`) |
+El laboratorio opera bajo la doctrina de **Fondeo Primero**, orientando la generación algorítmica a superar exámenes de prop firms y cobrar retiros reales de **$3.000–$4.000**. Queda eliminada la búsqueda "kamikaze" de 1000%.
+
+- **Histórico Generado:** 95 estrategias y 77 backtests evaluados; **0 aprobados**.
+- **Rendimiento Máximo Real en Disco:** ~2.24% IS retorno (cero candidatos de miles de %).
+- **Datos Disponibles en SQX:** 3.840 barras H1 de `BTCUSDT_AUTO` (26-feb a 4-ago 2026, 5,2 meses). Sin M1 (bar magnifier desactivado).
+- **Servicios VPS:** Frontend Next.js en `:5000` (ONLINE), API FastAPI en `:8000` (ONLINE, WAL activo, 1.051 contratos BingX).
+- **Control de Versiones:** Repositorio privado [`https://github.com/JOSFER78/ultrarentable`](https://github.com/JOSFER78/ultrarentable) conectado y sincronizado en rama `main`.
 
 ---
 
-## 🔴 Pendiente
+## 2. Estado de Fases de Ejecución
 
-| Qué | Prioridad | Notas |
-|-----|-----------|-------|
-| **Encontrar estrategia de miles de %** | 🔴 CRÍTICA | El objetivo principal. Mejor candidato actual: ~2.24% IS retorno. Ninguno cerca de 1000%+ |
-| Afinar búsqueda kamikaze nivel 2 | 🔴 ALTA | Cambiar fitness de SQX a retorno puro (no Sharpe/Profit Factor), ampliar universo de indicadores, más generaciones, más pares |
-| Resolver acceso GUI virtual de SQX | 🟡 MEDIA | Poder ver la GUI de SQX remotamente (VNC/noVNC a DISPLAY=:99) para inspección visual |
-| Ejecutar plan de orquestación | 🟡 MEDIA | Implementar el controlador de búsqueda según `ORQUESTACION_MOTOR_BUSQUEDA_20260809.md` |
-| Pipeline fondeo completo | 🟡 MEDIA | Integrar prop firms con cuenta gratis, definir criterios de aprobación de examen |
-| Backfill histórico paginado | 🟠 BAJA | Completar ingesta de datos históricos de BingX |
-| Motores de backtest adicionales | 🟠 BAJA | NautilusTrader, adaptador BingX |
+| Fase | Descripción | Estado | Evidencia en Disco |
+|---|---|---|---|
+| **FASE 0** | Inventario Real y Auditoría Cuádruple | ✅ **COMPLETA** | 4 informes en `plan_implementacion/AUDITORIA_LECTURA_FASE0_*.md` (16.601 bytes total) |
+| **FASE 1** | Congelar ULTRA y Perfil Fondeo Canónico | 🟡 **EN CURSO** | Bloqueo de UI/API y redacción de `PERFIL_FONDEO_CANONICO.md` |
+| **FASE 2** | Corrección XML del CFX (4 cambios pendientes) | ⏳ **PENDIENTE** | Backup confirmado en `/home/ubuntu/backups/ultrarentable/pre_reconfig_20260809_105641/` |
+| **FASE 3** | Run Corto de Prueba con Gates Fondeo | ⏳ **PENDIENTE** | Requiere resolver puerto SQX y correr lote acotado |
+| **FASE 4** | Decisión de Mercado (Sandbox BTC vs Futuros CME) | ⏳ **PENDIENTE** | Documentación de la ruta para examen real |
 
 ---
 
-## 🎯 Próximo paso concreto
+## 3. Próximo Paso Concreto
 
-**Afinar la búsqueda kamikaze nivel 2 en SQX:**
-
-1. Cambiar la función fitness de SQX a **retorno neto puro** (no Sharpe ni Profit Factor) — el modo kamikaze no penaliza volatilidad.
-2. Ampliar el **universo de indicadores/bloques genéticos** disponibles para la generación.
-3. Aumentar el número de **generaciones** y **población** en la búsqueda genética.
-4. Expandir los **pares/timeframes** bajo prueba (no solo BTCUSDT).
-5. Monitorear la serie 4.1.x de candidatos y evaluar con el scorecard de `AUDITORIA_CANDIDATOS_KAMIKAZE.md`.
-
----
-
-## 📁 Dónde está cada cosa
-
-| Recurso | Ubicación |
-|---------|-----------|
-| Estado vivo (este archivo) | `ESTADO.md` |
-| **Modelo multiagente + sistema de seguimiento** | `MULTIAGENTE_Y_SEGUIMIENTO.md` |
-| Guía de entrada (web/Obsidian/servicios) | `README.md` |
-| Bitácora de sesiones | `plan_implementacion/bitacora/<fecha>.md` |
-| Documentos de plan/investigación | `plan_implementacion/*.md` |
-| Espejo de teoría Obsidian | `docs/` |
-| Backend API | `services/api/` |
-| Frontend web | `apps/web/` |
-| Tests canónicos | `services/api/tests/` |
-| BD operacional | `~/.local/state/ultrarentable/ultrarentable.sqlite3` |
+1. **Completar FASE 1:**
+   - Desactivar/congelar en la UI y API la selección del modo Ultra (fijar por defecto el modo Fondeo).
+   - Generar `plan_implementacion/PERFIL_FONDEO_CANONICO.md` con las métricas cuantitativas estándar (Target ~6%, DLL ≤ 2.5%, Max DD ≤ 5%, consistencia 40-50%, trades OOS ≥ 20).
+2. **Preparar FASE 2:** Aplicar los 4 cambios XML pendientes en `Build-Task1.xml` dentro del CFX sin alterar el backup.

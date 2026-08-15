@@ -31,16 +31,16 @@ export default function SearchHomePage() {
   const [bgState, setBgState] = useState<{ status?: string; percent?: number; done?: number; total?: number; logs?: any[] }>({});
   const [bgRunning, setBgRunning] = useState(false);
 
-  // Search Configurator Form State
-  const [cfgMode, setCfgMode] = useState<"ultra" | "fondeo">("ultra");
-  const [cfgName, setCfgName] = useState("");
+  // Search Configurator Form State (FONDEO PRIMERO - ULTRA CONGELADO)
+  const [cfgMode, setCfgMode] = useState<"ultra" | "fondeo">("fondeo");
+  const [cfgName, setCfgName] = useState("Config Fondeo Canónico 50K");
   const [cfgProject, setCfgProject] = useState(DEFAULT_SEARCH.project);
   const [cfgDatabank, setCfgDatabank] = useState(DEFAULT_SEARCH.databank);
   const [cfgSymbol, setCfgSymbol] = useState("BTC-USDT");
   const [cfgInterval, setCfgInterval] = useState("1h");
   const [cfgPopulation, setCfgPopulation] = useState(24);
-  const [cfgTargetMultiplier, setCfgTargetMultiplier] = useState(1000);
-  const [cfgMaxDrawdownPct, setCfgMaxDrawdownPct] = useState(15);
+  const [cfgTargetMultiplier, setCfgTargetMultiplier] = useState(6);
+  const [cfgMaxDrawdownPct, setCfgMaxDrawdownPct] = useState(5);
   const [cfgConsistencyTarget, setCfgConsistencyTarget] = useState(85);
   const [cfgTechniques, setCfgTechniques] = useState("");
   const [savedConfigs, setSavedConfigs] = useState<any[]>([]);
@@ -256,39 +256,41 @@ export default function SearchHomePage() {
             <h2 style={{ fontSize: 16, fontWeight: 800, margin: "4px 0 0 0" }}>Parámetros de Búsqueda Genética</h2>
           </div>
 
-          {/* Mode selector */}
+          {/* Mode selector: FONDEO FIRST / ULTRA FROZEN */}
           <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-            <button
-              onClick={() => handleModeChange("ultra")}
-              style={{
-                flex: 1,
-                padding: "8px 12px",
-                borderRadius: 6,
-                border: cfgMode === "ultra" ? "2px solid var(--accent)" : "1px solid var(--border)",
-                background: cfgMode === "ultra" ? "var(--accent-dim)" : "transparent",
-                color: cfgMode === "ultra" ? "var(--accent)" : "var(--text-muted)",
-                fontSize: 12,
-                fontWeight: 800,
-                cursor: "pointer",
-              }}
-            >
-              MODO ULTRARENTABLE (Capital Propio)
-            </button>
             <button
               onClick={() => handleModeChange("fondeo")}
               style={{
-                flex: 1,
+                flex: 1.2,
                 padding: "8px 12px",
                 borderRadius: 6,
-                border: cfgMode === "fondeo" ? "2px solid #60a5fa" : "1px solid var(--border)",
-                background: cfgMode === "fondeo" ? "rgba(96, 165, 250, 0.15)" : "transparent",
-                color: cfgMode === "fondeo" ? "#60a5fa" : "var(--text-muted)",
+                border: "2px solid #60a5fa",
+                background: "rgba(96, 165, 250, 0.15)",
+                color: "#60a5fa",
                 fontSize: 12,
                 fontWeight: 800,
                 cursor: "pointer",
               }}
             >
-              MODO FONDEO (Prop Firms)
+              ⭐ MODO FONDEO (Activo — Prop Firms)
+            </button>
+            <button
+              disabled
+              title="Modo Ultra congelado por doctrina Fondeo Primero"
+              style={{
+                flex: 1,
+                padding: "8px 12px",
+                borderRadius: 6,
+                border: "1px dashed var(--border)",
+                background: "rgba(255, 255, 255, 0.02)",
+                color: "var(--text-muted)",
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: "not-allowed",
+                opacity: 0.6,
+              }}
+            >
+              🔒 MODO ULTRA (Congelado)
             </button>
           </div>
 
