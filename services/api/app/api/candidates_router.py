@@ -1,13 +1,16 @@
-"""FastAPI Router for Candidates, Scorecards and Reclassification."""
+"""FastAPI Router for Candidates, Scorecards, Reclassification, Robustness Verification & Code Exports."""
 
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
-from services.api.app.db.database import get_db, CandidateModel
+from services.api.app.db.database import get_db, CandidateModel, AuditEventModel
+from services.api.app.export.sqx_to_tradingview import generate_pinescript_v5
+from services.api.app.export.sqx_to_ninjatrader import generate_ninjatrader_strategy_cs
+from services.api.app.factory.robustness_verifier import verify_strategy_robustness
 
 candidates_router = APIRouter(prefix="/candidates", tags=["Strategy Candidates & Scorecards"])
 
@@ -101,6 +104,85 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
         },
         "scorecard_json": c.scorecard_json,
         "created_at": c.created_at.isoformat() if c.created_at else None,
+    }
+
+
+@candidates_router.post("/{candidate_id}/verify-robustness")
+def verify_candidate_robustness(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Run Zero-Trust 5-Gate Robustness Verification on candidate."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+
+    report = verify_strategy_robustness({
+        "candidate_id": c.candidate_id,
+        "name": c.name,
+        "route": c.route,
+        "trades_is": c.trades_is,
+        "trades_oos": c.trades_oos,
+        "net_profit_is": c.net_profit_is,
+        "net_profit_oos": c.net_profit_oos,
+        "profit_factor_is": c.profit_factor_is,
+        "profit_factor_oos": c.profit_factor_oos,
+        "max_dd_is_pct": c.max_dd_is_pct,
+        "max_dd_oos_pct": c.max_dd_oos_pct,
+        "ratio_oos_is": c.ratio_oos_is,
+        "wfo_pass_pct": c.wfo_pass_pct,
+        "monte_carlo_score": c.monte_carlo_score,
+    })
+
+    return {
+        "candidate_id": report.candidate_id,
+        "name": report.name,
+        "route": report.route,
+        "total_score_pct": report.total_score_pct,
+        "is_approved_for_live": report.is_approved_for_live,
+        "status_verdict": report.status_verdict,
+        "gates": [
+            {
+                "gate_id": g.gate_id,
+                "name": g.name,
+                "passed": g.passed,
+                "threshold": g.threshold,
+                "measured_value": g.measured_value,
+                "detail": g.detail
+            }
+            for g in report.gates
+        ]
+    }
+
+
+@candidates_router.get("/{candidate_id}/export/tradingview")
+def export_candidate_tradingview(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Export strategy candidate as TradingView Pine Script v5 code."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+    
+    code = generate_pinescript_v5(strategy_name=c.name, symbol=c.symbol.replace("-", ""), timeframe="60")
+    return {
+        "candidate_id": c.candidate_id,
+        "strategy_name": c.name,
+        "language": "Pine Script v5",
+        "filename": f"{c.candidate_id}_tradingview.pine",
+        "code": code
+    }
+
+
+@candidates_router.get("/{candidate_id}/export/ninjatrader")
+def export_candidate_ninjatrader(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Export strategy candidate as NinjaTrader 8 C# Strategy code."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+    
+    code = generate_ninjatrader_strategy_cs(strategy_name=c.name, asset="MES", daily_loss_limit_usd=1000.0)
+    return {
+        "candidate_id": c.candidate_id,
+        "strategy_name": c.name,
+        "language": "C# NinjaScript (NinjaTrader 8)",
+        "filename": f"{c.candidate_id}_ninjatrader.cs",
+        "code": code
     }
 
 
