@@ -173,7 +173,7 @@ export default function SearchHomePage() {
   };
 
   return (
-    <div className="page-container stagger" style={{ maxWidth: 1280, margin: "0 auto", padding: "24px 16px" }}>
+    <div className="page-container stagger" suppressHydrationWarning style={{ maxWidth: 1280, margin: "0 auto", padding: "24px 16px" }}>
       {/* STEP INDICATOR HEADER */}
       <div className="card animate-in" style={{ padding: 20, marginBottom: 24, background: "var(--bg-2)", border: "1px solid var(--border)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>

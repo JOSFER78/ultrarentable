@@ -16,12 +16,12 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <div className="app-shell">
+        <div className="app-shell" suppressHydrationWarning>
           <Sidebar />
-          <div className="main-content" id="main-content">
+          <div className="main-content" id="main-content" suppressHydrationWarning>
             <Header />
-            <main className="page-content">{children}</main>
-            <footer className="footer">
+            <main className="page-content" suppressHydrationWarning>{children}</main>
+            <footer className="footer" suppressHydrationWarning>
               El objetivo ≥1000% es un criterio de investigación histórica, no una
               garantía. La aplicación no muestra resultados sin artefactos reales
               y reproducibles.
