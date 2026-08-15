@@ -1,0 +1,30 @@
+{
+  "cedula_version": "1.0.0",
+  "strategy_id": "strat_1_4_140",
+  "name": "Strategy 1.4.140 (Dual-Pass OOS)",
+  "route": "FONDEO",
+  "symbol": "BTC-USDT",
+  "timeframe": "1h",
+  "dataset_id": "BTCUSDT_AUTO_H1",
+  "status": "INVESTIGACION_BTC",
+  "status_reason": "Excelente comportamiento en OOS: Net Profit +8.95, PF OOS 1.29 con 30 trades fuera de muestra. Requiere validaci\u00f3n en CME.",
+  "in_sample_metrics": {
+    "net_profit_usd": 249.38,
+    "trades": 71,
+    "profit_factor": 1.4,
+    "max_drawdown_pct": 13.42
+  },
+  "out_of_sample_metrics": {
+    "net_profit_usd": 88.95,
+    "trades": 30,
+    "profit_factor": 1.29,
+    "max_drawdown_pct": 8.5
+  },
+  "robustness_metrics": {
+    "ratio_oos_is": 0.92,
+    "wfo_pass_pct": 80.0,
+    "monte_carlo_score": 85.0
+  },
+  "sql_extraction_timestamp": "2026-08-15T19:01:41.299116+00:00",
+  "digital_sha256_signature": "53c11a1df75e60f12f0f750778faa05f8735882ca403744e5b03c8aca6a97728"
+}

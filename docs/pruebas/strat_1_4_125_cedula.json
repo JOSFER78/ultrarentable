@@ -1,0 +1,30 @@
+{
+  "cedula_version": "1.0.0",
+  "strategy_id": "strat_1_4_125",
+  "name": "Strategy 1.4.125 (Bajo Drawdown)",
+  "route": "FONDEO",
+  "symbol": "BTC-USDT",
+  "timeframe": "1h",
+  "dataset_id": "BTCUSDT_AUTO_H1",
+  "status": "INVESTIGACION_BTC",
+  "status_reason": "Drawdown IS m\u00ednimo de 2.26 (4.2%) con PF IS de 2.43. OOS positivo con 28 trades.",
+  "in_sample_metrics": {
+    "net_profit_usd": 130.36,
+    "trades": 58,
+    "profit_factor": 2.43,
+    "max_drawdown_pct": 4.23
+  },
+  "out_of_sample_metrics": {
+    "net_profit_usd": 5.77,
+    "trades": 28,
+    "profit_factor": 1.08,
+    "max_drawdown_pct": 5.71
+  },
+  "robustness_metrics": {
+    "ratio_oos_is": 0.44,
+    "wfo_pass_pct": 70.0,
+    "monte_carlo_score": 75.0
+  },
+  "sql_extraction_timestamp": "2026-08-15T19:01:42.400442+00:00",
+  "digital_sha256_signature": "2961b02503ee6f4c8b122abff30ef5f28aa83400d1429a2798adb46ca0ef4d18"
+}

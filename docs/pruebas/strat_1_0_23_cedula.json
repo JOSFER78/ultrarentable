@@ -1,0 +1,30 @@
+{
+  "cedula_version": "1.0.0",
+  "strategy_id": "strat_1_0_23",
+  "name": "Strategy 1.0.23 (Sharpe 4.46)",
+  "route": "FONDEO",
+  "symbol": "BTC-USDT",
+  "timeframe": "1h",
+  "dataset_id": "BTCUSDT_AUTO_H1",
+  "status": "INVESTIGACION_BTC",
+  "status_reason": "Sharpe Ratio excepcional de 4.46 y Ret/DD Ratio de 4.50 en In-Sample. OOS positivo (+9.23, PF 1.05, 33 trades).",
+  "in_sample_metrics": {
+    "net_profit_usd": 366.44,
+    "trades": 62,
+    "profit_factor": 1.66,
+    "max_drawdown_pct": 8.14
+  },
+  "out_of_sample_metrics": {
+    "net_profit_usd": 19.23,
+    "trades": 33,
+    "profit_factor": 1.05,
+    "max_drawdown_pct": 12.1
+  },
+  "robustness_metrics": {
+    "ratio_oos_is": 0.63,
+    "wfo_pass_pct": 75.0,
+    "monte_carlo_score": 80.0
+  },
+  "sql_extraction_timestamp": "2026-08-15T19:01:41.876514+00:00",
+  "digital_sha256_signature": "1a919822cef25c9ce025bba832647c5b4915b319fe97dba566fc8e3cfa671dc4"
+}

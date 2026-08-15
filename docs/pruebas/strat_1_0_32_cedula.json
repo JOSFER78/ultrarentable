@@ -1,0 +1,30 @@
+{
+  "cedula_version": "1.0.0",
+  "strategy_id": "strat_1_0_32",
+  "name": "Strategy 1.0.32",
+  "route": "FONDEO",
+  "symbol": "BTC-USDT",
+  "timeframe": "1h",
+  "dataset_id": "BTCUSDT_AUTO_H1",
+  "status": "INVESTIGACION_BTC",
+  "status_reason": "Candidata en datos de BTC H1 (5,2 meses). No validada en instrumento CME (MES/MNQ), sin DD intrabar y sin paper trading. Requiere validaci\u00f3n espec\u00edfica.",
+  "in_sample_metrics": {
+    "net_profit_usd": 73.48,
+    "trades": 49,
+    "profit_factor": 1.47,
+    "max_drawdown_pct": 5.35
+  },
+  "out_of_sample_metrics": {
+    "net_profit_usd": 30.99,
+    "trades": 25,
+    "profit_factor": 1.32,
+    "max_drawdown_pct": 3.74
+  },
+  "robustness_metrics": {
+    "ratio_oos_is": 0.9,
+    "wfo_pass_pct": 70.0,
+    "monte_carlo_score": 75.0
+  },
+  "sql_extraction_timestamp": "2026-08-15T19:01:40.635205+00:00",
+  "digital_sha256_signature": "99d0ab94a6ef4ee3eb808579c0d0b8f9541359a862516f943ef937d67831f321"
+}

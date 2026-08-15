@@ -1,0 +1,30 @@
+{
+  "cedula_version": "1.0.0",
+  "strategy_id": "strat_1_0_54",
+  "name": "Strategy 1.0.54",
+  "route": "FONDEO",
+  "symbol": "BTC-USDT",
+  "timeframe": "1h",
+  "dataset_id": "BTCUSDT_AUTO_H1",
+  "status": "RECHAZADA_FONDEO_DD",
+  "status_reason": "Drawdown OOS del 10.18% excede el l\u00edmite can\u00f3nico de fondeo (<= 4.0%). No califica para evaluaci\u00f3n en prop firm.",
+  "in_sample_metrics": {
+    "net_profit_usd": 134.51,
+    "trades": 55,
+    "profit_factor": 1.38,
+    "max_drawdown_pct": 10.07
+  },
+  "out_of_sample_metrics": {
+    "net_profit_usd": 168.5,
+    "trades": 29,
+    "profit_factor": 1.75,
+    "max_drawdown_pct": 10.18
+  },
+  "robustness_metrics": {
+    "ratio_oos_is": 1.27,
+    "wfo_pass_pct": 75.0,
+    "monte_carlo_score": 80.0
+  },
+  "sql_extraction_timestamp": "2026-08-15T19:01:39.824701+00:00",
+  "digital_sha256_signature": "0472ff609744af3eaeb4c5b54c38983ee7b65d2bc9cff912a00223e541176695"
+}

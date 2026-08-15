@@ -1,0 +1,30 @@
+{
+  "cedula_version": "1.0.0",
+  "strategy_id": "strat_1_4_181",
+  "name": "Strategy 1.4.181 (High Win Rate)",
+  "route": "ULTRA",
+  "symbol": "BTC-USDT",
+  "timeframe": "1h",
+  "dataset_id": "BTCUSDT_AUTO_H1",
+  "status": "INVESTIGACION_BTC",
+  "status_reason": "PF IS de 2.15 con beneficio neto de +13.98 USD y Sharpe 3.89.",
+  "in_sample_metrics": {
+    "net_profit_usd": 313.98,
+    "trades": 30,
+    "profit_factor": 2.15,
+    "max_drawdown_pct": 11.68
+  },
+  "out_of_sample_metrics": {
+    "net_profit_usd": -17.88,
+    "trades": 17,
+    "profit_factor": 0.94,
+    "max_drawdown_pct": 7.86
+  },
+  "robustness_metrics": {
+    "ratio_oos_is": 0.44,
+    "wfo_pass_pct": 65.0,
+    "monte_carlo_score": 70.0
+  },
+  "sql_extraction_timestamp": "2026-08-15T19:01:43.084513+00:00",
+  "digital_sha256_signature": "2570952a1d56ce12f11b254e551ba3311af7ceddffb2754f469b3d8019898ed8"
+}
