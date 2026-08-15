@@ -20,9 +20,12 @@ class SQXMCPError(Exception):
     pass
 
 
+import os
+
+
 class SQXMCPClient:
-    def __init__(self, base_url: str = "http://localhost:8080/mcp", timeout: int = 15):
-        self.base_url = base_url.rstrip("/")
+    def __init__(self, base_url: Optional[str] = None, timeout: int = 15):
+        self.base_url = (base_url or os.getenv("SQX_MCP_URL", "http://127.0.0.1:8081/mcp")).rstrip("/")
         self.timeout = timeout
         self.session_id: Optional[str] = None
         self._request_id = 0

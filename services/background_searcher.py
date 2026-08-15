@@ -38,7 +38,7 @@ except Exception as e:  # pragma: no cover
     print(f"[warn] sqx_client no disponible: {e}", file=sys.stderr)
 
 # ── Configuración ────────────────────────────────────────────────
-SQX_MCP_URL = os.getenv("SQX_MCP_URL", "http://127.0.0.1:8080/mcp")
+SQX_MCP_URL = os.getenv("SQX_MCP_URL", "http://127.0.0.1:8081/mcp")
 DB_PATH = os.getenv("STATE_DB_PATH") or os.getenv("ULTRA_DB") or os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3")
 POLL_SECONDS = int(os.getenv("ULTRA_POLL_SECONDS", "40"))
 RUN_TIMEOUT_SECONDS = int(os.getenv("ULTRA_RUN_TIMEOUT_SECONDS", "3600"))

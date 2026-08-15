@@ -16,14 +16,14 @@ class ProjectRunRequest(BaseModel):
 
 
 @sqx_router.get("/status")
-def get_sqx_status(url: str = Query("http://localhost:8080/mcp")) -> Dict[str, Any]:
+def get_sqx_status(url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """Check connectivity and state of the StrategyQuant X MCP server."""
     client = SQXMCPClient(base_url=url)
     return client.check_connection()
 
 
 @sqx_router.get("/tools")
-def list_sqx_tools(url: str = Query("http://localhost:8080/mcp")) -> Dict[str, Any]:
+def list_sqx_tools(url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """Discover available MCP tools on the StrategyQuant X server."""
     client = SQXMCPClient(base_url=url)
     try:
@@ -39,7 +39,7 @@ def list_sqx_tools(url: str = Query("http://localhost:8080/mcp")) -> Dict[str, A
 
 
 @sqx_router.get("/projects")
-def list_sqx_projects(url: str = Query("http://localhost:8080/mcp")) -> Dict[str, Any]:
+def list_sqx_projects(url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """List all projects available in the StrategyQuant X instance."""
     client = SQXMCPClient(base_url=url)
     try:
@@ -55,7 +55,7 @@ def list_sqx_projects(url: str = Query("http://localhost:8080/mcp")) -> Dict[str
 
 
 @sqx_router.get("/projects/{project_name}/databanks")
-def list_sqx_databanks(project_name: str, url: str = Query("http://localhost:8080/mcp")) -> Dict[str, Any]:
+def list_sqx_databanks(project_name: str, url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """List databanks for a specified StrategyQuant X project."""
     client = SQXMCPClient(base_url=url)
     try:
@@ -74,7 +74,7 @@ def list_sqx_databanks(project_name: str, url: str = Query("http://localhost:808
 def list_sqx_strategies(
     project_name: str,
     databank_name: str,
-    url: str = Query("http://localhost:8080/mcp")
+    url: str = Query("http://localhost:8081/mcp")
 ) -> Dict[str, Any]:
     """List strategies stored inside a specific databank of a project."""
     client = SQXMCPClient(base_url=url)
@@ -96,7 +96,7 @@ def get_sqx_strategy_stats(
     project_name: str,
     databank_name: str,
     strategy_name: str,
-    url: str = Query("http://localhost:8080/mcp")
+    url: str = Query("http://localhost:8081/mcp")
 ) -> Dict[str, Any]:
     """Get metrics and statistics for a specific strategy in a databank."""
     client = SQXMCPClient(base_url=url)
@@ -114,7 +114,7 @@ def get_sqx_strategy_stats(
 
 
 @sqx_router.post("/projects/{project_name}/run")
-def run_sqx_project(project_name: str, url: str = Query("http://localhost:8080/mcp")) -> Dict[str, Any]:
+def run_sqx_project(project_name: str, url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """Trigger execution of a StrategyQuant X project."""
     client = SQXMCPClient(base_url=url)
     try:
@@ -125,7 +125,7 @@ def run_sqx_project(project_name: str, url: str = Query("http://localhost:8080/m
 
 
 @sqx_router.post("/projects/{project_name}/stop")
-def stop_sqx_project(project_name: str, url: str = Query("http://localhost:8080/mcp")) -> Dict[str, Any]:
+def stop_sqx_project(project_name: str, url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """Stop execution of a running StrategyQuant X project."""
     client = SQXMCPClient(base_url=url)
     try:

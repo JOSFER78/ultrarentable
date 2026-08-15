@@ -1350,7 +1350,7 @@ def get_background_search_status(db: Session = Depends(get_db)):
         import sys as _sys
         _sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "sqx_bridge"))
         from sqx_client import SQXMCPClient
-        _c = SQXMCPClient("http://127.0.0.1:8080/mcp", timeout=8)
+        _c = SQXMCPClient("http://127.0.0.1:8081/mcp", timeout=8)
         _databanks = {"Results": 0, "Last generation": 0, "Results_robust_20260809": 0}
         for db_name in _databanks:
             try:
