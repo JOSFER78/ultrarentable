@@ -1,190 +1,301 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useTelemetryStream } from "@/hooks/useTelemetryStream";
+import { WorkerId } from "@/types/telemetry";
 
-interface SystemHealthData {
-  overall_status: string;
-  checked_at: string;
-  services: {
-    web_frontend: { configured_port: number; url: string; status: string; code?: number; latency_ms: number };
-    api_backend: { configured_port: number; url: string; status: string; mode: string };
-    sqx_mcp: { detected_port: number; url: string; status: string; message?: string };
-    sqx_web_ui: { detected_port: number; url: string; status: string; code?: number; latency_ms: number };
-  };
-  database: {
-    db_path: string;
-    size_bytes: number;
-    wal_active: boolean;
-    tables: Record<string, number>;
-  };
-  market_data: {
-    btc_usdt_h1: {
-      path: string;
-      exists: boolean;
-      size_bytes: number;
-      bars: number;
-      date_range: string;
-      cme_futures_data: string;
-    };
-  };
-}
+const WORKER_NAMES: Record<WorkerId, string> = {
+  DataWorker: "1. Data Pipeline Worker",
+  SQXWorker: "2. StrategyQuant X Bridge",
+  FastBacktestWorker: "3. Fast Backtester Engine",
+  ValidationWorker: "4. Quant Validation Fabric",
+  MonteCarloWorker: "5. Monte Carlo & Robustness",
+  SemanticAIWorker: "6. Semantic Quant Engine",
+  PortfolioWorker: "7. Portfolio Multi-Asset",
+  PaperTradingWorker: "8. Paper Sandbox 14-Day",
+};
 
-export default function SistemaPage() {
-  const [data, setData] = useState<SystemHealthData | null>(null);
-  const [loading, setLoading] = useState(true);
+const FORBIDDEN_GOVERNANCE_RULES = [
+  "Bypass manual o forzado de compuertas QVF (Evidence Gate)",
+  "Relajación arbitraria de umbrales cuantitativos (DSR < 2.0 / DD > 4.5%)",
+  "Apertura de posiciones reales sin completar 14 días de incubación en Paper Sandbox",
+  "Uso de datos futuros o manipulación de particiones IS/OOS",
+];
 
-  const fetchHealth = () => {
-    fetch("/api/v1/system/health")
-      .then((r) => r.json())
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching system health:", err);
-        setLoading(false);
-      });
-  };
+export default function SistemaSupervisionPage() {
+  const { workers, logs, systemMetrics, isPaused, togglePause, clearLogs, reconnect } = useTelemetryStream();
+  const [filterQuery, setFilterQuery] = useState<string>("");
 
-  useEffect(() => {
-    fetchHealth();
-    const timer = setInterval(fetchHealth, 6000);
-    return () => clearInterval(timer);
-  }, []);
+  const filteredLogs = logs.filter((ev) => {
+    if (!filterQuery) return true;
+    return (
+      ev.eventType.toLowerCase().includes(filterQuery.toLowerCase()) ||
+      ev.id.toLowerCase().includes(filterQuery.toLowerCase()) ||
+      ev.message.toLowerCase().includes(filterQuery.toLowerCase())
+    );
+  });
+
+  const isConnected = systemMetrics.connectionState === "CONNECTED";
 
   return (
-    <div className="page-container animate-in" style={{ padding: "28px", maxWidth: "1200px", margin: "0 auto" }}>
-      {/* HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-            <Link href="/" style={{ color: "var(--text-muted)", fontSize: "12px", textDecoration: "none" }}>
-              ← Control Center
-            </Link>
-            <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-            <span style={{ fontSize: "11px", fontWeight: 800, color: "var(--accent)", textTransform: "uppercase", fontFamily: "monospace" }}>
-              DIAGNÓSTICO DEL SISTEMA
-            </span>
-          </div>
-          <h1 style={{ fontSize: "26px", fontWeight: 900, margin: 0, color: "#fff" }}>
-            🖥️ Estado de Infraestructura & Servicios
-          </h1>
-          <p style={{ color: "var(--text-muted)", fontSize: "13px", marginTop: "4px" }}>
-            Telemetría en tiempo real: FastAPI (:8000), StrategyQuant X (:5050/:8081) y SQLite WAL.
-          </p>
+    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
+      {/* 1. HEADER */}
+      <div style={{ marginBottom: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+          <Link href="/" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
+            ← Command Center
+          </Link>
+          <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
+          <span style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
+            TELEMETRY & SUPERVISION · 8 WORKERS POOL
+          </span>
         </div>
-
-        <button
-          onClick={fetchHealth}
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "var(--text-secondary)",
-            padding: "8px 16px",
-            borderRadius: "6px",
-            fontSize: "12px",
-            fontWeight: 700,
-            cursor: "pointer"
-          }}
-        >
-          🔄 Refrescar
-        </button>
+        <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
+          Centro de Supervisión, Resiliencia & Telemetría SSE
+        </h1>
+        <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
+          Monitorización distribuida de los 8 workers asíncronos, consola de eventos SSE y gobernanza inmutable.
+        </p>
       </div>
 
-      {loading && !data ? (
-        <div style={{ textAlign: "center", padding: "60px 0", color: "var(--text-muted)" }}>
-          Cargando telemetría del sistema...
+      {/* 2. POOL DE 8 WORKERS MONITOR */}
+      <div
+        style={{
+          background: "rgba(16, 23, 34, 0.75)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: "14px",
+          padding: "20px",
+          marginBottom: "24px",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+          <div style={{ fontSize: "11px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+            POOL DISTRIBUIDO DE 8 WORKERS ASÍNCRONOS (HEALTH SCORE: {systemMetrics.systemHealthScore}%)
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: isConnected ? "#34d399" : "#f43f5e" }} />
+            <span style={{ fontSize: "11px", fontWeight: 800, color: isConnected ? "#34d399" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
+              {systemMetrics.connectionState}
+            </span>
+            <button
+              onClick={reconnect}
+              style={{
+                padding: "3px 8px",
+                borderRadius: "4px",
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                color: "#cbd5e1",
+                fontSize: "10px",
+                cursor: "pointer",
+              }}
+            >
+              Reconectar
+            </button>
+          </div>
         </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          
-          {/* SERVICIOS HTTP Y PUERTOS */}
-          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", padding: "20px" }}>
-            <h2 style={{ fontSize: "16px", fontWeight: 800, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", color: "#fff" }}>
-              🌐 Servicios del Ecosistema Ultrarentable
-            </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "14px" }}>
-              
-              {/* NEXT.JS */}
-              <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>FRONTEND (NEXT.JS)</div>
-                <div style={{ fontSize: "18px", fontWeight: 800, color: data?.services.web_frontend.status === "ONLINE" ? "#22c55e" : "#ef4444", marginTop: "4px" }}>
-                  ● {data?.services.web_frontend.status}
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "12px" }}>
+          {Object.entries(workers).map(([wId, info]) => {
+            const friendlyName = WORKER_NAMES[wId as WorkerId] || wId;
+            const isHealthy = info.status === "RUNNING" || info.status === "BUSY";
+
+            return (
+              <div
+                key={wId}
+                style={{
+                  background: "rgba(0, 0, 0, 0.35)",
+                  border: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderRadius: "10px",
+                  padding: "14px",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 800, color: "#fff" }}>
+                    {friendlyName}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      background: isHealthy ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)",
+                      color: isHealthy ? "#34d399" : "#f43f5e",
+                      fontFamily: "var(--font-mono, monospace)",
+                    }}
+                  >
+                    ● {info.status}
+                  </span>
                 </div>
-                <div style={{ fontSize: "12px", fontFamily: "monospace", color: "var(--text-muted)", marginTop: "4px" }}>
-                  Puerto :3000 ({data?.services.web_frontend.latency_ms}ms)
+
+                <div style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+                  Tareas completadas: <strong style={{ color: "#38bdf8" }}>{info.tasksCompleted}</strong> · {info.opsPerSec} ops/s
+                </div>
+                <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+                  Tarea: {info.currentTaskName}
                 </div>
               </div>
-
-              {/* FASTAPI */}
-              <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>BACKEND (FASTAPI)</div>
-                <div style={{ fontSize: "18px", fontWeight: 800, color: "#22c55e", marginTop: "4px" }}>
-                  ● {data?.services.api_backend.status}
-                </div>
-                <div style={{ fontSize: "12px", fontFamily: "monospace", color: "var(--text-muted)", marginTop: "4px" }}>
-                  Puerto :8000 (SQLite WAL)
-                </div>
-              </div>
-
-              {/* SQX MCP */}
-              <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>STRATEGYQUANT X (MCP API)</div>
-                <div style={{ fontSize: "18px", fontWeight: 800, color: data?.services.sqx_mcp.status === "ONLINE" ? "#22c55e" : "#ef4444", marginTop: "4px" }}>
-                  ● {data?.services.sqx_mcp.status}
-                </div>
-                <div style={{ fontSize: "12px", fontFamily: "monospace", color: "var(--text-muted)", marginTop: "4px" }}>
-                  Puerto :8081 (/mcp activo)
-                </div>
-              </div>
-
-              {/* SQX WEB UI */}
-              <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>STRATEGYQUANT X (WEB UI)</div>
-                <div style={{ fontSize: "18px", fontWeight: 800, color: "#22c55e", marginTop: "4px" }}>
-                  ● ONLINE
-                </div>
-                <div style={{ fontSize: "12px", fontFamily: "monospace", color: "var(--text-muted)", marginTop: "4px" }}>
-                  Puerto :5050 (Panel Gráfico)
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* BASE DE DATOS SQLITE WAL */}
-          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", padding: "20px" }}>
-            <h2 style={{ fontSize: "16px", fontWeight: 800, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", color: "#fff" }}>
-              💾 Base de Datos Operacional (SQLite WAL)
-            </h2>
-            <div style={{ fontSize: "12px", fontFamily: "monospace", color: "var(--text-muted)", marginBottom: "12px" }}>
-              Ruta: {data?.database.db_path} ({(data?.database.size_bytes ? data.database.size_bytes / 1024 : 0).toFixed(1)} KB) · Modo WAL: {data?.database.wal_active ? "ACTIVO 🟢" : "INACTIVO 🔴"}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "10px" }}>
-              {data?.database.tables && Object.entries(data.database.tables).map(([tbl, count]) => (
-                <div key={tbl} style={{ background: "rgba(0,0,0,0.2)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>{tbl}</div>
-                  <div style={{ fontSize: "16px", fontWeight: 800, color: "#fff", marginTop: "2px" }}>{count} filas</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* HISTORICO DE MERCADO */}
-          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", padding: "20px" }}>
-            <h2 style={{ fontSize: "16px", fontWeight: 800, marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", color: "#fff" }}>
-              📊 Datasets en Disco
-            </h2>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)", fontSize: "12px", fontFamily: "monospace", display: "flex", flexDirection: "column", gap: "6px" }}>
-              <div><strong>Archivo BTC:</strong> {data?.market_data.btc_usdt_h1.path}</div>
-              <div><strong>Total Barras:</strong> {data?.market_data.btc_usdt_h1.bars} barras H1</div>
-              <div><strong>Rango Temporal:</strong> {data?.market_data.btc_usdt_h1.date_range}</div>
-              <div style={{ color: "#22c55e" }}><strong>Cobertura:</strong> Multi-Activo & Multi-Timeframe Agnostico</div>
-            </div>
-          </div>
-
+            );
+          })}
         </div>
-      )}
+      </div>
+
+      {/* 3. CONSOLA CANÓNICA DE EVENTOS SSE */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: "24px" }}>
+        {/* LEFT: CONSOLA DE STREAMING */}
+        <div
+          style={{
+            background: "rgba(16, 23, 34, 0.75)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "14px",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
+            <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: 0 }}>
+              Consola de Eventos en Tiempo Real (AsyncEventBus SSE)
+            </h3>
+
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                type="text"
+                placeholder="Filtrar eventos..."
+                value={filterQuery}
+                onChange={(e) => setFilterQuery(e.target.value)}
+                style={{
+                  background: "rgba(0, 0, 0, 0.4)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "6px",
+                  padding: "4px 8px",
+                  color: "#fff",
+                  fontSize: "11px",
+                  fontFamily: "var(--font-mono, monospace)",
+                  outline: "none",
+                }}
+              />
+              <button
+                onClick={togglePause}
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  background: isPaused ? "rgba(245, 158, 11, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: isPaused ? "#f59e0b" : "#cbd5e1",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
+                {isPaused ? "▶ Reanudar" : "⏸ Pausar"}
+              </button>
+              <button
+                onClick={clearLogs}
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#94a3b8",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
+                Limpiar
+              </button>
+            </div>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              background: "#080c14",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              borderRadius: "8px",
+              padding: "14px",
+              fontFamily: "var(--font-mono, monospace)",
+              fontSize: "11px",
+              maxHeight: "380px",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+            }}
+          >
+            {filteredLogs.length === 0 ? (
+              <div style={{ color: "#64748b", textAlign: "center", padding: "40px 0" }}>
+                Escuchando eventos en el bus SSE...
+              </div>
+            ) : (
+              filteredLogs.map((ev, i) => (
+                <div
+                  key={`${ev.eventId}-${i}`}
+                  style={{
+                    padding: "8px 10px",
+                    borderRadius: "6px",
+                    background: "rgba(255, 255, 255, 0.02)",
+                    border: "1px solid rgba(255, 255, 255, 0.04)",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b", fontSize: "10px" }}>
+                    <span style={{ color: "#38bdf8", fontWeight: 800 }}>{ev.eventType}</span>
+                    <span>{new Date(ev.timestampUtcMs).toISOString().slice(11, 23)}</span>
+                  </div>
+                  <div style={{ color: "#cbd5e1", marginTop: "2px", fontSize: "11px" }}>
+                    ID: {ev.eventId} · {ev.details}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT: GOBERNANZA & PROTOCOLO ZERO-TRUST */}
+        <div
+          style={{
+            background: "rgba(16, 23, 34, 0.75)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "14px",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ fontSize: "11px", fontWeight: 800, color: "#f43f5e", fontFamily: "var(--font-mono, monospace)", marginBottom: "4px" }}>
+            GOBERNANZA QUANT ZERO-TRUST
+          </div>
+          <h3 style={{ fontSize: "14px", fontWeight: 900, color: "#fff", margin: "0 0 12px 0" }}>
+            Candados y Acciones Prohibidas
+          </h3>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+            {FORBIDDEN_GOVERNANCE_RULES.map((rule, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: "rgba(244, 63, 94, 0.06)",
+                  border: "1px solid rgba(244, 63, 94, 0.15)",
+                  borderRadius: "8px",
+                  padding: "10px 12px",
+                  fontSize: "11px",
+                  color: "#fda4af",
+                }}
+              >
+                <strong style={{ color: "#f43f5e" }}>🔒 CANDADO #{idx + 1}:</strong> {rule}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: "14px", background: "rgba(0, 0, 0, 0.3)", borderRadius: "8px", padding: "10px", fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+            Self-Healing Monitor: <strong style={{ color: "#34d399" }}>0 fallos no recuperados</strong>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
