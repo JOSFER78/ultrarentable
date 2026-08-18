@@ -10,6 +10,7 @@ from services.api.app.api.audit_router import audit_router
 from services.api.app.api.system_health_router import system_health_router
 from services.api.app.api.search_router import router as search_router
 from services.api.app.api.firebase_sync_router import firebase_sync_router
+from services.api.app.api.portfolios_router import portfolios_router
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
@@ -36,6 +37,7 @@ app.include_router(router, prefix="/api/v1")
 app.include_router(sqx_router, prefix="/api/v1")
 app.include_router(providers_router, prefix="/api/v1")
 app.include_router(candidates_router, prefix="/api/v1")
+app.include_router(portfolios_router)
 app.include_router(execution_router, prefix="/api/v1")
 app.include_router(audit_router, prefix="/api/v1")
 app.include_router(firebase_sync_router, prefix="/api/v1")

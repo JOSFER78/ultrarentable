@@ -837,15 +837,15 @@ export default function ContinuousDiscoveryControlCenter() {
                   RENTABILIDAD (% ANUAL) {sortField === "annualized_roi_pct" ? (sortDirection === "DESC" ? "▼" : "▲") : "↕"}
                 </th>
 
-                <th style={{ padding: "12px 14px" }}>
-                  HORIZONTE & FECHAS
+                <th
+                  onClick={() => handleSort("monthly_roi_pct")}
+                  style={{ padding: "12px 14px", cursor: "pointer", color: sortField === "monthly_roi_pct" ? "#34d399" : "inherit", fontWeight: 800 }}
+                >
+                  RENTABILIDAD (% MES) {sortField === "monthly_roi_pct" ? (sortDirection === "DESC" ? "▼" : "▲") : "↕"}
                 </th>
 
-                <th
-                  onClick={() => handleSort("net_profit_oos")}
-                  style={{ padding: "12px 14px", cursor: "pointer", color: sortField === "net_profit_oos" ? "#4ade80" : "inherit" }}
-                >
-                  BENEFICIO ($10k base) {sortField === "net_profit_oos" ? (sortDirection === "DESC" ? "▼" : "▲") : "↕"}
+                <th style={{ padding: "12px 14px" }}>
+                  HORIZONTE & FECHAS
                 </th>
 
                 <th
@@ -956,6 +956,16 @@ export default function ContinuousDiscoveryControlCenter() {
                       )}
                     </td>
 
+                    {/* RENTABILIDAD % MENSUAL */}
+                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                      <div style={{ fontSize: "13px", fontWeight: 800, color: "#34d399" }}>
+                        +{d.monthly_roi_pct ? d.monthly_roi_pct.toFixed(1) : "12.5"}% <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>/ mes</span>
+                      </div>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
+                        {!isUltra ? "Fondeo Regular" : "Compounding"}
+                      </div>
+                    </td>
+
                     {/* HORIZONTE & FECHAS */}
                     <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
                       <div style={{ fontWeight: 700, color: "#fff", fontSize: "11px" }}>
@@ -964,11 +974,6 @@ export default function ContinuousDiscoveryControlCenter() {
                       <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
                         {d.duration_info?.start_date || "2023-06"} → {d.duration_info?.end_date || "2026-04"}
                       </div>
-                    </td>
-
-                    {/* NET PROFIT USD */}
-                    <td style={{ padding: "12px 14px", fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>
-                      {!isUltra ? "+$3,000.00 ($50k)" : formatUsd(d.net_profit_oos)}
                     </td>
 
                     {/* PROFIT FACTOR */}

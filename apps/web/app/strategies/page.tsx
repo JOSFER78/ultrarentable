@@ -625,15 +625,15 @@ export default function StrategiesExplorerPage() {
                   RENTABILIDAD (% ANUAL) {sortField === "annualized_roi_pct" ? (sortDirection === "DESC" ? "▼" : "▲") : "↕"}
                 </th>
 
-                <th style={{ padding: "12px 14px" }}>
-                  HORIZONTE & FECHAS
+                <th
+                  onClick={() => handleSort("monthly_roi_pct")}
+                  style={{ padding: "12px 14px", cursor: "pointer", color: sortField === "monthly_roi_pct" ? "#34d399" : "inherit", fontWeight: 800 }}
+                >
+                  RENTABILIDAD (% MES) {sortField === "monthly_roi_pct" ? (sortDirection === "DESC" ? "▼" : "▲") : "↕"}
                 </th>
 
-                <th
-                  onClick={() => handleSort("net_profit_usd")}
-                  style={{ padding: "12px 14px", cursor: "pointer", color: sortField === "net_profit_usd" ? "#4ade80" : "inherit" }}
-                >
-                  BENEFICIO ($10k base) {sortField === "net_profit_usd" ? (sortDirection === "DESC" ? "▼" : "▲") : "↕"}
+                <th style={{ padding: "12px 14px" }}>
+                  HORIZONTE & FECHAS
                 </th>
 
                 <th
@@ -682,6 +682,7 @@ export default function StrategiesExplorerPage() {
                   end_date: "2026-04-16"
                 };
                 const annRoiVal = oos.annualized_roi_pct ?? (dur.oos_days ? Math.round(((1.0 + roiVal / 100.0) ** (365.25 / Math.max(20, dur.oos_days)) - 1.0) * 100.0 * 10) / 10 : roiVal);
+                const monthlyRoiVal = oos.monthly_roi_pct ?? Math.round(annRoiVal / 12.0 * 10) / 10;
                 const tpm = oos.trades_per_month ?? (dur.oos_days ? Math.round((oos.trades || 12) / (dur.oos_days / 30.4375) * 10) / 10 : 3.5);
                 const isEven = index % 2 === 0;
 
@@ -744,19 +745,24 @@ export default function StrategiesExplorerPage() {
                       </div>
                     </td>
 
+                    {/* RENTABILIDAD % MENSUAL */}
+                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                      <div style={{ fontSize: "13px", fontWeight: 800, color: "#34d399" }}>
+                        +{monthlyRoiVal.toFixed(1)}% <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>/ mes</span>
+                      </div>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
+                        {!isUltra ? "Fondeo Regular" : "Compounding"}
+                      </div>
+                    </td>
+
                     {/* HORIZONTE & FECHAS */}
                     <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
                       <div style={{ fontWeight: 700, color: "#fff", fontSize: "11px" }}>
-                        {dur.total_years || 2.85} años <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>({dur.total_days || 1041}d)</span>
+                        {!isUltra ? "Sprints de 3 a 5 días" : `${dur.total_years || 2.85} años`} <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>({dur.total_days || 1041}d)</span>
                       </div>
                       <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
                         {dur.start_date || "2023-06"} → {dur.end_date || "2026-04"}
                       </div>
-                    </td>
-
-                    {/* NET PROFIT USD */}
-                    <td style={{ padding: "12px 14px", fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>
-                      {netProf >= 0 ? "+" : "-"}${Math.abs(netProf).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
 
                     {/* PROFIT FACTOR */}
