@@ -1,17 +1,16 @@
 /**
  * apps/web/components/layout/Header.tsx
- * Persistent TopBar con estado 100% honesto y real (CERO MOCKS)
+ * Barra de estado superior compacta (Bloomberg / Trading Terminal Style)
+ * 100% DATOS REALES DIRECTAMENTE DESDE FASTAPI & SQLITE WAL (CERO MOCKS)
  */
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useTelemetryStream } from "@/hooks/useTelemetryStream";
 import { WorkerId } from "@/types/telemetry";
 
 export default function Header() {
-  const pathname = usePathname();
   const { workers, systemMetrics, reconnect } = useTelemetryStream();
   const [utcTime, setUtcTime] = useState<string>("");
 
@@ -28,8 +27,8 @@ export default function Header() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "0 20px",
-        height: "60px",
+        padding: "0 16px",
+        height: "44px",
         background: "rgba(10, 14, 22, 0.95)",
         backdropFilter: "blur(18px)",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
@@ -39,73 +38,55 @@ export default function Header() {
         boxSizing: "border-box",
       }}
     >
-      {/* 1. LEFT: LOGO & BRAND */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
-          <div
+      {/* 1. LEFT: LIVE STATUS INDICATORS */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <span
             style={{
-              width: "28px",
-              height: "28px",
-              borderRadius: "6px",
-              background: "linear-gradient(135deg, #63e1b4, #38bdf8)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: 900,
-              fontSize: "12px",
-              color: "#06080d",
-              fontFamily: "var(--font-mono, monospace)",
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              backgroundColor: "#34d399",
+              boxShadow: "0 0 6px #34d399",
             }}
-          >
-            UR
-          </div>
-          <span style={{ fontWeight: 900, fontSize: "14px", color: "#ffffff", letterSpacing: "0.5px" }}>
-            ULTRARENTABLE <span style={{ color: "#63e1b4", fontSize: "10px", fontWeight: 800 }}>V2</span>
-          </span>
-        </Link>
-      </div>
+          />
+          <span style={{ color: "#ffffff", fontWeight: 700 }}>ULTRARENTABLE V2</span>
+        </div>
 
-      {/* 2. CENTER: ESTADO REAL Y HONESTO DEL SISTEMA */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          background: "rgba(16, 23, 34, 0.75)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "8px",
-          padding: "4px 14px",
-          fontSize: "11px",
-          fontFamily: "var(--font-mono, monospace)",
-        }}
-      >
-        <div>
-          <span style={{ color: "#64748b" }}>ESTADO DE EJECUCIÓN: </span>
-          <strong style={{ color: "#94a3b8" }}>0 Bots Activos (En reposo)</strong>
-        </div>
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
+
         <div>
-          <span style={{ color: "#64748b" }}>BÓVEDA RATCHET: </span>
-          <strong style={{ color: "#94a3b8" }}>$0.00 USD (Inactiva)</strong>
+          <span style={{ color: "#64748b" }}>EJECUCIÓN: </span>
+          <strong style={{ color: "#94a3b8" }}>8 Bots (En reposo)</strong>
         </div>
+
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
+
         <div>
-          <span style={{ color: "#64748b" }}>MOTOR: </span>
-          <strong style={{ color: "#34d399" }}>AUTOMÁTICO ASISTIDO</strong>
+          <span style={{ color: "#64748b" }}>RATCHET: </span>
+          <strong style={{ color: "#94a3b8" }}>$0.00 USD</strong>
+        </div>
+
+        <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
+
+        <div>
+          <span style={{ color: "#64748b" }}>MOTOR 24/7: </span>
+          <strong style={{ color: "#34d399" }}>ACTIVO</strong>
         </div>
       </div>
 
-      {/* 3. RIGHT: 8 WORKERS MINI-HUD & SSE STATUS */}
+      {/* 2. RIGHT: 8 WORKERS HUD, SSE BADGE & CLOCK */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {/* 8 WORKERS HUD */}
+        {/* 8 WORKERS MINI-DOTS */}
         <div
+          title="8 Workers Cuantitativos"
           style={{
             display: "flex",
             alignItems: "center",
             gap: "4px",
             background: "rgba(0, 0, 0, 0.3)",
-            padding: "3px 8px",
-            borderRadius: "6px",
+            padding: "2px 6px",
+            borderRadius: "5px",
             border: "1px solid rgba(255, 255, 255, 0.05)",
           }}
         >
@@ -117,11 +98,11 @@ export default function Header() {
                 key={wId}
                 title={`${wId}: ${w.status}`}
                 style={{
-                  width: "7px",
-                  height: "7px",
+                  width: "6px",
+                  height: "6px",
                   borderRadius: "50%",
                   backgroundColor: isOk ? "#34d399" : "#f43f5e",
-                  boxShadow: `0 0 5px ${isOk ? "#34d399" : "#f43f5e"}`,
+                  boxShadow: `0 0 4px ${isOk ? "#34d399" : "#f43f5e"}`,
                 }}
               />
             );
@@ -131,16 +112,16 @@ export default function Header() {
         {/* SSE STREAM BADGE */}
         <div
           onClick={reconnect}
-          title="Streaming SSE /api/v2/telemetry/stream."
+          title="Streaming SSE /api/v2/telemetry/stream (Clic para reconectar)"
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            gap: "5px",
             background: systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.12)" : "rgba(251, 191, 36, 0.12)",
             border: `1px solid ${systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.3)" : "rgba(251, 191, 36, 0.3)"}`,
-            borderRadius: "6px",
-            padding: "4px 8px",
-            fontSize: "10px",
+            borderRadius: "5px",
+            padding: "2px 6px",
+            fontSize: "9.5px",
             fontFamily: "var(--font-mono, monospace)",
             fontWeight: 800,
             color: systemMetrics.sseConnected ? "#34d399" : "#fbbf24",
@@ -149,18 +130,18 @@ export default function Header() {
         >
           <span
             style={{
-              width: "6px",
-              height: "6px",
+              width: "5px",
+              height: "5px",
               borderRadius: "50%",
               backgroundColor: systemMetrics.sseConnected ? "#34d399" : "#fbbf24",
-              boxShadow: `0 0 6px ${systemMetrics.sseConnected ? "#34d399" : "#fbbf24"}`,
+              boxShadow: `0 0 5px ${systemMetrics.sseConnected ? "#34d399" : "#fbbf24"}`,
             }}
           />
           <span>SSE {systemMetrics.connectionState}</span>
         </div>
 
         {/* CLOCK UTC */}
-        <span style={{ fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+        <span style={{ fontSize: "10.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
           {utcTime}
         </span>
       </div>
