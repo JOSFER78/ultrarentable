@@ -11,13 +11,19 @@ import math
 import sqlite3
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, Query, Body
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+from pydantic import BaseModel, Field
 
 from services.api.app.db.database import get_db, StrategyModel, BacktestModel, CandidateModel
 
 router = APIRouter(tags=["Real Data & SQLite Strategies"])
+
+
+class CombinePortfolioRequest(BaseModel):
+    candidate_ids: List[str] = Field(..., description="Lista de IDs de estrategias a combinar")
+    total_capital_usd: float = Field(10000.0, description="Capital base en USD")
 
 
 @router.get("/candidates/approved")
@@ -40,7 +46,6 @@ def list_approved_candidates(
 
     for c in candidates:
         net_oos = c.net_profit_oos or 0.0
-        # Cálculo de rentabilidad anual y mensual estimada sobre capital base $10,000
         annual_pct = round((net_oos / 10000.0) * 100.0, 2)
         monthly_pct = round(annual_pct / 12.0, 2)
         dd_oos = c.max_dd_oos_pct or c.max_dd_is_pct or 0.0
@@ -80,28 +85,24 @@ def list_approved_candidates(
 
 @router.post("/portfolio/combine")
 def combine_portfolio(
-    candidate_ids: List[str] = Body(..., embed=True),
-    total_capital_usd: float = Body(10000.0, embed=True),
+    req: CombinePortfolioRequest,
     db: Session = Depends(get_db),
 ) -> Dict[str, Any]:
     """Combina inteligentemente un conjunto de estrategias aprobadas, calculando la matriz
-
     de correlación y la reducción combinada de Drawdown.
     """
-    if not candidate_ids:
+    if not req.candidate_ids:
         return {"status": "ERROR", "message": "Selecciona al menos 1 estrategia"}
 
-    cands = db.query(CandidateModel).filter(CandidateModel.candidate_id.in_(candidate_ids)).all()
+    cands = db.query(CandidateModel).filter(CandidateModel.candidate_id.in_(req.candidate_ids)).all()
     if not cands:
         return {"status": "ERROR", "message": "No se encontraron las estrategias solicitadas"}
 
     n = len(cands)
-    # Asignación de pesos inversos a la volatilidad / drawdown
     inv_dds = [1.0 / max(5.0, (c.max_dd_oos_pct or 20.0)) for c in cands]
     sum_inv_dd = sum(inv_dds)
     weights = [round(w / sum_inv_dd, 4) for w in inv_dds]
 
-    # Matriz de correlación estimada entre pares (descorrelación multi-temporalidad y multi-activo)
     corr_matrix = []
     for i, c1 in enumerate(cands):
         row = []
@@ -109,18 +110,16 @@ def combine_portfolio(
             if i == j:
                 row.append(1.0)
             elif c1.symbol != c2.symbol:
-                row.append(0.18)  # Descorrelación alta entre pares distintos
+                row.append(0.18)
             elif c1.timeframe != c2.timeframe:
-                row.append(0.35)  # Descorrelación moderada entre temporalidades
+                row.append(0.35)
             else:
                 row.append(0.65)
         corr_matrix.append(row)
 
-    # Retorno esperado y DD combinado (Diversification Benefit)
     avg_annual = sum(w * ((c.net_profit_oos or 0.0) / 10000.0 * 100.0) for w, c in zip(weights, cands))
     avg_monthly = avg_annual / 12.0
 
-    # Drawdown conjunto reducido por diversificación Choueifaty
     individual_max_dd = max((c.max_dd_oos_pct or 20.0) for c in cands)
     diversification_factor = math.sqrt(sum(w**2 for w in weights) + 0.25 * (1.0 - sum(w**2 for w in weights)))
     combined_max_dd = round(individual_max_dd * diversification_factor, 2)
@@ -134,7 +133,7 @@ def combine_portfolio(
             "symbol": c.symbol,
             "timeframe": c.timeframe,
             "weight": w,
-            "allocated_capital_usd": round(total_capital_usd * w, 2),
+            "allocated_capital_usd": round(req.total_capital_usd * w, 2),
             "individual_dd_pct": c.max_dd_oos_pct or 20.0,
             "annual_return_pct": round(((c.net_profit_oos or 0.0) / 10000.0) * 100.0, 2),
         })
@@ -142,7 +141,7 @@ def combine_portfolio(
     return {
         "status": "SUCCESS",
         "strategies_count": n,
-        "total_capital_usd": total_capital_usd,
+        "total_capital_usd": req.total_capital_usd,
         "combined_annual_return_pct": round(avg_annual, 2),
         "combined_monthly_return_pct": round(avg_monthly, 2),
         "combined_max_dd_pct": combined_max_dd,
