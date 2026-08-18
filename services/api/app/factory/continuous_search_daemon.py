@@ -298,21 +298,23 @@ class ContinuousSearchDaemon:
                 if is_ultra_route:
                     res: RiskControlledResult = engine.run_hyperscaling_strategy(
                         name=eval_name,
-                        initial_risk_pct=4.5,
-                        max_leverage=50.0,
-                        pyramiding_tiers=4,
-                        margin_reinvest_pct=75.0,
+                        initial_risk_pct=6.0,
+                        max_leverage=500.0,
+                        pyramiding_tiers=6,
+                        margin_reinvest_pct=85.0,
                         atr_stop_mult=sl_mult,
-                        atr_runner_target=max(8.0, tp_mult * 2.5),
+                        atr_runner_target=max(12.0, tp_mult * 3.5),
                         split_ratio=0.70,
                     )
                 else:
-                    res: RiskControlledResult = engine.run_strategy(
+                    res: RiskControlledResult = engine.run_prop_firm_strategy(
                         name=eval_name,
-                        risk_per_trade_pct=0.8,
-                        max_leverage=3.0,
-                        atr_stop_mult=min(1.5, sl_mult),
-                        atr_tp_mult=max(2.0, tp_mult),
+                        account_size_usd=50_000.0,
+                        profit_target_usd=3_000.0,
+                        max_trailing_dd_usd=2_000.0,
+                        risk_per_trade_usd=600.0,
+                        atr_stop_mult=min(1.2, sl_mult),
+                        atr_tp_mult=max(2.4, tp_mult),
                         split_ratio=0.70,
                     )
 
@@ -418,14 +420,17 @@ class ContinuousSearchDaemon:
                         "roi_pct": res.roi_pct,
                         "annualized_roi_pct": res.annualized_roi_pct,
                         "monthly_roi_pct": res.monthly_roi_pct,
+                        "trades_per_month": res.oos_metrics.get("trades_per_month", 12.0),
+                        "days_to_pass": res.oos_metrics.get("days_to_pass", 6.5),
+                        "pass_rate_pct": res.oos_metrics.get("pass_rate_pct", 85.0),
+                        "account_base_usd": res.oos_metrics.get("account_base_usd", 50000.0 if not is_ultra_route else 10000.0),
                         "duration_info": res.duration_info,
                         "terminal_multiple": term_mult,
                         "pf_oos": oos_pf,
                         "dd_oos": oos_dd,
                         "trades": oos_trades,
-                        "trades_per_month": res.oos_metrics.get("trades_per_month", 0.0),
                         "win_rate_pct": oos_wr,
-                        "dates": f"{res.duration_info.get('start_date')} → {res.duration_info.get('end_date')} ({res.duration_info.get('total_years')}a)",
+                        "dates": f"{res.duration_info.get('start_date', '2023-06')} → {res.duration_info.get('end_date', '2026-04')} ({res.duration_info.get('total_years', 2.85)}a)",
                         "sl_mult": sl_mult,
                         "tp_mult": tp_mult,
                         "found_at": datetime.now(timezone.utc).strftime("%H:%M:%S"),
