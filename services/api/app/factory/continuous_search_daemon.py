@@ -268,7 +268,7 @@ class ContinuousSearchDaemon:
 
             # Load candles for cell
             candles = load_candles(cell.symbol, cell.timeframe.value)
-            if len(candles) < 150:
+            if len(candles) < 50:
                 time.sleep(0.05)
                 continue
 
@@ -331,6 +331,7 @@ class ContinuousSearchDaemon:
                                             margin_reinvest_pct=r_val,
                                             atr_stop_mult=sl_val,
                                             atr_runner_target=tp_val * 2.0,
+                                            archetype=archetype_key,
                                             split_ratio=0.70,
                                         )
                                         oos_m = res_cand.oos_metrics
@@ -368,6 +369,7 @@ class ContinuousSearchDaemon:
                                     risk_per_trade_usd=risk_val,
                                     atr_stop_mult=sl_val,
                                     atr_tp_mult=tp_val,
+                                    archetype=archetype_key,
                                     split_ratio=0.70,
                                 )
                                 oos_m = res_cand.oos_metrics

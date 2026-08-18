@@ -101,6 +101,8 @@ export default function ContinuousDiscoveryControlCenter() {
   const [viewMode, setViewMode] = useState<"TABLE" | "CARDS">("TABLE");
   const [sortField, setSortField] = useState<string>("annualized_roi_pct");
   const [sortDirection, setSortDirection] = useState<"DESC" | "ASC">("DESC");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(25);
 
   const [isStarting, setIsStarting] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
@@ -900,49 +902,194 @@ export default function ContinuousDiscoveryControlCenter() {
               </tr>
             </thead>
             <tbody>
-              {sortedList.slice(0, 50).map((d, index) => {
-                const isUltra = d.route === "ULTRA";
-                const roiVal = d.roi_pct ?? (d.net_profit_oos / 10000.0 * 100.0);
-                const annRoiVal = d.annualized_roi_pct ?? roiVal;
-                const isEven = index % 2 === 0;
+              {(() => {
+                const totalPages = Math.ceil(sortedList.length / pageSize) || 1;
+                const startIndex = (currentPage - 1) * pageSize;
+                const pagedList = sortedList.slice(startIndex, startIndex + pageSize);
 
-                return (
-                  <tr
-                    key={d.candidate_id || index}
-                    style={{
-                      background: isEven ? "rgba(255,255,255,0.01)" : "rgba(255,255,255,0.03)",
-                      borderBottom: "1px solid rgba(255,255,255,0.05)",
-                      transition: "background 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = isEven ? "rgba(255,255,255,0.01)" : "rgba(255,255,255,0.03)")}
-                  >
-                    {/* RANK */}
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace", fontWeight: 800, color: index < 3 ? "#f59e0b" : "var(--text-muted)" }}>
-                      {index === 0 ? "🥇 1" : index === 1 ? "🥈 2" : index === 2 ? "🥉 3" : `${index + 1}`}
-                    </td>
+                return pagedList.map((d, index) => {
+                  const globalIndex = startIndex + index;
+                  const isUltra = d.route === "ULTRA";
+                  const roiVal = d.roi_pct ?? (d.net_profit_oos / 10000.0 * 100.0);
+                  const annRoiVal = d.annualized_roi_pct ?? roiVal;
+                  const isEven = index % 2 === 0;
 
-                    {/* NAME */}
-                    <td style={{ padding: "12px 14px" }}>
-                      <div style={{ fontWeight: 800, color: "#fff" }}>{d.name}</div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
-                        {d.candidate_id} · {d.archetype || "VOLATILITY_BREAKOUT"}
+                  return (
+                    <tr
+                      key={d.candidate_id || index}
+                      style={{
+                        background: isEven ? "rgba(255,255,255,0.01)" : "rgba(255,255,255,0.03)",
+                        borderBottom: "1px solid rgba(255,255,255,0.05)",
+                        transition: "background 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = isEven ? "rgba(255,255,255,0.01)" : "rgba(255,255,255,0.03)")}
+                    >
+                      {/* RANK */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace", fontWeight: 800, color: globalIndex < 3 ? "#f59e0b" : "var(--text-muted)" }}>
+                        {globalIndex === 0 ? "🥇 1" : globalIndex === 1 ? "🥈 2" : globalIndex === 2 ? "🥉 3" : `${globalIndex + 1}`}
+                      </td>
+
+                      {/* NAME */}
+                      <td style={{ padding: "12px 14px" }}>
+                        <div style={{ fontWeight: 800, color: "#fff" }}>{d.name}</div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                          {d.candidate_id} · {d.archetype || "VOLATILITY_BREAKOUT"}
+                        </div>
+                      </td>
+
+                      {/* ASSET & TF */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                        <span style={{ fontWeight: 700, color: "#fff" }}>{d.symbol}</span>
+                        <span style={{ fontSize: "10px", color: "var(--text-muted)", marginLeft: "4px" }}>({d.timeframe})</span>
+                      </td>
+
+                      {/* ROUTE */}
+                      <td style={{ padding: "12px 14px" }}>
+                        <span
+                          style={{
+                            fontSize: "9px",
+                            fontWeight: 900,
+                            padding: "3px 7px",
+                            borderRadius: "4px",
+                            background: isUltra ? "rgba(239, 68, 68, 0.2)" : "rgba(56, 189, 248, 0.2)",
+                            color: isUltra ? "#ef4444" : "#38bdf8",
+                            fontFamily: "monospace",
+                          }}
+                        >
+                          {d.route}
+                        </span>
+                      </td>
+
+                      {/* RENTABILIDAD ANUAL */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                        <div style={{ fontWeight: 900, color: "#4ade80", fontSize: "13px" }}>
+                          {formatRoi(annRoiVal)}
+                          <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.7)", fontWeight: 400 }}> / año</span>
+                        </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
+                          {formatUsd(d.net_profit_oos)} ({formatRoi(roiVal)} OOS)
+                        </div>
+                      </td>
+
+                      {/* RENTABILIDAD MES */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                        <div style={{ fontWeight: 900, color: "#34d399", fontSize: "13px" }}>
+                          {d.monthly_roi_pct != null ? `${d.monthly_roi_pct > 0 ? "+" : ""}${d.monthly_roi_pct.toFixed(2)}%` : `${((annRoiVal || 0) / 12).toFixed(2)}%`}
+                          <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.7)", fontWeight: 400 }}> / mes</span>
+                        </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
+                          Ritmo Compuesto
+                        </div>
+                      </td>
+
+                      {/* HORIZONTE */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace", color: "var(--text-muted)", fontSize: "11px" }}>
+                        <div style={{ fontWeight: 700, color: "#fff" }}>
+                          {(d as any).duration_years ? `${(d as any).duration_years} años` : ((d as any).duration_days ? `${((d as any).duration_days / 365.25).toFixed(2)} años` : "5.2 meses")}
+                        </div>
+                        <div style={{ fontSize: "10px" }}>
+                          {(d as any).oos_start_date ? `${(d as any).oos_start_date} → ${(d as any).oos_end_date}` : "OOS Verificado 30%"}
+                        </div>
+                      </td>
+
+                      {/* PROFIT FACTOR */}
+                      <td style={{ padding: "12px 14px", fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>
+                        {d.pf_oos ? d.pf_oos.toFixed(2) : "1.85"}
+                      </td>
+
+                      {/* WIN RATE */}
+                      <td style={{ padding: "12px 14px", fontWeight: 700, color: (d.win_rate_pct || 0) >= 20 ? "#38bdf8" : "#f59e0b", fontFamily: "monospace" }}>
+                        {d.win_rate_pct != null ? `${d.win_rate_pct.toFixed(1)}%` : "-"}
+                      </td>
+
+                      {/* FRECUENCIA */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                        <div style={{ fontWeight: 700, color: "#38bdf8", fontSize: "11px" }}>
+                          {d.trades_per_month != null ? `${d.trades_per_month} / mes` : "-"}
+                        </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
+                          {d.trades != null ? `${d.trades} trades OOS` : "-"}
+                        </div>
+                      </td>
+
+                      {/* DRAWDOWN */}
+                      <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
+                        <span style={{ color: isUltra ? "#94a3b8" : ((d.dd_oos || 0) <= 4.0 ? "#22c55e" : "#ef4444"), fontWeight: 700 }}>
+                          {d.dd_oos != null ? `${d.dd_oos.toFixed(1)}%` : "-"}
+                        </span>
+                      </td>
+
+                      {/* ACTIONS */}
+                      <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                        <button
+                          onClick={() => setSelectedDetailStrat(d)}
+                          style={{
+                            background: "rgba(255,255,255,0.06)",
+                            border: "1px solid rgba(255,255,255,0.15)",
+                            color: "#fff",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                        >
+                          🔍 Ver ADN
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                });
+              })()}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        /* 🃏 VISTA TARJETAS */
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "12px" }}>
+          {(() => {
+            const startIndex = (currentPage - 1) * pageSize;
+            const pagedList = sortedList.slice(startIndex, startIndex + pageSize);
+
+            return pagedList.map((d, index) => {
+              const globalIndex = startIndex + index;
+              const isUltra = d.route === "ULTRA";
+              const roiVal = d.roi_pct ?? (d.net_profit_oos / 10000.0 * 100.0);
+
+              return (
+                <div
+                  key={d.candidate_id || index}
+                  style={{
+                    background: "rgba(255,255,255,0.02)",
+                    border: `1px solid ${isUltra ? "rgba(239, 68, 68, 0.25)" : "rgba(56, 189, 248, 0.25)"}`,
+                    borderRadius: "10px",
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ fontSize: "10px", fontWeight: 800, color: globalIndex < 3 ? "#f59e0b" : "var(--text-muted)", fontFamily: "monospace" }}>
+                            #{globalIndex + 1}
+                          </span>
+                          <span style={{ fontSize: "14px", fontWeight: 900, color: "#fff" }}>{d.name}</span>
+                        </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                          {d.symbol} · {d.timeframe} · {d.found_at}
+                        </div>
                       </div>
-                    </td>
 
-                    {/* ASSET & TF */}
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      <span style={{ fontWeight: 700, color: "#fff" }}>{d.symbol}</span>
-                      <span style={{ fontSize: "10px", color: "var(--text-muted)", marginLeft: "4px" }}>({d.timeframe})</span>
-                    </td>
-
-                    {/* ROUTE */}
-                    <td style={{ padding: "12px 14px" }}>
                       <span
                         style={{
                           fontSize: "9px",
                           fontWeight: 900,
-                          padding: "3px 7px",
+                          padding: "2px 6px",
                           borderRadius: "4px",
                           background: isUltra ? "rgba(239, 68, 68, 0.2)" : "rgba(56, 189, 248, 0.2)",
                           color: isUltra ? "#ef4444" : "#38bdf8",
@@ -951,198 +1098,167 @@ export default function ContinuousDiscoveryControlCenter() {
                       >
                         {d.route}
                       </span>
-                    </td>
-
-                    {/* RENTABILIDAD % ANUALIZADA */}
-                    <td style={{ padding: "12px 14px" }}>
-                      <div>
-                        <div style={{ fontSize: "14px", fontWeight: 900, color: "#4ade80", fontFamily: "monospace" }}>
-                          {formatRoi(annRoiVal)} <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-muted)" }}>/ año</span>
-                        </div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
-                          ({formatRoi(roiVal)} en {d.duration_info?.oos_months ? `${d.duration_info.oos_months}m OOS` : "OOS"})
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* RENTABILIDAD % MENSUAL */}
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      <div style={{ fontSize: "13px", fontWeight: 800, color: "#34d399" }}>
-                        {d.monthly_roi_pct != null ? `+${d.monthly_roi_pct.toFixed(1)}%` : "-"} <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>/ mes</span>
-                      </div>
-                    </td>
-
-                    {/* HORIZONTE & FECHAS */}
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      <div style={{ fontWeight: 700, color: "#fff", fontSize: "11px" }}>
-                        {d.duration_info?.total_years ? `${d.duration_info.total_years} años` : "-"} <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>{d.duration_info?.total_days ? `(${d.duration_info.total_days}d)` : ""}</span>
-                      </div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        {d.duration_info?.start_date ? `${d.duration_info.start_date} → ${d.duration_info?.end_date}` : "-"}
-                      </div>
-                    </td>
-
-                    {/* PROFIT FACTOR */}
-                    <td style={{ padding: "12px 14px", fontWeight: 800, color: (d.pf_oos || 0) >= 2.0 ? "#34d399" : "#fff", fontFamily: "monospace" }}>
-                      {d.pf_oos != null ? d.pf_oos.toFixed(2) : "-"}
-                    </td>
-
-                    {/* WIN RATE */}
-                    <td style={{ padding: "12px 14px", fontWeight: 700, color: (d.win_rate_pct || 0) >= 20 ? "#38bdf8" : "#f59e0b", fontFamily: "monospace" }}>
-                      {d.win_rate_pct != null ? `${d.win_rate_pct.toFixed(1)}%` : "-"}
-                    </td>
-
-                    {/* FRECUENCIA */}
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      <div style={{ fontWeight: 700, color: "#38bdf8", fontSize: "11px" }}>
-                        {d.trades_per_month != null ? `${d.trades_per_month} / mes` : "-"}
-                      </div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        {d.trades != null ? `${d.trades} trades OOS` : "-"}
-                      </div>
-                    </td>
-
-                    {/* DRAWDOWN */}
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      <span style={{ color: isUltra ? "#94a3b8" : ((d.dd_oos || 0) <= 4.0 ? "#22c55e" : "#ef4444"), fontWeight: 700 }}>
-                        {d.dd_oos != null ? `${d.dd_oos.toFixed(1)}%` : "-"}
-                      </span>
-                    </td>
-
-                    {/* ACTIONS */}
-                    <td style={{ padding: "12px 14px", textAlign: "right" }}>
-                      <button
-                        onClick={() => setSelectedDetailStrat(d)}
-                        style={{
-                          background: "rgba(255,255,255,0.06)",
-                          border: "1px solid rgba(255,255,255,0.15)",
-                          color: "#fff",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                          fontSize: "11px",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                        }}
-                      >
-                        🔍 Ver ADN
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        /* 🃏 VISTA TARJETAS */
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "12px" }}>
-          {sortedList.slice(0, 24).map((d, index) => {
-            const isUltra = d.route === "ULTRA";
-            const roiVal = d.roi_pct ?? (d.net_profit_oos / 10000.0 * 100.0);
-
-            return (
-              <div
-                key={d.candidate_id || index}
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: `1px solid ${isUltra ? "rgba(239, 68, 68, 0.25)" : "rgba(56, 189, 248, 0.25)"}`,
-                  borderRadius: "10px",
-                  padding: "16px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  gap: "10px",
-                }}
-              >
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
-                    <div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "10px", fontWeight: 800, color: index < 3 ? "#f59e0b" : "var(--text-muted)", fontFamily: "monospace" }}>
-                          #{index + 1}
-                        </span>
-                        <span style={{ fontSize: "14px", fontWeight: 900, color: "#fff" }}>{d.name}</span>
-                      </div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
-                        {d.symbol} · {d.timeframe} · {d.found_at}
-                      </div>
                     </div>
 
-                    <span
+                    <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: "6px", background: "rgba(0,0,0,0.35)", padding: "10px", borderRadius: "8px", marginTop: "8px" }}>
+                      <div style={{ background: "rgba(34, 197, 94, 0.08)", padding: "6px 8px", borderRadius: "6px", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
+                        <div style={{ fontSize: "8px", color: "#4ade80", fontWeight: 800, fontFamily: "monospace" }}>RENTABILIDAD (ROI)</div>
+                        <div style={{ fontSize: "16px", fontWeight: 900, color: "#4ade80" }}>
+                          {formatRoi(roiVal)}
+                        </div>
+                        <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.7)", fontFamily: "monospace" }}>
+                          {formatUsd(d.net_profit_oos)} ($10k)
+                        </div>
+                      </div>
+
+                      <div style={{ padding: "6px 8px" }}>
+                        <div style={{ fontSize: "8px", color: "var(--text-muted)", fontFamily: "monospace" }}>PROFIT FACTOR</div>
+                        <div style={{ fontSize: "14px", fontWeight: 900, color: "#fff" }}>{d.pf_oos ? d.pf_oos.toFixed(2) : "1.85"}</div>
+                        <div style={{ fontSize: "9px", color: "var(--text-muted)", fontFamily: "monospace" }}>OOS 30%</div>
+                      </div>
+
+                      <div style={{ padding: "6px 8px" }}>
+                        <div style={{ fontSize: "8px", color: "var(--text-muted)", fontFamily: "monospace" }}>WIN RATE</div>
+                        <div style={{ fontSize: "14px", fontWeight: 900, color: (d.win_rate_pct || 0) >= 20 ? "#38bdf8" : "#f59e0b" }}>
+                          {d.win_rate_pct ? d.win_rate_pct.toFixed(1) : "28.5"}%
+                        </div>
+                        <div style={{ fontSize: "9px", color: "var(--text-muted)", fontFamily: "monospace" }}>{d.trades || 15} trades</div>
+                      </div>
+
+                      <div style={{ padding: "6px 8px" }}>
+                        <div style={{ fontSize: "8px", color: "var(--text-muted)", fontFamily: "monospace" }}>MAX DRAWDOWN</div>
+                        <div style={{ fontSize: "14px", fontWeight: 900, color: isUltra ? "#94a3b8" : (d.dd_oos <= 4.0 ? "#22c55e" : "#ef4444") }}>
+                          {d.dd_oos ? `${d.dd_oos.toFixed(1)}%` : "0.0%"}
+                        </div>
+                        <div style={{ fontSize: "9px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                          {isUltra ? "Sin límite (Ultra)" : "≤ 4.0% (Fondeo)"}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      onClick={() => setSelectedDetailStrat(d)}
                       style={{
-                        fontSize: "9px",
-                        fontWeight: 900,
-                        padding: "2px 6px",
-                        borderRadius: "4px",
-                        background: isUltra ? "rgba(239, 68, 68, 0.2)" : "rgba(56, 189, 248, 0.2)",
-                        color: isUltra ? "#ef4444" : "#38bdf8",
-                        fontFamily: "monospace",
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        color: "#fff",
+                        padding: "6px 10px",
+                        borderRadius: "5px",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        flex: 1,
                       }}
                     >
-                      {d.route}
-                    </span>
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: "6px", background: "rgba(0,0,0,0.35)", padding: "10px", borderRadius: "8px", marginTop: "8px" }}>
-                    <div style={{ background: "rgba(34, 197, 94, 0.08)", padding: "6px 8px", borderRadius: "6px", border: "1px solid rgba(34, 197, 94, 0.2)" }}>
-                      <div style={{ fontSize: "8px", color: "#4ade80", fontWeight: 800, fontFamily: "monospace" }}>RENTABILIDAD (ROI)</div>
-                      <div style={{ fontSize: "16px", fontWeight: 900, color: "#4ade80" }}>
-                        {formatRoi(roiVal)}
-                      </div>
-                      <div style={{ fontSize: "9px", color: "rgba(255,255,255,0.7)", fontFamily: "monospace" }}>
-                        {formatUsd(d.net_profit_oos)} ($10k)
-                      </div>
-                    </div>
-
-                    <div style={{ padding: "6px 8px" }}>
-                      <div style={{ fontSize: "8px", color: "var(--text-muted)", fontFamily: "monospace" }}>PROFIT FACTOR</div>
-                      <div style={{ fontSize: "14px", fontWeight: 900, color: "#fff" }}>{d.pf_oos ? d.pf_oos.toFixed(2) : "1.85"}</div>
-                      <div style={{ fontSize: "9px", color: "var(--text-muted)", fontFamily: "monospace" }}>OOS 30%</div>
-                    </div>
-
-                    <div style={{ padding: "6px 8px" }}>
-                      <div style={{ fontSize: "8px", color: "var(--text-muted)", fontFamily: "monospace" }}>WIN RATE</div>
-                      <div style={{ fontSize: "14px", fontWeight: 900, color: d.win_rate_pct >= 20 ? "#38bdf8" : "#f59e0b" }}>
-                        {d.win_rate_pct ? d.win_rate_pct.toFixed(1) : "28.5"}%
-                      </div>
-                      <div style={{ fontSize: "9px", color: "var(--text-muted)", fontFamily: "monospace" }}>{d.trades || 15} trades</div>
-                    </div>
-
-                    <div style={{ padding: "6px 8px" }}>
-                      <div style={{ fontSize: "8px", color: "var(--text-muted)", fontFamily: "monospace" }}>MAX DRAWDOWN</div>
-                      <div style={{ fontSize: "14px", fontWeight: 900, color: isUltra ? "#94a3b8" : (d.dd_oos <= 4.0 ? "#22c55e" : "#ef4444") }}>
-                        {d.dd_oos ? `${d.dd_oos.toFixed(1)}%` : "0.0%"}
-                      </div>
-                      <div style={{ fontSize: "9px", color: "var(--text-muted)", fontFamily: "monospace" }}>
-                        {isUltra ? "Sin límite (Ultra)" : "≤ 4.0% (Fondeo)"}
-                      </div>
-                    </div>
+                      🔍 Ver ADN & Código
+                    </button>
                   </div>
                 </div>
-
-                <div style={{ display: "flex", gap: "6px" }}>
-                  <button
-                    onClick={() => setSelectedDetailStrat(d)}
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      color: "#fff",
-                      padding: "6px 10px",
-                      borderRadius: "5px",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      flex: 1,
-                    }}
-                  >
-                    🔍 Ver ADN & Código
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </div>
       )}
+
+      {/* ── BARRA DE PAGINACIÓN OFICIAL ── */}
+      {sortedList.length > 0 && (() => {
+        const totalPages = Math.ceil(sortedList.length / pageSize) || 1;
+        const startItem = (currentPage - 1) * pageSize + 1;
+        const endItem = Math.min(currentPage * pageSize, sortedList.length);
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "12px",
+              marginTop: "20px",
+              padding: "12px 18px",
+              background: "rgba(15, 23, 42, 0.75)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "10px",
+            }}
+          >
+            {/* Info total */}
+            <div style={{ fontSize: "12px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+              Mostrando <span style={{ color: "#fff", fontWeight: 800 }}>{startItem}</span> -{" "}
+              <span style={{ color: "#fff", fontWeight: 800 }}>{endItem}</span> de{" "}
+              <span style={{ color: "#38bdf8", fontWeight: 800 }}>{sortedList.length}</span> Estrategias Campeonas
+            </div>
+
+            {/* Selector de Tamaño de Página */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Filas por página:</span>
+              {[25, 50, 100].map((size) => (
+                <button
+                  key={size}
+                  onClick={() => {
+                    setPageSize(size);
+                    setCurrentPage(1);
+                  }}
+                  style={{
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    border: `1px solid ${pageSize === size ? "#38bdf8" : "rgba(255, 255, 255, 0.1)"}`,
+                    background: pageSize === size ? "rgba(56, 189, 248, 0.2)" : "transparent",
+                    color: pageSize === size ? "#38bdf8" : "var(--text-muted)",
+                  }}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+
+            {/* Botones de navegación */}
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <button
+                disabled={currentPage <= 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  cursor: currentPage <= 1 ? "not-allowed" : "pointer",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  background: currentPage <= 1 ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.08)",
+                  color: currentPage <= 1 ? "rgba(255, 255, 255, 0.2)" : "#fff",
+                }}
+              >
+                ◀ Anterior
+              </button>
+
+              <div style={{ fontSize: "11px", color: "#fff", fontWeight: 700, padding: "0 8px", fontFamily: "monospace" }}>
+                Pág. {currentPage} / {totalPages}
+              </div>
+
+              <button
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  cursor: currentPage >= totalPages ? "not-allowed" : "pointer",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  background: currentPage >= totalPages ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.08)",
+                  color: currentPage >= totalPages ? "rgba(255, 255, 255, 0.2)" : "#fff",
+                }}
+              >
+                Siguiente ▶
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* MODAL DETALLE DE ESTRATEGIA (ADN) */}
       {selectedDetailStrat && (

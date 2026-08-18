@@ -165,6 +165,48 @@ class UltraRiskControlledEngine:
             self.highest[i] = np.max(self.highs[i - 20 : i])
             self.lowest[i] = np.min(self.lows[i - 20 : i])
 
+        # RSI 14
+        self.rsi = self._calc_rsi(self.closes, 14)
+
+        # Bollinger Bands (20, 2.0)
+        self.bb_upper, self.bb_middle, self.bb_lower = self._calc_bollinger(self.closes, 20, 2.0)
+
+    @staticmethod
+    def _calc_rsi(data: np.ndarray, period: int = 14) -> np.ndarray:
+        rsi = np.full_like(data, 50.0)
+        if len(data) <= period:
+            return rsi
+        deltas = np.diff(data)
+        seed = deltas[:period]
+        up = seed[seed >= 0].sum() / period
+        down = -seed[seed < 0].sum() / period
+        rs = up / down if down != 0 else 0
+        rsi[period] = 100.0 - (100.0 / (1.0 + rs)) if (1.0 + rs) != 0 else 50.0
+
+        for i in range(period + 1, len(data)):
+            delta = deltas[i - 1]
+            upval = delta if delta > 0 else 0.0
+            downval = -delta if delta < 0 else 0.0
+            up = (up * (period - 1) + upval) / period
+            down = (down * (period - 1) + downval) / period
+            rs = up / down if down != 0 else 0
+            rsi[i] = 100.0 - (100.0 / (1.0 + rs)) if (1.0 + rs) != 0 else 50.0
+        return rsi
+
+    @staticmethod
+    def _calc_bollinger(data: np.ndarray, period: int = 20, num_std: float = 2.0) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        middle = np.zeros_like(data)
+        upper = np.zeros_like(data)
+        lower = np.zeros_like(data)
+        for i in range(period, len(data)):
+            window = data[i - period : i]
+            mean = np.mean(window)
+            std = np.std(window)
+            middle[i] = mean
+            upper[i] = mean + (num_std * std)
+            lower[i] = mean - (num_std * std)
+        return upper, middle, lower
+
     @staticmethod
     def _calc_ema(data: np.ndarray, period: int) -> np.ndarray:
         alpha = 2.0 / (period + 1)
@@ -406,6 +448,61 @@ class UltraRiskControlledEngine:
             trades=trades
         )
 
+    def _check_entry_signal(self, i: int, archetype: str) -> Tuple[bool, bool]:
+        """Evaluate distinct quantitative entry signals based on strategy archetype."""
+        if i < 20 or i >= self.n_bars - 5:
+            return False, False
+
+        c_px = self.closes[i]
+        h_px = self.highs[i]
+        l_px = self.lows[i]
+        cur_atr = self.atr[i]
+        arch = archetype.upper()
+
+        if "VOLATILITY" in arch or "EXPANSION" in arch:
+            avg_atr = np.mean(self.atr[max(0, i - 14) : i])
+            vol_exp = cur_atr >= avg_atr * 1.12
+            trend_up = c_px > self.highest[i - 1] and vol_exp
+            trend_down = c_px < self.lowest[i - 1] and vol_exp
+            return trend_up, trend_down
+
+        elif "TREND" in arch or "EMA" in arch:
+            trend_up = self.ema_fast[i] > self.ema_slow[i] and self.ema_fast[i - 1] <= self.ema_slow[i - 1] and c_px > self.ema_fast[i]
+            trend_down = self.ema_fast[i] < self.ema_slow[i] and self.ema_fast[i - 1] >= self.ema_slow[i - 1] and c_px < self.ema_fast[i]
+            return trend_up, trend_down
+
+        elif "MOMENTUM" in arch or "BREAKOUT" in arch:
+            rsi_val = self.rsi[i]
+            trend_up = rsi_val > 56.0 and c_px > self.highest[i - 1]
+            trend_down = rsi_val < 44.0 and c_px < self.lowest[i - 1]
+            return trend_up, trend_down
+
+        elif "MEAN" in arch or "REVERSION" in arch:
+            bb_up = self.bb_upper[i]
+            bb_low = self.bb_lower[i]
+            rsi_val = self.rsi[i]
+            trend_up = l_px <= bb_low and c_px > bb_low and rsi_val < 38.0
+            trend_down = h_px >= bb_up and c_px < bb_up and rsi_val > 62.0
+            return trend_up, trend_down
+
+        elif "RSI" in arch or "DIVERGENCE" in arch:
+            prev_idx = max(0, i - 8)
+            rsi_val = self.rsi[i]
+            rsi_prev = self.rsi[prev_idx]
+            trend_up = rsi_val > rsi_prev and c_px < self.closes[prev_idx] and rsi_val < 42.0
+            trend_down = rsi_val < rsi_prev and c_px > self.closes[prev_idx] and rsi_val > 58.0
+            return trend_up, trend_down
+
+        elif "DONCHIAN" in arch or "CHANNEL" in arch:
+            trend_up = c_px >= self.highest[i - 1]
+            trend_down = c_px <= self.lowest[i - 1]
+            return trend_up, trend_down
+
+        else:
+            trend_up = self.ema_fast[i] > self.ema_slow[i] and c_px > self.highest[i - 1]
+            trend_down = self.ema_fast[i] < self.ema_slow[i] and c_px < self.lowest[i - 1]
+            return trend_up, trend_down
+
     def run_prop_firm_strategy(
         self,
         name: str,
@@ -416,6 +513,7 @@ class UltraRiskControlledEngine:
         risk_per_trade_usd: float = 350.0,      # $350 risk per trade (0.7%)
         atr_stop_mult: float = 1.2,
         atr_tp_mult: float = 2.4,
+        archetype: str = "VOLATILITY_EXPANSION",
         split_ratio: float = 0.70
     ) -> RiskControlledResult:
         """Run CME Prop Firm Challenge Simulation ($50,000 account, sprint to +$3,000 target)."""
@@ -483,13 +581,11 @@ class UltraRiskControlledEngine:
                     in_pos = False
                     continue
 
-            # Entries: Intraday Trend & Breakout
+            # Entries: Specific Archetype Rules
             if not in_pos and i < self.n_bars - 5:
-                trend_up = self.ema_fast[i] > self.ema_slow[i] and c_px > self.highest[i - 1]
-                trend_down = self.ema_fast[i] < self.ema_slow[i] and c_px < self.lowest[i - 1]
-                vol_ok = cur_atr >= np.mean(self.atr[max(0, i - 15) : i]) * 0.90
+                trend_up, trend_down = self._check_entry_signal(i, archetype)
 
-                if (trend_up or trend_down) and vol_ok:
+                if trend_up or trend_down:
                     pos_side = "LONG" if trend_up else "SHORT"
                     entry_idx = i
                     entry_px = c_px * (1.0 + (self.spread_bps + self.slippage_bps)) if pos_side == "LONG" else c_px * (1.0 - (self.spread_bps + self.slippage_bps))
@@ -665,6 +761,7 @@ class UltraRiskControlledEngine:
         margin_reinvest_pct: float = 40.0,
         atr_stop_mult: float = 1.2,
         atr_runner_target: float = 6.0,
+        archetype: str = "VOLATILITY_EXPANSION",
         split_ratio: float = 0.70
     ) -> RiskControlledResult:
         """Run Ultra Convexity Backtest on standard $10,000 USD capital with realistic bounded sizing."""
@@ -743,13 +840,11 @@ class UltraRiskControlledEngine:
                     in_pos = False
                     continue
 
-            # Check entries
+            # Check entries by specific archetype
             if not in_pos and i < self.n_bars - 5:
-                trend_up = self.ema_fast[i] > self.ema_slow[i] and c_px > self.highest[i - 1]
-                trend_down = self.ema_fast[i] < self.ema_slow[i] and c_px < self.lowest[i - 1]
-                vol_ok = cur_atr >= np.mean(self.atr[max(0, i - 15) : i]) * 1.05
+                trend_up, trend_down = self._check_entry_signal(i, archetype)
 
-                if (trend_up or trend_down) and vol_ok:
+                if trend_up or trend_down:
                     pos_side = "LONG" if trend_up else "SHORT"
                     entry_idx = i
                     entry_px = c_px * (1.0 + (self.spread_bps + self.slippage_bps)) if pos_side == "LONG" else c_px * (1.0 - (self.spread_bps + self.slippage_bps))

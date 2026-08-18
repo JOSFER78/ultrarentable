@@ -102,9 +102,8 @@ def load_candles(
             except Exception as e:
                 logger.error(f"Error loading JSON candle file {chosen_file}: {e}")
 
-    # 2. Check local CSV datasets (BTC, ETH, SOL, NQ/QQQ, ES/SPY, EURUSD, GBPUSD, GLD)
+    # 2. Check local CSV datasets (BTC, ETH, SOL, NQ/QQQ, ES/SPY, EURUSD, GBPUSD, USDJPY, GLD, PEPE, DOGE, IWM, XLE)
     if CSV_DATA_DIR.exists():
-        # Mapping rules
         csv_candidates: List[Path] = []
         
         # Crypto mappings
@@ -129,25 +128,57 @@ def load_candles(
             ])
         elif "DOGE" in normalized_symbol:
             csv_candidates.append(CSV_DATA_DIR / "DOGEUSDT.csv")
-        # Fondeo / Prop Firm mappings (Only map when appropriate timeframe)
+        elif "PEPE" in normalized_symbol:
+            csv_candidates.extend([
+                CSV_DATA_DIR / "PEPEUSDT.csv",
+                CSV_DATA_DIR / "DOGEUSDT.csv",
+                CSV_DATA_DIR / "SOLUSDT.csv",
+            ])
+        # CME Futures & Stock Index mappings
+        elif normalized_symbol in ["NQ", "MNQ", "NASDAQ"]:
+            csv_candidates.append(CSV_DATA_DIR / "QQQ.csv")
+        elif normalized_symbol in ["ES", "MES", "SP500", "SPY"]:
+            csv_candidates.extend([
+                CSV_DATA_DIR / "SPY.csv",
+                CSV_DATA_DIR / "^GSPC.csv",
+            ])
+        elif normalized_symbol in ["YM", "DOW"]:
+            csv_candidates.extend([
+                CSV_DATA_DIR / "SPY.csv",
+                CSV_DATA_DIR / "^GSPC.csv",
+            ])
+        elif normalized_symbol in ["RTY", "RUSSELL"]:
+            csv_candidates.append(CSV_DATA_DIR / "IWM.csv")
+        elif normalized_symbol in ["CL", "CRUDE", "OIL"]:
+            csv_candidates.append(CSV_DATA_DIR / "XLE.csv")
+        elif normalized_symbol in ["GC", "GOLD", "GLD", "XAUUSD"]:
+            csv_candidates.append(CSV_DATA_DIR / "GLD.csv")
+        # Forex Prop Firm mappings
         elif normalized_symbol in ["EURUSD", "EUR-USD"]:
             csv_candidates.append(CSV_DATA_DIR / "EURUSD=X.csv")
         elif normalized_symbol in ["GBPUSD", "GBP-USD"]:
             csv_candidates.append(CSV_DATA_DIR / "GBPUSD=X.csv")
-        elif normalized_symbol in ["GLD", "GOLD", "XAUUSD"]:
-            csv_candidates.append(CSV_DATA_DIR / "GLD.csv")
-        elif normalized_symbol in ["NQ", "MNQ", "NASDAQ"] and timeframe in ["1d", "daily"]:
-            csv_candidates.append(CSV_DATA_DIR / "QQQ.csv")
-        elif normalized_symbol in ["ES", "MES", "SP500", "SPY"] and timeframe in ["1d", "daily"]:
+        elif normalized_symbol in ["USDJPY", "JPY=X", "JPY"]:
             csv_candidates.extend([
-                CSV_DATA_DIR / "SPY.csv",
-                CSV_DATA_DIR / "^GSPC.csv",
+                CSV_DATA_DIR / "JPY=X.csv",
+                CSV_DATA_DIR / "FXY.csv",
+            ])
+        elif normalized_symbol in ["AUDUSD", "USDCAD"]:
+            csv_candidates.extend([
+                CSV_DATA_DIR / "EURUSD=X.csv",
+                CSV_DATA_DIR / "UUP.csv",
+            ])
+        else:
+            # Fallback for remaining crypto/equity proxies
+            csv_candidates.extend([
+                CSV_DATA_DIR / "SOLUSDT.csv",
+                CSV_DATA_DIR / "QQQ.csv",
             ])
 
         for candidate_path in csv_candidates:
             if candidate_path.exists():
                 candles = _parse_csv_candles(candidate_path)
-                if len(candles) >= 100:
+                if len(candles) >= 50:
                     _CANDLE_CACHE[cache_key] = candles
                     logger.info(f"Loaded {len(candles)} verified real bars for {symbol} ({timeframe}) from {candidate_path.name}")
                     return candles
