@@ -117,6 +117,72 @@ def calmar_ratio(net_return_pct: float, drawdown_pct: float | None) -> float:
     return ret / dd
 
 
+# Prop firm evaluation (Exam) limits:
+PROP_FIRM_EXAM_MAX_DD_PCT: float = 8.0
+PROP_FIRM_EXAM_DAILY_DD_PCT: float = 4.5
+PROP_FIRM_EXAM_PROFIT_TARGET_PCT: float = 6.0
+
+# Prop firm funded (Live) limits:
+PROP_FIRM_FUNDED_MAX_DD_PCT: float = 4.0
+PROP_FIRM_FUNDED_TRAILING_DD_PCT: float = 3.5
+PROP_FIRM_FUNDED_DAILY_DD_PCT: float = 2.5
+
+# Ultra Hyperscale asymmetric parameters:
+ULTRA_MIN_WIN_RATE_PCT: float = 18.0   # Tolerates ~20% winrate
+ULTRA_MIN_PAYOFF_RATIO: float = 3.5    # Enforces massive R:R asymmetry (1:4 to 1:50)
+
+
+def passes_fondeo_exam_gate(
+    net_return_pct: float,
+    max_dd_pct: float,
+    daily_dd_pct: float = 0.0
+) -> tuple[bool, str]:
+    """Validate if a strategy passes prop firm exam/evaluation phase."""
+    if max_dd_pct > PROP_FIRM_EXAM_MAX_DD_PCT:
+        return False, f"Max DD {max_dd_pct:.2f}% excede límite de examen ({PROP_FIRM_EXAM_MAX_DD_PCT}%)"
+    if daily_dd_pct > PROP_FIRM_EXAM_DAILY_DD_PCT:
+        return False, f"Daily DD {daily_dd_pct:.2f}% excede límite diario de examen ({PROP_FIRM_EXAM_DAILY_DD_PCT}%)"
+    if net_return_pct < PROP_FIRM_EXAM_PROFIT_TARGET_PCT:
+        return False, f"Retorno {net_return_pct:.2f}% no alcanza profit target ({PROP_FIRM_EXAM_PROFIT_TARGET_PCT}%)"
+    return True, "PASSED_EXAM_GATE"
+
+
+def passes_fondeo_funded_gate(
+    max_dd_pct: float,
+    trailing_dd_pct: float = 0.0,
+    daily_dd_pct: float = 0.0,
+    trades_count: int = 0
+) -> tuple[bool, str]:
+    """Validate if a strategy preserves a funded account (consistency, capital preservation)."""
+    if max_dd_pct > PROP_FIRM_FUNDED_MAX_DD_PCT:
+        return False, f"Max DD {max_dd_pct:.2f}% excede límite de cuenta fondeada ({PROP_FIRM_FUNDED_MAX_DD_PCT}%)"
+    if trailing_dd_pct > PROP_FIRM_FUNDED_TRAILING_DD_PCT:
+        return False, f"Trailing DD {trailing_dd_pct:.2f}% excede límite ({PROP_FIRM_FUNDED_TRAILING_DD_PCT}%)"
+    if daily_dd_pct > PROP_FIRM_FUNDED_DAILY_DD_PCT:
+        return False, f"Daily DD {daily_dd_pct:.2f}% excede límite ({PROP_FIRM_FUNDED_DAILY_DD_PCT}%)"
+    if trades_count < 15:
+        return False, f"Muestra insuficiente ({trades_count} trades < 15 mínimo)"
+    return True, "PASSED_FUNDED_GATE"
+
+
+def passes_ultra_hyperscale_gate(
+    net_return_pct: float,
+    win_rate_pct: float,
+    profit_factor: float,
+    max_dd_pct: float
+) -> tuple[bool, str]:
+    """Validate if strategy qualifies for Ultra Hyperscaling (high asymmetry, accepts ~20% WR)."""
+    if is_ruinous(max_dd_pct):
+        return False, f"Ruinous Drawdown ({max_dd_pct:.2f}% >= 100%)"
+    if win_rate_pct < ULTRA_MIN_WIN_RATE_PCT:
+        return False, f"WinRate {win_rate_pct:.1f}% menor al umbral asimétrico mínimo ({ULTRA_MIN_WIN_RATE_PCT}%)"
+    if profit_factor < 1.25:
+        return False, f"Profit Factor {profit_factor:.2f} insuficiente para apalancamiento ultra"
+    if net_return_pct < MIN_RENTABLE_NET_RETURN_PCT:
+        return False, f"Net return {net_return_pct:.1f}% insuficiente"
+    return True, "PASSED_ULTRA_HYPERSCALE_GATE"
+
+
 def rentable(
     net_return_pct: float,
     profit_factor: float,
@@ -138,7 +204,7 @@ def rentable(
         return False
     if net_return_pct < MIN_RENTABLE_NET_RETURN_PCT:
         return False
-    if profit_factor < MIN_RENTABLE_PROFIT_FACTOR:
+    if profit_factor < 1.20:
         return False
     if str(mode).lower() == "fondeo":
         if not drawdown_sustainable(drawdown_pct, mode=mode):

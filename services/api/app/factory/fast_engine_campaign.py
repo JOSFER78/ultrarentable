@@ -84,7 +84,7 @@ class FastCampaignOutcome:
 class FastEngineCampaignRunner:
     """Real FastEngine evolutionary search with an untouched final lockbox."""
 
-    _TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "1h": 60}
+    _TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "1h": 60, "4h": 240, "1d": 1440}
 
     def __init__(self, db: Session, seed: int = 42) -> None:
         self.db = db

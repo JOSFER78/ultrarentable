@@ -32,11 +32,26 @@ export default function RobotsPage() {
   useEffect(() => {
     // Attempt to load real bot executions from API
     api
-      .getAutopilotStatus()
-      .then((status) => {
-        // If real bot executions are returned in status, map them; otherwise state stays []
-        if ((status as any)?.active_bots && Array.isArray((status as any).active_bots)) {
-          setRobots((status as any).active_bots);
+      .getExecutionSessions()
+      .then((sessions) => {
+        if (Array.isArray(sessions)) {
+          const mapped: RobotItem[] = sessions.map((s: any) => ({
+            id: s.session_id,
+            name: s.candidate_id || `Bot ${s.symbol}`,
+            mode: (s.route?.toLowerCase() === "fondeo" ? "fondeo" : "ultra") as "fondeo" | "ultra",
+            firm_or_exchange: s.environment || "BingX",
+            account_id: s.session_id,
+            symbol: s.symbol,
+            timeframe: "1h",
+            equity_usd: s.peak_equity_usd || 0.0,
+            open_drawdown_pct: s.current_drawdown_pct || 0.0,
+            daily_pnl_usd: s.daily_pnl_usd || 0.0,
+            win_rate_pct: 0.0,
+            trades_count: 0,
+            status: (s.kill_switch_active ? "KILL_SWITCH" : s.status === "RUNNING" ? "ACTIVE" : "PAUSED") as "ACTIVE" | "PAUSED" | "STOPPED" | "KILL_SWITCH",
+            last_trade: s.last_signal || "Sin órdenes",
+          }));
+          setRobots(mapped);
         }
       })
       .catch(() => setRobots([]));

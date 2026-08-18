@@ -9,7 +9,7 @@ from services.api.app.factory.grammar import TypedGrammar
 
 QUANTITATIVE_TEMPLATES = [
     {
-        "name": "EMA Crossover Template",
+        "name": "EMA Crossover Trend Template",
         "family": "trend_following",
         "longEntry_fast": 10,
         "longEntry_slow": 30,
@@ -23,9 +23,23 @@ QUANTITATIVE_TEMPLATES = [
         "overbought": 70.0,
     },
     {
-        "name": "Donchian Breakout Template",
+        "name": "Donchian Breakout Momentum Template",
         "family": "breakout",
         "donchian_period": 20,
+    },
+    {
+        "name": "Ultra Hyperscale Asymmetric Burst",
+        "family": "hyperscale",
+        "fast_ema": 9,
+        "slow_ema": 21,
+        "atr_period": 14,
+    },
+    {
+        "name": "Prop Firm Conservative Session Trend",
+        "family": "fondeo_preservation",
+        "fast_ema": 20,
+        "slow_ema": 50,
+        "donchian_period": 30,
     },
 ]
 
@@ -37,10 +51,19 @@ class SeedFactory:
         self.rng = random.Random(seed)
         self.grammar = TypedGrammar(rng=self.rng)
 
+    def _determine_venue(self, symbol: str) -> str:
+        s = symbol.upper()
+        if any(f in s for f in ("NQ", "ES", "YM", "RTY", "CL", "GC", "MES", "MNQ")):
+            return "CME"
+        elif "USDT" in s or s in ("BTC", "ETH", "SOL", "DOGE", "AVAX"):
+            return "BINGX"
+        return "UNIVERSAL"
+
     def create_template_strategy(
-        self, template_index: int, symbol: str = "ETH-USDT", timeframe: str = "1h"
+        self, template_index: int, symbol: str = "NQ", timeframe: str = "1h"
     ) -> dict[str, Any]:
         tmpl = QUANTITATIVE_TEMPLATES[template_index % len(QUANTITATIVE_TEMPLATES)]
+        venue = self._determine_venue(symbol)
         if tmpl["family"] == "trend_following":
             fast_p = tmpl.get("longEntry_fast", 10)
             slow_p = tmpl.get("longEntry_slow", 30)
@@ -48,7 +71,7 @@ class SeedFactory:
             return {
                 "dslVersion": "1.0.0",
                 "metadata": {"name": tmpl["name"], "family": "trend_following", "parents": [], "origin": "MANUAL"},
-                "market": {"venue": "BINGX", "symbol": symbol, "timeframe": timeframe},
+                "market": {"venue": venue, "symbol": symbol, "timeframe": timeframe},
                 "signals": {
                     "longEntry": {
                         "nodeType": "COMPARISON",
@@ -151,7 +174,39 @@ class SeedFactory:
             }
             return strategy
 
-        period = int(tmpl["donchian_period"])
+        if tmpl["family"] == "hyperscale":
+            fast_p = int(tmpl.get("fast_ema", 9))
+            slow_p = int(tmpl.get("slow_ema", 21))
+            strategy["signals"] = {
+                "longEntry": {
+                    "nodeType": "COMPARISON",
+                    "op": "CROSS_ABOVE",
+                    "left": {"type": "INDICATOR", "indicator": "EMA", "source": dict(close), "params": {"period": fast_p}, "offset": 0},
+                    "right": {"type": "INDICATOR", "indicator": "EMA", "source": dict(close), "params": {"period": slow_p}, "offset": 0},
+                },
+                "shortEntry": {
+                    "nodeType": "COMPARISON",
+                    "op": "CROSS_BELOW",
+                    "left": {"type": "INDICATOR", "indicator": "EMA", "source": dict(close), "params": {"period": fast_p}, "offset": 0},
+                    "right": {"type": "INDICATOR", "indicator": "EMA", "source": dict(close), "params": {"period": slow_p}, "offset": 0},
+                },
+                "longExit": {
+                    "nodeType": "COMPARISON",
+                    "op": "CROSS_BELOW",
+                    "left": dict(close),
+                    "right": {"type": "INDICATOR", "indicator": "EMA", "source": dict(close), "params": {"period": slow_p}, "offset": 0},
+                },
+                "shortExit": {
+                    "nodeType": "COMPARISON",
+                    "op": "CROSS_ABOVE",
+                    "left": dict(close),
+                    "right": {"type": "INDICATOR", "indicator": "EMA", "source": dict(close), "params": {"period": slow_p}, "offset": 0},
+                },
+            }
+            strategy["position"] = {"marginMode": "ISOLATED", "leverage": 50, "allocationPct": 50.0, "compound": True, "pyramiding": {"enabled": True, "maxEntries": 3}, "riskManagement": {"stopLossPct": 1.5, "takeProfitPct": 15.0, "trailingStopPct": 2.0, "maxHoldingBars": 150}}
+            return strategy
+
+        period = int(tmpl.get("donchian_period", 20))
 
         def channel(indicator: str, series: str) -> dict[str, Any]:
             return {
@@ -159,8 +214,6 @@ class SeedFactory:
                 "indicator": indicator,
                 "source": {"type": "SERIES", "series": series, "offset": 0},
                 "params": {"period": period},
-                # Previous completed channel: including the current high/low would
-                # make a strict breakout impossible or look-ahead dependent.
                 "offset": 1,
             }
 

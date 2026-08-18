@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Body
 from pydantic import BaseModel, Field
 
 from services.api.app.core.market_matrix import (
@@ -22,12 +22,19 @@ from services.api.app.factory.universe_searcher import (
     universe_search_engine,
 )
 
+from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
+from services.api.app.factory.ai_learning_engine import ai_learning_engine
+
 router = APIRouter(prefix="/api/v1/search", tags=["Search & Discovery"])
 
 
 class SearchRequest(BaseModel):
     symbols: Optional[List[str]] = Field(default=None, description="Filtrar por símbolos (ej. ['BTC-USDT', 'EURUSD', 'NQ'])")
     timeframes: Optional[List[str]] = Field(default=None, description="Filtrar por temporalidades (ej. ['1m', '5m', '15m', '1h', '4h'])")
+    route_filter: Optional[str] = Field(default="ALL", description="Filtrar por ruta: 'ULTRA', 'FONDEO' o 'ALL'")
+    max_dd_limit_pct: Optional[float] = Field(default=None, description="Límite máximo de Drawdown tolerable (ej. 3.5, 5.0, 10.0, 20.0)")
+    min_pf_target: Optional[float] = Field(default=None, description="Profit Factor mínimo objetivo (ej. 1.25, 1.50)")
+    date_range_days: Optional[int] = Field(default=None, description="Rango de días para backtest (0 = todo el histórico)")
     max_variations_per_cell: int = Field(default=25, ge=5, le=100)
 
 
@@ -51,13 +58,45 @@ def get_universe_matrix() -> List[Dict[str, Any]]:
 
 @router.get("/status")
 def get_search_status() -> Dict[str, Any]:
-    """Get current state and progress of the Universe Search Engine."""
+    """Get current state of both single-batch and continuous search engines."""
     return {
-        "is_running": universe_search_engine.is_running,
-        "stats": universe_search_engine.stats,
+        "is_continuous_running": continuous_search_daemon.is_running,
+        "is_batch_running": universe_search_engine.is_running,
         "supported_timeframes": [t.value for t in Timeframe],
         "supported_asset_classes": [a.value for a in AssetClass],
+        "stats": continuous_search_daemon.telemetry,
     }
+
+
+@router.get("/telemetry")
+def get_continuous_telemetry() -> Dict[str, Any]:
+    """Get live telemetry, speed, funnel counts, and AI learning metrics."""
+    return continuous_search_daemon.get_telemetry()
+
+
+@router.post("/start")
+def start_continuous_search(req: SearchRequest = Body(default_factory=SearchRequest)) -> Dict[str, Any]:
+    """Start 24/7 continuous search daemon with AI learning and custom filters."""
+    return continuous_search_daemon.start(
+        timeframes=req.timeframes,
+        symbols=req.symbols,
+        route_filter=req.route_filter,
+        max_dd_limit_pct=req.max_dd_limit_pct,
+        min_pf_target=req.min_pf_target,
+        date_range_days=req.date_range_days,
+    )
+
+
+@router.post("/stop")
+def stop_continuous_search() -> Dict[str, Any]:
+    """Stop continuous search daemon gracefully."""
+    return continuous_search_daemon.stop()
+
+
+@router.get("/ai-learning")
+def get_ai_learning_summary() -> Dict[str, Any]:
+    """Get AI learning weights and top evolved patterns."""
+    return ai_learning_engine.get_summary_metrics()
 
 
 def _run_search_task(timeframes: Optional[List[str]], max_variations: int):

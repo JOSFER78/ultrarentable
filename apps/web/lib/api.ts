@@ -104,10 +104,34 @@ export const api = {
   getSQXCandidates: (mode = "ultra") =>
     request<any[]>(`/api/v1/autopilot/candidates?mode=${encodeURIComponent(mode)}`),
 
-  // ── Search Configurator ──
+  // ── Search Configurator & Continuous Discovery Engine ──
   listSearchConfigs: () => request<any[]>("/api/v1/search-configs"),
   createSearchConfig: (payload: any) =>
     request<any>("/api/v1/search-configs", { method: "POST", body: JSON.stringify(payload) }),
   runSearchConfig: (configId: string) =>
     request<any>(`/api/v1/search-configs/${encodeURIComponent(configId)}/run`, { method: "POST", body: JSON.stringify({}) }),
+  getSearchTelemetry: () => request<any>("/api/v1/search/telemetry"),
+  startContinuousSearch: (payload?: any) =>
+    request<any>("/api/v1/search/start", { method: "POST", body: JSON.stringify(payload || {}) }),
+  stopContinuousSearch: () =>
+    request<any>("/api/v1/search/stop", { method: "POST", body: JSON.stringify({}) }),
+  getAILearningSummary: () => request<any>("/api/v1/search/ai-learning"),
+  getUniverseMatrix: () => request<any[]>("/api/v1/search/matrix"),
+
+  // ── Candidates & Audit ──
+  getCandidates: () => request<any[]>("/api/v1/candidates"),
+  getAuditEvents: () => request<any[]>("/api/v1/audit/events"),
+
+  // ── Execution Sessions & Kill-Switches ──
+  getExecutionSessions: () => request<any[]>("/api/v1/execution/sessions"),
+  triggerKillSwitch: (sessionId: string, reason: string) =>
+    request<any>(`/api/v1/execution/sessions/${encodeURIComponent(sessionId)}/kill-switch`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    }),
+  resumeSession: (sessionId: string) =>
+    request<any>(`/api/v1/execution/sessions/${encodeURIComponent(sessionId)}/resume`, {
+      method: "POST",
+      body: JSON.stringify({}),
+    }),
 };

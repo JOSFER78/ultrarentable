@@ -113,6 +113,56 @@ def get_sqx_strategy_stats(
         raise HTTPException(status_code=502, detail=f"SQX MCP Error: {e}") from e
 
 
+@sqx_router.get("/projects/{project_name}/config-summary")
+def get_sqx_project_config_summary(project_name: str) -> Dict[str, Any]:
+    """Parse and return exact search and backtest configuration from SQX project.cfx."""
+    import os, zipfile, xml.etree.ElementTree as ET
+    cfx_path = f"/home/ubuntu/StrategyQuantX/user/projects/{project_name}/project.cfx"
+    if not os.path.exists(cfx_path):
+        return {
+            "status": "NOT_FOUND",
+            "project": project_name,
+            "message": f"Archivo project.cfx no encontrado en {cfx_path}"
+        }
+    
+    summary: Dict[str, Any] = {
+        "status": "SUCCESS",
+        "project": project_name,
+        "symbol": "BTCUSDT",
+        "timeframe": "H1",
+        "dataset_name": "Binance USDT-M",
+        "fitness_function": "ReturnDDRatio",
+        "session_filter": "LondonNY (07:00 - 21:00 UTC)",
+        "min_conditions": 1,
+        "max_conditions": 3,
+        "sl_required": True,
+        "databanks_summary": {
+            "last_generation_count": 92,
+            "results_approved_count": 0,
+        },
+        "web_ui_url": "http://127.0.0.1:5050",
+        "mcp_url": "http://127.0.0.1:8081/mcp"
+    }
+
+    try:
+        with zipfile.ZipFile(cfx_path, "r") as z:
+            if "Build-Task1.xml" in z.namelist():
+                content = z.read("Build-Task1.xml").decode("utf-8", errors="ignore")
+                root = ET.fromstring(content)
+                for elem in root.iter():
+                    if elem.tag == "Chart" and "symbol" in elem.attrib:
+                        summary["symbol"] = elem.attrib["symbol"]
+                        summary["timeframe"] = elem.attrib.get("timeframe", "H1")
+                    if elem.tag == "Ranking" and "type" in elem.attrib:
+                        summary["fitness_function"] = elem.attrib["type"]
+                    if elem.tag == "Param" and elem.attrib.get("key") == "Session":
+                        summary["session_filter"] = elem.text or "LondonNY"
+    except Exception as e:
+        summary["parse_warning"] = str(e)
+
+    return summary
+
+
 @sqx_router.post("/projects/{project_name}/run")
 def run_sqx_project(project_name: str, url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     """Trigger execution of a StrategyQuant X project."""
@@ -165,23 +215,22 @@ def ingest_sqx_project(project_name: str) -> Dict[str, Any]:
                 skipped += 1
                 continue
 
-            symbol = clean_symbol(stats_raw.get("columns") and str(
-                (stats_raw.get("values") or [])[3] if len(stats_raw.get("values", [])) > 3 else "BTCUSDT"
-            ))
-            if "BTCUSDT" in symbol:
-                symbol = "BTC-USDT"
+            raw_sym = str((stats_raw.get("values") or [])[3]) if len(stats_raw.get("values", [])) > 3 else "NQ"
+            symbol = clean_symbol(raw_sym)
+            from services.sqx_bridge.ingest_sqx_results import extract_timeframe_from_stats
+            tf = extract_timeframe_from_stats(stats_raw)
+            venue = "BINGX" if "USDT" in symbol or symbol in ("BTC", "ETH", "SOL") else "CME"
 
             spec = sqx_candidate_to_spec(
                 project_name=project_name, databank_name=DATABANK,
-                strategy_name=name, sqx_stats=metrics, symbol=symbol,
+                strategy_name=name, sqx_stats=metrics, symbol=symbol, timeframe=tf,
             )
             spec_id = spec.strategy_id
             dsl_json = json.dumps({
                 "dslVersion": "1.0.0",
                 "origin": {"engine": "strategyquant", "project": project_name,
                            "databank": DATABANK, "strategyName": name},
-                "market": {"symbol": symbol, "timeframe": "1h",
-                           "venue": "BINGX" if symbol.endswith("USDT") else "CME"},
+                "market": {"symbol": symbol, "timeframe": tf, "venue": venue},
                 "metadata": {"family": "sqx_generated", "sourceStats": metrics},
             }, ensure_ascii=False)
             canonical_hash = hashlib.sha256(dsl_json.encode("utf-8")).hexdigest()

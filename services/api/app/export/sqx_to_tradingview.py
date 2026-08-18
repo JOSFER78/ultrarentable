@@ -15,7 +15,7 @@ from typing import Any, Dict
 
 def generate_pinescript_v5(
     strategy_name: str,
-    symbol: str = "BTCUSDT",
+    symbol: str = "NQ",
     timeframe: str = "60",
     fast_ema: int = 21,
     slow_ema: int = 55,
@@ -24,17 +24,23 @@ def generate_pinescript_v5(
     atr_stop_mult: float = 1.5,
     atr_tp_mult: float = 4.0,
     risk_per_trade_pct: float = 1.5,
+    mode: str = "ULTRA",
+    leverage: float = 100.0,
+    pyramiding_tiers: int = 3,
     oos_start_year: int = 2026,
     oos_start_month: int = 6,
     oos_start_day: int = 18
 ) -> str:
-    """Generate compilable TradingView Pine Script (v5) code."""
+    """Generate compilable TradingView Pine Script (v5) code with ULTRA / FONDEO controls."""
     clean_name = strategy_name.replace("'", "").replace('"', "")
+    pyramid_val = pyramiding_tiers if mode.upper() == "ULTRA" else 1
     
     code = f"""//@version=5
-strategy("{clean_name} [Ultrarentable]", overlay=true, initial_capital=10000, default_qty_type=strategy.percent_of_equity, default_qty_value={risk_per_trade_pct}, commission_type=strategy.commission.percent, commission_value=0.05, slippage=3)
+strategy("{clean_name} [{mode}]", overlay=true, initial_capital=10000, default_qty_type=strategy.percent_of_equity, default_qty_value={risk_per_trade_pct}, pyramiding={pyramid_val}, commission_type=strategy.commission.percent, commission_value=0.05, slippage=3)
 
 // === 1. PARÁMETROS CONFIGURABLES ===
+mode_type    = input.string("{mode}", "Modo Operativo", options=["ULTRA", "FONDEO"], group="Arquitectura")
+leverage_val = input.float({leverage}, "Apalancamiento Efectivo (hasta 500x)", minval=1.0, maxval=500.0, group="Apalancamiento & Margen")
 fast_ema_len = input.int({fast_ema}, "EMA Rápida", group="Indicadores")
 slow_ema_len = input.int({slow_ema}, "EMA Lenta", group="Indicadores")
 donchian_len = input.int({donchian_period}, "Período Donchian", group="Indicadores")
@@ -63,28 +69,35 @@ plot(ema_slow, "EMA Lenta", color=color.purple, linewidth=2)
 plot(hh[1], "Donchian High", color=color.green, style=plot.style_circles)
 plot(ll[1], "Donchian Low", color=color.red, style=plot.style_circles)
 
-// === 4. CONDICIONES DE ENTRADA Y SALIDA ===
+// === 4. CONDICIONES DE ENTRADA Y ESCALADO (PYRAMIDING) ===
 trend_up   = ema_fast > ema_slow and close > ema_fast
 trend_down = ema_fast < ema_slow and close < ema_fast
 
 long_condition  = trend_up and close >= hh[1]
 short_condition = trend_down and close <= ll[1]
 
-// === 5. EJECUCIÓN CON SL/TP DINÁMICO POR ATR ===
+// === 5. EJECUCIÓN CON SL/TP DINÁMICO POR ATR & HIPERESCALADO ===
 if (strategy.position_size == 0)
     if (long_condition)
         sl_price = close - (atr_val * atr_sl_mult)
         tp_price = close + (atr_val * atr_tp_mult)
-        strategy.entry("Long", strategy.long, comment="BUY_SIGNAL")
+        strategy.entry("Long", strategy.long, comment="BUY_INITIAL")
         strategy.exit("Long Exit", "Long", stop=sl_price, limit=tp_price, comment="LONG_SL_TP")
-        alert('{{"action": "BUY", "symbol": "' + syminfo.ticker + '", "price": ' + str.tostring(close) + ', "sl": ' + str.tostring(sl_price) + ', "tp": ' + str.tostring(tp_price) + '}}', alert.freq_once_per_bar_close)
+        alert('{{"action": "BUY", "symbol": "' + syminfo.ticker + '", "leverage": ' + str.tostring(leverage_val) + ', "price": ' + str.tostring(close) + ', "sl": ' + str.tostring(sl_price) + ', "tp": ' + str.tostring(tp_price) + '}}', alert.freq_once_per_bar_close)
 
     if (short_condition)
         sl_price = close + (atr_val * atr_sl_mult)
         tp_price = close - (atr_val * atr_tp_mult)
-        strategy.entry("Short", strategy.short, comment="SELL_SIGNAL")
+        strategy.entry("Short", strategy.short, comment="SELL_INITIAL")
         strategy.exit("Short Exit", "Short", stop=sl_price, limit=tp_price, comment="SHORT_SL_TP")
-        alert('{{"action": "SELL", "symbol": "' + syminfo.ticker + '", "price": ' + str.tostring(close) + ', "sl": ' + str.tostring(sl_price) + ', "tp": ' + str.tostring(tp_price) + '}}', alert.freq_once_per_bar_close)
+        alert('{{"action": "SELL", "symbol": "' + syminfo.ticker + '", "leverage": ' + str.tostring(leverage_val) + ', "price": ' + str.tostring(close) + ', "sl": ' + str.tostring(sl_price) + ', "tp": ' + str.tostring(tp_price) + '}}', alert.freq_once_per_bar_close)
+
+else if (mode_type == "ULTRA" and math.abs(strategy.position_size) > 0 and {pyramid_val} > 1)
+    // Hiperescalado: Pyramiding incremental si la posición está en beneficios
+    if (strategy.position_size > 0 and close >= strategy.position_avg_price + (atr_val * 1.5))
+        strategy.entry("Long_Scale", strategy.long, comment="BUY_PYRAMID")
+    if (strategy.position_size < 0 and close <= strategy.position_avg_price - (atr_val * 1.5))
+        strategy.entry("Short_Scale", strategy.short, comment="SELL_PYRAMID")
 
 // === 6. TABLA DE TELEMETRÍA EN PANTALLA ===
 var table perfTable = table.new(position.top_right, 4, 2, bgcolor=color.new(color.black, 20), border_color=color.gray, border_width=1)

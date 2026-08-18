@@ -2,145 +2,156 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-const ROUTE_NAMES: Record<string, string> = {
-  "/": "Paso 1: Buscador de Estrategias SQX",
-  "/dashboard": "Dashboard General del Sistema",
-  "/strategies": "Laboratorio de Estrategias",
-  "/ultra": "Paso 2B: Modo Ultrarentable (BingX)",
-  "/fondeo": "Paso 2A: Modo Fondeo (Prop Firms)",
-  "/robots": "Paso 3: Monitor de Bots en Vivo",
-  "/portfolio": "Métricas de Portfolio y Riesgo",
-  "/alertas": "Alertas y Telemetría",
-  "/seguridad": "Ajustes de Seguridad",
-  "/strategyquant": "Servidor StrategyQuant X (MCP)",
-  "/panel": "Estado del Sistema",
-  "/data": "Gestión de Datos",
-  "/backtest": "Motor de Backtesting",
-  "/campaigns": "Campañas Autónomas",
-  "/leaderboard": "Leaderboard de Calidad",
-  "/research": "Investigación",
-  "/bifurcacion": "Bifurcación de Despliegue",
-  "/prop-firms": "Catálogo de Empresas de Fondeo (34 Firmas)",
-  "/pasos": "Guía del Proceso Paso a Paso",
+const ROUTE_NAMES: Record<string, { title: string; subtitle: string }> = {
+  "/": { title: "Command Center", subtitle: "Operaciones Cuantitativas & Resumen Real" },
+  "/ultra": { title: "Ruta ULTRA", subtitle: "BingX Crypto Perps (Apalancamiento hasta 500x & Pyramiding)" },
+  "/fondeo": { title: "Ruta FONDEO", subtitle: "Futuros CME (Exámenes & Cuentas Fondeadas Prop Firms)" },
+  "/candidatos": { title: "Candidatos & Scorecards", subtitle: "Auditoría Anti-Overfit 9D & Exportación de Código" },
+  "/ejecucion": { title: "Ejecución & Telemetría", subtitle: "Gestión de Sesiones, Kill-Switches y Logs" },
+  "/prop-firms": { title: "Base de Datos Prop Firms", subtitle: "Reglas de Exámenes y Cuentas Fondeadas" },
+  "/sistema": { title: "Diagnóstico de Infraestructura", subtitle: "Estado de SQX, FastAPI, DB y Puertos" },
 };
 
 export default function Header() {
   const pathname = usePathname();
-  const currentPage = ROUTE_NAMES[pathname] ?? "Módulo Operativo";
+  const current = ROUTE_NAMES[pathname] ?? { title: "Módulo Operativo", subtitle: "Ultrarentable Lab" };
+
+  const [health, setHealth] = useState<{
+    overall_status: string;
+    services?: {
+      api_backend?: { status: string };
+      sqx_mcp?: { status: string };
+      web_frontend?: { latency_ms?: number };
+    };
+    database?: { tables?: { candidates?: number } };
+  } | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchHealth = () => {
+      fetch("/api/v1/system/health")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (mounted && data) setHealth(data);
+        })
+        .catch(() => {});
+    };
+    fetchHealth();
+    const interval = setInterval(fetchHealth, 10000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  const isSqxOnline = health?.services?.sqx_mcp?.status === "ONLINE";
+  const candidateCount = health?.database?.tables?.candidates ?? 0;
+  const latency = health?.services?.web_frontend?.latency_ms ?? 0;
 
   return (
     <header
       className="header"
+      suppressHydrationWarning
       style={{
-        padding: "0 24px",
+        padding: "0 28px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        gap: 16,
-        minHeight: "56px",
-        height: "auto",
-        borderBottom: "1px solid var(--border)",
-        background: "rgba(10, 15, 26, 0.95)",
-        backdropFilter: "blur(12px)",
+        minHeight: "60px",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(11, 15, 25, 0.85)",
+        backdropFilter: "blur(16px)",
         position: "sticky",
         top: 0,
         zIndex: 100,
         boxSizing: "border-box",
       }}
     >
-      {/* Left: Breadcrumb */}
-      <div className="breadcrumb" style={{ fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
-        <span className="breadcrumb-item" style={{ color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.8px", fontSize: 10, fontFamily: "monospace", fontWeight: 700 }}>
-          ULTRARENTABLE TRADING LAB
-        </span>
-        <span className="breadcrumb-sep" style={{ margin: "0 8px", color: "var(--border)" }}>/</span>
-        <span className="breadcrumb-item current" style={{ color: "var(--text-primary)", fontWeight: 700 }}>
-          {currentPage}
-        </span>
+      {/* Left: Breadcrumb & Title */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 800, color: "var(--accent)", letterSpacing: "1px", fontFamily: "monospace" }}>
+              ULTRARENTABLE
+            </span>
+            <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "12px" }}>/</span>
+            <span style={{ color: "#fff", fontWeight: 800, fontSize: "14px", letterSpacing: "-0.2px" }}>
+              {current.title}
+            </span>
+          </div>
+          <span style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "1px" }}>
+            {current.subtitle}
+          </span>
+        </div>
       </div>
 
-      {/* Right: Clean Step Navigation */}
-      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "flex-end", padding: "6px 0" }}>
-        <Link
-          href="/"
+      {/* Right: Real-time System Telemetry & Quick Navigation */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Live Pulse Badges */}
+        <div
           style={{
-            padding: "4px 10px",
-            borderRadius: "4px",
-            background: pathname === "/" ? "var(--accent-dim)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${pathname === "/" ? "var(--accent)" : "var(--border)"}`,
-            color: pathname === "/" ? "var(--accent)" : "var(--text-secondary)",
-            fontSize: 10,
-            fontWeight: 800,
-            textDecoration: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            background: "rgba(255, 255, 255, 0.03)",
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+            borderRadius: "20px",
+            padding: "4px 14px",
+            fontSize: "11px",
             fontFamily: "monospace",
           }}
         >
-          [01] BUSCADOR SQX
-        </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 8px #22c55e" }} />
+            <span style={{ color: "#94a3b8" }}>API :8000</span>
+          </div>
+
+          <span style={{ color: "rgba(255,255,255,0.15)" }}>|</span>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                background: isSqxOnline ? "#22c55e" : "#ef4444",
+                boxShadow: isSqxOnline ? "0 0 8px #22c55e" : "0 0 8px #ef4444",
+              }}
+            />
+            <span style={{ color: isSqxOnline ? "#e2e8f0" : "#fca5a5" }}>SQX :8081</span>
+          </div>
+
+          <span style={{ color: "rgba(255,255,255,0.15)" }}>|</span>
+
+          <div style={{ color: "#38bdf8" }}>
+            {candidateCount} <span style={{ color: "#64748b" }}>candidatos</span>
+          </div>
+
+          <span style={{ color: "rgba(255,255,255,0.15)" }}>|</span>
+
+          <div style={{ color: "#a855f7" }}>
+            {latency}ms
+          </div>
+        </div>
+
+        {/* Quick Nav Shortcut */}
         <Link
-          href="/fondeo"
+          href="/candidatos"
           style={{
-            padding: "4px 10px",
-            borderRadius: "4px",
-            background: pathname === "/fondeo" ? "var(--accent-dim)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${pathname === "/fondeo" ? "var(--accent)" : "var(--border)"}`,
-            color: pathname === "/fondeo" ? "var(--accent)" : "var(--text-secondary)",
-            fontSize: 10,
-            fontWeight: 800,
+            background: "rgba(56, 189, 248, 0.1)",
+            border: "1px solid rgba(56, 189, 248, 0.3)",
+            color: "#38bdf8",
+            fontSize: "11px",
+            fontWeight: 700,
+            padding: "5px 12px",
+            borderRadius: "6px",
             textDecoration: "none",
-            fontFamily: "monospace",
+            transition: "all 0.2s ease",
           }}
         >
-          [02A] FONDEO
-        </Link>
-        <Link
-          href="/ultra"
-          style={{
-            padding: "4px 10px",
-            borderRadius: "4px",
-            background: pathname === "/ultra" ? "var(--accent-dim)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${pathname === "/ultra" ? "var(--accent)" : "var(--border)"}`,
-            color: pathname === "/ultra" ? "var(--accent)" : "var(--text-secondary)",
-            fontSize: 10,
-            fontWeight: 800,
-            textDecoration: "none",
-            fontFamily: "monospace",
-          }}
-        >
-          [02B] ULTRA
-        </Link>
-        <Link
-          href="/robots"
-          style={{
-            padding: "4px 10px",
-            borderRadius: "4px",
-            background: pathname === "/robots" ? "var(--accent-dim)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${pathname === "/robots" ? "var(--accent)" : "var(--border)"}`,
-            color: pathname === "/robots" ? "var(--accent)" : "var(--text-secondary)",
-            fontSize: 10,
-            fontWeight: 800,
-            textDecoration: "none",
-            fontFamily: "monospace",
-          }}
-        >
-          [03] MONITOR BOTS
-        </Link>
-        <Link
-          href="/prop-firms"
-          style={{
-            padding: "4px 10px",
-            borderRadius: "4px",
-            background: pathname === "/prop-firms" ? "var(--accent-dim)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${pathname === "/prop-firms" ? "var(--accent)" : "var(--border)"}`,
-            color: pathname === "/prop-firms" ? "var(--accent)" : "var(--text-secondary)",
-            fontSize: 10,
-            fontWeight: 800,
-            textDecoration: "none",
-            fontFamily: "monospace",
-          }}
-        >
-          [DB] PROP FIRMS
+          📊 Ver Scorecards
         </Link>
       </div>
     </header>

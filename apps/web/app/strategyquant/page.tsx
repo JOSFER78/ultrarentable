@@ -62,7 +62,7 @@ export default function StrategyQuantPage() {
         </div>
         <h1 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "8px" }}>StrategyQuant X — Laboratorio MCP</h1>
         <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>
-          Conexión 100% directa en tiempo real con la instancia de StrategyQuant X (`http://localhost:8080/mcp`). Cero mocks.
+          Conexión 100% directa en tiempo real con la instancia de StrategyQuant X (`http://localhost:8081/mcp`). Cero mocks.
         </p>
       </div>
 

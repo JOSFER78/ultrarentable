@@ -9,6 +9,7 @@ from services.api.app.api.execution_router import execution_router
 from services.api.app.api.audit_router import audit_router
 from services.api.app.api.system_health_router import system_health_router
 from services.api.app.api.search_router import router as search_router
+from services.api.app.api.firebase_sync_router import firebase_sync_router
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
@@ -37,8 +38,19 @@ app.include_router(providers_router, prefix="/api/v1")
 app.include_router(candidates_router, prefix="/api/v1")
 app.include_router(execution_router, prefix="/api/v1")
 app.include_router(audit_router, prefix="/api/v1")
-app.include_router(system_health_router, prefix="/api/v1")
+app.include_router(firebase_sync_router, prefix="/api/v1")
 app.include_router(search_router)
+
+
+@app.on_event("startup")
+def startup_event():
+    """Auto-start 24/7 continuous search daemon on API boot."""
+    try:
+        from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
+        if not continuous_search_daemon.is_running:
+            continuous_search_daemon.start()
+    except Exception as e:
+        print(f"Error auto-starting continuous search daemon: {e}")
 
 
 @app.get("/")

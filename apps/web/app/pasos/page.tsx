@@ -22,13 +22,13 @@ const STEPS = [
   {
     number: 2,
     title: "2. Búsqueda y Generación de Estrategias con SQX MCP",
-    description: "Conecta con la aplicación StrategyQuant X en puerto 8080 para importar los candidatos a estrategias.",
+    description: "Conecta con la aplicación StrategyQuant X en puerto 8081 para importar los candidatos a estrategias.",
     badge: "Fábrica SQX",
     actionText: "Ver Conector SQX ->",
     actionHref: "/strategyquant",
     icon: "[SQX]",
     details: [
-      "Servidor Jetty HTTP SSE escuchando en http://127.0.0.1:8080/mcp.",
+      "Servidor Jetty HTTP SSE escuchando en http://127.0.0.1:8081/mcp.",
       "Importación neutra a formato StrategySpec (YAML/Pydantic).",
       "Filtrado primario de databanks activos."
     ]

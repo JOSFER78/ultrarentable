@@ -27,6 +27,55 @@ class KillSwitchTriggerSchema(BaseModel):
     reason: str = Field(..., description="Reason for triggering kill-switch (e.g. DLL reached, 3 consecutive stops, manual emergency)")
 
 
+@execution_router.post("/sessions")
+def create_session(payload: CreateSessionSchema, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Deploy and create a new execution session for a strategy candidate."""
+    import time
+    session_id = f"sess_{payload.route.lower()}_{payload.symbol.lower().replace('-', '_')}_{int(time.time() * 1000) % 100000}"
+    new_sess = ExecutionSessionModel(
+        session_id=session_id,
+        route=payload.route.upper(),
+        environment=payload.environment.upper(),
+        candidate_id=payload.candidate_id,
+        provider_id=payload.provider_id,
+        symbol=payload.symbol,
+        status="RUNNING",
+        current_pnl_usd=0.0,
+        daily_pnl_usd=0.0,
+        current_drawdown_pct=0.0,
+        peak_equity_usd=payload.initial_capital,
+        heartbeat_last_at=datetime.utcnow(),
+        last_signal="CONECTADO · Esperando primera condición de entrada",
+        last_order="LISTO · Telemetría activa",
+        open_positions_json="[]",
+        kill_switch_active=False,
+        created_at=datetime.utcnow(),
+    )
+    db.add(new_sess)
+    
+    # Audit log
+    db.add(
+        AuditEventModel(
+            event_id=f"evt_deploy_{session_id}",
+            category="LIVE" if "LIVE" in payload.environment else "PAPER",
+            route=payload.route.upper(),
+            title=f"🚀 SESIÓN DESPLEGADA: {session_id}",
+            description=f"Se ha iniciado la ejecución de la estrategia {payload.candidate_id} en {payload.environment} ({payload.symbol}).",
+            severity="INFO",
+        )
+    )
+    db.commit()
+    db.refresh(new_sess)
+    
+    return {
+        "status": "CREATED",
+        "session_id": new_sess.session_id,
+        "environment": new_sess.environment,
+        "candidate_id": new_sess.candidate_id,
+        "symbol": new_sess.symbol,
+    }
+
+
 @execution_router.get("/sessions")
 def list_sessions(
     route: Optional[str] = Query(None, description="ULTRA, FONDEO"),
@@ -138,9 +187,45 @@ def trigger_kill_switch(
     return {"status": "SUCCESS", "session_id": session_id, "kill_switch_active": True, "reason": s.kill_switch_reason}
 
 
+@execution_router.post("/sessions/{session_id}/flatten")
+def flatten_session_positions(session_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Force flatten all open positions for this session without killing the process."""
+    s = db.query(ExecutionSessionModel).filter(ExecutionSessionModel.session_id == session_id).first()
+    if not s:
+        raise HTTPException(status_code=404, detail="SESSION_NOT_FOUND")
+    
+    s.open_positions_json = "[]"
+    s.last_order = f"MANUAL FLATTEN @ {datetime.utcnow().strftime('%H:%M:%S')}: Posiciones cerradas a mercado."
+    db.add(
+        AuditEventModel(
+            event_id=f"evt_flat_{session_id}_{int(datetime.utcnow().timestamp())}",
+            category="MANUAL_ACTION",
+            route=s.route,
+            title=f"🛑 POSICIONES APLANADAS: {s.session_id}",
+            description=f"Se han cerrado a mercado todas las posiciones de la sesión {s.session_id}.",
+            severity="WARNING"
+        )
+    )
+    db.commit()
+    return {"status": "SUCCESS", "session_id": session_id, "message": "Todas las posiciones cerradas a mercado."}
+
+
+@execution_router.post("/sessions/{session_id}/pause")
+def pause_session(session_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Pause bot from placing new entries while managing existing positions."""
+    s = db.query(ExecutionSessionModel).filter(ExecutionSessionModel.session_id == session_id).first()
+    if not s:
+        raise HTTPException(status_code=404, detail="SESSION_NOT_FOUND")
+    
+    s.status = "PAUSED"
+    s.last_signal = "BOT PAUSADO · No se abrirán nuevas posiciones"
+    db.commit()
+    return {"status": "SUCCESS", "session_id": session_id, "status": "PAUSED"}
+
+
 @execution_router.post("/sessions/{session_id}/resume")
 def resume_session(session_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
-    """Reset kill-switch and resume session."""
+    """Reset kill-switch or unpause session."""
     s = db.query(ExecutionSessionModel).filter(ExecutionSessionModel.session_id == session_id).first()
     if not s:
         raise HTTPException(status_code=404, detail="SESSION_NOT_FOUND")
@@ -149,6 +234,7 @@ def resume_session(session_id: str, db: Session = Depends(get_db)) -> Dict[str, 
     s.kill_switch_active = False
     s.kill_switch_reason = None
     s.heartbeat_last_at = datetime.utcnow()
+    s.last_signal = "ACTIVO · Analizando mercado en tiempo real"
     
     db.add(
         AuditEventModel(
@@ -156,7 +242,7 @@ def resume_session(session_id: str, db: Session = Depends(get_db)) -> Dict[str, 
             category="KILL_SWITCH",
             route=s.route,
             title=f"🟢 SESIÓN REANUDADA: {s.session_id}",
-            description=f"Se ha restablecido el Kill-Switch de la sesión {s.session_id} ({s.environment}).",
+            description=f"Se ha restablecido la sesión {s.session_id} ({s.environment}).",
             severity="INFO"
         )
     )

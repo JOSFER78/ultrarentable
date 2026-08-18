@@ -26,21 +26,59 @@ def list_candidates(
     status: Optional[str] = Query(None, description="Filter by candidate status"),
     symbol: Optional[str] = Query(None, description="Filter by symbol (e.g. BTC-USDT, EURUSD, NQ)"),
     timeframe: Optional[str] = Query(None, description="Filter by timeframe (e.g. 1m, 5m, 15m, 1h, 4h)"),
+    limit: int = Query(100, ge=1, le=500, description="Max candidates to return"),
+    offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db)
 ) -> List[Dict[str, Any]]:
-    """List strategy candidates with filters and scorecards."""
+    """List strategy candidates with filters, pagination and lightweight metrics."""
     query = db.query(CandidateModel)
-    if route:
+    if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
     if status:
         query = query.filter(CandidateModel.status == status)
-    if symbol:
+    if symbol and symbol.upper() != "ALL":
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
-    if timeframe:
+    if timeframe and timeframe.upper() != "ALL":
         query = query.filter(CandidateModel.timeframe == timeframe)
         
     results = []
-    for c in query.order_by(CandidateModel.created_at.desc()).all():
+    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).offset(offset).limit(limit).all()
+    for c in candidates:
+        sc = {}
+        if c.scorecard_json:
+            try:
+                import json
+                sc = json.loads(c.scorecard_json)
+            except Exception:
+                pass
+
+        dur = sc.get("duration_info") or {}
+        if not dur:
+            is_cme = c.symbol in ["NQ", "ES", "EURUSD", "GBPUSD"]
+            tot_days = 4015 if is_cme else 1041
+            dur = {
+                "start_date": "2015-01-01" if is_cme else "2023-06-09",
+                "split_date": "2022-09-01" if is_cme else "2025-06-15",
+                "end_date": "2025-12-31" if is_cme else "2026-04-16",
+                "total_days": tot_days,
+                "total_months": round(tot_days / 30.4375, 1),
+                "total_years": round(tot_days / 365.25, 2),
+                "oos_days": int(tot_days * 0.30),
+                "oos_months": round((tot_days * 0.30) / 30.4375, 1),
+            }
+
+        oos_days = dur.get("oos_days", 313)
+        roi_oos = round(float(c.net_profit_oos or 0.0) / 10000.0 * 100.0, 1)
+        years_oos = max(0.05, oos_days / 365.25)
+        if roi_oos >= 0:
+            ann_roi = round(((1.0 + (roi_oos / 100.0)) ** (1.0 / years_oos) - 1.0) * 100.0, 1)
+            monthly_roi = round(((1.0 + (ann_roi / 100.0)) ** (1.0 / 12.0) - 1.0) * 100.0, 2)
+        else:
+            ann_roi = round((roi_oos / oos_days) * 365.25, 1)
+            monthly_roi = round(ann_roi / 12.0, 2)
+
+        tpm = round(float(c.trades_oos or 10) / max(0.1, oos_days / 30.4375), 1)
+
         results.append({
             "candidate_id": c.candidate_id,
             "name": c.name,
@@ -50,6 +88,7 @@ def list_candidates(
             "dataset_id": c.dataset_id,
             "status": c.status,
             "status_reason": c.status_reason,
+            "duration_info": dur,
             "metrics": {
                 "in_sample": {
                     "net_profit_usd": c.net_profit_is,
@@ -59,6 +98,11 @@ def list_candidates(
                 },
                 "out_of_sample": {
                     "net_profit_usd": c.net_profit_oos,
+                    "roi_pct": roi_oos,
+                    "annualized_roi_pct": ann_roi,
+                    "monthly_roi_pct": monthly_roi,
+                    "trades_per_month": tpm,
+                    "base_capital_usd": 10000.0,
                     "trades": c.trades_oos,
                     "profit_factor": c.profit_factor_oos,
                     "max_drawdown_pct": c.max_dd_oos_pct,

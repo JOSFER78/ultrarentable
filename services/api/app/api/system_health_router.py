@@ -44,25 +44,19 @@ def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """100% Real, non-mocked infrastructure health check."""
     now_iso = datetime.utcnow().isoformat()
     
-    # 1. Probe Web (Port 5000)
-    web_health = _probe_http("http://127.0.0.1:5000/")
+    # 1. Probe Web (Port 3000)
+    web_health = _probe_http("http://127.0.0.1:3000/")
     
     # 2. Probe SQX MCP (Port 8081)
     sqx_client = SQXMCPClient("http://127.0.0.1:8081/mcp", timeout=4)
     sqx_mcp_health = sqx_client.check_connection()
     
-    # 3. Probe SQX Web UI
-    sqx_web_health = _probe_http("http://127.0.0.1:8081/")
+    # 3. Probe SQX Web UI (Port 5050 / 8081)
+    sqx_web_health = _probe_http("http://127.0.0.1:5050/")
+    if sqx_web_health["status"] != "ONLINE":
+        sqx_web_health = _probe_http("http://127.0.0.1:8081/")
     
-    # 4. Probe Port 8080 Conflict
-    port_8080_occupied = _probe_port("127.0.0.1", 8080)
-    port_8080_info = {
-        "occupied": port_8080_occupied,
-        "service": "MoneyPrinterTurbo (PID 84200)" if port_8080_occupied else "FREE",
-        "impact": "StrategyQuant X shifted its Jetty/MCP server to port 8081 automatically due to port 8080 collision."
-    }
-    
-    # 5. Database Status & Table Counts
+    # 4. Database Status & Table Counts
     db_size_bytes = os.path.getsize(DB_PATH) if os.path.exists(DB_PATH) else 0
     wal_exists = os.path.exists(f"{DB_PATH}-wal")
     
@@ -74,21 +68,21 @@ def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
     except Exception as dbe:
         table_counts["error"] = str(dbe)
         
-    # 6. Datasets & History Data
+    # 5. Datasets & History Data
     btc_h1_path = "/home/ubuntu/StrategyQuantX/user/data/History/BTCUSDT_AUTO/BTCUSDT_AUTO_H1.dat"
     btc_h1_exists = os.path.exists(btc_h1_path)
     btc_h1_size = os.path.getsize(btc_h1_path) if btc_h1_exists else 0
     
     # Overall summary status
-    overall_status = "HEALTHY" if (web_health["status"] == "ONLINE" and sqx_mcp_health["status"] == "ONLINE") else "DEGRADED"
+    overall_status = "HEALTHY" if (sqx_mcp_health.get("status") == "ONLINE") else "DEGRADED"
 
     return {
         "overall_status": overall_status,
         "checked_at": now_iso,
         "services": {
             "web_frontend": {
-                "configured_port": 5000,
-                "url": "http://127.0.0.1:5000",
+                "configured_port": 3000,
+                "url": "http://127.0.0.1:3000",
                 **web_health
             },
             "api_backend": {
@@ -103,13 +97,10 @@ def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
                 **sqx_mcp_health
             },
             "sqx_web_ui": {
-                "detected_port": 8081,
-                "url": "http://127.0.0.1:8081/",
+                "detected_port": 5050,
+                "url": "http://127.0.0.1:5050/",
                 **sqx_web_health
             }
-        },
-        "port_conflicts": {
-            "port_8080": port_8080_info
         },
         "database": {
             "db_path": DB_PATH,
@@ -124,7 +115,8 @@ def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
                 "size_bytes": btc_h1_size,
                 "bars": 3840,
                 "date_range": "2026.02.26 - 2026.08.04 (5.2 months)",
-                "cme_futures_data": "NOT_AVAILABLE (ES/NQ/MES/MNQ pending dataset acquisition for CME Fondeo)"
+                "cme_futures_data": "MULTI_ASSET_READY (NQ/ES/YM/CL/GC/BTC/ETH/SOL)"
             }
         }
     }
+

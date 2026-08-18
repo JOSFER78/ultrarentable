@@ -22,22 +22,24 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: "RUTAS DE TRADING",
     items: [
-      { code: "BX", label: "ULTRA · BingX", href: "/ultra", badge: "LAB" },
+      { code: "BX", label: "ULTRA · BingX", href: "/ultra", badge: "500X" },
       { code: "FD", label: "FONDEO · Prop Firms", href: "/fondeo", badge: "CME" },
     ],
   },
   {
-    label: "GESTIÓN Y ANÁLISIS",
+    label: "ESTRATEGIAS & ANÁLISIS",
     items: [
+      { code: "DNA", label: "Explorador 5 Gates", href: "/strategies", badge: "GATES" },
+      { code: "LB", label: "Leaderboard Canónico", href: "/leaderboard", badge: "RANK" },
+      { code: "RUN", label: "Ejecución & Bots", href: "/ejecucion", badge: "LIVE" },
       { code: "PF", label: "Proveedores & Reglas", href: "/prop-firms", badge: "REGLAS" },
-      { code: "CD", label: "Candidatos & Scorecards", href: "/candidatos", badge: "AUDIT" },
-      { code: "RUN", label: "Ejecución & Kill-Switches", href: "/ejecucion", badge: "LIVE" },
-      { code: "LOG", label: "Seguimiento & Timeline", href: "/seguimiento" },
     ],
   },
   {
-    label: "INFRAESTRUCTURA",
+    label: "DATOS & RESEARCH",
     items: [
+      { code: "DAT", label: "Catálogo de Datos", href: "/data", badge: "OHLCV" },
+      { code: "RES", label: "Research Inbox", href: "/research", badge: "IDEAS" },
       { code: "SYS", label: "Sistema & Salud", href: "/sistema", badge: "8081" },
     ],
   },

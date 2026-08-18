@@ -76,9 +76,30 @@ def extract_stats(stats: dict | str) -> dict:
 
 
 def clean_symbol(raw_symbol: str) -> str:
-    """BTCUSDT_AUTO -> BTC-USDT"""
-    s = raw_symbol.replace("_AUTO", "").replace("_", "-").upper()
-    return s if "-" in s else s
+    """Clean symbol name from SQX artifacts (e.g. BTCUSDT_AUTO -> BTC-USDT, NQ_AUTO -> NQ)."""
+    if not raw_symbol or raw_symbol.upper() == "NONE":
+        return "NQ"
+    s = raw_symbol.replace("_AUTO", "").replace("_FUT", "").replace("_PERP", "").strip().upper()
+    if s.endswith("USDT") and "-" not in s:
+        return f"{s[:-4]}-USDT"
+    return s
+
+
+def extract_timeframe_from_stats(stats_raw: dict | str) -> str:
+    """Extract timeframe from SQX stats or return standard fallback 1h."""
+    if isinstance(stats_raw, dict):
+        cols = stats_raw.get("columns", [])
+        vals = stats_raw.get("values", [])
+        for c, v in zip(cols, vals):
+            if "timeframe" in str(c).lower() or "tf" in str(c).lower() or "period" in str(c).lower():
+                val_str = str(v).lower()
+                if "1m" in val_str: return "1m"
+                if "5m" in val_str: return "5m"
+                if "15m" in val_str: return "15m"
+                if "1h" in val_str or "60" in val_str: return "1h"
+                if "4h" in val_str or "240" in val_str: return "4h"
+                if "d1" in val_str or "1d" in val_str: return "1d"
+    return "1h"
 
 
 def main() -> None:
@@ -109,12 +130,10 @@ def main() -> None:
             skipped += 1
             continue
 
-        symbol = clean_symbol(stats_raw.get("columns") and str(
-            (stats_raw.get("values") or [])[3] if len(stats_raw.get("values", [])) > 3 else "BTCUSDT"
-        ))
-        # Use BTC-USDT when the SQX symbol is the auto pilot synthetic
-        if "BTCUSDT" in symbol:
-            symbol = "BTC-USDT"
+        raw_sym = str((stats_raw.get("values") or [])[3]) if len(stats_raw.get("values", [])) > 3 else "NQ"
+        symbol = clean_symbol(raw_sym)
+        tf = extract_timeframe_from_stats(stats_raw)
+        venue = "BINGX" if "USDT" in symbol or symbol in ("BTC", "ETH", "SOL") else "CME"
 
         spec = sqx_candidate_to_spec(
             project_name=PROJECT,
@@ -122,6 +141,7 @@ def main() -> None:
             strategy_name=name,
             sqx_stats=metrics,
             symbol=symbol,
+            timeframe=tf,
         )
 
         spec_id = spec.strategy_id
@@ -135,8 +155,8 @@ def main() -> None:
             },
             "market": {
                 "symbol": symbol,
-                "timeframe": "1h",
-                "venue": "BINGX" if symbol.endswith("USDT") else "CME",
+                "timeframe": tf,
+                "venue": venue,
             },
             "metadata": {
                 "family": "sqx_generated",

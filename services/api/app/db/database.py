@@ -585,55 +585,7 @@ def init_db():
                 db.add(p)
             db.commit()
 
-        # Seed Candidates with strict truthful classification
-        if db.query(CandidateModel).count() == 0:
-            candidates = [
-                CandidateModel(
-                    candidate_id="strat_1_0_54",
-                    name="Strategy 1.0.54",
-                    route="FONDEO",
-                    symbol="BTC-USDT",
-                    timeframe="1h",
-                    dataset_id="BTCUSDT_AUTO_H1",
-                    status="RECHAZADA_FONDEO_DD",
-                    status_reason="Drawdown OOS del 10.18% excede el límite canónico de fondeo (<= 4.0%). No califica para evaluación en prop firm.",
-                    net_profit_is=134.51,
-                    trades_is=55,
-                    profit_factor_is=1.38,
-                    max_dd_is_pct=10.07,
-                    net_profit_oos=168.50,
-                    trades_oos=29,
-                    profit_factor_oos=1.75,
-                    max_dd_oos_pct=10.18,
-                    ratio_oos_is=1.27,
-                    wfo_pass_pct=75.0,
-                    monte_carlo_score=80.0,
-                ),
-                CandidateModel(
-                    candidate_id="strat_1_0_32",
-                    name="Strategy 1.0.32",
-                    route="FONDEO",
-                    symbol="BTC-USDT",
-                    timeframe="1h",
-                    dataset_id="BTCUSDT_AUTO_H1",
-                    status="INVESTIGACION_BTC",
-                    status_reason="Candidata en datos de BTC H1 (5,2 meses). No validada en instrumento CME (MES/MNQ), sin DD intrabar y sin paper trading. Requiere validación específica.",
-                    net_profit_is=73.48,
-                    trades_is=49,
-                    profit_factor_is=1.47,
-                    max_dd_is_pct=5.35,
-                    net_profit_oos=30.99,
-                    trades_oos=25,
-                    profit_factor_oos=1.32,
-                    max_dd_oos_pct=3.74,
-                    ratio_oos_is=0.90,
-                    wfo_pass_pct=70.0,
-                    monte_carlo_score=75.0,
-                ),
-            ]
-            for c in candidates:
-                db.add(c)
-            db.commit()
+        # Candidates table remains clean (0 candidates) until discovered by the search engine
 
         # Seed initial Audit Events
         if db.query(AuditEventModel).count() == 0:
@@ -667,27 +619,9 @@ def init_db():
                 db.add(e)
             db.commit()
 
-        # Seed initial Execution Session demo
-        if db.query(ExecutionSessionModel).count() == 0:
-            db.add(
-                ExecutionSessionModel(
-                    session_id="session_bingx_demo_01",
-                    route="ULTRA",
-                    environment="PAPER_BINGX",
-                    candidate_id="strat_1_0_32",
-                    symbol="BTC-USDT",
-                    status="RUNNING",
-                    current_pnl_usd=14.50,
-                    daily_pnl_usd=5.20,
-                    current_drawdown_pct=0.85,
-                    peak_equity_usd=1014.50,
-                    last_signal="BUY @ 60,420.00 (Momentum Breakout H1)",
-                    last_order="FILLED SIM 0.05 BTC @ 60,421.50",
-                    open_positions_json='[{"symbol":"BTC-USDT","side":"LONG","qty":0.05,"entryPrice":60421.5,"unrealizedPnl":14.50,"leverage":5}]',
-                    kill_switch_active=False
-                )
-            )
-            db.commit()
+        # Purge any legacy demo/fake execution sessions (REAL-ONLY DOCTRINE)
+        db.query(ExecutionSessionModel).filter(ExecutionSessionModel.session_id.like("%demo%")).delete()
+        db.commit()
 
     return DB_PATH
 
