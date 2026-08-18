@@ -96,11 +96,44 @@ async def get_recent_failures(limit: int = 20) -> List[FailureRecord]:
 @router.post("/failures/record", response_model=FailureRecord)
 async def record_failure_autopsy(req: RecordFailureRequest) -> FailureRecord:
     """Registra un fallo cuantitativo e indexa la firma en la lista de exclusión."""
-    return failure_db_instance.record_failure(
-        strategy=req.strategy,
-        track=req.track,
-        category=req.category,
-        rejection_reasons=req.rejection_reasons,
-        market_regime=req.market_regime,
-        metrics_snapshot=req.metrics_snapshot,
+class DebateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    strategy_id: str
+    name: str = "Quantitative Champion Strategy"
+    symbol: str = "SOL-USDT"
+    timeframe: str = "15m"
+    route: str = "ULTRA"
+    profit_factor_oos: float = 1.35
+    max_dd_pct: float = 4.2
+    win_rate: float = 40.0
+
+
+@router.post("/debate")
+async def debate_strategy_agents(req: DebateRequest) -> Dict[str, Any]:
+    """Ejecuta el debate multi-agente cuantitativo (Interpreter, Critic, Improver, Regime, Adversarial)."""
+    return semantic_engine_instance.debate_candidate(
+        strategy_id=req.strategy_id,
+        name=req.name,
+        symbol=req.symbol,
+        timeframe=req.timeframe,
+        route=req.route,
+        pf_oos=req.profit_factor_oos,
+        max_dd_pct=req.max_dd_pct,
+        win_rate=req.win_rate,
     )
+
+
+class EnsembleDebateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    route: str = "ULTRA"
+    strategies: List[Dict[str, Any]]
+
+
+@router.post("/ensemble-debate")
+async def debate_ensemble_portfolio(req: EnsembleDebateRequest) -> Dict[str, Any]:
+    """Ejecuta el debate multi-agente para la creación y sinergia de una Meta-Estrategia Ensamblada."""
+    return semantic_engine_instance.ensemble_debate(
+        route=req.route,
+        strategies=req.strategies,
+    )
+
