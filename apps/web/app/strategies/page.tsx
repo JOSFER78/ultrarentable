@@ -49,6 +49,8 @@ export default function StrategiesExplorerPage() {
   });
   const [simLoading, setSimLoading] = useState(false);
   const [simResult, setSimResult] = useState<any | null>(null);
+  const [aiOptimizing, setAiOptimizing] = useState(false);
+  const [aiReport, setAiReport] = useState<any | null>(null);
 
   const [viewMode, setViewMode] = useState<"TABLE" | "CARDS">("TABLE");
   const [sortField, setSortField] = useState<string>("annualized_roi_pct");
@@ -1908,10 +1910,114 @@ export default function StrategiesExplorerPage() {
             {/* Tab 3: Editor & Fast Simulator */}
             {activeModalTab === "EDITOR" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {/* BANNER DE AUTO-APRENDIZAJE Y OPTIMIZACIÓN IA */}
+                <div style={{
+                  background: "linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(56, 189, 248, 0.15))",
+                  border: "1px solid rgba(168, 85, 247, 0.3)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}>
+                  <div>
+                    <div style={{ fontSize: "14px", fontWeight: 900, color: "#fff", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span>🧠 Auto-Optimización con Memoria IA Cuántica</span>
+                      <span style={{ fontSize: "10px", background: "rgba(168, 85, 247, 0.3)", color: "#c084fc", padding: "2px 6px", borderRadius: "4px" }}>
+                        Sistema 24/7 de Autoaprendizaje
+                      </span>
+                    </div>
+                    <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px", maxWidth: "480px" }}>
+                      La IA explora la estructura de volatilidad de {selectedCandidate.symbol} en memoria y auto-calibra los parámetros óptimos sin que tengas que adivinar nada.
+                    </div>
+                  </div>
+
+                  <button
+                    disabled={aiOptimizing}
+                    onClick={async () => {
+                      try {
+                        setAiOptimizing(true);
+                        setAiReport(null);
+                        const resp = await fetch(`/api/v1/candidates/${selectedCandidate.candidate_id}/ai-optimize`, {
+                          method: "POST",
+                        });
+                        if (resp.ok) {
+                          const rep = await resp.json();
+                          setAiReport(rep);
+                          if (rep.recommended_params) {
+                            setSimParams((prev) => ({
+                              ...prev,
+                              ...rep.recommended_params,
+                            }));
+                          }
+                        }
+                      } catch (e) {
+                        console.error("AI Optimize error:", e);
+                      } finally {
+                        setAiOptimizing(false);
+                      }
+                    }}
+                    style={{
+                      background: aiOptimizing ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #a855f7, #38bdf8)",
+                      color: aiOptimizing ? "var(--text-muted)" : "#000",
+                      padding: "10px 18px",
+                      borderRadius: "8px",
+                      fontWeight: 900,
+                      fontSize: "12px",
+                      border: "none",
+                      cursor: aiOptimizing ? "not-allowed" : "pointer",
+                      boxShadow: "0 4px 15px rgba(168, 85, 247, 0.4)",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    {aiOptimizing ? "🧠 Explorando Espacio de Parámetros..." : "✨ Auto-Optimizar con IA"}
+                  </button>
+                </div>
+
+                {/* INFORME DE LA IA TRAS OPTIMIZAR */}
+                {aiReport && (
+                  <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.3)", borderRadius: "10px", padding: "16px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: 800, color: "#c084fc", marginBottom: "8px" }}>
+                      💡 Razonamiento Cuantitativo de la IA:
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: "1.5", marginBottom: "12px" }}>
+                      {aiReport.ai_rationale}
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", background: "rgba(0,0,0,0.3)", padding: "12px", borderRadius: "8px" }}>
+                      <div>
+                        <div style={{ fontSize: "11px", fontWeight: 800, color: "#f87171", marginBottom: "6px" }}>Configuración Anterior (Base)</div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          Beneficio: <strong style={{ color: "#fff" }}>${aiReport.before_metrics?.net_profit_usd?.toLocaleString("en-US", { minimumFractionDigits: 1 })}</strong>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          ROI Anual: <strong style={{ color: "#fff" }}>{aiReport.before_metrics?.annualized_roi_pct}% / año</strong>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          Drawdown: <strong style={{ color: "#fff" }}>{aiReport.before_metrics?.max_drawdown_pct}%</strong>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: "11px", fontWeight: 800, color: "#4ade80", marginBottom: "6px" }}>Configuración Optimizada por IA</div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          Beneficio: <strong style={{ color: "#4ade80" }}>+${aiReport.after_metrics?.net_profit_usd?.toLocaleString("en-US", { minimumFractionDigits: 1 })}</strong>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          ROI Anual: <strong style={{ color: "#34d399" }}>+{aiReport.after_metrics?.annualized_roi_pct}% / año</strong>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                          Drawdown: <strong style={{ color: "#38bdf8" }}>{aiReport.after_metrics?.max_drawdown_pct}%</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                     <h4 style={{ margin: 0, fontSize: "14px", color: "var(--accent)" }}>
-                      🛠️ Ajuste de Parámetros Cuantitativos ({selectedCandidate.symbol} {selectedCandidate.timeframe})
+                      🛠️ Parámetros Cuantitativos ({selectedCandidate.symbol} {selectedCandidate.timeframe})
                     </h4>
                     <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>
                       Modo: {selectedCandidate.route === "ULTRA" ? "🔥 Hiperescalado Convexo" : "🛡️ Fondeo Preservación"}

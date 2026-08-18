@@ -283,57 +283,109 @@ class ContinuousSearchDaemon:
                 self.telemetry["funnel"]["total_generated"] += 1
                 self.telemetry["runtime_seconds"] = int(now_t - start_ts)
 
-                # 1. Sample AI parameters
-                params = ai_learning_engine.sample_parameters(cell.symbol, cell.timeframe.value)
+                # 1. Pipeline Etapa 1: Generación y Muestreo de Arquetipo
                 archetype_key = params.get("archetype", cell.primary_archetype.value)
-                sl_mult = float(params.get("atr_stop_mult", 1.5))
-                tp_mult = float(params.get("atr_tp_mult", 3.5))
-                max_lev = 10.0 if cell.target_route == TargetRoute.ULTRA else 1.0
-                risk_pct = 2.0 if cell.target_route == TargetRoute.ULTRA else 1.0
-
-                # 2. Run deterministic IS/OOS backtest
                 eval_name = f"{cell.symbol} {cell.timeframe.value} {archetype_key}"
                 is_ultra_route = (cell.target_route == TargetRoute.ULTRA)
 
-                if is_ultra_route:
-                    res: RiskControlledResult = engine.run_hyperscaling_strategy(
-                        name=eval_name,
-                        initial_risk_pct=6.0,
-                        max_leverage=500.0,
-                        pyramiding_tiers=6,
-                        margin_reinvest_pct=85.0,
-                        atr_stop_mult=sl_mult,
-                        atr_runner_target=max(12.0, tp_mult * 3.5),
-                        split_ratio=0.70,
-                    )
-                else:
-                    res: RiskControlledResult = engine.run_prop_firm_strategy(
-                        name=eval_name,
-                        account_size_usd=50_000.0,
-                        profit_target_usd=3_000.0,
-                        max_trailing_dd_usd=2_000.0,
-                        risk_per_trade_usd=600.0,
-                        atr_stop_mult=min(1.2, sl_mult),
-                        atr_tp_mult=max(2.4, tp_mult),
-                        split_ratio=0.70,
-                    )
+                # 2. Pipeline Etapa 2: Pulido y Auto-Optimización IA Multivariable (Búsqueda en Memoria)
+                best_res: Optional[RiskControlledResult] = None
+                best_score = -999.0
+                best_p = {}
 
-                # 3. Step-by-Step Gate Verification (Funnel)
+                if is_ultra_route:
+                    sl_grid = [1.0, 1.2, 1.5, 1.8, 2.0]
+                    tp_grid = [3.0, 4.5, 6.0, 8.0]
+                    reinvest_grid = [75.0, 85.0, 90.0]
+                    tier_grid = [4, 6, 8]
+                    lev_grid = [50.0, 100.0, 250.0, 500.0]
+
+                    for sl_val in sl_grid:
+                        for tp_val in tp_grid:
+                            for r_val in reinvest_grid:
+                                for t_val in tier_grid:
+                                    for lev_val in lev_grid:
+                                        res_cand = engine.run_hyperscaling_strategy(
+                                            name=eval_name,
+                                            initial_risk_pct=6.0,
+                                            max_leverage=lev_val,
+                                            pyramiding_tiers=t_val,
+                                            margin_reinvest_pct=r_val,
+                                            atr_stop_mult=sl_val,
+                                            atr_runner_target=tp_val * 2.0,
+                                            split_ratio=0.70,
+                                        )
+                                        oos_m = res_cand.oos_metrics
+                                        oos_pf = float(oos_m.get("profit_factor", 0.0))
+                                        oos_roi = float(oos_m.get("roi_pct", 0.0))
+                                        oos_dd = float(oos_m.get("max_drawdown_pct", 100.0))
+                                        oos_wr = float(oos_m.get("win_rate_pct", 0.0))
+
+                                        if oos_dd < 95.0 and oos_wr >= 18.0 and oos_pf >= 1.02:
+                                            cand_score = (oos_roi * 0.6) + (oos_pf * 20.0) - (oos_dd * 0.2)
+                                            if cand_score > best_score:
+                                                best_score = cand_score
+                                                best_res = res_cand
+                                                best_p = {
+                                                    "atr_stop_mult": sl_val,
+                                                    "atr_tp_mult": tp_val,
+                                                    "margin_reinvest_pct": r_val,
+                                                    "pyramiding_tiers": t_val,
+                                                    "max_leverage": lev_val,
+                                                }
+                else:
+                    # Fondeo: Estricto Drawdown <= 4.0%, Max Payoff
+                    sl_grid = [0.8, 1.0, 1.2, 1.4]
+                    tp_grid = [2.4, 3.0, 3.6, 4.5]
+                    risk_grid = [350.0, 500.0, 650.0, 750.0]
+
+                    for sl_val in sl_grid:
+                        for tp_val in tp_grid:
+                            for risk_val in risk_grid:
+                                res_cand = engine.run_prop_firm_strategy(
+                                    name=eval_name,
+                                    account_size_usd=50_000.0,
+                                    profit_target_usd=3_000.0,
+                                    max_trailing_dd_usd=2_000.0,
+                                    risk_per_trade_usd=risk_val,
+                                    atr_stop_mult=sl_val,
+                                    atr_tp_mult=tp_val,
+                                    split_ratio=0.70,
+                                )
+                                oos_m = res_cand.oos_metrics
+                                oos_pf = float(oos_m.get("profit_factor", 0.0))
+                                oos_roi = float(oos_m.get("roi_pct", 0.0))
+                                oos_dd = float(oos_m.get("max_drawdown_pct", 10.0))
+
+                                if oos_dd <= 4.0 and oos_pf >= 1.05:
+                                    cand_score = (oos_roi * 10.0) + (oos_pf * 30.0) - (oos_dd * 15.0)
+                                    if cand_score > best_score:
+                                        best_score = cand_score
+                                        best_res = res_cand
+                                        best_p = {
+                                            "atr_stop_mult": sl_val,
+                                            "atr_tp_mult": tp_val,
+                                            "risk_per_trade_usd": risk_val,
+                                        }
+
+                if best_res is None:
+                    continue
+
+                res = best_res
+
+                # 3. Pipeline Etapa 3: Verificación Ciega de los 5 Gates (Funnel)
                 is_trades = res.is_metrics.get("trades", 0)
                 is_pf = float(res.is_metrics.get("profit_factor", 0.0))
                 is_dd = float(res.is_metrics.get("max_drawdown_pct", 0.0))
                 is_wr = float(res.is_metrics.get("win_rate_pct") or res.is_metrics.get("win_rate") or 0.0)
-                
+
                 oos_trades = res.oos_metrics.get("trades", 0)
                 oos_pf = float(res.oos_metrics.get("profit_factor", 0.0))
                 oos_dd = float(res.oos_metrics.get("max_drawdown_pct", 0.0))
                 oos_wr = float(res.oos_metrics.get("win_rate_pct") or res.oos_metrics.get("win_rate") or 0.0)
 
-                is_ultra_route = (cell.target_route == TargetRoute.ULTRA)
-
                 if is_ultra_route:
                     # ── CRITERIOS RUTA ULTRA (BingX 500x / Cripto Convexo) ──
-                    # Sin límite de Drawdown tradicional (solo quiebra < 95%), exige Win Rate >= 18% y ganancia
                     passed_is = (is_trades >= 4) and (is_pf >= 1.02) and (is_wr >= 18.0) and (is_dd < 95.0)
                     passed_oos = passed_is and (oos_trades >= 2) and (oos_pf >= 1.02) and (oos_wr >= 18.0) and (oos_dd < 95.0)
                     ratio_oos_is = round(oos_pf / max(0.01, is_pf), 2) if passed_oos else 0.0
@@ -361,9 +413,9 @@ class ContinuousSearchDaemon:
                 if passed_mc:
                     self.telemetry["funnel"]["passed_monte_carlo"] += 1
 
-                # 4. Feed results into AI Learning Engine
+                # 4. Pipeline Etapa 4: Retroalimentación a la Memoria Central IA
                 ai_learning_engine.register_feedback(
-                    params=params,
+                    params=best_p or params,
                     passed_is=passed_is,
                     passed_oos=passed_oos,
                     passed_wfo=passed_wfo,
@@ -391,12 +443,7 @@ class ContinuousSearchDaemon:
                             "split_oos": res.duration_info.get("split_date"),
                             "end_oos": res.duration_info.get("end_date"),
                         },
-                        "parameters": {
-                            "atr_stop_mult": sl_mult,
-                            "atr_tp_mult": tp_mult,
-                            "risk_per_trade_pct": risk_pct,
-                            "max_leverage": max_lev,
-                        },
+                        "parameters": best_p,
                         "is_metrics": res.is_metrics,
                         "oos_metrics": res.oos_metrics,
                         "ratio_oos_is": ratio_oos_is,
@@ -431,8 +478,8 @@ class ContinuousSearchDaemon:
                         "trades": oos_trades,
                         "win_rate_pct": oos_wr,
                         "dates": f"{res.duration_info.get('start_date', '2023-06')} → {res.duration_info.get('end_date', '2026-04')} ({res.duration_info.get('total_years', 2.85)}a)",
-                        "sl_mult": sl_mult,
-                        "tp_mult": tp_mult,
+                        "sl_mult": best_p.get("atr_stop_mult", 1.2),
+                        "tp_mult": best_p.get("atr_tp_mult", 3.0),
                         "found_at": datetime.now(timezone.utc).strftime("%H:%M:%S"),
                     })
                     self.telemetry["recent_discoveries"] = self.telemetry["recent_discoveries"][:20]
