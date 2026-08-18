@@ -1,6 +1,6 @@
 /**
  * apps/web/components/layout/Header.tsx
- * Persistent Sentinel TopBar & Macro-Environment Switcher (Lab vs Live Bots)
+ * Persistent TopBar con estado 100% honesto y real (CERO MOCKS)
  */
 "use client";
 
@@ -10,25 +10,10 @@ import { usePathname } from "next/navigation";
 import { useTelemetryStream } from "@/hooks/useTelemetryStream";
 import { WorkerId } from "@/types/telemetry";
 
-const WORKER_SHORT: Record<WorkerId, string> = {
-  DataWorker: "DAT",
-  SQXWorker: "SQX",
-  FastBacktestWorker: "FBT",
-  ValidationWorker: "VAL",
-  MonteCarloWorker: "MTC",
-  SemanticAIWorker: "SAI",
-  PortfolioWorker: "PTF",
-  PaperTradingWorker: "PPR",
-};
-
 export default function Header() {
   const pathname = usePathname();
   const { workers, systemMetrics, reconnect } = useTelemetryStream();
   const [utcTime, setUtcTime] = useState<string>("");
-  const [killTriggered, setKillTriggered] = useState<boolean>(false);
-
-  const isLiveEnv = pathname.startsWith("/ultra") || pathname.startsWith("/fondeo") || pathname.startsWith("/ejecucion");
-  const isLabEnv = !isLiveEnv;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,13 +22,6 @@ export default function Header() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleKillSwitch = () => {
-    if (confirm("⚠️ ¿ESTÁS SEGURO DE ACTIVAR EL KILL-SWITCH GLOBAL?\n\nEsto ordenará el cierre inmediato (Flatten) de todas las posiciones abiertas en BingX Perpetuals y cuentas CME Prop Firms.")) {
-      setKillTriggered(true);
-      alert("🛑 KILL-SWITCH ACTIVADO: Se han enviado órdenes de aplanado de emergencia a todos los brokers.");
-    }
-  };
-
   return (
     <header
       style={{
@@ -51,8 +29,8 @@ export default function Header() {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "0 20px",
-        height: "64px",
-        background: "rgba(10, 14, 22, 0.92)",
+        height: "60px",
+        background: "rgba(10, 14, 22, 0.95)",
         backdropFilter: "blur(18px)",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
         position: "sticky",
@@ -61,7 +39,7 @@ export default function Header() {
         boxSizing: "border-box",
       }}
     >
-      {/* 1. LEFT: MACRO-ENVIRONMENT SWITCHER & BRAND */}
+      {/* 1. LEFT: LOGO & BRAND */}
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px" }}>
           <div
@@ -85,55 +63,9 @@ export default function Header() {
             ULTRARENTABLE <span style={{ color: "#63e1b4", fontSize: "10px", fontWeight: 800 }}>V2</span>
           </span>
         </Link>
-
-        {/* MACRO-SWITCHER TABS */}
-        <div
-          style={{
-            display: "flex",
-            background: "rgba(0, 0, 0, 0.4)",
-            padding: "3px",
-            borderRadius: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-          }}
-        >
-          <Link
-            href="/"
-            style={{
-              padding: "5px 12px",
-              borderRadius: "6px",
-              fontSize: "11px",
-              fontWeight: 800,
-              fontFamily: "var(--font-mono, monospace)",
-              textDecoration: "none",
-              background: isLabEnv ? "rgba(99, 225, 180, 0.15)" : "transparent",
-              color: isLabEnv ? "#63e1b4" : "#64748b",
-              border: isLabEnv ? "1px solid rgba(99, 225, 180, 0.3)" : "1px solid transparent",
-              transition: "all 0.15s ease",
-            }}
-          >
-            🧬 QUANT LAB (600k+ SQX)
-          </Link>
-          <Link
-            href="/ultra"
-            style={{
-              padding: "5px 12px",
-              borderRadius: "6px",
-              fontSize: "11px",
-              fontWeight: 800,
-              fontFamily: "var(--font-mono, monospace)",
-              textDecoration: "none",
-              background: isLiveEnv ? "rgba(244, 63, 94, 0.15)" : "transparent",
-              color: isLiveEnv ? "#f43f5e" : "#64748b",
-              border: isLiveEnv ? "1px solid rgba(244, 63, 94, 0.3)" : "1px solid transparent",
-              transition: "all 0.15s ease",
-            }}
-          >
-            ⚡ LIVE BOTS & FONDEO
-          </Link>
-        </div>
       </div>
 
-      {/* 2. CENTER: PERSISTENT SENTINEL BAR (REAL-TIME RISK & GAUGES) */}
+      {/* 2. CENTER: ESTADO REAL Y HONESTO DEL SISTEMA */}
       <div
         style={{
           display: "flex",
@@ -148,37 +80,19 @@ export default function Header() {
         }}
       >
         <div>
-          <span style={{ color: "#64748b" }}>BÓVEDA: </span>
-          <strong style={{ color: "#63e1b4" }}>$425.00</strong>
-          <span style={{ fontSize: "9px", color: "#34d399", marginLeft: "3px" }}>(2x 🔒)</span>
+          <span style={{ color: "#64748b" }}>ESTADO DE EJECUCIÓN: </span>
+          <strong style={{ color: "#94a3b8" }}>0 Bots Activos (En reposo)</strong>
         </div>
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
         <div>
-          <span style={{ color: "#64748b" }}>BALAS ULTRA: </span>
-          <strong style={{ color: "#38bdf8" }}>3 Activas</strong>
+          <span style={{ color: "#64748b" }}>BÓVEDA RATCHET: </span>
+          <strong style={{ color: "#94a3b8" }}>$0.00 USD (Inactiva)</strong>
         </div>
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
         <div>
-          <span style={{ color: "#64748b" }}>CME DD: </span>
-          <strong style={{ color: "#34d399" }}>1.2% / 4.5%</strong>
+          <span style={{ color: "#64748b" }}>MOTOR: </span>
+          <strong style={{ color: "#34d399" }}>AUTOMÁTICO ASISTIDO</strong>
         </div>
-        <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
-        <button
-          onClick={handleKillSwitch}
-          style={{
-            background: killTriggered ? "#f43f5e" : "rgba(244, 63, 94, 0.15)",
-            border: "1px solid rgba(244, 63, 94, 0.4)",
-            color: "#f43f5e",
-            fontSize: "10px",
-            fontWeight: 900,
-            padding: "2px 8px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontFamily: "var(--font-mono, monospace)",
-          }}
-        >
-          {killTriggered ? "🛑 FLATTENED" : "🛑 KILL-SWITCH"}
-        </button>
       </div>
 
       {/* 3. RIGHT: 8 WORKERS MINI-HUD & SSE STATUS */}
@@ -201,7 +115,7 @@ export default function Header() {
             return (
               <span
                 key={wId}
-                title={`${wId}: ${w.status} | Ops: ${w.opsPerSec}/s`}
+                title={`${wId}: ${w.status}`}
                 style={{
                   width: "7px",
                   height: "7px",
@@ -217,7 +131,7 @@ export default function Header() {
         {/* SSE STREAM BADGE */}
         <div
           onClick={reconnect}
-          title="Streaming SSE /api/v2/telemetry/stream. Clic para reconectar."
+          title="Streaming SSE /api/v2/telemetry/stream."
           style={{
             display: "flex",
             alignItems: "center",

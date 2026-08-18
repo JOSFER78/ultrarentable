@@ -90,7 +90,10 @@ app.include_router(semantic_router, prefix="/api/v2/semantic", tags=["v2-semanti
 app.include_router(ultra_router, prefix="/api/v2/ultra", tags=["v2-ultra"])
 app.include_router(portfolio_router, prefix="/api/v2/portfolio", tags=["v2-portfolio"])
 app.include_router(paper_router, prefix="/api/v2/paper", tags=["v2-paper"])
-app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data"])
+
+# Montar real_data_router en /api/v2 y en /api/v2/real
+app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])
+app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-alias"])
 
 
 @app.get("/", tags=["system"])
@@ -102,20 +105,4 @@ def read_root() -> Dict[str, Any]:
         "status": "RUNNING",
         "mode": "REAL_ONLY",
         "architecture": "CLEAN_MODULAR_ASYNC_EVENT_BUS",
-        "tracks": {
-            "TRACK_FONDEO": "CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection",
-            "TRACK_ULTRA": "BingX Crypto Perps / Margen Aislado 1R / Piramidación Free-Risk / Bóveda Ratchet",
-        },
-        "v2_endpoints": [
-            "/api/v2/telemetry/health",
-            "/api/v2/telemetry/stream",
-            "/api/v2/validation/evaluate",
-            "/api/v2/semantic/failures/stats",
-            "/api/v2/ultra/vault/config",
-            "/api/v2/portfolio/weights",
-            "/api/v2/paper/orders",
-            "/api/v2/real/overview",
-            "/api/v2/real/strategies",
-            "/api/v2/real/trades/botfreq",
-        ],
     }
