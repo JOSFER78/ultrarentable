@@ -1,46 +1,49 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 interface NavItem {
-  code?: string;
+  code: string;
   label: string;
   href: string;
   badge?: string;
-  isPhase?: boolean;
+  highlight?: boolean;
 }
 
-const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
+const NAVIGATION: NavGroup[] = [
   {
-    label: "CENTRO DE CONTROL",
+    group: "OPERACIONES NÚCLEO",
     items: [
-      { code: "CC", label: "Control Center", href: "/" },
+      { code: "CMD", label: "Command Center", href: "/", badge: "DUAL" },
+      { code: "FSM", label: "Candidatos FSM", href: "/candidatos", badge: "10-STATES" },
     ],
   },
   {
-    label: "RUTAS DE TRADING",
+    group: "DOCTRINA DUAL",
     items: [
-      { code: "BX", label: "ULTRA · BingX", href: "/ultra", badge: "500X" },
-      { code: "FD", label: "FONDEO · Prop Firms", href: "/fondeo", badge: "CME" },
+      { code: "ULT", label: "Ultra Lab", href: "/ultra", badge: "BINGX · 1R", highlight: true },
+      { code: "FND", label: "Track Fondeo", href: "/fondeo", badge: "CME · PROPS" },
     ],
   },
   {
-    label: "ESTRATEGIAS & ANÁLISIS",
+    group: "VALIDACIÓN & IA",
     items: [
-      { code: "DNA", label: "Explorador 5 Gates", href: "/strategies", badge: "GATES" },
-      { code: "LB", label: "Leaderboard Canónico", href: "/leaderboard", badge: "RANK" },
-      { code: "RUN", label: "Ejecución & Bots", href: "/ejecucion", badge: "LIVE" },
-      { code: "PF", label: "Proveedores & Reglas", href: "/prop-firms", badge: "REGLAS" },
+      { code: "QVF", label: "Bifurcación QVF", href: "/bifurcacion", badge: "EVIDENCE" },
+      { code: "SEM", label: "IA Semántica & Failure-DB", href: "/research", badge: "5 AGENTS" },
     ],
   },
   {
-    label: "DATOS & RESEARCH",
+    group: "EJECUCIÓN & RESILIENCIA",
     items: [
-      { code: "DAT", label: "Catálogo de Datos", href: "/data", badge: "OHLCV" },
-      { code: "RES", label: "Research Inbox", href: "/research", badge: "IDEAS" },
-      { code: "SYS", label: "Sistema & Salud", href: "/sistema", badge: "8081" },
+      { code: "BOX", label: "Paper Sandbox (14d)", href: "/ejecucion", badge: "SANDBOX" },
+      { code: "SUP", label: "Supervisión & Workers", href: "/sistema", badge: "8 WORKERS" },
     ],
   },
 ];
@@ -59,168 +62,258 @@ export default function Sidebar() {
     <>
       {mobileOpen && (
         <div
-          className="sidebar-overlay"
           onClick={() => setMobileOpen(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0, 0, 0, 0.7)",
+            backdropFilter: "blur(4px)",
             zIndex: 199,
-            display: "none",
           }}
         />
       )}
-      <button
-        className="mobile-menu-btn"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        style={{
-          position: "fixed",
-          top: 12,
-          left: 12,
-          zIndex: 300,
-          display: "none",
-          background: "var(--bg-panel)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-md)",
-          color: "var(--text-primary)",
-          padding: "8px 12px",
-          cursor: "pointer",
-          fontSize: "12px",
-          fontWeight: 700,
-          letterSpacing: "1px",
-        }}
-      >
-        MENU
-      </button>
 
       <aside
-        className={`sidebar ${collapsed ? "collapsed" : ""} ${
-          mobileOpen ? "mobile-open" : ""
-        }`}
+        style={{
+          width: collapsed ? "72px" : "240px",
+          minWidth: collapsed ? "72px" : "240px",
+          height: "100vh",
+          background: "rgba(8, 12, 18, 0.95)",
+          backdropFilter: "blur(20px)",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+          display: "flex",
+          flexDirection: "column",
+          position: "sticky",
+          top: 0,
+          transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+          zIndex: 200,
+          boxSizing: "border-box",
+        }}
       >
-        <div className="sidebar-logo" onClick={() => setCollapsed(!collapsed)}>
-          <div className="sidebar-logo-icon">UR</div>
-          <div className="sidebar-logo-text">
-            <span className="sidebar-logo-title">ULTRARENTABLE</span>
-            <span className="sidebar-logo-subtitle">AUTOMATED TRADING LAB</span>
+        {/* LOGO & TITLE */}
+        <div
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            height: "64px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "0 18px",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            cursor: "pointer",
+          }}
+        >
+          <div
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #63e1b4 0%, #38bdf8 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 900,
+              fontSize: "14px",
+              color: "#06080d",
+              fontFamily: "var(--font-mono, monospace)",
+              boxShadow: "0 0 16px rgba(99, 225, 180, 0.3)",
+              flexShrink: 0,
+            }}
+          >
+            UR
           </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          {NAV_SECTIONS.map((section) => (
-            <div key={section.label} style={{ marginBottom: 16 }}>
-              <div
-                className="nav-section-label"
+          {!collapsed && (
+            <div style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
+              <span
                 style={{
-                  fontSize: "9px",
-                  letterSpacing: "1px",
-                  fontWeight: 800,
-                  opacity: 0.6,
-                  color: "var(--text-muted)",
-                  marginBottom: 6,
-                  paddingLeft: 8,
+                  fontWeight: 900,
+                  fontSize: "13px",
+                  color: "#ffffff",
+                  letterSpacing: "0.5px",
+                  whiteSpace: "nowrap",
                 }}
               >
-                {section.label}
-              </div>
-              {section.items.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.href + item.label}
-                    href={item.href}
-                    className={`nav-item ${active ? "active" : ""}`}
-                    onClick={() => setMobileOpen(false)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      padding: "7px 10px",
-                      borderRadius: "4px",
-                      marginBottom: 2,
-                      fontSize: "12px",
-                      fontWeight: item.isPhase ? 700 : 500,
-                    }}
-                  >
-                    {item.code && (
+                ULTRARENTABLE
+              </span>
+              <span
+                style={{
+                  fontSize: "9px",
+                  color: "#63e1b4",
+                  fontWeight: 800,
+                  letterSpacing: "0.8px",
+                  fontFamily: "var(--font-mono, monospace)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                V2 QUANT LAB
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* NAVIGATION GROUPS */}
+        <nav style={{ flex: 1, padding: "16px 10px", overflowY: "auto" }}>
+          {NAVIGATION.map((group) => (
+            <div key={group.group} style={{ marginBottom: "20px" }}>
+              {!collapsed && (
+                <div
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 800,
+                    color: "#475569",
+                    letterSpacing: "1px",
+                    padding: "0 8px",
+                    marginBottom: "8px",
+                    fontFamily: "var(--font-mono, monospace)",
+                  }}
+                >
+                  {group.group}
+                </div>
+              )}
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                {group.items.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      title={collapsed ? item.label : undefined}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: collapsed ? "9px 0" : "8px 12px",
+                        justifyContent: collapsed ? "center" : "flex-start",
+                        borderRadius: "8px",
+                        background: active
+                          ? "rgba(99, 225, 180, 0.12)"
+                          : "transparent",
+                        border: active
+                          ? "1px solid rgba(99, 225, 180, 0.25)"
+                          : "1px solid transparent",
+                        textDecoration: "none",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
                       <span
                         style={{
                           fontSize: "10px",
-                          fontFamily: "monospace",
-                          fontWeight: 800,
+                          fontWeight: 900,
+                          fontFamily: "var(--font-mono, monospace)",
                           padding: "2px 5px",
-                          borderRadius: "3px",
+                          borderRadius: "4px",
                           background: active
-                            ? "var(--accent)"
-                            : item.isPhase
-                            ? "rgba(255, 255, 255, 0.08)"
-                            : "transparent",
-                          color: active ? "#000" : "var(--text-muted)",
+                            ? "#63e1b4"
+                            : item.highlight
+                            ? "rgba(99, 225, 180, 0.15)"
+                            : "rgba(255, 255, 255, 0.06)",
+                          color: active
+                            ? "#06080d"
+                            : item.highlight
+                            ? "#63e1b4"
+                            : "#94a3b8",
+                          flexShrink: 0,
                         }}
                       >
                         {item.code}
                       </span>
-                    )}
-                    <span className="nav-label" style={{ flex: 1 }}>{item.label}</span>
-                    {item.badge && (
-                      <span
-                        className="nav-badge"
-                        style={{
-                          fontSize: "9px",
-                          fontWeight: 700,
-                          padding: "1px 5px",
-                          borderRadius: "2px",
-                          background: "rgba(255, 255, 255, 0.06)",
-                          color: "var(--text-muted)",
-                          border: "1px solid var(--border)",
-                        }}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
+
+                      {!collapsed && (
+                        <>
+                          <span
+                            style={{
+                              fontSize: "12px",
+                              fontWeight: active ? 700 : 500,
+                              color: active ? "#ffffff" : "#cbd5e1",
+                              flex: 1,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {item.label}
+                          </span>
+
+                          {item.badge && (
+                            <span
+                              style={{
+                                fontSize: "9px",
+                                fontWeight: 700,
+                                padding: "2px 5px",
+                                borderRadius: "4px",
+                                background: item.highlight
+                                  ? "rgba(99, 225, 180, 0.1)"
+                                  : "rgba(255, 255, 255, 0.04)",
+                                color: item.highlight ? "#63e1b4" : "#64748b",
+                                border: "1px solid rgba(255, 255, 255, 0.06)",
+                                fontFamily: "var(--font-mono, monospace)",
+                              }}
+                            >
+                              {item.badge}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="sidebar-status">
-            <span className="status-dot" />
-            <span
-              className="sidebar-footer-text"
-              style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "monospace" }}
-            >
-              REAL-ONLY MODE
-            </span>
-          </div>
+        {/* FOOTER */}
+        <div
+          style={{
+            padding: "14px",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: collapsed ? "center" : "space-between",
+          }}
+        >
+          {!collapsed && (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  backgroundColor: "#34d399",
+                  boxShadow: "0 0 8px #34d399",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "10px",
+                  color: "#64748b",
+                  fontWeight: 700,
+                  fontFamily: "var(--font-mono, monospace)",
+                }}
+              >
+                REAL-ONLY · ZERO-MOCK
+              </span>
+            </div>
+          )}
+
           <button
-            className="sidebar-collapse-btn"
             onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? "Expandir Sidebar" : "Colapsar Sidebar"}
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "6px",
+              color: "#94a3b8",
+              padding: "4px 8px",
+              cursor: "pointer",
+              fontSize: "11px",
+              fontFamily: "var(--font-mono, monospace)",
+            }}
           >
-            <span
-              style={{
-                transform: collapsed ? "rotate(180deg)" : "none",
-                transition: "transform 200ms",
-                fontSize: 10,
-              }}
-            >
-              [&lt;]
-            </span>
-            <span className="sidebar-footer-text">Colapsar</span>
+            {collapsed ? "→" : "←"}
           </button>
         </div>
       </aside>
-
-      <style jsx global>{`
-        @media (max-width: 768px) {
-          .sidebar-overlay { display: block !important; }
-          .mobile-menu-btn { display: block !important; }
-        }
-      `}</style>
     </>
   );
 }
-
-
