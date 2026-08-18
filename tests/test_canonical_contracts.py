@@ -1,172 +1,248 @@
-"""Comprehensive Unit Tests for Canonical Contracts Package (Fase 1)."""
+"""Unit tests for Pydantic V2 Canonical Contracts (Fase 1)."""
 
 import pytest
 from pydantic import ValidationError
 
 from contracts import (
-    ActionType,
-    AssetClass,
-    ASTEntryExitLogic,
-    ASTIndicatorNode,
-    ASTRuleCondition,
-    BalaState,
     CanonicalStrategy,
-    ComparisonOperator,
-    ContractType,
-    CostsConfig,
-    EvidenceGateDecision,
+    StrategyLifecycleStatus,
+    ExecutionTrack,
+    TargetInstrument,
+    RuleTree,
+    RuleCondition,
+    IndicatorSpec,
+    ExitModel,
+    SizingAndRisk,
+    SessionWindow,
+    ProvenanceMetadata,
     FondeoValidationCriteria,
-    GateId,
-    InstrumentConfig,
-    IntrabarPolicy,
-    IsolatedBullet,
-    PropChallengeConfig,
-    RiskSizingConfig,
-    RouteType,
-    SessionConfig,
-    StrategyArchetype,
-    StrategyStatus,
+    FondeoValidationResult,
     UltraValidationCriteria,
+    UltraValidationResult,
+    ValidationTrack,
+    BalaState,
+    BalaExecutionRecord,
+    EvidenceGateDecision,
+    BacktestRequest,
+    BacktestResult,
+    EngineType,
+    DatasetSnapshot,
+    TradeLog,
+    PortfolioRequest,
+    PortfolioAllocation,
+    AssetWeight,
+    AllocationMethod,
+    IsolatedBullet,
+    BulletTradeDirection,
     VaultRatchetConfig,
+    PropChallengeConfig,
 )
 
 
-def _build_sample_canonical_strategy() -> CanonicalStrategy:
+def create_sample_strategy() -> CanonicalStrategy:
     return CanonicalStrategy(
-        strategy_id="CS-SOL-5M-VOL-001",
-        version="2.0.0",
-        name="SOL High Volatility Expansion 5m",
-        target_route="ULTRA",
-        status=StrategyStatus.CANDIDATE,
-        instrument=InstrumentConfig(
-            symbol="SOL-USDT",
-            exchange="BINGX",
-            asset_class=AssetClass.CRYPTO_PERPETUAL,
-            contract_type=ContractType.PERPETUAL,
-            point_value=1.0,
-            tick_size=0.01,
+        strategy_id="UR-CANON-001",
+        name="NQ Momentum Breakout H1",
+        target_track=ExecutionTrack.TRACK_FONDEO,
+        status=StrategyLifecycleStatus.GENERATED,
+        instrument=TargetInstrument(
+            symbol="NQ",
+            exchange="CME",
+            contract_type="FUTURES",
+            point_value=20.0,
+            tick_size=0.25,
         ),
-        timeframe="5m",
-        session=SessionConfig(timezone="UTC", start_time="00:00", end_time="23:59", close_at_end=False),
-        logic=ASTEntryExitLogic(
-            archetype=StrategyArchetype.VOLATILITY_EXPANSION,
-            long_entry_conditions=[
-                ASTRuleCondition(
-                    left_indicator=ASTIndicatorNode(name="ATR", timeframe="5m", period=14),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    threshold_value=1.2,
+        timeframe="1h",
+        session=SessionWindow(
+            timezone="America/New_York",
+            start_time="09:30",
+            end_time="16:00",
+            force_close_at_end=True,
+        ),
+        rules=RuleTree(
+            long_conditions=[
+                RuleCondition(
+                    left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
+                    operator="GREATER_THAN",
+                    threshold_value=50.0,
                 )
-            ],
-            stop_loss_atr_mult=1.5,
-            take_profit_atr_mult=4.0,
-            pyramiding_tiers=3,
+            ]
         ),
-        risk_sizing=RiskSizingConfig(
-            method="CAPITAL_COMPOUND",
-            risk_per_trade_pct=5.0,
-            max_leverage=50.0,
-            margin_reinvest_pct=80.0,
-        ),
-        costs=CostsConfig(
-            maker_fee_bps=0.0002,
-            taker_fee_bps=0.0005,
-            spread_ticks=1.0,
-            slippage_ticks=0.5,
+        exits=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
+        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, max_contracts_or_lots=4.0),
+        provenance=ProvenanceMetadata(
+            source_engine="strategyquant",
+            project_name="Ultra_Auto_Pilot",
+            databank_name="Results",
+            build_id="build_001",
+            created_timestamp_utc=1771437600000,
+            author_or_agent="SQX_MCP_BRIDGE",
         ),
     )
 
 
-def test_canonical_strategy_immutability():
-    """Verify CanonicalStrategy enforces frozen immutability."""
-    strat = _build_sample_canonical_strategy()
-    with pytest.raises(ValidationError):
-        strat.target_route = "FONDEO"  # type: ignore[misc]
-    with pytest.raises(ValidationError):
-        strat.instrument.symbol = "BTC-USDT"  # type: ignore[misc]
+def test_canonical_strategy_creation_and_immutability():
+    """Verify CanonicalStrategy builds cleanly and enforces immutability (frozen)."""
+    strategy = create_sample_strategy()
+    assert strategy.strategy_id == "UR-CANON-001"
+    assert strategy.instrument.symbol == "NQ"
+    assert strategy.session.force_close_at_end is True
 
+    # Check hash is deterministic
+    h1 = strategy.compute_sha256()
+    h2 = strategy.compute_sha256()
+    assert h1 == h2
+    assert len(h1) == 64
 
-def test_canonical_strategy_provenance_hash():
-    """Verify deterministic SHA-256 computation."""
-    strat1 = _build_sample_canonical_strategy()
-    strat2 = _build_sample_canonical_strategy()
-    
-    hash1 = strat1.compute_provenance_hash()
-    hash2 = strat2.compute_provenance_hash()
-    
-    assert hash1 == hash2
-    assert len(hash1) == 64
-    
-    strat_with_hash = strat1.with_provenance_hash()
-    assert strat_with_hash.provenance_hash == hash1
+    # Verify immutability
+    with pytest.raises(ValidationError):
+        strategy.name = "Mutated Strategy Name"  # type: ignore
 
 
 def test_canonical_strategy_json_roundtrip():
-    """Verify lossless serialization and deserialization."""
-    strat = _build_sample_canonical_strategy().with_provenance_hash()
-    json_data = strat.model_dump_json()
-    reloaded = CanonicalStrategy.model_validate_json(json_data)
-    
-    assert reloaded.strategy_id == strat.strategy_id
-    assert reloaded.instrument.symbol == "SOL-USDT"
-    assert reloaded.logic.archetype == StrategyArchetype.VOLATILITY_EXPANSION
-    assert reloaded.provenance_hash == strat.provenance_hash
+    """Verify serialization to JSON and deserialization maintains exact equality."""
+    strategy = create_sample_strategy()
+    json_str = strategy.model_dump_json()
+    recovered = CanonicalStrategy.model_validate_json(json_str)
+
+    assert recovered.strategy_id == strategy.strategy_id
+    assert recovered.compute_sha256() == strategy.compute_sha256()
 
 
-def test_validation_criteria_fondeo_and_ultra():
-    """Verify Fondeo and Ultra decoupled validation criteria."""
-    fondeo = FondeoValidationCriteria()
-    assert fondeo.max_trailing_dd_pct == 4.0
-    assert fondeo.require_eod_flatten is True
-    assert fondeo.max_single_day_profit_share_pct == 40.0
-    
-    ultra = UltraValidationCriteria()
-    assert ultra.min_annualized_roi_pct == 100.0
-    assert ultra.min_asymmetric_payoff == 3.0
-    assert ultra.disallow_account_bust is True
+def test_fondeo_validation_contracts():
+    """Verify Fondeo criteria and result models."""
+    criteria = FondeoValidationCriteria(
+        min_sharpe=2.0,
+        min_deflated_sharpe=2.0,
+        max_drawdown_pct=4.5,
+        max_daily_loss_limit_usd=1000.0,
+    )
+    assert criteria.min_sharpe == 2.0
 
-
-def test_evidence_gate_decision_structure():
-    """Verify gate decision structure and scores."""
-    decision = EvidenceGateDecision(
-        gate_id=GateId.GATE_2_OUT_OF_SAMPLE,
+    result = FondeoValidationResult(
+        strategy_id="UR-CANON-001",
         passed=True,
-        score=92.5,
-        reason="OOS Profit Factor 1.65 exceeds minimum target 1.35",
-        metrics={"oos_profit_factor": 1.65, "oos_trades": 38},
+        sharpe_ratio=2.45,
+        deflated_sharpe_ratio=2.15,
+        max_drawdown_pct=3.8,
+        daily_loss_limit_violations=0,
+        ruin_probability_pct=0.00,
+        walk_forward_efficiency=0.85,
+        top2_outlier_dependency_pct=12.0,
+        consistency_score=88.0,
     )
-    assert decision.passed is True
-    assert decision.gate_id == GateId.GATE_2_OUT_OF_SAMPLE
-    assert decision.score == 92.5
+    assert result.passed is True
+    assert result.track == ValidationTrack.TRACK_FONDEO
 
 
-def test_portfolio_isolated_bullet_and_bala_states():
-    """Verify BalaState enum contains all 6 canonical states."""
-    expected_states = {"SEEDED", "ACTIVE", "RUNNER", "HARVESTING", "RECYCLE_PROFIT", "STOPPED"}
-    actual_states = {s.value for s in BalaState}
-    assert expected_states == actual_states
-
-    bullet = IsolatedBullet(
-        bullet_id="BALA-SOL-001",
-        parent_vault_id="VAULT_MAIN_01",
-        allocated_capital_usd=2500.0,
-        current_equity_usd=5200.0,
-        peak_equity_usd=5200.0,
-        state=BalaState.RUNNER,
+def test_ultra_validation_contracts():
+    """Verify Ultra criteria and execution records."""
+    criteria = UltraValidationCriteria(
+        min_payoff_ratio=3.0,
+        min_expected_r_per_bala=0.20,
+        min_tail_gain_ratio=0.60,
     )
-    assert bullet.allocated_capital_usd == 2500.0
-    assert bullet.state == BalaState.RUNNER
+    assert criteria.min_payoff_ratio == 3.0
 
-
-def test_vault_ratchet_and_prop_challenge_config():
-    """Verify VaultRatchet and PropChallenge configurations."""
-    vault = VaultRatchetConfig()
-    assert vault.bullet_allocation_pct == 5.0
-    assert vault.profit_harvest_threshold_roi_pct == 200.0
-
-    prop = PropChallengeConfig(
-        challenge_id="APEX-50K-001",
-        prop_firm_name="Apex Trader Funding",
+    bala = BalaExecutionRecord(
+        bala_id="bala_eth_001",
+        entry_time_ms=1771437600000,
+        exit_time_ms=1771441200000,
+        margin_cost_usd=100.0,
+        gross_pnl_usd=1850.0,
+        net_pnl_usd=1842.0,
+        return_r=18.42,
+        reached_state=BalaState.COSECHA_VAULT,
+        pyramid_levels_executed=3,
+        friction_cost_usd=8.0,
     )
-    assert prop.account_size_usd == 50000.0
-    assert prop.target_profit_usd == 3000.0
-    assert prop.trailing_max_dd_usd == 2000.0
+    assert bala.return_r == 18.42
+    assert bala.reached_state == BalaState.COSECHA_VAULT
+
+
+def test_backtest_contracts():
+    """Verify BacktestRequest and BacktestResult contracts."""
+    dataset = DatasetSnapshot(
+        dataset_id="ds_btc_h1_2026",
+        symbol="BTC-USDT",
+        timeframe="1h",
+        start_timestamp_utc_ms=1770000000000,
+        end_timestamp_utc_ms=1771437600000,
+        total_bars=3840,
+        sha256_hash="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        is_in_sample=False,
+    )
+    request = BacktestRequest(
+        request_id="req_bt_001",
+        strategy_id="UR-CANON-001",
+        engine_type=EngineType.FAST_APPROXIMATE,
+        dataset=dataset,
+        initial_capital_usd=10000.0,
+        leverage=20,
+    )
+    assert request.engine_type == EngineType.FAST_APPROXIMATE
+
+    result = BacktestResult(
+        request_id="req_bt_001",
+        strategy_id="UR-CANON-001",
+        engine_type=EngineType.FAST_APPROXIMATE,
+        dataset_id="ds_btc_h1_2026",
+        initial_capital_usd=10000.0,
+        final_equity_usd=14200.0,
+        net_profit_usd=4200.0,
+        net_return_pct=42.0,
+        total_trades=101,
+        winning_trades=58,
+        losing_trades=43,
+        win_rate_pct=57.4,
+        profit_factor=1.42,
+        max_drawdown_pct=8.2,
+        max_drawdown_usd=820.0,
+        provenance_hash_sha256="abc123hash",
+    )
+    assert result.net_profit_usd == 4200.0
+
+
+def test_portfolio_contracts():
+    """Verify Portfolio and Fondeo/Ultra contracts."""
+    prop_cfg = PropChallengeConfig(
+        firm_name="Topstep 50K",
+        account_size_usd=50000.0,
+        profit_target_usd=3000.0,
+        max_trailing_drawdown_usd=2000.0,
+        daily_loss_limit_usd=1000.0,
+        consistency_max_profit_share_pct=50.0,
+    )
+    assert prop_cfg.profit_target_usd == 3000.0
+
+    vault_cfg = VaultRatchetConfig(
+        milestone_2x_lock_pct=0.50,
+        milestone_3x_lock_pct=0.65,
+        milestone_5x_lock_pct=0.75,
+    )
+    assert vault_cfg.milestone_2x_lock_pct == 0.50
+
+    allocation = PortfolioAllocation(
+        portfolio_id="port_fondeo_01",
+        timestamp_utc_ms=1771437600000,
+        total_capital_usd=50000.0,
+        weights=[
+            AssetWeight(
+                symbol="MES",
+                weight=0.60,
+                target_capital_usd=30000.0,
+                max_contracts_or_lots=4.0,
+            ),
+            AssetWeight(
+                symbol="MNQ",
+                weight=0.40,
+                target_capital_usd=20000.0,
+                max_contracts_or_lots=2.0,
+            ),
+        ],
+        expected_sharpe=2.35,
+        diversification_ratio=1.42,
+        max_historical_drawdown_pct=3.2,
+        provenance_hash_sha256="port_sha256_hash",
+    )
+    assert len(allocation.weights) == 2
