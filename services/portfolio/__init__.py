@@ -1,12 +1,7 @@
-"""services/portfolio package.
+"""services.portfolio package
+Exportación del PortfolioEngine y utilidades de asignación de capital.
 """
 
-from services.portfolio.allocator import PortfolioAllocator
-from services.portfolio.bullet_manager import BulletLifecycleManager
 from services.portfolio.portfolio_engine import PortfolioEngine
 
-__all__ = [
-    "BulletLifecycleManager",
-    "PortfolioAllocator",
-    "PortfolioEngine",
-]
+__all__ = ["PortfolioEngine"]
