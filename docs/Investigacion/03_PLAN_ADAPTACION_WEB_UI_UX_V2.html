@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ultrarentable V2 — Informe Forense & Plan Maestro de Adaptación Web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #060911;
+      color: #f1f5f9;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 0, 85, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(52, 211, 153, 0.05) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+    .font-outfit { font-family: 'Outfit', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .glass-card {
+      background: rgba(13, 19, 33, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.12);
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- HEADER -->
+    <header class="glass-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            AUDITORÍA MULTI-AGENTE (7 SUBAGENTES)
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-purple-950 text-purple-300 border border-purple-800">
+            ULTRARENTABLE V2.1.0
+          </span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-black font-outfit text-white tracking-tight">
+          Plan Maestro de Adaptación Web & Diagnóstico Forense
+        </h1>
+        <p class="text-sm text-slate-400 mt-1">
+          Por qué la web en <code class="text-cyan-300 font-mono">localhost:3000</code> seguía idéntica y cómo conectar el 100% de la arquitectura V2.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="glass-card px-5 py-3 rounded-2xl text-center border-emerald-500/30">
+          <div class="text-[10px] font-mono uppercase text-slate-400 font-bold">ESTADO BACKEND</div>
+          <div class="text-lg font-black font-mono text-emerald-400">41/41 TESTS PASSED</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 3 CAUSAS RAÍZ DEL DESCONECTE -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="glass-card rounded-2xl p-6 border-rose-500/30">
+        <div class="w-10 h-10 rounded-xl bg-rose-950 text-rose-400 flex items-center justify-center font-bold text-lg mb-4 border border-rose-800/50">
+          01
+        </div>
+        <h3 class="text-base font-bold text-white mb-2 font-outfit">Routers V2 No Montados en FastAPI</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          <code class="text-rose-300 font-mono">services/api/app/main.py</code> solo incluía routers antiguos <code class="text-slate-300 font-mono">/api/v1</code>. Los nuevos microservicios (<code class="text-slate-300 font-mono">telemetry_router</code>, <code class="text-slate-300 font-mono">validation_fabric</code>, <code class="text-slate-300 font-mono">ultra_engine</code>, <code class="text-slate-300 font-mono">paper_sandbox</code>) funcionaban en tests unitarios pero no estaban expuestos vía HTTP/SSE.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 border-amber-500/30">
+        <div class="w-10 h-10 rounded-xl bg-amber-950 text-amber-400 flex items-center justify-center font-bold text-lg mb-4 border border-amber-800/50">
+          02
+        </div>
+        <h3 class="text-base font-bold text-white mb-2 font-outfit">Página Principal Anclada a V1</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          <code class="text-amber-300 font-mono">apps/web/app/page.tsx</code> seguía renderizando el componente legacy con el antiguo <strong class="text-slate-200">'Embudo de 5 Gates'</strong> y leyendo datos estáticos con drawdowns del 62.3%, sin el selector dual ni los contratos de <code class="text-slate-300 font-mono">contracts/</code>.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 border-blue-500/30">
+        <div class="w-10 h-10 rounded-xl bg-blue-950 text-blue-400 flex items-center justify-center font-bold text-lg mb-4 border border-blue-800/50">
+          03
+        </div>
+        <h3 class="text-base font-bold text-white mb-2 font-outfit">Vistas Especializadas Desconectadas</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Las nuevas herramientas (<strong class="text-slate-200">HUD de los 8 Workers</strong>, <strong class="text-slate-200">FSM de 10 Estados</strong>, <strong class="text-slate-200">Bóveda Ratchet</strong>, <strong class="text-slate-200">FailureKnowledgeDB</strong> y <strong class="text-slate-200">Sandbox de 14 Días</strong>) no tenían sus componentes React montados en la navegación principal.
+        </p>
+      </div>
+    </section>
+
+    <!-- MAPA DE LOS 6 MÓDULOS DE LA UI A INTEGRAR -->
+    <section class="glass-card rounded-3xl p-6 md:p-8 space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-xl font-bold text-white font-outfit flex items-center gap-2">
+          <span>🗺️</span>
+          Los 6 Módulos Web V2 a Desplegar en la Interfaz
+        </h2>
+        <p class="text-xs text-slate-400 mt-1">
+          Arquitectura Next.js 14 App Router + Server-Sent Events + Dark Glassmorphism
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <!-- MODULO 1 -->
+        <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-cyan-400">01. TOPBAR & HUD SSE</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 font-mono">LIVE 1Hz</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100 font-outfit">HUD de los 8 Workers en Tiempo Real</h4>
+          <p class="text-xs text-slate-400">
+            Streaming SSE a <code class="text-cyan-300 font-mono">/api/v2/telemetry/stream</code> mostrando estado, latencia, heartbeats y autocuración de los 8 workers aislados.
+          </p>
+        </div>
+
+        <!-- MODULO 2 -->
+        <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-emerald-400">02. COMMAND CENTER V2</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-mono">/</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100 font-outfit">Panel de Control Dual Unificado</h4>
+          <p class="text-xs text-slate-400">
+            Sustitución del 'Embudo de 5 Gates' por el selector interactivo <strong class="text-slate-200">TRACK_FONDEO (CME)</strong> vs <strong class="text-slate-200">TRACK_ULTRA (BingX)</strong> con hashes SHA-256 inmutables.
+          </p>
+        </div>
+
+        <!-- MODULO 3 -->
+        <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-purple-400">03. ULTRA LAB & BÓVEDA</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-purple-950 text-purple-300 font-mono">/ultra</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100 font-outfit">HUD de la Bala (6 Estados) & Bóveda</h4>
+          <p class="text-xs text-slate-400">
+            Simulador interactivo de piramidación con House Money (40%), Stop Loss Free-Risk y bloqueo monotónico a Bóveda Ratchet (Milestones: 2x, 3x, 5x, 10x).
+          </p>
+        </div>
+
+        <!-- MODULO 4 -->
+        <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-blue-400">04. CANDIDATE REGISTRY FSM</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 font-mono">/candidatos</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100 font-outfit">Visualizador de 10 Estados Inmutables</h4>
+          <p class="text-xs text-slate-400">
+            Grafo DAG del ciclo de vida de la estrategia (<code class="text-slate-300 font-mono">GENERATED &rarr; LIVE_ACTIVE</code>) con sellado criptográfico y Evidence Gate.
+          </p>
+        </div>
+
+        <!-- MODULO 5 -->
+        <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-indigo-400">05. SEMANTIC AI STUDIO</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono">/research</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100 font-outfit">FailureKnowledgeDB & Mutación IA</h4>
+          <p class="text-xs text-slate-400">
+            Radar de las 11 categorías de fallos, patrones en lista negra y panel interactivo con los 3 agentes (<strong class="text-slate-200">Interpreter, Critic, Improver</strong>).
+          </p>
+        </div>
+
+        <!-- MODULO 6 -->
+        <div class="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-amber-400">06. PAPER SANDBOX</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-mono">/ejecucion</span>
+          </div>
+          <h4 class="text-sm font-bold text-slate-100 font-outfit">Incubadora 14 Días & Fills en Vivo</h4>
+          <p class="text-xs text-slate-400">
+            Simulador de microestructura (latencia 50ms, slippage), contador regresivo de 14 días y medidor de degradación de Sharpe (&le; 30%) y Drawdown (&le; 1.25x).
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER CON ACCIÓN REQUERIDA -->
+    <footer class="glass-card rounded-2xl p-6 text-center text-xs text-slate-400 font-mono">
+      Ultrarentable V2 Master Plan • Documentación en <code class="text-cyan-300">docs/Investigacion/03_PLAN_ADAPTACION_WEB_UI_UX_V2.md</code> • 100% Real-Only
+    </footer>
+
+  </div>
+</body>
+</html>

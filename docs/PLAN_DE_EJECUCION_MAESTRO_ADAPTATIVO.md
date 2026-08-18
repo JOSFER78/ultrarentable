@@ -137,6 +137,25 @@
 
 ---
 
+### [x] FASE 7: Sandbox de Paper Trading en Tiempo Real - 14 Días (COMPLETADA)
+- **Objetivo:** Implementar el motor de incubación en tiempo real (`PaperSandboxEngine`) que ejecuta estrategias aprobadas en modo `INCUBATION_PAPER` durante un periodo de observación de 14 días contra datos en vivo, con métricas de degradación OOS y aborto automático.
+- **Acciones Ejecutadas:**
+  1. **`services/paper/paper_sandbox_engine.py`:**
+     - `PaperSandboxEngine`: Simulación mark-to-market de fills en tiempo real con modelado de slippage dinámico, comisiones y latencia de red (50ms).
+     - Seguimiento de equidad, trades realizados, fees acumulados y métricas operacionales continuas (`PaperMetrics`).
+  2. **`services/paper/incubation_evaluator.py`:**
+     - `IncubationEvaluator`: Chequeo continuo contra la línea base de backtest (`IncubationBaseline`):
+       - Estado `OBSERVING` durante los primeros 14 días.
+       - Aborto inmediato si el Drawdown supera $1.2 \times \text{Max DD}_{\text{backtest}}$.
+       - Tras 14 días: verificación de degradación de Sharpe ($\le 30\%$) y suficiencia de trades.
+       - Transición automatizada en la FSM de `CandidateRegistry`: `INCUBATION_PAPER` $\to$ `LIVE_ACTIVE` (si aprueba) o $\to$ `REJECTED` (si degrada).
+  3. **Verificación de Tests:**
+     - Creado `tests/test_paper_sandbox.py`.
+     - Validada la simulación de ejecución, cálculo de slippage, reglas de aborto por drawdown y promoción a `LIVE_ACTIVE`.
+     - Ejecución de `pytest tests/ -v` arrojando **39 tests PASSED, 1 SKIPPED, 0 FAILED**.
+
+---
+
 ### [ ] FASE 3: Interfaz de Usuario y Telemetría en Tiempo Real
 - Control Center con paginación optimizada (`25 | 50 | 100` por página).
 - Selector de rutas desacoplado (`ULTRA` vs `FONDEO`).
