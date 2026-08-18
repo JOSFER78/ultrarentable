@@ -233,7 +233,7 @@ export default function SistemaSupervisionPage() {
             ) : (
               filteredLogs.map((ev, i) => (
                 <div
-                  key={`${ev.eventId}-${i}`}
+                  key={`${ev.id}-${i}`}
                   style={{
                     padding: "8px 10px",
                     borderRadius: "6px",
@@ -243,10 +243,10 @@ export default function SistemaSupervisionPage() {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b", fontSize: "10px" }}>
                     <span style={{ color: "#38bdf8", fontWeight: 800 }}>{ev.eventType}</span>
-                    <span>{new Date(ev.timestampUtcMs).toISOString().slice(11, 23)}</span>
+                    <span>{new Date(ev.timestampMs).toISOString().slice(11, 23)}</span>
                   </div>
                   <div style={{ color: "#cbd5e1", marginTop: "2px", fontSize: "11px" }}>
-                    ID: {ev.eventId} · {ev.details}
+                    ID: {ev.id} · {ev.message}
                   </div>
                 </div>
               ))
