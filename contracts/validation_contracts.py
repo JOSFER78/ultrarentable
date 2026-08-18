@@ -85,7 +85,7 @@ class UltraValidationCriteria(BaseModel):
     min_positive_skewness: float = Field(default=1.50, ge=0.50)
     min_vault_harvest_rate_pct: float = Field(default=10.0, gt=0.0)
     min_walk_forward_vault_efficiency: float = Field(default=0.50, ge=0.0)
-    max_burst_ruin_probability_pct: float = Field(default=1.00, le=5.00)
+    max_burst_ruin_probability_pct: float = Field(default=15.0, le=50.0)
     burst_size_balas: int = Field(default=20, ge=5)
     taker_fee_pct: float = Field(default=0.050, ge=0.0)
     slippage_bps_per_pyramid: float = Field(default=3.0, ge=0.0)

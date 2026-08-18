@@ -72,6 +72,50 @@
 
 ---
 
+### [x] FASE 4: Quant Validation Fabric Bifurcado & Evidence Gate (COMPLETADA)
+- **Objetivo:** Implementar el motor de validación cuantitativa `QuantValidationFabric` con compuertas desacopladas (`FondeoEvidenceGate` y `UltraEvidenceGate`), Máquina de Estados Finitos `CandidateRegistry` (10 estados discretos) y arnés de Golden Tests deterministas.
+- **Acciones Ejecutadas:**
+  1. **`services/validation/metrics_calculator.py`:**
+     - Deflated Sharpe Ratio (DSR) ajustado por sesgo de selección y no-normalidad (Bailey & López de Prado).
+     - Dependencia de outliers (Top-2 trades sobre ganancia total).
+     - Tail Gain Ratio (ganancias en cola derecha $\ge 3.0R$).
+     - Monte Carlo de ráfagas de 20 balas para probabilidad de supervivencia de la bóveda nodriza.
+     - Test de estrés por fricción piramidal y spread/slippage aumentado.
+  2. **`services/validation/fondeo_gate.py`:**
+     - `FondeoEvidenceGate`: Criterios institucionales CME Prop Firms (Sharpe, DSR, Max DD $< 4.5\%$, Outliers $< 15\%$, single trade share $< 30\%$).
+  3. **`services/validation/ultra_gate.py`:**
+     - `UltraEvidenceGate`: Criterios de asimetría BingX Crypto (Payoff Ratio $\ge 3.0$, Tail Gain $\ge 60\%$, $E(Bala) \ge 0.20R$, fricción y supervivencia de ráfagas).
+  4. **`services/validation/quant_fabric.py`:**
+     - `QuantValidationFabric`: Orquestador de validación que bifurca según `target_track` y genera `EvidenceGateDecision` con hash criptográfico SHA-256 de procedencia.
+  5. **`services/validation/candidate_registry.py`:**
+     - `CandidateRegistry`: FSM estricta sobre los 10 estados discretos de `StrategyLifecycleStatus` con validación de grafo de transición y trazabilidad inmutable.
+  6. **Verificación de Tests:**
+     - Creado `tests/test_quant_validation_fabric.py` con Golden Tests bit a bit.
+     - Ejecución de `pytest tests/ -v` arrojando **28 tests PASSED, 1 SKIPPED, 0 FAILED**.
+
+---
+
+### [x] FASE 5: Semantic AI Engine & Memoria de Fallos FailureKnowledge (COMPLETADA)
+- **Objetivo:** Implementar el motor `SemanticQuantEngine` con orquestación de agentes especializados (`Interpreter`, `Critic`, `Improver`, `RegimeAnalyst`, `AdversarialResearcher`), la base de datos de aprendizaje de fallos (`FailureKnowledgeDB`) y el pipeline de mutación/cruce de estrategias canónicas bajo la regla de gobernanza: "La IA propone candidatos, el Evidence Gate aprueba o rechaza".
+- **Acciones Ejecutadas:**
+  1. **`services/semantic_ai/failure_knowledge.py`:**
+     - `FailureKnowledgeDB`: Catálogo estructurado de firmas de fallos (`FailureType`: `OVERFITTING_OOS`, `OUTLIER_DEPENDENCY`, `MAX_DRAWDOWN_EXCEEDED`, `FRICTION_SENSITIVITY`, `BURST_RUIN_RISK`, `INSUFFICIENT_PAYOFF`).
+     - Cálculo de firmas canónicas de indicadores (`indicator_fingerprint`) y penalización progresiva para guiar la búsqueda estocástica.
+     - Registro directo desde decisiones de compuerta (`record_from_gate_decision`).
+  2. **`services/semantic_ai/semantic_engine.py`:**
+     - `SemanticQuantEngine`: Orquestación modular de roles:
+       - `Interpreter`: Traducción semántica del AST a lenguaje económico y técnico comprensible.
+       - `Critic`: Auditoría previa contra la memoria de fallos y validación de reglas de fondeo / ultra.
+       - `Improver`: Mutación de parámetros y cruce (`crossover`) genético-semántico de estrategias padre.
+       - `RegimeAnalyst`: Clasificación de regímenes de mercado (`BULL_TRENDING`, `BEAR_TRENDING`, `CHOPPY_RANGING`, `HIGH_VOLATILITY_EXPANSION`).
+       - `AdversarialResearcher`: Generación de parámetros y multiplicadores de estrés para robustez extrema.
+  3. **Verificación de Tests:**
+     - Creado `tests/test_semantic_ai_and_failure_db.py`.
+     - Verificada la regla de gobernanza ("La IA propone, el Gate decide").
+     - Ejecución de `pytest tests/ -v` arrojando **34 tests PASSED, 1 SKIPPED, 0 FAILED**.
+
+---
+
 ### [ ] FASE 3: Interfaz de Usuario y Telemetría en Tiempo Real
 - Control Center con paginación optimizada (`25 | 50 | 100` por página).
 - Selector de rutas desacoplado (`ULTRA` vs `FONDEO`).

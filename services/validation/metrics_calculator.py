@@ -89,7 +89,7 @@ def calculate_burst_ruin_probability(
     burst_size: int = 20,
     iterations: int = 500,
 ) -> float:
-    """Simulación Monte Carlo de ráfagas para verificar probabilidad de quiebra de la bala aislada."""
+    """Simulación Monte Carlo de ráfagas para verificar probabilidad de quiebra de la ráfaga de balas."""
     if not trades:
         return 0.0
 
@@ -99,7 +99,7 @@ def calculate_burst_ruin_probability(
     np.random.seed(42)
     for _ in range(iterations):
         sample = np.random.choice(returns_r, size=burst_size, replace=True)
-        equity = 1.0  # 1R de margen aislado base
+        equity = float(burst_size)  # Presupuesto total de la ráfaga (burst_size R)
         for r in sample:
             equity += r
             if equity <= 0.0:

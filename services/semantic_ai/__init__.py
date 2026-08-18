@@ -1,6 +1,27 @@
-"""services/semantic_ai package.
+"""services.semantic_ai package
+Exportación del SemanticQuantEngine y FailureKnowledgeDB.
 """
 
-from services.semantic_ai.mutation_engine import SemanticMutationEngine
+from services.semantic_ai.failure_knowledge import (
+    FailureKnowledgeDB,
+    FailureRecord,
+    FailureCategory,
+)
+from services.semantic_ai.semantic_engine import (
+    SemanticQuantEngine,
+    InterpreterAgent,
+    CriticAgent,
+    ImproverAgent,
+    MarketRegime,
+)
 
-__all__ = ["SemanticMutationEngine"]
+__all__ = [
+    "FailureKnowledgeDB",
+    "FailureRecord",
+    "FailureCategory",
+    "SemanticQuantEngine",
+    "InterpreterAgent",
+    "CriticAgent",
+    "ImproverAgent",
+    "MarketRegime",
+]

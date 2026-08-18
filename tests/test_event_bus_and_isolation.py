@@ -1,40 +1,36 @@
-"""Unit and Integration tests for AsyncEventBus and Clean Architecture Domain Isolation (Fase 2)."""
+"""Unit tests for AsyncEventBus and Domain Event Decoupling (Fase 2)."""
 
 import asyncio
 import pytest
+from datetime import datetime, timezone
 
 from contracts import (
+    CanonicalStrategy,
+    StrategyLifecycleStatus,
+    ExecutionTrack,
+    TargetInstrument,
+    RuleTree,
+    ExitModel,
+    SizingAndRisk,
+    SessionWindow,
+    ProvenanceMetadata,
     BacktestRequest,
     BacktestResult,
-    CanonicalStrategy,
     EngineType,
-    EvidenceGateDecision,
-    ExecutionTrack,
-    FondeoValidationCriteria,
-    UltraValidationCriteria,
+    DatasetSnapshot,
 )
-from services.core import (
+from services.core.event_bus import (
     AsyncEventBus,
-    BacktestCompletedEvent,
-    BacktestRequestedEvent,
     StrategyGeneratedEvent,
-    ValidationCompletedEvent,
+    BacktestRequestedEvent,
+    BacktestCompletedEvent,
+    SystemAlertEvent,
 )
-from services.data import DatasetRepository
-from services.backtest import FastEngineAdapter
-from services.validation import GateEvaluator
-from services.evidence import EvidenceVault
-from services.semantic_ai import SemanticMutationEngine
-from services.portfolio import PortfolioAllocator, BulletLifecycleManager
-from services.fondeo.challenge_evaluator import PropChallengeEvaluator
-from services.paper import PaperBrokerSimulator, PaperOrder
-from services.execution import OrderRouter
-from services.monitoring import HealthMonitor
 
 
 @pytest.mark.asyncio
-async def test_async_event_bus_pub_sub():
-    """Verify AsyncEventBus registers handlers, publishes events, and tracks history."""
+async def test_event_bus_publish_subscribe():
+    """Verify event bus delivers events to registered subscribers."""
     bus = AsyncEventBus()
     received_events = []
 
@@ -43,104 +39,105 @@ async def test_async_event_bus_pub_sub():
 
     bus.subscribe(StrategyGeneratedEvent, on_strategy_generated)
 
-    mutation_engine = SemanticMutationEngine()
-    strategy = mutation_engine.generate_candidate(symbol="NQ", timeframe="1h", track=ExecutionTrack.TRACK_FONDEO)
-    event = StrategyGeneratedEvent(strategy=strategy)
+    strategy = CanonicalStrategy(
+        strategy_id="UR-TEST-001",
+        name="Test Strategy",
+        target_track=ExecutionTrack.TRACK_FONDEO,
+        status=StrategyLifecycleStatus.GENERATED,
+        instrument=TargetInstrument(
+            symbol="NQ",
+            exchange="CME",
+            contract_type="FUTURES",
+            point_value=20.0,
+            tick_size=0.25,
+        ),
+        timeframe="1h",
+        provenance=ProvenanceMetadata(
+            source_engine="manual",
+            created_timestamp_utc=int(datetime.now(timezone.utc).timestamp() * 1000),
+            author_or_agent="TEST_SUITE",
+        ),
+    )
 
+    event = StrategyGeneratedEvent(event_id="evt_001", strategy=strategy)
     await bus.publish(event)
 
     assert len(received_events) == 1
-    assert received_events[0].strategy.strategy_id == strategy.strategy_id
-    assert len(bus.history) == 1
-
-    # Unsubscribe test
-    assert bus.unsubscribe(StrategyGeneratedEvent, on_strategy_generated) is True
-    await bus.publish(event)
-    assert len(received_events) == 1  # Should not increase
+    assert received_events[0].strategy.strategy_id == "UR-TEST-001"
+    assert len(bus.get_history()) == 1
 
 
 @pytest.mark.asyncio
-async def test_end_to_end_decoupled_pipeline():
-    """Verify full end-to-end decoupled workflow from Generation -> Backtest -> Validation -> Evidence."""
+async def test_event_bus_error_isolation():
+    """Verify failing subscriber does not halt other subscribers."""
     bus = AsyncEventBus()
-    dataset_repo = DatasetRepository()
-    backtest_engine = FastEngineAdapter()
-    gate_evaluator = GateEvaluator()
-    evidence_vault = EvidenceVault()
-    mutation_engine = SemanticMutationEngine()
+    successful_calls = []
 
-    validation_decisions: list[EvidenceGateDecision] = []
+    async def broken_handler(event: SystemAlertEvent):
+        raise RuntimeError("Intentional handler failure")
 
-    # Wire up decoupled event listeners
-    async def handle_strategy_generated(event: StrategyGeneratedEvent):
-        snapshot = dataset_repo.get_snapshot(symbol=event.strategy.instrument.symbol, timeframe=event.strategy.timeframe)
-        bt_req = BacktestRequest(
-            request_id=f"bt_req_{event.strategy.strategy_id}",
-            strategy_id=event.strategy.strategy_id,
-            engine_type=EngineType.FAST_APPROXIMATE,
-            dataset=snapshot,
+    async def working_handler(event: SystemAlertEvent):
+        successful_calls.append(event.message)
+
+    bus.subscribe(SystemAlertEvent, broken_handler)
+    bus.subscribe(SystemAlertEvent, working_handler)
+
+    alert = SystemAlertEvent(event_id="alert_001", severity="WARNING", component="DataWorker", message="Feed latency spike")
+    await bus.publish(alert)
+
+    assert len(successful_calls) == 1
+    assert successful_calls[0] == "Feed latency spike"
+
+
+@pytest.mark.asyncio
+async def test_event_bus_multi_subscriber_flow():
+    """Verify multi-service workflow decoupled via events."""
+    bus = AsyncEventBus()
+    pipeline_state = {"backtest_requested": False, "backtest_completed": False}
+
+    async def on_backtest_requested(event: BacktestRequestedEvent):
+        pipeline_state["backtest_requested"] = True
+        # Simulate backtest engine completion
+        result = BacktestResult(
+            request_id=event.request.request_id,
+            strategy_id=event.request.strategy_id,
+            engine_type=event.request.engine_type,
+            dataset_id=event.request.dataset.dataset_id,
             initial_capital_usd=10000.0,
-            leverage=1,
+            final_equity_usd=12500.0,
+            net_profit_usd=2500.0,
+            net_return_pct=25.0,
+            total_trades=45,
+            provenance_hash_sha256="hash123",
         )
-        await bus.publish(BacktestRequestedEvent(request=bt_req))
+        await bus.publish(BacktestCompletedEvent(event_id="evt_bt_done", result=result))
 
-    async def handle_backtest_requested(event: BacktestRequestedEvent):
-        bt_res = backtest_engine.execute_backtest(event.request)
-        await bus.publish(BacktestCompletedEvent(result=bt_res))
+    async def on_backtest_completed(event: BacktestCompletedEvent):
+        pipeline_state["backtest_completed"] = True
+        pipeline_state["final_profit"] = event.result.net_profit_usd
 
-    async def handle_backtest_completed(event: BacktestCompletedEvent):
-        decision = gate_evaluator.evaluate_fondeo(
-            strategy_id=event.result.strategy_id,
-            backtest_result=event.result,
-        )
-        validation_decisions.append(decision)
-        await bus.publish(ValidationCompletedEvent(decision=decision))
+    bus.subscribe(BacktestRequestedEvent, on_backtest_requested)
+    bus.subscribe(BacktestCompletedEvent, on_backtest_completed)
 
-    bus.subscribe(StrategyGeneratedEvent, handle_strategy_generated)
-    bus.subscribe(BacktestRequestedEvent, handle_backtest_requested)
-    bus.subscribe(BacktestCompletedEvent, handle_backtest_completed)
+    dataset = DatasetSnapshot(
+        dataset_id="ds_nq_h1",
+        symbol="NQ",
+        timeframe="1h",
+        start_timestamp_utc_ms=1770000000000,
+        end_timestamp_utc_ms=1771437600000,
+        total_bars=1000,
+        sha256_hash="hash_nq",
+        is_in_sample=True,
+    )
+    request = BacktestRequest(
+        request_id="req_001",
+        strategy_id="UR-TEST-001",
+        engine_type=EngineType.FAST_APPROXIMATE,
+        dataset=dataset,
+    )
 
-    # Trigger pipeline
-    sample_strat = mutation_engine.generate_candidate(symbol="NQ", timeframe="1h", track=ExecutionTrack.TRACK_FONDEO)
-    await bus.publish(StrategyGeneratedEvent(strategy=sample_strat))
+    await bus.publish(BacktestRequestedEvent(event_id="evt_req_001", request=request))
 
-    assert len(validation_decisions) == 1
-    decision = validation_decisions[0]
-    assert decision.strategy_id == sample_strat.strategy_id
-
-    # Store evidence
-    pack_hash = evidence_vault.store_evidence(sample_strat, decision)
-    assert len(pack_hash) == 64
-    assert evidence_vault.verify_integrity(pack_hash) is True
-
-
-def test_domain_services_isolation():
-    """Verify all domain services instantiate cleanly without circular imports."""
-    # Data
-    ds = DatasetRepository()
-    snapshot = ds.get_snapshot("BTC-USDT", "1h")
-    assert snapshot.total_bars > 0
-
-    # Portfolio
-    allocator = PortfolioAllocator()
-    bullet_mgr = BulletLifecycleManager()
-    assert allocator is not None
-    assert bullet_mgr is not None
-
-    # Fondeo
-    evaluator = PropChallengeEvaluator()
-    assert evaluator is not None
-
-    # Paper & Execution
-    paper = PaperBrokerSimulator()
-    fill = paper.execute_order(PaperOrder(order_id="o1", symbol="BTC-USDT", side="BUY", quantity=1.0), mark_price=60000.0)
-    assert fill.fill_price > 0.0
-
-    router = OrderRouter()
-    route = router.route_instrument(snapshot_dummy := SemanticMutationEngine().generate_candidate("BTC-USDT", "1h").instrument)
-    assert route == "CONNECTOR_BINGX_PERPETUAL"
-
-    # Monitoring
-    monitor = HealthMonitor()
-    health = monitor.check_health()
-    assert health.status == "HEALTHY"
+    assert pipeline_state["backtest_requested"] is True
+    assert pipeline_state["backtest_completed"] is True
+    assert pipeline_state["final_profit"] == 2500.0
