@@ -239,6 +239,7 @@ export default function ContinuousDiscoveryControlCenter() {
   };
 
   const runtimeFormatted = () => {
+    if (!mounted) return "00:00:00";
     const sec = telemetry?.runtime_seconds || 0;
     const hrs = Math.floor(sec / 3600);
     const mins = Math.floor((sec % 3600) / 60);
@@ -298,18 +299,8 @@ export default function ContinuousDiscoveryControlCenter() {
     };
   });
 
-  // Merge live recent discoveries at top while keeping full DB catalog
-  const recentList = telemetry?.recent_discoveries || [];
-  const combinedMap = new Map<string, any>();
-  for (const item of recentList) {
-    if (item?.candidate_id) combinedMap.set(item.candidate_id, item);
-  }
-  for (const item of dbMappedList) {
-    if (item?.candidate_id && !combinedMap.has(item.candidate_id)) {
-      combinedMap.set(item.candidate_id, item);
-    }
-  }
-  const rawList = Array.from(combinedMap.values());
+  // Full database catalog of verified multi-asset champion strategies
+  const rawList = dbMappedList;
 
   // Filter list
   const filteredList = rawList.filter((d) => {
