@@ -40,7 +40,17 @@ async def get_event_history(limit: int = 50) -> List[Dict[str, Any]]:
 
 async def event_generator(request: Request) -> AsyncGenerator[str, None]:
     """Generador asíncrono para Server-Sent Events (SSE)."""
+    # Enviar evento inicial de conexión
+    init_payload = {
+        "event_type": "SSE_CONNECTED",
+        "event_id": "init_session",
+        "timestamp_utc_ms": int(asyncio.get_event_loop().time() * 1000),
+        "message": "Canal de telemetría SSE establecido con SystemSupervisor V2",
+    }
+    yield f"data: {json.dumps(init_payload)}\n\n"
+
     last_sent_idx = len(event_bus.history)
+    heartbeat_counter = 0
 
     while True:
         if await request.is_disconnected():
@@ -56,6 +66,11 @@ async def event_generator(request: Request) -> AsyncGenerator[str, None]:
                 }
                 yield f"data: {json.dumps(payload)}\n\n"
             last_sent_idx = len(current_history)
+
+        heartbeat_counter += 1
+        if heartbeat_counter >= 10:  # Cada 5 segundos si no hay eventos
+            yield ": keepalive\n\n"
+            heartbeat_counter = 0
 
         await asyncio.sleep(0.5)
 
