@@ -67,23 +67,22 @@ def list_candidates(
                 "oos_months": round((tot_days * 0.30) / 30.4375, 1),
             }
 
-        oos_days = dur.get("oos_days", 313)
-        roi_oos = round(float(c.net_profit_oos or 0.0) / 10000.0 * 100.0, 1)
-        years_oos = max(0.05, oos_days / 365.25)
-        if roi_oos >= 0:
-            ann_roi = round(((1.0 + (roi_oos / 100.0)) ** (1.0 / years_oos) - 1.0) * 100.0, 1)
-            monthly_roi = round(((1.0 + (ann_roi / 100.0)) ** (1.0 / 12.0) - 1.0) * 100.0, 2)
-        else:
-            ann_roi = round((roi_oos / oos_days) * 365.25, 1)
-            monthly_roi = round(ann_roi / 12.0, 2)
-
-        tpm = round(float(c.trades_oos or 0) / max(0.1, oos_days / 30.4375), 1)
         is_fondeo = (c.route == "FONDEO")
         base_cap = 50000.0 if is_fondeo else 10000.0
+        net_prof_oos = float(c.net_profit_oos or 0.0)
+        oos_days = dur.get("oos_days", 313)
+        oos_years = max(0.05, float(oos_days) / 365.25)
+        
+        # Real ROI % based on actual account base capital
+        roi_oos = round((net_prof_oos / base_cap) * 100.0, 2)
+        ann_roi = round(roi_oos / oos_years, 2)
+        monthly_roi = round(ann_roi / 12.0, 2)
+
+        tpm = round(float(c.trades_oos or 0) / max(0.1, oos_days / 30.4375), 1)
 
         # Win rate from scorecard or metrics
-        wr_is = sc.get("metrics", {}).get("in_sample", {}).get("win_rate_pct")
-        wr_oos = sc.get("metrics", {}).get("out_of_sample", {}).get("win_rate_pct")
+        wr_is = sc.get("is_metrics", {}).get("win_rate_pct") or sc.get("metrics", {}).get("in_sample", {}).get("win_rate_pct")
+        wr_oos = sc.get("oos_metrics", {}).get("win_rate_pct") or sc.get("metrics", {}).get("out_of_sample", {}).get("win_rate_pct")
 
         results.append({
             "candidate_id": c.candidate_id,

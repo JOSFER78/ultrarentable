@@ -106,7 +106,7 @@ def build_engine(tmp_path, *, with_rules: bool = True):
 
 
 def strategy(*, leverage: int = 100, allocation: float = 1.0, margin_mode: str = "ISOLATED"):
-    value = SeedFactory(seed=12).create_template_strategy(0, timeframe="15m")
+    value = SeedFactory(seed=12).create_template_strategy(0, symbol="ETH-USDT", timeframe="15m")
     value["signals"] = {
         "longEntry": constant_signal(True),
         "shortEntry": constant_signal(False),

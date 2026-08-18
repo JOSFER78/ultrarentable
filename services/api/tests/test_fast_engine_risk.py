@@ -58,7 +58,7 @@ def _constant_signal(value: bool):
 
 
 def _strategy(*, exit_signal: bool, leverage: int = 1):
-    strategy = SeedFactory(seed=10).create_template_strategy(0, timeframe="15m")
+    strategy = SeedFactory(seed=10).create_template_strategy(0, symbol="ETH-USDT", timeframe="15m")
     strategy["signals"] = {
         "longEntry": _constant_signal(True),
         "shortEntry": _constant_signal(False),

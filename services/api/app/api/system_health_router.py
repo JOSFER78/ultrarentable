@@ -108,6 +108,7 @@ def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
             "wal_active": wal_exists,
             "tables": table_counts
         },
+        "port_conflicts": [],
         "market_data": {
             "btc_usdt_h1": {
                 "path": btc_h1_path,

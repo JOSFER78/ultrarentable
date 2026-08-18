@@ -1093,7 +1093,7 @@ export default function StrategiesExplorerPage() {
                 const isUltra = c.route === "ULTRA";
                 const oos = c.metrics?.out_of_sample || {};
                 const netProf = oos.net_profit_usd || 0;
-                const roiVal = oos.roi_pct ?? (netProf / 10000.0 * 100.0);
+                const baseCap = c.route === "FONDEO" ? 50000.0 : 10000.0;
                 const dur = c.duration_info || {
                   total_days: 1041,
                   total_years: 2.85,
@@ -1102,9 +1102,12 @@ export default function StrategiesExplorerPage() {
                   start_date: "2023-06-09",
                   end_date: "2026-04-16"
                 };
-                const annRoiVal = oos.annualized_roi_pct ?? (dur.oos_days ? Math.round(((1.0 + roiVal / 100.0) ** (365.25 / Math.max(20, dur.oos_days)) - 1.0) * 100.0 * 10) / 10 : roiVal);
-                const monthlyRoiVal = oos.monthly_roi_pct ?? Math.round(annRoiVal / 12.0 * 10) / 10;
-                const tpm = oos.trades_per_month ?? (dur.oos_days ? Math.round((oos.trades || 12) / (dur.oos_days / 30.4375) * 10) / 10 : 3.5);
+                const oosDays = dur.oos_days || 313;
+                const oosYears = Math.max(0.05, oosDays / 365.25);
+                const roiVal = oos.roi_pct ?? (Math.round((netProf / baseCap * 100.0) * 100) / 100);
+                const annRoiVal = oos.annualized_roi_pct ?? (Math.round((roiVal / oosYears) * 10) / 10);
+                const monthlyRoiVal = oos.monthly_roi_pct ?? (Math.round((annRoiVal / 12.0) * 10) / 10);
+                const tpm = oos.trades_per_month ?? (Math.round(((oos.trades || 0) / Math.max(0.1, oosDays / 30.4375)) * 10) / 10);
                 const isEven = index % 2 === 0;
 
                 return (
@@ -1321,28 +1324,28 @@ export default function StrategiesExplorerPage() {
                     <div style={{ padding: "6px 8px" }}>
                       <div style={{ fontSize: "9px", color: "#38bdf8", fontFamily: "monospace" }}>PROFIT FACTOR OOS</div>
                       <div style={{ fontSize: "14px", fontWeight: 900, color: "#fff", marginTop: "2px" }}>
-                        {c.metrics?.out_of_sample?.profit_factor?.toFixed(2) || "1.85"}
+                        {c.metrics?.out_of_sample?.profit_factor ? c.metrics.out_of_sample.profit_factor.toFixed(2) : "-"}
                       </div>
                     </div>
 
                     <div style={{ padding: "6px 8px" }}>
                       <div style={{ fontSize: "9px", color: "#38bdf8", fontFamily: "monospace" }}>WIN RATE (MIN 20%)</div>
-                      <div style={{ fontSize: "14px", fontWeight: 900, color: (c.metrics?.out_of_sample?.win_rate_pct || 28.5) >= 20 ? "#38bdf8" : "#f59e0b", marginTop: "2px" }}>
-                        {c.metrics?.out_of_sample?.win_rate_pct ? c.metrics.out_of_sample.win_rate_pct.toFixed(1) : "28.5"}%
+                      <div style={{ fontSize: "14px", fontWeight: 900, color: (c.metrics?.out_of_sample?.win_rate_pct || 0) >= 20 ? "#38bdf8" : "#f59e0b", marginTop: "2px" }}>
+                        {c.metrics?.out_of_sample?.win_rate_pct != null ? `${c.metrics.out_of_sample.win_rate_pct.toFixed(1)}%` : "-"}
                       </div>
                     </div>
 
                     <div style={{ padding: "6px 8px" }}>
                       <div style={{ fontSize: "9px", color: "#f87171", fontFamily: "monospace" }}>MAX DRAWDOWN</div>
                       <div style={{ fontSize: "13px", fontWeight: 800, color: isUltra ? "#94a3b8" : ((c.metrics?.out_of_sample?.max_drawdown_pct || 0) <= 4.0 ? "#22c55e" : "#ef4444"), marginTop: "2px" }}>
-                        {c.metrics?.out_of_sample?.max_drawdown_pct ? `${c.metrics.out_of_sample.max_drawdown_pct.toFixed(1)}%` : "0.0%"}
+                        {c.metrics?.out_of_sample?.max_drawdown_pct != null ? `${c.metrics.out_of_sample.max_drawdown_pct.toFixed(1)}%` : "-"}
                       </div>
                     </div>
 
                     <div style={{ padding: "6px 8px" }}>
                       <div style={{ fontSize: "9px", color: "#f87171", fontFamily: "monospace" }}>TRADES OOS</div>
                       <div style={{ fontSize: "13px", fontWeight: 800, color: "#38bdf8", marginTop: "2px" }}>
-                        {c.metrics?.out_of_sample?.trades || 15}
+                        {c.metrics?.out_of_sample?.trades ?? 0}
                       </div>
                     </div>
 

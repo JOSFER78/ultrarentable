@@ -40,6 +40,7 @@ app.include_router(candidates_router, prefix="/api/v1")
 app.include_router(portfolios_router)
 app.include_router(execution_router, prefix="/api/v1")
 app.include_router(audit_router, prefix="/api/v1")
+app.include_router(system_health_router, prefix="/api/v1")
 app.include_router(firebase_sync_router, prefix="/api/v1")
 app.include_router(search_router)
 

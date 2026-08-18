@@ -955,71 +955,57 @@ export default function ContinuousDiscoveryControlCenter() {
 
                     {/* RENTABILIDAD % ANUALIZADA */}
                     <td style={{ padding: "12px 14px" }}>
-                      {!isUltra ? (
-                        <div>
-                          <div style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "monospace" }}>
-                            🎯 Pasa en ~{(d as any).days_to_pass || 4.5} días
-                          </div>
-                          <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
-                            +6.0% (+$3k) | {(d as any).pass_rate_pct || 91.5}% Pass Rate
-                          </div>
+                      <div>
+                        <div style={{ fontSize: "14px", fontWeight: 900, color: "#4ade80", fontFamily: "monospace" }}>
+                          {formatRoi(annRoiVal)} <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-muted)" }}>/ año</span>
                         </div>
-                      ) : (
-                        <div>
-                          <div style={{ fontSize: "14px", fontWeight: 900, color: "#4ade80", fontFamily: "monospace" }}>
-                            {formatRoi(annRoiVal)} <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-muted)" }}>/ año (500x)</span>
-                          </div>
-                          <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
-                            ({formatRoi(roiVal)} en {d.duration_info?.oos_months || 10.3}m OOS · 6 Tiers)
-                          </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                          ({formatRoi(roiVal)} en {d.duration_info?.oos_months ? `${d.duration_info.oos_months}m OOS` : "OOS"})
                         </div>
-                      )}
+                      </div>
                     </td>
 
                     {/* RENTABILIDAD % MENSUAL */}
                     <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
                       <div style={{ fontSize: "13px", fontWeight: 800, color: "#34d399" }}>
-                        +{d.monthly_roi_pct ? d.monthly_roi_pct.toFixed(1) : "12.5"}% <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>/ mes</span>
-                      </div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        {!isUltra ? "Fondeo Regular" : "Compounding"}
+                        {d.monthly_roi_pct != null ? `+${d.monthly_roi_pct.toFixed(1)}%` : "-"} <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>/ mes</span>
                       </div>
                     </td>
 
                     {/* HORIZONTE & FECHAS */}
                     <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
                       <div style={{ fontWeight: 700, color: "#fff", fontSize: "11px" }}>
-                        {!isUltra ? "Sprints de 3 a 5 días" : `${d.duration_info?.total_years || 2.85} años`} <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>({d.duration_info?.total_days || 1041}d)</span>
+                        {d.duration_info?.total_years ? `${d.duration_info.total_years} años` : "-"} <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>{d.duration_info?.total_days ? `(${d.duration_info.total_days}d)` : ""}</span>
                       </div>
                       <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        {d.duration_info?.start_date || "2023-06"} → {d.duration_info?.end_date || "2026-04"}
+                        {d.duration_info?.start_date ? `${d.duration_info.start_date} → ${d.duration_info?.end_date}` : "-"}
                       </div>
                     </td>
 
                     {/* PROFIT FACTOR */}
-                    <td style={{ padding: "12px 14px", fontWeight: 800, color: d.pf_oos >= 2.0 ? "#34d399" : "#fff", fontFamily: "monospace" }}>
-                      {d.pf_oos ? d.pf_oos.toFixed(2) : "1.85"}
+                    <td style={{ padding: "12px 14px", fontWeight: 800, color: (d.pf_oos || 0) >= 2.0 ? "#34d399" : "#fff", fontFamily: "monospace" }}>
+                      {d.pf_oos != null ? d.pf_oos.toFixed(2) : "-"}
                     </td>
 
                     {/* WIN RATE */}
-                    <td style={{ padding: "12px 14px", fontWeight: 700, color: d.win_rate_pct >= 20 ? "#38bdf8" : "#f59e0b", fontFamily: "monospace" }}>
-                      {d.win_rate_pct ? d.win_rate_pct.toFixed(1) : "28.5"}%
+                    <td style={{ padding: "12px 14px", fontWeight: 700, color: (d.win_rate_pct || 0) >= 20 ? "#38bdf8" : "#f59e0b", fontFamily: "monospace" }}>
+                      {d.win_rate_pct != null ? `${d.win_rate_pct.toFixed(1)}%` : "-"}
                     </td>
 
                     {/* FRECUENCIA */}
                     <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
                       <div style={{ fontWeight: 700, color: "#38bdf8", fontSize: "11px" }}>
-                        {!isUltra ? "2.1 trades / día" : `${d.trades_per_month || 11.8} / mes`}
+                        {d.trades_per_month != null ? `${d.trades_per_month} / mes` : "-"}
                       </div>
                       <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        {!isUltra ? "Multi-Activo (NQ/ES/EUR)" : `${d.trades || 15} trades OOS`}
+                        {d.trades != null ? `${d.trades} trades OOS` : "-"}
                       </div>
                     </td>
 
                     {/* DRAWDOWN */}
                     <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      <span style={{ color: isUltra ? "#94a3b8" : "#22c55e", fontWeight: 700 }}>
-                        {!isUltra ? `${(d.dd_oos || 1.8).toFixed(1)}% (Fondeada ≤2.0%)` : `${d.dd_oos ? d.dd_oos.toFixed(1) : "0.0"}%`}
+                      <span style={{ color: isUltra ? "#94a3b8" : ((d.dd_oos || 0) <= 4.0 ? "#22c55e" : "#ef4444"), fontWeight: 700 }}>
+                        {d.dd_oos != null ? `${d.dd_oos.toFixed(1)}%` : "-"}
                       </span>
                     </td>
 
@@ -1215,14 +1201,14 @@ export default function ContinuousDiscoveryControlCenter() {
               <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <div style={{ fontSize: "10px", color: "#38bdf8", fontFamily: "monospace" }}>PROFIT FACTOR OOS</div>
                 <div style={{ fontSize: "18px", fontWeight: 900, color: "#fff" }}>
-                  {selectedDetailStrat.pf_oos ? selectedDetailStrat.pf_oos.toFixed(2) : "1.85"}
+                  {selectedDetailStrat.pf_oos != null ? selectedDetailStrat.pf_oos.toFixed(2) : "-"}
                 </div>
               </div>
 
               <div style={{ background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.08)" }}>
                 <div style={{ fontSize: "10px", color: "#f87171", fontFamily: "monospace" }}>MAX DRAWDOWN</div>
-                <div style={{ fontSize: "18px", fontWeight: 900, color: selectedDetailStrat.dd_oos <= 4.0 ? "#22c55e" : "#f59e0b" }}>
-                  {selectedDetailStrat.dd_oos ? `${selectedDetailStrat.dd_oos.toFixed(1)}%` : "0.0%"}
+                <div style={{ fontSize: "18px", fontWeight: 900, color: (selectedDetailStrat.dd_oos || 0) <= 4.0 ? "#22c55e" : "#f59e0b" }}>
+                  {selectedDetailStrat.dd_oos != null ? `${selectedDetailStrat.dd_oos.toFixed(1)}%` : "-"}
                 </div>
               </div>
             </div>
