@@ -99,12 +99,17 @@ export default function ContinuousDiscoveryControlCenter() {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [viewMode, setViewMode] = useState<"TABLE" | "CARDS">("TABLE");
-  const [sortField, setSortField] = useState<string>("roi_pct");
+  const [sortField, setSortField] = useState<string>("annualized_roi_pct");
   const [sortDirection, setSortDirection] = useState<"DESC" | "ASC">("DESC");
 
   const [isStarting, setIsStarting] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [selectedDetailStrat, setSelectedDetailStrat] = useState<any | null>(null);
+
+  const [fondeoSubTab, setFondeoSubTab] = useState<"INDIVIDUAL" | "PORTFOLIOS">("INDIVIDUAL");
+  const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [ultraSubTab, setUltraSubTab] = useState<"INDIVIDUAL" | "PORTFOLIOS">("INDIVIDUAL");
+  const [ultraPortfolios, setUltraPortfolios] = useState<any[]>([]);
 
   // Filters for background engine
   const [filterSymbols, setFilterSymbols] = useState<string[]>([]);
@@ -132,9 +137,24 @@ export default function ContinuousDiscoveryControlCenter() {
         const cands = await res.json();
         if (Array.isArray(cands)) setCandidates(cands);
       }
+
+      // Load Fondeo multi-asset portfolios
+      const portRes = await fetch("/api/v1/portfolios/fondeo-sprints");
+      if (portRes.ok) {
+        const pData = await portRes.json();
+        if (Array.isArray(pData)) setPortfolios(pData);
+      }
+
+      // Load Ultra hyper-scale portfolios
+      const ultraPortRes = await fetch("/api/v1/portfolios/ultra-hyperscale");
+      if (ultraPortRes.ok) {
+        const uData = await ultraPortRes.json();
+        if (Array.isArray(uData)) setUltraPortfolios(uData);
+      }
+
       setLastUpdated(new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
     } catch (e) {
-      console.error("Error fetching candidates:", e);
+      console.error("Error fetching candidates and portfolios:", e);
     }
   }, [selectedRoute]);
 

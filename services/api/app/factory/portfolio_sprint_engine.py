@@ -40,13 +40,20 @@ class FondeoSprintPortfolio:
     day_by_day_progress: List[Dict[str, Any]] = field(default_factory=list)
 
 
+_PORTFOLIOS_CACHE: Optional[List[FondeoSprintPortfolio]] = None
+
+
 def build_fondeo_sprint_portfolios() -> List[FondeoSprintPortfolio]:
     """Build and backtest standard multi-asset prop firm sprint portfolios."""
-    # Load real candle feeds
-    nq_candles = load_candles("NQ", "15m")
-    es_candles = load_candles("ES", "1h")
-    eur_candles = load_candles("EURUSD", "1h")
-    btc_candles = load_candles("BTC-USDT", "1h")
+    global _PORTFOLIOS_CACHE
+    if _PORTFOLIOS_CACHE is not None:
+        return _PORTFOLIOS_CACHE
+
+    # Load real candle feeds (last 3,000 bars for fast execution)
+    nq_candles = load_candles("NQ", "15m")[-3000:]
+    es_candles = load_candles("ES", "1h")[-3000:]
+    eur_candles = load_candles("EURUSD", "1h")[-3000:]
+    btc_candles = load_candles("BTC-USDT", "1h")[-3000:]
 
     # Initialize individual engines
     eng_nq = FiveDayChallengeEngine(nq_candles, "NQ", "15m")
