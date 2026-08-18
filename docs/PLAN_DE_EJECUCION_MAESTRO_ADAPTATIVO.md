@@ -116,6 +116,27 @@
 
 ---
 
+### [x] FASE 6: Portfolio Multi-Activo & UltraExploitationEngine (COMPLETADA)
+- **Objetivo:** Implementar el motor de optimización de carteras `PortfolioEngine` con alineación temporal estricta de trades (NQ, ES, BTC, ETH) y el `UltraExploitationEngine` con la Máquina de Estados de la Bala (6 estados: `INICIO`, `CONFIRMACION`, `CRECIMIENTO_RECYCLING`, `COSECHA_VAULT`, `PROTECCION`, `CIERRE`), piramidación financiada por House Money ($40\%$) y Bóveda de Cosecha Ratchet inmutable.
+- **Acciones Ejecutadas:**
+  1. **`services/portfolio/portfolio_engine.py`:**
+     - Alineación sincrónica de series de retornos por timestamps UTC exactos en matriz $T \times N$.
+     - Cálculo de matriz de covarianza real $\Sigma$ y ratios de diversificación.
+     - Métodos de asignación: `EQUAL_WEIGHT`, `INVERSE_VOLATILITY`, `RISK_PARITY_ERC` (Equal Risk Contribution) y `HIERARCHICAL_RISK_PARITY` (HRP).
+     - Generación del contrato inmutable `PortfolioAllocation` con firma criptográfica SHA-256.
+  2. **`services/exploitation_engines/ultra_engine.py`:**
+     - `UltraExploitationEngine`:
+       - Ciclo de vida FSM de la Bala (6 estados discretos).
+       - Piramidación Free-Risk: adición de capas financiada al $40\%$ por beneficio no realizado (House Money) con ajuste de SL para garantizar beneficio neto.
+       - Milestones Ratchet de cosecha hacia la Bóveda Nodriza ($2x \to 50\%$, $3x \to 65\%$, $5x \to 75\%$, $10x \to 85\%$).
+       - Registro consolidado `BalaExecutionRecord` y eventos `BalaHarvestEvent`.
+  3. **Verificación de Tests:**
+     - Creado `tests/test_portfolio_and_ultra_engine.py`.
+     - Validada la optimización de pesos y la piramidación con cosecha Ratchet a la Bóveda.
+     - Ejecución de `pytest tests/ -v` arrojando **36 tests PASSED, 1 SKIPPED, 0 FAILED**.
+
+---
+
 ### [ ] FASE 3: Interfaz de Usuario y Telemetría en Tiempo Real
 - Control Center con paginación optimizada (`25 | 50 | 100` por página).
 - Selector de rutas desacoplado (`ULTRA` vs `FONDEO`).
