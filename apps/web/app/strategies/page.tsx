@@ -356,12 +356,37 @@ export default function StrategiesExplorerPage() {
               fontFamily: "var(--font-mono, monospace)",
             }}
           >
-            <option value="ALL">Todos los Activos</option>
-            <option value="SOL">SOL-USDT</option>
-            <option value="BTC">BTC-USDT</option>
-            <option value="ETH">ETH-USDT</option>
-            <option value="NQ">NQ (E-mini Nasdaq)</option>
-            <option value="ES">ES (E-mini S&P)</option>
+            <option value="ALL">🌐 Todos los Activos ({candidates.length})</option>
+            <optgroup label="Crypto Ultra (BingX)" style={{ background: "#0c111d", color: "#63e1b4" }}>
+              <option value="BTC">BTC-USDT</option>
+              <option value="ETH">ETH-USDT</option>
+              <option value="SOL">SOL-USDT</option>
+              <option value="AVAX">AVAX-USDT</option>
+              <option value="DOGE">DOGE-USDT</option>
+              <option value="PEPE">PEPE-USDT</option>
+              <option value="LINK">LINK-USDT</option>
+              <option value="XRP">XRP-USDT</option>
+              <option value="BNB">BNB-USDT</option>
+              <option value="SUI">SUI-USDT</option>
+            </optgroup>
+            <optgroup label="Futuros CME (Fondeo)" style={{ background: "#0c111d", color: "#38bdf8" }}>
+              <option value="NQ">NQ (Nasdaq Futures)</option>
+              <option value="MNQ">MNQ (Micro Nasdaq)</option>
+              <option value="ES">ES (S&P 500 Futures)</option>
+              <option value="MES">MES (Micro S&P)</option>
+              <option value="YM">YM (Dow Jones)</option>
+              <option value="RTY">RTY (Russell 2000)</option>
+              <option value="CL">CL (Crude Oil)</option>
+              <option value="GC">GC (Gold Futures)</option>
+            </optgroup>
+            <optgroup label="Forex & Metales Prop" style={{ background: "#0c111d", color: "#fbbf24" }}>
+              <option value="EURUSD">EURUSD</option>
+              <option value="GBPUSD">GBPUSD</option>
+              <option value="USDJPY">USDJPY</option>
+              <option value="AUDUSD">AUDUSD</option>
+              <option value="USDCAD">USDCAD</option>
+              <option value="XAUUSD">XAUUSD (Spot Gold)</option>
+            </optgroup>
           </select>
 
           <select
@@ -379,6 +404,7 @@ export default function StrategiesExplorerPage() {
             }}
           >
             <option value="ALL">Todas las Temporalidades</option>
+            <option value="1m">1m</option>
             <option value="5m">5m</option>
             <option value="15m">15m</option>
             <option value="1h">1h</option>

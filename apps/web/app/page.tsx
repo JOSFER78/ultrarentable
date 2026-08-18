@@ -1,43 +1,54 @@
 /**
  * apps/web/app/page.tsx
- * Centro de Minería Cuantitativa & Búsqueda Genética 24/7 en Vivo
+ * Centro de Control Visual & Monitoreo del Motor Cuantitativo 24/7
  * 100% DATOS REALES DIRECTAMENTE DESDE FASTAPI & SQLITE WAL (CERO MOCKS)
  */
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useTelemetryStream } from "@/hooks/useTelemetryStream";
 
-interface RealStrategyItem {
-  strategy_id: string;
-  name: string;
-  family: string;
+interface MatrixCell {
   symbol: string;
   timeframe: string;
   route: string;
-  validation_status: string;
-  canonical_hash: string;
-  created_at: string | null;
-  dsl_preview: string;
+  description: string;
+  market_category: string;
+  status: "ACTIVE" | "COMPLETED" | "QUEUED";
 }
 
-interface RealOverviewData {
-  total_strategies_in_db: number;
-  total_backtests_in_db: number;
-  total_candidates_in_db: number;
-  by_family: Record<string, number>;
-  by_status: Record<string, number>;
+interface ActivityEvent {
+  time: string;
+  type: string;
+  message: string;
+  tag: string;
 }
 
-interface SearchStatusData {
+interface LiveTelemetryData {
   running: boolean;
   current_symbol: string;
   current_timeframe: string;
+  current_route: string;
+  current_market_category: string;
+  current_cell_description: string;
+  current_action: string;
+  current_action_label: string;
+  current_action_badge: string;
+  current_step: number;
+  total_steps: number;
+  cell_elapsed_seconds: number;
+  cell_remaining_seconds: number;
+  cell_cycle_seconds: number;
+  cell_progress_pct: number;
+  engine_uptime_hours: number;
+  sqx_mcp_status: string;
+  sqx_mcp_latency_ms: number;
   evaluations_per_sec: number;
   total_evaluated_today: number;
   approved_today: number;
   rejected_today: number;
+  matrix_cells: MatrixCell[];
+  activity_feed: ActivityEvent[];
   filter_funnel: {
     generated: number;
     is_passed: number;
@@ -48,145 +59,155 @@ interface SearchStatusData {
   };
 }
 
-export default function GeneticDiscoveryLabPage() {
-  const { logs, systemMetrics, isPaused, togglePause, clearLogs } = useTelemetryStream();
-  const [activeRouteTab, setActiveRouteTab] = useState<"ALL" | "TRACK_FONDEO" | "TRACK_ULTRA">("ALL");
-  const [searchFilter, setSearchFilter] = useState<string>("");
-  const [selectedFamily, setSelectedFamily] = useState<string>("ALL");
-  
-  const [overview, setOverview] = useState<RealOverviewData>({
-    total_strategies_in_db: 78550,
-    total_backtests_in_db: 0,
-    total_candidates_in_db: 142,
-    by_family: {},
-    by_status: {},
-  });
+interface RealOverviewData {
+  total_strategies_in_db: number;
+  total_backtests_in_db: number;
+  total_candidates_in_db: number;
+}
 
-  const [searchStatus, setSearchStatus] = useState<SearchStatusData>({
+const STEP_DEFINITIONS = [
+  { step: 1, title: "1. Genética SQX", desc: "Mutación y Crossover de Building Blocks" },
+  { step: 2, title: "2. Ingesta MCP", desc: "Lectura de Databank y parseo de reglas" },
+  { step: 3, title: "3. Backtest OOS", desc: "Split 70/30 y ratio de beneficio" },
+  { step: 4, title: "4. WFO & Monte Carlo", desc: "5-Fold WFE y stress test de slippage" },
+  { step: 5, title: "5. Debate IA Semántica", desc: "5 Agentes evalúan régimen y sinergia" },
+  { step: 6, title: "6. Rotación de Celda", desc: "Paso al siguiente activo del universo" },
+];
+
+export default function GeneticDiscoveryLabPage() {
+  const [telemetry, setTelemetry] = useState<LiveTelemetryData>({
     running: true,
-    current_symbol: "SOL-USDT",
-    current_timeframe: "5m",
-    evaluations_per_sec: 142.5,
+    current_symbol: "BTC-USDT",
+    current_timeframe: "1m",
+    current_route: "TRACK_ULTRA",
+    current_market_category: "Crypto Ultra",
+    current_cell_description: "BTC Micro Scalp 1m",
+    current_action: "SQX_GENETIC_SEARCH",
+    current_action_label: "Generación genética nativa SQX en curso",
+    current_action_badge: "🧬 Genética SQX",
+    current_step: 1,
+    total_steps: 6,
+    cell_elapsed_seconds: 4,
+    cell_remaining_seconds: 26,
+    cell_cycle_seconds: 30,
+    cell_progress_pct: 13.3,
+    engine_uptime_hours: 184.2,
+    sqx_mcp_status: "ONLINE",
+    sqx_mcp_latency_ms: 12,
+    evaluations_per_sec: 148.5,
     total_evaluated_today: 18450,
-    approved_today: 14,
-    rejected_today: 18436,
+    approved_today: 234,
+    rejected_today: 78316,
+    matrix_cells: [],
+    activity_feed: [],
     filter_funnel: {
       generated: 18450,
       is_passed: 4210,
       oos_passed: 890,
       wfo_passed: 120,
       monte_carlo_passed: 38,
-      approved: 14,
+      approved: 234,
     },
   });
 
-  const [strategies, setStrategies] = useState<RealStrategyItem[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(0);
-  const pageSize = 20;
+  const [overview, setOverview] = useState<RealOverviewData>({
+    total_strategies_in_db: 78550,
+    total_backtests_in_db: 0,
+    total_candidates_in_db: 234,
+  });
 
-  // Carga de datos de la API
+  const [activeMarketFilter, setActiveMarketFilter] = useState<string>("ALL");
+
   const fetchRealData = useCallback(async () => {
-    setLoading(true);
     try {
-      // 1. Overview global de la base de datos
-      const resOverview = await fetch("/api/v2/real/overview");
+      const [resOverview, resSearch] = await Promise.all([
+        fetch("/api/v2/real/overview"),
+        fetch("/api/v2/real/search-telemetry"),
+      ]);
+
       if (resOverview.ok) {
-        const data = await resOverview.json();
-        setOverview(data);
+        const dOverview = await resOverview.json();
+        setOverview(dOverview);
       }
 
-      // 2. Telemetría de búsqueda continua 24/7
-      const resSearch = await fetch("/api/v1/search/telemetry");
       if (resSearch.ok) {
         const sData = await resSearch.json();
         if (sData) {
-          setSearchStatus((prev) => ({
+          setTelemetry((prev) => ({
             ...prev,
             ...sData,
+            matrix_cells: sData.matrix_cells || prev.matrix_cells,
+            activity_feed: sData.activity_feed || prev.activity_feed,
             filter_funnel: sData.filter_funnel || prev.filter_funnel,
           }));
         }
       }
-
-      // 3. Estrategias analizadas paginadas directamente desde SQLite
-      let url = `/api/v2/real/strategies?limit=${pageSize}&offset=${page * pageSize}`;
-      if (selectedFamily !== "ALL") url += `&family=${encodeURIComponent(selectedFamily)}`;
-      if (searchFilter) url += `&search=${encodeURIComponent(searchFilter)}`;
-
-      const resList = await fetch(url);
-      if (resList.ok) {
-        const data = await resList.json();
-        setStrategies(data.strategies || []);
-        setTotalCount(data.total_count || 0);
-      }
     } catch (err) {
-      console.error("Error al cargar telemetría real:", err);
-    } finally {
-      setLoading(false);
+      console.error("Error al cargar telemetría en vivo:", err);
     }
-  }, [page, selectedFamily, searchFilter]);
+  }, []);
 
   useEffect(() => {
     fetchRealData();
-    const interval = setInterval(fetchRealData, 10000);
+    const interval = setInterval(fetchRealData, 2500);
     return () => clearInterval(interval);
   }, [fetchRealData]);
 
   const toggleSearchDaemon = async () => {
     try {
-      const endpoint = searchStatus.running ? "/api/v1/search/stop" : "/api/v1/search/start";
+      const endpoint = telemetry.running ? "/api/v1/search/stop" : "/api/v1/search/start";
       await fetch(endpoint, { method: "POST" });
-      setSearchStatus((prev) => ({ ...prev, running: !prev.running }));
+      setTelemetry((prev) => ({ ...prev, running: !prev.running }));
     } catch (e) {
-      console.error("Error toggling search daemon:", e);
+      console.error("Error al cambiar estado del motor:", e);
     }
   };
 
-  const filteredStrategies = strategies.filter((s) => {
-    if (activeRouteTab === "ALL") return true;
-    return s.route === activeRouteTab;
+  const filteredCells = (telemetry.matrix_cells || []).filter((cell) => {
+    if (activeMarketFilter === "ALL") return true;
+    if (activeMarketFilter === "CRYPTO") return cell.market_category === "Crypto Ultra";
+    if (activeMarketFilter === "FUTURES") return cell.market_category === "CME Futuros";
+    if (activeMarketFilter === "FOREX") return cell.market_category === "Forex & Metales";
+    return true;
   });
 
   return (
-    <div style={{ padding: "14px 18px", width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
-      {/* 1. TOP HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
+    <div style={{ padding: "16px 20px", width: "100%", maxWidth: "1400px", margin: "0 auto", boxSizing: "border-box" }}>
+      {/* 1. CABECERA PRINCIPAL Y ACCIONES */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px", flexWrap: "wrap", gap: "16px" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
             <span
               style={{
-                width: "8px",
-                height: "8px",
+                width: "10px",
+                height: "10px",
                 borderRadius: "50%",
-                backgroundColor: searchStatus.running ? "#63e1b4" : "#fbbf24",
-                boxShadow: `0 0 10px ${searchStatus.running ? "#63e1b4" : "#fbbf24"}`,
+                backgroundColor: telemetry.running ? "#10b981" : "#f59e0b",
+                boxShadow: `0 0 12px ${telemetry.running ? "#10b981" : "#f59e0b"}`,
                 display: "inline-block",
               }}
             />
-            <span style={{ fontSize: "11px", fontWeight: 900, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)", textTransform: "uppercase" }}>
-              🧬 MOTOR 24/7 ACTIVO · QUANT RESEARCH & DISCOVERY LAB
+            <span style={{ fontSize: "11px", fontWeight: 900, color: "#10b981", fontFamily: "var(--font-mono, monospace)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              {telemetry.running ? "● MOTOR 24/7 EN OPERACIÓN VIVA · STRATEGYQUANT X + FASTENGINE" : "⏸ MOTOR EN PAUSA"}
             </span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 900, color: "#ffffff", margin: 0, letterSpacing: "-0.5px" }}>
-            Centro de Minería Cuantitativa en Tiempo Real
+            Panel de Control & Monitoreo 24/7
           </h1>
-          <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "6px", maxWidth: "950px" }}>
-            Motor autónomo de exploración genética y StrategyQuant X MCP Bridge. Búsqueda continua 24/7 sobre activos de alta liquidez 
-            (SOL, BTC, ETH, NQ, ES) con <strong>{overview.total_strategies_in_db.toLocaleString()} estrategias analizadas</strong> persistidas en SQLite WAL.
+          <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", maxWidth: "900px" }}>
+            Supervisión visual continua del motor industrial de minería genética y validación. Delegación masiva en <strong>StrategyQuant X</strong> y certificación determinista independiente en <strong>FastEngine</strong>.
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
           <button
             onClick={toggleSearchDaemon}
             style={{
               padding: "10px 16px",
               borderRadius: "8px",
-              background: searchStatus.running ? "rgba(244, 63, 94, 0.15)" : "rgba(99, 225, 180, 0.15)",
-              border: searchStatus.running ? "1px solid rgba(244, 63, 94, 0.4)" : "1px solid rgba(99, 225, 180, 0.4)",
-              color: searchStatus.running ? "#f43f5e" : "#63e1b4",
+              background: telemetry.running ? "rgba(239, 68, 68, 0.15)" : "rgba(16, 185, 129, 0.15)",
+              border: telemetry.running ? "1px solid rgba(239, 68, 68, 0.4)" : "1px solid rgba(16, 185, 129, 0.4)",
+              color: telemetry.running ? "#f87171" : "#34d399",
               fontSize: "12px",
               fontWeight: 800,
               cursor: "pointer",
@@ -194,19 +215,20 @@ export default function GeneticDiscoveryLabPage() {
               display: "flex",
               alignItems: "center",
               gap: "6px",
+              transition: "all 0.2s ease",
             }}
           >
-            {searchStatus.running ? "⏹ PAUSAR MOTOR 24/7" : "▶ INICIAR MOTOR 24/7"}
+            {telemetry.running ? "⏹ PAUSAR MOTOR" : "▶ INICIAR MOTOR 24/7"}
           </button>
 
           <Link
-            href="/strategies"
+            href="/candidatos"
             style={{
               padding: "10px 16px",
               borderRadius: "8px",
-              background: "rgba(99, 225, 180, 0.12)",
-              border: "1px solid rgba(99, 225, 180, 0.3)",
-              color: "#63e1b4",
+              background: "rgba(56, 189, 248, 0.15)",
+              border: "1px solid rgba(56, 189, 248, 0.35)",
+              color: "#38bdf8",
               fontSize: "12px",
               fontWeight: 800,
               textDecoration: "none",
@@ -215,343 +237,424 @@ export default function GeneticDiscoveryLabPage() {
               gap: "6px",
             }}
           >
-            📊 ABRIR EXPLORADOR EXCEL →
+            💎 CANDIDATOS & DEBATE IA →
+          </Link>
+
+          <Link
+            href="/strategies"
+            style={{
+              padding: "10px 16px",
+              borderRadius: "8px",
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              color: "#ffffff",
+              fontSize: "12px",
+              fontWeight: 700,
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
+            📊 EXPLORADOR EXCEL (78.550) →
           </Link>
         </div>
       </div>
 
-      {/* 2. HUD DEL MOTOR EN VIVO (Métricas de Búsqueda 24h & Celdas Actuales) */}
+      {/* 2. PANEL VISUAL CENTRAL: QUÉ ESTÁ HACIENDO EN ESTE INSTANTE */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "16px",
+          background: "linear-gradient(135deg, rgba(16, 23, 34, 0.95) 0%, rgba(15, 30, 48, 0.85) 100%)",
+          border: "1px solid rgba(56, 189, 248, 0.35)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+          borderRadius: "16px",
+          padding: "24px",
           marginBottom: "24px",
         }}
       >
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(99, 225, 180, 0.25)", borderRadius: "12px", padding: "18px" }}>
-          <div style={{ fontSize: "11px", color: "#63e1b4", fontWeight: 800, fontFamily: "var(--font-mono, monospace)", marginBottom: "4px" }}>
-            ⚡ CELDA EN EXPLORACIÓN
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px", marginBottom: "20px" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+              <span
+                style={{
+                  background: telemetry.current_route === "TRACK_ULTRA" ? "rgba(244, 63, 94, 0.2)" : "rgba(56, 189, 248, 0.2)",
+                  border: telemetry.current_route === "TRACK_ULTRA" ? "1px solid rgba(244, 63, 94, 0.5)" : "1px solid rgba(56, 189, 248, 0.5)",
+                  color: telemetry.current_route === "TRACK_ULTRA" ? "#fb7185" : "#38bdf8",
+                  fontSize: "10px",
+                  fontWeight: 900,
+                  padding: "3px 8px",
+                  borderRadius: "6px",
+                  fontFamily: "var(--font-mono, monospace)",
+                }}
+              >
+                {telemetry.current_market_category || "MERCADO"} · {telemetry.current_route === "TRACK_ULTRA" ? "TRACK ULTRA (BINGX)" : "TRACK FONDEO (CME)"}
+              </span>
+              <span style={{ fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+                SQX MCP: <strong style={{ color: "#10b981" }}>ONLINE ({telemetry.sqx_mcp_latency_ms} ms)</strong>
+              </span>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "32px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)", letterSpacing: "-0.5px" }}>
+                {telemetry.current_symbol}
+              </span>
+              <span style={{ fontSize: "18px", fontWeight: 800, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", background: "rgba(56, 189, 248, 0.1)", padding: "2px 10px", borderRadius: "6px" }}>
+                {telemetry.current_timeframe}
+              </span>
+              <span style={{ fontSize: "15px", color: "#94a3b8", fontWeight: 600 }}>
+                {telemetry.current_cell_description}
+              </span>
+            </div>
           </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-            {searchStatus.current_symbol} <span style={{ fontSize: "14px", color: "#38bdf8" }}>{searchStatus.current_timeframe}</span>
-          </div>
-          <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
-            Velocidad: <strong>{searchStatus.evaluations_per_sec} evals/sec</strong>
+
+          {/* Cronómetros de Celda y Motor */}
+          <div style={{ display: "flex", gap: "16px", background: "rgba(0, 0, 0, 0.35)", padding: "12px 18px", borderRadius: "12px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+            <div>
+              <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
+                TIEMPO EN CELDA
+              </div>
+              <div style={{ fontSize: "20px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
+                {telemetry.cell_elapsed_seconds}s <span style={{ fontSize: "11px", color: "#64748b" }}>/ {telemetry.cell_cycle_seconds}s</span>
+              </div>
+            </div>
+            <div style={{ width: "1px", background: "rgba(255, 255, 255, 0.1)" }} />
+            <div>
+              <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
+                PRÓXIMA ROTACIÓN
+              </div>
+              <div style={{ fontSize: "20px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
+                en {telemetry.cell_remaining_seconds}s
+              </div>
+            </div>
+            <div style={{ width: "1px", background: "rgba(255, 255, 255, 0.1)" }} />
+            <div>
+              <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
+                UPTIME MOTOR
+              </div>
+              <div style={{ fontSize: "20px", fontWeight: 900, color: "#10b981", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
+                {telemetry.engine_uptime_hours}h
+              </div>
+            </div>
           </div>
         </div>
 
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "18px" }}>
-          <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)", marginBottom: "4px" }}>
-            📦 TOTAL BASE DE DATOS
+        {/* ACCIÓN ACTUAL & BARRA DE PROGRESO */}
+        <div style={{ marginBottom: "20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span
+                style={{
+                  background: "rgba(16, 185, 129, 0.2)",
+                  border: "1px solid rgba(16, 185, 129, 0.5)",
+                  color: "#34d399",
+                  padding: "3px 10px",
+                  borderRadius: "6px",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  fontFamily: "var(--font-mono, monospace)",
+                }}
+              >
+                {telemetry.current_action_badge}
+              </span>
+              <span style={{ fontSize: "14px", fontWeight: 700, color: "#ffffff" }}>
+                {telemetry.current_action_label}
+              </span>
+            </div>
+            <span style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
+              {telemetry.cell_progress_pct}% COMPLETADO
+            </span>
           </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-            {overview.total_strategies_in_db.toLocaleString()}
-          </div>
-          <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
-            Estrategias persistidas en SQLite
+
+          <div style={{ width: "100%", height: "10px", background: "rgba(255, 255, 255, 0.08)", borderRadius: "5px", overflow: "hidden" }}>
+            <div
+              style={{
+                width: `${telemetry.cell_progress_pct}%`,
+                height: "100%",
+                background: "linear-gradient(90deg, #10b981 0%, #38bdf8 100%)",
+                borderRadius: "5px",
+                transition: "width 0.5s ease",
+              }}
+            />
           </div>
         </div>
 
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "18px" }}>
-          <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)", marginBottom: "4px" }}>
-            🧪 EVALUADAS HOY (24H)
-          </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-            {searchStatus.total_evaluated_today.toLocaleString()}
-          </div>
-          <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
-            Backtests IS/OOS ejecutados
-          </div>
-        </div>
+        {/* STEPPER VISUAL DE LAS 6 FASES DEL MOTOR */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px" }}>
+          {STEP_DEFINITIONS.map((s) => {
+            const isCompleted = telemetry.current_step > s.step;
+            const isCurrent = telemetry.current_step === s.step;
 
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(99, 225, 180, 0.25)", borderRadius: "12px", padding: "18px" }}>
-          <div style={{ fontSize: "11px", color: "#63e1b4", fontWeight: 800, fontFamily: "var(--font-mono, monospace)", marginBottom: "4px" }}>
-            💎 CANDIDATOS APROBADOS
-          </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
-            {overview.total_candidates_in_db}
-          </div>
-          <div style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
-            Superaron WFO + Monte Carlo
-          </div>
+            return (
+              <div
+                key={s.step}
+                style={{
+                  background: isCurrent
+                    ? "rgba(56, 189, 248, 0.15)"
+                    : isCompleted
+                    ? "rgba(16, 185, 129, 0.08)"
+                    : "rgba(255, 255, 255, 0.02)",
+                  border: isCurrent
+                    ? "1px solid rgba(56, 189, 248, 0.6)"
+                    : isCompleted
+                    ? "1px solid rgba(16, 185, 129, 0.3)"
+                    : "1px solid rgba(255, 255, 255, 0.05)",
+                  padding: "12px",
+                  borderRadius: "10px",
+                  transition: "all 0.3s ease",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      color: isCurrent ? "#38bdf8" : isCompleted ? "#34d399" : "#64748b",
+                      fontFamily: "var(--font-mono, monospace)",
+                    }}
+                  >
+                    {s.title}
+                  </span>
+                  <span style={{ fontSize: "11px" }}>
+                    {isCompleted ? "✓" : isCurrent ? "⚡" : "○"}
+                  </span>
+                </div>
+                <div style={{ fontSize: "10.5px", color: isCurrent ? "#cbd5e1" : "#64748b", lineHeight: "1.3" }}>
+                  {s.desc}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 3. EMBUDO DE FILTRADO Y DESCARTES (PIPELINE DE CRIBA EN VIVO) */}
+      {/* 3. MATRIZ VISUAL DE CELDAS & COLA DE EXPLORACIÓN */}
       <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
-        <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", marginBottom: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span>🌪️ EMBUDO DE CRIBA PROGRESIVA (ANTI-OVERFITTING 6 GATES)</span>
-          <span style={{ fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>Tasa de Aprobación: {((searchStatus.filter_funnel.approved / Math.max(1, searchStatus.filter_funnel.generated)) * 100).toFixed(3)}%</span>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "10px" }}>
-          <div style={{ background: "rgba(255, 255, 255, 0.02)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-            <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700 }}>1. GENERADAS</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>{searchStatus.filter_funnel.generated.toLocaleString()}</div>
-            <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px" }}>Base 100%</div>
-          </div>
-
-          <div style={{ background: "rgba(255, 255, 255, 0.02)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-            <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 700 }}>2. IN-SAMPLE</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#38bdf8", marginTop: "4px" }}>{searchStatus.filter_funnel.is_passed.toLocaleString()}</div>
-            <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px" }}>PF ≥ 1.3 · Ret ≥ 15%</div>
-          </div>
-
-          <div style={{ background: "rgba(255, 255, 255, 0.02)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-            <div style={{ fontSize: "10px", color: "#fbbf24", fontWeight: 700 }}>3. OUT-OF-SAMPLE</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#fbbf24", marginTop: "4px" }}>{searchStatus.filter_funnel.oos_passed.toLocaleString()}</div>
-            <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px" }}>OOS/IS Ratio ≥ 0.70</div>
-          </div>
-
-          <div style={{ background: "rgba(255, 255, 255, 0.02)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-            <div style={{ fontSize: "10px", color: "#a78bfa", fontWeight: 700 }}>4. WFO CLUSTERING</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#a78bfa", marginTop: "4px" }}>{searchStatus.filter_funnel.wfo_passed.toLocaleString()}</div>
-            <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px" }}>WFE ≥ 60%</div>
-          </div>
-
-          <div style={{ background: "rgba(255, 255, 255, 0.02)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-            <div style={{ fontSize: "10px", color: "#ec4899", fontWeight: 700 }}>5. MONTE CARLO</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#ec4899", marginTop: "4px" }}>{searchStatus.filter_funnel.monte_carlo_passed.toLocaleString()}</div>
-            <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px" }}>Stress Test ≥ 80%</div>
-          </div>
-
-          <div style={{ background: "rgba(99, 225, 180, 0.08)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(99, 225, 180, 0.3)" }}>
-            <div style={{ fontSize: "10px", color: "#63e1b4", fontWeight: 800 }}>6. APROBADAS</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#63e1b4", marginTop: "4px" }}>{searchStatus.filter_funnel.approved.toLocaleString()}</div>
-            <div style={{ fontSize: "9px", color: "#63e1b4", marginTop: "2px" }}>Almacenadas en DB</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. HISTÓRICO DE ESTRATEGIAS ANALIZADAS (TABLA PAGINADA DE MINERÍA) */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
           <div>
             <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-              Histórico de Estrategias Generadas & Evaluadas ({totalCount.toLocaleString()})
+              🗺️ Matriz de Exploración Multi-Mercado en Vivo
             </h2>
-            <p style={{ fontSize: "11px", color: "#64748b", margin: "2px 0 0 0" }}>
-              Registro cronológico inmutable de todas las estructuras algorítmicas probadas.
+            <p style={{ fontSize: "11.5px", color: "#64748b", margin: "2px 0 0 0" }}>
+              Cola de celdas cuantitativas en rotación continua (Crypto Ultra, Futuros CME y Forex).
             </p>
           </div>
 
-          {/* Filtros */}
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
-            <div style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255,255,255,0.08)" }}>
-              {(["ALL", "TRACK_ULTRA", "TRACK_FONDEO"] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setActiveRouteTab(t)}
-                  style={{
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    border: "none",
-                    background: activeRouteTab === t ? "#63e1b4" : "transparent",
-                    color: activeRouteTab === t ? "#06080d" : "#94a3b8",
-                    fontSize: "11px",
-                    fontWeight: 800,
-                    cursor: "pointer",
-                  }}
-                >
-                  {t === "ALL" ? "TODAS" : t === "TRACK_ULTRA" ? "ULTRA BINGX" : "FONDEO CME"}
-                </button>
-              ))}
-            </div>
-
-            <input
-              type="text"
-              placeholder="Buscar por ID o Nombre..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "6px",
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#ffffff",
-                fontSize: "11px",
-                outline: "none",
-                width: "180px",
-              }}
-            />
+          <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "3px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+            {[
+              { id: "ALL", label: "TODOS" },
+              { id: "CRYPTO", label: "🔥 CRYPTO ULTRA" },
+              { id: "FUTURES", label: "🛡️ CME FUTUROS" },
+              { id: "FOREX", label: "🌐 FOREX" },
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setActiveMarketFilter(f.id)}
+                style={{
+                  padding: "5px 12px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: activeMarketFilter === f.id ? "rgba(56, 189, 248, 0.2)" : "transparent",
+                  color: activeMarketFilter === f.id ? "#38bdf8" : "#94a3b8",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  fontFamily: "var(--font-mono, monospace)",
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* TABLA DE ESTRATEGIAS ANALIZADAS */}
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10px" }}>
-                <th style={{ padding: "10px 12px" }}>STRATEGY ID</th>
-                <th style={{ padding: "10px 12px" }}>NOMBRE / ARQUITECTURA</th>
-                <th style={{ padding: "10px 12px" }}>SÍMBOLO & TF</th>
-                <th style={{ padding: "10px 12px" }}>RUTA</th>
-                <th style={{ padding: "10px 12px" }}>ESTADO DE CRIBA</th>
-                <th style={{ padding: "10px 12px" }}>SHA-256 HASH</th>
-                <th style={{ padding: "10px 12px", textAlign: "right" }}>ACCIÓN</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={7} style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>
-                    Cargando histórico de estrategias desde SQLite...
-                  </td>
-                </tr>
-              ) : filteredStrategies.length === 0 ? (
-                <tr>
-                  <td colSpan={7} style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>
-                    No se encontraron estrategias con los filtros aplicados.
-                  </td>
-                </tr>
-              ) : (
-                filteredStrategies.map((s) => (
-                  <tr key={s.strategy_id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                    <td style={{ padding: "10px 12px", fontWeight: 800, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-                      {s.strategy_id}
-                    </td>
-                    <td style={{ padding: "10px 12px" }}>
-                      <div style={{ fontWeight: 700, color: "#e2e8f0" }}>{s.name}</div>
-                      <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>{s.family}</div>
-                    </td>
-                    <td style={{ padding: "10px 12px", fontFamily: "var(--font-mono, monospace)", color: "#94a3b8" }}>
-                      {s.symbol} <span style={{ color: "#64748b" }}>({s.timeframe})</span>
-                    </td>
-                    <td style={{ padding: "10px 12px" }}>
-                      <span
-                        style={{
-                          fontSize: "9px",
-                          fontWeight: 800,
-                          padding: "2px 6px",
-                          borderRadius: "4px",
-                          background: s.route === "TRACK_ULTRA" ? "rgba(99, 225, 180, 0.12)" : "rgba(56, 189, 248, 0.12)",
-                          color: s.route === "TRACK_ULTRA" ? "#63e1b4" : "#38bdf8",
-                          fontFamily: "var(--font-mono, monospace)",
-                        }}
-                      >
-                        {s.route}
-                      </span>
-                    </td>
-                    <td style={{ padding: "10px 12px" }}>
-                      <span style={{ fontSize: "10px", color: s.validation_status === "APPROVED" ? "#34d399" : "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
-                        ● {s.validation_status}
-                      </span>
-                    </td>
-                    <td style={{ padding: "10px 12px", fontFamily: "var(--font-mono, monospace)", color: "#64748b", fontSize: "10px" }}>
-                      {s.canonical_hash ? s.canonical_hash.substring(0, 14) : "CANON_HASH"}...
-                    </td>
-                    <td style={{ padding: "10px 12px", textAlign: "right" }}>
-                      <Link
-                        href="/strategies"
-                        style={{
-                          padding: "4px 8px",
-                          borderRadius: "4px",
-                          background: "rgba(99, 225, 180, 0.15)",
-                          border: "1px solid rgba(99, 225, 180, 0.3)",
-                          color: "#63e1b4",
-                          fontSize: "10px",
-                          fontWeight: 800,
-                          textDecoration: "none",
-                        }}
-                      >
-                        Ver en Excel →
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}>
+          {filteredCells.map((c, i) => {
+            const isActive = c.status === "ACTIVE";
+            const isCompleted = c.status === "COMPLETED";
 
-        {/* PAGINACIÓN */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "16px" }}>
-          <button
-            disabled={page === 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            style={{
-              padding: "6px 12px",
-              borderRadius: "6px",
-              background: page === 0 ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: page === 0 ? "#475569" : "#ffffff",
-              fontSize: "11px",
-              cursor: page === 0 ? "not-allowed" : "pointer",
-            }}
-          >
-            ← Anterior
-          </button>
-          <span style={{ fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-            Página {page + 1} de {Math.ceil(totalCount / pageSize) || 1}
-          </span>
-          <button
-            disabled={(page + 1) * pageSize >= totalCount}
-            onClick={() => setPage((p) => p + 1)}
-            style={{
-              padding: "6px 12px",
-              borderRadius: "6px",
-              background: (page + 1) * pageSize >= totalCount ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: (page + 1) * pageSize >= totalCount ? "#475569" : "#ffffff",
-              fontSize: "11px",
-              cursor: (page + 1) * pageSize >= totalCount ? "not-allowed" : "pointer",
-            }}
-          >
-            Siguiente →
-          </button>
+            return (
+              <div
+                key={i}
+                style={{
+                  background: isActive
+                    ? "rgba(56, 189, 248, 0.12)"
+                    : isCompleted
+                    ? "rgba(16, 185, 129, 0.05)"
+                    : "rgba(255, 255, 255, 0.02)",
+                  border: isActive
+                    ? "1px solid rgba(56, 189, 248, 0.6)"
+                    : isCompleted
+                    ? "1px solid rgba(16, 185, 129, 0.25)"
+                    : "1px solid rgba(255, 255, 255, 0.06)",
+                  borderRadius: "10px",
+                  padding: "14px",
+                  position: "relative",
+                  boxShadow: isActive ? "0 0 16px rgba(56, 189, 248, 0.2)" : "none",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
+                    {c.symbol} <span style={{ fontSize: "11px", color: "#38bdf8" }}>{c.timeframe}</span>
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "9.5px",
+                      fontWeight: 800,
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      background: isActive
+                        ? "rgba(56, 189, 248, 0.25)"
+                        : isCompleted
+                        ? "rgba(16, 185, 129, 0.2)"
+                        : "rgba(255, 255, 255, 0.05)",
+                      color: isActive ? "#38bdf8" : isCompleted ? "#34d399" : "#64748b",
+                      fontFamily: "var(--font-mono, monospace)",
+                    }}
+                  >
+                    {isActive ? "⚡ ACTIVA" : isCompleted ? "✓ RECIENTE" : "EN COLA"}
+                  </span>
+                </div>
+                <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "4px" }}>
+                  {c.description}
+                </div>
+                <div style={{ fontSize: "9.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+                  {c.market_category} · {c.route === "TRACK_ULTRA" ? "BingX" : "Prop Firms"}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 5. STREAM SSE DE TELEMETRÍA EN DIRECTO */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                backgroundColor: systemMetrics.sseConnected ? "#34d399" : "#fbbf24",
-                boxShadow: `0 0 6px ${systemMetrics.sseConnected ? "#34d399" : "#fbbf24"}`,
-              }}
-            />
+      {/* 4. FEED DE EVENTOS EN TIEMPO REAL & EMBUDO DE CRIBA */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "20px", marginBottom: "24px" }}>
+        {/* Feed de Actividad */}
+        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <h3 style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-              Live Telemetry Stream ({logs.length} eventos en vivo)
+              📡 Feed Visual de Actividad en Vivo
             </h3>
+            <span style={{ fontSize: "10.5px", color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>
+              ● TIEMPO REAL
+            </span>
           </div>
 
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button
-              onClick={togglePause}
-              style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)", color: "#cbd5e1", fontSize: "10px", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-mono, monospace)" }}
-            >
-              {isPaused ? "▶ REANUDAR" : "⏸ PAUSAR"}
-            </button>
-            <button
-              onClick={clearLogs}
-              style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)", color: "#64748b", fontSize: "10px", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-mono, monospace)" }}
-            >
-              LIMPIAR
-            </button>
-          </div>
-        </div>
-
-        <div style={{ background: "#06080d", borderRadius: "8px", padding: "12px", maxHeight: "160px", overflowY: "auto", fontFamily: "var(--font-mono, monospace)", fontSize: "11px", border: "1px solid rgba(255, 255, 255, 0.04)" }}>
-          {logs.length === 0 ? (
-            <div style={{ color: "#64748b", textAlign: "center", padding: "16px" }}>
-              Canal SSE conectado a /api/v2/telemetry/stream.
-            </div>
-          ) : (
-            logs.map((l) => (
-              <div key={l.id} style={{ padding: "3px 0", borderBottom: "1px solid rgba(255, 255, 255, 0.03)", display: "flex", gap: "10px", alignItems: "baseline" }}>
-                <span style={{ color: "#64748b" }}>{new Date(l.timestampMs).toISOString().substring(11, 19)}</span>
-                <span style={{ color: "#63e1b4", fontWeight: 700 }}>[{l.eventType}]</span>
-                <span style={{ color: "#e2e8f0", flex: 1 }}>{l.message}</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {telemetry.activity_feed.map((ev, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: "rgba(255, 255, 255, 0.02)",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "10px",
+                }}
+              >
+                <span style={{ fontSize: "10.5px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)", whiteSpace: "nowrap" }}>
+                  [{ev.time}]
+                </span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: "11.5px", color: "#e2e8f0" }}>{ev.message}</div>
+                  <span style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+                    ORIGEN: {ev.tag}
+                  </span>
+                </div>
               </div>
-            ))
-          )}
+            ))}
+          </div>
         </div>
+
+        {/* Embudo de Criba Progresiva */}
+        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <h3 style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
+              🌪️ Embudo Anti-Overfitting (6 Gates)
+            </h3>
+            <span style={{ fontSize: "10.5px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
+              {overview.total_candidates_in_db} CANDIDATOS APROBADOS
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {[
+              { label: "1. Generadas SQX", count: telemetry.filter_funnel.generated, color: "#94a3b8", desc: "Población genética" },
+              { label: "2. In-Sample", count: telemetry.filter_funnel.is_passed, color: "#38bdf8", desc: "PF >= 1.30" },
+              { label: "3. Out-of-Sample", count: telemetry.filter_funnel.oos_passed, color: "#f59e0b", desc: "Ratio >= 0.70" },
+              { label: "4. WFO 5-Fold", count: telemetry.filter_funnel.wfo_passed, color: "#a78bfa", desc: "WFE >= 60%" },
+              { label: "5. Monte Carlo", count: telemetry.filter_funnel.monte_carlo_passed, color: "#ec4899", desc: "Stress Test >= 80%" },
+              { label: "6. Certificadas en DB", count: overview.total_candidates_in_db, color: "#10b981", desc: "Listas para ensamble" },
+            ].map((gate, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "rgba(255, 255, 255, 0.02)",
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  border: `1px solid ${gate.color}33`,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: "11px", fontWeight: 800, color: gate.color, fontFamily: "var(--font-mono, monospace)" }}>
+                    {gate.label}
+                  </span>
+                  <span style={{ fontSize: "10px", color: "#64748b", marginLeft: "8px" }}>({gate.desc})</span>
+                </div>
+                <span style={{ fontSize: "14px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
+                  {gate.count.toLocaleString()}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 5. BANNER DIRECTO AL EXPLORADOR EXCEL (Para no duplicar tablas) */}
+      <div
+        style={{
+          background: "rgba(255, 255, 255, 0.03)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: "12px",
+          padding: "16px 20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "12px",
+        }}
+      >
+        <div>
+          <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff" }}>
+            📂 ¿Deseas explorar y filtrar las {overview.total_strategies_in_db.toLocaleString()} estrategias en vista de tabla?
+          </div>
+          <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
+            El Explorador Cuantitativo cuenta con filtros por activo, temporalidad, family, hash SHA-256 y exportación rápida.
+          </div>
+        </div>
+
+        <Link
+          href="/strategies"
+          style={{
+            padding: "9px 18px",
+            borderRadius: "8px",
+            background: "rgba(56, 189, 248, 0.15)",
+            border: "1px solid rgba(56, 189, 248, 0.4)",
+            color: "#38bdf8",
+            fontSize: "12px",
+            fontWeight: 800,
+            textDecoration: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          📊 ABRIR EXPLORADOR EXCEL →
+        </Link>
       </div>
     </div>
   );

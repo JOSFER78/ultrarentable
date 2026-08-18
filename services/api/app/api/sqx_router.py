@@ -406,9 +406,30 @@ def rentable_sqx_strategies(
             },
             "total_sqx_candidates": total_sqx,
             "rejected_by_gate": total_sqx - len(items),
-            "rejected_by_drawdown_gate": rejected_by_drawdown_gate,
             "strategies": items,
         }
     finally:
         db.close()
+
+
+@sqx_router.post("/sync")
+def trigger_sqx_sync() -> Dict[str, Any]:
+    """Ejecuta la sincronización e ingesta masiva de databanks SQX a SQLite WAL."""
+    from services.sqx_bridge.sqx_sync_worker import SQXSyncWorker
+    worker = SQXSyncWorker()
+    summary = worker.sync_all_projects()
+    return {
+        "status": "SUCCESS",
+        "message": "Sincronización completada con éxito",
+        "summary": summary
+    }
+
+
+@sqx_router.get("/feedback-loop")
+def get_sqx_feedback_loop() -> Dict[str, Any]:
+    """Retorna las recomendaciones de la IA Semántica para optimizar los proyectos y bloques de SQX."""
+    from services.semantic_ai.sqx_feedback_loop import SQXFeedbackLoop
+    loop = SQXFeedbackLoop()
+    return loop.analyze_learning_curve()
+
 
