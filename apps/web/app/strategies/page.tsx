@@ -30,12 +30,25 @@ export default function StrategiesExplorerPage() {
   const [selectedSymbol, setSelectedSymbol] = useState<string>("ALL");
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("ALL");
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [activeModalTab, setActiveModalTab] = useState<"DNA" | "SCORECARD" | "EXPORT">("DNA");
+  const [activeModalTab, setActiveModalTab] = useState<"DNA" | "SCORECARD" | "EXPORT" | "EDITOR">("DNA");
   const [exportCode, setExportCode] = useState<string>("");
   const [exportType, setExportType] = useState<"PINESCRIPT" | "NINJATRADER" | "PYTHON">("PINESCRIPT");
   const [copied, setCopied] = useState(false);
   const [firebaseSyncing, setFirebaseSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+
+  // Live Strategy Editor & Fast Simulator state
+  const [simParams, setSimParams] = useState({
+    atr_stop_mult: 1.2,
+    atr_tp_mult: 3.0,
+    risk_per_trade_usd: 500,
+    risk_pct: 6.0,
+    max_leverage: 100.0,
+    pyramiding_tiers: 4,
+    margin_reinvest_pct: 80.0,
+  });
+  const [simLoading, setSimLoading] = useState(false);
+  const [simResult, setSimResult] = useState<any | null>(null);
 
   const [viewMode, setViewMode] = useState<"TABLE" | "CARDS">("TABLE");
   const [sortField, setSortField] = useState<string>("annualized_roi_pct");
@@ -1814,6 +1827,24 @@ export default function StrategiesExplorerPage() {
                 Scorecard 5 Gates
               </button>
               <button
+                onClick={() => {
+                  setActiveModalTab("EDITOR");
+                  setSimResult(null);
+                }}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: "6px",
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  border: "none",
+                  cursor: "pointer",
+                  background: activeModalTab === "EDITOR" ? "var(--accent)" : "transparent",
+                  color: activeModalTab === "EDITOR" ? "#000" : "var(--text-muted)",
+                }}
+              >
+                🛠️ Editor & Re-Backtest en Vivo
+              </button>
+              <button
                 onClick={() => setActiveModalTab("EXPORT")}
                 style={{
                   padding: "6px 14px",
@@ -1874,7 +1905,195 @@ export default function StrategiesExplorerPage() {
               </div>
             )}
 
-            {/* Tab 3: Export */}
+            {/* Tab 3: Editor & Fast Simulator */}
+            {activeModalTab === "EDITOR" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    <h4 style={{ margin: 0, fontSize: "14px", color: "var(--accent)" }}>
+                      🛠️ Ajuste de Parámetros Cuantitativos ({selectedCandidate.symbol} {selectedCandidate.timeframe})
+                    </h4>
+                    <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                      Modo: {selectedCandidate.route === "ULTRA" ? "🔥 Hiperescalado Convexo" : "🛡️ Fondeo Preservación"}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", fontSize: "12px" }}>
+                    <div>
+                      <label style={{ display: "block", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                        Stop Loss ATR Multiplier: <strong>{simParams.atr_stop_mult}x ATR</strong>
+                      </label>
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="3.0"
+                        step="0.1"
+                        value={simParams.atr_stop_mult}
+                        onChange={(e) => setSimParams({ ...simParams, atr_stop_mult: parseFloat(e.target.value) })}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: "block", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                        Take Profit ATR Multiplier: <strong>{simParams.atr_tp_mult}x ATR</strong>
+                      </label>
+                      <input
+                        type="range"
+                        min="1.5"
+                        max="8.0"
+                        step="0.2"
+                        value={simParams.atr_tp_mult}
+                        onChange={(e) => setSimParams({ ...simParams, atr_tp_mult: parseFloat(e.target.value) })}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+
+                    {selectedCandidate.route === "ULTRA" ? (
+                      <>
+                        <div>
+                          <label style={{ display: "block", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                            Apalancamiento Máximo: <strong>{simParams.max_leverage}x</strong>
+                          </label>
+                          <input
+                            type="range"
+                            min="10"
+                            max="500"
+                            step="10"
+                            value={simParams.max_leverage}
+                            onChange={(e) => setSimParams({ ...simParams, max_leverage: parseFloat(e.target.value) })}
+                            style={{ width: "100%" }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ display: "block", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                            Reinversión Margen Flotante: <strong>{simParams.margin_reinvest_pct}%</strong>
+                          </label>
+                          <input
+                            type="range"
+                            min="50"
+                            max="95"
+                            step="5"
+                            value={simParams.margin_reinvest_pct}
+                            onChange={(e) => setSimParams({ ...simParams, margin_reinvest_pct: parseFloat(e.target.value) })}
+                            style={{ width: "100%" }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <label style={{ display: "block", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                            Riesgo por Operación: <strong>${simParams.risk_per_trade_usd} USD</strong> ({(simParams.risk_per_trade_usd / 500).toFixed(1)}%)
+                          </label>
+                          <input
+                            type="range"
+                            min="150"
+                            max="1500"
+                            step="50"
+                            value={simParams.risk_per_trade_usd}
+                            onChange={(e) => setSimParams({ ...simParams, risk_per_trade_usd: parseFloat(e.target.value) })}
+                            style={{ width: "100%" }}
+                          />
+                        </div>
+
+                        <div>
+                          <label style={{ display: "block", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                            Target Examen Fondeo: <strong>+$3,000 USD (6.0%)</strong>
+                          </label>
+                          <div style={{ color: "var(--text-muted)", fontSize: "11px", paddingTop: "6px" }}>
+                            Drawdown Máximo Trailing: $2,000 USD (4.0%)
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                    <button
+                      disabled={simLoading}
+                      onClick={async () => {
+                        try {
+                          setSimLoading(true);
+                          const resp = await fetch(`/api/v1/candidates/${selectedCandidate.candidate_id}/simulate`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(simParams),
+                          });
+                          if (resp.ok) {
+                            const resJson = await resp.json();
+                            setSimResult(resJson);
+                          }
+                        } catch (err) {
+                          console.error("Simulation error:", err);
+                        } finally {
+                          setSimLoading(false);
+                        }
+                      }}
+                      style={{
+                        background: simLoading ? "rgba(255,255,255,0.1)" : "var(--accent)",
+                        color: simLoading ? "var(--text-muted)" : "#000",
+                        padding: "8px 18px",
+                        borderRadius: "6px",
+                        fontWeight: 900,
+                        fontSize: "12px",
+                        border: "none",
+                        cursor: simLoading ? "not-allowed" : "pointer",
+                      }}
+                    >
+                      {simLoading ? "⏳ Simulando Velas Históricas..." : "⚡ Ejecutar Re-Backtest Instantáneo"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* RESULTADOS DE LA SIMULACIÓN EN VIVO */}
+                {simResult && (
+                  <div style={{ background: "rgba(56, 189, 248, 0.05)", border: "1px solid rgba(56, 189, 248, 0.2)", padding: "16px", borderRadius: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 800, color: "#fff" }}>
+                        📊 Resultado del Backtest en Tiempo Real (REAL-ONLY)
+                      </span>
+                      <span style={{ fontSize: "11px", color: "#38bdf8", fontFamily: "monospace" }}>
+                        {simResult.total_trades} Operaciones Ejecutadas
+                      </span>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", textAlign: "center" }}>
+                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "6px" }}>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Beneficio Neto OOS</div>
+                        <div style={{ fontSize: "15px", fontWeight: 900, color: simResult.oos_metrics?.net_profit_usd >= 0 ? "#4ade80" : "#f87171", fontFamily: "monospace" }}>
+                          +${simResult.oos_metrics?.net_profit_usd?.toLocaleString("en-US", { minimumFractionDigits: 1 }) || "0.0"}
+                        </div>
+                      </div>
+
+                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "6px" }}>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Rentabilidad Anual OOS</div>
+                        <div style={{ fontSize: "15px", fontWeight: 900, color: "#34d399", fontFamily: "monospace" }}>
+                          +{simResult.oos_metrics?.annualized_roi_pct || simResult.annualized_roi_pct}% <span style={{ fontSize: "9px" }}>/ año</span>
+                        </div>
+                      </div>
+
+                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "6px" }}>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Profit Factor OOS</div>
+                        <div style={{ fontSize: "15px", fontWeight: 900, color: "#38bdf8", fontFamily: "monospace" }}>
+                          {simResult.oos_metrics?.profit_factor || simResult.profit_factor}
+                        </div>
+                      </div>
+
+                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "6px" }}>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Max Drawdown OOS</div>
+                        <div style={{ fontSize: "15px", fontWeight: 900, color: simResult.oos_metrics?.max_drawdown_pct > 4.0 && selectedCandidate.route === "FONDEO" ? "#ef4444" : "#fbbf24", fontFamily: "monospace" }}>
+                          {simResult.oos_metrics?.max_drawdown_pct || simResult.max_drawdown_pct}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Tab 4: Export */}
             {activeModalTab === "EXPORT" && (
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Body, Response
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
@@ -243,17 +243,74 @@ def export_candidate_ninjatrader(candidate_id: str, db: Session = Depends(get_db
     }
 
 
-@candidates_router.patch("/{candidate_id}/status")
-def update_candidate_status(
+@candidates_router.post("/{candidate_id}/simulate")
+def simulate_candidate_custom(
     candidate_id: str,
-    payload: StatusUpdateSchema,
+    payload: Dict[str, Any] = Body(...),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
-    """Update candidate status with mandatory reason."""
+    """Run interactive on-the-fly backtest simulation with custom tweaked parameters."""
     c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
     if not c:
         raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
-    c.status = payload.status
-    c.status_reason = payload.reason
-    db.commit()
-    return {"status": "SUCCESS", "candidate_id": candidate_id, "new_status": c.status, "reason": c.status_reason}
+    
+    from services.api.app.data_feed.feed_loader import load_candles
+    from services.api.app.factory.ultra_risk_controlled_engine import UltraRiskControlledEngine
+    
+    candles = load_candles(c.symbol, c.timeframe)
+    if not candles or len(candles) < 50:
+        raise HTTPException(status_code=400, detail="INSUFFICIENT_HISTORICAL_DATA")
+    
+    engine = UltraRiskControlledEngine(bars=candles, symbol=c.symbol, timeframe=c.timeframe)
+    
+    atr_stop = float(payload.get("atr_stop_mult", 1.2))
+    atr_tp = float(payload.get("atr_tp_mult", 3.0))
+    is_ultra = (c.route == "ULTRA")
+    
+    if is_ultra:
+        res = engine.run_hyperscaling_strategy(
+            name=f"{c.name} (Custom Tweak)",
+            initial_risk_pct=float(payload.get("risk_pct", 6.0)),
+            max_leverage=float(payload.get("max_leverage", 500.0)),
+            pyramiding_tiers=int(payload.get("pyramiding_tiers", 6)),
+            margin_reinvest_pct=float(payload.get("margin_reinvest_pct", 85.0)),
+            atr_stop_mult=atr_stop,
+            atr_runner_target=atr_tp * 2.5,
+            split_ratio=0.70,
+        )
+    else:
+        account_size = float(payload.get("account_size_usd", 50_000.0))
+        risk_usd = float(payload.get("risk_per_trade_usd", 500.0))
+        res = engine.run_prop_firm_strategy(
+            name=f"{c.name} (Custom Tweak)",
+            account_size_usd=account_size,
+            profit_target_usd=float(payload.get("profit_target_usd", 3_000.0)),
+            max_trailing_dd_usd=float(payload.get("max_trailing_dd_usd", 2_000.0)),
+            risk_per_trade_usd=risk_usd,
+            atr_stop_mult=atr_stop,
+            atr_tp_mult=atr_tp,
+            split_ratio=0.70,
+        )
+        
+    return {
+        "candidate_id": c.candidate_id,
+        "name": res.name,
+        "symbol": res.symbol,
+        "timeframe": res.timeframe,
+        "route": c.route,
+        "initial_equity": res.initial_equity,
+        "final_equity": res.final_equity,
+        "net_profit_usd": res.net_profit_usd,
+        "roi_pct": res.roi_pct,
+        "annualized_roi_pct": res.annualized_roi_pct,
+        "monthly_roi_pct": res.monthly_roi_pct,
+        "total_trades": res.total_trades,
+        "win_rate_pct": res.win_rate_pct,
+        "profit_factor": res.profit_factor,
+        "max_drawdown_pct": res.max_drawdown_pct,
+        "sharpe_ratio": res.sharpe_ratio,
+        "duration_info": res.duration_info,
+        "is_metrics": res.is_metrics,
+        "oos_metrics": res.oos_metrics,
+    }
+
