@@ -46,7 +46,7 @@ class TradeLog(BaseModel):
     entry_price: float = Field(..., gt=0.0)
     exit_price: float = Field(..., gt=0.0)
     quantity: float = Field(..., gt=0.0)
-    leverage: float = Field(1.0, ge=1.0)
+    leverage: float = Field(1.0, ge=0.0)
     gross_pnl_usd: float
     fee_usd: float = Field(0.0, ge=0.0)
     slippage_usd: float = Field(0.0, ge=0.0)

@@ -42,6 +42,7 @@ from contracts.portfolio import (
     PortfolioAllocation,
     IsolatedBullet,
     BulletLayer,
+    BulletTradeDirection,
     VaultRatchetConfig,
     PropChallengeConfig,
 )
@@ -80,6 +81,7 @@ __all__ = [
     "PortfolioAllocation",
     "IsolatedBullet",
     "BulletLayer",
+    "BulletTradeDirection",
     "VaultRatchetConfig",
     "PropChallengeConfig",
 ]

@@ -48,9 +48,27 @@
 
 ---
 
-### [ ] FASE 2: Ingesta Determinista y Persistencia SQLite / WAL
-- Sincronización continua de candidatos evaluados hacia SQLite sin duplicidad de métricas.
-- Índices de ordenación de alta velocidad por beneficio OOS y ruta.
+### [x] FASE 2: Desacoplamiento Modular & Clean Architecture (COMPLETADA)
+- **Objetivo:** Desacoplar el acceso a datos monolítico estructurando los microservicios bajo Clean Architecture (`services/data`, `services/backtest`, `services/validation`, `services/evidence`, `services/semantic_ai`, `services/portfolio`, `services/fondeo`, `services/paper`, `services/execution`, `services/monitoring`) e integrando un `AsyncEventBus` tipado e inmutable.
+- **Acciones Ejecutadas:**
+  1. **`services/core/event_bus.py`:**
+     - `AsyncEventBus` tipado y no bloqueante en memoria.
+     - Eventos canónicos inmutables (`StrategyGeneratedEvent`, `BacktestRequestedEvent`, `BacktestCompletedEvent`, `ValidationCompletedEvent`, `CandidatePromotedEvent`, `BulletStateChangedEvent`, `VaultHarvestExecutedEvent`, `PortfolioRebalancedEvent`).
+  2. **Microservicios de Dominio Aislados:**
+     - `services/data`: `DatasetRepository` para snapshots deterministas de velas reales.
+     - `services/backtest`: `BacktestEnginePort` y `FastEngineAdapter`.
+     - `services/validation`: `GateEvaluator` con compuertas desacopladas para Fondeo y Ultra.
+     - `services/evidence`: `EvidenceVault` para paquetes inmutables indexados por SHA-256.
+     - `services/semantic_ai`: `SemanticMutationEngine` para generación de estrategias canónicas.
+     - `services/portfolio`: `PortfolioAllocator` y `BulletLifecycleManager` (6 estados de bala).
+     - `services/fondeo`: `PropChallengeEvaluator` para auditoría de reglas de evaluación CME.
+     - `services/paper`: `PaperBrokerSimulator` con slippage y costes.
+     - `services/execution`: `OrderRouter` para derivación a BingX o Tradovate.
+     - `services/monitoring`: `HealthMonitor` y `SystemHealthTelemetry`.
+  3. **Verificación de Tests:**
+     - Creado `tests/test_event_bus_and_isolation.py`.
+     - Pipeline E2E validado: Generación $\to$ Backtest $\to$ Validación $\to$ Bóveda de Evidencia.
+     - Ejecución de `pytest tests/ -v` arrojando **23 tests PASSED, 1 SKIPPED, 0 FAILED**.
 
 ---
 
