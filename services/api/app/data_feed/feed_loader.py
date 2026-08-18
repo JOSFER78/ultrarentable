@@ -129,20 +129,20 @@ def load_candles(
             ])
         elif "DOGE" in normalized_symbol:
             csv_candidates.append(CSV_DATA_DIR / "DOGEUSDT.csv")
-        # Fondeo / Prop Firm mappings
-        elif normalized_symbol in ["NQ", "MNQ", "NASDAQ"]:
+        # Fondeo / Prop Firm mappings (Only map when appropriate timeframe)
+        elif normalized_symbol in ["EURUSD", "EUR-USD"]:
+            csv_candidates.append(CSV_DATA_DIR / "EURUSD=X.csv")
+        elif normalized_symbol in ["GBPUSD", "GBP-USD"]:
+            csv_candidates.append(CSV_DATA_DIR / "GBPUSD=X.csv")
+        elif normalized_symbol in ["GLD", "GOLD", "XAUUSD"]:
+            csv_candidates.append(CSV_DATA_DIR / "GLD.csv")
+        elif normalized_symbol in ["NQ", "MNQ", "NASDAQ"] and timeframe in ["1d", "daily"]:
             csv_candidates.append(CSV_DATA_DIR / "QQQ.csv")
-        elif normalized_symbol in ["ES", "MES", "SP500", "SPY"]:
+        elif normalized_symbol in ["ES", "MES", "SP500", "SPY"] and timeframe in ["1d", "daily"]:
             csv_candidates.extend([
                 CSV_DATA_DIR / "SPY.csv",
                 CSV_DATA_DIR / "^GSPC.csv",
             ])
-        elif "EURUSD" in normalized_symbol:
-            csv_candidates.append(CSV_DATA_DIR / "EURUSD=X.csv")
-        elif "GBPUSD" in normalized_symbol:
-            csv_candidates.append(CSV_DATA_DIR / "GBPUSD=X.csv")
-        elif normalized_symbol in ["GLD", "GOLD", "XAUUSD"]:
-            csv_candidates.append(CSV_DATA_DIR / "GLD.csv")
 
         for candidate_path in csv_candidates:
             if candidate_path.exists():

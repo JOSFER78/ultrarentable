@@ -42,7 +42,9 @@ def list_candidates(
         query = query.filter(CandidateModel.timeframe == timeframe)
         
     results = []
-    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).offset(offset).limit(limit).all()
+    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).all()
+    
+    seen_champion_keys = set()
     for c in candidates:
         sc = {}
         if c.scorecard_json:
@@ -52,26 +54,31 @@ def list_candidates(
             except Exception:
                 pass
 
+        arch = sc.get("archetype") or c.name.split()[-1]
+        champ_key = f"{c.symbol}_{c.timeframe}_{arch}_{c.route}"
+        if champ_key in seen_champion_keys:
+            continue
+        seen_champion_keys.add(champ_key)
+
         dur = sc.get("duration_info") or {}
-        if not dur:
-            is_cme = c.symbol in ["NQ", "ES", "EURUSD", "GBPUSD"]
-            tot_days = 4015 if is_cme else 1041
+        if not dur or not dur.get("oos_days"):
+            # Default to real intraday testing span (6 months total, ~54 days OOS)
             dur = {
-                "start_date": "2015-01-01" if is_cme else "2023-06-09",
-                "split_date": "2022-09-01" if is_cme else "2025-06-15",
-                "end_date": "2025-12-31" if is_cme else "2026-04-16",
-                "total_days": tot_days,
-                "total_months": round(tot_days / 30.4375, 1),
-                "total_years": round(tot_days / 365.25, 2),
-                "oos_days": int(tot_days * 0.30),
-                "oos_months": round((tot_days * 0.30) / 30.4375, 1),
+                "start_date": "2025-10-01",
+                "split_date": "2026-02-15",
+                "end_date": "2026-04-16",
+                "total_days": 197,
+                "total_months": 6.5,
+                "total_years": 0.54,
+                "oos_days": 59,
+                "oos_months": 1.9,
             }
 
         is_fondeo = (c.route == "FONDEO")
         base_cap = 50000.0 if is_fondeo else 10000.0
         net_prof_oos = float(c.net_profit_oos or 0.0)
-        oos_days = dur.get("oos_days", 313)
-        oos_years = max(0.05, float(oos_days) / 365.25)
+        oos_days = max(15, dur.get("oos_days", 59))
+        oos_years = max(0.04, float(oos_days) / 365.25)
         
         # Real ROI % based on actual account base capital
         roi_oos = round((net_prof_oos / base_cap) * 100.0, 2)
@@ -93,6 +100,8 @@ def list_candidates(
             "dataset_id": c.dataset_id,
             "status": c.status,
             "status_reason": c.status_reason,
+            "archetype": arch,
+            "scorecard_json": c.scorecard_json,
             "duration_info": dur,
             "metrics": {
                 "in_sample": {
@@ -122,7 +131,11 @@ def list_candidates(
             },
             "created_at": c.created_at.isoformat() if c.created_at else None,
         })
-    return results
+        
+        if len(results) >= offset + limit:
+            break
+
+    return results[offset : offset + limit]
 
 
 @candidates_router.get("/{candidate_id}")

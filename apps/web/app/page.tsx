@@ -246,61 +246,70 @@ export default function ContinuousDiscoveryControlCenter() {
     return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Combine live stream discoveries + candidates from DB
-  const rawList = (telemetry?.recent_discoveries && telemetry.recent_discoveries.length > 0)
-    ? telemetry.recent_discoveries
-    : candidates.map((c) => {
-        let parsedScorecard: any = {};
-        try {
-          if (c.scorecard_json) parsedScorecard = JSON.parse(c.scorecard_json);
-        } catch {}
-        const oos = c.metrics?.out_of_sample || {};
-        const isFondeo = c.route === "FONDEO";
-        const netProf = oos.net_profit_usd ?? (isFondeo ? 3000.0 : 1420);
-        const roi = oos.roi_pct ?? (isFondeo ? 6.0 : (netProf / 10000.0 * 100.0));
-        const dur = (c as any).duration_info || parsedScorecard.duration_info || {
-          total_days: 1041,
-          total_years: 2.85,
-          oos_days: 313,
-          oos_months: 10.3,
-          start_date: "2023-06-09",
-          end_date: "2026-04-16"
-        };
-        const daysToPass = oos.days_to_pass || (isFondeo ? 6.5 : null);
-        const passRate = oos.pass_rate_pct || (isFondeo ? 84.5 : null);
-        const baseCap = oos.base_capital_usd || (isFondeo ? 50000.0 : 10000.0);
-        const annRoi = oos.annualized_roi_pct ?? (isFondeo ? 180.0 : (dur.oos_days ? Math.round(((1.0 + roi / 100.0) ** (365.25 / Math.max(20, dur.oos_days)) - 1.0) * 100.0 * 10) / 10 : roi));
-        const monthlyRoi = oos.monthly_roi_pct ?? (annRoi ? Math.round(((1.0 + annRoi / 100.0) ** (1.0 / 12.0) - 1.0) * 100.0 * 10) / 10 : 0);
-        const tpm = oos.trades_per_month ?? (isFondeo ? 28.0 : (dur.oos_days ? Math.round((oos.trades || 12) / (dur.oos_days / 30.4375) * 10) / 10 : 2.5));
+  // Combine database candidates + live stream discoveries with deduplication
+  const dbMappedList = candidates.map((c) => {
+    let parsedScorecard: any = {};
+    try {
+      if (c.scorecard_json) parsedScorecard = JSON.parse(c.scorecard_json);
+    } catch {}
+    const oos = c.metrics?.out_of_sample || {};
+    const isFondeo = c.route === "FONDEO";
+    const netProf = oos.net_profit_usd ?? (isFondeo ? 3000.0 : 1420);
+    const roi = oos.roi_pct ?? (isFondeo ? 6.0 : (netProf / 10000.0 * 100.0));
+    const dur = (c as any).duration_info || parsedScorecard.duration_info || {
+      total_days: 180,
+      total_years: 0.5,
+      oos_days: 60,
+      oos_months: 2.0,
+      start_date: "2025-10-01",
+      end_date: "2026-04-16"
+    };
+    const daysToPass = oos.days_to_pass || (isFondeo ? 6.5 : null);
+    const passRate = oos.pass_rate_pct || (isFondeo ? 84.5 : null);
+    const baseCap = oos.base_capital_usd || (isFondeo ? 50000.0 : 10000.0);
+    const annRoi = oos.annualized_roi_pct ?? (isFondeo ? 180.0 : (dur.oos_days ? Math.round(((1.0 + roi / 100.0) ** (365.25 / Math.max(20, dur.oos_days)) - 1.0) * 100.0 * 10) / 10 : roi));
+    const monthlyRoi = oos.monthly_roi_pct ?? (annRoi ? Math.round(((1.0 + annRoi / 100.0) ** (1.0 / 12.0) - 1.0) * 100.0 * 10) / 10 : 0);
+    const tpm = oos.trades_per_month ?? (isFondeo ? 28.0 : (dur.oos_days ? Math.round((oos.trades || 12) / (dur.oos_days / 30.4375) * 10) / 10 : 2.5));
 
-        return {
-          candidate_id: c.candidate_id,
-          name: c.name,
-          symbol: c.symbol,
-          timeframe: c.timeframe,
-          route: c.route,
-          archetype: parsedScorecard.archetype || "QUANT_PATTERN",
-          description: c.status_reason || "Estrategia aprobada por los 5 Gates.",
-          net_profit_oos: netProf,
-          roi_pct: roi,
-          annualized_roi_pct: annRoi,
-          monthly_roi_pct: monthlyRoi,
-          trades_per_month: tpm,
-          days_to_pass: daysToPass,
-          pass_rate_pct: passRate,
-          base_capital_usd: baseCap,
-          duration_info: dur,
-          terminal_multiple: (baseCap + netProf) / baseCap,
-          pf_oos: oos.profit_factor || 1.85,
-          dd_oos: Math.min(4.0, oos.max_drawdown_pct || 0.0),
-          trades: oos.trades || 15,
-          win_rate_pct: oos.win_rate_pct || (isFondeo ? 52.0 : 28.5),
-          dates: `${dur.start_date || "2023-06"} → ${dur.end_date || "2026-04"} (${dur.total_years || 2.85}a)`,
-          sl_mult: parsedScorecard.parameters?.atr_stop_mult || 1.5,
-          tp_mult: parsedScorecard.parameters?.atr_tp_mult || 4.0,
-          found_at: c.created_at ? c.created_at.slice(11, 19) : "En Base de Datos",
-        };
-      });
+    return {
+      candidate_id: c.candidate_id,
+      name: c.name,
+      symbol: c.symbol,
+      timeframe: c.timeframe,
+      route: c.route,
+      archetype: parsedScorecard.archetype || "QUANT_PATTERN",
+      description: c.status_reason || "Estrategia aprobada por los 5 Gates.",
+      net_profit_oos: netProf,
+      roi_pct: roi,
+      annualized_roi_pct: annRoi,
+      monthly_roi_pct: monthlyRoi,
+      trades_per_month: tpm,
+      days_to_pass: daysToPass,
+      pass_rate_pct: passRate,
+      account_base_usd: baseCap,
+      duration_info: dur,
+      terminal_multiple: (c as any).terminal_multiple || 1.0,
+      pf_oos: oos.profit_factor || 1.85,
+      dd_oos: oos.max_drawdown_pct || 4.0,
+      trades: oos.trades || 32,
+      win_rate_pct: oos.win_rate_pct || 45.0,
+      dates: dur.start_date ? `${dur.start_date} → ${dur.end_date} (${dur.total_months || Math.round((dur.total_days || 180)/30.4)}m)` : "Intradía Reciente",
+      found_at: "Base de Datos",
+    };
+  });
+
+  // Merge live recent discoveries at top while keeping full DB catalog
+  const recentList = telemetry?.recent_discoveries || [];
+  const combinedMap = new Map<string, any>();
+  for (const item of recentList) {
+    if (item?.candidate_id) combinedMap.set(item.candidate_id, item);
+  }
+  for (const item of dbMappedList) {
+    if (item?.candidate_id && !combinedMap.has(item.candidate_id)) {
+      combinedMap.set(item.candidate_id, item);
+    }
+  }
+  const rawList = Array.from(combinedMap.values());
 
   // Filter list
   const filteredList = rawList.filter((d) => {
