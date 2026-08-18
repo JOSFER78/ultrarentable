@@ -13,8 +13,9 @@ import hashlib
 from datetime import datetime
 from pathlib import Path
 
-PROJECT_ROOT = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable")
-sys.path.insert(0, str(PROJECT_ROOT))
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from services.sqx_bridge.sqx_client import SQXMCPClient
 from services.sqx_bridge.converter import sqx_candidate_to_spec

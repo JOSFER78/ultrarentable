@@ -8,7 +8,22 @@ from __future__ import annotations
 
 from enum import Enum
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+
+class AssetClass(str, Enum):
+    FUTURES = "FUTURES"
+    CRYPTO = "CRYPTO"
+    PERPETUAL = "PERPETUAL"
+    FOREX = "FOREX"
+    SPOT = "SPOT"
+
+
+class StrategySource(str, Enum):
+    STRATEGYQUANT_MCP = "STRATEGYQUANT_MCP"
+    PYTHON_NATIVE = "PYTHON_NATIVE"
+    PINESCRIPT = "PINESCRIPT"
+    NINJATRADER = "NINJATRADER"
 
 
 class StrategyStatus(str, Enum):
@@ -50,6 +65,10 @@ class RuleConditionSpec(BaseModel):
     comparison: str = Field("GREATER_THAN", description="Operador: GREATER_THAN, LESS_THAN, CROSSES_ABOVE, CROSSES_BELOW")
     threshold_value: Optional[float] = Field(None, description="Valor numérico de umbral")
     threshold_indicator: Optional[str] = Field(None, description="Indicador secundario de comparación")
+
+
+# Alias for backward compatibility
+RuleCondition = RuleConditionSpec
 
 
 class EntriesSpec(BaseModel):
@@ -104,7 +123,7 @@ class StrategySpec(BaseModel):
     status: StrategyStatus = Field(StrategyStatus.DRAFT, description="Estado en el ciclo de vida")
     
     origin: OriginSpec = Field(default_factory=OriginSpec)
-    instrument: InstrumentSpec = Field(..., description="Especificación del instrumento")
+    instrument: Optional[InstrumentSpec] = Field(None, description="Especificación del instrumento")
     timeframe: str = Field("1h", description="Timeframe principal de ejecución")
     session: SessionSpec = Field(default_factory=SessionSpec)
     
@@ -116,3 +135,60 @@ class StrategySpec(BaseModel):
     deployment: DeploymentSpec = Field(default_factory=DeploymentSpec)
 
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadatos arbitrarios y estadísticas adicionales")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_flexible_input(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            # Convenience mapping for flat symbol
+            if "symbol" in data and "instrument" not in data:
+                sym = data.pop("symbol")
+                contract_type = str(data.pop("asset_class", "FUTURES"))
+                if hasattr(contract_type, "value"):
+                    contract_type = contract_type.value
+                data["instrument"] = InstrumentSpec(
+                    symbol=sym,
+                    contract_type=str(contract_type),
+                    exchange="CME" if "USDT" not in sym else "BINGX"
+                )
+            
+            # Convenience mapping for session close
+            if "close_at_session_end" in data:
+                close_end = data.pop("close_at_session_end")
+                if "session" not in data:
+                    data["session"] = SessionSpec(close_at_end=bool(close_end))
+                elif isinstance(data["session"], dict):
+                    data["session"]["close_at_end"] = bool(close_end)
+
+            # Convenience mapping for entry rules
+            if "entry_long_rules" in data:
+                rules = data.pop("entry_long_rules")
+                if "entries" not in data:
+                    data["entries"] = EntriesSpec(long=rules)
+                elif isinstance(data["entries"], dict):
+                    data["entries"]["long"] = rules
+
+            # Convenience mapping for timeframe
+            if "main_timeframe" in data and "timeframe" not in data:
+                data["timeframe"] = data.pop("main_timeframe")
+
+            # Convenience mapping for exits
+            if "stop_loss_ticks" in data or "take_profit_ticks" in data:
+                sl = data.pop("stop_loss_ticks", None)
+                tp = data.pop("take_profit_ticks", None)
+                if "exits" not in data:
+                    data["exits"] = ExitsSpec(stop_loss_ticks=sl, take_profit_ticks=tp)
+
+            # Default instrument if still missing
+            if "instrument" not in data:
+                data["instrument"] = InstrumentSpec(symbol="NQ")
+
+        return data
+
+    @property
+    def symbol(self) -> str:
+        return self.instrument.symbol if self.instrument else "NQ"
+
+    @property
+    def close_at_session_end(self) -> bool:
+        return self.session.close_at_end if self.session else True
