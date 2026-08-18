@@ -19,28 +19,30 @@ interface NavGroup {
 
 const NAVIGATION: NavGroup[] = [
   {
-    group: "OPERACIONES NÚCLEO",
+    group: "CENTRO DE CONTROL & SQX",
     items: [
-      { code: "CMD", label: "Command Center", href: "/", badge: "DUAL" },
-      { code: "FSM", label: "Candidatos FSM", href: "/candidatos", badge: "10-STATES" },
+      { code: "CMD", label: "Panel Maestro Aprobadas", href: "/", badge: "MASTER", highlight: true },
+      { code: "SQX", label: "Servidor StrategyQuant X", href: "/strategyquant", badge: "MCP 8081" },
+      { code: "XLS", label: "Explorador Masivo Excel", href: "/strategies", badge: "BRUTO" },
     ],
   },
   {
-    group: "DOCTRINA DUAL",
+    group: "DOCTRINA DUAL & CARTERAS",
     items: [
-      { code: "ULT", label: "Ultra Lab", href: "/ultra", badge: "BINGX · 1R", highlight: true },
-      { code: "FND", label: "Track Fondeo", href: "/fondeo", badge: "CME · PROPS" },
+      { code: "ULT", label: "Ultra Lab (BingX · 500x)", href: "/ultra", badge: "1R · PYRAMID" },
+      { code: "FND", label: "Track Fondeo (CME Props)", href: "/fondeo", badge: "MAX DD 4%" },
     ],
   },
   {
-    group: "VALIDACIÓN & IA",
+    group: "PIPELINE & IA CUANTITATIVA",
     items: [
-      { code: "QVF", label: "Bifurcación QVF", href: "/bifurcacion", badge: "EVIDENCE" },
+      { code: "FSM", label: "Ciclo de Vida (10 Estados)", href: "/candidatos", badge: "PIPELINE" },
+      { code: "QVF", label: "Bifurcación Evidence Gates", href: "/bifurcacion", badge: "EVIDENCE" },
       { code: "SEM", label: "IA Semántica & Failure-DB", href: "/research", badge: "5 AGENTS" },
     ],
   },
   {
-    group: "EJECUCIÓN & RESILIENCIA",
+    group: "EJECUCIÓN & SISTEMA",
     items: [
       { code: "BOX", label: "Paper Sandbox (14d)", href: "/ejecucion", badge: "SANDBOX" },
       { code: "SUP", label: "Supervisión & Workers", href: "/sistema", badge: "8 WORKERS" },

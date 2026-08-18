@@ -105,4 +105,19 @@ def read_root() -> Dict[str, Any]:
         "status": "RUNNING",
         "mode": "REAL_ONLY",
         "architecture": "CLEAN_MODULAR_ASYNC_EVENT_BUS",
+        "tracks": {
+            "TRACK_FONDEO": "CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection",
+            "TRACK_ULTRA": "BingX Crypto Perps / Margen Aislado 1R / Piramidación Free-Risk / Bóveda Ratchet",
+        },
+        "v2_endpoints": [
+            "/api/v2/telemetry/health",
+            "/api/v2/telemetry/stream",
+            "/api/v2/validation/evaluate",
+            "/api/v2/semantic/failures/stats",
+            "/api/v2/ultra/vault/config",
+            "/api/v2/portfolio/weights",
+            "/api/v2/paper/orders",
+            "/api/v2/candidates/approved",
+            "/api/v2/portfolio/combine",
+        ],
     }
