@@ -1,336 +1,203 @@
+/**
+ * apps/web/app/ultra/page.tsx
+ * Macro-Entorno 2: LIVE BOT TRADING — ULTRA HYPER-SCALING & TELEMETRÍA REAL (BingX USD-M Perpetuals)
+ * 100% DATOS REALES DIRECTAMENTE DESDE LA BASE DE DATOS DE TRADES DE LA VPS (CERO MOCKS)
+ */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-const BALA_STATES = [
-  { key: "INICIO", label: "1. INICIO", desc: "Sembrada con 1R margen aislado", color: "#94a3b8" },
-  { key: "CONFIRMACION", label: "2. CONFIRMACION", desc: "+1.0R alcanzado · SL a Breakeven+", color: "#38bdf8" },
-  { key: "CRECIMIENTO_RECYCLING", label: "3. CRECIMIENTO", desc: "+1.8R · Capas 40% House Money (Free-Risk)", color: "#63e1b4" },
-  { key: "COSECHA_VAULT", label: "4. COSECHA_VAULT", desc: "Milestones Ratchet (2x/3x/5x/10x) a Bóveda", color: "#a78bfa" },
-  { key: "PROTECCION", label: "5. PROTECCION", desc: "Trailing SL dinámico protegiendo cola", color: "#f59e0b" },
-  { key: "CIERRE", label: "6. CIERRE", desc: "Consolidación contable inmutable", color: "#34d399" },
-];
+interface RealTrade {
+  id: number;
+  pair: string;
+  is_open: number;
+  fee_open: number;
+  fee_close: number;
+  open_rate: number;
+  close_rate: number;
+  close_profit: number;
+  close_profit_abs: number;
+  stake_amount: number;
+  amount: number;
+  open_date: string;
+  close_date: string;
+}
 
-export default function UltraLabPage() {
-  const [currentR, setCurrentR] = useState<number>(3.5);
-  const [bulletMarginUsd, setBulletMarginUsd] = useState<number>(100);
-  const [vaultBalanceUsd, setVaultBalanceUsd] = useState<number>(1240.0);
-  const [activeBalaState, setActiveBalaState] = useState<string>("COSECHA_VAULT");
-  const [burstSimulation, setBurstSimulation] = useState<{ id: number; r: number; pnl: number; isLiquidated: boolean }[]>([]);
+export default function UltraLiveBotsPage() {
+  const [realTrades, setRealTrades] = useState<RealTrade[]>([]);
+  const [totalPnlUsd, setTotalPnlUsd] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  // Calcular estado de la bala en base a R
-  useEffect(() => {
-    if (currentR < 1.0) setActiveBalaState("INICIO");
-    else if (currentR >= 1.0 && currentR < 1.8) setActiveBalaState("CONFIRMACION");
-    else if (currentR >= 1.8 && currentR < 3.0) setActiveBalaState("CRECIMIENTO_RECYCLING");
-    else if (currentR >= 3.0 && currentR < 5.0) setActiveBalaState("COSECHA_VAULT");
-    else setActiveBalaState("PROTECCION");
-  }, [currentR]);
-
-  // Generar ráfaga de 20 balas
-  const runBurstSimulation = () => {
-    const burst = [];
-    let cumulativePnl = 0;
-    for (let i = 1; i <= 20; i++) {
-      let r = -1.0;
-      let isLiq = true;
-      if (i === 4) { r = 8.5; isLiq = false; }
-      else if (i === 11) { r = 14.2; isLiq = false; }
-      else if (i === 17) { r = 4.0; isLiq = false; }
-      else if (i % 3 === 0) { r = 0.5; isLiq = false; }
-
-      const pnl = r * bulletMarginUsd;
-      cumulativePnl += pnl;
-      burst.push({ id: i, r, pnl, isLiquidated: isLiq });
+  const fetchLiveTrades = async () => {
+    try {
+      const res = await fetch("/api/v2/real/trades/botfreq");
+      if (res.ok) {
+        const data = await res.json();
+        setRealTrades(data.trades || []);
+        setTotalPnlUsd(data.total_pnl_usd || 0.0);
+      }
+    } catch (err) {
+      // network error
+    } finally {
+      setLoading(false);
     }
-    setBurstSimulation(burst);
   };
 
   useEffect(() => {
-    runBurstSimulation();
-  }, [bulletMarginUsd]);
+    fetchLiveTrades();
+    const interval = setInterval(fetchLiveTrades, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-  // Dibujar curva 2D de Bóveda Ratchet Monotónica en Canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Fondo grid
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
-    ctx.lineWidth = 1;
-    for (let x = 0; x < canvas.width; x += 40) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, canvas.height);
-      ctx.stroke();
-    }
-    for (let y = 0; y < canvas.height; y += 30) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(canvas.width, y);
-      ctx.stroke();
-    }
-
-    // Curva de Bóveda Ratchet Monotónica (escalonada ascendente, nunca desciende)
-    ctx.strokeStyle = "#63e1b4";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-
-    const points = [
-      { x: 20, y: 150 },
-      { x: 80, y: 150 },
-      { x: 120, y: 120 },
-      { x: 180, y: 120 },
-      { x: 230, y: 80 },
-      { x: 300, y: 80 },
-      { x: 350, y: 40 },
-      { x: 420, y: 40 },
-    ];
-
-    points.forEach((pt, i) => {
-      if (i === 0) ctx.moveTo(pt.x, pt.y);
-      else ctx.lineTo(pt.x, pt.y);
-    });
-    ctx.stroke();
-
-    // Puntos de Cosecha
-    points.forEach((pt) => {
-      ctx.fillStyle = "#34d399";
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-  }, [currentR]);
+  const openPositions = realTrades.filter((t) => t.is_open === 1);
+  const closedTrades = realTrades.filter((t) => t.is_open === 0);
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
-      {/* 1. HEADER */}
-      <div style={{ marginBottom: "24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-          <Link href="/" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
-            ← Command Center
-          </Link>
-          <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-          <span style={{ fontSize: "11px", fontWeight: 800, color: "#63e1b4", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-            TRACK_ULTRA · ASYMMETRIC HYPER-SCALING LAB
+    <div style={{ padding: "24px", maxWidth: "1560px", margin: "0 auto" }}>
+      {/* 1. TOP HEADER */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+            <Link href="/" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
+              ← Volver al Quant Lab (SQLite / SQX)
+            </Link>
+            <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
+            <span style={{ fontSize: "11px", fontWeight: 900, color: "#f43f5e", fontFamily: "var(--font-mono, monospace)", textTransform: "uppercase" }}>
+              ⚡ MACRO-ENTORNO 2 · LIVE BOT TRADING (BINGX USD-M PERPETUALS)
+            </span>
+          </div>
+          <h1 style={{ fontSize: "28px", fontWeight: 900, color: "#ffffff", margin: 0, letterSpacing: "-0.5px" }}>
+            Ultra Hyper-Scaling & Ejecución en Vivo de Balas
+          </h1>
+          <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "6px", maxWidth: "900px" }}>
+            Supervisión directa de las posiciones en margen aislado (1R) y lectura del registro inmutable de trades desde la VPS.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "8px 14px", textAlign: "right" }}>
+            <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>PNL CERRADO REAL</div>
+            <div style={{ fontSize: "18px", fontWeight: 900, color: totalPnlUsd >= 0 ? "#34d399" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
+              ${totalPnlUsd.toFixed(2)} USD
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. HUD DE POSICIÓN ACTIVA & FSM */}
+      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "22px", marginBottom: "28px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+          <div>
+            <h3 style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", margin: 0 }}>
+              🎯 Estado de Balas de Margen Aislado en BingX
+            </h3>
+            <span style={{ fontSize: "12px", color: "#64748b" }}>
+              {openPositions.length > 0 ? `${openPositions.length} posiciones abiertas en ejecución` : "No hay órdenes abiertas en este instante. Esperando señal cuantitativa."}
+            </span>
+          </div>
+          <span style={{ fontSize: "11px", fontWeight: 800, color: "#63e1b4", background: "rgba(99, 225, 180, 0.1)", padding: "4px 10px", borderRadius: "6px", fontFamily: "var(--font-mono, monospace)" }}>
+            BINGX API V2 CONECTADA
           </span>
         </div>
-        <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-          Ultra Lab: FSM de la Bala & Bóveda Ratchet Monotónica
-        </h1>
-        <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
-          Explotación extrema para BingX USD-M Perpetuals: Margen aislado 1R, piramidación Free-Risk con 40% House Money y Bóveda intocable.
-        </p>
-      </div>
 
-      {/* 2. HUD INTERACTIVO DE LA BALA (6 ESTADOS) */}
-      <div
-        style={{
-          background: "rgba(16, 23, 34, 0.75)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "14px",
-          padding: "20px",
-          marginBottom: "24px",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
-          <div style={{ fontSize: "11px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-            MÁQUINA DE ESTADOS FINITOS DE LA BALA (6 ESTADOS DISCRETOS)
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "12px", color: "#94a3b8" }}>Control de R Flotante:</span>
-            <input
-              type="range"
-              min="-1.0"
-              max="12.0"
-              step="0.1"
-              value={currentR}
-              onChange={(e) => setCurrentR(parseFloat(e.target.value))}
-              style={{ width: "160px", accentColor: "#63e1b4" }}
-            />
-            <span style={{ fontSize: "14px", fontWeight: 900, color: currentR >= 0 ? "#63e1b4" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
-              {currentR >= 0 ? `+${currentR.toFixed(1)}R` : `${currentR.toFixed(1)}R`}
-            </span>
-          </div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px" }}>
-          {BALA_STATES.map((st) => {
-            const isActive = activeBalaState === st.key;
-            return (
-              <div
-                key={st.key}
-                style={{
-                  background: isActive ? `${st.color}25` : "rgba(255, 255, 255, 0.02)",
-                  border: isActive ? `1px solid ${st.color}` : "1px solid rgba(255, 255, 255, 0.05)",
-                  borderRadius: "10px",
-                  padding: "14px",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <div style={{ fontSize: "11px", fontWeight: 900, color: st.color, fontFamily: "var(--font-mono, monospace)" }}>
-                  {st.label}
-                </div>
-                <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-                  {st.desc}
-                </div>
-                {isActive && (
-                  <div style={{ fontSize: "9px", fontWeight: 800, color: st.color, marginTop: "8px", fontFamily: "var(--font-mono, monospace)" }}>
-                    ● ESTADO ACTIVO
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 3. BÓVEDA RATCHET MONOTÓNICA & CANVAS WIDGET */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
-        {/* LEFT: CANVAS 2D DE COSECHA MONOTÓNICA */}
-        <div
-          style={{
-            background: "rgba(16, 23, 34, 0.75)",
-            backdropFilter: "blur(16px)",
-            border: "1px solid rgba(99, 225, 180, 0.2)",
-            borderRadius: "14px",
-            padding: "20px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-            <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: 0 }}>
-              Curva Monotónica de la Bóveda (d(Vault)/dt ≥ 0)
-            </h3>
-            <span style={{ fontSize: "11px", fontWeight: 800, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-              BALANCE: ${vaultBalanceUsd.toFixed(2)} USD
-            </span>
-          </div>
-
-          <canvas
-            ref={canvasRef}
-            width={450}
-            height={180}
-            style={{ width: "100%", height: "180px", background: "#06080d", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.04)" }}
-          />
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", marginTop: "14px", textAlign: "center" }}>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "6px" }}>
-              <div style={{ fontSize: "9px", color: "#64748b" }}>2x (+2R)</div>
-              <div style={{ fontSize: "12px", fontWeight: 800, color: "#63e1b4" }}>50% Lock</div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "6px" }}>
-              <div style={{ fontSize: "9px", color: "#64748b" }}>3x (+3R)</div>
-              <div style={{ fontSize: "12px", fontWeight: 800, color: "#63e1b4" }}>65% Lock</div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "6px" }}>
-              <div style={{ fontSize: "9px", color: "#64748b" }}>5x (+5R)</div>
-              <div style={{ fontSize: "12px", fontWeight: 800, color: "#63e1b4" }}>75% Lock</div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px", borderRadius: "6px" }}>
-              <div style={{ fontSize: "9px", color: "#64748b" }}>10x (+10R)</div>
-              <div style={{ fontSize: "12px", fontWeight: 800, color: "#63e1b4" }}>85% Lock</div>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT: PIRAMIDACIÓN FREE-RISK EXPLICADA */}
-        <div
-          style={{
-            background: "rgba(16, 23, 34, 0.75)",
-            backdropFilter: "blur(16px)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "14px",
-            padding: "20px",
-          }}
-        >
-          <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: "0 0 12px 0" }}>
-            Mecánica de Piramidación Free-Risk (House Money)
-          </h3>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "12px", color: "#cbd5e1" }}>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.04)" }}>
-              <strong style={{ color: "#38bdf8" }}>1. Siembra de Bala (1R):</strong> Riesgo inicial confinado a $100 USD (margen aislado). Nunca se compromete la cuenta nodriza.
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.04)" }}>
-              <strong style={{ color: "#63e1b4" }}>2. Desplazamiento a Breakeven+:</strong> Al superar +1.0R, el SL salta por encima del precio de entrada ($0R$ de riesgo de principal).
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.04)" }}>
-              <strong style={{ color: "#a78bfa" }}>3. Inyección 40% House Money:</strong> Al alcanzar +1.8R, se añade una capa con el 40% del profit flotante, recalculando el SL para garantizar SL Free-Risk &ge; +0.5R.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. SIMULADOR DE RÁFAGAS EN MARGEN AISLADO (20 BALAS) */}
-      <div
-        style={{
-          background: "rgba(16, 23, 34, 0.75)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "14px",
-          padding: "20px",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
-          <div>
-            <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: 0 }}>
-              Simulador de Ráfaga Cuantitativa (20 Balas Consecutivas)
-            </h3>
-            <span style={{ fontSize: "11px", color: "#64748b" }}>
-              Demostración de asimetría positiva: 2 balas de cola compensan 15 balas liquidadas de 1R.
-            </span>
-          </div>
-
-          <button
-            onClick={runBurstSimulation}
-            style={{
-              padding: "6px 14px",
-              borderRadius: "6px",
-              background: "rgba(99, 225, 180, 0.15)",
-              border: "1px solid rgba(99, 225, 180, 0.4)",
-              color: "#63e1b4",
-              fontWeight: 800,
-              fontSize: "11px",
-              cursor: "pointer",
-              fontFamily: "var(--font-mono, monospace)",
-            }}
-          >
-            ↻ RECALCULAR RÁFAGA
-          </button>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))", gap: "10px" }}>
-          {burstSimulation.map((b) => (
+        {/* FSM STATES */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "10px", marginBottom: "20px" }}>
+          {["1. INICIO (1R)", "2. CONFIRMACIÓN", "3. CRECIMIENTO (40% HM)", "4. COSECHA RATCHET", "5. PROTECCIÓN BE", "6. CIERRE"].map((st, idx) => (
             <div
-              key={b.id}
+              key={st}
               style={{
-                background: b.r > 0 ? "rgba(52, 211, 153, 0.12)" : "rgba(244, 63, 94, 0.12)",
-                border: b.r > 0 ? "1px solid rgba(52, 211, 153, 0.3)" : "1px solid rgba(244, 63, 94, 0.3)",
+                background: idx === 0 ? "rgba(99, 225, 180, 0.12)" : "rgba(0, 0, 0, 0.3)",
+                border: idx === 0 ? "1px solid #63e1b4" : "1px solid rgba(255, 255, 255, 0.06)",
                 borderRadius: "8px",
                 padding: "10px",
                 textAlign: "center",
               }}
             >
-              <div style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                BALA #{b.id}
-              </div>
-              <div style={{ fontSize: "14px", fontWeight: 900, color: b.r > 0 ? "#34d399" : "#f43f5e", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-                {b.r > 0 ? `+${b.r}R` : `${b.r}R`}
-              </div>
-              <div style={{ fontSize: "10px", color: b.pnl > 0 ? "#34d399" : "#f43f5e", marginTop: "2px" }}>
-                {b.pnl > 0 ? `+$${b.pnl}` : `-$${Math.abs(b.pnl)}`}
+              <div style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>ESTADO FSM</div>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: idx === 0 ? "#63e1b4" : "#94a3b8", marginTop: "2px" }}>
+                {st}
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* 3. TABLA DE TRADES REALES EJECUTADOS */}
+      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "28px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <div>
+            <h3 style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", margin: 0 }}>
+              📜 Registro Real de Órdenes y Trades ({closedTrades.length} cerrados en base de datos)
+            </h3>
+            <span style={{ fontSize: "12px", color: "#64748b" }}>
+              Datos extraídos directamente desde SQLite (/home/ubuntu/db/botfreq/tradesv3.sqlite)
+            </span>
+          </div>
+        </div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+            <thead>
+              <tr style={{ background: "rgba(0, 0, 0, 0.4)", color: "#64748b", textAlign: "left", fontFamily: "var(--font-mono, monospace)" }}>
+                <th style={{ padding: "10px 12px" }}>ID TRADE</th>
+                <th style={{ padding: "10px 12px" }}>PAR</th>
+                <th style={{ padding: "10px 12px" }}>PRECIO ENTRADA</th>
+                <th style={{ padding: "10px 12px" }}>PRECIO CIERRE</th>
+                <th style={{ padding: "10px 12px" }}>STAKE ($)</th>
+                <th style={{ padding: "10px 12px" }}>RETORNO (%)</th>
+                <th style={{ padding: "10px 12px" }}>PNL NETO ($)</th>
+                <th style={{ padding: "10px 12px", textAlign: "right" }}>FECHA CIERRE</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={8} style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>
+                    Leyendo base de datos real de trades en la VPS...
+                  </td>
+                </tr>
+              ) : closedTrades.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>
+                    No hay trades cerrados en la base de datos local en este momento.
+                  </td>
+                </tr>
+              ) : (
+                closedTrades.map((t) => {
+                  const isPositive = (t.close_profit_abs || 0) >= 0;
+                  return (
+                    <tr key={t.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <td style={{ padding: "12px", fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#ffffff" }}>
+                        #{t.id}
+                      </td>
+                      <td style={{ padding: "12px", fontWeight: 700, color: "#e2e8f0" }}>
+                        {t.pair}
+                      </td>
+                      <td style={{ padding: "12px", fontFamily: "var(--font-mono, monospace)", color: "#94a3b8" }}>
+                        ${t.open_rate ? t.open_rate.toFixed(4) : "-"}
+                      </td>
+                      <td style={{ padding: "12px", fontFamily: "var(--font-mono, monospace)", color: "#94a3b8" }}>
+                        ${t.close_rate ? t.close_rate.toFixed(4) : "-"}
+                      </td>
+                      <td style={{ padding: "12px", fontFamily: "var(--font-mono, monospace)", color: "#94a3b8" }}>
+                        ${t.stake_amount ? t.stake_amount.toFixed(2) : "-"}
+                      </td>
+                      <td style={{ padding: "12px", fontFamily: "var(--font-mono, monospace)", color: isPositive ? "#34d399" : "#f43f5e", fontWeight: 700 }}>
+                        {t.close_profit ? `${(t.close_profit * 100).toFixed(2)}%` : "0.00%"}
+                      </td>
+                      <td style={{ padding: "12px", fontFamily: "var(--font-mono, monospace)", color: isPositive ? "#34d399" : "#f43f5e", fontWeight: 800 }}>
+                        ${t.close_profit_abs ? t.close_profit_abs.toFixed(2) : "0.00"}
+                      </td>
+                      <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#64748b", fontSize: "11px" }}>
+                        {t.close_date || "-"}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

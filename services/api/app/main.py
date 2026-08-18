@@ -24,6 +24,7 @@ from services.api.app.api.candidates_router import candidates_router
 from services.api.app.api.execution_router import execution_router
 from services.api.app.api.audit_router import audit_router
 from services.api.app.api.system_health_router import system_health_router
+from services.api.app.api.real_data_router import router as real_data_router
 
 # Routers V2 Modulares
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
@@ -54,13 +55,13 @@ app = FastAPI(
     version="2.2.0",
     description=(
         "Plataforma Cuantitativa Dual REAL-ONLY: "
-        "TRACK_FONDEO (CME Futures / Prop Firms) & TRACK_ULTRA (BingX Crypto Perps / Asimetría Positiva). "
+        "TRACK_FONDEO (CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection) & TRACK_ULTRA (BingX Crypto Perps / Asimetría Positiva). "
         "Motor desacoplado con AsyncEventBus, QVF Evidence Gate y Streaming SSE."
     ),
     lifespan=lifespan,
 )
 
-# Configuración CORS para Next.js 14
+# Configuración CORS para Next.js 14/16
 app.add_middleware(
     CORSMiddleware,
     allow_origins=LOCAL_WEB_ORIGINS or ["http://localhost:3000", "http://127.0.0.1:3000"],
@@ -89,6 +90,7 @@ app.include_router(semantic_router, prefix="/api/v2/semantic", tags=["v2-semanti
 app.include_router(ultra_router, prefix="/api/v2/ultra", tags=["v2-ultra"])
 app.include_router(portfolio_router, prefix="/api/v2/portfolio", tags=["v2-portfolio"])
 app.include_router(paper_router, prefix="/api/v2/paper", tags=["v2-paper"])
+app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data"])
 
 
 @app.get("/", tags=["system"])
@@ -108,12 +110,12 @@ def read_root() -> Dict[str, Any]:
             "/api/v2/telemetry/health",
             "/api/v2/telemetry/stream",
             "/api/v2/validation/evaluate",
-            "/api/v2/validation/registry",
-            "/api/v2/semantic/generate",
             "/api/v2/semantic/failures/stats",
-            "/api/v2/ultra/bullet",
-            "/api/v2/portfolio/allocate",
-            "/api/v2/paper/open",
-            "/api/v2/paper/evaluate-incubation",
+            "/api/v2/ultra/vault/config",
+            "/api/v2/portfolio/weights",
+            "/api/v2/paper/orders",
+            "/api/v2/real/overview",
+            "/api/v2/real/strategies",
+            "/api/v2/real/trades/botfreq",
         ],
     }
