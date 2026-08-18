@@ -1,7 +1,21 @@
 /**
  * apps/web/types/telemetry.ts
- * Definición estricta de contratos de telemetría y tipos para Ultrarentable V2 (2026).
+ * Definición estricta de contratos de telemetría para Ultrarentable V2
  */
+
+export type ValidationTrack = 'TRACK_FONDEO' | 'TRACK_ULTRA';
+
+export type StrategyLifecycleStatus = 
+  | 'GENERATED'
+  | 'BACKTESTED'
+  | 'OOS_PASSED'
+  | 'ROBUSTNESS_PASSED'
+  | 'EVIDENCE_APPROVED'
+  | 'CANDIDATE'
+  | 'INCUBATION_PAPER'
+  | 'LIVE_ACTIVE'
+  | 'REJECTED'
+  | 'RETIRED';
 
 export type WorkerId = 
   | 'DataWorker'
@@ -20,28 +34,11 @@ export type WorkerStatus =
   | 'DEGRADED'
   | 'RESTARTING'
   | 'FAILED'
-  | 'DISCONNECTED'
-  | 'RUNNING'
-  | 'STOPPED'
-  | 'ERROR';
-
-export type ValidationTrack = 'TRACK_FONDEO' | 'TRACK_ULTRA';
-
-export type StrategyLifecycleStatus =
-  | 'GENERATED'
-  | 'BACKTESTED'
-  | 'OOS_PASSED'
-  | 'ROBUSTNESS_PASSED'
-  | 'EVIDENCE_APPROVED'
-  | 'CANDIDATE'
-  | 'INCUBATION_PAPER'
-  | 'LIVE_ACTIVE'
-  | 'REJECTED'
-  | 'RETIRED';
+  | 'DISCONNECTED';
 
 export type LogLevel = 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR' | 'CRITICAL' | 'AUDIT';
 
-export type TelemetryEventType =
+export type CanonicalEventType =
   | 'DATA_INGESTED'
   | 'SQX_STRATEGY_FOUND'
   | 'BACKTEST_COMPLETED'
@@ -53,27 +50,7 @@ export type TelemetryEventType =
   | 'WORKER_HEARTBEAT'
   | 'SELF_HEALING_TRIGGERED'
   | 'SYSTEM_ALERT'
-  | 'CIRCUIT_BREAKER_TRIPPED'
-  | 'CANDIDATE_PROMOTED'
-  | 'VALIDATION_COMPLETED'
-  | 'VAULT_HARVEST_EXECUTED'
-  | 'BULLET_STATE_CHANGED';
-
-export interface WorkerStateRecord {
-  state: WorkerStatus;
-  processed_tasks: number;
-  failed_tasks: number;
-  heartbeat_latency_ms: number;
-  restart_count: number;
-  last_error: string | null;
-}
-
-export interface SystemHealthResponse {
-  supervisor_active: boolean;
-  overall_healthy: boolean;
-  total_workers: number;
-  workers: Record<WorkerId | string, WorkerStateRecord>;
-}
+  | 'CIRCUIT_BREAKER_TRIPPED';
 
 export interface WorkerTelemetry {
   workerId: WorkerId;
@@ -90,18 +67,11 @@ export interface WorkerTelemetry {
   version: string;
 }
 
-export interface TelemetryEventPayload {
-  event_type: string;
-  event_id: string;
-  timestamp_utc_ms: number;
-  payload?: Record<string, any>;
-}
-
-export interface DomainEventLog {
+export interface TelemetryLogEvent {
   id: string;
   timestampMs: number;
-  workerId: WorkerId | 'SystemSupervisor' | string;
-  eventType: string;
+  workerId: WorkerId | 'SystemSupervisor';
+  eventType: CanonicalEventType;
   level: LogLevel;
   message: string;
   provenanceHash: string;
@@ -130,19 +100,4 @@ export interface SystemOverviewMetrics {
   sseConnected: boolean;
   connectionState: 'CONNECTED' | 'RECONNECTING' | 'DISCONNECTED' | 'STALLED';
   lastSyncTimestampMs: number;
-}
-
-export interface CanonicalStrategySummary {
-  strategy_id: string;
-  symbol: string;
-  timeframe: string;
-  track: ValidationTrack;
-  status: StrategyLifecycleStatus;
-  sharpe_ratio: number;
-  profit_factor: number;
-  max_drawdown_pct: number;
-  win_rate_pct: number;
-  trades_count: number;
-  provenance_hash_sha256: string;
-  created_at_utc: string;
 }
