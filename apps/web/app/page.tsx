@@ -256,23 +256,20 @@ export default function ContinuousDiscoveryControlCenter() {
       if (c.scorecard_json) parsedScorecard = JSON.parse(c.scorecard_json);
     } catch {}
     const oos = c.metrics?.out_of_sample || {};
-    const isFondeo = c.route === "FONDEO";
-    const netProf = oos.net_profit_usd ?? (isFondeo ? 3000.0 : 1420);
-    const roi = oos.roi_pct ?? (isFondeo ? 6.0 : (netProf / 10000.0 * 100.0));
-    const dur = (c as any).duration_info || parsedScorecard.duration_info || {
-      total_days: 180,
-      total_years: 0.5,
-      oos_days: 60,
-      oos_months: 2.0,
-      start_date: "2025-10-01",
-      end_date: "2026-04-16"
-    };
-    const daysToPass = oos.days_to_pass || (isFondeo ? 6.5 : null);
-    const passRate = oos.pass_rate_pct || (isFondeo ? 84.5 : null);
-    const baseCap = oos.base_capital_usd || (isFondeo ? 50000.0 : 10000.0);
-    const annRoi = oos.annualized_roi_pct ?? (isFondeo ? 180.0 : (dur.oos_days ? Math.round(((1.0 + roi / 100.0) ** (365.25 / Math.max(20, dur.oos_days)) - 1.0) * 100.0 * 10) / 10 : roi));
-    const monthlyRoi = oos.monthly_roi_pct ?? (annRoi ? Math.round(((1.0 + annRoi / 100.0) ** (1.0 / 12.0) - 1.0) * 100.0 * 10) / 10 : 0);
-    const tpm = oos.trades_per_month ?? (isFondeo ? 28.0 : (dur.oos_days ? Math.round((oos.trades || 12) / (dur.oos_days / 30.4375) * 10) / 10 : 2.5));
+    const dur = (c as any).duration_info || parsedScorecard.duration_info || {};
+    
+    const netProf = Number(oos.net_profit_usd ?? (c as any).net_profit_oos ?? 0.0);
+    const roi = Number(oos.roi_pct ?? 0.0);
+    const annRoi = Number(oos.annualized_roi_pct ?? parsedScorecard.annualized_roi_pct ?? roi);
+    const monthlyRoi = Number(oos.monthly_roi_pct ?? parsedScorecard.monthly_roi_pct ?? (annRoi / 12.0));
+    const tpm = Number(oos.trades_per_month ?? 0.0);
+    const daysToPass = oos.days_to_pass ? Number(oos.days_to_pass) : null;
+    const passRate = oos.pass_rate_pct ? Number(oos.pass_rate_pct) : null;
+    const baseCap = Number(oos.base_capital_usd ?? (c.route === "FONDEO" ? 50000.0 : 10000.0));
+    const pfVal = Number(oos.profit_factor ?? (c as any).profit_factor_oos ?? 0.0);
+    const ddVal = Number(oos.max_drawdown_pct ?? (c as any).max_dd_oos_pct ?? 0.0);
+    const tradesCount = Number(oos.trades ?? (c as any).trades_oos ?? 0);
+    const wrVal = Number(oos.win_rate_pct ?? parsedScorecard.win_rate_pct ?? 0.0);
 
     return {
       candidate_id: c.candidate_id,
@@ -280,8 +277,8 @@ export default function ContinuousDiscoveryControlCenter() {
       symbol: c.symbol,
       timeframe: c.timeframe,
       route: c.route,
-      archetype: parsedScorecard.archetype || "QUANT_PATTERN",
-      description: c.status_reason || "Estrategia aprobada por los 5 Gates.",
+      archetype: parsedScorecard.archetype || (c as any).archetype || "QUANT_PATTERN",
+      description: c.status_reason || "Estrategia cuantitativa calculada en velas reales.",
       net_profit_oos: netProf,
       roi_pct: roi,
       annualized_roi_pct: annRoi,
@@ -291,13 +288,13 @@ export default function ContinuousDiscoveryControlCenter() {
       pass_rate_pct: passRate,
       account_base_usd: baseCap,
       duration_info: dur,
-      terminal_multiple: (c as any).terminal_multiple || 1.0,
-      pf_oos: oos.profit_factor || 1.85,
-      dd_oos: oos.max_drawdown_pct || 4.0,
-      trades: oos.trades || 32,
-      win_rate_pct: oos.win_rate_pct || 45.0,
-      dates: dur.start_date ? `${dur.start_date} → ${dur.end_date} (${dur.total_months || Math.round((dur.total_days || 180)/30.4)}m)` : "Intradía Reciente",
-      found_at: "Base de Datos",
+      terminal_multiple: (c as any).terminal_multiple || (baseCap > 0 ? (baseCap + netProf) / baseCap : 1.0),
+      pf_oos: pfVal,
+      dd_oos: ddVal,
+      trades: tradesCount,
+      win_rate_pct: wrVal,
+      dates: dur.start_date ? `${dur.start_date} → ${dur.end_date} (${dur.total_months || Math.round((dur.total_days || 180)/30.4)}m)` : "Intradía Real",
+      found_at: "Base de Datos Real",
     };
   });
 
