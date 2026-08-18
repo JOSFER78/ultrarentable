@@ -25,9 +25,26 @@
 
 ---
 
-### [ ] FASE 1: Motor Multi-Arquetipo y Expansión Cuantitativa
-- Integración de arquetipos matemáticos adicionales (`VOLATILITY_EXPANSION`, `TREND_FOLLOWING_EMA`, `MOMENTUM_BREAKOUT`, `MEAN_REVERSION`, `RSI_DIVERGENCE`, `DONCHIAN_CHANNEL`).
-- Validación exhaustiva de comisiones y slippage en BingX Crypto y CME Futuros.
+### [x] FASE 1: Paquete de Contratos Canónicos e Inmutabilidad Pydantic v2 (COMPLETADA)
+- **Objetivo:** Crear el paquete central `contracts/` con modelos Pydantic v2 inmutables (`frozen=True`) para unificar la interfaz entre FastEngine, StrategyQuant X y el subsistema de IA.
+- **Acciones Ejecutadas:**
+  1. **`contracts/canonical_strategy.py`:**
+     - Modelo unificado `CanonicalStrategy` v2.0.0 (`frozen=True`).
+     - AST completo de reglas técnicas (`ASTIndicatorNode`, `ASTRuleCondition`, `ASTActionNode`, `ASTEntryExitLogic`).
+     - Configuración de instrumento, sesión, dimensionamiento de riesgo y comisiones.
+     - Método determinista de hashing criptográfico `compute_provenance_hash()` (SHA-256 sobre la estructura canónica serializada).
+  2. **`contracts/validation_contracts.py`:**
+     - Criterios desacoplados: `FondeoValidationCriteria` (preservación CME, trailing DD $\le 4\%$, auto-flatten) y `UltraValidationCriteria` (convexidad, asimetría $\ge 3.0x$, ROI anualizado $\ge 100\%$).
+     - Estructura de auditoría de compuertas `EvidenceGateDecision` y registro de balas `BalaExecutionRecord`.
+  3. **`contracts/backtest.py`:**
+     - Contratos inmutables de petición y resultado (`BacktestRequest`, `BacktestResult`, `BarData`, `DatasetSnapshot`, `TradeRecord`).
+     - Enums estrictos de ejecución intrabar (`IntrabarPolicy.PESSIMISTIC`, `OPTIMISTIC`, `LOWER_TF_REPLAY`).
+  4. **`contracts/portfolio.py`:**
+     - Modelo de 6 estados de bala canónica (`BalaState`: `SEEDED`, `ACTIVE`, `RUNNER`, `HARVESTING`, `RECYCLE_PROFIT`, `STOPPED`).
+     - Contratos de gestión de bóveda y retos de fondeo (`VaultRatchetConfig`, `PropChallengeConfig`, `IsolatedBullet`).
+  5. **Verificación de Tests:**
+     - Creado `tests/test_canonical_contracts.py`.
+     - Ejecución de `pytest tests/ -v` arrojando **19 tests PASSED, 1 SKIPPED, 0 FAILED**.
 
 ---
 

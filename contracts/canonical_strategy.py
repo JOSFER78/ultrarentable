@@ -66,6 +66,16 @@ class ActionType(str, Enum):
     PYRAMID_ADD = "PYRAMID_ADD"
 
 
+class ASTActionNode(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    action_type: ActionType
+    order_type: str = Field("MARKET", description="MARKET, LIMIT, STOP")
+    quantity_pct: Optional[float] = None
+    target_price: Optional[float] = None
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+
 class InstrumentConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
