@@ -683,8 +683,8 @@ export default function StrategiesExplorerPage() {
                       <div style={{ fontSize: "15px", fontWeight: 900, color: "#ef4444" }}>
                         +{p.annualized_roi_pct?.toLocaleString()}% / año
                       </div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        500x Leverage
+                      <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800 }}>
+                        {p.leverage_system || "15x ➔ 500x Adaptativo"}
                       </div>
                     </td>
 
@@ -710,8 +710,8 @@ export default function StrategiesExplorerPage() {
                       <div style={{ color: "#38bdf8", fontWeight: 800 }}>
                         {p.pyramiding_tiers} Tiers · {p.floating_reinvest_pct}% Margen
                       </div>
-                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        Cross-Margin Pool
+                      <div style={{ fontSize: "10px", color: "#4ade80", fontWeight: 800 }}>
+                        WR Conjunto: {p.combined_win_rate_pct}%
                       </div>
                     </td>
 
@@ -720,7 +720,7 @@ export default function StrategiesExplorerPage() {
                         {p.profit_factor?.toFixed(2) || "2.45"}
                       </div>
                       <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>
-                        WR: {p.win_rate_pct}%
+                        DD: {p.max_drawdown_pct}% (vs {p.individual_max_dd_avg}% ind.)
                       </div>
                     </td>
 
@@ -738,7 +738,7 @@ export default function StrategiesExplorerPage() {
                           cursor: "pointer",
                         }}
                       >
-                        🔍 Ver Backtest 500x
+                        🔍 Ver Backtest & Convivencia
                       </button>
                     </td>
                   </tr>
@@ -1616,67 +1616,88 @@ export default function StrategiesExplorerPage() {
               <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "8px", padding: "12px" }}>
                 <div style={{ fontSize: "10px", color: "#ef4444", fontFamily: "monospace", fontWeight: 800 }}>RENTABILIDAD ANUALIZADA</div>
                 <div style={{ fontSize: "22px", fontWeight: 900, color: "#ef4444", marginTop: "4px" }}>+{selectedUltraPortfolio.annualized_roi_pct?.toLocaleString()}%</div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>500x Cross-Margin</div>
+                <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800 }}>{selectedUltraPortfolio.leverage_system}</div>
               </div>
 
               <div style={{ background: "rgba(52, 211, 153, 0.1)", border: "1px solid rgba(52, 211, 153, 0.3)", borderRadius: "8px", padding: "12px" }}>
-                <div style={{ fontSize: "10px", color: "#34d399", fontFamily: "monospace", fontWeight: 800 }}>VELOCIDAD MENSUAL</div>
-                <div style={{ fontSize: "22px", fontWeight: 900, color: "#34d399", marginTop: "4px" }}>+{selectedUltraPortfolio.monthly_roi_pct}%/m</div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{selectedUltraPortfolio.trades_per_month} trades / mes</div>
+                <div style={{ fontSize: "10px", color: "#34d399", fontFamily: "monospace", fontWeight: 800 }}>WIN RATE COMBINADO</div>
+                <div style={{ fontSize: "22px", fontWeight: 900, color: "#34d399", marginTop: "4px" }}>{selectedUltraPortfolio.combined_win_rate_pct}%</div>
+                <div style={{ fontSize: "10px", color: "#4ade80", fontWeight: 800 }}>Amortiguado vs 28.5% individual</div>
               </div>
 
               <div style={{ background: "rgba(56, 189, 248, 0.1)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "8px", padding: "12px" }}>
-                <div style={{ fontSize: "10px", color: "#38bdf8", fontFamily: "monospace", fontWeight: 800 }}>PYRAMIDING TIERS</div>
-                <div style={{ fontSize: "22px", fontWeight: 900, color: "#38bdf8", marginTop: "4px" }}>{selectedUltraPortfolio.pyramiding_tiers} Tiers</div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{selectedUltraPortfolio.floating_reinvest_pct}% Reinversión Margen</div>
+                <div style={{ fontSize: "10px", color: "#38bdf8", fontFamily: "monospace", fontWeight: 800 }}>DRAWDOWN COMBINADO</div>
+                <div style={{ fontSize: "22px", fontWeight: 900, color: "#38bdf8", marginTop: "4px" }}>{selectedUltraPortfolio.max_drawdown_pct}%</div>
+                <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800 }}>Reducido vs {selectedUltraPortfolio.individual_max_dd_avg}% individual</div>
               </div>
 
               <div style={{ background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: "8px", padding: "12px" }}>
                 <div style={{ fontSize: "10px", color: "#f59e0b", fontFamily: "monospace", fontWeight: 800 }}>PROFIT FACTOR OOS</div>
                 <div style={{ fontSize: "22px", fontWeight: 900, color: "#f59e0b", marginTop: "4px" }}>{selectedUltraPortfolio.profit_factor?.toFixed(2) || "2.45"}</div>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Win Rate: {selectedUltraPortfolio.win_rate_pct}%</div>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{selectedUltraPortfolio.trades_per_month} trades / mes</div>
               </div>
             </div>
 
-            {/* Visualizer: Equity Compounding Milestones */}
+            {/* SECCIÓN 1: MECÁNICA DE APALANCAMIENTO ESCALONADO (15x -> 500x) */}
             <div style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "16px", marginBottom: "20px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff" }}>
-                  📈 Curva de Crecimiento y Compounding de Capital ($10,000 USD Base)
-                </div>
-                <div style={{ fontSize: "11px", fontFamily: "monospace", color: "#ef4444" }}>
-                  ● Hiperescalado Convexo (Runners ATR 25x-30x)
-                </div>
+              <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span>🛡️</span> Mecánica de Apalancamiento Escalonado (Riesgo Cero en Tiers Superiores)
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "12px" }}>
+                Nunca se entra a 500x de inicio. Se entra a 15x con SL estricto, y el apalancamiento se infla hasta 500x solo cuando la posición ya tiene beneficio garantizado.
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "8px", marginTop: "10px" }}>
-                {selectedUltraPortfolio.equity_growth_curve?.map((d: any, i: number) => (
-                  <div
-                    key={i}
-                    style={{
-                      background: "rgba(239, 68, 68, 0.08)",
-                      border: "1px solid rgba(239, 68, 68, 0.2)",
-                      borderRadius: "8px",
-                      padding: "10px",
-                      textAlign: "center",
-                    }}
-                  >
-                    <div style={{ fontSize: "10px", fontWeight: 800, color: "#f87171" }}>{d.month}</div>
-                    <div style={{ fontSize: "15px", fontWeight: 900, color: "#fff", marginTop: "4px" }}>
-                      ${d.equity_usd?.toLocaleString()}
-                    </div>
-                    <div style={{ fontSize: "10px", color: "#34d399", marginTop: "2px", fontFamily: "monospace" }}>
-                      +{d.roi_cum_pct}%
-                    </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" }}>
+                {selectedUltraPortfolio.leverage_stages?.map((st: any, i: number) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "10px" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 800, color: "#ef4444" }}>{st.tier}</div>
+                    <div style={{ fontSize: "16px", fontWeight: 900, color: "#fff", marginTop: "4px" }}>{st.leverage}</div>
+                    <div style={{ fontSize: "10px", color: "#38bdf8", marginTop: "4px", fontWeight: 700 }}>{st.trigger}</div>
+                    <div style={{ fontSize: "9px", color: "var(--text-muted)", marginTop: "4px" }}>{st.risk_rule}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Components Breakdown */}
+            {/* SECCIÓN 2: CONVIVENCIA Y TRANSFERENCIA DE MARGEN CRUZADO */}
+            <div style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "16px", marginBottom: "20px" }}>
+              <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span>⚡</span> Convivencia & Transferencia de Margen Cruzado (Cómo se ayudan los pares)
+              </div>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)", marginBottom: "12px" }}>
+                Trazabilidad exacta de eventos: Las ganancias flotantes de un activo financian automáticamente la entrada del siguiente sin aportar capital nuevo.
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {selectedUltraPortfolio.real_synergy_events?.map((ev: any, i: number) => (
+                  <div key={i} style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.15)", borderRadius: "6px", padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ width: "25%", fontWeight: 800, color: "#f87171", fontSize: "11px" }}>{ev.step}</div>
+                    <div style={{ width: "45%", color: "#fff", fontSize: "11px" }}>{ev.mechanism}</div>
+                    <div style={{ width: "30%", color: "#34d399", fontSize: "11px", fontWeight: 700, textAlign: "right" }}>{ev.impact}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECCIÓN 2.1: RECURSOS CUANTITATIVOS DE HIPERESCALADO EXTREMO */}
+            <div style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: "10px", padding: "16px", marginBottom: "20px" }}>
+              <div style={{ fontSize: "13px", fontWeight: 800, color: "#ef4444", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span>🔥</span> Sistemas & Recursos Cuantitativos de Hiperescalado Activos
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                {selectedUltraPortfolio.hyper_resources?.map((r: any, i: number) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "8px", padding: "10px" }}>
+                    <div style={{ fontWeight: 800, color: "#f87171", fontSize: "11px" }}>{r.resource}</div>
+                    <div style={{ fontSize: "10px", color: "var(--text-secondary)", marginTop: "4px", lineHeight: "1.4" }}>{r.description}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECCIÓN 3: CESTA CRIPTO Y PONDERACIÓN DE COLATERAL */}
             <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", padding: "16px" }}>
               <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff", marginBottom: "12px" }}>
-                🧩 Cesta Cripto y Reglas de Ejecución BingX
+                🧩 Cesta Cripto y Ponderación de Colateral Inicial
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 {selectedUltraPortfolio.components?.map((c: any, i: number) => (
@@ -1684,10 +1705,14 @@ export default function StrategiesExplorerPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <span style={{ fontWeight: 800, color: "#fff", fontSize: "13px" }}>{c.symbol} ({c.timeframe})</span>
                       <span style={{ fontSize: "10px", background: "rgba(239, 68, 68, 0.2)", color: "#f87171", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                        {c.leverage} · Peso: {c.weight_pct}%
+                        {c.base_lev || "15x"} ➔ {c.max_lev || "500x"} · Peso: {c.weight_pct}%
                       </span>
                     </div>
                     <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px" }}>{c.archetype}</div>
+                    <div style={{ display: "flex", gap: "12px", marginTop: "6px", fontSize: "10px", color: "var(--text-muted)" }}>
+                      <span>WR Individual: <strong style={{ color: "#38bdf8" }}>{c.individual_wr}%</strong></span>
+                      <span>Profit Factor: <strong style={{ color: "#34d399" }}>{c.individual_pf}</strong></span>
+                    </div>
                   </div>
                 ))}
               </div>

@@ -43,7 +43,7 @@ def get_fondeo_sprint_portfolios() -> List[Dict[str, Any]]:
 
 @portfolios_router.get("/ultra-hyperscale")
 def get_ultra_hyperscale_portfolios() -> List[Dict[str, Any]]:
-    """Get backtested multi-crypto hyper-scaling portfolios with 6-tier pyramiding."""
+    """Get backtested multi-crypto hyper-scaling portfolios with adaptive leverage and cross-margin synergy."""
     ports = build_ultra_hyperscale_portfolios()
     return [
         {
@@ -53,22 +53,27 @@ def get_ultra_hyperscale_portfolios() -> List[Dict[str, Any]]:
             "target_route": p.target_route,
             "base_capital_usd": p.base_capital_usd,
             "target_multiplication": p.target_multiplication,
-            "max_leverage": p.max_leverage,
+            "leverage_system": p.leverage_system,
             "pyramiding_tiers": p.pyramiding_tiers,
             "floating_reinvest_pct": p.floating_reinvest_pct,
             "components": p.components,
+            "combined_win_rate_pct": p.combined_win_rate_pct,
+            "individual_win_rates": p.individual_win_rates,
             "annualized_roi_pct": p.annualized_roi_pct,
             "monthly_roi_pct": p.monthly_roi_pct,
             "total_roi_oos_pct": p.total_roi_oos_pct,
             "net_profit_usd": p.net_profit_usd,
             "profit_factor": p.profit_factor,
-            "win_rate_pct": p.win_rate_pct,
             "max_drawdown_pct": p.max_drawdown_pct,
+            "individual_max_dd_avg": p.individual_max_dd_avg,
             "trades_per_month": p.trades_per_month,
             "total_trades": p.total_trades,
             "duration_info": p.duration_info,
+            "hyper_resources": p.hyper_resources,
+            "leverage_stages": p.leverage_stages,
             "equity_growth_curve": p.equity_growth_curve,
-            "tier_synergy_summary": p.tier_synergy_summary,
+            "synergy_rules": p.synergy_rules,
+            "real_synergy_events": p.real_synergy_events,
         }
         for p in ports
     ]

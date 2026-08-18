@@ -77,23 +77,13 @@ def list_candidates(
             ann_roi = round((roi_oos / oos_days) * 365.25, 1)
             monthly_roi = round(ann_roi / 12.0, 2)
 
-        tpm = round(float(c.trades_oos or 10) / max(0.1, oos_days / 30.4375), 1)
+        tpm = round(float(c.trades_oos or 0) / max(0.1, oos_days / 30.4375), 1)
         is_fondeo = (c.route == "FONDEO")
         base_cap = 50000.0 if is_fondeo else 10000.0
-        
-        # For Fondeo: Sprint Reto en <= 5 días (Multi-activo) + Fase Cuenta Fondeada
-        days_to_pass = max(3.0, min(5.0, round(4.5 - (hash(c.candidate_id) % 15) / 10.0, 1))) if is_fondeo else None
-        pass_rate = round(88.0 + (hash(c.candidate_id) % 80) / 10.0, 1) if is_fondeo else None
-        fondeo_ann_roi = round((6.0 / max(3.0, days_to_pass or 4.0)) * 252.0, 1) if is_fondeo else ann_roi
 
-        # 5-day challenge sprint stats
-        curve_5d = [
-            {"day": 0.0, "equity_pct": 0.0, "target_pct": 6.0, "dd_limit_pct": -4.0},
-            {"day": 1.0, "equity_pct": round(1.6 + (hash(c.candidate_id) % 8) / 10.0, 2), "target_pct": 6.0, "dd_limit_pct": -4.0},
-            {"day": 2.0, "equity_pct": round(3.2 + (hash(c.candidate_id) % 9) / 10.0, 2), "target_pct": 6.0, "dd_limit_pct": -4.0},
-            {"day": 2.8, "equity_pct": round(4.8 + (hash(c.candidate_id) % 8) / 10.0, 2), "target_pct": 6.0, "dd_limit_pct": -4.0},
-            {"day": days_to_pass or 3.6, "equity_pct": 6.2, "target_pct": 6.0, "dd_limit_pct": -4.0},
-        ] if is_fondeo else []
+        # Win rate from scorecard or metrics
+        wr_is = sc.get("metrics", {}).get("in_sample", {}).get("win_rate_pct")
+        wr_oos = sc.get("metrics", {}).get("out_of_sample", {}).get("win_rate_pct")
 
         results.append({
             "candidate_id": c.candidate_id,
@@ -105,35 +95,25 @@ def list_candidates(
             "status": c.status,
             "status_reason": c.status_reason,
             "duration_info": dur,
-            "sprint_5d_stats": {
-                "days_to_pass": days_to_pass or 3.6,
-                "pass_rate_pct": pass_rate or 91.5,
-                "max_dd_pct": 1.8 if is_fondeo else 0.0,
-                "daily_trades_avg": 2.9 if is_fondeo else 0.0,
-                "equity_curve": curve_5d,
-                "multi_asset_combo": "NQ 15m Momentum + ES 1h Breakout + EURUSD 1h Reversion" if is_fondeo else None
-            } if is_fondeo else None,
             "metrics": {
                 "in_sample": {
                     "net_profit_usd": c.net_profit_is,
                     "trades": c.trades_is,
                     "profit_factor": c.profit_factor_is,
                     "max_drawdown_pct": c.max_dd_is_pct,
+                    "win_rate_pct": wr_is,
                 },
                 "out_of_sample": {
-                    "net_profit_usd": c.net_profit_oos if not is_fondeo else 3000.0,
-                    "roi_pct": roi_oos if not is_fondeo else 6.0,
-                    "annualized_roi_pct": fondeo_ann_roi,
-                    "monthly_roi_pct": monthly_roi if not is_fondeo else round(fondeo_ann_roi / 12.0, 1),
-                    "trades_per_month": tpm if not is_fondeo else max(24.0, tpm * 15),
-                    "days_to_pass": days_to_pass,
-                    "pass_rate_pct": pass_rate,
-                    "funded_phase_dd_pct": 1.8 if is_fondeo else None,
-                    "funded_monthly_payout_usd": 2400.0 if is_fondeo else None,
+                    "net_profit_usd": c.net_profit_oos,
+                    "roi_pct": roi_oos,
+                    "annualized_roi_pct": ann_roi,
+                    "monthly_roi_pct": monthly_roi,
+                    "trades_per_month": tpm,
                     "base_capital_usd": base_cap,
                     "trades": c.trades_oos,
                     "profit_factor": c.profit_factor_oos,
-                    "max_drawdown_pct": min(3.2, c.max_dd_oos_pct) if is_fondeo else c.max_dd_oos_pct,
+                    "win_rate_pct": wr_oos,
+                    "max_drawdown_pct": c.max_dd_oos_pct,
                 },
                 "anti_overfit": {
                     "ratio_oos_is": c.ratio_oos_is,
