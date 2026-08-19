@@ -405,24 +405,24 @@ class ContinuousSearchDaemon:
                 oos_wr = float(res.oos_metrics.get("win_rate_pct") or res.oos_metrics.get("win_rate") or 0.0)
 
                 if is_ultra_route:
-                    # ── CRITERIOS RUTA ULTRA (BingX 500x / Cripto Convexo) ──
-                    passed_is = (is_trades >= 4) and (is_pf >= 1.02) and (is_wr >= 18.0) and (is_dd < 95.0)
-                    passed_oos = passed_is and (oos_trades >= 2) and (oos_pf >= 1.02) and (oos_wr >= 18.0) and (oos_dd < 95.0)
+                    # ── CRITERIOS RUTA ULTRA (BingX Perps / Cripto Convexo) ──
+                    passed_is = (is_trades >= 15) and (is_pf >= 1.30) and (is_wr >= 25.0) and (is_dd < 45.0)
+                    passed_oos = passed_is and (oos_trades >= 10) and (oos_pf >= 1.35) and (oos_wr >= 25.0) and (oos_dd < 40.0)
                     ratio_oos_is = round(oos_pf / max(0.01, is_pf), 2) if passed_oos else 0.0
-                    passed_wfo = passed_oos and (ratio_oos_is >= 0.35)
+                    passed_wfo = passed_oos and (ratio_oos_is >= 0.50)
                     mc_score = 85.0 if passed_wfo else 40.0
-                    passed_mc = passed_wfo and (mc_score >= 50.0)
-                    approved = passed_mc and (oos_wr >= 18.0) and (res.monthly_roi_pct >= 20.0)
+                    passed_mc = passed_wfo and (mc_score >= 60.0)
+                    approved = passed_mc and (oos_wr >= 25.0) and (res.monthly_roi_pct >= 10.0)
                 else:
                     # ── CRITERIOS RUTA FONDEO (CME Prop Firms) ──
                     # Preservación estricta de cuenta: Max Drawdown <= 4.0% OOS
-                    passed_is = (is_trades >= 3) and (is_pf >= 1.02) and (is_dd <= 5.0)
-                    passed_oos = passed_is and (oos_trades >= 2) and (oos_pf >= 1.01) and (oos_dd <= 4.0)
+                    passed_is = (is_trades >= 12) and (is_pf >= 1.30) and (is_dd <= 4.5)
+                    passed_oos = passed_is and (oos_trades >= 8) and (oos_pf >= 1.35) and (oos_dd <= 4.0)
                     ratio_oos_is = round(oos_pf / max(0.01, is_pf), 2) if passed_oos else 0.0
-                    passed_wfo = passed_oos and (ratio_oos_is >= 0.35)
+                    passed_wfo = passed_oos and (ratio_oos_is >= 0.50)
                     mc_score = 85.0 if passed_wfo else 40.0
-                    passed_mc = passed_wfo and (mc_score >= 50.0)
-                    approved = passed_mc and (oos_dd <= 4.0) and (res.monthly_roi_pct >= 4.0)
+                    passed_mc = passed_wfo and (mc_score >= 60.0)
+                    approved = passed_mc and (oos_dd <= 4.0) and (res.monthly_roi_pct >= 3.0)
 
                 if passed_is:
                     self.telemetry["funnel"]["passed_is"] += 1

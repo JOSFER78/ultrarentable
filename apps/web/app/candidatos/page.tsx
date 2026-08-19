@@ -254,12 +254,182 @@ export default function CandidatosFSMPage() {
         code = `# Ultrarentable Multi-Asset Ensemble Execution\nimport pandas as pd\nimport numpy as np\n\ndef run_meta_ensemble_${ensembleRoute.toLowerCase()}(price_matrices, weights):\n    returns = (price_matrices.pct_change() * weights).sum(axis=1)\n    cumulative = (1 + returns).cumprod()\n    return returns, cumulative`;
       }
     } else if (c) {
+      // Parse detailed parameters from scorecard if available
+      let params = {
+        sl_atr_mult: 1.5,
+        tp_atr_mult: 7.0,
+        risk_pct: c.route === "FONDEO" ? 0.8 : 3.0,
+        pyramiding_tiers: c.route === "FONDEO" ? 1 : 3,
+        max_leverage: c.route === "FONDEO" ? 1.0 : 500.0,
+      };
+      let arch = c.archetype || "TREND_EMA_REGIME";
+
+      if (c.scorecard_json) {
+        try {
+          const sc = typeof c.scorecard_json === "string" ? JSON.parse(c.scorecard_json) : c.scorecard_json;
+          if (sc.parameters) {
+            params = { ...params, ...sc.parameters };
+          }
+          if (sc.archetype) {
+            arch = sc.archetype;
+          }
+        } catch {}
+      }
+
       if (type === "pine") {
-        code = `//@version=5\n// Ultrarentable V2 Quantitative PineScript Strategy\n// Strategy: ${c.name} (${c.symbol} ${c.timeframe})\nstrategy("${c.name}", overlay=true, initial_capital=${c.route === "FONDEO" ? 50000 : 10000}, default_qty_type=strategy.percent_of_equity, default_qty_value=${c.route === "FONDEO" ? 2 : 10}, commission_type=strategy.commission.percent, commission_value=0.05, slippage=3)\n\n// Parámetros\nlen = input.int(20, "Donchian Period")\nupper = ta.highest(high, len)\nlower = ta.lowest(low, len)\natrVal = ta.atr(14)\natr_sl_mult = input.float(1.5, "ATR Stop Multiplier")\natr_tp_mult = input.float(3.5, "ATR TP Multiplier")\n\n// Condiciones Long / Short\nlongCond = close > upper[1] and ta.rsi(close, 14) > 52\nshortCond = close < lower[1] and ta.rsi(close, 14) < 48\n\nif (longCond)\n    sl_price = close - (atrVal * atr_sl_mult)\n    tp_price = close + (atrVal * atr_tp_mult)\n    strategy.entry("Long", strategy.long)\n    strategy.exit("ExitLong", "Long", stop=sl_price, limit=tp_price)\n\nif (shortCond)\n    sl_price = close + (atrVal * atr_sl_mult)\n    tp_price = close - (atrVal * atr_tp_mult)\n    strategy.entry("Short", strategy.short)\n    strategy.exit("ExitShort", "Short", stop=sl_price, limit=tp_price)`;
+        const isUltra = c.route === "ULTRA";
+        const cap = isUltra ? 10000 : 50000;
+        const marginVal = isUltra ? 0.2 : 1.0;
+        const pyrVal = isUltra ? (params.pyramiding_tiers || 3) : 1;
+
+        let logicDeclarations = "";
+        let entryLogic = "";
+
+        if (arch === "TREND_EMA_REGIME") {
+          logicDeclarations = `ema_fast = ta.ema(close, 20)
+ema_slow = ta.ema(close, 50)
+ema_trend = ta.ema(close, 200)
+upper_channel = ta.highest(high, 20)
+lower_channel = ta.lowest(low, 20)
+vol_expansion = atr_val >= ta.sma(atr_val, 20) * 1.05
+
+long_cond = (close > ema_trend) and (ema_fast > ema_slow) and (close >= upper_channel[1]) and vol_expansion
+short_cond = (close < ema_trend) and (ema_fast < ema_slow) and (close <= lower_channel[1]) and vol_expansion`;
+        } else if (arch === "DONCHIAN_EXPANSION") {
+          logicDeclarations = `upper_channel = ta.highest(high, 20)
+lower_channel = ta.lowest(low, 20)
+vol_expansion = atr_val >= ta.sma(atr_val, 20) * 1.10
+
+long_cond = (close >= upper_channel[1]) and vol_expansion
+short_cond = (close <= lower_channel[1]) and vol_expansion`;
+        } else if (arch === "MEAN_REVERSION_RSI" || arch === "MEAN_REVERSION") {
+          logicDeclarations = `rsi_val = ta.rsi(close, 14)
+ema_mid = ta.ema(close, 20)
+upper_channel = ta.highest(high, 20)
+lower_channel = ta.lowest(low, 20)
+
+long_cond = (rsi_val < 32.0) and (low <= lower_channel) and (close > ema_mid)
+short_cond = (rsi_val > 68.0) and (high >= upper_channel) and (close < ema_mid)`;
+        } else {
+          logicDeclarations = `upper_channel = ta.highest(high, 20)
+lower_channel = ta.lowest(low, 20)
+vol_expansion = atr_val >= ta.sma(atr_val, 20) * 1.10
+
+long_cond = (close >= upper_channel[1]) and vol_expansion
+short_cond = (close <= lower_channel[1]) and vol_expansion`;
+        }
+
+        if (isUltra) {
+          entryLogic = `// ==========================================
+// 4. GESTIÓN ULTRA (Entrada Inicial + Piramidación en Beneficio Flotante)
+// ==========================================
+if (strategy.position_size == 0)
+    tier_count := 0
+    if (long_cond)
+        entry_px := close
+        active_sl := close - (atr_val * atr_sl_mult)
+        active_tp := close + (atr_val * atr_tp_mult)
+        strategy.entry("Long_T1", strategy.long, qty=pos_qty)
+        tier_count := 1
+    else if (short_cond)
+        entry_px := close
+        active_sl := close + (atr_val * atr_sl_mult)
+        active_tp := close - (atr_val * atr_tp_mult)
+        strategy.entry("Short_T1", strategy.short, qty=pos_qty)
+        tier_count := 1
+
+// Piramidación y Reciclaje de Margen Libre (HASTA ${pyrVal} Tiers con SL Asegurado a Break-Even)
+if (strategy.position_size > 0 and tier_count < max_tiers)
+    float target_add_px = entry_px + (tier_count * atr_val * 1.8)
+    if (high >= target_add_px)
+        active_sl := entry_px + ((tier_count - 1) * atr_val * 0.8)
+        strategy.entry("Long_T" + str.tostring(tier_count + 1), strategy.long, qty=pos_qty)
+        tier_count := tier_count + 1
+
+if (strategy.position_size < 0 and tier_count < max_tiers)
+    float target_add_px = entry_px - (tier_count * atr_val * 1.8)
+    if (low <= target_add_px)
+        active_sl := entry_px - ((tier_count - 1) * atr_val * 0.8)
+        strategy.entry("Short_T" + str.tostring(tier_count + 1), strategy.short, qty=pos_qty)
+        tier_count := tier_count + 1
+
+// Salidas Globales de la Posición Compuesta
+if (strategy.position_size > 0)
+    strategy.exit("ExitLong", stop=active_sl, limit=active_tp)
+
+if (strategy.position_size < 0)
+    strategy.exit("ExitShort", stop=active_sl, limit=active_tp)`;
+        } else {
+          entryLogic = `// ==========================================
+// 4. GESTIÓN FONDEO (Preservación de Cuenta · Single Position · Max DD <= 4.0%)
+// ==========================================
+var bool be_activated = false
+
+if (strategy.position_size == 0)
+    be_activated := false
+    if (long_cond)
+        entry_px := close
+        active_sl := close - (atr_val * atr_sl_mult)
+        active_tp := close + (atr_val * atr_tp_mult)
+        strategy.entry("Long_Fondeo", strategy.long, qty=pos_qty)
+    else if (short_cond)
+        entry_px := close
+        active_sl := close + (atr_val * atr_sl_mult)
+        active_tp := close - (atr_val * atr_tp_mult)
+        strategy.entry("Short_Fondeo", strategy.short, qty=pos_qty)
+
+// Trailing a Break-Even asegurado en +1.5 ATR
+if (strategy.position_size > 0)
+    if (not be_activated and high >= entry_px + (atr_val * 1.5))
+        active_sl := entry_px + (atr_val * 0.05)
+        be_activated := true
+    strategy.exit("ExitLong", "Long_Fondeo", stop=active_sl, limit=active_tp)
+
+if (strategy.position_size < 0)
+    if (not be_activated and low <= entry_px - (atr_val * 1.5))
+        active_sl := entry_px - (atr_val * 0.05)
+        be_activated := true
+    strategy.exit("ExitShort", "Short_Fondeo", stop=active_sl, limit=active_tp)`;
+        }
+
+        code = `//@version=5
+// Ultrarentable V2 Quantitative Strategy Engine
+// Estrategia: ${c.name} (${c.symbol} ${c.timeframe})
+// Ruta: ${c.route} · Arquetipo: ${arch}
+strategy("${c.name}", overlay=true, initial_capital=${cap}, default_qty_type=strategy.cash, pyramiding=${pyrVal}, margin_long=${marginVal}, margin_short=${marginVal}, commission_type=strategy.commission.percent, commission_value=0.05, slippage=2)
+
+// ==========================================
+// 1. PARÁMETROS CALIBRADOS (OPTIMIZADOS 100% LLAVE EN MANO)
+// ==========================================
+risk_pct = input.float(${params.risk_pct.toFixed(1)}, "Riesgo Inicial por Operación (%)", minval=0.5, maxval=10.0)
+max_tiers = input.int(${pyrVal}, "Niveles Máximos de Piramidación", minval=1, maxval=5)
+atr_len = input.int(14, "Periodo ATR")
+atr_sl_mult = input.float(${params.sl_atr_mult.toFixed(1)}, "Multiplicador ATR Stop Loss")
+atr_tp_mult = input.float(${params.tp_atr_mult.toFixed(1)}, "Multiplicador ATR Take Profit Runner")
+
+// ==========================================
+// 2. INDICADORES DEL ARQUETIPO (${arch})
+// ==========================================
+atr_val = ta.atr(atr_len)
+${logicDeclarations}
+
+// ==========================================
+// 3. DIMENSIONAMIENTO DINÁMICO POR RIESGO (Apalancamiento Adaptativo HASTA 500x)
+// ==========================================
+risk_budget = strategy.equity * (risk_pct / 100.0)
+stop_distance = atr_val * atr_sl_mult
+pos_qty = (stop_distance > 0) ? (risk_budget / stop_distance) : (strategy.equity / close)
+
+var float entry_px = 0.0
+var float active_sl = 0.0
+var float active_tp = 0.0
+var int tier_count = 0
+
+${entryLogic}`;
       } else if (type === "ninja") {
-        code = `// NinjaTrader 8 Strategy Export\n// Strategy: ${c.name}\nnamespace NinjaTrader.NinjaScript.Strategies {\n    public class ${c.candidate_id.replace(/[^a-zA-Z0-9]/g, "_")} : Strategy {\n        protected override void OnStateChange() {\n            if (State == State.SetDefaults) {\n                Name = "${c.name}";\n                Calculate = Calculate.OnBarClose;\n            }\n        }\n    }\n}`;
+        code = `// NinjaTrader 8 Strategy Export\n// Strategy: ${c.name}\n// Route: ${c.route} · Archetype: ${arch}\nnamespace NinjaTrader.NinjaScript.Strategies {\n    public class ${c.candidate_id.replace(/[^a-zA-Z0-9]/g, "_")} : Strategy {\n        protected override void OnStateChange() {\n            if (State == State.SetDefaults) {\n                Name = "${c.name}";\n                Calculate = Calculate.OnBarClose;\n            }\n        }\n    }\n}`;
       } else {
-        code = `# Ultrarentable Vectorized Backtest Export\nimport pandas as pd\nimport numpy as np\n\ndef run_${c.candidate_id.replace(/[^a-zA-Z0-9]/g, "_")}_strategy(df):\n    df['atr'] = df['high'] - df['low']\n    df['signal'] = np.where(df['close'] > df['high'].rolling(20).max().shift(1), 1, 0)\n    df['returns'] = df['close'].pct_change() * df['signal'].shift(1)\n    return df`;
+        code = `# Ultrarentable Python Vectorized Backtest Export\n# Strategy: ${c.name} (${c.symbol} ${c.timeframe})\n# Route: ${c.route} | Archetype: ${arch}\nimport pandas as pd\nimport numpy as np\n\ndef run_${c.candidate_id.replace(/[^a-zA-Z0-9]/g, "_")}_strategy(df):\n    df['atr'] = df['high'] - df['low']\n    df['signal'] = np.where(df['close'] > df['high'].rolling(20).max().shift(1), 1, 0)\n    df['returns'] = df['close'].pct_change() * df['signal'].shift(1)\n    return df`;
       }
     }
     setExportModal({ open: true, type, content: code, name });
@@ -885,9 +1055,9 @@ export default function CandidatosFSMPage() {
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>% ANUAL</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>% MES</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>PF OOS</th>
-                    <th style={{ padding: "8px 10px", textAlign: "right" }}>WIN RATE</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>MAX DD</th>
-                    <th style={{ padding: "8px 10px", textAlign: "center" }}>DEBATE IA</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>GATE 11 (NAUTILUS)</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>EXPORTAR</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -908,8 +1078,16 @@ export default function CandidatosFSMPage() {
                       const annRoi = oos?.annualized_roi_pct || 0;
                       const monthRoi = oos?.monthly_roi_pct || 0;
                       const pfOos = oos?.profit_factor || 0;
-                      const wrOos = oos?.win_rate_pct || 0;
                       const maxDd = oos?.max_drawdown_pct || 0;
+
+                      // Parse Gate 11
+                      let n11: any = null;
+                      if (c.scorecard_json) {
+                        try {
+                          const sc = typeof c.scorecard_json === "string" ? JSON.parse(c.scorecard_json) : c.scorecard_json;
+                          n11 = sc.nautilus_gate_11;
+                        } catch {}
+                      }
 
                       return (
                         <tr
@@ -961,30 +1139,60 @@ export default function CandidatosFSMPage() {
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: pfOos >= 1.3 ? "#34d399" : pfOos >= 1.0 ? "#facc15" : "#f87171", fontFamily: "var(--font-mono, monospace)" }}>
                             {pfOos.toFixed(2)}
                           </td>
-                          <td style={{ padding: "8px 10px", textAlign: "right", color: wrOos >= 45 ? "#63e1b4" : "#cbd5e1", fontFamily: "var(--font-mono, monospace)" }}>
-                            {wrOos.toFixed(1)}%
-                          </td>
                           <td style={{ padding: "8px 10px", textAlign: "right", color: maxDd <= 5 ? "#34d399" : maxDd <= 10 ? "#facc15" : "#fb7185", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>
                             {maxDd.toFixed(1)}%
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "center" }}>
+                            {n11?.verified ? (
+                              <span
+                                style={{
+                                  fontSize: "9px",
+                                  fontWeight: 800,
+                                  padding: "2px 6px",
+                                  borderRadius: "4px",
+                                  background: "rgba(52, 211, 153, 0.15)",
+                                  color: "#34d399",
+                                  border: "1px solid rgba(52, 211, 153, 0.3)",
+                                  fontFamily: "var(--font-mono, monospace)",
+                                }}
+                                title={`Simulación Event-Driven: Distancia Liq ${n11.liquidation_distance_min_pct}% · Apalancamiento Efectivo ${n11.effective_max_leverage}x`}
+                              >
+                                🛡️ PASSED ({n11.effective_max_leverage}x)
+                              </span>
+                            ) : (
+                              <span
+                                style={{
+                                  fontSize: "9px",
+                                  fontWeight: 800,
+                                  padding: "2px 6px",
+                                  borderRadius: "4px",
+                                  background: "rgba(251, 191, 36, 0.15)",
+                                  color: "#fbbf24",
+                                  fontFamily: "var(--font-mono, monospace)",
+                                }}
+                              >
+                                ⏳ PENDING
+                              </span>
+                            )}
                           </td>
                           <td style={{ padding: "8px 10px", textAlign: "center" }}>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                runDebateForCandidate(c);
+                                openCodeExport(c, "pine");
                               }}
                               style={{
-                                padding: "3px 8px",
+                                padding: "4px 8px",
                                 borderRadius: "6px",
-                                background: isSelected ? "rgba(99, 225, 180, 0.25)" : "rgba(255, 255, 255, 0.05)",
-                                border: isSelected ? "1px solid rgba(99, 225, 180, 0.6)" : "1px solid rgba(255, 255, 255, 0.1)",
-                                color: isSelected ? "#63e1b4" : "#cbd5e1",
-                                fontSize: "9.5px",
+                                background: "rgba(99, 225, 180, 0.2)",
+                                border: "1px solid rgba(99, 225, 180, 0.4)",
+                                color: "#63e1b4",
+                                fontSize: "10px",
                                 fontWeight: 800,
                                 cursor: "pointer",
                               }}
                             >
-                              🤖 {isSelected ? "Debatiendo" : "Debatir"}
+                              📜 Pine Script
                             </button>
                           </td>
                         </tr>

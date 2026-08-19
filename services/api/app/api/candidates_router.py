@@ -78,10 +78,12 @@ def list_candidates(
         max_allowed_dd = 4.5 if is_fondeo else 90.0
         base_cap = float(oos_m.get("account_base_usd") or (50000.0 if is_fondeo else 10000.0))
         net_prof_oos = float(c.net_profit_oos if c.net_profit_oos is not None else oos_m.get("net_profit_usd", 0.0))
-        
-        roi_oos = float(oos_m.get("roi_pct") or round((net_prof_oos / base_cap) * 100.0, 2))
-        ann_roi = float(sc.get("annualized_roi_pct") or oos_m.get("annualized_roi_pct") or roi_oos)
-        monthly_roi = float(sc.get("monthly_roi_pct") or oos_m.get("monthly_roi_pct") or round(ann_roi / 12.0, 2))
+        oos_months = max(0.2, float(dur.get("oos_months", 1.0)))
+
+        # Real Linear ROI calculation (Zero artificial exponentiation)
+        roi_oos = round((net_prof_oos / base_cap) * 100.0, 2)
+        monthly_roi = round(roi_oos / oos_months, 2)
+        ann_roi = round(monthly_roi * 12.0, 2)
         tpm = float(oos_m.get("trades_per_month") or 15.0)
 
         wr_is = float(is_m.get("win_rate_pct") or is_m.get("win_rate") or 42.5)

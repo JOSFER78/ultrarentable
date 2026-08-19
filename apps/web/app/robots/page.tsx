@@ -328,7 +328,7 @@ export default function RobotsPage() {
                       <span style={{ fontFamily: "monospace", fontWeight: 700 }}>{robot.symbol}</span>
                       <span style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: 4 }}>({robot.timeframe})</span>
                     </td>
-                    <td style={{ padding: "12px 14px", fontWeight: 700, fontFamily: "monospace" }}>
+                    <td style={{ padding: "12px 14px", fontWeight: 700, fontFamily: "monospace" }} suppressHydrationWarning>
                       ${robot.equity_usd.toLocaleString()}
                     </td>
                     <td style={{ padding: "12px 14px", fontFamily: "monospace", color: robot.open_drawdown_pct > 5 ? "var(--danger)" : "var(--warning)" }}>

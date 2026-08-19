@@ -101,9 +101,15 @@ export default function GeneticDiscoveryLabPage() {
     supervisor_workers: {},
   });
 
+  const [mounted, setMounted] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [syncing, setSyncing] = useState<boolean>(false);
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
+
+  const fmt = (n: number | undefined | null): string => {
+    if (n === undefined || n === null || isNaN(n)) return "0";
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
 
   const fetchRealData = useCallback(async () => {
     try {
@@ -120,6 +126,7 @@ export default function GeneticDiscoveryLabPage() {
   }, []);
 
   useEffect(() => {
+    setMounted(true);
     fetchRealData();
     const interval = setInterval(fetchRealData, 3000);
     return () => clearInterval(interval);
@@ -143,7 +150,7 @@ export default function GeneticDiscoveryLabPage() {
   };
 
   return (
-    <div style={{ padding: "16px 20px", width: "100%", maxWidth: "1400px", margin: "0 auto", boxSizing: "border-box" }}>
+    <div style={{ padding: "16px 20px", width: "100%", maxWidth: "1400px", margin: "0 auto", boxSizing: "border-box" }} suppressHydrationWarning>
       {/* 1. CABECERA PRINCIPAL */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px", flexWrap: "wrap", gap: "16px" }}>
         <div>
@@ -182,14 +189,14 @@ export default function GeneticDiscoveryLabPage() {
               color: "#34d399",
               fontSize: "12px",
               fontWeight: 800,
-              cursor: "pointer",
+              cursor: syncing ? "not-allowed" : "pointer",
               fontFamily: "var(--font-mono, monospace)",
               display: "flex",
               alignItems: "center",
               gap: "6px",
             }}
           >
-            {syncing ? "⏳ Sincronizando..." : "🔄 Forzar Sincronización SQX"}
+            {syncing ? "🔄 Sincronizando..." : "🔄 Sincronizar Databanks SQX"}
           </button>
 
           <Link
@@ -227,7 +234,7 @@ export default function GeneticDiscoveryLabPage() {
               gap: "6px",
             }}
           >
-            📊 CATÁLOGO SQX ({telemetry.total_strategies_catalog.toLocaleString()}) →
+            <span suppressHydrationWarning>📊 CATÁLOGO SQX ({fmt(telemetry.total_strategies_catalog)}) →</span>
           </Link>
         </div>
       </div>
@@ -255,15 +262,15 @@ export default function GeneticDiscoveryLabPage() {
         <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>VELOCIDAD DE CÁLCULO</span>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
+            <span style={{ fontSize: "13px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }} suppressHydrationWarning>
               {telemetry.evaluation_speed_per_sec || 0.5} evals/seg
             </span>
           </div>
 
           <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>EVALUACIONES REALES</span>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-              {(telemetry.total_evaluations_count || 599901).toLocaleString()}
+            <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }} suppressHydrationWarning>
+              {fmt(telemetry.total_evaluations_count || 599901)}
             </span>
           </div>
 

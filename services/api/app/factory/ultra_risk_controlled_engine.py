@@ -85,25 +85,16 @@ class UltraRiskControlledEngine:
 
     @staticmethod
     def _calc_annualized(roi: float, days: int) -> float:
+        """Cálculo lineal honesto y reproducible sin exponenciaciones irreales."""
         if days <= 0:
             return round(roi, 2)
-        years = days / 365.25
-        if years <= 0:
-            return round(roi, 2)
-        if roi >= 0:
-            if years < 0.1:
-                return round((roi / days) * 365.25, 2)
-            cagr = ((1.0 + (roi / 100.0)) ** (1.0 / years) - 1.0) * 100.0
-            return round(cagr, 2)
-        else:
-            return round((roi / days) * 365.25, 2)
+        years = max(0.01, days / 365.25)
+        return round(roi / years, 2)
 
     @staticmethod
     def _calc_monthly(annualized_roi: float) -> float:
-        if annualized_roi >= 0:
-            return round(((1.0 + (annualized_roi / 100.0)) ** (1.0 / 12.0) - 1.0) * 100.0, 2)
-        else:
-            return round(annualized_roi / 12.0, 2)
+        """Retorno mensual lineal honesto."""
+        return round(annualized_roi / 12.0, 2)
 
     def __init__(
         self,

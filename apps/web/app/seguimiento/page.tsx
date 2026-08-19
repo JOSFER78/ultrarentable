@@ -112,7 +112,7 @@ export default function SeguimientoPage() {
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
                   <span style={{ fontSize: "14px", fontWeight: 800, color: "var(--text-primary)" }}>{e.title}</span>
-                  <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }}>
+                  <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "monospace" }} suppressHydrationWarning>
                     {new Date(e.created_at).toLocaleString()}
                   </span>
                 </div>
