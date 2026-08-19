@@ -114,7 +114,8 @@ class Gate09NoveltyAntiFit:
         params_passed = (num_params <= max_params_allowed)
 
         passed = dof_passed and stability_passed and params_passed
-        score = min(100.0, max(0.0, (stability_ratio * 0.6) + (min(100.0, dof_ratio * 4.0) * 0.4))) if passed else max(0.0, stability_ratio * 0.4)
+        raw_score = (min(100.0, stability_ratio) * 0.6) + (min(100.0, dof_ratio * 4.0) * 0.4) if passed else (stability_ratio * 0.4)
+        score = min(100.0, max(0.0, raw_score))
 
         verdict_msg = (
             f"PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: {dof_ratio:.1f} trades/param, Estabilidad Vecindario: {stability_ratio:.1f}%, Re-backtest PFs: {perturbed_pfs})"

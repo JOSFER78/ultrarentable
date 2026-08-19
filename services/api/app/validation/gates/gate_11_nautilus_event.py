@@ -20,6 +20,8 @@ class Gate11NautilusEvent:
         self,
         oos_trades: List[float],
         trades_raw: Optional[List[Dict[str, Any]]] = None,
+        candles: Optional[List[Dict[str, Any]]] = None,
+        strategy_snapshot: Optional[Any] = None,
         symbol: str = "BTCUSDT",
         initial_capital: float = 1000.0,
         max_allowed_leverage: Optional[float] = None,

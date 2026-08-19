@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_strat_rt_hash_g03",
+  "run_id": "run_strat_rt_hash",
+  "strategy_id": "strat_rt_hash",
+  "strategy_snapshot_hash": "0fa316b74787cc9dba0e02fea884334caf35093de2a06fae99a0150489f55c5a",
+  "dataset_id": "ds_btc_1h",
+  "dataset_sha256": "3a4b5c6d7e8f00112233445566778899aabbccddeeff00112233445566778899",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "32ecda8068d4ec54712ff959443cad88cde5684743c012cdeff1a9f7ca203e7d",
+  "output_hash": "040c73a880ad791e385b70a5dcb2c45b47f568f25c0225a9e741f4997f5bb4bb",
+  "status": "FAILED",
+  "score": 20.0,
+  "verdict": "FALLO: Muestra insuficiente (0 IS < 15 ó 4 OOS < 10)",
+  "metrics": {
+    "trades_is": 0,
+    "trades_oos": 4,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/strat_rt_hash/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-19T23:24:15.209141+00:00"
+}

@@ -1,37 +1,40 @@
 # 📊 ESTADO.md — Mapa Único y Estado Vivo del Proyecto Ultrarentable
 
-> **Última actualización:** 2026-08-19 (Cierre Forense Integral y Erradicación de los 6 Bloqueantes)  
-> **Doctrina:** REAL-ONLY / ZERO-MOCKS (100% Certificado)  
+> **Última actualización:** 2026-08-19 (Cierre Forense Definitivo de las 6 Fases — 100% Real-Only)  
+> **Doctrina:** REAL-ONLY / ZERO-MOCKS (100% Certificado con Batería Red-Team)  
 > **Arquitectura:** DUAL-ENGINE DESACOPLADO (Ruta ULTRA / BingX vs Ruta FONDEO / Prop Firms CME)
 
 ---
 
 ## 1. Resumen Ejecutivo y Realidad Verificada
 
-El laboratorio cuantitativo opera con una separación estricta entre la capa de exploración (Discovery) y la capa ciego-evaluadora (11 Quantitative Gates & Certification):
+El laboratorio cuantitativo opera con una separación física y cognoscitiva estricta entre la capa de exploración (Discovery) y la capa ciego-evaluadora (11 Quantitative Gates & Certification):
 
-1. **🔒 Cadena de Custodia Criptográfica y Particionado Ciego Inmutable (Bloqueantes 1 & 2):**
+1. **🔒 Cadena de Custodia Criptográfica & Particionado en 4 Etapas:**
    - Cada dataset físico en `data/normalized/` tiene su hash SHA-256 criptográfico real calculado desde los bytes en disco (`compute_file_sha256()`).
    - Particionado temporal obligatorio antes de discovery:
-     - **In-Sample (60%):** Búsqueda combinatoria y optimización algorítmica.
-     - **Validation (20%):** Selección y ajuste fino de parámetros.
-     - **Blind Holdout OOS (20%):** Partición intocada y congelada donde el juez independiente ejecuta los 11 Gates.
+     - **In-Sample (60%):** Búsqueda combinatoria (400+ trials) con score multiobjetivo (PF, DD, Trades, Winrate) $\to$ Filtrado de Top 20.
+     - **Validation (20%):** Desempate y selección ciega del campeón #1 sobre datos fuera de muestra de búsqueda.
+     - **Freeze Snapshot:** Congelación inmutable del `StrategySnapshot` y su `canonical_hash` SHA-256 de 64 caracteres.
+     - **Blind Holdout OOS (20%):** Muestra intocada donde el evaluador independiente ejecuta los 11 Gates.
 
-2. **📜 Registro Forense de Trials y DSR Estricto (Bloqueante 5):**
-   - Cada hipótesis explorada en In-Sample se registra en la tabla `discovery_search_trials` de SQLite (`ultrarentable.sqlite3`).
-   - Gate 8 (Deflated Sharpe Ratio de Bailey & López de Prado) evalúa con el recuento exacto de trials registrados físicamente. Cero fallbacks inventados: si $N_{\text{trials}} \le 0$, el gate emite `BLOCKED / NO_EVIDENCE_TRIALS_UNRECORDED`.
+2. **⚙️ Intérprete Canónico Determinista (`EventBacktestEngine`):**
+   - El motor de validación parsea dinámicamente indicadores (EMAs de cualquier período, RSI Wilder recursivo, Donchian Breakouts) y reglas de salida (SL/TP ATR multipliers, risk %) directamente desde los nodos del `StrategySnapshot`.
+   - Cero parámetros cableados: las variaciones en los blueprints producen cambios cuantitativos y órdenes físicamente diferentes.
 
-3. **⏱️ Mapeo Temporal Real de Regímenes (Bloqueante 3 - Gate 7):**
-   - Eliminada cualquier asignación proporcional. Cada trade físico generado por `EventBacktestEngine` se cruza temporalmente mediante su timestamp exacto (`entry_time_ms`) con el régimen activo de la vela (BULL, BEAR, CHOP, HIGH_VOL).
+3. **🛡️ Aislamiento Total de Gate 4 (Walk-Forward Optimization):**
+   - Gate 4 recibe exclusivamente trades generados sobre el conjunto de desarrollo pre-OOS (`IS + Val`), protegiendo el 20% de Blind Holdout OOS de cualquier contaminación por ventana rodante.
 
-4. **🔬 Anti-Curve Fit con Re-Backtest Real de Vecindario (Bloqueante 4 - Gate 9):**
-   - Eliminadas las estimaciones sintéticas. Gate 9 instancia variantes perturbadas ($\pm 10\%$, $\pm 20\%$) y re-ejecuta `EventBacktestEngine` sobre las velas reales para medir la estabilidad empírica del vecindario.
+4. **📜 Registro Forense de Trials & Intolerancia a Datos Falsos (Gates 7, 8, 9, 10, 11):**
+   - **Gate 7 (Regime Coverage):** Exige `trades_raw` con timestamps físicos mapeados a regímenes ATR/Trend; bloquea ante fallbacks sintéticos.
+   - **Gate 8 (Deflated Sharpe Ratio):** Si $N_{\text{trials}} \le 0$ o no está registrado en SQLite, emite `BLOCKED / NO_EVIDENCE`.
+   - **Gate 9 (Anti-Curve Fit):** Re-backtesting físico de vecindario ($\pm 10\%, \pm 20\%$) re-ejecutando el motor sobre velas reales.
+   - **Gate 10 (Multi-Specialist Audit):** Auditoría cuantitativa determinista de 5 especialistas independientes.
+   - **Gate 11 (Cross-Validation Eventual):** Verificación independiente de margen cruzado, margen de mantenimiento, distancia a liquidación y costes de funding.
 
-5. **⚙️ Validación Cruzada Orientada a Eventos (Bloqueante 6 - Gate 11):**
-   - Simulación orden a orden de margen cruzado, margen de mantenimiento, apalancamiento pico real ($\text{nominal}/\text{equity}$), distancia mínima a liquidación forzada y costes de funding.
-
-6. **📁 Artefactos de Evidencia Física en Disco (`EvidenceRecord`):**
-   - Cada gate genera un archivo JSON en `data/evidence/{strategy_id}/gate_{i}.json` con hashes SHA-256 de entrada y salida, auditables en cualquier momento.
+5. **📁 Evidence Ledger Criptográfico con Hashes Reales:**
+   - Cada gate persiste un archivo `EvidenceRecord` en `data/evidence/{strategy_id}/gate_{i}.json`.
+   - Hashes SHA-256 de 64 caracteres exactos para `strategy_snapshot_hash`, `input_hash` y `output_hash`.
 
 ---
 
@@ -48,5 +51,5 @@ El laboratorio cuantitativo opera con una separación estricta entre la capa de 
 
 ## 3. Estado de la Suite de Pruebas
 
-- `pytest tests/ -v` ➔ **67 passed, 1 skipped (SQX Server Offline opcional), 0 failed** (100% verificado sin mocks).
-- Todos los endpoints de auditoría y controladores REST devuelven respuestas coherentes y matemáticamente reproducibles.
+- `pytest tests/ -v` ➔ **73 passed, 1 skipped (SQX Server Offline opcional), 0 failed** (100% verificado sin mocks).
+- Batería Red-Team (`tests/test_red_team_adversarial.py`) pasando 5/5 ataques de estrés y corrupción de datos con 100% de éxito.

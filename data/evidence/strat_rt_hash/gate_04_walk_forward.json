@@ -1,0 +1,25 @@
+{
+  "evidence_id": "ev_strat_rt_hash_g04",
+  "run_id": "run_strat_rt_hash",
+  "strategy_id": "strat_rt_hash",
+  "strategy_snapshot_hash": "0fa316b74787cc9dba0e02fea884334caf35093de2a06fae99a0150489f55c5a",
+  "dataset_id": "ds_btc_1h",
+  "dataset_sha256": "3a4b5c6d7e8f00112233445566778899aabbccddeeff00112233445566778899",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "14ca79b0a0baee0a9f1ac913b133ccde494d07c367398d46380b69dfcdcb5e2d",
+  "output_hash": "a3adeca54a4bc95f4ccf423047eb7f1085f679c9d49099f847f7b833cbdb4ead",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
+  "metrics": {
+    "total_trades": 4,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
+  },
+  "artifact_path": "data/evidence/strat_rt_hash/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-19T23:24:15.210197+00:00"
+}

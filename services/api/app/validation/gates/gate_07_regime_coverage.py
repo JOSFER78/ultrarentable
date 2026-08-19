@@ -41,9 +41,20 @@ class Gate07RegimeCoverage:
                 "evidence": {"candles_count": len(candles) if candles else 0},
             }
 
-        closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)
-        highs = np.array([float(c["high"]) for c in candles], dtype=np.float64)
-        lows = np.array([float(c["low"]) for c in candles], dtype=np.float64)
+        first_c = candles[0]
+        if not isinstance(first_c, dict) or "close" not in first_c:
+            return {
+                "gate_id": self.GATE_ID,
+                "name": self.NAME,
+                "passed": False,
+                "score": 0.0,
+                "verdict": "RECHAZADO / BLOCKED: Estructura de velas inválida o sin precios de cierre",
+                "evidence": {"candles_count": len(candles)},
+            }
+
+        closes = np.array([float(c.get("close", 0.0)) for c in candles], dtype=np.float64)
+        highs = np.array([float(c.get("high", c.get("close", 0.0))) for c in candles], dtype=np.float64)
+        lows = np.array([float(c.get("low", c.get("close", 0.0))) for c in candles], dtype=np.float64)
 
         # 1. Cálculo de ATR
         tr = np.maximum(highs[1:] - lows[1:], np.maximum(np.abs(highs[1:] - closes[:-1]), np.abs(lows[1:] - closes[:-1])))

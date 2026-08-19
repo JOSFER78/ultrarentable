@@ -157,7 +157,7 @@ class GatePipelineOrchestrator:
                     input_hash=inp_hash,
                     output_hash=out_hash,
                     status=GateStatus.PASSED if res.get("passed") else GateStatus.FAILED,
-                    score=float(res.get("score", 0.0)),
+                    score=min(100.0, max(0.0, float(res.get("score", 0.0)))),
                     verdict=str(res.get("verdict", "")),
                     metrics=res.get("evidence", {}),
                     artifact_path=str(art_file),
