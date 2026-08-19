@@ -71,13 +71,21 @@ class DiscoveryValidationPipeline:
         conn.execute("PRAGMA busy_timeout = 30000;")
         return conn
 
-    def run_continuous_pipeline(self, max_datasets: Optional[int] = None, sleep_between_cycles_sec: int = 60):
+    def run_continuous_pipeline(
+        self,
+        max_datasets: Optional[int] = None,
+        sleep_between_cycles_sec: int = 60,
+        max_cycles: Optional[int] = None,
+    ):
         """Bucle continuo de descubrimiento y validación sobre todos los datasets físicos."""
         logger.info("Iniciando Pipeline Continuo de Discovery & Validación Real-Only...")
 
         cycle_num = 0
         while True:
             cycle_num += 1
+            if max_cycles and cycle_num > max_cycles:
+                logger.info(f"Finalizados {max_cycles} ciclos de supervisión controlada.")
+                break
             dataset_files = sorted(glob.glob(str(self.data_dir / "*.json")))
             logger.info(f"=== Ciclo #{cycle_num} — {len(dataset_files)} datasets detectados ===")
 

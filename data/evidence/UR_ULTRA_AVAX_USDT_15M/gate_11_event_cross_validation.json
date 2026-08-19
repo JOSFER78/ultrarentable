@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g11",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
+  "strategy_snapshot_hash": "a335539aaa39e46bb19330f27cf3c975fdaaf7ae9bdccd6e1714a55dab145964",
+  "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "9704809fd218d7ee64fa8a52c23165b6c80c1cb0120a743f9000e13a8c0b4d22",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "323c036d2de20fac04d0943f1d4316e8b87cb8c5a24271f2bbdb49086be9992e",
+  "output_hash": "887e1f6a05d1f871cd5161910a56a10c0cb61549f76cd98f77d0437668c8d46c",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $1081.25, Apalancamiento Pico: 7.6x, Dist. Mín. Liquidación: 96.3%, Comisiones+Funding: $242.42)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 1081.25,
+    "peak_equity_usd": 1296.52,
+    "min_equity_usd": 992.34,
+    "peak_leverage_used": 7.61,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 96.33,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 220.38,
+    "total_funding_cost_usd": 22.04,
+    "execution_events_count": 54
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-19T23:56:35.039005+00:00"
+}
