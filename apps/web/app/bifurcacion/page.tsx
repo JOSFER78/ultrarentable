@@ -36,45 +36,48 @@ export default function BifurcacionQVFPage() {
   const [ultraMcSurvival, setUltraMcSurvival] = useState<number>(98.5);
   const [ultraSkewness, setUltraSkewness] = useState<number>(1.85);
 
+  const [candidatesList, setCandidatesList] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch("/api/v2/candidates")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setCandidatesList(data);
+          setStrategyId(data[0].candidate_id);
+        }
+      })
+      .catch(() => setCandidatesList([]));
+  }, []);
+
   const handleEvaluate = async () => {
+    if (!strategyId) return;
     setEvaluating(true);
     try {
-      let body: any = {
-        strategy_id: strategyId,
-        track: activeTrack,
-      };
-
-      if (activeTrack === "TRACK_FONDEO") {
-        // Mocking trade series based on user input parameters
-        const isTrades = Array.from({ length: 60 }, (_, i) => (i % 2 === 0 ? 250.0 : -100.0));
-        const oosTrades = Array.from({ length: 40 }, (_, i) => (i % 2 === 0 ? 220.0 : -95.0));
-        body.is_trades = isTrades;
-        body.oos_trades = oosTrades;
-        body.daily_pnls = Array.from({ length: 30 }, (_, i) => (i % 5 === 0 ? -200.0 : 400.0));
-        body.dsr_score = fondeoDsr;
-        body.mc_ruin_pct = 0.0;
-      } else {
-        body.is_balas = [
-          { bala_id: "b_is_01", entry_time_ms: 1000, exit_time_ms: 2000, margin_cost_usd: 100, gross_pnl_usd: 400, net_pnl_usd: 390, return_r: ultraPayoff, reached_state: "COSECHA_VAULT", pyramid_levels_executed: 1, harvest_events: [] },
-          { bala_id: "b_is_02", entry_time_ms: 3000, exit_time_ms: 4000, margin_cost_usd: 100, gross_pnl_usd: -100, net_pnl_usd: -102, return_r: -1.0, reached_state: "CIERRE", pyramid_levels_executed: 0, harvest_events: [] }
-        ];
-        body.oos_balas = [
-          { bala_id: "b_oos_01", entry_time_ms: 5000, exit_time_ms: 6000, margin_cost_usd: 100, gross_pnl_usd: 450, net_pnl_usd: 440, return_r: ultraPayoff + 0.5, reached_state: "COSECHA_VAULT", pyramid_levels_executed: 1, harvest_events: [] }
-        ];
-      }
-
-      const res = await fetch("/api/v2/validation/evaluate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
+      const res = await fetch(`/api/v2/candidates/${strategyId}/gates`);
       if (res.ok) {
         const data = await res.json();
-        setResult(data);
+        setResult({
+          decision_id: `DEC_${strategyId}_${Date.now()}`,
+          strategy_id: strategyId,
+          target_track: activeTrack,
+          is_approved: data.overall_certified || false,
+          score_pct: data.scorecard_average || 0.0,
+          evaluated_at_utc_ms: Date.now(),
+          gate_metrics: {
+            "Total Gates Aprobados": `${data.gates_passed_count || 0} / 11`,
+            "Score Medio": `${data.scorecard_average || 0.0} pts`,
+            "Estado": data.overall_certified ? "APROBADO_11_GATES" : "RECHAZADO_GATES_FALLIDOS",
+          },
+          rejection_reasons: (data.gates || []).filter((g: any) => !g.passed).map((g: any) => `Gate ${g.gate_id} (${g.name}): ${g.verdict}`),
+          provenance_signature_sha256: data.strategy_id ? `sha256_${data.strategy_id}` : "NO_PROVENANCE",
+        });
+      } else {
+        setResult(null);
       }
     } catch (e) {
       console.error(e);
+      setResult(null);
     } finally {
       setEvaluating(false);
     }

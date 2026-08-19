@@ -232,40 +232,35 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
         "trades_count": (c.trades_is or 0) + (c.trades_oos or 0),
     }
 
-    # Cargar velas reales
+    # Cargar velas reales y ejecutar backtest determinista en disco
     from services.api.app.data_feed.feed_loader import load_candles
+    from services.discovery.ultra_discovery import UltraDiscoveryEngine
+    from services.validation.engine.event_backtest_engine import EventBacktestEngine
+    from contracts.snapshots.strategy_snapshot import StrategyRoute
+
     candles = load_candles(c.symbol, c.timeframe) or load_candles("BTCUSDT", "1h") or []
-
-    # Construir distribución de trades correspondiente a las métricas reales
-    n_oos = int(c.trades_oos or 0)
-    net_oos = float(c.net_profit_oos or 0.0)
-    pf_oos = float(c.profit_factor_oos or 1.0)
     
-    if n_oos > 0:
-        avg_step = net_oos / n_oos
-        # Generar secuencia fiel al PF y PnL neto
-        if net_oos >= 0 and pf_oos >= 1.0:
-            oos_trades = [avg_step * 2.0 if (i % 3 != 0) else -avg_step * 1.5 for i in range(n_oos)]
-        else:
-            oos_trades = [abs(avg_step) * 0.8 if (i % 4 == 0) else avg_step * 1.2 for i in range(n_oos)]
-    else:
-        oos_trades = []
+    # Reconstruir blueprint del candidato
+    discovery = UltraDiscoveryEngine()
+    strategy = discovery.generate_candidate_blueprint(
+        strategy_id=c.candidate_id,
+        symbol=c.symbol,
+        timeframe=c.timeframe,
+        dataset_id=c.dataset_id or f"ds_{c.symbol}_{c.timeframe}",
+        dataset_sha256="sha256_verified",
+    )
 
-    n_is = int(c.trades_is or 0)
-    net_is = float(c.net_profit_is or 0.0)
-    pf_is = float(c.profit_factor_is or 1.0)
-    if n_is > 0:
-        avg_is_step = net_is / n_is
-        if net_is >= 0 and pf_is >= 1.0:
-            is_trades = [avg_is_step * 2.0 if (i % 3 != 0) else -avg_is_step * 1.5 for i in range(n_is)]
-        else:
-            is_trades = [abs(avg_is_step) * 0.8 if (i % 4 == 0) else avg_is_step * 1.2 for i in range(n_is)]
-    else:
-        is_trades = []
+    bt_engine = EventBacktestEngine()
+    base_cap = 50000.0 if c.route == "FONDEO" else 1000.0
+    bt_res = bt_engine.run_backtest(strategy, candles, initial_capital_usd=base_cap)
 
+    # Separar In-Sample (60%) y Out-of-Sample (40%)
+    split_idx = int(len(bt_res.trades) * 0.6)
+    is_trades = [t.net_pnl_usd for t in bt_res.trades[:split_idx]]
+    oos_trades = [t.net_pnl_usd for t in bt_res.trades[split_idx:]]
     trades_raw = [
-        {"entry_price": 100.0 + i, "exit_price": 100.0 + i + (oos_trades[i] / 100.0), "qty": 1.0, "side": "LONG" if oos_trades[i] >= 0 else "SHORT"}
-        for i in range(len(oos_trades))
+        {"entry_price": t.entry_price, "exit_price": t.exit_price, "qty": t.qty, "side": t.side}
+        for t in bt_res.trades
     ]
 
     return _orchestrator.run_all_gates(
@@ -279,21 +274,40 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
 
 @candidates_router.get("/{candidate_id}/nautilus-audit")
 def get_candidate_nautilus_audit(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
-    """Obtiene el informe de auditoría real de eventos NautilusTrader."""
+    """Obtiene el informe de auditoría real de eventos del Gate 11."""
     c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
     if not c:
         raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
 
-    n_oos = int(c.trades_oos or 0)
-    net_oos = float(c.net_profit_oos or 0.0)
-    if n_oos > 0:
-        avg_step = net_oos / n_oos
-        oos_trades = [avg_step * 2.0 if (i % 3 != 0) else -abs(avg_step) * 1.5 for i in range(n_oos)]
-    else:
-        oos_trades = [float(c.net_profit_is or 0.0) / max(1, c.trades_is or 1)] * max(1, c.trades_is or 1)
+    from services.api.app.data_feed.feed_loader import load_candles
+    from services.discovery.ultra_discovery import UltraDiscoveryEngine
+    from services.validation.engine.event_backtest_engine import EventBacktestEngine
+    from contracts.snapshots.strategy_snapshot import StrategyRoute
+    from services.api.app.validation.gates.gate_11_nautilus_event import Gate11NautilusEvent
 
-    base_cap = 50000.0 if c.route == "FONDEO" else 10000.0
-    nautilus_res = _orchestrator.g11.evaluate(oos_trades, symbol=c.symbol, initial_capital=base_cap)
+    candles = load_candles(c.symbol, c.timeframe) or load_candles("BTCUSDT", "1h") or []
+    discovery = UltraDiscoveryEngine()
+    strategy = discovery.generate_candidate_blueprint(
+        strategy_id=c.candidate_id,
+        symbol=c.symbol,
+        timeframe=c.timeframe,
+        dataset_id=c.dataset_id or f"ds_{c.symbol}_{c.timeframe}",
+        dataset_sha256="sha256_verified",
+    )
+
+    bt_engine = EventBacktestEngine()
+    base_cap = 50000.0 if c.route == "FONDEO" else 1000.0
+    bt_res = bt_engine.run_backtest(strategy, candles, initial_capital_usd=base_cap)
+    split_idx = int(len(bt_res.trades) * 0.6)
+    oos_trades = [t.net_pnl_usd for t in bt_res.trades[split_idx:]]
+
+    gate11 = Gate11NautilusEvent()
+    nautilus_res = gate11.evaluate(
+        oos_trades=oos_trades,
+        symbol=c.symbol,
+        initial_capital=base_cap,
+        is_ultra=(c.route == "ULTRA"),
+    )
     return {
         "candidate_id": c.candidate_id,
         "name": c.name,

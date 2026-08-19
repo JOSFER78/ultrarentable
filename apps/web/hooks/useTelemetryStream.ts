@@ -94,8 +94,9 @@ export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
             }
 
             if (!isPausedRef.current && payload.event_type) {
+              const eventId = payload.event_id || `evt_${payload.event_type}_${Date.now()}_${logs.length}`;
               const newLog: TelemetryLogEvent = {
-                id: payload.event_id || Math.random().toString(36).substring(7),
+                id: eventId,
                 timestampMs: payload.timestamp_utc_ms || Date.now(),
                 workerId: 'SystemSupervisor',
                 eventType: payload.event_type,
