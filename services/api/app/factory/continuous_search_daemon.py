@@ -412,7 +412,7 @@ class ContinuousSearchDaemon:
                     passed_wfo = passed_oos and (ratio_oos_is >= 0.35)
                     mc_score = 85.0 if passed_wfo else 40.0
                     passed_mc = passed_wfo and (mc_score >= 50.0)
-                    approved = passed_mc and (oos_wr >= 18.0)
+                    approved = passed_mc and (oos_wr >= 18.0) and (res.monthly_roi_pct >= 20.0)
                 else:
                     # ── CRITERIOS RUTA FONDEO (CME Prop Firms) ──
                     # Preservación estricta de cuenta: Max Drawdown <= 4.0% OOS
@@ -422,7 +422,7 @@ class ContinuousSearchDaemon:
                     passed_wfo = passed_oos and (ratio_oos_is >= 0.35)
                     mc_score = 85.0 if passed_wfo else 40.0
                     passed_mc = passed_wfo and (mc_score >= 50.0)
-                    approved = passed_mc and (oos_dd <= 4.0)
+                    approved = passed_mc and (oos_dd <= 4.0) and (res.monthly_roi_pct >= 4.0)
 
                 if passed_is:
                     self.telemetry["funnel"]["passed_is"] += 1

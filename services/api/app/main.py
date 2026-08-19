@@ -5,6 +5,7 @@ Expone APIs V1 y V2 con soporte para streaming SSE y gobernanza Zero-Trust.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Dict, Any
@@ -37,14 +38,55 @@ from services.paper.paper_router import router as paper_router
 logger = logging.getLogger("UltrarentableAPI")
 
 
+from services.sqx_bridge.sqx_sync_worker import SQXSyncWorker
+from services.sqx_bridge.sqx_client import SQXMCPClient
+from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
+from services.api.app.api.search_router import router as search_router
+
+async def _periodic_sqx_sync():
+    """Sincroniza continuamente los databanks de SQX y garantiza que el proyecto esté corriendo 24/7."""
+    worker = SQXSyncWorker()
+    client = SQXMCPClient()
+    
+    # Auto-conectar y asegurar que Ultra_Auto_Pilot esté corriendo en SQX
+    try:
+        client.run_project("Ultra_Auto_Pilot")
+        logger.info("SQX Auto-Connect: Proyecto Ultra_Auto_Pilot lanzado en VPS.")
+    except Exception as e:
+        logger.debug(f"SQX initial launch note: {e}")
+
+    while True:
+        try:
+            worker.sync_databank("Ultra_Auto_Pilot", "Last generation")
+            worker.sync_databank("Ultra_Auto_Pilot", "Results")
+            worker.sync_databank("Ultra_Auto_Pilot", "Results_robust_20260809")
+        except Exception as e:
+            logger.debug(f"SQX periodic sync notice: {e}")
+        await asyncio.sleep(15)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Ciclo de vida de FastAPI: Inicializa DB y arranca el pool de 8 workers del Supervisor."""
+    """Ciclo de vida de FastAPI: Inicializa DB, arranca workers, demonio 24/7 y sincronizador SQX."""
     logger.info("Iniciando infraestructura Ultrarentable V2...")
     init_db()
     await supervisor_instance.start_all()
     logger.info("SystemSupervisor activo: 8 workers operando y emitiendo heartbeats.")
+    
+    # Arrancar Demonio de Búsqueda y Optimización Continua 24/7
+    try:
+        continuous_search_daemon.start()
+        logger.info("24/7 Continuous Strategy Search & Mining Daemon ACTIVO.")
+    except Exception as e:
+        logger.error(f"Error iniciando continuous_search_daemon: {e}")
+
+    # Iniciar tarea asíncrona de sincronización y supervisión 24/7 con StrategyQuant X
+    sync_task = asyncio.create_task(_periodic_sqx_sync())
+    
     yield
+    
+    sync_task.cancel()
+    continuous_search_daemon.stop()
     logger.info("Deteniendo SystemSupervisor y cerrando conexiones...")
     await supervisor_instance.stop_all()
     logger.info("Apagado ordenado completado.")
@@ -75,6 +117,7 @@ app.add_middleware(
 # ----------------------------------------------------------------------------
 app.include_router(legacy_routes, prefix="/api/v1", tags=["v1-core"])
 app.include_router(sqx_router, prefix="/api/v1", tags=["v1-sqx"])
+app.include_router(search_router, tags=["v1-search"])
 app.include_router(providers_router, prefix="/api/v1", tags=["v1-providers"])
 app.include_router(candidates_router, prefix="/api/v1", tags=["v1-candidates"])
 app.include_router(execution_router, prefix="/api/v1", tags=["v1-execution"])

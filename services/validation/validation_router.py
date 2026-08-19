@@ -141,3 +141,146 @@ async def list_candidates(status_filter: Optional[StrategyLifecycleStatus] = Non
         status_enum.value: registry_instance.list_by_status(status_enum)
         for status_enum in StrategyLifecycleStatus
     }
+
+
+# ----------------------------------------------------------------------------
+# 11 MODULAR VALIDATION ENGINES ENDPOINTS
+# ----------------------------------------------------------------------------
+from services.validation.engines.pipeline_orchestrator import ModularValidationPipeline
+
+modular_pipeline = ModularValidationPipeline()
+
+
+class Validate11GatesRequest(BaseModel):
+    strategy_id: str = Field(..., description="Unique Strategy ID")
+    name: str = Field(..., description="Strategy name")
+    symbol: str = Field("BTC-USDT", description="Trading asset symbol")
+    timeframe: str = Field("1h", description="Timeframe")
+    route: str = Field("ULTRA", description="ULTRA or FONDEO")
+    raw_trades_is: List[float] = Field(default_factory=list, description="In-sample trade PnLs in USD")
+    raw_trades_oos: List[float] = Field(default_factory=list, description="Out-of-sample trade PnLs in USD")
+    rules_text: Optional[str] = Field("", description="Strategy rules signature")
+    regime_pnls: Optional[Dict[str, float]] = Field(None, description="PnL breakdown by market regime")
+
+
+@router.get("/engines")
+async def list_modular_validation_engines() -> Dict[str, Any]:
+    """Retorna el catálogo oficial de los 11 motores desacoplados de validación."""
+    return {
+        "total_engines": 11,
+        "mode": "REAL_ONLY_MODULAR",
+        "engines": [
+            {
+                "gate_id": 1,
+                "engine_name": "Gate01_IngestSanityEngine",
+                "purpose": "Integridad física de OHLCV, ticks, gaps temporales y ausencia de NaNs",
+                "module_path": "services/validation/engines/gate_01_ingest_sanity.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 2,
+                "engine_name": "Gate02_DeterministicBacktestEngine",
+                "purpose": "Simulación determinista con comisiones reales BingX (0.05%) y slippage (3 ticks)",
+                "module_path": "services/validation/engines/gate_02_deterministic_backtest.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 3,
+                "engine_name": "Gate03_TradeSignificanceEngine",
+                "purpose": "Mínimo de trades estadísticamente significativo (>= 20 OOS, >= 40 total)",
+                "module_path": "services/validation/engines/gate_03_trade_significance.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 4,
+                "engine_name": "Gate04_WalkForwardEfficiencyEngine",
+                "purpose": "Walk-Forward Efficiency IS/OOS (WFE >= 0.50, Profit Factor OOS >= 1.20)",
+                "module_path": "services/validation/engines/gate_04_walk_forward_efficiency.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 5,
+                "engine_name": "Gate05_MonteCarloStressEngine",
+                "purpose": "1.000 simulaciones de permutación y reordenamiento, riesgo de ruina <= 1.0%",
+                "module_path": "services/validation/engines/gate_05_monte_carlo_stress.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 6,
+                "engine_name": "Gate06_FrictionStressEngine",
+                "purpose": "Estrés a fricción duplicada (+5 bps + 2x slippage) y retención de rentabilidad",
+                "module_path": "services/validation/engines/gate_06_friction_stress.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 7,
+                "engine_name": "Gate07_MarketRegimeCoverageEngine",
+                "purpose": "Verificación de comportamiento en regímenes alcista, bajista y lateral",
+                "module_path": "services/validation/engines/gate_07_market_regime_coverage.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 8,
+                "engine_name": "Gate08_DeflatedSharpeEngine",
+                "purpose": "Deflated Sharpe Ratio (DSR de Bailey & López de Prado) penalizando múltiples ensayos",
+                "module_path": "services/validation/engines/gate_08_deflated_sharpe.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 9,
+                "engine_name": "Gate09_NoveltyAntiOverfitEngine",
+                "purpose": "Auditoría contra FailureKnowledgeDB para descartar clones y sobreajustes conocidos",
+                "module_path": "services/validation/engines/gate_09_novelty_antioverfit.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 10,
+                "engine_name": "Gate10_SemanticAIDebateEngine",
+                "purpose": "Deliberación cualitativa de 5 agentes IA (Interpreter, Critic, Improver, Regime, Adversarial)",
+                "module_path": "services/validation/engines/gate_10_semantic_ai_debate.py",
+                "isolated_testable": True,
+            },
+            {
+                "gate_id": 11,
+                "engine_name": "Gate11_EnsembleSynergyEngine",
+                "purpose": "Sinergia multi-activo, correlación cruzada (< 0.35) y ponderación inversa por volatilidad",
+                "module_path": "services/validation/engines/gate_11_ensemble_synergy.py",
+                "isolated_testable": True,
+            },
+        ],
+    }
+
+
+@router.post("/validate-11-gates")
+async def validate_strategy_11_gates(req: Validate11GatesRequest) -> Dict[str, Any]:
+    """Ejecuta el pipeline secuencial completo de los 11 motores desacoplados."""
+    report = modular_pipeline.validate_candidate(
+        strategy_id=req.strategy_id,
+        name=req.name,
+        symbol=req.symbol,
+        timeframe=req.timeframe,
+        route=req.route,
+        raw_trades_is=req.raw_trades_is,
+        raw_trades_oos=req.raw_trades_oos,
+        rules_text=req.rules_text or "",
+        regime_pnls=req.regime_pnls,
+    )
+    return {
+        "strategy_id": report.strategy_id,
+        "name": report.name,
+        "route": report.route,
+        "all_passed": report.all_passed,
+        "failed_at_gate": report.failed_at_gate,
+        "total_execution_time_ms": report.total_execution_time_ms,
+        "gate_reports": [
+            {
+                "gate_id": g.gate_id,
+                "gate_name": g.gate_name,
+                "passed": g.passed,
+                "execution_time_ms": g.execution_time_ms,
+                "details": g.details,
+                "rejection_reasons": g.rejection_reasons,
+            }
+            for g in report.gate_reports
+        ],
+    }

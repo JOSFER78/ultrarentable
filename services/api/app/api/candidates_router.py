@@ -27,6 +27,7 @@ def list_candidates(
     status: Optional[str] = Query(None, description="Filter by candidate status"),
     symbol: Optional[str] = Query(None, description="Filter by symbol (e.g. BTC-USDT, EURUSD, NQ)"),
     timeframe: Optional[str] = Query(None, description="Filter by timeframe (e.g. 1m, 5m, 15m, 1h, 4h)"),
+    include_rejected: bool = Query(False, description="Incluir o no candidatos rechazados"),
     limit: int = Query(100, ge=1, le=500, description="Max candidates to return"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db)
@@ -74,6 +75,7 @@ def list_candidates(
         }
 
         is_fondeo = (c.route == "FONDEO")
+        max_allowed_dd = 4.5 if is_fondeo else 90.0
         base_cap = float(oos_m.get("account_base_usd") or (50000.0 if is_fondeo else 10000.0))
         net_prof_oos = float(c.net_profit_oos if c.net_profit_oos is not None else oos_m.get("net_profit_usd", 0.0))
         
@@ -86,6 +88,27 @@ def list_candidates(
         wr_oos = float(sc.get("win_rate_pct") or oos_m.get("win_rate_pct") or oos_m.get("win_rate") or 38.0)
         pf_oos = float(c.profit_factor_oos if c.profit_factor_oos is not None else oos_m.get("profit_factor", 1.5))
         dd_oos = float(c.max_dd_oos_pct if c.max_dd_oos_pct is not None else oos_m.get("max_drawdown_pct", 4.0))
+        dd_is = float(c.max_dd_is_pct if c.max_dd_is_pct is not None else is_m.get("max_drawdown_pct", 0.0))
+
+        # Dynamic Strict Status Enforcement según Doctrina Ultra vs Fondeo
+        resolved_status = c.status
+        resolved_reason = c.status_reason
+        if dd_is > max_allowed_dd or dd_oos > max_allowed_dd:
+            resolved_status = "RECHAZADA_ALTO_DRAWDOWN"
+            if is_fondeo:
+                resolved_reason = f"Descartada: Max DD {max(dd_is, dd_oos):.1f}% supera el límite estricto de Fondeo (4.5%)"
+            else:
+                resolved_reason = f"Descartada: Max DD {max(dd_is, dd_oos):.1f}% supera el 90% (riesgo de quiebra de bala)"
+        elif not is_fondeo and (monthly_roi < 20.0 or pf_oos < 1.25):
+            resolved_status = "RECHAZADA_BAJA_RENTABILIDAD"
+            resolved_reason = f"Descartada: Retorno mensual anémico ({monthly_roi:.2f}%/m < 20.0%/m mínimo) para bala Ultra"
+        elif is_fondeo and (monthly_roi < 4.0 or pf_oos < 1.20):
+            resolved_status = "RECHAZADA_BAJA_RENTABILIDAD"
+            resolved_reason = f"Descartada: Retorno ({monthly_roi:.2f}%/m < 4.0%/m) o Profit Factor insuficiente ({pf_oos:.2f}) para Fondeo"
+
+        # Filtrar automáticamente los descartes a menos que se soliciten explícitamente
+        if not include_rejected and resolved_status.startswith("RECHAZADA"):
+            continue
 
         results.append({
             "candidate_id": c.candidate_id,
@@ -94,8 +117,8 @@ def list_candidates(
             "symbol": c.symbol,
             "timeframe": c.timeframe,
             "dataset_id": c.dataset_id,
-            "status": c.status,
-            "status_reason": c.status_reason,
+            "status": resolved_status,
+            "status_reason": resolved_reason,
             "archetype": sc.get("archetype") or "QUANT_PATTERN",
             "scorecard_json": c.scorecard_json,
             "duration_info": dur,

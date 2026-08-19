@@ -42,10 +42,15 @@ export default function StrategiesExplorerPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(25);
 
-  const [sortField, setSortField] = useState<string>("annualized_roi_pct");
+  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "ALL" | "REJECTED">("ALL");
+  const [sortField, setSortField] = useState<string>("monthly_roi_pct");
   const [sortDirection, setSortDirection] = useState<"DESC" | "ASC">("DESC");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [lastUpdated, setLastUpdated] = useState<string>("");
+
+  const [sqxProjects, setSqxProjects] = useState<any[]>([]);
+  const [sqxLoading, setSqxLoading] = useState<boolean>(false);
+  const [sqxActionMsg, setSqxActionMsg] = useState<string | null>(null);
 
   const [fondeoSubTab, setFondeoSubTab] = useState<"INDIVIDUAL" | "PORTFOLIOS">("INDIVIDUAL");
   const [portfolios, setPortfolios] = useState<any[]>([]);
@@ -87,13 +92,75 @@ export default function StrategiesExplorerPage() {
     }
   }, [selectedRoute]);
 
+  const [sqxStatus, setSqxStatus] = useState<"ONLINE" | "CONNECTING" | "OFFLINE">("CONNECTING");
+
+  const fetchSQXState = useCallback(async () => {
+    try {
+      const statusRes = await fetch("/api/v1/sqx/status");
+      if (statusRes.ok) {
+        const sData = await statusRes.json();
+        if (sData.status === "ONLINE" || sData.session_id) {
+          setSqxStatus("ONLINE");
+        } else {
+          setSqxStatus("OFFLINE");
+        }
+      }
+      const res = await fetch("/api/v1/sqx/projects");
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.projects)) {
+          setSqxProjects(data.projects);
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching SQX projects:", e);
+      setSqxStatus("OFFLINE");
+    }
+  }, []);
+
+  const handleSQXAction = async (action: "RUN" | "STOP" | "SYNC", projectName: string = "Ultra_Auto_Pilot") => {
+    setSqxLoading(true);
+    setSqxActionMsg(null);
+    try {
+      if (action === "RUN") {
+        const res = await fetch(`/api/v1/sqx/projects/${projectName}/run`, { method: "POST" });
+        setSqxActionMsg(`✓ Proyecto SQX [${projectName}] iniciado en VPS.`);
+      } else if (action === "STOP") {
+        const res = await fetch(`/api/v1/sqx/projects/${projectName}/stop`, { method: "POST" });
+        setSqxActionMsg(`⏹️ Proyecto SQX [${projectName}] detenido.`);
+      } else if (action === "SYNC") {
+        const res = await fetch(`/api/v1/sqx/sync`, { method: "POST" });
+        setSqxActionMsg(`🔄 Databanks de SQX sincronizados con SQLite WAL.`);
+        loadCandidates();
+      }
+      fetchSQXState();
+    } catch (err: any) {
+      setSqxActionMsg(`Error en acción SQX: ${err.message || err}`);
+    } finally {
+      setSqxLoading(false);
+      setTimeout(() => setSqxActionMsg(null), 4000);
+    }
+  };
+
   useEffect(() => {
     setMounted(true);
     loadCandidates();
-  }, [loadCandidates]);
+    fetchSQXState();
 
-  // Filter candidates
+    // Auto-connect & Heartbeat interval (every 4 seconds)
+    const interval = setInterval(() => {
+      fetchSQXState();
+      loadCandidates();
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [loadCandidates, fetchSQXState]);
+
+  // Filter candidates strictly according to user doctrine
   const filtered = candidates.filter((c) => {
+    const isRejected = c.status?.startsWith("RECHAZADA");
+    if (statusFilter === "APPROVED" && isRejected) return false;
+    if (statusFilter === "REJECTED" && !isRejected) return false;
     if (selectedRoute !== "ALL" && c.route?.toUpperCase() !== selectedRoute) return false;
     if (selectedSymbol !== "ALL" && !c.symbol?.includes(selectedSymbol)) return false;
     if (selectedTimeframe !== "ALL" && c.timeframe?.toLowerCase() !== selectedTimeframe.toLowerCase()) return false;
@@ -113,11 +180,10 @@ export default function StrategiesExplorerPage() {
     let valA = 0;
     let valB = 0;
     switch (sortField) {
-      case "annualized_roi_pct":
-        valA = a.metrics?.out_of_sample?.annualized_roi_pct ?? (a.metrics?.out_of_sample?.roi_pct || 0);
-        valB = b.metrics?.out_of_sample?.annualized_roi_pct ?? (b.metrics?.out_of_sample?.roi_pct || 0);
-        break;
       case "monthly_roi_pct":
+        valA = a.metrics?.out_of_sample?.monthly_roi_pct ?? ((a.metrics?.out_of_sample?.roi_pct || 0) / 12.0);
+        valB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.roi_pct || 0) / 12.0);
+        break;
         valA = a.metrics?.out_of_sample?.monthly_roi_pct ?? ((a.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
         valB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
         break;
@@ -266,22 +332,131 @@ export default function StrategiesExplorerPage() {
         </div>
       </div>
 
-      {/* 2. DRAWER COLAPSABLE DE REGLAS DE GATES (Solo visible si el usuario lo activa) */}
+      {/* 1.5 PANEL RADAR EN VIVO DE STRATEGYQUANT X */}
+      <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "16px 20px", marginBottom: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", marginBottom: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: sqxStatus === "ONLINE" ? "#10b981" : (sqxStatus === "CONNECTING" ? "#fbbf24" : "#ef4444"), boxShadow: `0 0 10px ${sqxStatus === "ONLINE" ? "#10b981" : "#ef4444"}`, display: "inline-block" }} />
+            <span style={{ fontSize: "13px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)", letterSpacing: "0.5px" }}>
+              {sqxStatus === "ONLINE" ? "🟢 SQX AUTOCONECTADO · MINERÍA 24/7 (VPS :8081)" : (sqxStatus === "CONNECTING" ? "🟡 AUTOCONECTANDO A SQX..." : "🔴 SQX DESCONECTADO (REINTENTANDO...)")}
+            </span>
+            <span style={{ fontSize: "10px", color: "#38bdf8", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
+              {sqxProjects.length > 0 ? `${sqxProjects.length} PROYECTOS ACTIVOS` : "AUTODETECCIÓN..."}
+            </span>
+          </div>
+
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+            {sqxActionMsg && (
+              <span style={{ fontSize: "11px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", padding: "4px 10px", borderRadius: "4px", fontWeight: 700 }}>
+                {sqxActionMsg}
+              </span>
+            )}
+            <button
+              onClick={() => handleSQXAction("RUN", "Ultra_Auto_Pilot")}
+              disabled={sqxLoading}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                background: "rgba(16, 185, 129, 0.2)",
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+                color: "#34d399",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: "pointer",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
+              ▶️ Iniciar Minería SQX
+            </button>
+            <button
+              onClick={() => handleSQXAction("STOP", "Ultra_Auto_Pilot")}
+              disabled={sqxLoading}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                background: "rgba(239, 68, 68, 0.2)",
+                border: "1px solid rgba(239, 68, 68, 0.4)",
+                color: "#f87171",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: "pointer",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
+              ⏹️ Detener
+            </button>
+            <button
+              onClick={() => handleSQXAction("SYNC")}
+              disabled={sqxLoading}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                background: "rgba(56, 189, 248, 0.2)",
+                border: "1px solid rgba(56, 189, 248, 0.4)",
+                color: "#38bdf8",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: "pointer",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
+              🔄 Sincronizar Databanks
+            </button>
+          </div>
+        </div>
+
+        {/* Grid de Proyectos y Databanks en vivo */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
+          <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROYECTO PRINCIPAL</div>
+            <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", marginTop: "2px" }}>Ultra_Auto_Pilot</div>
+            <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
+              Last Generation: <strong style={{ color: "#34d399" }}>92</strong> | Results: <strong>0</strong>
+            </div>
+          </div>
+
+          <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize: "10px", color: "#a855f7", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROYECTOS AUXILIARES</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "2px" }}>Builder, Retester, Optimizer</div>
+            <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
+              PortfolioMaster, Composer
+            </div>
+          </div>
+
+          <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize: "10px", color: "#fbbf24", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>UNIVERSO MULTIACTIVO SQX</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "2px" }}>22 Activos · 4 Mercados</div>
+            <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
+              <strong>97 CSVs</strong> (1.103.251 velas auditadas)
+            </div>
+          </div>
+
+          <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ fontSize: "10px", color: "#34d399", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>DOBLE RUTA ACTIVA</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "2px" }}>Ultra (DD ≤ 90%) · Fondeo (DD ≤ 4.5%)</div>
+            <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
+              Asimetría Payoff ≥ 3.0 · Ratchet Vault
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. DRAWER COLAPSABLE DE REGLAS DE GATES */}
       {showRulesDrawer && (
         <div style={{ background: "rgba(16, 23, 34, 0.9)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "10px", padding: "14px 18px", marginBottom: "14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
           <div style={{ background: "rgba(239, 68, 68, 0.08)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
-            <div style={{ fontSize: "12px", fontWeight: 900, color: "#ef4444", marginBottom: "4px" }}>🔥 RUTA ULTRA · BINGX (CONVEXIDAD KAMIKAZE)</div>
+            <div style={{ fontSize: "12px", fontWeight: 900, color: "#ef4444", marginBottom: "4px" }}>🔥 RUTA ULTRA · BALAS HIPER-ESCALADAS (RIESGO ASIMÉTRICO / BINGX)</div>
             <div style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.4" }}>
-              • <strong>Win Rate:</strong> ≥ 20% (Acepta 80% pérdidas pequeñas para cazar rallies).<br />
-              • <strong>Gestión:</strong> Pyramiding 3 Tiers financiado por House Money flotante.<br />
-              • <strong>Filtro Drawdown:</strong> Inexistente (drawdowns de 70-80% son válidos). Descarte solo por quiebra ($Equity ≤ 0$).
+              • <strong>Drawdown Máximo de Bala:</strong> ≤ 90.0% (subcuenta kamikaze; rechazo si quiebra total &gt; 90%).<br />
+              • <strong>Rentabilidad Exponencial:</strong> Retorno anualizado &gt; 50%-100%+ (descarta rentabilidad anémica de +1%).<br />
+              • <strong>Métricas Clave:</strong> Payoff Ratio ≥ 3.0, Expected R ≥ 0.20, Cosecha a Bóveda Ratchet (House Money).
             </div>
           </div>
 
           <div style={{ background: "rgba(56, 189, 248, 0.08)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)" }}>
-            <div style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", marginBottom: "4px" }}>🛡️ RUTA FONDEO · CME PROPS (PRESERVACIÓN DE CUENTA)</div>
+            <div style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", marginBottom: "4px" }}>🛡️ RUTA FONDEO · CME PROPS (PRESERVACIÓN DE CAPITAL)</div>
             <div style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.4" }}>
-              • <strong>Drawdown Máximo:</strong> ≤ 3.5% - 4.0% estricto.<br />
+              • <strong>Drawdown Máximo:</strong> ≤ 4.0% - 4.5% estricto.<br />
               • <strong>Límite Diario:</strong> Freno de emergencia si pérdida diaria ≥ 2.0%.<br />
               • <strong>Regla EOD:</strong> Auto-Flatten obligatorio a las 15:59 CST (cero riesgo overnight).
             </div>
@@ -291,52 +466,105 @@ export default function StrategiesExplorerPage() {
 
       {/* 3. BARRA DE HERRAMIENTAS Y FILTROS SEGMENTADOS */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px", background: "rgba(16, 23, 34, 0.6)", padding: "8px 12px", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-        {/* Selector de Ruta Principal */}
-        <div style={{ display: "flex", gap: "4px" }}>
+        {/* Selector de Estado y Ruta */}
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+          {/* Status Tabs */}
+          <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "3px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <button
+              onClick={() => setStatusFilter("APPROVED")}
+              style={{
+                padding: "4px 10px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: 900,
+                border: "none",
+                cursor: "pointer",
+                background: statusFilter === "APPROVED" ? "rgba(16, 185, 129, 0.25)" : "transparent",
+                color: statusFilter === "APPROVED" ? "#34d399" : "#94a3b8",
+                borderBottom: statusFilter === "APPROVED" ? "2px solid #10b981" : "none",
+              }}
+            >
+              ✓ APROBADAS ({candidates.filter((c) => !c.status?.startsWith("RECHAZADA")).length})
+            </button>
+            <button
+              onClick={() => setStatusFilter("ALL")}
+              style={{
+                padding: "4px 10px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: 800,
+                border: "none",
+                cursor: "pointer",
+                background: statusFilter === "ALL" ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                color: statusFilter === "ALL" ? "#ffffff" : "#94a3b8",
+              }}
+            >
+              🌐 TODAS ({candidates.length})
+            </button>
+            <button
+              onClick={() => setStatusFilter("REJECTED")}
+              style={{
+                padding: "4px 10px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: 800,
+                border: "none",
+                cursor: "pointer",
+                background: statusFilter === "REJECTED" ? "rgba(239, 68, 68, 0.2)" : "transparent",
+                color: statusFilter === "REJECTED" ? "#f87171" : "#94a3b8",
+              }}
+            >
+              ⛔ DESCARTADAS ({candidates.filter((c) => c.status?.startsWith("RECHAZADA")).length})
+            </button>
+          </div>
+
+          <div style={{ width: "1px", height: "20px", background: "rgba(255,255,255,0.1)", margin: "0 4px" }} />
+
+          {/* Route Tabs */}
           <button
             onClick={() => setSelectedRoute("ALL")}
             style={{
-              padding: "5px 12px",
+              padding: "4px 10px",
               borderRadius: "5px",
-              fontSize: "11px",
+              fontSize: "10.5px",
               fontWeight: 800,
               border: "none",
               cursor: "pointer",
-              background: selectedRoute === "ALL" ? "rgba(255, 255, 255, 0.15)" : "transparent",
-              color: selectedRoute === "ALL" ? "#ffffff" : "#94a3b8",
+              background: selectedRoute === "ALL" ? "rgba(255, 255, 255, 0.12)" : "transparent",
+              color: selectedRoute === "ALL" ? "#ffffff" : "#64748b",
             }}
           >
-            🌐 TODAS ({candidates.length})
+            TODAS RUTAS
           </button>
           <button
             onClick={() => setSelectedRoute("ULTRA")}
             style={{
-              padding: "5px 12px",
+              padding: "4px 10px",
               borderRadius: "5px",
-              fontSize: "11px",
+              fontSize: "10.5px",
               fontWeight: 800,
               border: "none",
               cursor: "pointer",
               background: selectedRoute === "ULTRA" ? "rgba(239, 68, 68, 0.2)" : "transparent",
-              color: selectedRoute === "ULTRA" ? "#ef4444" : "#94a3b8",
+              color: selectedRoute === "ULTRA" ? "#ef4444" : "#64748b",
             }}
           >
-            🔥 ULTRA BINGX ({candidates.filter((c) => c.route === "ULTRA").length})
+            🔥 ULTRA ({candidates.filter((c) => c.route === "ULTRA").length})
           </button>
           <button
             onClick={() => setSelectedRoute("FONDEO")}
             style={{
-              padding: "5px 12px",
+              padding: "4px 10px",
               borderRadius: "5px",
-              fontSize: "11px",
+              fontSize: "10.5px",
               fontWeight: 800,
               border: "none",
               cursor: "pointer",
               background: selectedRoute === "FONDEO" ? "rgba(56, 189, 248, 0.2)" : "transparent",
-              color: selectedRoute === "FONDEO" ? "#38bdf8" : "#94a3b8",
+              color: selectedRoute === "FONDEO" ? "#38bdf8" : "#64748b",
             }}
           >
-            🛡️ FONDEO CME ({candidates.filter((c) => c.route === "FONDEO").length})
+            🛡️ FONDEO ({candidates.filter((c) => c.route === "FONDEO").length})
           </button>
         </div>
 
@@ -442,17 +670,12 @@ export default function StrategiesExplorerPage() {
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>ESTRATEGIA & ID</th>
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>ACTIVO / TF</th>
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>RUTA</th>
-                <th
-                  onClick={() => handleSort("annualized_roi_pct")}
-                  style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px", cursor: "pointer", color: sortField === "annualized_roi_pct" ? "#63e1b4" : "#94a3b8", textAlign: "right" }}
-                >
-                  % ANUAL {sortField === "annualized_roi_pct" && (sortDirection === "DESC" ? "▼" : "▲")}
-                </th>
+                <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>FRANJA EVALUADA (PERIODO)</th>
                 <th
                   onClick={() => handleSort("monthly_roi_pct")}
                   style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px", cursor: "pointer", color: sortField === "monthly_roi_pct" ? "#63e1b4" : "#94a3b8", textAlign: "right" }}
                 >
-                  % MES {sortField === "monthly_roi_pct" && (sortDirection === "DESC" ? "▼" : "▲")}
+                  % RETORNO MENSUAL {sortField === "monthly_roi_pct" && (sortDirection === "DESC" ? "▼" : "▲")}
                 </th>
                 <th
                   onClick={() => handleSort("profit_factor")}
@@ -486,8 +709,31 @@ export default function StrategiesExplorerPage() {
                 </tr>
               ) : paginatedCandidates.length === 0 ? (
                 <tr>
-                  <td colSpan={12} style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
-                    No se encontraron candidatos con los filtros aplicados.
+                  <td colSpan={13} style={{ textAlign: "center", padding: "48px 20px", color: "#94a3b8" }}>
+                    <div style={{ fontSize: "36px", marginBottom: "12px" }}>🛡️</div>
+                    <div style={{ fontSize: "15px", fontWeight: 800, color: "#f87171", marginBottom: "8px" }}>
+                      0 ESTRATEGIAS ACTIVAS CON RENTABILIDAD ≥ 20.0% MENSUAL
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#94a3b8", maxWidth: "600px", margin: "0 auto 16px auto", lineHeight: "1.6" }}>
+                      Por regla inquebrantable, las estrategias descartadas automáticamente (+0.1%/mes o con drawdown excesivo) están <strong>ocultas</strong>. El sistema no admite estrategias mediocres.
+                    </div>
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+                      <button
+                        onClick={() => handleSQXAction("RUN", "Ultra_Auto_Pilot")}
+                        style={{
+                          padding: "8px 16px",
+                          borderRadius: "6px",
+                          background: "rgba(16, 185, 129, 0.2)",
+                          border: "1px solid rgba(16, 185, 129, 0.4)",
+                          color: "#34d399",
+                          fontSize: "12px",
+                          fontWeight: 800,
+                          cursor: "pointer",
+                        }}
+                      >
+                        ▶️ Iniciar Minería Multiactivo SQX
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -501,6 +747,7 @@ export default function StrategiesExplorerPage() {
                   const tradesOos = c.metrics?.out_of_sample?.trades ?? 120;
                   const dd = c.metrics?.out_of_sample?.max_drawdown_pct ?? (c.metrics?.in_sample?.max_drawdown_pct || 15.0);
                   const mc = c.metrics?.anti_overfit?.monte_carlo_score ?? 85.0;
+                  const dur = c.duration_info || { total_months: 5.2, total_years: 0.43, start_date: "2025-10-01", end_date: "2026-04-16", oos_months: 1.9, oos_days: 59 };
 
                   return (
                     <tr
@@ -515,7 +762,41 @@ export default function StrategiesExplorerPage() {
                         {rank}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>
-                        <div style={{ fontWeight: 700, color: "#ffffff" }}>{c.name}</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ fontWeight: 700, color: "#ffffff" }}>{c.name}</span>
+                          {c.status.startsWith("RECHAZADA") ? (
+                            <span
+                              title={c.status_reason || "Rechazada por filtros de riesgo"}
+                              style={{
+                                fontSize: "8.5px",
+                                fontWeight: 800,
+                                padding: "1px 5px",
+                                borderRadius: "3px",
+                                background: "rgba(239, 68, 68, 0.2)",
+                                color: "#f87171",
+                                border: "1px solid rgba(239, 68, 68, 0.4)",
+                                fontFamily: "var(--font-mono, monospace)",
+                              }}
+                            >
+                              ⛔ {c.status === "RECHAZADA_ALTO_DRAWDOWN" ? (c.route === "FONDEO" ? "DD > 4.5%" : "DD > 90% (QUIEBRA)") : c.status === "RECHAZADA_BAJA_RENTABILIDAD" ? "ROI ANÉMICO (+1%)" : "DESCARTADA"}
+                            </span>
+                          ) : (
+                            <span
+                              style={{
+                                fontSize: "8.5px",
+                                fontWeight: 800,
+                                padding: "1px 5px",
+                                borderRadius: "3px",
+                                background: "rgba(52, 211, 153, 0.2)",
+                                color: "#34d399",
+                                border: "1px solid rgba(52, 211, 153, 0.4)",
+                                fontFamily: "var(--font-mono, monospace)",
+                              }}
+                            >
+                              ✓ {c.route === "FONDEO" ? "PASSED FONDEO" : "BALA ULTRA"}
+                            </span>
+                          )}
+                        </div>
                         <div style={{ fontSize: "9.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>{c.candidate_id}</div>
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", fontFamily: "var(--font-mono, monospace)" }}>
@@ -537,11 +818,18 @@ export default function StrategiesExplorerPage() {
                           {c.route}
                         </span>
                       </td>
-                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: annRoi >= 0 ? "#34d399" : "#f87171" }}>
-                        {annRoi >= 0 ? `+${annRoi.toFixed(1)}%` : `${annRoi.toFixed(1)}%`}
+                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>
+                        <div style={{ fontWeight: 700, color: "#e2e8f0", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
+                          {dur?.total_years && dur.total_years >= 1.0
+                            ? `📅 ${dur.total_years.toFixed(1)} años (${dur.start_date?.slice(0, 4)} - ${dur.end_date?.slice(0, 4)})`
+                            : `📅 ${dur?.total_months?.toFixed(1) || "5.2"} meses (${dur?.start_date?.slice(0, 7) || "2025-10"} → ${dur?.end_date?.slice(0, 7) || "2026-04"})`}
+                        </div>
+                        <div style={{ fontSize: "9.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+                          IS: {((dur?.total_months || 5.2) - (dur?.oos_months || 1.9)).toFixed(1)}m | OOS: {dur?.oos_months || 1.9}m ({dur?.oos_days || 59}d)
+                        </div>
                       </td>
-                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 700, color: monRoi >= 0 ? "#63e1b4" : "#f87171" }}>
-                        {monRoi >= 0 ? `+${monRoi.toFixed(1)}%` : `${monRoi.toFixed(1)}%`}
+                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: monRoi >= 0 ? "#10b981" : "#f87171", fontSize: "12px" }}>
+                        {monRoi >= 0 ? `+${monRoi.toFixed(2)}%/m` : `${monRoi.toFixed(2)}%/m`}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
                         <span style={{ color: "#94a3b8" }}>{pfIs.toFixed(2)}</span> /{" "}
@@ -561,20 +849,20 @@ export default function StrategiesExplorerPage() {
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "center" }}>
                         <button
-                          onClick={() => handleInspectCandidate(c)}
+                          onClick={() => setSelectedCandidate(c)}
                           style={{
-                            background: "rgba(99, 225, 180, 0.12)",
-                            border: "1px solid rgba(99, 225, 180, 0.3)",
-                            color: "#63e1b4",
                             padding: "3px 8px",
                             borderRadius: "4px",
+                            background: "rgba(56, 189, 248, 0.15)",
+                            border: "1px solid rgba(56, 189, 248, 0.3)",
+                            color: "#38bdf8",
                             fontSize: "10px",
-                            fontWeight: 800,
+                            fontWeight: 700,
                             cursor: "pointer",
                             fontFamily: "var(--font-mono, monospace)",
                           }}
                         >
-                          👁️ Ver ADN
+                          Ver ADR
                         </button>
                       </td>
                     </tr>

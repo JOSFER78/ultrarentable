@@ -4,18 +4,18 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { StrategyLifecycleStatus } from "@/types/telemetry";
 
-const FSM_11_STEPS: { key: StrategyLifecycleStatus | "SEMANTIC_DEBATED" | "PORTFOLIO_ENSEMBLE"; label: string; desc: string; color: string; count: number; step: number }[] = [
-  { key: "GENERATED", label: "1. GENERATED", desc: "Generada por SQX / IA", color: "#94a3b8", count: 78550, step: 1 },
-  { key: "BACKTESTED", label: "2. BACKTESTED", desc: "Backtest en muestra (IS)", color: "#38bdf8", count: 78550, step: 2 },
-  { key: "OOS_PASSED", label: "3. OOS_PASSED", desc: "Ventana fuera de muestra", color: "#60a5fa", count: 1240, step: 3 },
-  { key: "ROBUSTNESS_PASSED", label: "4. ROBUSTNESS_PASSED", desc: "Monte Carlo 10k & WFO", color: "#818cf8", count: 380, step: 4 },
-  { key: "EVIDENCE_APPROVED", label: "5. EVIDENCE_APPROVED", desc: "Evidence Gate Dual", color: "#a78bfa", count: 142, step: 5 },
-  { key: "SEMANTIC_DEBATED", label: "6. SEMANTIC_DEBATED", desc: "Debate 5 Agentes IA", color: "#c084fc", count: 142, step: 6 },
-  { key: "PORTFOLIO_ENSEMBLE", label: "7. ENSEMBLE_HEDGED", desc: "Compensación de Fallos", color: "#ec4899", count: 10, step: 7 },
-  { key: "CANDIDATE", label: "8. CANDIDATE", desc: "Candidato Formal FSM", color: "#f43f5e", count: 142, step: 8 },
-  { key: "INCUBATION_PAPER", label: "9. INCUBATION_PAPER", desc: "14 días sandbox sin drift", color: "#f59e0b", count: 24, step: 9 },
-  { key: "LIVE_ACTIVE", label: "10. LIVE_ACTIVE", desc: "Operación real 24/7", color: "#34d399", count: 8, step: 10 },
-  { key: "REJECTED", label: "TERMINAL_REJECT", desc: "Rechazada / Drift", color: "#64748b", count: 77170, step: 99 },
+const FSM_11_STEPS: { key: string; label: string; desc: string; color: string; step: number }[] = [
+  { key: "INGEST_SANITY", label: "1. DATA INGEST", desc: "Saneamiento OHLCV & Gaps", color: "#94a3b8", step: 1 },
+  { key: "BACKTEST_DETERMINISTIC", label: "2. BACKTEST COSTES", desc: "Costes BingX 0.05% + 3 ticks", color: "#38bdf8", step: 2 },
+  { key: "TRADE_SIGNIFICANCE", label: "3. TRADE SIGNIFICANCE", desc: "Trades OOS >= 20", color: "#60a5fa", step: 3 },
+  { key: "WALK_FORWARD", label: "4. WALK-FORWARD", desc: "WFE >= 0.50 & Anti-Curvefit", color: "#818cf8", step: 4 },
+  { key: "MONTE_CARLO", label: "5. MONTE CARLO", desc: "1.000 Sims (Ruina <= 1%)", color: "#a78bfa", step: 5 },
+  { key: "FRICTION_STRESS", label: "6. STRESS SLIPPAGE", desc: "+5 bps & Slippage 2x", color: "#c084fc", step: 6 },
+  { key: "REGIME_COVERAGE", label: "7. REGIME COVERAGE", desc: "Bull / Bear / Lateral", color: "#e879f9", step: 7 },
+  { key: "DEFLATED_SHARPE", label: "8. DSR RATIO", desc: "DSR > 1.50 (Bailey & López)", color: "#f43f5e", step: 8 },
+  { key: "NOVELTY_ANTIOVERFIT", label: "9. NOVELTY / ANTI-FIT", desc: "FailureKnowledgeDB", color: "#fb923c", step: 9 },
+  { key: "SEMANTIC_DEBATE", label: "10. DEBATE 5 AGENTES", desc: "Comité IA de Riesgo", color: "#facc15", step: 10 },
+  { key: "PORTFOLIO_ENSEMBLE", label: "11. META-ENSEMBLE", desc: "HRP & Descorrelación <0.35", color: "#34d399", step: 11 },
 ];
 
 interface CandidateItem {
@@ -247,7 +247,7 @@ export default function CandidatosFSMPage() {
     
     if (isEnsemble) {
       if (type === "pine") {
-        code = `//@version=5\n// Ultrarentable V2 Meta-Ensemble Multi-Asset Hybrid (${ensembleRoute})\n// Sinergia y Compensación de Fallos en Paralelo\nstrategy("Meta-Ensemble ${ensembleRoute}", overlay=true, initial_capital=${ensembleRoute === "FONDEO" ? 50000 : 10000})\n\n// Submotores Multi-Activo ponderados por Risk Parity\n${selectedEnsembleIds.map((id, i) => `// Submotor #${i + 1}: ${id}`).join("\n")}\n\n// Señales sincronizadas y Bóveda Ratchet\nvar float portfolio_equity_peak = 0.0\nportfolio_equity_peak := math.max(portfolio_equity_peak, strategy.equity)\nfloat dd_pct = (portfolio_equity_peak - strategy.equity) / portfolio_equity_peak * 100.0\n\n// Cortacircuito Anti-Drawdown Global\nif (dd_pct > ${ensembleRoute === "FONDEO" ? 3.5 : 8.0})\n    strategy.close_all(comment="Circuit Breaker Drawdown Cushion")`;
+        code = `//@version=5\n// Ultrarentable V2 Meta-Ensemble Multi-Asset Hybrid (${ensembleRoute})\n// Sinergia y Compensación de Fallos en Paralelo\nstrategy("Meta-Ensemble ${ensembleRoute}", overlay=true, initial_capital=${ensembleRoute === "FONDEO" ? 50000 : 10000}, commission_type=strategy.commission.percent, commission_value=0.05, slippage=3)\n\n// Submotores Multi-Activo ponderados por Risk Parity\n${selectedEnsembleIds.map((id, i) => `// Submotor #${i + 1}: ${id}`).join("\n")}\n\n// Señales sincronizadas y Bóveda Ratchet\nvar float portfolio_equity_peak = 0.0\nportfolio_equity_peak := math.max(portfolio_equity_peak, strategy.equity)\nfloat dd_pct = (portfolio_equity_peak - strategy.equity) / portfolio_equity_peak * 100.0\n\n// Cortacircuito Anti-Drawdown Global\nif (dd_pct > ${ensembleRoute === "FONDEO" ? 3.5 : 8.0})\n    strategy.close_all(comment="Circuit Breaker Drawdown Cushion")`;
       } else if (type === "ninja") {
         code = `// NinjaTrader 8 Multi-Instrument Portfolio Strategy\n// Meta-Ensemble Hybrid (${ensembleRoute})\nnamespace NinjaTrader.NinjaScript.Strategies {\n    public class MetaEnsemble${ensembleRoute} : Strategy {\n        protected override void OnStateChange() {\n            if (State == State.SetDefaults) {\n                Name = "MetaEnsemble_${ensembleRoute}";\n                Calculate = Calculate.OnBarClose;\n            }\n        }\n    }\n}`;
       } else {
@@ -255,7 +255,7 @@ export default function CandidatosFSMPage() {
       }
     } else if (c) {
       if (type === "pine") {
-        code = `//@version=5\n// Ultrarentable V2 Quantitative PineScript\n// Strategy: ${c.name} (${c.symbol} ${c.timeframe})\nstrategy("${c.name}", overlay=true, initial_capital=${c.route === "FONDEO" ? 50000 : 10000}, default_qty_type=strategy.percent_of_equity, default_qty_value=${c.route === "FONDEO" ? 2 : 10})\n\n// Parámetros\nlen = input.int(20, "Donchian Period")\nupper = ta.highest(high, len)\nlower = ta.lowest(low, len)\natrVal = ta.atr(14)\n\n// Condiciones Long / Short\nlongCond = close > upper[1] and ta.rsi(close, 14) > 52\nshortCond = close < lower[1] and ta.rsi(close, 14) < 48\n\nif (longCond)\n    strategy.entry("Long", strategy.long)\n    strategy.exit("ExitLong", "Long", loss=atrVal * 1.5, profit=atrVal * 3.5)\n\nif (shortCond)\n    strategy.entry("Short", strategy.short)\n    strategy.exit("ExitShort", "Short", loss=atrVal * 1.5, profit=atrVal * 3.5)`;
+        code = `//@version=5\n// Ultrarentable V2 Quantitative PineScript Strategy\n// Strategy: ${c.name} (${c.symbol} ${c.timeframe})\nstrategy("${c.name}", overlay=true, initial_capital=${c.route === "FONDEO" ? 50000 : 10000}, default_qty_type=strategy.percent_of_equity, default_qty_value=${c.route === "FONDEO" ? 2 : 10}, commission_type=strategy.commission.percent, commission_value=0.05, slippage=3)\n\n// Parámetros\nlen = input.int(20, "Donchian Period")\nupper = ta.highest(high, len)\nlower = ta.lowest(low, len)\natrVal = ta.atr(14)\natr_sl_mult = input.float(1.5, "ATR Stop Multiplier")\natr_tp_mult = input.float(3.5, "ATR TP Multiplier")\n\n// Condiciones Long / Short\nlongCond = close > upper[1] and ta.rsi(close, 14) > 52\nshortCond = close < lower[1] and ta.rsi(close, 14) < 48\n\nif (longCond)\n    sl_price = close - (atrVal * atr_sl_mult)\n    tp_price = close + (atrVal * atr_tp_mult)\n    strategy.entry("Long", strategy.long)\n    strategy.exit("ExitLong", "Long", stop=sl_price, limit=tp_price)\n\nif (shortCond)\n    sl_price = close + (atrVal * atr_sl_mult)\n    tp_price = close - (atrVal * atr_tp_mult)\n    strategy.entry("Short", strategy.short)\n    strategy.exit("ExitShort", "Short", stop=sl_price, limit=tp_price)`;
       } else if (type === "ninja") {
         code = `// NinjaTrader 8 Strategy Export\n// Strategy: ${c.name}\nnamespace NinjaTrader.NinjaScript.Strategies {\n    public class ${c.candidate_id.replace(/[^a-zA-Z0-9]/g, "_")} : Strategy {\n        protected override void OnStateChange() {\n            if (State == State.SetDefaults) {\n                Name = "${c.name}";\n                Calculate = Calculate.OnBarClose;\n            }\n        }\n    }\n}`;
       } else {
@@ -409,7 +409,7 @@ export default function CandidatosFSMPage() {
                         fontFamily: "var(--font-mono, monospace)",
                       }}
                     >
-                      {state.count.toLocaleString()}
+                      GATE {state.step}
                     </span>
                   </div>
                   <div style={{ fontSize: "8.5px", color: "#94a3b8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -417,7 +417,7 @@ export default function CandidatosFSMPage() {
                   </div>
                 </div>
 
-                {idx < 9 && (
+                {idx < 10 && (
                   <span style={{ color: "rgba(255, 255, 255, 0.2)", fontSize: "11px", fontWeight: 800 }}>
                     →
                   </span>
@@ -648,63 +648,75 @@ export default function CandidatosFSMPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(ensembleRoute === "ULTRA" ? top5Ultra : top5Fondeo).map((strat) => {
-                        const isChecked = selectedEnsembleIds.includes(strat.candidate_id);
-                        const alloc = ensembleResult?.allocated_strategies.find((a) => a.strategy_id === strat.candidate_id);
-                        const weight = alloc?.weight_pct || 20.0;
-                        const role = alloc?.role_in_ensemble || "Amortiguador de Convexidad";
+                      {(ensembleRoute === "ULTRA" ? top5Ultra : top5Fondeo).length === 0 ? (
+                        <tr>
+                          <td colSpan={6} style={{ padding: "30px 10px", textAlign: "center", color: "#94a3b8" }}>
+                            <div style={{ fontSize: "20px", marginBottom: "6px" }}>🔬</div>
+                            <div style={{ fontSize: "12px", fontWeight: 800, color: "#fff" }}>0 Candidatos Certificados en la Base de Datos</div>
+                            <div style={{ fontSize: "10.5px", color: "#64748b", maxWidth: "420px", margin: "4px auto 0 auto" }}>
+                              Las estrategias previas no validadas han sido purgadas. El generador continuo SQX + FastEngine está calibrando nuevos candidatos matemáticos verificados.
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        (ensembleRoute === "ULTRA" ? top5Ultra : top5Fondeo).map((strat) => {
+                          const isChecked = selectedEnsembleIds.includes(strat.candidate_id);
+                          const alloc = ensembleResult?.allocated_strategies.find((a) => a.strategy_id === strat.candidate_id);
+                          const weight = alloc?.weight_pct || 20.0;
+                          const role = alloc?.role_in_ensemble || "Amortiguador de Convexidad";
 
-                        return (
-                          <tr
-                            key={strat.candidate_id}
-                            style={{
-                              borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                              background: isChecked ? "rgba(236, 72, 153, 0.06)" : "transparent",
-                            }}
-                          >
-                            <td style={{ padding: "8px" }}>
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => toggleEnsembleStrategy(strat.candidate_id)}
-                                style={{ cursor: "pointer", accentColor: "#ec4899" }}
-                              />
-                            </td>
-                            <td style={{ padding: "8px" }}>
-                              <div style={{ fontWeight: 800, color: "#fff", fontSize: "11px" }}>{strat.name}</div>
-                              <div style={{ color: "#64748b", fontSize: "9px", fontFamily: "var(--font-mono, monospace)" }}>
-                                {strat.candidate_id}
-                              </div>
-                            </td>
-                            <td style={{ padding: "8px" }}>
-                              <span style={{ fontWeight: 800, color: "#cbd5e1" }}>{strat.symbol}</span>{" "}
-                              <span style={{ color: "#38bdf8", fontSize: "9.5px", fontFamily: "var(--font-mono, monospace)" }}>
-                                ({strat.timeframe})
-                              </span>
-                            </td>
-                            <td style={{ padding: "8px", textAlign: "right", fontWeight: 800, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
-                              {isChecked ? `${weight}%` : "0%"}
-                            </td>
-                            <td style={{ padding: "8px", textAlign: "right", color: "#fb7185", fontFamily: "var(--font-mono, monospace)" }}>
-                              {strat.metrics?.out_of_sample?.max_drawdown_pct?.toFixed(1) || "4.0"}%
-                            </td>
-                            <td style={{ padding: "8px" }}>
-                              <span
-                                style={{
-                                  fontSize: "9px",
-                                  fontWeight: 800,
-                                  padding: "2px 6px",
-                                  borderRadius: "4px",
-                                  background: "rgba(255, 255, 255, 0.05)",
-                                  color: "#cbd5e1",
-                                }}
-                              >
-                                {role}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                          return (
+                            <tr
+                              key={strat.candidate_id}
+                              style={{
+                                borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                                background: isChecked ? "rgba(236, 72, 153, 0.06)" : "transparent",
+                              }}
+                            >
+                              <td style={{ padding: "8px" }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleEnsembleStrategy(strat.candidate_id)}
+                                  style={{ cursor: "pointer", accentColor: "#ec4899" }}
+                                />
+                              </td>
+                              <td style={{ padding: "8px" }}>
+                                <div style={{ fontWeight: 800, color: "#fff", fontSize: "11px" }}>{strat.name}</div>
+                                <div style={{ color: "#64748b", fontSize: "9px", fontFamily: "var(--font-mono, monospace)" }}>
+                                  {strat.candidate_id}
+                                </div>
+                              </td>
+                              <td style={{ padding: "8px" }}>
+                                <span style={{ fontWeight: 800, color: "#cbd5e1" }}>{strat.symbol}</span>{" "}
+                                <span style={{ color: "#38bdf8", fontSize: "9.5px", fontFamily: "var(--font-mono, monospace)" }}>
+                                  ({strat.timeframe})
+                                </span>
+                              </td>
+                              <td style={{ padding: "8px", textAlign: "right", fontWeight: 800, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
+                                {isChecked ? `${weight}%` : "0%"}
+                              </td>
+                              <td style={{ padding: "8px", textAlign: "right", color: "#fb7185", fontFamily: "var(--font-mono, monospace)" }}>
+                                {strat.metrics?.out_of_sample?.max_drawdown_pct?.toFixed(1) || "4.0"}%
+                              </td>
+                              <td style={{ padding: "8px" }}>
+                                <span
+                                  style={{
+                                    fontSize: "9px",
+                                    fontWeight: 800,
+                                    padding: "2px 6px",
+                                    borderRadius: "4px",
+                                    background: "rgba(255, 255, 255, 0.05)",
+                                    color: "#cbd5e1",
+                                  }}
+                                >
+                                  {role}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -879,94 +891,106 @@ export default function CandidatosFSMPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCandidates.map((c, idx) => {
-                    const isSelected = selectedCandidate?.candidate_id === c.candidate_id;
-                    const oos = c.metrics?.out_of_sample;
-                    const annRoi = oos?.annualized_roi_pct || 0;
-                    const monthRoi = oos?.monthly_roi_pct || 0;
-                    const pfOos = oos?.profit_factor || 0;
-                    const wrOos = oos?.win_rate_pct || 0;
-                    const maxDd = oos?.max_drawdown_pct || 0;
+                  {filteredCandidates.length === 0 ? (
+                    <tr>
+                      <td colSpan={10} style={{ padding: "40px 20px", textAlign: "center", color: "#94a3b8" }}>
+                        <div style={{ fontSize: "28px", marginBottom: "8px" }}>🔬</div>
+                        <div style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>0 Candidatos Certificados en este Momento</div>
+                        <div style={{ fontSize: "11px", color: "#64748b", maxWidth: "450px", margin: "6px auto 0 auto", lineHeight: "1.4" }}>
+                          El historial previo no validado ha sido purgado. El motor cuantitativo está calibrando estrategias deterministas con paridad matemática exacta para TradingView y SQX.
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredCandidates.map((c, idx) => {
+                      const isSelected = selectedCandidate?.candidate_id === c.candidate_id;
+                      const oos = c.metrics?.out_of_sample;
+                      const annRoi = oos?.annualized_roi_pct || 0;
+                      const monthRoi = oos?.monthly_roi_pct || 0;
+                      const pfOos = oos?.profit_factor || 0;
+                      const wrOos = oos?.win_rate_pct || 0;
+                      const maxDd = oos?.max_drawdown_pct || 0;
 
-                    return (
-                      <tr
-                        key={c.candidate_id}
-                        onClick={() => runDebateForCandidate(c)}
-                        style={{
-                          borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                          background: isSelected ? "rgba(99, 225, 180, 0.08)" : "transparent",
-                          cursor: "pointer",
-                          transition: "background 0.1s ease",
-                        }}
-                      >
-                        <td style={{ padding: "8px 10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10px" }}>
-                          {idx + 1}
-                        </td>
-                        <td style={{ padding: "8px 10px" }}>
-                          <div style={{ fontWeight: 800, color: "#fff", fontSize: "11.5px" }}>{c.name}</div>
-                          <div style={{ color: "#64748b", fontSize: "9.5px", fontFamily: "var(--font-mono, monospace)" }}>
-                            {c.candidate_id}
-                          </div>
-                        </td>
-                        <td style={{ padding: "8px 10px" }}>
-                          <span style={{ fontWeight: 800, color: "#cbd5e1" }}>{c.symbol}</span>{" "}
-                          <span style={{ color: "#38bdf8", fontSize: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-                            ({c.timeframe})
-                          </span>
-                        </td>
-                        <td style={{ padding: "8px 10px" }}>
-                          <span
-                            style={{
-                              fontSize: "9px",
-                              fontWeight: 900,
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              background: c.route === "ULTRA" ? "rgba(244, 63, 94, 0.15)" : "rgba(56, 189, 248, 0.15)",
-                              color: c.route === "ULTRA" ? "#fb7185" : "#38bdf8",
-                              fontFamily: "var(--font-mono, monospace)",
-                            }}
-                          >
-                            {c.route}
-                          </span>
-                        </td>
-                        <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                          +{annRoi > 0 ? annRoi.toFixed(1) : "0.0"}%
-                        </td>
-                        <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
-                          +{monthRoi > 0 ? monthRoi.toFixed(1) : "0.0"}%
-                        </td>
-                        <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: pfOos >= 1.2 ? "#fbbf24" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-                          {pfOos.toFixed(2)}
-                        </td>
-                        <td style={{ padding: "8px 10px", textAlign: "right", color: "#cbd5e1", fontFamily: "var(--font-mono, monospace)" }}>
-                          {wrOos.toFixed(1)}%
-                        </td>
-                        <td style={{ padding: "8px 10px", textAlign: "right", color: maxDd < 5 ? "#34d399" : "#fb7185", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>
-                          {maxDd.toFixed(1)}%
-                        </td>
-                        <td style={{ padding: "8px 10px", textAlign: "center" }}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              runDebateForCandidate(c);
-                            }}
-                            style={{
-                              padding: "4px 8px",
-                              borderRadius: "6px",
-                              background: isSelected ? "rgba(99, 225, 180, 0.25)" : "rgba(255, 255, 255, 0.05)",
-                              border: isSelected ? "1px solid #63e1b4" : "1px solid rgba(255, 255, 255, 0.1)",
-                              color: isSelected ? "#63e1b4" : "#cbd5e1",
-                              fontSize: "10px",
-                              fontWeight: 800,
-                              cursor: "pointer",
-                            }}
-                          >
-                            🤖 {isSelected ? "Debatiendo" : "Debatir"}
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                      return (
+                        <tr
+                          key={c.candidate_id}
+                          onClick={() => runDebateForCandidate(c)}
+                          style={{
+                            borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                            background: isSelected ? "rgba(99, 225, 180, 0.08)" : "transparent",
+                            cursor: "pointer",
+                            transition: "background 0.1s ease",
+                          }}
+                        >
+                          <td style={{ padding: "8px 10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10px" }}>
+                            {idx + 1}
+                          </td>
+                          <td style={{ padding: "8px 10px" }}>
+                            <div style={{ fontWeight: 800, color: "#fff", fontSize: "11.5px" }}>{c.name}</div>
+                            <div style={{ color: "#64748b", fontSize: "9.5px", fontFamily: "var(--font-mono, monospace)" }}>
+                              {c.candidate_id}
+                            </div>
+                          </td>
+                          <td style={{ padding: "8px 10px" }}>
+                            <span style={{ fontWeight: 800, color: "#cbd5e1" }}>{c.symbol}</span>{" "}
+                            <span style={{ color: "#38bdf8", fontSize: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+                              ({c.timeframe})
+                            </span>
+                          </td>
+                          <td style={{ padding: "8px 10px" }}>
+                            <span
+                              style={{
+                                fontSize: "9px",
+                                fontWeight: 900,
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                background: c.route === "ULTRA" ? "rgba(244, 63, 94, 0.15)" : "rgba(56, 189, 248, 0.15)",
+                                color: c.route === "ULTRA" ? "#fb7185" : "#38bdf8",
+                                fontFamily: "var(--font-mono, monospace)",
+                              }}
+                            >
+                              {c.route}
+                            </span>
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: annRoi >= 1000 ? "#34d399" : annRoi > 0 ? "#63e1b4" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+                            {annRoi > 0 ? `+${annRoi.toFixed(1)}%` : `${annRoi.toFixed(1)}%`}
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: monthRoi > 0 ? "#63e1b4" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+                            {monthRoi > 0 ? `+${monthRoi.toFixed(1)}%` : `${monthRoi.toFixed(1)}%`}
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: pfOos >= 1.3 ? "#34d399" : pfOos >= 1.0 ? "#facc15" : "#f87171", fontFamily: "var(--font-mono, monospace)" }}>
+                            {pfOos.toFixed(2)}
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", color: wrOos >= 45 ? "#63e1b4" : "#cbd5e1", fontFamily: "var(--font-mono, monospace)" }}>
+                            {wrOos.toFixed(1)}%
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "right", color: maxDd <= 5 ? "#34d399" : maxDd <= 10 ? "#facc15" : "#fb7185", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>
+                            {maxDd.toFixed(1)}%
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "center" }}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                runDebateForCandidate(c);
+                              }}
+                              style={{
+                                padding: "3px 8px",
+                                borderRadius: "6px",
+                                background: isSelected ? "rgba(99, 225, 180, 0.25)" : "rgba(255, 255, 255, 0.05)",
+                                border: isSelected ? "1px solid rgba(99, 225, 180, 0.6)" : "1px solid rgba(255, 255, 255, 0.1)",
+                                color: isSelected ? "#63e1b4" : "#cbd5e1",
+                                fontSize: "9.5px",
+                                fontWeight: 800,
+                                cursor: "pointer",
+                              }}
+                            >
+                              🤖 {isSelected ? "Debatiendo" : "Debatir"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
