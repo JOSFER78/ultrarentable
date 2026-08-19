@@ -14,15 +14,17 @@ candidatos que pasen los gates (antes: 95 estrategias, 77 backtests, 0 aprobados
 Los docs 11-14 son soporte del análisis (ya cerrado); no re-hacer.
 
 ## Reglas del proyecto (no negociables)
-- **REAL-ONLY**: cita rutas y valores concretos verificados en disco. Nunca supongas ni
-  inventes métricas. Un subagente que "reporta completado" NO es verdad hasta que el
-  artefacto exista en disco (verificar con `wc -c`).
+- **ZERO MOCKS & REAL-ONLY**: Cita rutas y valores concretos verificados en disco. Nunca supongas ni
+  inventes métricas, velas, trades, Sharpe, Profit Factor o curvas de equidad.
+- **NO HAY PRISA / PACIENCIA METÓDICA**: El usuario no tiene prisa. No tomes atajos apresurados ni intentes
+  resolver todo en un solo turno. Usa loops de reintento, depuración y auditoría ilimitados hasta que la solución sea matemáticamente real.
+- **AVANCE POR FASES ESTRICTO**: Cada fase sigue el ciclo: INSPECT -> AUDIT -> IMPLEMENT -> TEST -> RUN REAL -> VERIFY -> FIX -> CERTIFY.
+- **MANEJO DE AUSENCIA DE DATOS**: Si falta información -> `BLOCKED / NO EVIDENCE`. Si un motor falla -> `ENGINE_ERROR / BLOCKED`.
+- **RUTAS DIFERENCIADAS**:
+  - *Ultra*: Subcuentas bala ($1k USD), apalancamiento hasta 100x, piramidación, colas gruesas, tolerancia a DD de hasta el 80% (solo descarte por liquidación real).
+  - *Fondeo*: $50k USD base, Trailing Drawdown <= 4.5%, Daily Loss Limit (DLL).
 - **Ejecuta, no narres.** Si delegas a subagentes, lánzalos de verdad (delegate_task).
-- **No descargar histórico de datos.** Trabajar con las 3.840 barras H1 de BTCUSDT
-  (5,2 meses) que ya están. SQX también tiene SPY D1 (33 años) de referencia.
-- **Decisión**: no activar bar magnifier M1 (no hay datos M1). Trades OOS >= 20.
-- **Backup crítico**: `project.cfx.pre_reconfig_20260809_1056` debe existir antes de tocar
-  el CFX. Confirmarlo siempre.
+- **Backup crítico**: `project.cfx.pre_reconfig_20260809_1056` debe existir antes de tocar el CFX.
 - Responde **en español**.
 
 ## Dónde está todo (rutas verificadas)

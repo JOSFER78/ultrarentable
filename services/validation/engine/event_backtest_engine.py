@@ -1,0 +1,436 @@
+"""services/validation/engine/event_backtest_engine.py
+Motor de Backtesting Determinista Orientado a Eventos (Fase 4).
+Ejecuta la simulación completa barra por barra:
+Market Data Event -> Signal -> Order -> Fill -> Friction (Fees & Slippage) -> Position -> Margin -> Equity.
+"""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional
+import numpy as np
+from pydantic import BaseModel
+
+from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute
+from contracts.snapshots.dataset_snapshot import DatasetSnapshot
+
+
+@dataclass
+class OrderEvent:
+    order_id: str
+    bar_index: int
+    timestamp_ms: int
+    order_type: str  # "MARKET" | "LIMIT"
+    side: str  # "BUY" | "SELL"
+    qty: float
+    price_requested: float
+    reason: str
+
+
+@dataclass
+class FillEvent:
+    fill_id: str
+    order_id: str
+    bar_index: int
+    timestamp_ms: int
+    side: str
+    qty: float
+    price_executed: float
+    slippage_usd: float
+    commission_usd: float
+    funding_fee_usd: float
+
+
+@dataclass
+class TradeRecord:
+    trade_id: str
+    entry_bar: int
+    exit_bar: int
+    entry_time_ms: int
+    exit_time_ms: int
+    side: str
+    qty: float
+    entry_price: float
+    exit_price: float
+    gross_pnl_usd: float
+    net_pnl_usd: float
+    return_pct: float
+    fees_usd: float
+    slippage_usd: float
+    exit_reason: str
+    pyramid_level: int = 0
+
+
+@dataclass
+class EventBacktestResult:
+    strategy_id: str
+    canonical_hash: str
+    dataset_id: str
+    total_trades: int
+    winning_trades: int
+    losing_trades: int
+    win_rate_pct: float
+    net_profit_usd: float
+    profit_factor: float
+    max_drawdown_pct: float
+    peak_equity_usd: float
+    final_equity_usd: float
+    peak_margin_utilization_pct: float
+    min_liquidation_distance_pct: float
+    total_fees_usd: float
+    total_slippage_usd: float
+    trades: List[TradeRecord] = field(default_factory=list)
+    equity_curve: List[float] = field(default_factory=list)
+    drawdown_curve: List[float] = field(default_factory=list)
+    order_log: List[OrderEvent] = field(default_factory=list)
+    fill_log: List[FillEvent] = field(default_factory=list)
+    execution_time_ms: float = 0.0
+
+
+class EventBacktestEngine:
+    """Motor de ejecución determinista con soporte de margen, apalancamiento y piramidación."""
+
+    def __init__(
+        self,
+        taker_fee_pct: float = 0.05,
+        maker_fee_pct: float = 0.02,
+        slippage_bps: float = 2.0,
+        cme_fee_per_contract_usd: float = 2.50,
+        funding_rate_8h: float = 0.0001,
+    ):
+        self.taker_fee = taker_fee_pct / 100.0
+        self.maker_fee = maker_fee_pct / 100.0
+        self.slippage = slippage_bps / 10000.0
+        self.cme_fee = cme_fee_per_contract_usd
+        self.funding_rate_8h = funding_rate_8h
+
+    def run_backtest(
+        self,
+        strategy: StrategySnapshot,
+        candles: List[Dict[str, Any]],
+        initial_capital_usd: Optional[float] = None,
+    ) -> EventBacktestResult:
+        """Ejecuta la simulación determinista de la estrategia sobre el dataset de velas."""
+        t_start = datetime.now(timezone.utc)
+
+        if not candles or len(candles) < 50:
+            return EventBacktestResult(
+                strategy_id=strategy.strategy_id,
+                canonical_hash=strategy.canonical_hash,
+                dataset_id=strategy.dataset_id_reference,
+                total_trades=0,
+                winning_trades=0,
+                losing_trades=0,
+                win_rate_pct=0.0,
+                net_profit_usd=0.0,
+                profit_factor=0.0,
+                max_drawdown_pct=0.0,
+                peak_equity_usd=initial_capital_usd or 1000.0,
+                final_equity_usd=initial_capital_usd or 1000.0,
+                peak_margin_utilization_pct=0.0,
+                min_liquidation_distance_pct=100.0,
+                total_fees_usd=0.0,
+                total_slippage_usd=0.0,
+            )
+
+        # Capital base según ruta
+        is_ultra = (strategy.route == StrategyRoute.ULTRA)
+        is_fondeo = (strategy.route == StrategyRoute.FONDEO)
+        base_capital = initial_capital_usd or (1000.0 if is_ultra else 50000.0)
+        max_leverage = strategy.margin_policy.max_leverage_ceiling
+
+        closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)
+        highs = np.array([float(c["high"]) for c in candles], dtype=np.float64)
+        lows = np.array([float(c["low"]) for c in candles], dtype=np.float64)
+        opens = np.array([float(c["open"]) for c in candles], dtype=np.float64)
+        timestamps = [int(c.get("timestamp_ms") or c.get("timestamp") or 0) for c in candles]
+
+        # Calcular ATR para stops y take profits dinámicos
+        tr = np.maximum(highs[1:] - lows[1:], np.maximum(np.abs(highs[1:] - closes[:-1]), np.abs(lows[1:] - closes[:-1])))
+        atr = np.zeros(len(closes))
+        atr[1:] = tr
+        for i in range(14, len(closes)):
+            atr[i] = np.mean(tr[i-14:i])
+
+        # Estado del backtest
+        current_equity = base_capital
+        peak_equity = base_capital
+        equity_curve = [base_capital]
+        drawdown_curve = [0.0]
+        max_drawdown_pct = 0.0
+        peak_margin_utilization = 0.0
+        min_liq_dist = 100.0
+
+        orders: List[OrderEvent] = []
+        fills: List[FillEvent] = []
+        trades: List[TradeRecord] = []
+
+        position_side = None
+        position_qty = 0.0
+        position_entry_price = 0.0
+        position_entry_bar = 0
+        position_entry_time = 0
+        stop_loss_price = 0.0
+        take_profit_price = 0.0
+        pyramid_count = 0
+        total_fees = 0.0
+        total_slippage = 0.0
+
+        sl_atr_mult = strategy.exit_rules.stop_loss_atr_mult or 2.0
+        tp_atr_mult = strategy.exit_rules.take_profit_atr_mult or 6.0
+        risk_pct = strategy.sizing_and_risk.base_risk_pct / 100.0
+
+        for i in range(30, len(closes)):
+            bar_close = closes[i]
+            bar_high = highs[i]
+            bar_low = lows[i]
+            bar_atr = max(1e-4, atr[i])
+            ts = timestamps[i]
+
+            # 1. Chequeo de salidas y liquidación si estamos en posición
+            if position_side is not None:
+                # Comprobar distancia a liquidación
+                margin_used = (position_qty * bar_close) / max_leverage
+                margin_util_pct = (margin_used / max(1.0, current_equity)) * 100.0
+                peak_margin_utilization = max(peak_margin_utilization, margin_util_pct)
+
+                liq_price = position_entry_price * (1.0 - 1.0 / max_leverage) if position_side == "LONG" else position_entry_price * (1.0 + 1.0 / max_leverage)
+                dist_liq_pct = abs(bar_close - liq_price) / bar_close * 100.0
+                min_liq_dist = min(min_liq_dist, dist_liq_pct)
+
+                # Comprobar liquidación real (quiebra al 100%)
+                if (position_side == "LONG" and bar_low <= liq_price) or (position_side == "SHORT" and bar_high >= liq_price):
+                    # Liquidación
+                    exit_price = liq_price
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
+                    net_pnl = gross_pnl - comm - slip
+                    current_equity = max(0.0, current_equity + net_pnl)
+                    total_fees += comm
+                    total_slippage += slip
+
+                    trades.append(
+                        TradeRecord(
+                            trade_id=f"trade_{len(trades)+1}",
+                            entry_bar=position_entry_bar,
+                            exit_bar=i,
+                            entry_time_ms=position_entry_time,
+                            exit_time_ms=ts,
+                            side=position_side,
+                            qty=position_qty,
+                            entry_price=position_entry_price,
+                            exit_price=exit_price,
+                            gross_pnl_usd=gross_pnl,
+                            net_pnl_usd=net_pnl,
+                            return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                            fees_usd=comm,
+                            slippage_usd=slip,
+                            exit_reason="LIQUIDATION",
+                            pyramid_level=pyramid_count,
+                        )
+                    )
+                    position_side = None
+                    position_qty = 0.0
+
+                # Comprobar Stop Loss
+                elif (position_side == "LONG" and bar_low <= stop_loss_price) or (position_side == "SHORT" and bar_high >= stop_loss_price):
+                    exit_price = stop_loss_price
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
+                    net_pnl = gross_pnl - comm - slip
+                    current_equity += net_pnl
+                    total_fees += comm
+                    total_slippage += slip
+
+                    trades.append(
+                        TradeRecord(
+                            trade_id=f"trade_{len(trades)+1}",
+                            entry_bar=position_entry_bar,
+                            exit_bar=i,
+                            entry_time_ms=position_entry_time,
+                            exit_time_ms=ts,
+                            side=position_side,
+                            qty=position_qty,
+                            entry_price=position_entry_price,
+                            exit_price=exit_price,
+                            gross_pnl_usd=gross_pnl,
+                            net_pnl_usd=net_pnl,
+                            return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                            fees_usd=comm,
+                            slippage_usd=slip,
+                            exit_reason="STOP_LOSS",
+                            pyramid_level=pyramid_count,
+                        )
+                    )
+                    position_side = None
+                    position_qty = 0.0
+
+                # Comprobar Take Profit
+                elif (position_side == "LONG" and bar_high >= take_profit_price) or (position_side == "SHORT" and bar_low <= take_profit_price):
+                    exit_price = take_profit_price
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
+                    net_pnl = gross_pnl - comm - slip
+                    current_equity += net_pnl
+                    total_fees += comm
+                    total_slippage += slip
+
+                    trades.append(
+                        TradeRecord(
+                            trade_id=f"trade_{len(trades)+1}",
+                            entry_bar=position_entry_bar,
+                            exit_bar=i,
+                            entry_time_ms=position_entry_time,
+                            exit_time_ms=ts,
+                            side=position_side,
+                            qty=position_qty,
+                            entry_price=position_entry_price,
+                            exit_price=exit_price,
+                            gross_pnl_usd=gross_pnl,
+                            net_pnl_usd=net_pnl,
+                            return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                            fees_usd=comm,
+                            slippage_usd=slip,
+                            exit_reason="TAKE_PROFIT",
+                            pyramid_level=pyramid_count,
+                        )
+                    )
+                    position_side = None
+                    position_qty = 0.0
+
+                # Piramidación sobre beneficio si está habilitada (Ruta Ultra)
+                elif is_ultra and strategy.pyramiding_policy.enabled and pyramid_count < strategy.pyramiding_policy.max_tiers:
+                    floating_pnl_r = ((bar_close - position_entry_price) / bar_atr) if position_side == "LONG" else ((position_entry_price - bar_close) / bar_atr)
+                    if floating_pnl_r >= (pyramid_count + 1) * 1.5:
+                        # Mover stop loss a break-even
+                        stop_loss_price = position_entry_price
+                        # Añadir tramo
+                        added_qty = (current_equity * risk_pct * max_leverage) / (bar_close * max(1.0, float(pyramid_count + 1)))
+                        position_qty += added_qty
+                        pyramid_count += 1
+
+            # 2. Señal de Entrada si estamos planos
+            if position_side is None and current_equity > 0:
+                # Regla de momentum determinista: EMA rápida > EMA lenta y ruptura del rango previo
+                ema_fast = np.mean(closes[i-10:i])
+                ema_slow = np.mean(closes[i-30:i])
+                
+                long_signal = (ema_fast > ema_slow) and (bar_close > np.max(highs[i-15:i-1]))
+                short_signal = (ema_fast < ema_slow) and (bar_close < np.min(lows[i-15:i-1]))
+
+                if long_signal:
+                    position_side = "LONG"
+                    position_entry_bar = i
+                    position_entry_time = ts
+                    position_entry_price = bar_close * (1.0 + self.slippage)
+                    risk_amount_usd = current_equity * risk_pct
+                    sl_dist = bar_atr * sl_atr_mult
+                    position_qty = max(0.001, (risk_amount_usd / max(1e-4, sl_dist)))
+                    stop_loss_price = position_entry_price - sl_dist
+                    take_profit_price = position_entry_price + (bar_atr * tp_atr_mult)
+                    pyramid_count = 0
+
+                    comm = position_entry_price * position_qty * self.taker_fee
+                    slip = position_entry_price * position_qty * self.slippage
+                    current_equity -= (comm + slip)
+                    total_fees += comm
+                    total_slippage += slip
+
+                elif short_signal:
+                    position_side = "SHORT"
+                    position_entry_bar = i
+                    position_entry_time = ts
+                    position_entry_price = bar_close * (1.0 - self.slippage)
+                    risk_amount_usd = current_equity * risk_pct
+                    sl_dist = bar_atr * sl_atr_mult
+                    position_qty = max(0.001, (risk_amount_usd / max(1e-4, sl_dist)))
+                    stop_loss_price = position_entry_price + sl_dist
+                    take_profit_price = position_entry_price - (bar_atr * tp_atr_mult)
+                    pyramid_count = 0
+
+                    comm = position_entry_price * position_qty * self.taker_fee
+                    slip = position_entry_price * position_qty * self.slippage
+                    current_equity -= (comm + slip)
+                    total_fees += comm
+                    total_slippage += slip
+
+            # Track equity curve and drawdown
+            peak_equity = max(peak_equity, current_equity)
+            dd_pct = ((peak_equity - current_equity) / max(1.0, peak_equity)) * 100.0
+            max_drawdown_pct = max(max_drawdown_pct, dd_pct)
+            equity_curve.append(round(current_equity, 2))
+            drawdown_curve.append(round(dd_pct, 2))
+
+        # Cierre forzado al final del dataset si queda posición abierta
+        if position_side is not None:
+            exit_price = closes[-1]
+            gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+            comm = exit_price * position_qty * self.taker_fee
+            slip = exit_price * position_qty * self.slippage
+            net_pnl = gross_pnl - comm - slip
+            current_equity += net_pnl
+            total_fees += comm
+            total_slippage += slip
+
+            trades.append(
+                TradeRecord(
+                    trade_id=f"trade_{len(trades)+1}",
+                    entry_bar=position_entry_bar,
+                    exit_bar=len(closes)-1,
+                    entry_time_ms=position_entry_time,
+                    exit_time_ms=timestamps[-1],
+                    side=position_side,
+                    qty=position_qty,
+                    entry_price=position_entry_price,
+                    exit_price=exit_price,
+                    gross_pnl_usd=gross_pnl,
+                    net_pnl_usd=net_pnl,
+                    return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                    fees_usd=comm,
+                    slippage_usd=slip,
+                    exit_reason="END_OF_DATASET",
+                    pyramid_level=pyramid_count,
+                )
+            )
+
+        # Resumen de métricas
+        total_trades = len(trades)
+        winning_trades = sum(1 for t in trades if t.net_pnl_usd > 0)
+        losing_trades = sum(1 for t in trades if t.net_pnl_usd <= 0)
+        win_rate = (winning_trades / total_trades * 100.0) if total_trades > 0 else 0.0
+        net_profit = current_equity - base_capital
+
+        gross_gains = sum(t.net_pnl_usd for t in trades if t.net_pnl_usd > 0)
+        gross_losses = abs(sum(t.net_pnl_usd for t in trades if t.net_pnl_usd < 0))
+        pf = (gross_gains / gross_losses) if gross_losses > 0 else (99.0 if gross_gains > 0 else 0.0)
+
+        t_end = datetime.now(timezone.utc)
+        exec_time = (t_end - t_start).total_seconds() * 1000.0
+
+        return EventBacktestResult(
+            strategy_id=strategy.strategy_id,
+            canonical_hash=strategy.canonical_hash,
+            dataset_id=strategy.dataset_id_reference,
+            total_trades=total_trades,
+            winning_trades=winning_trades,
+            losing_trades=losing_trades,
+            win_rate_pct=round(win_rate, 2),
+            net_profit_usd=round(net_profit, 2),
+            profit_factor=round(pf, 2),
+            max_drawdown_pct=round(max_drawdown_pct, 2),
+            peak_equity_usd=round(peak_equity, 2),
+            final_equity_usd=round(current_equity, 2),
+            peak_margin_utilization_pct=round(peak_margin_utilization, 2),
+            min_liquidation_distance_pct=round(min_liq_dist, 2),
+            total_fees_usd=round(total_fees, 2),
+            total_slippage_usd=round(total_slippage, 2),
+            trades=trades,
+            equity_curve=equity_curve,
+            drawdown_curve=drawdown_curve,
+            execution_time_ms=round(exec_time, 2),
+        )

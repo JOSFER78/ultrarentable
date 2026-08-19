@@ -121,3 +121,57 @@ def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
         }
     }
 
+
+@system_health_router.get("/logs/sqx")
+def get_sqx_real_logs(lines: int = 50) -> Dict[str, Any]:
+    """Lee las últimas líneas reales de log de StrategyQuant X en VPS."""
+    log_dir = "/home/ubuntu/StrategyQuantX/user/log"
+    log_files = []
+    if os.path.exists(log_dir):
+        for f in sorted(os.listdir(log_dir), reverse=True):
+            if f.endswith(".log"):
+                log_files.append(os.path.join(log_dir, f))
+    
+    extracted_lines = []
+    if log_files:
+        latest_file = log_files[0]
+        try:
+            with open(latest_file, "r", encoding="utf-8", errors="ignore") as lf:
+                all_lines = lf.readlines()
+                extracted_lines = [l.strip() for l in all_lines[-lines:] if l.strip()]
+        except Exception as e:
+            extracted_lines = [f"Error leyendo {latest_file}: {e}"]
+    else:
+        extracted_lines = ["No se encontraron archivos de log en /home/ubuntu/StrategyQuantX/user/log"]
+
+    return {
+        "source": "StrategyQuant X VPS 24/7 Service",
+        "log_directory": log_dir,
+        "latest_file": log_files[0] if log_files else None,
+        "lines_count": len(extracted_lines),
+        "logs": extracted_lines
+    }
+
+
+@system_health_router.get("/logs/backend")
+def get_backend_real_logs(lines: int = 50) -> Dict[str, Any]:
+    """Lee las últimas líneas reales del log de FastAPI y SQX Sync Worker."""
+    log_file = "/tmp/fastapi_ultra.log"
+    extracted_lines = []
+    if os.path.exists(log_file):
+        try:
+            with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
+                all_lines = f.readlines()
+                extracted_lines = [l.strip() for l in all_lines[-lines:] if l.strip()]
+        except Exception as e:
+            extracted_lines = [f"Error leyendo {log_file}: {e}"]
+    else:
+        extracted_lines = [f"Archivo {log_file} no encontrado."]
+
+    return {
+        "source": "Ultrarentable FastAPI Central Backend & SQX Worker",
+        "log_file": log_file,
+        "lines_count": len(extracted_lines),
+        "logs": extracted_lines
+    }
+

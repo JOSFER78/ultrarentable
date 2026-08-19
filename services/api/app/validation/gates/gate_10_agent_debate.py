@@ -12,12 +12,23 @@ class Gate10AgentDebate:
     LABEL = "10. DEBATE 5 AGENTES"
 
     def evaluate(self, candidate_info: Dict[str, Any]) -> Dict[str, Any]:
+        trades_count = int(candidate_info.get("trades_count", 0))
+        if trades_count <= 0:
+            return {
+                "gate_id": self.GATE_ID,
+                "name": self.NAME,
+                "passed": False,
+                "score": 0.0,
+                "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para debate multi-agente",
+                "evidence": {"trades_count": 0, "verdict_status": "BLOCKED_NO_TRADES"},
+            }
+
         symbol = str(candidate_info.get("symbol", "BTCUSDT"))
         timeframe = str(candidate_info.get("timeframe", "1h"))
-        pf_oos = float(candidate_info.get("profit_factor_oos", 1.5))
-        max_dd = float(candidate_info.get("max_drawdown_pct", 20.0))
-        monthly_roi = float(candidate_info.get("monthly_roi_pct", 15.0))
-        trades_oos = int(candidate_info.get("trades_count", 50))
+        pf_oos = float(candidate_info.get("profit_factor_oos", 1.0))
+        max_dd = float(candidate_info.get("max_drawdown_pct", 0.0))
+        monthly_roi = float(candidate_info.get("monthly_roi_pct", 0.0))
+        trades_oos = trades_count
         route = str(candidate_info.get("route", "ULTRA"))
 
         # 1. Interpreter Agent (Hipótesis Estructural)

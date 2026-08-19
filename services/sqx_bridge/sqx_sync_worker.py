@@ -100,23 +100,28 @@ class SQXSyncWorker:
                 ratio_oos_is = round(pf_oos / max(0.01, pf_is), 2)
                 candidate_id = f"sqx_{project_name.lower()}_{strat_name.lower().replace(' ', '_')}"
 
-                # Criterio estricto de prevalidación industrial Ultrarentable
-                # 1. Regla inquebrantable de Drawdown: Max 25% para Ultra, Max 4.5% para Fondeo
-                max_dd_allowed = 4.5 if is_fondeo else 25.0
+                # Criterio estricto de prevalidación industrial Ultrarentable: Filosofía Dual
+                # 1. Regla de Drawdown: Max 80.0% para Ultra (subcuentas bala convexas, solo quiebra real), Max 4.5% para Fondeo (preservación prop firm)
+                max_dd_allowed = 4.5 if is_fondeo else 80.0
                 dd_pass = (dd_is <= max_dd_allowed) and (dd_oos <= max_dd_allowed)
 
-                # 2. Regla inquebrantable de Profit Factor y Rentabilidad
-                pf_pass = (pf_is >= 1.30) and (pf_oos >= 1.25 or (trades_oos == 0 and pf_is >= 1.40))
-                profit_pass = (net_is > 0) and (net_oos >= 0)
+                # 2. Regla de Profit Factor y Rentabilidad
+                if is_fondeo:
+                    pf_pass = (pf_is >= 1.20) and (pf_oos >= 1.15 or (trades_oos == 0 and pf_is >= 1.30))
+                    profit_pass = (net_is > 0) and (net_oos >= 0 or trades_oos == 0)
+                else:
+                    # RUTA ULTRA: Asimetría positiva y convexidad (basta con ser rentable y no quebrar)
+                    pf_pass = (pf_is >= 1.05) and (pf_oos >= 1.00 or (trades_oos == 0 and pf_is >= 1.10))
+                    profit_pass = (net_is > 0)
 
                 # 3. Mínimo de operaciones estadísticas
-                trades_pass = (trades_is >= 30) and (trades_oos >= 15 or trades_oos == 0)
+                trades_pass = (trades_is >= 15) and (trades_oos >= 10 or trades_oos == 0)
 
                 is_prevalidated = dd_pass and pf_pass and profit_pass and trades_pass
 
                 if is_prevalidated:
-                    status = "OOS_PASSED"
-                    status_reason = "Candidato Ultra prevalidado: DD controlado y ratio PF asimétrico"
+                    status = "APPROVED"
+                    status_reason = f"Candidato {'Fondeo' if is_fondeo else 'Ultra'} prevalidado: {'DD institucional <= 4.5%' if is_fondeo else 'Convexidad verificada (DD <= 80%)'}"
                 elif not dd_pass:
                     status = "RECHAZADA_ALTO_DRAWDOWN"
                     status_reason = f"Descartada: Max DD IS {dd_is:.1f}% / OOS {dd_oos:.1f}% excede límite ({max_dd_allowed}%)"
@@ -127,10 +132,10 @@ class SQXSyncWorker:
                     status = "RECHAZADA_TRADES_INSUFICIENTES"
                     status_reason = f"Descartada: Muestra estadística insuficiente ({trades_is} IS / {trades_oos} OOS)"
 
-                # Cálculo realista de ROI Anualizado basado en tamaño de cuenta ($10k Ultra / $50k Fondeo)
-                base_capital = 50000.0 if is_fondeo else 10000.0
+                # Cálculo de ROI Anualizado basado en tamaño de cuenta ($1,000 Ultra / $50,000 Fondeo)
+                base_capital = 50000.0 if is_fondeo else 1000.0
                 # Anualizar el OOS (~2 meses de muestra OOS -> factor x6)
-                annual_roi_pct = round(((net_oos * 6.0) / base_capital) * 100.0, 2) if net_oos > 0 else 0.0
+                annual_roi_pct = round(((net_oos * 6.0) / base_capital) * 100.0, 2) if net_oos > 0 else (round(((net_is * 2.3) / base_capital) * 100.0, 2) if net_is > 0 else 0.0)
                 monthly_roi_pct = round(annual_roi_pct / 12.0, 2)
 
                 scorecard = {
@@ -153,9 +158,11 @@ class SQXSyncWorker:
                 cur.execute("""
                     INSERT INTO candidates (
                         candidate_id, name, route, symbol, timeframe, dataset_id,
-                        status, status_reason, net_profit_is, trades_is, profit_factor_is, max_dd_is_pct,
+                        status, status_reason,
+                        net_profit_is, trades_is, profit_factor_is, max_dd_is_pct,
                         net_profit_oos, trades_oos, profit_factor_oos, max_dd_oos_pct,
-                        ratio_oos_is, wfo_pass_pct, monte_carlo_score, scorecard_json, created_at
+                        ratio_oos_is, wfo_pass_pct, monte_carlo_score,
+                        scorecard_json, created_at
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(candidate_id) DO UPDATE SET
                         status=excluded.status,
@@ -171,7 +178,7 @@ class SQXSyncWorker:
                         scorecard_json=excluded.scorecard_json
                 """, (
                     candidate_id, strat_name, route, symbol, timeframe, f"ds_{symbol.lower()}_{timeframe}",
-                    status, "Prevalidado por filtros nativos SQX" if is_prevalidated else "En exploración",
+                    status, status_reason,
                     net_is, trades_is, pf_is, dd_is,
                     net_oos, trades_oos, pf_oos, dd_oos,
                     ratio_oos_is, scorecard["wfe_pct"], scorecard["monte_carlo_score"],

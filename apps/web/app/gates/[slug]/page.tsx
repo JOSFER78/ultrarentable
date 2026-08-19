@@ -863,14 +863,17 @@ export default function GateDetailPage() {
                 </div>
               </div>
 
-              {/* Event Log Console */}
+              {/* Real Logs Console */}
               <div style={{ background: "#05080e", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "12px" }}>
-                <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", textTransform: "uppercase", marginBottom: "6px" }}>
-                  Nautilus Event Log & Margin Verification Trace
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                  <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>
+                    📡 Consola de Logs Reales: StrategyQuant X & Backend (VPS 24/7)
+                  </div>
+                  <span style={{ fontSize: "9px", color: "#34d399", fontWeight: 800 }}>● ZERO SIMULACIÓN · 100% REAL</span>
                 </div>
-                <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px", color: "#cbd5e1", display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "10px", color: "#cbd5e1", display: "flex", flexDirection: "column", gap: "4px", maxHeight: "150px", overflowY: "auto" }}>
                   {(nautilusReport.event_log || []).map((line: string, i: number) => (
-                    <div key={i} style={{ color: line.includes("CERTIFICADA") ? "#34d399" : "#94a3b8" }}>
+                    <div key={i} style={{ color: line.includes("ERROR") ? "#fb7185" : line.includes("Sincronización") || line.includes("Starting") ? "#34d399" : "#94a3b8" }}>
                       {line}
                     </div>
                   ))}

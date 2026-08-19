@@ -17,10 +17,10 @@ class Gate07RegimeCoverage:
             return {
                 "gate_id": self.GATE_ID,
                 "name": self.NAME,
-                "passed": True,  # Non-blocking default if candle-level alignment is sparse
-                "score": 85.0,
-                "verdict": "PASSED: Cobertura de régimen básica aceptada",
-                "evidence": {"regimes_tested": ["TREND_EXPANSION", "HIGH_VOLATILITY"]},
+                "passed": False,
+                "score": 0.0,
+                "verdict": "RECHAZADO / BLOCKED: Velas o trades insuficientes para evaluar cobertura de régimen",
+                "evidence": {"candles_count": len(candles) if candles else 0, "trades_count": len(oos_trades) if oos_trades else 0},
             }
 
         closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)

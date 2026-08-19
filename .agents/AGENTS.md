@@ -13,14 +13,25 @@
 
 ## 2. GUARDARRAÍLES INQUEBRANTABLES PARA LA IA
 
-1. **PROHIBIDO INVENTAR PÁGINAS O VISTAS WEB**:
+1. **DOCTRINA ZERO-MOCKS & REAL-ONLY**:
+   - PROHIBIDO inventar velas, trades, curvas de equidad, PF, Sharpe o logs.
+   - Si falta información: `BLOCKED / NO EVIDENCE`.
+   - Si un motor falla: `ENGINE_ERROR / BLOCKED`.
+   - Toda métrica debe provenir de archivos reales en disco con hash SHA256 verificado.
+
+2. **PRINCIPIO DE PACIENCIA Y CALIDAD (NO HAY PRISA)**:
+   - El usuario no tiene prisa. No tomes atajos ni intentes resolver todo en un solo turno apresurado.
+   - Trabaja estrictamente por fases secuenciales.
+   - Utiliza loops de reintento y depuración ilimitados hasta que la solución matemática y empírica sea real y verificada por tests.
+
+3. **PROHIBIDO INVENTAR PÁGINAS O VISTAS WEB**:
    - La portada principal (`apps/web/app/page.tsx`) y el menú (`Sidebar.tsx`) solo contendrán las pantallas oficiales establecidas en el plan de Obsidian.
    - NUNCA añadir subpáginas temporales, borradores, ni enlaces a versiones antiguas que saturen o confundan la interfaz.
 
-2. **LECTURA PREVIA OBLIGATORIA DEL PLAN**:
-   - Antes de escribir o modificar código en `apps/` o `services/`, el agente debe revisar el plan en Obsidian para saber qué paso o fase está en curso.
+4. **LECTURA PREVIA OBLIGATORIA DEL PLAN**:
+   - Antes de escribir o modificar código en `apps/` o `services/`, el agente debe revisar el plan maestro forense.
 
-3. **MANTENER EL PROYECTO LIMPIO**:
+5. **MANTENER EL PROYECTO LIMPIO**:
    - No dejar archivos `.zip`, scripts `.bat` sueltos en la raíz ni archivos temporales (`dispatch-state.json`, `__pycache__`).
 
 ---

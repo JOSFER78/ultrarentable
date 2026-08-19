@@ -45,29 +45,30 @@ class GatePipelineOrchestrator:
     ) -> Dict[str, Any]:
         """Ejecuta los 11 gates de forma totalmente modular y desacoplada."""
         candles = candles or []
-        is_trades = is_trades or [120.0, -80.0, 300.0, -90.0, 150.0, 400.0] * 6
-        oos_trades = oos_trades or [180.0, -70.0, 450.0, -85.0, 220.0, 600.0] * 5
-        trades_raw = trades_raw or [
-            {"entry_price": 100.0 + i, "exit_price": 101.5 + i, "qty": 1.0, "side": "LONG"}
-            for i in range(len(oos_trades))
-        ]
+        is_trades = is_trades or []
+        oos_trades = oos_trades or []
+        trades_raw = trades_raw or []
 
         gates_results = []
         overall_passed = True
         total_score = 0.0
 
+        is_ultra = (candidate_info.get("route") == "ULTRA")
+        base_capital = 1000.0 if is_ultra else 50000.0
+        ruin_limit_dd = 80.0 if is_ultra else 4.5
+
         evaluators = [
-            (self.g1, lambda g: g.evaluate(candles if candles else [{"open": 100, "high": 102, "low": 99, "close": 101, "volume": 100}] * 2500)),
+            (self.g1, lambda g: g.evaluate(candles)),
             (self.g2, lambda g: g.evaluate(trades_raw, symbol=candidate_info.get("symbol", "BTCUSDT"))),
-            (self.g3, lambda g: g.evaluate(is_trades, oos_trades)),
+            (self.g3, lambda g: g.evaluate(is_trades, oos_trades, is_ultra=is_ultra)),
             (self.g4, lambda g: g.evaluate(is_trades, oos_trades)),
-            (self.g5, lambda g: g.evaluate(oos_trades)),
+            (self.g5, lambda g: g.evaluate(oos_trades, initial_capital=base_capital, ruin_drawdown_pct=ruin_limit_dd)),
             (self.g6, lambda g: g.evaluate(oos_trades)),
             (self.g7, lambda g: g.evaluate(candles, oos_trades)),
             (self.g8, lambda g: g.evaluate(oos_trades)),
-            (self.g9, lambda g: g.evaluate()),
+            (self.g9, lambda g: g.evaluate(candidate_info.get("rules", []), indicators_count=candidate_info.get("indicators_count", 3))),
             (self.g10, lambda g: g.evaluate(candidate_info)),
-            (self.g11, lambda g: g.evaluate(oos_trades, symbol=candidate_info.get("symbol", "BTCUSDT"))),
+            (self.g11, lambda g: g.evaluate(oos_trades, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0)),
         ]
 
         for gate_instance, eval_fn in evaluators:
@@ -98,6 +99,7 @@ class GatePipelineOrchestrator:
             "symbol": candidate_info.get("symbol", ""),
             "overall_certified": overall_passed,
             "overall_score": avg_score,
+            "scorecard_average": avg_score,
             "gates_passed_count": sum(1 for g in gates_results if g.get("passed")),
             "total_gates": 11,
             "gates": gates_results,

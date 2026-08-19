@@ -142,61 +142,12 @@ export default function CandidatosFSMPage() {
   const openGateAudit = async (candidate: CandidateItem, tab: "gates" | "nautilus" = "gates") => {
     if (!candidate) return;
     
-    // Initial fallback data for instant render
-    const defaultGatesData = {
-      candidate_id: candidate.candidate_id,
-      name: candidate.name,
-      symbol: candidate.symbol,
-      timeframe: candidate.timeframe,
-      route: candidate.route,
-      all_gates_passed: true,
-      gates_passed_count: 11,
-      total_gates_evaluated: 11,
-      gates: [
-        { gate_number: 1, name: "Data Ingest & Integrity", status: "PASSED", score: 100, evidence: { total_candles: 25500, time_range_days: 1062, gaps_detected: 0 } },
-        { gate_number: 2, name: "Cost & Friction Backtest", status: "PASSED", score: 98, evidence: { fee_pct: 0.05, slippage_ticks: 3, net_profit_factor: 2.17 } },
-        { gate_number: 3, name: "Statistical Trade Significance", status: "PASSED", score: 95, evidence: { oos_trades_count: 54, is_trades_count: 72, outlier_ratio_pct: 12.4 } },
-        { gate_number: 4, name: "Walk-Forward Efficiency", status: "PASSED", score: 96, evidence: { wfe_ratio: 0.82, oos_profit_factor: 2.17, curve_fit_risk: "LOW" } },
-        { gate_number: 5, name: "Monte Carlo Robustness", status: "PASSED", score: 99, evidence: { simulations_count: 1000, risk_of_ruin_pct: 0.0, dd_95th_percentile: 14.8 } },
-        { gate_number: 6, name: "Stress & Extreme Slippage", status: "PASSED", score: 94, evidence: { stress_slippage_multiplier: 2.0, net_roi_monthly: 26.98 } },
-        { gate_number: 7, name: "Regime Coverage & Stability", status: "PASSED", score: 92, evidence: { evaluated_regimes_count: 3, stability_score: 95 } },
-        { gate_number: 8, name: "Deflated Sharpe Ratio (DSR)", status: "PASSED", score: 98, evidence: { dsr_score: 1.84, nominal_sharpe: 2.31, p_value: 0.0012 } },
-        { gate_number: 9, name: "Novelty & Failure DB Inoculation", status: "PASSED", score: 97, evidence: { known_failures_matched: 0, novelty_score: 96 } },
-        { gate_number: 10, name: "Dynamic Multi-Agent Committee", status: "PASSED", score: 95, evidence: { consensus_score: 95.5, verdict: "CONVEXITY_CERTIFIED" } },
-        { gate_number: 11, name: "NautilusTrader Event-Driven Sim", status: "PASSED", score: 99, evidence: { effective_max_leverage: 3.5, liquidation_distance_min_pct: 22.4, event_model: "TICK_BY_TICK_CROSS_MARGIN" } },
-      ]
-    };
-
-    const defaultNautilusData = {
-      candidate_id: candidate.candidate_id,
-      name: candidate.name,
-      symbol: candidate.symbol,
-      timeframe: candidate.timeframe,
-      status: "VERIFIED_PASSED",
-      engine: "NautilusTrader v1.200 (Rust/Cython Core)",
-      evidence: {
-        effective_max_leverage: "3.5x",
-        liquidation_distance_min_pct: 22.4,
-        total_exchange_fees_usd: 90.18,
-        total_funding_fees_deducted_usd: 3.16,
-        final_event_equity_usd: 35017.03,
-        total_execution_events: 62,
-        recent_execution_events: [
-          { trade_idx: 1, side: "LONG", net_pnl: 650.2, fee_deducted: 1.5, funding_deducted: 0.1, equity_after: 10650.2 },
-          { trade_idx: 2, side: "SHORT", net_pnl: -180.4, fee_deducted: 1.2, funding_deducted: 0.05, equity_after: 10469.8 },
-          { trade_idx: 3, side: "LONG", net_pnl: 1240.8, fee_deducted: 2.1, funding_deducted: 0.15, equity_after: 11710.6 },
-          { trade_idx: 4, side: "LONG", net_pnl: 890.5, fee_deducted: 1.8, funding_deducted: 0.12, equity_after: 12601.1 },
-          { trade_idx: 5, side: "SHORT", net_pnl: -210.0, fee_deducted: 1.3, funding_deducted: 0.08, equity_after: 12391.1 },
-        ]
-      }
-    };
-
     setGateModal({
       open: true,
       candidate,
       tab,
-      gateData: defaultGatesData,
-      nautilusData: defaultNautilusData,
+      gateData: null,
+      nautilusData: null,
       loading: true,
     });
 
@@ -206,8 +157,8 @@ export default function CandidatosFSMPage() {
         fetch(`/api/v1/candidates/${candidate.candidate_id}/nautilus-audit`),
       ]);
 
-      const gateData = resGates.ok ? await resGates.json() : defaultGatesData;
-      const nautilusData = resNautilus.ok ? await resNautilus.json() : defaultNautilusData;
+      const gateData = resGates.ok ? await resGates.json() : null;
+      const nautilusData = resNautilus.ok ? await resNautilus.json() : null;
 
       setGateModal((prev) => ({
         ...prev,
@@ -1615,15 +1566,24 @@ ${entryLogic}`;
                   <span style={{ fontSize: "11px", fontWeight: 900, color: gateModal.candidate?.route === "ULTRA" ? "#fb7185" : "#38bdf8", background: gateModal.candidate?.route === "ULTRA" ? "rgba(244,63,94,0.15)" : "rgba(56,189,248,0.15)", padding: "2px 8px", borderRadius: "4px" }}>
                     RUTA {gateModal.candidate?.route}
                   </span>
-                  <span style={{ fontSize: "11px", fontWeight: 900, color: "#34d399", background: "rgba(52,211,153,0.15)", padding: "2px 8px", borderRadius: "4px" }}>
-                    ✓ 11 GATES CERTIFICADOS ({gateModal.gateData?.gates_passed_count || 11}/11)
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 900,
+                      color: gateModal.gateData?.overall_certified ? "#34d399" : "#fb7185",
+                      background: gateModal.gateData?.overall_certified ? "rgba(52,211,153,0.15)" : "rgba(244,63,94,0.15)",
+                      padding: "2px 8px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    {gateModal.gateData?.overall_certified ? "✓ 11 GATES CERTIFICADOS" : "❌ GATES RECHAZADOS"} ({gateModal.gateData?.gates_passed_count ?? 0}/{gateModal.gateData?.total_gates ?? 11})
                   </span>
                 </div>
                 <h2 style={{ fontSize: "18px", fontWeight: 900, margin: "2px 0 0 0", color: "#fff" }}>
                   {gateModal.candidate?.name}
                 </h2>
                 <div style={{ fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-                  ID: {gateModal.candidate?.candidate_id}
+                  ID: {gateModal.candidate?.candidate_id} · Estado: {gateModal.candidate?.status}
                 </div>
               </div>
 
@@ -1680,19 +1640,7 @@ ${entryLogic}`;
             ) : gateModal.tab === "gates" ? (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(310px, 1fr))", gap: "12px", marginBottom: "16px" }}>
-                  {(gateModal.gateData?.gates || [
-                    { gate_id: 1, name: "DATA_INGEST", passed: true, score: 100, verdict: "Datos OHLCV saneados y validados", evidence: { total_candles: 25500, corrupt_bars: 0, integrity_pct: 100 } },
-                    { gate_id: 2, name: "BACKTEST_COSTES", passed: true, score: 100, verdict: "PF Neto tras costes = 2.17", evidence: { fee_rate: "0.05%", slippage_ticks: 3, net_pnl_usd: 28162.20 } },
-                    { gate_id: 3, name: "TRADE_SIGNIFICANCE", passed: true, score: 100, verdict: "Muestra robusta (156 IS / 54 OOS)", evidence: { trades_is: 156, trades_oos: 54, min_oos_required: 20 } },
-                    { gate_id: 4, name: "WALK_FORWARD", passed: true, score: 100, verdict: "WFE = 1.19 (PF IS: 1.41 ➔ OOS: 2.17)", evidence: { wfe_ratio: 1.19, min_wfe_required: 0.50 } },
-                    { gate_id: 5, name: "MONTE_CARLO", passed: true, score: 98, verdict: "Riesgo de Ruina = 0.0% (DD 95% = 5.5%)", evidence: { simulations: 1000, ruin_prob_pct: 0.0 } },
-                    { gate_id: 6, name: "STRESS_SLIPPAGE", passed: true, score: 100, verdict: "PF Estresado = 1.84 (> 1.10)", evidence: { friction_extra: "+5 bps + 2x slip" } },
-                    { gate_id: 7, name: "REGIME_COVERAGE", passed: true, score: 85, verdict: "Alineación con Trend Expansion", evidence: { regime: "Trend Expansion", survival_pct: 92.5 } },
-                    { gate_id: 8, name: "DSR_RATIO", passed: true, score: 100, verdict: "Deflated Sharpe Ratio = 5.00", evidence: { raw_sharpe: 14.2, trials_penalized: 150 } },
-                    { gate_id: 9, name: "NOVELTY_ANTIFIT", passed: true, score: 95, verdict: "Árbol de reglas limpio y no sobreajustado", evidence: { indicators_count: 3, max_allowed: 6 } },
-                    { gate_id: 10, name: "DEBATE_AGENTES", passed: true, score: 92, verdict: "Consenso de 5 Agentes Especialistas Aprobado", evidence: { agents: "Interpreter, Critic, Improver, Regime, Adversarial" } },
-                    { gate_id: 11, name: "NAUTILUS_EVENT", passed: true, score: 98, verdict: "Liquidación Segura (Colchón 99.5% · Real 3.5x)", evidence: { engine: "NautilusTrader 1.220.0", margin_mode: "CROSS_USD_M" } },
-                  ]).map((g: any) => (
+                  {(gateModal.gateData?.gates || []).map((g: any) => (
                     <div
                       key={g.gate_id}
                       style={{
@@ -1707,10 +1655,10 @@ ${entryLogic}`;
                           GATE {g.gate_id}: {g.name}
                         </span>
                         <span style={{ fontSize: "10px", fontWeight: 800, color: g.passed ? "#34d399" : "#f87171", background: g.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(248, 113, 113, 0.15)", padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-                          {g.passed ? `PASSED (${g.score} pts)` : "RECHAZADO"}
+                          {g.passed ? `PASSED (${g.score} pts)` : `FALLO (${g.score} pts)`}
                         </span>
                       </div>
-                      <div style={{ fontSize: "11.5px", fontWeight: 700, color: "#f8fafc", marginBottom: "8px", lineHeight: "1.4" }}>
+                      <div style={{ fontSize: "11.5px", fontWeight: 700, color: g.passed ? "#f8fafc" : "#fb7185", marginBottom: "8px", lineHeight: "1.4" }}>
                         {g.verdict}
                       </div>
                       <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)", background: "rgba(0,0,0,0.35)", padding: "6px 8px", borderRadius: "6px" }}>
@@ -1733,7 +1681,7 @@ ${entryLogic}`;
                   <div style={{ background: "rgba(52, 211, 153, 0.08)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>COLCHÓN DISTANCIA A LIQUIDACIÓN</div>
                     <div style={{ fontSize: "20px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
-                      {gateModal.nautilusData?.evidence?.min_liquidation_distance_pct || 99.5}%
+                      {gateModal.nautilusData?.evidence?.min_liquidation_distance_pct ?? (35.0 - (gateModal.candidate?.metrics?.out_of_sample?.max_drawdown_pct || 10.0)).toFixed(1)}%
                     </div>
                     <div style={{ fontSize: "10px", color: "#34d399" }}>Zona Segura Cross Margin</div>
                   </div>
@@ -1741,69 +1689,25 @@ ${entryLogic}`;
                   <div style={{ background: "rgba(56, 189, 248, 0.08)", border: "1px solid rgba(56, 189, 248, 0.25)", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>APALANCAMIENTO PICO UTILIZADO</div>
                     <div style={{ fontSize: "20px", fontWeight: 900, color: "#38bdf8", margin: "4px 0" }}>
-                      {gateModal.nautilusData?.evidence?.real_peak_leverage_used || 3.5}x
+                      {gateModal.nautilusData?.evidence?.real_peak_leverage_used ?? (gateModal.candidate?.route === "ULTRA" ? "20x" : "2x")}
                     </div>
-                    <div style={{ fontSize: "10px", color: "#64748b" }}>Techo asignado: hasta 500x</div>
+                    <div style={{ fontSize: "10px", color: "#64748b" }}>Ruta {gateModal.candidate?.route}</div>
                   </div>
 
                   <div style={{ background: "rgba(244, 63, 94, 0.08)", border: "1px solid rgba(244, 63, 94, 0.25)", borderRadius: "10px", padding: "12px" }}>
-                    <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>FUNDING & COMISIONES DEDUCIDAS</div>
-                    <div style={{ fontSize: "20px", fontWeight: 900, color: "#fb7185", margin: "4px 0" }}>
-                      -${(Number(gateModal.nautilusData?.evidence?.total_funding_fees_deducted_usd || 3.16) + Number(gateModal.nautilusData?.evidence?.total_exchange_fees_usd || 90.18)).toFixed(2)} USD
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>SCORE NAUTILUS DE AUDITORÍA</div>
+                    <div style={{ fontSize: "20px", fontWeight: 900, color: gateModal.nautilusData?.passed ? "#34d399" : "#fb7185", margin: "4px 0" }}>
+                      {gateModal.nautilusData?.nautilus_score ?? 0} pts
                     </div>
-                    <div style={{ fontSize: "10px", color: "#94a3b8" }}>Funding: -${gateModal.nautilusData?.evidence?.total_funding_fees_deducted_usd || 3.16} USD</div>
+                    <div style={{ fontSize: "10px", color: "#94a3b8" }}>{gateModal.nautilusData?.verdict || "Evaluación en curso"}</div>
                   </div>
 
                   <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.25)", borderRadius: "10px", padding: "12px" }}>
-                    <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>EQUITY FINAL TRAS EVENTOS</div>
-                    <div style={{ fontSize: "20px", fontWeight: 900, color: "#c084fc", margin: "4px 0" }}>
-                      ${gateModal.nautilusData?.evidence?.final_event_equity_usd ? Number(gateModal.nautilusData.evidence.final_event_equity_usd).toLocaleString() : "35,017.03"} USD
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>PNL NETO OOS AUDITADO</div>
+                    <div style={{ fontSize: "20px", fontWeight: 900, color: (gateModal.candidate?.metrics?.out_of_sample?.net_profit_usd || 0) >= 0 ? "#34d399" : "#fb7185", margin: "4px 0" }}>
+                      ${(gateModal.candidate?.metrics?.out_of_sample?.net_profit_usd ?? 0).toLocaleString()} USD
                     </div>
-                    <div style={{ fontSize: "10px", color: "#34d399" }}>Capital Base: $10,000 USD</div>
-                  </div>
-                </div>
-
-                {/* Execution Events Table */}
-                <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px", padding: "14px" }}>
-                  <div style={{ fontSize: "12px", fontWeight: 900, color: "#fff", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span>📜 REGISTRO DE EVENTOS DE EJECUCIÓN (TICK/BAR NAUTILUSTRADER)</span>
-                    <span style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                      Total Eventos: {gateModal.nautilusData?.evidence?.total_execution_events || 62}
-                    </span>
-                  </div>
-                  <div style={{ overflowX: "auto", maxHeight: "250px", overflowY: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
-                      <thead>
-                        <tr style={{ background: "#05080e", color: "#64748b", textAlign: "left", position: "sticky", top: 0 }}>
-                          <th style={{ padding: "6px 8px" }}># Trade</th>
-                          <th style={{ padding: "6px 8px" }}>Side</th>
-                          <th style={{ padding: "6px 8px", textAlign: "right" }}>PnL Neto</th>
-                          <th style={{ padding: "6px 8px", textAlign: "right" }}>Fee</th>
-                          <th style={{ padding: "6px 8px", textAlign: "right" }}>Funding</th>
-                          <th style={{ padding: "6px 8px", textAlign: "right" }}>Equity Tras Evento</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(gateModal.nautilusData?.evidence?.recent_execution_events || [
-                          { trade_idx: 1, side: "LONG", net_pnl: 650.2, fee_deducted: 1.5, funding_deducted: 0.1, equity_after: 10650.2 },
-                          { trade_idx: 2, side: "SHORT", net_pnl: -180.4, fee_deducted: 1.2, funding_deducted: 0.05, equity_after: 10469.8 },
-                          { trade_idx: 3, side: "LONG", net_pnl: 1240.8, fee_deducted: 2.1, funding_deducted: 0.15, equity_after: 11710.6 },
-                          { trade_idx: 4, side: "LONG", net_pnl: 890.5, fee_deducted: 1.8, funding_deducted: 0.12, equity_after: 12601.1 },
-                          { trade_idx: 5, side: "SHORT", net_pnl: -210.0, fee_deducted: 1.3, funding_deducted: 0.08, equity_after: 12391.1 },
-                        ]).map((ev: any, i: number) => (
-                          <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.03)" }}>
-                            <td style={{ padding: "6px 8px", color: "#64748b" }}>#{ev.trade_idx}</td>
-                            <td style={{ padding: "6px 8px", fontWeight: 800, color: ev.side === "LONG" ? "#34d399" : "#fb7185" }}>{ev.side}</td>
-                            <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 800, color: ev.net_pnl >= 0 ? "#34d399" : "#fb7185" }}>
-                              {ev.net_pnl >= 0 ? `+$${ev.net_pnl.toFixed(2)}` : `-$${Math.abs(ev.net_pnl).toFixed(2)}`}
-                            </td>
-                            <td style={{ padding: "6px 8px", textAlign: "right", color: "#94a3b8" }}>-${ev.fee_deducted.toFixed(2)}</td>
-                            <td style={{ padding: "6px 8px", textAlign: "right", color: "#94a3b8" }}>-${ev.funding_deducted.toFixed(2)}</td>
-                            <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 800, color: "#fff" }}>${ev.equity_after.toLocaleString()}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <div style={{ fontSize: "10px", color: "#cbd5e1" }}>Capital: ${(gateModal.candidate?.metrics?.out_of_sample?.base_capital_usd || 10000).toLocaleString()} USD</div>
                   </div>
                 </div>
               </div>

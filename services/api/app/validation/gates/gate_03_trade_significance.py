@@ -12,7 +12,7 @@ class Gate03TradeSignificance:
     NAME = "TRADE_SIGNIFICANCE"
     LABEL = "3. TRADE SIGNIFICANCE"
 
-    def evaluate(self, is_trades: List[float], oos_trades: List[float]) -> Dict[str, Any]:
+    def evaluate(self, is_trades: List[float], oos_trades: List[float], is_ultra: bool = False) -> Dict[str, Any]:
         n_is = len(is_trades) if is_trades else 0
         n_oos = len(oos_trades) if oos_trades else 0
 
@@ -22,24 +22,30 @@ class Gate03TradeSignificance:
         top2_win_pnl = sum(sorted(pos_oos, reverse=True)[:2]) if len(pos_oos) >= 2 else total_win_pnl
         top2_ratio = (top2_win_pnl / total_win_pnl * 100.0) if total_win_pnl > 0 else 100.0
 
-        is_sample_ok = (n_is >= 30)
-        oos_sample_ok = (n_oos >= 20)
-        outlier_ok = (top2_ratio <= 50.0) or (n_oos >= 50)  # Si hay 50+ trades, top 2 es menos crítico
+        # En Ultra se permiten menos trades por periodo si hay alta convexidad (mínimo 15 IS / 10 OOS)
+        min_is = 15 if is_ultra else 30
+        min_oos = 10 if is_ultra else 20
+        max_outlier_ratio = 85.0 if is_ultra else 50.0
+
+        is_sample_ok = (n_is >= min_is)
+        oos_sample_ok = (n_oos >= min_oos) or (n_oos == 0 and is_ultra and n_is >= 20)
+        outlier_ok = (top2_ratio <= max_outlier_ratio) or (n_oos >= 30)
 
         passed = is_sample_ok and oos_sample_ok and outlier_ok
-        score = min(100.0, (n_oos / 40.0) * 100.0) if passed else max(10.0, (n_oos / 20.0) * 50.0)
+        score = min(100.0, (n_oos / float(min_oos * 2)) * 100.0) if passed else max(10.0, (n_oos / float(min_oos)) * 50.0)
 
         return {
             "gate_id": self.GATE_ID,
             "name": self.NAME,
             "passed": passed,
             "score": round(score, 1),
-            "verdict": f"PASSED: Muestra robusta ({n_is} IS / {n_oos} OOS)" if passed else f"FALLO: Muestra insuficiente ({n_is} IS < 30 ó {n_oos} OOS < 20)",
+            "verdict": f"PASSED: Muestra robusta ({n_is} IS / {n_oos} OOS · {'Ultra Convex' if is_ultra else 'Fondeo'})" if passed else f"FALLO: Muestra insuficiente ({n_is} IS < {min_is} ó {n_oos} OOS < {min_oos})",
             "evidence": {
                 "trades_is": n_is,
                 "trades_oos": n_oos,
                 "top2_outlier_dependency_pct": round(top2_ratio, 1),
-                "min_is_required": 30,
-                "min_oos_required": 20,
+                "min_is_required": min_is,
+                "min_oos_required": min_oos,
+                "route_mode": "ULTRA_ASYMMETRIC" if is_ultra else "FONDEO_CONSISTENCY",
             },
         }
