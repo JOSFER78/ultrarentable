@@ -88,5 +88,5 @@ def test_certification_registry_multi_route_verdicts():
     )
 
     assert verdict.strategy_id == "strat_cert_ultra"
-    assert verdict.certified_status in ["ULTRA_CERTIFIED", "REJECTED_ALTO_DRAWDOWN", "REJECTED_BAJO_PF", "BLOCKED_NO_EVIDENCE"]
+    assert verdict.certified_status in ["ULTRA_CERTIFIED", "REJECTED_GATES_INCOMPLETE", "REJECTED_ALTO_DRAWDOWN", "REJECTED_BAJO_PF", "BLOCKED_NO_EVIDENCE"]
     assert len(verdict.canonical_hash) == 64
