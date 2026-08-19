@@ -79,8 +79,12 @@ def load_candles(
     base_path = Path(data_dir) if data_dir else NORMALIZED_DATA_DIR
     if base_path.exists():
         symbol_variants = [
+            normalized_symbol.replace("-", "_").lower(),
+            normalized_symbol.lower(),
+            normalized_symbol.replace("-USDT", "").replace("_USDT", "").lower(),
             normalized_symbol.replace("-", "_"),
             normalized_symbol,
+            normalized_symbol.replace("-USDT", "").replace("_USDT", ""),
         ]
         
         matches = []
@@ -88,6 +92,11 @@ def load_candles(
             pattern = str(base_path / f"*{s_var}*{timeframe}*.json")
             found = [f for f in glob.glob(pattern) if not f.endswith("_manifest.json")]
             matches.extend(found)
+            if not matches:
+                # Intento sin timeframe en caso de archivo único
+                pattern_all = str(base_path / f"*{s_var}*.json")
+                found_all = [f for f in glob.glob(pattern_all) if not f.endswith("_manifest.json")]
+                matches.extend(found_all)
             
         if matches:
             chosen_file = max(matches, key=lambda p: Path(p).stat().st_size)

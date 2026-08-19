@@ -99,6 +99,7 @@ export default function CandidatosFSMPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
+  const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateItem | null>(null);
 
@@ -222,7 +223,7 @@ export default function CandidatosFSMPage() {
   const fetchCandidates = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/v1/candidates?limit=200");
+      const res = await fetch("/api/v1/candidates?limit=500&include_rejected=true");
       if (res.ok) {
         const data = await res.json();
         setCandidates(data);
@@ -533,8 +534,17 @@ ${entryLogic}`;
     setExportModal({ open: true, type, content: code, name });
   };
 
+  const getSymbolCategory = (sym: string): "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES" => {
+    const s = (sym || "").toUpperCase();
+    if (s.includes("NQ") || s.includes("ES") || s.includes("YM") || s.includes("RTY") || s.includes("DAX") || s.includes("FTSE") || s.includes("NK") || s.includes("HSI") || s.includes("STOXX")) return "INDICES";
+    if (s.includes("EUR") || s.includes("GBP") || s.includes("JPY") || s.includes("AUD") || s.includes("CAD") || s.includes("CHF") || s.includes("NZD")) return "FOREX";
+    if (s.includes("XAU") || s.includes("GC") || s.includes("XAG") || s.includes("SI") || s.includes("CL") || s.includes("WTI") || s.includes("BRENT") || s.includes("NG") || s.includes("NATGAS") || s.includes("HG") || s.includes("COPPER") || s.includes("PL")) return "COMMODITIES";
+    return "CRYPTO";
+  };
+
   const filteredCandidates = candidates.filter((c) => {
     if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
+    if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const match = c.name.toLowerCase().includes(q) || c.candidate_id.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q);
@@ -1084,6 +1094,7 @@ ${entryLogic}`;
             {/* Filters Bar */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {/* Route filter */}
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
                   {[
                     { id: "ALL", label: `TODAS (${candidates.length})` },
@@ -1106,6 +1117,35 @@ ${entryLogic}`;
                       }}
                     >
                       {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Market Category filter */}
+                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                  {[
+                    { id: "ALL", label: "🌐 TODOS" },
+                    { id: "CRYPTO", label: "🔥 CRIPTO" },
+                    { id: "INDICES", label: "📈 ÍNDICES" },
+                    { id: "FOREX", label: "💱 FOREX" },
+                    { id: "COMMODITIES", label: "🪙 COMMODITIES" },
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setCategoryFilter(cat.id as any)}
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: categoryFilter === cat.id ? "rgba(56, 189, 248, 0.25)" : "transparent",
+                        color: categoryFilter === cat.id ? "#38bdf8" : "#94a3b8",
+                        fontSize: "10px",
+                        fontWeight: 800,
+                        cursor: "pointer",
+                        fontFamily: "var(--font-mono, monospace)",
+                      }}
+                    >
+                      {cat.label}
                     </button>
                   ))}
                 </div>
@@ -1224,8 +1264,9 @@ ${entryLogic}`;
                                 color: c.route === "ULTRA" ? "#fb7185" : "#38bdf8",
                                 fontFamily: "var(--font-mono, monospace)",
                               }}
+                              title={c.route === "FONDEO" ? `Prop Firms: ${(c as any).prop_firm_venues || "FTMO / Apex / Topstep"}` : "Ruta ULTRA: BingX 500x"}
                             >
-                              {c.route}
+                              {c.route === "FONDEO" ? "🛡️ FONDEO" : "🔥 ULTRA"}
                             </span>
                           </td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: annRoi > 0 ? "#34d399" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>

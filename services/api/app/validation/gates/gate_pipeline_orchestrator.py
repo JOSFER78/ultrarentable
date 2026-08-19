@@ -58,7 +58,7 @@ class GatePipelineOrchestrator:
 
         evaluators = [
             (self.g1, lambda g: g.evaluate(candles if candles else [{"open": 100, "high": 102, "low": 99, "close": 101, "volume": 100}] * 2500)),
-            (self.g2, lambda g: g.evaluate(trades_raw)),
+            (self.g2, lambda g: g.evaluate(trades_raw, symbol=candidate_info.get("symbol", "BTCUSDT"))),
             (self.g3, lambda g: g.evaluate(is_trades, oos_trades)),
             (self.g4, lambda g: g.evaluate(is_trades, oos_trades)),
             (self.g5, lambda g: g.evaluate(oos_trades)),

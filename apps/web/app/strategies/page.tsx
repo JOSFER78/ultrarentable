@@ -62,8 +62,8 @@ export default function StrategiesExplorerPage() {
     try {
       setLoading(true);
       const url = selectedRoute !== "ALL"
-        ? `/api/v1/candidates?route=${selectedRoute}&limit=100`
-        : `/api/v1/candidates?limit=200`;
+        ? `/api/v1/candidates?route=${selectedRoute}&limit=500&include_rejected=true`
+        : `/api/v1/candidates?limit=500&include_rejected=true`;
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
@@ -556,35 +556,64 @@ export default function StrategiesExplorerPage() {
             }}
           >
             <option value="ALL">🌐 Todos los Activos ({candidates.length})</option>
-            <optgroup label="Crypto Ultra (BingX)" style={{ background: "#0c111d", color: "#63e1b4" }}>
-              <option value="BTC">BTC-USDT</option>
-              <option value="ETH">ETH-USDT</option>
-              <option value="SOL">SOL-USDT</option>
-              <option value="AVAX">AVAX-USDT</option>
-              <option value="DOGE">DOGE-USDT</option>
-              <option value="PEPE">PEPE-USDT</option>
-              <option value="LINK">LINK-USDT</option>
-              <option value="XRP">XRP-USDT</option>
-              <option value="BNB">BNB-USDT</option>
-              <option value="SUI">SUI-USDT</option>
+            
+            <optgroup label="🛡️ Cripto Fondeo (FTMO / FundedNext / Prop Firms)" style={{ background: "#0c111d", color: "#38bdf8" }}>
+              <option value="BTC">BTC-USDT (Bitcoin)</option>
+              <option value="ETH">ETH-USDT (Ethereum)</option>
+              <option value="SOL">SOL-USDT (Solana)</option>
+              <option value="XRP">XRP-USDT (Ripple)</option>
+              <option value="ADA">ADA-USDT (Cardano)</option>
+              <option value="BNB">BNB-USDT (BNB Chain)</option>
+              <option value="DOGE">DOGE-USDT (Dogecoin)</option>
+              <option value="LINK">LINK-USDT (Chainlink)</option>
+              <option value="AVAX">AVAX-USDT (Avalanche)</option>
             </optgroup>
-            <optgroup label="Futuros CME (Fondeo)" style={{ background: "#0c111d", color: "#38bdf8" }}>
-              <option value="NQ">NQ (Nasdaq Futures)</option>
-              <option value="MNQ">MNQ (Micro Nasdaq)</option>
-              <option value="ES">ES (S&P 500 Futures)</option>
-              <option value="MES">MES (Micro S&P)</option>
-              <option value="YM">YM (Dow Jones)</option>
+
+            <optgroup label="🔥 Cripto Alta Beta (Exclusivo Ruta ULTRA 500x BingX)" style={{ background: "#0c111d", color: "#fb7185" }}>
+              <option value="SUI">SUI-USDT (Sui Network)</option>
+              <option value="NEAR">NEAR-USDT (Near Protocol)</option>
+              <option value="APT">APT-USDT (Aptos)</option>
+              <option value="INJ">INJ-USDT (Injective)</option>
+              <option value="RENDER">RENDER-USDT (Render)</option>
+              <option value="ARB">ARB-USDT (Arbitrum)</option>
+              <option value="OP">OP-USDT (Optimism)</option>
+              <option value="TIA">TIA-USDT (Celestia)</option>
+              <option value="FET">FET-USDT (Fetch.ai)</option>
+            </optgroup>
+
+            <optgroup label="📈 Índices CME & Globales" style={{ background: "#0c111d", color: "#38bdf8" }}>
+              <option value="NQ">NQ / MNQ (Nasdaq 100 Futures)</option>
+              <option value="ES">ES / MES (S&P 500 Futures)</option>
+              <option value="YM">YM (Dow Jones Futures)</option>
               <option value="RTY">RTY (Russell 2000)</option>
-              <option value="CL">CL (Crude Oil)</option>
-              <option value="GC">GC (Gold Futures)</option>
+              <option value="FDAX">FDAX (DAX 40 Alemania)</option>
+              <option value="FTSE">FTSE (FTSE 100 UK)</option>
+              <option value="NK225">NK225 (Nikkei 225 Japón)</option>
+              <option value="HSI">HSI (Hang Seng Hong Kong)</option>
+              <option value="STOXX50">STOXX50 (Euro Stoxx 50)</option>
             </optgroup>
-            <optgroup label="Forex & Metales Prop" style={{ background: "#0c111d", color: "#fbbf24" }}>
-              <option value="EURUSD">EURUSD</option>
-              <option value="GBPUSD">GBPUSD</option>
-              <option value="USDJPY">USDJPY</option>
-              <option value="AUDUSD">AUDUSD</option>
-              <option value="USDCAD">USDCAD</option>
-              <option value="XAUUSD">XAUUSD (Spot Gold)</option>
+
+            <optgroup label="💱 Forex Majors & Cruces" style={{ background: "#0c111d", color: "#facc15" }}>
+              <option value="EURUSD">EURUSD (Euro / US Dollar)</option>
+              <option value="USDJPY">USDJPY (US Dollar / Yen)</option>
+              <option value="GBPJPY">GBPJPY (British Pound / Yen)</option>
+              <option value="GBPUSD">GBPUSD (British Pound / USD)</option>
+              <option value="EURJPY">EURJPY (Euro / Yen)</option>
+              <option value="USDCAD">USDCAD (US Dollar / CAD)</option>
+              <option value="AUDUSD">AUDUSD (Australian Dollar / USD)</option>
+              <option value="USDCHF">USDCHF (US Dollar / Franco Suizo)</option>
+              <option value="NZDUSD">NZDUSD (New Zealand Dollar / USD)</option>
+              <option value="EURGBP">EURGBP (Euro / British Pound)</option>
+            </optgroup>
+
+            <optgroup label="🪙 Commodities (Metales & Energías)" style={{ background: "#0c111d", color: "#c084fc" }}>
+              <option value="XAU">XAUUSD / GC (Oro Spot & Futuros)</option>
+              <option value="XAG">XAGUSD / SI (Plata Spot & Futuros)</option>
+              <option value="CL">WTI / CL (Petróleo Texas Crudo)</option>
+              <option value="BRENT">BRENT (Petróleo Mar del Norte)</option>
+              <option value="NG">NATGAS / NG (Gas Natural)</option>
+              <option value="HG">COPPER / HG (Cobre High Grade)</option>
+              <option value="PL">PLATINUM / PL (Platino)</option>
             </optgroup>
           </select>
 

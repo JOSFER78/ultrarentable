@@ -12,6 +12,7 @@ from services.api.app.db.database import get_db, CandidateModel, AuditEventModel
 from services.api.app.export.sqx_to_tradingview import generate_pinescript_v5
 from services.api.app.export.sqx_to_ninjatrader import generate_ninjatrader_strategy_cs
 from services.api.app.factory.robustness_verifier import verify_strategy_robustness
+from services.api.app.validation.market_specs import get_market_spec
 
 candidates_router = APIRouter(prefix="/candidates", tags=["Strategy Candidates & Scorecards"])
 
@@ -113,12 +114,17 @@ def list_candidates(
         if not include_rejected and resolved_status.startswith("RECHAZADA"):
             continue
 
+        spec = get_market_spec(c.symbol)
         results.append({
             "candidate_id": c.candidate_id,
             "name": c.name,
             "route": c.route,
             "symbol": c.symbol,
             "timeframe": c.timeframe,
+            "market_category": spec.category,
+            "icon": spec.icon,
+            "prop_firm_eligible": spec.prop_firm_eligible,
+            "prop_firm_venues": spec.prop_firm_venues,
             "dataset_id": c.dataset_id,
             "status": resolved_status,
             "status_reason": resolved_reason,

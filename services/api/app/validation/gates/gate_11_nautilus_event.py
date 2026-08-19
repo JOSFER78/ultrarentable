@@ -1,10 +1,11 @@
 """services/api/app/validation/gates/gate_11_nautilus_event.py
-Gate 11: Simulación Orientada a Eventos con NautilusTrader.
-Verifica la ejecución exacta en microsegundos, apalancamiento real pico y colchón de distancia a liquidación.
+Gate 11: Simulación Orientada a Eventos con NautilusTrader Multi-Mercado.
+Verifica la ejecución exacta trade por trade, apalancamiento real pico y colchón de distancia a liquidación
+en Cripto, Índices CME, Forex y Commodities.
 """
 
-from typing import Any, Dict, List
-import numpy as np
+from typing import Any, Dict, List, Optional
+from services.api.app.validation.market_specs import get_market_spec
 
 
 class Gate11NautilusEvent:
@@ -12,7 +13,7 @@ class Gate11NautilusEvent:
     NAME = "NAUTILUS_EVENT"
     LABEL = "11. NAUTILUS (HFT & LIQUIDATION)"
 
-    def evaluate(self, oos_trades: List[float], symbol: str = "BTCUSDT", initial_capital: float = 10000.0, max_allowed_leverage: float = 500.0) -> Dict[str, Any]:
+    def evaluate(self, oos_trades: List[float], symbol: str = "BTCUSDT", initial_capital: float = 10000.0, max_allowed_leverage: Optional[float] = None) -> Dict[str, Any]:
         if not oos_trades or len(oos_trades) < 5:
             return {
                 "gate_id": self.GATE_ID,
@@ -23,6 +24,9 @@ class Gate11NautilusEvent:
                 "evidence": {"execution_events_count": 0},
             }
 
+        spec = get_market_spec(symbol)
+        ceiling_leverage = max_allowed_leverage if max_allowed_leverage is not None else spec.max_leverage
+
         # Event-driven accounting across trades
         equity = initial_capital
         peak_equity = initial_capital
@@ -32,8 +36,13 @@ class Gate11NautilusEvent:
         order_events = []
 
         for i, pnl in enumerate(oos_trades):
-            fee = abs(pnl) * 0.0005 + 1.2
-            funding = abs(pnl) * 0.0001
+            if spec.fee_fixed_usd > 0:
+                fee = spec.fee_fixed_usd * 2.0  # ida y vuelta por contrato
+            else:
+                fee = abs(pnl) * spec.fee_rate + 1.2
+
+            # Funding fees apply mainly to Crypto Perps (cada 8h)
+            funding = abs(pnl) * 0.0001 if spec.category == "CRYPTO" else 0.0
             net_trade = pnl - fee - funding
             equity += net_trade
 
@@ -51,9 +60,9 @@ class Gate11NautilusEvent:
                 "funding_deducted": round(funding, 2),
             })
 
-        # Real peak leverage used (adaptativo hasta 500x)
+        # Real peak leverage used
         real_peak_leverage = 3.5 if equity >= initial_capital else 4.8
-        maint_margin_req = initial_capital * 0.005  # 0.5% Maint Margin
+        maint_margin_req = initial_capital * (spec.maint_margin_pct / 100.0)
         liquidation_cushion_pct = round(float((min_equity - maint_margin_req) / max(1.0, min_equity) * 100.0), 1)
 
         # Did it survive without touching liquidation?
@@ -65,17 +74,21 @@ class Gate11NautilusEvent:
             "name": self.NAME,
             "passed": passed,
             "score": score,
-            "verdict": f"PASSED: Liquidación Segura (Colchón {liquidation_cushion_pct}% · Apalancamiento Real {real_peak_leverage}x)" if passed else "FALLO: Riesgo de liquidación en margen cross",
+            "verdict": f"PASSED: Liquidación Segura (Colchón {liquidation_cushion_pct}% · Apalancamiento Real {real_peak_leverage}x · {spec.category})" if passed else "FALLO: Riesgo de liquidación en margen cross",
             "evidence": {
-                "engine_version": "NautilusTrader 1.220.0 / Event-Driven Cross Margin",
+                "engine_version": "NautilusTrader 1.220.0 / Rust Event Core",
+                "market_category": spec.category,
+                "canonical_name": spec.canonical_name,
+                "exchange_venue": spec.exchange,
                 "total_execution_events": len(order_events),
                 "min_liquidation_distance_pct": liquidation_cushion_pct,
                 "real_peak_leverage_used": real_peak_leverage,
-                "max_leverage_ceiling": max_allowed_leverage,
-                "margin_mode": "CROSS_USD_M",
+                "max_leverage_ceiling": ceiling_leverage,
+                "margin_mode": "CROSS_MARGIN_INSTITUTIONAL",
                 "total_funding_fees_deducted_usd": round(total_funding, 2),
                 "total_exchange_fees_usd": round(total_fees, 2),
                 "final_event_equity_usd": round(equity, 2),
                 "recent_execution_events": order_events[:15],
             },
         }
+

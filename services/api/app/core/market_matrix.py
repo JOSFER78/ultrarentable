@@ -1,20 +1,26 @@
 """Universe Market Matrix Core Definitions.
 
 Defines the asset classes, symbols, supported timeframes (1m, 5m, 15m, 1h, 4h),
-and trading archetypes for multi-market quantitative strategy generation.
+and trading archetypes for multi-market quantitative strategy generation across:
+- RUTA ULTRA: 44 Activos (Convexidad 500x, Pyramiding agresivo, todo el universo cripto, índices, forex y commodities).
+- RUTA FONDEO: Solo Activos Aprobados por Empresas de Fondeo Reguladas (FTMO, Apex, Topstep, FundedNext, Alpha Capital).
+  En Cripto Fondeo: Se limita estrictamente a los 9 activos mayores (BTC, ETH, SOL, XRP, ADA, BNB, DOGE, LINK, AVAX).
+  Excluye altcoins de baja liquidez que no se permiten en prop firms.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import List
+from services.api.app.validation.market_specs import get_market_spec
 
 
 class AssetClass(str, Enum):
     CRYPTO = "CRYPTO"
     FOREX = "FOREX"
     INDICES_FUTURES = "INDICES_FUTURES"
+    COMMODITIES = "COMMODITIES"
 
 
 class Timeframe(str, Enum):
@@ -49,74 +55,94 @@ class MarketCell:
     min_pf_target: float
 
 
-# Matriz canónica del universo de búsqueda
-CANONICAL_UNIVERSE_MATRIX: List[MarketCell] = [
-    # ══════════════════════════════════════════════════════════════════════════════
-    # ── 1. RUTA ULTRA (BingX Crypto Perps — Convexidad Kamikaze & Pyramiding 500x) ──
-    # ══════════════════════════════════════════════════════════════════════════════
-    MarketCell(symbol="SOL-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="SOL High Volatility Breakout 5m", max_dd_limit_pct=15.0, min_pf_target=1.25),
-    MarketCell(symbol="SOL-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="SOL Trend Momentum 15m", max_dd_limit_pct=15.0, min_pf_target=1.30),
-    MarketCell(symbol="SOL-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.H1, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="SOL Trend Following 1h", max_dd_limit_pct=20.0, min_pf_target=1.35),
-    
-    MarketCell(symbol="BTC-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M1, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="BTC Micro Breakout 1m", max_dd_limit_pct=10.0, min_pf_target=1.20),
-    MarketCell(symbol="BTC-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="BTC Momentum Intradía 5m", max_dd_limit_pct=10.0, min_pf_target=1.25),
-    MarketCell(symbol="BTC-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="BTC Volatility Breakout 15m", max_dd_limit_pct=12.0, min_pf_target=1.25),
-    MarketCell(symbol="BTC-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.H1, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="BTC Trend Following Swing 1h", max_dd_limit_pct=15.0, min_pf_target=1.30),
+# Universo Canónico Completo de 44 Activos
+ALL_SYMBOLS_SPECS = [
+    # ── 1. CRIPTO PERPETUOS (18 ACTIVOS) ──
+    ("BTC-USDT", AssetClass.CRYPTO, "Bitcoin Perpetuo"),
+    ("ETH-USDT", AssetClass.CRYPTO, "Ethereum Perpetuo"),
+    ("SOL-USDT", AssetClass.CRYPTO, "Solana Perpetuo"),
+    ("SUI-USDT", AssetClass.CRYPTO, "Sui Network Perpetuo"),
+    ("LINK-USDT", AssetClass.CRYPTO, "Chainlink Perpetuo"),
+    ("AVAX-USDT", AssetClass.CRYPTO, "Avalanche Perpetuo"),
+    ("BNB-USDT", AssetClass.CRYPTO, "BNB Chain Perpetuo"),
+    ("NEAR-USDT", AssetClass.CRYPTO, "Near Protocol Perpetuo"),
+    ("APT-USDT", AssetClass.CRYPTO, "Aptos Perpetuo"),
+    ("INJ-USDT", AssetClass.CRYPTO, "Injective Perpetuo"),
+    ("RENDER-USDT", AssetClass.CRYPTO, "Render Perpetuo"),
+    ("ARB-USDT", AssetClass.CRYPTO, "Arbitrum Perpetuo"),
+    ("OP-USDT", AssetClass.CRYPTO, "Optimism Perpetuo"),
+    ("TIA-USDT", AssetClass.CRYPTO, "Celestia Perpetuo"),
+    ("FET-USDT", AssetClass.CRYPTO, "Fetch.ai Perpetuo"),
+    ("DOGE-USDT", AssetClass.CRYPTO, "Dogecoin Perpetuo"),
+    ("XRP-USDT", AssetClass.CRYPTO, "XRP Perpetuo"),
+    ("ADA-USDT", AssetClass.CRYPTO, "Cardano Perpetuo"),
 
-    MarketCell(symbol="ETH-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="ETH Breakout Donchian 5m", max_dd_limit_pct=10.0, min_pf_target=1.25),
-    MarketCell(symbol="ETH-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="ETH SuperTrend Momentum 15m", max_dd_limit_pct=12.0, min_pf_target=1.30),
-    MarketCell(symbol="ETH-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.H1, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="ETH Dual Moving Average 1h", max_dd_limit_pct=15.0, min_pf_target=1.35),
+    # ── 2. ÍNDICES CME & GLOBALES (9 ACTIVOS) ──
+    ("NQ", AssetClass.INDICES_FUTURES, "E-mini Nasdaq 100"),
+    ("ES", AssetClass.INDICES_FUTURES, "E-mini S&P 500"),
+    ("YM", AssetClass.INDICES_FUTURES, "E-mini Dow Jones"),
+    ("RTY", AssetClass.INDICES_FUTURES, "E-mini Russell 2000"),
+    ("FDAX", AssetClass.INDICES_FUTURES, "DAX 40 Futures"),
+    ("FTSE", AssetClass.INDICES_FUTURES, "FTSE 100 Index Futures"),
+    ("NK225", AssetClass.INDICES_FUTURES, "Nikkei 225 Futures"),
+    ("HSI", AssetClass.INDICES_FUTURES, "Hang Seng Futures"),
+    ("STOXX50", AssetClass.INDICES_FUTURES, "Euro Stoxx 50"),
 
-    MarketCell(symbol="DOGE-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="DOGE Explosive Volume 5m", max_dd_limit_pct=15.0, min_pf_target=1.20),
-    MarketCell(symbol="DOGE-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.H1, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="DOGE Momentum Follow 1h", max_dd_limit_pct=20.0, min_pf_target=1.30),
+    # ── 3. FOREX MAJORS & CRUCES (10 ACTIVOS) ──
+    ("EURUSD", AssetClass.FOREX, "Euro / US Dollar"),
+    ("USDJPY", AssetClass.FOREX, "US Dollar / Japanese Yen"),
+    ("GBPJPY", AssetClass.FOREX, "British Pound / Yen"),
+    ("GBPUSD", AssetClass.FOREX, "British Pound / USD"),
+    ("EURJPY", AssetClass.FOREX, "Euro / Japanese Yen"),
+    ("USDCAD", AssetClass.FOREX, "US Dollar / Canadian Dollar"),
+    ("AUDUSD", AssetClass.FOREX, "Australian Dollar / USD"),
+    ("USDCHF", AssetClass.FOREX, "US Dollar / Swiss Franc"),
+    ("NZDUSD", AssetClass.FOREX, "New Zealand Dollar / USD"),
+    ("EURGBP", AssetClass.FOREX, "Euro / British Pound"),
 
-    MarketCell(symbol="PEPE-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="PEPE Meme Squeeze 5m", max_dd_limit_pct=20.0, min_pf_target=1.25),
-    MarketCell(symbol="PEPE-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="PEPE Trend Pyramiding 15m", max_dd_limit_pct=20.0, min_pf_target=1.30),
-
-    MarketCell(symbol="AVAX-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="AVAX Volatility Squeeze 5m", max_dd_limit_pct=15.0, min_pf_target=1.25),
-    MarketCell(symbol="LINK-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="LINK Oracle Momentum 15m", max_dd_limit_pct=15.0, min_pf_target=1.30),
-    MarketCell(symbol="XRP-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.H1, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="XRP Breakout Trend 1h", max_dd_limit_pct=15.0, min_pf_target=1.30),
-    MarketCell(symbol="BNB-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="BNB Trend Channel 15m", max_dd_limit_pct=12.0, min_pf_target=1.30),
-    MarketCell(symbol="SUI-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M5, target_route=TargetRoute.ULTRA, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="SUI Hyperscale Breakout 5m", max_dd_limit_pct=20.0, min_pf_target=1.25),
-
-    # ══════════════════════════════════════════════════════════════════════════════
-    # ── 2. RUTA FONDEO (CME Prop Firms: Apex, Topstep, FTMO, TradeDay — DD <= 4%) ─
-    # ══════════════════════════════════════════════════════════════════════════════
-    # CME Futuros Índices
-    MarketCell(symbol="NQ", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M1, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.OPENING_RANGE_BREAKOUT, description="NQ Micro Scalp 1m (NY Open)", max_dd_limit_pct=3.5, min_pf_target=1.25),
-    MarketCell(symbol="NQ", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M5, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.OPENING_RANGE_BREAKOUT, description="NQ ORB 5m (NY Session)", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="NQ", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="NQ Momentum Breakout 15m", max_dd_limit_pct=4.0, min_pf_target=1.35),
-    MarketCell(symbol="MNQ", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M5, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.OPENING_RANGE_BREAKOUT, description="Micro Nasdaq 5m Fondeo Sprint", max_dd_limit_pct=3.5, min_pf_target=1.30),
-    
-    MarketCell(symbol="ES", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M5, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.MEAN_REVERSION, description="S&P 500 Pullback Reversion 5m", max_dd_limit_pct=3.5, min_pf_target=1.25),
-    MarketCell(symbol="ES", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="S&P 500 Trend Following 15m", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="MES", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.MEAN_REVERSION, description="Micro S&P 15m Preservación", max_dd_limit_pct=3.5, min_pf_target=1.25),
-    
-    MarketCell(symbol="YM", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="Dow Jones 15m Trend Momentum", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="RTY", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="Russell 2000 15m Small-Caps Breakout", max_dd_limit_pct=4.0, min_pf_target=1.30),
-
-    # CME Commodities
-    MarketCell(symbol="CL", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="Crude Oil WTI 15m Energy Breakout", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="GC", asset_class=AssetClass.INDICES_FUTURES, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="Gold CME Futures 15m Safe-Haven Trend", max_dd_limit_pct=3.5, min_pf_target=1.35),
-    MarketCell(symbol="XAUUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="Gold Spot XAUUSD 15m Prop Firm Sprint", max_dd_limit_pct=3.5, min_pf_target=1.35),
-
-    # Forex Prop Firms (FTMO, Alpha Capital, FundedNext)
-    MarketCell(symbol="EURUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.M5, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.MEAN_REVERSION, description="EURUSD RSI Extremes 5m", max_dd_limit_pct=3.5, min_pf_target=1.25),
-    MarketCell(symbol="EURUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.OPENING_RANGE_BREAKOUT, description="EURUSD London Open ORB 15m", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="EURUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.H1, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.MEAN_REVERSION, description="EURUSD Bollinger Mean Reversion 1h", max_dd_limit_pct=4.0, min_pf_target=1.35),
-    
-    MarketCell(symbol="GBPUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.OPENING_RANGE_BREAKOUT, description="GBPUSD London Breakout 15m", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="GBPUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.H1, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="GBPUSD Trend Pullback 1h", max_dd_limit_pct=4.0, min_pf_target=1.35),
-
-    MarketCell(symbol="USDJPY", asset_class=AssetClass.FOREX, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="USDJPY Tokyo & NY Trend 15m", max_dd_limit_pct=3.5, min_pf_target=1.30),
-    MarketCell(symbol="AUDUSD", asset_class=AssetClass.FOREX, timeframe=Timeframe.H1, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.MEAN_REVERSION, description="AUDUSD Commodity Currency Reversion 1h", max_dd_limit_pct=4.0, min_pf_target=1.30),
-    MarketCell(symbol="USDCAD", asset_class=AssetClass.FOREX, timeframe=Timeframe.H1, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="USDCAD Oil Correlation Trend 1h", max_dd_limit_pct=4.0, min_pf_target=1.30),
-
-    # Crypto en Prop Firms (FTMO Crypto, BingX Prop)
-    MarketCell(symbol="BTC-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="BTC Prop Firm Preservation 15m (DD <= 4%)", max_dd_limit_pct=3.5, min_pf_target=1.30),
-    MarketCell(symbol="ETH-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.TREND_MOMENTUM, description="ETH Prop Firm Preservation 15m (DD <= 4%)", max_dd_limit_pct=3.5, min_pf_target=1.30),
-    MarketCell(symbol="SOL-USDT", asset_class=AssetClass.CRYPTO, timeframe=Timeframe.M15, target_route=TargetRoute.FONDEO, primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT, description="SOL Prop Firm Preservation 15m (DD <= 4%)", max_dd_limit_pct=4.0, min_pf_target=1.30),
+    # ── 4. COMMODITIES (7 ACTIVOS) ──
+    ("GC", AssetClass.COMMODITIES, "Oro COMEX Gold Futures"),
+    ("XAUUSD", AssetClass.COMMODITIES, "Oro Spot / Gold FX"),
+    ("SI", AssetClass.COMMODITIES, "Plata COMEX Silver Futures"),
+    ("CL", AssetClass.COMMODITIES, "Petróleo Crudo WTI"),
+    ("BRENT", AssetClass.COMMODITIES, "Petróleo Brent"),
+    ("NG", AssetClass.COMMODITIES, "Gas Natural Henry Hub"),
+    ("HG", AssetClass.COMMODITIES, "Cobre High Grade"),
 ]
+
+CANONICAL_UNIVERSE_MATRIX: List[MarketCell] = []
+
+for sym, aclass, name in ALL_SYMBOLS_SPECS:
+    spec = get_market_spec(sym)
+    
+    # 1. RUTA ULTRA: DISPONIBLE PARA TODOS LOS 44 ACTIVOS (100%)
+    CANONICAL_UNIVERSE_MATRIX.append(
+        MarketCell(
+            symbol=sym,
+            asset_class=aclass,
+            timeframe=Timeframe.H1 if aclass in [AssetClass.FOREX, AssetClass.COMMODITIES] else Timeframe.M15,
+            target_route=TargetRoute.ULTRA,
+            primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT if aclass != AssetClass.FOREX else StrategyArchetype.TREND_MOMENTUM,
+            description=f"{sym} ULTRA Convexidad & Crecimiento Exponencial ({name})",
+            max_dd_limit_pct=25.0,
+            min_pf_target=1.20,
+        )
+    )
+    
+    # 2. RUTA FONDEO: SOLO PARA ACTIVOS ADMITIDOS EN EMPRESAS DE FONDEO REGULADAS (FTMO, APEX, TOPSTEP)
+    if spec.prop_firm_eligible:
+        CANONICAL_UNIVERSE_MATRIX.append(
+            MarketCell(
+                symbol=sym,
+                asset_class=aclass,
+                timeframe=Timeframe.M15 if aclass != AssetClass.FOREX else Timeframe.H1,
+                target_route=TargetRoute.FONDEO,
+                primary_archetype=StrategyArchetype.TREND_MOMENTUM if aclass == AssetClass.INDICES_FUTURES else StrategyArchetype.OPENING_RANGE_BREAKOUT,
+                description=f"{sym} FONDEO Prop Firm [{spec.prop_firm_venues}] ({name})",
+                max_dd_limit_pct=4.0,
+                min_pf_target=1.25,
+            )
+        )
 
 
 def get_matrix_by_symbol(symbol: str) -> List[MarketCell]:
