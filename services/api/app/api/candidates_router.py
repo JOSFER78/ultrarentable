@@ -49,7 +49,7 @@ def list_candidates(
     
     seen_champion_keys = set()
     for c in candidates:
-        champ_key = f"{c.symbol}_{c.timeframe}_{c.name}_{c.route}"
+        champ_key = f"{c.symbol.upper()}_{c.timeframe.lower()}_{c.route.upper()}"
         if champ_key in seen_champion_keys:
             continue
         seen_champion_keys.add(champ_key)

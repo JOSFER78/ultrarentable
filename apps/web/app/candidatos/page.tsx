@@ -1618,7 +1618,7 @@ ${entryLogic}`;
                       cursor: "pointer",
                     }}
                   >
-                    🛡️ Nautilus Event Backtest (Gate 11)
+                    🛡️ Event Cross-Validation (Gate 11)
                   </button>
                 </div>
 

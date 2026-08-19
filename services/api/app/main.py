@@ -59,12 +59,11 @@ async def _periodic_sqx_sync():
 
     while True:
         try:
-            worker.sync_databank("Ultra_Auto_Pilot", "Last generation")
             worker.sync_databank("Ultra_Auto_Pilot", "Results")
-            worker.sync_databank("Ultra_Auto_Pilot", "Results_robust_20260809")
+            worker.sync_databank("Ultra_Auto_Pilot", "Last generation")
         except Exception as e:
             logger.debug(f"SQX periodic sync notice: {e}")
-        await asyncio.sleep(15)
+        await asyncio.sleep(30)
 
 
 @asynccontextmanager

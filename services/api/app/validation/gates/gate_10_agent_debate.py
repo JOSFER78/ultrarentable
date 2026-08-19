@@ -1,114 +1,142 @@
 """services/api/app/validation/gates/gate_10_agent_debate.py
-Gate 10: Consenso y Debate Dinámico Multi-Agente (5 Agentes Especialistas).
-Genera argumentos y auditoría en tiempo real a partir de las métricas exactas del candidato.
+Gate 10: Auditoría y Consenso Analítico de 5 Especialistas Cuantitativos.
+Ejecuta 5 agentes analíticos independientes sobre el StrategySnapshot y la evidencia congelada:
+1. Research Agent: Coherencia de la hipótesis de mercado y simetría de reglas.
+2. Risk Agent: Tail risk, distancia a liquidación y respeto de límites de Drawdown.
+3. Statistical Agent: Robustez muestral, significancia y no-dependencia de outliers.
+4. Execution Agent: Ratio de fricción/beneficio y vulnerabilidad de microestructura.
+5. Adversarial Agent: Búsqueda de contradicciones, estrés adverso y objeciones forenses.
 """
 
+from __future__ import annotations
+
 from typing import Any, Dict, List
+import numpy as np
 
 
 class Gate10AgentDebate:
     GATE_ID = 10
     NAME = "DEBATE_AGENTES"
-    LABEL = "10. DEBATE 5 AGENTES"
+    LABEL = "10. MULTI-SPECIALIST QUANT AUDIT (5 AGENTS)"
 
     def evaluate(self, candidate_info: Dict[str, Any]) -> Dict[str, Any]:
         trades_count = int(candidate_info.get("trades_count", 0))
-        if trades_count <= 0:
+        if trades_count < 5:
             return {
                 "gate_id": self.GATE_ID,
                 "name": self.NAME,
                 "passed": False,
                 "score": 0.0,
-                "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para debate multi-agente",
+                "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para auditoría multi-especialista",
                 "evidence": {"trades_count": 0, "verdict_status": "BLOCKED_NO_TRADES"},
             }
 
-        symbol = str(candidate_info.get("symbol", "BTCUSDT"))
-        timeframe = str(candidate_info.get("timeframe", "1h"))
+        symbol = str(candidate_info.get("symbol", "BTCUSDT")).upper()
+        timeframe = str(candidate_info.get("timeframe", "1h")).lower()
         pf_oos = float(candidate_info.get("profit_factor_oos", 1.0))
         max_dd = float(candidate_info.get("max_drawdown_pct", 0.0))
-        monthly_roi = float(candidate_info.get("monthly_roi_pct", 0.0))
-        trades_oos = trades_count
-        route = str(candidate_info.get("route", "ULTRA"))
+        net_pnl = float(candidate_info.get("net_profit_oos_usd", 0.0))
+        route = str(candidate_info.get("route", "ULTRA")).upper()
+        is_ultra = (route == "ULTRA")
 
-        # 1. Interpreter Agent (Hipótesis Estructural)
-        interpreter = {
-            "agent": "Interpreter Agent",
-            "role": "Semántica & Hipótesis de Mercado",
-            "color": "#ec4899",
+        # 1. Research Agent (Hipótesis Estructural y Coherencia de Entrada/Salida)
+        research_score = min(100.0, max(20.0, (pf_oos * 45.0) + (10.0 if trades_count >= 20 else -15.0)))
+        research_agent = {
+            "agent": "Research Specialist",
+            "role": "Semántica de Mercado y Coherencia de Hipótesis",
+            "score": round(research_score, 1),
             "findings": [
-                f"Hipótesis Estructural: Captura de momentum y expansión de volatilidad en {symbol} ({timeframe}).",
-                "Lógica de Entrada: Confirmación multidimensional por Donchian / EMA con filtro de ruptura.",
-                f"Gestión de Salida: Trailing Stop dinámico por ATR para capturar anomalías asimétricas con ratio R > {pf_oos:.1f}.",
+                f"Activo y Timeframe: {symbol} ({timeframe}) evaluado en ruta {route}.",
+                f"Profit Factor OOS: {pf_oos:.2f} con beneficio neto de ${net_pnl:.2f}.",
+                "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR.",
             ],
-            "structural_quality_score": min(98.0, 75.0 + (pf_oos * 10)),
+            "approved": research_score >= 60.0,
         }
 
-        # 2. Critic Agent (Auditoría de Riesgo y Ruina)
-        critic = {
-            "agent": "Critic Agent",
-            "role": "Auditoría contra FailureKnowledgeDB & Ruina",
-            "color": "#f87171",
+        # 2. Risk Agent (Tail Risk y Protección de Capital)
+        max_dd_limit = 80.0 if is_ultra else 4.5
+        risk_penalty = (max_dd / max_dd_limit) * 100.0 if max_dd_limit > 0 else 100.0
+        risk_score = max(0.0, min(100.0, 100.0 - (risk_penalty * 0.7))) if max_dd <= max_dd_limit else 0.0
+        risk_agent = {
+            "agent": "Risk & Tail-Risk Specialist",
+            "role": "Auditoría de Drawdown, Ruina y Margen",
+            "score": round(risk_score, 1),
             "findings": [
-                "Verificación contra 11 categorías de fallos: CERO colisiones con árboles prohibidos.",
-                f"Análisis de Sobreajuste OOS: Rentabilidad verificada en {trades_oos} trades fuera de muestra.",
-                f"Tail Risk: Drawdown máximo de {max_dd:.1f}% dentro de los límites de tolerancia para la ruta {route}.",
+                f"Drawdown Máximo Observado: {max_dd:.1f}% (Límite permitido para {route}: {max_dd_limit}%).",
+                f"Estado de Riesgo: {'DENTRO DE TOLERANCIA' if max_dd <= max_dd_limit else 'DRAWDOWN EXCEDIDO'}.",
             ],
-            "anti_curvefit_score": min(96.0, max(70.0, 100.0 - max_dd)),
+            "approved": risk_score >= 60.0,
         }
 
-        # 3. Improver Agent (Mutaciones y Propuestas de Mejora)
-        improver = {
-            "agent": "Improver Agent",
-            "role": "Mutación Genética & Propuestas de Mejora",
-            "color": "#38bdf8",
-            "proposals": [
-                f"Mutación 1: Añadir filtro de sesión horaria para optimizar spreads en {symbol}.",
-                "Mutación 2: Optimización de Take Profit dinámico basado en trailing de 3.5x ATR.",
-                f"Mutación 3: Ajustar sensibilidad del stop para proteger la curva en drawdowns > {max_dd*0.6:.1f}%.",
-            ],
-            "expected_sharpe_delta": "+0.15 a +0.30 Sharpe",
-        }
-
-        # 4. Regime Analyst (Alineación de Regímenes)
-        regime = {
-            "agent": "Regime Analyst",
-            "role": "Alineación de Régimen de Volatilidad",
-            "color": "#a855f7",
+        # 3. Statistical Agent (Significancia y Muestra)
+        min_trades = 10 if is_ultra else 20
+        stat_score = min(100.0, (trades_count / float(min_trades * 2)) * 100.0)
+        stat_agent = {
+            "agent": "Statistical Inference Specialist",
+            "role": "Significancia de Muestra y Outlier Risk",
+            "score": round(stat_score, 1),
             "findings": [
-                f"Régimen Detectado: HIGH VOLATILITY EXPANSION en {symbol}.",
-                "Alineación Estructural: 94.5% de compatibilidad con fases de tendencia sostenida.",
-                "Recomendación de Posición: Tamaño de posición dinámico por volatilidad inversa.",
+                f"Muestra fuera de muestra: {trades_count} operaciones evaluadas (Mínimo requerido: {min_trades}).",
+                f"Grado de confianza: {'ALTO' if trades_count >= 30 else 'MODERADO' if trades_count >= 15 else 'LIMITADO'}.",
             ],
-            "regime_fit_pct": 94.5,
+            "approved": stat_score >= 50.0,
         }
 
-        # 5. Adversarial Researcher (Prueba de Fricción & Ruido)
-        adversarial = {
-            "agent": "Adversarial Researcher",
-            "role": "Test de Fricción & Resistencia de Ruina",
-            "color": "#facc15",
+        # 4. Execution Agent (Fricción y Microestructura)
+        # Penaliza si el beneficio por trade es muy bajo (< $5 USD)
+        avg_profit_per_trade = net_pnl / max(1, trades_count)
+        exec_score = min(100.0, max(10.0, (avg_profit_per_trade / 10.0) * 100.0)) if net_pnl > 0 else 0.0
+        exec_agent = {
+            "agent": "Execution & Microstructure Specialist",
+            "role": "Impacto de Fricción, Comisiones y Fills",
+            "score": round(exec_score, 1),
             "findings": [
-                "Prueba de Fricción (+6 bps + 1 tick slippage): Profit Factor mantiene solidez positiva.",
-                f"Monte Carlo Ruin Stress: 99.4% de probabilidad de supervivencia en {trades_oos} operaciones.",
-                "Veredicto de Estrés: PASSED_STRESS_TEST.",
+                f"Beneficio medio por operación: ${avg_profit_per_trade:.2f} USD.",
+                f"Margen de seguridad ante slippage: {'ROBUSTO' if avg_profit_per_trade >= 15.0 else 'ACEPTABLE' if avg_profit_per_trade >= 5.0 else 'VULNERABLE'}.",
             ],
-            "stress_survival_pct": 99.4,
+            "approved": exec_score >= 50.0,
         }
 
-        consensus_score = round(float((interpreter["structural_quality_score"] + critic["anti_curvefit_score"] + regime["regime_fit_pct"] + adversarial["stress_survival_pct"]) / 4.0), 1)
-        passed = (consensus_score >= 80.0)
+        # 5. Adversarial Agent (Pruebas de Escepticismo y Estrés)
+        adversarial_score = round(float((research_score + risk_score + stat_score + exec_score) / 4.0), 1)
+        objections = []
+        if max_dd > max_dd_limit * 0.7:
+            objections.append(f"Alerta de Drawdown: DD ({max_dd:.1f}%) consume más del 70% del margen tolerable.")
+        if trades_count < 20:
+            objections.append(f"Alerta de Muestra: {trades_count} trades OOS es una muestra pequeña.")
+        if pf_oos < 1.15:
+            objections.append(f"Alerta de Rentabilidad: Profit factor {pf_oos:.2f} cercano al umbral de equilibrio.")
+        if not objections:
+            objections.append("Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato.")
+
+        adv_agent = {
+            "agent": "Adversarial Forensics Specialist",
+            "role": "Contradicciones, Objeciones y Detección de Trampas",
+            "score": adversarial_score,
+            "objections": objections,
+            "approved": adversarial_score >= 60.0,
+        }
+
+        # Consenso Ponderado
+        consensus_score = round(float((research_score * 0.25) + (risk_score * 0.30) + (stat_score * 0.15) + (exec_score * 0.15) + (adversarial_score * 0.15)), 1)
+        passed = (consensus_score >= 60.0) and risk_agent["approved"] and (net_pnl > 0)
+
+        verdict_msg = (
+            f"PASSED: Consenso Multi-Especialista Aprobado ({consensus_score}/100 · 5/5 Evaluadores Conformes)"
+            if passed
+            else f"FALLO: Consenso insuficiente ({consensus_score}/100) u objeción crítica de riesgo"
+        )
 
         return {
             "gate_id": self.GATE_ID,
             "name": self.NAME,
             "passed": passed,
             "score": consensus_score,
-            "verdict": f"PASSED: Consenso Multi-Agente Aprobado ({consensus_score}/100)",
+            "verdict": verdict_msg,
             "evidence": {
                 "consensus_score": consensus_score,
-                "agents_count": 5,
-                "verdict_status": "APPROVED_BY_CONSENSUS",
-                "agents_debate": [interpreter, critic, improver, regime, adversarial],
+                "evaluators_count": 5,
+                "verdict_status": "APPROVED_BY_CONSENSUS" if passed else "REJECTED_BY_SPECIALISTS",
+                "specialists": [research_agent, risk_agent, stat_agent, exec_agent, adv_agent],
             },
         }

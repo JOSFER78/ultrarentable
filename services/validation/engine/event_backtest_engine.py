@@ -106,6 +106,16 @@ class EventBacktestEngine:
         self.cme_fee = cme_fee_per_contract_usd
         self.funding_rate_8h = funding_rate_8h
 
+    @staticmethod
+    def _calc_ema(series: np.ndarray, span: int) -> np.ndarray:
+        """Cálculo matemático exacto de Exponential Moving Average recursiva."""
+        alpha = 2.0 / (span + 1.0)
+        ema = np.empty_like(series)
+        ema[0] = series[0]
+        for t in range(1, len(series)):
+            ema[t] = alpha * series[t] + (1.0 - alpha) * ema[t - 1]
+        return ema
+
     def run_backtest(
         self,
         strategy: StrategySnapshot,
@@ -115,7 +125,7 @@ class EventBacktestEngine:
         """Ejecuta la simulación determinista de la estrategia sobre el dataset de velas."""
         t_start = datetime.now(timezone.utc)
 
-        if not candles or len(candles) < 50:
+        if not candles or len(candles) < 35:
             return EventBacktestResult(
                 strategy_id=strategy.strategy_id,
                 canonical_hash=strategy.canonical_hash,
@@ -153,6 +163,10 @@ class EventBacktestEngine:
         atr[1:] = tr
         for i in range(14, len(closes)):
             atr[i] = np.mean(tr[i-14:i])
+
+        # Precalcular EMAs recursivas exactas
+        ema_fast_series = self._calc_ema(closes, 10)
+        ema_slow_series = self._calc_ema(closes, 30)
 
         # Estado del backtest
         current_equity = base_capital
@@ -309,16 +323,17 @@ class EventBacktestEngine:
                     if floating_pnl_r >= (pyramid_count + 1) * 1.5:
                         # Mover stop loss a break-even
                         stop_loss_price = position_entry_price
-                        # Añadir tramo
-                        added_qty = (current_equity * risk_pct * max_leverage) / (bar_close * max(1.0, float(pyramid_count + 1)))
-                        position_qty += added_qty
+                        # Añadir tramo acotado a subcuenta bala
+                        max_nominal_qty = (base_capital * max_leverage) / max(1e-4, bar_close)
+                        added_qty = (base_capital * risk_pct * max_leverage) / (bar_close * max(1.0, float(pyramid_count + 1)))
+                        position_qty = min(position_qty + added_qty, max_nominal_qty)
                         pyramid_count += 1
 
             # 2. Señal de Entrada si estamos planos
             if position_side is None and current_equity > 0:
-                # Regla de momentum determinista: EMA rápida > EMA lenta y ruptura del rango previo
-                ema_fast = np.mean(closes[i-10:i])
-                ema_slow = np.mean(closes[i-30:i])
+                # Regla de momentum determinista: EMA rápida recursiva > EMA lenta recursiva y ruptura
+                ema_fast = ema_fast_series[i]
+                ema_slow = ema_slow_series[i]
                 
                 long_signal = (ema_fast > ema_slow) and (bar_close > np.max(highs[i-15:i-1]))
                 short_signal = (ema_fast < ema_slow) and (bar_close < np.min(lows[i-15:i-1]))
@@ -328,9 +343,13 @@ class EventBacktestEngine:
                     position_entry_bar = i
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 + self.slippage)
-                    risk_amount_usd = current_equity * risk_pct
+                    # Sizing realista por subcuenta bala / fondeo acotado
+                    effective_equity = min(current_equity, base_capital * 1.5)
+                    risk_amount_usd = effective_equity * risk_pct
                     sl_dist = bar_atr * sl_atr_mult
-                    position_qty = max(0.001, (risk_amount_usd / max(1e-4, sl_dist)))
+                    raw_qty = risk_amount_usd / max(1e-4, sl_dist)
+                    max_nominal_qty = (base_capital * max_leverage) / max(1e-4, position_entry_price)
+                    position_qty = max(0.001, min(raw_qty, max_nominal_qty))
                     stop_loss_price = position_entry_price - sl_dist
                     take_profit_price = position_entry_price + (bar_atr * tp_atr_mult)
                     pyramid_count = 0
@@ -346,9 +365,13 @@ class EventBacktestEngine:
                     position_entry_bar = i
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 - self.slippage)
-                    risk_amount_usd = current_equity * risk_pct
+                    # Sizing realista por subcuenta bala / fondeo acotado
+                    effective_equity = min(current_equity, base_capital * 1.5)
+                    risk_amount_usd = effective_equity * risk_pct
                     sl_dist = bar_atr * sl_atr_mult
-                    position_qty = max(0.001, (risk_amount_usd / max(1e-4, sl_dist)))
+                    raw_qty = risk_amount_usd / max(1e-4, sl_dist)
+                    max_nominal_qty = (base_capital * max_leverage) / max(1e-4, position_entry_price)
+                    position_qty = max(0.001, min(raw_qty, max_nominal_qty))
                     stop_loss_price = position_entry_price + sl_dist
                     take_profit_price = position_entry_price - (bar_atr * tp_atr_mult)
                     pyramid_count = 0

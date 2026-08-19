@@ -58,17 +58,17 @@ class GatePipelineOrchestrator:
         ruin_limit_dd = 80.0 if is_ultra else 4.5
 
         evaluators = [
-            (self.g1, lambda g: g.evaluate(candles)),
+            (self.g1, lambda g: g.evaluate(candles, timeframe=candidate_info.get("timeframe", "1h"), dataset_filepath=candidate_info.get("dataset_filepath"))),
             (self.g2, lambda g: g.evaluate(trades_raw, symbol=candidate_info.get("symbol", "BTCUSDT"))),
             (self.g3, lambda g: g.evaluate(is_trades, oos_trades, is_ultra=is_ultra)),
-            (self.g4, lambda g: g.evaluate(is_trades, oos_trades)),
-            (self.g5, lambda g: g.evaluate(oos_trades, initial_capital=base_capital, ruin_drawdown_pct=ruin_limit_dd)),
-            (self.g6, lambda g: g.evaluate(oos_trades)),
-            (self.g7, lambda g: g.evaluate(candles, oos_trades)),
-            (self.g8, lambda g: g.evaluate(oos_trades)),
-            (self.g9, lambda g: g.evaluate(candidate_info.get("rules", []), indicators_count=candidate_info.get("indicators_count", 3))),
+            (self.g4, lambda g: g.evaluate(is_trades + oos_trades if (is_trades or oos_trades) else [])),
+            (self.g5, lambda g: g.evaluate(oos_trades, initial_capital=base_capital, is_ultra=is_ultra)),
+            (self.g6, lambda g: g.evaluate(oos_trades, is_ultra=is_ultra)),
+            (self.g7, lambda g: g.evaluate(candles, oos_trades, is_ultra=is_ultra)),
+            (self.g8, lambda g: g.evaluate(oos_trades, trials_tested=candidate_info.get("trials_tested", 100))),
+            (self.g9, lambda g: g.evaluate(candidate_info.get("parameters", {}), trades_count=len(oos_trades), oos_pf=float(candidate_info.get("profit_factor_oos", 1.5)), is_ultra=is_ultra)),
             (self.g10, lambda g: g.evaluate(candidate_info)),
-            (self.g11, lambda g: g.evaluate(oos_trades, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0)),
+            (self.g11, lambda g: g.evaluate(oos_trades, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0, is_ultra=is_ultra)),
         ]
 
         for gate_instance, eval_fn in evaluators:

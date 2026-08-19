@@ -87,3 +87,39 @@ class DatasetSnapshot(BaseModel):
         with open(self.file_path, "rb") as f:
             current_hash = hashlib.sha256(f.read()).hexdigest()
         return current_hash == self.sha256_hash
+
+    def get_blind_partitions(self) -> Dict[str, Any]:
+        """Divide el dataset físicamente en IS (60%), Validation (20%) y Blind OOS (20%) con hashes únicos."""
+        with open(self.file_path, "rb") as f:
+            candles = json.loads(f.read().decode("utf-8"))
+        
+        n = len(candles)
+        idx_is = int(n * 0.60)
+        idx_val = int(n * 0.80)
+
+        is_slice = candles[:idx_is]
+        val_slice = candles[idx_is:idx_val]
+        oos_slice = candles[idx_val:]
+
+        def _hash_slice(slice_data: list) -> str:
+            raw = json.dumps(slice_data, sort_keys=True).encode("utf-8")
+            return hashlib.sha256(raw).hexdigest()
+
+        return {
+            "in_sample": {
+                "candles": is_slice,
+                "count": len(is_slice),
+                "sha256": _hash_slice(is_slice),
+            },
+            "validation": {
+                "candles": val_slice,
+                "count": len(val_slice),
+                "sha256": _hash_slice(val_slice),
+            },
+            "blind_oos": {
+                "candles": oos_slice,
+                "count": len(oos_slice),
+                "sha256": _hash_slice(oos_slice),
+            },
+        }
+

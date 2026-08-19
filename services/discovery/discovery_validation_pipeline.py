@@ -96,8 +96,8 @@ class DiscoveryValidationPipeline:
                     if not candles or len(candles) < 200:
                         continue
 
-                    # 1. Generar hipótesis de estrategia
-                    strat_id = f"auto_{route.value.lower()}_{symbol.lower().replace('-', '_')}_{timeframe}_{int(time.time()) % 10000}"
+                    # 1. Generar hipótesis de estrategia canónica y determinista
+                    strat_id = f"UR_{route.value.upper()}_{symbol.upper().replace('-', '_')}_{timeframe.upper()}"
                     
                     if route == StrategyRoute.ULTRA:
                         strategy = self.ultra_discovery.generate_candidate_blueprint(
@@ -181,6 +181,15 @@ class DiscoveryValidationPipeline:
                     pf_is = (sum(x for x in is_trades if x > 0) / max(0.01, abs(sum(x for x in is_trades if x < 0)))) if is_trades else 1.0
                     pf_oos = (sum(x for x in oos_trades if x > 0) / max(0.01, abs(sum(x for x in oos_trades if x < 0)))) if oos_trades else 1.0
 
+                    # Estimación precisa de duración
+                    total_bars = len(candles)
+                    # Estimación de meses según timeframe
+                    tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
+                    bars_per_m = tf_bars_per_month.get(timeframe.lower(), 720)
+                    total_months = max(0.5, total_bars / bars_per_m)
+                    monthly_roi_pct = (bt_result.net_profit_usd / max(1.0, initial_cap)) * 100.0 / total_months
+                    annual_roi_pct = monthly_roi_pct * 12.0
+
                     scorecard_payload = {
                         "source": "Autonomous Real-Only Quantitative Discovery",
                         "strategy_snapshot_hash": strategy.canonical_hash,
@@ -188,10 +197,21 @@ class DiscoveryValidationPipeline:
                         "gates_passed_count": gates_eval.get("gates_passed_count", 0),
                         "overall_score": gates_eval.get("overall_score", 0.0),
                         "gates": gates_eval.get("gates", []),
-                        "annual_return_pct": round((bt_result.net_profit_usd / initial_cap) * 100.0, 2),
-                        "monthly_return_pct": round(((bt_result.net_profit_usd / initial_cap) * 100.0) / 12.0, 2),
+                        "annual_return_pct": round(annual_roi_pct, 2),
+                        "monthly_return_pct": round(monthly_roi_pct, 2),
                         "audit_summary": verdict.audit_summary,
+                        "duration_info": {
+                            "total_bars": total_bars,
+                            "total_months": round(total_months, 2),
+                        }
                     }
+
+                    # Extraer scores matemáticos empíricos directamente de los Gates (Cero invenciones)
+                    gates_map = {g.get("gate_id"): g for g in gates_eval.get("gates", [])}
+                    g4_data = gates_map.get(4, {})
+                    g5_data = gates_map.get(5, {})
+                    real_wfo_score = float(g4_data.get("score", 0.0))
+                    real_mc_score = float(g5_data.get("score", 0.0))
 
                     cur.execute("""
                         INSERT INTO candidates (
@@ -213,6 +233,9 @@ class DiscoveryValidationPipeline:
                             trades_oos=excluded.trades_oos,
                             profit_factor_oos=excluded.profit_factor_oos,
                             max_dd_oos_pct=excluded.max_dd_oos_pct,
+                            ratio_oos_is=excluded.ratio_oos_is,
+                            wfo_pass_pct=excluded.wfo_pass_pct,
+                            monte_carlo_score=excluded.monte_carlo_score,
                             scorecard_json=excluded.scorecard_json
                     """, (
                         strategy.strategy_id,
@@ -232,8 +255,8 @@ class DiscoveryValidationPipeline:
                         round(pf_oos, 2),
                         round(bt_result.max_drawdown_pct, 2),
                         round(pf_oos / max(0.01, pf_is), 2),
-                        85.0 if verdict.is_certified else 40.0,
-                        90.0 if verdict.is_certified else 45.0,
+                        round(real_wfo_score, 1),
+                        round(real_mc_score, 1),
                         json.dumps(scorecard_payload, default=str),
                         datetime.now(timezone.utc).isoformat(),
                     ))

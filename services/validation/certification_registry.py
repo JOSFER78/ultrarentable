@@ -1,6 +1,14 @@
 """services/validation/certification_registry.py
-Registro y Clasificación Multi-Ruta de Certificación (Fase 16).
-Emite los certificados formales: ULTRA_CERTIFIED, FUNDING_CERTIFIED, PORTFOLIO_CERTIFIED, REJECTED.
+Registro y Clasificación Multi-Ruta de Certificación Estricta 11/11 (Fase 10).
+Emite los certificados formales únicamente cuando se superan el 100% de los 11 Gates:
+- ULTRA_CERTIFIED
+- FUNDING_CERTIFIED
+- PORTFOLIO_CERTIFIED
+- LEGACY_UNVERIFIED
+- REJECTED_GATES_INCOMPLETE
+- REJECTED_ALTO_DRAWDOWN
+- REJECTED_BAJO_PF
+- BLOCKED_NO_EVIDENCE
 """
 
 from __future__ import annotations
@@ -19,9 +27,20 @@ class CertificationVerdict(BaseModel):
     strategy_id: str
     canonical_hash: str
     route: StrategyRoute
-    certified_status: Literal["ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "PORTFOLIO_CERTIFIED", "REJECTED_ALTO_DRAWDOWN", "REJECTED_BAJO_PF", "BLOCKED_NO_EVIDENCE"]
+    certified_status: Literal[
+        "ULTRA_CERTIFIED",
+        "FUNDING_CERTIFIED",
+        "PORTFOLIO_CERTIFIED",
+        "LEGACY_UNVERIFIED",
+        "REJECTED_GATES_INCOMPLETE",
+        "REJECTED_ALTO_DRAWDOWN",
+        "REJECTED_BAJO_PF",
+        "BLOCKED_NO_EVIDENCE"
+    ]
     is_certified: bool
     scorecard_average: float
+    gates_passed_count: int
+    total_gates: int
     total_trades_evaluated: int
     net_profit_usd: float
     profit_factor_oos: float
@@ -31,7 +50,9 @@ class CertificationVerdict(BaseModel):
 
 
 class CertificationRegistry:
-    """Certificador oficial de estrategias."""
+    """Certificador oficial estricto 11/11 de estrategias cuantitativas."""
+
+    TOTAL_REQUIRED_GATES = 11
 
     def certify_candidate(
         self,
@@ -60,13 +81,13 @@ class CertificationRegistry:
         elif backtest_result.profit_factor < min_allowed_pf or backtest_result.net_profit_usd <= 0:
             certified_status = "REJECTED_BAJO_PF"
             audit_summary = f"Profit Factor {backtest_result.profit_factor:.2f} < {min_allowed_pf:.2f} o PnL no positivo"
-        elif gates_passed_count >= 8:  # Supera los gates críticos
+        elif gates_passed_count == self.TOTAL_REQUIRED_GATES:  # 11 de 11 Gates Obligatorios
             is_certified = True
             certified_status = "ULTRA_CERTIFIED" if is_ultra else "FUNDING_CERTIFIED"
-            audit_summary = f"Certificada exitosamente: {gates_passed_count}/11 Gates Aprobados, PF {backtest_result.profit_factor:.2f}, DD {backtest_result.max_drawdown_pct:.1f}%"
+            audit_summary = f"Certificada exitosamente: 11/11 Gates Aprobados al 100%, PF {backtest_result.profit_factor:.2f}, DD {backtest_result.max_drawdown_pct:.1f}%"
         else:
-            certified_status = "REJECTED_BAJO_PF"
-            audit_summary = f"Gates insuficientes ({gates_passed_count}/11 aprobados)"
+            certified_status = "REJECTED_GATES_INCOMPLETE"
+            audit_summary = f"Validación incompleta: {gates_passed_count}/11 Gates aprobados (Requisito inmutable: 11/11)"
 
         return CertificationVerdict(
             strategy_id=strategy.strategy_id,
@@ -75,6 +96,8 @@ class CertificationRegistry:
             certified_status=certified_status,
             is_certified=is_certified,
             scorecard_average=scorecard_average,
+            gates_passed_count=gates_passed_count,
+            total_gates=self.TOTAL_REQUIRED_GATES,
             total_trades_evaluated=backtest_result.total_trades,
             net_profit_usd=backtest_result.net_profit_usd,
             profit_factor_oos=backtest_result.profit_factor,

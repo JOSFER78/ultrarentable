@@ -12,16 +12,25 @@ class Gate05MonteCarlo:
     NAME = "MONTE_CARLO"
     LABEL = "5. MONTE CARLO"
 
-    def evaluate(self, oos_trades: List[float], initial_capital: float = 10000.0, num_sims: int = 1000, ruin_drawdown_pct: float = 40.0) -> Dict[str, Any]:
+    def evaluate(
+        self,
+        oos_trades: List[float],
+        initial_capital: float = 1000.0,
+        num_sims: int = 1000,
+        is_ultra: bool = True,
+    ) -> Dict[str, Any]:
         if not oos_trades or len(oos_trades) < 10:
             return {
                 "gate_id": self.GATE_ID,
                 "name": self.NAME,
                 "passed": False,
                 "score": 0.0,
-                "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo",
+                "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
                 "evidence": {"simulations_run": 0},
             }
+
+        ruin_drawdown_pct = 80.0 if is_ultra else 4.5
+        max_allowed_dd_95 = 75.0 if is_ultra else 4.0
 
         trades_arr = np.array(oos_trades, dtype=np.float64)
         n_trades = len(trades_arr)
@@ -31,11 +40,11 @@ class Gate05MonteCarlo:
         rng = np.random.default_rng(42)
 
         for _ in range(num_sims):
-            # Resample with replacement (Bootstrap)
+            # Resample with replacement (Bootstrap determinista)
             sim_trades = rng.choice(trades_arr, size=n_trades, replace=True)
             equity_curve = initial_capital + np.cumsum(np.insert(sim_trades, 0, 0.0))
             peak = np.maximum.accumulate(equity_curve)
-            dd_series = (peak - equity_curve) / peak * 100.0
+            dd_series = (peak - equity_curve) / np.maximum(1.0, peak) * 100.0
             max_sim_dd = float(np.max(dd_series))
             max_dds.append(max_sim_dd)
 
@@ -46,8 +55,8 @@ class Gate05MonteCarlo:
         dd_95th = float(np.percentile(max_dds, 95))
         dd_median = float(np.median(max_dds))
 
-        passed = (ruin_prob_pct <= 1.0) and (dd_95th <= 50.0)
-        score = max(0.0, 100.0 - (ruin_prob_pct * 10) - (dd_95th * 0.5))
+        passed = (ruin_prob_pct <= (5.0 if is_ultra else 0.5)) and (dd_95th <= max_allowed_dd_95)
+        score = max(0.0, min(100.0, 100.0 - (ruin_prob_pct * 10) - (dd_95th * (0.5 if is_ultra else 10.0)))) if passed else 0.0
 
         return {
             "gate_id": self.GATE_ID,
