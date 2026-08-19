@@ -41,7 +41,7 @@ export default function TrackFondeoCMEPage() {
   const isDllOk = todayPnl > -selectedFirm.daily_loss_limit;
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
+    <div style={{ padding: "16px 24px", width: "100%", maxWidth: "100%", margin: 0, color: "#f8fafc", boxSizing: "border-box" }}>
       {/* 1. HEADER */}
       <div style={{ marginBottom: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>

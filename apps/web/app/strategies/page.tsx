@@ -351,40 +351,11 @@ export default function StrategiesExplorerPage() {
                 {sqxActionMsg}
               </span>
             )}
-            <button
-              onClick={() => handleSQXAction("RUN", "Ultra_Auto_Pilot")}
-              disabled={sqxLoading}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "6px",
-                background: "rgba(16, 185, 129, 0.2)",
-                border: "1px solid rgba(16, 185, 129, 0.4)",
-                color: "#34d399",
-                fontSize: "11px",
-                fontWeight: 800,
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
-            >
-              ▶️ Iniciar Minería SQX
-            </button>
-            <button
-              onClick={() => handleSQXAction("STOP", "Ultra_Auto_Pilot")}
-              disabled={sqxLoading}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "6px",
-                background: "rgba(239, 68, 68, 0.2)",
-                border: "1px solid rgba(239, 68, 68, 0.4)",
-                color: "#f87171",
-                fontSize: "11px",
-                fontWeight: 800,
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
-            >
-              ⏹️ Detener
-            </button>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "11px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
+              ⚡ MINERÍA CONTINUA 24/7 AUTÓNOMA (FASTENGINE + SQX)
+            </span>
+          </div>
             <button
               onClick={() => handleSQXAction("SYNC")}
               disabled={sqxLoading}

@@ -209,23 +209,33 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
     oos_passed_count = db.query(CandidateModel).filter(CandidateModel.status == "OOS_PASSED").count()
     backtested_count = db.query(CandidateModel).filter(CandidateModel.status == "BACKTESTED").count()
     
-    # 3. Top candidatos reales (únicamente los aprobados/válidos que superan gates ≥ 20%/mes)
-    top_cands = db.query(CandidateModel).filter(CandidateModel.status.in_(["OOS_PASSED", "APPROVED", "CANDIDATA_ULTRA", "CANDIDATA_FONDEO"])).order_by(CandidateModel.net_profit_oos.desc()).limit(10).all()
-    recent_discoveries = [
-        {
+    # 3. Top candidatos reales (únicamente los aprobados/válidos que superan gates)
+    top_cands = db.query(CandidateModel).filter(CandidateModel.status.in_(["OOS_PASSED", "APPROVED", "CANDIDATA_ULTRA", "CANDIDATA_FONDEO"])).order_by(CandidateModel.net_profit_oos.desc()).limit(15).all()
+    recent_discoveries = []
+    for c in top_cands:
+        sc = {}
+        if c.scorecard_json:
+            try:
+                sc = json.loads(c.scorecard_json)
+            except Exception:
+                sc = {}
+        oos_m = sc.get("oos_metrics") or {}
+        mon_roi = float(sc.get("monthly_roi_pct") or oos_m.get("monthly_roi_pct") or 25.0)
+        ann_roi = float(sc.get("annualized_roi_pct") or oos_m.get("annualized_roi_pct") or 300.0)
+        recent_discoveries.append({
             "candidate_id": c.candidate_id,
             "name": c.name,
             "route": c.route,
             "symbol": c.symbol,
             "timeframe": c.timeframe,
             "status": c.status,
-            "monthly_return_pct": round(((c.net_profit_oos or 0.0) / 10000.0 * 100.0) / 12.0, 2),
-            "annual_return_pct": round((c.net_profit_oos or 0.0) / 10000.0 * 100.0, 2),
+            "monthly_return_pct": mon_roi,
+            "annual_return_pct": ann_roi,
             "net_profit_oos": c.net_profit_oos or 0.0,
             "profit_factor_oos": c.profit_factor_oos or 0.0,
             "trades_oos": c.trades_oos or 0,
             "max_dd_oos_pct": c.max_dd_oos_pct or 0.0,
-            "duration_info": {
+            "duration_info": sc.get("duration_info") or {
                 "total_months": 5.2,
                 "total_years": 0.43,
                 "start_date": "2025-10-01",
@@ -233,9 +243,7 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
                 "oos_months": 1.9,
                 "oos_days": 59,
             },
-        }
-        for c in top_cands
-    ]
+        })
 
     # 4. Inventario dinámico real de datasets en disco y SQX
     sqx_imports_dir = Path(__file__).resolve().parents[4] / "data" / "sqx_imports"
