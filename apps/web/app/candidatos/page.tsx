@@ -4,18 +4,18 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { StrategyLifecycleStatus } from "@/types/telemetry";
 
-const FSM_11_STEPS: { key: string; label: string; desc: string; color: string; step: number }[] = [
-  { key: "INGEST_SANITY", label: "1. DATA INGEST", desc: "Saneamiento OHLCV & Gaps", color: "#94a3b8", step: 1 },
-  { key: "BACKTEST_DETERMINISTIC", label: "2. BACKTEST COSTES", desc: "Costes BingX 0.05% + 3 ticks", color: "#38bdf8", step: 2 },
-  { key: "TRADE_SIGNIFICANCE", label: "3. TRADE SIGNIFICANCE", desc: "Trades OOS >= 20", color: "#60a5fa", step: 3 },
-  { key: "WALK_FORWARD", label: "4. WALK-FORWARD", desc: "WFE >= 0.50 & Anti-Curvefit", color: "#818cf8", step: 4 },
-  { key: "MONTE_CARLO", label: "5. MONTE CARLO", desc: "1.000 Sims (Ruina <= 1%)", color: "#a78bfa", step: 5 },
-  { key: "FRICTION_STRESS", label: "6. STRESS SLIPPAGE", desc: "+5 bps & Slippage 2x", color: "#c084fc", step: 6 },
-  { key: "REGIME_COVERAGE", label: "7. REGIME COVERAGE", desc: "Bull / Bear / Lateral", color: "#e879f9", step: 7 },
-  { key: "DEFLATED_SHARPE", label: "8. DSR RATIO", desc: "DSR > 1.50 (Bailey & López)", color: "#f43f5e", step: 8 },
-  { key: "NOVELTY_ANTIOVERFIT", label: "9. NOVELTY / ANTI-FIT", desc: "FailureKnowledgeDB", color: "#fb923c", step: 9 },
-  { key: "SEMANTIC_DEBATE", label: "10. DEBATE 5 AGENTES", desc: "Comité IA de Riesgo", color: "#facc15", step: 10 },
-  { key: "PORTFOLIO_ENSEMBLE", label: "11. META-ENSEMBLE", desc: "HRP & Descorrelación <0.35", color: "#34d399", step: 11 },
+const FSM_11_STEPS: { key: string; label: string; desc: string; color: string; step: number; slug: string }[] = [
+  { key: "INGEST_SANITY", label: "1. DATA INGEST", desc: "Saneamiento OHLCV & Gaps", color: "#94a3b8", step: 1, slug: "gate-1-data-ingest" },
+  { key: "BACKTEST_DETERMINISTIC", label: "2. BACKTEST COSTES", desc: "Costes CME/FX/Crypto Reales", color: "#38bdf8", step: 2, slug: "gate-2-cost-backtest" },
+  { key: "TRADE_SIGNIFICANCE", label: "3. TRADE SIGNIFICANCE", desc: "Trades OOS >= 20 & Outliers", color: "#60a5fa", step: 3, slug: "gate-3-trade-significance" },
+  { key: "WALK_FORWARD", label: "4. WALK-FORWARD", desc: "WFE >= 0.50 & Anti-Curvefit", color: "#818cf8", step: 4, slug: "gate-4-walk-forward" },
+  { key: "MONTE_CARLO", label: "5. MONTE CARLO", desc: "1.000 Sims (Ruina 0.0%)", color: "#a78bfa", step: 5, slug: "gate-5-monte-carlo" },
+  { key: "FRICTION_STRESS", label: "6. STRESS SLIPPAGE", desc: "3x Fricción & Latencia", color: "#c084fc", step: 6, slug: "gate-6-stress-slippage" },
+  { key: "REGIME_COVERAGE", label: "7. REGIME COVERAGE", desc: "Bull / Bear / Lateral", color: "#e879f9", step: 7, slug: "gate-7-regime-coverage" },
+  { key: "DEFLATED_SHARPE", label: "8. DSR RATIO", desc: "DSR > 1.50 (Bailey & López)", color: "#f43f5e", step: 8, slug: "gate-8-dsr-ratio" },
+  { key: "NOVELTY_ANTIOVERFIT", label: "9. NOVELTY / ANTI-FIT", desc: "FailureKnowledgeDB", color: "#fb923c", step: 9, slug: "gate-9-novelty-antifit" },
+  { key: "SEMANTIC_DEBATE", label: "10. DEBATE 5 AGENTES", desc: "Comité IA de Riesgo", color: "#facc15", step: 10, slug: "gate-10-multi-agent-debate" },
+  { key: "PORTFOLIO_ENSEMBLE", label: "11. NAUTILUS TRADER", desc: "Event-Driven & Margen Cross", color: "#34d399", step: 11, slug: "gate-11-nautilus-trader" },
 ];
 
 interface CandidateItem {
@@ -662,15 +662,20 @@ ${entryLogic}`;
             const isPassed = state.step <= 10;
             return (
               <React.Fragment key={state.key}>
-                <div
+                <Link
+                  href={`/gates/${state.slug}`}
                   style={{
                     flex: 1,
                     background: isPassed ? `${state.color}15` : "rgba(255, 255, 255, 0.02)",
                     border: isPassed ? `1px solid ${state.color}50` : "1px solid rgba(255, 255, 255, 0.06)",
                     borderRadius: "8px",
                     padding: "8px 10px",
+                    textDecoration: "none",
+                    display: "block",
+                    cursor: "pointer",
                     transition: "all 0.15s ease",
                   }}
+                  title={`Abrir página oficial y editor IA de Gate ${state.step}: ${state.label}`}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
                     <span style={{ fontSize: "9px", fontWeight: 900, color: state.color, fontFamily: "var(--font-mono, monospace)" }}>
@@ -693,7 +698,7 @@ ${entryLogic}`;
                   <div style={{ fontSize: "8.5px", color: "#94a3b8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {state.desc}
                   </div>
-                </div>
+                </Link>
 
                 {idx < 10 && (
                   <span style={{ color: "rgba(255, 255, 255, 0.2)", fontSize: "11px", fontWeight: 800 }}>

@@ -606,12 +606,61 @@ function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }
           <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
             <span style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>⚡ {telemetry.evaluation_speed_per_sec || 14.8} evals/seg</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>🔬 11 GATES AISLADOS</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(168, 85, 247, 0.12)", border: "1px solid rgba(168, 85, 247, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#c084fc", fontWeight: 800 }}>🛡️ NAUTILUS EVENT GATE 11</span>
-          </div>
+          <Link href="/gates/gate-1-data-ingest" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
+            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>🔬 11 GATES AISLADOS →</span>
+          </Link>
+          <Link href="/gates/gate-11-nautilus-trader" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(168, 85, 247, 0.12)", border: "1px solid rgba(168, 85, 247, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
+            <span style={{ fontSize: "11px", color: "#c084fc", fontWeight: 800 }}>🛡️ NAUTILUS EVENT GATE 11 →</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Interactive 11-Gate Fast Pipeline Navigator */}
+      <div style={{ background: "rgba(10, 14, 23, 0.85)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "10px 14px", marginBottom: "18px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+          <span style={{ fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            ⚡ Fases Cuantitativas & Gates (Haz clic en cualquier fase para editar parámetros con IA Semántica):
+          </span>
+          <span style={{ fontSize: "10px", color: "#34d399", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>
+            ☁️ Firebase Realtime Synced
+          </span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(11, 1fr)", gap: "6px" }}>
+          {[
+            { num: 1, slug: "gate-1-data-ingest", name: "1. Data Ingest", icon: "🗄️", badge: "Integridad" },
+            { num: 2, slug: "gate-2-cost-backtest", name: "2. Costes Reales", icon: "💸", badge: "Fricción" },
+            { num: 3, slug: "gate-3-trade-significance", name: "3. Muestra", icon: "📊", badge: "N >= 20" },
+            { num: 4, slug: "gate-4-walk-forward", name: "4. Walk-Forward", icon: "🔄", badge: "WFE >= 0.50" },
+            { num: 5, slug: "gate-5-monte-carlo", name: "5. Monte Carlo", icon: "🎲", badge: "Ruina 0.0%" },
+            { num: 6, slug: "gate-6-stress-slippage", name: "6. Estrés 3x", icon: "⚡", badge: "Slippage 3x" },
+            { num: 7, slug: "gate-7-regime-coverage", name: "7. Regímenes", icon: "🌐", badge: "Bull/Bear" },
+            { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe", icon: "📐", badge: "DSR > 1.5" },
+            { num: 9, slug: "gate-9-novelty-antifit", name: "9. Inoculación", icon: "🧬", badge: "Failure DB" },
+            { num: 10, slug: "gate-10-multi-agent-debate", name: "10. Debate 5 IA", icon: "🤖", badge: "Comité IA" },
+            { num: 11, slug: "gate-11-nautilus-trader", name: "11. Nautilus Core", icon: "💎", badge: "Event-Driven" },
+          ].map((g) => (
+            <Link
+              key={g.slug}
+              href={`/gates/${g.slug}`}
+              style={{
+                textDecoration: "none",
+                padding: "6px 4px",
+                borderRadius: "6px",
+                background: "rgba(255, 255, 255, 0.03)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                transition: "all 0.15s ease",
+              }}
+              title={`Ir a subpágina independiente y editor IA de Gate ${g.num}: ${g.name}`}
+            >
+              <span style={{ fontSize: "13px", marginBottom: "2px" }}>{g.icon}</span>
+              <span style={{ fontSize: "9px", fontWeight: 800, color: "#ffffff", whiteSpace: "nowrap" }}>G{g.num}</span>
+              <span style={{ fontSize: "7.5px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>{g.badge}</span>
+            </Link>
+          ))}
         </div>
       </div>
 

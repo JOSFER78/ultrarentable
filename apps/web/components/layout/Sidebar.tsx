@@ -37,7 +37,8 @@ const NAVIGATION: NavGroup[] = [
     group: "PIPELINE CUÁNTICO",
     items: [
       { code: "FSM", icon: "🧬", label: "FSM 10-Estados", href: "/candidatos", badge: "PIPELINE" },
-      { code: "QVF", icon: "⚖️", label: "Evidence Gates", href: "/bifurcacion", badge: "GATES" },
+      { code: "G11", icon: "⚡", label: "11 Gates & Fases", href: "/gates/gate-1-data-ingest", badge: "11 G" },
+      { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-11-nautilus-trader", badge: "RUST" },
       { code: "SEM", icon: "🧠", label: "IA Semántica & Fallos", href: "/research", badge: "AI" },
     ],
   },

@@ -311,6 +311,42 @@ export default function StrategiesExplorerPage() {
             {isCompactDensity ? "⚡ Modo Compacto" : "📋 Modo Normal"}
           </button>
 
+          <Link
+            href="/gates/gate-1-data-ingest"
+            style={{
+              background: "rgba(56, 189, 248, 0.12)",
+              border: "1px solid rgba(56, 189, 248, 0.3)",
+              color: "#38bdf8",
+              padding: "5px 10px",
+              borderRadius: "6px",
+              fontSize: "11px",
+              fontWeight: 800,
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+          >
+            🔬 11 Gates & IA
+          </Link>
+          <Link
+            href="/gates/gate-11-nautilus-trader"
+            style={{
+              background: "rgba(168, 85, 247, 0.12)",
+              border: "1px solid rgba(168, 85, 247, 0.3)",
+              color: "#c084fc",
+              padding: "5px 10px",
+              borderRadius: "6px",
+              fontSize: "11px",
+              fontWeight: 800,
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+          >
+            ⚡ NautilusTrader Core
+          </Link>
           <button
             onClick={loadCandidates}
             style={{
