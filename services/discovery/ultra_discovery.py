@@ -37,32 +37,37 @@ class UltraDiscoveryEngine:
         sl_atr_mult: float = 2.0,
         tp_atr_mult: float = 7.0,
         pyramiding_tiers_count: int = 3,
+        ema_fast: int = 20,
+        ema_slow: int = 50,
+        rsi_period: int = 14,
+        rsi_threshold_long: float = 52.0,
+        rsi_threshold_short: float = 48.0,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot inmutable con la configuración completa para la ruta Ultra."""
-        # Reglas de Entrada: Ruptura Donchian / Momentum con filtro de tendencia
+        # Reglas de Entrada: Tendencia EMA y Filtro de Momentum RSI
         entry_rules = RuleTree(
             long_conditions=[
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=20),
+                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
                     operator=ComparisonOperator.GREATER_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=50),
+                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
                 ),
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=14),
+                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
                     operator=ComparisonOperator.GREATER_THAN,
-                    threshold_value=52.0,
+                    threshold_value=rsi_threshold_long,
                 ),
             ],
             short_conditions=[
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=20),
+                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
                     operator=ComparisonOperator.LESS_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=50),
+                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
                 ),
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=14),
+                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
                     operator=ComparisonOperator.LESS_THAN,
-                    threshold_value=48.0,
+                    threshold_value=rsi_threshold_short,
                 ),
             ],
             logical_operator="AND",

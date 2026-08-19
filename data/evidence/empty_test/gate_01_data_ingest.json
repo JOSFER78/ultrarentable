@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_empty_test_g01",
+  "run_id": "run_empty_test",
+  "strategy_id": "empty_test",
+  "strategy_snapshot_hash": "empty_test",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "99485d21e8eb6d4c155cc7bf8d69d28db9db905519848c19539b7a5ab6bd572f",
+  "output_hash": "5ec6bfe711a13d7aee0a7152f9a011bf0cbdb3ea8fa47d3983cd1438a4ca4382",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Dataset insuficiente (< 500 velas)",
+  "metrics": {
+    "total_candles": 0,
+    "min_required": 500,
+    "corrupt_bars": 0,
+    "gaps_detected": 0,
+    "out_of_order_bars": 0,
+    "dataset_sha256": null
+  },
+  "artifact_path": "data/evidence/empty_test/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-19T22:38:43.612936+00:00"
+}

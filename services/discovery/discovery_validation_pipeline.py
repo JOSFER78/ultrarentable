@@ -1,12 +1,18 @@
 """services/discovery/discovery_validation_pipeline.py
-Pipeline Autónomo de Discovery & Validación Cuantitativa Real-Only.
-Procesa secuencialmente los datasets físicos en data/normalized/, genera hipótesis algorítmicas,
-ejecuta backtesting determinista barra a barra, evalúa los 11 Gates y registra los resultados reales en SQLite.
+Pipeline Autónomo de Discovery & Validación Cuantitativa Real-Only (Fases 1 a 6).
+Procesa secuencialmente los datasets físicos en data/normalized/:
+1. Calcula el SHA-256 criptográfico real del archivo en disco.
+2. Aplica particionado cronológico estricto: IS 60%, Validation 20%, Blind Holdout OOS 20%.
+3. Recorre el espacio combinatorio en IS y registra cada trial en StrategySearchRegistry (SQLite).
+4. Congela la estrategia elegida y ejecuta el backtest en la partición ciega Blind OOS (20%).
+5. Evalúa los 11 Gates Cuantitativos independientes con persistencia de EvidenceRecords en disco.
+6. Registra métricas y veredictos deterministas en la base de datos oficial SQLite.
 """
 
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import logging
 import sqlite3
@@ -14,7 +20,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(WORKSPACE_ROOT) not in sys.path:
@@ -23,6 +29,7 @@ if str(WORKSPACE_ROOT) not in sys.path:
 from contracts.snapshots.strategy_snapshot import StrategyRoute
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
 from services.discovery.funding_discovery import FundingDiscoveryEngine
+from services.discovery.strategy_search_registry import StrategySearchRegistry, SearchTrialRecord
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
@@ -34,6 +41,15 @@ DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
 DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
 
 
+def compute_file_sha256(filepath: str) -> str:
+    """Calcula el hash SHA-256 real de los bytes físicos de un archivo en disco."""
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 class DiscoveryValidationPipeline:
     """Orquestador de minería cuantitativa y validación en 11 gates para todos los activos."""
 
@@ -42,14 +58,16 @@ class DiscoveryValidationPipeline:
         self.data_dir = data_dir or DATA_DIR
         self.ultra_discovery = UltraDiscoveryEngine()
         self.funding_discovery = FundingDiscoveryEngine()
+        self.search_registry = StrategySearchRegistry(db_path=str(self.db_path))
         self.backtest_engine = EventBacktestEngine()
         self.gates_orchestrator = GatePipelineOrchestrator()
         self.cert_registry = CertificationRegistry()
 
     def get_db_connection(self) -> sqlite3.Connection:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(str(self.db_path))
+        conn = sqlite3.connect(str(self.db_path), timeout=30.0)
         conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA busy_timeout = 30000;")
         return conn
 
     def run_continuous_pipeline(self, max_datasets: Optional[int] = None, sleep_between_cycles_sec: int = 60):
@@ -88,28 +106,116 @@ class DiscoveryValidationPipeline:
 
                     is_fondeo = any(f_sym in symbol for f_sym in ["NQ", "ES", "YM", "GC", "CL", "EURUSD", "GBPUSD"])
                     route = StrategyRoute.FONDEO if is_fondeo else StrategyRoute.ULTRA
+                    initial_cap = 1000.0 if route == StrategyRoute.ULTRA else 50000.0
 
-                    # Cargar dataset físico
+                    # 1. Calcular SHA-256 criptográfico real del archivo en disco
+                    real_file_sha256 = compute_file_sha256(file_path)
+
+                    # 2. Cargar dataset físico
                     with open(file_path, "r") as f:
                         candles = json.load(f)
 
                     if not candles or len(candles) < 200:
                         continue
 
-                    # 1. Generar hipótesis de estrategia canónica y determinista
+                    # 3. Particionado Cronológico Ciego Inmutable: IS (60%), Validation (20%), Blind OOS (20%)
+                    total_bars = len(candles)
+                    idx_is = int(total_bars * 0.60)
+                    idx_val = int(total_bars * 0.80)
+
+                    candles_is = candles[:idx_is]
+                    candles_val = candles[idx_is:idx_val]
+                    candles_blind_oos = candles[idx_val:]
+
+                    # 4. Discovery Combinatorio en In-Sample & Registro de Trials
                     strat_id = f"UR_{route.value.upper()}_{symbol.upper().replace('-', '_')}_{timeframe.upper()}"
+                    run_id = f"run_{strat_id}_{cycle_num}"
                     
+                    param_space = self.search_registry.generate_combinatorial_parameter_space(
+                        symbol=symbol,
+                        timeframe=timeframe,
+                        route=route.value,
+                    )
+
+                    best_params = None
+                    best_is_pf = -1.0
+                    trials_count_this_run = 0
+
+                    for p_idx, p_set in enumerate(param_space):
+                        trial_strat_id = f"{strat_id}_t{p_idx:03d}"
+                        if route == StrategyRoute.ULTRA:
+                            trial_strat = self.ultra_discovery.generate_candidate_blueprint(
+                                strategy_id=trial_strat_id,
+                                symbol=symbol,
+                                timeframe=timeframe,
+                                dataset_id=fname,
+                                dataset_sha256=real_file_sha256,
+                                sl_atr_mult=float(p_set["sl_atr_mult"]),
+                                tp_atr_mult=float(p_set["tp_atr_mult"]),
+                                ema_fast=int(p_set["ema_fast"]),
+                                ema_slow=int(p_set["ema_slow"]),
+                                pyramiding_tiers_count=int(p_set.get("pyramiding_tiers_count", 3)),
+                            )
+                        else:
+                            trial_strat = self.funding_discovery.generate_candidate_blueprint(
+                                strategy_id=trial_strat_id,
+                                symbol=symbol,
+                                timeframe=timeframe,
+                                dataset_id=fname,
+                                dataset_sha256=real_file_sha256,
+                                ema_fast=int(p_set["ema_fast"]),
+                                ema_slow=int(p_set["ema_slow"]),
+                            )
+
+                        # Evaluar en In-Sample (60%)
+                        is_res = self.backtest_engine.run_backtest(trial_strat, candles_is, initial_capital_usd=initial_cap)
+                        
+                        # Registrar trial en SQLite
+                        trial_rec = SearchTrialRecord(
+                            trial_id=trial_strat_id,
+                            run_id=run_id,
+                            generation=1,
+                            parent_trial_id=None,
+                            symbol=symbol,
+                            timeframe=timeframe,
+                            route=route.value,
+                            archetype=trial_strat.archetype,
+                            parameters=p_set,
+                            rules_json=trial_strat.entry_rules.model_dump_json(),
+                            dataset_id=fname,
+                            dataset_sha256=real_file_sha256,
+                            discovery_engine="UltrarentableCombinatorialExplorer",
+                            in_sample_pf=is_res.profit_factor,
+                            in_sample_dd_pct=is_res.max_drawdown_pct,
+                        )
+                        self.search_registry.record_trial(trial_rec)
+                        trials_count_this_run += 1
+
+                        if is_res.profit_factor > best_is_pf:
+                            best_is_pf = is_res.profit_factor
+                            best_params = p_set
+
+                    # Si no se encontró mejor o espacio vacío, usar configuración base
+                    if best_params is None:
+                        best_params = {
+                            "sl_atr_mult": 2.0, "tp_atr_mult": 6.0,
+                            "ema_fast": 20, "ema_slow": 50,
+                            "pyramiding_tiers_count": 2 if route == StrategyRoute.ULTRA else 1
+                        }
+
+                    # 5. Generar Blueprint Final con Parámetros Seleccionados y Hash Real
                     if route == StrategyRoute.ULTRA:
                         strategy = self.ultra_discovery.generate_candidate_blueprint(
                             strategy_id=strat_id,
                             symbol=symbol,
                             timeframe=timeframe,
                             dataset_id=fname,
-                            dataset_sha256="hash_local_" + fname[:16],
-                            leverage=20.0,
-                            sl_atr_mult=2.0,
-                            tp_atr_mult=6.0,
-                            pyramiding_tiers_count=2,
+                            dataset_sha256=real_file_sha256,
+                            sl_atr_mult=float(best_params["sl_atr_mult"]),
+                            tp_atr_mult=float(best_params["tp_atr_mult"]),
+                            ema_fast=int(best_params["ema_fast"]),
+                            ema_slow=int(best_params["ema_slow"]),
+                            pyramiding_tiers_count=int(best_params.get("pyramiding_tiers_count", 2)),
                         )
                     else:
                         strategy = self.funding_discovery.generate_candidate_blueprint(
@@ -117,51 +223,59 @@ class DiscoveryValidationPipeline:
                             symbol=symbol,
                             timeframe=timeframe,
                             dataset_id=fname,
-                            dataset_sha256="hash_local_" + fname[:16],
-                            risk_per_trade_pct=0.5,
-                            target_profit_ticks=40,
-                            stop_loss_ticks=20,
+                            dataset_sha256=real_file_sha256,
+                            ema_fast=int(best_params["ema_fast"]),
+                            ema_slow=int(best_params["ema_slow"]),
                         )
 
-                    # 2. Ejecutar Backtest Determinista
-                    initial_cap = 1000.0 if route == StrategyRoute.ULTRA else 50000.0
-                    bt_result = self.backtest_engine.run_backtest(strategy, candles, initial_capital_usd=initial_cap)
+                    # 6. Ejecutar Backtests Separados: In-Sample (60%) y Blind Holdout OOS (20%)
+                    is_bt = self.backtest_engine.run_backtest(strategy, candles_is, initial_capital_usd=initial_cap)
+                    oos_bt = self.backtest_engine.run_backtest(strategy, candles_blind_oos, initial_capital_usd=initial_cap)
 
-                    # 3. Separar IS y OOS
-                    split_idx = int(len(bt_result.trades) * 0.7)
-                    is_trades = [t.net_pnl_usd for t in bt_result.trades[:split_idx]]
-                    oos_trades = [t.net_pnl_usd for t in bt_result.trades[split_idx:]]
+                    is_trades = [t.net_pnl_usd for t in is_bt.trades]
+                    oos_trades = [t.net_pnl_usd for t in oos_bt.trades]
                     trades_raw = [
-                        {"entry_price": t.entry_price, "exit_price": t.exit_price, "qty": t.qty, "side": t.side}
-                        for t in bt_result.trades
+                        {
+                            "entry_price": t.entry_price, "exit_price": t.exit_price,
+                            "qty": t.qty, "side": t.side, "net_pnl_usd": t.net_pnl_usd,
+                            "entry_bar_idx": t.entry_bar, "exit_bar_idx": t.exit_bar,
+                            "entry_time_ms": t.entry_time_ms, "exit_time_ms": t.exit_time_ms,
+                        }
+                        for t in oos_bt.trades
                     ]
 
-                    # 4. Evaluación en los 11 Gates
+                    # 7. Evaluación en los 11 Gates sobre la muestra intocada Blind OOS
                     candidate_info = {
                         "candidate_id": strategy.strategy_id,
                         "name": strategy.strategy_id,
                         "route": strategy.route.value,
                         "symbol": strategy.symbol,
                         "timeframe": strategy.timeframe,
-                        "profit_factor_oos": bt_result.profit_factor,
-                        "max_drawdown_pct": bt_result.max_drawdown_pct,
+                        "dataset_id": fname,
+                        "dataset_sha256": real_file_sha256,
+                        "dataset_filepath": file_path,
+                        "profit_factor_oos": oos_bt.profit_factor,
+                        "max_drawdown_pct": oos_bt.max_drawdown_pct,
                         "trades_count": len(oos_trades),
+                        "trials_tested": max(1, trials_count_this_run),
+                        "parameters": best_params,
                         "rules": ["EMA_FAST > EMA_SLOW", "RSI > 50", "VOLATILITY_EXPANSION"],
                         "indicators_count": 3,
                     }
 
                     gates_eval = self.gates_orchestrator.run_all_gates(
                         candidate_info=candidate_info,
-                        candles=candles,
+                        candles=candles_blind_oos,
                         is_trades=is_trades,
                         oos_trades=oos_trades,
                         trades_raw=trades_raw,
+                        strategy_snapshot=strategy,
                     )
 
-                    # 5. Certificación
+                    # 8. Certificación Inmutable (11/11 Requerido)
                     verdict = self.cert_registry.certify_candidate(
                         strategy=strategy,
-                        backtest_result=bt_result,
+                        backtest_result=oos_bt,
                         gates_passed_count=gates_eval.get("gates_passed_count", 0),
                         scorecard_average=gates_eval.get("overall_score", 0.0),
                     )
@@ -172,7 +286,7 @@ class DiscoveryValidationPipeline:
                     else:
                         status = verdict.certified_status
 
-                    # 6. Guardar en SQLite
+                    # 9. Persistir en Base de Datos SQLite
                     conn = self.get_db_connection()
                     cur = conn.cursor()
 
@@ -181,19 +295,19 @@ class DiscoveryValidationPipeline:
                     pf_is = (sum(x for x in is_trades if x > 0) / max(0.01, abs(sum(x for x in is_trades if x < 0)))) if is_trades else 1.0
                     pf_oos = (sum(x for x in oos_trades if x > 0) / max(0.01, abs(sum(x for x in oos_trades if x < 0)))) if oos_trades else 1.0
 
-                    # Estimación precisa de duración
-                    total_bars = len(candles)
-                    # Estimación de meses según timeframe
                     tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
                     bars_per_m = tf_bars_per_month.get(timeframe.lower(), 720)
                     total_months = max(0.5, total_bars / bars_per_m)
-                    monthly_roi_pct = (bt_result.net_profit_usd / max(1.0, initial_cap)) * 100.0 / total_months
+                    monthly_roi_pct = (oos_bt.net_profit_usd / max(1.0, initial_cap)) * 100.0 / total_months
                     annual_roi_pct = monthly_roi_pct * 12.0
 
                     scorecard_payload = {
                         "source": "Autonomous Real-Only Quantitative Discovery",
                         "strategy_snapshot_hash": strategy.canonical_hash,
+                        "dataset_sha256": real_file_sha256,
                         "route": route.value,
+                        "trials_tested": trials_count_this_run,
+                        "parameters_selected": best_params,
                         "gates_passed_count": gates_eval.get("gates_passed_count", 0),
                         "overall_score": gates_eval.get("overall_score", 0.0),
                         "gates": gates_eval.get("gates", []),
@@ -202,11 +316,12 @@ class DiscoveryValidationPipeline:
                         "audit_summary": verdict.audit_summary,
                         "duration_info": {
                             "total_bars": total_bars,
+                            "is_bars": len(candles_is),
+                            "blind_oos_bars": len(candles_blind_oos),
                             "total_months": round(total_months, 2),
                         }
                     }
 
-                    # Extraer scores matemáticos empíricos directamente de los Gates (Cero invenciones)
                     gates_map = {g.get("gate_id"): g for g in gates_eval.get("gates", [])}
                     g4_data = gates_map.get(4, {})
                     g5_data = gates_map.get(5, {})
@@ -249,11 +364,11 @@ class DiscoveryValidationPipeline:
                         round(net_is, 2),
                         len(is_trades),
                         round(pf_is, 2),
-                        round(bt_result.max_drawdown_pct, 2),
+                        round(is_bt.max_drawdown_pct, 2),
                         round(net_oos, 2),
                         len(oos_trades),
                         round(pf_oos, 2),
-                        round(bt_result.max_drawdown_pct, 2),
+                        round(oos_bt.max_drawdown_pct, 2),
                         round(pf_oos / max(0.01, pf_is), 2),
                         round(real_wfo_score, 1),
                         round(real_mc_score, 1),
@@ -264,7 +379,7 @@ class DiscoveryValidationPipeline:
                     conn.close()
 
                     processed_count += 1
-                    logger.info(f"[{processed_count}/{len(dataset_files)}] Procesado {strategy.strategy_id} ({symbol} {timeframe}) -> {status} (Trades: {bt_result.total_trades}, Net: ${bt_result.net_profit_usd:.2f}, PF: {bt_result.profit_factor:.2f}, DD: {bt_result.max_drawdown_pct:.1f}%)")
+                    logger.info(f"[{processed_count}/{len(dataset_files)}] {strategy.strategy_id} -> {status} (Trials: {trials_count_this_run}, OOS Trades: {len(oos_trades)}, OOS PF: {oos_bt.profit_factor:.2f}, Gates: {gates_eval.get('gates_passed_count')}/11)")
 
                 except Exception as e:
                     logger.error(f"Error procesando dataset {file_path}: {e}", exc_info=True)

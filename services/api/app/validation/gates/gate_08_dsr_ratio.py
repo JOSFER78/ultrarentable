@@ -5,6 +5,7 @@ Ajusta el ratio de Sharpe observado considerando:
 - La asimetría (skewness) y curtosis (kurtosis) de la distribución de retornos.
 - La longitud temporal de la muestra.
 Implementación matemática pura sin dependencias binarias externas (math.erf determinista).
+Cero tolerancias a trials no registrados: si trials_tested <= 0, el Gate es RECHAZADO / BLOCKED.
 """
 
 from __future__ import annotations
@@ -63,8 +64,18 @@ class Gate08DSRRatio:
     def evaluate(
         self,
         oos_trades_pnl: List[float],
-        trials_tested: int = 100,
+        trials_tested: int = 1,
     ) -> Dict[str, Any]:
+        if trials_tested <= 0:
+            return {
+                "gate_id": self.GATE_ID,
+                "name": self.NAME,
+                "passed": False,
+                "score": 0.0,
+                "verdict": "RECHAZADO / BLOCKED: Recuento de trials de búsqueda nulo o desconocido (No evidence of trials)",
+                "evidence": {"trials_penalized": 0, "dsr_probability": 0.0},
+            }
+
         if not oos_trades_pnl or len(oos_trades_pnl) < 10:
             return {
                 "gate_id": self.GATE_ID,
@@ -102,12 +113,15 @@ class Gate08DSRRatio:
 
         # 3. Estimación del umbral de Sharpe esperado bajo selección múltiple (Bailey & López de Prado)
         euler_gamma = 0.57721566490153286
-        n_trials = max(2, int(trials_tested))
+        n_trials = max(1, int(trials_tested))
         
-        p1 = 1.0 - (1.0 / n_trials)
-        p2 = 1.0 - (1.0 / (n_trials * math.e))
-        expected_max_sr = (1.0 - euler_gamma) * _std_norm_ppf(p1) + euler_gamma * _std_norm_ppf(p2)
-        expected_max_sr = max(0.0, float(expected_max_sr))
+        if n_trials > 1:
+            p1 = 1.0 - (1.0 / n_trials)
+            p2 = 1.0 - (1.0 / (n_trials * math.e))
+            expected_max_sr = (1.0 - euler_gamma) * _std_norm_ppf(p1) + euler_gamma * _std_norm_ppf(p2)
+            expected_max_sr = max(0.0, float(expected_max_sr))
+        else:
+            expected_max_sr = 0.0
 
         # 4. Cálculo del Estadístico DSR
         denom_var = 1.0 - skewness * raw_sharpe + ((kurtosis - 1.0) / 4.0) * (raw_sharpe ** 2)

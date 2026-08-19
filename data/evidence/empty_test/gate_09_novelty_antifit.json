@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_empty_test_g09",
+  "run_id": "run_empty_test",
+  "strategy_id": "empty_test",
+  "strategy_snapshot_hash": "empty_test",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "ce065ea937d74b43f6cfe43958bd1f5a38b6658863f92a8375c96e3c145dac20",
+  "output_hash": "7bcc14d63512e8f6ad99d36aef3c38efa9c3bcdb1860f902a04ffff7f3dccf25",
+  "status": "FAILED",
+  "score": 36.9,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 0.0 o Estabilidad 92.3% < 60.0%)",
+  "metrics": {
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 0.0,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 92.3,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      1.35,
+      1.42,
+      1.42,
+      1.35
+    ],
+    "rebacktest_performed": false
+  },
+  "artifact_path": "data/evidence/empty_test/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-19T22:38:43.633229+00:00"
+}

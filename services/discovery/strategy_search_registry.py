@@ -1,7 +1,8 @@
 """services/discovery/strategy_search_registry.py
-Registro Forense de Búsqueda y Espacio de Parámetros de Discovery (Fase 3).
+Registro Forense de Búsqueda y Espacio de Parámetros de Discovery (Fase 3 & Bloqueante 5).
 Almacena cada hipótesis generada (trials), sus parámetros, mutaciones y genealogía.
 Suministra el contador real y trazable de trials para el Deflated Sharpe Ratio (DSR) en Gate 8.
+Cero defaults complacientes: si no hay trials registrados, el recuento es estrictamente 0.
 """
 
 from __future__ import annotations
@@ -100,24 +101,27 @@ class StrategySearchRegistry:
                 trial.dataset_id,
                 trial.dataset_sha256,
                 trial.discovery_engine,
-                trial.in_sample_pf,
-                trial.in_sample_dd_pct,
+                float(trial.in_sample_pf),
+                float(trial.in_sample_dd_pct),
                 trial.created_at_utc,
             ))
             conn.commit()
 
     def get_total_trials_count(self, symbol: Optional[str] = None, timeframe: Optional[str] = None) -> int:
-        """Devuelve el número real y trazable de hipótesis probadas para el cálculo exacto del DSR."""
+        """Retorna el recuento real de hipótesis evaluadas en SQLite. Sin fallbacks inventados."""
         with sqlite3.connect(self.db_path, timeout=30.0) as conn:
+            cur = conn.cursor()
             if symbol and timeframe:
-                cur = conn.execute(
+                cur.execute(
                     "SELECT COUNT(*) FROM discovery_search_trials WHERE symbol = ? AND timeframe = ?",
                     (symbol.upper(), timeframe.lower())
                 )
+            elif symbol:
+                cur.execute("SELECT COUNT(*) FROM discovery_search_trials WHERE symbol = ?", (symbol.upper(),))
             else:
-                cur = conn.execute("SELECT COUNT(*) FROM discovery_search_trials")
+                cur.execute("SELECT COUNT(*) FROM discovery_search_trials")
             row = cur.fetchone()
-            return int(row[0]) if row and row[0] > 0 else 100
+            return int(row[0]) if row else 0
 
     def generate_combinatorial_parameter_space(
         self,
@@ -126,28 +130,26 @@ class StrategySearchRegistry:
         route: str = "ULTRA",
     ) -> List[Dict[str, Any]]:
         """Genera un espacio de búsqueda cuantitativo con múltiples hipótesis de momentum, volatilidad y reversión."""
-        fast_emas = [8, 10, 12, 15, 20]
-        slow_emas = [21, 30, 45, 55, 89]
-        breakout_periods = [10, 15, 20, 30]
-        atr_multipliers_sl = [1.5, 2.0, 2.5, 3.0]
-        atr_multipliers_tp = [3.0, 4.5, 6.0, 8.0]
+        fast_emas = [8, 12, 20]
+        slow_emas = [30, 50, 80]
+        atr_multipliers_sl = [1.5, 2.0, 3.0]
+        atr_multipliers_tp = [4.0, 6.0, 8.0]
         
         space = []
         for f in fast_emas:
             for s in slow_emas:
                 if f >= s:
                     continue
-                for b in breakout_periods:
-                    for sl in atr_multipliers_sl:
-                        for tp in atr_multipliers_tp:
-                            space.append({
-                                "ema_fast": f,
-                                "ema_slow": s,
-                                "breakout_period": b,
-                                "atr_sl_mult": sl,
-                                "atr_tp_mult": tp,
-                                "route": route,
-                                "symbol": symbol,
-                                "timeframe": timeframe,
-                            })
+                for sl in atr_multipliers_sl:
+                    for tp in atr_multipliers_tp:
+                        space.append({
+                            "ema_fast": f,
+                            "ema_slow": s,
+                            "sl_atr_mult": sl,
+                            "tp_atr_mult": tp,
+                            "pyramiding_tiers_count": 3 if route == "ULTRA" else 1,
+                            "route": route,
+                            "symbol": symbol,
+                            "timeframe": timeframe,
+                        })
         return space

@@ -35,31 +35,36 @@ class FundingDiscoveryEngine:
         risk_per_trade_pct: float = 0.5,
         target_profit_ticks: int = 40,
         stop_loss_ticks: int = 20,
+        ema_fast: int = 9,
+        ema_slow: int = 21,
+        rsi_period: int = 14,
+        rsi_threshold_long: float = 50.0,
+        rsi_threshold_short: float = 50.0,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot inmutable con la configuración estricta para Fondeo."""
         entry_rules = RuleTree(
             long_conditions=[
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=9),
+                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
                     operator=ComparisonOperator.CROSSES_ABOVE,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=21),
+                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
                 ),
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=14),
+                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
                     operator=ComparisonOperator.GREATER_THAN,
-                    threshold_value=50.0,
+                    threshold_value=rsi_threshold_long,
                 ),
             ],
             short_conditions=[
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=9),
+                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
                     operator=ComparisonOperator.CROSSES_BELOW,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=21),
+                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
                 ),
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=14),
+                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
                     operator=ComparisonOperator.LESS_THAN,
-                    threshold_value=50.0,
+                    threshold_value=rsi_threshold_short,
                 ),
             ],
             logical_operator="AND",
@@ -99,7 +104,7 @@ class FundingDiscoveryEngine:
         return StrategySnapshot.create_and_hash(
             strategy_id=strategy_id,
             route=StrategyRoute.FONDEO,
-            archetype="INTRADAY_MOMENTUM_PROP",
+            archetype="INSTITUTIONAL_SESSION_MOMENTUM",
             symbol=symbol,
             timeframe=timeframe,
             entry_rules=entry_rules,

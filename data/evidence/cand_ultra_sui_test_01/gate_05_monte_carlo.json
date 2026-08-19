@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_cand_ultra_sui_test_01_g05",
+  "run_id": "run_cand_ultra_sui_test_01",
+  "strategy_id": "cand_ultra_sui_test_01",
+  "strategy_snapshot_hash": "cand_ultra_sui_test_01",
+  "dataset_id": "ds_binance_suiusdt_1h",
+  "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8d8bdab28a469edd9a76fefbad69ecdfdc82e053a80f4312a8eea72f67d35645",
+  "output_hash": "619ef37a33adfa54141c74930648d9c7f47f6deee75d46205ba16902a231c1f9",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 7.9% > 1.0%",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 7.9,
+    "drawdown_median_pct": 34.4,
+    "drawdown_95th_percentile_pct": 91.1,
+    "max_simulated_drawdown_pct": 172.2
+  },
+  "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-19T22:38:35.572098+00:00"
+}

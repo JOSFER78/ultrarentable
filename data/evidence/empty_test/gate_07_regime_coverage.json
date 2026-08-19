@@ -1,0 +1,23 @@
+{
+  "evidence_id": "ev_empty_test_g07",
+  "run_id": "run_empty_test",
+  "strategy_id": "empty_test",
+  "strategy_snapshot_hash": "empty_test",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "2b2c190cb1cc950a5fafec77d156b15757f0a4b68584b993386bd440507bd5a5",
+  "output_hash": "6bc8689d6b70683292a55d5ec6bbdde5d75e0b041fa8a5dfc591b57a86ab3d88",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO / BLOCKED: Velas insuficientes para clasificar regímenes (< 50 velas)",
+  "metrics": {
+    "candles_count": 0
+  },
+  "artifact_path": "data/evidence/empty_test/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-19T22:38:43.632641+00:00"
+}

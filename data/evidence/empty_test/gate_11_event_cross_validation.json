@@ -1,0 +1,23 @@
+{
+  "evidence_id": "ev_empty_test_g11",
+  "run_id": "run_empty_test",
+  "strategy_id": "empty_test",
+  "strategy_snapshot_hash": "empty_test",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "f05652ab002dc685f32e4f6d187c53b1b56e4929c1b19aaf5bb87f9a0c1d068d",
+  "output_hash": "3c884c39e7621cfe05e7da0b4c9bd2464530e3e96b5c97a9d553ac8ace1e85b8",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para validación cruzada orientada a eventos (< 5 trades)",
+  "metrics": {
+    "execution_events_count": 0
+  },
+  "artifact_path": "data/evidence/empty_test/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-19T22:38:43.637979+00:00"
+}

@@ -1,5 +1,5 @@
 """tests/test_gates_modular_quad_state.py
-Verificación de los 11 Gates Cuantitativos Modulares con Estado Cuádruple y Cero Mocks (Fases 8, 9, 10, 11 y 12).
+Verificación de los 11 Gates Cuantitativos Modulares con Particionado Ciego 60/20/20 y Evidencia Criptográfica en Disco.
 """
 
 import json
@@ -7,6 +7,7 @@ import pytest
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
+from services.discovery.discovery_validation_pipeline import compute_file_sha256
 
 
 def test_11_gates_pipeline_evaluates_real_backtest():
@@ -14,58 +15,80 @@ def test_11_gates_pipeline_evaluates_real_backtest():
     with open(sample_file, "r") as f:
         candles = json.load(f)
 
+    # 1. Particionado Ciego 60% IS, 20% Val, 20% Blind OOS
+    n = len(candles)
+    idx_is = int(n * 0.60)
+    idx_val = int(n * 0.80)
+
+    candles_is = candles[:idx_is]
+    candles_val = candles[idx_is:idx_val]
+    candles_blind_oos = candles[idx_val:]
+
+    real_sha = compute_file_sha256(sample_file)
+
     ultra_discovery = UltraDiscoveryEngine()
     strategy = ultra_discovery.generate_candidate_blueprint(
         strategy_id="cand_ultra_sui_test_01",
         symbol="SUIUSDT",
         timeframe="1h",
         dataset_id="ds_binance_suiusdt_1h",
-        dataset_sha256="test_sui_hash_123456",
+        dataset_sha256=real_sha,
         leverage=50.0,
         sl_atr_mult=1.5,
         tp_atr_mult=7.0,
         pyramiding_tiers_count=3,
     )
 
-    # 1. Ejecutar Backtest Determinista
+    # 2. Ejecutar Backtest Determinista sobre In-Sample y Blind OOS
     bt_engine = EventBacktestEngine()
-    bt_result = bt_engine.run_backtest(strategy, candles, initial_capital_usd=1000.0)
+    bt_is = bt_engine.run_backtest(strategy, candles_is, initial_capital_usd=1000.0)
+    bt_oos = bt_engine.run_backtest(strategy, candles_blind_oos, initial_capital_usd=1000.0)
 
-    # Separar In-Sample (70%) y Out-of-Sample (30%)
-    split_idx = int(len(bt_result.trades) * 0.7)
-    is_trades = [t.net_pnl_usd for t in bt_result.trades[:split_idx]]
-    oos_trades = [t.net_pnl_usd for t in bt_result.trades[split_idx:]]
+    is_trades = [t.net_pnl_usd for t in bt_is.trades]
+    oos_trades = [t.net_pnl_usd for t in bt_oos.trades]
     trades_raw = [
-        {"entry_price": t.entry_price, "exit_price": t.exit_price, "qty": t.qty, "side": t.side}
-        for t in bt_result.trades
+        {
+            "entry_price": t.entry_price, "exit_price": t.exit_price,
+            "qty": t.qty, "side": t.side, "net_pnl_usd": t.net_pnl_usd,
+            "entry_bar_idx": t.entry_bar, "exit_bar_idx": t.exit_bar,
+            "entry_time_ms": t.entry_time_ms, "exit_time_ms": t.exit_time_ms,
+        }
+        for t in bt_oos.trades
     ]
 
-    # 2. Evaluar a través de los 11 Gates Modulares
+    # 3. Evaluar a través de los 11 Gates Modulares con Blind OOS intocado
     orchestrator = GatePipelineOrchestrator()
     candidate_info = {
         "candidate_id": strategy.strategy_id,
         "route": strategy.route.value,
         "symbol": strategy.symbol,
         "timeframe": strategy.timeframe,
-        "profit_factor_oos": bt_result.profit_factor,
-        "max_drawdown_pct": bt_result.max_drawdown_pct,
+        "dataset_id": "ds_binance_suiusdt_1h",
+        "dataset_sha256": real_sha,
+        "dataset_filepath": sample_file,
+        "profit_factor_oos": bt_oos.profit_factor,
+        "max_drawdown_pct": bt_oos.max_drawdown_pct,
         "trades_count": len(oos_trades),
+        "trials_tested": 15,
+        "parameters": {"sl_atr_mult": 1.5, "tp_atr_mult": 7.0, "ema_fast": 20, "ema_slow": 50},
         "rules": ["EMA_FAST > EMA_SLOW", "RSI > 52", "DONCHIAN_BREAKOUT"],
         "indicators_count": 3,
     }
 
     gates_res = orchestrator.run_all_gates(
         candidate_info=candidate_info,
-        candles=candles,
+        candles=candles_blind_oos,
         is_trades=is_trades,
         oos_trades=oos_trades,
         trades_raw=trades_raw,
+        strategy_snapshot=strategy,
     )
 
     assert "gates" in gates_res
     assert len(gates_res["gates"]) == 11
     assert "overall_certified" in gates_res
     assert "scorecard_average" in gates_res
+    assert gates_res["evidence_count"] == 11
 
     # Cada uno de los 11 gates debe tener id, name, passed, score y evidence
     for g in gates_res["gates"]:

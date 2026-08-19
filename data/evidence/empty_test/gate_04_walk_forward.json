@@ -1,0 +1,25 @@
+{
+  "evidence_id": "ev_empty_test_g04",
+  "run_id": "run_empty_test",
+  "strategy_id": "empty_test",
+  "strategy_snapshot_hash": "empty_test",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "868030c07ba876d50de401e122da513e96ab781c339d38d9888ebdbd9b1a5d3d",
+  "output_hash": "5fe853fb4e7e16b420863a7826ad92552a92f22911d5aa5a7d8a902101f2d126",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
+  "metrics": {
+    "total_trades": 0,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
+  },
+  "artifact_path": "data/evidence/empty_test/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-19T22:38:43.623248+00:00"
+}
