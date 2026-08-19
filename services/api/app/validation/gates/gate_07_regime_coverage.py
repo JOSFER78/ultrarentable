@@ -87,29 +87,27 @@ class Gate07RegimeCoverage:
         regime_trades_count = {"BULL_TREND": 0, "BEAR_TREND": 0, "CHOP_RANGING": 0, "HIGH_VOLATILITY": 0}
         regime_wins = {"BULL_TREND": 0, "BEAR_TREND": 0, "CHOP_RANGING": 0, "HIGH_VOLATILITY": 0}
 
-        # Si tenemos trades_raw con índices o timestamps
-        if trades_raw and len(trades_raw) > 0:
-            for t in trades_raw:
-                pnl = float(t.get("net_pnl_usd", 0.0) or t.get("pnl", 0.0))
-                bar_idx = int(t.get("entry_bar_idx", 0) or t.get("bar_index", 0))
-                # Limitar bar_idx al rango válido de velas
-                valid_idx = min(max(0, bar_idx), len(bar_regimes) - 1)
-                regime = bar_regimes[valid_idx]
+        if not trades_raw or len(trades_raw) == 0:
+            return {
+                "gate_id": self.GATE_ID,
+                "name": self.NAME,
+                "passed": False,
+                "score": 0.0,
+                "verdict": "RECHAZADO / BLOCKED: Sin trades_raw físicos con timestamp/índice para mapeo temporal real",
+                "evidence": {"trades_mapped_count": 0, "active_regimes": []},
+            }
 
-                regime_pnl[regime] += pnl
-                regime_trades_count[regime] += 1
-                if pnl > 0:
-                    regime_wins[regime] += 1
-        elif oos_trades_pnl:
-            # Si sólo se pasan PnLs, distribuirlos cronológicamente a lo largo de las velas
-            step = max(1, len(bar_regimes) // len(oos_trades_pnl))
-            for idx, pnl in enumerate(oos_trades_pnl):
-                c_idx = min(idx * step, len(bar_regimes) - 1)
-                regime = bar_regimes[c_idx]
-                regime_pnl[regime] += pnl
-                regime_trades_count[regime] += 1
-                if pnl > 0:
-                    regime_wins[regime] += 1
+        for t in trades_raw:
+            pnl = float(t.get("net_pnl_usd", 0.0) or t.get("pnl", 0.0))
+            bar_idx = int(t.get("entry_bar_idx", 0) or t.get("bar_index", 0))
+            # Limitar bar_idx al rango válido de velas
+            valid_idx = min(max(0, bar_idx), len(bar_regimes) - 1)
+            regime = bar_regimes[valid_idx]
+
+            regime_pnl[regime] += pnl
+            regime_trades_count[regime] += 1
+            if pnl > 0:
+                regime_wins[regime] += 1
 
         # Redondear PnL por régimen
         regime_pnl = {k: round(v, 2) for k, v in regime_pnl.items()}

@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g07",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "cand_ultra_sui_test_01",
+  "strategy_snapshot_hash": "a2d5ffed5a4845b32717d9c88f25a986032debb188b4cff7c68f74768b1faa0d",
   "dataset_id": "ds_binance_suiusdt_1h",
   "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "bb60e26fc8895777c6e18e84fe497aa40aba2250ecc38378cbe214948fa21665",
-  "output_hash": "3d8629804bb29eadbc9e50a992cb1e5f0a42fbc6a7befe87931c3d837dc01099",
+  "input_hash": "993dfcb70a82715b9fe3b0ab9ac0d517f1557c25be8f813aac4ca258d03a8495",
+  "output_hash": "5ad5b9104c23894b432ebad3dcd60f58ffa92125a3f710325f2a705cc018d908",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $5164.71)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (4/4 regímenes en beneficio, Net PnL: $4520.62)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 640,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 1064
     },
     "regime_trades_count": {
-      "BULL_TREND": 22,
-      "BEAR_TREND": 19,
-      "CHOP_RANGING": 109,
-      "HIGH_VOLATILITY": 42
+      "BULL_TREND": 21,
+      "BEAR_TREND": 15,
+      "CHOP_RANGING": 81,
+      "HIGH_VOLATILITY": 32
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 111.1,
-      "BEAR_TREND": -281.45,
-      "CHOP_RANGING": 4234.47,
-      "HIGH_VOLATILITY": 1100.59
+      "BULL_TREND": 1043.77,
+      "BEAR_TREND": 542.54,
+      "CHOP_RANGING": 1593.6,
+      "HIGH_VOLATILITY": 1340.71
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 5164.71
+    "total_oos_pnl_usd": 4520.62
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-19T22:38:35.622856+00:00"
+  "created_at_utc": "2026-08-19T23:22:30.136734+00:00"
 }

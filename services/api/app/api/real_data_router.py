@@ -28,6 +28,17 @@ class CombinePortfolioRequest(BaseModel):
     total_capital_usd: float = Field(10000.0, description="Capital base en USD")
 
 
+def normalize_symbol_key(raw_sym: str) -> str:
+    s = (raw_sym or "").upper().replace("/", "").replace("-", "").replace("_", "").strip()
+    if s.endswith("USDT"):
+        base = s[:-4]
+        return f"{base}-USDT"
+    elif s.endswith("USD") and len(s) > 6 and s not in ["EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY"]:
+        base = s[:-3]
+        return f"{base}-USDT"
+    return s
+
+
 @router.get("/candidates/approved")
 def list_approved_candidates(
     route: Optional[str] = Query(None, description="ULTRA o FONDEO"),
@@ -36,7 +47,7 @@ def list_approved_candidates(
     symbol: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ) -> Dict[str, Any]:
-    """Retorna las estrategias candidatas reales que han superado los filtros de validación."""
+    """Retorna únicamente la mejor estrategia campeona por activo que ha superado los filtros."""
     query = db.query(CandidateModel)
     if route:
         query = query.filter(CandidateModel.route == route.upper())
@@ -44,9 +55,23 @@ def list_approved_candidates(
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
 
     candidates = query.all()
+
+    # Deduplicación: 1 solo campeón por activo
+    champions_by_asset: Dict[str, Any] = {}
+    for c in candidates:
+        norm_sym = normalize_symbol_key(c.symbol)
+        asset_key = f"{c.route}_{norm_sym}"
+        pf = float(c.profit_factor_oos or 0.0)
+        net_oos = float(c.net_profit_oos or 0.0)
+        quality = pf * 1000.0 + net_oos
+
+        if asset_key not in champions_by_asset or quality > champions_by_asset[asset_key][0]:
+            champions_by_asset[asset_key] = (quality, c)
+
+    sorted_cands = sorted([item[1] for item in champions_by_asset.values()], key=lambda c: (float(c.profit_factor_oos or 0.0), float(c.net_profit_oos or 0.0)), reverse=True)
     results = []
 
-    for c in candidates:
+    for c in sorted_cands:
         net_oos = c.net_profit_oos or 0.0
         annual_pct = round((net_oos / 10000.0) * 100.0, 2)
         monthly_pct = round(annual_pct / 12.0, 2)
@@ -61,7 +86,7 @@ def list_approved_candidates(
             "candidate_id": c.candidate_id,
             "name": c.name,
             "route": c.route,
-            "symbol": c.symbol,
+            "symbol": normalize_symbol_key(c.symbol),
             "timeframe": c.timeframe,
             "status": c.status,
             "annual_return_pct": annual_pct,
@@ -209,10 +234,31 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
     oos_passed_count = db.query(CandidateModel).filter(CandidateModel.status == "OOS_PASSED").count()
     backtested_count = db.query(CandidateModel).filter(CandidateModel.status == "BACKTESTED").count()
     
-    # 3. Top candidatos reales (únicamente los aprobados/válidos que superan gates)
-    top_cands = db.query(CandidateModel).filter(CandidateModel.status.in_(["OOS_PASSED", "APPROVED", "CANDIDATA_ULTRA", "CANDIDATA_FONDEO"])).order_by(CandidateModel.net_profit_oos.desc()).limit(15).all()
+    # 3. Top candidatos reales: Deduplicación estricta (1 solo campeón por activo)
+    top_cands_query = db.query(CandidateModel).filter(
+        CandidateModel.status.in_(["OOS_PASSED", "APPROVED", "CANDIDATA_ULTRA", "CANDIDATA_FONDEO"])
+    ).all()
+
+    champions_by_asset: Dict[str, Any] = {}
+    for c in top_cands_query:
+        norm_sym = normalize_symbol_key(c.symbol)
+        asset_key = f"{c.route}_{norm_sym}"
+        pf = float(c.profit_factor_oos or 0.0)
+        net_oos = float(c.net_profit_oos or 0.0)
+        # Ponderación de calidad: PF principal, PnL desempate
+        quality = pf * 1000.0 + net_oos
+
+        if asset_key not in champions_by_asset or quality > champions_by_asset[asset_key][0]:
+            champions_by_asset[asset_key] = (quality, c)
+
+    sorted_champions = sorted(
+        [item[1] for item in champions_by_asset.values()],
+        key=lambda c: (float(c.profit_factor_oos or 0.0), float(c.net_profit_oos or 0.0)),
+        reverse=True,
+    )
+
     recent_discoveries = []
-    for c in top_cands:
+    for c in sorted_champions:
         sc = {}
         if c.scorecard_json:
             try:
@@ -220,29 +266,60 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
             except Exception:
                 sc = {}
         oos_m = sc.get("oos_metrics") or {}
-        mon_roi = float(sc.get("monthly_roi_pct") or oos_m.get("monthly_roi_pct") or 25.0)
-        ann_roi = float(sc.get("annualized_roi_pct") or oos_m.get("annualized_roi_pct") or 300.0)
+        dur_raw = sc.get("duration_info") or {}
+        total_bars = int(dur_raw.get("total_bars") or 3840)
+        tf = (c.timeframe or "1h").lower()
+        tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
+        bars_per_m = tf_bars_per_month.get(tf, 720)
+        calc_months = max(0.5, round(total_bars / bars_per_m, 1))
+        calc_years = round(calc_months / 12.0, 1)
+
+        initial_cap = 1000.0 if c.route == "ULTRA" else 50000.0
+        net_oos_val = float(c.net_profit_oos or 0.0)
+
+        # Extraer retorno mensual real de scorecard o calcularlo fielmente
+        if "monthly_return_pct" in sc:
+            mon_roi = float(sc["monthly_return_pct"])
+        elif "monthly_roi_pct" in sc:
+            mon_roi = float(sc["monthly_roi_pct"])
+        elif "monthly_roi_pct" in oos_m:
+            mon_roi = float(oos_m["monthly_roi_pct"])
+        else:
+            mon_roi = round((net_oos_val / initial_cap) * 100.0 / calc_months, 2)
+
+        if "annual_return_pct" in sc:
+            ann_roi = float(sc["annual_return_pct"])
+        elif "annualized_roi_pct" in sc:
+            ann_roi = float(sc["annualized_roi_pct"])
+        elif "annualized_roi_pct" in oos_m:
+            ann_roi = float(oos_m["annualized_roi_pct"])
+        else:
+            ann_roi = round(mon_roi * 12.0, 2)
+
+        duration_info = {
+            "total_bars": total_bars,
+            "total_months": float(dur_raw.get("total_months") or calc_months),
+            "total_years": float(dur_raw.get("total_years") or calc_years),
+            "start_date": str(dur_raw.get("start_date") or "2025-10"),
+            "end_date": str(dur_raw.get("end_date") or "2026-08"),
+            "oos_months": float(dur_raw.get("oos_months") or round(calc_months * 0.2, 1)),
+            "oos_days": int(dur_raw.get("oos_days") or int(calc_months * 0.2 * 30)),
+        }
+
         recent_discoveries.append({
             "candidate_id": c.candidate_id,
             "name": c.name,
             "route": c.route,
-            "symbol": c.symbol,
+            "symbol": normalize_symbol_key(c.symbol),
             "timeframe": c.timeframe,
             "status": c.status,
             "monthly_return_pct": mon_roi,
             "annual_return_pct": ann_roi,
-            "net_profit_oos": c.net_profit_oos or 0.0,
-            "profit_factor_oos": c.profit_factor_oos or 0.0,
-            "trades_oos": c.trades_oos or 0,
-            "max_dd_oos_pct": c.max_dd_oos_pct or 0.0,
-            "duration_info": sc.get("duration_info") or {
-                "total_months": 5.2,
-                "total_years": 0.43,
-                "start_date": "2025-10-01",
-                "end_date": "2026-04-16",
-                "oos_months": 1.9,
-                "oos_days": 59,
-            },
+            "net_profit_oos": net_oos_val,
+            "profit_factor_oos": float(c.profit_factor_oos or 0.0),
+            "trades_oos": int(c.trades_oos or 0),
+            "max_dd_oos_pct": float(c.max_dd_oos_pct or 0.0),
+            "duration_info": duration_info,
         })
 
     # 4. Inventario dinámico real de datasets en disco y SQX

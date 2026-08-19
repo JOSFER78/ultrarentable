@@ -463,8 +463,11 @@ export default function GeneticDiscoveryLabPage() {
                 </tr>
               ) : (
                 telemetry.recent_discoveries.map((c, i) => {
-                  const monRoi = (c as any).monthly_return_pct ?? 25.0;
-                  const dur = (c as any).duration_info || { total_months: 34.0, total_years: 2.8, start_date: "2023-09", end_date: "2026-08" };
+                  const monRoi = typeof (c as any).monthly_return_pct === "number" ? (c as any).monthly_return_pct : 0.0;
+                  const dur = (c as any).duration_info || {};
+                  const totalYears = dur.total_years !== undefined ? Number(dur.total_years).toFixed(1) : (dur.total_months ? (Number(dur.total_months) / 12).toFixed(1) : "0.5");
+                  const startStr = dur.start_date ? String(dur.start_date).slice(0, 7) : "2025-10";
+                  const endStr = dur.end_date ? String(dur.end_date).slice(0, 7) : "2026-08";
                   return (
                     <tr key={i} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
                       <td style={{ padding: "10px", fontWeight: 800, color: "#ffffff" }}>{c.name}</td>
@@ -475,10 +478,10 @@ export default function GeneticDiscoveryLabPage() {
                         </span>
                       </td>
                       <td style={{ padding: "10px", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1", fontSize: "11px" }}>
-                        📅 2.8 años ({dur.start_date?.slice(0, 7) || "2023-09"} → {dur.end_date?.slice(0, 7) || "2026-08"})
+                        📅 {totalYears} años ({startStr} → {endStr})
                       </td>
-                      <td style={{ padding: "10px", color: "#34d399", fontWeight: 900, textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
-                        {`+${monRoi.toFixed(2)}%/m`}
+                      <td style={{ padding: "10px", color: monRoi >= 0 ? "#34d399" : "#fb7185", fontWeight: 900, textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
+                        {monRoi >= 0 ? `+${monRoi.toFixed(2)}%/m` : `${monRoi.toFixed(2)}%/m`}
                       </td>
                       <td style={{ padding: "10px", fontWeight: 800, color: c.profit_factor_oos >= 1.2 ? "#34d399" : "#f59e0b", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
                         {c.profit_factor_oos.toFixed(2)}

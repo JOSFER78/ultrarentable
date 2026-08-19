@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g10",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "cand_ultra_sui_test_01",
+  "strategy_snapshot_hash": "a2d5ffed5a4845b32717d9c88f25a986032debb188b4cff7c68f74768b1faa0d",
   "dataset_id": "ds_binance_suiusdt_1h",
   "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ad39b31973c738faa228b6a2a832e69321d1d3fceda23de017b1d238853222b3",
-  "output_hash": "95a2ca2d89e8713afbbaa954b4d990860f7c53b66c21cbec7f8db2ccb0d1e380",
+  "input_hash": "ad6038c58a10b8fe5e0643a3c1e56faf1fce732404061e72cca89d6e2fcd91d8",
+  "output_hash": "0a6529c80e14ffa8f5a303c2048bd31f086158d2350eba9168c1bc60425641f4",
   "status": "FAILED",
-  "score": 76.9,
-  "verdict": "FALLO: Consenso insuficiente (76.9/100) u objeción crítica de riesgo",
+  "score": 76.1,
+  "verdict": "FALLO: Consenso insuficiente (76.1/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 76.9,
+    "consensus_score": 76.1,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 98.2,
+        "score": 100.0,
         "findings": [
           "Activo y Timeframe: SUIUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.96 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 2.12 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 88.6,
+        "score": 84.9,
         "findings": [
-          "Drawdown Máximo Observado: 13.0% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 17.3% (Límite permitido para ULTRA: 80.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 192 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 149 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 71.7,
+        "score": 71.2,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-19T22:38:36.770210+00:00"
+  "created_at_utc": "2026-08-19T23:22:30.586277+00:00"
 }

@@ -11,7 +11,7 @@ Cero tolerancias a trials no registrados: si trials_tested <= 0, el Gate es RECH
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 import numpy as np
 
 
@@ -64,9 +64,9 @@ class Gate08DSRRatio:
     def evaluate(
         self,
         oos_trades_pnl: List[float],
-        trials_tested: int = 1,
+        trials_tested: Optional[int] = None,
     ) -> Dict[str, Any]:
-        if trials_tested <= 0:
+        if trials_tested is None or trials_tested <= 0:
             return {
                 "gate_id": self.GATE_ID,
                 "name": self.NAME,

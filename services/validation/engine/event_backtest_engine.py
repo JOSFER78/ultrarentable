@@ -109,12 +109,49 @@ class EventBacktestEngine:
     @staticmethod
     def _calc_ema(series: np.ndarray, span: int) -> np.ndarray:
         """Cálculo matemático exacto de Exponential Moving Average recursiva."""
+        span = max(1, int(span))
         alpha = 2.0 / (span + 1.0)
         ema = np.empty_like(series)
         ema[0] = series[0]
         for t in range(1, len(series)):
             ema[t] = alpha * series[t] + (1.0 - alpha) * ema[t - 1]
         return ema
+
+    @staticmethod
+    def _calc_rsi(closes: np.ndarray, period: int = 14) -> np.ndarray:
+        """Cálculo matemático exacto del Relative Strength Index (Wilder's Smoothing)."""
+        period = max(2, int(period))
+        n = len(closes)
+        rsi = np.full(n, 50.0, dtype=np.float64)
+        if n <= period:
+            return rsi
+
+        deltas = np.diff(closes)
+        gains = np.where(deltas > 0, deltas, 0.0)
+        losses = np.where(deltas < 0, -deltas, 0.0)
+
+        avg_gain = np.mean(gains[:period])
+        avg_loss = np.mean(losses[:period])
+
+        if avg_loss == 0:
+            rsi[period] = 100.0
+        else:
+            rs = avg_gain / avg_loss
+            rsi[period] = 100.0 - (100.0 / (1.0 + rs))
+
+        for i in range(period + 1, n):
+            gain = gains[i - 1]
+            loss = losses[i - 1]
+            avg_gain = (avg_gain * (period - 1) + gain) / period
+            avg_loss = (avg_loss * (period - 1) + loss) / period
+
+            if avg_loss == 0:
+                rsi[i] = 100.0
+            else:
+                rs = avg_gain / avg_loss
+                rsi[i] = 100.0 - (100.0 / (1.0 + rs))
+
+        return rsi
 
     def run_backtest(
         self,
@@ -149,7 +186,7 @@ class EventBacktestEngine:
         is_ultra = (strategy.route == StrategyRoute.ULTRA)
         is_fondeo = (strategy.route == StrategyRoute.FONDEO)
         base_capital = initial_capital_usd or (1000.0 if is_ultra else 50000.0)
-        max_leverage = strategy.margin_policy.max_leverage_ceiling
+        max_leverage = strategy.margin_policy.max_leverage_ceiling if hasattr(strategy, "margin_policy") and strategy.margin_policy else 20.0
 
         closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)
         highs = np.array([float(c["high"]) for c in candles], dtype=np.float64)
@@ -157,16 +194,57 @@ class EventBacktestEngine:
         opens = np.array([float(c["open"]) for c in candles], dtype=np.float64)
         timestamps = [int(c.get("timestamp_ms") or c.get("timestamp") or 0) for c in candles]
 
-        # Calcular ATR para stops y take profits dinámicos
+        # 1. Extracción e Intérprete Dinámico de Indicadores del StrategySnapshot
+        ema_fast_period = 20
+        ema_slow_period = 50
+        rsi_period = 14
+        rsi_threshold_long = 50.0
+        rsi_threshold_short = 50.0
+        use_rsi = False
+        breakout_lookback = 15
+
+        if hasattr(strategy, "entry_rules") and strategy.entry_rules:
+            # Long conditions
+            for cond in getattr(strategy.entry_rules, "long_conditions", []):
+                l_name = getattr(cond.left_indicator, "name", "").upper()
+                l_period = getattr(cond.left_indicator, "period", None)
+                if l_name == "EMA" and l_period:
+                    ema_fast_period = int(l_period)
+                    if hasattr(cond, "right_indicator") and cond.right_indicator and cond.right_indicator.name.upper() == "EMA":
+                        ema_slow_period = int(cond.right_indicator.period)
+                elif l_name == "RSI" and l_period:
+                    rsi_period = int(l_period)
+                    if getattr(cond, "threshold_value", None) is not None:
+                        rsi_threshold_long = float(cond.threshold_value)
+                        use_rsi = True
+                if getattr(cond, "lookback_bars", 0) > 0:
+                    breakout_lookback = int(cond.lookback_bars)
+
+            # Short conditions
+            for cond in getattr(strategy.entry_rules, "short_conditions", []):
+                l_name = getattr(cond.left_indicator, "name", "").upper()
+                if l_name == "RSI":
+                    if getattr(cond, "threshold_value", None) is not None:
+                        rsi_threshold_short = float(cond.threshold_value)
+                        use_rsi = True
+
+        # Precalcular ATR para stops y take profits dinámicos
         tr = np.maximum(highs[1:] - lows[1:], np.maximum(np.abs(highs[1:] - closes[:-1]), np.abs(lows[1:] - closes[:-1])))
         atr = np.zeros(len(closes))
         atr[1:] = tr
         for i in range(14, len(closes)):
             atr[i] = np.mean(tr[i-14:i])
 
-        # Precalcular EMAs recursivas exactas
-        ema_fast_series = self._calc_ema(closes, 10)
-        ema_slow_series = self._calc_ema(closes, 30)
+        # Precalcular series de indicadores exactas según configuración del Snapshot
+        ema_fast_series = self._calc_ema(closes, ema_fast_period)
+        ema_slow_series = self._calc_ema(closes, ema_slow_period)
+        rsi_series = self._calc_rsi(closes, rsi_period) if use_rsi else None
+
+        # Parámetros de salida y riesgo del Snapshot
+        sl_atr_mult = strategy.exit_rules.stop_loss_atr_mult or 2.0 if hasattr(strategy, "exit_rules") and strategy.exit_rules and strategy.exit_rules.stop_loss_atr_mult else 2.0
+        tp_atr_mult = strategy.exit_rules.take_profit_atr_mult or 6.0 if hasattr(strategy, "exit_rules") and strategy.exit_rules and strategy.exit_rules.take_profit_atr_mult else 6.0
+        risk_pct = (strategy.sizing_and_risk.base_risk_pct / 100.0) if hasattr(strategy, "sizing_and_risk") and strategy.sizing_and_risk else 0.02
+        warmup_bars = max(30, ema_slow_period + 5, rsi_period + 5)
 
         # Estado del backtest
         current_equity = base_capital
@@ -192,11 +270,7 @@ class EventBacktestEngine:
         total_fees = 0.0
         total_slippage = 0.0
 
-        sl_atr_mult = strategy.exit_rules.stop_loss_atr_mult or 2.0
-        tp_atr_mult = strategy.exit_rules.take_profit_atr_mult or 6.0
-        risk_pct = strategy.sizing_and_risk.base_risk_pct / 100.0
-
-        for i in range(30, len(closes)):
+        for i in range(warmup_bars, len(closes)):
             bar_close = closes[i]
             bar_high = highs[i]
             bar_low = lows[i]
@@ -331,12 +405,17 @@ class EventBacktestEngine:
 
             # 2. Señal de Entrada si estamos planos
             if position_side is None and current_equity > 0:
-                # Regla de momentum determinista: EMA rápida recursiva > EMA lenta recursiva y ruptura
-                ema_fast = ema_fast_series[i]
-                ema_slow = ema_slow_series[i]
+                ema_fast_val = ema_fast_series[i]
+                ema_slow_val = ema_slow_series[i]
                 
-                long_signal = (ema_fast > ema_slow) and (bar_close > np.max(highs[i-15:i-1]))
-                short_signal = (ema_fast < ema_slow) and (bar_close < np.min(lows[i-15:i-1]))
+                lookback = min(breakout_lookback, i)
+                breakout_long = (bar_close >= np.max(highs[i-lookback:i])) if lookback > 1 else True
+                rsi_long_ok = (rsi_series[i] >= rsi_threshold_long) if (use_rsi and rsi_series is not None) else True
+                long_signal = (ema_fast_val > ema_slow_val) and breakout_long and rsi_long_ok
+
+                breakout_short = (bar_close <= np.min(lows[i-lookback:i])) if lookback > 1 else True
+                rsi_short_ok = (rsi_series[i] <= rsi_threshold_short) if (use_rsi and rsi_series is not None) else True
+                short_signal = (ema_fast_val < ema_slow_val) and breakout_short and rsi_short_ok
 
                 if long_signal:
                     position_side = "LONG"

@@ -58,11 +58,62 @@ def test_event_backtest_handles_empty_data_without_fabrication():
         symbol="BTCUSDT",
         timeframe="1h",
         dataset_id="empty_ds",
-        dataset_sha256="empty_hash",
+        dataset_sha256="fake_sha",
     )
+
     engine = EventBacktestEngine()
     res = engine.run_backtest(strategy, [], initial_capital_usd=1000.0)
+
     assert res.total_trades == 0
     assert res.net_profit_usd == 0.0
     assert res.profit_factor == 0.0
+    assert res.win_rate_pct == 0.0
+    assert res.max_drawdown_pct == 0.0
     assert len(res.trades) == 0
+
+
+def test_event_backtest_interprets_exact_snapshot_parameters():
+    sample_file = "/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized/ds_binance_btcusdt_1h_1695290400000_1787086800000.json"
+    with open(sample_file, "r") as f:
+        candles = json.load(f)
+
+    ultra_discovery = UltraDiscoveryEngine()
+    
+    # Estrategia A: EMAs Rápidas (8 / 21)
+    strat_a = ultra_discovery.generate_candidate_blueprint(
+        strategy_id="strat_fast_ema",
+        symbol="BTCUSDT",
+        timeframe="1h",
+        dataset_id="ds_binance_btcusdt_1h",
+        dataset_sha256="test_hash_123",
+        ema_fast=8,
+        ema_slow=21,
+        rsi_period=14,
+        rsi_threshold_long=50.0,
+        sl_atr_mult=1.5,
+        tp_atr_mult=4.0,
+    )
+
+    # Estrategia B: EMAs Lentas (50 / 200)
+    strat_b = ultra_discovery.generate_candidate_blueprint(
+        strategy_id="strat_slow_ema",
+        symbol="BTCUSDT",
+        timeframe="1h",
+        dataset_id="ds_binance_btcusdt_1h",
+        dataset_sha256="test_hash_123",
+        ema_fast=50,
+        ema_slow=200,
+        rsi_period=14,
+        rsi_threshold_long=50.0,
+        sl_atr_mult=3.0,
+        tp_atr_mult=9.0,
+    )
+
+    engine = EventBacktestEngine(taker_fee_pct=0.05, slippage_bps=2.0)
+    res_a = engine.run_backtest(strat_a, candles, initial_capital_usd=1000.0)
+    res_b = engine.run_backtest(strat_b, candles, initial_capital_usd=1000.0)
+
+    # Debe haber diferencias cuantitativas físicas entre ambas ejecuciones
+    assert res_a.total_trades != res_b.total_trades
+    assert res_a.net_profit_usd != res_b.net_profit_usd
+    assert res_a.profit_factor != res_b.profit_factor

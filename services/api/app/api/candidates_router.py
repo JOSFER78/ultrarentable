@@ -22,6 +22,17 @@ class StatusUpdateSchema(BaseModel):
     reason: str = Field(..., description="Mandatory audit trail reason for status change")
 
 
+def normalize_symbol_key(raw_sym: str) -> str:
+    s = (raw_sym or "").upper().replace("/", "").replace("-", "").replace("_", "").strip()
+    if s.endswith("USDT"):
+        base = s[:-4]
+        return f"{base}-USDT"
+    elif s.endswith("USD") and len(s) > 6 and s not in ["EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY"]:
+        base = s[:-3]
+        return f"{base}-USDT"
+    return s
+
+
 @candidates_router.get("")
 def list_candidates(
     route: Optional[str] = Query(None, description="ULTRA, FONDEO"),
@@ -44,15 +55,20 @@ def list_candidates(
     if timeframe and timeframe.upper() != "ALL":
         query = query.filter(CandidateModel.timeframe == timeframe)
         
-    results = []
     candidates = query.order_by(CandidateModel.net_profit_oos.desc()).limit(150).all()
     
     seen_champion_keys = set()
+    filtered_candidates = []
     for c in candidates:
-        champ_key = f"{c.symbol.upper()}_{c.timeframe.lower()}_{c.route.upper()}"
+        norm_sym = normalize_symbol_key(c.symbol)
+        champ_key = f"{c.route.upper()}_{norm_sym}"
         if champ_key in seen_champion_keys:
             continue
         seen_champion_keys.add(champ_key)
+        filtered_candidates.append(c)
+
+    results = []
+    for c in filtered_candidates:
 
         # Parse real scorecard if available
         sc = {}

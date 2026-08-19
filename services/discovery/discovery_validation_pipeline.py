@@ -15,6 +15,7 @@ import glob
 import hashlib
 import json
 import logging
+import math
 import sqlite3
 import sys
 import time
@@ -137,8 +138,17 @@ class DiscoveryValidationPipeline:
                         route=route.value,
                     )
 
-                    best_params = None
-                    best_is_pf = -1.0
+                    # 4. Discovery Combinatorio en In-Sample (60%) & Registro Exhaustivo de Trials
+                    strat_id = f"UR_{route.value.upper()}_{symbol.upper().replace('-', '_')}_{timeframe.upper()}"
+                    run_id = f"run_{strat_id}_{cycle_num}"
+                    
+                    param_space = self.search_registry.generate_combinatorial_parameter_space(
+                        symbol=symbol,
+                        timeframe=timeframe,
+                        route=route.value,
+                    )
+
+                    is_trial_results = []
                     trials_count_this_run = 0
 
                     for p_idx, p_set in enumerate(param_space):
@@ -167,10 +177,10 @@ class DiscoveryValidationPipeline:
                                 ema_slow=int(p_set["ema_slow"]),
                             )
 
-                        # Evaluar en In-Sample (60%)
+                        # Evaluar exclusivamente en In-Sample (60%)
                         is_res = self.backtest_engine.run_backtest(trial_strat, candles_is, initial_capital_usd=initial_cap)
                         
-                        # Registrar trial en SQLite
+                        # Registrar trial físico en SQLite
                         trial_rec = SearchTrialRecord(
                             trial_id=trial_strat_id,
                             run_id=run_id,
@@ -191,19 +201,66 @@ class DiscoveryValidationPipeline:
                         self.search_registry.record_trial(trial_rec)
                         trials_count_this_run += 1
 
-                        if is_res.profit_factor > best_is_pf:
-                            best_is_pf = is_res.profit_factor
+                        # Score multiobjetivo en In-Sample (PF, DD, trades, winrate)
+                        dd_penalty = max(0.01, 1.0 - (is_res.max_drawdown_pct / 100.0))
+                        trades_bonus = math.log(1.0 + max(0, is_res.total_trades))
+                        wr_factor = max(0.2, is_res.win_rate_pct / 50.0)
+                        is_multiobj_score = is_res.profit_factor * dd_penalty * trades_bonus * wr_factor
+
+                        is_trial_results.append((is_multiobj_score, p_set, trial_strat, is_res))
+
+                    # 5. Filtrar Top 20 Candidatos Prometedores de In-Sample
+                    is_trial_results.sort(key=lambda x: x[0], reverse=True)
+                    top_is_candidates = is_trial_results[:min(20, len(is_trial_results))]
+
+                    # 6. Evaluación Ciega en Validation (20%) para Selección del Campeón #1
+                    best_params = None
+                    best_val_score = -999999.0
+                    selected_strategy = None
+
+                    for _, p_set, _, _ in top_is_candidates:
+                        # Re-crear blueprint para validación
+                        v_strat_id = f"{strat_id}_val"
+                        if route == StrategyRoute.ULTRA:
+                            v_strat = self.ultra_discovery.generate_candidate_blueprint(
+                                strategy_id=v_strat_id,
+                                symbol=symbol,
+                                timeframe=timeframe,
+                                dataset_id=fname,
+                                dataset_sha256=real_file_sha256,
+                                sl_atr_mult=float(p_set["sl_atr_mult"]),
+                                tp_atr_mult=float(p_set["tp_atr_mult"]),
+                                ema_fast=int(p_set["ema_fast"]),
+                                ema_slow=int(p_set["ema_slow"]),
+                                pyramiding_tiers_count=int(p_set.get("pyramiding_tiers_count", 2)),
+                            )
+                        else:
+                            v_strat = self.funding_discovery.generate_candidate_blueprint(
+                                strategy_id=v_strat_id,
+                                symbol=symbol,
+                                timeframe=timeframe,
+                                dataset_id=fname,
+                                dataset_sha256=real_file_sha256,
+                                ema_fast=int(p_set["ema_fast"]),
+                                ema_slow=int(p_set["ema_slow"]),
+                            )
+
+                        val_res = self.backtest_engine.run_backtest(v_strat, candles_val, initial_capital_usd=initial_cap)
+                        
+                        # Score de Calidad en Validación (Fuera de Muestra de Búsqueda)
+                        val_quality = (val_res.profit_factor * 100.0) + (val_res.net_profit_usd / max(1.0, initial_cap) * 100.0) - (val_res.max_drawdown_pct * 0.5)
+                        if val_quality > best_val_score:
+                            best_val_score = val_quality
                             best_params = p_set
 
-                    # Si no se encontró mejor o espacio vacío, usar configuración base
                     if best_params is None:
-                        best_params = {
+                        best_params = top_is_candidates[0][1] if top_is_candidates else {
                             "sl_atr_mult": 2.0, "tp_atr_mult": 6.0,
                             "ema_fast": 20, "ema_slow": 50,
                             "pyramiding_tiers_count": 2 if route == StrategyRoute.ULTRA else 1
                         }
 
-                    # 5. Generar Blueprint Final con Parámetros Seleccionados y Hash Real
+                    # 7. Generar Snapshot Inmutable del Campeón y Congelar Hash Criptográfico SHA-256
                     if route == StrategyRoute.ULTRA:
                         strategy = self.ultra_discovery.generate_candidate_blueprint(
                             strategy_id=strat_id,
@@ -228,10 +285,15 @@ class DiscoveryValidationPipeline:
                             ema_slow=int(best_params["ema_slow"]),
                         )
 
-                    # 6. Ejecutar Backtests Separados: In-Sample (60%) y Blind Holdout OOS (20%)
+                    # 8. Ejecutar Backtests Separados:
+                    # - Desarrollo Pre-OOS (IS 60% + Val 20%) para Gate 4 WFO
+                    # - Blind Holdout OOS (20% intocado) para Gates Finales
+                    candles_pre_oos = candles_is + candles_val
+                    pre_oos_bt = self.backtest_engine.run_backtest(strategy, candles_pre_oos, initial_capital_usd=initial_cap)
                     is_bt = self.backtest_engine.run_backtest(strategy, candles_is, initial_capital_usd=initial_cap)
                     oos_bt = self.backtest_engine.run_backtest(strategy, candles_blind_oos, initial_capital_usd=initial_cap)
 
+                    pre_oos_trades = [t.net_pnl_usd for t in pre_oos_bt.trades]
                     is_trades = [t.net_pnl_usd for t in is_bt.trades]
                     oos_trades = [t.net_pnl_usd for t in oos_bt.trades]
                     trades_raw = [
@@ -268,6 +330,7 @@ class DiscoveryValidationPipeline:
                         candles=candles_blind_oos,
                         is_trades=is_trades,
                         oos_trades=oos_trades,
+                        pre_oos_trades=pre_oos_trades,
                         trades_raw=trades_raw,
                         strategy_snapshot=strategy,
                     )

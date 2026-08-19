@@ -91,8 +91,18 @@ class Gate09NoveltyAntiFit:
                 p_pf = round(float(g / max(0.01, l)), 2) if l > 0 else (2.5 if g > 0 else 0.0)
                 perturbed_pfs.append(p_pf)
         else:
-            # Si no se entregan velas para re-backtesting en tests aislados, evaluar con base en dof
-            perturbed_pfs = [round(oos_pf * 0.90, 2), round(oos_pf * 0.95, 2), round(oos_pf * 0.95, 2), round(oos_pf * 0.90, 2)]
+            return {
+                "gate_id": self.GATE_ID,
+                "name": self.NAME,
+                "passed": False,
+                "score": 0.0,
+                "verdict": "RECHAZADO / BLOCKED: Velas o StrategySnapshot ausentes para re-backtesting físico de vecindario",
+                "evidence": {
+                    "degrees_of_freedom": round(dof_ratio, 2),
+                    "rebacktest_performed": False,
+                    "perturbed_pfs": [],
+                },
+            }
 
         avg_perturbed_pf = float(np.mean(perturbed_pfs)) if perturbed_pfs else oos_pf
         stability_ratio = (avg_perturbed_pf / max(0.1, oos_pf)) * 100.0

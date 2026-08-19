@@ -57,21 +57,29 @@ export default function Header() {
 
         <div>
           <span style={{ color: "#64748b" }}>EJECUCIÓN: </span>
-          <strong style={{ color: "#94a3b8" }}>8 Bots (En reposo)</strong>
+          <strong style={{ color: Object.values(workers).some(w => w.status === "ACTIVE") ? "#34d399" : "#94a3b8" }}>
+            {Object.keys(workers).length > 0
+              ? `${Object.values(workers).filter(w => w.status === "ACTIVE").length}/${Object.keys(workers).length} Bots Activos`
+              : "8 Bots (En reposo)"}
+          </strong>
         </div>
 
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
 
         <div>
           <span style={{ color: "#64748b" }}>RATCHET: </span>
-          <strong style={{ color: "#94a3b8" }}>$0.00 USD</strong>
+          <strong style={{ color: (systemMetrics.vault_balance_usd || 0) > 0 ? "#34d399" : "#94a3b8" }}>
+            ${(systemMetrics.vault_balance_usd || 0).toFixed(2)} USD
+          </strong>
         </div>
 
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
 
         <div>
           <span style={{ color: "#64748b" }}>MOTOR 24/7: </span>
-          <strong style={{ color: "#34d399" }}>ACTIVO</strong>
+          <strong style={{ color: systemMetrics.sseConnected ? "#34d399" : "#f59e0b" }}>
+            {systemMetrics.sseConnected ? "ACTIVO" : "STANDBY"}
+          </strong>
         </div>
       </div>
 

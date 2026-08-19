@@ -66,6 +66,7 @@ class GatePipelineOrchestrator:
         candles: Optional[List[Dict[str, Any]]] = None,
         is_trades: Optional[List[float]] = None,
         oos_trades: Optional[List[float]] = None,
+        pre_oos_trades: Optional[List[float]] = None,
         trades_raw: Optional[List[Dict[str, Any]]] = None,
         strategy_snapshot: Optional[Any] = None,
     ) -> Dict[str, Any]:
@@ -73,6 +74,7 @@ class GatePipelineOrchestrator:
         candles = candles or []
         is_trades = is_trades or []
         oos_trades = oos_trades or []
+        pre_oos_trades = pre_oos_trades or is_trades
         trades_raw = trades_raw or []
 
         gates_results = []
@@ -87,18 +89,26 @@ class GatePipelineOrchestrator:
         dataset_id = str(candidate_info.get("dataset_id") or "ds_primary")
         dataset_sha256 = str(candidate_info.get("dataset_sha256") or "sha256_unverified")
 
+        # Hash SHA-256 criptográfico real del StrategySnapshot
+        strat_snapshot_hash = (
+            getattr(strategy_snapshot, "canonical_hash", None)
+            or str(candidate_info.get("strategy_snapshot_hash") or hashlib.sha256(strat_id.encode()).hexdigest())
+        )
+
         evaluators = [
             (self.g1, lambda g: g.evaluate(candles, timeframe=candidate_info.get("timeframe", "1h"), dataset_filepath=candidate_info.get("dataset_filepath"))),
             (self.g2, lambda g: g.evaluate(trades_raw, symbol=candidate_info.get("symbol", "BTCUSDT"))),
             (self.g3, lambda g: g.evaluate(is_trades, oos_trades, is_ultra=is_ultra)),
-            (self.g4, lambda g: g.evaluate(is_trades + oos_trades if (is_trades or oos_trades) else [])),
+            # Gate 4: Rolling WFO evaluado estrictamente sobre datos Pre-OOS (IS + Val), jamás contaminando el Blind Holdout OOS
+            (self.g4, lambda g: g.evaluate(pre_oos_trades)),
             (self.g5, lambda g: g.evaluate(oos_trades, initial_capital=base_capital, is_ultra=is_ultra)),
             (self.g6, lambda g: g.evaluate(oos_trades, is_ultra=is_ultra)),
             (self.g7, lambda g: g.evaluate(candles=candles, trades_raw=trades_raw, oos_trades_pnl=oos_trades, is_ultra=is_ultra)),
-            (self.g8, lambda g: g.evaluate(oos_trades_pnl=oos_trades, trials_tested=int(candidate_info.get("trials_tested") or 1))),
+            # Gate 8: Cero default complaciente. Si trials_tested no está registrado en SQLite, Gate 8 bloquea
+            (self.g8, lambda g: g.evaluate(oos_trades_pnl=oos_trades, trials_tested=candidate_info.get("trials_tested"))),
             (self.g9, lambda g: g.evaluate(parameters=candidate_info.get("parameters", {}), trades_count=len(oos_trades), oos_pf=float(candidate_info.get("profit_factor_oos", 1.5)), candles=candles, strategy_snapshot=strategy_snapshot, is_ultra=is_ultra)),
             (self.g10, lambda g: g.evaluate(candidate_info)),
-            (self.g11, lambda g: g.evaluate(oos_trades=oos_trades, trades_raw=trades_raw, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0, is_ultra=is_ultra)),
+            (self.g11, lambda g: g.evaluate(oos_trades=oos_trades, trades_raw=trades_raw, candles=candles, strategy_snapshot=strategy_snapshot, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0, is_ultra=is_ultra)),
         ]
 
         strat_evidence_dir = self.evidence_dir / strat_id
@@ -115,10 +125,20 @@ class GatePipelineOrchestrator:
                 if not res.get("passed", False):
                     overall_passed = False
 
-                # Construir y persistir EvidenceRecord
-                inp_data = {"candidate": strat_id, "gate_id": gate_id, "gate_name": gate_name}
-                inp_hash = hashlib.sha256(json.dumps(inp_data, default=str, sort_keys=True).encode("utf-8")).hexdigest()
-                out_hash = hashlib.sha256(json.dumps(res, default=str, sort_keys=True).encode("utf-8")).hexdigest()
+                # Construir y persistir EvidenceRecord con trazabilidad criptográfica exacta
+                canonical_input_payload = {
+                    "strategy_snapshot_hash": strat_snapshot_hash,
+                    "dataset_id": dataset_id,
+                    "dataset_sha256": dataset_sha256,
+                    "gate_id": gate_id,
+                    "gate_name": gate_name,
+                    "parameters": candidate_info.get("parameters", {}),
+                    "trials_tested": candidate_info.get("trials_tested"),
+                    "candles_count": len(candles),
+                    "oos_trades_count": len(oos_trades),
+                }
+                inp_hash = hashlib.sha256(json.dumps(canonical_input_payload, sort_keys=True, default=str).encode("utf-8")).hexdigest()
+                out_hash = hashlib.sha256(json.dumps(res, sort_keys=True, default=str).encode("utf-8")).hexdigest()
 
                 art_file = strat_evidence_dir / f"gate_{gate_id:02d}_{gate_name.lower()}.json"
                 
@@ -126,7 +146,7 @@ class GatePipelineOrchestrator:
                     evidence_id=f"ev_{strat_id}_g{gate_id:02d}",
                     run_id=run_id,
                     strategy_id=strat_id,
-                    strategy_snapshot_hash=strat_id,
+                    strategy_snapshot_hash=strat_snapshot_hash,
                     dataset_id=dataset_id,
                     dataset_sha256=dataset_sha256,
                     gate_id=gate_id,
