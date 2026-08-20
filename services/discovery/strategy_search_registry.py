@@ -114,7 +114,7 @@ class StrategySearchRegistry:
             if symbol and timeframe:
                 cur.execute(
                     "SELECT COUNT(*) FROM discovery_search_trials WHERE symbol = ? AND timeframe = ?",
-                    (symbol.upper(), timeframe.lower())
+                    (symbol.upper(), timeframe.lower()),
                 )
             elif symbol:
                 cur.execute("SELECT COUNT(*) FROM discovery_search_trials WHERE symbol = ?", (symbol.upper(),))
@@ -122,6 +122,28 @@ class StrategySearchRegistry:
                 cur.execute("SELECT COUNT(*) FROM discovery_search_trials")
             row = cur.fetchone()
             return int(row[0]) if row else 0
+
+    def get_trials_for_run(self, run_id: str) -> List[Dict[str, Any]]:
+        """Retorna todos los registros de trials asociados a un run_id."""
+        with sqlite3.connect(self.db_path, timeout=30.0) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT * FROM discovery_search_trials WHERE run_id = ? ORDER BY generation ASC, trial_id ASC",
+                (run_id,),
+            )
+            return [dict(row) for row in cur.fetchall()]
+
+    def get_all_trials(self, limit: int = 1000) -> List[Dict[str, Any]]:
+        """Retorna los trials más recientes registrados."""
+        with sqlite3.connect(self.db_path, timeout=30.0) as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT * FROM discovery_search_trials ORDER BY created_at_utc DESC LIMIT ?",
+                (limit,),
+            )
+            return [dict(row) for row in cur.fetchall()]
 
     def generate_combinatorial_parameter_space(
         self,

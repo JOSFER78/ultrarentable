@@ -138,6 +138,23 @@ class CanonicalExecutionLedger(BaseModel):
     ledger_hash: str = ""
 
     def calculate_ledger_hash(self) -> str:
-        """Computes deterministic SHA-256 hash of the complete trade execution sequence."""
-        payload = f"{self.strategy_snapshot_hash}:{self.dataset_sha256}:{self.final_equity_usd:.4f}:{self.total_trades_count}:{self.net_profit_usd:.4f}"
-        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        """Calcula el hash criptográfico determinista mediante Hash-Chain secuencial sobre toda la serie ordenada de trades.
+        Garantiza sensibilidad absoluta al orden de operaciones, microestructura, comisiones, slippage y equity.
+        """
+        genesis_payload = (
+            f"{self.strategy_id}:{self.strategy_snapshot_hash}:{self.dataset_sha256}:"
+            f"{self.execution_config_hash}:{self.engine_name}:{self.initial_capital_usd:.4f}"
+        )
+        current_hash = hashlib.sha256(genesis_payload.encode("utf-8")).hexdigest()
+
+        for trade in self.trades:
+            trade_dict = trade.model_dump()
+            trade_str = json.dumps(trade_dict, sort_keys=True, separators=(",", ":"))
+            chain_payload = f"{current_hash}:{trade_str}"
+            current_hash = hashlib.sha256(chain_payload.encode("utf-8")).hexdigest()
+
+        summary_payload = (
+            f"{current_hash}:{self.final_equity_usd:.4f}:{self.total_trades_count}:"
+            f"{self.net_profit_usd:.4f}:{self.total_commission_paid_usd:.4f}:{self.total_slippage_paid_usd:.4f}"
+        )
+        return hashlib.sha256(summary_payload.encode("utf-8")).hexdigest()
