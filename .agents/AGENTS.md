@@ -31,6 +31,10 @@
 - No dejar archivos temporales sueltos en la raíz (`.zip`, `.bat`, `.tmp`, scripts huérfanos).
 - Mantener la separación limpia y desacoplada entre capas: contratos inmutables, motores de exploración, motores de validación, servicios y vistas.
 
+### 1.5 SOBERANÍA Y CONTROL TOTAL DE GIT EN MANOS DEL USUARIO
+- **PROHIBIDO hacer `git commit` o `git push` de forma automática o desatendida**.
+- Todos los cambios de código, directivas y documentación deben permanecer en el *working tree* (sin commitear) para que el usuario pueda inspeccionar los diffs en el panel de **Source Control** y hacer commit/push manualmente cuando lo decida.
+
 ---
 
 ## 2. ARQUITECTURA DINÁMICA DE EJECUCIÓN (UNIVERSAL PARA CUALQUIER PROYECTO)
