@@ -50,6 +50,12 @@ def get_engine_versions_summary(db: Session = Depends(get_db)) -> Dict[str, Any]
         "codebase_fingerprint": info["codebase_fingerprint"],
         "code_drift_detected": info["code_drift_detected"],
         "git_commit": info["git_commit"],
+        "git_commit_short": info.get("git_commit_short", info["git_commit"][:7]),
+        "git_message": info.get("git_message", ""),
+        "git_author": info.get("git_author", ""),
+        "git_date": info.get("git_date", ""),
+        "git_branch": info.get("git_branch", "main"),
+        "git_is_dirty": info.get("git_is_dirty", False),
         "last_bump_utc": info["last_bump_utc"],
         "history": enriched_history,
         "version_distribution": version_counts,
@@ -66,6 +72,10 @@ def get_current_version() -> Dict[str, Any]:
         "pipeline_version": info["pipeline_version"],
         "codebase_fingerprint": info["codebase_fingerprint"],
         "code_drift_detected": info["code_drift_detected"],
+        "git_commit": info["git_commit"],
+        "git_commit_short": info.get("git_commit_short", info["git_commit"][:7]),
+        "git_branch": info.get("git_branch", "main"),
+        "git_message": info.get("git_message", ""),
     }
 
 

@@ -87,7 +87,7 @@ class DiscoveryValidationPipeline:
             if max_cycles and cycle_num > max_cycles:
                 logger.info(f"Finalizados {max_cycles} ciclos de supervisión controlada.")
                 break
-            dataset_files = sorted(glob.glob(str(self.data_dir / "*.json")))
+            dataset_files = sorted([f for f in glob.glob(str(self.data_dir / "*.json")) if not f.endswith("_manifest.json")])
             logger.info(f"=== Ciclo #{cycle_num} — {len(dataset_files)} datasets detectados ===")
 
             if max_datasets:
@@ -114,7 +114,7 @@ class DiscoveryValidationPipeline:
                     else:
                         symbol = symbol_raw
 
-                    is_fondeo = any(f_sym in symbol for f_sym in ["NQ", "ES", "YM", "GC", "CL", "EURUSD", "GBPUSD"])
+                    is_fondeo = any(f_sym == symbol.upper() or f_sym in symbol.upper() for f_sym in ["NQ", "ES", "YM", "GC", "CL", "RTY", "SI", "EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY"])
                     route = StrategyRoute.FONDEO if is_fondeo else StrategyRoute.ULTRA
                     initial_cap = 1000.0 if route == StrategyRoute.ULTRA else 50000.0
 
@@ -327,6 +327,8 @@ class DiscoveryValidationPipeline:
                         "dataset_filepath": file_path,
                         "profit_factor_oos": oos_bt.profit_factor,
                         "max_drawdown_pct": oos_bt.max_drawdown_pct,
+                        "net_profit_oos_usd": oos_bt.net_profit_usd,
+                        "net_profit_usd": oos_bt.net_profit_usd,
                         "trades_count": len(oos_trades),
                         "trials_tested": max(1, trials_count_this_run),
                         "parameters": best_params,

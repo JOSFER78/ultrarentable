@@ -77,7 +77,10 @@ class LegacyRevalidationService:
     def find_dataset_file(self, symbol: str, timeframe: str) -> Optional[Path]:
         """Localiza el dataset físico normalizado para un símbolo y timeframe."""
         clean_sym = symbol.replace("-", "").replace("/", "").replace("_", "").lower()
-        clean_tf = timeframe.lower()
+        tf_map = {
+            "h1": "1h", "h4": "4h", "d1": "1d", "m1": "1m", "m5": "5m", "m15": "15m", "m30": "30m"
+        }
+        clean_tf = tf_map.get(timeframe.lower(), timeframe.lower())
 
         # 1. Búsqueda exacta
         candidates_files = list(self.data_dir.glob("*.json"))
@@ -126,16 +129,25 @@ class LegacyRevalidationService:
         # 1. Localizar dataset físico
         ds_file = self.find_dataset_file(symbol, timeframe)
         if not ds_file or not ds_file.exists():
+            new_st = "BLOCKED_NO_DATASET"
+            res_msg = f"No se encontró dataset físico para {symbol} {timeframe}"
+            conn = self.get_db_connection()
+            conn.execute(
+                "UPDATE candidates SET status = ?, status_reason = ?, engine_version = ? WHERE candidate_id = ?",
+                (new_st, res_msg, CURRENT_ENGINE_VERSION, cid),
+            )
+            conn.commit()
+            conn.close()
             return {
                 "candidate_id": cid,
                 "name": name,
                 "symbol": symbol,
                 "timeframe": timeframe,
                 "old_version": old_engine_ver or "1.00",
-                "new_version": old_engine_ver or "1.00",
+                "new_version": CURRENT_ENGINE_VERSION,
                 "old_status": old_status,
-                "new_status": "BLOCKED_NO_DATASET",
-                "reason": f"No se encontró dataset físico para {symbol} {timeframe}",
+                "new_status": new_st,
+                "reason": res_msg,
                 "passed": False,
                 "gates_passed": 0,
             }
@@ -146,19 +158,35 @@ class LegacyRevalidationService:
                 data = json.load(f)
             candles = data if isinstance(data, list) else data.get("candles", [])
             if len(candles) < 200:
+                new_st = "REJECTED_INSUFFICIENT_BARS"
+                res_msg = f"Dataset tiene solo {len(candles)} velas (requerido >= 200)"
+                conn = self.get_db_connection()
+                conn.execute(
+                    "UPDATE candidates SET status = ?, status_reason = ?, engine_version = ? WHERE candidate_id = ?",
+                    (new_st, res_msg, CURRENT_ENGINE_VERSION, cid),
+                )
+                conn.commit()
+                conn.close()
                 return {
                     "candidate_id": cid,
                     "name": name,
                     "symbol": symbol,
                     "timeframe": timeframe,
                     "old_version": old_engine_ver or "1.00",
-                    "new_version": old_engine_ver or "1.00",
+                    "new_version": CURRENT_ENGINE_VERSION,
                     "old_status": old_status,
-                    "new_status": "RECHAZADA_INSUFFICIENT_BARS",
-                    "reason": f"Dataset tiene solo {len(candles)} velas (requerido >= 200)",
+                    "new_status": new_st,
+                    "reason": res_msg,
                     "passed": False,
                     "gates_passed": 0,
                 }
+        except Exception as e:
+            return {
+                "candidate_id": cid,
+                "status": "ERROR",
+                "message": f"Error leyendo dataset: {e}",
+                "passed": False,
+            }
         except Exception as e:
             return {
                 "candidate_id": cid,

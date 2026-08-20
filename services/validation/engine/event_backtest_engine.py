@@ -243,7 +243,8 @@ class EventBacktestEngine:
         # Parámetros de salida y riesgo del Snapshot
         sl_atr_mult = strategy.exit_rules.stop_loss_atr_mult or 2.0 if hasattr(strategy, "exit_rules") and strategy.exit_rules and strategy.exit_rules.stop_loss_atr_mult else 2.0
         tp_atr_mult = strategy.exit_rules.take_profit_atr_mult or 6.0 if hasattr(strategy, "exit_rules") and strategy.exit_rules and strategy.exit_rules.take_profit_atr_mult else 6.0
-        risk_pct = (strategy.sizing_and_risk.base_risk_pct / 100.0) if hasattr(strategy, "sizing_and_risk") and strategy.sizing_and_risk else 0.02
+        default_risk = 0.075 if is_ultra else 0.01
+        risk_pct = (strategy.sizing_and_risk.base_risk_pct / 100.0) if hasattr(strategy, "sizing_and_risk") and strategy.sizing_and_risk and strategy.sizing_and_risk.base_risk_pct else default_risk
         warmup_bars = max(30, ema_slow_period + 5, rsi_period + 5)
 
         # Estado del backtest
@@ -422,12 +423,12 @@ class EventBacktestEngine:
                     position_entry_bar = i
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 + self.slippage)
-                    # Sizing realista por subcuenta bala / fondeo acotado
-                    effective_equity = min(current_equity, base_capital * 1.5)
+                    # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
+                    effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
                     risk_amount_usd = effective_equity * risk_pct
                     sl_dist = bar_atr * sl_atr_mult
                     raw_qty = risk_amount_usd / max(1e-4, sl_dist)
-                    max_nominal_qty = (base_capital * max_leverage) / max(1e-4, position_entry_price)
+                    max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price)
                     position_qty = max(0.001, min(raw_qty, max_nominal_qty))
                     stop_loss_price = position_entry_price - sl_dist
                     take_profit_price = position_entry_price + (bar_atr * tp_atr_mult)
@@ -444,12 +445,12 @@ class EventBacktestEngine:
                     position_entry_bar = i
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 - self.slippage)
-                    # Sizing realista por subcuenta bala / fondeo acotado
-                    effective_equity = min(current_equity, base_capital * 1.5)
+                    # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
+                    effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
                     risk_amount_usd = effective_equity * risk_pct
                     sl_dist = bar_atr * sl_atr_mult
                     raw_qty = risk_amount_usd / max(1e-4, sl_dist)
-                    max_nominal_qty = (base_capital * max_leverage) / max(1e-4, position_entry_price)
+                    max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price)
                     position_qty = max(0.001, min(raw_qty, max_nominal_qty))
                     stop_loss_price = position_entry_price + sl_dist
                     take_profit_price = position_entry_price - (bar_atr * tp_atr_mult)

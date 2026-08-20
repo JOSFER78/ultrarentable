@@ -11,12 +11,12 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "ad6038c58a10b8fe5e0643a3c1e56faf1fce732404061e72cca89d6e2fcd91d8",
-  "output_hash": "0a6529c80e14ffa8f5a303c2048bd31f086158d2350eba9168c1bc60425641f4",
+  "output_hash": "f29b6352d261e6b643e2c4fd2e054824a25eb5e85ad931cd168c5174cceb5a0c",
   "status": "FAILED",
-  "score": 76.1,
-  "verdict": "FALLO: Consenso insuficiente (76.1/100) u objeción crítica de riesgo",
+  "score": 78.5,
+  "verdict": "FALLO: Consenso insuficiente (78.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 76.1,
+    "consensus_score": 78.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 84.9,
+        "score": 91.9,
         "findings": [
-          "Drawdown Máximo Observado: 17.3% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 17.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 71.2,
+        "score": 73.0,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T09:09:39.220090+00:00"
+  "created_at_utc": "2026-08-20T09:45:18.368639+00:00"
 }

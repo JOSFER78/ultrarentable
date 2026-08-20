@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1H",
-  "strategy_snapshot_hash": "02a82ee4a607f0ed8f9d9029059f4dbc38caf0bb8194a688a8a567bee56b32fe",
+  "strategy_snapshot_hash": "ceac73d30a7fd8d0ac27e4fa89b406b9ab16100b3b3000889488deb92a2aa598",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "43558970dd3987c0e35c79d88737ed8991ae25a2d367cf9288df45ab964f4655",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5962be3a104acba143442aee6c116b9884ca8b40fd6c9ea8911ce881847f36df",
-  "output_hash": "ba85f90147e0b1242c0a833ee0abb63926ca7b015d45858f52235ac1951a07f5",
-  "status": "FAILED",
-  "score": 56.9,
-  "verdict": "FALLO: Consenso insuficiente (56.9/100) u objeción crítica de riesgo",
+  "input_hash": "af430a453414c7b6ab892b56f52299d52e9d97f88315f464d0699aae4fa6209a",
+  "output_hash": "9c2778cdf9b657ffebfb666a9f5b9eb2befb062c25bc76e65ba8628bb2764f26",
+  "status": "PASSED",
+  "score": 88.9,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (88.9/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 56.9,
+    "consensus_score": 88.9,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 62.6,
+        "score": 81.5,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.17 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.59 con beneficio neto de $1917.67.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 59.8,
+        "score": 82.9,
         "findings": [
-          "Drawdown Máximo Observado: 45.9% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 36.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 144 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 171 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $11.21 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 55.6,
+        "score": 91.1,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T08:33:55.422351+00:00"
+  "created_at_utc": "2026-08-20T09:47:15.300080+00:00"
 }

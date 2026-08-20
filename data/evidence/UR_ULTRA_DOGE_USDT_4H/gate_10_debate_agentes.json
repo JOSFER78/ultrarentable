@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
-  "strategy_snapshot_hash": "13aed4d41f127ba3e2f79d1fb4ca921800285453a6c78910fd2e64d7e3a868f1",
+  "strategy_snapshot_hash": "6b1cec2c23d574f3bebf5756fc569a02c1fbd207275124fc1a9af93685ec0c8f",
   "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "82bc0d93a0546009307f5a02ac9653ebed03485fe3a81a3cfeda634ad483da42",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8e336c66e8084d58b685822bface1c50479d73a1f1838785dce559aac0f8de73",
-  "output_hash": "7555c6e5773a2d5911dd196389c9d6b0ef9cf6ce1714076cce9eee056cae70ca",
-  "status": "FAILED",
-  "score": 75.0,
-  "verdict": "FALLO: Consenso insuficiente (75.0/100) u objeción crítica de riesgo",
+  "input_hash": "cf1fb77c27e402e3c351a36c2996df9888475b3fef70850c79ce0961d0cb5c38",
+  "output_hash": "43d6194629982604c8e2cb59eec1e8a7824e806c886f558611be837380a9b5d1",
+  "status": "PASSED",
+  "score": 98.3,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (98.3/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 75.0,
+    "consensus_score": 98.3,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 97.8,
+        "score": 100.0,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.95 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 2.82 con beneficio neto de $2170.66.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 83.4,
+        "score": 94.8,
         "findings": [
-          "Drawdown Máximo Observado: 19.0% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 10.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 78 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 100 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,17 +54,17 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $21.71 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 70.3,
+        "score": 98.7,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T08:33:42.913533+00:00"
+  "created_at_utc": "2026-08-20T09:55:56.713669+00:00"
 }

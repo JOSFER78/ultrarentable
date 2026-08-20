@@ -120,8 +120,8 @@ class SQXSyncWorker:
                 is_prevalidated = dd_pass and pf_pass and profit_pass and trades_pass
 
                 if is_prevalidated:
-                    status = "APPROVED"
-                    status_reason = f"Candidato {'Fondeo' if is_fondeo else 'Ultra'} prevalidado: {'DD institucional <= 4.5%' if is_fondeo else 'Convexidad verificada (DD <= 80%)'}"
+                    status = "CANDIDATA_DISCOVERY"
+                    status_reason = f"Candidato SQX {'Fondeo' if is_fondeo else 'Ultra'} preseleccionado para validación 11 Gates"
                 elif not dd_pass:
                     status = "RECHAZADA_ALTO_DRAWDOWN"
                     status_reason = f"Descartada: Max DD IS {dd_is:.1f}% / OOS {dd_oos:.1f}% excede límite ({max_dd_allowed}%)"

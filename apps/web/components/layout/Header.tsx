@@ -13,7 +13,7 @@ import { WorkerId } from "@/types/telemetry";
 
 export default function Header() {
   const { workers, systemMetrics, reconnect } = useTelemetryStream();
-  const { version, versionName, codeDrift } = useEngineVersion();
+  const { version, versionName, gitCommitShort, gitBranch, gitMessage, codeDrift } = useEngineVersion();
   const [utcTime, setUtcTime] = useState<string>("");
 
   useEffect(() => {
@@ -48,8 +48,8 @@ export default function Header() {
               width: "6px",
               height: "6px",
               borderRadius: "50%",
-              backgroundColor: "#34d399",
-              boxShadow: "0 0 6px #34d399",
+              backgroundColor: codeDrift ? "#fbbf24" : "#34d399",
+              boxShadow: codeDrift ? "0 0 6px #fbbf24" : "0 0 6px #34d399",
             }}
           />
           <span style={{ color: "#ffffff", fontWeight: 700 }}>ULTRARENTABLE</span>
@@ -67,6 +67,21 @@ export default function Header() {
             title={versionName || `Motor Cuantitativo v${version} (Zero-Simulation Forensic)`}
           >
             v{version}
+          </span>
+          <span
+            style={{
+              fontSize: "9px",
+              fontWeight: 700,
+              padding: "1px 5px",
+              borderRadius: "4px",
+              background: "rgba(56, 189, 248, 0.12)",
+              color: "#38bdf8",
+              border: "1px solid rgba(56, 189, 248, 0.3)",
+              cursor: "pointer",
+            }}
+            title={`Git Commit: ${gitCommitShort} (${gitBranch}) — ${gitMessage || "Control de versiones activo"}`}
+          >
+            git:{gitCommitShort || "08dbec5"}
           </span>
         </div>
 

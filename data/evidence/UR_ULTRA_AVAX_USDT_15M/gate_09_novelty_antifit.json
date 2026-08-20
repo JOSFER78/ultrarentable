@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "a335539aaa39e46bb19330f27cf3c975fdaaf7ae9bdccd6e1714a55dab145964",
+  "strategy_snapshot_hash": "a83603f99d14576bbe6337d6e5ae32c77c225fd0126ad91bbab0702ad4087499",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "9704809fd218d7ee64fa8a52c23165b6c80c1cb0120a743f9000e13a8c0b4d22",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "1e795d229f2303563d87236928e97febf9425312b62d538beb32710ea2238524",
-  "output_hash": "672b7c6af8e1f3e38e4d467558688dd2af049487374f87df5d3cc6e29ed1bd02",
-  "status": "FAILED",
-  "score": 40.3,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 6.8 o Estabilidad 100.7% < 60.0%)",
+  "input_hash": "bb56248d244ed86eef53d9ed166e603a8050ab37ee70710b730453fbc1dbd747",
+  "output_hash": "743025d3fd1f5455509c4227724ef8260b54eb7dce9821db1f31e62d8953cb84",
+  "status": "PASSED",
+  "score": 99.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 28.9 trades/param, Estabilidad Vecindario: 99.8%, Re-backtest PFs: [1.43, 1.37, 1.17, 1.1])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 6.8,
+    "degrees_of_freedom_ratio": 28.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 100.7,
+    "parameter_neighborhood_stability_pct": 99.8,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.6,
-      1.51,
-      1.26,
-      1.15
+      1.43,
+      1.37,
+      1.17,
+      1.1
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T09:00:15.495908+00:00"
+  "created_at_utc": "2026-08-20T10:55:11.309158+00:00"
 }

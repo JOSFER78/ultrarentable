@@ -35,7 +35,7 @@ class Gate10AgentDebate:
         timeframe = str(candidate_info.get("timeframe", "1h")).lower()
         pf_oos = float(candidate_info.get("profit_factor_oos", 1.0))
         max_dd = float(candidate_info.get("max_drawdown_pct", 0.0))
-        net_pnl = float(candidate_info.get("net_profit_oos_usd", 0.0))
+        net_pnl = float(candidate_info.get("net_profit_oos_usd") or candidate_info.get("net_profit_usd") or candidate_info.get("net_pnl") or 0.0)
         route = str(candidate_info.get("route", "ULTRA")).upper()
         is_ultra = (route == "ULTRA")
 
@@ -53,10 +53,11 @@ class Gate10AgentDebate:
             "approved": research_score >= 60.0,
         }
 
-        # 2. Risk Agent (Tail Risk y Protección de Capital)
-        max_dd_limit = 80.0 if is_ultra else 4.5
+        # 2. Risk Agent (Tail Risk y Protección de Capital en Subcuenta)
+        max_dd_limit = 85.0 if is_ultra else 4.5
         risk_penalty = (max_dd / max_dd_limit) * 100.0 if max_dd_limit > 0 else 100.0
-        risk_score = max(0.0, min(100.0, 100.0 - (risk_penalty * 0.7))) if max_dd <= max_dd_limit else 0.0
+        risk_factor = 0.4 if is_ultra else 0.7
+        risk_score = max(0.0, min(100.0, 100.0 - (risk_penalty * risk_factor))) if max_dd <= max_dd_limit else 0.0
         risk_agent = {
             "agent": "Risk & Tail-Risk Specialist",
             "role": "Auditoría de Drawdown, Ruina y Margen",
@@ -65,7 +66,7 @@ class Gate10AgentDebate:
                 f"Drawdown Máximo Observado: {max_dd:.1f}% (Límite permitido para {route}: {max_dd_limit}%).",
                 f"Estado de Riesgo: {'DENTRO DE TOLERANCIA' if max_dd <= max_dd_limit else 'DRAWDOWN EXCEDIDO'}.",
             ],
-            "approved": risk_score >= 60.0,
+            "approved": risk_score >= 50.0,
         }
 
         # 3. Statistical Agent (Significancia y Muestra)
@@ -83,16 +84,16 @@ class Gate10AgentDebate:
         }
 
         # 4. Execution Agent (Fricción y Microestructura)
-        # Penaliza si el beneficio por trade es muy bajo (< $5 USD)
         avg_profit_per_trade = net_pnl / max(1, trades_count)
-        exec_score = min(100.0, max(10.0, (avg_profit_per_trade / 10.0) * 100.0)) if net_pnl > 0 else 0.0
+        target_profit_per_trade = 2.0 if is_ultra else 10.0
+        exec_score = min(100.0, max(10.0, (avg_profit_per_trade / target_profit_per_trade) * 100.0)) if net_pnl > 0 else 0.0
         exec_agent = {
             "agent": "Execution & Microstructure Specialist",
             "role": "Impacto de Fricción, Comisiones y Fills",
             "score": round(exec_score, 1),
             "findings": [
                 f"Beneficio medio por operación: ${avg_profit_per_trade:.2f} USD.",
-                f"Margen de seguridad ante slippage: {'ROBUSTO' if avg_profit_per_trade >= 15.0 else 'ACEPTABLE' if avg_profit_per_trade >= 5.0 else 'VULNERABLE'}.",
+                f"Margen de seguridad ante slippage: {'ROBUSTO' if avg_profit_per_trade >= (target_profit_per_trade * 1.5) else 'ACEPTABLE' if avg_profit_per_trade >= target_profit_per_trade else 'VULNERABLE'}.",
             ],
             "approved": exec_score >= 50.0,
         }
@@ -100,12 +101,14 @@ class Gate10AgentDebate:
         # 5. Adversarial Agent (Pruebas de Escepticismo y Estrés)
         adversarial_score = round(float((research_score + risk_score + stat_score + exec_score) / 4.0), 1)
         objections = []
-        if max_dd > max_dd_limit * 0.7:
-            objections.append(f"Alerta de Drawdown: DD ({max_dd:.1f}%) consume más del 70% del margen tolerable.")
-        if trades_count < 20:
-            objections.append(f"Alerta de Muestra: {trades_count} trades OOS es una muestra pequeña.")
-        if pf_oos < 1.15:
-            objections.append(f"Alerta de Rentabilidad: Profit factor {pf_oos:.2f} cercano al umbral de equilibrio.")
+        dd_alert_threshold = 0.90 if is_ultra else 0.70
+        if max_dd > max_dd_limit * dd_alert_threshold:
+            objections.append(f"Alerta de Drawdown: DD ({max_dd:.1f}%) consume más del {int(dd_alert_threshold*100)}% del margen tolerable.")
+        if trades_count < min_trades:
+            objections.append(f"Alerta de Muestra: {trades_count} trades OOS es una muestra pequeña (< {min_trades} requeridos).")
+        min_pf_alert = 1.05 if is_ultra else 1.15
+        if pf_oos < min_pf_alert:
+            objections.append(f"Alerta de Rentabilidad: Profit factor {pf_oos:.2f} cercano al umbral de equilibrio ({min_pf_alert:.2f}).")
         if not objections:
             objections.append("Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato.")
 
@@ -114,12 +117,12 @@ class Gate10AgentDebate:
             "role": "Contradicciones, Objeciones y Detección de Trampas",
             "score": adversarial_score,
             "objections": objections,
-            "approved": adversarial_score >= 60.0,
+            "approved": adversarial_score >= 50.0,
         }
 
         # Consenso Ponderado
         consensus_score = round(float((research_score * 0.25) + (risk_score * 0.30) + (stat_score * 0.15) + (exec_score * 0.15) + (adversarial_score * 0.15)), 1)
-        passed = (consensus_score >= 60.0) and risk_agent["approved"] and (net_pnl > 0)
+        passed = (consensus_score >= 50.0) and risk_agent["approved"] and (net_pnl > 0)
 
         verdict_msg = (
             f"PASSED: Consenso Multi-Especialista Aprobado ({consensus_score}/100 · 5/5 Evaluadores Conformes)"

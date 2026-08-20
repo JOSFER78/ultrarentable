@@ -21,15 +21,24 @@ export interface EngineVersionData {
   pipeline_version: string;
   codebase_fingerprint?: string;
   code_drift_detected?: boolean;
+  git_commit?: string;
+  git_commit_short?: string;
+  git_message?: string;
+  git_author?: string;
+  git_date?: string;
+  git_branch?: string;
+  git_is_dirty?: boolean;
   history: VersionHistoryItem[];
   version_distribution?: Record<string, number>;
 }
 
 export function useEngineVersion() {
   const [data, setData] = useState<EngineVersionData>({
-    current_version: "1.03",
-    current_name: "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
-    pipeline_version: "1.03",
+    current_version: "1.04",
+    current_name: "Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)",
+    pipeline_version: "1.04",
+    git_commit_short: "08dbec5",
+    git_branch: "main",
     history: [],
     version_distribution: {},
   });
@@ -66,6 +75,11 @@ export function useEngineVersion() {
     version: data.current_version,
     versionName: data.current_name,
     pipelineVersion: data.pipeline_version,
+    gitCommit: data.git_commit,
+    gitCommitShort: data.git_commit_short || (data.git_commit ? data.git_commit.substring(0, 7) : "08dbec5"),
+    gitBranch: data.git_branch || "main",
+    gitMessage: data.git_message || "",
+    gitIsDirty: data.git_is_dirty || false,
     history: data.history,
     versionDistribution: data.version_distribution || {},
     codeDrift: data.code_drift_detected,

@@ -35,13 +35,51 @@ CORE_CODE_DIRECTORIES = [
 ]
 
 
-def get_git_commit_hash() -> str:
-    """Obtiene el hash del commit actual de git o 'UNKNOWN'."""
+def get_git_metadata() -> Dict[str, Any]:
+    """Obtiene metadata completa del commit actual de git o defaults deterministas."""
+    info = {
+        "commit_hash": "git_commit_untracked",
+        "commit_short": "untracked",
+        "commit_message": "Cambios en desarrollo",
+        "commit_author": "Hermes Agent",
+        "commit_date": datetime.now(timezone.utc).isoformat(),
+        "branch": "main",
+        "is_dirty": False,
+    }
     try:
+        # Commit hash
         res = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL)
-        return res.decode().strip()
+        full_hash = res.decode().strip()
+        info["commit_hash"] = full_hash
+        info["commit_short"] = full_hash[:7] if len(full_hash) >= 7 else full_hash
+        
+        # Commit message
+        msg = subprocess.check_output(["git", "log", "-1", "--format=%s"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL)
+        info["commit_message"] = msg.decode().strip()
+
+        # Commit author
+        author = subprocess.check_output(["git", "log", "-1", "--format=%an"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL)
+        info["commit_author"] = author.decode().strip()
+
+        # Commit date
+        cdate = subprocess.check_output(["git", "log", "-1", "--format=%ci"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL)
+        info["commit_date"] = cdate.decode().strip()
+
+        # Branch
+        branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL)
+        info["branch"] = branch.decode().strip()
+
+        # Dirty status
+        status = subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL)
+        info["is_dirty"] = bool(status.strip())
     except Exception:
-        return "git_commit_untracked"
+        pass
+    return info
+
+
+def get_git_commit_hash() -> str:
+    """Obtiene el hash del commit actual de git."""
+    return get_git_metadata()["commit_hash"]
 
 
 def compute_codebase_fingerprint() -> str:
@@ -197,20 +235,27 @@ class VersionControlManager:
         return manifest
 
     def get_full_version_info(self) -> Dict[str, Any]:
-        """Devuelve el estado completo de versionado incluyendo changelog y huella de código."""
+        """Devuelve el estado completo de versionado incluyendo changelog, git commits y huella de código."""
         manifest = self.load_manifest()
         current_fp = compute_codebase_fingerprint()
         is_drifted = (current_fp != manifest.get("codebase_fingerprint"))
+        git_meta = get_git_metadata()
         
         return {
-            "active_version": manifest.get("active_version", "1.03"),
+            "active_version": manifest.get("active_version", "1.04"),
             "active_name": manifest.get("active_name", ""),
-            "pipeline_version": manifest.get("pipeline_version", "1.03"),
+            "pipeline_version": manifest.get("pipeline_version", "1.04"),
             "build_id": current_fp[:8],
             "codebase_fingerprint": manifest.get("codebase_fingerprint", ""),
             "current_runtime_fingerprint": current_fp,
             "code_drift_detected": is_drifted,
-            "git_commit": manifest.get("git_commit", ""),
+            "git_commit": git_meta["commit_hash"],
+            "git_commit_short": git_meta["commit_short"],
+            "git_message": git_meta["commit_message"],
+            "git_author": git_meta["commit_author"],
+            "git_date": git_meta["commit_date"],
+            "git_branch": git_meta["branch"],
+            "git_is_dirty": git_meta["is_dirty"],
             "last_bump_utc": manifest.get("last_bump_utc", ""),
             "history": manifest.get("history", []),
         }

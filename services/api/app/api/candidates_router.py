@@ -61,13 +61,19 @@ def list_candidates(
         query = query.filter(CandidateModel.route == route.upper())
     if status and status.upper() != "ALL":
         if status.upper() == "APPROVED":
-            query = query.filter(CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
+            query = query.filter(
+                CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]),
+                CandidateModel.scorecard_json.isnot(None)
+            )
         elif status.upper() == "REJECTED":
             query = query.filter(~CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
         else:
             query = query.filter(CandidateModel.status == status)
     elif not include_rejected:
-        query = query.filter(CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
+        query = query.filter(
+            CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]),
+            CandidateModel.scorecard_json.isnot(None)
+        )
 
     if symbol and symbol.upper() != "ALL":
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))

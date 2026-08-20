@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "1.03"
-CURRENT_ENGINE_NAME = "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "1.03"
+CURRENT_ENGINE_VERSION = "1.04"
+CURRENT_ENGINE_NAME = "Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)"
+CURRENT_VALIDATION_PIPELINE_VERSION = "1.04"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
@@ -60,8 +60,8 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
         "version": "1.03",
         "name": "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
         "released_at": "2026-08-20T07:28:27.623229+00:00",
-        "status": "CURRENT_RECOMMENDED",
-        "status_label": "Actual / Certificada",
+        "status": "INTERMEDIATE",
+        "status_label": "Intermedia (1.03)",
         "description": "Versi\u00f3n mayor de certificaci\u00f3n forense. Implementaci\u00f3n del CanonicalExecutionLedger trade-by-trade, reconciliaci\u00f3n matem\u00e1tica multi-activo de 5 benchmarks reales (SUI, BTC, EURUSD, NQ, CL), blindaje de techo de apalancamiento en Gate 11, cat\u00e1logo de microestructura y costes reales para 44+ activos, aislamiento f\u00edsico del Blind Holdout 60/20/20, c\u00e1lculo probabil\u00edstico de quiebra de cuentas Prop Firm y suite de 231 tests unitarios y de integraci\u00f3n (100% aprobados).",
         "ruleset_hash": "be3018355b2027b7db2b668e50a8c4c3",
         "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
@@ -74,6 +74,21 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
             "PropFirmRiskEngine con c\u00e1lculo de probabilidad real de violaci\u00f3n de reglas diarias y trailing DD.",
             "Estructura formal de Balas ULTRA con riesgo fijo, cero martingalas y cosecha a B\u00f3veda.",
             "Bater\u00eda de tests adversariales Red-Team profunda y suite completa de 231 tests pasando."
+        ]
+    },
+    {
+        "version": "1.04",
+        "name": "Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)",
+        "released_at": "2026-08-20T10:53:30.016392+00:00",
+        "status": "CURRENT_RECOMMENDED",
+        "status_label": "Actual / Certificada",
+        "description": "Calibraci\u00f3n agresiva de la Ruta ULTRA (7.5% de riesgo base por bala kamikaze en subcuenta .000 USD), rastreo sistem\u00e1tico de los 23 activos globales (112 datasets f\u00edsicos) y control formal de versiones vinculado a commits de Git.",
+        "ruleset_hash": "82120a73fe95cb1dc5773e46e4fc638d",
+        "git_commit": "08dbec5bf43b9d4ec07b457300ca7dd2023b178c",
+        "changes": [
+            "Calibraci\u00f3n de Sizing ULTRA: Entrada agresiva al 7.5% de riesgo base (rango 5.0%-10.0%) con apalancamiento din\u00e1mico 5x-15x y reinversi\u00f3n sobre equidad.",
+            "Rastreo Exhaustivo de los 23 Activos: Expansi\u00f3n de miner\u00eda continua sobre los 112 datasets en disco (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, NQ, ES, GC, SI, EURUSD, etc.).",
+            "Control de Versiones Definitivo: Sincronizaci\u00f3n bidireccional con Git commits (hash, short, mensaje, autor, fecha, rama) y persistencia inmutable en SQLite WAL."
         ]
     }
 ]
@@ -99,7 +114,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "fb10be43dcd3f3d125bffcf00f583ea5",
+        "82120a73fe95cb1dc5773e46e4fc638d",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload

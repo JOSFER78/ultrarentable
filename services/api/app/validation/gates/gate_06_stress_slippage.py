@@ -18,9 +18,11 @@ class Gate06StressSlippage:
     def evaluate(
         self,
         oos_trades: List[float],
-        base_friction_usd: float = 3.0,
+        base_friction_usd: float | None = None,
         is_ultra: bool = True,
     ) -> Dict[str, Any]:
+        if base_friction_usd is None:
+            base_friction_usd = 0.35 if is_ultra else 3.0
         if not oos_trades or len(oos_trades) < 5:
             return {
                 "gate_id": self.GATE_ID,

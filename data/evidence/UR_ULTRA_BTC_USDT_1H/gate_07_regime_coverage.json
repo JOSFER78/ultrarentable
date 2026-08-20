@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_1H",
   "strategy_id": "UR_ULTRA_BTC_USDT_1H",
-  "strategy_snapshot_hash": "cf384603b563e068b97b91c83593d42f06011ace30c7083c2b344ee597d13277",
+  "strategy_snapshot_hash": "47fbe62c8881c5d45ced883df14bc6ddf6aa155a86b44b73d9de98b6bcfb05b8",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "d2830c628452df6411a0851e35e0be4926c27aee6ec740824bb48bc0783ce463",
-  "output_hash": "f8fd15e81d39991885334018ef270b733ce102019421e68ef3ae51f94db6e709",
+  "input_hash": "1ffab4a8a374bb3b2262a59adee29d3d3783bcf6437810772c9c1f7f77a6a91b",
+  "output_hash": "c6da84de8fa5cf50059000258440f08b56c24281e247048108cb7fefd208305c",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (2/4 regímenes en beneficio, Net PnL: $118.02)",
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $1580.52)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 9,
-      "BEAR_TREND": 12,
-      "CHOP_RANGING": 96,
+      "BEAR_TREND": 11,
+      "CHOP_RANGING": 87,
       "HIGH_VOLATILITY": 19
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": -21.29,
-      "BEAR_TREND": 62.83,
-      "CHOP_RANGING": -19.41,
-      "HIGH_VOLATILITY": 95.89
+      "BULL_TREND": -176.76,
+      "BEAR_TREND": 791.58,
+      "CHOP_RANGING": 58.71,
+      "HIGH_VOLATILITY": 906.99
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 118.02
+    "total_oos_pnl_usd": 1580.52
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T09:09:40.597995+00:00"
+  "created_at_utc": "2026-08-20T09:52:31.834232+00:00"
 }
