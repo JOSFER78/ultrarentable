@@ -189,7 +189,7 @@ class EventBacktestEngine:
         is_ultra = (strategy.route == StrategyRoute.ULTRA)
         is_fondeo = (strategy.route == StrategyRoute.FONDEO)
         base_capital = initial_capital_usd or (1000.0 if is_ultra else 50000.0)
-        max_leverage = strategy.margin_policy.max_leverage_ceiling if hasattr(strategy, "margin_policy") and strategy.margin_policy else 20.0
+        max_leverage = strategy.margin_policy.max_leverage_ceiling if hasattr(strategy, "margin_policy") and strategy.margin_policy else (500.0 if is_ultra else 1.0)
 
         closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)
         highs = np.array([float(c["high"]) for c in candles], dtype=np.float64)
