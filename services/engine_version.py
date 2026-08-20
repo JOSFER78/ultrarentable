@@ -129,7 +129,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "adae7675a7bd775be0cf451cda933ec2",
+        "0b1200810c2537736bf51d0cce45616a",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload
