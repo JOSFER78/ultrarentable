@@ -2,23 +2,76 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g10",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "42511873f8632da38ee827b593c26e3be883c53fcf31210ba777fb6d26c5cdac",
-  "dataset_id": "ds_bingx_ETH_USDT_1h_1781942400000_1785535200000_b268efd8d5.json",
-  "dataset_sha256": "b268efd8d59e00210293b760c335cb982207485dab9c6788cb601c146cbb2d15",
+  "strategy_snapshot_hash": "ff5dd6b3aa1777a7faca08354aaf352b377136d91100b765e31b03d8158fd017",
+  "dataset_id": "ds_bingx_ETH_USDT_5m_1771841100000_1785664800000_9cdb918f02.json",
+  "dataset_sha256": "9cdb918f020b562444ee2142fa63990743724830ea47b581643fb0089c7d9930",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "0929677d16683378357dea5b9384ab37cba88ef5d4d2c83afca7ca03da6b82ea",
-  "output_hash": "f16b9f8a7ca92d9d91d0efd8b2e5a99ecc7aa0863027ea79904231b60d0ad000",
+  "input_hash": "a5ae483451a5ed2f53e2c8fb04994b5e9c309e98ded063b5b84c894efaf2e7fa",
+  "output_hash": "5dc688939c98efae2ab44ec42794d28cca32e2144a380d3e5ac8c1bd99cc0360",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para auditoría multi-especialista",
+  "score": 36.4,
+  "verdict": "FALLO: Consenso insuficiente (36.4/100) u objeción crítica de riesgo",
   "metrics": {
-    "trades_count": 0,
-    "verdict_status": "BLOCKED_NO_TRADES"
+    "consensus_score": 36.4,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 61.3,
+        "findings": [
+          "Activo y Timeframe: ETH (usdt) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.14 con beneficio neto de $-619.84.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 97.6% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 214 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-2.90 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 40.3,
+        "objections": [
+          "Alerta de Drawdown: DD (97.6%) consume más del 90% del margen tolerable."
+        ],
+        "approved": false
+      }
+    ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:43:19.509263+00:00"
+  "created_at_utc": "2026-08-20T15:01:08.854266+00:00"
 }

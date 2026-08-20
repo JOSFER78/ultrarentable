@@ -782,6 +782,14 @@ def revalidate_candidate(candidate_id: str) -> Dict[str, Any]:
     return res
 
 
+@candidates_router.post("/{candidate_id}/refine-loop")
+def refine_candidate_loop(candidate_id: str, max_iterations: int = 5) -> Dict[str, Any]:
+    """Reprograma y dopa algorítmicamente la estrategia en un bucle cerrado de refinamiento de expertos."""
+    from services.optimization.expert_refinement_loop import expert_strategy_optimizer
+    res = expert_strategy_optimizer.refine_candidate_loop(candidate_id=candidate_id, max_iterations=max_iterations)
+    return res
+
+
 @candidates_router.delete("/rejected")
 def purge_rejected_candidates(
     engine_version: Optional[str] = Query(None, description="Filtrar por versión de motor a purgar (o ALL)"),

@@ -154,7 +154,7 @@ export default function CandidatosFSMPage() {
   const [showFinishedResults, setShowFinishedResults] = useState<boolean>(false);
   const [singleRevalLoading, setSingleRevalLoading] = useState<string | null>(null);
 
-  const openGateAudit = async (candidate: CandidateItem, tab: "gates" | "nautilus" = "gates") => {
+  const openGateAudit = async (candidate: CandidateItem, tab: "gates" | "nautilus" | "debate" = "gates") => {
     if (!candidate) return;
     
     setGateModal({
@@ -269,6 +269,8 @@ export default function CandidatosFSMPage() {
     }
   };
 
+  const [singleRefineLoading, setSingleRefineLoading] = useState<string | null>(null);
+
   const executeSingleCandidateRevalidation = async (candidateId: string) => {
     try {
       setSingleRevalLoading(candidateId);
@@ -286,6 +288,26 @@ export default function CandidatosFSMPage() {
       console.error("Error revalidating candidate:", err);
     } finally {
       setSingleRevalLoading(null);
+    }
+  };
+
+  const executeRefinementLoop = async (candidateId: string) => {
+    try {
+      setSingleRefineLoading(candidateId);
+      const res = await fetch(`/api/v1/candidates/${candidateId}/refine-loop?max_iterations=5`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        await fetchCandidates();
+        if (gateModal.open && gateModal.candidate?.candidate_id === candidateId) {
+          openGateAudit(gateModal.candidate, "debate");
+        }
+      }
+    } catch (err) {
+      console.error("Error running expert refinement loop:", err);
+    } finally {
+      setSingleRefineLoading(null);
     }
   };
 
@@ -1551,6 +1573,26 @@ ${entryLogic}`;
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
+                                executeRefinementLoop(c.candidate_id);
+                              }}
+                              disabled={singleRefineLoading === c.candidate_id}
+                              style={{
+                                padding: "4px 7px",
+                                borderRadius: "6px",
+                                background: "rgba(250, 204, 21, 0.15)",
+                                border: "1px solid rgba(250, 204, 21, 0.35)",
+                                color: "#facc15",
+                                fontSize: "9.5px",
+                                fontWeight: 800,
+                                cursor: singleRefineLoading === c.candidate_id ? "not-allowed" : "pointer",
+                              }}
+                              title="Dopar y Reprogramar esta estrategia en un bucle cerrado de refinamiento de expertos (hasta 5 iteraciones)"
+                            >
+                              {singleRefineLoading === c.candidate_id ? "⚡ Loop..." : "🧬 Expert Loop"}
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 openGateAudit(c, "gates");
                               }}
                               style={{
@@ -2097,6 +2139,35 @@ ${entryLogic}`;
                         Muta dinámicamente los parámetros de la estrategia (período Donchian, multiplicador ATR de Stop Loss, umbral RSI, filtros de volatilidad) explorando variantes robustas que mejoren el Sharpe Ratio OOS sin caer en sobreajuste.
                       </div>
                     </div>
+                  </div>
+
+                  {/* Action CTA: Trigger Closed Loop */}
+                  <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+                    <button
+                      onClick={() => gateModal.candidate && executeRefinementLoop(gateModal.candidate.candidate_id)}
+                      disabled={singleRefineLoading === gateModal.candidate?.candidate_id}
+                      style={{
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                        border: "none",
+                        color: "#000",
+                        fontSize: "12px",
+                        fontWeight: 900,
+                        cursor: singleRefineLoading === gateModal.candidate?.candidate_id ? "not-allowed" : "pointer",
+                        boxShadow: "0 4px 15px rgba(245, 158, 11, 0.35)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <span>⚡</span>
+                      <span>
+                        {singleRefineLoading === gateModal.candidate?.candidate_id
+                          ? "Reprogramando y Optimizando en Bucle..."
+                          : "Ejecutar Bucle de Reprogramación y Dopaje Algorítmico (5 Iteraciones)"}
+                      </span>
+                    </button>
                   </div>
                 </div>
               </div>

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g09",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "42511873f8632da38ee827b593c26e3be883c53fcf31210ba777fb6d26c5cdac",
-  "dataset_id": "ds_bingx_ETH_USDT_1h_1781942400000_1785535200000_b268efd8d5.json",
-  "dataset_sha256": "b268efd8d59e00210293b760c335cb982207485dab9c6788cb601c146cbb2d15",
+  "strategy_snapshot_hash": "ff5dd6b3aa1777a7faca08354aaf352b377136d91100b765e31b03d8158fd017",
+  "dataset_id": "ds_bingx_ETH_USDT_5m_1771841100000_1785664800000_9cdb918f02.json",
+  "dataset_sha256": "9cdb918f020b562444ee2142fa63990743724830ea47b581643fb0089c7d9930",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "31a829f8677e411da74acfc8b9a3d8706303725439a3fb4dc0e8ff9a1f72226c",
-  "output_hash": "ac21c64bab83d1d77df8b4de38a5650e2ebcf77da70b99fc12e6f20ddab37219",
-  "status": "FAILED",
-  "score": 47.1,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 1.9 o Estabilidad 117.6% < 60.0%)",
+  "input_hash": "a3b3a8bda39798cd65515567509ffa13f3c7607d5779502898fc92aa53f4ce08",
+  "output_hash": "4f56fd409108ce91bab2c420dd3cd01e40a6b1882b93b0f416cd5a108f38721e",
+  "status": "PASSED",
+  "score": 98.6,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 105.6 trades/param, Estabilidad Vecindario: 97.6%, Re-backtest PFs: [1.09, 1.1, 1.16, 1.1])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 1.9,
+    "degrees_of_freedom_ratio": 105.6,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 117.6,
+    "parameter_neighborhood_stability_pct": 97.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.77,
-      0.63,
-      1.01,
-      1.06
+      1.09,
+      1.1,
+      1.16,
+      1.1
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:43:19.508277+00:00"
+  "created_at_utc": "2026-08-20T15:01:08.853754+00:00"
 }

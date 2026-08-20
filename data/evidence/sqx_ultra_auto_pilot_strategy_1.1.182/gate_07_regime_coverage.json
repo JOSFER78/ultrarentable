@@ -2,42 +2,42 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.1.182_g07",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.1.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.1.182",
-  "strategy_snapshot_hash": "f48d256038b946f78264312e308844f6ded90e795e2bfb25a8d8bb9566ada960",
-  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "strategy_snapshot_hash": "16249ef473ced3f253c15c37dd4eeb4942235bb1a1f89e44ee6d6ea21951f7c8",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "refined_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b6636c0714fa3764a4e6cd02ab07157f2ac1aee6405f987881b200612a4fb318",
-  "output_hash": "faa310e91c580c63e7ee13fe4a9d6150bbf49af9df5134e1a2dc25a6be34053a",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-63.22)",
+  "input_hash": "5385f5bc6aa551f96fe5cb88adc26a530581f48700c9f12b421dabdf10f5c940",
+  "output_hash": "38f03c7e9dd1f8e40e967b38c9ba3ebaad9ab52af8f9ae77557195c696b3cbed",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (1/4 regímenes en beneficio, Net PnL: $67.39)",
   "metrics": {
     "regimes_candle_distribution": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 1675,
-      "HIGH_VOLATILITY": 425
+      "BULL_TREND": 322,
+      "BEAR_TREND": 469,
+      "CHOP_RANGING": 3428,
+      "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 48,
-      "HIGH_VOLATILITY": 4
+      "BULL_TREND": 7,
+      "BEAR_TREND": 7,
+      "CHOP_RANGING": 98,
+      "HIGH_VOLATILITY": 19
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 0.0,
-      "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -57.39,
-      "HIGH_VOLATILITY": -5.83
+      "BULL_TREND": -315.07,
+      "BEAR_TREND": 1793.08,
+      "CHOP_RANGING": -1155.22,
+      "HIGH_VOLATILITY": -255.4
     },
-    "regimes_profitable_count": 0,
-    "regimes_active_count": 2,
-    "total_oos_pnl_usd": -63.22
+    "regimes_profitable_count": 1,
+    "regimes_active_count": 4,
+    "total_oos_pnl_usd": 67.39
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.1.182/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T08:36:03.734583+00:00"
+  "created_at_utc": "2026-08-20T17:31:14.684955+00:00"
 }

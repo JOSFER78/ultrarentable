@@ -2,22 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g05",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "42511873f8632da38ee827b593c26e3be883c53fcf31210ba777fb6d26c5cdac",
-  "dataset_id": "ds_bingx_ETH_USDT_1h_1781942400000_1785535200000_b268efd8d5.json",
-  "dataset_sha256": "b268efd8d59e00210293b760c335cb982207485dab9c6788cb601c146cbb2d15",
+  "strategy_snapshot_hash": "ff5dd6b3aa1777a7faca08354aaf352b377136d91100b765e31b03d8158fd017",
+  "dataset_id": "ds_bingx_ETH_USDT_5m_1771841100000_1785664800000_9cdb918f02.json",
+  "dataset_sha256": "9cdb918f020b562444ee2142fa63990743724830ea47b581643fb0089c7d9930",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "0f56a978bc84910e67e405173e9a49dc47054d1e497176e6988dd22fb62f7602",
-  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
+  "input_hash": "092b8d74fc43f65b8cff908a0043dc08613e11aa6197325f7af826d053df1dda",
+  "output_hash": "2cf1048d81f9c50285ba046769d8d1849e9bacafe8abb5ebb24d2e25e240dbca",
+  "status": "PASSED",
+  "score": 57.3,
+  "verdict": "PASSED: Riesgo de Ruina = 0.5% (DD 95% = 75.3%)",
   "metrics": {
-    "simulations_run": 0
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.5,
+    "drawdown_median_pct": 50.4,
+    "drawdown_95th_percentile_pct": 75.3,
+    "max_simulated_drawdown_pct": 91.3
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T14:43:19.486058+00:00"
+  "created_at_utc": "2026-08-20T15:01:07.880978+00:00"
 }
