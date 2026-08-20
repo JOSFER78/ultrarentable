@@ -12,7 +12,7 @@ portfolios_router = APIRouter(prefix="/api/v1/portfolios", tags=["portfolios"])
 
 
 class AssemblePortfolioRequest(BaseModel):
-    candidate_ids: List[str] = Field(..., min_items=2, description="Lista de IDs de estrategias en activos distintos.")
+    candidate_ids: List[str] = Field(..., min_length=2, description="Lista de IDs de estrategias en activos distintos.")
     ensemble_name: Optional[str] = Field(None, description="Nombre personalizado del Meta-Portafolio.")
     target_route: Optional[str] = Field(None, description="Ruta cuantitativa: ULTRA o FONDEO.")
     total_capital_usd: Optional[float] = Field(None, description="Capital base total en USD.")

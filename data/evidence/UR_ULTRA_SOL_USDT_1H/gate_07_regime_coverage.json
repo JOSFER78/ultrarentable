@@ -11,10 +11,10 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "f93841a1d790d7f9867dc2bd68536ac87949f6727da18f8c350c10d83ec0abda",
-  "output_hash": "0cb8073daea881574c49583d2fe6b3c9cc6fddb87601666b17a7c3165a4c6800",
+  "output_hash": "96de7c8e6bb8c7949eb1f31511a4e4347e7b9b6a64e4638ef69e75f0d3258b8e",
   "status": "PASSED",
   "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $259.86)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +259.86%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 641,
@@ -28,7 +28,7 @@
       "CHOP_RANGING": 76,
       "HIGH_VOLATILITY": 28
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 61.22,
       "BEAR_TREND": 142.33,
       "CHOP_RANGING": -270.08,
@@ -36,8 +36,8 @@
     },
     "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 259.86
+    "total_oos_return_pct": 259.86
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:40:14.838622+00:00"
+  "created_at_utc": "2026-08-20T17:59:41.424397+00:00"
 }

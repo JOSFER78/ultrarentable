@@ -101,7 +101,7 @@ export default function CandidatosFSMPage() {
   const [activeTab, setActiveTab] = useState<"individual" | "ensemble">("individual");
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedStatus, setSelectedStatus] = useState<string>("APPROVED");
+  const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
   const [versionFilter, setVersionFilter] = useState<string>("ALL");
@@ -422,8 +422,43 @@ export default function CandidatosFSMPage() {
     );
   };
 
-  const top5Ultra = useMemo(() => candidates.filter((c) => c.route === "ULTRA" && isApprovedStatus(c.status)).slice(0, 5), [candidates]);
-  const top5Fondeo = useMemo(() => candidates.filter((c) => c.route === "FONDEO" && isApprovedStatus(c.status)).slice(0, 5), [candidates]);
+  const approvedCount = useMemo(() => candidates.filter((c) => isApprovedStatus(c.status)).length, [candidates]);
+  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status)).length, [candidates]);
+  const discoveryCount = useMemo(() => candidates.filter((c) => !isApprovedStatus(c.status) && !isCandidateRejected(c.status)).length, [candidates]);
+
+  const top5Ultra = useMemo(() => {
+    const approved = candidates.filter((c) => c.route === "ULTRA" && isApprovedStatus(c.status));
+    if (approved.length > 0) return approved.slice(0, 5);
+    const seen = new Set<string>();
+    const res: CandidateItem[] = [];
+    const ultraCandidates = candidates.filter((c) => c.route === "ULTRA");
+    for (const c of ultraCandidates) {
+      const sym = c.symbol.replace("-", "").replace("/", "").toUpperCase();
+      if (!seen.has(sym)) {
+        seen.add(sym);
+        res.push(c);
+        if (res.length >= 5) break;
+      }
+    }
+    return res.length > 0 ? res : ultraCandidates.slice(0, 5);
+  }, [candidates]);
+
+  const top5Fondeo = useMemo(() => {
+    const approved = candidates.filter((c) => c.route === "FONDEO" && isApprovedStatus(c.status));
+    if (approved.length > 0) return approved.slice(0, 5);
+    const seen = new Set<string>();
+    const res: CandidateItem[] = [];
+    const fondeoCandidates = candidates.filter((c) => c.route === "FONDEO");
+    for (const c of fondeoCandidates) {
+      const sym = c.symbol.replace("-", "").replace("/", "").toUpperCase();
+      if (!seen.has(sym)) {
+        seen.add(sym);
+        res.push(c);
+        if (res.length >= 5) break;
+      }
+    }
+    return res.length > 0 ? res : fondeoCandidates.slice(0, 5);
+  }, [candidates]);
 
   const openCodeExport = (c: CandidateItem | null, type: "pine" | "ninja" | "python", isEnsemble = false) => {
     let code = "";
@@ -640,8 +675,12 @@ ${entryLogic}`;
   const filteredCandidates = candidates.filter((c) => {
     const isApproved = isApprovedStatus(c.status);
     const isRejected = isCandidateRejected(c.status);
+    const isDiscovery = !isApproved && !isRejected;
+
     if (selectedStatus === "APPROVED" && !isApproved) return false;
     if (selectedStatus === "REJECTED" && !isRejected) return false;
+    if (selectedStatus === "DISCOVERY" && !isDiscovery) return false;
+
     if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
     if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
     if (versionFilter !== "ALL" && (c.engine_version || "1.00") !== versionFilter) return false;
