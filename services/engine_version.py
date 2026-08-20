@@ -59,12 +59,12 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
     {
         "version": "1.03",
         "name": "Test Milestone Auto Bump",
-        "released_at": "2026-08-20T07:44:38.288525+00:00",
+        "released_at": "2026-08-20T07:57:59.825859+00:00",
         "status": "CURRENT_RECOMMENDED",
         "status_label": "Actual / Certificada",
         "description": "Automated unit test bump validation.",
         "ruleset_hash": "438494981732599943aad1051cc417b5",
-        "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
+        "git_commit": "544827feafcd16380dd9ac07b30234c5fbbf291a",
         "changes": [
             "Refactor X",
             "Add feature Y"

@@ -13,6 +13,7 @@ from services.api.app.export.sqx_to_tradingview import generate_pinescript_v5
 from services.api.app.export.sqx_to_ninjatrader import generate_ninjatrader_strategy_cs
 from services.api.app.factory.robustness_verifier import verify_strategy_robustness
 from services.api.app.validation.market_specs import get_market_spec
+from services.validation.legacy_revalidation_service import legacy_revalidation_service
 
 candidates_router = APIRouter(prefix="/candidates", tags=["Strategy Candidates & Scorecards"])
 
@@ -20,6 +21,13 @@ candidates_router = APIRouter(prefix="/candidates", tags=["Strategy Candidates &
 class StatusUpdateSchema(BaseModel):
     status: str = Field(..., description="INVESTIGACION_BTC, RECHAZADA_FONDEO_DD, CANDIDATA_FONDEO, PAPER, LISTA_PARA_EVALUACION, EJECUTANDO, PAUSADA, RETIRADA")
     reason: str = Field(..., description="Mandatory audit trail reason for status change")
+
+
+class RevalidateLegacyRequest(BaseModel):
+    target_version: Optional[str] = Field(None, description="Versión específica a revalidar e.g. '1.02', '1.00' o 'ALL'")
+    only_approved: bool = Field(True, description="Si es True, revalida solo estrategias que no estén rechazadas")
+    route: Optional[str] = Field("ALL", description="Filtro de ruta: 'ALL', 'ULTRA', 'FONDEO'")
+    max_candidates: int = Field(100, ge=1, le=500, description="Máximo número de estrategias a revalidar en esta tanda")
 
 
 def normalize_symbol_key(raw_sym: str) -> str:
@@ -712,5 +720,24 @@ def ai_optimize_candidate(
             "total_trades": best_res.oos_metrics.get("trades", best_res.total_trades),
         },
     }
+
+
+@candidates_router.post("/revalidate-legacy")
+def revalidate_legacy_strategies(payload: RevalidateLegacyRequest = Body(...)) -> Dict[str, Any]:
+    """Revalida estrategias de versiones anteriores bajo el pipeline y 11 Gates del motor actual (v1.03)."""
+    report = legacy_revalidation_service.revalidate_legacy_batch(
+        target_version=payload.target_version,
+        only_approved=payload.only_approved,
+        route=payload.route,
+        max_candidates=payload.max_candidates,
+    )
+    return report
+
+
+@candidates_router.post("/{candidate_id}/revalidate")
+def revalidate_candidate(candidate_id: str) -> Dict[str, Any]:
+    """Revalida una estrategia específica bajo los 11 Gates del motor actual (v1.03)."""
+    res = legacy_revalidation_service.revalidate_single_candidate(candidate_id)
+    return res
 
 

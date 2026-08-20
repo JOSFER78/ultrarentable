@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useEngineVersion } from "@/hooks/useEngineVersion";
 
@@ -161,6 +161,16 @@ export default function StrategiesExplorerPage() {
     return () => clearInterval(interval);
   }, [loadCandidates, fetchSQXState]);
 
+  const availableVersions = useMemo(() => {
+    const set = new Set<string>();
+    if (version) set.add(version);
+    candidates.forEach((c) => {
+      if (c.engine_version) set.add(c.engine_version);
+      else set.add("1.00");
+    });
+    return Array.from(set).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+  }, [candidates, version]);
+
   // Filter candidates strictly according to user doctrine
   const filtered = candidates.filter((c) => {
     const isRejected = c.status?.startsWith("RECHAZADA");
@@ -169,7 +179,7 @@ export default function StrategiesExplorerPage() {
     if (selectedRoute !== "ALL" && c.route?.toUpperCase() !== selectedRoute) return false;
     if (selectedSymbol !== "ALL" && !c.symbol?.includes(selectedSymbol)) return false;
     if (selectedTimeframe !== "ALL" && c.timeframe?.toLowerCase() !== selectedTimeframe.toLowerCase()) return false;
-    if (selectedEngineVersion !== "ALL" && (c.engine_version || version) !== selectedEngineVersion) return false;
+    if (selectedEngineVersion !== "ALL" && (c.engine_version || "1.00") !== selectedEngineVersion) return false;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       return (
@@ -597,38 +607,36 @@ export default function StrategiesExplorerPage() {
                 color: selectedEngineVersion === "ALL" ? "#ffffff" : "#94a3b8",
               }}
             >
-              ⚙️ TODAS VERS.
+              ⚙️ TODAS ({candidates.length})
             </button>
-            <button
-              onClick={() => setSelectedEngineVersion(version)}
-              style={{
-                padding: "4px 8px",
-                borderRadius: "4px",
-                fontSize: "10.5px",
-                fontWeight: 800,
-                border: "none",
-                cursor: "pointer",
-                background: selectedEngineVersion === version ? "rgba(52, 211, 153, 0.2)" : "transparent",
-                color: selectedEngineVersion === version ? "#34d399" : "#94a3b8",
-              }}
-            >
-              🟢 v{version} ACTUAL ({candidates.filter((c) => (c.engine_version || version) === version).length})
-            </button>
-            <button
-              onClick={() => setSelectedEngineVersion("1.00")}
-              style={{
-                padding: "4px 8px",
-                borderRadius: "4px",
-                fontSize: "10.5px",
-                fontWeight: 800,
-                border: "none",
-                cursor: "pointer",
-                background: selectedEngineVersion === "1.00" ? "rgba(148, 163, 184, 0.2)" : "transparent",
-                color: selectedEngineVersion === "1.00" ? "#94a3b8" : "#64748b",
-              }}
-            >
-              ⚪ v1.00 LEGACY ({candidates.filter((c) => c.engine_version === "1.00").length})
-            </button>
+            {availableVersions.map((v) => {
+              const count = candidates.filter((c) => (c.engine_version || "1.00") === v).length;
+              const isActual = v === version;
+              const isCertified = v >= "1.02";
+              const isSelected = selectedEngineVersion === v;
+              return (
+                <button
+                  key={v}
+                  onClick={() => setSelectedEngineVersion(v)}
+                  style={{
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    fontSize: "10.5px",
+                    fontWeight: 800,
+                    border: "none",
+                    cursor: "pointer",
+                    background: isSelected
+                      ? (isActual ? "rgba(52, 211, 153, 0.25)" : (isCertified ? "rgba(56, 189, 248, 0.25)" : "rgba(148, 163, 184, 0.25)"))
+                      : "transparent",
+                    color: isSelected
+                      ? (isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#f1f5f9"))
+                      : (isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#94a3b8")),
+                  }}
+                >
+                  {isActual ? `🟢 v${v} ACTUAL (${count})` : (isCertified ? `🔵 v${v} (${count})` : `⚪ v${v} LEGACY (${count})`)}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -842,7 +850,9 @@ export default function StrategiesExplorerPage() {
                   const dd = c.metrics?.out_of_sample?.max_drawdown_pct ?? c.metrics?.in_sample?.max_drawdown_pct;
                   const mc = c.metrics?.anti_overfit?.monte_carlo_score;
                   const dur = c.duration_info;
-                  const isCurrentVer = (c.engine_version === version || !c.engine_version || c.engine_version >= "1.02");
+                  const candVer = c.engine_version || "1.00";
+                  const isActual = candVer === version;
+                  const isCertified = candVer >= "1.02";
 
                   return (
                     <tr
@@ -920,14 +930,14 @@ export default function StrategiesExplorerPage() {
                             fontWeight: 800,
                             padding: "2px 5px",
                             borderRadius: "3px",
-                            background: isCurrentVer ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
-                            color: isCurrentVer ? "#34d399" : "#94a3b8",
-                            border: `1px solid ${isCurrentVer ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                            background: isActual ? "rgba(52, 211, 153, 0.15)" : (isCertified ? "rgba(56, 189, 248, 0.12)" : "rgba(148, 163, 184, 0.10)"),
+                            color: isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#94a3b8"),
+                            border: `1px solid ${isActual ? "rgba(52, 211, 153, 0.4)" : (isCertified ? "rgba(56, 189, 248, 0.35)" : "rgba(148, 163, 184, 0.25)")}`,
                             fontFamily: "var(--font-mono, monospace)",
                           }}
-                          title={isCurrentVer ? (versionName || `Motor Cuantitativo v${c.engine_version || version} (Zero-Simulation Forensic)`) : `Motor v${c.engine_version || "1.00"} (Legacy Baseline)`}
+                          title={`Estrategia generada con Motor Cuantitativo v${candVer}${isActual ? " (Actual)" : (isCertified ? " (Certificada)" : " (Legacy)")}`}
                         >
-                          {isCurrentVer ? `🟢 v${c.engine_version || version}` : `⚪ v${c.engine_version || "1.00"}`}
+                          {isActual ? `🟢 v${candVer}` : (isCertified ? `🔵 v${candVer}` : `⚪ v${candVer}`)}
                         </span>
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>

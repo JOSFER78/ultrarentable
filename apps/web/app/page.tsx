@@ -469,8 +469,9 @@ export default function GeneticDiscoveryLabPage() {
                   const totalYears = dur.total_years !== undefined ? Number(dur.total_years).toFixed(1) : (dur.total_months ? (Number(dur.total_months) / 12).toFixed(1) : "0.5");
                   const startStr = dur.start_date ? String(dur.start_date).slice(0, 7) : "2025-10";
                   const endStr = dur.end_date ? String(dur.end_date).slice(0, 7) : "2026-08";
-                  const candVer = (c as any).engine_version || "1.03";
-                  const isCurrent = candVer === "1.03" || candVer >= "1.02";
+                  const candVer = (c as any).engine_version || "1.00";
+                  const isActual = candVer === "1.03";
+                  const isCertified = candVer >= "1.02";
                   return (
                     <tr key={i} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
                       <td style={{ padding: "10px", fontWeight: 800, color: "#ffffff" }}>{c.name}</td>
@@ -481,8 +482,8 @@ export default function GeneticDiscoveryLabPage() {
                         </span>
                       </td>
                       <td style={{ padding: "10px", textAlign: "center" }}>
-                        <span style={{ fontSize: "9px", fontWeight: 800, color: isCurrent ? "#34d399" : "#94a3b8", background: isCurrent ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)", border: `1px solid ${isCurrent ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`, padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-                          {isCurrent ? `🟢 v${candVer}` : `⚪ v${candVer}`}
+                        <span style={{ fontSize: "9px", fontWeight: 800, color: isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#94a3b8"), background: isActual ? "rgba(52, 211, 153, 0.15)" : (isCertified ? "rgba(56, 189, 248, 0.12)" : "rgba(148, 163, 184, 0.10)"), border: `1px solid ${isActual ? "rgba(52, 211, 153, 0.4)" : (isCertified ? "rgba(56, 189, 248, 0.35)" : "rgba(148, 163, 184, 0.25)")}`, padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+                          {isActual ? `🟢 v${candVer}` : (isCertified ? `🔵 v${candVer}` : `⚪ v${candVer}`)}
                         </span>
                       </td>
                       <td style={{ padding: "10px", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1", fontSize: "11px" }}>

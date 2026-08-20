@@ -501,10 +501,20 @@ ${entryLogic}`;
     return "CRYPTO";
   };
 
+  const availableVersions = useMemo(() => {
+    const set = new Set<string>();
+    if (version) set.add(version);
+    candidates.forEach((c) => {
+      if (c.engine_version) set.add(c.engine_version);
+      else set.add("1.00");
+    });
+    return Array.from(set).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+  }, [candidates, version]);
+
   const filteredCandidates = candidates.filter((c) => {
     if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
     if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
-    if (versionFilter !== "ALL" && (c.engine_version || version) !== versionFilter) return false;
+    if (versionFilter !== "ALL" && (c.engine_version || "1.00") !== versionFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const match = c.name.toLowerCase().includes(q) || c.candidate_id.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q);
@@ -1135,30 +1145,52 @@ ${entryLogic}`;
                 </div>
 
                 {/* Engine Version filter */}
-                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
-                  {[
-                    { id: "ALL", label: "⚙️ TODAS VERS." },
-                    { id: version, label: `🟢 v${version} ACTUAL (${candidates.filter(c => (c.engine_version || version) === version).length})` },
-                    { id: "1.00", label: `⚪ v1.00 LEGACY (${candidates.filter(c => c.engine_version === "1.00").length})` },
-                  ].map((ver) => (
-                    <button
-                      key={ver.id}
-                      onClick={() => setVersionFilter(ver.id)}
-                      style={{
-                        padding: "5px 10px",
-                        borderRadius: "6px",
-                        border: "none",
-                        background: versionFilter === ver.id ? "rgba(52, 211, 153, 0.25)" : "transparent",
-                        color: versionFilter === ver.id ? "#34d399" : "#94a3b8",
-                        fontSize: "10px",
-                        fontWeight: 800,
-                        cursor: "pointer",
-                        fontFamily: "var(--font-mono, monospace)",
-                      }}
-                    >
-                      {ver.label}
-                    </button>
-                  ))}
+                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)", flexWrap: "wrap", gap: "2px" }}>
+                  <button
+                    onClick={() => setVersionFilter("ALL")}
+                    style={{
+                      padding: "5px 10px",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: versionFilter === "ALL" ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                      color: versionFilter === "ALL" ? "#ffffff" : "#94a3b8",
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      fontFamily: "var(--font-mono, monospace)",
+                    }}
+                  >
+                    ⚙️ TODAS ({candidates.length})
+                  </button>
+                  {availableVersions.map((v) => {
+                    const count = candidates.filter((c) => (c.engine_version || "1.00") === v).length;
+                    const isActual = v === version;
+                    const isCertified = v >= "1.02";
+                    const isSelected = versionFilter === v;
+                    return (
+                      <button
+                        key={v}
+                        onClick={() => setVersionFilter(v)}
+                        style={{
+                          padding: "5px 10px",
+                          borderRadius: "6px",
+                          border: "none",
+                          background: isSelected
+                            ? (isActual ? "rgba(52, 211, 153, 0.25)" : (isCertified ? "rgba(56, 189, 248, 0.25)" : "rgba(148, 163, 184, 0.25)"))
+                            : "transparent",
+                          color: isSelected
+                            ? (isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#f1f5f9"))
+                            : (isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#94a3b8")),
+                          fontSize: "10px",
+                          fontWeight: 800,
+                          cursor: "pointer",
+                          fontFamily: "var(--font-mono, monospace)",
+                        }}
+                      >
+                        {isActual ? `🟢 v${v} ACTUAL (${count})` : (isCertified ? `🔵 v${v} (${count})` : `⚪ v${v} LEGACY (${count})`)}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1229,7 +1261,9 @@ ${entryLogic}`;
                       const monthRoi = oos?.monthly_roi_pct || 0;
                       const pfOos = oos?.profit_factor || 0;
                       const maxDd = oos?.max_drawdown_pct || 0;
-                      const isCurrent = (c.engine_version === version || !c.engine_version || c.engine_version >= "1.02");
+                      const candVer = c.engine_version || "1.00";
+                      const isActual = candVer === version;
+                      const isCertified = candVer >= "1.02";
 
                       // Parse Gate 11
                       let n11: any = null;
@@ -1289,14 +1323,14 @@ ${entryLogic}`;
                                 fontWeight: 800,
                                 padding: "2px 6px",
                                 borderRadius: "4px",
-                                background: isCurrent ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
-                                color: isCurrent ? "#34d399" : "#94a3b8",
-                                border: `1px solid ${isCurrent ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                                background: isActual ? "rgba(52, 211, 153, 0.15)" : (isCertified ? "rgba(56, 189, 248, 0.12)" : "rgba(148, 163, 184, 0.10)"),
+                                color: isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#94a3b8"),
+                                border: `1px solid ${isActual ? "rgba(52, 211, 153, 0.4)" : (isCertified ? "rgba(56, 189, 248, 0.35)" : "rgba(148, 163, 184, 0.25)")}`,
                                 fontFamily: "var(--font-mono, monospace)",
                               }}
-                              title={isCurrent ? (versionName || `Motor Cuantitativo v${c.engine_version || version} (Zero-Simulation Forensic)`) : `Motor v${c.engine_version || "1.00"} (Legacy Baseline)`}
+                              title={`Estrategia generada con Motor Cuantitativo v${candVer}${isActual ? " (Actual)" : (isCertified ? " (Certificada)" : " (Legacy)")}`}
                             >
-                              {isCurrent ? `🟢 v${c.engine_version || version}` : `⚪ v${c.engine_version || "1.00"}`}
+                              {isActual ? `🟢 v${candVer}` : (isCertified ? `🔵 v${candVer}` : `⚪ v${candVer}`)}
                             </span>
                           </td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: annRoi > 0 ? "#34d399" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
