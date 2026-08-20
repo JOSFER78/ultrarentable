@@ -44,12 +44,20 @@ La carpeta [`docs/`](docs/) es el **cerebro teórico y cuantitativo** del proyec
 
 ---
 
-## 3. 🚀 Modos de Operación Cuantitativa
+## 3. 🚀 ESPECIFICACIÓN MAESTRA: ULTRA VS FONDEO (V1.05)
 
-| RUTA | OBJETIVO | APALANCAMIENTO | GESTIÓN DE RIESGO |
-| :--- | :--- | :---: | :--- |
-| **🔥 ULTRA (BingX Perps)** | Hiperescalado exponencial (+5,000% a +25,000% / año) | **100x ➔ 500x** (Adaptativo) | 95% reinversión de margen flotante + Pyramiding asimétrico |
-| **🛡️ FONDEO (CME Futures)** | Reto en $\le 5$ días + Cobros en cuenta fondeada | **1x a 10x** (Sin sobreapalancamiento) | Trailing Drawdown estricto $\le 4\%$ + Consistencia obligatoria |
+> 📖 **Documento Canónico Inmutable**: Consulta la especificación exhaustiva en [`SPEC_MASTER_ULTRA_VS_FONDEO.md`](SPEC_MASTER_ULTRA_VS_FONDEO.md).
+
+| Dimensión | Ruta ULTRA (Hiper-Rentable Asimétrico) | Ruta FONDEO (Prop Firms / Apex / Topstep) |
+| :--- | :--- | :--- |
+| **Capital Inicial Base** | **$\$1.000\text{ USD}$** (Subcuenta Bala Sacrificable) | **$\$50.000\text{ USD}$** (Cuenta Institucional) |
+| **Riesgo Base por Trade** | **$7.5\%$** de la Equidad Disponible ($5.0\% - 10.0\%$) | **$0.5\% - 1.0\%$** ($\$250 - \$500\text{ USD}$) |
+| **Sizing & Compounding** | **Interés Compuesto Dinámico (Equity Compounding)** | **Lotes Fijos / Contratos CME (1 o 2 contratos)** |
+| **Piramidación** | **1 a 3 tramos en ganancia $\ge +1.5R$ (Stop en BE)** | **Prohibida (Exposición Lineal Fija)** |
+| **Drawdown Permitido** | **Hasta $80.0\%$** (Quiebra de bala en $85\% - 100\%$) | **Máximo $4.0\% - 4.5\%$** (Límite estricto Prop Firm) |
+| **Mecanismo de Bóveda** | **Ratchet Vault**: 50% de ganancia a Bóveda tras $+200\%$ | No aplica (Administrado por Prop Firm) |
+| **Universo de Activos** | **23 Activos Globales (112 datasets)**: BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, ADA, DOT, NEAR, APT, MATIC, PEPE, NQ, ES, YM, RTY, GC, SI, CL, EURUSD. | **Futuros Regulados CME & Forex Spot**: NQ, ES, YM, RTY, GC, CL, 6E, EURUSD. |
+| **Validación en Gates** | Retornos porcentuales fraccionales $r_t$, Monte Carlo geométrico | Retornos aditivos en dólares fijos nominales |
 
 ---
 

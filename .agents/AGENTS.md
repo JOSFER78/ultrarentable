@@ -41,3 +41,44 @@
   - **Capa Discovery / Exploración**: Abierta a generar, optimizar y explorar hipótesis algorítmicas o soluciones técnicas.
   - **Capa Validación / Juez**: Evaluador independiente, ciego e inmutable. Evalúa las hipótesis desde cero sobre datos reales sin alterar los parámetros.
   - **Capa Certificación**: Emisión de veredictos verificables basados en evidencia matemática.
+
+---
+
+## 3. ESPECIFICACIÓN MAESTRA CANÓNICA: RUTA ULTRA VS RUTA FONDEO
+
+> **Cualquier agente de IA que opere en este workspace debe acatar estas definiciones exactas sin alterarlas ni omitirlas.**
+
+### 3.1 RUTA ULTRA (ASIMETRÍA HIPER-RENTABLE & SUB-CUENTAS BALA)
+- **Filosofía**: Convexidad agresiva mediante subcuentas independientes ("balas kamikaze") de **$\$1.000\text{ USD}$**.
+- **Sizing de Riesgo**: **$7.5\%$ de riesgo base por trade** (rango calibrado: $5.0\% - 10.0\%$) calculado sobre la **equidad disponible**.
+- **Interés Compuesto**: **Compounding Dinámico Activo**. A medida que la subcuenta crece, el dimensionamiento de posición escala geométricamente.
+- **Piramidación**: **Habilitada (1 a 3 tramos)** exclusivamente en beneficio flotante $\ge +1.5R$ moviendo el Stop Loss a Break-Even ($0R$).
+- **Drawdown Permitido**: **Hasta $80.0\%$** en la subcuenta bala. La bala solo se considera muerta si alcanza el $85.0\% - 100.0\%$ (liquidación).
+- **Cosecha a Bóveda (Ratchet Vault)**: Al alcanzar $+200\%$ de ganancia, el $50\%$ se transfiere automáticamente e irrevocablemente a la Bóveda de Cosecha protegida.
+- **Universo de Activos**: **Rastreo OBLIGATORIO de los 23 Activos Globales** (112 datasets en disco):
+  - *Cripto Perpetuos*: `BTC`, `ETH`, `SOL`, `SUI`, `DOGE`, `AVAX`, `BNB`, `LINK`, `XRP`, `ADA`, `DOT`, `NEAR`, `APT`, `MATIC/POL`, `PEPE`.
+  - *Futuros CME*: `NQ`, `ES`, `YM`, `RTY`, `GC`, `SI`, `CL`.
+  - *Forex Mayor*: `EURUSD` / `6E`.
+
+### 3.2 RUTA FONDEO (EXÁMENES PROP FIRMS & CUENTAS INSTITUCIONALES)
+- **Filosofía**: Superación sistemática de evaluaciones de Prop Firms (Apex, Topstep, FTMO, etc.) y preservación del capital institucional.
+- **Capital Base**: **$\$50.000\text{ USD}$**.
+- **Sizing de Riesgo**: **$0.5\% - 1.0\%$ por trade** ($\$250 - \$500\text{ USD}$).
+- **Interés Compuesto**: **DESHABILITADO**. Lotes fijos / contratos fijos CME (1 o 2 contratos).
+- **Piramidación**: **PROHIBIDA**. Exposición lineal estricta.
+- **Drawdown Máximo**: **$4.0\% - 4.5\%$** (Límite estricto de Apex/Topstep de $\$2.000 - \$2.500\text{ USD}$). Cualquier DD $> 4.0\%$ es motivo de descarte fatal.
+- **Límite de Pérdida Diaria**: **$\le 2.0\%$ diario** ($\le \$1.000\text{ USD}$ al día) con auto-flatten al $1.5\%$.
+- **Universo de Activos**: Solo instrumentos regulados autorizados por firmas de fondeo (`NQ`, `ES`, `YM`, `RTY`, `GC`, `CL`, `6E`, `EURUSD`, `GBPUSD`, `USDJPY`).
+
+---
+
+## 4. DOCTRINA DE PUREZA DIMENSIONAL (% Y MÚLTIPLOS R)
+
+- **Capa Cuantitativa y de Juicio (11 Gates, Señales, Optimización)**:
+  - **100% en $\%$ y múltiplos $R$**. Prohibido evaluar calidad algorítmica sumando o restando dólares nominales brutos ($\$$).
+  - Retorno por trade: $r_t = \frac{\Delta \text{Equity}_t}{\text{Equity}_{t-1}}$.
+  - Drawdown: $\text{DD}_t = \frac{\text{Peak}_t - \text{Equity}_t}{\text{Peak}_t} \times 100\%$.
+  - Monte Carlo: Remuestreo multiplicativo geométrico $\text{Equity}_t = \text{Equity}_0 \times \prod (1 + r_k)$.
+- **Capa de Liquidación Contable**:
+  - Los **$\$$ USD** se emplean exclusivamente para balances finales, depósitos iniciales y transferencias a Bóveda.
+

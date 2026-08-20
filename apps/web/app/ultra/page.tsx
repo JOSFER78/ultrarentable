@@ -81,6 +81,62 @@ export default function UltraPage() {
           </div>
         </div>
 
+        {/* 3. MANIFIESTO MAESTRO: ULTRA VS FONDEO */}
+        <div style={{ marginTop: "24px", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "20px" }}>
+          <h4 style={{ fontSize: "14px", fontWeight: 900, color: "#63e1b4", marginBottom: "12px", fontFamily: "var(--font-mono, monospace)" }}>
+            ⚡ ESPECIFICACIÓN CANÓNICA: RUTA ULTRA (SUB-CUENTA BALA) VS RUTA FONDEO (APEX / TOPSTEP)
+          </h4>
+          
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
+              <thead>
+                <tr style={{ background: "rgba(255, 255, 255, 0.03)", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                  <th style={{ padding: "8px 12px", textAlign: "left", color: "#94a3b8" }}>Parámetro</th>
+                  <th style={{ padding: "8px 12px", textAlign: "left", color: "#63e1b4" }}>Ruta ULTRA (Asimétrica)</th>
+                  <th style={{ padding: "8px 12px", textAlign: "left", color: "#38bdf8" }}>Ruta FONDEO (Prop Firms)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Capital Base Inicial</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>$1.000 USD (Bala Sacrificable)</td>
+                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>$50.000 USD (Cuenta Institucional)</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Riesgo Base por Trade</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>7.5% de la Equidad Disponible</td>
+                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>0.5% - 1.0% ($250 - $500 USD)</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Interés Compuesto</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>Compounding Dinámico Activo</td>
+                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>Lotes / Contratos Fijos CME</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Piramidación</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>1 a 3 niveles en beneficio ≥ +1.5R</td>
+                  <td style={{ padding: "8px 12px", color: "#f43f5e" }}>Prohibida (Exposición fija)</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Drawdown Permitido</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>Hasta 80% (Quiebra de bala en 85-100%)</td>
+                  <td style={{ padding: "8px 12px", color: "#f43f5e" }}>Máximo 4.0% - 4.5% ($2.000 - $2.500 USD)</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Cosecha a Bóveda</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>50% del beneficio cosechado al superar +200%</td>
+                  <td style={{ padding: "8px 12px", color: "#94a3b8" }}>No aplica (Administrado por Prop Firm)</td>
+                </tr>
+                <tr>
+                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Universo de Activos</td>
+                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>23 Activos Globales (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, NQ, ES, GC, SI, CL, EURUSD, etc.)</td>
+                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>Futuros Regulados CME & Forex (NQ, ES, YM, GC, CL, 6E)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <div style={{ textAlign: "center", padding: "20px 0", color: "#64748b", fontSize: "13px" }}>
           Para activar este motor en vivo, selecciona una cartera validada en el{" "}
           <Link href="/" style={{ color: "#63e1b4", textDecoration: "none", fontWeight: 800 }}>
