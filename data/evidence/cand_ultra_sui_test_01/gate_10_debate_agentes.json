@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g10",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "44ef8e840fb94846db66bef36507bb3e5a6d487f922cf6383d8a2204bbbd3ed6",
+  "strategy_snapshot_hash": "0c9b8e2c2700e08d2e8e101cbe5d60b0003c8e2fed2f152ccf6ceaf250fdb7be",
   "dataset_id": "ds_binance_suiusdt_1h",
   "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 10,
@@ -10,36 +10,36 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "0c7e2c3b374dce56d6b64072c89a856f9c6365368268ccb136e25a75c4aa4eb1",
-  "output_hash": "9396a90d83feb2008c05fe8d45373aec3d5386327a9249622f384c8fb27806a2",
+  "input_hash": "a3859e1efc762c46703f5ff2e7d9005f74f96f44c1f121ef96c81955181f4298",
+  "output_hash": "e1c3c205f089fb1c834ef538b7dbaf20f3eee3beeb443690a63b5144c634f499",
   "status": "FAILED",
-  "score": 57.3,
-  "verdict": "FALLO: Consenso insuficiente (57.3/100) u objeción crítica de riesgo",
+  "score": 35.3,
+  "verdict": "FALLO: Consenso insuficiente (35.3/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 57.3,
+    "consensus_score": 35.3,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.8,
+        "score": 57.7,
         "findings": [
           "Activo y Timeframe: SUIUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.13 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.06 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 62.5,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 79.6% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 96.7% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 55.8,
+        "score": 39.4,
         "objections": [
-          "Alerta de Drawdown: DD (79.6%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (96.7%) consume más del 90% del margen tolerable."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T19:20:55.280696+00:00"
+  "created_at_utc": "2026-08-20T19:29:51.848044+00:00"
 }

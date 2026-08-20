@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g05",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "44ef8e840fb94846db66bef36507bb3e5a6d487f922cf6383d8a2204bbbd3ed6",
+  "strategy_snapshot_hash": "0c9b8e2c2700e08d2e8e101cbe5d60b0003c8e2fed2f152ccf6ceaf250fdb7be",
   "dataset_id": "ds_binance_suiusdt_1h",
   "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9859c7c22d63e9430b0643261942f0f77fc7c4ed55531e11cba9b78391892255",
-  "output_hash": "f29de343af3d48c86b131cd166f55c23072f9441c0f2574386daedde48633518",
+  "input_hash": "9f314b547bc40352f3f813b159c5be2f9b3b28a9b0cd6bba47486629791472e6",
+  "output_hash": "ce0809cd5eab13360246f215da9e1e4511e6e9910cdc7706be45e10d7f075cc9",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 15.3% > 1.0% (DD 95% = 91.8%)",
+  "verdict": "FALLO: Riesgo Ruina 68.4% > 1.0% (DD 95% = 98.9%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 15.3,
-    "drawdown_median_pct": 71.6,
-    "drawdown_95th_percentile_pct": 91.8,
-    "max_simulated_drawdown_pct": 98.5
+    "ruin_probability_pct": 68.4,
+    "drawdown_median_pct": 89.9,
+    "drawdown_95th_percentile_pct": 98.9,
+    "max_simulated_drawdown_pct": 100.0
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T19:20:54.683608+00:00"
+  "created_at_utc": "2026-08-20T19:29:51.137639+00:00"
 }

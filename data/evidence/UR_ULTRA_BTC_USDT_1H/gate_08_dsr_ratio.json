@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1H_g08",
   "run_id": "run_UR_ULTRA_BTC_USDT_1H",
   "strategy_id": "UR_ULTRA_BTC_USDT_1H",
-  "strategy_snapshot_hash": "269a1ae8a5f0ba8e08cd43e997896dac3ff21596ee35987bfab8595c7d28f995",
+  "strategy_snapshot_hash": "81b0d06686ff1d049efa3744b669839cc4444f68e228d12504e6842b36b5c63a",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ecd6230286f87cbeb885f6dcf9108c64886e9e908456555c80f7b66c5c4e2e5c",
-  "output_hash": "7b89dbc0075efd288f90831e6f10d0992ff149194e8a111f441fb2fa5cbdc45f",
+  "input_hash": "6c992e5c2881e68ba79562f119731530b463ea2a261595673ecd3d25bdde39a0",
+  "output_hash": "bab67ad24ff4ffb727ddb01690589087e96aaead7b6de9ae002423033eb77515",
   "status": "PASSED",
-  "score": 86.9,
-  "verdict": "PASSED: DSR = 86.9% (Sharpe Bruto: 0.09, Trials Penalizados: 1, Skew: 1.78, Kurt: 4.99)",
+  "score": 99.3,
+  "verdict": "PASSED: DSR = 99.3% (Sharpe Bruto: 0.13, Trials Penalizados: 1, Skew: 5.81, Kurt: 47.65)",
   "metrics": {
-    "raw_sharpe_ratio": 0.089,
-    "deflated_sharpe_probability_pct": 86.89,
+    "raw_sharpe_ratio": 0.131,
+    "deflated_sharpe_probability_pct": 99.3,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 1.782,
-    "kurtosis": 4.994,
-    "sample_trades_count": 136
+    "skewness": 5.81,
+    "kurtosis": 47.649,
+    "sample_trades_count": 156
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-20T19:20:56.732782+00:00"
+  "created_at_utc": "2026-08-20T19:29:53.156082+00:00"
 }

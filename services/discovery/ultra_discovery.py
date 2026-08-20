@@ -13,9 +13,9 @@ from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRout
 
 
 class UltraSearchSpace(BaseModel):
-    symbols: List[str] = Field(default_factory=lambda: ["BTCUSDT", "ETHUSDT", "SOLUSDT", "SUIUSDT", "DOGEUSDT", "AVAXUSDT", "BNBUSDT", "LINKUSDT", "XRPUSDT"])
+    symbols: List[str] = Field(default_factory=lambda: ["BTCUSDT", "ETHUSDT", "SOLUSDT", "SUIUSDT", "DOGEUSDT", "AVAXUSDT", "BNBUSDT", "LINKUSDT", "XRPUSDT", "EURUSD", "GBPUSD", "USDJPY", "NQ", "GC", "CL"])
     timeframes: List[str] = Field(default_factory=lambda: ["1m", "5m", "15m", "1h", "4h"])
-    leverage_tiers: List[float] = Field(default_factory=lambda: [10.0, 20.0, 50.0, 100.0])
+    leverage_tiers: List[float] = Field(default_factory=lambda: [10.0, 20.0, 50.0, 100.0, 200.0, 500.0])
     pyramiding_max_tiers: int = Field(default=3, ge=1, le=5)
     max_tolerated_drawdown_pct: float = Field(default=85.0, ge=50.0, le=85.0)
 
@@ -33,7 +33,7 @@ class UltraDiscoveryEngine:
         timeframe: str,
         dataset_id: str,
         dataset_sha256: str,
-        leverage: float = 50.0,
+        leverage: float = 100.0,
         sl_atr_mult: float = 2.0,
         tp_atr_mult: float = 7.0,
         pyramiding_tiers_count: int = 3,
@@ -81,8 +81,8 @@ class UltraDiscoveryEngine:
         )
 
         sizing = SizingAndRisk(
-            base_risk_pct=7.5,
-            max_contracts_or_lots=100.0,
+            base_risk_pct=15.0,
+            max_contracts_or_lots=500.0,
             base_leverage=leverage,
         )
 

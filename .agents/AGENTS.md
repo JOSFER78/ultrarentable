@@ -49,16 +49,17 @@
 > **Cualquier agente de IA que opere en este workspace debe acatar estas definiciones exactas sin alterarlas ni omitirlas.**
 
 ### 3.1 RUTA ULTRA (ASIMETRÍA HIPER-RENTABLE & SUB-CUENTAS BALA)
-- **Filosofía**: Convexidad agresiva mediante subcuentas independientes ("balas kamikaze") de **$\$1.000\text{ USD}$**.
-- **Sizing de Riesgo**: **$7.5\%$ de riesgo base por trade** (rango calibrado: $5.0\% - 10.0\%$) calculado sobre la **equidad disponible**.
-- **Interés Compuesto**: **Compounding Dinámico Activo**. A medida que la subcuenta crece, el dimensionamiento de posición escala geométricamente.
-- **Piramidación**: **Habilitada (1 a 3 tramos)** exclusivamente en beneficio flotante $\ge +1.5R$ moviendo el Stop Loss a Break-Even ($0R$).
-- **Drawdown Permitido**: **Hasta $80.0\%$** en la subcuenta bala. La bala solo se considera muerta si alcanza el $85.0\% - 100.0\%$ (liquidación).
+- **Filosofía**: Convexidad agresiva extrema mediante subcuentas independientes ("balas kamikaze") de **$\$1.000\text{ USD}$**.
+- **Sizing de Riesgo**: **$10.0\% - 25.0\%$ de riesgo base por trade** calculado sobre la **equidad disponible**.
+- **Apalancamiento Máximo**: **Hasta $500\text{x}$** (Hyper-Leverage extremo en BingX, Perpetuos y Forex).
+- **Interés Compuesto**: **Compounding Dinámico Activo y Geométrico**. A medida que la subcuenta crece, el dimensionamiento escala geométricamente.
+- **Piramidación**: **Habilitada (1 a 3 tramos agresivos)** reinvirtiendo del $50\%$ al $75\%$ del margen flotante exclusivamente en beneficio $\ge +1.5R$ moviendo el Stop Loss a Break-Even ($0R$).
+- **Drawdown Permitido**: **Hasta $80.0\% - 85.0\%$** en la subcuenta bala. La bala solo se considera muerta si alcanza el $85.0\% - 100.0\%$ (liquidación).
 - **Cosecha a Bóveda (Ratchet Vault)**: Al alcanzar $+200\%$ de ganancia, el $50\%$ se transfiere automáticamente e irrevocablemente a la Bóveda de Cosecha protegida.
-- **Universo de Activos**: **Rastreo OBLIGATORIO de los 23 Activos Globales** (112 datasets en disco):
-  - *Cripto Perpetuos*: `BTC`, `ETH`, `SOL`, `SUI`, `DOGE`, `AVAX`, `BNB`, `LINK`, `XRP`, `ADA`, `DOT`, `NEAR`, `APT`, `MATIC/POL`, `PEPE`.
-  - *Futuros CME*: `NQ`, `ES`, `YM`, `RTY`, `GC`, `SI`, `CL`.
-  - *Forex Mayor*: `EURUSD` / `6E`.
+- **Universo de Activos**: **ABSOLUTAMENTE TODOS LOS MERCADOS Y ACTIVOS GLOBALES** (100% Cripto Perpetuos, 100% Forex Majors y Cruces, 100% Futuros CME e Índices, 100% Commodities en todas las temporalidades `1m`, `5m`, `15m`, `1h`, `4h`, `1d`):
+  - *Forex Majors & Cruces*: `EURUSD`, `GBPUSD`, `USDJPY`, `AUDUSD`, `USDCAD`, `USDCHF`, `NZDUSD`, `EURJPY`, `GBPJPY`, `EURGBP`, `CADJPY`, etc.
+  - *Cripto Perpetuos*: `BTC`, `ETH`, `SOL`, `SUI`, `DOGE`, `AVAX`, `BNB`, `LINK`, `XRP`, `ADA`, `DOT`, `NEAR`, `APT`, `MATIC/POL`, `PEPE`, `SHIB`, `ARB`, `OP`, `TIA`, etc.
+  - *Futuros CME & Materias Primas*: `NQ`, `ES`, `YM`, `RTY`, `GC`, `SI`, `CL`, `NG`, `FDAX`, `FTSE`, `NK225`.
 
 ### 3.2 RUTA FONDEO (EXÁMENES PROP FIRMS & CUENTAS INSTITUCIONALES)
 - **Filosofía**: Superación sistemática de evaluaciones de Prop Firms (Apex, Topstep, FTMO, etc.) y preservación del capital institucional.

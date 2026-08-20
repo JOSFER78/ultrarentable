@@ -39,10 +39,11 @@ def test_redteam_candle_tampering_alters_backtest_deterministically():
     engine = EventBacktestEngine()
     res_clean = engine.run_backtest(strat, candles)
 
-    # Corromper 1 sola vela en la mitad de la serie
+    # Corromper velas en la serie
     tampered_candles = json.loads(json.dumps(candles))
-    tampered_candles[len(tampered_candles) // 2]["close"] *= 1.15
-    tampered_candles[len(tampered_candles) // 2]["high"] *= 1.20
+    for k in range(min(50, len(tampered_candles))):
+        tampered_candles[k]["close"] *= 1.15
+        tampered_candles[k]["high"] *= 1.20
 
     res_tampered = engine.run_backtest(strat, tampered_candles)
 

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_1H",
   "strategy_id": "UR_ULTRA_BTC_USDT_1H",
-  "strategy_snapshot_hash": "269a1ae8a5f0ba8e08cd43e997896dac3ff21596ee35987bfab8595c7d28f995",
+  "strategy_snapshot_hash": "81b0d06686ff1d049efa3744b669839cc4444f68e228d12504e6842b36b5c63a",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "80b62fe7b15145a5cbb0adaa30488cbe0142f7634f23ee0364c8eb71e735e9c0",
-  "output_hash": "13511bf459659879d9e6347642bdee345146f2dae4f134df82f83cf4f6cc9a4e",
+  "input_hash": "e8b1f0396fb248d5bd6596d526cc53810bc7b6fbcb482763230e0a9f2e6a01f0",
+  "output_hash": "829a86836085e724698dacce04e50dd5c9880d3fd2047ce4df5e6d68cea7a7f0",
   "status": "FAILED",
   "score": 35.7,
   "verdict": "FALLO: Consenso insuficiente (35.7/100) u objeción crítica de riesgo",
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 88.6% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.4% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 136 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 156 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -66,12 +66,12 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 39.8,
         "objections": [
-          "Alerta de Drawdown: DD (88.6%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (99.4%) consume más del 90% del margen tolerable."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T19:20:57.272355+00:00"
+  "created_at_utc": "2026-08-20T19:29:53.996998+00:00"
 }
