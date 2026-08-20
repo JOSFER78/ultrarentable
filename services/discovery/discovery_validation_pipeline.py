@@ -311,10 +311,19 @@ class DiscoveryValidationPipeline:
         oos_trades = [t.net_pnl_usd for t in oos_bt.trades]
         trades_raw = [
             {
-                "entry_price": t.entry_price, "exit_price": t.exit_price,
-                "qty": t.qty, "side": t.side, "net_pnl_usd": t.net_pnl_usd,
-                "entry_bar_idx": t.entry_bar, "exit_bar_idx": t.exit_bar,
-                "entry_time_ms": t.entry_time_ms, "exit_time_ms": t.exit_time_ms,
+                "entry_price": t.entry_price,
+                "exit_price": t.exit_price,
+                "qty": t.qty,
+                "side": t.side,
+                "net_pnl_usd": t.net_pnl_usd,
+                "return_pct": t.return_pct,
+                "r_multiple": t.r_multiple,
+                "equity_before_usd": t.equity_before_usd,
+                "equity_after_usd": t.equity_after_usd,
+                "entry_bar_idx": t.entry_bar,
+                "exit_bar_idx": t.exit_bar,
+                "entry_time_ms": t.entry_time_ms,
+                "exit_time_ms": t.exit_time_ms,
             }
             for t in oos_bt.trades
         ]
@@ -329,6 +338,7 @@ class DiscoveryValidationPipeline:
             "dataset_id": fname,
             "dataset_sha256": real_file_sha256,
             "dataset_filepath": file_path,
+            "roi_pct": round(((oos_bt.final_equity_usd - initial_cap) / initial_cap) * 100.0, 2),
             "profit_factor_oos": oos_bt.profit_factor,
             "max_drawdown_pct": oos_bt.max_drawdown_pct,
             "net_profit_oos_usd": oos_bt.net_profit_usd,

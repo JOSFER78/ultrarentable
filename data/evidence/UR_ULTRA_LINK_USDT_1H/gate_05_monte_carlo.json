@@ -11,17 +11,17 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "a2fcb274391c774f0b79d2bb159f2ca4571c8421d34f62ec470a0928a889a216",
-  "output_hash": "52f35352a971d6b7b6bd02131aa8fa4e3cf990c4dc90db8bf668b69392bbd50f",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 48.8% > 1.0%",
+  "output_hash": "9db7179ba59086557242e47eed8538472fc160a87f204c6a26c14a21321fd7db",
+  "status": "PASSED",
+  "score": 52.1,
+  "verdict": "PASSED: Riesgo de Ruina = 0.9% (DD 95% = 77.8%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 48.8,
-    "drawdown_median_pct": 83.1,
-    "drawdown_95th_percentile_pct": 262.4,
-    "max_simulated_drawdown_pct": 604.1
+    "ruin_probability_pct": 0.9,
+    "drawdown_median_pct": 53.5,
+    "drawdown_95th_percentile_pct": 77.8,
+    "max_simulated_drawdown_pct": 90.7
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T11:26:58.877497+00:00"
+  "created_at_utc": "2026-08-20T14:35:13.952338+00:00"
 }

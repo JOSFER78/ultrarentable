@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "1.04"
-CURRENT_ENGINE_NAME = "Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "1.04"
+CURRENT_ENGINE_VERSION = "1.05"
+CURRENT_ENGINE_NAME = "Ultrarentable V1.05 (Pure Dimensional Quant Architecture, % & R-Multiples Unification & Dynamic Git Versioning)"
+CURRENT_VALIDATION_PIPELINE_VERSION = "1.05"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
@@ -80,8 +80,8 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
         "version": "1.04",
         "name": "Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)",
         "released_at": "2026-08-20T10:53:30.016392+00:00",
-        "status": "CURRENT_RECOMMENDED",
-        "status_label": "Actual / Certificada",
+        "status": "INTERMEDIATE",
+        "status_label": "Intermedia (1.04)",
         "description": "Calibraci\u00f3n agresiva de la Ruta ULTRA (7.5% de riesgo base por bala kamikaze en subcuenta .000 USD), rastreo sistem\u00e1tico de los 23 activos globales (112 datasets f\u00edsicos) y control formal de versiones vinculado a commits de Git.",
         "ruleset_hash": "82120a73fe95cb1dc5773e46e4fc638d",
         "git_commit": "08dbec5bf43b9d4ec07b457300ca7dd2023b178c",
@@ -89,6 +89,21 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
             "Calibraci\u00f3n de Sizing ULTRA: Entrada agresiva al 7.5% de riesgo base (rango 5.0%-10.0%) con apalancamiento din\u00e1mico 5x-15x y reinversi\u00f3n sobre equidad.",
             "Rastreo Exhaustivo de los 23 Activos: Expansi\u00f3n de miner\u00eda continua sobre los 112 datasets en disco (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, NQ, ES, GC, SI, EURUSD, etc.).",
             "Control de Versiones Definitivo: Sincronizaci\u00f3n bidireccional con Git commits (hash, short, mensaje, autor, fecha, rama) y persistencia inmutable en SQLite WAL."
+        ]
+    },
+    {
+        "version": "1.05",
+        "name": "Ultrarentable V1.05 (Pure Dimensional Quant Architecture, % & R-Multiples Unification & Dynamic Git Versioning)",
+        "released_at": "2026-08-20T14:36:57.197722+00:00",
+        "status": "CURRENT_RECOMMENDED",
+        "status_label": "Actual / Certificada",
+        "description": "Unificaci\u00f3n dimensional universal: m\u00e9tricas, se\u00f1ales, optimizaci\u00f3n y los 11 Gates operan exclusivamente en % y m\u00faltiplos R, reservando USD solo para liquidaci\u00f3n contable de balances. Sincronizaci\u00f3n din\u00e1mica de Git metadata y control de versiones aut\u00f3nomo.",
+        "ruleset_hash": "adae7675a7bd775be0cf451cda933ec2",
+        "git_commit": "3055e14d696f28d764709bc3b0f75c59c7c4029d",
+        "changes": [
+            "Pureza Dimensional Universal: Todo el motor cuantitativo opera en % de retorno y m\u00faltiplos R (Drawdown %, ROI %, R-Expectancy, Cost Drag % y WFE %).",
+            "Gate 5 Monte Carlo Geom\u00e9trico: Remuestreo de retornos fraccionales con c\u00e1lculo relativo de drawdown para compounding sin falsos drawdowns lineales.",
+            "Control de Versiones V1.05: Sincronizaci\u00f3n din\u00e1mica con commits de Git y persistencia inmutable en SQLite WAL."
         ]
     }
 ]
@@ -114,7 +129,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "82120a73fe95cb1dc5773e46e4fc638d",
+        "adae7675a7bd775be0cf451cda933ec2",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload

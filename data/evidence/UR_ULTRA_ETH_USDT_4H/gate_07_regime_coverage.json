@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_4H",
   "strategy_id": "UR_ULTRA_ETH_USDT_4H",
-  "strategy_snapshot_hash": "0a9c1a7ae1bfd465e091ba12ad1fc6504319343396b4c005198ce35be6064d6c",
+  "strategy_snapshot_hash": "dabc08523b7a30ef81b5ae7cf9eec468da2f2269d4de1d5d0f9dea162c1a4102",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "aebeaa475995e7ddcafc84bbf8455ca16ad4f834717f9195dbcfabd728666cf7",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "33b48a84ad74a21c53b6390cea00e17125788ad6bd4ef6d68a7aecea890ac703",
-  "output_hash": "a92a2d8a4c03dc850e8ef0b8c14bb8ab09dcbeedd1bd56c44ce363a1a12f0d65",
+  "input_hash": "24621dcd5feca3e455a4a86b3b81e0301643edc25e0b1da0ad754ac28cd3bea2",
+  "output_hash": "ed2c987494309d70d47d5f81279b56d92517df04a36bc8596d8a34e41ab902bd",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (4/4 regímenes en beneficio, Net PnL: $5892.06)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (1/4 regímenes en beneficio, Net PnL: $11.41)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 533,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 453
     },
     "regime_trades_count": {
-      "BULL_TREND": 21,
-      "BEAR_TREND": 12,
+      "BULL_TREND": 22,
+      "BEAR_TREND": 15,
       "CHOP_RANGING": 27,
-      "HIGH_VOLATILITY": 20
+      "HIGH_VOLATILITY": 15
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 2560.34,
-      "BEAR_TREND": 2943.78,
-      "CHOP_RANGING": 250.8,
-      "HIGH_VOLATILITY": 137.14
+      "BULL_TREND": -7.49,
+      "BEAR_TREND": -64.7,
+      "CHOP_RANGING": 108.98,
+      "HIGH_VOLATILITY": -25.38
     },
-    "regimes_profitable_count": 4,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 5892.06
+    "total_oos_pnl_usd": 11.41
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T11:25:32.467958+00:00"
+  "created_at_utc": "2026-08-20T14:40:12.490190+00:00"
 }

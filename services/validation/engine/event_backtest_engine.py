@@ -61,6 +61,9 @@ class TradeRecord:
     slippage_usd: float
     exit_reason: str
     pyramid_level: int = 0
+    equity_before_usd: float = 1000.0
+    equity_after_usd: float = 1000.0
+    r_multiple: float = 0.0
 
 
 @dataclass
@@ -265,6 +268,8 @@ class EventBacktestEngine:
         position_entry_price = 0.0
         position_entry_bar = 0
         position_entry_time = 0
+        position_equity_before = base_capital
+        position_risk_amount = base_capital * risk_pct
         stop_loss_price = 0.0
         take_profit_price = 0.0
         pyramid_count = 0
@@ -314,11 +319,14 @@ class EventBacktestEngine:
                             exit_price=exit_price,
                             gross_pnl_usd=gross_pnl,
                             net_pnl_usd=net_pnl,
-                            return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                            return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
                             fees_usd=comm,
                             slippage_usd=slip,
                             exit_reason="LIQUIDATION",
                             pyramid_level=pyramid_count,
+                            equity_before_usd=round(position_equity_before, 2),
+                            equity_after_usd=round(current_equity, 2),
+                            r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
                         )
                     )
                     position_side = None
@@ -348,11 +356,14 @@ class EventBacktestEngine:
                             exit_price=exit_price,
                             gross_pnl_usd=gross_pnl,
                             net_pnl_usd=net_pnl,
-                            return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                            return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
                             fees_usd=comm,
                             slippage_usd=slip,
                             exit_reason="STOP_LOSS",
                             pyramid_level=pyramid_count,
+                            equity_before_usd=round(position_equity_before, 2),
+                            equity_after_usd=round(current_equity, 2),
+                            r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
                         )
                     )
                     position_side = None
@@ -382,11 +393,14 @@ class EventBacktestEngine:
                             exit_price=exit_price,
                             gross_pnl_usd=gross_pnl,
                             net_pnl_usd=net_pnl,
-                            return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                            return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
                             fees_usd=comm,
                             slippage_usd=slip,
                             exit_reason="TAKE_PROFIT",
                             pyramid_level=pyramid_count,
+                            equity_before_usd=round(position_equity_before, 2),
+                            equity_after_usd=round(current_equity, 2),
+                            r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
                         )
                     )
                     position_side = None
@@ -423,9 +437,11 @@ class EventBacktestEngine:
                     position_entry_bar = i
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 + self.slippage)
+                    position_equity_before = current_equity
                     # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
                     effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
                     risk_amount_usd = effective_equity * risk_pct
+                    position_risk_amount = risk_amount_usd
                     sl_dist = bar_atr * sl_atr_mult
                     raw_qty = risk_amount_usd / max(1e-4, sl_dist)
                     max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price)
@@ -445,9 +461,11 @@ class EventBacktestEngine:
                     position_entry_bar = i
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 - self.slippage)
+                    position_equity_before = current_equity
                     # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
                     effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
                     risk_amount_usd = effective_equity * risk_pct
+                    position_risk_amount = risk_amount_usd
                     sl_dist = bar_atr * sl_atr_mult
                     raw_qty = risk_amount_usd / max(1e-4, sl_dist)
                     max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price)
@@ -493,11 +511,14 @@ class EventBacktestEngine:
                     exit_price=exit_price,
                     gross_pnl_usd=gross_pnl,
                     net_pnl_usd=net_pnl,
-                    return_pct=(net_pnl / max(1.0, base_capital)) * 100.0,
+                    return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
                     fees_usd=comm,
                     slippage_usd=slip,
                     exit_reason="END_OF_DATASET",
                     pyramid_level=pyramid_count,
+                    equity_before_usd=round(position_equity_before, 2),
+                    equity_after_usd=round(current_equity, 2),
+                    r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
                 )
             )
 

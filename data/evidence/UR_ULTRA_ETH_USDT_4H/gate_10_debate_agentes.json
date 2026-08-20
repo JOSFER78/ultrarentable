@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_ETH_USDT_4H",
   "strategy_id": "UR_ULTRA_ETH_USDT_4H",
-  "strategy_snapshot_hash": "0a9c1a7ae1bfd465e091ba12ad1fc6504319343396b4c005198ce35be6064d6c",
+  "strategy_snapshot_hash": "dabc08523b7a30ef81b5ae7cf9eec468da2f2269d4de1d5d0f9dea162c1a4102",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "aebeaa475995e7ddcafc84bbf8455ca16ad4f834717f9195dbcfabd728666cf7",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "bf282ceaaf554f28d719da010fae1b3186a3ea6afca9c64bf7232357ffec2922",
-  "output_hash": "51e9715e891712b34c44c0e9add0cf5a692adbc910b09722ee0b828c19bf3b5c",
-  "status": "PASSED",
-  "score": 87.1,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (87.1/100 · 5/5 Evaluadores Conformes)",
+  "input_hash": "ee4ad5b70a947ac9c06ac25ad6fad05197532e301fb8ee7ae50d78e92bf02209",
+  "output_hash": "c378dc74ac51ec7bc2628106c87151f4f03cbfee243bff89c5d7691d10b5ffbd",
+  "status": "FAILED",
+  "score": 56.8,
+  "verdict": "FALLO: Consenso insuficiente (56.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 87.1,
+    "consensus_score": 56.8,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 90.1,
+        "score": 56.4,
         "findings": [
           "Activo y Timeframe: ETH-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.78 con beneficio neto de $5562.46.",
+          "Profit Factor OOS: 1.03 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 70.3,
+        "score": 64.8,
         "findings": [
-          "Drawdown Máximo Observado: 63.1% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 74.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 80 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 79 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $69.53 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 90.1,
+        "score": 55.3,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Rentabilidad: Profit factor 1.03 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T11:25:32.682664+00:00"
+  "created_at_utc": "2026-08-20T14:40:13.043999+00:00"
 }

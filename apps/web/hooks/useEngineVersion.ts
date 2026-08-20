@@ -34,10 +34,10 @@ export interface EngineVersionData {
 
 export function useEngineVersion() {
   const [data, setData] = useState<EngineVersionData>({
-    current_version: "1.04",
-    current_name: "Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)",
-    pipeline_version: "1.04",
-    git_commit_short: "08dbec5",
+    current_version: "1.05",
+    current_name: "Ultrarentable V1.05 (Pure Dimensional Quant Architecture, % & R-Multiples Unification & Dynamic Git Versioning)",
+    pipeline_version: "1.05",
+    git_commit_short: "3055e14",
     git_branch: "main",
     history: [],
     version_distribution: {},
