@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g07",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "a2d5ffed5a4845b32717d9c88f25a986032debb188b4cff7c68f74768b1faa0d",
+  "strategy_snapshot_hash": "44ef8e840fb94846db66bef36507bb3e5a6d487f922cf6383d8a2204bbbd3ed6",
   "dataset_id": "ds_binance_suiusdt_1h",
   "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "993dfcb70a82715b9fe3b0ab9ac0d517f1557c25be8f813aac4ca258d03a8495",
-  "output_hash": "5ad5b9104c23894b432ebad3dcd60f58ffa92125a3f710325f2a705cc018d908",
+  "input_hash": "6e149dfc68d05cae4645c007bdc9a6470c0fddb131807c5dad79644cc0b424d1",
+  "output_hash": "b38e00d110cfbd7a9e7979bd589bf851f36d30235c1a77000d392691632854bb",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (4/4 regímenes en beneficio, Net PnL: $4520.62)",
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (4/4 regímenes en beneficio, Net PnL: $4771.85)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 640,
@@ -29,15 +29,15 @@
       "HIGH_VOLATILITY": 32
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 1043.77,
-      "BEAR_TREND": 542.54,
-      "CHOP_RANGING": 1593.6,
-      "HIGH_VOLATILITY": 1340.71
+      "BULL_TREND": 353.3,
+      "BEAR_TREND": 268.78,
+      "CHOP_RANGING": 351.4,
+      "HIGH_VOLATILITY": 3798.37
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 4520.62
+    "total_oos_pnl_usd": 4771.85
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T09:45:17.918138+00:00"
+  "created_at_utc": "2026-08-20T14:24:53.025031+00:00"
 }

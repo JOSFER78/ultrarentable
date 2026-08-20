@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g03",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "a2d5ffed5a4845b32717d9c88f25a986032debb188b4cff7c68f74768b1faa0d",
+  "strategy_snapshot_hash": "44ef8e840fb94846db66bef36507bb3e5a6d487f922cf6383d8a2204bbbd3ed6",
   "dataset_id": "ds_binance_suiusdt_1h",
   "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "57c9e8d7ce54cf354d634da26a64a2e6cd2458394ea28060aaa1d5fee0156af0",
-  "output_hash": "d3eeafa6726e5fc4276f4e9ddb5ff27757cfaaf713becd2ad727e75d0ff2bb26",
+  "input_hash": "b477022b53e94f0b26f73b6853627eff2d8be8c8c3c84485af004c8d3a9313c5",
+  "output_hash": "a3499655fce89118ae8d3c772881898b57541b33938b6cded7aa93ffe98fb818",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED: Muestra robusta (493 IS / 149 OOS · Ultra Convex)",
   "metrics": {
     "trades_is": 493,
     "trades_oos": 149,
-    "top2_outlier_dependency_pct": 14.5,
+    "top2_outlier_dependency_pct": 18.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T09:45:17.846100+00:00"
+  "created_at_utc": "2026-08-20T14:24:52.807339+00:00"
 }

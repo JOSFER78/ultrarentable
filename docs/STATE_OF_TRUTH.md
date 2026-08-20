@@ -1,7 +1,7 @@
 # ESTADO DE LA VERDAD (STATE OF TRUTH) — ULTRARENTABLE
 > **AUTORIDAD ÚNICA DE DOCUMENTACIÓN BASADA EN EVIDENCIA FÍSICA**
-> **Última Generación Automática:** `2026-08-20 09:45:13 UTC`
-> **Commit Hash:** `08dbec5` (`08dbec5bf43b9d4ec07b457300ca7dd2023b178c`) | **Rama:** `main`
+> **Última Generación Automática:** `2026-08-20 14:24:48 UTC`
+> **Commit Hash:** `5d7b8f8` (`5d7b8f8da8ee45b0b32a083a9f11e66d46cca36c`) | **Rama:** `main`
 
 ---
 
@@ -10,11 +10,11 @@
 | Dimensión | Estado Certificado | Evidencia Física / Fuente |
 | :--- | :--- | :--- |
 | **Doctrina** | `ZERO-MOCK / REAL-ONLY` | [AGENTS.md](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/.agents/AGENTS.md) |
-| **Versión del Motor Activo** | `v1.03 — Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)` | [services/version_control_manager.py](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/services/version_control_manager.py) |
-| **Huella Criptográfica del Motor** | `fb10be43dcd3f3d125bffcf0...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
+| **Versión del Motor Activo** | `v1.04 — Ultrarentable V1.04 (Aggressive Ultra Sizing, 23-Asset Full Mining & Definitive Git Versioning)` | [services/version_control_manager.py](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/services/version_control_manager.py) |
+| **Huella Criptográfica del Motor** | `82120a73fe95cb1dc5773e46...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
 | **Estado del Laboratorio** | `CERTIFICADO FORENSE / RECONCILIACIÓN CROSS-ENGINE COMPLETADA` | [data/evidence/execution_reconciliation.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/execution_reconciliation.json) |
 | **Datasets Físicos Normalizados** | `112 datasets reales` | `data/normalized/*.json` con SHA-256 |
-| **Estrategias en SQLite WAL** | `190 totales (v1.00: 92, v1.02: 93, v1.03: 5)` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
+| **Estrategias en SQLite WAL** | `214 totales (v1.00: 92, v1.02: 24, v1.04: 98)` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
 | **Suite de Tests Backend** | `236 tests pasados (100%)` | `pytest services/api/tests/ tests/` |
 | **Compilación Frontend** | `33/33 rutas Next.js compiladas` | `apps/web/` (`npm run build`) |
 | **Persistencia Cloud** | `Firebase RTDB (pecemi-default-rtdb)` | `/ultrarentable/engine_versions` |

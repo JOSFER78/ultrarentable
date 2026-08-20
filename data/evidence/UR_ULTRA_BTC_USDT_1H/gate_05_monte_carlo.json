@@ -11,17 +11,17 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "b8d03c956c7d20612b963ee0cb37d30923fe68d29886994b1748f863ef864982",
-  "output_hash": "4c12cf0191bc73ab4f561871e8e3a6f6374cf08c918cdb53d8a0ee9cca5e8415",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 69.1% > 1.0%",
+  "output_hash": "409e8ec6ce6e8211f4a7caded3bc8179fc2b3f70f05a062e9d1e8f7bc9ea2b99",
+  "status": "PASSED",
+  "score": 34.0,
+  "verdict": "PASSED: Riesgo de Ruina = 2.6% (DD 95% = 79.9%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 69.1,
-    "drawdown_median_pct": 117.4,
-    "drawdown_95th_percentile_pct": 374.6,
-    "max_simulated_drawdown_pct": 739.5
+    "ruin_probability_pct": 2.6,
+    "drawdown_median_pct": 55.4,
+    "drawdown_95th_percentile_pct": 79.9,
+    "max_simulated_drawdown_pct": 92.5
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T11:20:58.800462+00:00"
+  "created_at_utc": "2026-08-20T14:29:56.103908+00:00"
 }
