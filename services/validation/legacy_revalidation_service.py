@@ -16,6 +16,8 @@ import glob
 import json
 import logging
 import sqlite3
+import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -47,6 +49,23 @@ class LegacyRevalidationService:
         self.backtest_engine = EventBacktestEngine()
         self.gates_orchestrator = GatePipelineOrchestrator()
         self.cert_registry = CertificationRegistry()
+        
+        self._job_lock = threading.Lock()
+        self._cancel_requested = False
+        self._job_state: Dict[str, Any] = {
+            "job_id": None,
+            "status": "IDLE",
+            "target_version": None,
+            "total_candidates": 0,
+            "processed_count": 0,
+            "promoted_count": 0,
+            "rejected_count": 0,
+            "current_candidate": None,
+            "start_time": None,
+            "finish_time": None,
+            "results": [],
+            "error_message": None,
+        }
 
     def get_db_connection(self) -> sqlite3.Connection:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -404,14 +423,14 @@ class LegacyRevalidationService:
             "profit_factor_oos": oos_bt.profit_factor,
         }
 
-    def revalidate_legacy_batch(
+    def get_candidate_ids_to_revalidate(
         self,
         target_version: Optional[str] = None,
         only_approved: bool = True,
         route: Optional[str] = None,
         max_candidates: int = 100,
-    ) -> Dict[str, Any]:
-        """Revalida en lote estrategias legacy/anteriores bajo el motor v1.03."""
+    ) -> List[str]:
+        """Obtiene la lista de candidate_ids para revalidar según los filtros."""
         conn = self.get_db_connection()
         cur = conn.cursor()
 
@@ -429,11 +448,29 @@ class LegacyRevalidationService:
             query += " AND route = ?"
             params.append(route.upper())
 
-        query += f" ORDER BY net_profit_oos DESC LIMIT {max_candidates}"
+        query += " ORDER BY net_profit_oos DESC"
+        if max_candidates and max_candidates > 0 and max_candidates < 999999:
+            query += f" LIMIT {max_candidates}"
 
         cur.execute(query, params)
         candidate_ids = [r[0] for r in cur.fetchall()]
         conn.close()
+        return candidate_ids
+
+    def revalidate_legacy_batch(
+        self,
+        target_version: Optional[str] = None,
+        only_approved: bool = True,
+        route: Optional[str] = None,
+        max_candidates: int = 100,
+    ) -> Dict[str, Any]:
+        """Revalida en lote estrategias legacy/anteriores de forma síncrona."""
+        candidate_ids = self.get_candidate_ids_to_revalidate(
+            target_version=target_version,
+            only_approved=only_approved,
+            route=route,
+            max_candidates=max_candidates,
+        )
 
         results = []
         promoted = 0
@@ -459,6 +496,120 @@ class LegacyRevalidationService:
             "revalidated_at": datetime.now(timezone.utc).isoformat(),
             "results": results,
         }
+
+    def start_background_revalidation(
+        self,
+        target_version: Optional[str] = None,
+        only_approved: bool = True,
+        route: Optional[str] = None,
+        max_candidates: int = 0,
+    ) -> Dict[str, Any]:
+        """Inicia la revalidación en segundo plano y retorna inmediatamente."""
+        with self._job_lock:
+            if self._job_state["status"] == "RUNNING":
+                return {
+                    "status": "ALREADY_RUNNING",
+                    "job_id": self._job_state["job_id"],
+                    "message": "Ya hay una revalidación activa en segundo plano.",
+                    "total_candidates": self._job_state["total_candidates"],
+                    "processed_count": self._job_state["processed_count"],
+                }
+
+            candidate_ids = self.get_candidate_ids_to_revalidate(
+                target_version=target_version,
+                only_approved=only_approved,
+                route=route,
+                max_candidates=max_candidates,
+            )
+
+            job_id = f"reval_job_{int(time.time())}"
+            self._cancel_requested = False
+            self._job_state = {
+                "job_id": job_id,
+                "status": "RUNNING",
+                "target_version": target_version or "ALL",
+                "route": route or "ALL",
+                "total_candidates": len(candidate_ids),
+                "processed_count": 0,
+                "promoted_count": 0,
+                "rejected_count": 0,
+                "current_candidate": None,
+                "start_time": datetime.now(timezone.utc).isoformat(),
+                "finish_time": None,
+                "results": [],
+                "error_message": None,
+            }
+
+            worker_thread = threading.Thread(
+                target=self._run_background_worker,
+                args=(candidate_ids,),
+                daemon=True,
+                name=f"RevalWorker_{job_id}",
+            )
+            worker_thread.start()
+
+            return {
+                "status": "STARTED",
+                "job_id": job_id,
+                "total_candidates": len(candidate_ids),
+                "target_engine_version": CURRENT_ENGINE_VERSION,
+                "message": f"Revalidación en segundo plano iniciada para {len(candidate_ids)} estrategias.",
+            }
+
+    def _run_background_worker(self, candidate_ids: List[str]) -> None:
+        """Worker que procesa las estrategias en segundo plano actualizando el progreso."""
+        logger.info(f"Worker en segundo plano: procesando {len(candidate_ids)} candidatos...")
+        for cid in candidate_ids:
+            if self._cancel_requested:
+                logger.info("Worker en segundo plano cancelado por solicitud del usuario.")
+                with self._job_lock:
+                    self._job_state["status"] = "CANCELLED"
+                    self._job_state["finish_time"] = datetime.now(timezone.utc).isoformat()
+                return
+
+            with self._job_lock:
+                self._job_state["current_candidate"] = cid
+
+            try:
+                res = self.revalidate_single_candidate(cid)
+            except Exception as e:
+                logger.error(f"Error procesando {cid} en segundo plano: {e}", exc_info=True)
+                res = {
+                    "candidate_id": cid,
+                    "name": cid,
+                    "passed": False,
+                    "new_status": "ERROR_REVALIDATION",
+                    "reason": str(e),
+                }
+
+            with self._job_lock:
+                self._job_state["processed_count"] += 1
+                if res.get("passed"):
+                    self._job_state["promoted_count"] += 1
+                else:
+                    self._job_state["rejected_count"] += 1
+                self._job_state["results"].append(res)
+
+        with self._job_lock:
+            self._job_state["status"] = "COMPLETED"
+            self._job_state["finish_time"] = datetime.now(timezone.utc).isoformat()
+            self._job_state["current_candidate"] = None
+        logger.info(
+            f"Worker en segundo plano finalizado: {self._job_state['promoted_count']} promovidas, {self._job_state['rejected_count']} rechazadas de {len(candidate_ids)}."
+        )
+
+    def get_revalidation_status(self) -> Dict[str, Any]:
+        """Obtiene el estado y progreso actual del worker de revalidación."""
+        with self._job_lock:
+            return dict(self._job_state)
+
+    def cancel_background_revalidation(self) -> Dict[str, Any]:
+        """Cancela la revalidación activa en segundo plano."""
+        with self._job_lock:
+            if self._job_state["status"] != "RUNNING":
+                return {"status": "NO_ACTIVE_JOB", "message": "No hay ningún proceso de revalidación activo."}
+            self._cancel_requested = True
+            return {"status": "CANCELLING", "job_id": self._job_state["job_id"], "message": "Cancelación solicitada."}
 
 
 # Instancia singleton

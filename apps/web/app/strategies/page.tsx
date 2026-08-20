@@ -97,6 +97,88 @@ export default function StrategiesExplorerPage() {
     }
   }, [selectedRoute]);
 
+  // Revalidation Modal State
+  const [showRevalModal, setShowRevalModal] = useState<boolean>(false);
+  const [revalTargetVersion, setRevalTargetVersion] = useState<string>("ALL");
+  const [revalOnlyApproved, setRevalOnlyApproved] = useState<boolean>(true);
+  const [revalRoute, setRevalRoute] = useState<string>("ALL");
+  const [revalLimit, setRevalLimit] = useState<number>(0); // 0 = Todas
+  const [revalStatus, setRevalStatus] = useState<any | null>(null);
+  const [showFinishedResults, setShowFinishedResults] = useState<boolean>(false);
+  const [singleRevalLoading, setSingleRevalLoading] = useState<string | null>(null);
+
+  const fetchRevalStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/candidates/revalidate-legacy/status");
+      if (res.ok) {
+        const data = await res.json();
+        setRevalStatus(data);
+        if (data.status === "RUNNING") {
+          loadCandidates();
+        }
+      }
+    } catch {
+      // quiet fallback
+    }
+  }, [loadCandidates]);
+
+  useEffect(() => {
+    fetchRevalStatus();
+    const timer = setInterval(() => {
+      fetchRevalStatus();
+    }, 2000);
+    return () => clearInterval(timer);
+  }, [fetchRevalStatus]);
+
+  const executeRevalidation = async () => {
+    try {
+      const res = await fetch("/api/v1/candidates/revalidate-legacy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target_version: revalTargetVersion,
+          only_approved: revalOnlyApproved,
+          route: revalRoute,
+          max_candidates: revalLimit,
+          background: true,
+        }),
+      });
+      if (res.ok) {
+        setShowFinishedResults(false);
+        await fetchRevalStatus();
+        await loadCandidates();
+      }
+    } catch (err) {
+      console.error("Error executing revalidation:", err);
+    }
+  };
+
+  const cancelRevalidation = async () => {
+    try {
+      await fetch("/api/v1/candidates/revalidate-legacy/cancel", { method: "POST" });
+      await fetchRevalStatus();
+      await loadCandidates();
+    } catch (err) {
+      console.error("Error cancelling revalidation:", err);
+    }
+  };
+
+  const executeSingleCandidateRevalidation = async (candidateId: string) => {
+    try {
+      setSingleRevalLoading(candidateId);
+      const res = await fetch(`/api/v1/candidates/${candidateId}/revalidate`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        await loadCandidates();
+      }
+    } catch (err) {
+      console.error("Error revalidating candidate:", err);
+    } finally {
+      setSingleRevalLoading(null);
+    }
+  };
+
   const [sqxStatus, setSqxStatus] = useState<"ONLINE" | "CONNECTING" | "OFFLINE">("CONNECTING");
 
   const fetchSQXState = useCallback(async () => {
@@ -741,6 +823,57 @@ export default function StrategiesExplorerPage() {
             <option value="1d">1d</option>
           </select>
 
+          {revalStatus?.status === "RUNNING" ? (
+            <button
+              onClick={() => setShowRevalModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "5px 12px",
+                background: "linear-gradient(135deg, rgba(236, 72, 153, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%)",
+                border: "1px solid rgba(236, 72, 153, 0.7)",
+                borderRadius: "5px",
+                color: "#f472b6",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                fontFamily: "var(--font-mono, monospace)",
+                boxShadow: "0 0 12px rgba(236, 72, 153, 0.35)",
+              }}
+              title="Ver progreso de la revalidación en segundo plano"
+            >
+              <span>⏳</span>
+              <span>Revalidando: {revalStatus.processed_count}/{revalStatus.total_candidates} ({revalStatus.promoted_count} ✅)</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowRevalModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "5px 12px",
+                background: "linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%)",
+                border: "1px solid rgba(236, 72, 153, 0.5)",
+                borderRadius: "5px",
+                color: "#f472b6",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
+                fontFamily: "var(--font-mono, monospace)",
+                boxShadow: "0 2px 8px rgba(236, 72, 153, 0.15)",
+              }}
+              title="Revalidar estrategias históricas (v1.02, v1.00) bajo el motor cuantitativo y 11 Gates actuales (v1.03)"
+            >
+              <span>🛡️</span>
+              <span>Revalidar con v1.03</span>
+            </button>
+          )}
+
           <input
             type="text"
             placeholder="🔍 Buscar ID, nombre..."
@@ -969,7 +1102,28 @@ export default function StrategiesExplorerPage() {
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#38bdf8", fontWeight: 700 }}>
                         {typeof mc === "number" ? `${mc.toFixed(0)}/100` : "N/A"}
                       </td>
-                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "center" }}>
+                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "center", display: "flex", gap: "4px", justifyContent: "center" }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            executeSingleCandidateRevalidation(c.candidate_id);
+                          }}
+                          disabled={singleRevalLoading === c.candidate_id}
+                          style={{
+                            padding: "3px 6px",
+                            borderRadius: "4px",
+                            background: "rgba(236, 72, 153, 0.15)",
+                            border: "1px solid rgba(236, 72, 153, 0.35)",
+                            color: "#f472b6",
+                            fontSize: "9.5px",
+                            fontWeight: 800,
+                            cursor: singleRevalLoading === c.candidate_id ? "not-allowed" : "pointer",
+                            fontFamily: "var(--font-mono, monospace)",
+                          }}
+                          title="Revalidar esta estrategia con el motor actual v1.03"
+                        >
+                          {singleRevalLoading === c.candidate_id ? "⏳..." : "🔄 v1.03"}
+                        </button>
                         <button
                           onClick={() => setSelectedCandidate(c)}
                           style={{
@@ -1183,6 +1337,414 @@ export default function StrategiesExplorerPage() {
                 {exportCode}
               </pre>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 6. MODAL DE CONFIRMACIÓN & RESULTADOS DE REVALIDACIÓN */}
+      {showRevalModal && (
+        <div
+          onClick={() => setShowRevalModal(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(10px)",
+            zIndex: 99999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#0b132b",
+              border: "1px solid rgba(236, 72, 153, 0.4)",
+              borderRadius: "16px",
+              padding: "28px",
+              maxWidth: "680px",
+              width: "100%",
+              color: "#f8fafc",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(236, 72, 153, 0.2)",
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "18px" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <span style={{ fontSize: "18px" }}>🛡️</span>
+                  <span style={{ fontSize: "11px", fontWeight: 900, color: "#ec4899", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
+                    CENTRO DE AUDITORÍA Y CERTIFICACIÓN CUANTITATIVA
+                  </span>
+                </div>
+                <h2 style={{ fontSize: "19px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
+                  Revalidación de Estrategias con Motor v1.03 (Actual)
+                </h2>
+              </div>
+              <button
+                onClick={() => setShowRevalModal(false)}
+                style={{ background: "transparent", border: "none", color: "#94a3b8", fontSize: "20px", cursor: "pointer" }}
+                title="Cerrar modal (la tarea en segundo plano continuará)"
+              >
+                ✕
+              </button>
+            </div>
+
+            {revalStatus?.status === "RUNNING" ? (
+              /* Running in Background Progress View */
+              <div>
+                <div style={{ background: "rgba(236, 72, 153, 0.08)", border: "1px solid rgba(236, 72, 153, 0.3)", borderRadius: "12px", padding: "16px", marginBottom: "18px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "16px" }}>⚙️</span>
+                      <span style={{ fontSize: "13px", fontWeight: 800, color: "#fff" }}>
+                        Ejecución Activa en Segundo Plano
+                      </span>
+                    </div>
+                    <div style={{ fontSize: "12px", fontWeight: 900, color: "#ec4899", fontFamily: "var(--font-mono, monospace)" }}>
+                      {Math.round((revalStatus.processed_count / (revalStatus.total_candidates || 1)) * 100)}%
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div style={{ width: "100%", height: "8px", background: "rgba(255, 255, 255, 0.1)", borderRadius: "4px", overflow: "hidden", marginBottom: "12px" }}>
+                    <div
+                      style={{
+                        height: "100%",
+                        width: `${Math.round((revalStatus.processed_count / (revalStatus.total_candidates || 1)) * 100)}%`,
+                        background: "linear-gradient(90deg, #ec4899 0%, #3b82f6 100%)",
+                        transition: "width 0.3s ease",
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", color: "#94a3b8" }}>
+                    <span>Procesadas: <strong>{revalStatus.processed_count}</strong> de <strong>{revalStatus.total_candidates}</strong> estrategias</span>
+                    <span style={{ color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
+                      {revalStatus.current_candidate ? `⏳ Evaluando: ${revalStatus.current_candidate}` : "Sincronizando..."}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Real-Time Metrics Counters */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "16px" }}>
+                  <div style={{ background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>PROMOVIDAS v1.03</div>
+                    <div style={{ fontSize: "22px", fontWeight: 900, color: "#34d399" }}>{revalStatus.promoted_count}</div>
+                  </div>
+                  <div style={{ background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>RECHAZADAS</div>
+                    <div style={{ fontSize: "22px", fontWeight: 900, color: "#fb7185" }}>{revalStatus.rejected_count}</div>
+                  </div>
+                  <div style={{ background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
+                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>TOTAL TANDA</div>
+                    <div style={{ fontSize: "22px", fontWeight: 900, color: "#38bdf8" }}>{revalStatus.total_candidates}</div>
+                  </div>
+                </div>
+
+                {/* Live evaluated list */}
+                {revalStatus.results && revalStatus.results.length > 0 && (
+                  <div style={{ maxHeight: "180px", overflowY: "auto", background: "rgba(0, 0, 0, 0.4)", borderRadius: "10px", padding: "10px", border: "1px solid rgba(255, 255, 255, 0.08)", marginBottom: "16px" }}>
+                    <div style={{ fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", marginBottom: "6px" }}>
+                      ÚLTIMAS EVALUADAS EN VIVO:
+                    </div>
+                    {revalStatus.results.slice(-5).reverse().map((r: any, idx: number) => (
+                      <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 6px", borderBottom: "1px solid rgba(255, 255, 255, 0.04)", fontSize: "11px" }}>
+                        <div>
+                          <span style={{ fontWeight: 800, color: "#fff" }}>{r.name}</span>{" "}
+                          <span style={{ color: "#38bdf8", fontSize: "10px" }}>({r.symbol} {r.timeframe})</span>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ fontSize: "10px", color: "#94a3b8" }}>Gates: {r.gates_passed}/11</span>
+                          <span style={{ fontSize: "9.5px", fontWeight: 800, color: r.passed ? "#34d399" : "#fb7185", background: r.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", padding: "2px 5px", borderRadius: "4px" }}>
+                            {r.passed ? "🟢 v1.03" : "⛔ RECHAZADA"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Running Actions */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <button
+                    onClick={cancelRevalidation}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      background: "rgba(244, 63, 94, 0.15)",
+                      border: "1px solid rgba(244, 63, 94, 0.4)",
+                      color: "#fb7185",
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    ⏹️ Detener Revalidación
+                  </button>
+                  <button
+                    onClick={() => setShowRevalModal(false)}
+                    style={{
+                      padding: "9px 20px",
+                      borderRadius: "8px",
+                      background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
+                      border: "none",
+                      color: "#fff",
+                      fontSize: "11.5px",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
+                    }}
+                  >
+                    🔽 Seguir en 2º Plano y Cerrar
+                  </button>
+                </div>
+              </div>
+            ) : showFinishedResults && revalStatus?.status === "COMPLETED" ? (
+              /* Completed Results Screen */
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "18px" }}>
+                  <div style={{ background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROMOVIDAS A v1.03</div>
+                    <div style={{ fontSize: "28px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
+                      {revalStatus.promoted_count}
+                    </div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Superaron los 11 Gates</div>
+                  </div>
+
+                  <div style={{ background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>RECHAZADAS POR GATES</div>
+                    <div style={{ fontSize: "28px", fontWeight: 900, color: "#fb7185", margin: "4px 0" }}>
+                      {revalStatus.rejected_count}
+                    </div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>No pasaron filtros v1.03</div>
+                  </div>
+
+                  <div style={{ background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>TOTAL AUDITADAS</div>
+                    <div style={{ fontSize: "28px", fontWeight: 900, color: "#38bdf8", margin: "4px 0" }}>
+                      {revalStatus.total_candidates}
+                    </div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Motor v1.03 Dual-Engine</div>
+                  </div>
+                </div>
+
+                {/* Audit breakdown list */}
+                <div style={{ maxHeight: "240px", overflowY: "auto", background: "rgba(0, 0, 0, 0.4)", borderRadius: "10px", padding: "10px", border: "1px solid rgba(255, 255, 255, 0.08)", marginBottom: "18px" }}>
+                  <div style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid rgba(255, 255, 255, 0.06)" }}>
+                    DESGLOSE FORENSE POR ESTRATEGIA:
+                  </div>
+                  {revalStatus.results?.map((r: any, idx: number) => (
+                    <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderBottom: "1px solid rgba(255, 255, 255, 0.04)", fontSize: "11px" }}>
+                      <div>
+                        <span style={{ fontWeight: 800, color: "#ffffff" }}>{r.name}</span>{" "}
+                        <span style={{ color: "#38bdf8", fontSize: "10px", fontFamily: "var(--font-mono, monospace)" }}>({r.symbol} {r.timeframe})</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{ fontSize: "10px", color: "#94a3b8" }}>Gates: {r.gates_passed}/11</span>
+                        <span style={{ fontSize: "10px", fontWeight: 800, color: r.passed ? "#34d399" : "#fb7185", background: r.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                          {r.passed ? "🟢 v1.03 APROBADA" : `⛔ ${r.new_status}`}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <button
+                    onClick={() => setShowFinishedResults(false)}
+                    style={{
+                      padding: "10px 18px",
+                      borderRadius: "8px",
+                      background: "rgba(255, 255, 255, 0.08)",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      color: "#fff",
+                      fontSize: "11.5px",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    ⚙️ Nueva Configuración
+                  </button>
+                  <button
+                    onClick={() => setShowRevalModal(false)}
+                    style={{
+                      padding: "10px 24px",
+                      borderRadius: "8px",
+                      background: "linear-gradient(135deg, #34d399 0%, #3b82f6 100%)",
+                      border: "none",
+                      color: "#0c111d",
+                      fontSize: "12px",
+                      fontWeight: 900,
+                      cursor: "pointer",
+                    }}
+                  >
+                    ✓ Cerrar y Ver Lista Actualizada
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Configuration Controls */
+              <div>
+                {/* Information Card */}
+                <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px", marginBottom: "20px" }}>
+                  <div style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.6" }}>
+                    Esta acción someterá las estrategias generadas en versiones anteriores a la verificación estricta del <strong>Pipeline Cuantitativo v1.03</strong> en segundo plano:
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+                    <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", gap: "6px" }}>
+                      <span style={{ color: "#34d399" }}>✓</span> Modelos de microestructura y costes reales CME/FX/Crypto.
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", gap: "6px" }}>
+                      <span style={{ color: "#34d399" }}>✓</span> Aislamiento físico del Blind Holdout 20% intocado.
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", gap: "6px" }}>
+                      <span style={{ color: "#34d399" }}>✓</span> Estrés 3x slippage y Monte Carlo (0.0% ruina).
+                    </div>
+                    <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", gap: "6px" }}>
+                      <span style={{ color: "#34d399" }}>✓</span> Reconciliación matemática trade-a-trade NautilusTrader.
+                    </div>
+                  </div>
+                  <div style={{ marginTop: "12px", padding: "10px", background: "rgba(56, 189, 248, 0.08)", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)", fontSize: "11px", color: "#38bdf8" }}>
+                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v1.03 ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
+                  </div>
+                </div>
+
+                {/* Configuration Controls */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "22px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", display: "block", marginBottom: "6px" }}>
+                      VERSIÓN DE ORIGEN A REVALIDAR:
+                    </label>
+                    <select
+                      value={revalTargetVersion}
+                      onChange={(e) => setRevalTargetVersion(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        background: "rgba(0, 0, 0, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        color: "#fff",
+                        fontSize: "12px",
+                        outline: "none",
+                      }}
+                    >
+                      <option value="ALL">⚙️ Todas las Versiones Anteriores ({candidates.filter(c => c.engine_version !== "1.03").length})</option>
+                      <option value="1.02">🔵 Solo Versión v1.02 ({candidates.filter(c => c.engine_version === "1.02").length})</option>
+                      <option value="1.00">⚪ Solo Versión v1.00 Legacy ({candidates.filter(c => (c.engine_version || "1.00") === "1.00").length})</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", display: "block", marginBottom: "6px" }}>
+                      RUTA / OBJETIVO:
+                    </label>
+                    <select
+                      value={revalRoute}
+                      onChange={(e) => setRevalRoute(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        background: "rgba(0, 0, 0, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        color: "#fff",
+                        fontSize: "12px",
+                        outline: "none",
+                      }}
+                    >
+                      <option value="ALL">🌐 Ambas Rutas (ULTRA + FONDEO)</option>
+                      <option value="ULTRA">🔥 Solo Ruta ULTRA</option>
+                      <option value="FONDEO">🛡️ Solo Ruta FONDEO</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", display: "block", marginBottom: "6px" }}>
+                      LÍMITE POR TANDA:
+                    </label>
+                    <select
+                      value={revalLimit}
+                      onChange={(e) => setRevalLimit(Number(e.target.value))}
+                      style={{
+                        width: "100%",
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        background: "rgba(0, 0, 0, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        color: "#fff",
+                        fontSize: "12px",
+                        outline: "none",
+                      }}
+                    >
+                      <option value={0}>🌐 Todas las Estrategias (Completo / Sin Límite)</option>
+                      <option value={100}>100 Estrategias (~30 seg)</option>
+                      <option value={50}>50 Estrategias (~15 seg)</option>
+                      <option value={25}>25 Estrategias (~8 seg)</option>
+                      <option value={10}>10 Estrategias (Rápido - ~3 seg)</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", paddingTop: "24px" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "12px", color: "#e2e8f0" }}>
+                      <input
+                        type="checkbox"
+                        checked={revalOnlyApproved}
+                        onChange={(e) => setRevalOnlyApproved(e.target.checked)}
+                        style={{ width: "16px", height: "16px", accentColor: "#ec4899" }}
+                      />
+                      <span>Solo estrategias aprobadas previamente</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                  <button
+                    onClick={() => setShowRevalModal(false)}
+                    style={{
+                      padding: "10px 18px",
+                      borderRadius: "8px",
+                      background: "rgba(255, 255, 255, 0.08)",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      color: "#fff",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={executeRevalidation}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "10px 22px",
+                      borderRadius: "8px",
+                      background: "linear-gradient(135deg, #ec4899 0%, #3b82f6 100%)",
+                      border: "none",
+                      color: "#ffffff",
+                      fontSize: "12px",
+                      fontWeight: 900,
+                      cursor: "pointer",
+                      boxShadow: "0 4px 14px rgba(236, 72, 153, 0.4)",
+                    }}
+                  >
+                    <span>🚀</span>
+                    <span>Confirmar y Revalidar en Segundo Plano</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

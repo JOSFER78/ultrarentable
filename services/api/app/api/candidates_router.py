@@ -27,7 +27,8 @@ class RevalidateLegacyRequest(BaseModel):
     target_version: Optional[str] = Field(None, description="Versión específica a revalidar e.g. '1.02', '1.00' o 'ALL'")
     only_approved: bool = Field(True, description="Si es True, revalida solo estrategias que no estén rechazadas")
     route: Optional[str] = Field("ALL", description="Filtro de ruta: 'ALL', 'ULTRA', 'FONDEO'")
-    max_candidates: int = Field(100, ge=1, le=500, description="Máximo número de estrategias a revalidar en esta tanda")
+    max_candidates: int = Field(0, ge=0, le=1000000, description="Máximo número de estrategias a revalidar (0 = Todas sin límite)")
+    background: bool = Field(True, description="Si es True, procesa en segundo plano y permite consultar el progreso en vivo")
 
 
 def normalize_symbol_key(raw_sym: str) -> str:
@@ -724,14 +725,36 @@ def ai_optimize_candidate(
 
 @candidates_router.post("/revalidate-legacy")
 def revalidate_legacy_strategies(payload: RevalidateLegacyRequest = Body(...)) -> Dict[str, Any]:
-    """Revalida estrategias de versiones anteriores bajo el pipeline y 11 Gates del motor actual (v1.03)."""
-    report = legacy_revalidation_service.revalidate_legacy_batch(
-        target_version=payload.target_version,
-        only_approved=payload.only_approved,
-        route=payload.route,
-        max_candidates=payload.max_candidates,
-    )
+    """Revalida estrategias de versiones anteriores bajo el pipeline y 11 Gates del motor actual (v1.03).
+    Si background=True, se ejecuta en segundo plano permitiendo consultar el progreso en vivo.
+    """
+    if payload.background:
+        report = legacy_revalidation_service.start_background_revalidation(
+            target_version=payload.target_version,
+            only_approved=payload.only_approved,
+            route=payload.route,
+            max_candidates=payload.max_candidates,
+        )
+    else:
+        report = legacy_revalidation_service.revalidate_legacy_batch(
+            target_version=payload.target_version,
+            only_approved=payload.only_approved,
+            route=payload.route,
+            max_candidates=payload.max_candidates,
+        )
     return report
+
+
+@candidates_router.get("/revalidate-legacy/status")
+def get_legacy_revalidation_status() -> Dict[str, Any]:
+    """Obtiene el estado en tiempo real, progreso y resultados de la revalidación en segundo plano."""
+    return legacy_revalidation_service.get_revalidation_status()
+
+
+@candidates_router.post("/revalidate-legacy/cancel")
+def cancel_legacy_revalidation() -> Dict[str, Any]:
+    """Cancela una revalidación activa en segundo plano."""
+    return legacy_revalidation_service.cancel_background_revalidation()
 
 
 @candidates_router.post("/{candidate_id}/revalidate")

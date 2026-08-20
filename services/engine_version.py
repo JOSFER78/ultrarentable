@@ -59,12 +59,12 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
     {
         "version": "1.03",
         "name": "Test Milestone Auto Bump",
-        "released_at": "2026-08-20T07:57:59.825859+00:00",
+        "released_at": "2026-08-20T08:20:47.776976+00:00",
         "status": "CURRENT_RECOMMENDED",
         "status_label": "Actual / Certificada",
         "description": "Automated unit test bump validation.",
-        "ruleset_hash": "438494981732599943aad1051cc417b5",
-        "git_commit": "544827feafcd16380dd9ac07b30234c5fbbf291a",
+        "ruleset_hash": "fb10be43dcd3f3d125bffcf00f583ea5",
+        "git_commit": "c246cf324dcdbb52f61a7c8d14799e10d0610020",
         "changes": [
             "Refactor X",
             "Add feature Y"
@@ -93,7 +93,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "438494981732599943aad1051cc417b5",
+        "fb10be43dcd3f3d125bffcf00f583ea5",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload
