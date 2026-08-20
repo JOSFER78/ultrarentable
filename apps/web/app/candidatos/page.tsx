@@ -102,6 +102,7 @@ export default function CandidatosFSMPage() {
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
+  const [roiFilter, setRoiFilter] = useState<"MIN_20_MONTHLY" | "ONLY_PROFITABLE" | "ALL">("ONLY_PROFITABLE");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
   const [versionFilter, setVersionFilter] = useState<string>("ALL");
@@ -672,25 +673,40 @@ ${entryLogic}`;
     return Array.from(set).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
   }, [candidates, version]);
 
-  const filteredCandidates = candidates.filter((c) => {
-    const isApproved = isApprovedStatus(c.status);
-    const isRejected = isCandidateRejected(c.status);
-    const isDiscovery = !isApproved && !isRejected;
+  const sortedCandidates = useMemo(() => {
+    const filtered = candidates.filter((c) => {
+      const isApproved = isApprovedStatus(c.status);
+      const isRejected = isCandidateRejected(c.status);
+      const isDiscovery = !isApproved && !isRejected;
 
-    if (selectedStatus === "APPROVED" && !isApproved) return false;
-    if (selectedStatus === "REJECTED" && !isRejected) return false;
-    if (selectedStatus === "DISCOVERY" && !isDiscovery) return false;
+      if (selectedStatus === "APPROVED" && !isApproved) return false;
+      if (selectedStatus === "REJECTED" && !isRejected) return false;
+      if (selectedStatus === "DISCOVERY" && !isDiscovery) return false;
 
-    if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
-    if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
-    if (versionFilter !== "ALL" && (c.engine_version || "1.00") !== versionFilter) return false;
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      const match = c.name.toLowerCase().includes(q) || c.candidate_id.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q);
-      if (!match) return false;
-    }
-    return true;
-  });
+      const oos = c.metrics?.out_of_sample;
+      const monthRoi = oos?.monthly_roi_pct ?? ((oos?.annualized_roi_pct || 0) / 12.0);
+      const netProfit = oos?.net_profit_usd ?? 0;
+
+      if (roiFilter === "MIN_20_MONTHLY" && monthRoi < 20.0 && (oos?.annualized_roi_pct || 0) < 240.0) return false;
+      if (roiFilter === "ONLY_PROFITABLE" && monthRoi <= 0.0 && netProfit <= 0.0) return false;
+
+      if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
+      if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
+      if (versionFilter !== "ALL" && (c.engine_version || "1.00") !== versionFilter) return false;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const match = c.name.toLowerCase().includes(q) || c.candidate_id.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      return true;
+    });
+
+    return [...filtered].sort((a, b) => {
+      const roiA = a.metrics?.out_of_sample?.monthly_roi_pct ?? ((a.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
+      const roiB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
+      return roiB - roiA;
+    });
+  }, [candidates, selectedStatus, roiFilter, routeFilter, categoryFilter, versionFilter, searchQuery]);
 
   return (
     <div style={{ width: "100%", maxWidth: "100%", padding: "16px 22px", color: "#f8fafc", boxSizing: "border-box" }}>
@@ -1284,6 +1300,33 @@ ${entryLogic}`;
                   ))}
                 </div>
 
+                {/* Profitability / Rentabilidad filter */}
+                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                  {[
+                    { id: "MIN_20_MONTHLY", label: "🚀 >= +20%/mes (Ultra Rentable)" },
+                    { id: "ONLY_PROFITABLE", label: "📈 Solo Rentables (>0%/m)" },
+                    { id: "ALL", label: "🌐 Todos los ROI (Auditoría)" },
+                  ].map((rf) => (
+                    <button
+                      key={rf.id}
+                      onClick={() => setRoiFilter(rf.id as any)}
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: roiFilter === rf.id ? "rgba(52, 211, 153, 0.25)" : "transparent",
+                        color: roiFilter === rf.id ? "#34d399" : "#94a3b8",
+                        fontSize: "10px",
+                        fontWeight: 800,
+                        cursor: "pointer",
+                        fontFamily: "var(--font-mono, monospace)",
+                      }}
+                    >
+                      {rf.label}
+                    </button>
+                  ))}
+                </div>
+
                 {/* Market Category filter */}
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
                   {[
@@ -1309,6 +1352,34 @@ ${entryLogic}`;
                       }}
                     >
                       {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Status filter */}
+                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                  {[
+                    { id: "ALL", label: `TODAS (${candidates.length})` },
+                    { id: "APPROVED", label: `🟢 CERTIFICADAS (${approvedCount})` },
+                    { id: "DISCOVERY", label: `🔬 INVESTIGACIÓN (${discoveryCount})` },
+                    { id: "REJECTED", label: `🔴 RECHAZADAS (${rejectedCount})` },
+                  ].map((st) => (
+                    <button
+                      key={st.id}
+                      onClick={() => setSelectedStatus(st.id)}
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: selectedStatus === st.id ? "rgba(236, 72, 153, 0.25)" : "transparent",
+                        color: selectedStatus === st.id ? "#f472b6" : "#94a3b8",
+                        fontSize: "10px",
+                        fontWeight: 800,
+                        cursor: "pointer",
+                        fontFamily: "var(--font-mono, monospace)",
+                      }}
+                    >
+                      {st.label}
                     </button>
                   ))}
                 </div>
@@ -1464,18 +1535,18 @@ ${entryLogic}`;
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCandidates.length === 0 ? (
+                  {sortedCandidates.length === 0 ? (
                     <tr>
                       <td colSpan={11} style={{ padding: "40px 20px", textAlign: "center", color: "#94a3b8" }}>
                         <div style={{ fontSize: "28px", marginBottom: "8px" }}>🔬</div>
                         <div style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>0 Candidatos Coincidentes</div>
                         <div style={{ fontSize: "11px", color: "#64748b", maxWidth: "450px", margin: "6px auto 0 auto", lineHeight: "1.4" }}>
-                          No se encontraron estrategias con los filtros seleccionados (Ruta, Activo o Versión del Motor).
+                          No se encontraron estrategias con los filtros seleccionados (Rentabilidad, Ruta, Activo o Versión del Motor).
                         </div>
                       </td>
                     </tr>
                   ) : (
-                    filteredCandidates.map((c, idx) => {
+                    sortedCandidates.map((c: CandidateItem, idx: number) => {
                       const isSelected = selectedCandidate?.candidate_id === c.candidate_id;
                       const oos = c.metrics?.out_of_sample;
                       const annRoi = oos?.annualized_roi_pct || 0;

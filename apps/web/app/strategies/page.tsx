@@ -49,7 +49,7 @@ export default function StrategiesExplorerPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(25);
 
-  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "ALL" | "REJECTED">("APPROVED");
+  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "ALL" | "REJECTED">("ALL");
   const [sortField, setSortField] = useState<string>("monthly_roi_pct");
   const [sortDirection, setSortDirection] = useState<"DESC" | "ASC">("DESC");
   const [searchQuery, setSearchQuery] = useState<string>("");
