@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g07",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "f20ad9044774fbd66bf97fb0c95c589d0fe342b1e8c1d8dd7ba4a0d4051664ff",
+  "strategy_snapshot_hash": "6ac3a55bf64c0f7770b8d10b39cf4e5d27d946a9a4a0ce3117daf4ce6b342d41",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "4c5f24b34a25bcac73109935c05d30c5f4dcdc38772ab0b124f99b494993d4dd",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "3cddc976ed52a4c9988196e135c05f355ad69ce6345531d59972536f2f416e77",
-  "output_hash": "48b64ec6d86414a9ba98e457bb9c79189cbbbb9b2dfbd3c607a90aa131bef317",
+  "input_hash": "44f1ae472caae4b40458f355904249d7f5c11204f62871ebd0aa0ab73bad1014",
+  "output_hash": "38ca036617cd60b0c7b6d9e8aab584b592dc701152a5b54f7031d604b83a7fcd",
   "status": "PASSED",
   "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (1/4 regímenes en beneficio, Net PnL: $78.52)",
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (1/4 regímenes en beneficio, Net PnL: $18.57)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 22,
-      "HIGH_VOLATILITY": 2
+      "CHOP_RANGING": 18,
+      "HIGH_VOLATILITY": 1
     },
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 140.53,
-      "HIGH_VOLATILITY": -62.01
+      "CHOP_RANGING": 18.97,
+      "HIGH_VOLATILITY": -0.4
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": 78.52
+    "total_oos_pnl_usd": 18.57
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T04:34:38.890118+00:00"
+  "created_at_utc": "2026-08-20T08:35:38.981053+00:00"
 }

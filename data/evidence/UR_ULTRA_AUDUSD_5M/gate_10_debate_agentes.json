@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_5M_g10",
   "run_id": "run_UR_ULTRA_AUDUSD_5M",
   "strategy_id": "UR_ULTRA_AUDUSD_5M",
-  "strategy_snapshot_hash": "2be0f6df5b914d9adcb2b7621b8a6474dfc29f35f8be3b610f4fd9083568ac77",
+  "strategy_snapshot_hash": "61bd4d5dccc8b8b963ed9376b212208a4932194faff1ba5b88ded9c6b479198c",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "791582be13d2358c0afb31e724009b591f8cbe965872b8d6b9464816325c0530",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "dce56d86b4c4cfa32600f669d5d81438bd6ee9326740b7fdd37b1c7a9c3030c3",
-  "output_hash": "c894c874383e530e5c83aea3882433d63a16960a0235ee0b2fe6bdf9e39efbd9",
+  "input_hash": "679ae1ee31656620fbb7383deb9286c78d5e00a0f0fb726b747a8de33021b7bb",
+  "output_hash": "73e6caa0d8e8af17dd9fcdb079a00d960703d8329321a0cdcdae2cc804be7550",
   "status": "FAILED",
-  "score": 24.9,
-  "verdict": "FALLO: Consenso insuficiente (24.9/100) u objeción crítica de riesgo",
+  "score": 24.7,
+  "verdict": "FALLO: Consenso insuficiente (24.7/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 24.9,
+    "consensus_score": 24.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 21.2,
+        "score": 20.8,
         "findings": [
           "Activo y Timeframe: AUDUSD (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.25 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.24 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.1% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 80.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 65 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 52 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.3,
+        "score": 30.2,
         "objections": [
-          "Alerta de Drawdown: DD (100.1%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.25 cercano al umbral de equilibrio."
+          "Alerta de Drawdown: DD (100.0%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.24 cercano al umbral de equilibrio."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:26:37.683259+00:00"
+  "created_at_utc": "2026-08-20T08:42:14.885366+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_15M",
   "strategy_id": "UR_ULTRA_ETH_USDT_15M",
-  "strategy_snapshot_hash": "3f203e823df00d96e54e0cce65d1ea932fe726371195a491d4b72e817712f969",
+  "strategy_snapshot_hash": "0151a0503c3f17560eea17fee7d33f9fc4e8418ec9de2a32fc5a97d465bf018c",
   "dataset_id": "ds_binance_ethusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "e6d9bf328c980953fc9a4ecef34ddb7011dadf7e28a5340ba9f7c383b2c3a96f",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "3ebd6b63761acd443d2677c59e9cf0614919858118e57895da298e20e4a83107",
-  "output_hash": "680b9b21a4b7f2bb5073722d63a83640707f832bedcfdaffaec2320b147285a5",
+  "input_hash": "9110ee31e850f85db3ee39e5fae884f101f2b18c91b210682964230b37b5f18a",
+  "output_hash": "33ec71419c8d84137bc613ff19c6012f06f5096bed6c55de29d0c2fd58b8a4ac",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-66.43)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-43.96)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 24,
-      "HIGH_VOLATILITY": 9
+      "CHOP_RANGING": 44,
+      "HIGH_VOLATILITY": 10
     },
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -28.35,
-      "HIGH_VOLATILITY": -38.08
+      "CHOP_RANGING": -41.17,
+      "HIGH_VOLATILITY": -2.79
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -66.43
+    "total_oos_pnl_usd": -43.96
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T04:45:46.765036+00:00"
+  "created_at_utc": "2026-08-20T08:38:49.621270+00:00"
 }

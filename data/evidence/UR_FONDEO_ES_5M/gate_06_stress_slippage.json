@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_ES_5M_g06",
   "run_id": "run_UR_FONDEO_ES_5M",
   "strategy_id": "UR_FONDEO_ES_5M",
-  "strategy_snapshot_hash": "0c0408063d541d7f641bd28ccd65c59a08060d2e7e1dd3f4275fe41d03918476",
+  "strategy_snapshot_hash": "4bd577d16dcef4789c28edd4d4983c2d76363b11d9de71d7bd66d761e30aadba",
   "dataset_id": "ds_trad_es_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "01510bab2c202323ccf80f85918286db619bbcb800c0fe229f63c96e967df488",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8b3e32e6c522c7ab828e487e124c1e2e83a968c4808307b684b671b0cdce38ae",
-  "output_hash": "25b9ef1af348c70095d373acebe5f51574923321c117a4909b22dcce20a22c39",
+  "input_hash": "8423106de0ef87695f83174ddb84b59ffa9f7a7fd221dfac3e46303da424d422",
+  "output_hash": "b8a6351af7245b13b5b78bb25a4dbe6093db6e34fc2dfed7f7ff649b5a10414a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 3.0,
-        "stressed_net_pnl_usd": -5953.52,
-        "stressed_profit_factor": 0.25,
+        "stressed_net_pnl_usd": -11772.05,
+        "stressed_profit_factor": 0.26,
         "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 9.88,
-        "stressed_net_pnl_usd": -6263.34,
-        "stressed_profit_factor": 0.24,
+        "friction_penalty_per_trade_usd": 13.77,
+        "stressed_net_pnl_usd": -12256.67,
+        "stressed_profit_factor": 0.25,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 20.21,
-        "stressed_net_pnl_usd": -6728.05,
-        "stressed_profit_factor": 0.22,
+        "friction_penalty_per_trade_usd": 29.92,
+        "stressed_net_pnl_usd": -12983.6,
+        "stressed_profit_factor": 0.23,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 34.42,
-        "stressed_net_pnl_usd": -7367.58,
-        "stressed_profit_factor": 0.19,
+        "friction_penalty_per_trade_usd": 53.85,
+        "stressed_net_pnl_usd": -14060.16,
+        "stressed_profit_factor": 0.21,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T04:28:14.971640+00:00"
+  "created_at_utc": "2026-08-20T08:43:21.364126+00:00"
 }

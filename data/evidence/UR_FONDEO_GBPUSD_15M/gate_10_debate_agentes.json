@@ -2,21 +2,21 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_15M_g10",
   "run_id": "run_UR_FONDEO_GBPUSD_15M",
   "strategy_id": "UR_FONDEO_GBPUSD_15M",
-  "strategy_snapshot_hash": "a2942368915b31582f88186097832a0137619e77fedd248617ba2aa908f7b719",
+  "strategy_snapshot_hash": "4ca772a89eadf71fc9c927ca3c9f4b53517290116eae691a99fdaa39d11e46e3",
   "dataset_id": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "a71187094aa428bcbf4af246123be644c4ab08ba756151d44e76749370ad0dc4",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b147e45e9ef97d400907a72a5d1977b423b728df1fae421989eba056cbe1d23c",
-  "output_hash": "4b2ff2086044ae248932ea763194a224b79c121415c906c43aa9dbce42d284d9",
+  "input_hash": "b600c72183206b1fab1ab6a56cd4c67eee9cc4b6704b4535238f1dd19f1dfde9",
+  "output_hash": "4d2adfc38da08bd5a0e9b580d8c4b737e4327f6b2e852117955d473ae4bcfc0c",
   "status": "FAILED",
-  "score": 17.9,
-  "verdict": "FALLO: Consenso insuficiente (17.9/100) u objeción crítica de riesgo",
+  "score": 18.9,
+  "verdict": "FALLO: Consenso insuficiente (18.9/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 17.9,
+    "consensus_score": 18.9,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: GBPUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.14 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.05 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 12.7% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 15.4% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -44,9 +44,9 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 65.0,
+        "score": 70.0,
         "findings": [
-          "Muestra fuera de muestra: 26 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 28 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: MODERADO."
         ],
         "approved": true
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 21.2,
+        "score": 22.5,
         "objections": [
-          "Alerta de Drawdown: DD (12.7%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.14 cercano al umbral de equilibrio."
+          "Alerta de Drawdown: DD (15.4%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.05 cercano al umbral de equilibrio."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:29:32.946071+00:00"
+  "created_at_utc": "2026-08-20T08:43:15.941525+00:00"
 }

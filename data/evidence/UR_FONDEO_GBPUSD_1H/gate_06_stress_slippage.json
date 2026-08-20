@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g06",
   "run_id": "run_UR_FONDEO_GBPUSD_1H",
   "strategy_id": "UR_FONDEO_GBPUSD_1H",
-  "strategy_snapshot_hash": "d8e6c228caeda15304f7a3e2e036816d6a34389bf0f2aa503a57dcabad769ddc",
+  "strategy_snapshot_hash": "9448c175e9c43911f69ee5b41a714e02909e73464a459df8d0b4a468003eb24b",
   "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "d74a3c5759a3784d19e06048fa883eca827c8566617348db4a6203e3a155e52f",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c9cc31b15f815f8e9c5ca79634beb876442f99325c22bacec759c8da7de9cb87",
-  "output_hash": "3540620ffd07c8b742f236472041219eb240ce5970254303d2a43d27642efd54",
+  "input_hash": "080c0c9eb7bfec3532ca466126ccd1e94c1cec657889b1d595649471afe8edb4",
+  "output_hash": "48388414709d0accfefd64f593d8e912c573f13932635aaae9c1f6b6559bfbc0",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 3.0,
-        "stressed_net_pnl_usd": -11775.23,
-        "stressed_profit_factor": 0.46,
+        "stressed_net_pnl_usd": -23250.47,
+        "stressed_profit_factor": 0.47,
         "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 12.36,
-        "stressed_net_pnl_usd": -12710.97,
-        "stressed_profit_factor": 0.44,
+        "friction_penalty_per_trade_usd": 18.71,
+        "stressed_net_pnl_usd": -24821.95,
+        "stressed_profit_factor": 0.45,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 26.39,
-        "stressed_net_pnl_usd": -14114.58,
-        "stressed_profit_factor": 0.41,
+        "friction_penalty_per_trade_usd": 42.29,
+        "stressed_net_pnl_usd": -27179.16,
+        "stressed_profit_factor": 0.42,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 46.79,
-        "stressed_net_pnl_usd": -16153.92,
-        "stressed_profit_factor": 0.37,
+        "friction_penalty_per_trade_usd": 78.57,
+        "stressed_net_pnl_usd": -30807.85,
+        "stressed_profit_factor": 0.38,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T04:29:54.478895+00:00"
+  "created_at_utc": "2026-08-20T08:43:51.396952+00:00"
 }

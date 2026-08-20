@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_4H",
   "strategy_id": "UR_ULTRA_SOL_USDT_4H",
-  "strategy_snapshot_hash": "11d28454fa3c56d66a2a4ea5a6eca93ff513f2429658ecf1b9b55188dc05e892",
+  "strategy_snapshot_hash": "5c7f8a436ae2340b60a688f14d1a66d3a35cd8be27e98d15eb2d3e3804ed994b",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "cadbdb0506114213419715f2f47480c7d01394604956b6d12f49582d1c9c1ecd",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "eeeb5a00668819764073e5797f2562271dee8e60965ae9228b88ef8f45feae0c",
-  "output_hash": "0784e23fa04ff001c615d24b4658cfb51f077f06f4ff16b0cabe130007443991",
+  "input_hash": "c9815b1016737311b1b1a525b4a192973342e9ba08124606c93044bf87c44168",
+  "output_hash": "dad6210ae2b6fc620c498b156e33f19fdcb44283c7c3807ab10f05219cc0536b",
   "status": "PASSED",
   "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $1424.33)",
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $27.95)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 477,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 535
     },
     "regime_trades_count": {
-      "BULL_TREND": 24,
-      "BEAR_TREND": 25,
-      "CHOP_RANGING": 38,
-      "HIGH_VOLATILITY": 31
+      "BULL_TREND": 19,
+      "BEAR_TREND": 19,
+      "CHOP_RANGING": 22,
+      "HIGH_VOLATILITY": 25
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 130.25,
-      "BEAR_TREND": 894.32,
-      "CHOP_RANGING": -213.61,
-      "HIGH_VOLATILITY": 613.37
+      "BULL_TREND": 24.86,
+      "BEAR_TREND": -37.37,
+      "CHOP_RANGING": 26.76,
+      "HIGH_VOLATILITY": 13.7
     },
     "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 1424.33
+    "total_oos_pnl_usd": 27.95
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T04:03:58.303468+00:00"
+  "created_at_utc": "2026-08-20T08:34:08.319152+00:00"
 }

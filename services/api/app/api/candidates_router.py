@@ -49,8 +49,9 @@ def list_candidates(
     symbol: Optional[str] = Query(None, description="Filter by symbol (e.g. BTC-USDT, EURUSD, NQ)"),
     timeframe: Optional[str] = Query(None, description="Filter by timeframe (e.g. 1m, 5m, 15m, 1h, 4h)"),
     engine_version: Optional[str] = Query(None, description="Filter by engine version (e.g. 1.02, 1.00)"),
-    include_rejected: bool = Query(False, description="Incluir o no candidatos rechazados"),
-    limit: int = Query(100, ge=1, le=500, description="Max candidates to return"),
+    include_rejected: bool = Query(True, description="Incluir o no candidatos rechazados"),
+    deduplicate_champions: bool = Query(False, description="Deduplicar sólo el mejor candidato por símbolo"),
+    limit: int = Query(250, ge=1, le=1000, description="Max candidates to return"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db)
 ) -> List[Dict[str, Any]]:
@@ -58,8 +59,16 @@ def list_candidates(
     query = db.query(CandidateModel)
     if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
-    if status:
-        query = query.filter(CandidateModel.status == status)
+    if status and status.upper() != "ALL":
+        if status.upper() == "APPROVED":
+            query = query.filter(CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
+        elif status.upper() == "REJECTED":
+            query = query.filter(~CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
+        else:
+            query = query.filter(CandidateModel.status == status)
+    elif not include_rejected:
+        query = query.filter(CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
+
     if symbol and symbol.upper() != "ALL":
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
     if timeframe and timeframe.upper() != "ALL":
@@ -67,17 +76,20 @@ def list_candidates(
     if engine_version and engine_version.upper() != "ALL":
         query = query.filter(CandidateModel.engine_version == engine_version)
         
-    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).limit(150).all()
+    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).offset(offset).limit(limit).all()
     
-    seen_champion_keys = set()
-    filtered_candidates = []
-    for c in candidates:
-        norm_sym = normalize_symbol_key(c.symbol)
-        champ_key = f"{c.route.upper()}_{norm_sym}"
-        if champ_key in seen_champion_keys:
-            continue
-        seen_champion_keys.add(champ_key)
-        filtered_candidates.append(c)
+    if deduplicate_champions:
+        seen_champion_keys = set()
+        filtered_candidates = []
+        for c in candidates:
+            norm_sym = normalize_symbol_key(c.symbol)
+            champ_key = f"{c.route.upper()}_{norm_sym}"
+            if champ_key in seen_champion_keys:
+                continue
+            seen_champion_keys.add(champ_key)
+            filtered_candidates.append(c)
+    else:
+        filtered_candidates = candidates
 
     results = []
     for c in filtered_candidates:
@@ -762,5 +774,41 @@ def revalidate_candidate(candidate_id: str) -> Dict[str, Any]:
     """Revalida una estrategia específica bajo los 11 Gates del motor actual (v1.03)."""
     res = legacy_revalidation_service.revalidate_single_candidate(candidate_id)
     return res
+
+
+@candidates_router.delete("/rejected")
+def purge_rejected_candidates(
+    engine_version: Optional[str] = Query(None, description="Filtrar por versión de motor a purgar (o ALL)"),
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Elimina definitivamente de la base de datos las estrategias descartadas/rechazadas que no pasaron los filtros."""
+    query = db.query(CandidateModel).filter(
+        ~CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "PORTFOLIO_CERTIFIED"])
+    )
+    if engine_version and engine_version.upper() != "ALL":
+        query = query.filter(CandidateModel.engine_version == engine_version)
+    
+    count = query.count()
+    query.delete(synchronize_session=False)
+    db.commit()
+    return {
+        "status": "SUCCESS",
+        "purged_count": count,
+        "message": f"Se han eliminado {count} estrategias descartadas de la base de datos.",
+    }
+
+
+@candidates_router.delete("/{candidate_id}")
+def delete_single_candidate(
+    candidate_id: str,
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Elimina una estrategia específica de la base de datos."""
+    cand = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not cand:
+        raise HTTPException(status_code=404, detail="Estrategia no encontrada")
+    db.delete(cand)
+    db.commit()
+    return {"status": "SUCCESS", "message": f"Estrategia {candidate_id} eliminada correctamente."}
 
 

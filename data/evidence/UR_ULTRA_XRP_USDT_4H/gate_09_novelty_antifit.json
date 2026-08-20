@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g09",
   "run_id": "run_UR_ULTRA_XRP_USDT_4H",
   "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "6ec62f76bf04e188712ff9a209281f94199aae92aefd9196771fc6ed40290678",
+  "strategy_snapshot_hash": "da121fe512b477e3b847e2ff028e6dc57238012d20b9813cd691c813b659a346",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "a79483d3453bf82b9c3304d5ac606d8030a4ed51083292ea517313113112eb60",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "96bc63bbb764969dec24b6c8463c4b89a3208f6edb11c71ae5ca0902a129441e",
-  "output_hash": "7e1d3d5aa11058ee2d3471f61b363c1262a6e339cbd4040e4f8d92f3614adaff",
+  "input_hash": "e05bfc46795fd54b3c1c9fa0d74fec63111c0447db955a7f51884868239770c2",
+  "output_hash": "a9bf2f0438a1075369fd3da19289c37960a7f8da6d5cc7cd4599ed132cf57388",
   "status": "PASSED",
-  "score": 72.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 10.0 trades/param, Estabilidad Vecindario: 94.3%, Re-backtest PFs: [2.93, 2.89, 3.08, 3.81])",
+  "score": 89.2,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.2 trades/param, Estabilidad Vecindario: 104.5%, Re-backtest PFs: [2.03, 2.95, 2.97, 2.88])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 10.0,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 18.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 94.3,
+    "parameter_neighborhood_stability_pct": 104.5,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      2.93,
-      2.89,
-      3.08,
-      3.81
+      2.03,
+      2.95,
+      2.97,
+      2.88
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T04:07:08.630354+00:00"
+  "created_at_utc": "2026-08-20T08:33:38.381980+00:00"
 }

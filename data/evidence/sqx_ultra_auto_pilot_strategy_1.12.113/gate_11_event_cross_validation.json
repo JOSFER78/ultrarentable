@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.113_g11",
+  "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.113",
+  "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.113",
+  "strategy_snapshot_hash": "d533ca2f77e0c7c585dcc6fefa4d46fad88722c1af2f19828dbd5052df2769c6",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8e57a7d47aa517a8b714c799740bc7900e6ed8f0f40ff12a65ca808e66e4a545",
+  "output_hash": "25a9de7d74c27dc24ce89d09ac9d06dc6e7c01da414c906cfeca3308b3cd3ac0",
+  "status": "PASSED",
+  "score": 93.8,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $887.28, Apalancamiento Pico: 2.4x, Dist. Mín. Liquidación: 98.8%, Comisiones+Funding: $49.51)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 887.28,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": 887.28,
+    "peak_leverage_used": 2.4,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 98.8,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 44.01,
+    "total_funding_cost_usd": 5.5,
+    "execution_events_count": 52
+  },
+  "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.113/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T08:38:52.472798+00:00"
+}

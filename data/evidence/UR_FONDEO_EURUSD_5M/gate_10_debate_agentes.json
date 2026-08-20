@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_5M_g10",
   "run_id": "run_UR_FONDEO_EURUSD_5M",
   "strategy_id": "UR_FONDEO_EURUSD_5M",
-  "strategy_snapshot_hash": "88ce0d5577c94b3ab8a7d172de4681facfb4210c6b7881d09a9a51dbdeda1b94",
+  "strategy_snapshot_hash": "22490b51292f8937083083b0569047e1ee658d2382c0dac86500c279586be47b",
   "dataset_id": "ds_trad_eurusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "d5bd5588526d6ec97bf4f9381046b280d659746aba04ba552dcede201a3b78e2",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "61b0207793aa49a79ff8c2dded8ac529c1a5df29e4ff96e52c265fd3c012476e",
-  "output_hash": "6fb87aa045fae264aad2989cc86711f1481f3c3c45e08970cb3be5c159221d26",
+  "input_hash": "4e1acc4a51df00e5a5c8f6fd27c95d7c61ab2a7f3901f1071e3494f4f09a1e32",
+  "output_hash": "5612c9cff5828ac25d04f9c669c62c44a5070d761b73923f36d2464ab04fde90",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 96.3% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 96.9% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 223 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 228 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (96.3%) consume más del 70% del margen tolerable.",
+          "Alerta de Drawdown: DD (96.9%) consume más del 70% del margen tolerable.",
           "Alerta de Rentabilidad: Profit factor 0.01 cercano al umbral de equilibrio."
         ],
         "approved": false
@@ -74,5 +74,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:29:20.808925+00:00"
+  "created_at_utc": "2026-08-20T08:44:03.623002+00:00"
 }

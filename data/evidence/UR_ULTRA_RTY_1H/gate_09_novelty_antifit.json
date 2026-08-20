@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_RTY_1H_g09",
   "run_id": "run_UR_ULTRA_RTY_1H",
   "strategy_id": "UR_ULTRA_RTY_1H",
-  "strategy_snapshot_hash": "ec6d20d3543dc1d3f93d9ce79bdf312a7d37bc791cd9a33db760029ebac59c58",
+  "strategy_snapshot_hash": "23dfc633cb80aa521c7f28aa675f2491c07f6b8f0e48679484237476196db934",
   "dataset_id": "ds_trad_rty_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "d8ebb1dc7c510cf0d9694ae2708733532daa5431b5274938cfb3913667e91221",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "959952174ba00ea76a49b1ba2f536124ae5685da7ad8048c46a8d9384dc94795",
-  "output_hash": "874878e10cb63a896487f1ef05c096fb87bee7424a869788aca8834f32991064",
-  "status": "FAILED",
-  "score": 52.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 8.5 o Estabilidad 129.9% < 60.0%)",
+  "input_hash": "a4fb8a1d098a8aa3bbab5ecab9af4c533093a344c047ac47575e71b1838c3a51",
+  "output_hash": "ca352c7699f4eea518a026b182b7d54c9b583cfbe7e29f6c41b43848d6544ddc",
+  "status": "PASSED",
+  "score": 94.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 21.2 trades/param, Estabilidad Vecindario: 111.1%, Re-backtest PFs: [0.7, 0.72, 0.82, 0.96])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 8.5,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 21.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 129.9,
+    "parameter_neighborhood_stability_pct": 111.1,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.9,
-      0.86,
-      0.95,
-      1.24
+      0.7,
+      0.72,
+      0.82,
+      0.96
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T04:32:40.942216+00:00"
+  "created_at_utc": "2026-08-20T08:41:02.557380+00:00"
 }

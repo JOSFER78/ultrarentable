@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_GC_15M_g07",
   "run_id": "run_UR_FONDEO_GC_15M",
   "strategy_id": "UR_FONDEO_GC_15M",
-  "strategy_snapshot_hash": "027fbaaaa073d83931bf3b915f052d6ad12a17bc6d37f518d44c155b683abeb2",
+  "strategy_snapshot_hash": "0b9708d384db4f0505a8b0cf66d0ea1adcfedc1da0ad6f2b0282378187eb3038",
   "dataset_id": "ds_trad_gc_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "3663ebdccef73495714ed28a557d7ac6263d7150f5005124189784ba3d03bc97",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9437d9a8ecff041a1a88594e6bd84e05f175b6ad54a6628ce7dbf5253c032c50",
-  "output_hash": "35d35562e3f86fbc6361a6dd40fa6781abd48808ccdb1efc432f944beb60bc16",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-682.07)",
+  "input_hash": "70c4479eb567d0c8da261bc5059958608c1ac5475660dec030d0d14c1158fdad",
+  "output_hash": "c016ed5f75f1d0e5c230800cd39c13f20d7dc0ddfce2b1237440f59aff1885e9",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (2/4 regímenes en beneficio, Net PnL: $1831.41)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 1,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 26,
-      "HIGH_VOLATILITY": 1
+      "CHOP_RANGING": 20,
+      "HIGH_VOLATILITY": 2
     },
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -405.76,
-      "HIGH_VOLATILITY": -276.31
+      "CHOP_RANGING": 950.44,
+      "HIGH_VOLATILITY": 880.97
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -682.07
+    "total_oos_pnl_usd": 1831.41
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T04:30:34.456250+00:00"
+  "created_at_utc": "2026-08-20T08:42:52.947269+00:00"
 }

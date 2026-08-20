@@ -426,9 +426,9 @@ class LegacyRevalidationService:
     def get_candidate_ids_to_revalidate(
         self,
         target_version: Optional[str] = None,
-        only_approved: bool = True,
+        only_approved: bool = False,
         route: Optional[str] = None,
-        max_candidates: int = 100,
+        max_candidates: int = 0,
     ) -> List[str]:
         """Obtiene la lista de candidate_ids para revalidar según los filtros."""
         conn = self.get_db_connection()
@@ -442,7 +442,7 @@ class LegacyRevalidationService:
             params.append(target_version)
 
         if only_approved:
-            query += " AND status NOT LIKE 'RECHAZADA%' AND status NOT LIKE 'REJECTED%'"
+            query += " AND status NOT LIKE 'RECHAZADA%' AND status NOT LIKE 'REJECTED%' AND status NOT LIKE 'BLOCKED%'"
 
         if route and route.upper() != "ALL":
             query += " AND route = ?"
@@ -460,7 +460,7 @@ class LegacyRevalidationService:
     def revalidate_legacy_batch(
         self,
         target_version: Optional[str] = None,
-        only_approved: bool = True,
+        only_approved: bool = False,
         route: Optional[str] = None,
         max_candidates: int = 100,
     ) -> Dict[str, Any]:
@@ -500,7 +500,7 @@ class LegacyRevalidationService:
     def start_background_revalidation(
         self,
         target_version: Optional[str] = None,
-        only_approved: bool = True,
+        only_approved: bool = False,
         route: Optional[str] = None,
         max_candidates: int = 0,
     ) -> Dict[str, Any]:

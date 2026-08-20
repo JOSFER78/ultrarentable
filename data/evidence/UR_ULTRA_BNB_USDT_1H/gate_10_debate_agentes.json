@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_BNB_USDT_1H",
   "strategy_id": "UR_ULTRA_BNB_USDT_1H",
-  "strategy_snapshot_hash": "5bcadf6cb8388903b3b0a419d3f07e44ef49db4614610d06c00f0231ee6afaa4",
+  "strategy_snapshot_hash": "19bbab6cbd23b532ba9299069919e79e6d06aae036fd53064006aa396480ac49",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "0b7ff0e1e886bd31e441eef60ff2e7fc404cb5c75d44616d55ebc279ebf4a98c",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b05a23031bd620241b59c3c0afba2d30461d57b41ad077c4cf19d464ac2b1389",
-  "output_hash": "f1bd2e9e1486ea83fede5f36351c51069330fc7f1c06accf0fa34de9859d2c7a",
+  "input_hash": "401716f419f1a87ea323f0ca2f43b2841a149d2607c44a26ffadfb8606bb0198",
+  "output_hash": "839fa98d48d4c9d27b8ff621582ab2c21c9e1971995fdc88f0a8370c83f7f96b",
   "status": "FAILED",
-  "score": 77.1,
-  "verdict": "FALLO: Consenso insuficiente (77.1/100) u objeción crítica de riesgo",
+  "score": 65.1,
+  "verdict": "FALLO: Consenso insuficiente (65.1/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 77.1,
+    "consensus_score": 65.1,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 100.0,
+        "score": 76.2,
         "findings": [
           "Activo y Timeframe: BNB-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 2.15 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.47 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 87.8,
+        "score": 72.4,
         "findings": [
-          "Drawdown Máximo Observado: 14.0% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 31.6% (Límite permitido para ULTRA: 80.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 149 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 150 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 71.9,
+        "score": 62.1,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:41:28.925325+00:00"
+  "created_at_utc": "2026-08-20T08:33:27.951997+00:00"
 }

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_4H_g09",
   "run_id": "run_UR_ULTRA_USDCHF_4H",
   "strategy_id": "UR_ULTRA_USDCHF_4H",
-  "strategy_snapshot_hash": "27217b31f8a74391ef6f1212f577ddc918a5178fea3e6e8132137cb19c9108d3",
+  "strategy_snapshot_hash": "664b271add799be877dab0a0cda9c488e15e17e1fa48bd1bf2e66e861dda4a64",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ea33990db2c973da5f959178ee4b630948a52220660fe7e57dc4528730f2740d",
-  "output_hash": "bc89737947e66aea0f650aea69e967e809506fe0156b3c1e0a73dd4f3edab849",
+  "input_hash": "7253dec44cbe7e65186f4400ea1f7bf23bf9b178487bd489c08e6a0c48027768",
+  "output_hash": "4bfffa029eb7133eaddf3002c839945c69edb146ebcac33e5427d27b15c1832a",
   "status": "FAILED",
-  "score": 100.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 3.1 o Estabilidad 332.5% < 60.0%)",
+  "score": 37.8,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 5.8 o Estabilidad 94.6% < 60.0%)",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 3.1,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 5.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 332.5,
+    "parameter_neighborhood_stability_pct": 94.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.8,
-      0.55,
-      0.52,
-      0.79
+      0.67,
+      0.4,
+      0.84,
+      0.89
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T04:35:44.445793+00:00"
+  "created_at_utc": "2026-08-20T08:41:12.523538+00:00"
 }

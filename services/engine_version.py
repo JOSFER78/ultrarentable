@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 
 
 CURRENT_ENGINE_VERSION = "1.03"
-CURRENT_ENGINE_NAME = "Test Milestone Auto Bump"
+CURRENT_ENGINE_NAME = "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)"
 CURRENT_VALIDATION_PIPELINE_VERSION = "1.03"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
@@ -58,16 +58,22 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
     },
     {
         "version": "1.03",
-        "name": "Test Milestone Auto Bump",
-        "released_at": "2026-08-20T08:20:47.776976+00:00",
+        "name": "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
+        "released_at": "2026-08-20T07:28:27.623229+00:00",
         "status": "CURRENT_RECOMMENDED",
         "status_label": "Actual / Certificada",
-        "description": "Automated unit test bump validation.",
-        "ruleset_hash": "fb10be43dcd3f3d125bffcf00f583ea5",
-        "git_commit": "c246cf324dcdbb52f61a7c8d14799e10d0610020",
+        "description": "Versi\u00f3n mayor de certificaci\u00f3n forense. Implementaci\u00f3n del CanonicalExecutionLedger trade-by-trade, reconciliaci\u00f3n matem\u00e1tica multi-activo de 5 benchmarks reales (SUI, BTC, EURUSD, NQ, CL), blindaje de techo de apalancamiento en Gate 11, cat\u00e1logo de microestructura y costes reales para 44+ activos, aislamiento f\u00edsico del Blind Holdout 60/20/20, c\u00e1lculo probabil\u00edstico de quiebra de cuentas Prop Firm y suite de 231 tests unitarios y de integraci\u00f3n (100% aprobados).",
+        "ruleset_hash": "be3018355b2027b7db2b668e50a8c4c3",
+        "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
         "changes": [
-            "Refactor X",
-            "Add feature Y"
+            "Capa can\u00f3nica de ejecuci\u00f3n f\u00edsica (ExecutionTruth & CanonicalExecutionLedger).",
+            "Reconciliaci\u00f3n trade-by-trade FastEngine vs NautilusTrader en 5 activos globales.",
+            "Eliminaci\u00f3n de la contradicci\u00f3n de leverage en Gate 11 (hard ceiling breach -> REJECTED).",
+            "Cat\u00e1logo can\u00f3nico de costes (InstrumentCostProfile) y bloqueo de activos sin modelo de fricci\u00f3n.",
+            "Aislamiento f\u00edsico del dataset ciego OOS (Blind Holdout) frente a procesos de discovery.",
+            "PropFirmRiskEngine con c\u00e1lculo de probabilidad real de violaci\u00f3n de reglas diarias y trailing DD.",
+            "Estructura formal de Balas ULTRA con riesgo fijo, cero martingalas y cosecha a B\u00f3veda.",
+            "Bater\u00eda de tests adversariales Red-Team profunda y suite completa de 231 tests pasando."
         ]
     }
 ]

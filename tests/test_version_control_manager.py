@@ -25,7 +25,7 @@ def test_codebase_fingerprint_is_valid_sha256():
 def test_version_manifest_loading_and_ssot(tmp_path):
     """Verify loading and writing to an isolated version manifest."""
     manifest_file = tmp_path / "test_version_manifest.json"
-    mgr = VersionControlManager(manifest_file=manifest_file)
+    mgr = VersionControlManager(manifest_file=manifest_file, py_path=None, db_path=None)
     
     assert manifest_file.exists()
     ver = mgr.get_active_version()
@@ -35,7 +35,7 @@ def test_version_manifest_loading_and_ssot(tmp_path):
 def test_version_bump_increments_and_persists(tmp_path):
     """Verify programmatic version bump increments string and updates manifest."""
     manifest_file = tmp_path / "test_version_manifest.json"
-    mgr = VersionControlManager(manifest_file=manifest_file)
+    mgr = VersionControlManager(manifest_file=manifest_file, py_path=None, db_path=None)
     
     initial_ver = mgr.get_active_version()
     next_expected = mgr.increment_version_string(initial_ver)

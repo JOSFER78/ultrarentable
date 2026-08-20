@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1M_g10",
   "run_id": "run_UR_ULTRA_BNB_USDT_1M",
   "strategy_id": "UR_ULTRA_BNB_USDT_1M",
-  "strategy_snapshot_hash": "d61eb3bec8ac66f521616eaeba5dfc6569b4f34f6efef04e9d0843115064e3e4",
+  "strategy_snapshot_hash": "a6be1caa8cbd78b22d1244b458e6b6677f77796dcf3a1f50770be220e04df595",
   "dataset_id": "ds_binance_bnbusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "82a657fc9f567cae2216cd71ee1a26e6e349260d68f4ea450492b06947fc76b4",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "e8d27205055022e7bc1b0ada9efc8f91709915056f12e779170943a18406a323",
-  "output_hash": "348d402570dc06e25a06859f4374302cd7b32251f94fe9044e67bddc7f499885",
+  "input_hash": "475a9537f138b29b77d70917d53445ca069f56d21b8973e94cb004536644b3ee",
+  "output_hash": "81ce788fdbe58b14aef3aafdb0294f88359a7ccb9dc6076515331209f68a0c9d",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BNB-USDT (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.10 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.00 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 47 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 36 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -67,12 +67,12 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.10 cercano al umbral de equilibrio."
+          "Alerta de Rentabilidad: Profit factor 0.00 cercano al umbral de equilibrio."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:41:41.232929+00:00"
+  "created_at_utc": "2026-08-20T08:42:26.576648+00:00"
 }

@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_5M_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_5M",
   "strategy_id": "UR_ULTRA_LINK_USDT_5M",
-  "strategy_snapshot_hash": "f8f038ba9d6b3bbc93bacca01e7e6457df17e6c35b2dd473f2fecfd1ff519181",
+  "strategy_snapshot_hash": "e4e1045ca93e3303e4387b54474cc8bcd82939ecf597acd957526b1bde0215e8",
   "dataset_id": "ds_binance_linkusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "52e90433d24664403dfab958a6f8485e8712bd7e49787521df556d17f6fe6531",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ba5a1db953cbfcc245136e95d2803c140330145882d0383d0eb8e58ccb681da1",
-  "output_hash": "eab02367d078d2c16238291850182a5078ab1a6e76ca9729272625d6805c2054",
+  "input_hash": "e2e8c0d562ff85df5148ff217f45516a4dc5c2341f8213c5183ee5c8226fddc9",
+  "output_hash": "dc6da01baf36b6127244ef76af10b57fb26f2a23d6c029b4b849378f907228d4",
   "status": "FAILED",
-  "score": 60.3,
-  "verdict": "FALLO: Consenso insuficiente (60.3/100) u objeción crítica de riesgo",
+  "score": 50.8,
+  "verdict": "FALLO: Consenso insuficiente (50.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 60.3,
+    "consensus_score": 50.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 56.4,
+        "score": 45.1,
         "findings": [
           "Activo y Timeframe: LINK-USDT (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.03 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.78 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 75.1,
+        "score": 56.5,
         "findings": [
-          "Drawdown Máximo Observado: 28.5% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 49.8% (Límite permitido para ULTRA: 80.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 42 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 53 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 57.9,
+        "score": 50.4,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 1.03 cercano al umbral de equilibrio."
+          "Alerta de Rentabilidad: Profit factor 0.78 cercano al umbral de equilibrio."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:02:30.961686+00:00"
+  "created_at_utc": "2026-08-20T08:36:32.170093+00:00"
 }

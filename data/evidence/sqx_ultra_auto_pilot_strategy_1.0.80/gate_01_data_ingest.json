@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.80_g01",
+  "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.80",
+  "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.80",
+  "strategy_snapshot_hash": "e8ec8c8241b1b54b6961b9fe08bd8ab3f055751c73595935cd9c4bbf44569fe3",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "0c3efc4c884b957872e66ea7e2697f3d75b497869854359b8677a0132abaed7f",
+  "output_hash": "d6db0326cb0fd50c3f5ac6e5796b0a7ec81b5ed493c0a74b283f32cbc825e2e3",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (2100 velas, SHA256: 27ac6391..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 2100,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 3600,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.80/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T08:39:00.882373+00:00"
+}

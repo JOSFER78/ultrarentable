@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_RTY_5M_g09",
   "run_id": "run_UR_ULTRA_RTY_5M",
   "strategy_id": "UR_ULTRA_RTY_5M",
-  "strategy_snapshot_hash": "bcc0c534c6f3ae131d6118240de960864cc95410f889230eec716d224ebd1668",
+  "strategy_snapshot_hash": "23256c7019038593207997289a5e041dd83d4bfc4d4b2869a45e0ed4d8218768",
   "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "bdb1d47a77cfe072f3e89d1240f2cdba13d44dd53e66ffcfd3c5c03c9ee3881e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "307b618675f0423a0107dad2b216cf67c8928a7a405943e259cf2758f601c8d1",
-  "output_hash": "a0caccfb1db3b7d540a9eba8dd970e5ba5608d5e179c207b9c098c710fe25781",
-  "status": "FAILED",
-  "score": 27.9,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 9.6 o Estabilidad 69.7% < 60.0%)",
+  "input_hash": "1f0a3691be9726517e989e48db7eb9acf81851d10a12d4264c8e33eee2bb2fa6",
+  "output_hash": "c561a1e7a5c17acc30fcbe8950800ef475ea6b3f42bbd607f9dbe2257ae1cdde",
+  "status": "PASSED",
+  "score": 64.8,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 17.2 trades/param, Estabilidad Vecindario: 62.0%, Re-backtest PFs: [0.15, 0.18, 0.11, 0.13])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 9.6,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 17.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 69.7,
+    "parameter_neighborhood_stability_pct": 62.0,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.19,
+      0.15,
       0.18,
-      0.04,
-      0.12
+      0.11,
+      0.13
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T04:33:08.817618+00:00"
+  "created_at_utc": "2026-08-20T08:42:39.547166+00:00"
 }

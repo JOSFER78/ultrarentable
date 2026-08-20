@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_4H_g05",
   "run_id": "run_UR_FONDEO_EURUSD_4H",
   "strategy_id": "UR_FONDEO_EURUSD_4H",
-  "strategy_snapshot_hash": "b43d030beb8b59264e14868aaf03e6555d30e94b000dc785790c4dbacfa0e084",
+  "strategy_snapshot_hash": "260ff041e2af2cecec8daf85a41aa34cdd4069043d148bc1fcb7bf98d95646ba",
   "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "a24ec26d2f12cf627e897e36bc3600900eb71cc2a676b806e5db1e26fce578da",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "28c017c2248548d72ed17c99f44378549aa59b8d7e6d8202ce5199a9289bf0be",
-  "output_hash": "b5e642323991ca7636fc0a7561a18229aa7dfe6c0aca4057e86bfb198ae97b09",
+  "input_hash": "e602529ba9d424c9d58a46ed785090429cb012fd942b6ca7c0b1ea027ced8a76",
+  "output_hash": "a51e4bccdf755be35a61da427964eb71ec30aebee92ba9dfa3706f0a0c233fcb",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 95.6% > 1.0%",
+  "verdict": "FALLO: Riesgo Ruina 96.4% > 1.0%",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 95.6,
-    "drawdown_median_pct": 9.8,
-    "drawdown_95th_percentile_pct": 15.4,
-    "max_simulated_drawdown_pct": 19.4
+    "ruin_probability_pct": 96.4,
+    "drawdown_median_pct": 10.8,
+    "drawdown_95th_percentile_pct": 19.1,
+    "max_simulated_drawdown_pct": 24.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_4H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T04:28:59.582629+00:00"
+  "created_at_utc": "2026-08-20T08:43:17.607615+00:00"
 }

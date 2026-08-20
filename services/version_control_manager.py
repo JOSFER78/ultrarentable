@@ -73,18 +73,26 @@ def compute_codebase_fingerprint() -> str:
 class VersionControlManager:
     """Administrador centralizado de versiones del motor cuántico."""
 
-    def __init__(self, manifest_file: Path = MANIFEST_PATH):
+    def __init__(
+        self,
+        manifest_file: Path = MANIFEST_PATH,
+        py_path: Optional[Path] = ENGINE_VERSION_PY_PATH,
+        db_path: Optional[Path] = DB_PATH,
+    ):
         self.manifest_file = manifest_file
-        EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+        self.py_path = py_path
+        self.db_path = db_path
+        if self.manifest_file.parent:
+            self.manifest_file.parent.mkdir(parents=True, exist_ok=True)
         self._ensure_manifest_exists()
 
     def _ensure_manifest_exists(self) -> None:
         """Crea el archivo version_manifest.json si no existe con el baseline inicial."""
         if not self.manifest_file.exists():
             initial_data = {
-                "active_version": "1.02",
-                "active_name": "Ultrarentable Dual-Engine V1.02 (Zero-Simulation Forensic)",
-                "pipeline_version": "1.02",
+                "active_version": "1.03",
+                "active_name": "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
+                "pipeline_version": "1.03",
                 "codebase_fingerprint": compute_codebase_fingerprint(),
                 "git_commit": get_git_commit_hash(),
                 "last_bump_utc": datetime.now(timezone.utc).isoformat(),
@@ -121,8 +129,8 @@ class VersionControlManager:
                         "version": "1.02",
                         "name": "Ultrarentable V1.02 (Zero-Simulation Forensic & Exact Math)",
                         "released_at": "2026-08-20T00:00:00Z",
-                        "status": "CURRENT_RECOMMENDED",
-                        "status_label": "Actual / Certificada",
+                        "status": "INTERMEDIATE",
+                        "status_label": "Intermedia (1.02)",
                         "description": "Endurecimiento Zero-Simulation, cálculo estricto de ROI OOS por velas reales y persistencia de versiones en DB y Firebase.",
                         "ruleset_hash": "e6f498c17b520ad98341fbcd2981045a",
                         "git_commit": "121caf5",
@@ -130,6 +138,23 @@ class VersionControlManager:
                             "Normalización temporal exacta por recuento de velas OOS.",
                             "Eliminación de sobreescritura de estados.",
                             "Sincronización en Firebase Cloud.",
+                        ],
+                    },
+                    {
+                        "version": "1.03",
+                        "name": "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
+                        "released_at": "2026-08-20T07:28:27Z",
+                        "status": "CURRENT_RECOMMENDED",
+                        "status_label": "Actual / Certificada",
+                        "description": "Versión mayor de certificación forense. Pipeline de 11 Gates, CanonicalExecutionLedger, reconciliación multi-activo y costes reales.",
+                        "ruleset_hash": "be3018355b2027b7db2b668e50a8c4c3",
+                        "git_commit": "96b34e2",
+                        "changes": [
+                            "Capa canónica de ejecución física (ExecutionTruth & CanonicalExecutionLedger).",
+                            "Reconciliación trade-by-trade FastEngine vs NautilusTrader en 5 activos globales.",
+                            "Eliminación de la contradicción de leverage en Gate 11.",
+                            "Catálogo canónico de costes y fricción real.",
+                            "Aislamiento físico del dataset ciego OOS (Blind Holdout).",
                         ],
                     },
                 ],
@@ -144,7 +169,7 @@ class VersionControlManager:
             with open(self.manifest_file, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
-            return {"active_version": "1.02", "history": []}
+            return {"active_version": "1.03", "history": []}
 
     def save_manifest(self, data: Dict[str, Any]) -> None:
         """Guarda los datos del manifiesto en disco."""
@@ -153,7 +178,23 @@ class VersionControlManager:
 
     def get_active_version(self) -> str:
         """Devuelve la versión activa actual (e.g. '1.02' o '1.03')."""
-        return self.load_manifest().get("active_version", "1.02")
+        return self.load_manifest().get("active_version", "1.03")
+
+    def get_runtime_build_id(self) -> str:
+        """Calcula el ID de build dinámico basado en la huella SHA-256 actual del código."""
+        fp = compute_codebase_fingerprint()
+        return fp[:8]
+
+    def sync_active_fingerprint(self) -> Dict[str, Any]:
+        """Sincroniza la huella criptográfica activa del código sin crear una nueva versión mayor."""
+        manifest = self.load_manifest()
+        fp = compute_codebase_fingerprint()
+        git_c = get_git_commit_hash()
+        manifest["codebase_fingerprint"] = fp
+        manifest["git_commit"] = git_c
+        self.save_manifest(manifest)
+        self._sync_engine_version_py(manifest)
+        return manifest
 
     def get_full_version_info(self) -> Dict[str, Any]:
         """Devuelve el estado completo de versionado incluyendo changelog y huella de código."""
@@ -162,9 +203,10 @@ class VersionControlManager:
         is_drifted = (current_fp != manifest.get("codebase_fingerprint"))
         
         return {
-            "active_version": manifest.get("active_version", "1.02"),
+            "active_version": manifest.get("active_version", "1.03"),
             "active_name": manifest.get("active_name", ""),
-            "pipeline_version": manifest.get("pipeline_version", "1.02"),
+            "pipeline_version": manifest.get("pipeline_version", "1.03"),
+            "build_id": current_fp[:8],
             "codebase_fingerprint": manifest.get("codebase_fingerprint", ""),
             "current_runtime_fingerprint": current_fp,
             "code_drift_detected": is_drifted,
@@ -249,7 +291,9 @@ class VersionControlManager:
         return manifest
 
     def _sync_engine_version_py(self, manifest: Dict[str, Any]) -> None:
-        """Regenera services/engine_version.py de forma determinista."""
+        """Regenera services/engine_version.py de forma determinista si self.py_path está definido."""
+        if not self.py_path:
+            return
         active_ver = manifest["active_version"]
         active_name = manifest["active_name"]
         history_json = json.dumps(manifest["history"], indent=4)
@@ -296,15 +340,15 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload
 '''
-        with open(ENGINE_VERSION_PY_PATH, "w", encoding="utf-8") as f:
+        with open(self.py_path, "w", encoding="utf-8") as f:
             f.write(content)
 
     def _record_in_sqlite(self, entry: Dict[str, Any]) -> None:
         """Registra el histórico de versiones en la base de datos SQLite WAL."""
-        if not DB_PATH.exists():
+        if not self.db_path or not self.db_path.exists():
             return
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(self.db_path)
             cur = conn.cursor()
             cur.execute(
                 """

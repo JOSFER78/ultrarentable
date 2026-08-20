@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.124_g07",
+  "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.124",
+  "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.124",
+  "strategy_snapshot_hash": "24923a2e29261a0c69fefcec928b25b97c9ef6cb6395d65d59eecad471cf006f",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "246797293469f4c5db061ed4065794a10fdb912d113fed6516c9a9b287012ea0",
+  "output_hash": "faa310e91c580c63e7ee13fe4a9d6150bbf49af9df5134e1a2dc25a6be34053a",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-63.22)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 1675,
+      "HIGH_VOLATILITY": 425
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 48,
+      "HIGH_VOLATILITY": 4
+    },
+    "regime_net_pnl_usd": {
+      "BULL_TREND": 0.0,
+      "BEAR_TREND": 0.0,
+      "CHOP_RANGING": -57.39,
+      "HIGH_VOLATILITY": -5.83
+    },
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 2,
+    "total_oos_pnl_usd": -63.22
+  },
+  "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.124/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-20T08:37:20.020451+00:00"
+}

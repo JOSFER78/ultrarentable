@@ -101,7 +101,7 @@ export default function CandidatosFSMPage() {
   const [activeTab, setActiveTab] = useState<"individual" | "ensemble">("individual");
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
+  const [selectedStatus, setSelectedStatus] = useState<string>("APPROVED");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
   const [versionFilter, setVersionFilter] = useState<string>("ALL");
@@ -379,8 +379,26 @@ export default function CandidatosFSMPage() {
     }
   };
 
-  const isApprovedStatus = (status: string) =>
-    status === "APPROVED" || status === "ULTRA_CERTIFIED" || status === "FUNDING_CERTIFIED" || status === "PORTFOLIO_CERTIFIED";
+  const isCandidateRejected = (status?: string) => {
+    if (!status) return true;
+    const s = status.toUpperCase();
+    return (
+      s.startsWith("RECHAZADA") ||
+      s.startsWith("REJECTED") ||
+      s.startsWith("BLOCKED") ||
+      s.startsWith("FAILED") ||
+      s.includes("INCOMPLETE")
+    );
+  };
+
+  const isApprovedStatus = (status?: string) => {
+    if (!status) return false;
+    const s = status.toUpperCase();
+    return (
+      !isCandidateRejected(status) &&
+      (s === "APPROVED" || s === "ULTRA_CERTIFIED" || s === "FUNDING_CERTIFIED" || s === "PORTFOLIO_CERTIFIED" || s.startsWith("CERTIFIED"))
+    );
+  };
 
   const top5Ultra = useMemo(() => candidates.filter((c) => c.route === "ULTRA" && isApprovedStatus(c.status)).slice(0, 5), [candidates]);
   const top5Fondeo = useMemo(() => candidates.filter((c) => c.route === "FONDEO" && isApprovedStatus(c.status)).slice(0, 5), [candidates]);
@@ -598,6 +616,10 @@ ${entryLogic}`;
   }, [candidates, version]);
 
   const filteredCandidates = candidates.filter((c) => {
+    const isApproved = isApprovedStatus(c.status);
+    const isRejected = isCandidateRejected(c.status);
+    if (selectedStatus === "APPROVED" && !isApproved) return false;
+    if (selectedStatus === "REJECTED" && !isRejected) return false;
     if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
     if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
     if (versionFilter !== "ALL" && (c.engine_version || "1.00") !== versionFilter) return false;

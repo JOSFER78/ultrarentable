@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1H",
-  "strategy_snapshot_hash": "0e7ed6ae0e2470523e12c04d266a7845bcfc2e1760573b8fbf483e04166ddeae",
+  "strategy_snapshot_hash": "b4743e50081de47f46dec91c773fb4d68a664aab5b57a43d90c6ba93fb93cf73",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "dfabfbb0cf8261ea477f50f9073a4c2a3585a045d92b1717ade81f83fbbe0d8c",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c129209cee13a542c5de6b2c596c61d65f53d98243e7dba57e0467d69d80813e",
-  "output_hash": "55e081a75bbeb03bcd5b4937e6b43d62925b5cca3de77f6c456ae3a390627b7f",
+  "input_hash": "9c7bb8fa9f6e8fcb6c19e0f20b5a93a3fd083900bc0d6900c73d2112ee818b37",
+  "output_hash": "9539e521a632c93dc9c8940a7b3043b1987eeadb6092d8b01ceb206f0cac13f8",
   "status": "PASSED",
-  "score": 77.5,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.5 trades/param, Estabilidad Vecindario: 79.8%, Re-backtest PFs: [1.3, 1.8, 2.63, 1.96])",
+  "score": 90.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 34.2 trades/param, Estabilidad Vecindario: 84.8%, Re-backtest PFs: [1.2, 1.5, 1.73, 1.95])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 18.5,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 34.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 79.8,
+    "parameter_neighborhood_stability_pct": 84.8,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.3,
-      1.8,
-      2.63,
-      1.96
+      1.2,
+      1.5,
+      1.73,
+      1.95
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T04:44:42.968015+00:00"
+  "created_at_utc": "2026-08-20T08:33:18.517852+00:00"
 }

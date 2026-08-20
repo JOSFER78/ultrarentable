@@ -2,50 +2,50 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_4H_g06",
   "run_id": "run_UR_ULTRA_SUI_USDT_4H",
   "strategy_id": "UR_ULTRA_SUI_USDT_4H",
-  "strategy_snapshot_hash": "d37b8469c687fe5e3fb34e5601cd5930e9447aa087fbbe89b1620802f8e78d84",
+  "strategy_snapshot_hash": "bab961e0ec77e2e45d3e9c7dd4d157b3dab7bc19aab8e06b8793e602148e357c",
   "dataset_id": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
-  "dataset_sha256": "4a408a645da2d8005cafc980d1bb2b9b477a4391f0b706b8999a8551da31c9d0",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8db0e054927ba17c0e24197f327068afa1a817513f1904751ceee2817fe1488a",
-  "output_hash": "84d48a60e04631e8040aeb64ddbddc5df2d9ecf9f7fc21c800943162c1a81d19",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Resistencia a fricción verificada (4/4 escenarios aprobados, PF +1σ: 2.36)",
+  "input_hash": "1b929bd380842253e9fc89e6e79de7eda6bb91e747c21a19f6d508990ba3cf8e",
+  "output_hash": "055e758468f3860713205240f97abd6a6f8dc6af65a8cbbecb6d7d8cf7667d28",
+  "status": "FAILED",
+  "score": 15.0,
+  "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (1/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 3.0,
-        "stressed_net_pnl_usd": 1980.93,
-        "stressed_profit_factor": 3.18,
+        "stressed_net_pnl_usd": 82.21,
+        "stressed_profit_factor": 1.43,
         "survived": true
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 8.05,
-        "stressed_net_pnl_usd": 1622.41,
-        "stressed_profit_factor": 2.36,
-        "survived": true
+        "friction_penalty_per_trade_usd": 6.35,
+        "stressed_net_pnl_usd": -75.07,
+        "stressed_profit_factor": 0.77,
+        "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 15.62,
-        "stressed_net_pnl_usd": 1084.63,
-        "stressed_profit_factor": 1.67,
-        "survived": true
+        "friction_penalty_per_trade_usd": 11.37,
+        "stressed_net_pnl_usd": -310.99,
+        "stressed_profit_factor": 0.41,
+        "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 25.25,
-        "stressed_net_pnl_usd": 401.33,
-        "stressed_profit_factor": 1.19,
-        "survived": true
+        "friction_penalty_per_trade_usd": 16.73,
+        "stressed_net_pnl_usd": -563.19,
+        "stressed_profit_factor": 0.25,
+        "survived": false
       }
     },
-    "passed_scenarios_count": 4,
+    "passed_scenarios_count": 1,
     "min_required_scenarios": 2,
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T04:05:35.008889+00:00"
+  "created_at_utc": "2026-08-20T08:33:47.536986+00:00"
 }

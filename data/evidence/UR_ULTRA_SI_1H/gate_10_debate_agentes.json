@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_SI_1H_g10",
   "run_id": "run_UR_ULTRA_SI_1H",
   "strategy_id": "UR_ULTRA_SI_1H",
-  "strategy_snapshot_hash": "ec644800b647eace054d5079a1dddbeb458caa635acf6aad199a3db95e5ca368",
+  "strategy_snapshot_hash": "6e672a419d12f167fdef6332bb9f41e7385790305dcb44bebbcd9c3afcd051fc",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "34e668861a72da0b5983474de0bc31169b3461f267de794348331b8d96134e91",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "e585484776e1dbfa2bbc3c1bcd78f58450a8170672145b0c3a609a4576b389ff",
-  "output_hash": "b2dd043e3a3626e90049e66c7f73d5501f133ef3a053e45c93569385eb7b3900",
+  "input_hash": "e23f150e9563df9cc652257a7d1966ca851416d2139aec50b766ff4032d85afb",
+  "output_hash": "873d33e1339d85c7f485d54a94bb6d139ea34b8d9c49cd6a6a9c53944fde9729",
   "status": "FAILED",
-  "score": 72.9,
-  "verdict": "FALLO: Consenso insuficiente (72.9/100) u objeción crítica de riesgo",
+  "score": 76.8,
+  "verdict": "FALLO: Consenso insuficiente (76.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 72.9,
+    "consensus_score": 76.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 86.5,
+        "score": 100.0,
         "findings": [
           "Activo y Timeframe: SI (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.70 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 2.28 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 86.8,
+        "score": 86.7,
         "findings": [
-          "Drawdown Máximo Observado: 15.1% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 15.2% (Límite permitido para ULTRA: 80.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 65 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 76 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 68.3,
+        "score": 71.7,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:33:32.230019+00:00"
+  "created_at_utc": "2026-08-20T08:34:35.273971+00:00"
 }

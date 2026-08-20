@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
-  "strategy_snapshot_hash": "6b1cec2c23d574f3bebf5756fc569a02c1fbd207275124fc1a9af93685ec0c8f",
+  "strategy_snapshot_hash": "13aed4d41f127ba3e2f79d1fb4ca921800285453a6c78910fd2e64d7e3a868f1",
   "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "82bc0d93a0546009307f5a02ac9653ebed03485fe3a81a3cfeda634ad483da42",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9b6f05b06428069a32617e86ced8c27269db87653adbb09bc3f56b869030558b",
-  "output_hash": "680d7a8c3f159eb8c9a9ff47bc100a3c18e3fa0032311d60fe7532527e7fc6b2",
+  "input_hash": "ad9dc07f1fb3c3eb8023557158a6cb7e00ef092ab51a448fcf8a95801d084f55",
+  "output_hash": "29d2d76b9a46ee0bbf873d519f53f9d2fb71f0d3defd5dcd565b12458a39244a",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (4/4 regímenes en beneficio, Net PnL: $2221.54)",
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $130.32)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 401,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 487
     },
     "regime_trades_count": {
-      "BULL_TREND": 28,
-      "BEAR_TREND": 24,
-      "CHOP_RANGING": 28,
-      "HIGH_VOLATILITY": 20
+      "BULL_TREND": 19,
+      "BEAR_TREND": 21,
+      "CHOP_RANGING": 21,
+      "HIGH_VOLATILITY": 17
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 432.17,
-      "BEAR_TREND": 77.25,
-      "CHOP_RANGING": 1420.44,
-      "HIGH_VOLATILITY": 291.68
+      "BULL_TREND": 31.63,
+      "BEAR_TREND": 18.91,
+      "CHOP_RANGING": 92.04,
+      "HIGH_VOLATILITY": -12.26
     },
-    "regimes_profitable_count": 4,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 2221.54
+    "total_oos_pnl_usd": 130.32
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T04:45:14.040380+00:00"
+  "created_at_utc": "2026-08-20T08:33:42.319418+00:00"
 }

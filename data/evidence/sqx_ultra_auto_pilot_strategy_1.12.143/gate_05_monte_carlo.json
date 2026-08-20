@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.143_g05",
+  "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.143",
+  "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.143",
+  "strategy_snapshot_hash": "9385a7a47e26babae21e7ef0c84ad31904e19b2259be6b32ecb5a537897bfe7d",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "9200a46b16ddc16e3cbef1bb0cabee778cf8b9045feab0c6f211da15c2038492",
+  "output_hash": "6b2bd9e3dc44ea56bddde421b0db0d96173b9a1385e9a562cc6773cd682f7d1f",
+  "status": "PASSED",
+  "score": 95.8,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 8.4%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 6.5,
+    "drawdown_95th_percentile_pct": 8.4,
+    "max_simulated_drawdown_pct": 10.1
+  },
+  "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.143/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T08:39:44.073369+00:00"
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useEngineVersion } from "@/hooks/useEngineVersion";
 
@@ -29,6 +29,8 @@ export default function StrategiesExplorerPage() {
   const [mounted, setMounted] = useState(false);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSilentRefreshing, setIsSilentRefreshing] = useState(false);
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState<number>(0); // 0 = Manual / Sin parpadeos
   const [selectedRoute, setSelectedRoute] = useState<"ALL" | "ULTRA" | "FONDEO">("ALL");
   const [selectedSymbol, setSelectedSymbol] = useState<string>("ALL");
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("ALL");
@@ -47,11 +49,12 @@ export default function StrategiesExplorerPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(25);
 
-  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "ALL" | "REJECTED">("ALL");
+  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "ALL" | "REJECTED">("APPROVED");
   const [sortField, setSortField] = useState<string>("monthly_roi_pct");
   const [sortDirection, setSortDirection] = useState<"DESC" | "ASC">("DESC");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [purgeLoading, setPurgeLoading] = useState<boolean>(false);
 
   const [sqxProjects, setSqxProjects] = useState<any[]>([]);
   const [sqxLoading, setSqxLoading] = useState<boolean>(false);
@@ -63,9 +66,12 @@ export default function StrategiesExplorerPage() {
   const [ultraSubTab, setUltraSubTab] = useState<"INDIVIDUAL" | "PORTFOLIOS">("INDIVIDUAL");
   const [ultraPortfolios, setUltraPortfolios] = useState<any[]>([]);
 
-  const loadCandidates = useCallback(async () => {
+  const loadCandidates = useCallback(async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) {
+        setLoading(true);
+      }
+      setIsSilentRefreshing(true);
       const url = selectedRoute !== "ALL"
         ? `/api/v1/candidates?route=${selectedRoute}&limit=500&include_rejected=true`
         : `/api/v1/candidates?limit=500&include_rejected=true`;
@@ -94,13 +100,31 @@ export default function StrategiesExplorerPage() {
       console.error("Error loading candidates and portfolios:", e);
     } finally {
       setLoading(false);
+      setIsSilentRefreshing(false);
     }
   }, [selectedRoute]);
+
+  const purgeRejectedStrategies = async () => {
+    if (!window.confirm("¿Seguro que deseas purgar y eliminar definitivamente todas las estrategias descartadas de la base de datos?")) {
+      return;
+    }
+    try {
+      setPurgeLoading(true);
+      const res = await fetch("/api/v1/candidates/rejected", { method: "DELETE" });
+      if (res.ok) {
+        await loadCandidates(true);
+      }
+    } catch (e) {
+      console.error("Error purgando descartadas:", e);
+    } finally {
+      setPurgeLoading(false);
+    }
+  };
 
   // Revalidation Modal State
   const [showRevalModal, setShowRevalModal] = useState<boolean>(false);
   const [revalTargetVersion, setRevalTargetVersion] = useState<string>("ALL");
-  const [revalOnlyApproved, setRevalOnlyApproved] = useState<boolean>(true);
+  const [revalOnlyApproved, setRevalOnlyApproved] = useState<boolean>(false); // False = Reevaluar todas
   const [revalRoute, setRevalRoute] = useState<string>("ALL");
   const [revalLimit, setRevalLimit] = useState<number>(0); // 0 = Todas
   const [revalStatus, setRevalStatus] = useState<any | null>(null);
@@ -113,14 +137,19 @@ export default function StrategiesExplorerPage() {
       if (res.ok) {
         const data = await res.json();
         setRevalStatus(data);
-        if (data.status === "RUNNING") {
-          loadCandidates();
-        }
       }
     } catch {
       // quiet fallback
     }
-  }, [loadCandidates]);
+  }, []);
+
+  const prevRevalStatusRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (revalStatus?.status === "COMPLETED" && prevRevalStatusRef.current === "RUNNING") {
+      loadCandidates(true);
+    }
+    prevRevalStatusRef.current = revalStatus?.status || null;
+  }, [revalStatus?.status, loadCandidates]);
 
   useEffect(() => {
     fetchRevalStatus();
@@ -146,7 +175,6 @@ export default function StrategiesExplorerPage() {
       if (res.ok) {
         setShowFinishedResults(false);
         await fetchRevalStatus();
-        await loadCandidates();
       }
     } catch (err) {
       console.error("Error executing revalidation:", err);
@@ -231,17 +259,25 @@ export default function StrategiesExplorerPage() {
 
   useEffect(() => {
     setMounted(true);
-    loadCandidates();
+    loadCandidates(false);
     fetchSQXState();
 
-    // Auto-connect & Heartbeat interval (every 4 seconds)
+    // Auto-connect & SQX Heartbeat interval (every 5 seconds, silent)
     const interval = setInterval(() => {
       fetchSQXState();
-      loadCandidates();
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [loadCandidates, fetchSQXState]);
+
+  // Optional Auto-Refresh interval (configurable by user, silent, zero flickering)
+  useEffect(() => {
+    if (autoRefreshInterval <= 0) return;
+    const interval = setInterval(() => {
+      loadCandidates(true);
+    }, autoRefreshInterval * 1000);
+    return () => clearInterval(interval);
+  }, [autoRefreshInterval, loadCandidates]);
 
   const availableVersions = useMemo(() => {
     const set = new Set<string>();
@@ -253,10 +289,36 @@ export default function StrategiesExplorerPage() {
     return Array.from(set).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
   }, [candidates, version]);
 
+  const isCandidateRejected = (status?: string) => {
+    if (!status) return true;
+    const s = status.toUpperCase();
+    return (
+      s.startsWith("RECHAZADA") ||
+      s.startsWith("REJECTED") ||
+      s.startsWith("BLOCKED") ||
+      s.startsWith("FAILED") ||
+      s.includes("INCOMPLETE")
+    );
+  };
+
+  const isCandidateApproved = (status?: string) => {
+    if (!status) return false;
+    const s = status.toUpperCase();
+    return (
+      !isCandidateRejected(status) &&
+      (s === "APPROVED" || s === "ULTRA_CERTIFIED" || s === "FUNDING_CERTIFIED" || s === "PORTFOLIO_CERTIFIED" || s.startsWith("CERTIFIED"))
+    );
+  };
+
+  const approvedCount = useMemo(() => candidates.filter((c) => isCandidateApproved(c.status)).length, [candidates]);
+  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status)).length, [candidates]);
+  const totalCount = candidates.length;
+
   // Filter candidates strictly according to user doctrine
   const filtered = candidates.filter((c) => {
-    const isRejected = c.status?.startsWith("RECHAZADA");
-    if (statusFilter === "APPROVED" && isRejected) return false;
+    const isRejected = isCandidateRejected(c.status);
+    const isApproved = isCandidateApproved(c.status);
+    if (statusFilter === "APPROVED" && !isApproved) return false;
     if (statusFilter === "REJECTED" && !isRejected) return false;
     if (selectedRoute !== "ALL" && c.route?.toUpperCase() !== selectedRoute) return false;
     if (selectedSymbol !== "ALL" && !c.symbol?.includes(selectedSymbol)) return false;
@@ -445,24 +507,52 @@ export default function StrategiesExplorerPage() {
           >
             ⚡ NautilusTrader Core
           </Link>
-          <button
-            onClick={loadCandidates}
-            style={{
-              background: "rgba(99, 225, 180, 0.12)",
-              border: "1px solid rgba(99, 225, 180, 0.3)",
-              color: "#63e1b4",
-              padding: "5px 10px",
-              borderRadius: "6px",
-              fontSize: "11px",
-              fontWeight: 800,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-            }}
-          >
-            🔄 Recargar
-          </button>
+          {/* Intelligent Refresh & Anti-Flicker Control */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(0,0,0,0.3)", padding: "2px 6px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <button
+              onClick={() => loadCandidates(true)}
+              disabled={isSilentRefreshing}
+              style={{
+                background: isSilentRefreshing ? "rgba(99, 225, 180, 0.25)" : "rgba(99, 225, 180, 0.12)",
+                border: "1px solid rgba(99, 225, 180, 0.3)",
+                color: "#63e1b4",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: isSilentRefreshing ? "wait" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+              title="Recargar datos manualmente sin parpadeos"
+            >
+              <span style={{ display: "inline-block", transform: isSilentRefreshing ? "rotate(180deg)" : "none", transition: "transform 0.4s" }}>🔄</span>
+              <span>{isSilentRefreshing ? "Actualizando..." : "Recargar"}</span>
+            </button>
+
+            <select
+              value={autoRefreshInterval}
+              onChange={(e) => setAutoRefreshInterval(Number(e.target.value))}
+              style={{
+                background: "rgba(0,0,0,0.5)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                color: autoRefreshInterval > 0 ? "#34d399" : "#94a3b8",
+                fontSize: "10.5px",
+                fontWeight: 700,
+                borderRadius: "4px",
+                padding: "3px 6px",
+                outline: "none",
+                cursor: "pointer",
+              }}
+              title="Configurar intervalo de auto-actualización sin parpadeos"
+            >
+              <option value={0}>⏸️ Refresco Manual</option>
+              <option value={10}>🟢 Auto 10s</option>
+              <option value={30}>🟢 Auto 30s</option>
+              <option value={60}>🟢 Auto 60s</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -589,7 +679,7 @@ export default function StrategiesExplorerPage() {
                 borderBottom: statusFilter === "APPROVED" ? "2px solid #10b981" : "none",
               }}
             >
-              ✓ APROBADAS ({candidates.filter((c) => !c.status?.startsWith("RECHAZADA")).length})
+              ✓ APROBADAS ({approvedCount})
             </button>
             <button
               onClick={() => setStatusFilter("ALL")}
@@ -604,7 +694,7 @@ export default function StrategiesExplorerPage() {
                 color: statusFilter === "ALL" ? "#ffffff" : "#94a3b8",
               }}
             >
-              🌐 TODAS ({candidates.length})
+              🌐 TODAS ({totalCount})
             </button>
             <button
               onClick={() => setStatusFilter("REJECTED")}
@@ -619,9 +709,33 @@ export default function StrategiesExplorerPage() {
                 color: statusFilter === "REJECTED" ? "#f87171" : "#94a3b8",
               }}
             >
-              ⛔ DESCARTADAS ({candidates.filter((c) => c.status?.startsWith("RECHAZADA")).length})
+              ⛔ DESCARTADAS ({rejectedCount})
             </button>
           </div>
+
+          {statusFilter === "REJECTED" && rejectedCount > 0 && (
+            <button
+              onClick={purgeRejectedStrategies}
+              disabled={purgeLoading}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                padding: "4px 10px",
+                background: "rgba(239, 68, 68, 0.25)",
+                border: "1px solid rgba(239, 68, 68, 0.6)",
+                borderRadius: "5px",
+                color: "#fca5a5",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: purgeLoading ? "wait" : "pointer",
+              }}
+              title="Eliminar de la base de datos todas las estrategias que no pasaron los filtros"
+            >
+              <span>🗑️</span>
+              <span>{purgeLoading ? "Purgando..." : "Purgar Descartadas"}</span>
+            </button>
+          )}
 
           <div style={{ width: "1px", height: "20px", background: "rgba(255,255,255,0.1)", margin: "0 4px" }} />
 
@@ -944,31 +1058,106 @@ export default function StrategiesExplorerPage() {
                 </tr>
               ) : paginatedCandidates.length === 0 ? (
                 <tr>
-                  <td colSpan={14} style={{ textAlign: "center", padding: "48px 20px", color: "#94a3b8" }}>
-                    <div style={{ fontSize: "36px", marginBottom: "12px" }}>🛡️</div>
-                    <div style={{ fontSize: "15px", fontWeight: 800, color: "#f87171", marginBottom: "8px" }}>
-                      0 ESTRATEGIAS ACTIVAS CON RENTABILIDAD ≥ 20.0% MENSUAL
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#94a3b8", maxWidth: "600px", margin: "0 auto 16px auto", lineHeight: "1.6" }}>
-                      Por regla inquebrantable, las estrategias descartadas automáticamente (+0.1%/mes o con drawdown excesivo) están <strong>ocultas</strong>. El sistema no admite estrategias mediocres.
-                    </div>
-                    <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                      <button
-                        onClick={() => handleSQXAction("RUN", "Ultra_Auto_Pilot")}
-                        style={{
-                          padding: "8px 16px",
-                          borderRadius: "6px",
-                          background: "rgba(16, 185, 129, 0.2)",
-                          border: "1px solid rgba(16, 185, 129, 0.4)",
-                          color: "#34d399",
-                          fontSize: "12px",
-                          fontWeight: 800,
-                          cursor: "pointer",
-                        }}
-                      >
-                        ▶️ Iniciar Minería Multiactivo SQX
-                      </button>
-                    </div>
+                  <td colSpan={14} style={{ textAlign: "center", padding: "44px 20px", color: "#94a3b8" }}>
+                    <div style={{ fontSize: "36px", marginBottom: "10px" }}>🛡️</div>
+                    
+                    {statusFilter === "APPROVED" ? (
+                      <div>
+                        <div style={{ fontSize: "15px", fontWeight: 800, color: "#f87171", marginBottom: "6px" }}>
+                          0 ESTRATEGIAS APROBADAS BAJO EL MOTOR v1.03
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#94a3b8", maxWidth: "620px", margin: "0 auto 16px auto", lineHeight: "1.6" }}>
+                          Por directiva estricta <strong>Zero-Mock & Real-Only</strong>, el sistema no maquilla resultados ni muestra estrategias que no superen los 11 Gates cuantitativos. Las {rejectedCount} estrategias históricas evaluadas fueron descartadas por no cumplir los criterios de microestructura, costes reales o drawdown.
+                        </div>
+
+                        {/* Status sync indicator */}
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "6px 14px", borderRadius: "8px", marginBottom: "16px", fontSize: "11.5px", color: "#34d399", fontWeight: 700 }}>
+                          <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 8px #10b981" }} />
+                          <span>Minería Continua 24/7 Autónoma Activa · Minando y evaluando candidatos en segundo plano</span>
+                        </div>
+
+                        <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                          <button
+                            onClick={() => setStatusFilter("REJECTED")}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              padding: "8px 16px",
+                              borderRadius: "6px",
+                              background: "rgba(239, 68, 68, 0.15)",
+                              border: "1px solid rgba(239, 68, 68, 0.35)",
+                              color: "#f87171",
+                              fontSize: "12px",
+                              fontWeight: 800,
+                              cursor: "pointer",
+                            }}
+                          >
+                            <span>⛔</span>
+                            <span>Ver Estrategias Descartadas ({rejectedCount})</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleSQXAction("SYNC")}
+                            disabled={sqxLoading}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              padding: "8px 16px",
+                              borderRadius: "6px",
+                              background: "rgba(56, 189, 248, 0.15)",
+                              border: "1px solid rgba(56, 189, 248, 0.35)",
+                              color: "#38bdf8",
+                              fontSize: "12px",
+                              fontWeight: 800,
+                              cursor: sqxLoading ? "wait" : "pointer",
+                            }}
+                          >
+                            <span>🔄</span>
+                            <span>{sqxLoading ? "Sincronizando..." : "Sincronizar Databanks SQX"}</span>
+                          </button>
+
+                          <Link
+                            href="/sistema"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              padding: "8px 16px",
+                              borderRadius: "6px",
+                              background: "rgba(255, 255, 255, 0.08)",
+                              border: "1px solid rgba(255, 255, 255, 0.15)",
+                              color: "#e2e8f0",
+                              fontSize: "12px",
+                              fontWeight: 800,
+                              textDecoration: "none",
+                            }}
+                          >
+                            <span>📊</span>
+                            <span>Supervisión de Workers</span>
+                          </Link>
+                        </div>
+                      </div>
+                    ) : statusFilter === "REJECTED" ? (
+                      <div>
+                        <div style={{ fontSize: "15px", fontWeight: 800, color: "#94a3b8", marginBottom: "6px" }}>
+                          0 ESTRATEGIAS DESCARTADAS
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#64748b", maxWidth: "500px", margin: "0 auto", lineHeight: "1.5" }}>
+                          No hay estrategias descartadas con los filtros actuales de símbolo, temporalidad o versión.
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div style={{ fontSize: "15px", fontWeight: 800, color: "#94a3b8", marginBottom: "6px" }}>
+                          NO SE ENCONTRARON ESTRATEGIAS
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#64748b", maxWidth: "500px", margin: "0 auto", lineHeight: "1.5" }}>
+                          No hay estrategias que coincidan con la búsqueda o filtros seleccionados.
+                        </div>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ) : (
@@ -1505,7 +1694,7 @@ export default function StrategiesExplorerPage() {
                   </button>
                 </div>
               </div>
-            ) : showFinishedResults && revalStatus?.status === "COMPLETED" ? (
+            ) : (revalStatus?.status === "COMPLETED" && (revalStatus?.results?.length > 0 || showFinishedResults)) ? (
               /* Completed Results Screen */
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "18px" }}>

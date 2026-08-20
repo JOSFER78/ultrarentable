@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.80_g02",
+  "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.80",
+  "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.80",
+  "strategy_snapshot_hash": "e8ec8c8241b1b54b6961b9fe08bd8ab3f055751c73595935cd9c4bbf44569fe3",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "1895e2a6c9c6265641fff7a1463f445d5ba17db9eff84af7bea4efaf0888aa00",
+  "output_hash": "5030eef86d091af96509177508a74fabe6ec86cd61229ed57601c7739dfeb164",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.14 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "Bitcoin Perpetuo",
+    "exchange": "Binance / BingX / FTMO",
+    "gross_pnl_usd": -24.71,
+    "total_fees_usd": 44.01,
+    "total_slippage_usd": 0.35,
+    "net_pnl_usd": -69.06,
+    "net_profit_factor": 0.14,
+    "drag_cost_pct": 179.51
+  },
+  "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.80/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T08:39:00.893150+00:00"
+}
