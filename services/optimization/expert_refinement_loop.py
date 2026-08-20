@@ -32,7 +32,14 @@ from services.engine_version import CURRENT_ENGINE_VERSION
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
-from services.semantic_ai.semantic_engine import FailureKnowledgeDB, CriticAgent, ImproverAgent
+from services.semantic_ai.semantic_engine import (
+    FailureKnowledgeDB,
+    InterpreterAgent,
+    CriticAgent,
+    ImproverAgent,
+    RegimeAnalystAgent,
+    AdversarialResearcherAgent,
+)
 
 logger = logging.getLogger("ExpertRefinementLoop")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -42,7 +49,7 @@ DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normal
 
 
 class ExpertStrategyOptimizer:
-    """Servicio de reprogramación y dopaje algorítmico en bucle cerrado."""
+    """Servicio de reprogramación, dopaje algorítmico y optimización en bucle cerrado con 5 agentes de IA."""
 
     def __init__(self, db_path: Optional[Path] = None, data_dir: Optional[Path] = None):
         self.db_path = db_path or DB_PATH
@@ -53,8 +60,11 @@ class ExpertStrategyOptimizer:
         self.gates_orchestrator = GatePipelineOrchestrator()
         self.cert_registry = CertificationRegistry()
         self.failure_db = FailureKnowledgeDB()
+        self.interpreter = InterpreterAgent()
         self.critic = CriticAgent(self.failure_db)
         self.improver = ImproverAgent(self.failure_db)
+        self.regime_analyst = RegimeAnalystAgent()
+        self.adversarial = AdversarialResearcherAgent()
 
     def find_dataset_file(self, symbol: str, timeframe: str) -> Optional[Path]:
         """Localiza el dataset físico normalizado correspondiente al símbolo y timeframe."""
