@@ -187,6 +187,7 @@ def test_backtest_contracts():
         strategy_id="UR-CANON-001",
         engine_type=EngineType.FAST_APPROXIMATE,
         dataset_id="ds_btc_h1_2026",
+        ledger_hash="ledger_sha256_mock",
         initial_capital_usd=10000.0,
         final_equity_usd=14200.0,
         net_profit_usd=4200.0,

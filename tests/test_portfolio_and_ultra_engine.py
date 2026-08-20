@@ -36,6 +36,8 @@ def create_sample_trades(symbol: str, count: int = 50, win_pct: float = 0.55) ->
                 quantity=1.0,
                 leverage=1.0,
                 gross_pnl_usd=pnl,
+                fee_usd=1.50,
+                slippage_usd=1.00,
                 net_pnl_usd=pnl - 2.5,
                 return_pct=ret,
                 return_r=ret,

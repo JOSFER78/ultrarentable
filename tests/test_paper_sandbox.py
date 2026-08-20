@@ -67,6 +67,7 @@ def test_incubation_evaluator_drift_and_promotion():
         strategy_id=strat.strategy_id,
         engine_type=EngineType.FAST_APPROXIMATE,
         dataset_id="ds_mes_01",
+        ledger_hash="ledger_hash_mes_01",
         initial_capital_usd=10000.0,
         final_equity_usd=13500.0,
         net_profit_usd=3500.0,

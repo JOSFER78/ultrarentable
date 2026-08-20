@@ -103,6 +103,7 @@ async def test_event_bus_multi_subscriber_flow():
             strategy_id=event.request.strategy_id,
             engine_type=event.request.engine_type,
             dataset_id=event.request.dataset.dataset_id,
+            ledger_hash="ledger_hash_event_bus",
             initial_capital_usd=10000.0,
             final_equity_usd=12500.0,
             net_profit_usd=2500.0,
