@@ -62,14 +62,16 @@
   - *Futuros CME & Materias Primas*: `NQ`, `ES`, `YM`, `RTY`, `GC`, `SI`, `CL`, `NG`, `FDAX`, `FTSE`, `NK225`.
 
 ### 3.2 RUTA FONDEO (EXÁMENES PROP FIRMS & CUENTAS INSTITUCIONALES)
-- **Filosofía**: Superación sistemática de evaluaciones de Prop Firms (Apex, Topstep, FTMO, etc.) y preservación del capital institucional.
-- **Capital Base**: **$\$50.000\text{ USD}$**.
-- **Sizing de Riesgo**: **$0.5\% - 1.0\%$ por trade** ($\$250 - \$500\text{ USD}$).
+- **Filosofía**: Superación rápida y sistemática de evaluaciones de Prop Firms (Apex, Topstep, FTMO) en sprint de **$\le 3 - 5$ días hábiles** preservando el Drawdown institucional.
+- **Capital Base**: **$\$50.000\text{ USD}$** (Objetivo de pase: $+6.0\% = +\$3.000\text{ USD}$).
+- **Sizing de Riesgo**: **$0.7\% - 1.0\%$ por trade** ($\$350 - \$500\text{ USD}$) con **Dynamic Drawdown Cushion Sizing**.
+- **Horizonte de Sprint**: Diseñado para alcanzar el Profit Target en $\le 5$ días de trading concentrando 2 a 4 operaciones de alta asimetría ($R \ge 2.5$) por sesión RTH.
 - **Interés Compuesto**: **DESHABILITADO**. Lotes fijos / contratos fijos CME (1 o 2 contratos).
 - **Piramidación**: **PROHIBIDA**. Exposición lineal estricta.
-- **Drawdown Máximo**: **$4.0\% - 4.5\%$** (Límite estricto de Apex/Topstep de $\$2.000 - \$2.500\text{ USD}$). Cualquier DD $> 4.0\%$ es motivo de descarte fatal.
+- **Drawdown Máximo**: **$4.0\%$ estricto** (Límite de Apex/Topstep de $\$2.000\text{ USD}$). Cualquier DD $> 4.0\%$ es motivo de descarte fatal.
 - **Límite de Pérdida Diaria**: **$\le 2.0\%$ diario** ($\le \$1.000\text{ USD}$ al día) con auto-flatten al $1.5\%$.
-- **Universo de Activos**: Solo instrumentos regulados autorizados por firmas de fondeo (`NQ`, `ES`, `YM`, `RTY`, `GC`, `CL`, `6E`, `EURUSD`, `GBPUSD`, `USDJPY`).
+- **Filtro de Sesión**: Operar exclusivamente en horario regular de alta liquidez (**RTH Nueva York: 13:30 a 20:00 UTC**).
+- **Universo de Activos**: Solo instrumentos regulados autorizados por firmas de fondeo (`NQ`, `ES`, `YM`, `RTY`, `GC`, `SI`, `CL`, `6E`, `EURUSD`, `GBPUSD`, `USDJPY`).
 
 ---
 
