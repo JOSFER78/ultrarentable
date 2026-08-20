@@ -112,8 +112,13 @@ class EvidenceGateDecision(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     decision_id: str
     strategy_id: str
+    strategy_snapshot_hash: str = Field(..., description="Hash SHA-256 de la definición canónica inmutable")
+    dataset_sha256: str = Field(..., description="Hash SHA-256 del dataset físico verificado")
+    execution_config_hash: str = Field(..., description="Hash SHA-256 de la configuración canónica de microestructura")
+    ledger_hash: str = Field(..., description="Hash SHA-256 del CanonicalExecutionLedger de origen")
     track: ValidationTrack
     approved: bool
     timestamp_ms: int
+    gate_records_count: int = Field(default=11, ge=1, description="Número de Gates evaluados con EvidenceRecord")
     provenance_hash_sha256: str
     details: FondeoValidationResult | UltraValidationResult
