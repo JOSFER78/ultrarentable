@@ -113,7 +113,7 @@ class ProvenanceMetadata(BaseModel):
 
 
 class CanonicalStrategy(BaseModel):
-    """Contrato Canónico Universal de Estrategia para Ultrarentable V2."""
+    """Contrato Canónico Universal de Estrategia para Ultrarentable V2 (SSOT Inmutable)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     schema_version: str = "2.0.0"
@@ -132,6 +132,19 @@ class CanonicalStrategy(BaseModel):
     
     provenance: ProvenanceMetadata
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+    def model_post_init(self, __context: Any) -> None:
+        """Valida que no existan parámetros funcionales ocultos en metadata que evadan el hash canónico."""
+        forbidden_keys = {
+            "risk", "leverage", "stop_loss", "take_profit", "rules",
+            "session", "timeframe", "sizing", "pyramiding", "margin", "indicator"
+        }
+        found_forbidden = set(self.metadata.keys()) & forbidden_keys
+        if found_forbidden:
+            raise ValueError(
+                f"VIOLACION_SSOT_METADATA: Parámetros funcionales prohibidos detectados en metadata: {found_forbidden}. "
+                f"Todos los parámetros que afecten señales, riesgo o ejecución deben residir en campos canónicos explícitos."
+            )
 
     def compute_sha256(self) -> str:
         """Calcula el hash criptográfico SHA-256 inmutable de la definición canónica."""

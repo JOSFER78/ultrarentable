@@ -48,8 +48,8 @@ class TradeLog(BaseModel):
     quantity: float = Field(..., gt=0.0)
     leverage: float = Field(1.0, ge=0.0)
     gross_pnl_usd: float
-    fee_usd: float = Field(0.0, ge=0.0)
-    slippage_usd: float = Field(0.0, ge=0.0)
+    fee_usd: float = Field(..., ge=0.0, description="Comisión real pagada (requerida)")
+    slippage_usd: float = Field(..., ge=0.0, description="Slippage real incurrido (requerido)")
     net_pnl_usd: float
     return_pct: float
     return_r: float
@@ -69,6 +69,7 @@ class BacktestRequest(BaseModel):
     strategy_id: str
     engine_type: EngineType = EngineType.FAST_APPROXIMATE
     dataset: DatasetSnapshot
+    execution_config_hash: Optional[str] = Field(None, description="Hash SHA256 de la configuración canónica de ejecución")
     initial_capital_usd: float = Field(10000.0, gt=0.0)
     leverage: int = Field(1, ge=1, le=500)
     fee_multiplier: float = Field(1.0, ge=0.0)
@@ -76,11 +77,13 @@ class BacktestRequest(BaseModel):
 
 
 class BacktestResult(BaseModel):
+    """Proyección de lectura (Read Model) derivada obligatoriamente del CanonicalExecutionLedger."""
     model_config = ConfigDict(frozen=True, extra="forbid")
     request_id: str
     strategy_id: str
     engine_type: EngineType
     dataset_id: str
+    ledger_hash: str = Field(..., description="Hash SHA-256 del CanonicalExecutionLedger de origen")
     
     # Métricas Principales
     initial_capital_usd: float
