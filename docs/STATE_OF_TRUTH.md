@@ -1,7 +1,7 @@
 # ESTADO DE LA VERDAD (STATE OF TRUTH) — ULTRARENTABLE
 > **AUTORIDAD ÚNICA DE DOCUMENTACIÓN BASADA EN EVIDENCIA FÍSICA**
-> **Última Generación Automática:** `2026-08-20 17:48:22 UTC`
-> **Commit Hash:** `001aa41` (`001aa41a722509d2f704294d5f47146db6390476`) | **Rama:** `main`
+> **Última Generación Automática:** `2026-08-20 17:59:16 UTC`
+> **Commit Hash:** `905b704` (`905b704c6dbbc74819d505df4d89bb94cee05939`) | **Rama:** `main`
 
 ---
 
@@ -11,10 +11,10 @@
 | :--- | :--- | :--- |
 | **Doctrina** | `ZERO-MOCK / REAL-ONLY` | [AGENTS.md](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/.agents/AGENTS.md) |
 | **Versión del Motor Activo** | `v1.05 — Ultrarentable V1.05 (Pure Dimensional Quant Architecture, % & R-Multiples Unification & Dynamic Git Versioning)` | [services/version_control_manager.py](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/services/version_control_manager.py) |
-| **Huella Criptográfica del Motor** | `0b1200810c2537736bf51d0c...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
+| **Huella Criptográfica del Motor** | `d0ea52e994f9c78f73220621...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
 | **Estado del Laboratorio** | `CERTIFICADO FORENSE / RECONCILIACIÓN CROSS-ENGINE COMPLETADA` | [data/evidence/execution_reconciliation.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/execution_reconciliation.json) |
 | **Datasets Físicos Normalizados** | `112 datasets reales` | `data/normalized/*.json` con SHA-256 |
-| **Estrategias en SQLite WAL** | `214 totales (v1.00: 92, v1.02: 24, v1.04: 98)` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
+| **Estrategias en SQLite WAL** | `218 totales (v1.00: 92, v1.02: 24, v1.04: 98, v1.05: 4)` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
 | **Suite de Tests Backend** | `236 tests pasados (100%)` | `pytest services/api/tests/ tests/` |
 | **Compilación Frontend** | `33/33 rutas Next.js compiladas` | `apps/web/` (`npm run build`) |
 | **Persistencia Cloud** | `Firebase RTDB (pecemi-default-rtdb)` | `/ultrarentable/engine_versions` |

@@ -398,6 +398,23 @@ class ExecutionSessionModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class PortfolioModel(Base):
+    __tablename__ = "portfolios"
+    portfolio_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    target_route = Column(String, default="ULTRA")  # ULTRA, FONDEO
+    base_capital_usd = Column(Float, default=10000.0)
+    components_json = Column(Text, nullable=False)
+    correlation_matrix_json = Column(Text, nullable=True)
+    equity_growth_curve_json = Column(Text, nullable=True)
+    annualized_roi_pct = Column(Float, default=0.0)
+    monthly_roi_pct = Column(Float, default=0.0)
+    max_drawdown_pct = Column(Float, default=0.0)
+    profit_factor = Column(Float, default=0.0)
+    canonical_hash = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class AuditEventModel(Base):
     __tablename__ = "audit_events"
     event_id = Column(String, primary_key=True, index=True)

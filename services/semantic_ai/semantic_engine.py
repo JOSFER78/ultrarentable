@@ -5,7 +5,7 @@ Garantiza la Regla Absoluta de Gobernanza: 'La IA propone, el Evidence Gate apru
 
 from __future__ import annotations
 
-import random
+import hashlib
 import time
 import uuid
 from enum import Enum
@@ -97,7 +97,7 @@ class CriticAgent:
 
 
 class ImproverAgent:
-    """Motor genético y semántico de mutación que recombina y mejora estrategias."""
+    """Motor genético y semántico de mutación determinista que recombina y mejora estrategias."""
 
     def __init__(self, failure_db: FailureKnowledgeDB) -> None:
         self.failure_db = failure_db
@@ -107,16 +107,22 @@ class ImproverAgent:
         base_strategy: CanonicalStrategy,
         max_attempts: int = 10,
     ) -> CanonicalStrategy:
-        """Genera una mutación válida que NO colisione con patrones fallidos conocidos."""
+        """Genera una mutación determinista válida que NO colisione con patrones fallidos conocidos."""
         current_rules = base_strategy.rules
         mutated_rules = current_rules
 
-        for _ in range(max_attempts):
-            # Mutar período de indicador o umbral
+        # Tabla determinista de pasos cuantitativos (Zero-Mocks / Cero Random)
+        step_offsets = [2, -2, 4, -1, 3, -3, 5, -4, 1, 6]
+        thresh_offsets = [-2.0, 2.0, -4.0, 4.0, -1.0, 1.0, -3.0, 3.0, -5.0, 5.0]
+
+        for attempt in range(max_attempts):
+            step = step_offsets[attempt % len(step_offsets)]
+            th_step = thresh_offsets[attempt % len(thresh_offsets)]
+
             new_longs = []
             for cond in current_rules.long_conditions:
-                new_period = max(5, cond.left_indicator.period + random.choice([-2, -1, 1, 2, 5]))
-                new_threshold = cond.threshold_value + random.choice([-5.0, -2.0, 2.0, 5.0]) if cond.threshold_value else None
+                new_period = max(5, cond.left_indicator.period + step)
+                new_threshold = round(cond.threshold_value + th_step, 1) if cond.threshold_value else None
                 new_longs.append(
                     RuleCondition(
                         left_indicator=IndicatorSpec(
@@ -140,13 +146,13 @@ class ImproverAgent:
                 mutated_rules = candidate_tree
                 break
 
-        # Adaptar salidas y apalancamiento
+        # Adaptar salidas de forma determinista
         new_sl = base_strategy.exits.stop_loss_ticks
         new_tp = base_strategy.exits.take_profit_ticks
         if new_sl:
-            new_sl = max(10, new_sl + random.choice([-2, 2, 5]))
+            new_sl = max(10, new_sl + step_offsets[0])
         if new_tp:
-            new_tp = max(20, new_tp + random.choice([-5, 5, 10]))
+            new_tp = max(20, new_tp + (step_offsets[0] * 2))
 
         now_ms = int(time.time() * 1000)
         u_suffix = uuid.uuid4().hex[:6].upper()

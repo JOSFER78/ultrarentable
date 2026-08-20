@@ -1,11 +1,120 @@
-"""Portfolios Router: Multi-Strategy Portfolio Sprints for Prop Firm Challenges."""
+from dataclasses import asdict
+from typing import Any, Dict, List, Optional
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
 
-from typing import Any, Dict, List
-from fastapi import APIRouter
+from services.api.app.db.database import SessionLocal, CandidateModel, PortfolioModel
 from services.api.app.factory.portfolio_sprint_engine import build_fondeo_sprint_portfolios
 from services.api.app.factory.ultra_portfolio_engine import build_ultra_hyperscale_portfolios
+from services.portfolio.meta_ensemble_service import MetaEnsembleService
 
 portfolios_router = APIRouter(prefix="/api/v1/portfolios", tags=["portfolios"])
+
+
+class AssemblePortfolioRequest(BaseModel):
+    candidate_ids: List[str] = Field(..., min_items=2, description="Lista de IDs de estrategias en activos distintos.")
+    ensemble_name: Optional[str] = Field(None, description="Nombre personalizado del Meta-Portafolio.")
+    target_route: Optional[str] = Field(None, description="Ruta cuantitativa: ULTRA o FONDEO.")
+    total_capital_usd: Optional[float] = Field(None, description="Capital base total en USD.")
+
+
+@portfolios_router.get("/available-candidates")
+def get_available_candidates_for_meta(route: Optional[str] = Query(None)) -> List[Dict[str, Any]]:
+    """Retorna candidatos certificados disponibles agrupados por activo para ensamblar Meta-Portafolios."""
+    db = SessionLocal()
+    try:
+        q = db.query(CandidateModel)
+        if route:
+            q = q.filter(CandidateModel.route == route.upper())
+        candidates = q.order_by(CandidateModel.profit_factor.desc()).all()
+
+        return [
+            {
+                "candidate_id": c.candidate_id,
+                "name": c.name,
+                "route": c.route,
+                "symbol": c.symbol,
+                "timeframe": c.timeframe,
+                "annualized_roi": c.annualized_roi,
+                "max_drawdown": c.max_drawdown,
+                "profit_factor": c.profit_factor,
+                "win_rate": c.win_rate,
+                "total_trades": c.total_trades,
+                "gates_passed_count": c.gates_passed_count or 11,
+                "is_certified": (c.gates_passed_count == 11),
+            }
+            for c in candidates
+        ]
+    finally:
+        db.close()
+
+
+@portfolios_router.post("/assemble-debate")
+def assemble_and_debate_meta_portfolio(req: AssemblePortfolioRequest) -> Dict[str, Any]:
+    """Ensambla un Meta-Portafolio multi-activo sobre datos reales y ejecuta el debate de los 5 agentes."""
+    service = MetaEnsembleService()
+    try:
+        res = service.assemble_meta_strategy(
+            candidate_ids=req.candidate_ids,
+            ensemble_name=req.ensemble_name,
+            target_route=req.target_route,
+            total_capital_usd=req.total_capital_usd,
+        )
+        return {
+            "status": "SUCCESS",
+            "meta_ensemble": {
+                "ensemble_id": res.ensemble_id,
+                "name": res.name,
+                "route": res.route,
+                "total_capital_usd": res.total_capital_usd,
+                "components": [asdict(c) for c in res.components],
+                "correlation_matrix": res.correlation_matrix,
+                "drawdown_correlation_matrix": res.drawdown_correlation_matrix,
+                "avg_cross_correlation": res.avg_cross_correlation,
+                "max_cross_correlation": res.max_cross_correlation,
+                "combined_annualized_roi_pct": res.combined_annualized_roi_pct,
+                "combined_monthly_roi_pct": res.combined_monthly_roi_pct,
+                "combined_max_dd_pct": res.combined_max_dd_pct,
+                "combined_profit_factor": res.combined_profit_factor,
+                "combined_sharpe_ratio": res.combined_sharpe_ratio,
+                "diversification_ratio": res.diversification_ratio,
+                "combined_equity_curve": res.combined_equity_curve,
+                "agents_debate": res.agents_debate,
+                "consensus_verdict": res.consensus_verdict,
+                "consensus_score": res.consensus_score,
+                "created_at_utc": res.created_at_utc,
+                "canonical_hash": res.canonical_hash,
+            },
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error durante el ensamblaje: {str(e)}")
+
+
+@portfolios_router.get("/assembled")
+def list_assembled_portfolios() -> List[Dict[str, Any]]:
+    """Lista todos los Meta-Portafolios ensamblados y persistidos en SQLite."""
+    db = SessionLocal()
+    try:
+        ports = db.query(PortfolioModel).order_by(PortfolioModel.created_at.desc()).all()
+        return [
+            {
+                "portfolio_id": p.portfolio_id,
+                "name": p.name,
+                "target_route": p.target_route,
+                "base_capital_usd": p.base_capital_usd,
+                "annualized_roi_pct": p.annualized_roi_pct,
+                "monthly_roi_pct": p.monthly_roi_pct,
+                "max_drawdown_pct": p.max_drawdown_pct,
+                "profit_factor": p.profit_factor,
+                "canonical_hash": p.canonical_hash,
+                "created_at": str(p.created_at),
+            }
+            for p in ports
+        ]
+    finally:
+        db.close()
 
 
 @portfolios_router.get("/fondeo-sprints")
