@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_GBPJPY_1h_g01",
+  "run_id": "run_UR_BEST_ULTRA_GBPJPY_1h",
+  "strategy_id": "UR_BEST_ULTRA_GBPJPY_1h",
+  "strategy_snapshot_hash": "cc8e4ea873cd726519d64f7c9aac81b1a3d02de2c720ed0f845b8f503596cb9a",
+  "dataset_id": "ds_GBPJPY_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "ba0d90213be49a2e575500c560666d4f17083f5ca42f59b86c92243491fc7fb9",
+  "output_hash": "457ce990eb8f054d3a7921b84f9af73b03ec01ca47e4da7764ae8be1531c4bdf",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (5000 velas, SHA256: 493a0024..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 5000,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 3600,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "493a00245ebd324e793d1ca381fe043ee221bcc083305e1261868c53c534353c",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_GBPJPY_1h/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T20:49:18.441165+00:00"
+}

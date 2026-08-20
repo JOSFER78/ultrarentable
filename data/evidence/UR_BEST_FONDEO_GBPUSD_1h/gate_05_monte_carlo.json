@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_BEST_FONDEO_GBPUSD_1h_g05",
+  "run_id": "run_UR_BEST_FONDEO_GBPUSD_1h",
+  "strategy_id": "UR_BEST_FONDEO_GBPUSD_1h",
+  "strategy_snapshot_hash": "6d9b7e43967ebf61a9056af5ddc5804ab1418d0879adc1338f12d9cf129db803",
+  "dataset_id": "ds_GBPUSD_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "cd65c2e718d2511b0669bd08428b5845e4f37ea3f2fe49294c634a1443e26cdc",
+  "output_hash": "3071cf8dda2e842b7e5a689415105409c5c96396c6a99bfe270e2702c32ca914",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 25.6%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 100.0,
+    "drawdown_median_pct": 21.4,
+    "drawdown_95th_percentile_pct": 25.6,
+    "max_simulated_drawdown_pct": 28.8
+  },
+  "artifact_path": "data/evidence/UR_BEST_FONDEO_GBPUSD_1h/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T20:49:25.216466+00:00"
+}

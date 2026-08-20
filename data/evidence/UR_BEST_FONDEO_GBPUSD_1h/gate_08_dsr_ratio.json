@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_BEST_FONDEO_GBPUSD_1h_g08",
+  "run_id": "run_UR_BEST_FONDEO_GBPUSD_1h",
+  "strategy_id": "UR_BEST_FONDEO_GBPUSD_1h",
+  "strategy_snapshot_hash": "6d9b7e43967ebf61a9056af5ddc5804ab1418d0879adc1338f12d9cf129db803",
+  "dataset_id": "ds_GBPUSD_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "38b17f4a7ecb72d41ecc65e145963305f09c1e320390496646a8e9ee63aed3ad",
+  "output_hash": "8d5f18194063abfd314c3775f0a9ee16f2fd49edfad9f25285f19988ee5ce18c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "BLOCKED: Sin evidencia de trials explorados (trials_tested <= 0 o None)",
+  "metrics": {
+    "trials_penalized": 0,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/UR_BEST_FONDEO_GBPUSD_1h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-20T20:49:25.244065+00:00"
+}

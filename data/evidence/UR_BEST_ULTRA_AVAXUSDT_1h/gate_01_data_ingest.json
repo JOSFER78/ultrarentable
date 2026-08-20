@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_AVAXUSDT_1h_g01",
+  "run_id": "run_UR_BEST_ULTRA_AVAXUSDT_1h",
+  "strategy_id": "UR_BEST_ULTRA_AVAXUSDT_1h",
+  "strategy_snapshot_hash": "2fba0e64cf2cb2ae5de34a13800abf9aff7cc8ae79691a6024d67a8a00a84413",
+  "dataset_id": "ds_AVAXUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "66a1490d463c7400ceea4f2ad35ab2bab285c0ee9b22076fc7c93c26551f5597",
+  "output_hash": "534d9c3ed3d2fbf77bb0f1925b2c35bb01b98ee3d1ac19515dbf6954f30d115c",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (5000 velas, SHA256: 5f72b1af..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 5000,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 3600,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "5f72b1afb397fe2d281a56d607c961757306d6e7c05ad419020d0baef7aff91f",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_AVAXUSDT_1h/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T20:49:16.966627+00:00"
+}

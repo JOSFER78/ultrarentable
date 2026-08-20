@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_BEST_FONDEO_GC_1h_g02",
+  "run_id": "run_UR_BEST_FONDEO_GC_1h",
+  "strategy_id": "UR_BEST_FONDEO_GC_1h",
+  "strategy_snapshot_hash": "5ca79f373aac832d8efb5e9f8490250fd7f41a23837f885c178d4b91ed3dbd40",
+  "dataset_id": "ds_GC_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "00d73cd3391a845ef48d11bfbd52b335b932949501fc159f1164f922c067fa2f",
+  "output_hash": "ecca31397ce629f41d1fd1cd4b84c290bb3bf5ac77efc621c59a72b89181284a",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.98 < 1.10",
+  "metrics": {
+    "market_category": "COMMODITIES",
+    "canonical_name": "Oro COMEX Gold Futures",
+    "exchange": "COMEX Globex",
+    "gross_pnl_usd": -9729.23,
+    "total_fees_usd": 6627.6,
+    "total_slippage_usd": 26510.41,
+    "net_pnl_usd": -42867.24,
+    "net_profit_factor": 0.98,
+    "drag_cost_pct": 340.6
+  },
+  "artifact_path": "data/evidence/UR_BEST_FONDEO_GC_1h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T20:49:22.806295+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_GBPJPY_1h_g03",
+  "run_id": "run_UR_BEST_ULTRA_GBPJPY_1h",
+  "strategy_id": "UR_BEST_ULTRA_GBPJPY_1h",
+  "strategy_snapshot_hash": "cc8e4ea873cd726519d64f7c9aac81b1a3d02de2c720ed0f845b8f503596cb9a",
+  "dataset_id": "ds_GBPJPY_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "e0354fa4c3fb411a3ec3570f444ec181767ae9767086633667f74d8e5e59ff13",
+  "output_hash": "64c034130adaa1d77e6804088f1431a50576706c987026a311309afb6d36c6c2",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (680 IS / 223 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 680,
+    "trades_oos": 223,
+    "top2_outlier_dependency_pct": 31.3,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_GBPJPY_1h/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T20:49:18.442353+00:00"
+}

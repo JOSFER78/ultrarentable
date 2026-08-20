@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_EURJPY_1h_g05",
+  "run_id": "run_UR_BEST_ULTRA_EURJPY_1h",
+  "strategy_id": "UR_BEST_ULTRA_EURJPY_1h",
+  "strategy_snapshot_hash": "dae3c30d785c1c9091a5b97a41cb57072b7ef4c1a24a2a6382e8e6292620daa4",
+  "dataset_id": "ds_EURJPY_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "91c43569290fc32b971cfe82434067e823d47edb3902db33d3935e0b273a2047",
+  "output_hash": "fa11e63f3aa3c73d167eed5340c8d7c6876e14ebb768ec057c46f2126826d61c",
+  "status": "PASSED",
+  "score": 96.9,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.3%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 3.5,
+    "drawdown_95th_percentile_pct": 6.3,
+    "max_simulated_drawdown_pct": 10.1
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_EURJPY_1h/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T20:49:20.115128+00:00"
+}

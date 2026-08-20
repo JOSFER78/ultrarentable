@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_BEST_FONDEO_EURUSD_1h_g08",
+  "run_id": "run_UR_BEST_FONDEO_EURUSD_1h",
+  "strategy_id": "UR_BEST_FONDEO_EURUSD_1h",
+  "strategy_snapshot_hash": "98af5a06280b069fc868e60752445b9260ed04695b71efee938ac69c938b80d0",
+  "dataset_id": "ds_EURUSD_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "2ebc2893d57513b4accd5a9cdb4629ac48256e4658ed6736b7d1c3d655536ee9",
+  "output_hash": "8d5f18194063abfd314c3775f0a9ee16f2fd49edfad9f25285f19988ee5ce18c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "BLOCKED: Sin evidencia de trials explorados (trials_tested <= 0 o None)",
+  "metrics": {
+    "trials_penalized": 0,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/UR_BEST_FONDEO_EURUSD_1h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-20T20:49:24.388225+00:00"
+}

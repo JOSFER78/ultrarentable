@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_DOGEUSDT_1h_g03",
+  "run_id": "run_UR_BEST_ULTRA_DOGEUSDT_1h",
+  "strategy_id": "UR_BEST_ULTRA_DOGEUSDT_1h",
+  "strategy_snapshot_hash": "8c94af31b75dc619ab2b3ba00740f4d5348744dc622a7b95996c885769b8e169",
+  "dataset_id": "ds_DOGEUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "d3cd50c6305e6f8ac0480e3994d80a55d856aa663877661fb22335ca09dfbb67",
+  "output_hash": "0da3919e70cde54d42762beb7991fae0995fdd396ccef68bd3b01bf07b577baa",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (46 IS / 163 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 46,
+    "trades_oos": 163,
+    "top2_outlier_dependency_pct": 42.5,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_DOGEUSDT_1h/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T20:49:15.507237+00:00"
+}

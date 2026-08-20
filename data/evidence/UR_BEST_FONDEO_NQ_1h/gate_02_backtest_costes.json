@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_BEST_FONDEO_NQ_1h_g02",
+  "run_id": "run_UR_BEST_FONDEO_NQ_1h",
+  "strategy_id": "UR_BEST_FONDEO_NQ_1h",
+  "strategy_snapshot_hash": "3a4eb9926505c36f6e76fb1808cc1e61c9afc5dcead35760313eabe663ed363d",
+  "dataset_id": "ds_NQ_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "41cfa60fca4db88953bd272ffd2c54b88214c8013615896f87a1db33b5002d76",
+  "output_hash": "f9b780b8c9c20677711cd18cd646b0244a327f8c696fe2d210de15b229b15dbd",
+  "status": "PASSED",
+  "score": 23.8,
+  "verdict": "PASSED: PF Neto tras costes = 1.24 (INDICES)",
+  "metrics": {
+    "market_category": "INDICES",
+    "canonical_name": "E-mini Nasdaq 100",
+    "exchange": "CME Globex",
+    "gross_pnl_usd": 97886.96,
+    "total_fees_usd": 1173.55,
+    "total_slippage_usd": 2347.1,
+    "net_pnl_usd": 94366.31,
+    "net_profit_factor": 1.24,
+    "drag_cost_pct": 3.6
+  },
+  "artifact_path": "data/evidence/UR_BEST_FONDEO_NQ_1h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T20:49:21.083904+00:00"
+}

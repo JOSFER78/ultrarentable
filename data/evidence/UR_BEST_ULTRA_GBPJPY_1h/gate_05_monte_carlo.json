@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_GBPJPY_1h_g05",
+  "run_id": "run_UR_BEST_ULTRA_GBPJPY_1h",
+  "strategy_id": "UR_BEST_ULTRA_GBPJPY_1h",
+  "strategy_snapshot_hash": "cc8e4ea873cd726519d64f7c9aac81b1a3d02de2c720ed0f845b8f503596cb9a",
+  "dataset_id": "ds_GBPJPY_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "c306ae01e7339f3efea7852162a33e8009f36a3de3fba97a87faef1a5464f37a",
+  "output_hash": "fa11e63f3aa3c73d167eed5340c8d7c6876e14ebb768ec057c46f2126826d61c",
+  "status": "PASSED",
+  "score": 96.9,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.3%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 3.5,
+    "drawdown_95th_percentile_pct": 6.3,
+    "max_simulated_drawdown_pct": 10.1
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_GBPJPY_1h/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T20:49:18.566854+00:00"
+}

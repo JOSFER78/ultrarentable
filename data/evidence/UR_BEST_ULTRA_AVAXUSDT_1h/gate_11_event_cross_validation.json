@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_AVAXUSDT_1h_g11",
+  "run_id": "run_UR_BEST_ULTRA_AVAXUSDT_1h",
+  "strategy_id": "UR_BEST_ULTRA_AVAXUSDT_1h",
+  "strategy_snapshot_hash": "2fba0e64cf2cb2ae5de34a13800abf9aff7cc8ae79691a6024d67a8a00a84413",
+  "dataset_id": "ds_AVAXUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "59c0ab75d8995f3f8978990b6501fdcab9787f408418696f2e220cb353e92313",
+  "output_hash": "f36c21c81b508f23cdc15c9eac2a7130977982bee69712c055a481eba7fb4f7e",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 989.2x > 100.0x)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": -3.21,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -3.21,
+    "peak_leverage_used": 989.23,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 914.51,
+    "total_funding_cost_usd": 91.45,
+    "execution_events_count": 164
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_AVAXUSDT_1h/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T20:49:17.658448+00:00"
+}

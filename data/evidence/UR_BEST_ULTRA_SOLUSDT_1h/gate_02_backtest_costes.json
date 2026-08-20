@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_SOLUSDT_1h_g02",
+  "run_id": "run_UR_BEST_ULTRA_SOLUSDT_1h",
+  "strategy_id": "UR_BEST_ULTRA_SOLUSDT_1h",
+  "strategy_snapshot_hash": "be7025700867f31bbe896d842a8c460b315aad9ce012bd372cf95f5e146a08c7",
+  "dataset_id": "ds_SOLUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "24f0ad42c2b4da331de1125de5ab65b5e6b0b742afb9aec533f4e1f1bae1faf5",
+  "output_hash": "c57e18eca7ac44e302619c20d00a6379cbd887f7fe64897a6a99857d4408987d",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.96 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "Solana Perpetuo",
+    "exchange": "Binance / BingX / FTMO",
+    "gross_pnl_usd": 3015.39,
+    "total_fees_usd": 2973.07,
+    "total_slippage_usd": 1353.29,
+    "net_pnl_usd": -1310.97,
+    "net_profit_factor": 0.96,
+    "drag_cost_pct": 143.48
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_SOLUSDT_1h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T20:49:10.019537+00:00"
+}

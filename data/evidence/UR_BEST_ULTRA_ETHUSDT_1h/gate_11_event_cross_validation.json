@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_BEST_ULTRA_ETHUSDT_1h_g11",
+  "run_id": "run_UR_BEST_ULTRA_ETHUSDT_1h",
+  "strategy_id": "UR_BEST_ULTRA_ETHUSDT_1h",
+  "strategy_snapshot_hash": "87b02bbd6ceb9afe63e902326b421d829f250ace8e1f6dc936065106ccd1ce13",
+  "dataset_id": "ds_ETHUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "0d6ca04eb418b73f0423858f0c372c1f2e3740e48d297b56710651e4d8ebde44",
+  "output_hash": "e2953355b523127319d045adf3f09f696e3343a131dc7f43657b3a6c477d3b4e",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1989.9x > 100.0x)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": -15.35,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -15.35,
+    "peak_leverage_used": 1989.9,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 926.63,
+    "total_funding_cost_usd": 92.66,
+    "execution_events_count": 154
+  },
+  "artifact_path": "data/evidence/UR_BEST_ULTRA_ETHUSDT_1h/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T20:49:13.757105+00:00"
+}
