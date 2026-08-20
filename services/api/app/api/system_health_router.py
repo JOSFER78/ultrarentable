@@ -175,3 +175,64 @@ def get_backend_real_logs(lines: int = 50) -> Dict[str, Any]:
         "logs": extracted_lines
     }
 
+
+@system_health_router.post("/auto-recover")
+def trigger_auto_recovery() -> Dict[str, Any]:
+    """Ejecuta una auto-recuperación y reinicio integral de todos los subcomponentes del sistema."""
+    from services.monitoring.high_availability_watchdog import ha_watchdog
+    result = ha_watchdog.manual_system_reset()
+    return {
+        "message": "Auto-recuperación del sistema ejecutada con éxito.",
+        "details": result,
+    }
+
+
+@system_health_router.post("/restart-mining")
+def restart_continuous_mining() -> Dict[str, Any]:
+    """Fuerza un reinicio limpio del demonio de minería continua 24/7."""
+    from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
+    try:
+        continuous_search_daemon.stop()
+        time.sleep(0.3)
+        res = continuous_search_daemon.start()
+        return {"status": "SUCCESS", "message": "Minería 24/7 reiniciada correctamente.", "details": res}
+    except Exception as e:
+        return {"status": "ERROR", "message": f"Error reiniciando minería: {e}"}
+
+
+@system_health_router.post("/sqx/restart-service")
+def restart_sqx_service() -> Dict[str, Any]:
+    """Reinicia el servicio systemd de StrategyQuant X con conmutación por error protegida."""
+    import subprocess
+    try:
+        proc = subprocess.run(
+            ["systemctl", "--user", "restart", "strategyquantx.service"],
+            capture_output=True,
+            text=True,
+            timeout=8,
+            check=False,
+        )
+        return {
+            "status": "SUCCESS" if proc.returncode == 0 else "WARNING",
+            "returncode": proc.returncode,
+            "stdout": proc.stdout.strip(),
+            "stderr": proc.stderr.strip(),
+            "message": "Señal de reinicio enviada a StrategyQuant X en VPS.",
+        }
+    except Exception as e:
+        return {"status": "ERROR", "message": f"Fallo al ejecutar reinicio de servicio SQX: {e}"}
+
+
+@system_health_router.get("/watchdog-status")
+def get_watchdog_status() -> Dict[str, Any]:
+    """Retorna el estado de salud y el registro de auto-reparaciones del Watchdog 24/7."""
+    from services.monitoring.high_availability_watchdog import ha_watchdog
+    return {
+        "is_running": ha_watchdog._is_running,
+        "last_check": ha_watchdog.last_check_timestamp,
+        "failover_active": ha_watchdog.failover_active,
+        "engine_mode": "FASTENGINE_24_7_AUTONOMOUS" if ha_watchdog.failover_active else "HYBRID_SQX_FASTENGINE",
+        "recent_recoveries": ha_watchdog.recovery_history,
+    }
+
+

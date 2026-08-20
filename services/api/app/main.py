@@ -84,12 +84,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error(f"Error iniciando continuous_search_daemon: {e}")
 
+    # Iniciar Watchdog de Alta Disponibilidad y Self-Healing 24/7
+    from services.monitoring.high_availability_watchdog import ha_watchdog
+    ha_watchdog.start()
+
     # Iniciar tarea asíncrona de sincronización y supervisión 24/7 con StrategyQuant X
     sync_task = asyncio.create_task(_periodic_sqx_sync())
     
     yield
     
     sync_task.cancel()
+    ha_watchdog.stop()
     continuous_search_daemon.stop()
     logger.info("Deteniendo SystemSupervisor y cerrando conexiones...")
     await supervisor_instance.stop_all()

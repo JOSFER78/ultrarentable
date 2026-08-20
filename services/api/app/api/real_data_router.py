@@ -403,14 +403,22 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
     cur_tf = cur_cell.get("timeframe", "5m")
     cur_route = cur_cell.get("target_route", "TRACK_ULTRA")
     cur_arch = cur_cell.get("archetype", "VOLATILITY_BREAKOUT")
+    from services.monitoring.high_availability_watchdog import ha_watchdog
+
+    is_sqx_online = sqx_status == "ONLINE"
+    engine_mode = "HYBRID_SQX_FASTENGINE" if is_sqx_online else "FASTENGINE_24_7_AUTONOMOUS"
+    connection_badge = "🟢 ONLINE (SQX Híbrido)" if is_sqx_online else "🟢 ACTIVO 24/7 (FastEngine Autónomo)"
 
     return {
         "running": supervisor_health.get("supervisor_active", True) and daemon_tel.get("is_running", True),
         "mode": "REAL_ONLY_ZERO_MOCK",
+        "engine_mode": engine_mode,
+        "sqx_connection_badge": connection_badge,
         "sqx_mcp_status": sqx_status,
         "sqx_mcp_latency_ms": sqx_latency_ms,
-        "sqx_active_project": "Ultra_Auto_Pilot",
-        "sqx_projects_detected": sqx_projects,
+        "sqx_active_project": "Ultra_Auto_Pilot" if is_sqx_online else "FastEngine 24/7 (Mining Activo)",
+        "sqx_projects_detected": sqx_projects if is_sqx_online else ["FastEngine Autonomous Daemon"],
+        "watchdog_active": ha_watchdog._is_running,
         "current_symbol": cur_sym,
         "current_timeframe": cur_tf,
         "current_route": cur_route,
