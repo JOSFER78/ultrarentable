@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_AUTO_ULTRA_BTCUSDT_1h_MUT2_g08",
+  "run_id": "run_UR_AUTO_ULTRA_BTCUSDT_1h_MUT2",
+  "strategy_id": "UR_AUTO_ULTRA_BTCUSDT_1h_MUT2",
+  "strategy_snapshot_hash": "901d3e5d3e18f178600e775dd8cd6bc30380c38e7af157eda4b1020fd1667012",
+  "dataset_id": "ds_BTCUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "1f570cf596551a6667b8b275ae89dd2c305976a8baebea71674094107a8a923a",
+  "output_hash": "8d5f18194063abfd314c3775f0a9ee16f2fd49edfad9f25285f19988ee5ce18c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "BLOCKED: Sin evidencia de trials explorados (trials_tested <= 0 o None)",
+  "metrics": {
+    "trials_penalized": 0,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/UR_AUTO_ULTRA_BTCUSDT_1h_MUT2/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-20T20:42:19.119583+00:00"
+}

@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_AUTO_ULTRA_BTCUSDT_1h_MUT1_g07",
+  "run_id": "run_UR_AUTO_ULTRA_BTCUSDT_1h_MUT1",
+  "strategy_id": "UR_AUTO_ULTRA_BTCUSDT_1h_MUT1",
+  "strategy_snapshot_hash": "4f5ce50ee84c8ad15d8eeb64bcb0fc4194fcc1f2b989151381a61681d01960f5",
+  "dataset_id": "ds_BTCUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "a95a8169d22f8d105d5207fa01196287f6f1770eb3e707b83afabf00d93d6bad",
+  "output_hash": "e2ad43e8a451ff8789573c0227922ecc4db7a4826cd374fd3438eaeb1f45034c",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +159.57%)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 317,
+      "BEAR_TREND": 440,
+      "CHOP_RANGING": 3381,
+      "HIGH_VOLATILITY": 862
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 6,
+      "BEAR_TREND": 7,
+      "CHOP_RANGING": 50,
+      "HIGH_VOLATILITY": 23
+    },
+    "regime_return_pct": {
+      "BULL_TREND": -44.52,
+      "BEAR_TREND": 3.62,
+      "CHOP_RANGING": -78.59,
+      "HIGH_VOLATILITY": 279.06
+    },
+    "regimes_profitable_count": 2,
+    "regimes_active_count": 4,
+    "total_oos_return_pct": 159.57
+  },
+  "artifact_path": "data/evidence/UR_AUTO_ULTRA_BTCUSDT_1h_MUT1/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-20T20:42:17.916931+00:00"
+}

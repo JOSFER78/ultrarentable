@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_AUTO_ULTRA_BTCUSDT_1h_MUT1_g01",
+  "run_id": "run_UR_AUTO_ULTRA_BTCUSDT_1h_MUT1",
+  "strategy_id": "UR_AUTO_ULTRA_BTCUSDT_1h_MUT1",
+  "strategy_snapshot_hash": "4f5ce50ee84c8ad15d8eeb64bcb0fc4194fcc1f2b989151381a61681d01960f5",
+  "dataset_id": "ds_BTCUSDT_1h",
+  "dataset_sha256": "sha256_verified_real",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "944a15f059b9c4f6c4e5dd8a606f7b834cf31fd895690b2a981efb5b2e45707e",
+  "output_hash": "373e2787418b77a5156bd27026fa5efe4d9f3b71051d380b78ee8079c7bf2f9f",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (5000 velas, SHA256: 2bffcf76..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 5000,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 3600,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "2bffcf76aba83806cf247cc00030a79bc8cd4b10b070977bbf4b72b775b0537f",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_AUTO_ULTRA_BTCUSDT_1h_MUT1/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T20:42:17.762240+00:00"
+}
