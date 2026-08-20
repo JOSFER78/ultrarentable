@@ -101,8 +101,8 @@ export default function CandidatosFSMPage() {
   const [activeTab, setActiveTab] = useState<"individual" | "ensemble">("individual");
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
-  const [roiFilter, setRoiFilter] = useState<"MIN_20_MONTHLY" | "ONLY_PROFITABLE" | "ALL">("ONLY_PROFITABLE");
+  const [selectedStatus, setSelectedStatus] = useState<string>("APPROVED");
+  const [roiFilter, setRoiFilter] = useState<"MIN_15_MONTHLY" | "MIN_20_MONTHLY" | "ONLY_PROFITABLE" | "ALL">("MIN_15_MONTHLY");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
   const [versionFilter, setVersionFilter] = useState<string>("ALL");
@@ -428,12 +428,14 @@ export default function CandidatosFSMPage() {
   const discoveryCount = useMemo(() => candidates.filter((c) => !isApprovedStatus(c.status) && !isCandidateRejected(c.status)).length, [candidates]);
 
   const top5Ultra = useMemo(() => {
-    const approved = candidates.filter((c) => c.route === "ULTRA" && isApprovedStatus(c.status));
-    if (approved.length > 0) return approved.slice(0, 5);
+    const sorted = [...candidates.filter((c) => c.route === "ULTRA" && !isCandidateRejected(c.status))].sort((a, b) => {
+      const roiA = a.metrics?.out_of_sample?.monthly_roi_pct ?? ((a.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
+      const roiB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
+      return roiB - roiA;
+    });
     const seen = new Set<string>();
     const res: CandidateItem[] = [];
-    const ultraCandidates = candidates.filter((c) => c.route === "ULTRA");
-    for (const c of ultraCandidates) {
+    for (const c of sorted) {
       const sym = c.symbol.replace("-", "").replace("/", "").toUpperCase();
       if (!seen.has(sym)) {
         seen.add(sym);
@@ -441,16 +443,18 @@ export default function CandidatosFSMPage() {
         if (res.length >= 5) break;
       }
     }
-    return res.length > 0 ? res : ultraCandidates.slice(0, 5);
+    return res;
   }, [candidates]);
 
   const top5Fondeo = useMemo(() => {
-    const approved = candidates.filter((c) => c.route === "FONDEO" && isApprovedStatus(c.status));
-    if (approved.length > 0) return approved.slice(0, 5);
+    const sorted = [...candidates.filter((c) => c.route === "FONDEO" && !isCandidateRejected(c.status))].sort((a, b) => {
+      const roiA = a.metrics?.out_of_sample?.monthly_roi_pct ?? ((a.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
+      const roiB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
+      return roiB - roiA;
+    });
     const seen = new Set<string>();
     const res: CandidateItem[] = [];
-    const fondeoCandidates = candidates.filter((c) => c.route === "FONDEO");
-    for (const c of fondeoCandidates) {
+    for (const c of sorted) {
       const sym = c.symbol.replace("-", "").replace("/", "").toUpperCase();
       if (!seen.has(sym)) {
         seen.add(sym);
@@ -458,7 +462,7 @@ export default function CandidatosFSMPage() {
         if (res.length >= 5) break;
       }
     }
-    return res.length > 0 ? res : fondeoCandidates.slice(0, 5);
+    return res;
   }, [candidates]);
 
   const openCodeExport = (c: CandidateItem | null, type: "pine" | "ninja" | "python", isEnsemble = false) => {
@@ -679,6 +683,9 @@ ${entryLogic}`;
       const isRejected = isCandidateRejected(c.status);
       const isDiscovery = !isApproved && !isRejected;
 
+      // Ocultar estrictamente rechazadas a menos que el usuario filtre explícitamente por "RECHAZADAS"
+      if (selectedStatus !== "REJECTED" && isRejected) return false;
+
       if (selectedStatus === "APPROVED" && !isApproved) return false;
       if (selectedStatus === "REJECTED" && !isRejected) return false;
       if (selectedStatus === "DISCOVERY" && !isDiscovery) return false;
@@ -687,6 +694,7 @@ ${entryLogic}`;
       const monthRoi = oos?.monthly_roi_pct ?? ((oos?.annualized_roi_pct || 0) / 12.0);
       const netProfit = oos?.net_profit_usd ?? 0;
 
+      if (roiFilter === "MIN_15_MONTHLY" && monthRoi < 15.0 && (oos?.annualized_roi_pct || 0) < 180.0) return false;
       if (roiFilter === "MIN_20_MONTHLY" && monthRoi < 20.0 && (oos?.annualized_roi_pct || 0) < 240.0) return false;
       if (roiFilter === "ONLY_PROFITABLE" && monthRoi <= 0.0 && netProfit <= 0.0) return false;
 
@@ -1303,7 +1311,8 @@ ${entryLogic}`;
                 {/* Profitability / Rentabilidad filter */}
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
                   {[
-                    { id: "MIN_20_MONTHLY", label: "🚀 >= +20%/mes (Ultra Rentable)" },
+                    { id: "MIN_15_MONTHLY", label: "🔥 >= +15%/m (Alta Rentabilidad)" },
+                    { id: "MIN_20_MONTHLY", label: "🚀 >= +20%/m (Ultra Rentable)" },
                     { id: "ONLY_PROFITABLE", label: "📈 Solo Rentables (>0%/m)" },
                     { id: "ALL", label: "🌐 Todos los ROI (Auditoría)" },
                   ].map((rf) => (
