@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_TEST_CAND_SOL_g09",
+  "run_id": "run_TEST_CAND_SOL",
+  "strategy_id": "TEST_CAND_SOL",
+  "strategy_snapshot_hash": "49d5d27e32321b94880bd64103381386d8229b0aa2a496d02eea0d2e81fd4e7e",
+  "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "803c1575bd7bb860e90966123f094c7facb907321e8a0fbd082b59cee9e37f17",
+  "output_hash": "73930599fd202e796e1f4daa15b41b20979c78066edb46a547c413b7d1f045ea",
+  "status": "PASSED",
+  "score": 92.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 54.0 trades/param, Estabilidad Vecindario: 88.1%, Re-backtest PFs: [0.79, 0.89, 0.55, 0.66])",
+  "metrics": {
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 54.0,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 88.1,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      0.79,
+      0.89,
+      0.55,
+      0.66
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/TEST_CAND_SOL/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T19:02:32.666623+00:00"
+}

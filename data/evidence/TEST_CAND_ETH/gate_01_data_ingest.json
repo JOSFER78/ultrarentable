@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_TEST_CAND_ETH_g01",
+  "run_id": "run_TEST_CAND_ETH",
+  "strategy_id": "TEST_CAND_ETH",
+  "strategy_snapshot_hash": "7227793b18297eeeb3fe1269605d89080349cf4bb7ee7705f1a9ed62978f5390",
+  "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "b1c5fabf1ea288a734f46e91cd850e4835285772a11c2693a28c9979cf074ae3",
+  "output_hash": "6523fb1359ceaf62a784ae3ebddb889c1dd24512b69a032741c97936182b00da",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (5100 velas, SHA256: 1f415536..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 5100,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 3600,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "1f4155362aa6bd4fc98a58afd7a6051e9608a3e8d81de9db7ca55fa9d9f0afe7",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/TEST_CAND_ETH/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T19:02:37.422754+00:00"
+}

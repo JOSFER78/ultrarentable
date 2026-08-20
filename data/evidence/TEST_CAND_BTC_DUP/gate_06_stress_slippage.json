@@ -1,0 +1,51 @@
+{
+  "evidence_id": "ev_TEST_CAND_BTC_DUP_g06",
+  "run_id": "run_TEST_CAND_BTC_DUP",
+  "strategy_id": "TEST_CAND_BTC_DUP",
+  "strategy_snapshot_hash": "594874e18c6b958a02c46606223d30cefef1b871ebfbfd9085055fae2e9a2330",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 6,
+  "gate_name": "STRESS_SLIPPAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "122d0b46f8c31e62bda64f9081ae34240b43178116e6b0edd5695fdb8318cd2f",
+  "output_hash": "5a545ce30965e83fa050a653706fecf388980fa255dcc6117a67dbf38d6b5716",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (0/4 escenarios superados)",
+  "metrics": {
+    "scenarios": {
+      "Base": {
+        "friction_penalty_per_trade_usd": 0.35,
+        "stressed_net_pnl_usd": -81.42,
+        "stressed_profit_factor": 0.11,
+        "survived": false
+      },
+      "+1_Sigma": {
+        "friction_penalty_per_trade_usd": 0.74,
+        "stressed_net_pnl_usd": -101.47,
+        "stressed_profit_factor": 0.09,
+        "survived": false
+      },
+      "+2_Sigma": {
+        "friction_penalty_per_trade_usd": 1.31,
+        "stressed_net_pnl_usd": -131.54,
+        "stressed_profit_factor": 0.06,
+        "survived": false
+      },
+      "+3_Sigma": {
+        "friction_penalty_per_trade_usd": 1.93,
+        "stressed_net_pnl_usd": -163.46,
+        "stressed_profit_factor": 0.04,
+        "survived": false
+      }
+    },
+    "passed_scenarios_count": 0,
+    "min_required_scenarios": 2,
+    "base_friction_usd": 0.35
+  },
+  "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_06_stress_slippage.json",
+  "created_at_utc": "2026-08-20T19:02:41.576773+00:00"
+}

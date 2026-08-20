@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_TEST_CAND_BTC_g08",
+  "run_id": "run_TEST_CAND_BTC",
+  "strategy_id": "TEST_CAND_BTC",
+  "strategy_snapshot_hash": "376c086cba763c835fe288f0edc20dce02ac91049a9f8da4b8435033f3012230",
+  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "265f51c1e4b01065fe1067ededce0c845412fe32320fb6e0450b981b5f61f1be",
+  "output_hash": "aa514ea7571a18b1522b5c90112a17591ecd0674a9bbeba17f0103b4192007be",
+  "status": "FAILED",
+  "score": 14.2,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (14.2% < 50.0% tras penalizar 1 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -0.164,
+    "deflated_sharpe_probability_pct": 14.19,
+    "trials_penalized_count": 1,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 1.867,
+    "kurtosis": 5.856,
+    "sample_trades_count": 58
+  },
+  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-20T19:02:34.193241+00:00"
+}

@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_TEST_CAND_ETH_g05",
+  "run_id": "run_TEST_CAND_ETH",
+  "strategy_id": "TEST_CAND_ETH",
+  "strategy_snapshot_hash": "7227793b18297eeeb3fe1269605d89080349cf4bb7ee7705f1a9ed62978f5390",
+  "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "b85e8d4d2a6b355d1b47fe2438fa3f98634e882dc58857343ebf6633e5aa96eb",
+  "output_hash": "cbd9fd48dde8ff455b48b622fb02ea7ffeaeb4c1241b1d2f3464c5d9058d9615",
+  "status": "PASSED",
+  "score": 94.4,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 11.2%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 5.9,
+    "drawdown_95th_percentile_pct": 11.2,
+    "max_simulated_drawdown_pct": 19.8
+  },
+  "artifact_path": "data/evidence/TEST_CAND_ETH/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T19:02:38.203137+00:00"
+}

@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_TEST_CAND_SOL_g10",
+  "run_id": "run_TEST_CAND_SOL",
+  "strategy_id": "TEST_CAND_SOL",
+  "strategy_snapshot_hash": "49d5d27e32321b94880bd64103381386d8229b0aa2a496d02eea0d2e81fd4e7e",
+  "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "72a17d927b44ad3cb90c7e16c59f42a580e262f9485b9b9fa00a137a715523e8",
+  "output_hash": "8af9982e692ad801c6f7d6d727a26c7b552561c746d4e5abc6b6932df1b6df0b",
+  "status": "FAILED",
+  "score": 57.0,
+  "verdict": "FALLO: Consenso insuficiente (57.0/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 57.0,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 46.9,
+        "findings": [
+          "Activo y Timeframe: SOLUSDT (15m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.82 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 73.4,
+        "findings": [
+          "Drawdown Máximo Observado: 56.6% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 60 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 55.1,
+        "objections": [
+          "Alerta de Rentabilidad: Profit factor 0.82 cercano al umbral de equilibrio (1.05)."
+        ],
+        "approved": true
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/TEST_CAND_SOL/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T19:02:32.696478+00:00"
+}

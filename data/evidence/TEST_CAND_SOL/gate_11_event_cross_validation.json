@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_TEST_CAND_SOL_g11",
+  "run_id": "run_TEST_CAND_SOL",
+  "strategy_id": "TEST_CAND_SOL",
+  "strategy_snapshot_hash": "49d5d27e32321b94880bd64103381386d8229b0aa2a496d02eea0d2e81fd4e7e",
+  "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "3152eae774c5ad642d099cbeb4d24b63b05373a88cf548194ea3d2c74269dad7",
+  "output_hash": "3538f71b5229e0ed90274af56063ae2908de1f0548f9c4dcaac1eb08133de810",
+  "status": "PASSED",
+  "score": 96.7,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $939.60, Apalancamiento Pico: 1.1x, Dist. Mín. Liquidación: 99.4%, Comisiones+Funding: $39.71)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 939.6,
+    "peak_equity_usd": 1015.87,
+    "min_equity_usd": 934.74,
+    "peak_leverage_used": 1.13,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 99.44,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 36.1,
+    "total_funding_cost_usd": 3.61,
+    "execution_events_count": 60
+  },
+  "artifact_path": "data/evidence/TEST_CAND_SOL/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T19:02:32.697280+00:00"
+}

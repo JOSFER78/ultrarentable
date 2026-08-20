@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_TEST_CAND_ETH_g10",
+  "run_id": "run_TEST_CAND_ETH",
+  "strategy_id": "TEST_CAND_ETH",
+  "strategy_snapshot_hash": "7227793b18297eeeb3fe1269605d89080349cf4bb7ee7705f1a9ed62978f5390",
+  "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "5cc8709cf9282ce5b654a6e5910e47aa32372ac9c7550e1f5c6ab9190addba03",
+  "output_hash": "ae9ce128d7a9b0c4d984729360c11dff302b331de71891c4a8ea5f8558ba284a",
+  "status": "FAILED",
+  "score": 71.0,
+  "verdict": "FALLO: Consenso insuficiente (71.0/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 71.0,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 78.4,
+        "findings": [
+          "Activo y Timeframe: ETHUSDT (1h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.52 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 88.0,
+        "findings": [
+          "Drawdown Máximo Observado: 25.6% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 133 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 66.6,
+        "objections": [
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+        ],
+        "approved": true
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/TEST_CAND_ETH/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T19:02:39.484862+00:00"
+}
