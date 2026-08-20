@@ -1,7 +1,7 @@
 # ESTADO DE LA VERDAD (STATE OF TRUTH) — ULTRARENTABLE
 > **AUTORIDAD ÚNICA DE DOCUMENTACIÓN BASADA EN EVIDENCIA FÍSICA**
-> **Última Generación Automática:** `2026-08-20 08:20:35 UTC`
-> **Commit Hash:** `c246cf3` (`c246cf324dcdbb52f61a7c8d14799e10d0610020`) | **Rama:** `main`
+> **Última Generación Automática:** `2026-08-20 09:09:35 UTC`
+> **Commit Hash:** `2aa4051` (`2aa40512e28eefa6fefdc6e3783fa747c5386399`) | **Rama:** `main`
 
 ---
 
@@ -11,10 +11,10 @@
 | :--- | :--- | :--- |
 | **Doctrina** | `ZERO-MOCK / REAL-ONLY` | [AGENTS.md](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/.agents/AGENTS.md) |
 | **Versión del Motor Activo** | `v1.03 — Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)` | [services/version_control_manager.py](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/services/version_control_manager.py) |
-| **Huella Criptográfica del Motor** | `be3018355b2027b7db2b668e...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
+| **Huella Criptográfica del Motor** | `fb10be43dcd3f3d125bffcf0...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
 | **Estado del Laboratorio** | `CERTIFICADO FORENSE / RECONCILIACIÓN CROSS-ENGINE COMPLETADA` | [data/evidence/execution_reconciliation.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/execution_reconciliation.json) |
 | **Datasets Físicos Normalizados** | `112 datasets reales` | `data/normalized/*.json` con SHA-256 |
-| **Estrategias en SQLite WAL** | `190 totales (v1.00: 92, v1.02: 98)` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
+| **Estrategias en SQLite WAL** | `190 totales (v1.00: 92, v1.02: 97, v1.03: 1)` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
 | **Suite de Tests Backend** | `236 tests pasados (100%)` | `pytest services/api/tests/ tests/` |
 | **Compilación Frontend** | `33/33 rutas Next.js compiladas` | `apps/web/` (`npm run build`) |
 | **Persistencia Cloud** | `Firebase RTDB (pecemi-default-rtdb)` | `/ultrarentable/engine_versions` |

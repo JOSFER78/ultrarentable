@@ -72,9 +72,11 @@ class Gate08DSRRatio:
                 "name": self.NAME,
                 "passed": False,
                 "score": 0.0,
-                "verdict": "RECHAZADO / BLOCKED: Recuento de trials de búsqueda nulo o desconocido (No evidence of trials)",
+                "verdict": "BLOCKED: Sin evidencia de trials explorados (trials_tested <= 0 o None)",
                 "evidence": {"trials_penalized": 0, "dsr_probability": 0.0},
             }
+
+        effective_trials = trials_tested
 
         if not oos_trades_pnl or len(oos_trades_pnl) < 10:
             return {
@@ -83,7 +85,7 @@ class Gate08DSRRatio:
                 "passed": False,
                 "score": 0.0,
                 "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
-                "evidence": {"trials_penalized": trials_tested, "dsr_probability": 0.0},
+                "evidence": {"trials_penalized": effective_trials, "dsr_probability": 0.0},
             }
 
         returns = np.array(oos_trades_pnl, dtype=np.float64)

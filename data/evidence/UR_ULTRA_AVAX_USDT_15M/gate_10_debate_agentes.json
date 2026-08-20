@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g10",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "6d8ba0271e8710fb2d5a40a4341540c3ea7b54b181b27c0211d75d5644454678",
+  "strategy_snapshot_hash": "a335539aaa39e46bb19330f27cf3c975fdaaf7ae9bdccd6e1714a55dab145964",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "9704809fd218d7ee64fa8a52c23165b6c80c1cb0120a743f9000e13a8c0b4d22",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "1be950da2d7ecb8a9964d8a4162ad746881b628c1b0feff603a64ef097706a0d",
-  "output_hash": "f537745cdb2baad67a5e16cb0e363668f346ef3052c5f1ea382c0fab97a35a5b",
+  "input_hash": "1082fe50987430693bd9dd623fe65b8f75cc4bf99657feee2da4f06871940370",
+  "output_hash": "62907964a8432fbbf733765a2565156fd617cef64cf1957bd622207f235869b7",
   "status": "FAILED",
-  "score": 61.9,
-  "verdict": "FALLO: Consenso insuficiente (61.9/100) u objeción crítica de riesgo",
+  "score": 67.9,
+  "verdict": "FALLO: Consenso insuficiente (67.9/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 61.9,
+    "consensus_score": 67.9,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.4,
+        "score": 71.7,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.12 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.37 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 76.4,
+        "score": 84.5,
         "findings": [
-          "Drawdown Máximo Observado: 27.0% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 17.7% (Límite permitido para ULTRA: 80.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 48 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 54 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 59.2,
+        "score": 64.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 1.12 cercano al umbral de equilibrio."
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T08:35:05.913439+00:00"
+  "created_at_utc": "2026-08-20T09:00:15.496432+00:00"
 }

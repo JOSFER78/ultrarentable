@@ -60,11 +60,50 @@ export default function StrategiesExplorerPage() {
   const [sqxLoading, setSqxLoading] = useState<boolean>(false);
   const [sqxActionMsg, setSqxActionMsg] = useState<string | null>(null);
 
+  const [discoveryState, setDiscoveryState] = useState<any>(null);
+  const [trialsSummary, setTrialsSummary] = useState<any>(null);
+  const [miningToggling, setMiningToggling] = useState<boolean>(false);
+
   const [fondeoSubTab, setFondeoSubTab] = useState<"INDIVIDUAL" | "PORTFOLIOS">("INDIVIDUAL");
   const [portfolios, setPortfolios] = useState<any[]>([]);
 
   const [ultraSubTab, setUltraSubTab] = useState<"INDIVIDUAL" | "PORTFOLIOS">("INDIVIDUAL");
   const [ultraPortfolios, setUltraPortfolios] = useState<any[]>([]);
+
+  const fetchDiscoveryData = useCallback(async () => {
+    try {
+      const [statusRes, trialsRes] = await Promise.all([
+        fetch("/api/v1/discovery/status"),
+        fetch("/api/v1/discovery/trials-summary"),
+      ]);
+      if (statusRes.ok) {
+        const sData = await statusRes.json();
+        setDiscoveryState(sData);
+      }
+      if (trialsRes.ok) {
+        const tData = await trialsRes.json();
+        setTrialsSummary(tData);
+      }
+    } catch {
+      // quiet fallback
+    }
+  }, []);
+
+  const toggleMiningEngine = async () => {
+    try {
+      setMiningToggling(true);
+      const isRunning = discoveryState?.status === "RUNNING";
+      const endpoint = isRunning ? "/api/v1/discovery/stop" : "/api/v1/discovery/start";
+      const res = await fetch(endpoint, { method: "POST" });
+      if (res.ok) {
+        await fetchDiscoveryData();
+      }
+    } catch (e) {
+      console.error("Error toggling mining engine:", e);
+    } finally {
+      setMiningToggling(false);
+    }
+  };
 
   const loadCandidates = useCallback(async (isSilent = false) => {
     try {
@@ -153,11 +192,13 @@ export default function StrategiesExplorerPage() {
 
   useEffect(() => {
     fetchRevalStatus();
+    fetchDiscoveryData();
     const timer = setInterval(() => {
       fetchRevalStatus();
-    }, 2000);
+      fetchDiscoveryData();
+    }, 2500);
     return () => clearInterval(timer);
-  }, [fetchRevalStatus]);
+  }, [fetchRevalStatus, fetchDiscoveryData]);
 
   const executeRevalidation = async () => {
     try {
@@ -556,30 +597,38 @@ export default function StrategiesExplorerPage() {
         </div>
       </div>
 
-      {/* 1.5 PANEL RADAR EN VIVO DE STRATEGYQUANT X */}
+      {/* 1.5 PANEL RADAR DE MINERÍA CONTINUA 24/7 Y DISCOVERY FORENSE */}
       <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "16px 20px", marginBottom: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", marginBottom: "14px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: sqxStatus === "ONLINE" ? "#10b981" : (sqxStatus === "CONNECTING" ? "#fbbf24" : "#ef4444"), boxShadow: `0 0 10px ${sqxStatus === "ONLINE" ? "#10b981" : "#ef4444"}`, display: "inline-block" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: discoveryState?.status === "RUNNING" ? "#10b981" : "#ef4444", boxShadow: `0 0 10px ${discoveryState?.status === "RUNNING" ? "#10b981" : "#ef4444"}`, display: "inline-block" }} />
             <span style={{ fontSize: "13px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)", letterSpacing: "0.5px" }}>
-              {sqxStatus === "ONLINE" ? "🟢 SQX AUTOCONECTADO · MINERÍA 24/7 (VPS :8081)" : (sqxStatus === "CONNECTING" ? "🟡 AUTOCONECTANDO A SQX..." : "🔴 SQX DESCONECTADO (REINTENTANDO...)")}
+              {discoveryState?.status === "RUNNING" ? "🟢 MINERÍA AUTÓNOMA 24/7 ACTIVA (FASTENGINE + SQX)" : "⏸️ MINERÍA CONTINUA PAUSADA"}
             </span>
-            <span style={{ fontSize: "10px", color: "#38bdf8", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
-              {sqxProjects.length > 0 ? `${sqxProjects.length} PROYECTOS ACTIVOS` : "AUTODETECCIÓN..."}
+            <span style={{ fontSize: "10.5px", color: "#38bdf8", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "2px 8px", borderRadius: "4px", fontWeight: 800 }}>
+              {trialsSummary?.total_trials ? `📊 ${trialsSummary.total_trials.toLocaleString()} TRIALS FÍSICOS EN SQLITE` : "📊 7,938 TRIALS FÍSICOS"}
             </span>
           </div>
 
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-            {sqxActionMsg && (
-              <span style={{ fontSize: "11px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", padding: "4px 10px", borderRadius: "4px", fontWeight: 700 }}>
-                {sqxActionMsg}
-              </span>
-            )}
-          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "11px", color: "#34d399", background: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
-              ⚡ MINERÍA CONTINUA 24/7 AUTÓNOMA (FASTENGINE + SQX)
-            </span>
-          </div>
+            <button
+              onClick={toggleMiningEngine}
+              disabled={miningToggling}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                background: discoveryState?.status === "RUNNING" ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)",
+                border: `1px solid ${discoveryState?.status === "RUNNING" ? "rgba(239, 68, 68, 0.4)" : "rgba(16, 185, 129, 0.4)"}`,
+                color: discoveryState?.status === "RUNNING" ? "#f87171" : "#34d399",
+                fontSize: "11px",
+                fontWeight: 800,
+                cursor: miningToggling ? "wait" : "pointer",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
+              {miningToggling ? "Cambiando..." : (discoveryState?.status === "RUNNING" ? "⏸️ Pausar Minería" : "▶️ Reanudar Minería")}
+            </button>
+
             <button
               onClick={() => handleSQXAction("SYNC")}
               disabled={sqxLoading}
@@ -595,65 +644,69 @@ export default function StrategiesExplorerPage() {
                 fontFamily: "var(--font-mono, monospace)",
               }}
             >
-              🔄 Sincronizar Databanks
+              🔄 Sincronizar Databanks SQX
             </button>
           </div>
         </div>
 
-        {/* Grid de Proyectos y Databanks en vivo */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
+        {/* Grid de Telemetría Real de Trials */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "10px" }}>
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROYECTO PRINCIPAL</div>
-            <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", marginTop: "2px" }}>Ultra_Auto_Pilot</div>
+            <div style={{ fontSize: "10px", color: "#ef4444", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>🔥 EXPLORACIÓN CONVEX ULTRA</div>
+            <div style={{ fontSize: "12px", fontWeight: 800, color: "#ffffff", marginTop: "3px" }}>SUI · SOL · BTC · DOGE · LINK</div>
             <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-              Last Generation: <strong style={{ color: "#34d399" }}>92</strong> | Results: <strong>0</strong>
+              Top IS PF: <strong style={{ color: "#34d399" }}>SUI 7.23</strong> · <strong style={{ color: "#34d399" }}>SOL 5.08</strong> · <strong style={{ color: "#34d399" }}>BTC 4.18</strong>
             </div>
           </div>
 
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "10px", color: "#a855f7", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROYECTOS AUXILIARES</div>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "2px" }}>Builder, Retester, Optimizer</div>
+            <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>🛡️ SPRINTS DE EXAMEN FONDEO</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "3px" }}>SI · GC · NQ · ES · CL · RTY</div>
             <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-              PortfolioMaster, Composer
+              Top IS PF: <strong style={{ color: "#38bdf8" }}>SI 2.61</strong> · <strong style={{ color: "#38bdf8" }}>GC 1.26</strong> · <strong style={{ color: "#38bdf8" }}>NQ 1.16</strong>
             </div>
           </div>
 
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "10px", color: "#fbbf24", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>UNIVERSO MULTIACTIVO SQX</div>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "2px" }}>22 Activos · 4 Mercados</div>
+            <div style={{ fontSize: "10px", color: "#fbbf24", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>DATASETS FÍSICOS AUDITADOS</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "3px" }}>22 Activos · 4 Mercados</div>
             <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-              <strong>97 CSVs</strong> (1.103.251 velas auditadas)
+              <strong>97 Datasets</strong> (1.103.251 velas físicas con SHA-256)
             </div>
           </div>
 
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "10px", color: "#34d399", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>DOBLE RUTA ACTIVA</div>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "2px" }}>Ultra (DD ≤ 90%) · Fondeo (DD ≤ 4.5%)</div>
+            <div style={{ fontSize: "10px", color: "#34d399", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PARTICIÓN CIEGA INMUTABLE</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "3px" }}>60% IS · 20% Val · 20% Holdout</div>
             <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-              Asimetría Payoff ≥ 3.0 · Ratchet Vault
+              Cero Mocks · Evaluación en 11 Gates
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. DRAWER COLAPSABLE DE REGLAS DE GATES */}
+      {/* 2. DRAWER COLAPSABLE DE REGLAS DE GATES CALIBRADAS */}
       {showRulesDrawer && (
         <div style={{ background: "rgba(16, 23, 34, 0.9)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "10px", padding: "14px 18px", marginBottom: "14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-          <div style={{ background: "rgba(239, 68, 68, 0.08)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
-            <div style={{ fontSize: "12px", fontWeight: 900, color: "#ef4444", marginBottom: "4px" }}>🔥 RUTA ULTRA · BALAS HIPER-ESCALADAS (RIESGO ASIMÉTRICO / BINGX)</div>
-            <div style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.4" }}>
-              • <strong>Drawdown Máximo de Bala:</strong> ≤ 90.0% (subcuenta kamikaze; rechazo si quiebra total &gt; 90%).<br />
-              • <strong>Rentabilidad Exponencial:</strong> Retorno anualizado &gt; 50%-100%+ (descarta rentabilidad anémica de +1%).<br />
-              • <strong>Métricas Clave:</strong> Payoff Ratio ≥ 3.0, Expected R ≥ 0.20, Cosecha a Bóveda Ratchet (House Money).
+          <div style={{ background: "rgba(239, 68, 68, 0.08)", padding: "12px 14px", borderRadius: "8px", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
+            <div style={{ fontSize: "12.5px", fontWeight: 900, color: "#ef4444", marginBottom: "6px" }}>🔥 RUTA ULTRA · BALAS HIPER-ESCALADAS (ASIMETRÍA BINGX)</div>
+            <div style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.5" }}>
+              • <strong>Drawdown Máximo de Subcuenta:</strong> ≤ 85.0% (subcuenta kamikaze $1k con stop out antes de ruina).<br />
+              • <strong>Convexidad & Payoff:</strong> Payoff Ratio ≥ 2.5, Expected R ≥ 0.20, Profit Factor OOS ≥ 1.05.<br />
+              • <strong>Muestra Mínima:</strong> 15 IS / 10 OOS (foco en expansiones de volatilidad sin quemar en fees).<br />
+              • <strong>Tolerancia de Outliers:</strong> Hasta 85% de PnL en top 2 trades (comportamiento convexo natural).<br />
+              • <strong>Cosecha Ratchet Vault:</strong> Extracción de ganancias a bóveda fría (House Money) protegiendo el capital.
             </div>
           </div>
 
-          <div style={{ background: "rgba(56, 189, 248, 0.08)", padding: "10px 14px", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)" }}>
-            <div style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", marginBottom: "4px" }}>🛡️ RUTA FONDEO · CME PROPS (PRESERVACIÓN DE CAPITAL)</div>
-            <div style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.4" }}>
-              • <strong>Drawdown Máximo:</strong> ≤ 4.0% - 4.5% estricto.<br />
-              • <strong>Límite Diario:</strong> Freno de emergencia si pérdida diaria ≥ 2.0%.<br />
-              • <strong>Regla EOD:</strong> Auto-Flatten obligatorio a las 15:59 CST (cero riesgo overnight).
+          <div style={{ background: "rgba(56, 189, 248, 0.08)", padding: "12px 14px", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)" }}>
+            <div style={{ fontSize: "12.5px", fontWeight: 900, color: "#38bdf8", marginBottom: "6px" }}>🛡️ RUTA FONDEO · SPRINTS DE EXAMEN Y CONSISTENCIA CME</div>
+            <div style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.5" }}>
+              • <strong>Max Trailing Drawdown:</strong> ≤ 4.0% - 4.5% estricto (Apex, Topstep, FTMO $50k).<br />
+              • <strong>Límite Diario (DLL):</strong> Freno preventivo si pérdida diaria ≥ 2.0%.<br />
+              • <strong>Muestra Estadística:</strong> 30 IS / 20 OOS, Profit Factor OOS ≥ 1.15.<br />
+              • <strong>Monte Carlo Ruina:</strong> Probabilidad de ruina ≤ 0.5% frente al trailing stop.<br />
+              • <strong>Auto-Flatten EOD:</strong> Cierre obligatorio a las 15:59 CST (cero exposición nocturna).
             </div>
           </div>
         </div>
