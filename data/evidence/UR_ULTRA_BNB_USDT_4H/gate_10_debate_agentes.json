@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_BNB_USDT_4H",
   "strategy_id": "UR_ULTRA_BNB_USDT_4H",
-  "strategy_snapshot_hash": "7ca48c0f4798ddb0e367c9c676e40476be093a88372b9ede1b304cfe25d8c674",
+  "strategy_snapshot_hash": "37806ed56372e2b8901823bd786d92acfb70848f99539e9e331a471bf3aee9c0",
   "dataset_id": "ds_binance_bnbusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "b325dd6ea5280027ebb293d5cef4b9ca9231d8df7a99bc12e1c78571482bced7",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "1ad2f150e23afecf4ec9ac98a5a98d438ecc4598dc1a92c4d4789e088d18042d",
-  "output_hash": "27f9d491ccbcf51fd3eac95504b4c3fa54bb1677fd88d6318f502798e75bb77c",
-  "status": "PASSED",
-  "score": 78.0,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (78.0/100 · 5/5 Evaluadores Conformes)",
+  "input_hash": "2827ac5837b9205d75ed422f1fb32cd9ece5b845e5094fa57628cdb68fd1a786",
+  "output_hash": "ae721d058ba9e788f9aa1d65c16688725b0ce4ef3c4aece8ee5b45e6ca7a7a9b",
+  "status": "FAILED",
+  "score": 69.3,
+  "verdict": "FALLO: Consenso insuficiente (69.3/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 78.0,
+    "consensus_score": 69.3,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 61.7,
+        "score": 77.5,
         "findings": [
           "Activo y Timeframe: BNB-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.15 con beneficio neto de $602.27.",
+          "Profit Factor OOS: 1.50 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 67.5,
+        "score": 83.7,
         "findings": [
-          "Drawdown Máximo Observado: 69.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 34.6% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 79 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 75 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,17 +54,17 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $7.62 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 82.3,
+        "score": 65.3,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:28:45.541888+00:00"
+  "created_at_utc": "2026-08-20T17:49:20.810188+00:00"
 }
