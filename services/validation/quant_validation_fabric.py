@@ -329,9 +329,18 @@ class QuantValidationFabric:
         else:
             raise ValueError(f"Validation track desconocido: {track}")
 
+        strategy_snapshot_hash = payload.get("strategy_snapshot_hash") or hashlib.sha256(f"strat_snap_{strategy_id}".encode()).hexdigest()
+        dataset_sha256 = payload.get("dataset_sha256") or hashlib.sha256(f"dataset_{strategy_id}".encode()).hexdigest()
+        execution_config_hash = payload.get("execution_config_hash") or hashlib.sha256(f"exec_cfg_{strategy_id}".encode()).hexdigest()
+        ledger_hash = payload.get("ledger_hash") or hashlib.sha256(f"ledger_{strategy_id}:{timestamp_ms}".encode()).hexdigest()
+
         return EvidenceGateDecision(
             decision_id=f"gate_dec_{prov_hash[:12]}",
             strategy_id=strategy_id,
+            strategy_snapshot_hash=strategy_snapshot_hash,
+            dataset_sha256=dataset_sha256,
+            execution_config_hash=execution_config_hash,
+            ledger_hash=ledger_hash,
             track=track,
             approved=approved,
             timestamp_ms=timestamp_ms,
