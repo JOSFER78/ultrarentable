@@ -1034,10 +1034,10 @@ export default function StrategiesExplorerPage() {
                 fontFamily: "var(--font-mono, monospace)",
                 boxShadow: "0 2px 8px rgba(236, 72, 153, 0.15)",
               }}
-              title="Revalidar estrategias históricas (v1.02, v1.00) bajo el motor cuantitativo y 11 Gates actuales (v1.03)"
+              title={`Revalidar estrategias históricas bajo el motor cuantitativo y 11 Gates actuales (v${version})`}
             >
               <span>🛡️</span>
-              <span>Revalidar con v1.03</span>
+              <span>Revalidar con v{version}</span>
             </button>
           )}
 
@@ -1117,7 +1117,7 @@ export default function StrategiesExplorerPage() {
                     {statusFilter === "APPROVED" ? (
                       <div>
                         <div style={{ fontSize: "15px", fontWeight: 800, color: "#f87171", marginBottom: "6px" }}>
-                          0 ESTRATEGIAS APROBADAS BAJO EL MOTOR v1.03
+                          0 ESTRATEGIAS APROBADAS BAJO EL MOTOR v{version}
                         </div>
                         <div style={{ fontSize: "12px", color: "#94a3b8", maxWidth: "620px", margin: "0 auto 16px auto", lineHeight: "1.6" }}>
                           Por directiva estricta <strong>Zero-Mock & Real-Only</strong>, el sistema no maquilla resultados ni muestra estrategias que no superen los 11 Gates cuantitativos. Las {rejectedCount} estrategias históricas evaluadas fueron descartadas por no cumplir los criterios de microestructura, costes reales o drawdown.
@@ -1362,9 +1362,9 @@ export default function StrategiesExplorerPage() {
                             cursor: singleRevalLoading === c.candidate_id ? "not-allowed" : "pointer",
                             fontFamily: "var(--font-mono, monospace)",
                           }}
-                          title="Revalidar esta estrategia con el motor actual v1.03"
+                          title={`Revalidar esta estrategia con el motor actual v${version}`}
                         >
-                          {singleRevalLoading === c.candidate_id ? "⏳..." : "🔄 v1.03"}
+                          {singleRevalLoading === c.candidate_id ? "⏳..." : `🔄 v${version}`}
                         </button>
                         <button
                           onClick={() => setSelectedCandidate(c)}
@@ -1625,7 +1625,7 @@ export default function StrategiesExplorerPage() {
                   </span>
                 </div>
                 <h2 style={{ fontSize: "19px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
-                  Revalidación de Estrategias con Motor v1.03 (Actual)
+                  Revalidación de Estrategias con Motor v{version} (Actual)
                 </h2>
               </div>
               <button
@@ -1676,7 +1676,7 @@ export default function StrategiesExplorerPage() {
                 {/* Real-Time Metrics Counters */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "16px" }}>
                   <div style={{ background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
-                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>PROMOVIDAS v1.03</div>
+                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>PROMOVIDAS v{version}</div>
                     <div style={{ fontSize: "22px", fontWeight: 900, color: "#34d399" }}>{revalStatus.promoted_count}</div>
                   </div>
                   <div style={{ background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
@@ -1704,7 +1704,7 @@ export default function StrategiesExplorerPage() {
                         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                           <span style={{ fontSize: "10px", color: "#94a3b8" }}>Gates: {r.gates_passed}/11</span>
                           <span style={{ fontSize: "9.5px", fontWeight: 800, color: r.passed ? "#34d399" : "#fb7185", background: r.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", padding: "2px 5px", borderRadius: "4px" }}>
-                            {r.passed ? "🟢 v1.03" : "⛔ RECHAZADA"}
+                            {r.passed ? `🟢 v${version}` : "⛔ RECHAZADA"}
                           </span>
                         </div>
                       </div>
@@ -1752,7 +1752,7 @@ export default function StrategiesExplorerPage() {
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "18px" }}>
                   <div style={{ background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
-                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROMOVIDAS A v1.03</div>
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROMOVIDAS A v{version}</div>
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
                       {revalStatus.promoted_count}
                     </div>
@@ -1764,7 +1764,7 @@ export default function StrategiesExplorerPage() {
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#fb7185", margin: "4px 0" }}>
                       {revalStatus.rejected_count}
                     </div>
-                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>No pasaron filtros v1.03</div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>No pasaron filtros v{version}</div>
                   </div>
 
                   <div style={{ background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
@@ -1772,7 +1772,7 @@ export default function StrategiesExplorerPage() {
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#38bdf8", margin: "4px 0" }}>
                       {revalStatus.total_candidates}
                     </div>
-                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Motor v1.03 Dual-Engine</div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Motor v{version} Dual-Engine</div>
                   </div>
                 </div>
 
@@ -1790,7 +1790,7 @@ export default function StrategiesExplorerPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <span style={{ fontSize: "10px", color: "#94a3b8" }}>Gates: {r.gates_passed}/11</span>
                         <span style={{ fontSize: "10px", fontWeight: 800, color: r.passed ? "#34d399" : "#fb7185", background: r.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
-                          {r.passed ? "🟢 v1.03 APROBADA" : `⛔ ${r.new_status}`}
+                          {r.passed ? `🟢 v${version} APROBADA` : `⛔ ${r.new_status}`}
                         </span>
                       </div>
                     </div>
@@ -1837,7 +1837,7 @@ export default function StrategiesExplorerPage() {
                 {/* Information Card */}
                 <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px", marginBottom: "20px" }}>
                   <div style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.6" }}>
-                    Esta acción someterá las estrategias generadas en versiones anteriores a la verificación estricta del <strong>Pipeline Cuantitativo v1.03</strong> en segundo plano:
+                    Esta acción someterá las estrategias generadas en versiones anteriores a la verificación estricta del <strong>Pipeline Cuantitativo v{version}</strong> en segundo plano:
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
                     <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", gap: "6px" }}>
@@ -1854,7 +1854,7 @@ export default function StrategiesExplorerPage() {
                     </div>
                   </div>
                   <div style={{ marginTop: "12px", padding: "10px", background: "rgba(56, 189, 248, 0.08)", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)", fontSize: "11px", color: "#38bdf8" }}>
-                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v1.03 ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
+                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v{version} ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
                   </div>
                 </div>
 

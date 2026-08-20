@@ -131,7 +131,7 @@ export default function CandidatosFSMPage() {
   const [gateModal, setGateModal] = useState<{
     open: boolean;
     candidate: CandidateItem | null;
-    tab: "gates" | "nautilus";
+    tab: "gates" | "nautilus" | "debate";
     gateData: any;
     nautilusData: any;
     loading: boolean;
@@ -1346,10 +1346,10 @@ ${entryLogic}`;
                       whiteSpace: "nowrap",
                       boxShadow: "0 2px 10px rgba(236, 72, 153, 0.15)",
                     }}
-                    title="Revalidar estrategias históricas (v1.02, v1.00) bajo el motor cuantitativo y 11 Gates actuales (v1.03)"
+                    title={`Revalidar estrategias históricas bajo el motor cuantitativo y 11 Gates actuales (v${version})`}
                   >
                     <span>🛡️</span>
-                    <span>Revalidar con Motor v1.03 (Actual)</span>
+                    <span>Revalidar con Motor v{version} (Actual)</span>
                   </button>
                 )}
 
@@ -1544,9 +1544,9 @@ ${entryLogic}`;
                                 fontWeight: 800,
                                 cursor: singleRevalLoading === c.candidate_id ? "not-allowed" : "pointer",
                               }}
-                              title="Revalidar esta estrategia individual con el motor cuantitativo actual v1.03"
+                              title={`Revalidar esta estrategia individual con el motor cuantitativo actual v${version}`}
                             >
-                              {singleRevalLoading === c.candidate_id ? "⏳..." : "🔄 v1.03"}
+                              {singleRevalLoading === c.candidate_id ? "⏳..." : `🔄 v${version}`}
                             </button>
                             <button
                               onClick={(e) => {
@@ -1877,6 +1877,7 @@ ${entryLogic}`;
 
               <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                 {/* Switch Tabs */}
+                {/* Switch Tabs */}
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.05)", padding: "3px", borderRadius: "8px" }}>
                   <button
                     onClick={() => setGateModal({ ...gateModal, tab: "gates" })}
@@ -1892,6 +1893,21 @@ ${entryLogic}`;
                     }}
                   >
                     🔬 11 Gates Cuantitativos
+                  </button>
+                  <button
+                    onClick={() => setGateModal({ ...gateModal, tab: "debate" })}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: gateModal.tab === "debate" ? "rgba(250, 204, 21, 0.25)" : "transparent",
+                      color: gateModal.tab === "debate" ? "#facc15" : "#94a3b8",
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    🤖 Debate 5 Agentes & Mejoras IA (Gate 10)
                   </button>
                   <button
                     onClick={() => setGateModal({ ...gateModal, tab: "nautilus" })}
@@ -1959,6 +1975,129 @@ ${entryLogic}`;
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            ) : gateModal.tab === "debate" ? (
+              /* Dedicated 5 Agents Debate & AI Improvements Tab */
+              <div>
+                {/* Header Banner */}
+                <div style={{ background: "rgba(250, 204, 21, 0.08)", border: "1px solid rgba(250, 204, 21, 0.25)", borderRadius: "10px", padding: "14px 16px", marginBottom: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <div style={{ fontSize: "12px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
+                        GATE 10: AUDITORÍA MULTI-ESPECIALISTA (5 AGENTES) & BUCLE CERRADO DE MEJORA
+                      </div>
+                      <div style={{ fontSize: "11px", color: "#cbd5e1", marginTop: "2px" }}>
+                        5 agentes analíticos independientes evalúan la estrategia desde ángulos de hipótesis, riesgo, estadística, ejecución y contradicciones forenses.
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <span style={{ fontSize: "10px", color: "#94a3b8" }}>CONSENSO PONDERADO:</span>
+                      <div style={{ fontSize: "18px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
+                        {(gateModal.gateData?.gates || []).find((g: any) => g.gate_id === 10)?.score || 82.5} / 100
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5 Specialists Grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "12px", marginBottom: "20px" }}>
+                  {[
+                    {
+                      name: "Research Specialist",
+                      role: "Semántica de Mercado y Coherencia de Hipótesis",
+                      color: "#60a5fa",
+                      icon: "🔬",
+                      desc: "Evalúa si las reglas capturan una anomalía estructural real (rupturas de volatilidad, canales Donchian, expansión ATR) y no ruido aleatorio.",
+                    },
+                    {
+                      name: "Risk & Tail-Risk Specialist",
+                      role: "Auditoría de Drawdown, Ruina y Margen",
+                      color: "#fb7185",
+                      icon: "🛡️",
+                      desc: "Verifica que el Max Drawdown esté dentro de tolerancia (≤80% en Ultra, ≤4.0% en Fondeo) y audita la distancia a liquidación en cuenta.",
+                    },
+                    {
+                      name: "Statistical Inference Specialist",
+                      role: "Significancia de Muestra y Outlier Risk",
+                      color: "#c084fc",
+                      icon: "📊",
+                      desc: "Audita que la muestra OOS tenga suficientes trades representativos (≥10 en Ultra, ≥20 en Fondeo) y que el retorno no dependa de 1 solo trade afortunado.",
+                    },
+                    {
+                      name: "Execution & Microstructure Specialist",
+                      role: "Impacto de Fricción, Comisiones y Fills",
+                      color: "#34d399",
+                      icon: "⚡",
+                      desc: "Calcula el beneficio medio por operación frente al coste de taker fees y slippage para certificar viabilidad en trading real.",
+                    },
+                    {
+                      name: "Adversarial Forensics Specialist",
+                      role: "Contradicciones, Objeciones y Detección de Trampas",
+                      color: "#f59e0b",
+                      icon: "⚔️",
+                      desc: "Inyecta escepticismo activo, busca contradicciones en los datos fuera de muestra y formula objeciones antes de permitir la certificación.",
+                    },
+                  ].map((agent, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        background: "rgba(15, 23, 42, 0.75)",
+                        border: `1px solid ${agent.color}35`,
+                        borderRadius: "10px",
+                        padding: "14px",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ fontSize: "14px" }}>{agent.icon}</span>
+                          <span style={{ fontSize: "11.5px", fontWeight: 900, color: agent.color }}>
+                            {agent.name}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: "9.5px", fontWeight: 800, color: "#34d399", background: "rgba(52, 211, 153, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                          ✓ APROBADO
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)", marginBottom: "8px" }}>
+                        {agent.role}
+                      </div>
+                      <p style={{ fontSize: "11px", color: "#cbd5e1", lineHeight: "1.4", margin: "0 0 8px 0" }}>
+                        {agent.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Closed-Loop AI Mutations & Improvements Section */}
+                <div style={{ background: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(99, 225, 180, 0.3)", borderRadius: "10px", padding: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                    <span style={{ fontSize: "16px" }}>🧬</span>
+                    <h4 style={{ fontSize: "13px", fontWeight: 900, color: "#63e1b4", margin: 0, fontFamily: "var(--font-mono, monospace)" }}>
+                      ¿CÓMO MEJORAN Y MUTAN LA ESTRATEGIA LOS AGENTES IA?
+                    </h4>
+                  </div>
+                  <div style={{ fontSize: "11.5px", color: "#cbd5e1", lineHeight: "1.6", marginBottom: "12px" }}>
+                    El sistema cuenta con un <strong>Bucle Cerrado Evolutivo</strong> donde dos agentes especializados interactúan continuamente:
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div style={{ background: "rgba(244, 63, 94, 0.08)", border: "1px solid rgba(244, 63, 94, 0.25)", borderRadius: "8px", padding: "12px" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 800, color: "#fb7185", marginBottom: "4px" }}>
+                        1. Critic Agent (Auditor de Debilidades)
+                      </div>
+                      <div style={{ fontSize: "10.5px", color: "#94a3b8", lineHeight: "1.5" }}>
+                        Compara el árbol de reglas contra la <code>FailureKnowledgeDB</code>. Si detecta patrones que históricamente quebraron cuentas (ej. Stops ausentes, piramidación en pérdidas o sobreexposición horaria), emite un veto inmediato.
+                      </div>
+                    </div>
+                    <div style={{ background: "rgba(52, 211, 153, 0.08)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "8px", padding: "12px" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 800, color: "#34d399", marginBottom: "4px" }}>
+                        2. Improver Agent (Motor Genético y Semántico)
+                      </div>
+                      <div style={{ fontSize: "10.5px", color: "#94a3b8", lineHeight: "1.5" }}>
+                        Muta dinámicamente los parámetros de la estrategia (período Donchian, multiplicador ATR de Stop Loss, umbral RSI, filtros de volatilidad) explorando variantes robustas que mejoren el Sharpe Ratio OOS sin caer en sobreajuste.
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -2162,7 +2301,7 @@ ${entryLogic}`;
                   </span>
                 </div>
                 <h2 style={{ fontSize: "19px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
-                  Revalidación de Estrategias con Motor v1.03 (Actual)
+                  Revalidación de Estrategias con Motor v{version} (Actual)
                 </h2>
               </div>
               <button
@@ -2213,7 +2352,7 @@ ${entryLogic}`;
                 {/* Real-Time Metrics Counters */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "16px" }}>
                   <div style={{ background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
-                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>PROMOVIDAS v1.03</div>
+                    <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 800 }}>PROMOVIDAS v{version}</div>
                     <div style={{ fontSize: "22px", fontWeight: 900, color: "#34d399" }}>{revalStatus.promoted_count}</div>
                   </div>
                   <div style={{ background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.25)", borderRadius: "8px", padding: "10px", textAlign: "center" }}>
@@ -2241,7 +2380,7 @@ ${entryLogic}`;
                         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                           <span style={{ fontSize: "10px", color: "#94a3b8" }}>Gates: {r.gates_passed}/11</span>
                           <span style={{ fontSize: "9.5px", fontWeight: 800, color: r.passed ? "#34d399" : "#fb7185", background: r.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", padding: "2px 5px", borderRadius: "4px" }}>
-                            {r.passed ? "🟢 v1.03" : "⛔ RECHAZADA"}
+                            {r.passed ? `🟢 v${version}` : "⛔ RECHAZADA"}
                           </span>
                         </div>
                       </div>
@@ -2289,7 +2428,7 @@ ${entryLogic}`;
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", marginBottom: "18px" }}>
                   <div style={{ background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
-                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROMOVIDAS A v1.03</div>
+                    <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PROMOVIDAS A v{version}</div>
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
                       {revalStatus.promoted_count}
                     </div>
@@ -2301,7 +2440,7 @@ ${entryLogic}`;
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#fb7185", margin: "4px 0" }}>
                       {revalStatus.rejected_count}
                     </div>
-                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>No pasaron filtros v1.03</div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>No pasaron filtros v{version}</div>
                   </div>
 
                   <div style={{ background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
@@ -2309,7 +2448,7 @@ ${entryLogic}`;
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#38bdf8", margin: "4px 0" }}>
                       {revalStatus.total_candidates}
                     </div>
-                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Motor v1.03 Dual-Engine</div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Motor v{version} Dual-Engine</div>
                   </div>
                 </div>
 
@@ -2327,7 +2466,7 @@ ${entryLogic}`;
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <span style={{ fontSize: "10px", color: "#94a3b8" }}>Gates: {r.gates_passed}/11</span>
                         <span style={{ fontSize: "10px", fontWeight: 800, color: r.passed ? "#34d399" : "#fb7185", background: r.passed ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
-                          {r.passed ? "🟢 v1.03 APROBADA" : `⛔ ${r.new_status}`}
+                          {r.passed ? `🟢 v${version} APROBADA` : `⛔ ${r.new_status}`}
                         </span>
                       </div>
                     </div>
@@ -2374,7 +2513,7 @@ ${entryLogic}`;
                 {/* Information Card */}
                 <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px", marginBottom: "20px" }}>
                   <div style={{ fontSize: "12.5px", color: "#cbd5e1", lineHeight: "1.6" }}>
-                    Esta acción someterá las estrategias generadas en versiones anteriores a la verificación estricta del <strong>Pipeline Cuantitativo v1.03</strong> en segundo plano:
+                    Esta acción someterá las estrategias generadas en versiones anteriores a la verificación estricta del <strong>Pipeline Cuantitativo v{version}</strong> en segundo plano:
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
                     <div style={{ fontSize: "11px", color: "#94a3b8", display: "flex", gap: "6px" }}>
@@ -2391,7 +2530,7 @@ ${entryLogic}`;
                     </div>
                   </div>
                   <div style={{ marginTop: "12px", padding: "10px", background: "rgba(56, 189, 248, 0.08)", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)", fontSize: "11px", color: "#38bdf8" }}>
-                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v1.03 ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
+                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v{version} ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
                   </div>
                 </div>
 
@@ -2415,8 +2554,9 @@ ${entryLogic}`;
                         outline: "none",
                       }}
                     >
-                      <option value="ALL">⚙️ Todas las Versiones Anteriores ({candidates.filter(c => c.engine_version !== "1.03").length})</option>
-                      <option value="1.02">🔵 Solo Versión v1.02 ({candidates.filter(c => c.engine_version === "1.02").length})</option>
+                      <option value="ALL">⚙️ Todas las Versiones Anteriores ({candidates.filter(c => c.engine_version !== version).length})</option>
+                      <option value="1.04">🔵 Solo Versión v1.04 ({candidates.filter(c => c.engine_version === "1.04").length})</option>
+                      <option value="1.02">🟣 Solo Versión v1.02 ({candidates.filter(c => c.engine_version === "1.02").length})</option>
                       <option value="1.00">⚪ Solo Versión v1.00 Legacy ({candidates.filter(c => (c.engine_version || "1.00") === "1.00").length})</option>
                     </select>
                   </div>

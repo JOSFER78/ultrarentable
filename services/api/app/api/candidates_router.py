@@ -743,7 +743,7 @@ def ai_optimize_candidate(
 
 @candidates_router.post("/revalidate-legacy")
 def revalidate_legacy_strategies(payload: RevalidateLegacyRequest = Body(...)) -> Dict[str, Any]:
-    """Revalida estrategias de versiones anteriores bajo el pipeline y 11 Gates del motor actual (v1.03).
+    """Revalida estrategias de versiones anteriores bajo el pipeline y 11 Gates del motor actual.
     Si background=True, se ejecuta en segundo plano permitiendo consultar el progreso en vivo.
     """
     if payload.background:
@@ -777,7 +777,7 @@ def cancel_legacy_revalidation() -> Dict[str, Any]:
 
 @candidates_router.post("/{candidate_id}/revalidate")
 def revalidate_candidate(candidate_id: str) -> Dict[str, Any]:
-    """Revalida una estrategia específica bajo los 11 Gates del motor actual (v1.03)."""
+    """Revalida una estrategia específica bajo los 11 Gates del motor actual."""
     res = legacy_revalidation_service.revalidate_single_candidate(candidate_id)
     return res
 
