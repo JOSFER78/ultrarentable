@@ -13,8 +13,14 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 from pydantic import BaseModel
 
-from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute
+from contracts.canonical_execution import (
+    CanonicalExecutionLedger,
+    ExecutionTruth,
+    ExitReason,
+    OrderSide,
+)
 from contracts.snapshots.dataset_snapshot import DatasetSnapshot
+from contracts.snapshots.strategy_snapshot import StrategyRoute, StrategySnapshot
 
 
 @dataclass
@@ -90,6 +96,78 @@ class EventBacktestResult:
     order_log: List[OrderEvent] = field(default_factory=list)
     fill_log: List[FillEvent] = field(default_factory=list)
     execution_time_ms: float = 0.0
+
+    def to_canonical_ledger(self, symbol: str = "BTCUSDT", execution_config_hash: str = "") -> CanonicalExecutionLedger:
+        """Convierte el resultado de backtest determinista a CanonicalExecutionLedger oficial con Hash-Chain Merkle."""
+        import hashlib
+        canonical_trades = []
+        for t in self.trades:
+            side_enum = OrderSide.BUY if t.side == "LONG" else OrderSide.SELL
+            exit_reason_enum = (
+                ExitReason.TAKE_PROFIT if t.exit_reason == "TAKE_PROFIT"
+                else ExitReason.STOP_LOSS if t.exit_reason == "STOP_LOSS"
+                else ExitReason.KILL_SWITCH
+            )
+            canonical_trades.append(
+                ExecutionTruth(
+                    trade_id=t.trade_id,
+                    symbol=symbol,
+                    side=side_enum,
+                    entry_timestamp_utc_ms=t.entry_time_ms,
+                    exit_timestamp_utc_ms=t.exit_time_ms,
+                    market_data_hash=self.dataset_id,
+                    strategy_snapshot_hash=self.canonical_hash,
+                    execution_config_hash=execution_config_hash or hashlib.sha256(b"canonical_exec_cfg").hexdigest(),
+                    decision_price=t.entry_price,
+                    requested_qty=t.qty,
+                    filled_qty=t.qty,
+                    entry_price=t.entry_price,
+                    exit_price=t.exit_price,
+                    stop_loss_px=None,
+                    take_profit_px=None,
+                    commission_usd=t.fees_usd,
+                    slippage_usd=t.slippage_usd,
+                    funding_usd=0.0,
+                    total_friction_cost_usd=round(t.fees_usd + t.slippage_usd, 4),
+                    gross_pnl_usd=t.gross_pnl_usd,
+                    net_pnl_usd=t.net_pnl_usd,
+                    return_r=t.r_multiple,
+                    exit_reason=exit_reason_enum,
+                    notional_usd=round(t.entry_price * t.qty, 2),
+                    margin_used_usd=max(1.0, round((t.entry_price * t.qty) / 10.0, 2)),
+                    leverage_actual=10.0,
+                    equity_before_usd=t.equity_before_usd,
+                    equity_after_usd=t.equity_after_usd,
+                    drawdown_after_pct=0.0,
+                )
+            )
+
+        initial_cap = max(1.0, self.final_equity_usd - self.net_profit_usd)
+        roi = (self.net_profit_usd / initial_cap) * 100.0
+
+        ledger = CanonicalExecutionLedger(
+            strategy_id=self.strategy_id,
+            strategy_snapshot_hash=self.canonical_hash,
+            dataset_sha256=self.dataset_id,
+            execution_config_hash=execution_config_hash or hashlib.sha256(b"canonical_exec_cfg").hexdigest(),
+            engine_name="EventBacktestEngine",
+            initial_capital_usd=round(initial_cap, 2),
+            final_equity_usd=self.final_equity_usd,
+            net_profit_usd=self.net_profit_usd,
+            roi_pct=round(roi, 2),
+            profit_factor=self.profit_factor,
+            win_rate_pct=self.win_rate_pct,
+            max_drawdown_pct=self.max_drawdown_pct,
+            peak_leverage_used=10.0,
+            total_trades_count=self.total_trades,
+            winning_trades_count=self.winning_trades,
+            losing_trades_count=self.losing_trades,
+            total_commission_paid_usd=self.total_fees_usd,
+            total_slippage_paid_usd=self.total_slippage_usd,
+            total_funding_paid_usd=0.0,
+            trades=canonical_trades,
+        )
+        return ledger
 
 
 class EventBacktestEngine:

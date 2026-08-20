@@ -137,6 +137,12 @@ class CanonicalExecutionLedger(BaseModel):
     trades: List[ExecutionTruth] = Field(default_factory=list)
     ledger_hash: str = ""
 
+    def model_post_init(self, __context: Any) -> None:
+        """Auto-calcula y sella criptográficamente el hash del ledger en la inicialización."""
+        if not self.ledger_hash:
+            calculated = self.calculate_ledger_hash()
+            object.__setattr__(self, "ledger_hash", calculated)
+
     def calculate_ledger_hash(self) -> str:
         """Calcula el hash criptográfico determinista mediante Hash-Chain secuencial sobre toda la serie ordenada de trades.
         Garantiza sensibilidad absoluta al orden de operaciones, microestructura, comisiones, slippage y equity.
