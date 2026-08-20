@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_SOL_USDT_1H",
   "strategy_id": "UR_ULTRA_SOL_USDT_1H",
-  "strategy_snapshot_hash": "7fe05df8a53dba00a3b2d26ed361007faf161d5b1faa480f8a4e66beee202ce7",
-  "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "5b3cfd4eaae68e2d4aef0e9b7b31a2fa4eb064f48a740e28d0de0c02a2281297",
+  "strategy_snapshot_hash": "UR_ULTRA_SOL_USDT_1H",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9da38b5177ab1ec1045fdd3b6fb0fe9e31a76619c93239f481a3f38e642fe160",
-  "output_hash": "945c5ed39438b30eb19c0651a05474346661bb71b03c475bef108744f77cc9eb",
+  "input_hash": "dfc37e7fbaccd2434765b7e55dd88b08fa4677d606796174b63474c33cd55e87",
+  "output_hash": "855eef25d5e1cdc40879d22f0a4a221869f76c1543a8ba85477e8e172630d7e4",
   "status": "FAILED",
   "score": 77.0,
   "verdict": "FALLO: Consenso insuficiente (77.0/100) u objeción crítica de riesgo",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 155 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 723 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T04:03:25.582153+00:00"
+  "created_at_utc": "2026-08-20T07:17:46.480895+00:00"
 }

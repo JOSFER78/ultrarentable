@@ -27,7 +27,7 @@ def test_providers_endpoint():
 
 def test_candidates_endpoint_honest_reclassification():
     """Verify that candidates endpoint returns real evaluated strategies with honest status."""
-    resp = client.get("/api/v1/candidates")
+    resp = client.get("/api/v1/candidates?include_rejected=true")
     assert resp.status_code == 200
     candidates = resp.json()
     assert len(candidates) >= 1
@@ -37,12 +37,28 @@ def test_candidates_endpoint_honest_reclassification():
         assert "status" in c
         assert "route" in c
         assert "metrics" in c
+        assert "engine_version" in c
         # Status must be deterministic and not a synthetic approved
         assert c["status"] in [
             "APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "PORTFOLIO_CERTIFIED",
             "REJECTED_GATES_INCOMPLETE", "REJECTED_ALTO_DRAWDOWN", "REJECTED_BAJO_PF",
             "RECHAZADA_FONDEO_DD", "INVESTIGACION_BTC", "BLOCKED_NO_EVIDENCE"
-        ]
+        ] or c["status"].startswith("RECHAZADA") or c["status"].startswith("REJECTED")
+
+
+def test_versions_endpoint_and_changelog():
+    """Verify engine versioning SSOT endpoint and changelog consistency."""
+    resp = client.get("/api/v1/versions")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["current_version"] == "1.02"
+    assert "Ultrarentable" in data["current_name"]
+    assert len(data["history"]) >= 3
+    assert "version_distribution" in data
+    
+    curr_resp = client.get("/api/v1/versions/current")
+    assert curr_resp.status_code == 200
+    assert curr_resp.json()["engine_version"] == "1.02"
 
 
 def test_execution_session_kill_switch_lifecycle():

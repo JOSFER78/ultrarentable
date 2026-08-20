@@ -1,0 +1,815 @@
+{
+  "audit_timestamp_utc": "2026-08-20T07:18:32.204464+00:00",
+  "phase": "FASE_0_CONGELACION_FORENSE",
+  "verdict": "PASS",
+  "doctrines_verified": {
+    "zero_mock": true,
+    "zero_synthetic_data": true,
+    "real_datasets_available": true,
+    "versioned_strategies_isolated": true
+  },
+  "source_code_scan": {
+    "scanned_files_count": 77,
+    "violations_count": 0,
+    "violations": [],
+    "clean": true
+  },
+  "datasets_inventory": {
+    "total_datasets": 112,
+    "verified_count": 112,
+    "unverified_count": 0,
+    "datasets": [
+      {
+        "filename": "ds_binance_suiusdt_1m_1786461900000_1787091840000.json",
+        "size_kb": 1226.7,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_solusdt_5m_1783939200000_1787088900000.json",
+        "size_kb": 1194.7,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_es_1h_1711425600000_1787090400000.json",
+        "size_kb": 1629.6,
+        "bars": 13701,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+        "size_kb": 1269.3,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
+        "size_kb": 2748.6,
+        "bars": 17007,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
+        "size_kb": 714.9,
+        "bars": 4438,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+        "size_kb": 717.4,
+        "bars": 4439,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_bnbusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1241.4,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1m_1771841100000_1785665040000_ee0b2e169d.json",
+        "size_kb": 22055.0,
+        "bars": 230400,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_solusdt_1m_1786459200000_1787089140000.json",
+        "size_kb": 1185.2,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_cl_1h_1711425600000_1787090400000.json",
+        "size_kb": 2129.2,
+        "bars": 13541,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_15m_1771749000000_1785571200000_32bc0d4520.json",
+        "size_kb": 1571.8,
+        "bars": 15359,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_ym_15m_1780891200000_1787090400000.json",
+        "size_kb": 551.7,
+        "bars": 4625,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_es_15m_1780891200000_1787090400000.json",
+        "size_kb": 545.9,
+        "bars": 4610,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_ym_4h_1711425600000_1787083200000.json",
+        "size_kb": 447.3,
+        "bars": 3712,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_15m_1771841700000_1785663900000_45532d621a.json",
+        "size_kb": 1571.9,
+        "bars": 15359,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_ethusdt_15m_1777639500000_1787088600000.json",
+        "size_kb": 1283.6,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
+        "size_kb": 863.6,
+        "bars": 7220,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
+        "size_kb": 913.4,
+        "bars": 5667,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_cl_5m_1780891200000_1787091000000.json",
+        "size_kb": 2158.1,
+        "bars": 13856,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
+        "size_kb": 1260.0,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+        "size_kb": 905.3,
+        "bars": 5654,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gc_4h_1711425600000_1787083200000.json",
+        "size_kb": 550.9,
+        "bars": 3721,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1238.1,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_rty_4h_1711425600000_1787083200000.json",
+        "size_kb": 557.0,
+        "bars": 3719,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
+        "size_kb": 913.2,
+        "bars": 5671,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1262.4,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_ethusdt_5m_1783939200000_1787088900000.json",
+        "size_kb": 1277.2,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_si_4h_1711425600000_1787083200000.json",
+        "size_kb": 590.7,
+        "bars": 3721,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_linkusdt_5m_1784389500000_1787089200000.json",
+        "size_kb": 1022.8,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
+        "size_kb": 2745.4,
+        "bars": 16990,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_nq_15m_1780891200000_1787090400000.json",
+        "size_kb": 562.3,
+        "bars": 4608,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1232.1,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 2999.2,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
+        "size_kb": 710.1,
+        "bars": 4436,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
+        "size_kb": 2744.0,
+        "bars": 17139,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_dogeusdt_5m_1784389200000_1787088900000.json",
+        "size_kb": 1106.0,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
+        "size_kb": 1201.3,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_cl_15m_1780891200000_1787090400000.json",
+        "size_kb": 720.0,
+        "bars": 4611,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_avaxusdt_1m_1786461900000_1787091840000.json",
+        "size_kb": 1175.2,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_nq_4h_1711425600000_1787083200000.json",
+        "size_kb": 457.1,
+        "bars": 3711,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_es_5m_1780891200000_1787091000000.json",
+        "size_kb": 1628.7,
+        "bars": 13813,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_5m_1771718100000_1785541500000_06058c9952.json",
+        "size_kb": 4511.6,
+        "bars": 46079,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_cl_4h_1711425600000_1787083200000.json",
+        "size_kb": 581.9,
+        "bars": 3688,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_suiusdt_15m_1778989500000_1787088600000.json",
+        "size_kb": 1065.2,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+        "size_kb": 1275.0,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_nq_1h_1711425600000_1787090400000.json",
+        "size_kb": 1676.4,
+        "bars": 13699,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gc_5m_1780891200000_1787091000000.json",
+        "size_kb": 2010.3,
+        "bars": 13854,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
+        "size_kb": 2792.6,
+        "bars": 17334,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
+        "size_kb": 2801.5,
+        "bars": 17335,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+        "size_kb": 919.1,
+        "bars": 5687,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1m_1771748520000_1785572460000_7b5e35887e.json",
+        "size_kb": 22055.6,
+        "bars": 230400,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
+        "size_kb": 2776.7,
+        "bars": 17181,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_es_4h_1711425600000_1787083200000.json",
+        "size_kb": 443.8,
+        "bars": 3714,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1243.4,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 2982.7,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1310.3,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_btcusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1298.3,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
+        "size_kb": 715.0,
+        "bars": 4438,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+        "size_kb": 2713.1,
+        "bars": 16943,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_xrpusdt_15m_1778989500000_1787088600000.json",
+        "size_kb": 1068.7,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
+        "size_kb": 401.6,
+        "bars": 3839,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_ym_1h_1711425600000_1787090400000.json",
+        "size_kb": 1642.4,
+        "bars": 13694,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gc_15m_1780891200000_1787090400000.json",
+        "size_kb": 671.5,
+        "bars": 4612,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
+        "size_kb": 2777.5,
+        "bars": 17241,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_nq_5m_1780891200000_1787091000000.json",
+        "size_kb": 1671.0,
+        "bars": 13763,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_rty_1h_1711425600000_1787090400000.json",
+        "size_kb": 2048.4,
+        "bars": 13721,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
+        "size_kb": 1043.8,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_eurusd_5m_1779836400000_1787091600000.json",
+        "size_kb": 2738.6,
+        "bars": 17006,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_ym_5m_1780891200000_1787091000000.json",
+        "size_kb": 1645.0,
+        "bars": 13851,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_eurusd_15m_1779836400000_1787091300000.json",
+        "size_kb": 915.7,
+        "bars": 5686,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1h_1785168000000_1785340800000.json",
+        "size_kb": 4.8,
+        "bars": 49,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
+        "size_kb": 1294.3,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_si_15m_1780891200000_1787090400000.json",
+        "size_kb": 725.4,
+        "bars": 4627,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3129.9,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
+        "size_kb": 1014.7,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3049.6,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1h_1781942400000_1785535200000_b268efd8d5.json",
+        "size_kb": 97.4,
+        "bars": 999,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gbpusd_5m_1779836400000_1787091600000.json",
+        "size_kb": 2746.8,
+        "bars": 17057,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_ethusdt_1m_1786459140000_1787089080000.json",
+        "size_kb": 1267.9,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_15m_1771718400000_1785540600000_6fb02da608.json",
+        "size_kb": 1503.6,
+        "bars": 15359,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1h_1771718400000_1785535200000_6668069ea1.json",
+        "size_kb": 376.4,
+        "bars": 3839,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_5m_1771841100000_1785664800000_9cdb918f02.json",
+        "size_kb": 4612.2,
+        "bars": 46080,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_rty_5m_1780891200000_1787091000000.json",
+        "size_kb": 2039.0,
+        "bars": 13811,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1h_1784991600000_1785344400000_cd007df145.json",
+        "size_kb": 9.6,
+        "bars": 99,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_xrpusdt_1m_1786461900000_1787091840000.json",
+        "size_kb": 1231.8,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
+        "size_kb": 1050.3,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3136.7,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1m_1771717980000_1785541920000_4145c4344b.json",
+        "size_kb": 22055.8,
+        "bars": 230400,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_bnbusdt_1m_1786461900000_1787091840000.json",
+        "size_kb": 1209.7,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3034.2,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_gc_1h_1711425600000_1787090400000.json",
+        "size_kb": 2026.7,
+        "bars": 13737,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_xrpusdt_5m_1784389500000_1787089200000.json",
+        "size_kb": 1063.0,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
+        "size_kb": 2741.5,
+        "bars": 17009,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3023.2,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_1h_1771844400000_1785661200000_03c2d34718.json",
+        "size_kb": 401.6,
+        "bars": 3839,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
+        "size_kb": 717.4,
+        "bars": 4453,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
+        "size_kb": 1186.9,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
+        "size_kb": 913.3,
+        "bars": 5652,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
+        "size_kb": 1019.5,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_eurusd_1h_1698796800000_1787090400000.json",
+        "size_kb": 2777.0,
+        "bars": 17236,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
+        "size_kb": 1027.0,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_si_5m_1780891200000_1787091000000.json",
+        "size_kb": 2157.8,
+        "bars": 13802,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_dogeusdt_1m_1786461900000_1787091840000.json",
+        "size_kb": 1280.6,
+        "bars": 10500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_si_1h_1711425600000_1787090400000.json",
+        "size_kb": 2174.0,
+        "bars": 13732,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_bingx_ETH_USDT_5m_1771748700000_1785572100000_cadb14855f.json",
+        "size_kb": 4612.0,
+        "bars": 46079,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_rty_15m_1780891200000_1787090400000.json",
+        "size_kb": 685.3,
+        "bars": 4625,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_dogeusdt_15m_1778989500000_1787088600000.json",
+        "size_kb": 1112.4,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3169.9,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
+        "size_kb": 719.7,
+        "bars": 4453,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_linkusdt_1h_1695290400000_1787086800000.json",
+        "size_kb": 3009.1,
+        "bars": 25500,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      },
+      {
+        "filename": "ds_binance_suiusdt_5m_1784389500000_1787089200000.json",
+        "size_kb": 1059.4,
+        "bars": 9000,
+        "has_manifest": true,
+        "classification": "REAL_VERIFIED"
+      }
+    ]
+  },
+  "strategies_inventory": {
+    "total_count": 190,
+    "v1_02_actual_count": 98,
+    "v1_00_legacy_count": 92,
+    "approved_count": 3,
+    "rejected_count": 181
+  }
+}

@@ -440,6 +440,7 @@ export default function GeneticDiscoveryLabPage() {
                 <th style={{ padding: "10px" }}>Estrategia</th>
                 <th style={{ padding: "10px" }}>Activo / TF</th>
                 <th style={{ padding: "10px" }}>Ruta</th>
+                <th style={{ padding: "10px", textAlign: "center" }}>Versión</th>
                 <th style={{ padding: "10px" }}>Franja Evaluada</th>
                 <th style={{ padding: "10px", textAlign: "right" }}>% Retorno Mensual</th>
                 <th style={{ padding: "10px", textAlign: "right" }}>Profit Factor OOS</th>
@@ -451,7 +452,7 @@ export default function GeneticDiscoveryLabPage() {
             <tbody>
               {(!telemetry.recent_discoveries || telemetry.recent_discoveries.length === 0) ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: "32px 16px", textAlign: "center" }}>
+                  <td colSpan={10} style={{ padding: "32px 16px", textAlign: "center" }}>
                     <div style={{ fontSize: "24px", marginBottom: "6px" }}>🛡️</div>
                     <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", marginBottom: "4px" }}>
                       0 estrategias en pantalla
@@ -468,6 +469,7 @@ export default function GeneticDiscoveryLabPage() {
                   const totalYears = dur.total_years !== undefined ? Number(dur.total_years).toFixed(1) : (dur.total_months ? (Number(dur.total_months) / 12).toFixed(1) : "0.5");
                   const startStr = dur.start_date ? String(dur.start_date).slice(0, 7) : "2025-10";
                   const endStr = dur.end_date ? String(dur.end_date).slice(0, 7) : "2026-08";
+                  const isV102 = ((c as any).engine_version === "1.02" || !(c as any).engine_version);
                   return (
                     <tr key={i} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
                       <td style={{ padding: "10px", fontWeight: 800, color: "#ffffff" }}>{c.name}</td>
@@ -475,6 +477,11 @@ export default function GeneticDiscoveryLabPage() {
                       <td style={{ padding: "10px" }}>
                         <span style={{ fontSize: "10px", fontWeight: 800, color: c.route === "ULTRA" ? "#fb7185" : "#38bdf8", background: c.route === "ULTRA" ? "rgba(244, 63, 94, 0.15)" : "rgba(56, 189, 248, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
                           {c.route}
+                        </span>
+                      </td>
+                      <td style={{ padding: "10px", textAlign: "center" }}>
+                        <span style={{ fontSize: "9px", fontWeight: 800, color: isV102 ? "#34d399" : "#94a3b8", background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)", border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`, padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+                          {isV102 ? "🟢 v1.02" : `⚪ v${(c as any).engine_version || "1.00"}`}
                         </span>
                       </td>
                       <td style={{ padding: "10px", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1", fontSize: "11px" }}>

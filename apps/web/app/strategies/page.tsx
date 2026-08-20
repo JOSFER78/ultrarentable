@@ -11,6 +11,8 @@ interface Candidate {
   timeframe: string;
   status: string;
   status_reason?: string;
+  engine_version?: string;
+  validation_pipeline_version?: string;
   duration_info?: any;
   metrics?: {
     in_sample?: { net_profit_usd?: number; trades?: number; profit_factor?: number; max_drawdown_pct?: number; win_rate_pct?: number };
@@ -28,6 +30,7 @@ export default function StrategiesExplorerPage() {
   const [selectedRoute, setSelectedRoute] = useState<"ALL" | "ULTRA" | "FONDEO">("ALL");
   const [selectedSymbol, setSelectedSymbol] = useState<string>("ALL");
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>("ALL");
+  const [selectedEngineVersion, setSelectedEngineVersion] = useState<string>("ALL");
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [activeModalTab, setActiveModalTab] = useState<"DNA" | "SCORECARD" | "EXPORT">("SCORECARD");
   const [exportCode, setExportCode] = useState<string>("");
@@ -164,6 +167,7 @@ export default function StrategiesExplorerPage() {
     if (selectedRoute !== "ALL" && c.route?.toUpperCase() !== selectedRoute) return false;
     if (selectedSymbol !== "ALL" && !c.symbol?.includes(selectedSymbol)) return false;
     if (selectedTimeframe !== "ALL" && c.timeframe?.toLowerCase() !== selectedTimeframe.toLowerCase()) return false;
+    if (selectedEngineVersion !== "ALL" && (c.engine_version || "1.02") !== selectedEngineVersion) return false;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       return (
@@ -573,6 +577,57 @@ export default function StrategiesExplorerPage() {
           >
             🛡️ FONDEO ({candidates.filter((c) => c.route === "FONDEO").length})
           </button>
+
+          <div style={{ width: "1px", height: "20px", background: "rgba(255,255,255,0.1)", margin: "0 4px" }} />
+
+          {/* Engine Version Tabs */}
+          <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "3px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <button
+              onClick={() => setSelectedEngineVersion("ALL")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "10.5px",
+                fontWeight: 800,
+                border: "none",
+                cursor: "pointer",
+                background: selectedEngineVersion === "ALL" ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                color: selectedEngineVersion === "ALL" ? "#ffffff" : "#94a3b8",
+              }}
+            >
+              ⚙️ TODAS VERS.
+            </button>
+            <button
+              onClick={() => setSelectedEngineVersion("1.02")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "10.5px",
+                fontWeight: 800,
+                border: "none",
+                cursor: "pointer",
+                background: selectedEngineVersion === "1.02" ? "rgba(52, 211, 153, 0.2)" : "transparent",
+                color: selectedEngineVersion === "1.02" ? "#34d399" : "#94a3b8",
+              }}
+            >
+              🟢 v1.02 ACTUAL ({candidates.filter((c) => (c.engine_version || "1.02") === "1.02").length})
+            </button>
+            <button
+              onClick={() => setSelectedEngineVersion("1.00")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "10.5px",
+                fontWeight: 800,
+                border: "none",
+                cursor: "pointer",
+                background: selectedEngineVersion === "1.00" ? "rgba(148, 163, 184, 0.2)" : "transparent",
+                color: selectedEngineVersion === "1.00" ? "#94a3b8" : "#64748b",
+              }}
+            >
+              ⚪ v1.00 LEGACY ({candidates.filter((c) => c.engine_version === "1.00").length})
+            </button>
+          </div>
         </div>
 
         {/* Filtros rápidos: Activo, TF, Orden, Búsqueda */}
@@ -706,6 +761,7 @@ export default function StrategiesExplorerPage() {
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>ESTRATEGIA & ID</th>
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>ACTIVO / TF</th>
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>RUTA</th>
+                <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px", textAlign: "center" }}>VERSIÓN</th>
                 <th style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px" }}>FRANJA EVALUADA (PERIODO)</th>
                 <th
                   onClick={() => handleSort("monthly_roi_pct")}
@@ -739,13 +795,13 @@ export default function StrategiesExplorerPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={12} style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
+                  <td colSpan={13} style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
                     Cargando estrategias reales desde la base de datos...
                   </td>
                 </tr>
               ) : paginatedCandidates.length === 0 ? (
                 <tr>
-                  <td colSpan={13} style={{ textAlign: "center", padding: "48px 20px", color: "#94a3b8" }}>
+                  <td colSpan={14} style={{ textAlign: "center", padding: "48px 20px", color: "#94a3b8" }}>
                     <div style={{ fontSize: "36px", marginBottom: "12px" }}>🛡️</div>
                     <div style={{ fontSize: "15px", fontWeight: 800, color: "#f87171", marginBottom: "8px" }}>
                       0 ESTRATEGIAS ACTIVAS CON RENTABILIDAD ≥ 20.0% MENSUAL
@@ -784,6 +840,7 @@ export default function StrategiesExplorerPage() {
                   const dd = c.metrics?.out_of_sample?.max_drawdown_pct ?? c.metrics?.in_sample?.max_drawdown_pct;
                   const mc = c.metrics?.anti_overfit?.monte_carlo_score;
                   const dur = c.duration_info;
+                  const isV102 = (c.engine_version === "1.02" || !c.engine_version);
 
                   return (
                     <tr
@@ -852,6 +909,23 @@ export default function StrategiesExplorerPage() {
                           }}
                         >
                           {c.route}
+                        </span>
+                      </td>
+                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "center" }}>
+                        <span
+                          style={{
+                            fontSize: "8.5px",
+                            fontWeight: 800,
+                            padding: "2px 5px",
+                            borderRadius: "3px",
+                            background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
+                            color: isV102 ? "#34d399" : "#94a3b8",
+                            border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                            fontFamily: "var(--font-mono, monospace)",
+                          }}
+                          title={isV102 ? "Motor Cuantitativo v1.02 (Zero-Simulation Forensic)" : "Motor v1.00 (Legacy Baseline)"}
+                        >
+                          {isV102 ? "🟢 v1.02" : `⚪ v${c.engine_version || "1.00"}`}
                         </span>
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>

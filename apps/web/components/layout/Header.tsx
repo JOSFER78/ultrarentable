@@ -50,7 +50,21 @@ export default function Header() {
               boxShadow: "0 0 6px #34d399",
             }}
           />
-          <span style={{ color: "#ffffff", fontWeight: 700 }}>ULTRARENTABLE V2</span>
+          <span style={{ color: "#ffffff", fontWeight: 700 }}>ULTRARENTABLE</span>
+          <span
+            style={{
+              fontSize: "9px",
+              fontWeight: 800,
+              padding: "1px 5px",
+              borderRadius: "4px",
+              background: "rgba(52, 211, 153, 0.15)",
+              color: "#34d399",
+              border: "1px solid rgba(52, 211, 153, 0.4)",
+            }}
+            title="Motor Cuantitativo v1.02 (Zero-Simulation Forensic)"
+          >
+            v1.02
+          </span>
         </div>
 
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>

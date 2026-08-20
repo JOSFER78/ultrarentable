@@ -7,6 +7,7 @@ validation gate with circuit-breaker protection for Ultrarentable.
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import logging
+import math
 from typing import Any, Dict, List, Optional
 import numpy as np
 
@@ -298,13 +299,49 @@ class NautilusGateEngine:
             net_profit = equity - account_size_usd
             roi_pct = (net_profit / account_size_usd) * 100.0
 
-            # Gate 11 Acceptance Criteria:
+            # Gate 11 Acceptance Criteria (Zero-Forced Pass & Hard Leverage Ceiling):
             # 1. Profit Factor >= 1.25
             # 2. Minimum Liquidation Distance > 0.5% (No margin calls / near-death events)
             # 3. Trades >= 15
-            # 4. Max Drawdown acceptable for route (<= 4.0% for Fondeo, <= 50.0% for Ultra)
+            # 4. Max Drawdown acceptable for route (<= 4.0% for Fondeo, <= 55.0% for Ultra)
+            # 5. Peak Leverage MUST NOT breach max_leverage_ceiling
+            # 6. Zero NaN or corrupt metrics
             max_dd_limit = 4.0 if route == "FONDEO" else 55.0
-            passed = (pf >= 1.25) and (min_liquidation_distance >= 0.5) and (len(trades) >= 15) and (max_drawdown <= max_dd_limit) and (net_profit > 0)
+            
+            has_nan = math.isnan(pf) or math.isnan(max_drawdown) or math.isnan(max_effective_leverage) or math.isnan(net_profit)
+            leverage_breached = (max_effective_leverage > max_leverage_ceiling) if not math.isnan(max_effective_leverage) else True
+            
+            passed = (
+                not has_nan
+                and not leverage_breached
+                and (pf >= 1.25)
+                and (min_liquidation_distance >= 0.5)
+                and (len(trades) >= 15)
+                and (max_drawdown <= max_dd_limit)
+                and (net_profit > 0)
+            )
+
+            diag_reasons = []
+            if has_nan:
+                diag_reasons.append("NaN en métricas")
+            if leverage_breached:
+                diag_reasons.append(f"Apalancamiento pico ({max_effective_leverage:.2f}x) > Techo ({max_leverage_ceiling:.2f}x)")
+            if pf < 1.25:
+                diag_reasons.append(f"PF insuficiente ({pf:.2f} < 1.25)")
+            if min_liquidation_distance < 0.5:
+                diag_reasons.append(f"Distancia liquidación peligrosa ({min_liquidation_distance:.2f}% < 0.5%)")
+            if len(trades) < 15:
+                diag_reasons.append(f"Operaciones insuficientes ({len(trades)} < 15)")
+            if max_drawdown > max_dd_limit:
+                diag_reasons.append(f"Max DD excesivo ({max_drawdown:.1f}% > {max_dd_limit}%)")
+            if net_profit <= 0:
+                diag_reasons.append(f"PnL neto negativo (${net_profit:.2f})")
+
+            diagnostics_msg = (
+                "Gate 11 PASSED: Event-driven microstructure, margin & funding simulation verified."
+                if passed
+                else f"Gate 11 FAILED: {', '.join(diag_reasons)}."
+            )
 
             return NautilusGateResult(
                 status="PASSED" if passed else "FAILED",
@@ -319,7 +356,7 @@ class NautilusGateEngine:
                 funding_fees_usd=total_funding_fees,
                 effective_max_leverage=max_effective_leverage,
                 execution_time_ms=elapsed_ms,
-                diagnostics="Gate 11 PASSED: Event-driven microstructure, margin & funding simulation verified." if passed else f"Gate 11 FAILED: PF={pf:.2f}, MinLiqDist={min_liquidation_distance:.2f}%, MaxDD={max_drawdown:.1f}%.",
+                diagnostics=diagnostics_msg,
                 details={
                     "route": route,
                     "archetype": arch,

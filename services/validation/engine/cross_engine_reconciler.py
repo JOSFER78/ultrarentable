@@ -97,7 +97,7 @@ class CrossEngineReconciler:
 
         # Delta de Drawdown
         dd_delta = abs(internal_res.max_drawdown_pct - nautilus_res.max_drawdown_pct)
-        if dd_delta > 15.0:
+        if dd_delta > self.dd_tolerance:
             discrepancies.append(f"Discrepancia de Drawdown: Interno = {internal_res.max_drawdown_pct:.1f}%, Nautilus = {nautilus_res.max_drawdown_pct:.1f}%")
 
         reconciled = len(discrepancies) == 0

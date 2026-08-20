@@ -27,6 +27,8 @@ interface CandidateItem {
   status: string;
   status_reason?: string;
   archetype?: string;
+  engine_version?: string;
+  validation_pipeline_version?: string;
   scorecard_json?: string;
   metrics?: {
     in_sample?: { net_profit_usd: number; trades: number; profit_factor: number; max_drawdown_pct: number; win_rate_pct: number };
@@ -100,6 +102,7 @@ export default function CandidatosFSMPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
+  const [versionFilter, setVersionFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCandidate, setSelectedCandidate] = useState<CandidateItem | null>(null);
 
@@ -499,6 +502,7 @@ ${entryLogic}`;
   const filteredCandidates = candidates.filter((c) => {
     if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
     if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
+    if (versionFilter !== "ALL" && (c.engine_version || "1.02") !== versionFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const match = c.name.toLowerCase().includes(q) || c.candidate_id.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q);
@@ -879,6 +883,7 @@ ${entryLogic}`;
                         <th style={{ padding: "8px" }}>ESTADO</th>
                         <th style={{ padding: "8px" }}>SUBMOTOR / ID</th>
                         <th style={{ padding: "8px" }}>ACTIVO</th>
+                        <th style={{ padding: "8px", textAlign: "center" }}>VERSIÓN</th>
                         <th style={{ padding: "8px", textAlign: "right" }}>PESO %</th>
                         <th style={{ padding: "8px", textAlign: "right" }}>MAX DD</th>
                         <th style={{ padding: "8px" }}>ROL EN EL META-PORTAFOLIO</th>
@@ -887,7 +892,7 @@ ${entryLogic}`;
                     <tbody>
                       {(ensembleRoute === "ULTRA" ? top5Ultra : top5Fondeo).length === 0 ? (
                         <tr>
-                          <td colSpan={6} style={{ padding: "30px 10px", textAlign: "center", color: "#94a3b8" }}>
+                          <td colSpan={7} style={{ padding: "30px 10px", textAlign: "center", color: "#94a3b8" }}>
                             <div style={{ fontSize: "20px", marginBottom: "6px" }}>🔬</div>
                             <div style={{ fontSize: "12px", fontWeight: 800, color: "#fff" }}>0 Candidatos Certificados en la Base de Datos</div>
                             <div style={{ fontSize: "10.5px", color: "#64748b", maxWidth: "420px", margin: "4px auto 0 auto" }}>
@@ -901,6 +906,7 @@ ${entryLogic}`;
                           const alloc = ensembleResult?.allocated_strategies.find((a) => a.strategy_id === strat.candidate_id);
                           const weight = alloc?.weight_pct || 20.0;
                           const role = alloc?.role_in_ensemble || "Amortiguador de Convexidad";
+                          const isV102 = (strat.engine_version === "1.02" || !strat.engine_version);
 
                           return (
                             <tr
@@ -928,6 +934,22 @@ ${entryLogic}`;
                                 <span style={{ fontWeight: 800, color: "#cbd5e1" }}>{strat.symbol}</span>{" "}
                                 <span style={{ color: "#38bdf8", fontSize: "9.5px", fontFamily: "var(--font-mono, monospace)" }}>
                                   ({strat.timeframe})
+                                </span>
+                              </td>
+                              <td style={{ padding: "8px", textAlign: "center" }}>
+                                <span
+                                  style={{
+                                    fontSize: "8.5px",
+                                    fontWeight: 800,
+                                    padding: "2px 5px",
+                                    borderRadius: "4px",
+                                    background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
+                                    color: isV102 ? "#34d399" : "#94a3b8",
+                                    border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                                    fontFamily: "var(--font-mono, monospace)",
+                                  }}
+                                >
+                                  {isV102 ? "🟢 v1.02" : `⚪ v${strat.engine_version || "1.00"}`}
                                 </span>
                               </td>
                               <td style={{ padding: "8px", textAlign: "right", fontWeight: 800, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
@@ -1108,6 +1130,33 @@ ${entryLogic}`;
                     </button>
                   ))}
                 </div>
+
+                {/* Engine Version filter */}
+                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                  {[
+                    { id: "ALL", label: "⚙️ TODAS VERS." },
+                    { id: "1.02", label: `🟢 v1.02 ACTUAL (${candidates.filter(c => (c.engine_version || "1.02") === "1.02").length})` },
+                    { id: "1.00", label: `⚪ v1.00 LEGACY (${candidates.filter(c => c.engine_version === "1.00").length})` },
+                  ].map((ver) => (
+                    <button
+                      key={ver.id}
+                      onClick={() => setVersionFilter(ver.id)}
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: versionFilter === ver.id ? "rgba(52, 211, 153, 0.25)" : "transparent",
+                        color: versionFilter === ver.id ? "#34d399" : "#94a3b8",
+                        fontSize: "10px",
+                        fontWeight: 800,
+                        cursor: "pointer",
+                        fontFamily: "var(--font-mono, monospace)",
+                      }}
+                    >
+                      {ver.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <input
@@ -1149,6 +1198,7 @@ ${entryLogic}`;
                     <th style={{ padding: "8px 10px" }}>ESTRATEGIA & ID</th>
                     <th style={{ padding: "8px 10px" }}>ACTIVO / TF</th>
                     <th style={{ padding: "8px 10px" }}>RUTA</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>VERSIÓN</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>% ANUAL</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>% MES</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>PF OOS</th>
@@ -1160,11 +1210,11 @@ ${entryLogic}`;
                 <tbody>
                   {filteredCandidates.length === 0 ? (
                     <tr>
-                      <td colSpan={10} style={{ padding: "40px 20px", textAlign: "center", color: "#94a3b8" }}>
+                      <td colSpan={11} style={{ padding: "40px 20px", textAlign: "center", color: "#94a3b8" }}>
                         <div style={{ fontSize: "28px", marginBottom: "8px" }}>🔬</div>
-                        <div style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>0 Candidatos Certificados en este Momento</div>
+                        <div style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>0 Candidatos Coincidentes</div>
                         <div style={{ fontSize: "11px", color: "#64748b", maxWidth: "450px", margin: "6px auto 0 auto", lineHeight: "1.4" }}>
-                          El historial previo no validado ha sido purgado. El motor cuantitativo está calibrando estrategias deterministas con paridad matemática exacta para TradingView y SQX.
+                          No se encontraron estrategias con los filtros seleccionados (Ruta, Activo o Versión del Motor).
                         </div>
                       </td>
                     </tr>
@@ -1176,6 +1226,7 @@ ${entryLogic}`;
                       const monthRoi = oos?.monthly_roi_pct || 0;
                       const pfOos = oos?.profit_factor || 0;
                       const maxDd = oos?.max_drawdown_pct || 0;
+                      const isV102 = (c.engine_version === "1.02" || !c.engine_version);
 
                       // Parse Gate 11
                       let n11: any = null;
@@ -1226,6 +1277,23 @@ ${entryLogic}`;
                               title={c.route === "FONDEO" ? `Prop Firms: ${(c as any).prop_firm_venues || "FTMO / Apex / Topstep"}` : "Ruta ULTRA: BingX 500x"}
                             >
                               {c.route === "FONDEO" ? "🛡️ FONDEO" : "🔥 ULTRA"}
+                            </span>
+                          </td>
+                          <td style={{ padding: "8px 10px", textAlign: "center" }}>
+                            <span
+                              style={{
+                                fontSize: "9px",
+                                fontWeight: 800,
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
+                                color: isV102 ? "#34d399" : "#94a3b8",
+                                border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                                fontFamily: "var(--font-mono, monospace)",
+                              }}
+                              title={isV102 ? "Motor Cuantitativo v1.02 (Zero-Simulation Forensic)" : "Motor v1.00 (Legacy Baseline)"}
+                            >
+                              {isV102 ? "🟢 v1.02" : `⚪ v${c.engine_version || "1.00"}`}
                             </span>
                           </td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: annRoi > 0 ? "#34d399" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
