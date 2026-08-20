@@ -1,0 +1,73 @@
+{
+  "active_version": "1.03",
+  "active_name": "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
+  "pipeline_version": "1.03",
+  "codebase_fingerprint": "be3018355b2027b7db2b668e50a8c4c32433b78224f0e21d259a31fbb2c23ef4",
+  "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
+  "last_bump_utc": "2026-08-20T07:28:27.623229+00:00",
+  "history": [
+    {
+      "version": "1.00",
+      "name": "Ultrarentable V1.00 (Legacy Baseline)",
+      "released_at": "2026-08-10T00:00:00Z",
+      "status": "LEGACY_DEPRECATED",
+      "status_label": "Legacy / Obsoleta",
+      "description": "Versi\u00f3n inicial del motor con StrategyQuant X.",
+      "ruleset_hash": "legacy_v1_00_unhardened",
+      "git_commit": "legacy",
+      "changes": [
+        "Descubrimiento de estrategias con StrategyQuant X.",
+        "Primeros filtros de consistencia."
+      ]
+    },
+    {
+      "version": "1.01",
+      "name": "Ultrarentable V1.01 (11-Gate Pipeline Integration)",
+      "released_at": "2026-08-18T00:00:00Z",
+      "status": "INTERMEDIATE",
+      "status_label": "Intermedia (11 Gates)",
+      "description": "Integraci\u00f3n del pipeline de 11 Gates y NautilusTrader.",
+      "ruleset_hash": "a8f9c42b109e8751d3b4e209871fa093",
+      "git_commit": "8b1668e",
+      "changes": [
+        "Arquitectura modular de 11 Gates Cuantitativos.",
+        "Gate 11 de reconciliaci\u00f3n NautilusTrader."
+      ]
+    },
+    {
+      "version": "1.02",
+      "name": "Ultrarentable V1.02 (Zero-Simulation Forensic & Exact Math)",
+      "released_at": "2026-08-20T00:00:00Z",
+      "status": "INTERMEDIATE",
+      "status_label": "Intermedia (1.02)",
+      "description": "Endurecimiento Zero-Simulation, c\u00e1lculo estricto de ROI OOS por velas reales y persistencia de versiones en DB y Firebase.",
+      "ruleset_hash": "e6f498c17b520ad98341fbcd2981045a",
+      "git_commit": "121caf5",
+      "changes": [
+        "Normalizaci\u00f3n temporal exacta por recuento de velas OOS.",
+        "Eliminaci\u00f3n de sobreescritura de estados.",
+        "Sincronizaci\u00f3n en Firebase Cloud."
+      ]
+    },
+    {
+      "version": "1.03",
+      "name": "Ultrarentable Dual-Engine V1.03 (Master Forensic Architecture & Reconciled Dual-Engine)",
+      "released_at": "2026-08-20T07:28:27.623229+00:00",
+      "status": "CURRENT_RECOMMENDED",
+      "status_label": "Actual / Certificada",
+      "description": "Versi\u00f3n mayor de certificaci\u00f3n forense. Implementaci\u00f3n del CanonicalExecutionLedger trade-by-trade, reconciliaci\u00f3n matem\u00e1tica multi-activo de 5 benchmarks reales (SUI, BTC, EURUSD, NQ, CL), blindaje de techo de apalancamiento en Gate 11, cat\u00e1logo de microestructura y costes reales para 44+ activos, aislamiento f\u00edsico del Blind Holdout 60/20/20, c\u00e1lculo probabil\u00edstico de quiebra de cuentas Prop Firm y suite de 231 tests unitarios y de integraci\u00f3n (100% aprobados).",
+      "ruleset_hash": "be3018355b2027b7db2b668e50a8c4c3",
+      "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
+      "changes": [
+        "Capa can\u00f3nica de ejecuci\u00f3n f\u00edsica (ExecutionTruth & CanonicalExecutionLedger).",
+        "Reconciliaci\u00f3n trade-by-trade FastEngine vs NautilusTrader en 5 activos globales.",
+        "Eliminaci\u00f3n de la contradicci\u00f3n de leverage en Gate 11 (hard ceiling breach -> REJECTED).",
+        "Cat\u00e1logo can\u00f3nico de costes (InstrumentCostProfile) y bloqueo de activos sin modelo de fricci\u00f3n.",
+        "Aislamiento f\u00edsico del dataset ciego OOS (Blind Holdout) frente a procesos de discovery.",
+        "PropFirmRiskEngine con c\u00e1lculo de probabilidad real de violaci\u00f3n de reglas diarias y trailing DD.",
+        "Estructura formal de Balas ULTRA con riesgo fijo, cero martingalas y cosecha a B\u00f3veda.",
+        "Bater\u00eda de tests adversariales Red-Team profunda y suite completa de 231 tests pasando."
+      ]
+    }
+  ]
+}

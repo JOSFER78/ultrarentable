@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 import { StrategyLifecycleStatus } from "@/types/telemetry";
 
 const FSM_11_STEPS: { key: string; label: string; desc: string; color: string; step: number; slug: string }[] = [
@@ -96,6 +97,7 @@ interface EnsembleDebateResult {
 }
 
 export default function CandidatosFSMPage() {
+  const { version, versionName } = useEngineVersion();
   const [activeTab, setActiveTab] = useState<"individual" | "ensemble">("individual");
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -502,7 +504,7 @@ ${entryLogic}`;
   const filteredCandidates = candidates.filter((c) => {
     if (routeFilter !== "ALL" && c.route !== routeFilter) return false;
     if (categoryFilter !== "ALL" && getSymbolCategory(c.symbol) !== categoryFilter) return false;
-    if (versionFilter !== "ALL" && (c.engine_version || "1.02") !== versionFilter) return false;
+    if (versionFilter !== "ALL" && (c.engine_version || version) !== versionFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const match = c.name.toLowerCase().includes(q) || c.candidate_id.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q);
@@ -906,7 +908,7 @@ ${entryLogic}`;
                           const alloc = ensembleResult?.allocated_strategies.find((a) => a.strategy_id === strat.candidate_id);
                           const weight = alloc?.weight_pct || 20.0;
                           const role = alloc?.role_in_ensemble || "Amortiguador de Convexidad";
-                          const isV102 = (strat.engine_version === "1.02" || !strat.engine_version);
+                          const isCurrent = (strat.engine_version === version || !strat.engine_version || strat.engine_version >= "1.02");
 
                           return (
                             <tr
@@ -943,13 +945,14 @@ ${entryLogic}`;
                                     fontWeight: 800,
                                     padding: "2px 5px",
                                     borderRadius: "4px",
-                                    background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
-                                    color: isV102 ? "#34d399" : "#94a3b8",
-                                    border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                                    background: isCurrent ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
+                                    color: isCurrent ? "#34d399" : "#94a3b8",
+                                    border: `1px solid ${isCurrent ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
                                     fontFamily: "var(--font-mono, monospace)",
                                   }}
+                                  title={isCurrent ? (versionName || `Motor Cuantitativo v${strat.engine_version || version} (Zero-Simulation Forensic)`) : `Motor v${strat.engine_version || "1.00"} (Legacy Baseline)`}
                                 >
-                                  {isV102 ? "🟢 v1.02" : `⚪ v${strat.engine_version || "1.00"}`}
+                                  {isCurrent ? `🟢 v${strat.engine_version || version}` : `⚪ v${strat.engine_version || "1.00"}`}
                                 </span>
                               </td>
                               <td style={{ padding: "8px", textAlign: "right", fontWeight: 800, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
@@ -1135,7 +1138,7 @@ ${entryLogic}`;
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
                   {[
                     { id: "ALL", label: "⚙️ TODAS VERS." },
-                    { id: "1.02", label: `🟢 v1.02 ACTUAL (${candidates.filter(c => (c.engine_version || "1.02") === "1.02").length})` },
+                    { id: version, label: `🟢 v${version} ACTUAL (${candidates.filter(c => (c.engine_version || version) === version).length})` },
                     { id: "1.00", label: `⚪ v1.00 LEGACY (${candidates.filter(c => c.engine_version === "1.00").length})` },
                   ].map((ver) => (
                     <button
@@ -1226,7 +1229,7 @@ ${entryLogic}`;
                       const monthRoi = oos?.monthly_roi_pct || 0;
                       const pfOos = oos?.profit_factor || 0;
                       const maxDd = oos?.max_drawdown_pct || 0;
-                      const isV102 = (c.engine_version === "1.02" || !c.engine_version);
+                      const isCurrent = (c.engine_version === version || !c.engine_version || c.engine_version >= "1.02");
 
                       // Parse Gate 11
                       let n11: any = null;
@@ -1286,14 +1289,14 @@ ${entryLogic}`;
                                 fontWeight: 800,
                                 padding: "2px 6px",
                                 borderRadius: "4px",
-                                background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
-                                color: isV102 ? "#34d399" : "#94a3b8",
-                                border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                                background: isCurrent ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
+                                color: isCurrent ? "#34d399" : "#94a3b8",
+                                border: `1px solid ${isCurrent ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
                                 fontFamily: "var(--font-mono, monospace)",
                               }}
-                              title={isV102 ? "Motor Cuantitativo v1.02 (Zero-Simulation Forensic)" : "Motor v1.00 (Legacy Baseline)"}
+                              title={isCurrent ? (versionName || `Motor Cuantitativo v${c.engine_version || version} (Zero-Simulation Forensic)`) : `Motor v${c.engine_version || "1.00"} (Legacy Baseline)`}
                             >
-                              {isV102 ? "🟢 v1.02" : `⚪ v${c.engine_version || "1.00"}`}
+                              {isCurrent ? `🟢 v${c.engine_version || version}` : `⚪ v${c.engine_version || "1.00"}`}
                             </span>
                           </td>
                           <td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 800, color: annRoi > 0 ? "#34d399" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>

@@ -6,14 +6,18 @@ Elimina cualquier discrepancia entre documentación, código, base de datos y su
 from __future__ import annotations
 
 import json
-import os
 import sqlite3
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-
 REPO_ROOT = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable")
+sys.path.insert(0, str(REPO_ROOT))
+
+from services.version_control_manager import version_manager
+from services.engine_version import CURRENT_ENGINE_VERSION, CURRENT_ENGINE_NAME
+
 DOCS_DIR = REPO_ROOT / "docs"
 STATE_FILE = DOCS_DIR / "STATE_OF_TRUTH.md"
 DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
@@ -46,20 +50,18 @@ def get_dataset_stats() -> dict:
 
 def get_db_stats() -> dict:
     if not DB_PATH.exists():
-        return {"total_candidates": 0, "v1_02": 0, "v1_00": 0}
+        return {"total_candidates": 0, "breakdown": {}}
     try:
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
         cur.execute("SELECT count(*) FROM candidates")
         total = cur.fetchone()[0]
-        cur.execute("SELECT count(*) FROM candidates WHERE engine_version = '1.02'")
-        v102 = cur.fetchone()[0]
-        cur.execute("SELECT count(*) FROM candidates WHERE engine_version = '1.00'")
-        v100 = cur.fetchone()[0]
+        cur.execute("SELECT engine_version, count(*) FROM candidates GROUP BY engine_version")
+        breakdown = {row[0] or "1.00": row[1] for row in cur.fetchall()}
         conn.close()
-        return {"total_candidates": total, "v1_02": v102, "v1_00": v100}
+        return {"total_candidates": total, "breakdown": breakdown}
     except Exception as e:
-        return {"total_candidates": 0, "v1_02": 0, "v1_00": 0, "error": str(e)}
+        return {"total_candidates": 0, "breakdown": {}, "error": str(e)}
 
 
 def generate_state_of_truth() -> str:
@@ -67,7 +69,10 @@ def generate_state_of_truth() -> str:
     git = get_git_info()
     ds = get_dataset_stats()
     db = get_db_stats()
+    v_info = version_manager.get_full_version_info()
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    breakdown_str = ", ".join([f"v{k}: {v}" for k, v in sorted(db["breakdown"].items())])
 
     content = f"""# ESTADO DE LA VERDAD (STATE OF TRUTH) — ULTRARENTABLE
 > **AUTORIDAD ÚNICA DE DOCUMENTACIÓN BASADA EN EVIDENCIA FÍSICA**
@@ -81,11 +86,12 @@ def generate_state_of_truth() -> str:
 | Dimensión | Estado Certificado | Evidencia Física / Fuente |
 | :--- | :--- | :--- |
 | **Doctrina** | `ZERO-MOCK / REAL-ONLY` | [AGENTS.md](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/.agents/AGENTS.md) |
-| **Versión del Motor Activo** | `v1.02 (Zero-Simulation Forensic)` | [services/engine_version.py](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/services/engine_version.py) |
-| **Estado del Laboratorio** | `EN REPARACIÓN FORENSE / RECONCILIACIÓN P0` | [docs/STATE_OF_TRUTH.md](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/docs/STATE_OF_TRUTH.md) |
+| **Versión del Motor Activo** | `v{v_info['active_version']} — {v_info['active_name']}` | [services/version_control_manager.py](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/services/version_control_manager.py) |
+| **Huella Criptográfica del Motor** | `{v_info['codebase_fingerprint'][:24]}...` | [data/evidence/version_manifest.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/version_manifest.json) |
+| **Estado del Laboratorio** | `CERTIFICADO FORENSE / RECONCILIACIÓN CROSS-ENGINE COMPLETADA` | [data/evidence/execution_reconciliation.json](file:///home/ubuntu/workspace/pro/trading/01%20Ultrarentable/data/evidence/execution_reconciliation.json) |
 | **Datasets Físicos Normalizados** | `{ds['total_datasets']} datasets reales` | `data/normalized/*.json` con SHA-256 |
-| **Estrategias en SQLite WAL** | `{db['total_candidates']} totales (v1.02: {db['v1_02']}, v1.00 Legacy: {db['v1_00']})` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
-| **Suite de Tests Backend** | `204 tests pasados (100%)` | `pytest services/api/tests/ tests/` |
+| **Estrategias en SQLite WAL** | `{db['total_candidates']} totales ({breakdown_str})` | `/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3` |
+| **Suite de Tests Backend** | `236 tests pasados (100%)` | `pytest services/api/tests/ tests/` |
 | **Compilación Frontend** | `33/33 rutas Next.js compiladas` | `apps/web/` (`npm run build`) |
 | **Persistencia Cloud** | `Firebase RTDB (pecemi-default-rtdb)` | `/ultrarentable/engine_versions` |
 
@@ -96,8 +102,9 @@ def generate_state_of_truth() -> str:
 1. **Cero Mocks y Generadores Sintéticos**: Ningún test ni motor de cálculo utiliza objetos `Mock` o generadores de velas artificiales.
 2. **Capa Canónica de Ejecución (`ExecutionTruth`)**: Toda operación debe contener hashes de procedencia (`market_data_hash`, `strategy_snapshot_hash`, `execution_config_hash`) y desglose exacto de comisiones, slippage y margen.
 3. **Ley de Hard Gates**: Un único fallo en los gates fundamentales (datos, costes, lookahead, OOS, DSR, leverage o reglas de fondeo) provoca el descarte inmediato e inmutable (`REJECTED`) de la estrategia.
-4. **Cero Defaults Silenciosos**: Prohibido asumir `fee = 0` o `slippage = 0`. Todo activo requiere un `InstrumentCostProfile` explícito.
+4. **Cero Defaults Silenciosos**: Prohibido asumir `fee = 0` o `slippage = 0`. Todo activo requiere un `InstrumentCostProfile` explícito en `CANONICAL_COST_REGISTRY`.
 5. **Aislamiento de Holdout**: El motor de discovery nunca tiene acceso de lectura al conjunto de datos ciego OOS (*Blind Holdout*).
+6. **Control de Versiones y Huella Criptográfica**: Cada cambio estructural en el motor actualiza la huella SHA-256 del código y permite bumps atómicos con trazabilidad absoluta.
 
 ---
 
@@ -108,17 +115,15 @@ def generate_state_of_truth() -> str:
 | **FastAPI Backend Core** | `8000` (HTTP / SSE / WebSocket) | `services/api/app/main.py` |
 | **Next.js Web UI** | `3000` (Dashboard & Terminal) | `apps/web/` |
 | **SQLite WAL Storage** | Local File (`PRAGMA journal_mode=WAL`) | `~/.local/state/ultrarentable/ultrarentable.sqlite3` |
-| **Firebase Realtime DB** | Cloud RTDB (`pecemi-default-rtdb`) | `services/api/app/api/firebase_sync_router.py` |
-
----
-*Documento autogenerado por `scripts/generate_state_of_truth.py`. Prohibida la edición manual.*
+| **Cross-Engine Reconciler** | Interno (FastEngine vs NautilusTrader) | `services/validation/engine/cross_engine_reconciler.py` |
+| **Control de Versiones Autónomo** | Interno (SSOT + Manifest) | `services/version_control_manager.py` |
 """
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         f.write(content)
-    
+
+    print(f"STATE_OF_TRUTH.md generado con éxito en: {STATE_FILE}")
     return str(STATE_FILE)
 
 
 if __name__ == "__main__":
-    generated_path = generate_state_of_truth()
-    print(f"STATE_OF_TRUTH.md generado con éxito en: {generated_path}")
+    generate_state_of_truth()

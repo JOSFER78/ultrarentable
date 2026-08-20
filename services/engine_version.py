@@ -1,9 +1,5 @@
 """SSOT Engine Versioning Module for Ultrarentable Dual-Engine Quantitative Lab.
-
-Provides:
-- Current engine and model version identifiers (incremental 1.00, 1.01, 1.02...).
-- Complete historical changelog with ruleset hashes and architectural milestones.
-- Helper functions to stamp version metadata on candidate strategies and evidence records.
+AUTOGENERADO POR services/version_control_manager.py — NO EDITAR MANUALMENTE.
 """
 
 from __future__ import annotations
@@ -12,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "1.02"
-CURRENT_ENGINE_NAME = "Ultrarentable Dual-Engine V1.02 (Zero-Simulation Forensic)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "1.02"
+CURRENT_ENGINE_VERSION = "1.03"
+CURRENT_ENGINE_NAME = "Test Milestone Auto Bump"
+CURRENT_VALIDATION_PIPELINE_VERSION = "1.03"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
@@ -23,13 +19,13 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
         "released_at": "2026-08-10T00:00:00Z",
         "status": "LEGACY_DEPRECATED",
         "status_label": "Legacy / Obsoleta",
-        "description": "Versión inicial del motor. Contenía anomalías en la normalización temporal mensual (default 1.0 mes) y bypass legacy en filtros de debate.",
+        "description": "Versi\u00f3n inicial del motor con StrategyQuant X.",
         "ruleset_hash": "legacy_v1_00_unhardened",
+        "git_commit": "legacy",
         "changes": [
             "Descubrimiento de estrategias con StrategyQuant X.",
-            "Primeros filtros de consistencia y drawdown.",
-            "ADVERTENCIA: Cálculo de ROI mensual no normalizado.",
-        ],
+            "Primeros filtros de consistencia."
+        ]
     },
     {
         "version": "1.01",
@@ -37,30 +33,43 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
         "released_at": "2026-08-18T00:00:00Z",
         "status": "INTERMEDIATE",
         "status_label": "Intermedia (11 Gates)",
-        "description": "Integración del pipeline de 11 Gates, reconciliación cruzada con NautilusTrader y tests de Red-Team adversarial.",
+        "description": "Integraci\u00f3n del pipeline de 11 Gates y NautilusTrader.",
         "ruleset_hash": "a8f9c42b109e8751d3b4e209871fa093",
+        "git_commit": "8b1668e",
         "changes": [
             "Arquitectura modular de 11 Gates Cuantitativos.",
-            "Gate 11 de reconciliación evento a evento con NautilusTrader.",
-            "Protección contra manipulación de velas y datasets.",
-        ],
+            "Gate 11 de reconciliaci\u00f3n NautilusTrader."
+        ]
     },
     {
         "version": "1.02",
         "name": "Ultrarentable V1.02 (Zero-Simulation Forensic & Exact Math)",
         "released_at": "2026-08-20T00:00:00Z",
+        "status": "INTERMEDIATE",
+        "status_label": "Intermedia (1.02)",
+        "description": "Endurecimiento Zero-Simulation, c\u00e1lculo estricto de ROI OOS por velas reales y persistencia de versiones en DB y Firebase.",
+        "ruleset_hash": "e6f498c17b520ad98341fbcd2981045a",
+        "git_commit": "121caf5",
+        "changes": [
+            "Normalizaci\u00f3n temporal exacta por recuento de velas OOS.",
+            "Eliminaci\u00f3n de sobreescritura de estados.",
+            "Sincronizaci\u00f3n en Firebase Cloud."
+        ]
+    },
+    {
+        "version": "1.03",
+        "name": "Test Milestone Auto Bump",
+        "released_at": "2026-08-20T07:44:38.288525+00:00",
         "status": "CURRENT_RECOMMENDED",
         "status_label": "Actual / Certificada",
-        "description": "Endurecimiento absoluto Zero-Simulation. Cálculo estricto de ROI mensual por recuento exacto de velas OOS reales, bloqueo de bypass en SQLite WAL, purga de fallbacks complacientes y trazabilidad forense completa en todas las tablas y Firebase.",
-        "ruleset_hash": "e6f498c17b520ad98341fbcd2981045a",
+        "description": "Automated unit test bump validation.",
+        "ruleset_hash": "438494981732599943aad1051cc417b5",
+        "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
         "changes": [
-            "Normalización temporal exacta basada en timeframe y velas reales OOS (blind_oos_bars).",
-            "Eliminación de sobreescritura de estado en router de candidatos (respeto estricto de c.status).",
-            "Purga de operadores de fallback numérico en frontend (cero placeholders).",
-            "Sincronización bidireccional del historial de versiones en Firebase Cloud.",
-            "Columna y selector de versión del motor en todas las tablas del sistema.",
-        ],
-    },
+            "Refactor X",
+            "Add feature Y"
+        ]
+    }
 ]
 
 
@@ -84,7 +93,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "e6f498c17b520ad98341fbcd2981045a",
+        "438494981732599943aad1051cc417b5",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload

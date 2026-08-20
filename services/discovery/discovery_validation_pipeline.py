@@ -34,6 +34,7 @@ from services.discovery.strategy_search_registry import StrategySearchRegistry, 
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
+from services.engine_version import CURRENT_ENGINE_VERSION
 
 logger = logging.getLogger("DiscoveryValidationPipeline")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -409,8 +410,8 @@ class DiscoveryValidationPipeline:
                             net_profit_is, trades_is, profit_factor_is, max_dd_is_pct,
                             net_profit_oos, trades_oos, profit_factor_oos, max_dd_oos_pct,
                             ratio_oos_is, wfo_pass_pct, monte_carlo_score,
-                            scorecard_json, created_at
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            scorecard_json, engine_version, validation_pipeline_version, created_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ON CONFLICT(candidate_id) DO UPDATE SET
                             status=excluded.status,
                             status_reason=excluded.status_reason,
@@ -425,7 +426,9 @@ class DiscoveryValidationPipeline:
                             ratio_oos_is=excluded.ratio_oos_is,
                             wfo_pass_pct=excluded.wfo_pass_pct,
                             monte_carlo_score=excluded.monte_carlo_score,
-                            scorecard_json=excluded.scorecard_json
+                            scorecard_json=excluded.scorecard_json,
+                            engine_version=excluded.engine_version,
+                            validation_pipeline_version=excluded.validation_pipeline_version
                     """, (
                         strategy.strategy_id,
                         strategy.strategy_id,
@@ -447,6 +450,8 @@ class DiscoveryValidationPipeline:
                         round(real_wfo_score, 1),
                         round(real_mc_score, 1),
                         json.dumps(scorecard_payload, default=str),
+                        CURRENT_ENGINE_VERSION,
+                        CURRENT_ENGINE_VERSION,
                         datetime.now(timezone.utc).isoformat(),
                     ))
                     conn.commit()

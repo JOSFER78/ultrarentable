@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 
 interface Candidate {
   candidate_id: string;
@@ -24,6 +25,7 @@ interface Candidate {
 }
 
 export default function StrategiesExplorerPage() {
+  const { version, versionName } = useEngineVersion();
   const [mounted, setMounted] = useState(false);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -167,7 +169,7 @@ export default function StrategiesExplorerPage() {
     if (selectedRoute !== "ALL" && c.route?.toUpperCase() !== selectedRoute) return false;
     if (selectedSymbol !== "ALL" && !c.symbol?.includes(selectedSymbol)) return false;
     if (selectedTimeframe !== "ALL" && c.timeframe?.toLowerCase() !== selectedTimeframe.toLowerCase()) return false;
-    if (selectedEngineVersion !== "ALL" && (c.engine_version || "1.02") !== selectedEngineVersion) return false;
+    if (selectedEngineVersion !== "ALL" && (c.engine_version || version) !== selectedEngineVersion) return false;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       return (
@@ -598,7 +600,7 @@ export default function StrategiesExplorerPage() {
               ⚙️ TODAS VERS.
             </button>
             <button
-              onClick={() => setSelectedEngineVersion("1.02")}
+              onClick={() => setSelectedEngineVersion(version)}
               style={{
                 padding: "4px 8px",
                 borderRadius: "4px",
@@ -606,11 +608,11 @@ export default function StrategiesExplorerPage() {
                 fontWeight: 800,
                 border: "none",
                 cursor: "pointer",
-                background: selectedEngineVersion === "1.02" ? "rgba(52, 211, 153, 0.2)" : "transparent",
-                color: selectedEngineVersion === "1.02" ? "#34d399" : "#94a3b8",
+                background: selectedEngineVersion === version ? "rgba(52, 211, 153, 0.2)" : "transparent",
+                color: selectedEngineVersion === version ? "#34d399" : "#94a3b8",
               }}
             >
-              🟢 v1.02 ACTUAL ({candidates.filter((c) => (c.engine_version || "1.02") === "1.02").length})
+              🟢 v{version} ACTUAL ({candidates.filter((c) => (c.engine_version || version) === version).length})
             </button>
             <button
               onClick={() => setSelectedEngineVersion("1.00")}
@@ -840,7 +842,7 @@ export default function StrategiesExplorerPage() {
                   const dd = c.metrics?.out_of_sample?.max_drawdown_pct ?? c.metrics?.in_sample?.max_drawdown_pct;
                   const mc = c.metrics?.anti_overfit?.monte_carlo_score;
                   const dur = c.duration_info;
-                  const isV102 = (c.engine_version === "1.02" || !c.engine_version);
+                  const isCurrentVer = (c.engine_version === version || !c.engine_version || c.engine_version >= "1.02");
 
                   return (
                     <tr
@@ -918,14 +920,14 @@ export default function StrategiesExplorerPage() {
                             fontWeight: 800,
                             padding: "2px 5px",
                             borderRadius: "3px",
-                            background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
-                            color: isV102 ? "#34d399" : "#94a3b8",
-                            border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
+                            background: isCurrentVer ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)",
+                            color: isCurrentVer ? "#34d399" : "#94a3b8",
+                            border: `1px solid ${isCurrentVer ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`,
                             fontFamily: "var(--font-mono, monospace)",
                           }}
-                          title={isV102 ? "Motor Cuantitativo v1.02 (Zero-Simulation Forensic)" : "Motor v1.00 (Legacy Baseline)"}
+                          title={isCurrentVer ? (versionName || `Motor Cuantitativo v${c.engine_version || version} (Zero-Simulation Forensic)`) : `Motor v${c.engine_version || "1.00"} (Legacy Baseline)`}
                         >
-                          {isV102 ? "🟢 v1.02" : `⚪ v${c.engine_version || "1.00"}`}
+                          {isCurrentVer ? `🟢 v${c.engine_version || version}` : `⚪ v${c.engine_version || "1.00"}`}
                         </span>
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>

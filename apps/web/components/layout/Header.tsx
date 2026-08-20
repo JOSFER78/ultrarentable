@@ -8,10 +8,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTelemetryStream } from "@/hooks/useTelemetryStream";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 import { WorkerId } from "@/types/telemetry";
 
 export default function Header() {
   const { workers, systemMetrics, reconnect } = useTelemetryStream();
+  const { version, versionName, codeDrift } = useEngineVersion();
   const [utcTime, setUtcTime] = useState<string>("");
 
   useEffect(() => {
@@ -60,10 +62,11 @@ export default function Header() {
               background: "rgba(52, 211, 153, 0.15)",
               color: "#34d399",
               border: "1px solid rgba(52, 211, 153, 0.4)",
+              cursor: "pointer",
             }}
-            title="Motor Cuantitativo v1.02 (Zero-Simulation Forensic)"
+            title={versionName || `Motor Cuantitativo v${version} (Zero-Simulation Forensic)`}
           >
-            v1.02
+            v{version}
           </span>
         </div>
 

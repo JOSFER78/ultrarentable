@@ -48,17 +48,18 @@ def test_candidates_endpoint_honest_reclassification():
 
 def test_versions_endpoint_and_changelog():
     """Verify engine versioning SSOT endpoint and changelog consistency."""
+    from services.engine_version import CURRENT_ENGINE_VERSION
     resp = client.get("/api/v1/versions")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["current_version"] == "1.02"
+    assert data["current_version"] == CURRENT_ENGINE_VERSION
     assert "Ultrarentable" in data["current_name"]
     assert len(data["history"]) >= 3
     assert "version_distribution" in data
     
     curr_resp = client.get("/api/v1/versions/current")
     assert curr_resp.status_code == 200
-    assert curr_resp.json()["engine_version"] == "1.02"
+    assert curr_resp.json()["engine_version"] == CURRENT_ENGINE_VERSION
 
 
 def test_execution_session_kill_switch_lifecycle():

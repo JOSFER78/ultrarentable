@@ -469,7 +469,8 @@ export default function GeneticDiscoveryLabPage() {
                   const totalYears = dur.total_years !== undefined ? Number(dur.total_years).toFixed(1) : (dur.total_months ? (Number(dur.total_months) / 12).toFixed(1) : "0.5");
                   const startStr = dur.start_date ? String(dur.start_date).slice(0, 7) : "2025-10";
                   const endStr = dur.end_date ? String(dur.end_date).slice(0, 7) : "2026-08";
-                  const isV102 = ((c as any).engine_version === "1.02" || !(c as any).engine_version);
+                  const candVer = (c as any).engine_version || "1.03";
+                  const isCurrent = candVer === "1.03" || candVer >= "1.02";
                   return (
                     <tr key={i} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
                       <td style={{ padding: "10px", fontWeight: 800, color: "#ffffff" }}>{c.name}</td>
@@ -480,8 +481,8 @@ export default function GeneticDiscoveryLabPage() {
                         </span>
                       </td>
                       <td style={{ padding: "10px", textAlign: "center" }}>
-                        <span style={{ fontSize: "9px", fontWeight: 800, color: isV102 ? "#34d399" : "#94a3b8", background: isV102 ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)", border: `1px solid ${isV102 ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`, padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-                          {isV102 ? "🟢 v1.02" : `⚪ v${(c as any).engine_version || "1.00"}`}
+                        <span style={{ fontSize: "9px", fontWeight: 800, color: isCurrent ? "#34d399" : "#94a3b8", background: isCurrent ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.12)", border: `1px solid ${isCurrent ? "rgba(52, 211, 153, 0.4)" : "rgba(148, 163, 184, 0.3)"}`, padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+                          {isCurrent ? `🟢 v${candVer}` : `⚪ v${candVer}`}
                         </span>
                       </td>
                       <td style={{ padding: "10px", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1", fontSize: "11px" }}>

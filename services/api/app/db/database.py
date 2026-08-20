@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from services.api.app.config import DATA_DIR, STATE_DB_PATH
+from services.engine_version import CURRENT_ENGINE_VERSION
 
 for folder in ["state", "raw", "normalized", "catalogs", "artifacts", "quarantine", "logs"]:
     (Path(DATA_DIR) / folder).mkdir(parents=True, exist_ok=True)
@@ -370,8 +371,8 @@ class CandidateModel(Base):
     wfo_pass_pct = Column(Float, nullable=True)
     monte_carlo_score = Column(Float, nullable=True)
     scorecard_json = Column(Text, nullable=True)
-    engine_version = Column(String, default="1.02", nullable=True)
-    validation_pipeline_version = Column(String, default="1.02", nullable=True)
+    engine_version = Column(String, default=CURRENT_ENGINE_VERSION, nullable=True)
+    validation_pipeline_version = Column(String, default=CURRENT_ENGINE_VERSION, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
