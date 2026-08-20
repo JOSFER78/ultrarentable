@@ -370,6 +370,8 @@ class CandidateModel(Base):
     wfo_pass_pct = Column(Float, nullable=True)
     monte_carlo_score = Column(Float, nullable=True)
     scorecard_json = Column(Text, nullable=True)
+    engine_version = Column(String, default="1.02", nullable=True)
+    validation_pipeline_version = Column(String, default="1.02", nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -412,6 +414,20 @@ from sqlalchemy import text
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    
+    # Auto-migration for engine_version columns if missing
+    try:
+        with engine.connect() as conn:
+            cursor = conn.connection.cursor()
+            cursor.execute("PRAGMA table_info(candidates);")
+            cols = [row[1] for row in cursor.fetchall()]
+            if cols and "engine_version" not in cols:
+                cursor.execute("ALTER TABLE candidates ADD COLUMN engine_version VARCHAR DEFAULT '1.02';")
+            if cols and "validation_pipeline_version" not in cols:
+                cursor.execute("ALTER TABLE candidates ADD COLUMN validation_pipeline_version VARCHAR DEFAULT '1.02';")
+            conn.connection.commit()
+    except Exception:
+        pass
     
     # Ensure tables and seed initial canonical data
     with SessionLocal() as db:

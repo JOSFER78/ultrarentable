@@ -39,6 +39,7 @@ def list_candidates(
     status: Optional[str] = Query(None, description="Filter by candidate status"),
     symbol: Optional[str] = Query(None, description="Filter by symbol (e.g. BTC-USDT, EURUSD, NQ)"),
     timeframe: Optional[str] = Query(None, description="Filter by timeframe (e.g. 1m, 5m, 15m, 1h, 4h)"),
+    engine_version: Optional[str] = Query(None, description="Filter by engine version (e.g. 1.02, 1.00)"),
     include_rejected: bool = Query(False, description="Incluir o no candidatos rechazados"),
     limit: int = Query(100, ge=1, le=500, description="Max candidates to return"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
@@ -54,6 +55,8 @@ def list_candidates(
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
     if timeframe and timeframe.upper() != "ALL":
         query = query.filter(CandidateModel.timeframe == timeframe)
+    if engine_version and engine_version.upper() != "ALL":
+        query = query.filter(CandidateModel.engine_version == engine_version)
         
     candidates = query.order_by(CandidateModel.net_profit_oos.desc()).limit(150).all()
     
@@ -187,6 +190,8 @@ def list_candidates(
                     "monte_carlo_score": c.monte_carlo_score if c.monte_carlo_score is not None else 90.0,
                 }
             },
+            "engine_version": getattr(c, "engine_version", None) or "1.02",
+            "validation_pipeline_version": getattr(c, "validation_pipeline_version", None) or "1.02",
             "created_at": c.created_at.isoformat() if c.created_at else None,
         })
         
