@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1M",
-  "strategy_snapshot_hash": "78fabff0086842f694ed7767067e7459fb2fb48d8566116b3c3cd37846aa4430",
+  "strategy_snapshot_hash": "926d88b91a6a8e2db7ae2158d8079d3b6611b85e2defb8e24725f585258aca1c",
   "dataset_id": "ds_binance_dogeusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "1c8d8b9612788dc77a39ee89fd218ec6ca41bea80b4df412bcde8dc159c41713",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "22e67c521a81a63cca13227ad4a878d527816d58dae4ab3e2499f4211b121cc2",
-  "output_hash": "8d6382aea50074bf672698113ad8eab554830d2d7a3633116cec2c930b883a1d",
+  "input_hash": "fed2b3ac02452d0701069d5c6413c09a95f479bdf9fc8a92459203aeb97ddf18",
+  "output_hash": "9a9dfc377cbfe069b9d6168bbb8a6e468b08a693748356fba711ef2927f26a59",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-155.80)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-344.86)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -139.43,
-      "HIGH_VOLATILITY": -16.37
+      "CHOP_RANGING": -310.33,
+      "HIGH_VOLATILITY": -34.53
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -155.8
+    "total_oos_pnl_usd": -344.86
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T09:55:25.408056+00:00"
+  "created_at_utc": "2026-08-20T11:23:12.532322+00:00"
 }

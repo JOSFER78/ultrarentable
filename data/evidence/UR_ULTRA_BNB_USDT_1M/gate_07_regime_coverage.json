@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_1M",
   "strategy_id": "UR_ULTRA_BNB_USDT_1M",
-  "strategy_snapshot_hash": "d61eb3bec8ac66f521616eaeba5dfc6569b4f34f6efef04e9d0843115064e3e4",
+  "strategy_snapshot_hash": "18c50ee0f7ca4e69c7c8d9c0a2c812d998efa55f5a256e1fbf28d1d5099f5abc",
   "dataset_id": "ds_binance_bnbusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "82a657fc9f567cae2216cd71ee1a26e6e349260d68f4ea450492b06947fc76b4",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a5a53efc9a0a249642669ea3daea66ebc6a1755a2794300ec5dea1f22a76ea89",
-  "output_hash": "766df8274cffc9fdbbdc6181b1f7b4ef46f67e2abc3e992f27fa5be2ff1d5f4b",
+  "input_hash": "8e48c0a40a58f767872fa4b7b362c00f4eac5752fab2ba7f997dbcab44df9f20",
+  "output_hash": "19383672bffd21817b5ede987a3fc1bdfc19ca830ab784033236939bf7ce1104",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-577.83)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-612.65)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 36,
+      "CHOP_RANGING": 59,
       "HIGH_VOLATILITY": 11
     },
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -358.16,
-      "HIGH_VOLATILITY": -219.67
+      "CHOP_RANGING": -288.38,
+      "HIGH_VOLATILITY": -324.27
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -577.83
+    "total_oos_pnl_usd": -612.65
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T09:50:13.631465+00:00"
+  "created_at_utc": "2026-08-20T11:19:27.043670+00:00"
 }

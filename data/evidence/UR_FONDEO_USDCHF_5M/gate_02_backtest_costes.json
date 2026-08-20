@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCHF_5M_g02",
+  "run_id": "run_UR_FONDEO_USDCHF_5M",
+  "strategy_id": "UR_FONDEO_USDCHF_5M",
+  "strategy_snapshot_hash": "6ccf07c7c0e5d25515a9669231c7be29e04e5ea53d11ce186209b097f3039bf2",
+  "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "f9c373f468a836d7cfde86d31959c5620083f2fb887c373025cf9613adaac0f4",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "1e39773d91eef327a68307cc5840b93af8dde6c733226fe2e89af15f2bf6594d",
+  "output_hash": "a0b982f16ca0e61fcb8fe961469d4beffdc0ed10e5b845ff96ad532b0bc5bc35",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.30 < 1.10",
+  "metrics": {
+    "market_category": "FOREX",
+    "canonical_name": "US Dollar / Franco Suizo",
+    "exchange": "Interbank / FTMO",
+    "gross_pnl_usd": -364048366.2,
+    "total_fees_usd": 80465470.45,
+    "total_slippage_usd": 160930940.9,
+    "net_pnl_usd": -605444777.55,
+    "net_profit_factor": 0.3,
+    "drag_cost_pct": 66.31
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCHF_5M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T12:08:05.753775+00:00"
+}

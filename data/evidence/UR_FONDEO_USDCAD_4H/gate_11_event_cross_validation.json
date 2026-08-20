@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCAD_4H_g11",
+  "run_id": "run_UR_FONDEO_USDCAD_4H",
+  "strategy_id": "UR_FONDEO_USDCAD_4H",
+  "strategy_snapshot_hash": "7b2cbf58e912413e80f5b805888c82767eda821e9533672e8d8e9d19dedaa315",
+  "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "4c5f24b34a25bcac73109935c05d30c5f4dcdc38772ab0b124f99b494993d4dd",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "f9fe75092ee461e05619a9a04e7ae8509c11fb28b2318788922a0c05aefbb688",
+  "output_hash": "cff2a2a40b34ef303a7e2abfdadf3e9a8a290a6cdcb73d280d09986c2d7be417",
+  "status": "PASSED",
+  "score": 98.5,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $50133.50, Apalancamiento Pico: 1.7x, Dist. Mín. Liquidación: 96.7%, Comisiones+Funding: $84.00)",
+  "metrics": {
+    "initial_capital_usd": 50000.0,
+    "final_equity_usd": 50133.5,
+    "peak_equity_usd": 50133.5,
+    "min_equity_usd": 48246.83,
+    "peak_leverage_used": 1.66,
+    "max_allowed_leverage_ceiling": 3.0,
+    "min_distance_to_liquidation_pct": 96.67,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 84.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 14
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCAD_4H/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T12:06:21.100998+00:00"
+}

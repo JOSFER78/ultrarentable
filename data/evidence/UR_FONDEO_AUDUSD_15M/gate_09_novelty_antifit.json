@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g09",
+  "run_id": "run_UR_FONDEO_AUDUSD_15M",
+  "strategy_id": "UR_FONDEO_AUDUSD_15M",
+  "strategy_snapshot_hash": "b516251a8722fd6c78b6bdfe716831391b23981b2028a4df6f6891d6b5ce987e",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "cb117c4129f1edbc1aea50a12b5b9e7edb378d2e95be7ff9907bdfca1146a539",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "287fcf2b24e09018b0ed21f75bc7d3c1f10009530cb495554d738182c9d9ebe9",
+  "output_hash": "b50d6b0001a1886ac617d18d4c77f4422432e59ddaec8da6c4d334a8600c1c65",
+  "status": "PASSED",
+  "score": 89.2,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.2 trades/param, Estabilidad Vecindario: 125.0%, Re-backtest PFs: [0.25, 0.25, 0.22, 0.23])",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 18.2,
+    "min_dof_required": 15.0,
+    "parameter_neighborhood_stability_pct": 125.0,
+    "min_stability_required_pct": 70.0,
+    "perturbed_neighborhood_pfs": [
+      0.25,
+      0.25,
+      0.22,
+      0.23
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T11:54:26.604657+00:00"
+}

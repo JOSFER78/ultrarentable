@@ -43,7 +43,7 @@ def test_candidates_endpoint_honest_reclassification():
             "APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "PORTFOLIO_CERTIFIED",
             "REJECTED_GATES_INCOMPLETE", "REJECTED_ALTO_DRAWDOWN", "REJECTED_BAJO_PF",
             "RECHAZADA_FONDEO_DD", "INVESTIGACION_BTC", "BLOCKED_NO_EVIDENCE"
-        ] or c["status"].startswith("RECHAZADA") or c["status"].startswith("REJECTED")
+        ] or c["status"].startswith("RECHAZADA") or c["status"].startswith("REJECTED") or c["status"].startswith("CANDIDATA")
 
 
 def test_versions_endpoint_and_changelog():

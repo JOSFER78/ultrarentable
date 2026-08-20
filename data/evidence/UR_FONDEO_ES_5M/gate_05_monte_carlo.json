@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_FONDEO_ES_5M_g05",
   "run_id": "run_UR_FONDEO_ES_5M",
   "strategy_id": "UR_FONDEO_ES_5M",
-  "strategy_snapshot_hash": "4bd577d16dcef4789c28edd4d4983c2d76363b11d9de71d7bd66d761e30aadba",
+  "strategy_snapshot_hash": "0c0408063d541d7f641bd28ccd65c59a08060d2e7e1dd3f4275fe41d03918476",
   "dataset_id": "ds_trad_es_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "01510bab2c202323ccf80f85918286db619bbcb800c0fe229f63c96e967df488",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "2e2a53965e70e1afece8d2d26722f7df42843d90b55defcaacadf7f69c814b9d",
-  "output_hash": "7242020bd01bfe72ca4b1586897680c345efc4cebfafcf01b3a650396624fce1",
+  "input_hash": "b7c2124b6b87aa171e098842de843beb48435a8233e4e53ae0bbf1cca864cf7a",
+  "output_hash": "1ce996d97959fa027e8ddb8fd6298637bcee3f5822a202cd38f8db5ce3464bb9",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0%",
+  "verdict": "FALLO: Riesgo Ruina 99.6% > 1.0%",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 100.0,
-    "drawdown_median_pct": 24.0,
-    "drawdown_95th_percentile_pct": 31.7,
-    "max_simulated_drawdown_pct": 37.6
+    "ruin_probability_pct": 99.6,
+    "drawdown_median_pct": 12.0,
+    "drawdown_95th_percentile_pct": 15.9,
+    "max_simulated_drawdown_pct": 18.8
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T08:43:21.363411+00:00"
+  "created_at_utc": "2026-08-20T11:57:38.381129+00:00"
 }

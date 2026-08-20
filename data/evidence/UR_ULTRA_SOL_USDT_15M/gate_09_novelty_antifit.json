@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_SOL_USDT_15M",
   "strategy_id": "UR_ULTRA_SOL_USDT_15M",
-  "strategy_snapshot_hash": "6535cfac2037812788b8551f135bcee0f84ddefce546754c6201f7dfd858d134",
+  "strategy_snapshot_hash": "1c6c7bb9db717505c20351a225d32a4d8945efb954ff702f5c26ba4307dc2c60",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "9127164004148bf2702d7818ffd0a33e473a993d4a34896f26c828febc515028",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "d68fa385a87b49b1b959bd01144e514c60aadc4a3cabb9dd4755bfb268293f3e",
-  "output_hash": "ce49f41dcdceab3e06b0757218edb1329e8605f0e692ced559fc1339a7cfd5e1",
+  "input_hash": "0ffddb5c75385445b433ab3e544fdd45dec4b0194d3128bd6820666ed974b8fb",
+  "output_hash": "26a15dd6933c177f85a63f7bc6399875e826e169b8a4dbae601611ee9e2ca92b",
   "status": "PASSED",
-  "score": 76.9,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 15.0 trades/param, Estabilidad Vecindario: 88.1%, Re-backtest PFs: [0.79, 0.89, 0.55, 0.66])",
+  "score": 90.4,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 19.0 trades/param, Estabilidad Vecindario: 118.2%, Re-backtest PFs: [0.76, 0.68, 0.99, 0.88])",
   "metrics": {
-    "parameters_count": 4,
-    "degrees_of_freedom_ratio": 15.0,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 19.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 88.1,
+    "parameter_neighborhood_stability_pct": 118.2,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.79,
-      0.89,
-      0.55,
-      0.66
+      0.76,
+      0.68,
+      0.99,
+      0.88
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T08:41:19.303517+00:00"
+  "created_at_utc": "2026-08-20T11:28:13.462123+00:00"
 }

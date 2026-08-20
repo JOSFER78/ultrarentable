@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_FONDEO_SI_15M_g05",
+  "run_id": "run_UR_FONDEO_SI_15M",
+  "strategy_id": "UR_FONDEO_SI_15M",
+  "strategy_snapshot_hash": "f583082193425a105ca876015c282d683a4b746b527577b20729dc19a7ff0f5f",
+  "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "2fe03b6e2234c03e8e5a17230ee4a091d9c19dc9fc07ba21af78a1ff44df754f",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "3ac4f9cf0f3d14f33387a4607f46fc37c7f12ea224efac7f4abf8f12a07abb3a",
+  "output_hash": "fe05833534164ad22888ea553bd569dfdd30285a12f278b8a0e5435da984c777",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 55.6% > 1.0%",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 55.6,
+    "drawdown_median_pct": 4.8,
+    "drawdown_95th_percentile_pct": 9.2,
+    "max_simulated_drawdown_pct": 12.7
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_SI_15M/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T12:04:38.511465+00:00"
+}

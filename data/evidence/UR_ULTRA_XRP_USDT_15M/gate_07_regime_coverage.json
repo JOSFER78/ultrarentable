@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_XRP_USDT_15M",
   "strategy_id": "UR_ULTRA_XRP_USDT_15M",
-  "strategy_snapshot_hash": "10ed9c533c522eda918d96d5abc15336dfc342463118275699bc04b5e13cd9c1",
+  "strategy_snapshot_hash": "793ac444db649940a9a107945e6296b7b2fd03dfad30de94d6e00a37c5e6b667",
   "dataset_id": "ds_binance_xrpusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "ce57c65099a341be5617cc5c8f772cfa47b9f02fbccc5d10bd5b7690f359da2b",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "87ecb02859cb95e21546caf76b29c58a9db5b9ddbf6dfbcc8135a16ed97ee405",
-  "output_hash": "91e6157df2a53052b33c4f8300f44239b966a8c120d79d8aff82d553cf2c1e52",
+  "input_hash": "e2fc632ae946c50518b26b3a0cc6826a9f2b25e28fca063b26cedd92e86be44b",
+  "output_hash": "485b04ca0c57b26475f51b36992d08348720ab9b6d1ea14036fb3337d3ab6917",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-44.68)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-591.28)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 1,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 49,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 45,
+      "HIGH_VOLATILITY": 6
     },
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -46.79,
-      "HIGH_VOLATILITY": 2.11
+      "CHOP_RANGING": -423.39,
+      "HIGH_VOLATILITY": -167.89
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -44.68
+    "total_oos_pnl_usd": -591.28
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T08:41:44.710492+00:00"
+  "created_at_utc": "2026-08-20T11:32:14.414938+00:00"
 }

@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g01",
+  "run_id": "run_UR_FONDEO_USDCHF_4H",
+  "strategy_id": "UR_FONDEO_USDCHF_4H",
+  "strategy_snapshot_hash": "64e94d528f5443c016ab615139dd6fa97954360eafae6c63bc0cbf4055bb786c",
+  "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "6aed9b9a8af8f47b3a71d0acd8cccc6a85641befffd0d8233a9236f8ba148b72",
+  "output_hash": "79a41438182872fc84ef0daf99c140a0ef181993fcba8fac60a024f6c274b48f",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: 0 corruptas, 0 desordenadas, 0 gaps excesivos",
+  "metrics": {
+    "total_candles": 888,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 14400,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T12:07:34.171242+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_5M_g03",
+  "run_id": "run_UR_FONDEO_USDJPY_5M",
+  "strategy_id": "UR_FONDEO_USDJPY_5M",
+  "strategy_snapshot_hash": "ff3ef7d2eab41eeccdee1c928ccdd708ce559270f1f3153d7bb7eb015dff2510",
+  "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "d20524302ad47dec9553b7f5880dbf6b28149b325e0e50cf2b9311c6b3ecf246",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "1dd4565846c57fefc7529de477e52376091fc2673dae9cff7bfbb9edd7ddf94e",
+  "output_hash": "ccd1e7360b0875ad5cc7e5d50cac74c88c928b7c974178c21978ccb7be2baa2b",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (234 IS / 67 OOS · Fondeo)",
+  "metrics": {
+    "trades_is": 234,
+    "trades_oos": 67,
+    "top2_outlier_dependency_pct": 51.6,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5M/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T12:09:24.529677+00:00"
+}

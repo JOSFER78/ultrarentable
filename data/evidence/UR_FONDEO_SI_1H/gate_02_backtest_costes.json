@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_SI_1H_g02",
+  "run_id": "run_UR_FONDEO_SI_1H",
+  "strategy_id": "UR_FONDEO_SI_1H",
+  "strategy_snapshot_hash": "103f7b544c256198584201a4be9e98a37ddbb69343c1d93d5920d5856a736e23",
+  "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "34e668861a72da0b5983474de0bc31169b3461f267de794348331b8d96134e91",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "38e4969c55374d835c7045d73c4da41ad527abc5f29cc14430d1237ab48e0f73",
+  "output_hash": "55171f82538e15a2ee038a613ccf6be3171e283daa8a0a782bc2fbe4ca342e7c",
+  "status": "PASSED",
+  "score": 56.2,
+  "verdict": "PASSED: PF Neto tras costes = 1.56 (COMMODITIES)",
+  "metrics": {
+    "market_category": "COMMODITIES",
+    "canonical_name": "Plata COMEX Silver Futures",
+    "exchange": "COMEX Globex",
+    "gross_pnl_usd": 26567852.96,
+    "total_fees_usd": 53898.38,
+    "total_slippage_usd": 1077967.55,
+    "net_pnl_usd": 25435987.03,
+    "net_profit_factor": 1.56,
+    "drag_cost_pct": 4.26
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_SI_1H/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T12:05:01.698556+00:00"
+}

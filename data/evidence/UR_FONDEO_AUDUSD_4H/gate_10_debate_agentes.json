@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_4H_g10",
+  "run_id": "run_UR_FONDEO_AUDUSD_4H",
+  "strategy_id": "UR_FONDEO_AUDUSD_4H",
+  "strategy_snapshot_hash": "231701064909d53beaa8f762b38258866f40e2909638cd434d817d23336d5395",
+  "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "e08297ffabee22cf266b06618bad1ac33472470b1c8ae8eac2dd337c55917a69",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8e369bd09b62cd5d1ac6865d51118cc42d2ba43dff43cc2ebf21123003bca804",
+  "output_hash": "2e7560c1879c9d51752faf34ed86cf5509a489a11434a560c2191748a1a2ad39",
+  "status": "FAILED",
+  "score": 19.3,
+  "verdict": "FALLO: Consenso insuficiente (19.3/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 19.3,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 29.8,
+        "findings": [
+          "Activo y Timeframe: AUDUSD (4h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.44 con beneficio neto de $-3490.98.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 7.4% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 57.5,
+        "findings": [
+          "Muestra fuera de muestra: 23 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: MODERADO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-151.78 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 21.8,
+        "objections": [
+          "Alerta de Drawdown: DD (7.4%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.44 cercano al umbral de equilibrio (1.15)."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T11:55:02.879562+00:00"
+}

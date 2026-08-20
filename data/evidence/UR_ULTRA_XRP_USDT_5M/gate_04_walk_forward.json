@@ -2,73 +2,73 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_5M_g04",
   "run_id": "run_UR_ULTRA_XRP_USDT_5M",
   "strategy_id": "UR_ULTRA_XRP_USDT_5M",
-  "strategy_snapshot_hash": "0879a16c156f0544ee0ab7f440ea88c64c8bf9a2ecdec87d94ee8c747740a501",
+  "strategy_snapshot_hash": "7eb7f5bf3d1f0d179de3a159eb2aeb22ccd529fb65fa5222cc8774d4f9f00459",
   "dataset_id": "ds_binance_xrpusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "eef3c09d40540c3615b21e3a1eea211030379022ed266d2b4571ec297b082165",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "63ac67a21bee8cb47ac512595b47b3a8e81f28d4062717fb9b61344e266a2b36",
-  "output_hash": "fc57f26bee560c5edb44b851bfc28a7f4de9a2bbad1874a36c5bdc118cf74f77",
-  "status": "FAILED",
+  "input_hash": "47114de6bb60f5ba5927c270ab3b16f838fde133c1d498f339a0dcd02468aecb",
+  "output_hash": "384dcdfd1f8bfeca0a2f4e306c7255e23a06a3e0181119b912b9caaa433241e0",
+  "status": "PASSED",
   "score": 100.0,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 2.30 < 0.50 ó Consistencia 40.0% < 50%)",
+  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 5.65, Consistencia: 60.0%)",
   "metrics": {
-    "total_trades_analyzed": 225,
+    "total_trades_analyzed": 152,
     "windows_count": 5,
-    "walk_forward_efficiency": 2.3,
-    "oos_consistency_pct": 40.0,
+    "walk_forward_efficiency": 5.65,
+    "oos_consistency_pct": 60.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 0.52,
-        "pf_oos": 0.92,
-        "net_profit_oos_usd": -1.39,
-        "wfe": 1.78
+        "is_trades_count": 21,
+        "oos_trades_count": 9,
+        "pf_is": 0.67,
+        "pf_oos": 1.28,
+        "net_profit_oos_usd": 84.99,
+        "wfe": 1.91
       },
       {
         "window_index": 2,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 0.74,
-        "pf_oos": 0.28,
-        "net_profit_oos_usd": -11.46,
-        "wfe": 0.38
+        "is_trades_count": 21,
+        "oos_trades_count": 9,
+        "pf_is": 1.11,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -339.64,
+        "wfe": 0.0
       },
       {
         "window_index": 3,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 0.44,
-        "pf_oos": 1.67,
-        "net_profit_oos_usd": 6.64,
-        "wfe": 3.78
+        "is_trades_count": 21,
+        "oos_trades_count": 9,
+        "pf_is": 0.55,
+        "pf_oos": 2.44,
+        "net_profit_oos_usd": 224.94,
+        "wfe": 4.42
       },
       {
         "window_index": 4,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 1.17,
-        "pf_oos": 0.3,
-        "net_profit_oos_usd": -5.48,
-        "wfe": 0.26
+        "is_trades_count": 21,
+        "oos_trades_count": 9,
+        "pf_is": 1.01,
+        "pf_oos": 0.84,
+        "net_profit_oos_usd": -14.04,
+        "wfe": 0.83
       },
       {
         "window_index": 5,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 0.32,
-        "pf_oos": 1.72,
-        "net_profit_oos_usd": 3.7,
-        "wfe": 5.31
+        "is_trades_count": 21,
+        "oos_trades_count": 9,
+        "pf_is": 0.29,
+        "pf_oos": 6.02,
+        "net_profit_oos_usd": 308.1,
+        "wfe": 21.07
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_5M/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-20T08:42:00.681437+00:00"
+  "created_at_utc": "2026-08-20T11:33:55.345096+00:00"
 }

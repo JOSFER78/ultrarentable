@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1H_g08",
   "run_id": "run_UR_ULTRA_BNB_USDT_1H",
   "strategy_id": "UR_ULTRA_BNB_USDT_1H",
-  "strategy_snapshot_hash": "5bcadf6cb8388903b3b0a419d3f07e44ef49db4614610d06c00f0231ee6afaa4",
+  "strategy_snapshot_hash": "2f9fb31549f37de389a835c44c2722585263ffaa007e6a803bfe40b0a103a082",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "0b7ff0e1e886bd31e441eef60ff2e7fc404cb5c75d44616d55ebc279ebf4a98c",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "34b22c4c5cb7bf241d094af1d21ca8027b00d34170ef7a76bdd4d7fe0a1ecf6b",
-  "output_hash": "76ec528855299389d36059d33c33ff3cb922531869510c69716c4b7899d57dca",
+  "input_hash": "000836305d47aa51483eef06c5d1a4b3252e4ce0b422a0c75b9af80d47a5ced0",
+  "output_hash": "8c074b7dd99487e7742e2523fce58f8a19e2b63bd3d674b96e71b36f530b3dff",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: DSR = 100.0% (Sharpe Bruto: 0.23, Trials Penalizados: 81, Skew: 1.52, Kurt: 4.13)",
+  "score": 81.7,
+  "verdict": "PASSED: DSR = 81.7% (Sharpe Bruto: 0.07, Trials Penalizados: 81, Skew: 1.81, Kurt: 6.01)",
   "metrics": {
-    "raw_sharpe_ratio": 0.231,
-    "deflated_sharpe_probability_pct": 99.96,
+    "raw_sharpe_ratio": 0.075,
+    "deflated_sharpe_probability_pct": 81.72,
     "trials_penalized_count": 81,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 1.52,
-    "kurtosis": 4.127,
-    "sample_trades_count": 149
+    "skewness": 1.811,
+    "kurtosis": 6.012,
+    "sample_trades_count": 129
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-20T09:49:47.863636+00:00"
+  "created_at_utc": "2026-08-20T11:19:04.513199+00:00"
 }

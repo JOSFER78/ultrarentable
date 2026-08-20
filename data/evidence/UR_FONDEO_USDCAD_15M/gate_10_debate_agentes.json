@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCAD_15M_g10",
+  "run_id": "run_UR_FONDEO_USDCAD_15M",
+  "strategy_id": "UR_FONDEO_USDCAD_15M",
+  "strategy_snapshot_hash": "be069a49298e99ffa5882d9cd5e7b64191f433092aae2ee9fc3c7cd3030672f8",
+  "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "75804a650891b49aff173770295f6dccaa7d885a348142160ae721be5815fb29",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "3372cebbb2bff6f49747700b63d04692950920e6703846c87f0f678423a1feb4",
+  "output_hash": "bea6935eb130e4d827886824a56a03953fc195b62690d162602997718283c3c0",
+  "status": "FAILED",
+  "score": 31.2,
+  "verdict": "FALLO: Consenso insuficiente (31.2/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 31.2,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 24.1,
+        "findings": [
+          "Activo y Timeframe: USDCAD (15m) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.87 con beneficio neto de $-1024.18.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 60.8,
+        "findings": [
+          "Drawdown Máximo Observado: 2.5% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 20.0,
+        "findings": [
+          "Muestra fuera de muestra: 8 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: LIMITADO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-128.02 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 26.2,
+        "objections": [
+          "Alerta de Muestra: 8 trades OOS es una muestra pequeña (< 20 requeridos).",
+          "Alerta de Rentabilidad: Profit factor 0.87 cercano al umbral de equilibrio (1.15)."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCAD_15M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T12:05:47.141565+00:00"
+}

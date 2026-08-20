@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g09",
+  "run_id": "run_UR_FONDEO_USDCHF_4H",
+  "strategy_id": "UR_FONDEO_USDCHF_4H",
+  "strategy_snapshot_hash": "64e94d528f5443c016ab615139dd6fa97954360eafae6c63bc0cbf4055bb786c",
+  "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "f6e9872ca4d5296577c4ffa704d7ec7cd4e9c29dbd4d8db82e1744d6949dc5f9",
+  "output_hash": "7342cb4de1941ec3e13d3d57bfdcb96a9ac1fcc0723084b7eb95c74d50b573c7",
+  "status": "FAILED",
+  "score": 35.2,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 10.5 o Estabilidad 88.0% < 70.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 10.5,
+    "min_dof_required": 15.0,
+    "parameter_neighborhood_stability_pct": 88.0,
+    "min_stability_required_pct": 70.0,
+    "perturbed_neighborhood_pfs": [
+      0.3,
+      0.39,
+      0.5,
+      0.57
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T12:07:34.306161+00:00"
+}

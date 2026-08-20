@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g07",
+  "run_id": "run_UR_FONDEO_USDCHF_4H",
+  "strategy_id": "UR_FONDEO_USDCHF_4H",
+  "strategy_snapshot_hash": "64e94d528f5443c016ab615139dd6fa97954360eafae6c63bc0cbf4055bb786c",
+  "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "e17f1d189d041f74d771bc8bf924e48f54f6414bf90e79cde6f6263245e86c20",
+  "output_hash": "10d8d900721713291243fd7b1c8d2e3037e01ede339e54763d7c799e14e0b7b2",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-2087.75)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 4,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 819,
+      "HIGH_VOLATILITY": 65
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 18,
+      "HIGH_VOLATILITY": 0
+    },
+    "regime_net_pnl_usd": {
+      "BULL_TREND": 0.0,
+      "BEAR_TREND": 0.0,
+      "CHOP_RANGING": -2087.75,
+      "HIGH_VOLATILITY": 0.0
+    },
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 1,
+    "total_oos_pnl_usd": -2087.75
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-20T12:07:34.219765+00:00"
+}

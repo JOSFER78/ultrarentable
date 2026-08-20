@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_FONDEO_RTY_1H_g08",
+  "run_id": "run_UR_FONDEO_RTY_1H",
+  "strategy_id": "UR_FONDEO_RTY_1H",
+  "strategy_snapshot_hash": "0c78a99fefcfbdda18949ef235bf7cb3974a384b955db12ff6a7e8d5aadf448c",
+  "dataset_id": "ds_trad_rty_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "d8ebb1dc7c510cf0d9694ae2708733532daa5431b5274938cfb3913667e91221",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "d47d43ddf2228e3d8282ff6f8ffce15c5c9a2c7ab218d85739b65e53eec2b572",
+  "output_hash": "1f5ffebdb508719f09a8242865d341b813c9359b6fff2f8cc05d8b40fcf0d2c5",
+  "status": "FAILED",
+  "score": 1.1,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (1.1% < 50.0% tras penalizar 81 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -0.361,
+    "deflated_sharpe_probability_pct": 1.14,
+    "trials_penalized_count": 81,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 1.959,
+    "kurtosis": 4.926,
+    "sample_trades_count": 74
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_RTY_1H/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-20T12:03:42.112086+00:00"
+}

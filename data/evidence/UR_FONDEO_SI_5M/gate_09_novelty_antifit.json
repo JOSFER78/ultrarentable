@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_FONDEO_SI_5M_g09",
+  "run_id": "run_UR_FONDEO_SI_5M",
+  "strategy_id": "UR_FONDEO_SI_5M",
+  "strategy_snapshot_hash": "b046e19ab1229ea1e3432fc0b7931a121fdc1939f28d5a75114da8f9b19e7053",
+  "dataset_id": "ds_trad_si_5m_1780891200000_1787091000000.json",
+  "dataset_sha256": "0729e7d3f9682246e8e1ade0c47279812294aa0efe5a1461cd06e9c1b3f57ba8",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8409837d9949318351d9eeb46387532a15f5e12bfa70ef3794f9340f04c2eec2",
+  "output_hash": "5e2f4e482928c4f74ac47888602cab913d5d89fcd361ea4a7ee2bc8ac8164161",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 32.6 trades/param, Estabilidad Vecindario: 102.1%, Re-backtest PFs: [0.85, 0.82, 0.89, 0.83])",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 32.6,
+    "min_dof_required": 15.0,
+    "parameter_neighborhood_stability_pct": 102.1,
+    "min_stability_required_pct": 70.0,
+    "perturbed_neighborhood_pfs": [
+      0.85,
+      0.82,
+      0.89,
+      0.83
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_SI_5M/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T12:05:34.262863+00:00"
+}

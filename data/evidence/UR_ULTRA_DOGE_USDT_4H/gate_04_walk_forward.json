@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g04",
   "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
-  "strategy_snapshot_hash": "6b1cec2c23d574f3bebf5756fc569a02c1fbd207275124fc1a9af93685ec0c8f",
+  "strategy_snapshot_hash": "31c42cefe3ecdd8a1387e378e2c806eb0d2476f2adee2025a08ff2e2474f7b1e",
   "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "82bc0d93a0546009307f5a02ac9653ebed03485fe3a81a3cfeda634ad483da42",
   "gate_id": 4,
@@ -10,65 +10,65 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8cbae56dadcca63a1f7bf1cee614581dab674633610e23c30b3ac54ba46fce3e",
-  "output_hash": "d7a70047c3182a5d6775728939bb69e9d65b75b6e1765ff00b356aeaec6944aa",
+  "input_hash": "fa5857879509c5514fbe59f052a931e7e77e891ce3e3d835b22852742d693ad3",
+  "output_hash": "dc18bce3e61d2164a4aad97be19addbe7d8ad32d87cc9479b38ce64c8b24b907",
   "status": "PASSED",
-  "score": 98.5,
-  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 0.98, Consistencia: 100.0%)",
+  "score": 100.0,
+  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 1.93, Consistencia: 80.0%)",
   "metrics": {
-    "total_trades_analyzed": 366,
+    "total_trades_analyzed": 322,
     "windows_count": 5,
-    "walk_forward_efficiency": 0.98,
-    "oos_consistency_pct": 100.0,
+    "walk_forward_efficiency": 1.93,
+    "oos_consistency_pct": 80.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 51,
-        "oos_trades_count": 22,
-        "pf_is": 4.95,
-        "pf_oos": 4.56,
-        "net_profit_oos_usd": 738.49,
-        "wfe": 0.92
+        "is_trades_count": 44,
+        "oos_trades_count": 20,
+        "pf_is": 3.27,
+        "pf_oos": 2.14,
+        "net_profit_oos_usd": 2127.25,
+        "wfe": 0.65
       },
       {
         "window_index": 2,
-        "is_trades_count": 51,
-        "oos_trades_count": 22,
-        "pf_is": 4.31,
-        "pf_oos": 7.72,
-        "net_profit_oos_usd": 1216.21,
-        "wfe": 1.79
+        "is_trades_count": 44,
+        "oos_trades_count": 20,
+        "pf_is": 1.29,
+        "pf_oos": 5.58,
+        "net_profit_oos_usd": 8413.41,
+        "wfe": 4.32
       },
       {
         "window_index": 3,
-        "is_trades_count": 51,
-        "oos_trades_count": 22,
-        "pf_is": 5.68,
-        "pf_oos": 2.28,
-        "net_profit_oos_usd": 393.04,
-        "wfe": 0.4
+        "is_trades_count": 44,
+        "oos_trades_count": 20,
+        "pf_is": 2.02,
+        "pf_oos": 1.58,
+        "net_profit_oos_usd": 3775.7,
+        "wfe": 0.78
       },
       {
         "window_index": 4,
-        "is_trades_count": 51,
-        "oos_trades_count": 22,
-        "pf_is": 4.69,
-        "pf_oos": 1.55,
-        "net_profit_oos_usd": 175.82,
-        "wfe": 0.33
+        "is_trades_count": 44,
+        "oos_trades_count": 20,
+        "pf_is": 1.07,
+        "pf_oos": 0.99,
+        "net_profit_oos_usd": -69.44,
+        "wfe": 0.92
       },
       {
         "window_index": 5,
-        "is_trades_count": 51,
-        "oos_trades_count": 22,
-        "pf_is": 1.89,
-        "pf_oos": 2.71,
-        "net_profit_oos_usd": 481.88,
-        "wfe": 1.43
+        "is_trades_count": 44,
+        "oos_trades_count": 20,
+        "pf_is": 0.62,
+        "pf_oos": 1.83,
+        "net_profit_oos_usd": 2145.44,
+        "wfe": 2.96
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-20T09:55:56.461469+00:00"
+  "created_at_utc": "2026-08-20T11:23:35.527924+00:00"
 }

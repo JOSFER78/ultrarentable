@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_15M",
   "strategy_id": "UR_ULTRA_LINK_USDT_15M",
-  "strategy_snapshot_hash": "ecdc978ecf01d75436e9f33b3198d2c545f8102496b26c1fadcf37e1d898ac2a",
+  "strategy_snapshot_hash": "bd67b2f4a14387d30fb9b293f309577b2501e1d13fbb01f01a29dc378eb48b25",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "ee389f73f86292c79ec6b5c4ba5b47689d5559ec49ad1f0bb622d9e2fa087b83",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "09264966427086f4d4754db709f2d2af87ebc3e9e2c48afce4f50aa68e03ad81",
-  "output_hash": "67ef72c2e69476401070af5e167196fb2594042320c9e42c986840621226a985",
-  "status": "FAILED",
-  "score": 30.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, PnL Total: $-19.81)",
+  "input_hash": "fea97944489ca4936987bca656d5826d4a04fe1b8a0e4facf2f1edea6103952a",
+  "output_hash": "5f21e43eaeb64e955a7bfb48f262dcf789088e08bfbc1bb576fd01d56b51def9",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (2/4 regímenes en beneficio, Net PnL: $43.61)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 36,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 2,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 41,
+      "CHOP_RANGING": 38,
       "HIGH_VOLATILITY": 6
     },
     "regime_net_pnl_usd": {
-      "BULL_TREND": 9.89,
+      "BULL_TREND": 120.03,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -35.34,
-      "HIGH_VOLATILITY": 5.64
+      "CHOP_RANGING": -198.27,
+      "HIGH_VOLATILITY": 121.85
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 3,
-    "total_oos_pnl_usd": -19.81
+    "total_oos_pnl_usd": 43.61
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T08:39:14.058448+00:00"
+  "created_at_utc": "2026-08-20T11:26:07.854808+00:00"
 }

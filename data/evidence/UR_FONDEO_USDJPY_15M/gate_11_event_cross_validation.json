@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g11",
+  "run_id": "run_UR_FONDEO_USDJPY_15M",
+  "strategy_id": "UR_FONDEO_USDJPY_15M",
+  "strategy_snapshot_hash": "f1596cd4e630c96957efad8e0ff7a91d92a9da0549a44673b14799fb89c3adcb",
+  "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "079f0ab28dd20ad9b0613194a31c5e3694ec442be71adaabf75108f8d4ac23bb",
+  "output_hash": "48ed424a7c60b60003205a6d3385c24424d803c625c30094c8f0b57ba2e16359",
+  "status": "PASSED",
+  "score": 94.3,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $47506.86, Apalancamiento Pico: 3.1x, Dist. Mín. Liquidación: 93.7%, Comisiones+Funding: $96.00)",
+  "metrics": {
+    "initial_capital_usd": 50000.0,
+    "final_equity_usd": 47506.86,
+    "peak_equity_usd": 50630.9,
+    "min_equity_usd": 47506.86,
+    "peak_leverage_used": 3.14,
+    "max_allowed_leverage_ceiling": 3.0,
+    "min_distance_to_liquidation_pct": 93.69,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 96.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 16
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T12:08:14.935238+00:00"
+}

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4H_g02",
   "run_id": "run_UR_ULTRA_AVAX_USDT_4H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_4H",
-  "strategy_snapshot_hash": "f7a3dabf12501bf502e1504c5c0bc008abba09100bada77639a6a755826d14b7",
+  "strategy_snapshot_hash": "872155908a13d67d1bc0dea816d63d657422f6783760554e8895e4cbca111534",
   "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "f2a3046ac61915b76ee6fa9d4e988434a5f6a1b2380f7d159110c92b99bd151f",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "2411b3958e3fc4fda46be416b5d88ea1b10b3997a05e54fedbdf7f3a3d02011c",
-  "output_hash": "e9d856db3f1c165cbcc80e2c9955001cf18be4de62d49d7b1fd0b6ddb4865fd7",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: PF Neto tras costes = 2.26 (CRYPTO)",
+  "input_hash": "ddc88d0df92338e9f46fc2860933d6ed38c31bef113e5a3dce2f77d650bba26b",
+  "output_hash": "7c392c474c7a4efca93657911e5a6b972e3e626454f555d3f1a62197fd7fc4a9",
+  "status": "FAILED",
+  "score": 0.4,
+  "verdict": "FALLO: PF Neto 1.00 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Avalanche Perpetuo",
     "exchange": "Binance / FTMO Perps",
-    "gross_pnl_usd": 1614.95,
-    "total_fees_usd": 63.86,
-    "total_slippage_usd": 358.54,
-    "net_pnl_usd": 1192.55,
-    "net_profit_factor": 2.26,
-    "drag_cost_pct": 26.16
+    "gross_pnl_usd": 3732.8,
+    "total_fees_usd": 514.96,
+    "total_slippage_usd": 3179.6,
+    "net_pnl_usd": 38.23,
+    "net_profit_factor": 1.0,
+    "drag_cost_pct": 98.98
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T09:48:02.963128+00:00"
+  "created_at_utc": "2026-08-20T11:17:51.200743+00:00"
 }

@@ -1,0 +1,79 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g10",
+  "run_id": "run_UR_FONDEO_USDCHF_4H",
+  "strategy_id": "UR_FONDEO_USDCHF_4H",
+  "strategy_snapshot_hash": "64e94d528f5443c016ab615139dd6fa97954360eafae6c63bc0cbf4055bb786c",
+  "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "a2d34f516891be1767e1006db4e60e28164795fbcc421730d3a557a7986b3ab9",
+  "output_hash": "5905ad7773d4039167db24bf1fb6444a28c338d89ffcdc6fa1ac3bab36a4d75b",
+  "status": "FAILED",
+  "score": 14.2,
+  "verdict": "FALLO: Consenso insuficiente (14.2/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 14.2,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 20.0,
+        "findings": [
+          "Activo y Timeframe: USDCHF (4h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.50 con beneficio neto de $-2680.91.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 6.1% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 45.0,
+        "findings": [
+          "Muestra fuera de muestra: 18 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: MODERADO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-148.94 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 16.2,
+        "objections": [
+          "Alerta de Drawdown: DD (6.1%) consume más del 70% del margen tolerable.",
+          "Alerta de Muestra: 18 trades OOS es una muestra pequeña (< 20 requeridos).",
+          "Alerta de Rentabilidad: Profit factor 0.50 cercano al umbral de equilibrio (1.15)."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T12:07:34.307172+00:00"
+}

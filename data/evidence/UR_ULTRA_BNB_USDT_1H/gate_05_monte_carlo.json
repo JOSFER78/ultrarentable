@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1H_g05",
   "run_id": "run_UR_ULTRA_BNB_USDT_1H",
   "strategy_id": "UR_ULTRA_BNB_USDT_1H",
-  "strategy_snapshot_hash": "5bcadf6cb8388903b3b0a419d3f07e44ef49db4614610d06c00f0231ee6afaa4",
+  "strategy_snapshot_hash": "2f9fb31549f37de389a835c44c2722585263ffaa007e6a803bfe40b0a103a082",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "0b7ff0e1e886bd31e441eef60ff2e7fc404cb5c75d44616d55ebc279ebf4a98c",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c443ea16f447fda8046274978d707d1cfe2a2b342b71eaa2e036e0106a5c90f9",
-  "output_hash": "d1b075bf773c9b903d558ec1604cf0704dbe5cce0970839fa11eae0102ec9641",
-  "status": "PASSED",
-  "score": 77.4,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 45.3%)",
+  "input_hash": "070cd6c992654f0e00beaca88ec989c568a9217a275a51b43d58e6f322288c40",
+  "output_hash": "1f73941722d8d8c3706434ff6e34a4b9f0cd9c364806b80a19d741c6992661f0",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 67.2% > 1.0%",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 20.4,
-    "drawdown_95th_percentile_pct": 45.3,
-    "max_simulated_drawdown_pct": 82.5
+    "ruin_probability_pct": 67.2,
+    "drawdown_median_pct": 117.4,
+    "drawdown_95th_percentile_pct": 501.1,
+    "max_simulated_drawdown_pct": 1016.3
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T09:49:47.830058+00:00"
+  "created_at_utc": "2026-08-20T11:19:04.430048+00:00"
 }

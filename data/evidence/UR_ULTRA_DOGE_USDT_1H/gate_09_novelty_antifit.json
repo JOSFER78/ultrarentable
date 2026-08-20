@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1H",
-  "strategy_snapshot_hash": "0e7ed6ae0e2470523e12c04d266a7845bcfc2e1760573b8fbf483e04166ddeae",
+  "strategy_snapshot_hash": "72b13f55f95246c21157e1ced7c9e773cc994931902df058427a8d2fef87b585",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "dfabfbb0cf8261ea477f50f9073a4c2a3585a045d92b1717ade81f83fbbe0d8c",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c129209cee13a542c5de6b2c596c61d65f53d98243e7dba57e0467d69d80813e",
-  "output_hash": "832ae42f3bb94c14b71eeb202dea7c630c4f56980fdf3e42dc9e4c575413e6a5",
+  "input_hash": "bb93e004fd803c86bd0807df03ca7faac68c87ce79e65851ea60c1d5077cd29e",
+  "output_hash": "d2c599fb9da1d0ef156401c5b6d6f0961ca3300bff78d233cac21354d4c3bcd7",
   "status": "PASSED",
-  "score": 87.9,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 82.5 trades/param, Estabilidad Vecindario: 79.8%, Re-backtest PFs: [1.3, 1.8, 2.63, 1.96])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 67.6 trades/param, Estabilidad Vecindario: 103.6%, Re-backtest PFs: [1.07, 1.1, 1.35, 1.37])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 82.5,
+    "degrees_of_freedom_ratio": 67.6,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 79.8,
+    "parameter_neighborhood_stability_pct": 103.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.3,
-      1.8,
-      2.63,
-      1.96
+      1.07,
+      1.1,
+      1.35,
+      1.37
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T09:55:05.051802+00:00"
+  "created_at_utc": "2026-08-20T11:22:59.899372+00:00"
 }

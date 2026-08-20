@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_CL_4H_g10",
   "run_id": "run_UR_FONDEO_CL_4H",
   "strategy_id": "UR_FONDEO_CL_4H",
-  "strategy_snapshot_hash": "673edc80a01d0635ca9710d2338cf063f5feb7a02a733519fa60595db5116c87",
+  "strategy_snapshot_hash": "d98502b998ae1be9e5232634ff17791b481e3b8ec403e38b1e7c7fd21038c8dd",
   "dataset_id": "ds_trad_cl_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "e91c3aba91d4a75f63c929b209f8db49a5e8e5386d7a60a8dc1de6af50b881ac",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "2569402be499f1cd7fd4442ffa84c3a43821cf77d2e2380ba81ab3a17ec3f7c2",
-  "output_hash": "05e4184a2433af91235af750e5ba8240a628decf5bd78eb8c19c2e4b443087ad",
-  "status": "FAILED",
-  "score": 41.9,
-  "verdict": "FALLO: Consenso insuficiente (41.9/100) u objeción crítica de riesgo",
+  "input_hash": "942fab5ac1de0a4d2f00d21611111d0556363295f7417b60042d8653a9aa1223",
+  "output_hash": "2be2dd2699cdc708cadd334f2eec1e370d15085911c659dcbcccd176d7b6b8e1",
+  "status": "PASSED",
+  "score": 63.6,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (63.6/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 41.9,
+    "consensus_score": 63.6,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 42.6,
+        "score": 55.7,
         "findings": [
           "Activo y Timeframe: CL (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 1.28 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.57 con beneficio neto de $1572.25.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 68.3,
+        "score": 60.5,
         "findings": [
-          "Drawdown Máximo Observado: 2.0% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 2.5% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -44,34 +44,34 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 35.0,
+        "score": 45.0,
         "findings": [
-          "Muestra fuera de muestra: 14 operaciones evaluadas (Mínimo requerido: 20).",
-          "Grado de confianza: LIMITADO."
+          "Muestra fuera de muestra: 18 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: MODERADO."
         ],
         "approved": false
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $87.35 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 36.5,
+        "score": 65.3,
         "objections": [
-          "Alerta de Muestra: 14 trades OOS es una muestra pequeña."
+          "Alerta de Muestra: 18 trades OOS es una muestra pequeña (< 20 requeridos)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T08:34:22.781060+00:00"
+  "created_at_utc": "2026-08-20T11:56:09.742181+00:00"
 }

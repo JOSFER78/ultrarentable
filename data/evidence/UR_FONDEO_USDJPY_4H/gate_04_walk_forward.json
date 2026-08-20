@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_4H_g04",
+  "run_id": "run_UR_FONDEO_USDJPY_4H",
+  "strategy_id": "UR_FONDEO_USDJPY_4H",
+  "strategy_snapshot_hash": "2a110416c99778e9a120ef272c7a25cd3e8a8d42f80b94192e2a2b8c224151f0",
+  "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "f3d314f1f902530723bb91acdb432b641b662b65666ed995ba01d7928dc5df2e",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8ccec694a21eb2b53c43bed9b9d21045dcbe321366f0b248df6df4b2456847d1",
+  "output_hash": "7384b062abc25b89746fb44dc6bc1ed5f324d9c5a79959e99646c43febe5b955",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 1.34, Consistencia: 60.0%)",
+  "metrics": {
+    "total_trades_analyzed": 99,
+    "windows_count": 5,
+    "walk_forward_efficiency": 1.34,
+    "oos_consistency_pct": 60.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 13,
+        "oos_trades_count": 6,
+        "pf_is": 1.61,
+        "pf_oos": 2.24,
+        "net_profit_oos_usd": 1169.12,
+        "wfe": 1.39
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 13,
+        "oos_trades_count": 6,
+        "pf_is": 1.49,
+        "pf_oos": 0.5,
+        "net_profit_oos_usd": -717.54,
+        "wfe": 0.34
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 13,
+        "oos_trades_count": 6,
+        "pf_is": 0.75,
+        "pf_oos": 2.74,
+        "net_profit_oos_usd": 1433.78,
+        "wfe": 3.66
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 13,
+        "oos_trades_count": 6,
+        "pf_is": 2.27,
+        "pf_oos": 2.64,
+        "net_profit_oos_usd": 1428.74,
+        "wfe": 1.16
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 13,
+        "oos_trades_count": 6,
+        "pf_is": 3.09,
+        "pf_oos": 0.51,
+        "net_profit_oos_usd": -744.18,
+        "wfe": 0.17
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_4H/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-20T12:08:52.046545+00:00"
+}

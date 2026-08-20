@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_5M",
   "strategy_id": "UR_ULTRA_BTC_USDT_5M",
-  "strategy_snapshot_hash": "6be51df91e671705898376e90fe8ac82a776a19882f0b4a73411e6f11da84995",
+  "strategy_snapshot_hash": "e7034b32ae6948841ddd956a78da18a23f6960d4edf2e275ce775c095868236e",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
   "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "4c8430d5096c87e9262bf2cd3bf1ab71ab6d8ff0692189a292d807c37280046e",
-  "output_hash": "27e349a01b1d2ae883ffc8eb06fa66d4481bc45fdfe967b1b5d39941af05dd1c",
+  "input_hash": "fda954c3901446a66657c98de6e9fc09645e64a6d3aaf54fdf1e6b0e9c303b2a",
+  "output_hash": "a84a0ae76ad5504f55f107da6e068f01607d573a345c5ab3058625566be2aa7e",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-548.70)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-570.05)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_net_pnl_usd": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -530.15,
-      "HIGH_VOLATILITY": -18.55
+      "CHOP_RANGING": -544.94,
+      "HIGH_VOLATILITY": -25.11
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -548.7
+    "total_oos_pnl_usd": -570.05
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T09:53:47.022573+00:00"
+  "created_at_utc": "2026-08-20T11:21:56.587145+00:00"
 }
