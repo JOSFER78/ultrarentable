@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_15M_g01",
+  "run_id": "run_UR_ULTRA_USDJPY_15M",
+  "strategy_id": "UR_ULTRA_USDJPY_15M",
+  "strategy_snapshot_hash": "200758d2a7a62fa28a3cd2b911a734ddacb5b1809cc0ae9efca30377f4fe1546",
+  "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "2a22308848612712647d948399d06f95c37e61d7d3600e31d2386b167c28b181",
+  "output_hash": "8c664ae21950d5715d636e1553c66089f17fda8480dcca2cc2597aac3a9355cc",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (1131 velas, SHA256: 4eab2e4f..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 1131,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 900,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T04:36:15.854357+00:00"
+}

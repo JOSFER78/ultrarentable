@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_1H_g07",
+  "run_id": "run_UR_ULTRA_SUI_USDT_1H",
+  "strategy_id": "UR_ULTRA_SUI_USDT_1H",
+  "strategy_snapshot_hash": "15d58415d3f9e2376e45c7dc909b7a4350ab79f61e1519da8944f0e2d6deb8e3",
+  "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "aaec70e26e1da5c7430e008ff01bc0d0335cc7b2f1ffd0e3f840a20911eac9b0",
+  "output_hash": "00b74d27cd7eb95583b535e1f92b0928e861d856de6943712790d4581cb28c42",
+  "status": "PASSED",
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $3801.63)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 640,
+      "BEAR_TREND": 944,
+      "CHOP_RANGING": 2452,
+      "HIGH_VOLATILITY": 1064
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 28,
+      "BEAR_TREND": 16,
+      "CHOP_RANGING": 87,
+      "HIGH_VOLATILITY": 36
+    },
+    "regime_net_pnl_usd": {
+      "BULL_TREND": 70.83,
+      "BEAR_TREND": -330.36,
+      "CHOP_RANGING": 2928.98,
+      "HIGH_VOLATILITY": 1132.18
+    },
+    "regimes_profitable_count": 3,
+    "regimes_active_count": 4,
+    "total_oos_pnl_usd": 3801.63
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1H/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-20T04:05:06.467010+00:00"
+}

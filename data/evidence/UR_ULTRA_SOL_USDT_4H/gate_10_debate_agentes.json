@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g10",
+  "run_id": "run_UR_ULTRA_SOL_USDT_4H",
+  "strategy_id": "UR_ULTRA_SOL_USDT_4H",
+  "strategy_snapshot_hash": "11d28454fa3c56d66a2a4ea5a6eca93ff513f2429658ecf1b9b55188dc05e892",
+  "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "cadbdb0506114213419715f2f47480c7d01394604956b6d12f49582d1c9c1ecd",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "e9c166cc37f502df78731e806d966c0742ecbfa42df5c21ff0eb2681576f5382",
+  "output_hash": "481535600d5c25edf95c4fe552507dd4eccd30c736265c9ad94e434119415093",
+  "status": "FAILED",
+  "score": 75.0,
+  "verdict": "FALLO: Consenso insuficiente (75.0/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 75.0,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 100.0,
+        "findings": [
+          "Activo y Timeframe: SOL-USDT (4h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 2.05 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 81.6,
+        "findings": [
+          "Drawdown Máximo Observado: 21.0% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 118 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 70.4,
+        "objections": [
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+        ],
+        "approved": true
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:03:58.511427+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_ULTRA_ETH_USDT_g09",
+  "run_id": "run_UR_ULTRA_ETH_USDT",
+  "strategy_id": "UR_ULTRA_ETH_USDT",
+  "strategy_snapshot_hash": "26e0b4050d13c823a98a37da7a43201152e40fff8ab6f9150e0ae88d18fc056f",
+  "dataset_id": "ds_bingx_ETH_USDT_5m_1771841100000_1785664800000_9cdb918f02.json",
+  "dataset_sha256": "9cdb918f020b562444ee2142fa63990743724830ea47b581643fb0089c7d9930",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "94efa179c269d28f5f2ceab12d8e5177ecd2737d1ad747303071d1d193aed98c",
+  "output_hash": "a052f6fbef831703ffa686855ae81caa14c2a5a16b8ce61b06ca9a5d7b9a904e",
+  "status": "PASSED",
+  "score": 97.7,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 28.2 trades/param, Estabilidad Vecindario: 96.2%, Re-backtest PFs: [1.02, 1.01, 1.22, 1.02])",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 28.2,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 96.2,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      1.02,
+      1.01,
+      1.22,
+      1.02
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T04:25:32.202838+00:00"
+}

@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_15M_g10",
+  "run_id": "run_UR_ULTRA_USDJPY_15M",
+  "strategy_id": "UR_ULTRA_USDJPY_15M",
+  "strategy_snapshot_hash": "200758d2a7a62fa28a3cd2b911a734ddacb5b1809cc0ae9efca30377f4fe1546",
+  "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "2e837094ceaf6960e0ab9b7a7cc0b085a0b3358c0a4dd5ddb0c64196b0a833e8",
+  "output_hash": "22d76277df5aa7d06a6770eb4d8c38b179b70de27e4266f4c85e09c982fda8e4",
+  "status": "FAILED",
+  "score": 42.1,
+  "verdict": "FALLO: Consenso insuficiente (42.1/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 42.1,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 21.2,
+        "findings": [
+          "Activo y Timeframe: USDJPY (15m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.25 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 51.0,
+        "findings": [
+          "Drawdown Máximo Observado: 56.0% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 22 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: MODERADO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 43.1,
+        "objections": [
+          "Alerta de Rentabilidad: Profit factor 0.25 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:36:15.991801+00:00"
+}

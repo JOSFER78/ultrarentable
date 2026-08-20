@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GBPUSD_5M_g09",
+  "run_id": "run_UR_FONDEO_GBPUSD_5M",
+  "strategy_id": "UR_FONDEO_GBPUSD_5M",
+  "strategy_snapshot_hash": "d4c7b967638f82810741ea36c779d86542695b5e56631c1b10e09b8521604ece",
+  "dataset_id": "ds_trad_gbpusd_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "9d1a198f5621c2609bac3d5be9b6b883237bbf4ea9ce9e0f1f0154c354289a30",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "6247db0e286f3648d143e24b5f132320d488137c716797fae86fb8bea840b3cc",
+  "output_hash": "e449d0b13379ece73729fd002ecc922e390e726d45cd64d232a410631fc5f81f",
+  "status": "FAILED",
+  "score": 9.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 21.9 o Estabilidad 22.5% < 70.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 21.9,
+    "min_dof_required": 15.0,
+    "parameter_neighborhood_stability_pct": 22.5,
+    "min_stability_required_pct": 70.0,
+    "perturbed_neighborhood_pfs": [
+      0.03,
+      0.02,
+      0.02,
+      0.02
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_5M/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T04:30:28.290238+00:00"
+}

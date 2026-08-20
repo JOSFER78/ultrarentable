@@ -57,28 +57,28 @@ export default function Header() {
 
         <div>
           <span style={{ color: "#64748b" }}>EJECUCIÓN: </span>
-          <strong style={{ color: Object.values(workers).some(w => w.status === "ACTIVE") ? "#34d399" : "#94a3b8" }}>
+          <strong style={{ color: Object.values(workers).some(w => w.status === "ACTIVE") ? "#34d399" : (systemMetrics.sseConnected ? "#94a3b8" : "#f43f5e") }}>
             {Object.keys(workers).length > 0
-              ? `${Object.values(workers).filter(w => w.status === "ACTIVE").length}/${Object.keys(workers).length} Bots Activos`
-              : "8 Bots (En reposo)"}
+              ? `${Object.values(workers).filter(w => w.status === "ACTIVE").length}/${Object.keys(workers).length} Workers Activos`
+              : (systemMetrics.sseConnected ? "0 Workers (Standby)" : "CONTROL PLANE OFFLINE")}
           </strong>
         </div>
 
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
 
         <div>
-          <span style={{ color: "#64748b" }}>RATCHET: </span>
-          <strong style={{ color: (systemMetrics.vault_balance_usd || 0) > 0 ? "#34d399" : "#94a3b8" }}>
-            ${(systemMetrics.vault_balance_usd || 0).toFixed(2)} USD
+          <span style={{ color: "#64748b" }}>SQX BRIDGE: </span>
+          <strong style={{ color: systemMetrics.sqxBridgeConnected ? "#34d399" : "#94a3b8" }}>
+            {systemMetrics.sqxBridgeConnected ? "CONECTADO" : "STANDBY"}
           </strong>
         </div>
 
         <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
 
         <div>
-          <span style={{ color: "#64748b" }}>MOTOR 24/7: </span>
-          <strong style={{ color: systemMetrics.sseConnected ? "#34d399" : "#f59e0b" }}>
-            {systemMetrics.sseConnected ? "ACTIVO" : "STANDBY"}
+          <span style={{ color: "#64748b" }}>TELEMETRÍA 24/7: </span>
+          <strong style={{ color: systemMetrics.sseConnected ? "#34d399" : "#f43f5e" }}>
+            {systemMetrics.sseConnected ? "ACTIVO" : "DESCONECTADO"}
           </strong>
         </div>
       </div>

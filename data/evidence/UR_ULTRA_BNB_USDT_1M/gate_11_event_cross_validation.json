@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BNB_USDT_1M_g11",
+  "run_id": "run_UR_ULTRA_BNB_USDT_1M",
+  "strategy_id": "UR_ULTRA_BNB_USDT_1M",
+  "strategy_snapshot_hash": "d61eb3bec8ac66f521616eaeba5dfc6569b4f34f6efef04e9d0843115064e3e4",
+  "dataset_id": "ds_binance_bnbusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "82a657fc9f567cae2216cd71ee1a26e6e349260d68f4ea450492b06947fc76b4",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "a147c0f78e8ce16595b87fdd450d6dba9c070948cc52a0dff05928c3be433a51",
+  "output_hash": "76b297aca8c0b857c5fa92987ec3c5343fe0a042ed8a04a80f78599c7d476621",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1178.5x > 100.0x)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": -16.1,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -16.1,
+    "peak_leverage_used": 1178.46,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 443.6,
+    "total_funding_cost_usd": 55.45,
+    "execution_events_count": 47
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T04:41:41.233421+00:00"
+}

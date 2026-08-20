@@ -263,21 +263,21 @@ export default function GeneticDiscoveryLabPage() {
           <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>VELOCIDAD DE CÁLCULO</span>
             <span style={{ fontSize: "13px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }} suppressHydrationWarning>
-              {telemetry.evaluation_speed_per_sec || 0.5} evals/seg
+              {typeof telemetry.evaluation_speed_per_sec === "number" ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "0.0 evals/seg"}
             </span>
           </div>
 
           <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>EVALUACIONES REALES</span>
             <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }} suppressHydrationWarning>
-              {fmt(telemetry.total_evaluations_count || 599901)}
+              {typeof telemetry.total_evaluations_count === "number" ? fmt(telemetry.total_evaluations_count) : "0"}
             </span>
           </div>
 
           <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "10px", color: "#34d399", display: "block" }}>ESTADO</span>
             <span style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>
-              🟢 {telemetry.current_action_badge || "Minería 24/7 Activa"}
+              🟢 {telemetry.current_action_badge || "STANDBY"}
             </span>
           </div>
         </div>
@@ -607,7 +607,7 @@ function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }
 
         <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>⚡ {telemetry.evaluation_speed_per_sec || 14.8} evals/seg</span>
+            <span style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>⚡ {typeof telemetry.evaluation_speed_per_sec === "number" ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "0.0 evals/seg"}</span>
           </div>
           <Link href="/gates/gate-1-data-ingest" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
             <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>🔬 11 GATES AISLADOS →</span>

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_4H_g03",
+  "run_id": "run_UR_ULTRA_SUI_USDT_4H",
+  "strategy_id": "UR_ULTRA_SUI_USDT_4H",
+  "strategy_snapshot_hash": "d37b8469c687fe5e3fb34e5601cd5930e9447aa087fbbe89b1620802f8e78d84",
+  "dataset_id": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
+  "dataset_sha256": "4a408a645da2d8005cafc980d1bb2b9b477a4391f0b706b8999a8551da31c9d0",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "d81b224b0bb0175bba807159f98cfc958c538e22773f242ec08015c2664f935c",
+  "output_hash": "5568246413ba1892a6dc32f5889a805a79b3e176e6ab10128393e8de63da7a4a",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (229 IS / 71 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 229,
+    "trades_oos": 71,
+    "top2_outlier_dependency_pct": 29.6,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_4H/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:05:34.971520+00:00"
+}

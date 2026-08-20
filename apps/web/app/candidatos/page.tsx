@@ -288,8 +288,11 @@ export default function CandidatosFSMPage() {
     }
   };
 
-  const top5Ultra = useMemo(() => candidates.filter((c) => c.route === "ULTRA").slice(0, 5), [candidates]);
-  const top5Fondeo = useMemo(() => candidates.filter((c) => c.route === "FONDEO").slice(0, 5), [candidates]);
+  const isApprovedStatus = (status: string) =>
+    status === "APPROVED" || status === "ULTRA_CERTIFIED" || status === "FUNDING_CERTIFIED" || status === "PORTFOLIO_CERTIFIED";
+
+  const top5Ultra = useMemo(() => candidates.filter((c) => c.route === "ULTRA" && isApprovedStatus(c.status)).slice(0, 5), [candidates]);
+  const top5Fondeo = useMemo(() => candidates.filter((c) => c.route === "FONDEO" && isApprovedStatus(c.status)).slice(0, 5), [candidates]);
 
   const openCodeExport = (c: CandidateItem | null, type: "pine" | "ninja" | "python", isEnsemble = false) => {
     let code = "";
@@ -1681,7 +1684,11 @@ ${entryLogic}`;
                   <div style={{ background: "rgba(52, 211, 153, 0.08)", border: "1px solid rgba(52, 211, 153, 0.25)", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>COLCHÓN DISTANCIA A LIQUIDACIÓN</div>
                     <div style={{ fontSize: "20px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
-                      {gateModal.nautilusData?.evidence?.min_liquidation_distance_pct ?? (35.0 - (gateModal.candidate?.metrics?.out_of_sample?.max_drawdown_pct || 10.0)).toFixed(1)}%
+                      {typeof gateModal.nautilusData?.evidence?.min_distance_to_liquidation_pct === "number"
+                        ? `${gateModal.nautilusData.evidence.min_distance_to_liquidation_pct.toFixed(1)}%`
+                        : typeof gateModal.nautilusData?.evidence?.min_liquidation_distance_pct === "number"
+                        ? `${gateModal.nautilusData.evidence.min_liquidation_distance_pct.toFixed(1)}%`
+                        : "N/A"}
                     </div>
                     <div style={{ fontSize: "10px", color: "#34d399" }}>Zona Segura Cross Margin</div>
                   </div>
@@ -1689,25 +1696,31 @@ ${entryLogic}`;
                   <div style={{ background: "rgba(56, 189, 248, 0.08)", border: "1px solid rgba(56, 189, 248, 0.25)", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>APALANCAMIENTO PICO UTILIZADO</div>
                     <div style={{ fontSize: "20px", fontWeight: 900, color: "#38bdf8", margin: "4px 0" }}>
-                      {gateModal.nautilusData?.evidence?.real_peak_leverage_used ?? (gateModal.candidate?.route === "ULTRA" ? "20x" : "2x")}
+                      {typeof gateModal.nautilusData?.evidence?.peak_leverage_used === "number"
+                        ? `${gateModal.nautilusData.evidence.peak_leverage_used.toFixed(1)}x`
+                        : typeof gateModal.nautilusData?.evidence?.real_peak_leverage_used === "number"
+                        ? `${gateModal.nautilusData.evidence.real_peak_leverage_used.toFixed(1)}x`
+                        : "N/A"}
                     </div>
-                    <div style={{ fontSize: "10px", color: "#64748b" }}>Ruta {gateModal.candidate?.route}</div>
+                    <div style={{ fontSize: "10px", color: "#64748b" }}>Ruta {gateModal.candidate?.route || "N/A"}</div>
                   </div>
 
                   <div style={{ background: "rgba(244, 63, 94, 0.08)", border: "1px solid rgba(244, 63, 94, 0.25)", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>SCORE NAUTILUS DE AUDITORÍA</div>
                     <div style={{ fontSize: "20px", fontWeight: 900, color: gateModal.nautilusData?.passed ? "#34d399" : "#fb7185", margin: "4px 0" }}>
-                      {gateModal.nautilusData?.nautilus_score ?? 0} pts
+                      {typeof gateModal.nautilusData?.nautilus_score === "number" ? `${gateModal.nautilusData.nautilus_score} pts` : "N/A"}
                     </div>
-                    <div style={{ fontSize: "10px", color: "#94a3b8" }}>{gateModal.nautilusData?.verdict || "Evaluación en curso"}</div>
+                    <div style={{ fontSize: "10px", color: "#94a3b8" }}>{gateModal.nautilusData?.verdict || "Evaluación en curso / Sin datos"}</div>
                   </div>
 
                   <div style={{ background: "rgba(168, 85, 247, 0.08)", border: "1px solid rgba(168, 85, 247, 0.25)", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>PNL NETO OOS AUDITADO</div>
-                    <div style={{ fontSize: "20px", fontWeight: 900, color: (gateModal.candidate?.metrics?.out_of_sample?.net_profit_usd || 0) >= 0 ? "#34d399" : "#fb7185", margin: "4px 0" }}>
-                      ${(gateModal.candidate?.metrics?.out_of_sample?.net_profit_usd ?? 0).toLocaleString()} USD
+                    <div style={{ fontSize: "20px", fontWeight: 900, color: typeof gateModal.candidate?.metrics?.out_of_sample?.net_profit_usd === "number" && gateModal.candidate.metrics.out_of_sample.net_profit_usd >= 0 ? "#34d399" : "#fb7185", margin: "4px 0" }}>
+                      {typeof gateModal.candidate?.metrics?.out_of_sample?.net_profit_usd === "number"
+                        ? `$${gateModal.candidate.metrics.out_of_sample.net_profit_usd.toLocaleString()} USD`
+                        : "N/A"}
                     </div>
-                    <div style={{ fontSize: "10px", color: "#cbd5e1" }}>Capital: ${(gateModal.candidate?.metrics?.out_of_sample?.base_capital_usd || 10000).toLocaleString()} USD</div>
+                    <div style={{ fontSize: "10px", color: "#cbd5e1" }}>Capital: ${typeof gateModal.candidate?.metrics?.out_of_sample?.base_capital_usd === "number" ? gateModal.candidate.metrics.out_of_sample.base_capital_usd.toLocaleString() : "N/A"} USD</div>
                   </div>
                 </div>
               </div>

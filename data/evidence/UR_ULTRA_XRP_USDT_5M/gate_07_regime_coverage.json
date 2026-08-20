@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_5M_g07",
+  "run_id": "run_UR_ULTRA_XRP_USDT_5M",
+  "strategy_id": "UR_ULTRA_XRP_USDT_5M",
+  "strategy_snapshot_hash": "22b5db33f9c42b2762fd13047c6c226ae6d0ac73c1f4f7a3fa9df5130b605375",
+  "dataset_id": "ds_binance_xrpusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "eef3c09d40540c3615b21e3a1eea211030379022ed266d2b4571ec297b082165",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "293dbe5b570803effae9b727770f366bdc9ae4cee05981146f2bee6403370c89",
+  "output_hash": "36fd44f506fd2404eab0b220cfe417fa434e53d239e227208173d3efa8e70c69",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-442.88)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 1496,
+      "HIGH_VOLATILITY": 304
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 35,
+      "HIGH_VOLATILITY": 8
+    },
+    "regime_net_pnl_usd": {
+      "BULL_TREND": 0.0,
+      "BEAR_TREND": 0.0,
+      "CHOP_RANGING": -387.29,
+      "HIGH_VOLATILITY": -55.59
+    },
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 2,
+    "total_oos_pnl_usd": -442.88
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_5M/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-20T04:07:24.730388+00:00"
+}

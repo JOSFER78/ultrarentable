@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1H_g07",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_1H",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_1H",
+  "strategy_snapshot_hash": "ceac73d30a7fd8d0ac27e4fa89b406b9ab16100b3b3000889488deb92a2aa598",
+  "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "43558970dd3987c0e35c79d88737ed8991ae25a2d367cf9288df45ab964f4655",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "25439fdf1b5e911cfcaf4d5b919a0d7de0be925b7fdeac646f32bd6d068cd207",
+  "output_hash": "c398916cbd6c1364e25f3a5e372fa32a55bbadaffeb0699ac081ebf2e09fbd7b",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen temporal verificada (4/4 regímenes en beneficio, Net PnL: $2105.77)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 632,
+      "BEAR_TREND": 906,
+      "CHOP_RANGING": 2769,
+      "HIGH_VOLATILITY": 793
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 18,
+      "BEAR_TREND": 21,
+      "CHOP_RANGING": 104,
+      "HIGH_VOLATILITY": 28
+    },
+    "regime_net_pnl_usd": {
+      "BULL_TREND": 292.17,
+      "BEAR_TREND": 224.39,
+      "CHOP_RANGING": 584.24,
+      "HIGH_VOLATILITY": 1004.97
+    },
+    "regimes_profitable_count": 4,
+    "regimes_active_count": 4,
+    "total_oos_pnl_usd": 2105.77
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1H/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-20T04:39:49.738381+00:00"
+}

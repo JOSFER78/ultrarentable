@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g02",
+  "run_id": "run_UR_ULTRA_SOL_USDT_4H",
+  "strategy_id": "UR_ULTRA_SOL_USDT_4H",
+  "strategy_snapshot_hash": "11d28454fa3c56d66a2a4ea5a6eca93ff513f2429658ecf1b9b55188dc05e892",
+  "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "cadbdb0506114213419715f2f47480c7d01394604956b6d12f49582d1c9c1ecd",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "3ddee553b0d99569a330a40e90de9b98a9a6348e6406c8a681e3161fca5e46f4",
+  "output_hash": "346d3a1a31dd653c42296d8b150f718cacd6e1a6a01e9119cfcde42679ae06d1",
+  "status": "PASSED",
+  "score": 92.9,
+  "verdict": "PASSED: PF Neto tras costes = 1.93 (CRYPTO)",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "Solana Perpetuo",
+    "exchange": "Binance / BingX / FTMO",
+    "gross_pnl_usd": 1520.28,
+    "total_fees_usd": 137.54,
+    "total_slippage_usd": 55.34,
+    "net_pnl_usd": 1327.4,
+    "net_profit_factor": 1.93,
+    "drag_cost_pct": 12.69
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:03:58.252103+00:00"
+}

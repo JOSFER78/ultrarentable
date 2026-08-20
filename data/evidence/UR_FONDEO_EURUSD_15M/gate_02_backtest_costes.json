@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_EURUSD_15M_g02",
+  "run_id": "run_UR_FONDEO_EURUSD_15M",
+  "strategy_id": "UR_FONDEO_EURUSD_15M",
+  "strategy_snapshot_hash": "1463b2fc856be02629e93c5393821b97e248a6f18e25e486178d25469344e4ed",
+  "dataset_id": "ds_trad_eurusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "0d3832d68b25678f06f67d72b27a76e56e709bcadf87f84cc336bd71aba321af",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "168cff8369d58c2b056b7bf5ba96594482456b11b4a1324cd70d7b5b8216ab33",
+  "output_hash": "ca7f42f2c5858c3076d160cbe377da28f48188cc6629916cb932c23f2d64197b",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.31 < 1.10",
+  "metrics": {
+    "market_category": "FOREX",
+    "canonical_name": "Euro / US Dollar",
+    "exchange": "Interbank / FTMO",
+    "gross_pnl_usd": -129253959.79,
+    "total_fees_usd": 20246278.71,
+    "total_slippage_usd": 33743797.85,
+    "net_pnl_usd": -183244036.35,
+    "net_profit_factor": 0.31,
+    "drag_cost_pct": 41.77
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_EURUSD_15M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:28:26.978913+00:00"
+}

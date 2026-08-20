@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g10",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
+  "strategy_snapshot_hash": "6b1cec2c23d574f3bebf5756fc569a02c1fbd207275124fc1a9af93685ec0c8f",
+  "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "82bc0d93a0546009307f5a02ac9653ebed03485fe3a81a3cfeda634ad483da42",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "cf1fb77c27e402e3c351a36c2996df9888475b3fef70850c79ce0961d0cb5c38",
+  "output_hash": "e579c73d87aa451a44486cede3220ad6ef549d03ecf4ed3d008c002e19e4bafe",
+  "status": "FAILED",
+  "score": 78.0,
+  "verdict": "FALLO: Consenso insuficiente (78.0/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 78.0,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 100.0,
+        "findings": [
+          "Activo y Timeframe: DOGE-USDT (4h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 2.82 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 90.4,
+        "findings": [
+          "Drawdown Máximo Observado: 10.9% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 100 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 72.6,
+        "objections": [
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+        ],
+        "approved": true
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:45:14.238713+00:00"
+}

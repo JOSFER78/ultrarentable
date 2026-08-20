@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BNB_USDT_5M_g04",
+  "run_id": "run_UR_ULTRA_BNB_USDT_5M",
+  "strategy_id": "UR_ULTRA_BNB_USDT_5M",
+  "strategy_snapshot_hash": "d0b5d53b2848a37117070659f78b7ba362000079b3ebcff7b48fd1fde6f8574b",
+  "dataset_id": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "e051023222b83d80af92d7ae17b66fa5fa59f8ed759a698bb98f00996b66a4d5",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "cebd919f115e8cd28c63cf0ddc16e7c34d5d1e7da49309f6dcf0566fb564e83f",
+  "output_hash": "64e552a6ff5df175280e60fc48e9a3d7912821e851c4d434a6e605a05eb185fa",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 2.63, Consistencia: 80.0%)",
+  "metrics": {
+    "total_trades_analyzed": 199,
+    "windows_count": 5,
+    "walk_forward_efficiency": 2.63,
+    "oos_consistency_pct": 80.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 27,
+        "oos_trades_count": 12,
+        "pf_is": 0.44,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -138.11,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 27,
+        "oos_trades_count": 12,
+        "pf_is": 0.64,
+        "pf_oos": 2.78,
+        "net_profit_oos_usd": 89.26,
+        "wfe": 4.34
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 27,
+        "oos_trades_count": 12,
+        "pf_is": 0.66,
+        "pf_oos": 1.18,
+        "net_profit_oos_usd": 9.48,
+        "wfe": 1.78
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 27,
+        "oos_trades_count": 12,
+        "pf_is": 0.39,
+        "pf_oos": 2.14,
+        "net_profit_oos_usd": 74.64,
+        "wfe": 5.52
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 27,
+        "oos_trades_count": 12,
+        "pf_is": 0.94,
+        "pf_oos": 1.41,
+        "net_profit_oos_usd": 28.92,
+        "wfe": 1.51
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5M/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-20T04:42:11.258181+00:00"
+}

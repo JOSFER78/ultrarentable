@@ -775,15 +775,15 @@ export default function StrategiesExplorerPage() {
               ) : (
                 paginatedCandidates.map((c, idx) => {
                   const rank = (currentPage - 1) * pageSize + idx + 1;
-                  const annRoi = c.metrics?.out_of_sample?.annualized_roi_pct ?? (c.metrics?.out_of_sample?.roi_pct || 0);
-                  const monRoi = c.metrics?.out_of_sample?.monthly_roi_pct ?? (annRoi / 12.0);
-                  const pfIs = c.metrics?.in_sample?.profit_factor ?? 1.25;
-                  const pfOos = c.metrics?.out_of_sample?.profit_factor ?? 1.20;
-                  const wr = c.metrics?.out_of_sample?.win_rate_pct ?? (c.metrics?.in_sample?.win_rate_pct || 45.0);
-                  const tradesOos = c.metrics?.out_of_sample?.trades ?? 120;
-                  const dd = c.metrics?.out_of_sample?.max_drawdown_pct ?? (c.metrics?.in_sample?.max_drawdown_pct || 15.0);
-                  const mc = c.metrics?.anti_overfit?.monte_carlo_score ?? 85.0;
-                  const dur = c.duration_info || { total_months: 5.2, total_years: 0.43, start_date: "2025-10-01", end_date: "2026-04-16", oos_months: 1.9, oos_days: 59 };
+                  const annRoi = c.metrics?.out_of_sample?.annualized_roi_pct;
+                  const monRoi = c.metrics?.out_of_sample?.monthly_roi_pct;
+                  const pfIs = c.metrics?.in_sample?.profit_factor;
+                  const pfOos = c.metrics?.out_of_sample?.profit_factor;
+                  const wr = c.metrics?.out_of_sample?.win_rate_pct ?? c.metrics?.in_sample?.win_rate_pct;
+                  const tradesOos = c.metrics?.out_of_sample?.trades;
+                  const dd = c.metrics?.out_of_sample?.max_drawdown_pct ?? c.metrics?.in_sample?.max_drawdown_pct;
+                  const mc = c.metrics?.anti_overfit?.monte_carlo_score;
+                  const dur = c.duration_info;
 
                   return (
                     <tr
@@ -800,7 +800,7 @@ export default function StrategiesExplorerPage() {
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                           <span style={{ fontWeight: 700, color: "#ffffff" }}>{c.name}</span>
-                          {c.status.startsWith("RECHAZADA") ? (
+                          {c.status.startsWith("RECHAZADA") || c.status.startsWith("REJECTED") || c.status.startsWith("BLOCKED") ? (
                             <span
                               title={c.status_reason || "Rechazada por filtros de riesgo"}
                               style={{
@@ -814,7 +814,7 @@ export default function StrategiesExplorerPage() {
                                 fontFamily: "var(--font-mono, monospace)",
                               }}
                             >
-                              ⛔ {c.status === "RECHAZADA_ALTO_DRAWDOWN" ? (c.route === "FONDEO" ? "DD > 4.5%" : "DD > 90% (QUIEBRA)") : c.status === "RECHAZADA_BAJA_RENTABILIDAD" ? "ROI ANÉMICO (+1%)" : "DESCARTADA"}
+                              ⛔ {c.status.replace("RECHAZADA_", "").replace("REJECTED_", "")}
                             </span>
                           ) : (
                             <span
@@ -829,7 +829,7 @@ export default function StrategiesExplorerPage() {
                                 fontFamily: "var(--font-mono, monospace)",
                               }}
                             >
-                              ✓ {c.route === "FONDEO" ? "PASSED FONDEO" : "BALA ULTRA"}
+                              ✓ {c.status}
                             </span>
                           )}
                         </div>
@@ -856,32 +856,32 @@ export default function StrategiesExplorerPage() {
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px" }}>
                         <div style={{ fontWeight: 700, color: "#e2e8f0", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
-                          {dur?.total_years && dur.total_years >= 1.0
-                            ? `📅 ${dur.total_years.toFixed(1)} años (${dur.start_date?.slice(0, 4)} - ${dur.end_date?.slice(0, 4)})`
-                            : `📅 ${dur?.total_months?.toFixed(1) || "5.2"} meses (${dur?.start_date?.slice(0, 7) || "2025-10"} → ${dur?.end_date?.slice(0, 7) || "2026-04"})`}
+                          {dur?.total_months ? `📅 ${dur.total_months.toFixed(1)}m dataset` : "📅 N/A"}
                         </div>
                         <div style={{ fontSize: "9.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                          IS: {((dur?.total_months || 5.2) - (dur?.oos_months || 1.9)).toFixed(1)}m | OOS: {dur?.oos_months || 1.9}m ({dur?.oos_days || 59}d)
+                          {dur?.blind_oos_bars ? `OOS: ${dur.blind_oos_bars} velas` : (dur?.oos_months ? `OOS: ${dur.oos_months.toFixed(1)}m` : "OOS: N/A")}
                         </div>
                       </td>
-                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: monRoi >= 0 ? "#10b981" : "#f87171", fontSize: "12px" }}>
-                        {monRoi >= 0 ? `+${monRoi.toFixed(2)}%/m` : `${monRoi.toFixed(2)}%/m`}
+                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: typeof monRoi === "number" ? (monRoi >= 0 ? "#10b981" : "#f87171") : "#94a3b8", fontSize: "12px" }}>
+                        {typeof monRoi === "number" ? (monRoi >= 0 ? `+${monRoi.toFixed(2)}%/m` : `${monRoi.toFixed(2)}%/m`) : "N/A"}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
-                        <span style={{ color: "#94a3b8" }}>{pfIs.toFixed(2)}</span> /{" "}
-                        <strong style={{ color: pfOos >= 1.2 ? "#34d399" : "#f59e0b" }}>{pfOos.toFixed(2)}</strong>
+                        <span style={{ color: "#94a3b8" }}>{typeof pfIs === "number" ? pfIs.toFixed(2) : "N/A"}</span> /{" "}
+                        <strong style={{ color: typeof pfOos === "number" ? (pfOos >= 1.2 ? "#34d399" : "#f59e0b") : "#94a3b8" }}>
+                          {typeof pfOos === "number" ? pfOos.toFixed(2) : "N/A"}
+                        </strong>
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>
-                        {wr.toFixed(1)}%
+                        {typeof wr === "number" ? `${wr.toFixed(1)}%` : "N/A"}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#94a3b8" }}>
-                        {tradesOos}
+                        {typeof tradesOos === "number" ? tradesOos : "N/A"}
                       </td>
-                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 700, color: dd <= 5.0 ? "#34d399" : dd <= 20.0 ? "#fbbf24" : "#f87171" }}>
-                        {dd.toFixed(1)}%
+                      <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 700, color: typeof dd === "number" ? (dd <= 5.0 ? "#34d399" : dd <= 20.0 ? "#fbbf24" : "#f87171") : "#94a3b8" }}>
+                        {typeof dd === "number" ? `${dd.toFixed(1)}%` : "N/A"}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#38bdf8", fontWeight: 700 }}>
-                        {mc.toFixed(0)}%
+                        {typeof mc === "number" ? `${mc.toFixed(0)}/100` : "N/A"}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "center" }}>
                         <button

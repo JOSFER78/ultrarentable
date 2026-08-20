@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_FONDEO_EURUSD_4H_g03",
+  "run_id": "run_UR_FONDEO_EURUSD_4H",
+  "strategy_id": "UR_FONDEO_EURUSD_4H",
+  "strategy_snapshot_hash": "b43d030beb8b59264e14868aaf03e6555d30e94b000dc785790c4dbacfa0e084",
+  "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "a24ec26d2f12cf627e897e36bc3600900eb71cc2a676b806e5db1e26fce578da",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "7a80bad4d8205f9ba13ef9396345a053297f69f8fe008e3cfb0bb9f92905c9a4",
+  "output_hash": "d634e1f2070ae4a296514f0f6c45711daee3d759ac16b72fff260ba70bed6b03",
+  "status": "PASSED",
+  "score": 85.0,
+  "verdict": "PASSED: Muestra robusta (55 IS / 34 OOS · Fondeo)",
+  "metrics": {
+    "trades_is": 55,
+    "trades_oos": 34,
+    "top2_outlier_dependency_pct": 34.9,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_EURUSD_4H/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:28:59.547144+00:00"
+}

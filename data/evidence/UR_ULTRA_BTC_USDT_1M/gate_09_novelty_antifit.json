@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_1M_g09",
+  "run_id": "run_UR_ULTRA_BTC_USDT_1M",
+  "strategy_id": "UR_ULTRA_BTC_USDT_1M",
+  "strategy_snapshot_hash": "9bfcbded0a100971922b1306aa6ae652851ef47386ef367ca09b5f82d1b8bfd3",
+  "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
+  "dataset_sha256": "2653252ef614a71230d7ca14340110e3874027379b353fad2f68bf9c5f5a1db9",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "626faf0e4475f0e04203b1ad86ff8c06adc69302825f2eb777ff7b42dee395dd",
+  "output_hash": "b3ad6822d9153b17833e96c3fd1081996f1a9c79bae2651f14e63a7a0ad469b7",
+  "status": "FAILED",
+  "score": 17.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 6.2 o Estabilidad 42.5% < 60.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 6.2,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 42.5,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      0.05,
+      0.01,
+      0.03,
+      0.08
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1M/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T04:43:20.432639+00:00"
+}

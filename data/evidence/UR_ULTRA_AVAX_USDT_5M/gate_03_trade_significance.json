@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g03",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
+  "strategy_snapshot_hash": "973f807619699f5d82fd6cec783de724f46566f007bfdeacca10fc4b92e695a6",
+  "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "41777d218ed68974c9f047a9409d4c05eb9f1a7f3ce0f2fb262f489f88a55aa3",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "9f7e6b3b5f2bb397cdb70186ad8b45f01420409f7345fe79f297367feb458480",
+  "output_hash": "957afc9263a76ae6b64e5c783bf15a1ab7cb5726b014b6e17f62996c744001ef",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (171 IS / 64 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 171,
+    "trades_oos": 64,
+    "top2_outlier_dependency_pct": 12.1,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:40:34.722116+00:00"
+}

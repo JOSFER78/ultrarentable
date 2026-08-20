@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1M_g10",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1M",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1M",
+  "strategy_snapshot_hash": "e915fd9c61d56f0beb5f274f60693b7dc7d7ce1ab84581f32cbc972542bf5891",
+  "dataset_id": "ds_binance_xrpusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "d42e1e080d29d671d3d12696d074c136b7a90be1fd3cd81ea1c5920cf8c14e5e",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "6f4c133e9b1daee13a417254418aedd768cf33832cc4815200e94d26525d9134",
+  "output_hash": "f08bbc9398750941109d43590dcd4e2931d52f11d6e79118bb66cfeacd556bcf",
+  "status": "FAILED",
+  "score": 27.1,
+  "verdict": "FALLO: Consenso insuficiente (27.1/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 27.1,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 28.9,
+        "findings": [
+          "Activo y Timeframe: XRP-USDT (1m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.42 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 94.9% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 75 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 32.2,
+        "objections": [
+          "Alerta de Drawdown: DD (94.9%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.42 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:06:54.305660+00:00"
+}

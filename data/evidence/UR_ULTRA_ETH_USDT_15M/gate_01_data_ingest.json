@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_ETH_USDT_15M_g01",
+  "run_id": "run_UR_ULTRA_ETH_USDT_15M",
+  "strategy_id": "UR_ULTRA_ETH_USDT_15M",
+  "strategy_snapshot_hash": "3f203e823df00d96e54e0cce65d1ea932fe726371195a491d4b72e817712f969",
+  "dataset_id": "ds_binance_ethusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "e6d9bf328c980953fc9a4ecef34ddb7011dadf7e28a5340ba9f7c383b2c3a96f",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "5bc9d41f64535e5a9aa843f0f21fae8eaea7e358e1245f9675189c259ffa8c04",
+  "output_hash": "8b3dfb911304466277c9835f91208b3eaefbd68efb5e90514e572d4098602efd",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (2100 velas, SHA256: e6d9bf32..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 2100,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 900,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "e6d9bf328c980953fc9a4ecef34ddb7011dadf7e28a5340ba9f7c383b2c3a96f",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_15M/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T04:45:46.710964+00:00"
+}

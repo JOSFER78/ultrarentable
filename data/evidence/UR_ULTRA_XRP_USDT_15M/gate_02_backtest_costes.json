@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_15M_g02",
+  "run_id": "run_UR_ULTRA_XRP_USDT_15M",
+  "strategy_id": "UR_ULTRA_XRP_USDT_15M",
+  "strategy_snapshot_hash": "1afe93aca2ed02720a62d6e1219856cc96680fef063c33912dd94ecc5a31b18f",
+  "dataset_id": "ds_binance_xrpusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "ce57c65099a341be5617cc5c8f772cfa47b9f02fbccc5d10bd5b7690f359da2b",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "05f3af226085b3e97d342a9d4e1bc64e825112c8ea8085f93424a65a9a2deacb",
+  "output_hash": "293a3ae24125228144e538b4ee8fef380895393c9da8a5d0d6badbf9d65d1eb3",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.38 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "XRP Perpetuo",
+    "exchange": "Binance / FTMO / BingX",
+    "gross_pnl_usd": -240.17,
+    "total_fees_usd": 244.53,
+    "total_slippage_usd": 141.2,
+    "net_pnl_usd": -625.9,
+    "net_profit_factor": 0.38,
+    "drag_cost_pct": 160.61
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_15M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:05:59.960270+00:00"
+}

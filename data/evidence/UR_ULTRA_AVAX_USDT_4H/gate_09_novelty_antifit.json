@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4H_g09",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_4H",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_4H",
+  "strategy_snapshot_hash": "f7a3dabf12501bf502e1504c5c0bc008abba09100bada77639a6a755826d14b7",
+  "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "f2a3046ac61915b76ee6fa9d4e988434a5f6a1b2380f7d159110c92b99bd151f",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "63b9c34e321a7a3bc66c1cdd0f52508ed56f1938709c6199b74e6078888d9dc8",
+  "output_hash": "1bdc8cd203956d5463ebe857eaf01c84b7f9e13ac63e2ff44fea2e84e4d055fa",
+  "status": "FAILED",
+  "score": 39.6,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.4 o Estabilidad 99.0% < 60.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 7.4,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 99.0,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      3.32,
+      3.33,
+      2.97,
+      3.61
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4H/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-20T04:40:23.261615+00:00"
+}

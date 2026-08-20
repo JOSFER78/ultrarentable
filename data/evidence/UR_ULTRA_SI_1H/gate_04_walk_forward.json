@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SI_1H_g04",
+  "run_id": "run_UR_ULTRA_SI_1H",
+  "strategy_id": "UR_ULTRA_SI_1H",
+  "strategy_snapshot_hash": "ec644800b647eace054d5079a1dddbeb458caa635acf6aad199a3db95e5ca368",
+  "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "34e668861a72da0b5983474de0bc31169b3461f267de794348331b8d96134e91",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "381e7a9c3f4b92bf128052009d7fe0d0145f92f028c5acb3d905b8ecff33d79f",
+  "output_hash": "5498aa2ae76b30a54f5940f0a6b6a61084f860e6939cf78d5c6c59c7b833a232",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 1.46, Consistencia: 80.0%)",
+  "metrics": {
+    "total_trades_analyzed": 268,
+    "windows_count": 5,
+    "walk_forward_efficiency": 1.46,
+    "oos_consistency_pct": 80.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 37,
+        "oos_trades_count": 16,
+        "pf_is": 2.7,
+        "pf_oos": 1.37,
+        "net_profit_oos_usd": 117.08,
+        "wfe": 0.51
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 37,
+        "oos_trades_count": 16,
+        "pf_is": 0.75,
+        "pf_oos": 2.43,
+        "net_profit_oos_usd": 412.87,
+        "wfe": 3.24
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 37,
+        "oos_trades_count": 16,
+        "pf_is": 1.37,
+        "pf_oos": 1.03,
+        "net_profit_oos_usd": 9.95,
+        "wfe": 0.75
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 37,
+        "oos_trades_count": 16,
+        "pf_is": 1.08,
+        "pf_oos": 2.61,
+        "net_profit_oos_usd": 391.32,
+        "wfe": 2.42
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 37,
+        "oos_trades_count": 16,
+        "pf_is": 2.22,
+        "pf_oos": 0.92,
+        "net_profit_oos_usd": -35.67,
+        "wfe": 0.41
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-20T04:33:31.925248+00:00"
+}

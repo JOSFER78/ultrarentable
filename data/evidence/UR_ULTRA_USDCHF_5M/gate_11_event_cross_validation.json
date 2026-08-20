@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCHF_5M_g11",
+  "run_id": "run_UR_ULTRA_USDCHF_5M",
+  "strategy_id": "UR_ULTRA_USDCHF_5M",
+  "strategy_snapshot_hash": "9d9238b69837938678c84447fd523ac2ebe9b46f954b1326d76fbd77ea1be89c",
+  "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "f9c373f468a836d7cfde86d31959c5620083f2fb887c373025cf9613adaac0f4",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "b6f11aaf9cd96053bacf1078e7f01e7c59ae5328db063d950e985976d39ca6a6",
+  "output_hash": "7d8b360237ac331eda49f0cbb00591617a4bcf3737ec91cb3b8e8c6280e9f743",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 147.7x > 100.0x)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": -0.88,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -0.88,
+    "peak_leverage_used": 147.72,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 348.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 76
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T04:36:08.465233+00:00"
+}

@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_5M_g02",
+  "run_id": "run_UR_ULTRA_BTC_USDT_5M",
+  "strategy_id": "UR_ULTRA_BTC_USDT_5M",
+  "strategy_snapshot_hash": "6be51df91e671705898376e90fe8ac82a776a19882f0b4a73411e6f11da84995",
+  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "c601c6cdf61bfb7813dd1707ef2948946f5b571639a2eab4574920625c3fefbf",
+  "output_hash": "6f9f56a5a86528c2c89b089c846e8e1de80a4d01a3eeffc6908fdb5eeaa5a3cb",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.22 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "Bitcoin Perpetuo",
+    "exchange": "Binance / BingX / FTMO",
+    "gross_pnl_usd": -143.58,
+    "total_fees_usd": 462.98,
+    "total_slippage_usd": 3.65,
+    "net_pnl_usd": -610.21,
+    "net_profit_factor": 0.22,
+    "drag_cost_pct": 325.01
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_5M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:43:53.473914+00:00"
+}

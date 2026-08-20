@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_15M_g10",
+  "run_id": "run_UR_ULTRA_SUI_USDT_15M",
+  "strategy_id": "UR_ULTRA_SUI_USDT_15M",
+  "strategy_snapshot_hash": "099484190bb57db75878d963977655416a24e5627cf42cb3d17f285ee93e8927",
+  "dataset_id": "ds_binance_suiusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "e1a388a76001b7e2c44b57b5a3785ecb02726ebe43a7e323bd4bc8d694bfe455",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "a150f67d691d35cb9a0f51648c0364be41d5b485e553c4b176005be356f93d04",
+  "output_hash": "706f8aae6deed238ed590c21b36807b99ca2a3f301b0630c56a1a5736ccbcdec",
+  "status": "FAILED",
+  "score": 52.3,
+  "verdict": "FALLO: Consenso insuficiente (52.3/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 52.3,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 45.1,
+        "findings": [
+          "Activo y Timeframe: SUI-USDT (15m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.78 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 61.0,
+        "findings": [
+          "Drawdown Máximo Observado: 44.5% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 49 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 51.5,
+        "objections": [
+          "Alerta de Rentabilidad: Profit factor 0.78 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_15M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:04:28.174013+00:00"
+}

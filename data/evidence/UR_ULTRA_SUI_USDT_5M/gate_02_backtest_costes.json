@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_5M_g02",
+  "run_id": "run_UR_ULTRA_SUI_USDT_5M",
+  "strategy_id": "UR_ULTRA_SUI_USDT_5M",
+  "strategy_snapshot_hash": "143ee8b3190e983673674f0538a62ef463c4ae558817bc4d213f648f7a0e6a34",
+  "dataset_id": "ds_binance_suiusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "50aae13dba1eab8b96053ab4e7a6740b094b6a7deb8f38239819cec32041f119",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "1f5cdeb8355f8a08376fb1ca102e573ab93726a0a62e52c5ed1fa719097dcf34",
+  "output_hash": "48151aa7d5ba2f38f0aee9647d0a8e6dda3ed6fe402b243538c316cf4bb34bf4",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.38 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "Sui Network Perpetuo",
+    "exchange": "BingX / Binance Perps",
+    "gross_pnl_usd": 12.82,
+    "total_fees_usd": 366.94,
+    "total_slippage_usd": 325.15,
+    "net_pnl_usd": -679.27,
+    "net_profit_factor": 0.38,
+    "drag_cost_pct": 5398.16
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_5M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:05:47.295003+00:00"
+}

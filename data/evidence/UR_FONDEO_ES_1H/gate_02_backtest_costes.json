@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_ES_1H_g02",
+  "run_id": "run_UR_FONDEO_ES_1H",
+  "strategy_id": "UR_FONDEO_ES_1H",
+  "strategy_snapshot_hash": "a72667463cf5580942de3a4dcf99a9ced2ea75c7f259d71cc147b1ac449880d2",
+  "dataset_id": "ds_trad_es_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "a0eae5161fef55fdea15d86c40db8dcdc6df87a88ef8f4c70619abb6b979007a",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "f45d981a9f572bed3b550c00ee1476e28ccf516a79b569da7acf3b89ae52a354",
+  "output_hash": "e6244f4202f487acdfad378a7d169be05bc547786ee7968d3c7085eae4069aaf",
+  "status": "FAILED",
+  "score": 1.5,
+  "verdict": "FALLO: PF Neto 1.01 < 1.10",
+  "metrics": {
+    "market_category": "INDICES",
+    "canonical_name": "E-mini S&P 500",
+    "exchange": "CME Globex",
+    "gross_pnl_usd": 21082.5,
+    "total_fees_usd": 2194.81,
+    "total_slippage_usd": 10974.03,
+    "net_pnl_usd": 7913.67,
+    "net_profit_factor": 1.01,
+    "drag_cost_pct": 62.46
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_ES_1H/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:27:54.047192+00:00"
+}

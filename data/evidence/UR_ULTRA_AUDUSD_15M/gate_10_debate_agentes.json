@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AUDUSD_15M_g10",
+  "run_id": "run_UR_ULTRA_AUDUSD_15M",
+  "strategy_id": "UR_ULTRA_AUDUSD_15M",
+  "strategy_snapshot_hash": "f9fabb7916ed3d8bb2c2f4913fcfedf12829977e925e3e990ade264416716f9c",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "cb117c4129f1edbc1aea50a12b5b9e7edb378d2e95be7ff9907bdfca1146a539",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8a81114a14450a5e7361ce31b407cb7784b20c90d56410d856a6b2324de47bcc",
+  "output_hash": "74699e1e491aa357366c44063e74495a8bb640c6b30e2c08628e66affa3a439e",
+  "status": "FAILED",
+  "score": 26.0,
+  "verdict": "FALLO: Consenso insuficiente (26.0/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 26.0,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 25.3,
+        "findings": [
+          "Activo y Timeframe: AUDUSD (15m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.34 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 80.5% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 36 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 31.3,
+        "objections": [
+          "Alerta de Drawdown: DD (80.5%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.34 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_15M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:25:40.843474+00:00"
+}

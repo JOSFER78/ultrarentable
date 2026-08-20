@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_1H_g10",
+  "run_id": "run_UR_ULTRA_BTC_USDT_1H",
+  "strategy_id": "UR_ULTRA_BTC_USDT_1H",
+  "strategy_snapshot_hash": "47fbe62c8881c5d45ced883df14bc6ddf6aa155a86b44b73d9de98b6bcfb05b8",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "a2b80855792f498ddc794f7818ec0ed70b209fbe1e3379f4f753f715e5e2fe45",
+  "output_hash": "e9ac71a2b25933844f4006ada047c0a809151cc0951a3dacdfc37a0779f8511e",
+  "status": "FAILED",
+  "score": 70.2,
+  "verdict": "FALLO: Consenso insuficiente (70.2/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 70.2,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 86.0,
+        "findings": [
+          "Activo y Timeframe: BTC-USDT (1h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.69 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 79.2,
+        "findings": [
+          "Drawdown Máximo Observado: 23.8% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 126 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 66.3,
+        "objections": [
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+        ],
+        "approved": true
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:43:08.528083+00:00"
+}

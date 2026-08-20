@@ -92,45 +92,56 @@ def list_candidates(
         }
 
         is_fondeo = (c.route == "FONDEO")
-        max_allowed_dd = 4.5 if is_fondeo else 80.0
         base_cap = float(sc.get("initial_capital_usd") or oos_m.get("account_base_usd") or (50000.0 if is_fondeo else 1000.0))
         net_prof_oos = float(c.net_profit_oos if c.net_profit_oos is not None else oos_m.get("net_profit_usd", 0.0))
-        oos_months = max(0.2, float(dur.get("oos_months", 1.0)))
 
-        # Real Monthly ROI
-        monthly_roi = float(sc.get("monthly_roi_pct") or oos_m.get("monthly_roi_pct") or ((net_prof_oos / max(1.0, base_cap)) * 100.0 / oos_months))
-        ann_roi = float(sc.get("annualized_roi_pct") or oos_m.get("annualized_roi_pct") or (monthly_roi * 12.0))
-        roi_oos = round(monthly_roi * oos_months, 2)
+        # Real Monthly ROI y Annual ROI (Zero-Simulation & Paridad Matemática Exacta)
+        # 1. Usar métrica calculada directamente por el pipeline si existe
+        if "monthly_return_pct" in sc:
+            monthly_roi = float(sc["monthly_return_pct"])
+            ann_roi = float(sc.get("annual_return_pct", monthly_roi * 12.0))
+        elif "monthly_roi_pct" in sc:
+            monthly_roi = float(sc["monthly_roi_pct"])
+            ann_roi = float(sc.get("annualized_roi_pct", monthly_roi * 12.0))
+        elif "monthly_roi_pct" in oos_m:
+            monthly_roi = float(oos_m["monthly_roi_pct"])
+            ann_roi = float(oos_m.get("annualized_roi_pct", monthly_roi * 12.0))
+        else:
+            # Calcular duración OOS exacta a partir del timeframe y número de velas
+            tf_bars_per_m = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
+            bars_per_m = tf_bars_per_m.get((c.timeframe or "1h").lower(), 720)
+            
+            if "blind_oos_bars" in dur:
+                oos_months = max(0.2, float(dur["blind_oos_bars"]) / bars_per_m)
+            elif "oos_months" in dur:
+                oos_months = max(0.2, float(dur["oos_months"]))
+            elif "total_months" in dur:
+                # OOS representa el 20% del total de meses del dataset
+                oos_months = max(0.2, float(dur["total_months"]) * 0.20)
+            else:
+                oos_months = 6.0  # Duración representativa estándar de 6 meses
+
+            monthly_roi = (net_prof_oos / max(1.0, base_cap)) * 100.0 / oos_months
+            ann_roi = monthly_roi * 12.0
+
+        roi_oos = round(monthly_roi * (dur.get("oos_months") or 6.0), 2)
         wr_is = float(is_m.get("win_rate_pct") or is_m.get("win_rate") or 0.0)
         wr_oos = float(sc.get("win_rate_pct") or oos_m.get("win_rate_pct") or oos_m.get("win_rate") or 0.0)
         pf_oos = float(c.profit_factor_oos if c.profit_factor_oos is not None else (oos_m.get("profit_factor") or 0.0))
         dd_oos = float(c.max_dd_oos_pct if c.max_dd_oos_pct is not None else (oos_m.get("max_drawdown_pct") or 0.0))
         dd_is = float(c.max_dd_is_pct if c.max_dd_is_pct is not None else (is_m.get("max_drawdown_pct") or 0.0))
         trades_count_oos = int(c.trades_oos if c.trades_oos is not None else (oos_m.get("trades") or 0))
-        tpm = float(oos_m.get("trades_per_month") or (trades_count_oos / oos_months if oos_months > 0 else 0.0))
+        
+        # Calcular trades por mes
+        eff_oos_months = float(dur.get("oos_months") or 6.0)
+        tpm = float(oos_m.get("trades_per_month") or (trades_count_oos / max(0.2, eff_oos_months)))
 
-        # Strict Status Enforcement 100% Real (Sin forzar ni inventar)
-        resolved_status = c.status
-        resolved_reason = c.status_reason
-        if c.status != "APPROVED":
-            if trades_count_oos == 0 and not c.trades_is:
-                resolved_status = "RECHAZADA_SIN_EVIDENCIA"
-                resolved_reason = "Descartada: Sin trades registrados en periodo In-Sample ni Out-of-Sample"
-            elif dd_is > max_allowed_dd or dd_oos > max_allowed_dd:
-                resolved_status = "RECHAZADA_ALTO_DRAWDOWN"
-                if is_fondeo:
-                    resolved_reason = f"Descartada: Max DD {max(dd_is, dd_oos):.1f}% supera el límite estricto de Fondeo ({max_allowed_dd}%)"
-                else:
-                    resolved_reason = f"Descartada: Max DD {max(dd_is, dd_oos):.1f}% supera el 80% (quiebra de subcuenta bala)"
-            elif pf_oos < 1.05 or net_prof_oos < 0:
-                resolved_status = "RECHAZADA_BAJO_PROFIT_FACTOR"
-                resolved_reason = f"Descartada: Profit Factor OOS ({pf_oos:.2f} < 1.05) o PnL negativo en periodo fuera de muestra"
-            else:
-                resolved_status = "APPROVED"
-                resolved_reason = f"Aprobada: Edge positivo verificado ({'Fondeo DD <= 4.5%' if is_fondeo else 'Ultra Asimétrico DD <= 80%'}, PF {pf_oos:.2f}, ROI mensual +{monthly_roi:.2f}%/m)"
+        # Respetar el estado determinista de la base de datos (SSOT inmutable)
+        resolved_status = c.status or "REJECTED_SIN_EVIDENCIA"
+        resolved_reason = c.status_reason or "Sin razón registrada"
 
         # Filtrar automáticamente los descartes a menos que se soliciten explícitamente
-        if not include_rejected and resolved_status.startswith("RECHAZADA"):
+        if not include_rejected and (resolved_status.startswith("REJECTED") or resolved_status.startswith("BLOCKED")):
             continue
 
         spec = get_market_spec(c.symbol)
@@ -236,6 +247,56 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
     if not c:
         raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
 
+    # 1. Comprobar si existen EvidenceRecords físicos persistidos en disco
+    from pathlib import Path
+    evidence_dir = Path("data/evidence") / candidate_id
+    if evidence_dir.exists():
+        gate_files = sorted(evidence_dir.glob("gate_*.json"))
+        if gate_files:
+            gates_data = []
+            overall_passed = True
+            total_score = 0.0
+            for gf in gate_files:
+                try:
+                    with open(gf, "r") as f:
+                        g_json = json.load(f)
+                        gates_data.append(g_json)
+                        if g_json.get("status") != "PASSED":
+                            overall_passed = False
+                        total_score += float(g_json.get("score", 0.0))
+                except Exception:
+                    pass
+            if gates_data:
+                passed_count = sum(1 for g in gates_data if g.get("status") == "PASSED")
+                return {
+                    "candidate_id": c.candidate_id,
+                    "overall_certified": overall_passed and (passed_count == 11),
+                    "gates_passed_count": passed_count,
+                    "total_gates": 11,
+                    "overall_score": round(total_score / len(gates_data), 2) if gates_data else 0.0,
+                    "gates": gates_data,
+                    "source": "Physical Evidence Ledger (Disks)",
+                }
+
+    # 2. Comprobar si scorecard_json contiene los gates precalculados
+    if c.scorecard_json:
+        try:
+            sc = json.loads(c.scorecard_json)
+            if "gates" in sc and isinstance(sc["gates"], list) and len(sc["gates"]) > 0:
+                gates_list = sc["gates"]
+                passed_count = sc.get("gates_passed_count", sum(1 for g in gates_list if g.get("passed")))
+                return {
+                    "candidate_id": c.candidate_id,
+                    "overall_certified": (passed_count == 11),
+                    "gates_passed_count": passed_count,
+                    "total_gates": 11,
+                    "overall_score": sc.get("overall_score", 0.0),
+                    "gates": gates_list,
+                    "source": "Scorecard Snapshot",
+                }
+        except Exception:
+            pass
+
     info = {
         "candidate_id": c.candidate_id,
         "name": c.name,
@@ -244,19 +305,16 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
         "route": c.route,
         "profit_factor_oos": c.profit_factor_oos or 1.0,
         "max_drawdown_pct": c.max_dd_oos_pct if c.max_dd_oos_pct is not None else (c.max_dd_is_pct or 0.0),
-        "monthly_roi_pct": round((c.net_profit_oos or 0.0) / (50000.0 if c.route == "FONDEO" else 10000.0) * 100.0 / 6.0, 2),
         "trades_count": (c.trades_is or 0) + (c.trades_oos or 0),
     }
 
-    # Cargar velas reales y ejecutar backtest determinista en disco
+    # Cargar velas reales y ejecutar backtest determinista en disco si no había evidencia previa
     from services.api.app.data_feed.feed_loader import load_candles
     from services.discovery.ultra_discovery import UltraDiscoveryEngine
     from services.validation.engine.event_backtest_engine import EventBacktestEngine
-    from contracts.snapshots.strategy_snapshot import StrategyRoute
 
     candles = load_candles(c.symbol, c.timeframe) or load_candles("BTCUSDT", "1h") or []
     
-    # Reconstruir blueprint del candidato
     discovery = UltraDiscoveryEngine()
     strategy = discovery.generate_candidate_blueprint(
         strategy_id=c.candidate_id,
@@ -270,7 +328,6 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
     base_cap = 50000.0 if c.route == "FONDEO" else 1000.0
     bt_res = bt_engine.run_backtest(strategy, candles, initial_capital_usd=base_cap)
 
-    # Separar In-Sample (60%) y Out-of-Sample (40%)
     split_idx = int(len(bt_res.trades) * 0.6)
     is_trades = [t.net_pnl_usd for t in bt_res.trades[:split_idx]]
     oos_trades = [t.net_pnl_usd for t in bt_res.trades[split_idx:]]
@@ -295,10 +352,50 @@ def get_candidate_nautilus_audit(candidate_id: str, db: Session = Depends(get_db
     if not c:
         raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
 
+    # 1. Comprobar si existe gate_11 en disco
+    from pathlib import Path
+    gate11_file = Path("data/evidence") / candidate_id / "gate_11_event_cross_validation.json"
+    if gate11_file.exists():
+        try:
+            with open(gate11_file, "r") as f:
+                g11_data = json.load(f)
+                return {
+                    "candidate_id": c.candidate_id,
+                    "name": c.name,
+                    "symbol": c.symbol,
+                    "timeframe": c.timeframe,
+                    "route": c.route,
+                    "nautilus_score": g11_data.get("score"),
+                    "passed": (g11_data.get("status") == "PASSED"),
+                    "verdict": g11_data.get("verdict"),
+                    "evidence": g11_data.get("evidence"),
+                }
+        except Exception:
+            pass
+
+    # 2. Comprobar si scorecard_json tiene gate 11
+    if c.scorecard_json:
+        try:
+            sc = json.loads(c.scorecard_json)
+            for g in sc.get("gates", []):
+                if g.get("gate_id") == 11 or g.get("name") == "EVENT_CROSS_VALIDATION":
+                    return {
+                        "candidate_id": c.candidate_id,
+                        "name": c.name,
+                        "symbol": c.symbol,
+                        "timeframe": c.timeframe,
+                        "route": c.route,
+                        "nautilus_score": g.get("score"),
+                        "passed": g.get("passed"),
+                        "verdict": g.get("verdict"),
+                        "evidence": g.get("evidence"),
+                    }
+        except Exception:
+            pass
+
     from services.api.app.data_feed.feed_loader import load_candles
     from services.discovery.ultra_discovery import UltraDiscoveryEngine
     from services.validation.engine.event_backtest_engine import EventBacktestEngine
-    from contracts.snapshots.strategy_snapshot import StrategyRoute
     from services.api.app.validation.gates.gate_11_nautilus_event import Gate11NautilusEvent
 
     candles = load_candles(c.symbol, c.timeframe) or load_candles("BTCUSDT", "1h") or []

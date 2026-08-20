@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_FONDEO_EURUSD_4H_g10",
+  "run_id": "run_UR_FONDEO_EURUSD_4H",
+  "strategy_id": "UR_FONDEO_EURUSD_4H",
+  "strategy_snapshot_hash": "b43d030beb8b59264e14868aaf03e6555d30e94b000dc785790c4dbacfa0e084",
+  "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "a24ec26d2f12cf627e897e36bc3600900eb71cc2a676b806e5db1e26fce578da",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "a7bb4d86b243e7afa997141cf518a5691468a45614ff3e6b3fa99777b2c2c1f2",
+  "output_hash": "2b401e6f668486a3257884ae6695c1bbbf272790b655410f79d4fbc6bccccff2",
+  "status": "FAILED",
+  "score": 25.4,
+  "verdict": "FALLO: Consenso insuficiente (25.4/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 25.4,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 33.0,
+        "findings": [
+          "Activo y Timeframe: EURUSD (4h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.51 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 13.2% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 85.0,
+        "findings": [
+          "Muestra fuera de muestra: 34 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 29.5,
+        "objections": [
+          "Alerta de Drawdown: DD (13.2%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.51 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_EURUSD_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:28:59.665012+00:00"
+}

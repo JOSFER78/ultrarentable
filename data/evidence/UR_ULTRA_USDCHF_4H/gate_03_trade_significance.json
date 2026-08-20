@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCHF_4H_g03",
+  "run_id": "run_UR_ULTRA_USDCHF_4H",
+  "strategy_id": "UR_ULTRA_USDCHF_4H",
+  "strategy_snapshot_hash": "27217b31f8a74391ef6f1212f577ddc918a5178fea3e6e8132137cb19c9108d3",
+  "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "31062a9f7449dfd38086af9900df1eec4ec6a1c1b4dc9cbd3deb4e21856fa845",
+  "output_hash": "4e9f45f2f052e1d4f5bf10849e2737a31a0da071e0febdb9cbae58077c593837",
+  "status": "FAILED",
+  "score": 100.0,
+  "verdict": "FALLO: Muestra insuficiente (71 IS < 15 ó 25 OOS < 10)",
+  "metrics": {
+    "trades_is": 71,
+    "trades_oos": 25,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4H/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:35:44.330125+00:00"
+}

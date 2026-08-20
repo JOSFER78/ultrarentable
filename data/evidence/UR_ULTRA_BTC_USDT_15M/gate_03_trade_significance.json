@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_15M_g03",
+  "run_id": "run_UR_ULTRA_BTC_USDT_15M",
+  "strategy_id": "UR_ULTRA_BTC_USDT_15M",
+  "strategy_snapshot_hash": "1620c73eb671bbe3c9d117b374a864cf4a2397fc423dced88e714fb26f5da990",
+  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "af00eb522e973773111ffac43608faf9c346b122296839b7bee380f63263b387",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "c7a3917af2bf336e2cc16959d8da2d1db5f05dffd4c37ef1e754e0a9e86ad4fa",
+  "output_hash": "291798c4d2a1aaa48f9b8884b49272feed690dc22fbe01a310f0601d9160204c",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (116 IS / 40 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 116,
+    "trades_oos": 40,
+    "top2_outlier_dependency_pct": 43.7,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15M/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:42:30.747656+00:00"
+}

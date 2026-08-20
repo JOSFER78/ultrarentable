@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCHF_5M_g04",
+  "run_id": "run_UR_ULTRA_USDCHF_5M",
+  "strategy_id": "UR_ULTRA_USDCHF_5M",
+  "strategy_snapshot_hash": "9d9238b69837938678c84447fd523ac2ebe9b46f954b1326d76fbd77ea1be89c",
+  "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "f9c373f468a836d7cfde86d31959c5620083f2fb887c373025cf9613adaac0f4",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "e26ce7176af560e75fb7080489ac1420b4c927546e7facb900a73fba38a2a98c",
+  "output_hash": "32cba4f6a0655877be5480cf88380871484a37b4a05c9948d54d0877e465c105",
+  "status": "FAILED",
+  "score": 38.4,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.77 < 0.50 ó Consistencia 0.0% < 50%)",
+  "metrics": {
+    "total_trades_analyzed": 136,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.77,
+    "oos_consistency_pct": 0.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 18,
+        "oos_trades_count": 9,
+        "pf_is": 0.28,
+        "pf_oos": 0.78,
+        "net_profit_oos_usd": -24.66,
+        "wfe": 2.74
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 18,
+        "oos_trades_count": 9,
+        "pf_is": 0.58,
+        "pf_oos": 0.63,
+        "net_profit_oos_usd": -25.47,
+        "wfe": 1.09
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 18,
+        "oos_trades_count": 9,
+        "pf_is": 0.62,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -49.84,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 18,
+        "oos_trades_count": 9,
+        "pf_is": 0.45,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -34.23,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 18,
+        "oos_trades_count": 9,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -16.15,
+        "wfe": 0.0
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5M/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-20T04:36:08.117946+00:00"
+}

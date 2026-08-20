@@ -369,7 +369,8 @@ class DiscoveryValidationPipeline:
                     tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
                     bars_per_m = tf_bars_per_month.get(timeframe.lower(), 720)
                     total_months = max(0.5, total_bars / bars_per_m)
-                    monthly_roi_pct = (oos_bt.net_profit_usd / max(1.0, initial_cap)) * 100.0 / total_months
+                    oos_months = max(0.2, len(candles_blind_oos) / bars_per_m)
+                    monthly_roi_pct = (oos_bt.net_profit_usd / max(1.0, initial_cap)) * 100.0 / oos_months
                     annual_roi_pct = monthly_roi_pct * 12.0
 
                     scorecard_payload = {
@@ -379,6 +380,7 @@ class DiscoveryValidationPipeline:
                         "route": route.value,
                         "trials_tested": trials_count_this_run,
                         "parameters_selected": best_params,
+                        "initial_capital_usd": initial_cap,
                         "gates_passed_count": gates_eval.get("gates_passed_count", 0),
                         "overall_score": gates_eval.get("overall_score", 0.0),
                         "gates": gates_eval.get("gates", []),
@@ -390,6 +392,7 @@ class DiscoveryValidationPipeline:
                             "is_bars": len(candles_is),
                             "blind_oos_bars": len(candles_blind_oos),
                             "total_months": round(total_months, 2),
+                            "oos_months": round(oos_months, 2),
                         }
                     }
 

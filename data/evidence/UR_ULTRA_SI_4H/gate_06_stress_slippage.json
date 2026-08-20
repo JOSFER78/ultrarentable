@@ -1,0 +1,51 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SI_4H_g06",
+  "run_id": "run_UR_ULTRA_SI_4H",
+  "strategy_id": "UR_ULTRA_SI_4H",
+  "strategy_snapshot_hash": "e2071ddc0bb03f184280893e51bafda2bedac255ab94cb3ed56bdb0721e01b16",
+  "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "dde4f6c8117b0430561a179978224b9c9aee60dc618d3d5d397db17732b95142",
+  "gate_id": 6,
+  "gate_name": "STRESS_SLIPPAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "4d6bb10da4f1977ea4047c6d6987224a8b56c026d9f1484665d8dd44b204cde2",
+  "output_hash": "0f7a7af87fdfe4a82160afcac778f16b6cadff3dba1096b8c4e8e63505c4b11c",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Resistencia a fricción verificada (4/4 escenarios aprobados, PF +1σ: 3.10)",
+  "metrics": {
+    "scenarios": {
+      "Base": {
+        "friction_penalty_per_trade_usd": 3.0,
+        "stressed_net_pnl_usd": 988.42,
+        "stressed_profit_factor": 4.26,
+        "survived": true
+      },
+      "+1_Sigma": {
+        "friction_penalty_per_trade_usd": 9.3,
+        "stressed_net_pnl_usd": 862.39,
+        "stressed_profit_factor": 3.1,
+        "survived": true
+      },
+      "+2_Sigma": {
+        "friction_penalty_per_trade_usd": 18.75,
+        "stressed_net_pnl_usd": 673.35,
+        "stressed_profit_factor": 2.18,
+        "survived": true
+      },
+      "+3_Sigma": {
+        "friction_penalty_per_trade_usd": 31.51,
+        "stressed_net_pnl_usd": 418.28,
+        "stressed_profit_factor": 1.53,
+        "survived": true
+      }
+    },
+    "passed_scenarios_count": 4,
+    "min_required_scenarios": 2,
+    "base_friction_usd": 3.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_06_stress_slippage.json",
+  "created_at_utc": "2026-08-20T04:33:41.664094+00:00"
+}

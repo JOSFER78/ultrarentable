@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_FONDEO_CL_1H_g10",
+  "run_id": "run_UR_FONDEO_CL_1H",
+  "strategy_id": "UR_FONDEO_CL_1H",
+  "strategy_snapshot_hash": "4ecbaefa2935f94a5752da974fae475da7adee3030d88473cf3dafee35a30c48",
+  "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "bf4eff97263c12c6c261277bb37ba2b8b84e27184833648fb5400a6f4acad7f9",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "edfe5c998baafb8e1fef35b746fbf16eea80a85b8c08d7f250514f5d684d803e",
+  "output_hash": "48d236c7722d7b97c20b92170fdca919b8f33930c84471130b1ccc6007569c45",
+  "status": "FAILED",
+  "score": 64.3,
+  "verdict": "FALLO: Consenso insuficiente (64.3/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 64.3,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 89.2,
+        "findings": [
+          "Activo y Timeframe: CL (1h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 1.76 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 58.9,
+        "findings": [
+          "Drawdown Máximo Observado: 2.6% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 53 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 62.0,
+        "objections": [
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+        ],
+        "approved": true
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_CL_1H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:26:59.919912+00:00"
+}

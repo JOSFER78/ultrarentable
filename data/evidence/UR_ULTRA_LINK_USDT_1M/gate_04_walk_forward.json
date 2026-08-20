@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_LINK_USDT_1M_g04",
+  "run_id": "run_UR_ULTRA_LINK_USDT_1M",
+  "strategy_id": "UR_ULTRA_LINK_USDT_1M",
+  "strategy_snapshot_hash": "39893cc2ec7432ad6639d14f20ef92bb29aaab9420208d451a84f0327b319f6b",
+  "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "050eb395e423bcbe1b88d7fdc20d4395df27745174d0f7bc962a7f26d339b307",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "0fee37be19846a306fce374655179ce341dd8f8e63b95f2fbd59598d0e61100a",
+  "output_hash": "dd355f36668ab2682f322ad1bc594ba63cc26882dddec066404071d39dece4a9",
+  "status": "FAILED",
+  "score": 71.4,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 1.43 < 0.50 ó Consistencia 40.0% < 50%)",
+  "metrics": {
+    "total_trades_analyzed": 277,
+    "windows_count": 5,
+    "walk_forward_efficiency": 1.43,
+    "oos_consistency_pct": 40.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 38,
+        "oos_trades_count": 17,
+        "pf_is": 0.54,
+        "pf_oos": 0.34,
+        "net_profit_oos_usd": -110.01,
+        "wfe": 0.64
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 38,
+        "oos_trades_count": 17,
+        "pf_is": 0.66,
+        "pf_oos": 1.31,
+        "net_profit_oos_usd": 24.45,
+        "wfe": 1.99
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 38,
+        "oos_trades_count": 17,
+        "pf_is": 0.97,
+        "pf_oos": 0.91,
+        "net_profit_oos_usd": -6.47,
+        "wfe": 0.94
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 38,
+        "oos_trades_count": 17,
+        "pf_is": 0.58,
+        "pf_oos": 0.82,
+        "net_profit_oos_usd": -8.33,
+        "wfe": 1.43
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 38,
+        "oos_trades_count": 17,
+        "pf_is": 0.71,
+        "pf_oos": 1.52,
+        "net_profit_oos_usd": 19.32,
+        "wfe": 2.15
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1M/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-20T04:02:04.327265+00:00"
+}

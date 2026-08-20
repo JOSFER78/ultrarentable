@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g05",
+  "run_id": "run_UR_ULTRA_AUDUSD_4H",
+  "strategy_id": "UR_ULTRA_AUDUSD_4H",
+  "strategy_snapshot_hash": "6aee46d8470ef33b13694a531532e2fc239ad8dc98f50a3ce086be1e84c3e288",
+  "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "e08297ffabee22cf266b06618bad1ac33472470b1c8ae8eac2dd337c55917a69",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "31bc336334a5d57682f55d65f7138855b51ffecb5989d663c7bb05c38031ecd6",
+  "output_hash": "8726b0c509463ac0c3391aabf22927cd521d5ff5ef5ddcbd237fc13f3b93e28e",
+  "status": "PASSED",
+  "score": 85.1,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 29.8%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 22.3,
+    "drawdown_95th_percentile_pct": 29.8,
+    "max_simulated_drawdown_pct": 36.8
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T04:26:14.060497+00:00"
+}

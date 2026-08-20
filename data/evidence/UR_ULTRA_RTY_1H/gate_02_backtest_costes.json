@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_RTY_1H_g02",
+  "run_id": "run_UR_ULTRA_RTY_1H",
+  "strategy_id": "UR_ULTRA_RTY_1H",
+  "strategy_snapshot_hash": "ec6d20d3543dc1d3f93d9ce79bdf312a7d37bc791cd9a33db760029ebac59c58",
+  "dataset_id": "ds_trad_rty_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "d8ebb1dc7c510cf0d9694ae2708733532daa5431b5274938cfb3913667e91221",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "e3cb8c83fb74cabaf89a65985a09299be762abb3ed313cad4883bd25e79da1d2",
+  "output_hash": "bf64fdb1ba66a7b80f4e0465076814dfa66b383cf46eb2466bedec24a83d6261",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.87 < 1.10",
+  "metrics": {
+    "market_category": "INDICES",
+    "canonical_name": "E-mini Russell 2000",
+    "exchange": "CME Globex",
+    "gross_pnl_usd": -5288.72,
+    "total_fees_usd": 397.17,
+    "total_slippage_usd": 794.35,
+    "net_pnl_usd": -6480.24,
+    "net_profit_factor": 0.87,
+    "drag_cost_pct": 22.53
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_RTY_1H/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:32:40.649821+00:00"
+}

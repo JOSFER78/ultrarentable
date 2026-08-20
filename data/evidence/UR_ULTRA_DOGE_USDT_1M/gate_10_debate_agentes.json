@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1M_g10",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_1M",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_1M",
+  "strategy_snapshot_hash": "78fabff0086842f694ed7767067e7459fb2fb48d8566116b3c3cd37846aa4430",
+  "dataset_id": "ds_binance_dogeusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "1c8d8b9612788dc77a39ee89fd218ec6ca41bea80b4df412bcde8dc159c41713",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "04a044636c08a2c9f7167b3775da60261c7f5f9b0295d21fda720957a43d8321",
+  "output_hash": "d3ffb6118cab029cb9203309dc4443b971d936ef62ad740b2bac09d8055b9553",
+  "status": "FAILED",
+  "score": 42.9,
+  "verdict": "FALLO: Consenso insuficiente (42.9/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 42.9,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 20.0,
+        "findings": [
+          "Activo y Timeframe: DOGE-USDT (1m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.01 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 82.4,
+        "findings": [
+          "Drawdown Máximo Observado: 20.1% (Límite permitido para ULTRA: 80.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 50.0,
+        "findings": [
+          "Muestra fuera de muestra: 10 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: LIMITADO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 38.1,
+        "objections": [
+          "Alerta de Muestra: 10 trades OOS es una muestra pequeña.",
+          "Alerta de Rentabilidad: Profit factor 0.01 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:44:58.785236+00:00"
+}

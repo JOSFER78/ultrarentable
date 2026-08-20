@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g10",
+  "run_id": "run_UR_FONDEO_GBPUSD_1H",
+  "strategy_id": "UR_FONDEO_GBPUSD_1H",
+  "strategy_snapshot_hash": "d8e6c228caeda15304f7a3e2e036816d6a34389bf0f2aa503a57dcabad769ddc",
+  "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
+  "dataset_sha256": "d74a3c5759a3784d19e06048fa883eca827c8566617348db4a6203e3a155e52f",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "fb133375628909e9601eec0cc4844ab1cde968591b12515047e18dc9169ab539",
+  "output_hash": "831cdf46bba0c0723f1fd133e962e30d2338a897ad211c104855237410c81c57",
+  "status": "FAILED",
+  "score": 27.7,
+  "verdict": "FALLO: Consenso insuficiente (27.7/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 27.7,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 31.1,
+        "findings": [
+          "Activo y Timeframe: GBPUSD (1h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.47 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 37.5% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 100 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 32.8,
+        "objections": [
+          "Alerta de Drawdown: DD (37.5%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.47 cercano al umbral de equilibrio."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:29:54.791886+00:00"
+}

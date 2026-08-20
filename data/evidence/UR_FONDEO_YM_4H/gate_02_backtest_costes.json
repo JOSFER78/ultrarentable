@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_YM_4H_g02",
+  "run_id": "run_UR_FONDEO_YM_4H",
+  "strategy_id": "UR_FONDEO_YM_4H",
+  "strategy_snapshot_hash": "d9cb978de27ceac98707567be905968f0f024c943f7d66069aa5c15c74548e3d",
+  "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "109f95af95f63694465a7a0b1ce60e45ec05cc7459203ce0b8de70a76bf2e030",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "28486a5deec161c9b76d612413c80ada515ae9263d0c4568a9e9069f67035ccf",
+  "output_hash": "04299a2bc918e56653943ea4ac09868b65d917c723f337a32c1d984e490edd86",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.73 < 1.10",
+  "metrics": {
+    "market_category": "INDICES",
+    "canonical_name": "E-mini Dow Jones ($5)",
+    "exchange": "CBOT Globex",
+    "gross_pnl_usd": -3926.63,
+    "total_fees_usd": 42.69,
+    "total_slippage_usd": 85.37,
+    "net_pnl_usd": -4054.68,
+    "net_profit_factor": 0.73,
+    "drag_cost_pct": 3.26
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_YM_4H/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:37:44.112277+00:00"
+}

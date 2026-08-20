@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_15M_g11",
+  "run_id": "run_UR_ULTRA_USDJPY_15M",
+  "strategy_id": "UR_ULTRA_USDJPY_15M",
+  "strategy_snapshot_hash": "200758d2a7a62fa28a3cd2b911a734ddacb5b1809cc0ae9efca30377f4fe1546",
+  "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "914026a84783080793a9890e02d204eba2085426347feeb65ce6e526cd0a47a1",
+  "output_hash": "6359475f0666a0a77e83d5c85c2b8db71e343d28dcf038f4cac8a7665256a02f",
+  "status": "PASSED",
+  "score": 41.1,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $523.94, Apalancamiento Pico: 33.9x, Dist. Mín. Liquidación: 29.9%, Comisiones+Funding: $132.00)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 523.94,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": 512.33,
+    "peak_leverage_used": 33.94,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 29.87,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 132.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 22
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T04:36:15.992266+00:00"
+}

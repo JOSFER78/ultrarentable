@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1M_g01",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1M",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1M",
+  "strategy_snapshot_hash": "e915fd9c61d56f0beb5f274f60693b7dc7d7ce1ab84581f32cbc972542bf5891",
+  "dataset_id": "ds_binance_xrpusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "d42e1e080d29d671d3d12696d074c136b7a90be1fd3cd81ea1c5920cf8c14e5e",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "7304ca071e4a99b8f70dfc0d86f5bcce835c972b567cfce6c6cddf71b927fb0f",
+  "output_hash": "9f06e7e1abdfaa1e6034fe732d7b13a0169f314b04608c3052dfb849bca9a51f",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (2100 velas, SHA256: d42e1e08..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 2100,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 60,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "d42e1e080d29d671d3d12696d074c136b7a90be1fd3cd81ea1c5920cf8c14e5e",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1M/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-20T04:06:54.060058+00:00"
+}

@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BNB_USDT_5M_g02",
+  "run_id": "run_UR_ULTRA_BNB_USDT_5M",
+  "strategy_id": "UR_ULTRA_BNB_USDT_5M",
+  "strategy_snapshot_hash": "d0b5d53b2848a37117070659f78b7ba362000079b3ebcff7b48fd1fde6f8574b",
+  "dataset_id": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "e051023222b83d80af92d7ae17b66fa5fa59f8ed759a698bb98f00996b66a4d5",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "845fc0e61305e082b74fd0cdbe79757912faab6b85a0bc7ae6db219a3bcdfc3b",
+  "output_hash": "400f49dee7b01b6d946607c3171bd089da4536e200868162fdfc0c5e34ae7d14",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.52 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "BNB Chain Perpetuo",
+    "exchange": "Binance / FTMO Perps",
+    "gross_pnl_usd": 85.57,
+    "total_fees_usd": 447.31,
+    "total_slippage_usd": 36.81,
+    "net_pnl_usd": -398.55,
+    "net_profit_factor": 0.52,
+    "drag_cost_pct": 565.74
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-20T04:42:11.257356+00:00"
+}

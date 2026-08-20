@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SI_1H_g03",
+  "run_id": "run_UR_ULTRA_SI_1H",
+  "strategy_id": "UR_ULTRA_SI_1H",
+  "strategy_snapshot_hash": "ec644800b647eace054d5079a1dddbeb458caa635acf6aad199a3db95e5ca368",
+  "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "34e668861a72da0b5983474de0bc31169b3461f267de794348331b8d96134e91",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "90c13a6049b67ebadee34474070d1889de2b7c5c3c9243671c484ed9aa14c030",
+  "output_hash": "031c91328106c312a385d477dda62c43523a0e000daa342101b1a4d9f85080cc",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (191 IS / 65 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 191,
+    "trades_oos": 65,
+    "top2_outlier_dependency_pct": 39.8,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:33:31.924602+00:00"
+}

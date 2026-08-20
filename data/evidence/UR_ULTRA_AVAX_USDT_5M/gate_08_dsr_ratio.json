@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g08",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
+  "strategy_snapshot_hash": "973f807619699f5d82fd6cec783de724f46566f007bfdeacca10fc4b92e695a6",
+  "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "41777d218ed68974c9f047a9409d4c05eb9f1a7f3ce0f2fb262f489f88a55aa3",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "0189404b2580dcd21c874115da7d609c225c521b18e3b9cade5566357e246509",
+  "output_hash": "6e9617cc36c94cb19251ebf9bd9ed201134fde9f79189bd49e5501bc337d4e1a",
+  "status": "PASSED",
+  "score": 69.8,
+  "verdict": "PASSED: DSR = 69.8% (Sharpe Bruto: 0.06, Trials Penalizados: 81, Skew: 0.31, Kurt: 1.50)",
+  "metrics": {
+    "raw_sharpe_ratio": 0.065,
+    "deflated_sharpe_probability_pct": 69.82,
+    "trials_penalized_count": 81,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 0.309,
+    "kurtosis": 1.496,
+    "sample_trades_count": 64
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-20T04:40:34.775853+00:00"
+}

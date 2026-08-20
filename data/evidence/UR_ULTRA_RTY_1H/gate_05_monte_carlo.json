@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_ULTRA_RTY_1H_g05",
+  "run_id": "run_UR_ULTRA_RTY_1H",
+  "strategy_id": "UR_ULTRA_RTY_1H",
+  "strategy_snapshot_hash": "ec6d20d3543dc1d3f93d9ce79bdf312a7d37bc791cd9a33db760029ebac59c58",
+  "dataset_id": "ds_trad_rty_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "d8ebb1dc7c510cf0d9694ae2708733532daa5431b5274938cfb3913667e91221",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "cb0bc48d766a4e2b941d8ed4aa13c3cd39c5f4fb361f1309d986ed45aa154833",
+  "output_hash": "a26e77d310ce37ae80dbd12c90ffc6f49e983b0b34197eae34fb00e97de23d95",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 8.6% > 1.0%",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 8.6,
+    "drawdown_median_pct": 44.2,
+    "drawdown_95th_percentile_pct": 87.9,
+    "max_simulated_drawdown_pct": 121.1
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_RTY_1H/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-20T04:32:40.686671+00:00"
+}

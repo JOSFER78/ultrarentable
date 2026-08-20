@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_FONDEO_NQ_4H_g10",
+  "run_id": "run_UR_FONDEO_NQ_4H",
+  "strategy_id": "UR_FONDEO_NQ_4H",
+  "strategy_snapshot_hash": "a02578bfc723a62550db3d3e24cba14d9079a740baf2b55466a2a13ee5069388",
+  "dataset_id": "ds_trad_nq_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "61e542f267d9cccccdedf931b69c8d159178030622efcaf23a92cf1b4e2f7dbf",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "4aca82aaead4c39aed3299678ec948eae1e575e407703602ec2a3ab046ab471f",
+  "output_hash": "62208c075661f049a6d5daaaeb87016e208685eee92a8e859f22e91f8558ef04",
+  "status": "FAILED",
+  "score": 30.1,
+  "verdict": "FALLO: Consenso insuficiente (30.1/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 30.1,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 72.1,
+        "findings": [
+          "Activo y Timeframe: NQ (4h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 1.38 con beneficio neto de $0.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 4.8% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 50.0,
+        "findings": [
+          "Muestra fuera de muestra: 20 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: MODERADO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $0.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 30.5,
+        "objections": [
+          "Alerta de Drawdown: DD (4.8%) consume más del 70% del margen tolerable."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_NQ_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-20T04:31:56.161512+00:00"
+}

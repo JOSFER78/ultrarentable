@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_5M_g11",
+  "run_id": "run_UR_ULTRA_USDJPY_5M",
+  "strategy_id": "UR_ULTRA_USDJPY_5M",
+  "strategy_snapshot_hash": "b00215b545a89d156ba0ca110d158dcd919803fab020956b0dce8e10b7eba186",
+  "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "d20524302ad47dec9553b7f5880dbf6b28149b325e0e50cf2b9311c6b3ecf246",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "3d33e13e655d5080dbda7dee14d639825a7bfad1353ef5a96d15238a3889a465",
+  "output_hash": "27f7096e028712fc92e4dbeb34bba3d6d81f829161debf0b5fec4bcc2034e7bc",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 109.0x > 100.0x)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 11.73,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": 11.73,
+    "peak_leverage_used": 109.03,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 390.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 65
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T04:37:11.909811+00:00"
+}

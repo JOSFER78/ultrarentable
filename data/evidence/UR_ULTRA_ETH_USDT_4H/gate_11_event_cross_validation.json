@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g11",
+  "run_id": "run_UR_ULTRA_ETH_USDT_4H",
+  "strategy_id": "UR_ULTRA_ETH_USDT_4H",
+  "strategy_snapshot_hash": "96a3d64b8d41430e36a6020caa387d8601adfff477afa3d9f0525f44cc59fa95",
+  "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "aebeaa475995e7ddcafc84bbf8455ca16ad4f834717f9195dbcfabd728666cf7",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "510ef22c77c6758f308ca95524aab7a1fa05f1add9a52622f100781a2ce62177",
+  "output_hash": "1f885f2f1951a4bc157d0c5186ced2400ab881d9775c5fe305a80ceb303906c8",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $3390.40, Apalancamiento Pico: 3.3x, Dist. Mín. Liquidación: 98.6%, Comisiones+Funding: $124.79)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 3390.4,
+    "peak_equity_usd": 3390.4,
+    "min_equity_usd": 986.63,
+    "peak_leverage_used": 3.32,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 98.61,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 113.44,
+    "total_funding_cost_usd": 11.34,
+    "execution_events_count": 73
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-20T04:00:38.427005+00:00"
+}

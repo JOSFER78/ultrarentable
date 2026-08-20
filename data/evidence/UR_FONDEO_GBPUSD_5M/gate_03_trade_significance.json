@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GBPUSD_5M_g03",
+  "run_id": "run_UR_FONDEO_GBPUSD_5M",
+  "strategy_id": "UR_FONDEO_GBPUSD_5M",
+  "strategy_snapshot_hash": "d4c7b967638f82810741ea36c779d86542695b5e56631c1b10e09b8521604ece",
+  "dataset_id": "ds_trad_gbpusd_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "9d1a198f5621c2609bac3d5be9b6b883237bbf4ea9ce9e0f1f0154c354289a30",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "42a2e82ff54f0b22d3f54f1320afc8f7b2b45425b166286b8abefd9ea57b8bb2",
+  "output_hash": "20ad5f088811a9ff6bbc71362825a3d633b249222d2a5a0fbc469e06fe24c83b",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (421 IS / 175 OOS · Fondeo)",
+  "metrics": {
+    "trades_is": 421,
+    "trades_oos": 175,
+    "top2_outlier_dependency_pct": 61.3,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_5M/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-20T04:30:27.924684+00:00"
+}
