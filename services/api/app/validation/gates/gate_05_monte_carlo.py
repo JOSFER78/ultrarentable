@@ -35,16 +35,27 @@ class Gate05MonteCarlo:
         ruin_count = 0
         rng = np.random.default_rng(42)
 
-        if is_ultra:
-            # En la ruta ULTRA con reinversión y apalancamiento dinámico, cada trade
-            # representa un retorno porcentual sobre la equidad disponible al inicio del trade.
-            eq_trajectory = [initial_capital]
-            for pnl in oos_trades:
-                eq_trajectory.append(max(1.0, eq_trajectory[-1] + pnl))
-            
-            # Array de retornos fraccionales normalizados: r_i = pnl_i / equity_before_i
-            returns_arr = np.array([oos_trades[i] / eq_trajectory[i] for i in range(n_trades)], dtype=np.float64)
+        raw_arr = np.array(oos_trades, dtype=np.float64)
+        # Si los valores vienen en porcentaje (ej. 7.5 para 7.5%), normalizar a retornos fraccionales (0.075)
+        # Si vienen en dólares nominales brutos mayores a initial_capital * 0.5, normalizar por initial_capital
+        if np.max(np.abs(raw_arr)) > 50.0 and np.max(np.abs(raw_arr)) > initial_capital * 0.1:
+            # Entrada en dólares nominales
+            if is_ultra:
+                eq_trajectory = [initial_capital]
+                for pnl in oos_trades:
+                    eq_trajectory.append(max(1.0, eq_trajectory[-1] + pnl))
+                returns_arr = np.array([oos_trades[i] / eq_trajectory[i] for i in range(n_trades)], dtype=np.float64)
+            else:
+                returns_arr = raw_arr / initial_capital
+        elif np.max(np.abs(raw_arr)) > 1.0:
+            # Entrada en porcentajes directos (ej. 7.5%)
+            returns_arr = raw_arr / 100.0
+        else:
+            # Entrada ya en retornos fraccionales puros (ej. 0.075)
+            returns_arr = raw_arr
 
+        if is_ultra:
+            # En la ruta ULTRA con reinversión geométrica (Compounding Dinámico)
             for _ in range(num_sims):
                 sim_returns = rng.choice(returns_arr, size=n_trades, replace=True)
                 sim_eq = [initial_capital]
@@ -59,12 +70,11 @@ class Gate05MonteCarlo:
                 if max_sim_dd >= ruin_drawdown_pct:
                     ruin_count += 1
         else:
-            # En la ruta FONDEO (CME Props), los contratos son de tamaño fijo (ej. 1 micro/mini)
-            # por lo que los trades son aditivos en dólares nominales.
-            trades_arr = np.array(oos_trades, dtype=np.float64)
+            # En la ruta FONDEO (CME Props), contratos de tamaño fijo (lineal aditivo)
             for _ in range(num_sims):
-                sim_trades = rng.choice(trades_arr, size=n_trades, replace=True)
-                equity_curve = initial_capital + np.cumsum(np.insert(sim_trades, 0, 0.0))
+                sim_returns = rng.choice(returns_arr, size=n_trades, replace=True)
+                sim_trades_usd = sim_returns * initial_capital
+                equity_curve = initial_capital + np.cumsum(np.insert(sim_trades_usd, 0, 0.0))
                 peak = np.maximum.accumulate(equity_curve)
                 dd_series = (peak - equity_curve) / np.maximum(1.0, peak) * 100.0
                 max_sim_dd = float(np.max(dd_series))

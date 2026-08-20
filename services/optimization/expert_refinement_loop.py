@@ -185,8 +185,8 @@ class ExpertStrategyOptimizer:
                     timeframe=timeframe,
                     dataset_id=ds_file.name,
                     dataset_sha256="refined_real_sha256",
-                    sl_atr_mult=float(params.get("sl_atr_mult", 1.5)),
-                    tp_atr_mult=float(params.get("tp_atr_mult", 3.0)),
+                    stop_loss_ticks=int(params.get("stop_loss_ticks", params.get("sl_ticks", 20))),
+                    target_profit_ticks=int(params.get("target_profit_ticks", params.get("tp_ticks", 40))),
                     ema_fast=int(params.get("ema_fast", 15)),
                     ema_slow=int(params.get("ema_slow", 45)),
                     rsi_period=int(params.get("rsi_period", 14)),
@@ -196,14 +196,14 @@ class ExpertStrategyOptimizer:
             is_bt = self.backtest_engine.run_backtest(strat_snapshot, candles_is, initial_capital_usd=initial_cap)
             oos_bt = self.backtest_engine.run_backtest(strat_snapshot, candles_blind_oos, initial_capital_usd=initial_cap)
 
-            is_trades = [t.net_pnl_usd for t in is_bt.trades]
-            oos_trades = [t.net_pnl_usd for t in oos_bt.trades]
+            is_trades = [t.return_pct / 100.0 for t in is_bt.trades]
+            oos_trades = [t.return_pct / 100.0 for t in oos_bt.trades]
             trades_raw = [
                 {
                     "entry_price": t.entry_price, "exit_price": t.exit_price,
                     "qty": t.qty, "side": t.side, "net_pnl_usd": t.net_pnl_usd,
-                    "return_pct": t.return_pct, "r_multiple": t.return_pct / 7.5 if is_ultra else t.return_pct / 1.0,
-                    "equity_before_usd": t.net_pnl_usd, "equity_after_usd": t.net_pnl_usd,
+                    "return_pct": t.return_pct, "r_multiple": t.r_multiple,
+                    "equity_before_usd": t.equity_before_usd, "equity_after_usd": t.equity_after_usd,
                     "entry_bar_idx": t.entry_bar, "exit_bar_idx": t.exit_bar,
                     "entry_time_ms": t.entry_time_ms, "exit_time_ms": t.exit_time_ms,
                 }

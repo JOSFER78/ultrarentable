@@ -34,15 +34,30 @@ class Gate06StressSlippage:
             }
 
         trades_arr = np.array(oos_trades, dtype=np.float64)
-        avg_trade_pnl = float(np.mean(trades_arr))
-        std_trade_pnl = float(np.std(trades_arr)) if len(trades_arr) > 1 else 10.0
+        max_val = float(np.max(np.abs(trades_arr))) if len(trades_arr) > 0 else 0.0
+
+        # Auto-calibración dimensional de la penalización base
+        if max_val <= 1.0:
+            # Retornos fraccionales puros (ej. 0.075 = +7.5%)
+            base_penalty = 0.0035 if is_ultra else 0.0006
+            unit_label = "fractional"
+        elif max_val <= 100.0:
+            # Retornos porcentuales directos (ej. 7.5 = +7.5%)
+            base_penalty = 0.35 if is_ultra else 0.06
+            unit_label = "percentage"
+        else:
+            # Dólares nominales brutos
+            base_penalty = 0.35 if is_ultra else 3.0
+            unit_label = "nominal_usd"
+
+        std_trade_pnl = float(np.std(trades_arr)) if len(trades_arr) > 1 else (0.01 if max_val <= 1.0 else 1.0)
 
         # Modelado de 4 Escenarios de Estrés Progresivo
         scenarios = {
-            "Base": base_friction_usd,
-            "+1_Sigma": base_friction_usd * 2.0 + (std_trade_pnl * 0.02),
-            "+2_Sigma": base_friction_usd * 3.5 + (std_trade_pnl * 0.05),
-            "+3_Sigma": base_friction_usd * 5.0 + (std_trade_pnl * 0.10),
+            "Base": base_penalty,
+            "+1_Sigma": base_penalty * 2.0 + (std_trade_pnl * 0.02),
+            "+2_Sigma": base_penalty * 3.5 + (std_trade_pnl * 0.05),
+            "+3_Sigma": base_penalty * 5.0 + (std_trade_pnl * 0.10),
         }
 
         scenario_results = {}

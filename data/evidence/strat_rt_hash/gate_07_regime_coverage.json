@@ -11,10 +11,10 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "fa673e1289fc48c655cfa747893455e16d85084d9747db2f9daa4fdaafdb561a",
-  "output_hash": "68fb6d3c97b0d4557f635bd7a909c22c3350a67377fdb09a9c1ce49714ff1909",
+  "output_hash": "3da1eba1096f0155ff8c9f80692836c983397bae5c952f6230ad2fdaae60ca4b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-117.99)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -117.99%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 2,
@@ -28,7 +28,7 @@
       "CHOP_RANGING": 4,
       "HIGH_VOLATILITY": 0
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
       "CHOP_RANGING": -117.99,
@@ -36,8 +36,8 @@
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_pnl_usd": -117.99
+    "total_oos_return_pct": -117.99
   },
   "artifact_path": "data/evidence/strat_rt_hash/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:39:52.985408+00:00"
+  "created_at_utc": "2026-08-20T17:48:34.950588+00:00"
 }

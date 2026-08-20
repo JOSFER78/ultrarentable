@@ -51,37 +51,49 @@ def calculate_deflated_sharpe_ratio(
 
 
 def calculate_outlier_dependency(trades: List[TradeLog]) -> float:
-    """Calcula el porcentaje de ganancias atribuible a los 2 mejores trades."""
-    winning_pnls = [t.net_pnl_usd for t in trades if t.net_pnl_usd > 0]
-    total_profit = sum(winning_pnls)
-    if total_profit <= 0:
+    """Calcula el porcentaje de ganancias atribuible a los 2 mejores trades (en múltiplos R / %)."""
+    winning_r = [
+        getattr(t, "return_r", 0.0) or (getattr(t, "return_pct", 0.0) / 7.5) or (getattr(t, "net_pnl_usd", 0.0) / 100.0)
+        for t in trades
+        if (getattr(t, "return_r", 0.0) > 0 or getattr(t, "return_pct", 0.0) > 0 or getattr(t, "net_pnl_usd", 0.0) > 0)
+    ]
+    total_profit_r = sum(winning_r)
+    if total_profit_r <= 0:
         return 0.0
 
-    sorted_wins = sorted(winning_pnls, reverse=True)
+    sorted_wins = sorted(winning_r, reverse=True)
     top2_sum = sum(sorted_wins[:2])
-    return round((top2_sum / total_profit) * 100.0, 2)
+    return round((top2_sum / total_profit_r) * 100.0, 2)
 
 
 def calculate_max_single_trade_share(trades: List[TradeLog]) -> float:
-    """Calcula el ratio del mayor trade respecto a la ganancia total."""
-    winning_pnls = [t.net_pnl_usd for t in trades if t.net_pnl_usd > 0]
-    total_profit = sum(winning_pnls)
-    if total_profit <= 0:
+    """Calcula el ratio del mayor trade respecto a la ganancia total (en múltiplos R / %)."""
+    winning_r = [
+        getattr(t, "return_r", 0.0) or (getattr(t, "return_pct", 0.0) / 7.5) or (getattr(t, "net_pnl_usd", 0.0) / 100.0)
+        for t in trades
+        if (getattr(t, "return_r", 0.0) > 0 or getattr(t, "return_pct", 0.0) > 0 or getattr(t, "net_pnl_usd", 0.0) > 0)
+    ]
+    total_profit_r = sum(winning_r)
+    if total_profit_r <= 0:
         return 0.0
 
-    max_win = max(winning_pnls)
-    return round(max_win / total_profit, 4)
+    max_win = max(winning_r)
+    return round(max_win / total_profit_r, 4)
 
 
 def calculate_tail_gain_ratio(trades: List[TradeLog]) -> float:
     """Calcula la proporción de ganancia generada por trades en la cola derecha (>= 3.0R)."""
-    winning_pnls = [t.net_pnl_usd for t in trades if t.net_pnl_usd > 0]
-    total_profit = sum(winning_pnls)
-    if total_profit <= 0:
+    winning_r = [
+        getattr(t, "return_r", 0.0) or (getattr(t, "return_pct", 0.0) / 7.5) or (getattr(t, "net_pnl_usd", 0.0) / 100.0)
+        for t in trades
+        if (getattr(t, "return_r", 0.0) > 0 or getattr(t, "return_pct", 0.0) > 0 or getattr(t, "net_pnl_usd", 0.0) > 0)
+    ]
+    total_profit_r = sum(winning_r)
+    if total_profit_r <= 0:
         return 0.0
 
-    tail_pnls = [t.net_pnl_usd for t in trades if t.return_r >= 3.0]
-    return round(sum(tail_pnls) / total_profit, 4)
+    tail_r = [getattr(t, "return_r", 0.0) for t in trades if getattr(t, "return_r", 0.0) >= 3.0]
+    return round(sum(tail_r) / total_profit_r, 4)
 
 
 def calculate_burst_ruin_probability(

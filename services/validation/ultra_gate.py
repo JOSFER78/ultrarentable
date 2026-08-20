@@ -30,9 +30,9 @@ class UltraEvidenceGate:
     ) -> UltraValidationResult:
         rejections: List[str] = []
 
-        # 1. Payoff Ratio (Avg Win / Avg Loss)
-        winning = [t.net_pnl_usd for t in backtest_result.trades if t.net_pnl_usd > 0]
-        losing = [abs(t.net_pnl_usd) for t in backtest_result.trades if t.net_pnl_usd < 0]
+        # 1. Payoff Ratio (Avg Win R / Avg Loss R)
+        winning = [getattr(t, "return_r", 0.0) or (getattr(t, "return_pct", 0.0) / 7.5) or t.net_pnl_usd for t in backtest_result.trades if (getattr(t, "return_r", 0.0) > 0 or getattr(t, "return_pct", 0.0) > 0 or getattr(t, "net_pnl_usd", 0.0) > 0)]
+        losing = [abs(getattr(t, "return_r", 0.0) or (getattr(t, "return_pct", 0.0) / 7.5) or t.net_pnl_usd) for t in backtest_result.trades if (getattr(t, "return_r", 0.0) < 0 or getattr(t, "return_pct", 0.0) < 0 or getattr(t, "net_pnl_usd", 0.0) < 0)]
         avg_win = float(np.mean(winning)) if winning else 0.0
         avg_loss = float(np.mean(losing)) if losing else 1.0
         payoff = round(avg_win / max(0.01, avg_loss), 2)

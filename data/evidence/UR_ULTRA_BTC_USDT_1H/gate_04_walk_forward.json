@@ -11,64 +11,64 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "00443a9a93cc37f0e349ffa9a19e995fcc2edcdb6ecde62b5f2b6722bd9ec149",
-  "output_hash": "a51ee8459d0b550df15f0333a74e43a50e4678afbf990ca0d3fe2c5876c2bd66",
+  "output_hash": "93bb42ac4185dd42c6524d8efc497888418ec8cfc083fb8da40f1b95ca641656",
   "status": "PASSED",
-  "score": 88.0,
-  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 1.07, Consistencia: 60.0%)",
+  "score": 100.0,
+  "verdict": "PASSED: Rolling WFO verificado (5 ventanas, WFE media: 1.06, Consistencia: 100.0%)",
   "metrics": {
     "total_trades_analyzed": 567,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.07,
-    "oos_consistency_pct": 60.0,
+    "walk_forward_efficiency": 1.06,
+    "oos_consistency_pct": 100.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
         "is_trades_count": 79,
         "oos_trades_count": 34,
-        "pf_is": 1.45,
-        "pf_oos": 1.3,
-        "net_profit_oos_usd": 145.88,
-        "wfe": 0.9
+        "pf_is": 1.7,
+        "pf_oos": 1.48,
+        "net_profit_oos_usd": 0.8,
+        "wfe": 0.87
       },
       {
         "window_index": 2,
         "is_trades_count": 79,
         "oos_trades_count": 34,
-        "pf_is": 1.15,
-        "pf_oos": 0.94,
-        "net_profit_oos_usd": -23.54,
-        "wfe": 0.82
+        "pf_is": 1.4,
+        "pf_oos": 1.1,
+        "net_profit_oos_usd": 0.14,
+        "wfe": 0.79
       },
       {
         "window_index": 3,
         "is_trades_count": 79,
         "oos_trades_count": 34,
-        "pf_is": 0.94,
-        "pf_oos": 1.14,
-        "net_profit_oos_usd": 69.51,
-        "wfe": 1.22
+        "pf_is": 1.17,
+        "pf_oos": 1.37,
+        "net_profit_oos_usd": 0.49,
+        "wfe": 1.17
       },
       {
         "window_index": 4,
         "is_trades_count": 79,
         "oos_trades_count": 34,
-        "pf_is": 1.13,
-        "pf_oos": 0.95,
-        "net_profit_oos_usd": -23.68,
-        "wfe": 0.84
+        "pf_is": 1.37,
+        "pf_oos": 1.1,
+        "net_profit_oos_usd": 0.16,
+        "wfe": 0.81
       },
       {
         "window_index": 5,
         "is_trades_count": 79,
         "oos_trades_count": 34,
-        "pf_is": 0.88,
-        "pf_oos": 1.37,
-        "net_profit_oos_usd": 160.6,
-        "wfe": 1.55
+        "pf_is": 1.06,
+        "pf_oos": 1.77,
+        "net_profit_oos_usd": 1.1,
+        "wfe": 1.67
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-20T14:39:45.715669+00:00"
+  "created_at_utc": "2026-08-20T17:48:28.330977+00:00"
 }

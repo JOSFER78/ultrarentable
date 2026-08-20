@@ -361,10 +361,16 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
     bt_res = bt_engine.run_backtest(strategy, candles, initial_capital_usd=base_cap)
 
     split_idx = int(len(bt_res.trades) * 0.6)
-    is_trades = [t.net_pnl_usd for t in bt_res.trades[:split_idx]]
-    oos_trades = [t.net_pnl_usd for t in bt_res.trades[split_idx:]]
+    is_trades = [t.return_pct / 100.0 for t in bt_res.trades[:split_idx]]
+    oos_trades = [t.return_pct / 100.0 for t in bt_res.trades[split_idx:]]
     trades_raw = [
-        {"entry_price": t.entry_price, "exit_price": t.exit_price, "qty": t.qty, "side": t.side}
+        {
+            "entry_price": t.entry_price, "exit_price": t.exit_price,
+            "qty": t.qty, "side": t.side, "net_pnl_usd": t.net_pnl_usd,
+            "return_pct": t.return_pct, "r_multiple": t.r_multiple,
+            "equity_before_usd": t.equity_before_usd, "equity_after_usd": t.equity_after_usd,
+            "entry_bar_idx": t.entry_bar, "exit_bar_idx": t.exit_bar,
+        }
         for t in bt_res.trades
     ]
 

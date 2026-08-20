@@ -109,7 +109,7 @@ class Gate07RegimeCoverage:
             }
 
         for t in trades_raw:
-            pnl = float(t.get("net_pnl_usd", 0.0) or t.get("pnl", 0.0))
+            pnl = float(t.get("return_pct", 0.0) or t.get("r_multiple", 0.0) or t.get("net_pnl_usd", 0.0) or t.get("pnl", 0.0))
             bar_idx = int(t.get("entry_bar_idx", 0) or t.get("bar_index", 0))
             # Limitar bar_idx al rango válido de velas
             valid_idx = min(max(0, bar_idx), len(bar_regimes) - 1)
@@ -120,7 +120,7 @@ class Gate07RegimeCoverage:
             if pnl > 0:
                 regime_wins[regime] += 1
 
-        # Redondear PnL por régimen
+        # Redondear retorno por régimen
         regime_pnl = {k: round(v, 2) for k, v in regime_pnl.items()}
 
         # 4. Evaluación de Supervivencia y Cobertura Multirégimen
@@ -128,7 +128,7 @@ class Gate07RegimeCoverage:
         active_regimes = [k for k, v in regime_trades_count.items() if v > 0]
         profitable_regimes = [k for k, v in regime_pnl.items() if v > 0]
         
-        # En Ultra: debe sobrevivir (PnL > -50% capital) en regímenes adversos y capturar fuerte convexidad en tendencias/volatilidad
+        # En Ultra: debe sobrevivir en regímenes adversos y capturar fuerte convexidad en tendencias/volatilidad
         # En Fondeo: debe ser rentable en al menos 2 regímenes y no quebrar en chop
         min_active_required = 2
         coverage_passed = (len(active_regimes) >= min_active_required)
@@ -138,9 +138,9 @@ class Gate07RegimeCoverage:
         score = min(100.0, max(0.0, (len(profitable_regimes) / 4.0) * 60.0 + (40.0 if net_profit_positive else 0.0)))
 
         verdict_msg = (
-            f"PASSED: Cobertura multirégimen temporal verificada ({len(profitable_regimes)}/4 regímenes en beneficio, Net PnL: ${total_pnl:.2f})"
+            f"PASSED: Cobertura multirégimen verificada ({len(profitable_regimes)}/4 regímenes positivos, Retorno OOS: {total_pnl:+.2f}%)"
             if passed
-            else f"FALLO: Fragilidad en regímenes de mercado ({len(profitable_regimes)}/4 rentables, PnL Total: ${total_pnl:.2f})"
+            else f"FALLO: Fragilidad en regímenes de mercado ({len(profitable_regimes)}/4 rentables, Retorno Total: {total_pnl:+.2f}%)"
         )
 
         return {
@@ -152,9 +152,9 @@ class Gate07RegimeCoverage:
             "evidence": {
                 "regimes_candle_distribution": regimes_candle_count,
                 "regime_trades_count": regime_trades_count,
-                "regime_net_pnl_usd": regime_pnl,
+                "regime_return_pct": regime_pnl,
                 "regimes_profitable_count": len(profitable_regimes),
                 "regimes_active_count": len(active_regimes),
-                "total_oos_pnl_usd": round(total_pnl, 2),
+                "total_oos_return_pct": round(total_pnl, 2),
             },
         }

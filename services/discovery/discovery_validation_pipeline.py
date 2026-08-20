@@ -306,9 +306,9 @@ class DiscoveryValidationPipeline:
         is_bt = self.backtest_engine.run_backtest(strategy, candles_is, initial_capital_usd=initial_cap)
         oos_bt = self.backtest_engine.run_backtest(strategy, candles_blind_oos, initial_capital_usd=initial_cap)
 
-        pre_oos_trades = [t.net_pnl_usd for t in pre_oos_bt.trades]
-        is_trades = [t.net_pnl_usd for t in is_bt.trades]
-        oos_trades = [t.net_pnl_usd for t in oos_bt.trades]
+        pre_oos_trades = [t.return_pct / 100.0 for t in pre_oos_bt.trades]
+        is_trades = [t.return_pct / 100.0 for t in is_bt.trades]
+        oos_trades = [t.return_pct / 100.0 for t in oos_bt.trades]
         trades_raw = [
             {
                 "entry_price": t.entry_price,
