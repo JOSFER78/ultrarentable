@@ -1,34 +1,21 @@
 {
-  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g09",
-  "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
-  "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
-  "strategy_snapshot_hash": "13aed4d41f127ba3e2f79d1fb4ca921800285453a6c78910fd2e64d7e3a868f1",
-  "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "6df7a08e9276f296034485cac76f91d74db1846bcc021cbc2d4d32dcf7444a33",
-  "output_hash": "f1a3cd948afdf776cd61b011e6b661c6539e6012f023ade0373023a45af93896",
-  "status": "PASSED",
+  "name": "NOVELTY_ANTIFIT",
+  "passed": true,
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 70.5 trades/param, Estabilidad Vecindario: 108.5%, Re-backtest PFs: [1.91, 2.41, 1.91, 2.23])",
-  "metrics": {
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada emp\u00edricamente (DoF: 70.5 trades/param, Estabilidad Vecindario: 117.3%, Re-backtest PFs: [1.15, 1.24, 1.43, 1.48])",
+  "evidence": {
     "parameters_count": 4,
     "degrees_of_freedom_ratio": 70.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 108.5,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 117.3,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.91,
-      2.41,
-      1.91,
-      2.23
+      1.15,
+      1.24,
+      1.43,
+      1.48
     ],
     "rebacktest_performed": true
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T17:49:15.209883+00:00"
+  }
 }
