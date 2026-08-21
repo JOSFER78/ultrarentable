@@ -1127,7 +1127,7 @@ export default function StrategiesExplorerPage() {
                   onClick={() => handleSort("monthly_roi_pct")}
                   style={{ padding: isCompactDensity ? "8px 10px" : "10px 12px", cursor: "pointer", color: sortField === "monthly_roi_pct" ? "#63e1b4" : "#94a3b8", textAlign: "right" }}
                 >
-                  % RETORNO MENSUAL {sortField === "monthly_roi_pct" && (sortDirection === "DESC" ? "▼" : "▲")}
+                  % RETORNO MENSUAL / ANUAL {sortField === "monthly_roi_pct" && (sortDirection === "DESC" ? "▼" : "▲")}
                 </th>
                 <th
                   onClick={() => handleSort("profit_factor")}

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_4H_g09",
   "run_id": "run_UR_ULTRA_USDCHF_4H",
   "strategy_id": "UR_ULTRA_USDCHF_4H",
-  "strategy_snapshot_hash": "664b271add799be877dab0a0cda9c488e15e17e1fa48bd1bf2e66e861dda4a64",
+  "strategy_snapshot_hash": "56211dc39f701f8b43ca81f615c1ed6d8e5ca26cddd236bd26d0f04c3d789901",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "7253dec44cbe7e65186f4400ea1f7bf23bf9b178487bd489c08e6a0c48027768",
-  "output_hash": "4bfffa029eb7133eaddf3002c839945c69edb146ebcac33e5427d27b15c1832a",
-  "status": "FAILED",
-  "score": 37.8,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 5.8 o Estabilidad 94.6% < 60.0%)",
+  "input_hash": "3f68223d9a50511cfa37f0e5520c18bcb58753d6eaffa6a173ac47eeb71e5e8f",
+  "output_hash": "e997694caaaa4372ea0ea58ceb78114795251b8564b74481c9d4325d70e7f84e",
+  "status": "PASSED",
+  "score": 96.4,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 23.5 trades/param, Estabilidad Vecindario: 98.0%, Re-backtest PFs: [0.86, 0.63, 0.95, 0.97])",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 5.8,
+    "degrees_of_freedom_ratio": 23.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 94.6,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 98.0,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.67,
-      0.4,
-      0.84,
-      0.89
+      0.86,
+      0.63,
+      0.95,
+      0.97
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T08:41:12.523538+00:00"
+  "created_at_utc": "2026-08-21T22:10:22.975810+00:00"
 }

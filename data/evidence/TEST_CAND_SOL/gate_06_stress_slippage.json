@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g06",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "49d5d27e32321b94880bd64103381386d8229b0aa2a496d02eea0d2e81fd4e7e",
+  "strategy_snapshot_hash": "b6d6dc09f4e77137cb133cf17328adc73b80e4bfac43bcab81ed25c2a58b515a",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
@@ -10,42 +10,42 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "2e4929eb473e818e36cca7bb2ad4769fa481611df91c8dab6df77d34c1a011a8",
-  "output_hash": "f7d60fda9a52e9a46b566d9613e77c7d79d3c04ab519b5b9dac1b58bc0310216",
+  "input_hash": "b43030a7ca09858ecab17b9fa8dfba1782a44ffe83c15c3bfe9339d9a0d690c4",
+  "output_hash": "24901aceaeef543c48ecb21b2ad61c27bfd2f0eb9f7b17bddf213e6abe1594a2",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (0/4 escenarios superados)",
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.35,
-        "stressed_net_pnl_usd": -41.69,
-        "stressed_profit_factor": 0.68,
+        "stressed_net_pnl_usd": -9.49,
+        "stressed_profit_factor": 0.62,
         "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.79,
-        "stressed_net_pnl_usd": -68.14,
-        "stressed_profit_factor": 0.55,
+        "friction_penalty_per_trade_usd": 0.73,
+        "stressed_net_pnl_usd": -32.2,
+        "stressed_profit_factor": 0.28,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 1.45,
-        "stressed_net_pnl_usd": -107.82,
-        "stressed_profit_factor": 0.42,
+        "friction_penalty_per_trade_usd": 1.3,
+        "stressed_net_pnl_usd": -66.27,
+        "stressed_profit_factor": 0.14,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 2.2,
-        "stressed_net_pnl_usd": -152.94,
-        "stressed_profit_factor": 0.32,
+        "friction_penalty_per_trade_usd": 1.89,
+        "stressed_net_pnl_usd": -102.05,
+        "stressed_profit_factor": 0.08,
         "survived": false
       }
     },
     "passed_scenarios_count": 0,
-    "min_required_scenarios": 2,
+    "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T19:02:32.084993+00:00"
+  "created_at_utc": "2026-08-21T22:11:35.741153+00:00"
 }

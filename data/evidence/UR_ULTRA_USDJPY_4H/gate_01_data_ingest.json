@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_4H_g01",
   "run_id": "run_UR_ULTRA_USDJPY_4H",
   "strategy_id": "UR_ULTRA_USDJPY_4H",
-  "strategy_snapshot_hash": "56045cc7dbfc3481a8ee7233c95a4632b6d7570ed9e37a4da7e5d749c9e73810",
+  "strategy_snapshot_hash": "d25ce9748c0d23a67ed211828ba7d7aa77af4cc2b7a043b63248e789b3cba0cf",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 1,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "3af7474aaf220f98be9165f29e436522398274c047686a906e137a3316606448",
-  "output_hash": "6a5d455c0a34504144b2b6770071a213c71396f20eb2ab0d03942210a60e3058",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: 0 corruptas, 0 desordenadas, 0 gaps excesivos",
+  "input_hash": "fa7cf8be77d6e8244ccf574782540f3840ac89c4ab1623f9d3a4e54d2238f11a",
+  "output_hash": "988424735ec10178900ab48ac3fa2c40aa02e2c91a943aae9da8f84554db0abf",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (888 velas, SHA256: f3d314f1..., 0 corruptas, 0 gaps tolerados)",
   "metrics": {
     "total_candles": 888,
     "corrupt_bars": 0,
@@ -27,5 +27,5 @@
     "integrity_pct": 100.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_4H/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-20T08:39:09.711635+00:00"
+  "created_at_utc": "2026-08-21T22:10:37.801663+00:00"
 }

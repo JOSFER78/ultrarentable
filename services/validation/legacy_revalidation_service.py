@@ -345,10 +345,10 @@ class LegacyRevalidationService:
                 "profit_factor": oos_bt.profit_factor,
                 "max_drawdown_pct": oos_bt.max_drawdown_pct,
                 "win_rate_pct": oos_bt.win_rate_pct,
-                "monthly_roi_pct": monthly_roi_pct,
-                "annualized_roi_pct": annual_roi_pct,
-                "total_months": total_months,
-                "oos_months": oos_months,
+                "monthly_roi_pct": round(monthly_roi_pct, 2),
+                "annualized_roi_pct": round(annual_roi_pct, 2),
+                "total_months": round(total_months, 1),
+                "oos_months": round(oos_months, 1),
                 "blind_oos_bars": len(candles_blind_oos),
             },
             "anti_overfit": {
@@ -357,6 +357,19 @@ class LegacyRevalidationService:
                 "monte_carlo_score": g5_score,
             },
         }
+
+        updated_scorecard.update({
+            "is_metrics": updated_metrics["in_sample"],
+            "oos_metrics": updated_metrics["out_of_sample"],
+            "metrics": updated_metrics,
+            "win_rate_pct": oos_bt.win_rate_pct,
+            "win_rate": oos_bt.win_rate_pct,
+            "monthly_roi_pct": round(monthly_roi_pct, 2),
+            "annual_roi_pct": round(annual_roi_pct, 2),
+            "annualized_roi_pct": round(annual_roi_pct, 2),
+            "tier": "TIER_1_CERTIFIED" if is_promoted else ("TIER_2_NEAR_CERTIFIED" if gates_passed_count in (9, 10) else ("TIER_3_INCUBATOR" if gates_passed_count in (7, 8) else "TIER_4_REJECTED")),
+            "tier_label": "🏆 Producción Certificada (11/11)" if is_promoted else ("💎 Diamante en Bruto (9-10/11)" if gates_passed_count in (9, 10) else ("🧪 Incubadora de I+D (7-8/11)" if gates_passed_count in (7, 8) else "❌ Rechazada")),
+        })
 
         # 10. Actualizar SQLite WAL de forma determinista
         conn = self.get_db_connection()

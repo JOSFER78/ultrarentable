@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_15M_g02",
   "run_id": "run_UR_ULTRA_SI_15M",
   "strategy_id": "UR_ULTRA_SI_15M",
-  "strategy_snapshot_hash": "8ad6de917a7ad242eccd5f4647b4c207a5994ced890bed901d042b1e257b6575",
+  "strategy_snapshot_hash": "bd443f7bd3e69ba9296c2ad9e627f4975ee9b999fc04650f407cbdbefa05a9d9",
   "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8686d72be66d394e845ba452de536dafad702ada9ce2428b5d031dcaf310c967",
-  "output_hash": "d3a83cde5f5de201cf941b47c906c0ebe36dd2c2388d51c5ab40f0bc924097d9",
+  "input_hash": "3fcef00a763bf9f9ce19cf911564277c4282a646b93d63dc40f87f6d36ba639a",
+  "output_hash": "f5953456d25d0aa5d2a2717dc2d7832d497f0ab66a15dec1f1fa71f33ed47df6",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.89 < 1.10",
+  "score": 8.5,
+  "verdict": "FALLO: PF Neto 1.09 < 1.10",
   "metrics": {
     "market_category": "COMMODITIES",
     "canonical_name": "Plata COMEX Silver Futures",
     "exchange": "COMEX Globex",
-    "gross_pnl_usd": -741.06,
-    "total_fees_usd": 1252.88,
-    "total_slippage_usd": 25057.53,
-    "net_pnl_usd": -27051.46,
-    "net_profit_factor": 0.89,
-    "drag_cost_pct": 3550.39
+    "gross_pnl_usd": 247457.64,
+    "total_fees_usd": 6376.66,
+    "total_slippage_usd": 127533.26,
+    "net_pnl_usd": 113547.72,
+    "net_profit_factor": 1.09,
+    "drag_cost_pct": 54.11
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_15M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T08:35:13.068944+00:00"
+  "created_at_utc": "2026-08-21T22:18:04.176100+00:00"
 }

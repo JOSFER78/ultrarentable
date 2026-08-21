@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g07",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "49d5d27e32321b94880bd64103381386d8229b0aa2a496d02eea0d2e81fd4e7e",
+  "strategy_snapshot_hash": "b6d6dc09f4e77137cb133cf17328adc73b80e4bfac43bcab81ed25c2a58b515a",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "611f99b86a9c3934ed1da307237e505e046d4227c493e8c8eb9e704e7237eead",
-  "output_hash": "76b6e8c2c72f12ceb112871297cbf7e88691d11c15d03fe9961108646037f480",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-20.69)",
+  "input_hash": "ac8da6e34759d6525ec9424692d77edbc821be5dcd1ae7e6379b3a1261fa9eaf",
+  "output_hash": "81808ea12888123ee4b6ffb229c77d151a3d5110e3ea6794fec3435e7612def0",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +8.56%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 7,
@@ -28,16 +28,16 @@
       "CHOP_RANGING": 54,
       "HIGH_VOLATILITY": 6
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -2.78,
-      "HIGH_VOLATILITY": -17.91
+      "CHOP_RANGING": 73.97,
+      "HIGH_VOLATILITY": -65.41
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -20.69
+    "total_oos_return_pct": 8.56
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T19:02:32.127037+00:00"
+  "created_at_utc": "2026-08-21T22:11:35.770811+00:00"
 }

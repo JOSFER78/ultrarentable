@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g01",
   "run_id": "run_UR_ULTRA_AUDUSD_4H",
   "strategy_id": "UR_ULTRA_AUDUSD_4H",
-  "strategy_snapshot_hash": "370b960beca0b820bfe068fee29675f1b0581772de3b121ba586b8a003651b50",
+  "strategy_snapshot_hash": "31f3985fe8d66c33fe84a16aa7340c3092ae6e176f090f31ac6bfa9985d7d577",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 1,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "627a8a3a518b1ef81bdf67d9111943da1e9143e5afebba447e693bb826456ec8",
-  "output_hash": "48ca13f01819f505953c4ca79b8896a45a9272f44b53e78463358a66d0cede72",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: 0 corruptas, 0 desordenadas, 0 gaps excesivos",
+  "input_hash": "6f670795947a005a7d074499d485b7a5d4b789a49ea59682226c9ae6e4c25bd0",
+  "output_hash": "11965b78ea43c455f7252a04cd318b515584e33dff7184342ba10769ba0499d3",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (891 velas, SHA256: e08297ff..., 0 corruptas, 0 gaps tolerados)",
   "metrics": {
     "total_candles": 891,
     "corrupt_bars": 0,
@@ -27,5 +27,5 @@
     "integrity_pct": 100.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-20T08:40:48.093904+00:00"
+  "created_at_utc": "2026-08-21T22:11:00.222961+00:00"
 }

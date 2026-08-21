@@ -11,41 +11,41 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "29c74eb4d67618ad1d7014f0e781ae1f5f7de6365d15b5aaf068c9933922ab49",
-  "output_hash": "4fd9c7730dc7661b7383dda4fcd70254a0f3e0d5f327a2af86a14044a25777fb",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
+  "output_hash": "150dac5632827432177f6618abd1f0109873788a380fa3ff6390b295de70b420",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
   "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.01,
-        "stressed_profit_factor": 1.13,
-        "survived": false
+        "stressed_net_pnl_usd": 0.02,
+        "stressed_profit_factor": 1.29,
+        "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.01,
-        "stressed_profit_factor": 0.93,
-        "survived": false
+        "stressed_net_pnl_usd": 0.02,
+        "stressed_profit_factor": 1.24,
+        "survived": true
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.03,
-        "stressed_profit_factor": 0.72,
-        "survived": false
+        "stressed_net_pnl_usd": 0.01,
+        "stressed_profit_factor": 1.18,
+        "survived": true
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.06,
-        "stressed_profit_factor": 0.54,
-        "survived": false
+        "stressed_net_pnl_usd": 0.01,
+        "stressed_profit_factor": 1.11,
+        "survived": true
       }
     },
-    "passed_scenarios_count": 0,
+    "passed_scenarios_count": 4,
     "min_required_scenarios": 2,
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T20:13:04.575703+00:00"
+  "created_at_utc": "2026-08-21T22:17:44.140053+00:00"
 }
