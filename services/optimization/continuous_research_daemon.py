@@ -1,10 +1,10 @@
 """services/optimization/continuous_research_daemon.py
-Demonio Autónomo y Cola de Refinamiento Cuantitativo 24/7 en Bucle Cerrado.
+Demonio Autónomo y Cola Universal de Refinamiento Cuantitativo 24/7.
 
 DOCTRINA ZERO-MOCKS & REAL-ONLY:
-Procesa secuencialmente las estrategias en revisión (Tier 2 Diamantes y Tier 3 Incubadora)
-utilizando el Arsenal Cuantitativo Dinámico (Hurst, Parkinson, Chandelier Trailing, Squeeze, 5 Agentes IA),
-ejecutando backtests reales sobre velas en disco y actualizando SQLite WAL y Firebase RTDB.
+- Gestiona una cola lógica persistente (SQLite WAL + Firebase Realtime Database).
+- Procesa secuencialmente cualquier estrategia candidata (Tier 2 y Tier 3) de cualquier activo o timeframe.
+- Emite telemetría física en tiempo real para alimentar el visor de Next.js y sincronizar con la nube.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from services.core.event_bus import DomainEvent, event_bus
-from services.optimization.expert_refinement_loop import ExpertStrategyOptimizer, DB_PATH, DATA_DIR
+from services.optimization.universal_optimizer_engine import universal_optimizer, DB_PATH
 from services.sync.firebase_sync_manager import firebase_sync_manager
 
 logger = logging.getLogger("ContinuousResearchDaemon")
@@ -40,7 +40,7 @@ class RefinementProgressEvent(DomainEvent):
 
 
 class ContinuousResearchDaemon:
-    """Demonio de optimización y refinamiento cuantitativo 24/7 con visor en tiempo real."""
+    """Demonio universal de optimización y cola 24/7 con visor en tiempo real."""
 
     _instance: Optional["ContinuousResearchDaemon"] = None
 
@@ -54,7 +54,7 @@ class ContinuousResearchDaemon:
         if self._initialized:
             return
         self._initialized = True
-        self.optimizer = ExpertStrategyOptimizer()
+        self.optimizer = universal_optimizer
         self.is_running = False
         self._stop_event = threading.Event()
         self._worker_thread: Optional[threading.Thread] = None
@@ -72,7 +72,7 @@ class ContinuousResearchDaemon:
         self.progress_pct: float = 0.0
         self.current_math_telemetry: Dict[str, Any] = {}
         
-        # Historial de logs en vivo (últimos 200 eventos reales)
+        # Historial de logs en vivo (últimos 250 eventos reales)
         self.live_logs: List[Dict[str, Any]] = []
         
         # Cola y resultados
@@ -90,7 +90,7 @@ class ContinuousResearchDaemon:
         self.refresh_queue_from_db()
 
     def add_log(self, level: str, message: str, step: str = "", math: Optional[Dict[str, Any]] = None):
-        """Registra un evento de log físico con timestamp UTC."""
+        """Registra un evento de log físico con timestamp UTC y emite a EventBus."""
         entry = {
             "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S.%f")[:-3],
             "iso_time": datetime.now(timezone.utc).isoformat(),
@@ -102,7 +102,7 @@ class ContinuousResearchDaemon:
         }
         with self._lock:
             self.live_logs.append(entry)
-            if len(self.live_logs) > 200:
+            if len(self.live_logs) > 250:
                 self.live_logs.pop(0)
 
         # Emitir a EventBus para suscriptores SSE
@@ -122,7 +122,7 @@ class ContinuousResearchDaemon:
             pass
 
     def refresh_queue_from_db(self) -> List[Dict[str, Any]]:
-        """Extrae de SQLite los candidatos en revisión (Tier 2: 9-10 Gates, Tier 3: 7-8 Gates)."""
+        """Extrae de SQLite todos los candidatos elegibles para refinamiento (Tier 2 y Tier 3)."""
         try:
             conn = sqlite3.connect(str(DB_PATH), timeout=20.0)
             conn.row_factory = sqlite3.Row
@@ -162,14 +162,14 @@ class ContinuousResearchDaemon:
                     else:
                         tier = "TIER_4_REJECTED"
 
-                # Solo candidatos de Tier 2 (9-10) y Tier 3 (7-8) para refinamiento
+                # Encolar estrategias prometedoras (Tier 2: 9-10 y Tier 3: 7-8)
                 if g_count >= 7:
                     new_queue.append({
                         "candidate_id": r["candidate_id"],
                         "name": r["name"],
                         "symbol": r["symbol"],
                         "timeframe": r["timeframe"],
-                        "route": r["route"],
+                        "route": (r["route"] or "ULTRA").upper(),
                         "status": "EN_COLA",
                         "tier": tier,
                         "initial_gates": g_count,
@@ -179,7 +179,7 @@ class ContinuousResearchDaemon:
                         "net_profit_usd": float(r["net_profit_oos"] or 0.0),
                     })
 
-            # Ordenar: primero Tier 2 (9-10), luego Tier 3 (7-8)
+            # Ordenamiento determinista: primero Tier 2 (9-10), luego Tier 3 (7-8)
             new_queue.sort(
                 key=lambda x: (
                     0 if x["tier"] == "TIER_2_NEAR_CERTIFIED" else 1 if x["tier"] == "TIER_3_INCUBATOR" else 2,
@@ -199,10 +199,33 @@ class ContinuousResearchDaemon:
                         final_q.append(item)
                 self.queue = final_q
 
+            # Sincronizar cola en Firebase Realtime Database
+            self._sync_queue_to_firebase()
             return self.queue
         except Exception as e:
-            logger.error(f"Error refrescando cola de refinamiento desde SQLite: {e}")
+            logger.error(f"ContinuousResearchDaemon: Error refrescando cola desde SQLite: {e}")
             return []
+
+    def _sync_queue_to_firebase(self):
+        """Sincroniza el estado de la cola con Firebase Realtime Database."""
+        try:
+            payload = {
+                "is_running": self.is_running,
+                "current_candidate_id": self.current_candidate_id,
+                "current_step": self.current_step,
+                "progress_pct": self.progress_pct,
+                "stats": self.stats,
+                "queue_summary": {
+                    "total": len(self.queue),
+                    "pending": len([q for q in self.queue if q["status"] in ("EN_COLA", "REINTENTO")]),
+                    "processed": len([q for q in self.queue if q["status"] in ("COMPLETADA", "MEJORADA", "CERTIFICADA")]),
+                },
+                "last_synced_at": datetime.now(timezone.utc).isoformat(),
+            }
+            # Escritura asíncrona a Firebase si está disponible
+            threading.Thread(target=firebase_sync_manager.sync_all, daemon=True).start()
+        except Exception:
+            pass
 
     def start_autonomous(self):
         """Inicia el bucle continuo 24/7 en segundo plano."""
@@ -224,10 +247,9 @@ class ContinuousResearchDaemon:
             self.add_log("WARNING", "Demonio de Refinamiento 24/7 PAUSADO.")
 
     def _run_loop(self):
-        """Bucle de ejecución continua que itera sobre la cola de candidatos."""
+        """Bucle de ejecución continua que procesa la cola de forma secuencial."""
         logger.info("ContinuousResearchDaemon: Bucle autónomo activo.")
         while not self._stop_event.is_set():
-            # Obtener el siguiente candidato pendiente
             candidate_to_process = None
             with self._lock:
                 for item in self.queue:
@@ -236,18 +258,14 @@ class ContinuousResearchDaemon:
                         break
 
             if not candidate_to_process:
-                # Si todos fueron procesados, reiniciar ciclo para mejora incremental
                 self.stats["total_cycles"] += 1
-                self.add_log("INFO", f"Ciclo de Refinamiento #{self.stats['total_cycles']} completado. Reevaluando cola...")
+                self.add_log("INFO", f"Ciclo de Cola #{self.stats['total_cycles']} completado. Reevaluando catálogo...")
                 self.refresh_queue_from_db()
                 time.sleep(5)
                 continue
 
-            # Procesar candidato
             cid = candidate_to_process["candidate_id"]
             self._process_single_candidate(cid, max_iterations=3)
-
-            # Pausa breve entre candidatos para no saturar I/O
             time.sleep(2)
 
     def refine_single_now(self, candidate_id: str, max_iterations: int = 3) -> Dict[str, Any]:
@@ -255,14 +273,13 @@ class ContinuousResearchDaemon:
         return self._process_single_candidate(candidate_id, max_iterations=max_iterations)
 
     def _process_single_candidate(self, candidate_id: str, max_iterations: int = 3) -> Dict[str, Any]:
-        """Procesa paso a paso un candidato con telemetría física en tiempo real."""
+        """Procesa un candidato mediante el motor universal con telemetría en vivo."""
         with self._lock:
             self.current_candidate_id = candidate_id
             self.max_iterations = max_iterations
             self.progress_pct = 5.0
             self.current_iteration = 0
             
-            # Buscar info del candidato
             c_info = next((q for q in self.queue if q["candidate_id"] == candidate_id), None)
             if c_info:
                 c_info["status"] = "PROCESANDO"
@@ -271,78 +288,43 @@ class ContinuousResearchDaemon:
                 self.current_timeframe = c_info["timeframe"]
                 self.current_route = c_info["route"]
 
-        self.add_log("INFO", f"Iniciando refinamiento de {candidate_id} ({self.current_symbol} {self.current_timeframe})...", step="1. INGESTA Y PROFILER")
+        self.add_log("INFO", f"Iniciando optimización universal para {candidate_id} ({self.current_symbol} {self.current_timeframe})...", step="1. INGESTA Y PROFILER")
 
-        # Paso 1: Carga de Dataset Físico
-        ds_file = self.optimizer.find_dataset_file(self.current_symbol or "BTC", self.current_timeframe or "15m")
-        if not ds_file or not ds_file.exists():
-            msg = f"Dataset físico para {self.current_symbol} no encontrado en disco."
-            self.add_log("ERROR", msg, step="ERROR_NO_DATASET")
-            with self._lock:
-                if c_info:
-                    c_info["status"] = "NO_DATASET"
-            return {"status": "ERROR", "message": msg}
-
-        self.progress_pct = 15.0
-        self.add_log("SUCCESS", f"Dataset físico verificado en disco: {ds_file.name}", step="2. ANÁLISIS MICROESTRUCTURAL")
-
-        # Paso 2: Análisis Microestructural Real (Hurst, Parkinson, Squeeze)
-        try:
-            with open(ds_file, "r", encoding="utf-8") as f:
-                raw_ds = json.load(f)
-            candles = raw_ds if isinstance(raw_ds, list) else (raw_ds.get("candles") or raw_ds.get("bars") or [])
-            
-            from services.optimization.quantitative_arsenal import MicrostructureProfiler
-            is_end = int(len(candles) * 0.60)
-            candles_is = candles[:is_end]
-            profile = MicrostructureProfiler.compute_profile(candles_is)
-            
-            self.current_math_telemetry = {
-                "hurst_exponent": round(profile.hurst_exponent, 3),
-                "parkinson_volatility": round(profile.parkinson_volatility, 5),
-                "squeeze_ratio": round(profile.squeeze_ratio, 3),
-                "is_squeeze_active": profile.is_squeeze_active,
-                "dominant_regime": profile.dominant_regime,
-                "optimal_fast_period": profile.optimal_fast_period,
-                "optimal_slow_period": profile.optimal_slow_period,
-                "optimal_sl_atr_mult": round(profile.optimal_sl_atr_mult, 2),
-                "optimal_tp_atr_mult": round(profile.optimal_tp_atr_mult, 2),
-            }
-            self.progress_pct = 30.0
-            self.add_log(
-                "INFO",
-                f"Perfil Cuantitativo: Hurst={profile.hurst_exponent:.3f} ({profile.dominant_regime}), "
-                f"Parkinson={profile.parkinson_volatility:.5f}, Squeeze={profile.is_squeeze_active}",
-                step="3. BUCLE ITERATIVO DE REFINAMIENTO",
-                math=self.current_math_telemetry,
-            )
-        except Exception as e:
-            self.add_log("WARN", f"Aviso al computar perfil: {e}", step="FALLBACK_PROFILE")
-
-        # Paso 3: Ejecución de las iteraciones reales
-        result = self.optimizer.refine_candidate_loop(candidate_id, max_iterations=max_iterations)
-        
-        # Registrar progreso de cada iteración completada
-        if "iteration_history" in result:
-            for it_data in result["iteration_history"]:
-                it_num = it_data.get("iteration", 1)
-                self.current_iteration = it_num
-                self.progress_pct = 30.0 + (it_num / max_iterations) * 60.0
-                gates_p = it_data.get("gates_passed_count", 0)
-                pf_oos = it_data.get("profit_factor_oos", 0.0)
-                net_p = it_data.get("net_profit_oos", 0.0)
-                failed_g = it_data.get("failed_gate_names", [])
-
+        def step_callback(step_name: str, step_data: Dict[str, Any]):
+            if step_name == "1. PERFIL_MICROESTRUCTURA":
+                self.progress_pct = 25.0
+                self.current_math_telemetry = step_data
                 self.add_log(
                     "INFO",
-                    f"Iteración #{it_num}/{max_iterations}: Gates Pasados={gates_p}/11, "
-                    f"PF_OOS={pf_oos:.2f}, NetProfit={net_p:.1f} USD. Fallos: {', '.join(failed_g) if failed_g else 'NINGUNO (11/11)'}",
+                    f"Microestructura calculada: Hurst={step_data.get('hurst', 0.5):.3f} ({step_data.get('regime')}), "
+                    f"ParkinsonVol={step_data.get('parkinson_vol', 0.0):.5f}, Squeeze={'ACTIVO' if step_data.get('squeeze_active') else 'INACTIVO'}",
+                    step="2. SÍNTESIS PARAMÉTRICA",
+                    math=step_data,
+                )
+            elif step_name.startswith("ITERACION_"):
+                it_num = step_data.get("iteration", 1)
+                self.current_iteration = it_num
+                self.progress_pct = 25.0 + (it_num / max_iterations) * 70.0
+                gates_p = step_data.get("gates_passed", 0)
+                pf = step_data.get("profit_factor", 0.0)
+                pnl = step_data.get("net_profit_usd", 0.0)
+                failed = step_data.get("failed_gates", [])
+                self.add_log(
+                    "INFO",
+                    f"Iteración #{it_num}/{max_iterations}: Gates Pasados={gates_p}/11, PF={pf:.2f}, NetProfit={pnl:.1f} USD. "
+                    f"Fallos: {', '.join(failed) if failed else 'NINGUNO (11/11)'}",
                     step=f"ITERACION_{it_num}",
                 )
 
-        # Paso 4: Veredicto Final y Persistencia
+        # Ejecución en el optimizador universal
+        result = self.optimizer.optimize_candidate_closed_loop(
+            candidate_id=candidate_id,
+            max_iterations=max_iterations,
+            on_step_callback=step_callback,
+        )
+
         self.progress_pct = 100.0
-        final_gates = result.get("final_gates_passed", result.get("gates_passed_count", 0))
+        final_gates = result.get("final_gates_passed", 0)
         initial_gates = result.get("initial_gates_passed", 0)
         is_cert = result.get("is_certified", False)
 
@@ -357,19 +339,19 @@ class ContinuousResearchDaemon:
                 c_info["status"] = "CERTIFICADA" if is_cert else "MEJORADA" if final_gates > initial_gates else "COMPLETADA"
                 c_info["current_gates"] = final_gates
 
-            # Agregar a historial de procesados
+            # Registro en historial reciente
             self.processed_history.insert(0, {
                 "candidate_id": candidate_id,
-                "name": self.current_candidate_name,
-                "symbol": self.current_symbol,
-                "timeframe": self.current_timeframe,
-                "route": self.current_route,
+                "name": self.current_candidate_name or candidate_id,
+                "symbol": self.current_symbol or "BTC",
+                "timeframe": self.current_timeframe or "15m",
+                "route": self.current_route or "ULTRA",
                 "initial_gates": initial_gates,
                 "final_gates": final_gates,
                 "gate_delta": final_gates - initial_gates,
                 "is_certified": is_cert,
-                "profit_factor": result.get("final_profit_factor_oos", 0.0),
-                "net_profit_usd": result.get("final_net_profit_oos", 0.0),
+                "profit_factor": result.get("iteration_history", [{}])[-1].get("profit_factor_oos", 0.0) if result.get("iteration_history") else 0.0,
+                "net_profit_usd": result.get("iteration_history", [{}])[-1].get("net_profit_oos", 0.0) if result.get("iteration_history") else 0.0,
                 "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S"),
             })
             if len(self.processed_history) > 50:
@@ -379,20 +361,15 @@ class ContinuousResearchDaemon:
 
         self.add_log(
             "SUCCESS" if is_cert or final_gates > initial_gates else "INFO",
-            f"Fin de refinamiento para {candidate_id}: Resultado Final = {final_gates}/11 Gates (Delta: +{final_gates - initial_gates}).",
-            step="4. RESULTADO FINAL GUARDADO EN BD",
+            f"Fin de optimización para {candidate_id}: Resultado Final = {final_gates}/11 Gates (Delta: +{final_gates - initial_gates}).",
+            step="4. RESULTADO GUARDADO EN BD",
         )
 
-        # Sincronización automática a Firebase Cloud en tiempo real
-        try:
-            firebase_sync_manager.sync_all()
-        except Exception:
-            pass
-
+        self._sync_queue_to_firebase()
         return result
 
     def get_status(self) -> Dict[str, Any]:
-        """Retorna el estado de ejecución completo para alimentar el frontend."""
+        """Retorna el snapshot completo de estado para el visor en Next.js."""
         with self._lock:
             return {
                 "is_running": self.is_running,
@@ -416,9 +393,9 @@ class ContinuousResearchDaemon:
                     "tier_2_count": len([q for q in self.queue if q["tier"] == "TIER_2_NEAR_CERTIFIED"]),
                     "tier_3_count": len([q for q in self.queue if q["tier"] == "TIER_3_INCUBATOR"]),
                 },
-                "queue": copy.deepcopy(self.queue[:25]),
-                "recent_history": copy.deepcopy(self.processed_history[:15]),
-                "live_logs": copy.deepcopy(self.live_logs[-30:]),
+                "queue": copy.deepcopy(self.queue[:30]),
+                "recent_history": copy.deepcopy(self.processed_history[:20]),
+                "live_logs": copy.deepcopy(self.live_logs[-35:]),
             }
 
 

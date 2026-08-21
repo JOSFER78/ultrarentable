@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g07",
+  "run_id": "run_UR_ULTRA_LINK_USDT_4H",
+  "strategy_id": "UR_ULTRA_LINK_USDT_4H",
+  "strategy_snapshot_hash": "bf5f9ef0c2ef34f9e1ba2e34a2e36e9d3e384293308b771239ca8375754f16e1",
+  "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
-  "name": "REGIME_COVERAGE",
-  "passed": true,
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (3/4 reg\u00edmenes positivos, Retorno OOS: +1495.82%)",
-  "evidence": {
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "5804b27f8fc43e341051f401337e073f0b57bfa658b13d631d6dfd74d7eaf181",
+  "output_hash": "e550174bad76940ca926ec413903170378c40e3ad880db4cd657b38a6e240971",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +13012.65%)",
+  "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 509,
       "BEAR_TREND": 512,
@@ -12,19 +23,21 @@
       "HIGH_VOLATILITY": 524
     },
     "regime_trades_count": {
-      "BULL_TREND": 15,
+      "BULL_TREND": 14,
       "BEAR_TREND": 12,
-      "CHOP_RANGING": 22,
-      "HIGH_VOLATILITY": 20
+      "CHOP_RANGING": 21,
+      "HIGH_VOLATILITY": 18
     },
     "regime_return_pct": {
-      "BULL_TREND": 1124.7,
-      "BEAR_TREND": 187.22,
-      "CHOP_RANGING": 254.01,
-      "HIGH_VOLATILITY": -70.11
+      "BULL_TREND": 13487.52,
+      "BEAR_TREND": -198.27,
+      "CHOP_RANGING": -291.34,
+      "HIGH_VOLATILITY": 14.74
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 1495.82
-  }
+    "total_oos_return_pct": 13012.65
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-21T17:58:23.784591+00:00"
 }

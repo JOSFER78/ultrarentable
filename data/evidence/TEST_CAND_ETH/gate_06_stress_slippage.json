@@ -2,50 +2,50 @@
   "evidence_id": "ev_TEST_CAND_ETH_g06",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "7227793b18297eeeb3fe1269605d89080349cf4bb7ee7705f1a9ed62978f5390",
+  "strategy_snapshot_hash": "870ed0f5268059b61f521de6d5fa909058e964f2dea5839446f3d64879bd9cbd",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "767174f091b3948add80d93dbb3f07fedab3cbd476aa008bb1008fc8f8b3d199",
-  "output_hash": "6cf6259c862f79e7b776db7ab20928ef50e39f552329526878936e6283589662",
-  "status": "PASSED",
-  "score": 50.0,
-  "verdict": "PASSED: Resistencia a fricción verificada (2/4 escenarios aprobados, PF +1σ: 1.14)",
+  "input_hash": "dfd587b833f927ccd90e09650fff03df41c0229f7c6c9d6815be5183704ad712",
+  "output_hash": "48caf46596e539d1fb11f2efcb7dd3fc77726be59a0f40b92c828cdb3b113c48",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.35,
-        "stressed_net_pnl_usd": 136.6,
-        "stressed_profit_factor": 1.35,
-        "survived": true
+        "stressed_net_pnl_usd": -39.83,
+        "stressed_profit_factor": 0.2,
+        "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.91,
-        "stressed_net_pnl_usd": 62.6,
-        "stressed_profit_factor": 1.14,
-        "survived": true
+        "friction_penalty_per_trade_usd": 0.71,
+        "stressed_net_pnl_usd": -87.4,
+        "stressed_profit_factor": 0.04,
+        "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 1.74,
-        "stressed_net_pnl_usd": -48.4,
-        "stressed_profit_factor": 0.91,
+        "friction_penalty_per_trade_usd": 1.24,
+        "stressed_net_pnl_usd": -158.77,
+        "stressed_profit_factor": 0.01,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 2.78,
-        "stressed_net_pnl_usd": -186.84,
-        "stressed_profit_factor": 0.71,
+        "friction_penalty_per_trade_usd": 1.79,
+        "stressed_net_pnl_usd": -231.17,
+        "stressed_profit_factor": 0.0,
         "survived": false
       }
     },
-    "passed_scenarios_count": 2,
-    "min_required_scenarios": 2,
+    "passed_scenarios_count": 0,
+    "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T19:02:38.216380+00:00"
+  "created_at_utc": "2026-08-21T17:57:42.377341+00:00"
 }

@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_4H",
   "strategy_id": "UR_ULTRA_BTC_USDT_4H",
-  "strategy_snapshot_hash": "7fefdcdba00f0c7350dfa9844c5404af7051abafed60a32ce439982d8596176d",
+  "strategy_snapshot_hash": "a4fa16d1334e09f8c35b249df42d575c2b28698a53a218213733c9ba2a28a852",
   "dataset_id": "ds_binance_btcusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "63947ef9117bcdb5e66eea850aaeba1543a6020136bd8e00bc92f4661f160d02",
-  "output_hash": "3a7df6dab3113d6ca0bb366a678fb837e88c1aad380e97ec8b6cc22b69aa41a5",
+  "input_hash": "241bb384c27922e89958706283db9361259dc6302fe12f4dfa133378c1f91a75",
+  "output_hash": "c906a79afb832f9907cc8701bf206fe3b2df2ea286866bb8232df177aaca9dfd",
   "status": "FAILED",
-  "score": 69.0,
-  "verdict": "FALLO: Consenso insuficiente (69.0/100) u objeción crítica de riesgo",
+  "score": 55.0,
+  "verdict": "FALLO: Consenso insuficiente (55.0/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 69.0,
+    "consensus_score": 55.0,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 78.4,
+        "score": 60.8,
         "findings": [
           "Activo y Timeframe: BTC-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.52 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.13 con beneficio neto de $970.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 82.0,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 38.2% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 93.3% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 76 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 263 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $3.69 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 65.1,
+        "score": 65.2,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Drawdown: DD (93.3%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T17:49:12.472436+00:00"
+  "created_at_utc": "2026-08-21T17:58:24.958983+00:00"
 }
