@@ -112,9 +112,9 @@ export default function CandidatosFSMPage() {
   const [activeTab, setActiveTab] = useState<"individual" | "ensemble">("individual");
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedStatus, setSelectedStatus] = useState<string>("APPROVED");
+  const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [selectedTier, setSelectedTier] = useState<"ALL" | "TIER_1_CERTIFIED" | "TIER_2_NEAR_CERTIFIED" | "TIER_3_INCUBATOR" | "TIER_4_REJECTED">("ALL");
-  const [roiFilter, setRoiFilter] = useState<"MIN_15_MONTHLY" | "MIN_20_MONTHLY" | "ONLY_PROFITABLE" | "ALL">("MIN_15_MONTHLY");
+  const [roiFilter, setRoiFilter] = useState<"MIN_15_MONTHLY" | "MIN_20_MONTHLY" | "ONLY_PROFITABLE" | "ALL">("ALL");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
   const [versionFilter, setVersionFilter] = useState<string>("ALL");
@@ -414,9 +414,11 @@ export default function CandidatosFSMPage() {
     }
   };
 
-  const isCandidateRejected = (status?: string) => {
+  const isCandidateRejected = (status?: string, tier?: string) => {
+    if (tier === "TIER_1_CERTIFIED" || tier === "TIER_2_NEAR_CERTIFIED" || tier === "TIER_3_INCUBATOR") return false;
     if (!status) return true;
     const s = status.toUpperCase();
+    if (s === "CANDIDATA_AVANZADA" || s === "INCUBADORA_REPROGRAMACION" || s === "APPROVED" || s.startsWith("CERTIFIED")) return false;
     return (
       s.startsWith("RECHAZADA") ||
       s.startsWith("REJECTED") ||
@@ -426,21 +428,21 @@ export default function CandidatosFSMPage() {
     );
   };
 
-  const isApprovedStatus = (status?: string) => {
+  const isApprovedStatus = (status?: string, tier?: string) => {
+    if (tier === "TIER_1_CERTIFIED") return true;
     if (!status) return false;
     const s = status.toUpperCase();
     return (
-      !isCandidateRejected(status) &&
-      (s === "APPROVED" || s === "ULTRA_CERTIFIED" || s === "FUNDING_CERTIFIED" || s === "PORTFOLIO_CERTIFIED" || s.startsWith("CERTIFIED"))
+      s === "APPROVED" || s === "ULTRA_CERTIFIED" || s === "FUNDING_CERTIFIED" || s === "PORTFOLIO_CERTIFIED" || s.startsWith("CERTIFIED")
     );
   };
 
-  const approvedCount = useMemo(() => candidates.filter((c) => isApprovedStatus(c.status)).length, [candidates]);
-  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status)).length, [candidates]);
-  const discoveryCount = useMemo(() => candidates.filter((c) => !isApprovedStatus(c.status) && !isCandidateRejected(c.status)).length, [candidates]);
-  const tier1Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_1_CERTIFIED" || isApprovedStatus(c.status)).length, [candidates]);
+  const tier1Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_1_CERTIFIED" || isApprovedStatus(c.status, c.tier)).length, [candidates]);
   const tier2Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 10 || c.gates_passed_count === 9).length, [candidates]);
   const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || c.gates_passed_count === 8 || c.gates_passed_count === 7).length, [candidates]);
+  const approvedCount = tier1Count;
+  const discoveryCount = useMemo(() => tier2Count + tier3Count, [tier2Count, tier3Count]);
+  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status, c.tier)).length, [candidates]);
 
   const top5Ultra = useMemo(() => {
     const sorted = [...candidates.filter((c) => c.route === "ULTRA" && !isCandidateRejected(c.status))].sort((a, b) => {
@@ -694,12 +696,11 @@ ${entryLogic}`;
 
   const sortedCandidates = useMemo(() => {
     const filtered = candidates.filter((c) => {
-      const isApproved = isApprovedStatus(c.status);
-      const isRejected = isCandidateRejected(c.status);
-      const isDiscovery = !isApproved && !isRejected;
-
-      // Ocultar estrictamente rechazadas a menos que el usuario filtre explícitamente por "RECHAZADAS"
-      if (selectedStatus !== "REJECTED" && isRejected) return false;
+      const isApproved = isApprovedStatus(c.status, c.tier);
+      const isTier2 = c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 10 || c.gates_passed_count === 9;
+      const isTier3 = c.tier === "TIER_3_INCUBATOR" || c.gates_passed_count === 8 || c.gates_passed_count === 7;
+      const isRejected = isCandidateRejected(c.status, c.tier);
+      const isDiscovery = isTier2 || isTier3;
 
       if (selectedStatus === "APPROVED" && !isApproved) return false;
       if (selectedStatus === "REJECTED" && !isRejected) return false;
@@ -707,10 +708,10 @@ ${entryLogic}`;
 
       // Multi-Tier Quantitative Filter (100% Real, Cero Descarte Ciego)
       if (selectedTier !== "ALL") {
-        if (selectedTier === "TIER_1_CERTIFIED" && c.tier !== "TIER_1_CERTIFIED" && !isApproved) return false;
-        if (selectedTier === "TIER_2_NEAR_CERTIFIED" && c.tier !== "TIER_2_NEAR_CERTIFIED" && c.gates_passed_count !== 10 && c.gates_passed_count !== 9) return false;
-        if (selectedTier === "TIER_3_INCUBATOR" && c.tier !== "TIER_3_INCUBATOR" && c.gates_passed_count !== 8 && c.gates_passed_count !== 7) return false;
-        if (selectedTier === "TIER_4_REJECTED" && c.tier !== "TIER_4_REJECTED" && !isRejected) return false;
+        if (selectedTier === "TIER_1_CERTIFIED" && !isApproved) return false;
+        if (selectedTier === "TIER_2_NEAR_CERTIFIED" && !isTier2) return false;
+        if (selectedTier === "TIER_3_INCUBATOR" && !isTier3) return false;
+        if (selectedTier === "TIER_4_REJECTED" && !isRejected) return false;
       }
 
       const oos = c.metrics?.out_of_sample;
@@ -733,6 +734,17 @@ ${entryLogic}`;
     });
 
     return [...filtered].sort((a, b) => {
+      // Priorizar por Tier (Tier 1 > Tier 2 > Tier 3 > Tier 4)
+      const tierWeight = (c: CandidateItem) => {
+        if (c.tier === "TIER_1_CERTIFIED" || isApprovedStatus(c.status, c.tier)) return 4;
+        if (c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 10 || c.gates_passed_count === 9) return 3;
+        if (c.tier === "TIER_3_INCUBATOR" || c.gates_passed_count === 8 || c.gates_passed_count === 7) return 2;
+        return 1;
+      };
+      const wA = tierWeight(a);
+      const wB = tierWeight(b);
+      if (wA !== wB) return wB - wA;
+
       const roiA = a.metrics?.out_of_sample?.monthly_roi_pct ?? ((a.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
       const roiB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
       return roiB - roiA;

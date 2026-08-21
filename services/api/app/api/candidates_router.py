@@ -179,7 +179,18 @@ def list_candidates(
             elif resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"):
                 passed_count = 11
             else:
-                passed_count = 8 if (pf_oos >= 1.2 and dd_oos <= 15.0) else 5
+                import re
+                m = re.search(r"(\d+)/11", resolved_reason)
+                if m:
+                    passed_count = int(m.group(1))
+                elif pf_oos >= 1.40 and dd_oos <= 45.0 and trades_count_oos >= 20:
+                    passed_count = 10
+                elif pf_oos >= 1.20 and dd_oos <= 65.0 and trades_count_oos >= 10:
+                    passed_count = 9
+                elif pf_oos >= 1.05 and dd_oos <= 80.0:
+                    passed_count = 7
+                else:
+                    passed_count = 5
 
         cand_tier = sc.get("tier")
         if not cand_tier:
