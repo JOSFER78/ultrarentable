@@ -2,12 +2,12 @@
   "gate_id": 4,
   "name": "WALK_FORWARD",
   "passed": false,
-  "score": 68.4,
-  "verdict": "FALLO: Degradaci\u00f3n temporal excesiva (WFE 1.37 < 0.40 \u00f3 Consistencia 20.0% < 40%)",
+  "score": 106.7,
+  "verdict": "FALLO: Degradaci\u00f3n temporal excesiva (WFE 2.13 < 0.40 \u00f3 Consistencia 20.0% < 40%)",
   "evidence": {
-    "total_trades_analyzed": 118,
+    "total_trades_analyzed": 116,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.37,
+    "walk_forward_efficiency": 2.13,
     "oos_consistency_pct": 20.0,
     "min_wfe_required": 0.5,
     "windows_details": [
@@ -36,25 +36,25 @@
         "pf_is": 0.47,
         "pf_oos": 0.15,
         "net_profit_oos_usd": -0.03,
-        "wfe": 0.31
+        "wfe": 0.32
       },
       {
         "window_index": 4,
         "is_trades_count": 16,
         "oos_trades_count": 7,
         "pf_is": 0.21,
-        "pf_oos": 1.27,
-        "net_profit_oos_usd": 0.01,
-        "wfe": 6.03
+        "pf_oos": 2.11,
+        "net_profit_oos_usd": 0.02,
+        "wfe": 9.87
       },
       {
         "window_index": 5,
         "is_trades_count": 16,
         "oos_trades_count": 7,
         "pf_is": 0.57,
-        "pf_oos": 0.16,
+        "pf_oos": 0.15,
         "net_profit_oos_usd": -0.04,
-        "wfe": 0.28
+        "wfe": 0.27
       }
     ]
   }

@@ -15,7 +15,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BTCUSDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.00 con beneficio neto de $-1013.77.",
+          "Profit Factor OOS: 0.00 con beneficio neto de $-1000.00.",
           "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -25,7 +25,7 @@
         "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown M\u00e1ximo Observado: 101.4% (L\u00edmite permitido para ULTRA: 85.0%).",
+          "Drawdown M\u00e1ximo Observado: 100.0% (L\u00edmite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -35,8 +35,8 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 33 operaciones evaluadas (M\u00ednimo requerido: 10).",
-          "Grado de confianza: ALTO."
+          "Muestra fuera de muestra: 21 operaciones evaluadas (M\u00ednimo requerido: 10).",
+          "Grado de confianza: MODERADO."
         ],
         "approved": true
       },
@@ -45,7 +45,7 @@
         "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operaci\u00f3n: $-30.72 USD.",
+          "Beneficio medio por operaci\u00f3n: $-47.62 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -55,7 +55,7 @@
         "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (101.4%) consume m\u00e1s del 90% del margen tolerable.",
+          "Alerta de Drawdown: DD (100.0%) consume m\u00e1s del 90% del margen tolerable.",
           "Alerta de Rentabilidad: Profit factor 0.00 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false

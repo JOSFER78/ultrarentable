@@ -2,20 +2,20 @@
   "gate_id": 10,
   "name": "DEBATE_AGENTES",
   "passed": false,
-  "score": 25.5,
-  "verdict": "FALLO: Consenso insuficiente (25.5/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "score": 24.7,
+  "verdict": "FALLO: Consenso insuficiente (24.7/100) u objeci\u00f3n cr\u00edtica de riesgo",
   "evidence": {
-    "consensus_score": 25.5,
+    "consensus_score": 24.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
-        "score": 23.5,
+        "score": 20.8,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.30 con beneficio neto de $-8697.31.",
+          "Profit Factor OOS: 0.24 con beneficio neto de $-9976.01.",
           "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -25,7 +25,7 @@
         "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown M\u00e1ximo Observado: 17.6% (L\u00edmite permitido para FONDEO: 4.5%).",
+          "Drawdown M\u00e1ximo Observado: 20.1% (L\u00edmite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -35,7 +35,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 158 operaciones evaluadas (M\u00ednimo requerido: 20).",
+          "Muestra fuera de muestra: 159 operaciones evaluadas (M\u00ednimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -45,7 +45,7 @@
         "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operaci\u00f3n: $-55.05 USD.",
+          "Beneficio medio por operaci\u00f3n: $-62.74 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -53,10 +53,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
-        "score": 30.9,
+        "score": 30.2,
         "objections": [
-          "Alerta de Drawdown: DD (17.6%) consume m\u00e1s del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.30 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (20.1%) consume m\u00e1s del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.24 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }

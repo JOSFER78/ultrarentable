@@ -20,27 +20,24 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
     ],
   },
   {
-    label: "RUTAS DE TRADING DUAL",
+    label: "ESTRATEGIAS (6 FASES DETERMINISTAS)",
+    items: [
+      { code: "1", label: "1. Motor 24/7 en Vivo", href: "/sistema", badge: "24/7", accent: "#34d399" },
+      { code: "2", label: "2. Explorador Excel", href: "/strategies", badge: "230", accent: "#38bdf8" },
+      { code: "3", label: "3. Pipeline 11 Pasos (FSM)", href: "/candidatos", badge: "11-G", accent: "#818cf8" },
+      { code: "4", label: "4. Panel Investigador Semántico", href: "/research", badge: "LAB", accent: "#facc15" },
+      { code: "5", label: "5. Estrategias Aprobadas (11/11)", href: "/gates", badge: "CERT", accent: "#10b981" },
+      { code: "6", label: "6. Meta-Estrategia Ensamblada", href: "/portfolio", badge: "META", accent: "#ec4899" },
+    ],
+  },
+  {
+    label: "RUTAS DE TRADING DUAL & EJECUCIÓN",
     items: [
       { code: "BX", label: "ULTRA · BingX Perps", href: "/ultra", badge: "VAULT", accent: "#ef4444" },
       { code: "FD", label: "FONDEO · CME Prop", href: "/fondeo", badge: "50K", accent: "#3b82f6" },
       { code: "PF", label: "Catálogo 34 Firmas", href: "/prop-firms", badge: "PROP" },
-    ],
-  },
-  {
-    label: "VALIDACIÓN & GOBERNANZA",
-    items: [
       { code: "QVF", label: "Validation Fabric Dual", href: "/bifurcacion", badge: "DSR" },
-      { code: "FSM", label: "Candidate Registry (10 St)", href: "/candidatos", badge: "DAG" },
-      { code: "IA", label: "Semantic AI & Failure-DB", href: "/research", badge: "MEM" },
-    ],
-  },
-  {
-    label: "EJECUCIÓN & SISTEMA",
-    items: [
       { code: "PPR", label: "Paper Sandbox (14d)", href: "/ejecucion", badge: "LIVE" },
-      { code: "PTF", label: "Portfolio Multi-Activo", href: "/portfolio", badge: "HRP" },
-      { code: "SYS", label: "Supervisor & 8 Workers", href: "/sistema", badge: "SSE", accent: "#34d399" },
     ],
   },
 ];

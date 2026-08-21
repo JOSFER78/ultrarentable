@@ -12,6 +12,10 @@ interface Candidate {
   timeframe: string;
   status: string;
   status_reason?: string;
+  tier?: string;
+  tier_label?: string;
+  gates_passed_count?: number;
+  overall_score?: number;
   engine_version?: string;
   validation_pipeline_version?: string;
   duration_info?: any;
@@ -49,7 +53,7 @@ export default function StrategiesExplorerPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(25);
 
-  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "ALL" | "REJECTED">("APPROVED");
+  const [statusFilter, setStatusFilter] = useState<"APPROVED" | "TIER_2" | "TIER_3" | "ALL" | "REJECTED">("ALL");
   const [sortField, setSortField] = useState<string>("monthly_roi_pct");
   const [sortDirection, setSortDirection] = useState<"DESC" | "ASC">("DESC");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -351,15 +355,24 @@ export default function StrategiesExplorerPage() {
     );
   };
 
-  const approvedCount = useMemo(() => candidates.filter((c) => isCandidateApproved(c.status)).length, [candidates]);
-  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status)).length, [candidates]);
+  const tier1Count = useMemo(() => candidates.filter((c) => (c.tier === "TIER_1_CERTIFIED" || c.gates_passed_count === 11) && isCandidateApproved(c.status)).length, [candidates]);
+  const tier2Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_2_NEAR_CERTIFIED" || (c.gates_passed_count != null && c.gates_passed_count >= 9 && c.gates_passed_count <= 10)).length, [candidates]);
+  const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || (c.gates_passed_count != null && c.gates_passed_count >= 7 && c.gates_passed_count <= 8)).length, [candidates]);
+  const approvedCount = tier1Count;
+  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status) && (!c.tier || c.tier === "TIER_4_REJECTED" || (c.gates_passed_count ?? 0) < 7)).length, [candidates]);
   const totalCount = candidates.length;
 
   // Filter candidates strictly according to user doctrine
   const filtered = candidates.filter((c) => {
     const isRejected = isCandidateRejected(c.status);
     const isApproved = isCandidateApproved(c.status);
+    const gCount = c.gates_passed_count ?? 0;
+    const isT2 = c.tier === "TIER_2_NEAR_CERTIFIED" || (gCount >= 9 && gCount <= 10);
+    const isT3 = c.tier === "TIER_3_INCUBATOR" || (gCount >= 7 && gCount <= 8);
+
     if (statusFilter === "APPROVED" && !isApproved) return false;
+    if (statusFilter === "TIER_2" && !isT2) return false;
+    if (statusFilter === "TIER_3" && !isT3) return false;
     if (statusFilter === "REJECTED" && !isRejected) return false;
     if (selectedRoute !== "ALL" && c.route?.toUpperCase() !== selectedRoute) return false;
     if (selectedSymbol !== "ALL" && !c.symbol?.includes(selectedSymbol)) return false;
@@ -717,11 +730,11 @@ export default function StrategiesExplorerPage() {
         {/* Selector de Estado y Ruta */}
         <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
           {/* Status Tabs */}
-          <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "3px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ display: "flex", background: "rgba(0,0,0,0.3)", padding: "3px", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.08)", gap: "2px" }}>
             <button
               onClick={() => setStatusFilter("APPROVED")}
               style={{
-                padding: "4px 10px",
+                padding: "4px 8px",
                 borderRadius: "4px",
                 fontSize: "11px",
                 fontWeight: 900,
@@ -732,12 +745,44 @@ export default function StrategiesExplorerPage() {
                 borderBottom: statusFilter === "APPROVED" ? "2px solid #10b981" : "none",
               }}
             >
-              ✓ APROBADAS ({approvedCount})
+              🏆 TIER 1 ({tier1Count})
+            </button>
+            <button
+              onClick={() => setStatusFilter("TIER_2")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: 900,
+                border: "none",
+                cursor: "pointer",
+                background: statusFilter === "TIER_2" ? "rgba(56, 189, 248, 0.25)" : "transparent",
+                color: statusFilter === "TIER_2" ? "#38bdf8" : "#94a3b8",
+                borderBottom: statusFilter === "TIER_2" ? "2px solid #38bdf8" : "none",
+              }}
+            >
+              💎 TIER 2: DIAMANTES ({tier2Count})
+            </button>
+            <button
+              onClick={() => setStatusFilter("TIER_3")}
+              style={{
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "11px",
+                fontWeight: 900,
+                border: "none",
+                cursor: "pointer",
+                background: statusFilter === "TIER_3" ? "rgba(250, 204, 21, 0.25)" : "transparent",
+                color: statusFilter === "TIER_3" ? "#facc15" : "#94a3b8",
+                borderBottom: statusFilter === "TIER_3" ? "2px solid #facc15" : "none",
+              }}
+            >
+              🧪 TIER 3: INCUBADORA ({tier3Count})
             </button>
             <button
               onClick={() => setStatusFilter("ALL")}
               style={{
-                padding: "4px 10px",
+                padding: "4px 8px",
                 borderRadius: "4px",
                 fontSize: "11px",
                 fontWeight: 800,
@@ -752,7 +797,7 @@ export default function StrategiesExplorerPage() {
             <button
               onClick={() => setStatusFilter("REJECTED")}
               style={{
-                padding: "4px 10px",
+                padding: "4px 8px",
                 borderRadius: "4px",
                 fontSize: "11px",
                 fontWeight: 800,
@@ -1380,8 +1425,28 @@ export default function StrategiesExplorerPage() {
                             fontFamily: "var(--font-mono, monospace)",
                           }}
                         >
-                          Ver ADR
+                          Ver ADN
                         </button>
+                        <Link
+                          href={`/research?candidate_id=${c.candidate_id}`}
+                          style={{
+                            padding: "3px 8px",
+                            borderRadius: "4px",
+                            background: "rgba(250, 204, 21, 0.15)",
+                            border: "1px solid rgba(250, 204, 21, 0.4)",
+                            color: "#facc15",
+                            fontSize: "10px",
+                            fontWeight: 800,
+                            textDecoration: "none",
+                            fontFamily: "var(--font-mono, monospace)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "3px",
+                          }}
+                          title="Abrir en el Laboratorio de Refinamiento Cuantitativo & IA (Punto 4)"
+                        >
+                          🔬 Refinar en Lab
+                        </Link>
                       </td>
                     </tr>
                   );
