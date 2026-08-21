@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_15M_g03",
   "run_id": "run_UR_ULTRA_USDCHF_15M",
   "strategy_id": "UR_ULTRA_USDCHF_15M",
-  "strategy_snapshot_hash": "a44f47a3c1e2c5e270bc63a2203c84edd916800fe25b62d0b2f30c83f51985fe",
+  "strategy_snapshot_hash": "c6dea482021d84072d9418e6e089ec9bbe2e29a5da3a97a225e5daff3bc7b1a7",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "829f383b8db2773d3fadec389a7767e51b73fb17fef4ce82d2baafba36e810e3",
-  "output_hash": "06b2b5d01a577fcd067597292b5d201e43fa8f710031747b8f8ba21d01246478",
-  "status": "PASSED",
+  "input_hash": "d7d2889668aa77c089db5923e48991955154bdb3211ff9f8c706a38d6b22bd48",
+  "output_hash": "a070c65975af22ef5b32d83c798e37707970b99454079ca5a62fe0233e00f1f9",
+  "status": "FAILED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (85 IS / 29 OOS · Ultra Convex)",
+  "verdict": "FALLO: Muestra insuficiente (29 IS < 15 ó 21 OOS < 10)",
   "metrics": {
-    "trades_is": 85,
-    "trades_oos": 29,
-    "top2_outlier_dependency_pct": 77.5,
+    "trades_is": 29,
+    "trades_oos": 21,
+    "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T08:41:38.848550+00:00"
+  "created_at_utc": "2026-08-21T22:22:18.971292+00:00"
 }

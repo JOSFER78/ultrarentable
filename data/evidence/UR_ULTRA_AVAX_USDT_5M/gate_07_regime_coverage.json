@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "120abb0372ee5cb7137ff397f039fceeeb70144a7007910efe0fc3628f9acc6a",
+  "strategy_snapshot_hash": "1309149f0d7d1c7e1fbb24fa74f54ef7682ae2704afbe56158da7e3a3df2d430",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "41777d218ed68974c9f047a9409d4c05eb9f1a7f3ce0f2fb262f489f88a55aa3",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "2706a5cdda509d10ded5c1bee3fc4284e4799dc6cc087f07eb3611d531cfd499",
-  "output_hash": "4440646bde61016f7ddf0edc5f76406a3584914b4e06db95f099bc336dd12f6f",
-  "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-71.88)",
+  "input_hash": "72ceaf029556eba7d805daced799c706883dea4c1fe0a3239295b66e9b20baf8",
+  "output_hash": "bb003415af9752371078a2cfa6084978aa384e256731506124de6d988d336d77",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +200.23%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 43,
-      "HIGH_VOLATILITY": 5
+      "CHOP_RANGING": 48,
+      "HIGH_VOLATILITY": 7
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -266.21,
-      "HIGH_VOLATILITY": 194.33
+      "CHOP_RANGING": 284.47,
+      "HIGH_VOLATILITY": -84.24
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -71.88
+    "total_oos_return_pct": 200.23
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:27:16.960726+00:00"
+  "created_at_utc": "2026-08-21T22:22:12.582237+00:00"
 }

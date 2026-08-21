@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "120abb0372ee5cb7137ff397f039fceeeb70144a7007910efe0fc3628f9acc6a",
+  "strategy_snapshot_hash": "1309149f0d7d1c7e1fbb24fa74f54ef7682ae2704afbe56158da7e3a3df2d430",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "41777d218ed68974c9f047a9409d4c05eb9f1a7f3ce0f2fb262f489f88a55aa3",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "7c345bbbcc7e7d94dec5a5d159ea3c9fdd1d252f20eebcd2362d6ef023180599",
-  "output_hash": "b1a7969c6f90aa692dd6f273261d9d4c481bf0ceb0e8b11cfb3aefa9ef8d5b54",
+  "input_hash": "c7ee2d178253eb42bcd2d7cc66d50253d8ba091177e7187d4f63e1200bc0e052",
+  "output_hash": "b720c19aa4bb6f0d237981fafff668d5fa4457ab74e28d3b4ffed2481c93a73f",
   "status": "PASSED",
-  "score": 96.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 22.6 trades/param, Estabilidad Vecindario: 114.4%, Re-backtest PFs: [1.24, 1.09, 1.06, 1.05])",
+  "score": 97.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 43.8 trades/param, Estabilidad Vecindario: 95.1%, Re-backtest PFs: [1.16, 1.24, 1.36, 1.26])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 22.6,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 43.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 114.4,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 95.1,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
+      1.16,
       1.24,
-      1.09,
-      1.06,
-      1.05
+      1.36,
+      1.26
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:27:17.138460+00:00"
+  "created_at_utc": "2026-08-21T22:22:13.044749+00:00"
 }

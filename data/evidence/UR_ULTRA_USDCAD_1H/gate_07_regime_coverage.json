@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_1H_g07",
   "run_id": "run_UR_ULTRA_USDCAD_1H",
   "strategy_id": "UR_ULTRA_USDCAD_1H",
-  "strategy_snapshot_hash": "5a23c52ad9eb465b4aa0db84c49e3924cd9f6f359df4cd0c0b573c029c9049e2",
+  "strategy_snapshot_hash": "b6ea7a95973733e284443b23e8880df6b960e3fc4354d50cd7091695ec607832",
   "dataset_id": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c27e6232ad9ddab77fa2e05d7e92eee0f8864171673d3d43d1f50a51708b4110",
-  "output_hash": "c3f73f2faaeb7a6fca7a66a82338c8894f915b341bc80a18ae1eea8986a3803c",
-  "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-22.24)",
+  "input_hash": "1db062fd8e7395c467d638fa72d5f843d6abf613d5eca2dbe8aad3395ac79196",
+  "output_hash": "f0a44c8e4c81de369e7408b9e04643c83f9e30534a38fd8581b8e96c00a2186d",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +13.15%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -28,16 +28,16 @@
       "CHOP_RANGING": 62,
       "HIGH_VOLATILITY": 6
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -24.91,
-      "HIGH_VOLATILITY": 2.67
+      "CHOP_RANGING": -2.5,
+      "HIGH_VOLATILITY": 15.65
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -22.24
+    "total_oos_return_pct": 13.15
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T08:41:05.366056+00:00"
+  "created_at_utc": "2026-08-21T22:22:02.437014+00:00"
 }

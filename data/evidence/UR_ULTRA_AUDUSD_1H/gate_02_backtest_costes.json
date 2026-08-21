@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g02",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "cbbb0e339038f2042931d515b9fa5864ec9ac084c9f3b726a402ed445f3fbb56",
+  "strategy_snapshot_hash": "aa21f767096071973bab8cbdd0f7deed299061af699e306273d7d4621110289c",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "54af272210fb2abd7618e8ae46c6aa51c05011873c116dd6f8e061e38edafd34",
-  "output_hash": "90e77a77d02235d02fcb29a88fbfe73de528af032b9cb8f57e61cb0ef0cd7241",
+  "input_hash": "d10f4d7c6d95c6f8bc93b5c43bd1d8b8dd77bf00c015ea1accc66e733ba0924b",
+  "output_hash": "e5ac37e68b2e6a9854dea58d9337941308599ee148fe76ce472b7342123e3bd3",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.74 < 1.10",
+  "score": 9.8,
+  "verdict": "FALLO: PF Neto 1.10 < 1.10",
   "metrics": {
     "market_category": "FOREX",
     "canonical_name": "Australian Dollar / USD",
     "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": -934619.68,
-    "total_fees_usd": 524734.62,
-    "total_slippage_usd": 1049469.24,
-    "net_pnl_usd": -2508823.55,
-    "net_profit_factor": 0.74,
-    "drag_cost_pct": 168.43
+    "gross_pnl_usd": 5488398.75,
+    "total_fees_usd": 1206331.14,
+    "total_slippage_usd": 2412662.29,
+    "net_pnl_usd": 1869405.32,
+    "net_profit_factor": 1.1,
+    "drag_cost_pct": 65.94
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T08:41:32.041010+00:00"
+  "created_at_utc": "2026-08-21T22:22:55.949612+00:00"
 }

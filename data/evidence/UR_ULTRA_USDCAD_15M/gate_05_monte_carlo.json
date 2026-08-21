@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15M_g05",
   "run_id": "run_UR_ULTRA_USDCAD_15M",
   "strategy_id": "UR_ULTRA_USDCAD_15M",
-  "strategy_snapshot_hash": "83ea4d680ab8d0ec53cd38ffead6c9210aaa99256591cfe42727a886cbbc0985",
+  "strategy_snapshot_hash": "19e71e5831d1012b5a6ea424aca0406b08f0823a6bb46832265ec2315d6853fa",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ef27e9d09ee3b45c8c724822caa446830b778823dc4a3daf7180dc53828e8bf2",
-  "output_hash": "5c18469693271578136427ddb9a63fc891357c411e509c11ba6300a230e74bc4",
+  "input_hash": "d2ea1c2a14e0f7ac81170e1b99b7f68a52558d8795305da1f0b40df6122cd1ee",
+  "output_hash": "8b4fe10d10fe15ae2003fedf97ef29191af9873dd87ea2c01578cd1c1ffbc922",
   "status": "PASSED",
-  "score": 97.5,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 5.0%)",
+  "score": 98.6,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 2.9%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 3.5,
-    "drawdown_95th_percentile_pct": 5.0,
-    "max_simulated_drawdown_pct": 5.9
+    "drawdown_median_pct": 1.9,
+    "drawdown_95th_percentile_pct": 2.9,
+    "max_simulated_drawdown_pct": 3.2
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T08:40:51.977860+00:00"
+  "created_at_utc": "2026-08-21T22:21:34.123823+00:00"
 }

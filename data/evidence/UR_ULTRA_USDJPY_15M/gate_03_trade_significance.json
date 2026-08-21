@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_15M_g03",
   "run_id": "run_UR_ULTRA_USDJPY_15M",
   "strategy_id": "UR_ULTRA_USDJPY_15M",
-  "strategy_snapshot_hash": "27b078077bd9b65c6545494741e33740ceb32d6c122f7eb3ce89c35d230acb9a",
+  "strategy_snapshot_hash": "57de02e35d32105c3f22dd789580f81f3b0301d36eaef97c9f0c6fb48b08fc6f",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "98732d7657d2672088f062c5b65ebf522e8114d044919ced36cce0dda8e309ea",
-  "output_hash": "1be0d04381473dd677e44a1e4a5d633f94a8b0781bdff4798b8ace9b7c519990",
+  "input_hash": "73dc3bfe8cfed58866505cba0258f24576163d002682dfe7aed1622fbf829f3b",
+  "output_hash": "b014db6b122e547ff2b8bfe91766dd9540f3fafdf5abd792d0dd2512e121c97c",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (92 IS / 20 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (23 IS / 20 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 92,
+    "trades_is": 23,
     "trades_oos": 20,
-    "top2_outlier_dependency_pct": 72.7,
+    "top2_outlier_dependency_pct": 60.8,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T08:41:27.066154+00:00"
+  "created_at_utc": "2026-08-21T22:21:36.535456+00:00"
 }

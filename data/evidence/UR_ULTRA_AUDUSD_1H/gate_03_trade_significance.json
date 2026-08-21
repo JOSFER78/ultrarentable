@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g03",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "cbbb0e339038f2042931d515b9fa5864ec9ac084c9f3b726a402ed445f3fbb56",
+  "strategy_snapshot_hash": "aa21f767096071973bab8cbdd0f7deed299061af699e306273d7d4621110289c",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "061a0483d79c6c970dace49287612d142a51bf83904deb109dac7722f578ef08",
-  "output_hash": "751553caa877f5641fc5d146f76e1d33f79210045b083ef1b0ae14ad1fb90eb8",
+  "input_hash": "170c9a2e2211ddf60d8d6f1357bdbd21d1b674a53c839cbe7bc5459ca1f5449e",
+  "output_hash": "fdc8225c82151a561289dccefe7abd65293ed818397428e9b9cdc59e81a3273a",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (291 IS / 116 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (54 IS / 72 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 291,
-    "trades_oos": 116,
-    "top2_outlier_dependency_pct": 25.7,
+    "trades_is": 54,
+    "trades_oos": 72,
+    "top2_outlier_dependency_pct": 57.4,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T08:41:32.041498+00:00"
+  "created_at_utc": "2026-08-21T22:22:55.958032+00:00"
 }

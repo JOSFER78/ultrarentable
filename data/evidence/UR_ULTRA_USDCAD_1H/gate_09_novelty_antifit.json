@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_1H_g09",
   "run_id": "run_UR_ULTRA_USDCAD_1H",
   "strategy_id": "UR_ULTRA_USDCAD_1H",
-  "strategy_snapshot_hash": "5a23c52ad9eb465b4aa0db84c49e3924cd9f6f359df4cd0c0b573c029c9049e2",
+  "strategy_snapshot_hash": "b6ea7a95973733e284443b23e8880df6b960e3fc4354d50cd7091695ec607832",
   "dataset_id": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c0674e7ecccf67c0fe295d040c36e3cd9cea72c06dc3664d40c2a2e2ef7799b7",
-  "output_hash": "22f4c3ba90f41bffdb2fb055a93734902e4c752114ef6cffd2a20dd8a8d23681",
+  "input_hash": "3e6566b0012830b9ded4ba09ec8a4c93a4c97c85a452c1e8b9c45ce0b8a68f43",
+  "output_hash": "09b493af0045391821dec6ef76602d0a3915014dbbf8ba7a9ca0d50461267acc",
   "status": "PASSED",
-  "score": 81.7,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 17.0 trades/param, Estabilidad Vecindario: 90.8%, Re-backtest PFs: [0.54, 0.62, 0.81, 0.9])",
+  "score": 89.6,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 27.8 trades/param, Estabilidad Vecindario: 82.6%, Re-backtest PFs: [0.34, 1.04, 1.05, 1.04])",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 17.0,
+    "degrees_of_freedom_ratio": 27.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 90.8,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 82.6,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.54,
-      0.62,
-      0.81,
-      0.9
+      0.34,
+      1.04,
+      1.05,
+      1.04
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T08:41:06.055717+00:00"
+  "created_at_utc": "2026-08-21T22:22:03.194284+00:00"
 }

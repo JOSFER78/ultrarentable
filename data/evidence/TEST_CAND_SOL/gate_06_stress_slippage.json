@@ -11,41 +11,41 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "b43030a7ca09858ecab17b9fa8dfba1782a44ffe83c15c3bfe9339d9a0d690c4",
-  "output_hash": "24901aceaeef543c48ecb21b2ad61c27bfd2f0eb9f7b17bddf213e6abe1594a2",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
+  "output_hash": "dfdc576cce9a05b6ed3c0b7d98d255fec60b3a3a45b0c2d50911c3056bbf2f0a",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
   "metrics": {
     "scenarios": {
       "Base": {
-        "friction_penalty_per_trade_usd": 0.35,
-        "stressed_net_pnl_usd": -9.49,
-        "stressed_profit_factor": 0.62,
-        "survived": false
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": 11.48,
+        "stressed_profit_factor": 2.55,
+        "survived": true
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.73,
-        "stressed_net_pnl_usd": -32.2,
-        "stressed_profit_factor": 0.28,
-        "survived": false
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 11.02,
+        "stressed_profit_factor": 2.42,
+        "survived": true
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 1.3,
-        "stressed_net_pnl_usd": -66.27,
-        "stressed_profit_factor": 0.14,
-        "survived": false
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 10.55,
+        "stressed_profit_factor": 2.29,
+        "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 1.89,
-        "stressed_net_pnl_usd": -102.05,
-        "stressed_profit_factor": 0.08,
-        "survived": false
+        "friction_penalty_per_trade_usd": 0.03,
+        "stressed_net_pnl_usd": 9.65,
+        "stressed_profit_factor": 2.08,
+        "survived": true
       }
     },
-    "passed_scenarios_count": 0,
+    "passed_scenarios_count": 4,
     "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:11:35.741153+00:00"
+  "created_at_utc": "2026-08-21T22:22:45.702668+00:00"
 }

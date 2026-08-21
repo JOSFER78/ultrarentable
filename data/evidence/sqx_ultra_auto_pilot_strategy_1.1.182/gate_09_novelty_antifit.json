@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.1.182_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.1.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.1.182",
-  "strategy_snapshot_hash": "589819f82a90d8370009068edb494c7746d2b90455fe2af41e895807f4164749",
+  "strategy_snapshot_hash": "fd63c2f7e045a80ae760ed3c4080a130773088106eb8746fd9fceb8203cc2015",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "baa8683b10f572b60a880bf84e22a2473c07b44bbeec0c67208a4b65ccb0f4c7",
-  "output_hash": "a21d336dd2a4f184974e2d7f51aede95e5e43607907a39b0caeeda7a6e92b778",
+  "input_hash": "adb0eb393bc07adfe11e597eb6c0d5eb8e2b07b890aa4b56a4a56ecb17bc3df0",
+  "output_hash": "ef56706be904a9485f26b2ec4c051e2a28fdf7825a809c9157e97f176b972bca",
   "status": "FAILED",
-  "score": 40.1,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 53.4 o Estabilidad 100.2% < 60.0%)",
+  "score": 39.4,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 23.8 o Estabilidad 98.6% < 50.0%)",
   "metrics": {
     "parameters_count": 9,
-    "degrees_of_freedom_ratio": 53.4,
+    "degrees_of_freedom_ratio": 23.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 100.2,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 98.6,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.08,
-      1.08,
-      1.04,
-      1.01
+      1.06,
+      1.07,
+      1.03,
+      0.98
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.1.182/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T18:06:58.416624+00:00"
+  "created_at_utc": "2026-08-21T22:22:41.956057+00:00"
 }
