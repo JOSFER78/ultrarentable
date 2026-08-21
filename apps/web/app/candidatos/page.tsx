@@ -762,59 +762,39 @@ ${entryLogic}`;
               ← Command Center
             </Link>
             <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-            <span style={{ fontSize: "10px", fontWeight: 800, color: "#ec4899", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-              QUANT FABRIC · 11 PASOS DETERMINISTAS & META-ENSAMBLE IA
+            <span style={{ fontSize: "10px", fontWeight: 800, color: "#818cf8", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
+              PUNTO 3 · PIPELINE CUANTITATIVO DE 11 PASOS (FSM 11 GATES)
             </span>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-            Estrategias Aprobadas & Meta-Estrategia Ensamblada
+            🧬 Pipeline Cuantitativo de los 11 Pasos & Candidatos FSM
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "12px", marginTop: "3px", margin: 0 }}>
-            Las Top 5 estrategias de cada ruta ya han superado los 11 pasos y el debate IA. Combínalas en un meta-portafolio inteligente para amortiguar fallos y maximizar convexidad.
+            Auditoría determinista de compuertas de evidencia inmutables: separación estricta entre <strong>Tier 1 (11/11 Certificadas)</strong>, <strong>Tier 2 (9-10/11 Diamantes en Bruto)</strong>, <strong>Tier 3 (7-8/11 Incubadora)</strong> y <strong>Tier 4 (Descartadas)</strong>.
           </p>
         </div>
 
-        {/* View Switcher Tabs */}
+        {/* Action Buttons */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "3px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
-            <button
-              onClick={() => setActiveTab("ensemble")}
-              style={{
-                padding: "6px 14px",
-                borderRadius: "6px",
-                border: "none",
-                background: activeTab === "ensemble" ? "linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(99, 225, 180, 0.25))" : "transparent",
-                color: activeTab === "ensemble" ? "#fff" : "#94a3b8",
-                borderBottom: activeTab === "ensemble" ? "2px solid #ec4899" : "none",
-                fontSize: "11px",
-                fontWeight: 900,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              ⚡ Meta-Estrategia & Ensamble Sinergia
-            </button>
-            <button
-              onClick={() => setActiveTab("individual")}
-              style={{
-                padding: "6px 14px",
-                borderRadius: "6px",
-                border: "none",
-                background: activeTab === "individual" ? "rgba(99, 225, 180, 0.2)" : "transparent",
-                color: activeTab === "individual" ? "#63e1b4" : "#94a3b8",
-                fontSize: "11px",
-                fontWeight: 800,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              📊 Candidatos Individuales ({candidates.length})
-            </button>
-          </div>
+          <Link
+            href="/research"
+            style={{
+              padding: "7px 14px",
+              borderRadius: "8px",
+              background: "rgba(250, 204, 21, 0.15)",
+              border: "1px solid rgba(250, 204, 21, 0.35)",
+              color: "#facc15",
+              fontSize: "11px",
+              fontWeight: 800,
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              fontFamily: "var(--font-mono, monospace)",
+            }}
+          >
+            🔬 Ir al Lab de Refinamiento (Punto 4) →
+          </Link>
 
           <button
             onClick={fetchCandidates}
@@ -848,10 +828,10 @@ ${entryLogic}`;
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
           <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
-            PIPELINE CUANTITATIVO DE 11 PASOS (CON DEBATE SEMÁNTICO & HEDGING DE FALLOS)
+            PIPELINE CUANTITATIVO DE 11 GATES DETERMINISTAS (ZERO-MOCKS & REAL-ONLY)
           </div>
-          <div style={{ fontSize: "10px", color: "#34d399", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
-            ✓ TOP 5 ULTRA & TOP 5 FONDEO HAN COMPLETADO TODOS LOS 11 PASOS
+          <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
+            📊 23 DIAMANTES (9-10 GATES) · 16 EN INCUBADORA (7-8 GATES) · 0 APROBADAS (11/11)
           </div>
         </div>
 

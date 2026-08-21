@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import ModuleMap from "@/components/ModuleMap";
 
 interface Candidate {
@@ -199,14 +200,23 @@ export default function PortfolioStudioPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
         <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+            <Link href="/" style={{ color: "#64748b", fontSize: "11px", textDecoration: "none" }}>
+              ← Command Center
+            </Link>
+            <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
+            <span style={{ fontSize: "10px", fontWeight: 800, color: "#ec4899", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
+              PUNTO 6 · META-ESTRATEGIA ENSAMBLADA & SINERGIA MULTI-ACTIVO
+            </span>
+          </div>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 10 }}>
-            <span>⚡ Estrategia de Estrategias</span>
-            <span style={{ fontSize: 13, padding: "4px 10px", borderRadius: 20, background: "rgba(16, 185, 129, 0.15)", color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
-              Debate Multi-Agente 100% Real
+            <span>🧩 Meta-Estrategia Ensamblada (Portfolio de Portfolios)</span>
+            <span style={{ fontSize: 13, padding: "4px 10px", borderRadius: 20, background: "rgba(236, 72, 153, 0.15)", color: "#ec4899", border: "1px solid rgba(236, 72, 153, 0.3)", fontFamily: "var(--font-mono, monospace)" }}>
+              Sinergia Multi-Activo
             </span>
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: 14, marginTop: 4 }}>
-            Combina múltiples estrategias compatibles en <b>distintos activos</b> (Cripto Perpetuos, CME Futuros, Forex) mediante Paridad de Riesgo Inversa y debate forense de 5 agentes.
+            Combina múltiples estrategias de <b>distintos activos descorrelacionados</b> (Cripto Perpetuos, CME Futuros, Forex) mediante Paridad de Riesgo Inversa y debate forense de 5 agentes para amortiguar drawdowns y maximizar rentabilidad conjunta.
           </p>
         </div>
 
