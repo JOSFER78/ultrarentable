@@ -1,77 +1,64 @@
 {
-  "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g10",
-  "run_id": "run_UR_ULTRA_LINK_USDT_4H",
-  "strategy_id": "UR_ULTRA_LINK_USDT_4H",
-  "strategy_snapshot_hash": "971327185b473a3210cfac475511c4c697c85b8f3f36efe1d88de6d9deb1841a",
-  "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
-  "gate_name": "DEBATE_AGENTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "b020e911553d740f842b67d4f4b36be69e4098763d6e6d7b5372693cc7b6ea01",
-  "output_hash": "047ce6f6f2e13c18127705b6445792c747a98dc3a672306ae8ef0955191f9213",
-  "status": "FAILED",
-  "score": 74.0,
-  "verdict": "FALLO: Consenso insuficiente (74.0/100) u objeción crítica de riesgo",
-  "metrics": {
-    "consensus_score": 74.0,
+  "name": "DEBATE_AGENTES",
+  "passed": false,
+  "score": 54.7,
+  "verdict": "FALLO: Consenso insuficiente (54.7/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "evidence": {
+    "consensus_score": 54.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 89.2,
+        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
+        "score": 60.0,
         "findings": [
           "Activo y Timeframe: LINK-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.76 con beneficio neto de $0.00.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 1.11 con beneficio neto de $611.35.",
+          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 87.7,
+        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 26.1% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown M\u00e1ximo Observado: 94.7% (L\u00edmite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 81 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 249 operaciones evaluadas (M\u00ednimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operaci\u00f3n: $2.46 USD.",
+          "Margen de seguridad ante slippage: ACEPTABLE."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 69.2,
+        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
+        "score": 65.0,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Drawdown: DD (94.7%) consume m\u00e1s del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T17:49:18.134212+00:00"
+  }
 }

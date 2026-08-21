@@ -129,28 +129,40 @@ class ContinuousResearchDaemon:
             cur = conn.cursor()
             rows = cur.execute(
                 """
-                SELECT candidate_id, name, symbol, timeframe, route, status, tier,
-                       gates_passed_count, overall_score, metrics_json, scorecard_json
+                SELECT candidate_id, name, symbol, timeframe, route, status,
+                       net_profit_oos, profit_factor_oos, max_dd_oos_pct, scorecard_json
                 FROM candidates
                 WHERE status != 'RETIRED'
-                ORDER BY
-                    CASE
-                        WHEN tier = 'TIER_2_NEAR_CERTIFIED' OR gates_passed_count IN (9, 10) THEN 1
-                        WHEN tier = 'TIER_3_INCUBATOR' OR gates_passed_count IN (7, 8) THEN 2
-                        ELSE 3
-                    END ASC,
-                    gates_passed_count DESC,
-                    overall_score DESC
                 """
             ).fetchall()
             conn.close()
 
             new_queue = []
             for r in rows:
-                g_count = r["gates_passed_count"] if r["gates_passed_count"] is not None else 0
-                tier = r["tier"] or ("TIER_2_NEAR_CERTIFIED" if g_count in (9, 10) else "TIER_3_INCUBATOR" if g_count in (7, 8) else "TIER_4_REJECTED")
-                
-                # Solo candidatos que valga la pena refinar (>= 7 gates)
+                sc = {}
+                if r["scorecard_json"]:
+                    try:
+                        sc = json.loads(r["scorecard_json"])
+                    except Exception:
+                        sc = {}
+
+                g_count = sc.get("gates_passed_count")
+                if g_count is None:
+                    gates_list = sc.get("gates") or []
+                    g_count = len([g for g in gates_list if g.get("passed")]) if gates_list else 0
+
+                tier = sc.get("tier")
+                if not tier:
+                    if g_count == 11:
+                        tier = "TIER_1_CERTIFIED"
+                    elif g_count in (9, 10):
+                        tier = "TIER_2_NEAR_CERTIFIED"
+                    elif g_count in (7, 8):
+                        tier = "TIER_3_INCUBATOR"
+                    else:
+                        tier = "TIER_4_REJECTED"
+
+                # Solo candidatos de Tier 2 (9-10) y Tier 3 (7-8) para refinamiento
                 if g_count >= 7:
                     new_queue.append({
                         "candidate_id": r["candidate_id"],
@@ -162,16 +174,27 @@ class ContinuousResearchDaemon:
                         "tier": tier,
                         "initial_gates": g_count,
                         "current_gates": g_count,
-                        "score": r["overall_score"] or 0.0,
+                        "score": sc.get("overall_score", 0.0),
+                        "profit_factor": float(r["profit_factor_oos"] or 0.0),
+                        "net_profit_usd": float(r["net_profit_oos"] or 0.0),
                     })
 
+            # Ordenar: primero Tier 2 (9-10), luego Tier 3 (7-8)
+            new_queue.sort(
+                key=lambda x: (
+                    0 if x["tier"] == "TIER_2_NEAR_CERTIFIED" else 1 if x["tier"] == "TIER_3_INCUBATOR" else 2,
+                    -x["current_gates"],
+                    -x["score"],
+                )
+            )
+
             with self._lock:
-                # Preservar el estado si ya estaban en proceso
-                existing_ids = {q["candidate_id"]: q for q in self.queue}
+                existing_statuses = {q["candidate_id"]: q["status"] for q in self.queue}
                 final_q = []
                 for item in new_queue:
-                    if item["candidate_id"] in existing_ids:
-                        final_q.append({**item, "status": existing_ids[item["candidate_id"]]["status"]})
+                    cid = item["candidate_id"]
+                    if cid in existing_statuses and existing_statuses[cid] != "EN_COLA":
+                        final_q.append({**item, "status": existing_statuses[cid]})
                     else:
                         final_q.append(item)
                 self.queue = final_q

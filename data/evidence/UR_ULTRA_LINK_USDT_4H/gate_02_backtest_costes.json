@@ -1,31 +1,18 @@
 {
-  "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g02",
-  "run_id": "run_UR_ULTRA_LINK_USDT_4H",
-  "strategy_id": "UR_ULTRA_LINK_USDT_4H",
-  "strategy_snapshot_hash": "971327185b473a3210cfac475511c4c697c85b8f3f36efe1d88de6d9deb1841a",
-  "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
-  "gate_name": "BACKTEST_COSTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "cc28b97c28a99e5256f4fa93acb27f5ba94d7a86362804195c53f8e8c5bba38c",
-  "output_hash": "04ea11bbe8e61d075a9117e9cd42bfb6a265cdad1597e947b5de1b30049e6c13",
-  "status": "PASSED",
-  "score": 64.5,
-  "verdict": "PASSED: PF Neto tras costes = 1.64 (CRYPTO)",
-  "metrics": {
+  "name": "BACKTEST_COSTES",
+  "passed": false,
+  "score": 4.9,
+  "verdict": "FALLO: PF Neto 1.05 < 1.10",
+  "evidence": {
     "market_category": "CRYPTO",
     "canonical_name": "Chainlink Perpetuo",
     "exchange": "Binance / FTMO Perps",
-    "gross_pnl_usd": 108.51,
-    "total_fees_usd": 11.38,
-    "total_slippage_usd": 6.75,
-    "net_pnl_usd": 90.37,
-    "net_profit_factor": 1.64,
-    "drag_cost_pct": 16.71
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T17:49:16.596950+00:00"
+    "gross_pnl_usd": 1204.97,
+    "total_fees_usd": 490.97,
+    "total_slippage_usd": 305.1,
+    "net_pnl_usd": 408.9,
+    "net_profit_factor": 1.05,
+    "drag_cost_pct": 66.07
+  }
 }
