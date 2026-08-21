@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g07",
-  "run_id": "run_UR_ULTRA_XRP_USDT_4H",
-  "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "fdb20c2c5dd4afa7cf04a15ba566dda3257e4a117aa68930db3292436f24d774",
-  "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "a79483d3453bf82b9c3304d5ac606d8030a4ed51083292ea517313113112eb60",
   "gate_id": 7,
-  "gate_name": "REGIME_COVERAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "cd72700d4d06edff30f3c58661652b7d21191b2562d9dcfbcc25cb093b531c8f",
-  "output_hash": "7ffa276d0e7c2e647b696af71d0c5fa7b46cdccec531cebba670f028cde6e89a",
-  "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $3510.80)",
-  "metrics": {
+  "name": "REGIME_COVERAGE",
+  "passed": true,
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (2/4 reg\u00edmenes positivos, Retorno OOS: +4062.55%)",
+  "evidence": {
     "regimes_candle_distribution": {
       "BULL_TREND": 358,
       "BEAR_TREND": 564,
@@ -23,21 +12,19 @@
       "HIGH_VOLATILITY": 461
     },
     "regime_trades_count": {
-      "BULL_TREND": 19,
-      "BEAR_TREND": 24,
-      "CHOP_RANGING": 42,
-      "HIGH_VOLATILITY": 23
+      "BULL_TREND": 12,
+      "BEAR_TREND": 18,
+      "CHOP_RANGING": 30,
+      "HIGH_VOLATILITY": 11
     },
-    "regime_net_pnl_usd": {
-      "BULL_TREND": 734.25,
-      "BEAR_TREND": -1280.95,
-      "CHOP_RANGING": 2934.47,
-      "HIGH_VOLATILITY": 1123.03
+    "regime_return_pct": {
+      "BULL_TREND": -66.94,
+      "BEAR_TREND": 3109.88,
+      "CHOP_RANGING": 1154.41,
+      "HIGH_VOLATILITY": -134.8
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 3510.8
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:41:30.067708+00:00"
+    "total_oos_return_pct": 4062.55
+  }
 }

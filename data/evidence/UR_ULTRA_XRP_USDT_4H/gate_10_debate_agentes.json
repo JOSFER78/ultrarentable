@@ -1,77 +1,65 @@
 {
-  "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g10",
-  "run_id": "run_UR_ULTRA_XRP_USDT_4H",
-  "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "fdb20c2c5dd4afa7cf04a15ba566dda3257e4a117aa68930db3292436f24d774",
-  "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "a79483d3453bf82b9c3304d5ac606d8030a4ed51083292ea517313113112eb60",
   "gate_id": 10,
-  "gate_name": "DEBATE_AGENTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "b072c257e22e7a065a72f852cd2b6a76d2c79a567bad786d44b34508785dfb22",
-  "output_hash": "34e95d83d5815f848234c273b9fce9a629a5dc047310701794455268e7262bfe",
-  "status": "PASSED",
-  "score": 88.9,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (88.9/100 · 5/5 Evaluadores Conformes)",
-  "metrics": {
-    "consensus_score": 88.9,
+  "name": "DEBATE_AGENTES",
+  "passed": false,
+  "score": 33.9,
+  "verdict": "FALLO: Consenso insuficiente (33.9/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "evidence": {
+    "consensus_score": 33.9,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 81.5,
+        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
+        "score": 52.8,
         "findings": [
           "Activo y Timeframe: XRP-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.59 con beneficio neto de $3220.85.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 0.95 con beneficio neto de $-645.37.",
+          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 82.7,
+        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 36.7% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown M\u00e1ximo Observado: 96.4% (L\u00edmite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 108 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 132 operaciones evaluadas (M\u00ednimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $29.82 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operaci\u00f3n: $-4.89 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 91.1,
+        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
+        "score": 38.2,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Drawdown: DD (96.4%) consume m\u00e1s del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.95 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": true
+        "approved": false
       }
     ]
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:41:30.316199+00:00"
+  }
 }

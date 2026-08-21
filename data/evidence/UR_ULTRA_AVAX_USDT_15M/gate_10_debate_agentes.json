@@ -1,77 +1,65 @@
 {
-  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g10",
-  "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
-  "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "a83603f99d14576bbe6337d6e5ae32c77c225fd0126ad91bbab0702ad4087499",
-  "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "9704809fd218d7ee64fa8a52c23165b6c80c1cb0120a743f9000e13a8c0b4d22",
   "gate_id": 10,
-  "gate_name": "DEBATE_AGENTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "48b2877e89c6528faf795a51223434a7be86c075a0864191d1efc25b1c55c3bf",
-  "output_hash": "c1ae48e381fac1f20a986aff37a3aa89d85f28d80cd6c4dcf131f5755cfbfbf1",
-  "status": "PASSED",
-  "score": 84.1,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (84.1/100 · 5/5 Evaluadores Conformes)",
-  "metrics": {
-    "consensus_score": 84.1,
+  "name": "DEBATE_AGENTES",
+  "passed": false,
+  "score": 24.5,
+  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "evidence": {
+    "consensus_score": 24.5,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 67.2,
+        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
+        "score": 20.0,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.27 con beneficio neto de $319.50.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 0.00 con beneficio neto de $-1000.00.",
+          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 80.9,
+        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 40.6% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown M\u00e1ximo Observado: 100.0% (L\u00edmite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 54 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: ALTO."
+          "Muestra fuera de muestra: 28 operaciones evaluadas (M\u00ednimo requerido: 10).",
+          "Grado de confianza: MODERADO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $5.92 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operaci\u00f3n: $-35.71 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 87.0,
+        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
+        "score": 30.0,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Drawdown: DD (100.0%) consume m\u00e1s del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.00 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": true
+        "approved": false
       }
     ]
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:25:46.794543+00:00"
+  }
 }

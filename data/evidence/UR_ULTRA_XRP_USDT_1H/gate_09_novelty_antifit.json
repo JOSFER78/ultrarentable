@@ -1,34 +1,21 @@
 {
-  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g09",
-  "run_id": "run_UR_ULTRA_XRP_USDT_1H",
-  "strategy_id": "UR_ULTRA_XRP_USDT_1H",
-  "strategy_snapshot_hash": "670934b9ab1a803d4ea11611b18f6f6f6808c8e2d6d204b9822d73c9ff0a8189",
-  "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "70013eec73839971f92f97ff182d0effeb7cf91c5649b18016debd1187d379db",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "e2b85e150c3bf68689440a6954570bb2f7ecd4413fc63df318af11369a9951fc",
-  "output_hash": "7168fcac1cdfb4501537b42b09faf1713d3f01641338b775e809fa00584f0b8c",
-  "status": "PASSED",
-  "score": 99.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 100.8 trades/param, Estabilidad Vecindario: 98.7%, Re-backtest PFs: [1.12, 1.15, 1.18, 1.17])",
-  "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 100.8,
+  "name": "NOVELTY_ANTIFIT",
+  "passed": false,
+  "score": 40.0,
+  "verdict": "FALLO: Fragilidad ante perturbaci\u00f3n param\u00e9trica (DoF 11.9 o Estabilidad 100.0% < 50.0%)",
+  "evidence": {
+    "parameters_count": 10,
+    "degrees_of_freedom_ratio": 11.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 98.7,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 100.0,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.12,
-      1.15,
-      1.18,
-      1.17
+      1.03,
+      1.03,
+      1.06,
+      1.06
     ],
     "rebacktest_performed": true
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:40:53.465288+00:00"
+  }
 }

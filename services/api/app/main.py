@@ -31,6 +31,7 @@ from services.api.app.api.firebase_sync_router import firebase_sync_router
 from services.api.app.api.version_router import version_router
 from services.api.app.api.discovery_router import router as discovery_router
 from services.api.app.api.portfolios_router import portfolios_router
+from services.api.app.api.research_router import router as research_router
 
 # Routers V2 Modulares
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
@@ -137,6 +138,7 @@ app.include_router(firebase_sync_router, prefix="/api/v1", tags=["v1-firebase-sy
 app.include_router(version_router, prefix="/api/v1", tags=["v1-versions"])
 app.include_router(discovery_router)
 app.include_router(portfolios_router)
+app.include_router(research_router)
 
 # ----------------------------------------------------------------------------
 # REGISTRO DE ROUTERS V2 (CLEAN ARCHITECTURE & DUAL-TRACK)

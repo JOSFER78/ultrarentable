@@ -1,33 +1,20 @@
 {
-  "evidence_id": "ev_UR_ULTRA_SUI_USDT_1H_g11",
-  "run_id": "run_UR_ULTRA_SUI_USDT_1H",
-  "strategy_id": "UR_ULTRA_SUI_USDT_1H",
-  "strategy_snapshot_hash": "1a9197c273b52b0dc3cb1d9033f3313cb55376aa76a05fd902a2340be3b3ba33",
-  "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 11,
-  "gate_name": "EVENT_CROSS_VALIDATION",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "43a4807b4df43c7f84cc9946b91a45cfa023c043503f23c06d48eac866a5928a",
-  "output_hash": "a105311c291c1f9190ff628fd781916beb25235c60cbacfb45ac56496efdac67",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $2640.49, Apalancamiento Pico: 14.5x, Dist. Mín. Liquidación: 92.6%, Comisiones+Funding: $2927.96)",
-  "metrics": {
+  "name": "EVENT_CROSS_VALIDATION",
+  "passed": false,
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidaci\u00f3n (Margin Call: True, Dist. Liquidaci\u00f3n: 0.0%, Peak Lev: 1018.2x > 100.0x)",
+  "evidence": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 2640.49,
-    "peak_equity_usd": 11162.66,
-    "min_equity_usd": 881.66,
-    "peak_leverage_used": 14.45,
+    "final_equity_usd": -7.9,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -7.9,
+    "peak_leverage_used": 1018.16,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 92.58,
-    "margin_call_triggered": false,
-    "total_fees_paid_usd": 2661.78,
-    "total_funding_cost_usd": 266.18,
-    "execution_events_count": 167
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-20T14:38:52.472732+00:00"
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 957.7,
+    "total_funding_cost_usd": 95.77,
+    "execution_events_count": 171
+  }
 }

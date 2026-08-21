@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_UR_ULTRA_SUI_USDT_1H_g07",
-  "run_id": "run_UR_ULTRA_SUI_USDT_1H",
-  "strategy_id": "UR_ULTRA_SUI_USDT_1H",
-  "strategy_snapshot_hash": "1a9197c273b52b0dc3cb1d9033f3313cb55376aa76a05fd902a2340be3b3ba33",
-  "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
   "gate_id": 7,
-  "gate_name": "REGIME_COVERAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "0a105a721f8c0230cd3db677142a7491e2fcc8d5e88efb1f1ba4e75a232c73f2",
-  "output_hash": "e224f3ac1247e54caa3281f07219acf94fd576682c89b60a25913b385ec8293e",
-  "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (2/4 regímenes en beneficio, Net PnL: $4568.45)",
-  "metrics": {
+  "name": "REGIME_COVERAGE",
+  "passed": true,
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (3/4 reg\u00edmenes positivos, Retorno OOS: +23785.51%)",
+  "evidence": {
     "regimes_candle_distribution": {
       "BULL_TREND": 640,
       "BEAR_TREND": 944,
@@ -23,21 +12,19 @@
       "HIGH_VOLATILITY": 1064
     },
     "regime_trades_count": {
-      "BULL_TREND": 28,
-      "BEAR_TREND": 16,
-      "CHOP_RANGING": 87,
-      "HIGH_VOLATILITY": 36
+      "BULL_TREND": 22,
+      "BEAR_TREND": 24,
+      "CHOP_RANGING": 81,
+      "HIGH_VOLATILITY": 44
     },
-    "regime_net_pnl_usd": {
-      "BULL_TREND": -2559.59,
-      "BEAR_TREND": -3164.08,
-      "CHOP_RANGING": 7758.36,
-      "HIGH_VOLATILITY": 2533.76
+    "regime_return_pct": {
+      "BULL_TREND": 132.6,
+      "BEAR_TREND": -175.37,
+      "CHOP_RANGING": 18823.71,
+      "HIGH_VOLATILITY": 5004.57
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 4568.45
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:38:51.915703+00:00"
+    "total_oos_return_pct": 23785.51
+  }
 }

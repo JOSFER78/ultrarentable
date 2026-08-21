@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_UR_FONDEO_CL_1H_g07",
-  "run_id": "run_UR_FONDEO_CL_1H",
-  "strategy_id": "UR_FONDEO_CL_1H",
-  "strategy_snapshot_hash": "4ecbaefa2935f94a5752da974fae475da7adee3030d88473cf3dafee35a30c48",
-  "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "bf4eff97263c12c6c261277bb37ba2b8b84e27184833648fb5400a6f4acad7f9",
   "gate_id": 7,
-  "gate_name": "REGIME_COVERAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "7b7194b26d960b67094e077f0cbe5eaf84f7effd0db059ff2cd9fbf0c5189089",
-  "output_hash": "d5d8470a1917e8c0a92e563453f35ce5de22768e18ad5ec05994a59f89899daf",
-  "status": "PASSED",
+  "name": "REGIME_COVERAGE",
+  "passed": true,
   "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $6827.10)",
-  "metrics": {
+  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (3/4 reg\u00edmenes positivos, Retorno OOS: +10.52%)",
+  "evidence": {
     "regimes_candle_distribution": {
       "BULL_TREND": 649,
       "BEAR_TREND": 518,
@@ -23,21 +12,19 @@
       "HIGH_VOLATILITY": 421
     },
     "regime_trades_count": {
-      "BULL_TREND": 12,
-      "BEAR_TREND": 9,
+      "BULL_TREND": 14,
+      "BEAR_TREND": 11,
       "CHOP_RANGING": 25,
-      "HIGH_VOLATILITY": 7
+      "HIGH_VOLATILITY": 8
     },
-    "regime_net_pnl_usd": {
-      "BULL_TREND": 1883.14,
-      "BEAR_TREND": 1744.85,
-      "CHOP_RANGING": 4010.13,
-      "HIGH_VOLATILITY": -811.02
+    "regime_return_pct": {
+      "BULL_TREND": 2.77,
+      "BEAR_TREND": 2.35,
+      "CHOP_RANGING": 7.47,
+      "HIGH_VOLATILITY": -2.07
     },
     "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 6827.1
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_CL_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:02:42.604398+00:00"
+    "total_oos_return_pct": 10.52
+  }
 }

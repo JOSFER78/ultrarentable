@@ -1,31 +1,18 @@
 {
-  "evidence_id": "ev_UR_FONDEO_CL_1H_g02",
-  "run_id": "run_UR_FONDEO_CL_1H",
-  "strategy_id": "UR_FONDEO_CL_1H",
-  "strategy_snapshot_hash": "4ecbaefa2935f94a5752da974fae475da7adee3030d88473cf3dafee35a30c48",
-  "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "bf4eff97263c12c6c261277bb37ba2b8b84e27184833648fb5400a6f4acad7f9",
   "gate_id": 2,
-  "gate_name": "BACKTEST_COSTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "0fc78482e5ca3624c8fb7f51518f6e1670619cb8e46ace0e8c155e25d3ab456b",
-  "output_hash": "7feb750a9d48cefb79ee6941ae154aa870a6b48cb82598363e6eb4bb44de5a38",
-  "status": "PASSED",
-  "score": 78.3,
-  "verdict": "PASSED: PF Neto tras costes = 1.78 (COMMODITIES)",
-  "metrics": {
+  "name": "BACKTEST_COSTES",
+  "passed": true,
+  "score": 54.8,
+  "verdict": "PASSED: PF Neto tras costes = 1.55 (COMMODITIES)",
+  "evidence": {
     "market_category": "COMMODITIES",
-    "canonical_name": "Petróleo Crudo WTI",
+    "canonical_name": "Petr\u00f3leo Crudo WTI",
     "exchange": "NYMEX Globex",
-    "gross_pnl_usd": 7266561.78,
-    "total_fees_usd": 34883.68,
-    "total_slippage_usd": 279069.4,
-    "net_pnl_usd": 6952608.7,
-    "net_profit_factor": 1.78,
-    "drag_cost_pct": 4.32
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_CL_1H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T15:02:42.529154+00:00"
+    "gross_pnl_usd": 5853684.92,
+    "total_fees_usd": 37477.98,
+    "total_slippage_usd": 299823.85,
+    "net_pnl_usd": 5516383.1,
+    "net_profit_factor": 1.55,
+    "drag_cost_pct": 5.76
+  }
 }

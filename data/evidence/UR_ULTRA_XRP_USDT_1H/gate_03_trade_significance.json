@@ -1,28 +1,15 @@
 {
-  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g03",
-  "run_id": "run_UR_ULTRA_XRP_USDT_1H",
-  "strategy_id": "UR_ULTRA_XRP_USDT_1H",
-  "strategy_snapshot_hash": "670934b9ab1a803d4ea11611b18f6f6f6808c8e2d6d204b9822d73c9ff0a8189",
-  "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "70013eec73839971f92f97ff182d0effeb7cf91c5649b18016debd1187d379db",
   "gate_id": 3,
-  "gate_name": "TRADE_SIGNIFICANCE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "543b2b6b20e589b8548e1686f30f375ec361e138d20e29b89bd7c780f863144c",
-  "output_hash": "940b597e47022d82f6b0c7f246232fef53dc6f6e545d0817034eeaad2aec704c",
-  "status": "PASSED",
+  "name": "TRADE_SIGNIFICANCE",
+  "passed": true,
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (604 IS / 202 OOS · Ultra Convex)",
-  "metrics": {
-    "trades_is": 604,
-    "trades_oos": 202,
-    "top2_outlier_dependency_pct": 6.3,
+  "verdict": "PASSED: Muestra robusta (79 IS / 40 OOS \u00b7 Ultra Convex)",
+  "evidence": {
+    "trades_is": 79,
+    "trades_oos": 40,
+    "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T14:40:52.162110+00:00"
+  }
 }
