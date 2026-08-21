@@ -14,12 +14,17 @@ import { WorkerId } from "@/types/telemetry";
 export default function Header() {
   const { workers, systemMetrics, reconnect } = useTelemetryStream();
   const { version, versionName, gitCommitShort, gitBranch, gitMessage, codeDrift } = useEngineVersion();
-  const [utcTime, setUtcTime] = useState<string>("");
+  const [timeDisplay, setTimeDisplay] = useState<string>("");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setUtcTime(new Date().toISOString().substring(11, 19) + " UTC");
-    }, 1000);
+    const updateTime = () => {
+      const d = new Date();
+      const localStr = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const utcStr = d.toISOString().substring(11, 19) + " UTC";
+      setTimeDisplay(`${localStr} (${utcStr})`);
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -81,7 +86,7 @@ export default function Header() {
             }}
             title={`Git Commit: ${gitCommitShort} (${gitBranch}) — ${gitMessage || "Control de versiones activo"}`}
           >
-            git:{gitCommitShort || "08dbec5"}
+            git:{gitCommitShort || "HEAD"}
           </span>
         </div>
 
@@ -100,8 +105,8 @@ export default function Header() {
 
         <div>
           <span style={{ color: "#64748b" }}>SQX BRIDGE: </span>
-          <strong style={{ color: systemMetrics.sqxBridgeConnected ? "#34d399" : "#94a3b8" }}>
-            {systemMetrics.sqxBridgeConnected ? "CONECTADO" : "STANDBY"}
+          <strong style={{ color: systemMetrics.sqxBridgeConnected ? "#34d399" : "#64748b" }}>
+            {systemMetrics.sqxBridgeConnected ? "CONECTADO" : "STANDBY (8081)"}
           </strong>
         </div>
 
@@ -110,61 +115,28 @@ export default function Header() {
         <div>
           <span style={{ color: "#64748b" }}>TELEMETRÍA 24/7: </span>
           <strong style={{ color: systemMetrics.sseConnected ? "#34d399" : "#f43f5e" }}>
-            {systemMetrics.sseConnected ? "ACTIVO" : "DESCONECTADO"}
+            {systemMetrics.sseConnected ? "ACTIVO" : "RECONECTANDO"}
           </strong>
         </div>
       </div>
 
-      {/* 2. RIGHT: 8 WORKERS HUD, SSE BADGE & CLOCK */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {/* 8 WORKERS MINI-DOTS */}
-        <div
-          title="8 Workers Cuantitativos"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            background: "rgba(0, 0, 0, 0.3)",
-            padding: "2px 6px",
-            borderRadius: "5px",
-            border: "1px solid rgba(255, 255, 255, 0.05)",
-          }}
-        >
-          {(Object.keys(workers) as WorkerId[]).map((wId) => {
-            const w = workers[wId];
-            const isOk = w.status === "ACTIVE" || w.status === "IDLE";
-            return (
-              <span
-                key={wId}
-                title={`${wId}: ${w.status}`}
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  backgroundColor: isOk ? "#34d399" : "#f43f5e",
-                  boxShadow: `0 0 4px ${isOk ? "#34d399" : "#f43f5e"}`,
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* SSE STREAM BADGE */}
+      {/* 2. RIGHT: SSE BADGE & DUAL TIME CLOCK */}
+      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        {/* SSE STATUS CHIP */}
         <div
           onClick={reconnect}
-          title="Streaming SSE /api/v2/telemetry/stream (Clic para reconectar)"
+          title="Streaming Server-Sent Events (SSE) :8000. Haz clic para forzar reconexión."
           style={{
             display: "flex",
             alignItems: "center",
             gap: "5px",
-            background: systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.12)" : "rgba(251, 191, 36, 0.12)",
-            border: `1px solid ${systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.3)" : "rgba(251, 191, 36, 0.3)"}`,
-            borderRadius: "5px",
-            padding: "2px 6px",
-            fontSize: "9.5px",
+            fontSize: "10px",
             fontFamily: "var(--font-mono, monospace)",
-            fontWeight: 800,
+            padding: "2px 8px",
+            borderRadius: "4px",
+            background: systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.1)" : "rgba(251, 191, 36, 0.1)",
             color: systemMetrics.sseConnected ? "#34d399" : "#fbbf24",
+            border: `1px solid ${systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.3)" : "rgba(251, 191, 36, 0.3)"}`,
             cursor: "pointer",
           }}
         >
@@ -180,9 +152,9 @@ export default function Header() {
           <span>SSE {systemMetrics.connectionState}</span>
         </div>
 
-        {/* CLOCK UTC */}
-        <span style={{ fontSize: "10.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-          {utcTime}
+        {/* DUAL CLOCK: LOCAL + UTC */}
+        <span style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)", fontWeight: 700 }}>
+          ⏱️ {timeDisplay || "LIVE"}
         </span>
       </div>
     </header>

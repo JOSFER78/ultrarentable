@@ -2,33 +2,33 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.97_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.97",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.97",
-  "strategy_snapshot_hash": "1324ef745ecba5e619a0886af2876c80d916c6e593f1a456a7a796d442547470",
-  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "strategy_snapshot_hash": "929f3ecdbe4409c73375b8c0d6ee8ea27b46f5b555bbeac8f98794cda3841596",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ca3ed039fd21d5f5defbce573bbb620d6e1e07c97fde391f1e1f24e18c7c7173",
-  "output_hash": "9ff5fe020f976b9085191362c8bd58d5b638a7db2d91e4bb000d33ae7a98534a",
+  "input_hash": "3b2300ba9966f0aa1906f96ae17bae38528a165e5fc543da60cabed141423e6b",
+  "output_hash": "d83aaa095c5cbd2fc257094e1d2fe3a2c914010ef17f8bb88eee91d8012f4b29",
   "status": "PASSED",
-  "score": 80.8,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 13.0 trades/param, Estabilidad Vecindario: 141.7%, Re-backtest PFs: [0.13, 0.29, 0.2, 0.23])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 158.2 trades/param, Estabilidad Vecindario: 100.0%, Re-backtest PFs: [1.07, 1.1, 1.09, 1.1])",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 13.0,
+    "degrees_of_freedom_ratio": 158.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 141.7,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 100.0,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.13,
-      0.29,
-      0.2,
-      0.23
+      1.07,
+      1.1,
+      1.09,
+      1.1
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.97/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T08:36:51.859418+00:00"
+  "created_at_utc": "2026-08-21T20:16:01.451551+00:00"
 }

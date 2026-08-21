@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_RTY_4H_g10",
   "run_id": "run_UR_ULTRA_RTY_4H",
   "strategy_id": "UR_ULTRA_RTY_4H",
-  "strategy_snapshot_hash": "cdda57c26924acfc79c7e5a33dac97742bb2a700d0458fb109d7e8e68f13e6e8",
+  "strategy_snapshot_hash": "0f8ff7c544699275b0fc3090c86b6cdae31d721d1d4c9610e3ede9ead80a6182",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "73f1ea3530bb1150013d5e2d570a5bf92096a9ab9df79dd3ddcfcd08e202d784",
-  "output_hash": "96911558bd73b737106e986de8355c561ddc6f5596f942d3f8b6f1a978af1526",
-  "status": "FAILED",
-  "score": 52.0,
-  "verdict": "FALLO: Consenso insuficiente (52.0/100) u objeción crítica de riesgo",
+  "input_hash": "9c46a47cc87137fd2d40d063cb88f11b4e7b2a4f139760c579e5a4ef9358cd52",
+  "output_hash": "5409dd4f409e5d68ba453a9f6ba7902f7d54d516514aab7792850068e37bd364",
+  "status": "PASSED",
+  "score": 59.5,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (59.5/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 52.0,
+    "consensus_score": 59.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 26.9,
+        "score": 55.5,
         "findings": [
           "Activo y Timeframe: RTY (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.93 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.01 con beneficio neto de $1.03.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 86.8,
+        "score": 67.9,
         "findings": [
-          "Drawdown Máximo Observado: 15.1% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 68.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -44,19 +44,19 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 80.0,
+        "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 16 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: MODERADO."
+          "Muestra fuera de muestra: 90 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 48.4,
+        "score": 58.3,
         "objections": [
-          "Alerta de Muestra: 16 trades OOS es una muestra pequeña.",
-          "Alerta de Rentabilidad: Profit factor 0.93 cercano al umbral de equilibrio."
+          "Alerta de Rentabilidad: Profit factor 1.01 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T08:35:16.468790+00:00"
+  "created_at_utc": "2026-08-21T20:16:16.132396+00:00"
 }

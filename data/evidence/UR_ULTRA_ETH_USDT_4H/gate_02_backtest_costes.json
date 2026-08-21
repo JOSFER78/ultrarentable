@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g02",
   "run_id": "run_UR_ULTRA_ETH_USDT_4H",
   "strategy_id": "UR_ULTRA_ETH_USDT_4H",
-  "strategy_snapshot_hash": "dabc08523b7a30ef81b5ae7cf9eec468da2f2269d4de1d5d0f9dea162c1a4102",
+  "strategy_snapshot_hash": "25bafeecedafd689af29fac0c8ee18586a008c85a4886486a912fc7006139be0",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "1e482fa60b41b2cdfa2baa30b477a459ae45e63e960227eb28ef5ae8d0db1288",
-  "output_hash": "696dc9427d57f545ddc2445b5cd36c9d5187d43e5242211178e43fd88b34b88d",
+  "input_hash": "f622a06d0d94ffa3ff0724fb8a76056bf48432739abb0719e219b04cc8c062aa",
+  "output_hash": "407c4d2b9fd16dde3093bea0b8405e8bf08c33909aab183edc832f75be0a2377",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 1.00 < 1.10",
+  "score": 1.5,
+  "verdict": "FALLO: PF Neto 1.01 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Ethereum Perpetuo",
     "exchange": "Binance / BingX / FTMO",
-    "gross_pnl_usd": 36.28,
-    "total_fees_usd": 35.68,
-    "total_slippage_usd": 0.61,
-    "net_pnl_usd": -0.01,
-    "net_profit_factor": 1.0,
-    "drag_cost_pct": 100.02
+    "gross_pnl_usd": 189.4,
+    "total_fees_usd": 165.3,
+    "total_slippage_usd": 2.87,
+    "net_pnl_usd": 21.23,
+    "net_profit_factor": 1.01,
+    "drag_cost_pct": 88.79
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T14:40:12.091360+00:00"
+  "created_at_utc": "2026-08-21T20:16:26.971724+00:00"
 }

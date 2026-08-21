@@ -1,22 +1,28 @@
+/**
+ * apps/web/layout/Header.tsx
+ */
 "use client";
 
-import { usePathname } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useTelemetryStream } from "@/hooks/useTelemetryStream";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 import { WorkerId } from "@/types/telemetry";
 
 const ROUTE_NAMES: Record<string, string> = {
-  "/": "Command Center V2 · Mission Control",
-  "/ultra": "Track ULTRA · BingX Perpetuals & Bóveda Ratchet",
-  "/fondeo": "Track FONDEO · CME Prop Firms Challenge",
-  "/candidatos": "Candidate Registry · FSM 10 Estados",
-  "/bifurcacion": "Quant Validation Fabric (QVF) Dual",
-  "/research": "Semantic AI Studio & FailureKnowledgeDB",
-  "/ejecucion": "Paper Trading Sandbox · 14 Días",
-  "/sistema": "System Supervisor & 8 Workers Pool",
-  "/prop-firms": "Catálogo de 34 Firmas Prop CME",
-  "/portfolio": "Portfolio Multi-Activo (HRP / ERC)",
+  "/": "Centro Operativo",
+  "/dashboard": "Dashboard",
+  "/sistema": "1. Motor en Vivo",
+  "/strategies": "2. Explorador Excel",
+  "/candidatos": "3. Pipeline 11 Pasos",
+  "/research": "4. Panel Investigador",
+  "/gates": "5. Estrategias Aprobadas",
+  "/portfolio": "6. Meta-Estrategia",
+  "/fondeo": "Track Fondeo",
+  "/ultra": "Track Ultra",
+  "/nautilus": "Nautilus Core",
+  "/campaigns": "Campañas de Minería",
 };
 
 const WORKER_SHORT: Record<WorkerId, string> = {
@@ -34,12 +40,15 @@ export default function Header() {
   const pathname = usePathname();
   const currentPage = ROUTE_NAMES[pathname] ?? "Centro Operativo";
   const { workers, systemMetrics, reconnect } = useTelemetryStream();
-  const [utcTime, setUtcTime] = useState("");
+  const { version, versionName, gitCommitShort } = useEngineVersion();
+  const [timeDisplay, setTimeDisplay] = useState("");
 
   useEffect(() => {
     const updateTime = () => {
       const d = new Date();
-      setUtcTime(d.toISOString().substring(11, 19) + " UTC");
+      const localStr = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      const utcStr = d.toISOString().substring(11, 19) + " UTC";
+      setTimeDisplay(`${localStr} (${utcStr})`);
     };
     updateTime();
     const timer = setInterval(updateTime, 1000);
@@ -71,9 +80,22 @@ export default function Header() {
         <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ fontSize: 14 }}>⚡</span>
           <span style={{ color: "var(--accent)", fontWeight: 800, fontFamily: "var(--font-mono)", letterSpacing: "0.5px" }}>
-            ULTRARENTABLE V2
+            ULTRARENTABLE
           </span>
         </Link>
+        <span
+          style={{
+            fontSize: "9px",
+            fontWeight: 800,
+            padding: "1px 5px",
+            borderRadius: "4px",
+            background: "rgba(52, 211, 153, 0.15)",
+            color: "#34d399",
+            border: "1px solid rgba(52, 211, 153, 0.4)",
+          }}
+        >
+          v{version}
+        </span>
         <span style={{ color: "var(--border)" }}>/</span>
         <span style={{ color: "var(--text-primary)", fontWeight: 700 }}>
           {currentPage}
@@ -114,7 +136,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Right: SSE Badge, Health & Clock */}
+      {/* Right: SSE Badge, Health & Dual Clock */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {/* SSE Streaming Badge */}
         <div
@@ -138,9 +160,9 @@ export default function Header() {
           <span>SSE {systemMetrics.connectionState}</span>
         </div>
 
-        {/* UTC Clock */}
+        {/* Dual Clock: Local + UTC */}
         <div style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)", fontWeight: 600 }}>
-          {utcTime || "UTC LIVE"}
+          ⏱️ {timeDisplay || "LIVE"}
         </div>
 
         {/* Link Supervisor */}
@@ -149,20 +171,18 @@ export default function Header() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 5,
+            gap: 4,
             fontSize: 11,
             fontFamily: "var(--font-mono)",
-            fontWeight: 700,
-            padding: "5px 10px",
+            padding: "4px 8px",
             borderRadius: "6px",
-            background: "rgba(56, 189, 248, 0.15)",
-            color: "#38bdf8",
-            border: "1px solid rgba(56, 189, 248, 0.3)",
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid var(--border)",
+            color: "var(--text-secondary)",
             textDecoration: "none",
           }}
         >
-          <span>🚀</span>
-          <span>SUPERVISOR</span>
+          <span>Control ⚙️</span>
         </Link>
       </div>
     </header>

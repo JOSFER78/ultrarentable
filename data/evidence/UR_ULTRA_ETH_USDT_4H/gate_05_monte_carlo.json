@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g05",
   "run_id": "run_UR_ULTRA_ETH_USDT_4H",
   "strategy_id": "UR_ULTRA_ETH_USDT_4H",
-  "strategy_snapshot_hash": "dabc08523b7a30ef81b5ae7cf9eec468da2f2269d4de1d5d0f9dea162c1a4102",
+  "strategy_snapshot_hash": "25bafeecedafd689af29fac0c8ee18586a008c85a4886486a912fc7006139be0",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "fc4452be66d2e4822f65fe3ff37ba1d118ff0548a40566872ab3fbb7da039aab",
-  "output_hash": "4d93caa8ec339dc75434c24f32cc82c6ead5e378b3ced2c82566012bb2e8bd76",
+  "input_hash": "6afe30805194738be3658ff7fa6b7bc5ba0b50de9dd0570479f1e0fff012d5ac",
+  "output_hash": "3afd9c8551ec51976c2b521731d1880d4764c02afc2e0a964dcf08f13991c66e",
   "status": "PASSED",
-  "score": 86.6,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 26.8%)",
+  "score": 98.4,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.2%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 15.3,
-    "drawdown_95th_percentile_pct": 26.8,
-    "max_simulated_drawdown_pct": 34.9
+    "drawdown_median_pct": 1.7,
+    "drawdown_95th_percentile_pct": 3.2,
+    "max_simulated_drawdown_pct": 4.5
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T14:40:12.444768+00:00"
+  "created_at_utc": "2026-08-21T20:16:27.682281+00:00"
 }

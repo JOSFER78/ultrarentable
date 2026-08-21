@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_15M",
   "strategy_id": "UR_ULTRA_LINK_USDT_15M",
-  "strategy_snapshot_hash": "bd67b2f4a14387d30fb9b293f309577b2501e1d13fbb01f01a29dc378eb48b25",
+  "strategy_snapshot_hash": "a3810510a47b5744fb169e5e7c65b626d155f616de378f4aa89fe77a83aa7732",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "ee389f73f86292c79ec6b5c4ba5b47689d5559ec49ad1f0bb622d9e2fa087b83",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "fea97944489ca4936987bca656d5826d4a04fe1b8a0e4facf2f1edea6103952a",
-  "output_hash": "5f21e43eaeb64e955a7bfb48f262dcf789088e08bfbc1bb576fd01d56b51def9",
+  "input_hash": "22629ae57fcc2d501acadb141422f059bcaafe9cd82376c7690dc9ef2a187770",
+  "output_hash": "77edbe2ec59c26bcda18f44ea789c54a15864d955874f318a139fa090f3bf92c",
   "status": "PASSED",
   "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (2/4 regímenes en beneficio, Net PnL: $43.61)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +24.54%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 36,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 2,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 38,
+      "CHOP_RANGING": 41,
       "HIGH_VOLATILITY": 6
     },
-    "regime_net_pnl_usd": {
-      "BULL_TREND": 120.03,
+    "regime_return_pct": {
+      "BULL_TREND": 76.42,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -198.27,
-      "HIGH_VOLATILITY": 121.85
+      "CHOP_RANGING": -88.22,
+      "HIGH_VOLATILITY": 36.34
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 3,
-    "total_oos_pnl_usd": 43.61
+    "total_oos_return_pct": 24.54
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:34:32.544577+00:00"
+  "created_at_utc": "2026-08-21T20:15:04.423877+00:00"
 }

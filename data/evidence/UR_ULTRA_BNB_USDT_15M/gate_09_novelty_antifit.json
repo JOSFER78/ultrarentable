@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_BNB_USDT_15M",
   "strategy_id": "UR_ULTRA_BNB_USDT_15M",
-  "strategy_snapshot_hash": "c57b74803ab48375c9dc81cc5d7baa6ce2a7b3ef536153791173722836944058",
+  "strategy_snapshot_hash": "4b200fd12576afe9290b985ecc94169d28ac068773ec93c04e5b413af1e3ea3a",
   "dataset_id": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "3cade86a5452925102db495a05f5f3f9777f1e7744b50be116b87ccad65e3f57",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5ce54a543d1565b9fc371598433f13a1b488e6a5b2631f1e97faf201f584bb80",
-  "output_hash": "649664ca6d1d0f27307fb243bf20e356a0b6bbae1d07b9049c93da6ec726cf95",
+  "input_hash": "36abcabc606a7d7ec5ba2228abb96436329e289fd937016901bf5190d1153067",
+  "output_hash": "c237ba38768fa3ce2643d3fb4e0533727e432337fbd602afbc5f46c8deb24f1a",
   "status": "PASSED",
-  "score": 94.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 21.2 trades/param, Estabilidad Vecindario: 102.8%, Re-backtest PFs: [0.94, 1.0, 1.09, 1.08])",
+  "score": 93.6,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 53.0 trades/param, Estabilidad Vecindario: 89.4%, Re-backtest PFs: [0.9, 0.95, 0.97, 1.04])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 21.2,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 53.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 102.8,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 89.4,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.94,
-      1.0,
-      1.09,
-      1.08
+      0.9,
+      0.95,
+      0.97,
+      1.04
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:27:31.686509+00:00"
+  "created_at_utc": "2026-08-21T20:16:09.501613+00:00"
 }

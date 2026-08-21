@@ -49,20 +49,36 @@ class WorkerInfo:
 
 
 class BaseWorker:
-    """Clase base para workers asíncronos desacoplados."""
+    """Clase base para workers asíncronos desacoplados con heartbeat autónomo."""
 
     def __init__(self, worker_type: WorkerType) -> None:
         self.info = WorkerInfo(worker_type=worker_type)
         self._running = False
+        self._task: Optional[asyncio.Task] = None
 
     async def start(self) -> None:
         self._running = True
         self.info.state = WorkerState.RUNNING
         self.info.last_heartbeat_ms = int(time.time() * 1000)
+        try:
+            loop = asyncio.get_running_loop()
+            self._task = loop.create_task(self._heartbeat_loop())
+        except RuntimeError:
+            pass
 
     async def stop(self) -> None:
         self._running = False
+        if self._task and not self._task.done():
+            self._task.cancel()
         self.info.state = WorkerState.STOPPED
+
+    async def _heartbeat_loop(self) -> None:
+        while self._running:
+            self.ping_heartbeat()
+            try:
+                await asyncio.sleep(5)
+            except asyncio.CancelledError:
+                break
 
     def ping_heartbeat(self) -> None:
         self.info.last_heartbeat_ms = int(time.time() * 1000)
@@ -85,7 +101,7 @@ class ForbiddenSelfHealingActionError(Exception):
 class SystemSupervisor:
     """Supervisor de orquestación, resiliencia y telemetría de Ultrarentable V2."""
 
-    def __init__(self, heartbeat_timeout_ms: int = 15000) -> None:
+    def __init__(self, heartbeat_timeout_ms: int = 60000) -> None:
         self.heartbeat_timeout_ms = heartbeat_timeout_ms
         self.workers: Dict[WorkerType, BaseWorker] = {
             w_type: BaseWorker(w_type) for w_type in WorkerType
