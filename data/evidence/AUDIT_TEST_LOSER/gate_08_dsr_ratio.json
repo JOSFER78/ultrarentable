@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_AUDIT_TEST_LOSER_g08",
+  "run_id": "run_AUDIT_TEST_LOSER",
+  "strategy_id": "AUDIT_TEST_LOSER",
+  "strategy_snapshot_hash": "e99a4f64e6108670e3085255497befe857eec5f803a4b731efcbd6ef23e1516f",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "13441577a70231d3e91ebe60448e7b137dc612aa9600df22de2783d8eb434af2",
+  "output_hash": "8d5f18194063abfd314c3775f0a9ee16f2fd49edfad9f25285f19988ee5ce18c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "BLOCKED: Sin evidencia de trials explorados (trials_tested <= 0 o None)",
+  "metrics": {
+    "trials_penalized": 0,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/AUDIT_TEST_LOSER/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-21T18:26:53.929202+00:00"
+}

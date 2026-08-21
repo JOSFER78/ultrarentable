@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_1H_g07",
   "run_id": "run_UR_ULTRA_SI_1H",
   "strategy_id": "UR_ULTRA_SI_1H",
-  "strategy_snapshot_hash": "6e672a419d12f167fdef6332bb9f41e7385790305dcb44bebbcd9c3afcd051fc",
+  "strategy_snapshot_hash": "dbfbcc27e2b49b0cc5d28da8f5ea6fabd7250ee7778f09288e8e5099074aff2c",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "cc9234d4d7f924382b16c07c857e4bd65bf206e76ba31f9c3b7e133864d3138c",
-  "output_hash": "eaeb664313424140804cca8ea61d277e5caed07abbca600861623de280fee5a6",
+  "input_hash": "f10f6c4fed99b6b72601f6b0fbfe371870e1e962771a73fec961f5c6372332c8",
+  "output_hash": "10e55d2085270cef6baa6e9bec2951e51a1eb4fa63eceea3dcecbf1f0f820a0d",
   "status": "PASSED",
   "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen temporal verificada (3/4 regímenes en beneficio, Net PnL: $226.99)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +739.05%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 511,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 468
     },
     "regime_trades_count": {
-      "BULL_TREND": 9,
-      "BEAR_TREND": 10,
-      "CHOP_RANGING": 44,
-      "HIGH_VOLATILITY": 13
+      "BULL_TREND": 11,
+      "BEAR_TREND": 13,
+      "CHOP_RANGING": 52,
+      "HIGH_VOLATILITY": 19
     },
-    "regime_net_pnl_usd": {
-      "BULL_TREND": -8.8,
-      "BEAR_TREND": 26.98,
-      "CHOP_RANGING": 103.88,
-      "HIGH_VOLATILITY": 104.93
+    "regime_return_pct": {
+      "BULL_TREND": -176.58,
+      "BEAR_TREND": 259.08,
+      "CHOP_RANGING": 80.58,
+      "HIGH_VOLATILITY": 575.97
     },
     "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": 226.99
+    "total_oos_return_pct": 739.05
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T08:34:34.493490+00:00"
+  "created_at_utc": "2026-08-21T20:13:47.189163+00:00"
 }

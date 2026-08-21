@@ -1,14 +1,27 @@
 {
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g05",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
+  "strategy_snapshot_hash": "218448240663c9d568d35f9e436b8aed9791d17ecaecb8d8f817eb552c3737b9",
+  "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
-  "name": "MONTE_CARLO",
-  "passed": true,
-  "score": 98.5,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.0%)",
-  "evidence": {
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "4bafd0bed6d9f85306ceb777a01ce90d9481115d8a23fc03da64f3ba1da5f7e1",
+  "output_hash": "26f2d7da4122590b7464106d1de624221ef792f9dbc55ddca169dc9386fdd159",
+  "status": "PASSED",
+  "score": 98.0,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.0%)",
+  "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.6,
-    "drawdown_95th_percentile_pct": 3.0,
-    "max_simulated_drawdown_pct": 6.0
-  }
+    "drawdown_median_pct": 2.2,
+    "drawdown_95th_percentile_pct": 4.0,
+    "max_simulated_drawdown_pct": 5.3
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-21T20:13:49.844119+00:00"
 }

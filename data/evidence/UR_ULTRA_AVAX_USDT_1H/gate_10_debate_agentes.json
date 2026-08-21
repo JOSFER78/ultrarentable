@@ -2,51 +2,51 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1H",
-  "strategy_snapshot_hash": "b804818bb158919f5116d888cc1a5e6d7a39c41529fb500a35004a4b134ba45d",
+  "strategy_snapshot_hash": "757d71e2a1598a088e4d78f141535bc3d94caf2ef69dc85bf91608e0487817c1",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "43558970dd3987c0e35c79d88737ed8991ae25a2d367cf9288df45ab964f4655",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "59baa95402b74da17a3cd63c1d791005f909db9aa21ba87ca2ae7f4ea7c68c03",
-  "output_hash": "c0d9fdbe6b0815014a93673d597f1b358f153e17ccfd1be16db84363ddcc6c19",
-  "status": "PASSED",
-  "score": 76.7,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (76.7/100 · 5/5 Evaluadores Conformes)",
+  "input_hash": "d15432dfb3b0b70adb9d25c071b3e6a0e25d5f1411a529caaf64819d2395dc77",
+  "output_hash": "7143321add615914a9819ece2e04862112c8353e44911aaaff3a65399c0c3eb8",
+  "status": "FAILED",
+  "score": 38.1,
+  "verdict": "FALLO: Consenso insuficiente (38.1/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 76.7,
+    "consensus_score": 38.1,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 59.5,
+        "score": 60.8,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.10 con beneficio neto de $476.96.",
+          "Profit Factor OOS: 1.13 con beneficio neto de $9.63.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 65.4,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 73.5% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 95.0% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 134 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 811 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $3.56 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.01 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 81.2,
+        "score": 42.7,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Drawdown: DD (95.0%) consume más del 90% del margen tolerable."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:26:28.799129+00:00"
+  "created_at_utc": "2026-08-21T20:13:35.448215+00:00"
 }

@@ -1,20 +1,33 @@
 {
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g11",
+  "run_id": "run_UR_ULTRA_XRP_USDT_4H",
+  "strategy_id": "UR_ULTRA_XRP_USDT_4H",
+  "strategy_snapshot_hash": "c2ffbd648bbef8bd3d30fec3d2cf0624cec8a1453278b996667c9ac3db76be36",
+  "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 11,
-  "name": "EVENT_CROSS_VALIDATION",
-  "passed": false,
-  "score": 26.0,
-  "verdict": "FALLO: Riesgo de margen o liquidaci\u00f3n (Margin Call: False, Dist. Liquidaci\u00f3n: 86.7%, Peak Lev: 25.9x > 100.0x)",
-  "evidence": {
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "8dc26eab79098d0c754e8b7f2e290f65835113fbce11c11c9d2fa04bf9fe4823",
+  "output_hash": "6580a2102f3d482be9de0d86d01f47e33627787f7b446fff79049c5ef29af545",
+  "status": "PASSED",
+  "score": 97.2,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $975.00, Apalancamiento Pico: 6.0x, Dist. Mín. Liquidación: 97.0%, Comisiones+Funding: $67.83)",
+  "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 461.52,
-    "peak_equity_usd": 1000.0,
-    "min_equity_usd": 461.52,
-    "peak_leverage_used": 25.91,
+    "final_equity_usd": 975.0,
+    "peak_equity_usd": 1006.16,
+    "min_equity_usd": 948.57,
+    "peak_leverage_used": 6.01,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 86.66,
+    "min_distance_to_liquidation_pct": 96.97,
     "margin_call_triggered": false,
-    "total_fees_paid_usd": 526.46,
-    "total_funding_cost_usd": 52.65,
-    "execution_events_count": 71
-  }
+    "total_fees_paid_usd": 61.66,
+    "total_funding_cost_usd": 6.17,
+    "execution_events_count": 37
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-21T20:13:03.114604+00:00"
 }

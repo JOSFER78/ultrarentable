@@ -11,19 +11,19 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "e4b1b0fb709c1049029ddba3aa4568aae55809fb2b8033f2f7301bbca9e59400",
-  "output_hash": "2adc723e0f4443a346058aa5fe5563614f8eb634d672d03e4f3e3e273c077045",
-  "status": "PASSED",
-  "score": 58.5,
-  "verdict": "PASSED: DSR = 58.5% (Sharpe Bruto: 0.02, Trials Penalizados: 15, Skew: 2.12, Kurt: 7.69)",
+  "output_hash": "af233b4be7305d76bd685c422ec17abf4c9c69607ed4df709f0e0d22962b147a",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 15 trials)",
   "metrics": {
     "raw_sharpe_ratio": 0.017,
-    "deflated_sharpe_probability_pct": 58.53,
+    "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 15,
-    "expected_max_sharpe_under_selection": 0.0,
+    "expected_max_sharpe_under_selection": 1.771,
     "skewness": 2.123,
     "kurtosis": 7.689,
     "sample_trades_count": 149
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T02:07:51.221187+00:00"
+  "created_at_utc": "2026-08-21T18:28:20.107736+00:00"
 }

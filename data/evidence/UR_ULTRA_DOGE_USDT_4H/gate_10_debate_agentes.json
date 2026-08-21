@@ -1,31 +1,42 @@
 {
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g10",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
+  "strategy_snapshot_hash": "218448240663c9d568d35f9e436b8aed9791d17ecaecb8d8f817eb552c3737b9",
+  "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
-  "name": "DEBATE_AGENTES",
-  "passed": true,
-  "score": 76.7,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (76.7/100 \u00b7 5/5 Evaluadores Conformes)",
-  "evidence": {
-    "consensus_score": 76.7,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "62bc08eda0511bfeb126de4f8e7a382249322d30e785805a8248b5f902e89f23",
+  "output_hash": "08f7984688bde08ea48c06bf113c7a89a801e5ee00066c398a792cfa110ef2a4",
+  "status": "PASSED",
+  "score": 60.9,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (60.9/100 · 5/5 Evaluadores Conformes)",
+  "metrics": {
+    "consensus_score": 60.9,
     "evaluators_count": 5,
     "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
-        "score": 60.8,
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 69.4,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.13 con beneficio neto de $1318.79.",
-          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 1.32 con beneficio neto de $18.94.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
-        "score": 64.2,
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 60.1,
         "findings": [
-          "Drawdown M\u00e1ximo Observado: 76.1% (L\u00edmite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 84.8% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -35,30 +46,32 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 282 operaciones evaluadas (M\u00ednimo requerido: 10).",
+          "Muestra fuera de muestra: 134 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
-        "score": 100.0,
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operaci\u00f3n: $4.68 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.14 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
-        "score": 81.3,
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 59.9,
         "objections": [
-          "Cero objeciones cr\u00edticas encontradas: La evidencia emp\u00edrica respalda el candidato."
+          "Alerta de Drawdown: DD (84.8%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
-  }
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-21T20:13:50.410733+00:00"
 }

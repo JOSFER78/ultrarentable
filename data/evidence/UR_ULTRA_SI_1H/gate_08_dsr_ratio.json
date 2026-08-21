@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_1H_g08",
   "run_id": "run_UR_ULTRA_SI_1H",
   "strategy_id": "UR_ULTRA_SI_1H",
-  "strategy_snapshot_hash": "6e672a419d12f167fdef6332bb9f41e7385790305dcb44bebbcd9c3afcd051fc",
+  "strategy_snapshot_hash": "dbfbcc27e2b49b0cc5d28da8f5ea6fabd7250ee7778f09288e8e5099074aff2c",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "95ea79c18483e610b866a35e2fb8bf2258cd92fedc9d7a51573a40847fd40434",
-  "output_hash": "20d8a8f1bee23a03f23e3f663801467c40b2e6c3d5c947c936931cae142e048f",
+  "input_hash": "b665f656e6ceaaa7ce8b3246aba88222dbaa5b9046731becf74921d9b7369096",
+  "output_hash": "26a39fde33045269b7f07df87797f8af8998476ba0798919103a95e6858e47ac",
   "status": "PASSED",
-  "score": 99.5,
-  "verdict": "PASSED: DSR = 99.5% (Sharpe Bruto: 0.24, Trials Penalizados: 1, Skew: 1.58, Kurt: 4.22)",
+  "score": 99.2,
+  "verdict": "PASSED: DSR = 99.2% (Sharpe Bruto: 0.17, Trials Penalizados: 1, Skew: 4.26, Kurt: 25.12)",
   "metrics": {
-    "raw_sharpe_ratio": 0.242,
-    "deflated_sharpe_probability_pct": 99.5,
+    "raw_sharpe_ratio": 0.167,
+    "deflated_sharpe_probability_pct": 99.15,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 1.584,
-    "kurtosis": 4.218,
-    "sample_trades_count": 76
+    "skewness": 4.255,
+    "kurtosis": 25.118,
+    "sample_trades_count": 95
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-20T08:34:34.527207+00:00"
+  "created_at_utc": "2026-08-21T20:13:47.211091+00:00"
 }

@@ -34,10 +34,10 @@ export interface EngineVersionData {
 
 export function useEngineVersion() {
   const [data, setData] = useState<EngineVersionData>({
-    current_version: "1.05",
-    current_name: "Ultrarentable V1.05 (Pure Dimensional Quant Architecture, % & R-Multiples Unification & Dynamic Git Versioning)",
-    pipeline_version: "1.05",
-    git_commit_short: "3055e14",
+    current_version: "2.0.0",
+    current_name: "Ultrarentable V2.0.0 (Universal Quantum Core, 24/7 Autonomous Research Loop & Strict Forensic Certification)",
+    pipeline_version: "2.0.0",
+    git_commit_short: "HEAD",
     git_branch: "main",
     history: [],
     version_distribution: {},
@@ -56,7 +56,7 @@ export function useEngineVersion() {
             setData(json);
           }
         }
-      } catch (err) {
+      } catch {
         // Keep default fallback
       } finally {
         if (mounted) setLoading(false);
@@ -76,7 +76,7 @@ export function useEngineVersion() {
     versionName: data.current_name,
     pipelineVersion: data.pipeline_version,
     gitCommit: data.git_commit,
-    gitCommitShort: data.git_commit_short || (data.git_commit ? data.git_commit.substring(0, 7) : "08dbec5"),
+    gitCommitShort: data.git_commit_short || (data.git_commit ? data.git_commit.substring(0, 7) : "HEAD"),
     gitBranch: data.git_branch || "main",
     gitMessage: data.git_message || "",
     gitIsDirty: data.git_is_dirty || false,

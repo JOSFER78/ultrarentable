@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR_FONDEO_CL_1H_g06",
+  "run_id": "run_UR_FONDEO_CL_1H",
+  "strategy_id": "UR_FONDEO_CL_1H",
+  "strategy_snapshot_hash": "a557d449ed3b84b6d4c69240684e54917c8585043b59d0919c6ecf75864c8078",
+  "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
-  "name": "STRESS_SLIPPAGE",
-  "passed": false,
+  "gate_name": "STRESS_SLIPPAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "e8322e52d65aed4d871bc89ea38c3d544b1b5d255d11b0ba53f3f7164268a64f",
+  "output_hash": "fde0238f2bf5db6ad44472638cdc7b3c4237983b73988cce25d30ae613543bda",
+  "status": "FAILED",
   "score": 15.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (1/4 escenarios superados)",
-  "evidence": {
+  "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
@@ -34,5 +45,7 @@
     "passed_scenarios_count": 1,
     "min_required_scenarios": 2,
     "base_friction_usd": 3.0
-  }
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_CL_1H/gate_06_stress_slippage.json",
+  "created_at_utc": "2026-08-21T20:12:46.506466+00:00"
 }

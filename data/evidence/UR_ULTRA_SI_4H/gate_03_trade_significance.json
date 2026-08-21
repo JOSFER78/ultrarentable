@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_4H_g03",
   "run_id": "run_UR_ULTRA_SI_4H",
   "strategy_id": "UR_ULTRA_SI_4H",
-  "strategy_snapshot_hash": "776ea289602c14ca96d814c33a652f485887f1246c6c1ed5bb70f7c7722cff78",
+  "strategy_snapshot_hash": "7658350895c726b20bf8b2391dd66ed41968c0380cf9964c1a3e51863ea19466",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8d7d930d245183165ce222db705441d3878548e56e3f6ea8a3a0e0d0d545464e",
-  "output_hash": "1f83a4b98e90f26356c2dea8b13b56601d0950117ec0f0ee874ec23e3bcaa513",
-  "status": "PASSED",
+  "input_hash": "621d63a41af2eae0de35a02699b5a5fe8d8a9423ae51ea0119fc1a9a2bf69209",
+  "output_hash": "e260b79de86dad5de4d720771e9d7553a075e75a73b09380190ab03b0bcbb568",
+  "status": "FAILED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (66 IS / 22 OOS · Ultra Convex)",
+  "verdict": "FALLO: Muestra insuficiente (81 IS < 15 ó 28 OOS < 10)",
   "metrics": {
-    "trades_is": 66,
-    "trades_oos": 22,
-    "top2_outlier_dependency_pct": 74.1,
+    "trades_is": 81,
+    "trades_oos": 28,
+    "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T08:34:28.904803+00:00"
+  "created_at_utc": "2026-08-21T20:14:27.076131+00:00"
 }

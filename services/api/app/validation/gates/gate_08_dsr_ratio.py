@@ -38,22 +38,25 @@ def _std_norm_ppf(p: float) -> float:
          -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00]
     d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00]
 
-    q = min(p, 1.0 - p)
-    if q > 0.02425:
-        r = q - 0.5
-        r2 = r * r
-        num = ((((a[0] * r2 + a[1]) * r2 + a[2]) * r2 + a[3]) * r2 + a[4]) * r2 + a[5]
-        den = ((((b[0] * r2 + b[1]) * r2 + b[2]) * r2 + b[3]) * r2 + b[4]) * r2 + 1.0
-        val = r * num / den
-    else:
-        r = math.sqrt(-2.0 * math.log(q))
-        num = ((((c[0] * r + c[1]) * r + c[2]) * r + c[3]) * r + c[4]) * r + c[5]
-        den = (((d[0] * r + d[1]) * r + d[2]) * r + d[3]) * r + 1.0
-        val = num / den
-        if p < 0.5:
-            val = -val
+    p_low = 0.02425
+    p_high = 1.0 - p_low
 
-    return val
+    if p < p_low:
+        q = math.sqrt(-2.0 * math.log(p))
+        num = ((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]
+        den = (((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0
+        return -num / den
+    elif p <= p_high:
+        q = p - 0.5
+        r = q * q
+        num = (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5]) * q
+        den = ((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1.0
+        return num / den
+    else:
+        q = math.sqrt(-2.0 * math.log(1.0 - p))
+        num = ((((c[0]*q + c[1])*q + c[2])*q + c[3])*q + c[4])*q + c[5]
+        den = (((d[0]*q + d[1])*q + d[2])*q + d[3])*q + 1.0
+        return num / den
 
 
 class Gate08DSRRatio:

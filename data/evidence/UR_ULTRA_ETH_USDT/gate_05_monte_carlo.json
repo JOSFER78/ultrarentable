@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g05",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "ff5dd6b3aa1777a7faca08354aaf352b377136d91100b765e31b03d8158fd017",
-  "dataset_id": "ds_bingx_ETH_USDT_5m_1771841100000_1785664800000_9cdb918f02.json",
-  "dataset_sha256": "9cdb918f020b562444ee2142fa63990743724830ea47b581643fb0089c7d9930",
+  "strategy_snapshot_hash": "30694a081d8d2f3387c09731236fafe45a3719ab705d8a73686616cea499044d",
+  "dataset_id": "ds_bingx_ETH_USDT_1m_1771841100000_1785665040000_ee0b2e169d.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "092b8d74fc43f65b8cff908a0043dc08613e11aa6197325f7af826d053df1dda",
-  "output_hash": "2cf1048d81f9c50285ba046769d8d1849e9bacafe8abb5ebb24d2e25e240dbca",
+  "input_hash": "699a03c42775cf0bf47328cc2ba6373608bd9dd44af98f99e80b8ba7a91dd15f",
+  "output_hash": "42b86ab73d15c4a9467f0ee43750bc45cfad41b52773bec13cffda00bff6756d",
   "status": "PASSED",
-  "score": 57.3,
-  "verdict": "PASSED: Riesgo de Ruina = 0.5% (DD 95% = 75.3%)",
+  "score": 96.5,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 7.0%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 0.5,
-    "drawdown_median_pct": 50.4,
-    "drawdown_95th_percentile_pct": 75.3,
-    "max_simulated_drawdown_pct": 91.3
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 3.7,
+    "drawdown_95th_percentile_pct": 7.0,
+    "max_simulated_drawdown_pct": 11.1
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T15:01:07.880978+00:00"
+  "created_at_utc": "2026-08-21T20:13:22.345648+00:00"
 }

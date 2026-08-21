@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_1H_g07",
+  "run_id": "run_UR_ULTRA_SUI_USDT_1H",
+  "strategy_id": "UR_ULTRA_SUI_USDT_1H",
+  "strategy_snapshot_hash": "2d60dc5ab173030c434054a65a39d0d1fb7f6020f5fb95b67d9f70de1ea21b51",
+  "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
-  "name": "REGIME_COVERAGE",
-  "passed": true,
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (3/4 reg\u00edmenes positivos, Retorno OOS: +23785.51%)",
-  "evidence": {
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "4d40d440cfa46b7b96b0f28ff1995b352e171210a875164d3e314c34a178a74d",
+  "output_hash": "e6117744e7b8f5150f9461e6bc7340eec25d8c18035dacd1db2cab9c6bdf2c24",
+  "status": "FAILED",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -74.24%)",
+  "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 640,
       "BEAR_TREND": 944,
@@ -12,19 +23,21 @@
       "HIGH_VOLATILITY": 1064
     },
     "regime_trades_count": {
-      "BULL_TREND": 22,
-      "BEAR_TREND": 24,
-      "CHOP_RANGING": 81,
-      "HIGH_VOLATILITY": 44
+      "BULL_TREND": 4,
+      "BEAR_TREND": 6,
+      "CHOP_RANGING": 8,
+      "HIGH_VOLATILITY": 17
     },
     "regime_return_pct": {
-      "BULL_TREND": 132.6,
-      "BEAR_TREND": -175.37,
-      "CHOP_RANGING": 18823.71,
-      "HIGH_VOLATILITY": 5004.57
+      "BULL_TREND": -50.95,
+      "BEAR_TREND": -89.04,
+      "CHOP_RANGING": 414.66,
+      "HIGH_VOLATILITY": -348.91
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 23785.51
-  }
+    "total_oos_return_pct": -74.24
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1H/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-21T18:28:23.618639+00:00"
 }

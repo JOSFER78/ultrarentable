@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_1H",
   "strategy_id": "UR_ULTRA_LINK_USDT_1H",
-  "strategy_snapshot_hash": "87f363f418089b6c4f80b043305f92d94955f9311f080c233c016b764703c91f",
+  "strategy_snapshot_hash": "193992dfeac02dd57b750ffb797fffece371025fd66cccfe494e66ed4d7f4444",
   "dataset_id": "ds_binance_linkusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "1a201f1712ff0e75d2b4f18f2de0dc3eae4e8f4d858b120183ce339ff1c59509",
-  "output_hash": "0a90840e458f4f7892f1e38ea7efe8deba28fb128e4391deed8ec3dc18b388b2",
+  "input_hash": "2c1fb127502ab36828e55171b2f5e73650651310d5071edbb42f0db6bfc3a1b2",
+  "output_hash": "f744347d22e58959205184a574e7c9489917d0ff80be62112cafbe5683cf9b92",
   "status": "FAILED",
-  "score": 65.2,
-  "verdict": "FALLO: Consenso insuficiente (65.2/100) u objeción crítica de riesgo",
+  "score": 39.4,
+  "verdict": "FALLO: Consenso insuficiente (39.4/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 65.2,
+    "consensus_score": 39.4,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 70.3,
+        "score": 65.3,
         "findings": [
           "Activo y Timeframe: LINK-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.34 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.23 con beneficio neto de $17.16.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 77.6,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 47.5% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 98.5% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 154 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 758 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $0.02 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 62.0,
+        "score": 43.8,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Alerta de Drawdown: DD (98.5%) consume más del 90% del margen tolerable."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T17:49:10.354240+00:00"
+  "created_at_utc": "2026-08-21T20:14:00.716577+00:00"
 }

@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g07",
+  "run_id": "run_UR_ULTRA_XRP_USDT_4H",
+  "strategy_id": "UR_ULTRA_XRP_USDT_4H",
+  "strategy_snapshot_hash": "c2ffbd648bbef8bd3d30fec3d2cf0624cec8a1453278b996667c9ac3db76be36",
+  "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
-  "name": "REGIME_COVERAGE",
-  "passed": true,
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (2/4 reg\u00edmenes positivos, Retorno OOS: +4062.55%)",
-  "evidence": {
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "acf5f4abf3440b569fa8abb17e8738040709e44fe8bf194899e40cacafb13fa0",
+  "output_hash": "514dba906f210527d42469cfa4fe46308eca4be6f9753fbbe3c7ba4ef5904fcf",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +1307.59%)",
+  "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 358,
       "BEAR_TREND": 564,
@@ -12,19 +23,21 @@
       "HIGH_VOLATILITY": 461
     },
     "regime_trades_count": {
-      "BULL_TREND": 12,
-      "BEAR_TREND": 18,
-      "CHOP_RANGING": 30,
-      "HIGH_VOLATILITY": 11
+      "BULL_TREND": 6,
+      "BEAR_TREND": 12,
+      "CHOP_RANGING": 6,
+      "HIGH_VOLATILITY": 13
     },
     "regime_return_pct": {
-      "BULL_TREND": -66.94,
-      "BEAR_TREND": 3109.88,
-      "CHOP_RANGING": 1154.41,
-      "HIGH_VOLATILITY": -134.8
+      "BULL_TREND": -150.8,
+      "BEAR_TREND": 1703.98,
+      "CHOP_RANGING": -58.82,
+      "HIGH_VOLATILITY": -186.77
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 4062.55
-  }
+    "total_oos_return_pct": 1307.59
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-21T20:13:02.557250+00:00"
 }

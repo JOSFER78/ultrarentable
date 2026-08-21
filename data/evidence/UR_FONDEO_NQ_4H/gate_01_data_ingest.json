@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_NQ_4H_g01",
   "run_id": "run_UR_FONDEO_NQ_4H",
   "strategy_id": "UR_FONDEO_NQ_4H",
-  "strategy_snapshot_hash": "a02578bfc723a62550db3d3e24cba14d9079a740baf2b55466a2a13ee5069388",
+  "strategy_snapshot_hash": "9d69c8242718f1678104be8c64b19481a23be2e5578c721d783c445a8ac194ab",
   "dataset_id": "ds_trad_nq_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "61e542f267d9cccccdedf931b69c8d159178030622efcaf23a92cf1b4e2f7dbf",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 1,
   "gate_name": "DATA_INGEST",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "660bb7d35a1d2544be7bcea4a7a5dbd1a48d85fffb3da6bd1134458feae3fd54",
-  "output_hash": "1369cf8e552947dfd1b05b580917d1ae82205f7e786bdcceef73b7cfa8c756ef",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: 0 corruptas, 0 desordenadas, 0 gaps excesivos",
+  "input_hash": "8c4ecb52945295fbb81e944960f605dba216eb64254b7ccd8112acbff3679774",
+  "output_hash": "8f931708136b652d535a1929a858e046bb2a2553f62675f2769c8a053659fbe5",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (743 velas, SHA256: 61e542f2..., 0 corruptas, 0 gaps tolerados)",
   "metrics": {
     "total_candles": 743,
     "corrupt_bars": 0,
@@ -27,5 +27,5 @@
     "integrity_pct": 100.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_NQ_4H/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-20T15:07:44.120663+00:00"
+  "created_at_utc": "2026-08-21T20:13:00.039742+00:00"
 }

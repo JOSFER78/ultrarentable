@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_4H_g01",
   "run_id": "run_UR_ULTRA_SI_4H",
   "strategy_id": "UR_ULTRA_SI_4H",
-  "strategy_snapshot_hash": "776ea289602c14ca96d814c33a652f485887f1246c6c1ed5bb70f7c7722cff78",
+  "strategy_snapshot_hash": "7658350895c726b20bf8b2391dd66ed41968c0380cf9964c1a3e51863ea19466",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 1,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5edd5035caf401eb15f712e9b4069fe6b20f14fda31ddb1ce96a9f41b09ba913",
-  "output_hash": "bba83283a66a3dd6d178ab7f56ff3f1b8340c47880f8fbdaf1dd07f28a785803",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: 0 corruptas, 0 desordenadas, 0 gaps excesivos",
+  "input_hash": "f1df3e561e81f9a16121fe53c6436eccd805f8d6f6a6fad7fe9f0beb44dae04c",
+  "output_hash": "d65a34e6fbcad307ed49c6779146ca60c21d5ca7f056d3d53f21655f5aec3174",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (745 velas, SHA256: dde4f6c8..., 0 corruptas, 0 gaps tolerados)",
   "metrics": {
     "total_candles": 745,
     "corrupt_bars": 0,
@@ -27,5 +27,5 @@
     "integrity_pct": 100.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-20T08:34:28.872031+00:00"
+  "created_at_utc": "2026-08-21T20:14:27.062675+00:00"
 }

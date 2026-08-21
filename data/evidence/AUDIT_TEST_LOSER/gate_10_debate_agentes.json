@@ -1,0 +1,78 @@
+{
+  "evidence_id": "ev_AUDIT_TEST_LOSER_g10",
+  "run_id": "run_AUDIT_TEST_LOSER",
+  "strategy_id": "AUDIT_TEST_LOSER",
+  "strategy_snapshot_hash": "e99a4f64e6108670e3085255497befe857eec5f803a4b731efcbd6ef23e1516f",
+  "dataset_id": "ds_primary",
+  "dataset_sha256": "sha256_unverified",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "9c03311eac3e9a2dd255666f936729aed11c6a5ba5cb8621c60107abcf879aa4",
+  "output_hash": "4c5f38c03c2cfbf6e0dda2e759c9d2291530a7630409480ef8fac171b6924ad1",
+  "status": "FAILED",
+  "score": 38.9,
+  "verdict": "FALLO: Consenso insuficiente (38.9/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 38.9,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 20.0,
+        "findings": [
+          "Activo y Timeframe: BTC-USDT (15m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.25 con beneficio neto de $-350.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 78.8,
+        "findings": [
+          "Drawdown Máximo Observado: 45.0% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 35.0,
+        "findings": [
+          "Muestra fuera de muestra: 7 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: LIMITADO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-50.00 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 33.5,
+        "objections": [
+          "Alerta de Muestra: 7 trades OOS es una muestra pequeña (< 10 requeridos).",
+          "Alerta de Rentabilidad: Profit factor 0.25 cercano al umbral de equilibrio (1.05)."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/AUDIT_TEST_LOSER/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-21T18:26:53.929880+00:00"
+}

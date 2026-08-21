@@ -2,61 +2,61 @@
   "evidence_id": "ev_UR_FONDEO_YM_15M_g10",
   "run_id": "run_UR_FONDEO_YM_15M",
   "strategy_id": "UR_FONDEO_YM_15M",
-  "strategy_snapshot_hash": "aa76633290b1eabe9f10fcc77903e93452b1992410c1336016c221fe69fb751b",
+  "strategy_snapshot_hash": "d65a6df08b473dcbaf2e7f061c3aa2f3e7d36fa6f7d7c7c2d45ab3d04028a8c2",
   "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "c74a21ae65046e37bf6b57c82f446ed9497a331b3e81b813f3aaaaa2a0da33fa",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "231a20e7898c32c7528cfc7c46b221171dc41cece1541eda66b1506afe5ff98d",
-  "output_hash": "3672e49bb727183bc23d5b49e1351c9cac1400d82d405a6c0af901f42c7997cb",
-  "status": "FAILED",
-  "score": 29.5,
-  "verdict": "FALLO: Consenso insuficiente (29.5/100) u objeción crítica de riesgo",
+  "input_hash": "4ef210bfdf4d9b82b5868a97f7537c9e1121094814d97aa605db4c3ba6056750",
+  "output_hash": "286e85cad5324e755f9c1e568c62a3f2a1f136e52c23aa6727808be685db514c",
+  "status": "PASSED",
+  "score": 66.7,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (66.7/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 29.5,
+    "consensus_score": 66.7,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 36.3,
+        "score": 83.8,
         "findings": [
           "Activo y Timeframe: YM (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 1.14 con beneficio neto de $-629.62.",
+          "Profit Factor OOS: 1.64 con beneficio neto de $0.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 42.6,
+        "score": 65.0,
         "findings": [
-          "Drawdown Máximo Observado: 3.7% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 2.2% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 25.0,
+        "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 10 operaciones evaluadas (Mínimo requerido: 20).",
-          "Grado de confianza: LIMITADO."
+          "Muestra fuera de muestra: 71 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-62.96 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,16 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 26.0,
+        "score": 64.7,
         "objections": [
-          "Alerta de Drawdown: DD (3.7%) consume más del 70% del margen tolerable.",
-          "Alerta de Muestra: 10 trades OOS es una muestra pequeña (< 20 requeridos).",
-          "Alerta de Rentabilidad: Profit factor 1.14 cercano al umbral de equilibrio (1.15)."
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:13:13.555228+00:00"
+  "created_at_utc": "2026-08-21T20:13:43.249574+00:00"
 }
