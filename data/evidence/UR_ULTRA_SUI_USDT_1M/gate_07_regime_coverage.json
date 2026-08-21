@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_SUI_USDT_1M",
   "strategy_id": "UR_ULTRA_SUI_USDT_1M",
-  "strategy_snapshot_hash": "976f62046e6a153cb3f3bf058d253335626276438ac9768a9023bb5b96375885",
+  "strategy_snapshot_hash": "7240f960e8a5200709f8a6e53659fc2921b9733cfa85fa1d973644a63c1f1e50",
   "dataset_id": "ds_binance_suiusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "d5aef0afc6534000ade751500390a8b0035919b5d12cb9c2644818e049cd3ec3",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "48620ec85d7e085e1f9e6736a1649c6ce7acbecdf81e3222a0a57414da50d412",
-  "output_hash": "1c325305a78491d20b5aa2954fcebba8b8ec6e2984d347b02a9cd44bf9631bdc",
+  "input_hash": "5b12a3e960bdc70deabe5673d3e7f8c0ed0b68ed0e04c3c447de5b38ee3372bf",
+  "output_hash": "ea11f844019c199a0602b8fb7808b419ce0474de424589b20faf4561d72feac9",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-465.14)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -71.95%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 49,
-      "HIGH_VOLATILITY": 9
+      "CHOP_RANGING": 17,
+      "HIGH_VOLATILITY": 0
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -661.17,
-      "HIGH_VOLATILITY": 196.03
+      "CHOP_RANGING": -71.95,
+      "HIGH_VOLATILITY": 0.0
     },
-    "regimes_profitable_count": 1,
-    "regimes_active_count": 2,
-    "total_oos_pnl_usd": -465.14
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 1,
+    "total_oos_return_pct": -71.95
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:39:08.718375+00:00"
+  "created_at_utc": "2026-08-21T22:26:34.800331+00:00"
 }

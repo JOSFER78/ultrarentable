@@ -2,27 +2,27 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_5M_g03",
   "run_id": "run_UR_FONDEO_USDCAD_5M",
   "strategy_id": "UR_FONDEO_USDCAD_5M",
-  "strategy_snapshot_hash": "877594d125b123b87a13b5e2f0369524580af4a66ea7e495e0249b4ed6cdddb9",
+  "strategy_snapshot_hash": "fc81c673b6c759140265a541bb9dcab220c4a23537b76feb71d0cd6087605f31",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "37237e9c000099121df419cd1aa6d63d963ec04b512edddab57dc8706c52cadf",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b8862d0545570e3ac27614c5b735ebd3485a9325785acb345e8e0b4d671ced6c",
-  "output_hash": "05a28b34b0f1faf80912dc035d4cbb42a88f9f97356649a4d46665c669239429",
+  "input_hash": "b55ae84e7428a76b411bea6e113b93ad8936c03c7b6d75f099cba05782afe922",
+  "output_hash": "04b408568251a216a99444dcd749ecb97bf67722de22cfe070bb844504a4a612",
   "status": "FAILED",
   "score": 37.5,
   "verdict": "FALLO: Muestra insuficiente (83 IS < 30 ó 15 OOS < 20)",
   "metrics": {
     "trades_is": 83,
     "trades_oos": 15,
-    "top2_outlier_dependency_pct": 68.6,
+    "top2_outlier_dependency_pct": 68.9,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_5M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T15:10:53.548856+00:00"
+  "created_at_utc": "2026-08-21T22:27:57.685714+00:00"
 }

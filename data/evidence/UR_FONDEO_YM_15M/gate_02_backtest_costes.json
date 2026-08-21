@@ -1,10 +1,23 @@
 {
+  "evidence_id": "ev_UR_FONDEO_YM_15M_g02",
+  "run_id": "run_UR_FONDEO_YM_15M",
+  "strategy_id": "UR_FONDEO_YM_15M",
+  "strategy_snapshot_hash": "0fd1edb13cdd88464a09de3e368acc1eb911ed0ec781c2c229950abebf59cc61",
+  "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
-  "name": "BACKTEST_COSTES",
-  "passed": false,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "9c8af193aadd7a76b009beb1a8c0eb6f793f3fb1e89932792d8e8e4684cf8d42",
+  "output_hash": "386b5574790f9d0fede751ac5b0b48308f3a38f939ddf3ff7b73bc1e2eefe11b",
+  "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para an\u00e1lisis de costes",
-  "evidence": {
-    "trades_count": 7
-  }
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
+  "metrics": {
+    "trades_count": 6
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_YM_15M/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-21T22:26:07.313758+00:00"
 }

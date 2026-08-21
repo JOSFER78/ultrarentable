@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1M",
-  "strategy_snapshot_hash": "eee57419da441a804b940c0a2b73830575dffc2a9046f2d2b21eb5ec55e879db",
+  "strategy_snapshot_hash": "8e04e21c7c4f3b4028243c6bc6ef5d3e3f6ae974752216f9099cf6b8d8671221",
   "dataset_id": "ds_binance_avaxusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "c0cdc87aaa782128713173e1da507b6664002dff7f642c37f2e5ef8116999a9e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a3ef8dc9f6d934ead1b785a9fe3a29e5d0a46a7f12308aef444e397aeebc5869",
-  "output_hash": "1a0c2535bf7d5527cb015727f6ca0fc5f6d95c0fe7db1a2373b3a546f4b65847",
+  "input_hash": "45625eb0746906a2e298300e4cae24b1d28a5dbab3d231e1d8c645f19b826988",
+  "output_hash": "dc85d7c4f09e3e2155f257bc5127259c988b3b7ea5729a65ce4e26c593bd515f",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-420.36)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -71.00%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 57,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 23,
+      "HIGH_VOLATILITY": 2
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -246.97,
-      "HIGH_VOLATILITY": -173.39
+      "CHOP_RANGING": -64.52,
+      "HIGH_VOLATILITY": -6.48
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -420.36
+    "total_oos_return_pct": -71.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:26:43.872646+00:00"
+  "created_at_utc": "2026-08-21T22:26:29.743352+00:00"
 }

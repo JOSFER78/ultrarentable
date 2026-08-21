@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1M_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_1M",
   "strategy_id": "UR_ULTRA_BTC_USDT_1M",
-  "strategy_snapshot_hash": "8520b73972c00bbc8df38ab00cfc093f51905fb83ded21f5d0f1c0e8a709eb8d",
+  "strategy_snapshot_hash": "1e7f182573c5928a72b9c53e9aa5456d6965f8bb0dc17fc789ff64cce508b892",
   "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
-  "dataset_sha256": "2653252ef614a71230d7ca14340110e3874027379b353fad2f68bf9c5f5a1db9",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "97230933802bdc6e0c4968e12643a21d5611b7ce0dc82d0af4679c26289dcf5a",
-  "output_hash": "ea3abb1d67e8446807e9fb94d5e8849c0c0f14ef17b7d9e369b518204ba496cb",
+  "input_hash": "b4fdbc08df3bbc7a2b14a3f3b8f428278c4ebfb02d527c1cdd104934c06e6e24",
+  "output_hash": "812022938e51238166364148724be4ed1b60a3f377194943235bb934dee775eb",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BTC-USDT (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.14 con beneficio neto de $-1000.40.",
+          "Profit Factor OOS: 0.21 con beneficio neto de $-0.45.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 79 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 66 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-12.66 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -67,12 +67,12 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.14 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 0.21 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:30:11.827818+00:00"
+  "created_at_utc": "2026-08-21T22:27:33.234924+00:00"
 }

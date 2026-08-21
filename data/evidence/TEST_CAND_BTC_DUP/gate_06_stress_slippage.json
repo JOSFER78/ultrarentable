@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g06",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "594874e18c6b958a02c46606223d30cefef1b871ebfbfd9085055fae2e9a2330",
+  "strategy_snapshot_hash": "a1881a0a22a5b8bf2ab471c6b60ab809e8f844fc7e0c0d23f5cd6c3b7b0881b3",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
@@ -10,42 +10,42 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "122d0b46f8c31e62bda64f9081ae34240b43178116e6b0edd5695fdb8318cd2f",
-  "output_hash": "5a545ce30965e83fa050a653706fecf388980fa255dcc6117a67dbf38d6b5716",
+  "input_hash": "257d9623284f515e1247d9b51d065c5900c76ec6020bb105cd4dc9d15fc4a512",
+  "output_hash": "e50635470486cc973973072eb240cd0cacb0e18e04b3ba3401c1d8c716563ecf",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (0/4 escenarios superados)",
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
-        "friction_penalty_per_trade_usd": 0.35,
-        "stressed_net_pnl_usd": -81.42,
-        "stressed_profit_factor": 0.11,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.23,
+        "stressed_profit_factor": 0.58,
         "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.74,
-        "stressed_net_pnl_usd": -101.47,
-        "stressed_profit_factor": 0.09,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.32,
+        "stressed_profit_factor": 0.56,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 1.31,
-        "stressed_net_pnl_usd": -131.54,
-        "stressed_profit_factor": 0.06,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": -2.42,
+        "stressed_profit_factor": 0.55,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 1.93,
-        "stressed_net_pnl_usd": -163.46,
-        "stressed_profit_factor": 0.04,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": -2.61,
+        "stressed_profit_factor": 0.53,
         "survived": false
       }
     },
     "passed_scenarios_count": 0,
-    "min_required_scenarios": 2,
+    "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T19:02:41.576773+00:00"
+  "created_at_utc": "2026-08-21T22:23:39.386935+00:00"
 }

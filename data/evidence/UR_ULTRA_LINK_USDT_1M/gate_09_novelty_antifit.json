@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1M_g09",
   "run_id": "run_UR_ULTRA_LINK_USDT_1M",
   "strategy_id": "UR_ULTRA_LINK_USDT_1M",
-  "strategy_snapshot_hash": "af573c66b826650928a8d301e7c5c2743a1fa8c1d2e9e2677080cf71225ef32a",
+  "strategy_snapshot_hash": "4b17847123be98b71d6812a4fb572998bf9601a9d413bffd7c1352b3aba3ed1b",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "050eb395e423bcbe1b88d7fdc20d4395df27745174d0f7bc962a7f26d339b307",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a2cedc1aa7c7bd949005928b02f0b6bdee16b0753a9bf0bf5cc93752ce7a0f43",
-  "output_hash": "c49e8b033e0063c8e63e6d1a00bee461158f738756a6ec853eaaaffe173bc51b",
+  "input_hash": "656d6e4d13a7f7d9faea559ad99416960b21276b952ed35072ab7d0190020147",
+  "output_hash": "78c833f8d5aa5cb334aef475ad1b44a5bf2ab17f65cc7c55fb3bfe99e6e8f05a",
   "status": "PASSED",
-  "score": 94.4,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 36.5 trades/param, Estabilidad Vecindario: 90.6%, Re-backtest PFs: [0.5, 0.55, 0.54, 0.44])",
+  "score": 83.6,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 14.8 trades/param, Estabilidad Vecindario: 153.0%, Re-backtest PFs: [0.44, 0.58, 0.77, 0.0])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 36.5,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 14.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 90.6,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 153.0,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.5,
-      0.55,
-      0.54,
-      0.44
+      0.44,
+      0.58,
+      0.77,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:35:32.457073+00:00"
+  "created_at_utc": "2026-08-21T22:26:39.090175+00:00"
 }

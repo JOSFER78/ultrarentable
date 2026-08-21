@@ -1,14 +1,27 @@
 {
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g05",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1H",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1H",
+  "strategy_snapshot_hash": "c345d10a55f87d5d8f551520a3f2d84c3ad877c7eaa780280663a933abd41767",
+  "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
-  "name": "MONTE_CARLO",
-  "passed": true,
-  "score": 94.6,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 10.9%)",
-  "evidence": {
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "d92fffd8cce2f2f562eb5e3ecb1c57c328784554163d82443c2c26354f93d45b",
+  "output_hash": "9205ead9d701643613b33dd5d6013178bd87e32f802bd8d611021772154dd25a",
+  "status": "PASSED",
+  "score": 95.2,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 9.7%)",
+  "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 4.8,
-    "drawdown_95th_percentile_pct": 10.9,
-    "max_simulated_drawdown_pct": 16.7
-  }
+    "drawdown_median_pct": 5.6,
+    "drawdown_95th_percentile_pct": 9.7,
+    "max_simulated_drawdown_pct": 12.2
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-21T22:27:48.748032+00:00"
 }

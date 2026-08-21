@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g03",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "f7ec3d38c843166c0bc7f8529236da06d8c7d1ba127fcab4ee1665e5846e697b",
+  "strategy_snapshot_hash": "3f28cdb98dfa384a670a0b58f81e50b8bc7b9ee4578fdc2c04c7dfa1d3071185",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "505ef90703ab9f374fb3e99afd23ab6fac4b6835d03c3b2c86570bee9693e28c",
-  "output_hash": "376923881ac5009ea65b9444d91a35b2832632f49e931cc995bc48cae6662c8d",
+  "input_hash": "ef86560197898701a386dd6e5cbb70241645145ace799d95204e22861cfdcca7",
+  "output_hash": "cd718dc88aaed53e6adff1cfd6d6524e3b63a8e9323f82698c3095158b9a2bde",
   "status": "PASSED",
-  "score": 95.0,
-  "verdict": "PASSED: Muestra robusta (65 IS / 19 OOS · Ultra Convex)",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (77 IS / 26 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 65,
-    "trades_oos": 19,
-    "top2_outlier_dependency_pct": 50.0,
+    "trades_is": 77,
+    "trades_oos": 26,
+    "top2_outlier_dependency_pct": 77.9,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:17:55.206345+00:00"
+  "created_at_utc": "2026-08-21T22:25:55.066551+00:00"
 }

@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUIUSDT_1h_g11",
+  "run_id": "run_UR_ULTRA_SUIUSDT_1h",
+  "strategy_id": "UR_ULTRA_SUIUSDT_1h",
+  "strategy_snapshot_hash": "31de0351328ed6c3ec6ce342d472fefc336a21fe5ebd811313076343e6a438e3",
+  "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "31c07f8c61b3b35601ec390130efe1d805a96a10e522daf967ad36fe75ad1649",
+  "output_hash": "7c61905146970d398b66e941fb4e0f2eb6d812ce26f8afcfc95b9d81a71a8d28",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1920.1x > 100.0x)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": -4.17,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -4.17,
+    "peak_leverage_used": 1920.14,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 918.94,
+    "total_funding_cost_usd": 91.89,
+    "execution_events_count": 182
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-21T22:27:16.080073+00:00"
+}

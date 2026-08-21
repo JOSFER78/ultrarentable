@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_RTY_5M_g02",
   "run_id": "run_UR_ULTRA_RTY_5M",
   "strategy_id": "UR_ULTRA_RTY_5M",
-  "strategy_snapshot_hash": "23256c7019038593207997289a5e041dd83d4bfc4d4b2869a45e0ed4d8218768",
+  "strategy_snapshot_hash": "778fb07373a8aab4ff9e24cf53e0f4599c1a6509505ea856f567a1519b1ed39c",
   "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5cccae9474e64a73fd8f33f51db9a4adf5e3a4137c11b3bfcea5f7d0cdb1adbb",
-  "output_hash": "c1ec2ef6bbcd4df5e5c2bc09e845f085d72ff2452437ebe88d6f483725f140eb",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.57 < 1.10",
+  "input_hash": "391e367c7946e9634dcd914448e1fac14821b27660969c84260d7dc7927bbaa4",
+  "output_hash": "ab6491294fa23c5a990739294bf69dab9b8c20025dac898e32a47296690a615f",
+  "status": "PASSED",
+  "score": 20.7,
+  "verdict": "PASSED: PF Neto tras costes = 1.21 (INDICES)",
   "metrics": {
     "market_category": "INDICES",
     "canonical_name": "E-mini Russell 2000",
     "exchange": "CME Globex",
-    "gross_pnl_usd": -456.9,
-    "total_fees_usd": 109.71,
-    "total_slippage_usd": 219.42,
-    "net_pnl_usd": -786.03,
-    "net_profit_factor": 0.57,
-    "drag_cost_pct": 72.04
+    "gross_pnl_usd": 1002.64,
+    "total_fees_usd": 159.45,
+    "total_slippage_usd": 318.9,
+    "net_pnl_usd": 524.29,
+    "net_profit_factor": 1.21,
+    "drag_cost_pct": 47.71
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_5M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T08:42:38.122433+00:00"
+  "created_at_utc": "2026-08-21T22:23:36.851554+00:00"
 }

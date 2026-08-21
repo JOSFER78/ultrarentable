@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g10",
+  "run_id": "run_UR_ULTRA_SOLUSDT_1h",
+  "strategy_id": "UR_ULTRA_SOLUSDT_1h",
+  "strategy_snapshot_hash": "1a4db8bfb84c6b2af2e135aaaef460f8af7a5306c00f769e7e0fe117f58b4050",
+  "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "4b4a90371da2ac5e5ff7e79d0ede9c208f7bb1c5952ad4521838166d4bd8699e",
+  "output_hash": "68603d6fe124a68d8e66a12711a4f37dffd8690a008edb700e2c49cf541ac51f",
+  "status": "FAILED",
+  "score": 37.6,
+  "verdict": "FALLO: Consenso insuficiente (37.6/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 37.6,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 59.1,
+        "findings": [
+          "Activo y Timeframe: SOLUSDT (1h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $10.57.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 97.7% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 785 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 10.0,
+        "findings": [
+          "Beneficio medio por operación: $0.01 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 42.3,
+        "objections": [
+          "Alerta de Drawdown: DD (97.7%) consume más del 90% del margen tolerable."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-21T22:27:10.838426+00:00"
+}

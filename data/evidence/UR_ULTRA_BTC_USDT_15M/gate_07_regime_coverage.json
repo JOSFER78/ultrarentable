@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_15M",
   "strategy_id": "UR_ULTRA_BTC_USDT_15M",
-  "strategy_snapshot_hash": "741aec7da640a1d7c91d0379c893925a3bdac6efc73298ce2fc2a68b8946fccb",
+  "strategy_snapshot_hash": "e46a60d725971edc9a7b88d1f0d987ebf9f2430235d237e5215e734bd27d675a",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "af00eb522e973773111ffac43608faf9c346b122296839b7bee380f63263b387",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "28e0f41580f3ab51bc52d6bb0e0516af99e7f3c027b164eb5764cb06b089f8ce",
-  "output_hash": "f7ded125399c863da827c1c3df21b74bedf37d451474635f5b8d4b4dcbd8efad",
+  "input_hash": "28973580d10546c528436f626946314b18126a952b8070b54ac0dba31eb685f0",
+  "output_hash": "9b4736d0285b0e259bd8c4f8c69b65b6240a84fc7933f26bc6893656d0f10d46",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-357.42)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -30.24%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 34,
-      "HIGH_VOLATILITY": 12
+      "CHOP_RANGING": 29,
+      "HIGH_VOLATILITY": 10
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -321.31,
-      "HIGH_VOLATILITY": -36.11
+      "CHOP_RANGING": -31.38,
+      "HIGH_VOLATILITY": 1.14
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -357.42
+    "total_oos_return_pct": -30.24
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:29:15.031419+00:00"
+  "created_at_utc": "2026-08-21T22:26:20.040105+00:00"
 }

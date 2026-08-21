@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_5M_g09",
   "run_id": "run_UR_ULTRA_XRP_USDT_5M",
   "strategy_id": "UR_ULTRA_XRP_USDT_5M",
-  "strategy_snapshot_hash": "7eb7f5bf3d1f0d179de3a159eb2aeb22ccd529fb65fa5222cc8774d4f9f00459",
+  "strategy_snapshot_hash": "315e05392ce6570502507e12f74cd274bfadaf81093f377318b41a62993729ea",
   "dataset_id": "ds_binance_xrpusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "eef3c09d40540c3615b21e3a1eea211030379022ed266d2b4571ec297b082165",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a43acbcbe6498ae4019422fd91cbe3b5dba8bb71e24d737901ed21706d7c72cf",
-  "output_hash": "b233e26dff6b4ba24f87b244ed9973518cfb0f01aa10d81beb5d38a86acc01c7",
+  "input_hash": "7046040767808e7280003f018a5aaa10fc6e41bc14abd11e5b4ede2e87f2bfe0",
+  "output_hash": "d62fd7c0195e24970242158d7b47fb8d66c35898d0cc54143d5fd5fa6bba0519",
   "status": "PASSED",
-  "score": 90.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 19.1 trades/param, Estabilidad Vecindario: 111.1%, Re-backtest PFs: [0.36, 0.38, 0.42, 0.44])",
+  "score": 99.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 36.8 trades/param, Estabilidad Vecindario: 98.3%, Re-backtest PFs: [0.53, 0.19, 0.48, 0.53])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 19.1,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 36.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 111.1,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 98.3,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.36,
-      0.38,
-      0.42,
-      0.44
+      0.53,
+      0.19,
+      0.48,
+      0.53
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:41:44.428714+00:00"
+  "created_at_utc": "2026-08-21T22:27:36.968711+00:00"
 }

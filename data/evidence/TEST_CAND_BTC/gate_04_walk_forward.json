@@ -1,12 +1,25 @@
 {
+  "evidence_id": "ev_TEST_CAND_BTC_g04",
+  "run_id": "run_TEST_CAND_BTC",
+  "strategy_id": "TEST_CAND_BTC",
+  "strategy_snapshot_hash": "05d92360c2280c2072ea92ae62b0f1e8762a8239c89bb637a9641f4ebfac6f71",
+  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 4,
-  "name": "WALK_FORWARD",
-  "passed": false,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "d4307e1a5089c887db2045d7964201c0db5fe006c0588bedf7e42226f6b6bf3a",
+  "output_hash": "4288b9b35db95cdb076e42cb00ef540ab883c73da38aa79bef864a178982e445",
+  "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
-  "evidence": {
-    "total_trades": 13,
+  "metrics": {
+    "total_trades": 15,
     "windows_evaluated": 0,
     "walk_forward_efficiency": 0.0
-  }
+  },
+  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-21T22:27:50.910756+00:00"
 }

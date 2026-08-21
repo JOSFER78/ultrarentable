@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g08",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "594874e18c6b958a02c46606223d30cefef1b871ebfbfd9085055fae2e9a2330",
+  "strategy_snapshot_hash": "a1881a0a22a5b8bf2ab471c6b60ab809e8f844fc7e0c0d23f5cd6c3b7b0881b3",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "aca39c39458cff76b85e33e228409024b76f4451a56cb33831587b9c60d73534",
-  "output_hash": "04d2913e43d88aebf86b988122645f926c395d5401ae4e2c69e179d22a1d1a86",
+  "input_hash": "ca18cad9a8ca2c084f506d2df71158d16e6c8dbff6ee41ce5fcf75c2f061055f",
+  "output_hash": "97b16900da4e36f9a5549ac45d3803cdb29b3b078b0f25619bba38049933f27f",
   "status": "FAILED",
-  "score": 0.5,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.5% < 50.0% tras penalizar 1 trials)",
+  "score": 28.2,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (28.2% < 50.0% tras penalizar 1 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.678,
-    "deflated_sharpe_probability_pct": 0.49,
+    "raw_sharpe_ratio": -0.136,
+    "deflated_sharpe_probability_pct": 28.24,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 2.036,
-    "kurtosis": 10.826,
-    "sample_trades_count": 52
+    "skewness": 3.138,
+    "kurtosis": 16.687,
+    "sample_trades_count": 28
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-20T19:02:41.659130+00:00"
+  "created_at_utc": "2026-08-21T22:23:39.447979+00:00"
 }

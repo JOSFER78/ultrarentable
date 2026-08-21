@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_5M_g09",
   "run_id": "run_UR_ULTRA_BTC_USDT_5M",
   "strategy_id": "UR_ULTRA_BTC_USDT_5M",
-  "strategy_snapshot_hash": "e7034b32ae6948841ddd956a78da18a23f6960d4edf2e275ce775c095868236e",
+  "strategy_snapshot_hash": "a839c26851fdc40781c3673a07718cef728f009433bb1bfe02de0380933e5578",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "d8837ded89ab64f263b7e9eea3bc3e10e8326e10d5c70b0d5594f8f678f034a4",
-  "output_hash": "3d17972d47efbcc310e3a30c18dd500a6261ecb3527c80a069e7b99f5ee41ea8",
+  "input_hash": "352e2fa2d9ae359312d125d103905228b2ff8d9c146e25f442142640a09e4e87",
+  "output_hash": "a944d4eac888bd6962297979058905823b5c799dd540a7c27894becdc3b6e289",
   "status": "PASSED",
-  "score": 98.4,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 24.0 trades/param, Estabilidad Vecindario: 127.9%, Re-backtest PFs: [0.47, 0.45, 0.42, 0.45])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 29.8 trades/param, Estabilidad Vecindario: 121.2%, Re-backtest PFs: [0.19, 0.53, 0.42, 0.46])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 24.0,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 29.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 127.9,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 121.2,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.47,
-      0.45,
+      0.19,
+      0.53,
       0.42,
-      0.45
+      0.46
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:30:46.690660+00:00"
+  "created_at_utc": "2026-08-21T22:26:41.183514+00:00"
 }

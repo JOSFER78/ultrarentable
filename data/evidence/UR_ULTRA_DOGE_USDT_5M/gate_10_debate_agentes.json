@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_5M_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_5M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_5M",
-  "strategy_snapshot_hash": "34af7aef361ca014d03f6ee50a103b9def9fba80b31117b0a3e60200285836ba",
+  "strategy_snapshot_hash": "e3702354fc62d47f74bd55bff2d7634693d6968f254189a0943ca0603f4f481a",
   "dataset_id": "ds_binance_dogeusdt_5m_1784389200000_1787088900000.json",
-  "dataset_sha256": "4444e251fd4a4ae2b2bc1b869202436c814529915f5e5d9a77b32210a250395e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "82189db4342dea107fc43c1be3742259c6e8a52784e55e60e44c6ada46ddec6d",
-  "output_hash": "98fe20056ec111594cebecfc5f46d8904ef4fe5e782978240997b77e8cf0ebaa",
+  "input_hash": "18ce92f4969b82fa05a91e7096970f2d1f2bbbdb4a1ae3e31ee3e34776209f8a",
+  "output_hash": "dd62f0a5746b182e57aec94294fbfae840f4568ff599f9f6b84e3dd7dcea7da5",
   "status": "FAILED",
-  "score": 49.8,
-  "verdict": "FALLO: Consenso insuficiente (49.8/100) u objeción crítica de riesgo",
+  "score": 32.7,
+  "verdict": "FALLO: Consenso insuficiente (32.7/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 49.8,
+    "consensus_score": 32.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 33.4,
+        "score": 42.0,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.52 con beneficio neto de $-704.79.",
+          "Profit Factor OOS: 0.71 con beneficio neto de $13.95.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 63.7,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 77.2% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 99.1% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 32 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 142 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-22.02 USD.",
+          "Beneficio medio por operación: $0.10 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 49.3,
+        "score": 38.0,
         "objections": [
-          "Alerta de Drawdown: DD (77.2%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.52 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (99.1%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.71 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T14:32:31.247924+00:00"
+  "created_at_utc": "2026-08-21T22:26:31.781405+00:00"
 }

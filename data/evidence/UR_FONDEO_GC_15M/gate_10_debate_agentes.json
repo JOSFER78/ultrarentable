@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_FONDEO_GC_15M_g10",
   "run_id": "run_UR_FONDEO_GC_15M",
   "strategy_id": "UR_FONDEO_GC_15M",
-  "strategy_snapshot_hash": "027fbaaaa073d83931bf3b915f052d6ad12a17bc6d37f518d44c155b683abeb2",
+  "strategy_snapshot_hash": "0b9708d384db4f0505a8b0cf66d0ea1adcfedc1da0ad6f2b0282378187eb3038",
   "dataset_id": "ds_trad_gc_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "3663ebdccef73495714ed28a557d7ac6263d7150f5005124189784ba3d03bc97",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "65dcca6082bf0c8f41c2bebc2e1f9975ddc9970793fc2ed70be2984e3d00bce8",
-  "output_hash": "265e35d8877327053f53da1a13fb8733f820bb7d05879f81c37fad69ec380bde",
+  "input_hash": "ad327007a4ebe06631e8429bcf577e947edc89b5624bfc42e321f8d95e4c4452",
+  "output_hash": "9d68bdf29977d493c3032e92c470e64f4dc704a859da02e76f3c68fdc5bc7745",
   "status": "FAILED",
-  "score": 26.9,
-  "verdict": "FALLO: Consenso insuficiente (26.9/100) u objeción crítica de riesgo",
+  "score": 39.2,
+  "verdict": "FALLO: Consenso insuficiente (39.2/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 26.9,
+    "consensus_score": 39.2,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 49.6,
+        "score": 64.4,
         "findings": [
           "Activo y Timeframe: GC (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.88 con beneficio neto de $-2037.62.",
+          "Profit Factor OOS: 1.21 con beneficio neto de $0.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 5.1% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 4.7% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -44,19 +44,19 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 67.5,
+        "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 27 operaciones evaluadas (Mínimo requerido: 20).",
-          "Grado de confianza: MODERADO."
+          "Muestra fuera de muestra: 76 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-75.47 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 29.3,
+        "score": 43.6,
         "objections": [
-          "Alerta de Drawdown: DD (5.1%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.88 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (4.7%) consume más del 70% del margen tolerable."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:06:25.144359+00:00"
+  "created_at_utc": "2026-08-21T22:27:38.426684+00:00"
 }

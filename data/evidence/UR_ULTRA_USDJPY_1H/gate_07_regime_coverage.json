@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g07",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "84956319ddf14cee7e3cfa6daa6c47c2a5c3291ecfa868fabcc33a2b2eaea4df",
+  "strategy_snapshot_hash": "b48f45dfbe326b70d9f017b6c633eaecf1124f4d99355dde52ad7982a9fa8272",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "acb464cfd6c9d0dc2bcdd5290c2334592157a9776bcd2a557b439399b2c48008",
-  "output_hash": "28298c596ee83fad331121fc4cc45445aa79977934f1b4b0c90fa38ec73e75e9",
-  "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-51.65)",
+  "input_hash": "72cfe50701600e65e70fcbfd6b97710e33fc4e0e12546dcbc88fdb2fb07f0fbe",
+  "output_hash": "08437f4a7287d43764a74051f63c6b9837c3d34813d65eeb6b930aa7e4d5d93b",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +15.95%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 86,
-      "HIGH_VOLATILITY": 12
+      "CHOP_RANGING": 38,
+      "HIGH_VOLATILITY": 9
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -55.6,
-      "HIGH_VOLATILITY": 3.95
+      "CHOP_RANGING": -21.43,
+      "HIGH_VOLATILITY": 37.38
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -51.65
+    "total_oos_return_pct": 15.95
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T08:41:42.085401+00:00"
+  "created_at_utc": "2026-08-21T22:23:24.597926+00:00"
 }

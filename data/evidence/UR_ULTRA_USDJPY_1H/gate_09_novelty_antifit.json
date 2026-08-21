@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g09",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "84956319ddf14cee7e3cfa6daa6c47c2a5c3291ecfa868fabcc33a2b2eaea4df",
+  "strategy_snapshot_hash": "b48f45dfbe326b70d9f017b6c633eaecf1124f4d99355dde52ad7982a9fa8272",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "897e553a0023e0e3c17aeac33e647457f37d7b1ef45ed0185358cdc3b1f460e9",
-  "output_hash": "1dbd9e2195c1b865c838ec36455afeb38536ae161420a8baea0ba09fc5fae92f",
+  "input_hash": "ef57e12554787d2cd6a4a24875151916186f426caf96c64ca4780025d207583c",
+  "output_hash": "97a918d736eddaaef59383a080b9f9cb3b2e5a59573bf221e2a662593658c8fb",
   "status": "PASSED",
-  "score": 99.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 24.5 trades/param, Estabilidad Vecindario: 109.1%, Re-backtest PFs: [0.68, 0.69, 0.57, 0.59])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 42.5 trades/param, Estabilidad Vecindario: 100.5%, Re-backtest PFs: [1.07, 1.07, 1.03, 1.01])",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 24.5,
+    "degrees_of_freedom_ratio": 42.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 109.1,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 100.5,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.68,
-      0.69,
-      0.57,
-      0.59
+      1.07,
+      1.07,
+      1.03,
+      1.01
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T08:41:42.888793+00:00"
+  "created_at_utc": "2026-08-21T22:23:25.373144+00:00"
 }

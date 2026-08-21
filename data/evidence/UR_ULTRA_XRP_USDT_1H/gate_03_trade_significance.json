@@ -1,15 +1,28 @@
 {
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g03",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1H",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1H",
+  "strategy_snapshot_hash": "c345d10a55f87d5d8f551520a3f2d84c3ad877c7eaa780280663a933abd41767",
+  "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
-  "name": "TRADE_SIGNIFICANCE",
-  "passed": true,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "880a299b4fd0ff6a54bb8e6faaf090d895fcc58dfdbbadcfac6ca08bffbcbd72",
+  "output_hash": "b8e5790ba0917a3dd2e367d67d9929887498533fd5f4b54b60ea89dfe571aec8",
+  "status": "FAILED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (79 IS / 40 OOS \u00b7 Ultra Convex)",
-  "evidence": {
-    "trades_is": 79,
-    "trades_oos": 40,
+  "verdict": "FALLO: Muestra insuficiente (7 IS < 15 ó 68 OOS < 10)",
+  "metrics": {
+    "trades_is": 7,
+    "trades_oos": 68,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
-  }
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-21T22:27:48.253743+00:00"
 }

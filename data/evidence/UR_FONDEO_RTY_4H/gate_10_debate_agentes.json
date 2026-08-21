@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_RTY_4H_g10",
   "run_id": "run_UR_FONDEO_RTY_4H",
   "strategy_id": "UR_FONDEO_RTY_4H",
-  "strategy_snapshot_hash": "d6d8ae447e899230a2797ce45b0b3b71231aa791f009bd3ba0b2211404dfc1ba",
+  "strategy_snapshot_hash": "43c296e1daa4d35257700612ee7e46568a7f23c250df35fa324f63134e15df5b",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "4e069089ef082296d5463d56301cac07de6735ba9a9b8bcc79d42202a689610e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "207bfa5d9f4d1f0d143e4be38d110740d7564de8db8a76744b13eba69c80d85e",
-  "output_hash": "e0b9f3261c39ece0db0c8fe1df64ef2c27932646b47ed0a6bd7e2eba17cb7f2b",
+  "input_hash": "56bdf14c2e3c733fa266b4d164ef707807bbbd5e16d32bb3449e1f54e3ff154b",
+  "output_hash": "704ed3d9fc6fda1906d4f0859701105b828bd7af7cc0bb9f7896c6cdfa047452",
   "status": "FAILED",
-  "score": 27.1,
-  "verdict": "FALLO: Consenso insuficiente (27.1/100) u objeción crítica de riesgo",
+  "score": 46.8,
+  "verdict": "FALLO: Consenso insuficiente (46.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 27.1,
+    "consensus_score": 46.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 32.5,
         "findings": [
           "Activo y Timeframe: RTY (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.50 con beneficio neto de $-1150.80.",
+          "Profit Factor OOS: 0.50 con beneficio neto de $-0.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,29 +34,29 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 49.3,
+        "score": 55.5,
         "findings": [
-          "Drawdown Máximo Observado: 3.3% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 2.9% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 25.0,
+        "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 10 operaciones evaluadas (Mínimo requerido: 20).",
-          "Grado de confianza: LIMITADO."
+          "Muestra fuera de muestra: 56 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-115.08 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,8 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 23.6,
+        "score": 47.0,
         "objections": [
-          "Alerta de Drawdown: DD (3.3%) consume más del 70% del margen tolerable.",
-          "Alerta de Muestra: 10 trades OOS es una muestra pequeña (< 20 requeridos).",
           "Alerta de Rentabilidad: Profit factor 0.50 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
@@ -75,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:08:37.632248+00:00"
+  "created_at_utc": "2026-08-21T22:27:52.869661+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_5M",
   "strategy_id": "UR_ULTRA_BNB_USDT_5M",
-  "strategy_snapshot_hash": "58ce7907cab485b5b6bae192ecaa4431f3bae4b918de9b7a3e706fd349e21841",
+  "strategy_snapshot_hash": "f0b7f1bf9a7f8be2185078880f35ff49bc0f240a198c1a34f3e0fd63cd577fc7",
   "dataset_id": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "e051023222b83d80af92d7ae17b66fa5fa59f8ed759a698bb98f00996b66a4d5",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "eff0feeac511bf1dcca0651f141412457264de960701f1c87e2f8ea70eee4715",
-  "output_hash": "e5c57906cd2d37ad1a10727551a21cda375f6b6debed0a5d66662aef7c5b2431",
+  "input_hash": "a16d22262434b2aebb8ecdfc756705e2f358a4daba96037b2e7a8b20182a1023",
+  "output_hash": "9cc5722a290613eee420ce9eac8dd1a4100a92b253de6859b156937e9633d7ed",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-460.56)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -23.84%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 43,
-      "HIGH_VOLATILITY": 8
+      "CHOP_RANGING": 35,
+      "HIGH_VOLATILITY": 4
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -255.4,
-      "HIGH_VOLATILITY": -205.16
+      "CHOP_RANGING": 7.96,
+      "HIGH_VOLATILITY": -31.8
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -460.56
+    "total_oos_return_pct": -23.84
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:28:58.482567+00:00"
+  "created_at_utc": "2026-08-21T22:26:33.179175+00:00"
 }

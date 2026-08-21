@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g02",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "84956319ddf14cee7e3cfa6daa6c47c2a5c3291ecfa868fabcc33a2b2eaea4df",
+  "strategy_snapshot_hash": "b48f45dfbe326b70d9f017b6c633eaecf1124f4d99355dde52ad7982a9fa8272",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "08540617199b953e35bdc42844d9b874b815f02788a598d1c899b145cadabbdd",
-  "output_hash": "80c9d18f1d7e786f69bd80ce60909962dcd83240d1e5a7a1134b0767803b747a",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.89 < 1.10",
+  "input_hash": "5a39ddba8111d087237e7575569388b3714594995d2709e1098e35c0d85791b8",
+  "output_hash": "2dab66de0530fec6091b01ad17b5fd90dfaeae30fabe6507917992f758697894",
+  "status": "PASSED",
+  "score": 49.9,
+  "verdict": "PASSED: PF Neto tras costes = 1.50 (FOREX)",
   "metrics": {
     "market_category": "FOREX",
     "canonical_name": "US Dollar / Yen Japonés",
     "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": -2765.83,
-    "total_fees_usd": 2644.69,
-    "total_slippage_usd": 4407.81,
-    "net_pnl_usd": -9818.32,
-    "net_profit_factor": 0.89,
-    "drag_cost_pct": 254.99
+    "gross_pnl_usd": 162725.07,
+    "total_fees_usd": 8017.19,
+    "total_slippage_usd": 13361.99,
+    "net_pnl_usd": 141345.89,
+    "net_profit_factor": 1.5,
+    "drag_cost_pct": 13.14
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-20T08:41:41.573007+00:00"
+  "created_at_utc": "2026-08-21T22:23:23.521012+00:00"
 }

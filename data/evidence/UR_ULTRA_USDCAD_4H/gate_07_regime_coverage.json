@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g07",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "f7ec3d38c843166c0bc7f8529236da06d8c7d1ba127fcab4ee1665e5846e697b",
+  "strategy_snapshot_hash": "3f28cdb98dfa384a670a0b58f81e50b8bc7b9ee4578fdc2c04c7dfa1d3071185",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8947ede5a2c9fafe488690369a641b9cbd66de9d6557c424e8f6f512f767e098",
-  "output_hash": "9819d9040593e132f1187f884cd24251e939d05f6b69e5b120091c433f07d368",
-  "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +128.34%)",
+  "input_hash": "1c5eec9bcfd4f05c19470c4abb66ddf3c58a8ed9a3fe3b8892184c0f41403ffd",
+  "output_hash": "383dd275d2760b54f7886a05e40a50eca12a77ce00faf274c5479c22499b1246",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -18.79%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 18,
-      "HIGH_VOLATILITY": 1
+      "CHOP_RANGING": 24,
+      "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 130.35,
-      "HIGH_VOLATILITY": -2.01
+      "CHOP_RANGING": -5.82,
+      "HIGH_VOLATILITY": -12.97
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 128.34
+    "total_oos_return_pct": -18.79
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:17:55.261258+00:00"
+  "created_at_utc": "2026-08-21T22:25:55.117024+00:00"
 }

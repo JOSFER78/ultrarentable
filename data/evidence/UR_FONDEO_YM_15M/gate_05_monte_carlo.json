@@ -1,10 +1,23 @@
 {
+  "evidence_id": "ev_UR_FONDEO_YM_15M_g05",
+  "run_id": "run_UR_FONDEO_YM_15M",
+  "strategy_id": "UR_FONDEO_YM_15M",
+  "strategy_snapshot_hash": "0fd1edb13cdd88464a09de3e368acc1eb911ed0ec781c2c229950abebf59cc61",
+  "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
-  "name": "MONTE_CARLO",
-  "passed": false,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "2175fdb0b6817f9a77f87d861e66aa5fcbd9a8f203f09852cd04403d2bf89fec",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para simulaci\u00f3n Monte Carlo (< 10 trades)",
-  "evidence": {
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
+  "metrics": {
     "simulations_run": 0
-  }
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_YM_15M/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-21T22:26:07.322921+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_1M",
   "strategy_id": "UR_ULTRA_BNB_USDT_1M",
-  "strategy_snapshot_hash": "18c50ee0f7ca4e69c7c8d9c0a2c812d998efa55f5a256e1fbf28d1d5099f5abc",
+  "strategy_snapshot_hash": "d68a993b0894d277e8e6c570aa0ad50048cb0434c9a77356676b6314ab892557",
   "dataset_id": "ds_binance_bnbusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "82a657fc9f567cae2216cd71ee1a26e6e349260d68f4ea450492b06947fc76b4",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8e48c0a40a58f767872fa4b7b362c00f4eac5752fab2ba7f997dbcab44df9f20",
-  "output_hash": "19383672bffd21817b5ede987a3fc1bdfc19ca830ab784033236939bf7ce1104",
+  "input_hash": "43aa57fc583090b0c8987c6b49c00c91695936086402336cfb57aa2aefded299",
+  "output_hash": "39611310d709bbd9fe7593497b4519483a37921dcab32930c079772b5c55a1c4",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-612.65)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -63.53%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 59,
-      "HIGH_VOLATILITY": 11
+      "CHOP_RANGING": 27,
+      "HIGH_VOLATILITY": 9
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -288.38,
-      "HIGH_VOLATILITY": -324.27
+      "CHOP_RANGING": -40.32,
+      "HIGH_VOLATILITY": -23.21
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -612.65
+    "total_oos_return_pct": -63.53
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:28:27.403455+00:00"
+  "created_at_utc": "2026-08-21T22:27:28.378964+00:00"
 }

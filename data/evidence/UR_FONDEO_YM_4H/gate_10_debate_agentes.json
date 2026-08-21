@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_YM_4H_g10",
   "run_id": "run_UR_FONDEO_YM_4H",
   "strategy_id": "UR_FONDEO_YM_4H",
-  "strategy_snapshot_hash": "d9cb978de27ceac98707567be905968f0f024c943f7d66069aa5c15c74548e3d",
+  "strategy_snapshot_hash": "bb68162dc9d75b6403e1033422944294732beb2c137eb6045ff8bb1238adecc1",
   "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "109f95af95f63694465a7a0b1ce60e45ec05cc7459203ce0b8de70a76bf2e030",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "acbe6f54c2255bb83c866de536da2007c500c8c8caab7ac53b667faaf85ab03d",
-  "output_hash": "23ecfc492134ade066dbd2357b1518044af7dba6f77054ad064f334c9916a944",
+  "input_hash": "66be4f60322eab00be2c31656129b4b5ccf7742e08a16a8aa678cee36883d27e",
+  "output_hash": "711d10a0ced7d20925a5b6d73c259632cdcab9f00a31638e75450be01a6da156",
   "status": "FAILED",
-  "score": 25.9,
-  "verdict": "FALLO: Consenso insuficiente (25.9/100) u objeción crítica de riesgo",
+  "score": 43.1,
+  "verdict": "FALLO: Consenso insuficiente (43.1/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 25.9,
+    "consensus_score": 43.1,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 33.9,
         "findings": [
           "Activo y Timeframe: YM (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.66 con beneficio neto de $-1381.84.",
+          "Profit Factor OOS: 0.53 con beneficio neto de $-0.03.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 37.6,
+        "score": 43.4,
         "findings": [
-          "Drawdown Máximo Observado: 4.0% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 3.6% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": false
@@ -44,19 +44,19 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 40.0,
+        "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 16 operaciones evaluadas (Mínimo requerido: 20).",
-          "Grado de confianza: MODERADO."
+          "Muestra fuera de muestra: 72 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-86.36 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,16 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 24.4,
+        "score": 44.3,
         "objections": [
-          "Alerta de Drawdown: DD (4.0%) consume más del 70% del margen tolerable.",
-          "Alerta de Muestra: 16 trades OOS es una muestra pequeña (< 20 requeridos).",
-          "Alerta de Rentabilidad: Profit factor 0.66 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (3.6%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.53 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:13:40.098653+00:00"
+  "created_at_utc": "2026-08-21T22:27:55.462908+00:00"
 }

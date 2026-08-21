@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_GC_1H_g10",
   "run_id": "run_UR_FONDEO_GC_1H",
   "strategy_id": "UR_FONDEO_GC_1H",
-  "strategy_snapshot_hash": "8aae56565cee8d156dfb2a76e2368035128b7d9df9686fe286f8a2f6a2573033",
+  "strategy_snapshot_hash": "c3396411864be0da29b546ba9edfc00bd045a8caff0f21b99b4bf0087dce66cc",
   "dataset_id": "ds_trad_gc_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "8aa50270f15a7cfcf4a5594330a064f334b90519ea523d75141953304f2f1455",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "90b0b260518e31b5f1c5bb3e4814ed581d2c0189086dfade84ccac1904d72978",
-  "output_hash": "8ab0411d84a0767519236166ab63e5c09805c21f832e85f70d2a34555b49f859",
+  "input_hash": "c6709ed66728e3d77c0cae219ff5c2a6fb417d08522860ff63ab744f4e247dbe",
+  "output_hash": "5d59ef4c8f4905352c6eaa82def1b492b03c27d69561adb91001d3a8ae810b39",
   "status": "FAILED",
   "score": 33.5,
   "verdict": "FALLO: Consenso insuficiente (33.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 51.4,
         "findings": [
           "Activo y Timeframe: GC (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.92 con beneficio neto de $-2022.07.",
+          "Profit Factor OOS: 0.92 con beneficio neto de $-0.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 60 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 222 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-33.70 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -74,5 +74,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:06:44.898799+00:00"
+  "created_at_utc": "2026-08-21T22:27:41.347484+00:00"
 }

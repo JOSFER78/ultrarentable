@@ -1,0 +1,77 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTCUSDT_1h_g10",
+  "run_id": "run_UR_ULTRA_BTCUSDT_1h",
+  "strategy_id": "UR_ULTRA_BTCUSDT_1h",
+  "strategy_snapshot_hash": "f68815c9e6c5351dbb7328c36a194ac1e6a0ed787a0e16eb9b060de2e2e398bd",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "2a45de076aa8dbbb7646d63648ec9403d46c7fccc19864aefe9266147c6e2a04",
+  "output_hash": "3b7ea59f4b245ae444863f553057889169ce8cc1e494ff8674447042be4baf95",
+  "status": "FAILED",
+  "score": 37.6,
+  "verdict": "FALLO: Consenso insuficiente (37.6/100) u objeción crítica de riesgo",
+  "metrics": {
+    "consensus_score": 37.6,
+    "evaluators_count": 5,
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 59.1,
+        "findings": [
+          "Activo y Timeframe: BTCUSDT (1h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $12.49.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 99.4% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 633 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 10.0,
+        "findings": [
+          "Beneficio medio por operación: $0.02 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 42.3,
+        "objections": [
+          "Alerta de Drawdown: DD (99.4%) consume más del 90% del margen tolerable."
+        ],
+        "approved": false
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTCUSDT_1h/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-21T22:27:26.766930+00:00"
+}

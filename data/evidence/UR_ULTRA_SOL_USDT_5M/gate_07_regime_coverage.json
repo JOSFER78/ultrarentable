@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_5M",
   "strategy_id": "UR_ULTRA_SOL_USDT_5M",
-  "strategy_snapshot_hash": "fe0002d3888fbefe3aa544fa391f4f7dc9d8b649e6aebd2fac5b21ae8811929e",
+  "strategy_snapshot_hash": "eaa2cb7082a8a2b7c95855fcfc18cc86cbac0d15ba990e5776e079c1d40e4312",
   "dataset_id": "ds_binance_solusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "dbe6554497ab12bb8b4c329f7039b0c49db5b58d40fdd73fc447d01cb3b454f1",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "247d0dfa2a94f59c22a965bf20faf7d1ee154c2d6999b3cac1c528f377d8d91c",
-  "output_hash": "c82ace6ba181ac91d8f1d4558e95a4fc26e3c28c955f2fbd052b8852293bef0b",
+  "input_hash": "9aa3a147ce27d220fde452e924d0b94e61a8f009ffbbadf50fbcb2be8ad4ff1a",
+  "output_hash": "0c6c3d4a67d2aaa8f8055187f582d4a6bd4ec38891a87a95d61fd1f4c251f1fd",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-349.07)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -59.79%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 48,
-      "HIGH_VOLATILITY": 8
+      "CHOP_RANGING": 23,
+      "HIGH_VOLATILITY": 3
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -280.11,
-      "HIGH_VOLATILITY": -68.96
+      "CHOP_RANGING": -26.57,
+      "HIGH_VOLATILITY": -33.22
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -349.07
+    "total_oos_return_pct": -59.79
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T14:37:53.597008+00:00"
+  "created_at_utc": "2026-08-21T22:26:17.616639+00:00"
 }

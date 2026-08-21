@@ -1,11 +1,24 @@
 {
+  "evidence_id": "ev_UR_FONDEO_YM_15M_g08",
+  "run_id": "run_UR_FONDEO_YM_15M",
+  "strategy_id": "UR_FONDEO_YM_15M",
+  "strategy_snapshot_hash": "0fd1edb13cdd88464a09de3e368acc1eb911ed0ec781c2c229950abebf59cc61",
+  "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
-  "name": "DSR_RATIO",
-  "passed": false,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "31aa0705e77aaf44ce7ae79cdaf69044df35105c62f6684bc91f13315fab99ea",
+  "output_hash": "fb283776fa0a25469b48eb5cd6acf8c5e08121f4cbe1e52f9ce0474dba42279d",
+  "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
-  "evidence": {
-    "trials_penalized": 3,
+  "metrics": {
+    "trials_penalized": 1,
     "dsr_probability": 0.0
-  }
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_YM_15M/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-21T22:26:07.346823+00:00"
 }

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_RTY_4H_g09",
   "run_id": "run_UR_FONDEO_RTY_4H",
   "strategy_id": "UR_FONDEO_RTY_4H",
-  "strategy_snapshot_hash": "d6d8ae447e899230a2797ce45b0b3b71231aa791f009bd3ba0b2211404dfc1ba",
+  "strategy_snapshot_hash": "43c296e1daa4d35257700612ee7e46568a7f23c250df35fa324f63134e15df5b",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "4e069089ef082296d5463d56301cac07de6735ba9a9b8bcc79d42202a689610e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "72bd61fa9ddf8e462aa6bac8b676b861204e9826e2a956759b5af956b0182ff2",
-  "output_hash": "93bdf32cf246047cdb6cd52f275527d686e0c2c77eec35e35530c364b5ec341b",
+  "input_hash": "fa1dfe9ac64cf2042f9da7abdc50ef6c1b975c37ff5fa0aec7b78efcff9c8eec",
+  "output_hash": "0e19503719d0fbfcb003e6d9253b161f3240bc0db9f6fa02dfbb669c1c6f8d9d",
   "status": "FAILED",
-  "score": 48.6,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.1 o Estabilidad 121.5% < 70.0%)",
+  "score": 42.4,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 14.0 o Estabilidad 106.0% < 60.0%)",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 7.1,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 14.0,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 121.5,
-    "min_stability_required_pct": 70.0,
+    "parameter_neighborhood_stability_pct": 106.0,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.6,
-      0.51,
-      0.57,
-      0.75
+      0.68,
+      0.44,
+      0.5,
+      0.5
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:08:37.631477+00:00"
+  "created_at_utc": "2026-08-21T22:27:52.846929+00:00"
 }

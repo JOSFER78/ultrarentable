@@ -2,73 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g04",
   "run_id": "run_UR_ULTRA_LINK_USDT_4H",
   "strategy_id": "UR_ULTRA_LINK_USDT_4H",
-  "strategy_snapshot_hash": "20690b12dde2841fb722c9e9073013285a09365740386fa01ba0fcfa0ce19a1e",
+  "strategy_snapshot_hash": "9abe9a491b1e645be82b54240d6c48b0088f3f7e331a5659e2458bbba9bb240d",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "bf842dee8287d83fb065f7b63cd8d23d2ec0ea6358f1bb04f2b4ae90b38ba3d3",
-  "output_hash": "c64370d61c0a75fa64728aa410b421873760a86c52059dd3988e3449d2eafec7",
+  "input_hash": "36f7eea152069a6a3fc66338da40064506ce685a88e4e3a253c847b23fcc9060",
+  "output_hash": "e7773b23905daff4802909bd1911dc2b6449f07e8c0f837c685b050c229a0af0",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.00 < 0.40 ó Consistencia 0.0% < 40%)",
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
   "metrics": {
-    "total_trades_analyzed": 33,
-    "windows_count": 5,
-    "walk_forward_efficiency": 0.0,
-    "oos_consistency_pct": 0.0,
-    "min_wfe_required": 0.5,
-    "windows_details": [
-      {
-        "window_index": 1,
-        "is_trades_count": 4,
-        "oos_trades_count": 2,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.06,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 2,
-        "is_trades_count": 4,
-        "oos_trades_count": 2,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.08,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 3,
-        "is_trades_count": 4,
-        "oos_trades_count": 2,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.11,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 4,
-        "is_trades_count": 4,
-        "oos_trades_count": 2,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.08,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 5,
-        "is_trades_count": 4,
-        "oos_trades_count": 2,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.08,
-        "wfe": 0.0
-      }
-    ]
+    "total_trades": 13,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-21T22:17:49.185657+00:00"
+  "created_at_utc": "2026-08-21T22:26:08.903325+00:00"
 }

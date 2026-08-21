@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_RTY_4H_g07",
   "run_id": "run_UR_FONDEO_RTY_4H",
   "strategy_id": "UR_FONDEO_RTY_4H",
-  "strategy_snapshot_hash": "d6d8ae447e899230a2797ce45b0b3b71231aa791f009bd3ba0b2211404dfc1ba",
+  "strategy_snapshot_hash": "43c296e1daa4d35257700612ee7e46568a7f23c250df35fa324f63134e15df5b",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "4e069089ef082296d5463d56301cac07de6735ba9a9b8bcc79d42202a689610e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a583ded3fc0ce7f7362deff6a08d15a59e3c4fb1aa2b7d9d5e00f17b8577399e",
-  "output_hash": "e7b1813dc3dab7817582420ec47fd8a7e48645391e07dd9bae53a2f71251f39f",
+  "input_hash": "93fbbd483bf4471fb2a6fcf8d6316d03321c61a7f87510cc351ddbe88323b2f8",
+  "output_hash": "390cf182b7c8af9fb61e0cd8cb760e1c68f3a8272757a4c6c84561555ca4af1c",
   "status": "FAILED",
   "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-1043.82)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -2072.32%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 127,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 2,
-      "BEAR_TREND": 1,
+      "BEAR_TREND": 2,
       "CHOP_RANGING": 5,
-      "HIGH_VOLATILITY": 2
+      "HIGH_VOLATILITY": 1
     },
-    "regime_net_pnl_usd": {
-      "BULL_TREND": -518.71,
-      "BEAR_TREND": -256.97,
-      "CHOP_RANGING": -307.8,
-      "HIGH_VOLATILITY": 39.66
+    "regime_return_pct": {
+      "BULL_TREND": -1029.2,
+      "BEAR_TREND": -1023.74,
+      "CHOP_RANGING": -614.49,
+      "HIGH_VOLATILITY": 595.11
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_pnl_usd": -1043.82
+    "total_oos_return_pct": -2072.32
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:08:37.537933+00:00"
+  "created_at_utc": "2026-08-21T22:27:52.650414+00:00"
 }

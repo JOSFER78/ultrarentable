@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1H_g04",
   "run_id": "run_UR_ULTRA_ETH_USDT_1H",
   "strategy_id": "UR_ULTRA_ETH_USDT_1H",
-  "strategy_snapshot_hash": "2704e70b60b2708fabcb7b47410543eed90eefba7affbb9de5ced2954b54c7b1",
+  "strategy_snapshot_hash": "eb7a49c09add3f2a36dd033e8a7c45d62304ed6a7736500b0f4217748361abe9",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "dcc4f64e3a72deda275dd375737c4b460f8bcd62ccdd2b28d4366697c8957a47",
-  "output_hash": "a5af8151455f2aabf8e41c8bfc076c96066fcc332a778aadbafff7c3c28503a6",
+  "input_hash": "acba433a4e0bc9fff45f279f14512beecb602a8ba93c821fd8521d1382449426",
+  "output_hash": "28df8ff98c32c1b20ed8d09f800e952fc00090562b05ae1f5079137aa4961a5b",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
   "metrics": {
-    "total_trades": 14,
+    "total_trades": 2,
     "windows_evaluated": 0,
     "walk_forward_efficiency": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-21T20:25:58.590029+00:00"
+  "created_at_utc": "2026-08-21T22:27:45.266203+00:00"
 }

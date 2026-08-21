@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_4H_g07",
   "run_id": "run_UR_FONDEO_GBPUSD_4H",
   "strategy_id": "UR_FONDEO_GBPUSD_4H",
-  "strategy_snapshot_hash": "435ead75278b33910175a92ba1f3af4f610fcd3709acd8be43066da6b3e5dfef",
+  "strategy_snapshot_hash": "03403ad3f7705d04d1f6a8b46d472947c84d57962e684e2ad0cba50c62d503be",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "a0df443be0d142d7679c8d079de67452cfa9f9cccfe292e84cba02f4ee32b59f",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "af0a77cf70dcce3eafeb8a0afbe63a0cd6ff12fe4b8182ae6eeb03102e4890f2",
-  "output_hash": "61db874a46ebc42c0173c63bad3c2f53edbd14e6afee9b6d89710ff24f73a2aa",
+  "input_hash": "6f3cf92d348e2cc21b351116feeb4ca56fd570e01c3b436f31c67569cd9455e2",
+  "output_hash": "a2b52466c46dfcaa3523bf7367a7cac9802e13d497a96ab5d218685665c0c91f",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-1449.85)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -5749.68%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 16,
-      "HIGH_VOLATILITY": 1
+      "CHOP_RANGING": 15,
+      "HIGH_VOLATILITY": 0
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -1167.27,
-      "HIGH_VOLATILITY": -282.58
+      "CHOP_RANGING": -5749.68,
+      "HIGH_VOLATILITY": 0.0
     },
     "regimes_profitable_count": 0,
-    "regimes_active_count": 2,
-    "total_oos_pnl_usd": -1449.85
+    "regimes_active_count": 1,
+    "total_oos_return_pct": -5749.68
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:05:51.598150+00:00"
+  "created_at_utc": "2026-08-21T22:28:03.015145+00:00"
 }

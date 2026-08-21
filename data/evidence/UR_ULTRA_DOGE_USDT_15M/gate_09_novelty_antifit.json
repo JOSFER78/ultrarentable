@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_DOGE_USDT_15M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_15M",
-  "strategy_snapshot_hash": "3cac2f55b9383faf5c2dfc83074475c825fed7964c49d7732361d28e3b10cd34",
+  "strategy_snapshot_hash": "52f2d1a07410a6ca9fba2e3b7f92d1e88b48e8a7e32fc384d1573f4654cec52b",
   "dataset_id": "ds_binance_dogeusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "422fd0a8a1fb96ef7fd670625e686e87d0639f8274f5dafa7d2b6547580d5f7e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "42ed2fb92ad943bb5046f33aeb9e09c5f9bdec048adfb3b67cfde119ae4f6431",
-  "output_hash": "0f198a20faa3fdd079e34d3cc33d9cd3870f4c28d13fc9e067d2a555332324df",
+  "input_hash": "351c01d2123824596bef3704aad48736dde35c3e10791c94fe90f00dc3934164",
+  "output_hash": "f5122c09fb907647f4c82c26e1e68282ba141f187a2366b45442a7e6875e8c30",
   "status": "PASSED",
-  "score": 89.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 20.1 trades/param, Estabilidad Vecindario: 95.6%, Re-backtest PFs: [0.99, 0.84, 0.71, 0.52])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 48.2 trades/param, Estabilidad Vecindario: 103.0%, Re-backtest PFs: [1.06, 0.94, 0.94, 0.81])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 20.1,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 48.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 95.6,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 103.0,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.99,
-      0.84,
-      0.71,
-      0.52
+      1.06,
+      0.94,
+      0.94,
+      0.81
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:31:02.205022+00:00"
+  "created_at_utc": "2026-08-21T22:26:09.736027+00:00"
 }

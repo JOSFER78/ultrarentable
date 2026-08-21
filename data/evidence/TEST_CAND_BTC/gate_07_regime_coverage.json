@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_TEST_CAND_BTC_g07",
+  "run_id": "run_TEST_CAND_BTC",
+  "strategy_id": "TEST_CAND_BTC",
+  "strategy_snapshot_hash": "05d92360c2280c2072ea92ae62b0f1e8762a8239c89bb637a9641f4ebfac6f71",
+  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
-  "name": "REGIME_COVERAGE",
-  "passed": false,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "35a37094db9125e7e701e407ef5ea3425fecb81eceb1748d6b8730c9a9c3bbcf",
+  "output_hash": "9a4cbd2f7625ed3df1dba76749e71b8bc66c5337a121814d4aeec8c1feebbba5",
+  "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en reg\u00edmenes de mercado (0/4 rentables, Retorno Total: -792.58%)",
-  "evidence": {
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -82.65%)",
+  "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
@@ -14,17 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 8,
-      "HIGH_VOLATILITY": 5
+      "CHOP_RANGING": 10,
+      "HIGH_VOLATILITY": 9
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -742.39,
-      "HIGH_VOLATILITY": -50.19
+      "CHOP_RANGING": -39.24,
+      "HIGH_VOLATILITY": -43.41
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -792.58
-  }
+    "total_oos_return_pct": -82.65
+  },
+  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-21T22:27:51.110605+00:00"
 }

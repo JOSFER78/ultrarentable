@@ -1,16 +1,29 @@
 {
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g08",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1H",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1H",
+  "strategy_snapshot_hash": "c345d10a55f87d5d8f551520a3f2d84c3ad877c7eaa780280663a933abd41767",
+  "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
-  "name": "DSR_RATIO",
-  "passed": false,
-  "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 5 trials)",
-  "evidence": {
-    "raw_sharpe_ratio": -0.239,
-    "deflated_sharpe_probability_pct": 0.0,
-    "trials_penalized_count": 5,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "009f48bd4b6213dbaae810a2a03fc165f1b537cc8e9b9c96d1a72f94949839e7",
+  "output_hash": "d1dab0cf6483387c311ee06be8bdfdae7bfe2f3cc95cd4ee3c12823b65a07aac",
+  "status": "PASSED",
+  "score": 91.5,
+  "verdict": "PASSED: DSR = 91.5% (Sharpe Bruto: 0.10, Trials Penalizados: 1, Skew: 7.65, Kurt: 61.36)",
+  "metrics": {
+    "raw_sharpe_ratio": 0.103,
+    "deflated_sharpe_probability_pct": 91.55,
+    "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": -5.832,
-    "kurtosis": 35.94,
-    "sample_trades_count": 40
-  }
+    "skewness": 7.646,
+    "kurtosis": 61.361,
+    "sample_trades_count": 68
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-21T22:27:48.884242+00:00"
 }

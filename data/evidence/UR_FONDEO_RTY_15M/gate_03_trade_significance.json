@@ -2,27 +2,27 @@
   "evidence_id": "ev_UR_FONDEO_RTY_15M_g03",
   "run_id": "run_UR_FONDEO_RTY_15M",
   "strategy_id": "UR_FONDEO_RTY_15M",
-  "strategy_snapshot_hash": "516f8ec15110350f2d90a789aa7ebabfbf159d92f1d83247bda7fead3893515a",
+  "strategy_snapshot_hash": "e319f25c4fa46d2b9a5581b8d30de179afbc7e699fa92c520ceb5f2aadbcb9a0",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "df39f580a7b6030634929d44d890723a0b8597b9fbd1563b850042663c1c0d85",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b8534d8773dc3ff368e0cb4f185a26e63911e7f332c4c86e336d1a753a5032c9",
-  "output_hash": "4cb44860d90576d9ccaff3a7fa68915217b31509f8966d4fadea3a0828121080",
+  "input_hash": "c3bb70a1331d8e96bfa12f04251f44cf77c28396d1bd3338d4dd939c0c5a7dbc",
+  "output_hash": "20601446a5fb34e9ee9dee2c3a03df852a60f61a80da75e5d70f8f7ecd29d756",
   "status": "FAILED",
   "score": 50.0,
   "verdict": "FALLO: Muestra insuficiente (85 IS < 30 ó 20 OOS < 20)",
   "metrics": {
     "trades_is": 85,
     "trades_oos": 20,
-    "top2_outlier_dependency_pct": 52.1,
+    "top2_outlier_dependency_pct": 51.7,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-20T15:08:10.974276+00:00"
+  "created_at_utc": "2026-08-21T22:28:10.961428+00:00"
 }

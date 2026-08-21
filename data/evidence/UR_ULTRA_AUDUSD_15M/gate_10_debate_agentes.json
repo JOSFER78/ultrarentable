@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_15M_g10",
   "run_id": "run_UR_ULTRA_AUDUSD_15M",
   "strategy_id": "UR_ULTRA_AUDUSD_15M",
-  "strategy_snapshot_hash": "7a2d232592828300ded5566e8cd1c28a5e47dbe2cb03dc64ee55a608b1dfa0ab",
+  "strategy_snapshot_hash": "011c52724bb72cfba046e3746c73bb4555b8aeabe01f2fa2836d9edb83e6161c",
   "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ad32232660679def8be4fc45878f4e46a6e0ec5650b8c30f6db50ac02379b986",
-  "output_hash": "337830de376aca69c2c7f0aa8341261ddc31f025c781573a8f05b82e5382e2dc",
+  "input_hash": "c455615c9642bd35d05114a20a345fc9efe2e6f45ef10b9f14df4e955f85c384",
+  "output_hash": "a77fbaf66302554b572f71700448b776c23b42f8e7a65256c5d33401411c1979",
   "status": "FAILED",
-  "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "score": 26.0,
+  "verdict": "FALLO: Consenso insuficiente (26.0/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 24.5,
+    "consensus_score": 26.0,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 25.3,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.22 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.34 con beneficio neto de $-4.71.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 94.6% (Límite permitido para ULTRA: 80.0%).",
+          "Drawdown Máximo Observado: 101.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 44 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 72 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $-0.07 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
+        "score": 31.3,
         "objections": [
-          "Alerta de Drawdown: DD (94.6%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.22 cercano al umbral de equilibrio."
+          "Alerta de Drawdown: DD (101.5%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.34 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T08:41:53.374574+00:00"
+  "created_at_utc": "2026-08-21T22:23:22.153692+00:00"
 }

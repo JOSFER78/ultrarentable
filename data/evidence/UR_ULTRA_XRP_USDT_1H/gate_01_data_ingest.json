@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g01",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1H",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1H",
+  "strategy_snapshot_hash": "c345d10a55f87d5d8f551520a3f2d84c3ad877c7eaa780280663a933abd41767",
+  "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 1,
-  "name": "DATA_INGEST",
-  "passed": true,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "27c2b7172b95f46f66788f3bcb1b48846f7b6be8f4398a281853da4dc796a468",
+  "output_hash": "92c3763320458f2ccabc31ab7d160bf89d397a55747db093fa1ea177540eb2d6",
+  "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED: Dataset verificado (5100 velas, SHA256: 70013eec..., 0 corruptas, 0 gaps tolerados)",
-  "evidence": {
+  "metrics": {
     "total_candles": 5100,
     "corrupt_bars": 0,
     "out_of_order_bars": 0,
@@ -14,5 +25,7 @@
     "zero_volume_bars": 0,
     "dataset_sha256": "70013eec73839971f92f97ff182d0effeb7cf91c5649b18016debd1187d379db",
     "integrity_pct": 100.0
-  }
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-21T22:27:48.235281+00:00"
 }
