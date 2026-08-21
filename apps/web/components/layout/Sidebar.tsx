@@ -20,33 +20,29 @@ interface NavGroup {
 
 const NAVIGATION: NavGroup[] = [
   {
-    group: "CENTRO DE CONTROL",
+    group: "ESTRATEGIAS (6 FASES DETERMINISTAS)",
     items: [
-      { code: "LIVE", icon: "⚡", label: "Motor 24/7 en Vivo", href: "/", badge: "24/7", highlight: true },
-      { code: "XLS", icon: "📊", label: "Explorador Masivo Excel", href: "/strategies", badge: "142 CAND" },
+      { code: "1", icon: "⚡", label: "1. Motor 24/7 en Vivo", href: "/sistema", badge: "24/7", highlight: true },
+      { code: "2", icon: "📊", label: "2. Explorador Cuantitativo Excel", href: "/strategies", badge: "230 CAND" },
+      { code: "3", icon: "🧬", label: "3. Pipeline 11 Pasos (FSM)", href: "/candidatos", badge: "11-GATES" },
+      { code: "4", icon: "🔬", label: "4. Panel Investigador Semántico", href: "/research", badge: "LAB I+D" },
+      { code: "5", icon: "🏆", label: "5. Estrategias Aprobadas (11/11)", href: "/gates", badge: "CERTIFICADAS" },
+      { code: "6", icon: "🧩", label: "6. Meta-Estrategia Ensamblada", href: "/portfolio", badge: "PORTFOLIO" },
     ],
   },
   {
-    group: "DOCTRINA DUAL",
+    group: "RUTAS DE TRADING DUAL",
     items: [
       { code: "ULT", icon: "🔥", label: "Ultra Lab (BingX 500x)", href: "/ultra", badge: "BALA" },
       { code: "FND", icon: "🛡️", label: "Track Fondeo (CME)", href: "/fondeo", badge: "DD 4%" },
+      { code: "PF", icon: "🏛️", label: "Catálogo 34 Prop Firms", href: "/prop-firms", badge: "APEX/TOP" },
     ],
   },
   {
-    group: "PIPELINE CUÁNTICO",
+    group: "EJECUCIÓN & INFRAESTRUCTURA",
     items: [
-      { code: "FSM", icon: "🧬", label: "FSM 10-Estados", href: "/candidatos", badge: "PIPELINE" },
-      { code: "G11", icon: "⚡", label: "11 Gates & Fases", href: "/gates/gate-1-data-ingest", badge: "11 G" },
-      { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-11-nautilus-trader", badge: "RUST" },
-      { code: "SEM", icon: "🧠", label: "IA Semántica & Fallos", href: "/research", badge: "AI" },
-    ],
-  },
-  {
-    group: "EJECUCIÓN",
-    items: [
-      { code: "BOX", icon: "📦", label: "Paper Sandbox 14d", href: "/ejecucion", badge: "PAPER" },
-      { code: "SUP", icon: "⚙️", label: "Supervisión Workers", href: "/sistema", badge: "8 W" },
+      { code: "PPR", icon: "📦", label: "Paper Sandbox (14d)", href: "/ejecucion", badge: "LIVE" },
+      { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-11-nautilus-trader", badge: "EVENT" },
     ],
   },
 ];

@@ -239,43 +239,217 @@ export default function GeneticDiscoveryLabPage() {
           >
             {syncing ? "🔄 Sincronizando..." : "🔄 Sincronizar Databanks SQX"}
           </button>
+        </div>
+      </div>
 
+      {/* 1.2 PANEL MAESTRO: ESTRATEGIAS (6 FASES DETERMINISTAS) */}
+      <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "14px", padding: "18px 20px", marginBottom: "20px", boxShadow: "0 6px 30px rgba(0,0,0,0.5)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
+              ARQUITECTURA INSTITUCIONAL · 6 FASES DETERMINISTAS DE ESTRATEGIAS
+            </div>
+            <div style={{ fontSize: "12.5px", color: "#cbd5e1", marginTop: "2px" }}>
+              Ciclo de vida cuantitativo completo sincronizado en tiempo real con FastAPI, SQLite WAL y Evidence Gates.
+            </div>
+          </div>
+          <span style={{ fontSize: "10.5px", color: "#34d399", background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "3px 8px", borderRadius: "4px", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
+            ZERO-MOCKS & REAL-ONLY
+          </span>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "10px" }}>
           <Link
-            href="/candidatos"
+            href="/sistema"
             style={{
-              padding: "10px 16px",
-              borderRadius: "8px",
-              background: "rgba(56, 189, 248, 0.15)",
-              border: "1px solid rgba(56, 189, 248, 0.35)",
-              color: "#38bdf8",
-              fontSize: "12px",
-              fontWeight: 800,
               textDecoration: "none",
+              background: "rgba(52, 211, 153, 0.08)",
+              border: "1px solid rgba(52, 211, 153, 0.25)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+              transition: "all 0.2s ease",
               display: "flex",
-              alignItems: "center",
-              gap: "6px",
+              flexDirection: "column",
+              justifyContent: "space-between",
             }}
           >
-            💎 CANDIDATOS & DEBATE IA ({telemetry.total_candidates}) →
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
+                  1. MOTOR 24/7 EN VIVO
+                </span>
+                <span style={{ fontSize: "9px", background: "rgba(52, 211, 153, 0.2)", color: "#34d399", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                  WORKERS
+                </span>
+              </div>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
+                Minería continua, estado de 8 workers, SQX bridge y persistencia SQLite WAL.
+              </p>
+            </div>
+            <div style={{ fontSize: "10px", fontWeight: 800, color: "#34d399", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+              Ver Telemetría →
+            </div>
           </Link>
 
           <Link
             href="/strategies"
             style={{
-              padding: "10px 16px",
-              borderRadius: "8px",
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              color: "#ffffff",
-              fontSize: "12px",
-              fontWeight: 700,
               textDecoration: "none",
+              background: "rgba(56, 189, 248, 0.08)",
+              border: "1px solid rgba(56, 189, 248, 0.25)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+              transition: "all 0.2s ease",
               display: "flex",
-              alignItems: "center",
-              gap: "6px",
+              flexDirection: "column",
+              justifyContent: "space-between",
             }}
           >
-            <span suppressHydrationWarning>📊 CATÁLOGO SQX ({fmt(telemetry.total_strategies_catalog)}) →</span>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
+                  2. EXPLORADOR EXCEL
+                </span>
+                <span style={{ fontSize: "9px", background: "rgba(56, 189, 248, 0.2)", color: "#38bdf8", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                  230 CAND
+                </span>
+              </div>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
+                Matriz tabular con todas las estrategias minadas, retornos %, PF OOS y ordenación.
+              </p>
+            </div>
+            <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+              Abrir Explorador →
+            </div>
+          </Link>
+
+          <Link
+            href="/candidatos"
+            style={{
+              textDecoration: "none",
+              background: "rgba(129, 140, 248, 0.08)",
+              border: "1px solid rgba(129, 140, 248, 0.25)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+              transition: "all 0.2s ease",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", fontWeight: 900, color: "#818cf8", fontFamily: "var(--font-mono, monospace)" }}>
+                  3. PIPELINE 11 PASOS (FSM)
+                </span>
+                <span style={{ fontSize: "9px", background: "rgba(129, 140, 248, 0.2)", color: "#818cf8", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                  11 GATES
+                </span>
+              </div>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
+                Embudo cuantitativo clasificando en Tier 1, Tier 2 Diamantes, Tier 3 y Rechazadas.
+              </p>
+            </div>
+            <div style={{ fontSize: "10px", fontWeight: 800, color: "#818cf8", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+              Ver Embudo 11-G →
+            </div>
+          </Link>
+
+          <Link
+            href="/research"
+            style={{
+              textDecoration: "none",
+              background: "rgba(250, 204, 21, 0.08)",
+              border: "1px solid rgba(250, 204, 21, 0.35)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+              transition: "all 0.2s ease",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              boxShadow: "0 0 15px rgba(250, 204, 21, 0.08)",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
+                  4. PANEL INVESTIGADOR (LAB)
+                </span>
+                <span style={{ fontSize: "9px", background: "rgba(250, 204, 21, 0.2)", color: "#facc15", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                  I+D SIN MOCKS
+                </span>
+              </div>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
+                Refinamiento de estrategias Tier 2 y 3 con Hurst, Parkinson, Chandelier Trailing y 5 Agentes IA.
+              </p>
+            </div>
+            <div style={{ fontSize: "10px", fontWeight: 800, color: "#facc15", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+              Abrir Laboratorio →
+            </div>
+          </Link>
+
+          <Link
+            href="/gates"
+            style={{
+              textDecoration: "none",
+              background: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid rgba(16, 185, 129, 0.25)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+              transition: "all 0.2s ease",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", fontWeight: 900, color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>
+                  5. ESTRATEGIAS APROBADAS
+                </span>
+                <span style={{ fontSize: "9px", background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                  11/11 CERT
+                </span>
+              </div>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
+                Registro oficial inmutable de estrategias aprobadas con evidencia en disco y exportadores.
+              </p>
+            </div>
+            <div style={{ fontSize: "10px", fontWeight: 800, color: "#10b981", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+              Ver Certificadas →
+            </div>
+          </Link>
+
+          <Link
+            href="/portfolio"
+            style={{
+              textDecoration: "none",
+              background: "rgba(236, 72, 153, 0.08)",
+              border: "1px solid rgba(236, 72, 153, 0.25)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+              transition: "all 0.2s ease",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", fontWeight: 900, color: "#ec4899", fontFamily: "var(--font-mono, monospace)" }}>
+                  6. META-ESTRATEGIA ENSAMBLADA
+                </span>
+                <span style={{ fontSize: "9px", background: "rgba(236, 72, 153, 0.2)", color: "#ec4899", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
+                  SINERGIA
+                </span>
+              </div>
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
+                Ensamble sinérgico de carteras multi-activo para amortiguar fallos y maximizar convexidad.
+              </p>
+            </div>
+            <div style={{ fontSize: "10px", fontWeight: 800, color: "#ec4899", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+              Ver Portfolios →
+            </div>
           </Link>
         </div>
       </div>
