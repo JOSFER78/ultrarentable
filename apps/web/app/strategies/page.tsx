@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useEngineVersion } from "@/hooks/useEngineVersion";
 
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
+
 interface Candidate {
   candidate_id: string;
   name: string;
@@ -470,6 +472,9 @@ export default function StrategiesExplorerPage() {
 
   return (
     <div suppressHydrationWarning style={{ padding: "14px 18px", width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
+      {/* 0. ESTRATEGIAS TOP SUB-NAV BAR */}
+      <EstrategiasHeaderNav />
+
       {/* 1. TOP HEADER COMPACTO */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>

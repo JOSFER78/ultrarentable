@@ -17,6 +17,8 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from services.sync.firebase_sync_manager import firebase_sync_manager
+
 logger = logging.getLogger("firebase_sync")
 firebase_sync_router = APIRouter(prefix="/sync/firebase", tags=["Firebase Firestore Cloud Sync"])
 
@@ -24,7 +26,7 @@ DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
 
 
 class FirebaseConfigSchema(BaseModel):
-    project_id: Optional[str] = Field("ultrarentable-prod", description="Firebase Project ID")
+    project_id: Optional[str] = Field("pecemi", description="Firebase Project ID")
     collection_name: Optional[str] = Field("strategies", description="Firestore Collection Name")
     auto_sync_enabled: bool = Field(True, description="Enable automatic cloud sync on survivor discovery")
 
@@ -32,6 +34,7 @@ class FirebaseConfigSchema(BaseModel):
 @firebase_sync_router.get("/status")
 def get_firebase_sync_status() -> Dict[str, Any]:
     """Check Firebase connection, local DB candidate count and cloud sync health."""
+    sync_status = firebase_sync_manager.get_status()
     try:
         conn = sqlite3.connect(DB_PATH)
         cur = conn.cursor()
@@ -40,20 +43,21 @@ def get_firebase_sync_status() -> Dict[str, Any]:
         cur.execute("SELECT count(*) FROM candidates")
         total_candidates = cur.fetchone()[0]
         conn.close()
-    except Exception as e:
+    except Exception:
         approved_count = 0
         total_candidates = 0
 
     return {
         "status": "ONLINE",
-        "mode": "DUAL_PERSISTENCE (SQLite WAL Local + Firebase Cloud)",
+        "mode": "DUAL_PERSISTENCE (SQLite WAL Local + Firebase Realtime Database 24/7)",
         "firebase_project": "pecemi",
         "database_url": "https://pecemi-default-rtdb.firebaseio.com",
         "cloud_paths": {
-            "strategies": "/ultrarentable/strategies",
-            "campaigns": "/ultrarentable/campaigns",
+            "candidates": "/ultrarentable/candidates",
             "telemetry": "/ultrarentable/telemetry",
-            "system_info": "/ultrarentable/system_info",
+            "heartbeat": "/ultrarentable/heartbeat",
+            "failure_stats": "/ultrarentable/failure_stats",
+            "engine_versions": "/ultrarentable/engine_versions",
         },
         "local_storage": {
             "database": "SQLite WAL",
@@ -63,10 +67,17 @@ def get_firebase_sync_status() -> Dict[str, Any]:
         "cloud_sync": {
             "enabled": True,
             "mcp_server_connected": True,
-            "last_synced_at": datetime.now(timezone.utc).isoformat(),
-            "sync_health": "HEALTHY",
+            "last_synced_at": sync_status.get("last_synced_at") or datetime.now(timezone.utc).isoformat(),
+            "sync_health": sync_status.get("status") or "HEALTHY",
+            "synced_counts": sync_status.get("counts") or {},
         },
     }
+
+
+@firebase_sync_router.post("/sync-now")
+def trigger_sync_now() -> Dict[str, Any]:
+    """Manually trigger immediate 24/7 full sync to Firebase Realtime Database."""
+    return firebase_sync_manager.sync_all()
 
 
 from services.engine_version import (

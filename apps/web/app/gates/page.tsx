@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 
 interface Candidate {
   candidate_id: string;
@@ -42,9 +43,9 @@ export default function ApprovedStrategiesPage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch("/api/v1/candidates")
-      .then((r) => (r.ok ? r.json() : { candidates: [] }))
-      .then((d) => setCandidates(d.candidates || []))
+    fetch("/api/v1/candidates?limit=500&include_rejected=true")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => setCandidates(Array.isArray(d) ? d : (d.candidates || [])))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -56,7 +57,10 @@ export default function ApprovedStrategiesPage() {
   const tier3Count = candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || (c.gates_passed_count != null && c.gates_passed_count >= 7 && c.gates_passed_count <= 8)).length;
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1500px", margin: "0 auto", color: "#f8fafc" }}>
+    <div style={{ padding: "20px 24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
+      {/* 0. ESTRATEGIAS TOP SUB-NAV BAR */}
+      <EstrategiasHeaderNav />
+
       {/* 1. HEADER */}
       <div style={{ marginBottom: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>

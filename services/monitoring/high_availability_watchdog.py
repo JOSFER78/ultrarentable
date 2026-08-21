@@ -126,6 +126,15 @@ class HighAvailabilityWatchdog:
         except Exception as dbe:
             logger.warning(f"Aviso de checkpoint SQLite WAL: {dbe}")
 
+        # 5. Sincronización Continua 24/7 con Firebase Cloud (Persistencia de Candidatos, Telemetría y Salud)
+        try:
+            from services.sync.firebase_sync_manager import firebase_sync_manager
+            sync_res = firebase_sync_manager.sync_all()
+            if sync_res.get("status") == "HEALTHY":
+                actions_taken.append("FIREBASE_CLOUD_SYNC_HEALTHY")
+        except Exception as fbe:
+            logger.warning(f"Aviso en sincronización 24/7 Firebase: {fbe}")
+
         # Registrar historial de recuperación si hubo acciones
         if actions_taken:
             rec_event = {

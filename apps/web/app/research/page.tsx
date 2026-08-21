@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 
 interface Candidate {
   candidate_id: string;
@@ -95,10 +96,10 @@ function SemanticResearchLabContent() {
   const loadCandidates = useCallback(async () => {
     try {
       setLoadingCandidates(true);
-      const res = await fetch("/api/v1/candidates");
+      const res = await fetch("/api/v1/candidates?limit=500&include_rejected=true");
       if (res.ok) {
         const data = await res.json();
-        const candList: Candidate[] = data.candidates || [];
+        const candList: Candidate[] = Array.isArray(data) ? data : (data.candidates || []);
         setCandidates(candList);
 
         if (initialCid) {
@@ -186,7 +187,10 @@ function SemanticResearchLabContent() {
   };
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
+    <div style={{ padding: "20px 24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
+      {/* 0. ESTRATEGIAS TOP SUB-NAV BAR */}
+      <EstrategiasHeaderNav />
+
       {/* 1. HEADER */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
         <div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import { useEngineVersion } from "@/hooks/useEngineVersion";
 import { StrategyLifecycleStatus } from "@/types/telemetry";
 
@@ -753,6 +754,8 @@ ${entryLogic}`;
 
   return (
     <div style={{ width: "100%", maxWidth: "100%", padding: "16px 22px", color: "#f8fafc", boxSizing: "border-box" }}>
+      {/* 0. ESTRATEGIAS TOP SUB-NAV BAR */}
+      <EstrategiasHeaderNav />
       
       {/* 1. TOP HEADER & NAVIGATION */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import ModuleMap from "@/components/ModuleMap";
 
 interface Candidate {
@@ -196,7 +197,10 @@ export default function PortfolioStudioPage() {
   };
 
   return (
-    <div className="page" style={{ padding: "32px", maxWidth: 1280, margin: "0 auto" }}>
+    <div className="page" style={{ padding: "20px 24px", maxWidth: 1600, margin: "0 auto" }}>
+      {/* 0. ESTRATEGIAS TOP SUB-NAV BAR */}
+      <EstrategiasHeaderNav />
+
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
         <div>
