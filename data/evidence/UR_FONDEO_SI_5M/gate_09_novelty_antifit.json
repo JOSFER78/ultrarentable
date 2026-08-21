@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_SI_5M_g09",
   "run_id": "run_UR_FONDEO_SI_5M",
   "strategy_id": "UR_FONDEO_SI_5M",
-  "strategy_snapshot_hash": "b046e19ab1229ea1e3432fc0b7931a121fdc1939f28d5a75114da8f9b19e7053",
+  "strategy_snapshot_hash": "d9562f7c88a7da89470efdd939d0fc8ff96f3eb611059c99ed15ccfd352dec29",
   "dataset_id": "ds_trad_si_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "0729e7d3f9682246e8e1ade0c47279812294aa0efe5a1461cd06e9c1b3f57ba8",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "8409837d9949318351d9eeb46387532a15f5e12bfa70ef3794f9340f04c2eec2",
-  "output_hash": "5e2f4e482928c4f74ac47888602cab913d5d89fcd361ea4a7ee2bc8ac8164161",
+  "input_hash": "c53751f90e772412eed9355ca042865a85ac4872a611a793dcfb98e76bb87de9",
+  "output_hash": "4cb999e2729469ba8fc26b79a7d73adf22097280984b261f481229566b002cbd",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 32.6 trades/param, Estabilidad Vecindario: 102.1%, Re-backtest PFs: [0.85, 0.82, 0.89, 0.83])",
+  "score": 98.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 62.0 trades/param, Estabilidad Vecindario: 98.1%, Re-backtest PFs: [0.85, 0.8, 0.74, 0.71])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 32.6,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 62.0,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 102.1,
-    "min_stability_required_pct": 70.0,
+    "parameter_neighborhood_stability_pct": 98.1,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
       0.85,
-      0.82,
-      0.89,
-      0.83
+      0.8,
+      0.74,
+      0.71
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:09:50.260738+00:00"
+  "created_at_utc": "2026-08-21T22:28:19.566702+00:00"
 }

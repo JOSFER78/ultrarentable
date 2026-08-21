@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g10",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "f1596cd4e630c96957efad8e0ff7a91d92a9da0549a44673b14799fb89c3adcb",
+  "strategy_snapshot_hash": "053e4926a2e70347d25819b44940f4f53d0db14f90cff00013f3acaefead93a2",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "f538edcd02caaefe34ea8b703e22a563bdfbc77337ac0330621fd1b460d9a41e",
-  "output_hash": "a54537be1ed3023ea7c5120a4c6efdc8a888a6bf26838019ac716367e4d7a426",
+  "input_hash": "10f583742a5eb278a7c38c6d77b67aaf9efb23a0572117cce5be6655bc07632a",
+  "output_hash": "239d50195d4dc6a08d241aa2dffb22be00e954bd10754e2c5e326fd0fef86e6c",
   "status": "FAILED",
-  "score": 13.2,
-  "verdict": "FALLO: Consenso insuficiente (13.2/100) u objeción crítica de riesgo",
+  "score": 28.5,
+  "verdict": "FALLO: Consenso insuficiente (28.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 13.2,
+    "consensus_score": 28.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 33.9,
         "findings": [
           "Activo y Timeframe: USDJPY (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.31 con beneficio neto de $-4048.70.",
+          "Profit Factor OOS: 0.53 con beneficio neto de $-0.03.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 8.9% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 7.9% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -44,19 +44,19 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 40.0,
+        "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 16 operaciones evaluadas (Mínimo requerido: 20).",
-          "Grado de confianza: MODERADO."
+          "Muestra fuera de muestra: 97 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-253.04 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,16 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 15.0,
+        "score": 33.5,
         "objections": [
-          "Alerta de Drawdown: DD (8.9%) consume más del 70% del margen tolerable.",
-          "Alerta de Muestra: 16 trades OOS es una muestra pequeña (< 20 requeridos).",
-          "Alerta de Rentabilidad: Profit factor 0.31 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (7.9%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.53 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:12:08.334066+00:00"
+  "created_at_utc": "2026-08-21T22:28:16.654410+00:00"
 }

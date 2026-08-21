@@ -32,7 +32,7 @@ class FundingDiscoveryEngine:
         timeframe: str,
         dataset_id: str,
         dataset_sha256: str,
-        risk_per_trade_pct: float = 0.25,
+        risk_per_trade_pct: float = 0.20,
         target_profit_ticks: int = 40,
         stop_loss_ticks: int = 20,
         sl_atr_mult: float = 1.8,
