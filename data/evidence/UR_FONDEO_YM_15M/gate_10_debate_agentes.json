@@ -1,42 +1,31 @@
 {
-  "evidence_id": "ev_UR_FONDEO_YM_15M_g10",
-  "run_id": "run_UR_FONDEO_YM_15M",
-  "strategy_id": "UR_FONDEO_YM_15M",
-  "strategy_snapshot_hash": "d65a6df08b473dcbaf2e7f061c3aa2f3e7d36fa6f7d7c7c2d45ab3d04028a8c2",
-  "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
-  "gate_name": "DEBATE_AGENTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "4ef210bfdf4d9b82b5868a97f7537c9e1121094814d97aa605db4c3ba6056750",
-  "output_hash": "286e85cad5324e755f9c1e568c62a3f2a1f136e52c23aa6727808be685db514c",
-  "status": "PASSED",
-  "score": 66.7,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (66.7/100 · 5/5 Evaluadores Conformes)",
-  "metrics": {
-    "consensus_score": 66.7,
+  "name": "DEBATE_AGENTES",
+  "passed": false,
+  "score": 58.9,
+  "verdict": "FALLO: Consenso insuficiente (58.9/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "evidence": {
+    "consensus_score": 58.9,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 83.8,
+        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
+        "score": 66.2,
         "findings": [
           "Activo y Timeframe: YM (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 1.64 con beneficio neto de $0.02.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 1.25 con beneficio neto de $-248.34.",
+          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 65.0,
+        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
+        "score": 62.5,
         "findings": [
-          "Drawdown Máximo Observado: 2.2% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown M\u00e1ximo Observado: 2.4% (L\u00edmite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,32 +35,30 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 71 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 71 operaciones evaluadas (M\u00ednimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operaci\u00f3n: $-3.50 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 64.7,
+        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
+        "score": 57.2,
         "objections": [
-          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
+          "Cero objeciones cr\u00edticas encontradas: La evidencia emp\u00edrica respalda el candidato."
         ],
         "approved": true
       }
     ]
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_YM_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T20:13:43.249574+00:00"
+  }
 }
