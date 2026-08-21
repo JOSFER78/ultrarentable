@@ -11,7 +11,7 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "c0fd661f69d5b141fb158645003690406a3d985f1320855f6e571d29ec85a7da",
-  "output_hash": "61861234e04370a96c4bf5e9e620197bc166c67b913a9f654ccdd7613908c3b6",
+  "output_hash": "28405c561d3bb535dcc464892dd642d872f8f19a3d402c600e87670f3237a353",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.05,
-        "stressed_profit_factor": 0.55,
+        "stressed_net_pnl_usd": -0.03,
+        "stressed_profit_factor": 0.62,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.06,
-        "stressed_profit_factor": 0.46,
+        "stressed_net_pnl_usd": -0.04,
+        "stressed_profit_factor": 0.6,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.09,
-        "stressed_profit_factor": 0.36,
+        "stressed_net_pnl_usd": -0.04,
+        "stressed_profit_factor": 0.58,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.11,
-        "stressed_profit_factor": 0.28,
+        "stressed_net_pnl_usd": -0.05,
+        "stressed_profit_factor": 0.54,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T20:14:13.448014+00:00"
+  "created_at_utc": "2026-08-21T22:28:27.794594+00:00"
 }

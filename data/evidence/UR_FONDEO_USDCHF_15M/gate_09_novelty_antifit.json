@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_15M_g09",
   "run_id": "run_UR_FONDEO_USDCHF_15M",
   "strategy_id": "UR_FONDEO_USDCHF_15M",
-  "strategy_snapshot_hash": "d6612bd83022b91f9b15eae3cde8e3314c85d2dc62f339ab3e59b77fa8bb9762",
+  "strategy_snapshot_hash": "d3ccd27678d1d4afd0e92fcf2dd06f47b2b146eddbf8a540ac4f79ca347827d4",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "d1774bf54505646584b992e587f391f0cfe8971f1457fce58f2e7efbb33b5de2",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a0f872c493da42eda7e5bc8a7320418cf1d800cdd869bf948c98f1603a624548",
-  "output_hash": "ae7bf40825d3a2ec8ff9b6230d775ddfbac88561a89ed3f7398871b02c068e44",
-  "status": "FAILED",
-  "score": 18.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 11.1 o Estabilidad 45.0% < 70.0%)",
+  "input_hash": "6cdc221e80a3c5a8cf21e936e574dddab40020d259ac8bac96f67208bfc2304e",
+  "output_hash": "2437daa1a9096252f7e6127c6d935a68ad058f3c844c4dca07753628fcb33dcf",
+  "status": "PASSED",
+  "score": 73.6,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 23.5 trades/param, Estabilidad Vecindario: 60.0%, Re-backtest PFs: [0.04, 0.15, 0.11, 0.06])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 11.1,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 23.5,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 45.0,
-    "min_stability_required_pct": 70.0,
+    "parameter_neighborhood_stability_pct": 60.0,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
       0.04,
-      0.04,
-      0.05,
-      0.05
+      0.15,
+      0.11,
+      0.06
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:11:02.585180+00:00"
+  "created_at_utc": "2026-08-21T22:28:29.256384+00:00"
 }

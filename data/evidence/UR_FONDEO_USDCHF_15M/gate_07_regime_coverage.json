@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_15M_g07",
   "run_id": "run_UR_FONDEO_USDCHF_15M",
   "strategy_id": "UR_FONDEO_USDCHF_15M",
-  "strategy_snapshot_hash": "d6612bd83022b91f9b15eae3cde8e3314c85d2dc62f339ab3e59b77fa8bb9762",
+  "strategy_snapshot_hash": "d3ccd27678d1d4afd0e92fcf2dd06f47b2b146eddbf8a540ac4f79ca347827d4",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "d1774bf54505646584b992e587f391f0cfe8971f1457fce58f2e7efbb33b5de2",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "da3edd143d30b75795f114aa50aabc8a9d3d162235590924cdadc5e95a01cf5e",
-  "output_hash": "19f5fb59e856b129c43a9b475561d13f8d24d6075b2f5c81c2f810a3e3b107c0",
+  "input_hash": "3a3517913d861b098056664aacb3685cd7aa61fc0f8dc4dbf9869678c418473b",
+  "output_hash": "81b094d6245b1e7d52033f98e132558b8adccdc14e63a9a9c76531a5ca895e14",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-5593.47)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -10312.06%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 20,
-      "HIGH_VOLATILITY": 2
+      "CHOP_RANGING": 22,
+      "HIGH_VOLATILITY": 3
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -4956.06,
-      "HIGH_VOLATILITY": -637.41
+      "CHOP_RANGING": -8303.62,
+      "HIGH_VOLATILITY": -2008.44
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -5593.47
+    "total_oos_return_pct": -10312.06
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:11:02.474883+00:00"
+  "created_at_utc": "2026-08-21T22:28:28.960168+00:00"
 }

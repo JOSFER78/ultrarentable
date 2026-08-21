@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_4H_g07",
   "run_id": "run_UR_FONDEO_AUDUSD_4H",
   "strategy_id": "UR_FONDEO_AUDUSD_4H",
-  "strategy_snapshot_hash": "231701064909d53beaa8f762b38258866f40e2909638cd434d817d23336d5395",
+  "strategy_snapshot_hash": "763e6bf1d40aa58be89e2db55fdda206f898b943afa231322273f8a6725e14fe",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "e08297ffabee22cf266b06618bad1ac33472470b1c8ae8eac2dd337c55917a69",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "be2bb1bc8b4f2c8899fd36c3c974f1287aa40aacb752c24aa2a52d2027680151",
-  "output_hash": "1edbf961210fb854fccb64fe01b4cfca0c6554abd91d6ed565fa0b6ed739fded",
+  "input_hash": "c0fa88715c647588812de4e7227b92c7fe3e31c4043d5376fd115afa9a43969e",
+  "output_hash": "b2a5cc8a95534026996584a128d58c04040ae115a2570742226d10a2d2ea4c17",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-2838.13)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -5676.27%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 20,
@@ -28,16 +28,16 @@
       "CHOP_RANGING": 18,
       "HIGH_VOLATILITY": 5
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -1530.88,
-      "HIGH_VOLATILITY": -1307.25
+      "CHOP_RANGING": -3061.76,
+      "HIGH_VOLATILITY": -2614.51
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -2838.13
+    "total_oos_return_pct": -5676.27
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:01:50.085790+00:00"
+  "created_at_utc": "2026-08-21T22:28:22.507000+00:00"
 }
