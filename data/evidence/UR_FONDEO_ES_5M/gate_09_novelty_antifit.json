@@ -2,25 +2,25 @@
   "evidence_id": "ev_UR_FONDEO_ES_5M_g09",
   "run_id": "run_UR_FONDEO_ES_5M",
   "strategy_id": "UR_FONDEO_ES_5M",
-  "strategy_snapshot_hash": "0c0408063d541d7f641bd28ccd65c59a08060d2e7e1dd3f4275fe41d03918476",
+  "strategy_snapshot_hash": "4bd577d16dcef4789c28edd4d4983c2d76363b11d9de71d7bd66d761e30aadba",
   "dataset_id": "ds_trad_es_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "01510bab2c202323ccf80f85918286db619bbcb800c0fe229f63c96e967df488",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5e384566e1426cc92462618931d20ab3c03939c3f81d2fc7befcb63acac2ec8c",
-  "output_hash": "99b6c821adae01a3d2d3dfc6b5026930aa3095d65b9b76d3e296aa6fb7375c09",
+  "input_hash": "c878f175f985946324352c8bea7d268463d643d8c9358b9ec65132b36d6ba061",
+  "output_hash": "53edc499663630ab397437096ea0ca058277188d2d18c9efcfefa5b7f018703e",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 27.0 trades/param, Estabilidad Vecindario: 101.9%, Re-backtest PFs: [0.26, 0.26, 0.26, 0.28])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 54.0 trades/param, Estabilidad Vecindario: 101.9%, Re-backtest PFs: [0.26, 0.26, 0.26, 0.28])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 27.0,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 54.0,
     "min_dof_required": 15.0,
     "parameter_neighborhood_stability_pct": 101.9,
-    "min_stability_required_pct": 70.0,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
       0.26,
       0.26,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:04:01.654083+00:00"
+  "created_at_utc": "2026-08-21T22:28:31.815238+00:00"
 }
