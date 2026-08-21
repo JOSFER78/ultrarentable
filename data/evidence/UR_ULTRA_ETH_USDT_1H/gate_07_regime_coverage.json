@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_1H",
   "strategy_id": "UR_ULTRA_ETH_USDT_1H",
-  "strategy_snapshot_hash": "d5aeb1e3fd6e572f3e835541584e5d5c76278fe918f1fa17f12aac0223b30215",
+  "strategy_snapshot_hash": "2704e70b60b2708fabcb7b47410543eed90eefba7affbb9de5ced2954b54c7b1",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "41c71562d2641c4fba26c1475762ab174de6ae72c329aaaa6e34e343d9ead013",
-  "output_hash": "368180f69dbd72341ed7a306314914bca465478f9e395ee40ae0d750516391e3",
+  "input_hash": "3aa3fb9e7c04aa5d3502b65f5a44d96bfddf76dc66ac2b7d4c5e2470e2978450",
+  "output_hash": "ca7c90649b3c50f2ab029f59b3ec68e9592bc03ade1dc0d18b840150cff9d7db",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +1606.79%)",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +15638.56%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 497,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 910
     },
     "regime_trades_count": {
-      "BULL_TREND": 15,
+      "BULL_TREND": 13,
       "BEAR_TREND": 26,
-      "CHOP_RANGING": 101,
-      "HIGH_VOLATILITY": 41
+      "CHOP_RANGING": 74,
+      "HIGH_VOLATILITY": 48
     },
     "regime_return_pct": {
-      "BULL_TREND": 464.1,
-      "BEAR_TREND": -56.84,
-      "CHOP_RANGING": 1112.25,
-      "HIGH_VOLATILITY": 87.28
+      "BULL_TREND": -3436.6,
+      "BEAR_TREND": 1749.34,
+      "CHOP_RANGING": 17438.53,
+      "HIGH_VOLATILITY": -112.71
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 1606.79
+    "total_oos_return_pct": 15638.56
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T18:28:12.004338+00:00"
+  "created_at_utc": "2026-08-21T20:25:58.741527+00:00"
 }

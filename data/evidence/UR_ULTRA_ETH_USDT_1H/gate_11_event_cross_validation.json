@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1H_g11",
   "run_id": "run_UR_ULTRA_ETH_USDT_1H",
   "strategy_id": "UR_ULTRA_ETH_USDT_1H",
-  "strategy_snapshot_hash": "d5aeb1e3fd6e572f3e835541584e5d5c76278fe918f1fa17f12aac0223b30215",
+  "strategy_snapshot_hash": "2704e70b60b2708fabcb7b47410543eed90eefba7affbb9de5ced2954b54c7b1",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "7c85b96bc70abd3e9a13649a00850d6f2dfe7ad8423baf6fbad7de8d151ac3a3",
-  "output_hash": "39c78768497bb89a244a0fcd16abc658cd72e6830ee6a4b9a59f281ccbc73179",
+  "input_hash": "a30ef79a566f8f3d56f1ea2943d587cc1afbf74445e9e7c9c4e736792d6266ed",
+  "output_hash": "27ffc5d0bd0cf79c77094182f9affce473b43058f0b2a5e6ae41a454a20610cb",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1399.1x > 100.0x)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6847.9x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -11.06,
+    "final_equity_usd": -39.46,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": -11.06,
-    "peak_leverage_used": 1399.07,
+    "min_equity_usd": -39.46,
+    "peak_leverage_used": 6847.92,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 923.71,
-    "total_funding_cost_usd": 92.37,
-    "execution_events_count": 183
+    "total_fees_paid_usd": 960.94,
+    "total_funding_cost_usd": 96.09,
+    "execution_events_count": 161
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-21T18:28:12.566051+00:00"
+  "created_at_utc": "2026-08-21T20:25:59.248018+00:00"
 }
