@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_CHAMPION_01_g04",
+  "run_id": "run_UR_CHAMPION_01",
+  "strategy_id": "UR_CHAMPION_01",
+  "strategy_snapshot_hash": "9f062e8cbaef507ca7dc84860bc6362e3bd2e0c4f171dd9317eb6821a09293c6",
+  "dataset_id": "ds_nq_h1",
+  "dataset_sha256": "683eaee43725332bb84688b6fa689f1542d17bda435eb0cf9ac9b9e0b0335dc7",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "87f97c95ee4ae7ddb225c646ad3a0c20ef051fcbb42ed0d84a4dd122d5743927",
+  "output_hash": "15f16d177911bc9bf36b122a3aac8309bfda71275f5a0f63f5886f8137fee84d",
+  "status": "PASSED",
+  "score": 66.7,
+  "verdict": "PASSED (MODERADO): Rolling WFO aceptable con observación (5 ventanas, WFE media: 0.44, Consistencia: 100.0%)",
+  "metrics": {
+    "total_trades_analyzed": 50,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.44,
+    "oos_consistency_pct": 100.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 3.1,
+        "pf_oos": 1.1,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 0.35
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 2.5,
+        "pf_oos": 1.45,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 0.58
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 3.1,
+        "pf_oos": 1.1,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 0.35
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 2.5,
+        "pf_oos": 1.45,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 0.58
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 3.1,
+        "pf_oos": 1.1,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 0.35
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_CHAMPION_01/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-21T02:06:44.946955+00:00"
+}

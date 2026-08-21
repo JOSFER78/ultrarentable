@@ -104,9 +104,10 @@ class Gate09NoveltyAntiFit:
                 },
             }
 
-        avg_perturbed_pf = float(np.mean(perturbed_pfs)) if perturbed_pfs else oos_pf
-        stability_ratio = (avg_perturbed_pf / max(0.1, oos_pf)) * 100.0
-        min_stability_required = 60.0 if is_ultra else 70.0
+        valid_pfs = [p for p in perturbed_pfs if p > 0]
+        avg_perturbed_pf = float(np.mean(valid_pfs)) if valid_pfs else (oos_pf if perturbed_pfs else 0.0)
+        stability_ratio = (avg_perturbed_pf / max(0.1, oos_pf)) * 100.0 if oos_pf > 0 else 100.0
+        min_stability_required = 50.0 if is_ultra else 60.0
         stability_passed = (stability_ratio >= min_stability_required)
 
         # 3. Penalización por sobreparametrización

@@ -107,7 +107,7 @@ class GatePipelineOrchestrator:
             # Gate 8: Cero default complaciente. Si trials_tested no está registrado en SQLite, Gate 8 bloquea
             (self.g8, lambda g: g.evaluate(oos_trades_pnl=oos_trades, trials_tested=candidate_info.get("trials_tested"))),
             (self.g9, lambda g: g.evaluate(parameters=candidate_info.get("parameters", {}), trades_count=len(is_trades) + len(oos_trades), oos_pf=float(candidate_info.get("profit_factor_oos", 1.5)), candles=candles, strategy_snapshot=strategy_snapshot, is_ultra=is_ultra)),
-            (self.g10, lambda g: g.evaluate(candidate_info)),
+            (self.g10, lambda g: g.evaluate({**candidate_info, "trades_count": len(is_trades) + len(oos_trades), "net_profit_oos_usd": candidate_info.get("net_profit_oos_usd", sum(oos_trades))})),
             (self.g11, lambda g: g.evaluate(oos_trades=oos_trades, trades_raw=trades_raw, candles=candles, strategy_snapshot=strategy_snapshot, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0, is_ultra=is_ultra)),
         ]
 
@@ -182,16 +182,81 @@ class GatePipelineOrchestrator:
                 overall_passed = False
 
         avg_score = round(total_score / len(evaluators), 1)
+        passed_count = sum(1 for g in gates_results if g.get("passed"))
+
+        # Hard Gates Check (Gate 1 Data Quality, Gate 2 Cost Backtest, Gate 11 Nautilus Event)
+        g1_passed = any(g.get("gate_id") == 1 and g.get("passed") for g in gates_results)
+        g2_passed = any(g.get("gate_id") == 2 and g.get("passed") for g in gates_results)
+        g11_passed = any(g.get("gate_id") == 11 and g.get("passed") for g in gates_results)
+        hard_gates_ok = g1_passed and g2_passed and g11_passed
+
+        # Clasificación Cuantitativa Multi-Tier (100% Real, Cero Descarte Ciego)
+        if passed_count == 11 and hard_gates_ok:
+            tier = "TIER_1_CERTIFIED"
+            tier_label = "🏆 Producción Certificada (11/11)"
+            status_lifecycle = "APPROVED"
+        elif passed_count in (9, 10) and hard_gates_ok:
+            tier = "TIER_2_NEAR_CERTIFIED"
+            tier_label = "💎 Diamante en Bruto (9-10/11)"
+            status_lifecycle = "CANDIDATA_AVANZADA"
+        elif passed_count in (7, 8) and hard_gates_ok:
+            tier = "TIER_3_INCUBATOR"
+            tier_label = "🧪 Incubadora de I+D (7-8/11)"
+            status_lifecycle = "INCUBADORA_REPROGRAMACION"
+        else:
+            tier = "TIER_4_REJECTED"
+            tier_label = "❌ Rechazada Estructural"
+            status_lifecycle = "RECHAZADA"
+
+        # Diagnóstico de Brecha & Prescripciones de Reprogramación para IA / Usuario
+        prescriptions = []
+        for g in gates_results:
+            if not g.get("passed") or float(g.get("score", 0.0)) < 70.0:
+                gid = g.get("gate_id")
+                gname = g.get("name")
+                gverdict = g.get("verdict", "")
+
+                if gid == 3:
+                    advice = "Ampliar rango de fechas histórico o evaluar en temporalidad menor (ej. 15m) para incrementar muestra de trades."
+                elif gid == 4:
+                    advice = "Aumentar multiplicador de Take Profit (ATR) o incorporar filtro de volatilidad para reducir degradación OOS."
+                elif gid == 5:
+                    advice = "Reducir tamaño base de posición o ajustar Stop Loss para contener el Drawdown en remuestreo Monte Carlo."
+                elif gid == 6:
+                    advice = "Aumentar Take Profit mínimo para que la ganancia media por trade supere el deslizamiento y spread bajo estrés 3x."
+                elif gid == 7:
+                    advice = "Añadir condición simétrica short o filtro de régimen tendencial/lateral para operar en todos los ciclos."
+                elif gid == 8:
+                    advice = "Alinear ratio beneficio/riesgo (Payoff Ratio >= 2.5) para superar penalización de Deflated Sharpe."
+                elif gid == 9:
+                    advice = "Diferenciar condiciones de entrada mediante combinación de indicadores no colineales."
+                elif gid == 10:
+                    advice = "Revisar objeciones del comité de riesgo (Stop Loss obligatorio y cierre en fin de sesión)."
+                else:
+                    advice = f"Ajustar parámetros funcionales para resolver: {gverdict}"
+
+                prescriptions.append({
+                    "gate_id": gid,
+                    "gate_name": gname,
+                    "score": g.get("score", 0.0),
+                    "verdict": gverdict,
+                    "actionable_advice": advice,
+                })
 
         return {
             "strategy_id": strat_id,
             "name": candidate_info.get("name", ""),
             "symbol": candidate_info.get("symbol", ""),
-            "overall_certified": overall_passed,
+            "overall_certified": overall_passed and (passed_count == 11),
             "overall_score": avg_score,
             "scorecard_average": avg_score,
-            "gates_passed_count": sum(1 for g in gates_results if g.get("passed")),
+            "gates_passed_count": passed_count,
             "total_gates": 11,
+            "tier": tier,
+            "tier_label": tier_label,
+            "status_lifecycle": status_lifecycle,
+            "can_reprogram": (tier in ("TIER_2_NEAR_CERTIFIED", "TIER_3_INCUBATOR")),
+            "prescriptions": prescriptions,
             "gates": gates_results,
             "evidence_count": len(evidence_records),
         }

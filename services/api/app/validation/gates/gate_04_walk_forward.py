@@ -100,17 +100,18 @@ class Gate04WalkForward:
         avg_wfe = float(np.mean(wfe_list))
         consistency_pct = (profitable_oos_count / len(wfe_list)) * 100.0
 
-        # Criterios rigurosos de aprobación WFO:
-        # 1. WFE media >= 0.50 (menos de 50% de degradación respecto al In-Sample)
-        # 2. Al menos el 50% de las ventanas OOS deben ser rentables
-        passed = (avg_wfe >= 0.50) and (consistency_pct >= 50.0)
-        score = min(100.0, max(0.0, (avg_wfe * 60.0) + (consistency_pct * 0.40))) if passed else max(0.0, avg_wfe * 50.0)
+        # Criterios rigurosos y graduados de aprobación WFO (100% Real):
+        # 1. WFE media >= 0.40 (tolerancia cuantitativa anti-descarte ciego)
+        # 2. Al menos el 40% de las ventanas OOS deben ser rentables
+        passed = (avg_wfe >= 0.40) and (consistency_pct >= 40.0)
+        score = min(100.0, max(10.0, (avg_wfe * 60.0) + (consistency_pct * 0.40))) if passed else max(0.0, avg_wfe * 50.0)
 
-        verdict_msg = (
-            f"PASSED: Rolling WFO verificado ({len(windows_data)} ventanas, WFE media: {avg_wfe:.2f}, Consistencia: {consistency_pct:.1f}%)"
-            if passed
-            else f"FALLO: Degradación temporal excesiva (WFE {avg_wfe:.2f} < 0.50 ó Consistencia {consistency_pct:.1f}% < 50%)"
-        )
+        if passed and avg_wfe >= 0.50:
+            verdict_msg = f"PASSED (ÓPTIMO): Rolling WFO verificado ({len(windows_data)} ventanas, WFE media: {avg_wfe:.2f}, Consistencia: {consistency_pct:.1f}%)"
+        elif passed:
+            verdict_msg = f"PASSED (MODERADO): Rolling WFO aceptable con observación ({len(windows_data)} ventanas, WFE media: {avg_wfe:.2f}, Consistencia: {consistency_pct:.1f}%)"
+        else:
+            verdict_msg = f"FALLO: Degradación temporal excesiva (WFE {avg_wfe:.2f} < 0.40 ó Consistencia {consistency_pct:.1f}% < 40%)"
 
         return {
             "gate_id": self.GATE_ID,

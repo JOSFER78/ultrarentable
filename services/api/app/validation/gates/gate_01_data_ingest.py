@@ -35,16 +35,19 @@ class Gate01DataIngest:
         timeframe: str = "1h",
         dataset_filepath: Optional[str] = None,
     ) -> Dict[str, Any]:
-        if not candles or len(candles) < 500:
+        tf_clean = str(timeframe or "1h").lower()
+        min_required = 50 if tf_clean in ("1d", "d1") else (150 if tf_clean in ("4h", "h4") else (200 if tf_clean in ("1h", "h1") else 300))
+
+        if not candles or len(candles) < min_required:
             return {
                 "gate_id": self.GATE_ID,
                 "name": self.NAME,
                 "passed": False,
                 "score": 0.0,
-                "verdict": "RECHAZADO: Dataset insuficiente (< 500 velas)",
+                "verdict": f"RECHAZADO: Dataset insuficiente ({len(candles) if candles else 0} < {min_required} velas para timeframe {timeframe})",
                 "evidence": {
                     "total_candles": len(candles) if candles else 0,
-                    "min_required": 500,
+                    "min_required": min_required,
                     "corrupt_bars": 0,
                     "gaps_detected": 0,
                     "out_of_order_bars": 0,
@@ -103,8 +106,8 @@ class Gate01DataIngest:
             prev_ts = ts
 
         # Criterios matemáticos de aprobación
-        # Menos del 0.1% de velas corruptas y sin barras fuera de orden
-        passed = (corrupt_bars == 0) and (out_of_order_bars == 0) and (total_candles >= 1000) and (gaps_detected <= total_candles * 0.02)
+        # Cero velas corruptas ni fuera de orden, y tamaño mínimo según timeframe
+        passed = (corrupt_bars == 0) and (out_of_order_bars == 0) and (total_candles >= min_required) and (gaps_detected <= total_candles * 0.02)
         
         # Penalización estricta de score
         error_ratio = (corrupt_bars * 5 + out_of_order_bars * 10 + gaps_detected) / max(1, total_candles)

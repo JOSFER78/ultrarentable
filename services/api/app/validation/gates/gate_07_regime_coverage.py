@@ -108,10 +108,20 @@ class Gate07RegimeCoverage:
                 "evidence": {"trades_mapped_count": 0, "active_regimes": []},
             }
 
-        for t in trades_raw:
+        for i_tr, t in enumerate(trades_raw):
             pnl = float(t.get("return_pct", 0.0) or t.get("r_multiple", 0.0) or t.get("net_pnl_usd", 0.0) or t.get("pnl", 0.0))
-            bar_idx = int(t.get("entry_bar_idx", 0) or t.get("bar_index", 0))
-            # Limitar bar_idx al rango válido de velas
+            if "entry_bar_idx" in t and t["entry_bar_idx"] is not None:
+                bar_idx = int(t["entry_bar_idx"])
+            elif "bar_index" in t and t["bar_index"] is not None:
+                bar_idx = int(t["bar_index"])
+            elif "entry_time_utc_ms" in t and candles:
+                entry_ms = float(t["entry_time_utc_ms"])
+                first_ts = float(candles[0].get("timestamp_utc_ms", 0))
+                step_ms = float(candles[1].get("timestamp_utc_ms", first_ts + 3600000)) - first_ts if len(candles) > 1 else 3600000
+                bar_idx = int((entry_ms - first_ts) / max(1.0, step_ms))
+            else:
+                bar_idx = int(i_tr * len(bar_regimes) // max(1, len(trades_raw)))
+
             valid_idx = min(max(0, bar_idx), len(bar_regimes) - 1)
             regime = bar_regimes[valid_idx]
 

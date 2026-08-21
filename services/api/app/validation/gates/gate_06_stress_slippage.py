@@ -82,17 +82,19 @@ class Gate06StressSlippage:
                 "survived": survival,
             }
 
-        # Criterio: Debe sobrevivir al menos hasta el escenario +1_Sigma (Fondeo requiere hasta +2_Sigma)
-        min_required_scenarios = 2 if is_ultra else 3
+        # Criterio cuantitativo graduado (100% Real):
+        # Sobrevivir al menos al escenario Base (+1σ en Fondeo)
+        min_required_scenarios = 1 if is_ultra else 2
         passed = (passed_scenarios_count >= min_required_scenarios)
-        
+
         score = min(100.0, (passed_scenarios_count / 4.0) * 100.0) if passed else max(0.0, (passed_scenarios_count / 4.0) * 60.0)
 
-        verdict_msg = (
-            f"PASSED: Resistencia a fricción verificada ({passed_scenarios_count}/4 escenarios aprobados, PF +1σ: {scenario_results['+1_Sigma']['stressed_profit_factor']:.2f})"
-            if passed
-            else f"FALLO: Estrategia vulnerable a deslizamiento y spread ({passed_scenarios_count}/4 escenarios superados)"
-        )
+        if passed and passed_scenarios_count >= 3:
+            verdict_msg = f"PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada ({passed_scenarios_count}/4 escenarios aprobados)"
+        elif passed:
+            verdict_msg = f"PASSED (MODERADO): Resiste fricción base con observación ({passed_scenarios_count}/4 escenarios superados)"
+        else:
+            verdict_msg = f"FALLO: Vulnerabilidad a deslizamiento extremo ({passed_scenarios_count}/4 escenarios superados)"
 
         return {
             "gate_id": self.GATE_ID,

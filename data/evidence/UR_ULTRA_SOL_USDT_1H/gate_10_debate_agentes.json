@@ -11,12 +11,12 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "928e43473f426e72e844497b73a8b1d1bb5a74ae84c1c473a6b55f433f868582",
-  "output_hash": "8fa0cd0f135df6006a7b85935309312c7eefcdb20d9bcdd077c6f951600a64b2",
+  "output_hash": "5b620826998797d0c07ddae9c1da14d2993f9a4b72aea3a896f39532152685b2",
   "status": "FAILED",
-  "score": 35.7,
-  "verdict": "FALLO: Consenso insuficiente (35.7/100) u objeción crítica de riesgo",
+  "score": 37.6,
+  "verdict": "FALLO: Consenso insuficiente (37.6/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 35.7,
+    "consensus_score": 37.6,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 59.1,
         "findings": [
           "Activo y Timeframe: SOL-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.09 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $10.57.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 183 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 785 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.8,
+        "score": 42.3,
         "objections": [
           "Alerta de Drawdown: DD (97.7%) consume más del 90% del margen tolerable."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T21:22:33.176475+00:00"
+  "created_at_utc": "2026-08-21T02:08:30.020408+00:00"
 }

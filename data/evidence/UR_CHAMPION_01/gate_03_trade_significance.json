@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_CHAMPION_01_g03",
+  "run_id": "run_UR_CHAMPION_01",
+  "strategy_id": "UR_CHAMPION_01",
+  "strategy_snapshot_hash": "9f062e8cbaef507ca7dc84860bc6362e3bd2e0c4f171dd9317eb6821a09293c6",
+  "dataset_id": "ds_nq_h1",
+  "dataset_sha256": "683eaee43725332bb84688b6fa689f1542d17bda435eb0cf9ac9b9e0b0335dc7",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "dd9bab8a05dc36198b6c94839f69e78dfc734581f1344337c99ce11ca4f68bc3",
+  "output_hash": "0573774bd0fe122e7f5903b89f4635bd4a64884a2982875dbbb7bc85262bcd03",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (50 IS / 50 OOS · Fondeo)",
+  "metrics": {
+    "trades_is": 50,
+    "trades_oos": 50,
+    "top2_outlier_dependency_pct": 8.6,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_CHAMPION_01/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-21T02:06:44.946018+00:00"
+}

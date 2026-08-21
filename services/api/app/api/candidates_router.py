@@ -48,6 +48,7 @@ def list_candidates(
     status: Optional[str] = Query(None, description="Filter by candidate status"),
     symbol: Optional[str] = Query(None, description="Filter by symbol (e.g. BTC-USDT, EURUSD, NQ)"),
     timeframe: Optional[str] = Query(None, description="Filter by timeframe (e.g. 1m, 5m, 15m, 1h, 4h)"),
+    tier: Optional[str] = Query(None, description="Filter by tier (TIER_1_CERTIFIED, TIER_2_NEAR_CERTIFIED, TIER_3_INCUBATOR, TIER_4_REJECTED, ALL)"),
     engine_version: Optional[str] = Query(None, description="Filter by engine version (e.g. 1.02, 1.00)"),
     include_rejected: bool = Query(True, description="Incluir o no candidatos rechazados"),
     deduplicate_champions: bool = Query(False, description="Deduplicar sólo el mejor candidato por símbolo"),
@@ -55,7 +56,7 @@ def list_candidates(
     offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db)
 ) -> List[Dict[str, Any]]:
-    """List strategy candidates with filters, pagination and lightweight metrics."""
+    """List strategy candidates with filters, pagination, multi-tier ranking and actionable prescriptions."""
     query = db.query(CandidateModel)
     if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
@@ -69,7 +70,7 @@ def list_candidates(
             query = query.filter(~CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
         else:
             query = query.filter(CandidateModel.status == status)
-    elif not include_rejected:
+    elif not include_rejected and (not tier or tier.upper() in ("TIER_1_CERTIFIED", "APPROVED")):
         query = query.filter(
             CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]),
             CandidateModel.scorecard_json.isnot(None)
@@ -170,9 +171,37 @@ def list_candidates(
         resolved_status = c.status or "REJECTED_SIN_EVIDENCIA"
         resolved_reason = c.status_reason or "Sin razón registrada"
 
-        # Filtrar automáticamente los descartes a menos que se soliciten explícitamente
-        if not include_rejected and (resolved_status.startswith("REJECTED") or resolved_status.startswith("BLOCKED")):
-            continue
+        # Multi-Tier & Gate Scoring
+        passed_count = sc.get("gates_passed_count")
+        if passed_count is None:
+            if "gates" in sc and isinstance(sc["gates"], list):
+                passed_count = sum(1 for g in sc["gates"] if g.get("passed"))
+            elif resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"):
+                passed_count = 11
+            else:
+                passed_count = 8 if (pf_oos >= 1.2 and dd_oos <= 15.0) else 5
+
+        cand_tier = sc.get("tier")
+        if not cand_tier:
+            if passed_count == 11 or resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"):
+                cand_tier = "TIER_1_CERTIFIED"
+                cand_tier_label = "🏆 Producción Certificada (11/11)"
+            elif passed_count in (9, 10):
+                cand_tier = "TIER_2_NEAR_CERTIFIED"
+                cand_tier_label = "💎 Diamante en Bruto (9-10/11)"
+            elif passed_count in (7, 8):
+                cand_tier = "TIER_3_INCUBATOR"
+                cand_tier_label = "🧪 Incubadora de I+D (7-8/11)"
+            else:
+                cand_tier = "TIER_4_REJECTED"
+                cand_tier_label = "❌ Rechazada Estructural"
+        else:
+            cand_tier_label = sc.get("tier_label") or ("🏆 Producción Certificada" if cand_tier == "TIER_1_CERTIFIED" else ("💎 Diamante en Bruto" if cand_tier == "TIER_2_NEAR_CERTIFIED" else "🧪 Incubadora de I+D"))
+
+        # Filtro de Tier si fue solicitado
+        if tier and tier.upper() != "ALL":
+            if tier.upper() != cand_tier:
+                continue
 
         spec = get_market_spec(c.symbol)
         results.append({
@@ -188,6 +217,11 @@ def list_candidates(
             "dataset_id": c.dataset_id,
             "status": resolved_status,
             "status_reason": resolved_reason,
+            "tier": cand_tier,
+            "tier_label": cand_tier_label,
+            "gates_passed_count": passed_count,
+            "can_reprogram": (cand_tier in ("TIER_2_NEAR_CERTIFIED", "TIER_3_INCUBATOR")),
+            "prescriptions": sc.get("prescriptions", []),
             "archetype": sc.get("archetype") or "QUANT_PATTERN",
             "scorecard_json": c.scorecard_json,
             "duration_info": dur,
@@ -791,6 +825,17 @@ def revalidate_candidate(candidate_id: str) -> Dict[str, Any]:
 @candidates_router.post("/{candidate_id}/refine-loop")
 def refine_candidate_loop(candidate_id: str, max_iterations: int = 5) -> Dict[str, Any]:
     """Reprograma y dopa algorítmicamente la estrategia en un bucle cerrado de refinamiento de expertos."""
+    from services.optimization.expert_refinement_loop import expert_strategy_optimizer
+    res = expert_strategy_optimizer.refine_candidate_loop(candidate_id=candidate_id, max_iterations=max_iterations)
+    return res
+
+
+@candidates_router.post("/{candidate_id}/reprogram")
+def reprogram_candidate(
+    candidate_id: str,
+    max_iterations: int = Query(5, ge=1, le=10),
+) -> Dict[str, Any]:
+    """Reprograma quirúrgicamente una estrategia Tier 2 (Diamante en Bruto) o Tier 3 (Incubadora) atacando sus gates fallidos."""
     from services.optimization.expert_refinement_loop import expert_strategy_optimizer
     res = expert_strategy_optimizer.refine_candidate_loop(candidate_id=candidate_id, max_iterations=max_iterations)
     return res

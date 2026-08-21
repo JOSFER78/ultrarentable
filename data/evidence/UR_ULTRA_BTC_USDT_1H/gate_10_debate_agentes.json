@@ -11,12 +11,12 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "e8b1f0396fb248d5bd6596d526cc53810bc7b6fbcb482763230e0a9f2e6a01f0",
-  "output_hash": "829a86836085e724698dacce04e50dd5c9880d3fd2047ce4df5e6d68cea7a7f0",
+  "output_hash": "09c9d3dffe7e05b0d0d020c55f1504aa1d4d00210542fe04e511b8fef4691928",
   "status": "FAILED",
-  "score": 35.7,
-  "verdict": "FALLO: Consenso insuficiente (35.7/100) u objeción crítica de riesgo",
+  "score": 37.6,
+  "verdict": "FALLO: Consenso insuficiente (37.6/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 35.7,
+    "consensus_score": 37.6,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 59.1,
         "findings": [
           "Activo y Timeframe: BTC-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.09 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $12.49.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 156 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 633 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $0.02 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.8,
+        "score": 42.3,
         "objections": [
           "Alerta de Drawdown: DD (99.4%) consume más del 90% del margen tolerable."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T21:21:44.540185+00:00"
+  "created_at_utc": "2026-08-21T02:07:53.977340+00:00"
 }

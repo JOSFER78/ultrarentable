@@ -27,6 +27,17 @@ interface CandidateItem {
   timeframe: string;
   status: string;
   status_reason?: string;
+  tier?: string;
+  tier_label?: string;
+  gates_passed_count?: number;
+  can_reprogram?: boolean;
+  prescriptions?: {
+    gate_id: number;
+    gate_name: string;
+    score: number;
+    verdict: string;
+    actionable_advice: string;
+  }[];
   archetype?: string;
   engine_version?: string;
   validation_pipeline_version?: string;
@@ -102,6 +113,7 @@ export default function CandidatosFSMPage() {
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("APPROVED");
+  const [selectedTier, setSelectedTier] = useState<"ALL" | "TIER_1_CERTIFIED" | "TIER_2_NEAR_CERTIFIED" | "TIER_3_INCUBATOR" | "TIER_4_REJECTED">("ALL");
   const [roiFilter, setRoiFilter] = useState<"MIN_15_MONTHLY" | "MIN_20_MONTHLY" | "ONLY_PROFITABLE" | "ALL">("MIN_15_MONTHLY");
   const [routeFilter, setRouteFilter] = useState<string>("ALL");
   const [categoryFilter, setCategoryFilter] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
@@ -426,6 +438,9 @@ export default function CandidatosFSMPage() {
   const approvedCount = useMemo(() => candidates.filter((c) => isApprovedStatus(c.status)).length, [candidates]);
   const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status)).length, [candidates]);
   const discoveryCount = useMemo(() => candidates.filter((c) => !isApprovedStatus(c.status) && !isCandidateRejected(c.status)).length, [candidates]);
+  const tier1Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_1_CERTIFIED" || isApprovedStatus(c.status)).length, [candidates]);
+  const tier2Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 10 || c.gates_passed_count === 9).length, [candidates]);
+  const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || c.gates_passed_count === 8 || c.gates_passed_count === 7).length, [candidates]);
 
   const top5Ultra = useMemo(() => {
     const sorted = [...candidates.filter((c) => c.route === "ULTRA" && !isCandidateRejected(c.status))].sort((a, b) => {
@@ -690,6 +705,14 @@ ${entryLogic}`;
       if (selectedStatus === "REJECTED" && !isRejected) return false;
       if (selectedStatus === "DISCOVERY" && !isDiscovery) return false;
 
+      // Multi-Tier Quantitative Filter (100% Real, Cero Descarte Ciego)
+      if (selectedTier !== "ALL") {
+        if (selectedTier === "TIER_1_CERTIFIED" && c.tier !== "TIER_1_CERTIFIED" && !isApproved) return false;
+        if (selectedTier === "TIER_2_NEAR_CERTIFIED" && c.tier !== "TIER_2_NEAR_CERTIFIED" && c.gates_passed_count !== 10 && c.gates_passed_count !== 9) return false;
+        if (selectedTier === "TIER_3_INCUBATOR" && c.tier !== "TIER_3_INCUBATOR" && c.gates_passed_count !== 8 && c.gates_passed_count !== 7) return false;
+        if (selectedTier === "TIER_4_REJECTED" && c.tier !== "TIER_4_REJECTED" && !isRejected) return false;
+      }
+
       const oos = c.metrics?.out_of_sample;
       const monthRoi = oos?.monthly_roi_pct ?? ((oos?.annualized_roi_pct || 0) / 12.0);
       const netProfit = oos?.net_profit_usd ?? 0;
@@ -714,7 +737,7 @@ ${entryLogic}`;
       const roiB = b.metrics?.out_of_sample?.monthly_roi_pct ?? ((b.metrics?.out_of_sample?.annualized_roi_pct || 0) / 12.0);
       return roiB - roiA;
     });
-  }, [candidates, selectedStatus, roiFilter, routeFilter, categoryFilter, versionFilter, searchQuery]);
+  }, [candidates, selectedStatus, selectedTier, roiFilter, routeFilter, categoryFilter, versionFilter, searchQuery]);
 
   return (
     <div style={{ width: "100%", maxWidth: "100%", padding: "16px 22px", color: "#f8fafc", boxSizing: "border-box" }}>
@@ -1368,10 +1391,10 @@ ${entryLogic}`;
                 {/* Status filter */}
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
                   {[
-                    { id: "ALL", label: `TODAS (${candidates.length})` },
-                    { id: "APPROVED", label: `🟢 CERTIFICADAS (${approvedCount})` },
-                    { id: "DISCOVERY", label: `🔬 INVESTIGACIÓN (${discoveryCount})` },
-                    { id: "REJECTED", label: `🔴 RECHAZADAS (${rejectedCount})` },
+                    { id: "ALL", label: `ESTADO: TODAS (${candidates.length})` },
+                    { id: "APPROVED", label: `🟢 APROBADAS (${approvedCount})` },
+                    { id: "DISCOVERY", label: `🔬 I+D (${discoveryCount})` },
+                    { id: "REJECTED", label: `🔴 DESCARTADAS (${rejectedCount})` },
                   ].map((st) => (
                     <button
                       key={st.id}
@@ -1389,6 +1412,34 @@ ${entryLogic}`;
                       }}
                     >
                       {st.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Multi-Tier Quantitative Filter (100% Real, Cero Descarte Ciego) */}
+                <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(234, 179, 8, 0.25)" }}>
+                  {[
+                    { id: "ALL", label: `🌐 TODOS LOS TIERS` },
+                    { id: "TIER_1_CERTIFIED", label: `🏆 TIER 1: 11/11 (${tier1Count})` },
+                    { id: "TIER_2_NEAR_CERTIFIED", label: `💎 TIER 2: DIAMANTES BRUTO 9-10 (${tier2Count})` },
+                    { id: "TIER_3_INCUBATOR", label: `🧪 TIER 3: INCUBADORA IA 7-8 (${tier3Count})` },
+                  ].map((tf) => (
+                    <button
+                      key={tf.id}
+                      onClick={() => setSelectedTier(tf.id as any)}
+                      style={{
+                        padding: "5px 10px",
+                        borderRadius: "6px",
+                        border: "none",
+                        background: selectedTier === tf.id ? "rgba(234, 179, 8, 0.35)" : "transparent",
+                        color: selectedTier === tf.id ? "#facc15" : "#94a3b8",
+                        fontSize: "10px",
+                        fontWeight: 800,
+                        cursor: "pointer",
+                        fontFamily: "var(--font-mono, monospace)",
+                      }}
+                    >
+                      {tf.label}
                     </button>
                   ))}
                 </div>
@@ -2137,6 +2188,48 @@ ${entryLogic}`;
                     </div>
                   ))}
                 </div>
+
+                {/* Prescriptions & Actionable Recommendations */}
+                {((gateModal.gateData?.prescriptions && gateModal.gateData.prescriptions.length > 0) || (gateModal.candidate?.prescriptions && gateModal.candidate.prescriptions.length > 0)) && (
+                  <div style={{ background: "rgba(234, 179, 8, 0.08)", border: "1px solid rgba(234, 179, 8, 0.25)", borderRadius: "10px", padding: "16px", marginBottom: "16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{ fontSize: "14px" }}>🧬</span>
+                        <span style={{ fontSize: "12px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
+                          RECETAS CUANTITATIVAS DE REPROGRAMACIÓN ({(gateModal.gateData?.prescriptions || gateModal.candidate?.prescriptions || []).length} ACCIONES)
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => executeRefinementLoop(gateModal.candidate?.candidate_id || "")}
+                        disabled={singleRefineLoading === gateModal.candidate?.candidate_id}
+                        style={{
+                          padding: "7px 16px",
+                          borderRadius: "6px",
+                          background: "linear-gradient(135deg, #facc15, #f59e0b)",
+                          border: "none",
+                          color: "#0c111d",
+                          fontSize: "11px",
+                          fontWeight: 900,
+                          cursor: singleRefineLoading === gateModal.candidate?.candidate_id ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        {singleRefineLoading === gateModal.candidate?.candidate_id ? "⚡ Reprogramando con 5 Agentes..." : "✨ Reprogramar con 5 Agentes de IA"}
+                      </button>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "10px" }}>
+                      {(gateModal.gateData?.prescriptions || gateModal.candidate?.prescriptions || []).map((p: any, idx: number) => (
+                        <div key={idx} style={{ background: "rgba(0,0,0,0.35)", borderRadius: "8px", padding: "10px 12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                          <div style={{ fontSize: "10.5px", fontWeight: 800, color: "#38bdf8", marginBottom: "4px" }}>
+                            Gate {p.gate_id}: {p.gate_name} · Score: {p.score} pts
+                          </div>
+                          <div style={{ fontSize: "10.5px", color: "#cbd5e1", lineHeight: "1.4" }}>
+                            {p.actionable_advice}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : gateModal.tab === "debate" ? (
               /* Dedicated 5 Agents Debate & AI Improvements Tab */
