@@ -1,12 +1,11 @@
 """services/semantic_ai/mutation_engine.py
-Motor de optimización semántica y muestreo de reglas AST para CanonicalStrategy.
+Motor de optimización semántica y muestreo determinista de reglas AST para CanonicalStrategy.
+Cumple estrictamente con la doctrina Zero-Mocks & Real-Only (Cero generadores sintéticos).
 """
 
 from __future__ import annotations
 
-import random
 import time
-from typing import Optional
 
 from contracts.canonical_strategy import (
     CanonicalStrategy,
@@ -25,7 +24,7 @@ from contracts.canonical_strategy import (
 
 
 class SemanticMutationEngine:
-    """Generador y mutador de estrategias canónicas cuantitativas."""
+    """Generador y mutador determinista de estrategias canónicas cuantitativas."""
 
     def generate_candidate(
         self,
@@ -34,10 +33,12 @@ class SemanticMutationEngine:
         track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO,
         archetype_name: str = "VOLATILITY_EXPANSION",
     ) -> CanonicalStrategy:
-        """Genera una instancia válida de CanonicalStrategy v2.0.0."""
+        """Genera una instancia válida de CanonicalStrategy v2.0.0 de forma determinista."""
         strat_id = f"UR-CAND-{symbol.replace('-', '_')}-{timeframe}-{int(time.time() * 1000) % 100000}"
         
-        rsi_period = random.choice([10, 14, 21])
+        # Selección determinista de parámetros según horizonte temporal y microestructura
+        tf_rsi_map = {"1m": 21, "5m": 14, "15m": 14, "1h": 14, "4h": 10, "1d": 10}
+        rsi_period = tf_rsi_map.get(timeframe.lower(), 14)
         rsi_thresh = 50.0 if "MOMENTUM" in archetype_name else 55.0
 
         is_cme = "USDT" not in symbol

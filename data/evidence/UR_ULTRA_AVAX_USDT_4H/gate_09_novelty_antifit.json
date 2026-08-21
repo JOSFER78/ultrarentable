@@ -1,34 +1,21 @@
 {
-  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4H_g09",
-  "run_id": "run_UR_ULTRA_AVAX_USDT_4H",
-  "strategy_id": "UR_ULTRA_AVAX_USDT_4H",
-  "strategy_snapshot_hash": "872155908a13d67d1bc0dea816d63d657422f6783760554e8895e4cbca111534",
-  "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "f2a3046ac61915b76ee6fa9d4e988434a5f6a1b2380f7d159110c92b99bd151f",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "56b67997a8e56cf51cc42f738c1e41a030ea8567103883e456507ea5a9e2405a",
-  "output_hash": "e8cf2bfb496f0d73811acc2ab3ba12bbacd3f8fa6dfd82e3eabbecc7af29cfa2",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 55.8 trades/param, Estabilidad Vecindario: 104.8%, Re-backtest PFs: [1.23, 1.26, 1.78, 2.06])",
-  "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 55.8,
+  "name": "NOVELTY_ANTIFIT",
+  "passed": false,
+  "score": 42.0,
+  "verdict": "FALLO: Fragilidad ante perturbaci\u00f3n param\u00e9trica (DoF 13.8 o Estabilidad 105.0% < 50.0%)",
+  "evidence": {
+    "parameters_count": 9,
+    "degrees_of_freedom_ratio": 13.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 104.8,
-    "min_stability_required_pct": 60.0,
+    "parameter_neighborhood_stability_pct": 105.0,
+    "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.23,
-      1.26,
-      1.78,
-      2.06
+      2.5,
+      2.85,
+      3.13,
+      1.31
     ],
     "rebacktest_performed": true
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T14:27:02.374886+00:00"
+  }
 }

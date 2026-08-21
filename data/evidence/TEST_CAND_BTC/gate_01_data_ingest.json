@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_TEST_CAND_BTC_g01",
-  "run_id": "run_TEST_CAND_BTC",
-  "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "376c086cba763c835fe288f0edc20dce02ac91049a9f8da4b8435033f3012230",
-  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 1,
-  "gate_name": "DATA_INGEST",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "bf72ff97981342081f184e91036c70ec17222324f44eab1d5ec7bd4c68a37680",
-  "output_hash": "06e68725ba85c52832264a533e55e988f22cb35e797335ead6346fc16a391855",
-  "status": "PASSED",
+  "name": "DATA_INGEST",
+  "passed": true,
   "score": 100.0,
   "verdict": "PASSED: Dataset verificado (2100 velas, SHA256: af00eb52..., 0 corruptas, 0 gaps tolerados)",
-  "metrics": {
+  "evidence": {
     "total_candles": 2100,
     "corrupt_bars": 0,
     "out_of_order_bars": 0,
@@ -25,7 +14,5 @@
     "zero_volume_bars": 0,
     "dataset_sha256": "af00eb522e973773111ffac43608faf9c346b122296839b7bee380f63263b387",
     "integrity_pct": 100.0
-  },
-  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-20T19:02:33.803862+00:00"
+  }
 }

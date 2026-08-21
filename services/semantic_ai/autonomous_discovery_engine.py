@@ -288,9 +288,11 @@ class AutonomousDiscoveryAgentLoop:
 
             logger.info(f"Iter #{iteration} [{symbol}]: {gates_passed_count}/11 Gates | Net=${res_oos.net_profit_usd:.2f} | PF={res_oos.profit_factor:.2f} | MaxDD={res_oos.max_drawdown_pct:.1f}%")
 
-            # Criterio de Certificación: ≥ 10/11 Gates y Beneficio Neto Positivo OOS
+            # Criterio de Certificación Estricta: 11/11 Gates y Beneficio Neto Positivo OOS
             max_tolerated_dd = 85.0 if is_ultra else 4.0
-            if gates_passed_count >= 10 and res_oos.net_profit_usd > 0 and res_oos.max_drawdown_pct <= max_tolerated_dd:
+            is_tier_1_certified = (gates_passed_count == 11 and res_oos.net_profit_usd > 0 and res_oos.max_drawdown_pct <= max_tolerated_dd)
+            
+            if is_tier_1_certified:
                 certified_strategy = strat
                 certified_scorecard = {
                     "strategy_id": strat_id,
@@ -298,6 +300,8 @@ class AutonomousDiscoveryAgentLoop:
                     "timeframe": timeframe,
                     "route": route_str,
                     "status": "APPROVED",
+                    "tier": "TIER_1_CERTIFIED",
+                    "tier_label": "🏆 Producción Certificada (11/11)",
                     "iterations_executed": iteration,
                     "gates_passed_count": gates_passed_count,
                     "overall_score": overall_score,
@@ -308,7 +312,7 @@ class AutonomousDiscoveryAgentLoop:
                     "win_rate_pct": res_oos.win_rate_pct,
                     "scorecard_json": json.dumps(iter_summary),
                 }
-                logger.info(f"🎉 ¡Estrategia Certificada por los 5 Agentes en Iteración #{iteration}!: {strat_id}")
+                logger.info(f"🎉 ¡Estrategia Certificada con 11/11 Gates por los 5 Agentes en Iteración #{iteration}!: {strat_id}")
                 break
 
             # 5. Agente Critic & Improver: Se formulan preguntas y mutan según el Gate fallido
