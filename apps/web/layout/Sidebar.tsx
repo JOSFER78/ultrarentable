@@ -22,7 +22,7 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   {
     label: "ESTRATEGIAS (6 FASES DETERMINISTAS)",
     items: [
-      { code: "1", label: "1. Motor 24/7 en Vivo", href: "/sistema", badge: "24/7", accent: "#34d399" },
+      { code: "1", label: "1. Motor 24/7 Autónomo", href: "/panel", badge: "24/7", accent: "#34d399" },
       { code: "2", label: "2. Explorador Excel", href: "/strategies", badge: "230", accent: "#38bdf8" },
       { code: "3", label: "3. Pipeline 11 Pasos (FSM)", href: "/candidatos", badge: "11-G", accent: "#818cf8" },
       { code: "4", label: "4. Panel Investigador Semántico", href: "/research", badge: "LAB", accent: "#facc15" },

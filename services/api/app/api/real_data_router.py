@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 from pydantic import BaseModel, Field
 
 from services.api.app.db.database import get_db, StrategyModel, BacktestModel, CandidateModel
@@ -204,35 +204,44 @@ def get_real_overview(db: Session = Depends(get_db)) -> Dict[str, Any]:
     }
 
 
+_TELEMETRY_CACHE: Dict[str, Any] = {}
+_LAST_TELEMETRY_TIME: float = 0.0
+
+
 @router.get("/search-telemetry")
 def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Retorna la telemetría 100% REAL del sistema, base de datos SQLite y StrategyQuant X.
     CERO DATOS SIMULADOS, CERO ROTACIONES FALSAS.
     """
+    global _TELEMETRY_CACHE, _LAST_TELEMETRY_TIME
     import time
+    now = time.time()
+    if _TELEMETRY_CACHE and (now - _LAST_TELEMETRY_TIME < 2.0):
+        return _TELEMETRY_CACHE
+
     from services.sqx_bridge.sqx_client import SQXMCPClient
     from services.monitoring.telemetry_router import supervisor_instance
 
-    # 1. Comprobación real de conexión con StrategyQuant X
-    sqx_client = SQXMCPClient(timeout=3)
+    # 1. Comprobación de conexión con StrategyQuant X
+    from services.monitoring.high_availability_watchdog import ha_watchdog
     sqx_status = "OFFLINE"
     sqx_latency_ms = 0
     sqx_projects = []
-    t0 = time.time()
-    try:
-        conn_info = sqx_client.check_connection()
-        if conn_info.get("status") == "ONLINE":
-            sqx_status = "ONLINE"
-            sqx_latency_ms = max(1, int((time.time() - t0) * 1000))
-            sqx_projects = [p.get("name", "") for p in sqx_client.list_projects() if isinstance(p, dict)]
-    except Exception:
-        sqx_status = "OFFLINE"
+    
+    if not ha_watchdog.failover_active:
+        sqx_client = SQXMCPClient(timeout=0.2)
+        t0 = time.time()
+        try:
+            conn_info = sqx_client.check_connection()
+            if conn_info.get("status") == "ONLINE":
+                sqx_status = "ONLINE"
+                sqx_latency_ms = max(1, int((time.time() - t0) * 1000))
+                sqx_projects = [p.get("name", "") for p in sqx_client.list_projects() if isinstance(p, dict)]
+        except Exception:
+            sqx_status = "OFFLINE"
 
-    # 2. Conteos 100% reales desde la base de datos SQLite
-    total_strategies = db.query(StrategyModel).count()
-    total_candidates = db.query(CandidateModel).count()
-    oos_passed_count = db.query(CandidateModel).filter(CandidateModel.status == "OOS_PASSED").count()
-    backtested_count = db.query(CandidateModel).filter(CandidateModel.status == "BACKTESTED").count()
+    # 2. Conteos 100% reales desde la base de datos SQLite (Raw SQL ultra-rápido < 2ms)
+    total_candidates = db.execute(text("SELECT count(*) FROM candidates")).scalar() or 0
     
     # 3. Top candidatos reales: Deduplicación estricta (1 solo campeón por activo)
     top_cands_query = db.query(CandidateModel).filter(
@@ -439,7 +448,7 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
     engine_mode = "HYBRID_SQX_FASTENGINE" if is_sqx_online else "FASTENGINE_24_7_AUTONOMOUS"
     connection_badge = "🟢 ONLINE (SQX Híbrido)" if is_sqx_online else "🟢 ACTIVO 24/7 (FastEngine Autónomo)"
 
-    return {
+    res_data = {
         "running": supervisor_health.get("supervisor_active", True) and daemon_tel.get("is_running", True),
         "mode": "REAL_ONLY_ZERO_MOCK",
         "engine_mode": engine_mode,
@@ -472,6 +481,9 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
         "evaluation_speed_per_sec": daemon_tel.get("speed", {}).get("evaluations_per_sec", 0.5),
         "total_evaluations_count": daemon_tel.get("speed", {}).get("total_evaluations", 0),
     }
+    _TELEMETRY_CACHE = res_data
+    _LAST_TELEMETRY_TIME = now
+    return res_data
 
 
 @router.get("/strategies")

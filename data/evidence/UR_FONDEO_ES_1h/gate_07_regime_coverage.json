@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_ES_1h_g07",
   "run_id": "run_UR_FONDEO_ES_1h",
   "strategy_id": "UR_FONDEO_ES_1h",
-  "strategy_snapshot_hash": "4f0191d52e71380304c1710d58ae7ee498048fb4a4a995757e2c93083066aa6c",
+  "strategy_snapshot_hash": "37c1d319f85ef1fb2fc95f80793dd382777021cce22f2f49cc5c936af0f5989b",
   "dataset_id": "ds_trad_es_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "6c858b421f11c6b7cc606ed1a0adc3d36eaa0801ac578907e2744392e2dbfac9",
-  "output_hash": "5e0f395c14799c7a20ae1fbaef1dc8d7fb15e983c8b1f435f8af53b417e7a075",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -4620.55%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "d38247f7699dacce22691d6e87cdc33d530bfe762f8fcff5bafff4e268906ff5",
+  "output_hash": "5a8769f121134e465e848ad59c9ba0d8f2ddda60d18bee5361f84c2eba203163",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +15667.73%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 15,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 47,
-      "HIGH_VOLATILITY": 13
+      "CHOP_RANGING": 24,
+      "HIGH_VOLATILITY": 7
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -1833.9,
-      "HIGH_VOLATILITY": -2786.65
+      "CHOP_RANGING": 7435.41,
+      "HIGH_VOLATILITY": 8232.32
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -4620.55
+    "total_oos_return_pct": 15667.73
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:29:39.299358+00:00"
+  "created_at_utc": "2026-08-22T06:01:21.935486+00:00"
 }

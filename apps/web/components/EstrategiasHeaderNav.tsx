@@ -20,18 +20,18 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
     step: 1,
     label: "1. Motor 24/7 en Vivo",
     shortLabel: "Motor 24/7",
-    href: "/sistema",
-    altHrefs: ["/estrategias/motor-en-vivo", "/sistema"],
+    href: "/panel",
+    altHrefs: ["/panel", "/sistema", "/panel/motor-en-vivo"],
     icon: "⚡",
     badge: "24/7",
     color: "#34d399",
   },
   {
     step: 2,
-    label: "2. Explorador Cuantitativo Excel",
-    shortLabel: "Explorador Excel",
-    href: "/strategies",
-    altHrefs: ["/estrategias/explorador-excel", "/strategies"],
+    label: "2. Catálogo de Estrategias (230)",
+    shortLabel: "Catálogo Estrategias",
+    href: "/estrategias",
+    altHrefs: ["/estrategias", "/strategies", "/estrategias/explorador-excel"],
     icon: "📊",
     badge: "230 CAND",
     color: "#38bdf8",
@@ -41,7 +41,7 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
     label: "3. Pipeline 11 Pasos (FSM)",
     shortLabel: "Pipeline 11-G",
     href: "/candidatos",
-    altHrefs: ["/estrategias/pipeline-11-gates", "/candidatos"],
+    altHrefs: ["/candidatos", "/pasos", "/estrategias/pipeline-11-gates"],
     icon: "🧬",
     badge: "11 GATES",
     color: "#818cf8",
@@ -51,7 +51,7 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
     label: "4. Panel Investigador Semántico",
     shortLabel: "Lab Investigador",
     href: "/research",
-    altHrefs: ["/estrategias/panel-investigador", "/research"],
+    altHrefs: ["/research", "/backtest", "/estrategias/panel-investigador"],
     icon: "🔬",
     badge: "LAB I+D",
     color: "#facc15",
@@ -61,7 +61,7 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
     label: "5. Estrategias Aprobadas (11/11)",
     shortLabel: "Aprobadas 11/11",
     href: "/gates",
-    altHrefs: ["/estrategias/estrategias-aprobadas", "/gates"],
+    altHrefs: ["/gates", "/leaderboard", "/estrategias/estrategias-aprobadas"],
     icon: "🏆",
     badge: "CERTIFICADAS",
     color: "#10b981",
@@ -71,9 +71,9 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
     label: "6. Meta-Estrategia Ensamblada",
     shortLabel: "Meta-Estrategia",
     href: "/portfolio",
-    altHrefs: ["/estrategias/meta-estrategia", "/portfolio"],
+    altHrefs: ["/portfolio", "/estrategias/meta-estrategia"],
     icon: "🧩",
-    badge: "SINERGIA",
+    badge: "PORTFOLIO",
     color: "#ec4899",
   },
 ];
@@ -81,95 +81,110 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
 export default function EstrategiasHeaderNav() {
   const pathname = usePathname();
 
-  const isTabActive = (tab: EstrategiaTab) => {
-    return tab.altHrefs.some((h) => pathname === h || pathname.startsWith(h));
+  if (pathname === "/estrategias") {
+    return null;
+  }
+
+  const isTabActive = (tab: EstrategiaTab): boolean => {
+    if (!pathname) return false;
+    if (pathname === tab.href) return true;
+    return tab.altHrefs.some((alt) => pathname === alt || pathname.startsWith(alt + "/"));
   };
 
   return (
-    <div
+    <nav
+      aria-label="Navegación de las 6 Fases Deterministas de Estrategias"
       style={{
-        background: "rgba(10, 14, 22, 0.95)",
-        backdropFilter: "blur(18px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-        padding: "8px 16px",
-        marginBottom: "20px",
-        borderRadius: "12px",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "10px",
+        gap: "8px",
+        background: "rgba(10, 15, 24, 0.85)",
+        backdropFilter: "blur(16px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        borderRadius: "12px",
+        padding: "6px 10px",
+        marginBottom: "20px",
+        overflowX: "auto",
+        scrollbarWidth: "none",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <span style={{ fontSize: "16px" }}>🎯</span>
+      {/* BADGE CATEGORÍA */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "6px 12px",
+          background: "rgba(56, 189, 248, 0.08)",
+          border: "1px solid rgba(56, 189, 248, 0.2)",
+          borderRadius: "8px",
+          marginRight: "4px",
+          flexShrink: 0,
+        }}
+      >
+        <span style={{ fontSize: "13px" }}>🧬</span>
         <span
           style={{
-            fontSize: "11px",
+            fontSize: "10px",
             fontWeight: 900,
-            color: "#ffffff",
-            fontFamily: "var(--font-mono, monospace)",
             letterSpacing: "1px",
-            textTransform: "uppercase",
-          }}
-        >
-          ESTRATEGIAS
-        </span>
-        <span
-          style={{
-            fontSize: "9px",
-            color: "#94a3b8",
-            background: "rgba(255, 255, 255, 0.06)",
-            padding: "2px 6px",
-            borderRadius: "4px",
+            color: "#38bdf8",
             fontFamily: "var(--font-mono, monospace)",
+            whiteSpace: "nowrap",
           }}
         >
-          6 FASES DETERMINISTAS
+          ESTRATEGIAS · 6 FASES DETERMINISTAS
         </span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-        {ESTRATEGIAS_TABS.map((tab) => {
-          const active = isTabActive(tab);
-          return (
-            <Link
-              key={tab.step}
-              href={tab.href}
+      {/* 6 TABS */}
+      {ESTRATEGIAS_TABS.map((tab) => {
+        const active = isTabActive(tab);
+        return (
+          <Link
+            key={tab.step}
+            href={tab.href}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "7px 12px",
+              borderRadius: "8px",
+              textDecoration: "none",
+              background: active
+                ? `linear-gradient(135deg, ${tab.color}22 0%, rgba(16, 24, 38, 0.9) 100%)`
+                : "transparent",
+              border: active
+                ? `1px solid ${tab.color}66`
+                : "1px solid transparent",
+              color: active ? "#ffffff" : "#94a3b8",
+              fontSize: "12px",
+              fontWeight: active ? 800 : 500,
+              transition: "all 0.15s ease",
+              flexShrink: 0,
+              boxShadow: active ? `0 0 12px ${tab.color}22` : "none",
+            }}
+          >
+            <span style={{ fontSize: "13px" }}>{tab.icon}</span>
+            <span style={{ whiteSpace: "nowrap" }}>{tab.shortLabel}</span>
+            <span
               style={{
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 12px",
-                borderRadius: "8px",
-                background: active ? `rgba(${tab.color === "#34d399" ? "52, 211, 153" : tab.color === "#38bdf8" ? "56, 189, 248" : tab.color === "#818cf8" ? "129, 140, 248" : tab.color === "#facc15" ? "250, 204, 21" : tab.color === "#10b981" ? "16, 185, 129" : "236, 72, 153"}, 0.18)` : "rgba(255, 255, 255, 0.03)",
-                border: active ? `1px solid ${tab.color}` : "1px solid rgba(255, 255, 255, 0.08)",
-                color: active ? "#ffffff" : "#94a3b8",
-                fontSize: "11.5px",
-                fontWeight: active ? 800 : 600,
-                transition: "all 0.15s ease",
+                fontSize: "9px",
+                fontWeight: 900,
+                padding: "2px 5px",
+                borderRadius: "4px",
+                background: active ? `${tab.color}33` : "rgba(255, 255, 255, 0.05)",
+                color: active ? tab.color : "#64748b",
+                fontFamily: "var(--font-mono, monospace)",
+                letterSpacing: "0.5px",
               }}
             >
-              <span>{tab.icon}</span>
-              <span>{tab.shortLabel}</span>
-              <span
-                style={{
-                  fontSize: "8.5px",
-                  fontWeight: 900,
-                  padding: "1px 5px",
-                  borderRadius: "4px",
-                  background: active ? tab.color : "rgba(255, 255, 255, 0.08)",
-                  color: active ? "#000000" : "#cbd5e1",
-                  fontFamily: "var(--font-mono, monospace)",
-                }}
-              >
-                {tab.badge}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
+              {tab.badge}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

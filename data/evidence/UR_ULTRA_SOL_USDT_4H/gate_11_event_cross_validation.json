@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g11",
   "run_id": "run_UR_ULTRA_SOL_USDT_4H",
   "strategy_id": "UR_ULTRA_SOL_USDT_4H",
-  "strategy_snapshot_hash": "98761781b4509e2dec0964937fd454793ccef26fba8d5eda7e3dd0f72a0c4c5c",
+  "strategy_snapshot_hash": "1fd261c513b8e24f0ea249ee1135ae6047c0c0d7a4f298c5ed673827c6f45444",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "8e2f2c0588035eb5cd2c6cb27e6576090d3c9d2a754389c83822dd8f82da783f",
-  "output_hash": "46c4bed6ccf280149eaa1f3c489fd8d01d2b11d8b72703f87b6ab311cb7874f7",
+  "input_hash": "a9c05e7cc221138099e11785283b842e444e10a9a06c3e26bad4846a488a53a8",
+  "output_hash": "dc07685858708029cc3bc825c78459fbbf8a5aee1877ed8ddc20473a8915aa3b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 5198.1x > 100.0x)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1784.2x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -108.74,
+    "final_equity_usd": -217.9,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": -108.74,
-    "peak_leverage_used": 5198.11,
+    "min_equity_usd": -217.9,
+    "peak_leverage_used": 1784.16,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 1018.41,
-    "total_funding_cost_usd": 101.84,
-    "execution_events_count": 321
+    "total_fees_paid_usd": 1113.36,
+    "total_funding_cost_usd": 111.34,
+    "execution_events_count": 384
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T02:20:39.083873+00:00"
+  "created_at_utc": "2026-08-22T03:01:58.755699+00:00"
 }

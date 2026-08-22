@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_5M_g09",
   "run_id": "run_UR_FONDEO_AUDUSD_5M",
   "strategy_id": "UR_FONDEO_AUDUSD_5M",
-  "strategy_snapshot_hash": "16c67db8a10f5534a85b86a37934f20958117c76c5e715cf6761828cad6c59b6",
+  "strategy_snapshot_hash": "bebe98eaf6c7f5035c526a48068786027168cb25449b9ee93def6c8be8a12f60",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "bab66b9c96a2c81c44fb80be7385c5aadfd37708db847dad4f60e303a20d0743",
-  "output_hash": "ba8247c29320c3c2fcd5c7150ba8561c24969ae3f8dcc6898b2ea424f7c111d9",
-  "status": "PASSED",
-  "score": 83.5,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 140.5 trades/param, Estabilidad Vecindario: 72.5%, Re-backtest PFs: [0.07, 0.08, 0.07, 0.07])",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "537cd608513feb0cfe1ebc815e559a84b07a944ca7a8181cec96cb04008b8340",
+  "output_hash": "3c6c6d6d810cb2022a8762567913d88581152123c71a426142feb6a5d4a8a634",
+  "status": "FAILED",
+  "score": 16.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 73.2 o Estabilidad 40.0% < 60.0%)",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 140.5,
+    "degrees_of_freedom_ratio": 73.2,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 72.5,
+    "parameter_neighborhood_stability_pct": 40.0,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.07,
-      0.08,
-      0.07,
-      0.07
+      0.0,
+      0.04,
+      0.0,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:29:18.855221+00:00"
+  "created_at_utc": "2026-08-22T06:01:06.002428+00:00"
 }

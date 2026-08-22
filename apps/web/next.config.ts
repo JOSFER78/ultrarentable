@@ -1,15 +1,22 @@
 import type { NextConfig } from "next";
-
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/pro/ultrarentable";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  basePath: basePath === "none" ? undefined : basePath,
+  basePath: "/pro/ultrarentable",
+  turbopack: {
+    root: path.resolve(__dirname, "../.."),
+  },
   async rewrites() {
     return [
       {
         source: "/api/:path*",
         destination: "http://127.0.0.1:8000/api/:path*",
+        basePath: false,
+      },
+      {
+        source: "/pro/ultrarentable/api/:path*",
+        destination: "http://127.0.0.1:8000/api/:path*",
+        basePath: false,
       },
     ];
   },

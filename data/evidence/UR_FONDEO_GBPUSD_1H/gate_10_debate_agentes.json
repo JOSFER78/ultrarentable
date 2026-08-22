@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g10",
   "run_id": "run_UR_FONDEO_GBPUSD_1H",
   "strategy_id": "UR_FONDEO_GBPUSD_1H",
-  "strategy_snapshot_hash": "9448c175e9c43911f69ee5b41a714e02909e73464a459df8d0b4a468003eb24b",
+  "strategy_snapshot_hash": "f9668c7bfe0553e75ddbb8b13347235b227992152572edc83f5d7e0f721398fb",
   "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "07f9362221f3c2ad6256eabd41936113a50bcd0c8eee6d6c3a4ee9ff4c4a3928",
-  "output_hash": "2791402bb2194b90ad577ade418060009421e3d758de5722a726a3ec05613192",
-  "status": "FAILED",
-  "score": 27.7,
-  "verdict": "FALLO: Consenso insuficiente (27.7/100) u objeción crítica de riesgo",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "4cd9481059e152f543029c4e5dea5dd87256027e76d91132eb2faf2547e95eda",
+  "output_hash": "1056c700f0d938d1c0eeeec6b067dea1af989df0b6c8616f62a842e07678c553",
+  "status": "PASSED",
+  "score": 63.5,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (63.5/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 27.7,
+    "consensus_score": 63.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 31.1,
+        "score": 31.6,
         "findings": [
           "Activo y Timeframe: GBPUSD (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.47 con beneficio neto de $-0.28.",
+          "Profit Factor OOS: 0.48 con beneficio neto de $0.15.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Drawdown Máximo Observado: 37.5% (Límite permitido para FONDEO: 4.5%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 0.0% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 404 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 244 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 32.8,
+        "score": 60.4,
         "objections": [
-          "Alerta de Drawdown: DD (37.5%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.47 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.48 cercano al umbral de equilibrio (1.15)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:29:01.611990+00:00"
+  "created_at_utc": "2026-08-22T06:01:51.908226+00:00"
 }

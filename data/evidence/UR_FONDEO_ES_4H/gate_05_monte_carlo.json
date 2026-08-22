@@ -2,26 +2,22 @@
   "evidence_id": "ev_UR_FONDEO_ES_4H_g05",
   "run_id": "run_UR_FONDEO_ES_4H",
   "strategy_id": "UR_FONDEO_ES_4H",
-  "strategy_snapshot_hash": "55209f682f8093208db23f8d9a5f5a75fba415540ccd7509079f61a6b3a991da",
+  "strategy_snapshot_hash": "3f6ffd000e5fdb506445a08c7c300b9438128f40fc6e32a8c2b39d749322fd12",
   "dataset_id": "ds_trad_es_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "39017e617b4e500dade38e555621be83695e0f19370c1cebeff2c0dd5737c600",
-  "output_hash": "d34a68628704487d3066bcc72284a89cb892d8d3a111c2cb1722a06af4630ff7",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "5a670856bee384392e106f5d101c653f702c6854cb8b8cbb47b82d49ff0bee6c",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 62.8% > 1.0% (DD 95% = 9.3%)",
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
   "metrics": {
-    "simulations_count": 1000,
-    "ruin_probability_pct": 62.8,
-    "drawdown_median_pct": 5.3,
-    "drawdown_95th_percentile_pct": 9.3,
-    "max_simulated_drawdown_pct": 11.4
+    "simulations_run": 0
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_4H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-21T22:28:27.793911+00:00"
+  "created_at_utc": "2026-08-22T06:01:15.138941+00:00"
 }

@@ -1,22 +1,21 @@
 // Base URL del API. La web Next.js (puerto 3000) proxea /api/* -> 127.0.0.1:8000
-// (ver next.config.ts rewrites), de modo que el navegador SIEMPRE habla con el
-// MISMO ORIGEN/PUERTO desde el que se sirve la web. Esto elimina la dependencia
-// de exponer el puerto 8000 externo (que quedaba bloqueado vía Tailscale / PC),
-// arreglando el SQX MCP que aparecía OFFLINE en el preview de Hermes.
-//
-// - En el navegador: BASE_URL = "" (mismo origen -> /api/v1/... en :3000, Next proxea).
-// - En SSR (sin window): 127.0.0.1:8000 directo.
-// - Override explícito con NEXT_PUBLIC_API_URL si se requiere otro destino.
 const API_PORT = process.env.NEXT_PUBLIC_API_PORT || "8000";
 const explicitUrl = process.env.NEXT_PUBLIC_API_URL;
-const BASE_URL = explicitUrl
-  ? explicitUrl.replace(/\/$/, "")
-  : typeof window === "undefined"
-    ? `http://127.0.0.1:${API_PORT}`
-    : ""; // mismo origen (herramienta: el browser ya carga :3000)
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${BASE_URL}${endpoint}`;
+export function getApiUrl(endpoint: string): string {
+  const clean = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  if (explicitUrl) return `${explicitUrl.replace(/\/$/, "")}${clean}`;
+  if (typeof window === "undefined") {
+    return `http://127.0.0.1:${API_PORT}${clean}`;
+  }
+  if (window.location.pathname.startsWith("/pro/ultrarentable")) {
+    return `/pro/ultrarentable${clean}`;
+  }
+  return clean;
+}
+
+export async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const url = getApiUrl(endpoint);
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -104,34 +103,13 @@ export const api = {
   getSQXCandidates: (mode = "ultra") =>
     request<any[]>(`/api/v1/autopilot/candidates?mode=${encodeURIComponent(mode)}`),
 
-  // ── Search Configurator & Continuous Discovery Engine ──
+  // ── Search Configurator ──
   listSearchConfigs: () => request<any[]>("/api/v1/search-configs"),
   createSearchConfig: (payload: any) =>
     request<any>("/api/v1/search-configs", { method: "POST", body: JSON.stringify(payload) }),
   runSearchConfig: (configId: string) =>
     request<any>(`/api/v1/search-configs/${encodeURIComponent(configId)}/run`, { method: "POST", body: JSON.stringify({}) }),
-  getSearchTelemetry: () => request<any>("/api/v1/search/telemetry"),
-  startContinuousSearch: (payload?: any) =>
-    request<any>("/api/v1/search/start", { method: "POST", body: JSON.stringify(payload || {}) }),
-  stopContinuousSearch: () =>
-    request<any>("/api/v1/search/stop", { method: "POST", body: JSON.stringify({}) }),
-  getAILearningSummary: () => request<any>("/api/v1/search/ai-learning"),
-  getUniverseMatrix: () => request<any[]>("/api/v1/search/matrix"),
 
-  // ── Candidates & Audit ──
-  getCandidates: () => request<any[]>("/api/v1/candidates"),
-  getAuditEvents: () => request<any[]>("/api/v1/audit/events"),
-
-  // ── Execution Sessions & Kill-Switches ──
+  // ── Execution Sessions ──
   getExecutionSessions: () => request<any[]>("/api/v1/execution/sessions"),
-  triggerKillSwitch: (sessionId: string, reason: string) =>
-    request<any>(`/api/v1/execution/sessions/${encodeURIComponent(sessionId)}/kill-switch`, {
-      method: "POST",
-      body: JSON.stringify({ reason }),
-    }),
-  resumeSession: (sessionId: string) =>
-    request<any>(`/api/v1/execution/sessions/${encodeURIComponent(sessionId)}/resume`, {
-      method: "POST",
-      body: JSON.stringify({}),
-    }),
 };

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_SOL_USDT_1H",
   "strategy_id": "UR_ULTRA_SOL_USDT_1H",
-  "strategy_snapshot_hash": "881571ba0a12aba4f8660c5fd71092013b495453105c018b15cb23d89a807417",
+  "strategy_snapshot_hash": "af2fb9b3b0558958bef64dab51f1e27e1e410e4510891896bfeb0569499b4d70",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "ee2784caa1458ad7a399b17133936003504303a51d661068d9315e70335cdbb6",
-  "output_hash": "01e51ac43d9dc6569beb7f7cb99d3f87e9e721cccdd85716638663fe76cdbcee",
+  "input_hash": "15a09cc351c7a2658bfcb9072ff5bbd655ee2a98c038f6a8dd700eef1363f351",
+  "output_hash": "a2bf8e3878f9843df0ec6b07dc7c0b1d6e250e278a2ed6d918ec1defc13b0db8",
   "status": "PASSED",
-  "score": 97.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 427.2 trades/param, Estabilidad Vecindario: 95.0%, Re-backtest PFs: [1.07, 1.63, 2.68, 1.69])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 456.0 trades/param, Estabilidad Vecindario: 113.3%, Re-backtest PFs: [1.09, 1.08, 1.14, 1.36])",
   "metrics": {
     "parameters_count": 5,
-    "degrees_of_freedom_ratio": 427.2,
+    "degrees_of_freedom_ratio": 456.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 95.0,
+    "parameter_neighborhood_stability_pct": 113.3,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.07,
-      1.63,
-      2.68,
-      1.69
+      1.09,
+      1.08,
+      1.14,
+      1.36
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T02:44:00.357925+00:00"
+  "created_at_utc": "2026-08-22T03:43:33.701989+00:00"
 }

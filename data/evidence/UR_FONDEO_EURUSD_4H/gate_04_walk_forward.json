@@ -2,73 +2,73 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_4H_g04",
   "run_id": "run_UR_FONDEO_EURUSD_4H",
   "strategy_id": "UR_FONDEO_EURUSD_4H",
-  "strategy_snapshot_hash": "260ff041e2af2cecec8daf85a41aa34cdd4069043d148bc1fcb7bf98d95646ba",
+  "strategy_snapshot_hash": "0df2b27d8db21da855c01cdfd6a92f8dfcf270884f6ea952aadffb78419af919",
   "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "9e9f2344dd63a9c6f45fbee1d9ad76f8de9556b4327b17aa6238fd1be1412c86",
-  "output_hash": "4bdf44a81316cb84edf4e01e5620e3f5ae702d9d2ed372cb7a1a5a6addca3347",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "fed4443077706ac2f75a16f0b286ca2b5bd19fec1df09cedc14704bf77520327",
+  "output_hash": "03a235f1483253293ebcc9f72eb4de11ec1103d4cc55ba170e9fd5745669c574",
   "status": "FAILED",
-  "score": 43.9,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.88 < 0.40 ó Consistencia 20.0% < 40%)",
+  "score": 0.0,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.00 < 0.40 ó Consistencia 40.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 80,
+    "total_trades_analyzed": 54,
     "windows_count": 5,
-    "walk_forward_efficiency": 0.88,
-    "oos_consistency_pct": 20.0,
+    "walk_forward_efficiency": 0.0,
+    "oos_consistency_pct": 40.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 11,
-        "oos_trades_count": 5,
-        "pf_is": 2.03,
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 0.0,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.03,
+        "net_profit_oos_usd": 0.0,
         "wfe": 0.0
       },
       {
         "window_index": 2,
-        "is_trades_count": 11,
-        "oos_trades_count": 5,
-        "pf_is": 0.53,
-        "pf_oos": 0.56,
-        "net_profit_oos_usd": -0.01,
-        "wfe": 1.07
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
       },
       {
         "window_index": 3,
-        "is_trades_count": 11,
-        "oos_trades_count": 5,
-        "pf_is": 0.86,
-        "pf_oos": 0.6,
-        "net_profit_oos_usd": -0.01,
-        "wfe": 0.7
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
       },
       {
         "window_index": 4,
-        "is_trades_count": 11,
-        "oos_trades_count": 5,
-        "pf_is": 0.89,
-        "pf_oos": 1.72,
-        "net_profit_oos_usd": 0.01,
-        "wfe": 1.94
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.0
       },
       {
         "window_index": 5,
-        "is_trades_count": 11,
-        "oos_trades_count": 5,
-        "pf_is": 0.93,
-        "pf_oos": 0.64,
-        "net_profit_oos_usd": -0.01,
-        "wfe": 0.69
+        "is_trades_count": 7,
+        "oos_trades_count": 3,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_4H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-21T22:28:24.466322+00:00"
+  "created_at_utc": "2026-08-22T06:01:26.129596+00:00"
 }

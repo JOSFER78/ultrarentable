@@ -24,21 +24,31 @@ const PROP_CATALOG: PropFirmChallenge[] = [
 
 export default function TrackFondeoCMEPage() {
   const [selectedFirm, setSelectedFirm] = useState<PropFirmChallenge>(PROP_CATALOG[0]);
-  const [currentEquity, setCurrentEquity] = useState<number>(51850.0);
-  const [peakEquity, setPeakEquity] = useState<number>(52100.0);
-  const [todayPnl, setTodayPnl] = useState<number>(450.0);
-  const [daysTraded, setDaysTraded] = useState<number>(3);
-  const [bestDayPnl, setBestDayPnl] = useState<number>(750.0);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Cálculos de cumplimiento
+  // Carga de sesiones reales
+  useEffect(() => {
+    fetch("/api/v1/execution/sessions?route=FONDEO")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setSessions(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setSessions([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const activeSession = sessions.length > 0 ? sessions[0] : null;
+
+  const currentEquity = activeSession ? (selectedFirm.account_size + activeSession.current_pnl_usd) : selectedFirm.account_size;
+  const peakEquity = activeSession ? activeSession.peak_equity_usd : selectedFirm.account_size;
+  const todayPnl = activeSession ? activeSession.daily_pnl_usd : 0.0;
   const totalProfit = currentEquity - selectedFirm.account_size;
   const targetProgress = Math.min(100, Math.max(0, (totalProfit / selectedFirm.profit_target) * 100));
-  const currentDd = peakEquity - currentEquity;
+  const currentDd = Math.max(0, peakEquity - currentEquity);
   const ddBuffer = Math.max(0, selectedFirm.max_trailing_dd - currentDd);
   const ddUsagePct = Math.min(100, (currentDd / selectedFirm.max_trailing_dd) * 100);
-  const consistencyPct = totalProfit > 0 ? (bestDayPnl / totalProfit) * 100 : 0;
-  const isConsistencyOk = consistencyPct <= selectedFirm.consistency_max_pct;
-  const isDllOk = todayPnl > -selectedFirm.daily_loss_limit;
+  const isDllOk = selectedFirm.daily_loss_limit === 0 || todayPnl > -selectedFirm.daily_loss_limit;
 
   return (
     <div style={{ padding: "16px 24px", width: "100%", maxWidth: "100%", margin: 0, color: "#f8fafc", boxSizing: "border-box" }}>
@@ -97,13 +107,13 @@ export default function TrackFondeoCMEPage() {
         {/* Equity Actual */}
         <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
           <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-            EQUITY DE LA CUENTA
+            EQUITY REAL DE LA CUENTA
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#fff", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
             ${currentEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </div>
-          <div style={{ fontSize: "11px", color: "#34d399", marginTop: "4px" }}>
-            Beneficio Neto: +${totalProfit.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          <div style={{ fontSize: "11px", color: totalProfit >= 0 ? "#34d399" : "#f43f5e", marginTop: "4px" }}>
+            Beneficio: {totalProfit >= 0 ? `+$${totalProfit.toFixed(2)}` : `-$${Math.abs(totalProfit).toFixed(2)}`} USD
           </div>
         </div>
 
@@ -133,21 +143,87 @@ export default function TrackFondeoCMEPage() {
           </div>
         </div>
 
-        {/* Regla de Consistencia */}
+        {/* Límite Pérdida Diaria */}
         <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
           <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-            REGLA DE CONSISTENCIA ({selectedFirm.consistency_max_pct}%)
+            ESTADO DAILY LOSS LIMIT ({selectedFirm.daily_loss_limit > 0 ? `$${selectedFirm.daily_loss_limit}` : "SIN DLL"})
           </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: isConsistencyOk ? "#34d399" : "#f43f5e", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            {consistencyPct.toFixed(1)}%
+          <div style={{ fontSize: "24px", fontWeight: 900, color: isDllOk ? "#34d399" : "#f43f5e", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+            {isDllOk ? "DENTRO DE LÍMITE" : "🚨 VIOLACIÓN"}
           </div>
-          <div style={{ fontSize: "11px", color: isConsistencyOk ? "#34d399" : "#f43f5e", marginTop: "4px" }}>
-            {isConsistencyOk ? "✓ Dentro del límite" : "✕ Supera límite permitido"}
+          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+            PnL Hoy: ${todayPnl.toFixed(2)} USD
           </div>
         </div>
       </div>
 
-      {/* 4. CME SESSION TIMER & AUTO-FLATTEN MONITOR */}
+      {/* 4. ACTIVE SESSIONS TABLE OR CALL TO ACTION */}
+      <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <h2 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: 0 }}>
+            Sesiones de Fondeo Registradas en SQLite
+          </h2>
+          <Link
+            href="/ejecucion"
+            style={{
+              padding: "6px 14px",
+              borderRadius: "6px",
+              background: "rgba(56, 189, 248, 0.15)",
+              border: "1px solid #38bdf8",
+              color: "#38bdf8",
+              fontWeight: 800,
+              fontSize: "11px",
+              textDecoration: "none",
+              fontFamily: "var(--font-mono, monospace)",
+            }}
+          >
+            ⚡ IR AL CENTRO DE EJECUCIÓN →
+          </Link>
+        </div>
+
+        {sessions.length === 0 ? (
+          <div style={{ padding: "20px", textAlign: "center", color: "#94a3b8", fontSize: "12px" }}>
+            No hay sesiones de fondeo activas en este momento. Despliega una estrategia en <Link href="/ejecucion" style={{ color: "#38bdf8" }}>Ejecución</Link> o conecta NinjaTrader 8.
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)", textAlign: "left", color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10px" }}>
+                  <th style={{ padding: "8px" }}>SESIÓN</th>
+                  <th style={{ padding: "8px" }}>ESTRATEGIA</th>
+                  <th style={{ padding: "8px" }}>SÍMBOLO</th>
+                  <th style={{ padding: "8px" }}>ESTADO</th>
+                  <th style={{ padding: "8px" }}>PNL HOY</th>
+                  <th style={{ padding: "8px" }}>PEAK EQUITY</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sessions.map((s) => (
+                  <tr key={s.session_id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
+                    <td style={{ padding: "10px 8px", fontFamily: "var(--font-mono, monospace)", color: "#38bdf8" }}>{s.session_id}</td>
+                    <td style={{ padding: "10px 8px" }}>{s.candidate_id}</td>
+                    <td style={{ padding: "10px 8px", fontWeight: 700 }}>{s.symbol}</td>
+                    <td style={{ padding: "10px 8px" }}>
+                      <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "4px", background: s.status === "RUNNING" ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", color: s.status === "RUNNING" ? "#34d399" : "#f43f5e" }}>
+                        {s.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: "10px 8px", color: s.daily_pnl_usd >= 0 ? "#34d399" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
+                      {s.daily_pnl_usd >= 0 ? `+$${s.daily_pnl_usd.toFixed(2)}` : `-$${Math.abs(s.daily_pnl_usd).toFixed(2)}`}
+                    </td>
+                    <td style={{ padding: "10px 8px", fontFamily: "var(--font-mono, monospace)" }}>
+                      ${s.peak_equity_usd?.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* 5. CME SESSION TIMER & AUTO-FLATTEN MONITOR */}
       <div
         style={{
           background: "linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(16, 23, 34, 0.85) 100%)",
@@ -182,7 +258,7 @@ export default function TrackFondeoCMEPage() {
               fontWeight: 800,
             }}
           >
-            GUARD ACTIVO · 0 VIOLACIONES
+            GUARD ACTIVO · 0 OVERNIGHT
           </div>
         </div>
       </div>

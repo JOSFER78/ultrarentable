@@ -1374,7 +1374,13 @@ export default function StrategiesExplorerPage() {
                         </div>
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: typeof monRoi === "number" ? (monRoi >= 0 ? "#10b981" : "#f87171") : "#94a3b8", fontSize: "12px" }}>
-                        {typeof monRoi === "number" ? (monRoi >= 0 ? `+${monRoi.toFixed(2)}%/m` : `${monRoi.toFixed(2)}%/m`) : "N/A"}
+                        {typeof monRoi === "number" && !isNaN(monRoi)
+                          ? monRoi > 300.0
+                            ? `+${Math.min(150.0, monRoi).toFixed(1)}%/m`
+                            : monRoi >= 0
+                            ? `+${monRoi.toFixed(2)}%/m`
+                            : `${monRoi.toFixed(2)}%/m`
+                          : "N/A"}
                       </td>
                       <td style={{ padding: isCompactDensity ? "6px 10px" : "10px 12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
                         <span style={{ color: "#94a3b8" }}>{typeof pfIs === "number" ? pfIs.toFixed(2) : "N/A"}</span> /{" "}

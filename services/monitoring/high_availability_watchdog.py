@@ -31,7 +31,7 @@ DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
 class HighAvailabilityWatchdog:
     """Watchdog daemon que supervisa 24/7 todos los subcomponentes del sistema."""
 
-    def __init__(self, check_interval_seconds: int = 15) -> None:
+    def __init__(self, check_interval_seconds: int = 10) -> None:
         self.check_interval_seconds = check_interval_seconds
         self._is_running = False
         self._thread: Optional[threading.Thread] = None
@@ -52,7 +52,7 @@ class HighAvailabilityWatchdog:
             name="HA-Watchdog-24-7",
         )
         self._thread.start()
-        logger.info("HighAvailabilityWatchdog 24/7 INICIADO.")
+        logger.info("HighAvailabilityWatchdog 24/7 INICIADO (Supervisión cada 10s).")
 
     def stop(self) -> None:
         """Detiene el watchdog de forma ordenada."""
@@ -78,18 +78,29 @@ class HighAvailabilityWatchdog:
         self.last_check_timestamp = now_str
         actions_taken: List[str] = []
 
-        # 1. Auditar y auto-recuperar ContinuousSearchDaemon
+        # 1. Auditar y auto-recuperar ContinuousSearchDaemon (Minería 24/7)
         from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
         daemon_tel = continuous_search_daemon.get_telemetry()
         if not daemon_tel.get("is_running", False):
-            logger.warning("HA Watchdog: ContinuousSearchDaemon inactivo. Reiniciando de inmediato...")
+            logger.warning("HA Watchdog: ContinuousSearchDaemon inactivo. Auto-reiniciando de inmediato...")
             try:
                 continuous_search_daemon.start()
                 actions_taken.append("RESTARTED_CONTINUOUS_SEARCH_DAEMON")
             except Exception as de:
                 logger.error(f"Error reiniciando continuous_search_daemon: {de}")
 
-        # 2. Auditar SystemSupervisor y sus 8 workers
+        # 2. Auditar y auto-recuperar ContinuousResearchDaemon (Auto-Refinamiento 24/7)
+        try:
+            from services.optimization.continuous_research_daemon import continuous_research_daemon
+            res_tel = continuous_research_daemon.get_status()
+            if not res_tel.get("is_running", False):
+                logger.warning("HA Watchdog: ContinuousResearchDaemon inactivo. Auto-iniciando...")
+                continuous_research_daemon.start_autonomous()
+                actions_taken.append("RESTARTED_CONTINUOUS_RESEARCH_DAEMON")
+        except Exception as re_err:
+            logger.error(f"Error en supervisión de ContinuousResearchDaemon: {re_err}")
+
+        # 3. Auditar SystemSupervisor y sus 8 workers
         try:
             loop = asyncio.new_event_loop()
             repaired_workers = loop.run_until_complete(supervisor_instance.run_self_healing_check())
@@ -99,7 +110,7 @@ class HighAvailabilityWatchdog:
         except Exception as se:
             logger.error(f"Error en self-healing del supervisor: {se}")
 
-        # 3. Comprobar SQX MCP y gestionar Failover
+        # 4. Comprobar SQX MCP y gestionar Failover
         sqx_client = SQXMCPClient(timeout=2)
         sqx_online = False
         try:
@@ -119,15 +130,17 @@ class HighAvailabilityWatchdog:
                 logger.info("HA Watchdog: StrategyQuant X en espera. Conmutando a FastEngine 24/7 Autónomo (Cero Downtime).")
                 actions_taken.append("ACTIVATED_FASTENGINE_AUTONOMOUS_FAILOVER")
 
-        # 4. Mantenimiento SQLite WAL (Prevenir bloqueos de base de datos)
+        # 5. Mantenimiento SQLite WAL (Prevenir bloqueos de base de datos) y Recolección de Basura
         try:
+            import gc
+            gc.collect()
             conn = sqlite3.connect(DB_PATH, timeout=5)
             conn.execute("PRAGMA wal_checkpoint(PASSIVE);")
             conn.close()
         except Exception as dbe:
             logger.warning(f"Aviso de checkpoint SQLite WAL: {dbe}")
 
-        # 5. Sincronización Continua 24/7 con Firebase Cloud (Persistencia de Candidatos, Telemetría y Salud)
+        # 6. Sincronización Continua 24/7 con Firebase Cloud
         try:
             from services.sync.firebase_sync_manager import firebase_sync_manager
             sync_res = firebase_sync_manager.sync_all()

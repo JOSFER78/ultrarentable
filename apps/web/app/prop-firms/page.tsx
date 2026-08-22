@@ -1003,6 +1003,426 @@ export const DEFAULT_FUTURES_PROVIDERS: Provider[] = [
 ];
 
 // ============================================================================
+// COMPONENTE DE RENDERIZADO VISUAL Y ULTRA-FÁCIL DE MENSAJES CON ENLACES
+// ============================================================================
+function parseInlineFormattedText(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let keyIdx = 0;
+
+  const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/;
+  const boldRegex = /\*\*([^*]+)\*\*/;
+  const codeRegex = /`([^`]+)`/;
+
+  while (remaining.length > 0) {
+    const linkMatch = remaining.match(linkRegex);
+    const boldMatch = remaining.match(boldRegex);
+    const codeMatch = remaining.match(codeRegex);
+
+    let firstMatch: { type: "link" | "bold" | "code"; index: number; match: RegExpMatchArray } | null = null;
+
+    if (linkMatch && linkMatch.index !== undefined) {
+      firstMatch = { type: "link", index: linkMatch.index, match: linkMatch };
+    }
+    if (boldMatch && boldMatch.index !== undefined) {
+      if (!firstMatch || boldMatch.index < firstMatch.index) {
+        firstMatch = { type: "bold", index: boldMatch.index, match: boldMatch };
+      }
+    }
+    if (codeMatch && codeMatch.index !== undefined) {
+      if (!firstMatch || codeMatch.index < firstMatch.index) {
+        firstMatch = { type: "code", index: codeMatch.index, match: codeMatch };
+      }
+    }
+
+    if (!firstMatch) {
+      parts.push(remaining);
+      break;
+    }
+
+    if (firstMatch.index > 0) {
+      parts.push(remaining.substring(0, firstMatch.index));
+    }
+
+    if (firstMatch.type === "link") {
+      const label = firstMatch.match[1];
+      const url = firstMatch.match[2];
+      parts.push(
+        <a
+          key={`lnk-${keyIdx++}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "4px",
+            padding: "2px 8px",
+            background: "rgba(0, 240, 255, 0.18)",
+            border: "1px solid var(--accent)",
+            borderRadius: "999px",
+            color: "var(--accent-bright)",
+            textDecoration: "none",
+            fontSize: "11px",
+            fontWeight: 800,
+            margin: "0 2px",
+            verticalAlign: "middle",
+            boxShadow: "0 2px 8px rgba(0, 240, 255, 0.25)",
+            transition: "all 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--accent)";
+            e.currentTarget.style.color = "#000";
+            e.currentTarget.style.transform = "translateY(-1px)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(0, 240, 255, 0.18)";
+            e.currentTarget.style.color = "var(--accent-bright)";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
+          <span>🌐 {label}</span>
+          <span style={{ fontSize: "9px" }}>↗</span>
+        </a>
+      );
+    } else if (firstMatch.type === "bold") {
+      const boldText = firstMatch.match[1];
+      parts.push(
+        <strong key={`bld-${keyIdx++}`} style={{ color: "#fff", fontWeight: 800 }}>
+          {boldText}
+        </strong>
+      );
+    } else if (firstMatch.type === "code") {
+      const codeText = firstMatch.match[1];
+      parts.push(
+        <code
+          key={`cd-${keyIdx++}`}
+          style={{
+            padding: "1px 6px",
+            background: "rgba(255, 255, 255, 0.08)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            borderRadius: "4px",
+            color: "var(--accent-bright)",
+            fontSize: "11px",
+            fontFamily: "monospace",
+          }}
+        >
+          {codeText}
+        </code>
+      );
+    }
+
+    remaining = remaining.substring(firstMatch.index + firstMatch.match[0].length);
+  }
+
+  return parts;
+}
+
+function VisualChatContent({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const elements: React.ReactNode[] = [];
+
+  const detectedActions: { title: string; url: string; icon: string; badge?: string }[] = [];
+  const lower = content.toLowerCase();
+
+  if (lower.includes("ninjatrader") || lower.includes("ninja trader") || lower.includes("nt8")) {
+    detectedActions.push({ title: "NinjaTrader Demo 14 Días", url: "https://ninjatrader.com/free-trading-simulator/", icon: "🎮", badge: "GRATIS" });
+    detectedActions.push({ title: "NinjaTrader 8 Oficial", url: "https://ninjatrader.com/", icon: "📥", badge: "OFICIAL" });
+  }
+  if (lower.includes("topstep")) {
+    detectedActions.push({ title: "TopstepX Simulador", url: "https://topstep.com/topstepx/", icon: "🎮", badge: "DEMO" });
+    detectedActions.push({ title: "Topstep Oficial", url: "https://topstep.com/", icon: "🏛️", badge: "OFICIAL" });
+  }
+  if (lower.includes("myfundedfutures") || lower.includes("mffu")) {
+    detectedActions.push({ title: "MyFundedFutures (MFFU)", url: "https://myfundedfutures.com/", icon: "⚡", badge: "50% OFF" });
+  }
+  if (lower.includes("tradeify")) {
+    detectedActions.push({ title: "Tradeify Oficial", url: "https://tradeify.co/", icon: "🚀", badge: "40% OFF" });
+  }
+  if (lower.includes("tradeday")) {
+    detectedActions.push({ title: "TradeDay 14d Trial", url: "https://tradeday.com/free-trial/", icon: "🎮", badge: "GRATIS" });
+  }
+  if (lower.includes("blusky")) {
+    detectedActions.push({ title: "BluSky (Static DD)", url: "https://blusky.pro/", icon: "🛡️", badge: "25% OFF" });
+  }
+  if (lower.includes("take profit trader") || lower.includes("takeprofittrader") || lower.includes("tpt")) {
+    detectedActions.push({ title: "Take Profit Trader", url: "https://takeprofittrader.com/", icon: "💎", badge: "OFICIAL" });
+  }
+  if (lower.includes("apex")) {
+    detectedActions.push({ title: "Apex Trader Funding", url: "https://apextraderfunding.com/", icon: "🎯", badge: "80% OFF" });
+  }
+  if (lower.includes("bulenox")) {
+    detectedActions.push({ title: "Bulenox Oficial", url: "https://bulenox.com/", icon: "🔥", badge: "89% OFF" });
+  }
+  if (lower.includes("tradovate")) {
+    detectedActions.push({ title: "Tradovate Web", url: "https://trader.tradovate.com/", icon: "📈", badge: "BROKER" });
+  }
+
+  let i = 0;
+  while (i < lines.length) {
+    const rawLine = lines[i];
+    const trimmed = rawLine.trim();
+
+    if (!trimmed) {
+      i++;
+      continue;
+    }
+
+    // 1. Separadores
+    if (trimmed === "---" || trimmed === "***" || trimmed === "___") {
+      elements.push(
+        <div
+          key={`div-${i}`}
+          style={{
+            height: "1px",
+            background: "linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent)",
+            margin: "12px 0",
+          }}
+        />
+      );
+      i++;
+      continue;
+    }
+
+    // 2. Encabezados (###, ##, #)
+    if (trimmed.startsWith("### ") || trimmed.startsWith("## ") || trimmed.startsWith("# ")) {
+      const headingText = trimmed.replace(/^#+\s*/, "");
+      elements.push(
+        <div
+          key={`h-${i}`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            marginTop: "12px",
+            marginBottom: "8px",
+            padding: "6px 12px",
+            background: "linear-gradient(90deg, rgba(0, 240, 255, 0.12), rgba(34, 197, 94, 0.04))",
+            borderLeft: "3px solid var(--accent)",
+            borderRadius: "0 6px 6px 0",
+          }}
+        >
+          <span style={{ fontSize: "14px" }}>📌</span>
+          <span style={{ fontSize: "13px", fontWeight: 900, color: "var(--accent-bright)" }}>
+            {parseInlineFormattedText(headingText)}
+          </span>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // 3. Pasos numerados (1. , 2. , etc.)
+    const stepMatch = trimmed.match(/^(\d+[\.\)]|[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]+)\s*(.*)/u);
+    if (stepMatch && !trimmed.startsWith("|")) {
+      const stepBadge = stepMatch[1];
+      const stepBody = stepMatch[2];
+      elements.push(
+        <div
+          key={`step-${i}`}
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "10px",
+            margin: "6px 0",
+            padding: "10px 14px",
+            background: "rgba(255, 255, 255, 0.03)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "8px",
+          }}
+        >
+          <div
+            style={{
+              minWidth: "24px",
+              height: "24px",
+              borderRadius: "6px",
+              background: "rgba(0, 240, 255, 0.2)",
+              border: "1px solid var(--accent)",
+              color: "var(--accent-bright)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "11px",
+              fontWeight: 900,
+              flexShrink: 0,
+              marginTop: "1px",
+            }}
+          >
+            {stepBadge.replace(/[\.\)]/, "")}
+          </div>
+          <div style={{ fontSize: "12px", lineHeight: "1.5", color: "var(--text-secondary)", flex: 1 }}>
+            {parseInlineFormattedText(stepBody)}
+          </div>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // 4. Listas de viñetas (- , * , ✓ , ❌)
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ") || trimmed.startsWith("✓ ") || trimmed.startsWith("❌ ")) {
+      const bulletSymbol = trimmed.startsWith("✓") ? "✓" : trimmed.startsWith("❌") ? "❌" : "•";
+      const bulletBody = trimmed.replace(/^([-*✓❌]\s*)/, "");
+      const isCheck = bulletSymbol === "✓";
+      const isCross = bulletSymbol === "❌";
+
+      elements.push(
+        <div
+          key={`bullet-${i}`}
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "8px",
+            margin: "4px 0",
+            paddingLeft: "6px",
+          }}
+        >
+          <span
+            style={{
+              color: isCheck ? "var(--success)" : isCross ? "var(--danger)" : "var(--accent)",
+              fontWeight: 900,
+              fontSize: isCheck || isCross ? "12px" : "16px",
+              lineHeight: "1.2",
+            }}
+          >
+            {bulletSymbol}
+          </span>
+          <span style={{ fontSize: "12px", lineHeight: "1.5", color: "var(--text-secondary)", flex: 1 }}>
+            {parseInlineFormattedText(bulletBody)}
+          </span>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // 5. Tablas (| col1 | col2 |)
+    if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+      const tableLines: string[] = [];
+      while (i < lines.length && lines[i].trim().startsWith("|") && lines[i].trim().endsWith("|")) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+
+      if (tableLines.length >= 2) {
+        const headerRow = tableLines[0].split("|").filter((c) => c.trim().length > 0);
+        const dataRows = tableLines.slice(2).map((row) => row.split("|").filter((c) => c.trim().length > 0));
+
+        elements.push(
+          <div
+            key={`tbl-${i}`}
+            style={{
+              overflowX: "auto",
+              margin: "12px 0",
+              borderRadius: "8px",
+              border: "1px solid var(--border)",
+              background: "rgba(0,0,0,0.3)",
+            }}
+          >
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
+              <thead>
+                <tr style={{ background: "rgba(0, 240, 255, 0.08)", borderBottom: "1px solid var(--border)" }}>
+                  {headerRow.map((h, hIdx) => (
+                    <th key={hIdx} style={{ padding: "8px 10px", color: "var(--accent-bright)", fontWeight: 800 }}>
+                      {parseInlineFormattedText(h.trim())}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dataRows.map((row, rIdx) => (
+                  <tr key={rIdx} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", background: rIdx % 2 === 0 ? "rgba(255,255,255,0.01)" : "transparent" }}>
+                    {row.map((cell, cIdx) => (
+                      <td key={cIdx} style={{ padding: "8px 10px", color: "var(--text-secondary)" }}>
+                        {parseInlineFormattedText(cell.trim())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        continue;
+      }
+    }
+
+    // 6. Párrafo Normal
+    elements.push(
+      <p key={`p-${i}`} style={{ margin: "6px 0", fontSize: "12px", lineHeight: "1.6", color: "var(--text-secondary)" }}>
+        {parseInlineFormattedText(rawLine)}
+      </p>
+    );
+    i++;
+  }
+
+  return (
+    <div>
+      <div>{elements}</div>
+
+      {/* DOCK DE ACCIONES RÁPIDAS Y ENLACES DIRECTOS DETECTADOS */}
+      {detectedActions.length > 0 && (
+        <div
+          style={{
+            marginTop: "14px",
+            padding: "10px 12px",
+            background: "linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(34, 197, 94, 0.08))",
+            border: "1px solid var(--accent)",
+            borderRadius: "8px",
+          }}
+        >
+          <div style={{ fontSize: "10px", fontWeight: 900, color: "var(--accent-bright)", textTransform: "uppercase", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+            <span>⚡ Enlaces Oficiales & Acciones Rápidas:</span>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            {detectedActions.map((act, aIdx) => (
+              <a
+                key={aIdx}
+                href={act.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "5px 10px",
+                  background: "rgba(0, 0, 0, 0.4)",
+                  border: "1px solid var(--accent)",
+                  borderRadius: "6px",
+                  color: "#fff",
+                  textDecoration: "none",
+                  fontSize: "11px",
+                  fontWeight: 800,
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "var(--accent)";
+                  e.currentTarget.style.color = "#000";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(0, 0, 0, 0.4)";
+                  e.currentTarget.style.color = "#fff";
+                }}
+              >
+                <span>{act.icon}</span>
+                <span>{act.title}</span>
+                {act.badge && (
+                  <span style={{ fontSize: "9px", padding: "1px 4px", borderRadius: "3px", background: "rgba(34, 197, 94, 0.3)", color: "var(--success)" }}>
+                    {act.badge}
+                  </span>
+                )}
+                <span style={{ fontSize: "9px" }}>↗</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
 // COMPONENTE PRINCIPAL
 // ============================================================================
 export default function WorldClassFuturesPropFirmsPage() {
@@ -1091,10 +1511,20 @@ export default function WorldClassFuturesPropFirmsPage() {
   const [selectedWikiFirm, setSelectedWikiFirm] = useState<string>("topstep");
   const [selectedGuide, setSelectedGuide] = useState<string>("rithmic-nt8");
 
+  // Helper para llamadas fetch con soporte universal de basePath
+  const fetchApi = async (endpoint: string, options?: RequestInit) => {
+    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    try {
+      const res = await fetch(`/pro/ultrarentable${cleanEndpoint}`, options);
+      if (res.ok) return res;
+    } catch (e) {}
+    return fetch(cleanEndpoint, options);
+  };
+
   // Fetching de datos de la API
   const fetchCatalog = () => {
     setIsLoading(true);
-    fetch("/api/v1/providers?market_type=FUTURES")
+    fetchApi("/api/v1/providers?market_type=FUTURES")
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -1125,7 +1555,7 @@ export default function WorldClassFuturesPropFirmsPage() {
     setIsSyncing(true);
     setSyncMessage("Sincronizando fuentes oficiales de futuros CME...");
     try {
-      const res = await fetch("/api/v1/providers/sync", { method: "POST" });
+      const res = await fetchApi("/api/v1/providers/sync", { method: "POST" });
       const data = await res.json();
       setSyncMessage(data.message || "Sincronización de futuros completada con éxito.");
       fetchCatalog();
@@ -1183,7 +1613,7 @@ export default function WorldClassFuturesPropFirmsPage() {
       }));
 
       // Conexión directa al backend FastAPI + Puente de Antigravity de Hermes
-      let res = await fetch("/api/v1/providers/chat", {
+      let res = await fetchApi("/api/v1/providers/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1192,9 +1622,9 @@ export default function WorldClassFuturesPropFirmsPage() {
         }),
       });
 
-      // Si falla, reintentar con el endpoint Next.js
+      // Si falla, reintentar con el endpoint de Next.js
       if (!res.ok) {
-        res = await fetch("/pro/ultrarentable/api/prop-firms/chat", {
+        res = await fetchApi("/api/prop-firms/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -2185,109 +2615,174 @@ export default function WorldClassFuturesPropFirmsPage() {
         {/* MÓDULO 2: CHATBOT EXPERTO AI (ULTRABOT AI) EN PANTALLA COMPLETA          */}
         {/* ========================================================================= */}
         {activeModule === "CHATBOT" && (
-          <div style={{ background: "var(--bg-panel)", border: "1px solid var(--accent)", borderRadius: "var(--radius-xl)", padding: "24px", boxShadow: "0 12px 40px rgba(0, 240, 255, 0.15)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid var(--border)", paddingBottom: "14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "linear-gradient(135deg, var(--accent), #22c55e)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", color: "#000", fontWeight: 900 }}>
-                  🤖
-                </div>
-                <div>
-                  <h2 style={{ fontSize: "18px", fontWeight: 900, margin: 0, color: "#fff", display: "flex", alignItems: "center", gap: "8px" }}>
-                    UltraBot AI — Consultor Cuantitativo de Futuros CME
-                    <span style={{ fontSize: "10px", fontWeight: 900, padding: "2px 8px", borderRadius: "999px", background: "rgba(34, 197, 94, 0.2)", color: "var(--success)", border: "1px solid var(--success)" }}>
-                      ONLINE · BASE DE DATOS REAL
-                    </span>
-                  </h2>
-                  <p style={{ margin: 0, fontSize: "11px", color: "var(--text-muted)" }}>
-                    Pregunta sobre cualquier firma, política de bots, promociones del día, cálculo de coste de extracción o trampas de letra pequeña.
-                  </p>
+          <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px", display: "flex", flexDirection: "column", gap: "20px" }}>
+            {/* CABECERA DEL ASISTENTE */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid var(--border)", paddingBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "28px" }}>🤖</span>
+                  <div>
+                    <h2 style={{ fontSize: "22px", fontWeight: 900, margin: 0, color: "var(--accent-bright)" }}>
+                      UltraBot AI — Asistente Experto en Futuros CME
+                    </h2>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "var(--text-secondary)" }}>
+                      Inteligencia Cuantitativa 100% Semántica conectada en vivo a la base de datos oficial de 17 firmas de futuros.
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              <button
-                onClick={() => setChatMessages([chatMessages[0]])}
-                style={{ background: "var(--bg-2)", border: "1px solid var(--border)", color: "var(--text-muted)", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", cursor: "pointer", fontWeight: 700 }}
-              >
-                Limpiar Conversación
-              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ background: "rgba(34, 197, 94, 0.12)", border: "1px solid var(--success)", padding: "6px 12px", borderRadius: "999px", fontSize: "11px", color: "var(--success)", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--success)", display: "inline-block", boxShadow: "0 0 8px var(--success)" }}></span>
+                  Puente de Antigravity (Gemini 3.7 Flash High)
+                </div>
+                {chatMessages.length > 1 && (
+                  <button
+                    onClick={() => {
+                      setChatMessages([chatMessages[0]]);
+                    }}
+                    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid var(--border)", color: "var(--text-muted)", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, cursor: "pointer" }}
+                  >
+                    🗑️ Reiniciar Chat
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* ZONA DE MENSAJES */}
-            <div style={{ height: "460px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px", paddingRight: "8px", marginBottom: "16px" }}>
+            {/* CHIPS DE PREGUNTAS SEMÁNTICAS RECOMENDADAS */}
+            <div>
+              <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>
+                💡 Preguntas Semánticas Rápidas:
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {[
+                  "🤖 ¿Qué firmas admiten bots de StrategyQuant X en NinjaTrader?",
+                  "💰 ¿Cuál es la cuenta de 50K más barata con $0 cuota de activación hoy?",
+                  "🛡️ ¿Qué firmas tienen Drawdown 100% Estático que nunca sube?",
+                  "⚡ ¿Dónde puedo retirar beneficios desde el Día 1 On-Demand?",
+                  "📈 ¿Qué diferencia hay entre Drawdown EOD e Intraday Peak?",
+                  "🎟️ Ver todos los códigos de descuento oficiales activos hoy",
+                  "🎮 ¿Qué firmas ofrecen cuentas demo o simulador gratis?",
+                  "⚖️ Comparar MFFU Rapid vs Tradeify vs Topstep",
+                ].map((prompt, pIdx) => (
+                  <button
+                    key={pIdx}
+                    onClick={() => handleSendChatMessage(prompt)}
+                    disabled={isChatLoading}
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid var(--border)",
+                      color: "var(--text-secondary)",
+                      padding: "6px 12px",
+                      borderRadius: "999px",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      textAlign: "left",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "var(--accent)";
+                      e.currentTarget.style.color = "#fff";
+                      e.currentTarget.style.background = "rgba(0, 240, 255, 0.08)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                      e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                    }}
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* CONTENEDOR DE MENSAJES */}
+            <div style={{ background: "rgba(0,0,0,0.3)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "20px", minHeight: "420px", maxHeight: "580px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px" }}>
               {chatMessages.map((msg) => (
                 <div
                   key={msg.id}
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: msg.role === "user" ? "flex-end" : "flex-start",
+                    alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+                    maxWidth: msg.role === "user" ? "80%" : "95%",
+                    background: msg.role === "user" ? "rgba(0, 240, 255, 0.15)" : "rgba(255, 255, 255, 0.03)",
+                    border: msg.role === "user" ? "1px solid var(--accent)" : "1px solid var(--border)",
+                    borderRadius: msg.role === "user" ? "14px 14px 2px 14px" : "14px 14px 14px 2px",
+                    padding: "16px 20px",
+                    color: "#fff",
+                    fontSize: "13px",
+                    lineHeight: "1.6",
                   }}
                 >
-                  <div style={{ fontSize: "10px", color: "var(--text-muted)", marginBottom: "4px", padding: "0 4px" }}>
-                    {msg.role === "user" ? "Tú" : "🤖 UltraBot AI"} · {msg.timestamp}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "4px" }}>
+                    <span style={{ fontWeight: 900, color: msg.role === "user" ? "var(--accent-bright)" : "var(--accent)", fontSize: "11px", textTransform: "uppercase" }}>
+                      {msg.role === "user" ? "👤 Tú" : "🤖 UltraBot AI"}
+                    </span>
+                    <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>{msg.timestamp}</span>
                   </div>
 
-                  <div
-                    style={{
-                      maxWidth: "85%",
-                      padding: "16px 20px",
-                      borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                      background: msg.role === "user" ? "linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(59, 130, 246, 0.2))" : "rgba(10, 16, 26, 0.85)",
-                      border: msg.role === "user" ? "1px solid var(--accent)" : "1px solid var(--border)",
-                      color: "#fff",
-                      fontSize: "13px",
-                      lineHeight: "1.6",
-                      whiteSpace: "pre-wrap",
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-                    }}
-                  >
-                    {msg.content}
+                  <div>
+                    <VisualChatContent content={msg.content} />
+                  </div>
 
-                    {/* CUPONES ACTIVOS SUGERIDOS */}
-                    {msg.active_coupons && msg.active_coupons.length > 0 && (
-                      <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  {/* CUPONES ACTIVOS RECOMENDADOS SI VIENEN EN LA RESPUESTA */}
+                  {msg.active_coupons && msg.active_coupons.length > 0 && (
+                    <div style={{ marginTop: "14px", paddingTop: "10px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 800, color: "var(--accent-bright)", marginBottom: "6px" }}>
+                        🎟️ Cupones Oficiales Verificados:
+                      </div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                         {msg.active_coupons.map((c, cIdx) => (
-                          <button
+                          <div
                             key={cIdx}
                             onClick={() => handleCopyCode(c.code)}
+                            title="Haz clic para copiar"
                             style={{
-                              padding: "4px 8px",
+                              background: copiedCode === c.code ? "rgba(34, 197, 94, 0.2)" : "rgba(99, 225, 180, 0.12)",
+                              border: copiedCode === c.code ? "1px solid var(--success)" : "1px dashed var(--accent)",
                               borderRadius: "4px",
-                              background: "rgba(99, 225, 180, 0.15)",
-                              border: "1px solid var(--accent-dim)",
-                              color: "var(--accent-bright)",
-                              fontSize: "10px",
+                              padding: "4px 8px",
+                              fontSize: "11px",
                               fontWeight: 800,
+                              color: "#fff",
                               cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              transition: "all 0.2s ease",
                             }}
                           >
-                            🏷️ {c.firm}: {copiedCode === c.code ? "✓ Copiado" : `${c.code} (${c.discount})`}
-                          </button>
+                            <span>{c.firm}:</span>
+                            <span style={{ color: "var(--accent-bright)" }}>{c.code}</span>
+                            <span style={{ color: "var(--success)", fontSize: "10px" }}>({c.discount})</span>
+                            <span style={{ fontSize: "10px" }}>{copiedCode === c.code ? "✓" : "📋"}</span>
+                          </div>
                         ))}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
-                  {/* ACCIONES O PREGUNTAS SUGERIDAS */}
+                  {/* ACCIONES Y PREGUNTAS SUGERIDAS */}
                   {msg.suggested_actions && msg.suggested_actions.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px", maxWidth: "85%" }}>
+                    <div style={{ marginTop: "12px", display: "flex", flexWrap: "wrap", gap: "6px" }}>
                       {msg.suggested_actions.map((act, aIdx) => (
                         <button
                           key={aIdx}
                           onClick={() => handleSendChatMessage(act)}
+                          disabled={isChatLoading}
                           style={{
-                            padding: "4px 10px",
-                            borderRadius: "999px",
-                            background: "rgba(255, 255, 255, 0.04)",
-                            border: "1px solid var(--border)",
-                            color: "var(--accent-bright)",
+                            background: "rgba(255,255,255,0.05)",
+                            border: "1px solid var(--border-active)",
+                            borderRadius: "4px",
+                            padding: "4px 8px",
                             fontSize: "11px",
-                            fontWeight: 700,
+                            color: "var(--text-secondary)",
                             cursor: "pointer",
-                            transition: "all 0.15s ease",
+                            fontWeight: 700,
                           }}
                         >
-                          💬 {act}
+                          ↳ {act}
                         </button>
                       ))}
                     </div>
@@ -2296,14 +2791,16 @@ export default function WorldClassFuturesPropFirmsPage() {
               ))}
 
               {isChatLoading && (
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--accent)", fontSize: "12px", fontWeight: 700 }}>
-                  <span>⏳ UltraBot AI analizando base de datos cuantitativa...</span>
+                <div style={{ alignSelf: "flex-start", background: "rgba(255,255,255,0.03)", border: "1px solid var(--accent)", borderRadius: "14px 14px 14px 2px", padding: "14px 20px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "16px", height: "16px", border: "2px solid var(--accent)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                  <span style={{ fontSize: "12px", color: "var(--accent)", fontWeight: 800 }}>
+                    UltraBot AI está consultando el Puente de Antigravity y analizando las 17 firmas...
+                  </span>
                 </div>
               )}
-              <div ref={chatBottomRef} />
             </div>
 
-            {/* INPUT DE ENTRADA DEL CHAT */}
+            {/* INPUT DE CHAT DEDICADO */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -2313,13 +2810,13 @@ export default function WorldClassFuturesPropFirmsPage() {
             >
               <input
                 type="text"
-                placeholder="Pregunta lo que sea sobre firmas de futuros (ej. ¿Qué firma me conviene si uso bots y tengo $60?...)"
+                placeholder="Pregunta lo que sea sobre normas, precios, drawdown, bots o cuentas fondeadas..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 disabled={isChatLoading}
                 style={{
                   flex: 1,
-                  padding: "12px 16px",
+                  padding: "14px 18px",
                   background: "var(--bg-2)",
                   border: "1px solid var(--border-hover)",
                   borderRadius: "var(--radius-md)",
@@ -2327,23 +2824,25 @@ export default function WorldClassFuturesPropFirmsPage() {
                   fontSize: "13px",
                   fontWeight: 600,
                   outline: "none",
+                  boxShadow: "inset 0 2px 6px rgba(0,0,0,0.4)",
                 }}
               />
               <button
                 type="submit"
                 disabled={isChatLoading || !chatInput.trim()}
                 style={{
-                  padding: "12px 24px",
-                  background: "var(--accent)",
-                  color: "#06090e",
+                  padding: "14px 28px",
+                  background: "linear-gradient(135deg, #00f0ff, #22c55e)",
+                  color: "#000",
                   border: "none",
                   borderRadius: "var(--radius-md)",
                   fontSize: "13px",
                   fontWeight: 900,
-                  cursor: isChatLoading || !chatInput.trim() ? "not-allowed" : "pointer",
+                  cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   gap: "6px",
+                  boxShadow: "0 4px 20px rgba(0, 240, 255, 0.3)",
                 }}
               >
                 <span>Enviar</span>
@@ -2604,221 +3103,783 @@ export default function WorldClassFuturesPropFirmsPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* MÓDULO 5: ENCICLOPEDIA & WIKI                                             */}
+        {/* MÓDULO 5: ENCICLOPEDIA & WIKI (17 FIRMAS COMPLETAS Y AUDITADAS 2026)       */}
         {/* ========================================================================= */}
-        {activeModule === "ENCICLOPEDIA" && (
-          <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
-            <h2 style={{ fontSize: "20px", fontWeight: 900, margin: "0 0 4px 0", color: "var(--accent-bright)" }}>
-              📚 Enciclopedia Técnica de Firmas de Futuros CME
-            </h2>
-            <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "var(--text-secondary)" }}>
-              Fichas técnicas exhaustivas con microestructura, comisiones por contrato, escalado, plataformas y auditoría forense de letra pequeña.
-            </p>
+        {activeModule === "ENCICLOPEDIA" && (() => {
+          const wikiData: Record<string, {
+            name: string;
+            badge: string;
+            founded: string;
+            hq: string;
+            platforms: string;
+            commissions: string;
+            activation: string;
+            drawdown: string;
+            ddModel: string;
+            bots: string;
+            payouts: string;
+            buffer: string;
+            finePrint: string;
+            pros: string[];
+            cons: string[];
+            coupon?: { code: string; discount: string };
+            officialUrl: string;
+            demoUrl?: string;
+          }> = {
+            topstep: {
+              name: "Topstep (Chicago)",
+              badge: "SOLVENCIA #1",
+              founded: "2012",
+              hq: "Chicago, IL, USA",
+              platforms: "TopstepX (TradingView integrado gratis), Tradovate, NinjaTrader, Quantower, Rithmic",
+              commissions: "Mini: ~$3.80 RT | Micro: ~$1.10 RT (TopstepX ofrece las comisiones más reducidas)",
+              activation: "$149 USD (Pass Fee único al fondear cuenta Express)",
+              drawdown: "EOD Trailing ($2,000 en 50K, $3,000 en 100K, $4,500 en 150K)",
+              ddModel: "Calcula a las 17:00 ET. En cuenta financiada Express, se congela permanentemente en el balance inicial tras alcanzar $2,000 de colchón.",
+              bots: "Permitidos bots algorítmicos propios. PROHIBIDO: HFT de microsegundos, proxies/VPS comerciales compartidos y algoritmos genéricos idénticos.",
+              payouts: "Retiros diarios: 50% de beneficio tras 5 días ganadores acumulando más de $200 por día. Tras 30 días, 100% de retiros.",
+              buffer: "Colchón de seguridad equivalente al Max Trailing Drawdown para no quebrar la cuenta.",
+              finePrint: "Posiciones deben estar cerradas a las 15:10 CT (16:10 ET). Trading en noticias 100% permitido. Daily Loss Limit activo.",
+              pros: ["Firma pionera y de mayor solvencia institucional (fundada en 2012)", "Plataforma TopstepX gratuita con TradingView", "Retiros diarios tras 5 días ganadores", "Trading en noticias permitido sin restricciones"],
+              cons: ["Cuota de activación de $149 USD", "Daily Loss Limit intradía de cierre automático", "Prohibidos proxies compartidos"],
+              coupon: { code: "TOPSTEP20", discount: "20% OFF" },
+              officialUrl: "https://topstep.com/",
+              demoUrl: "https://topstep.com/topstepx/",
+            },
+            mffu: {
+              name: "MyFundedFutures (MFFU)",
+              badge: "RETIRADAS DÍA 1",
+              founded: "2023",
+              hq: "Austin, TX, USA",
+              platforms: "Tradovate, NinjaTrader 8, TradingView, Quantower",
+              commissions: "Mini: ~$2.90 RT | Micro: ~$1.04 RT",
+              activation: "$0 USD (Plan Rapid incluye activación totalmente gratis)",
+              drawdown: "EOD Trailing ($2,000 en 50K, $3,000 en 100K, $4,500 en 150K)",
+              ddModel: "Calcula a las 17:00 ET. En fondeada, se congela en $50,100 una vez alcanzado $52,000 de balance.",
+              bots: "100% Permitidos para trading automático y bots en VPS sin restricciones.",
+              payouts: "Retiros Día 1 On-Demand (procesamiento en 12-24h). 100% de los primeros $10,000 netos.",
+              buffer: "$0 en Rapid (retiras cualquier excedente sobre el balance inicial).",
+              finePrint: "Regla de consistencia del 40% (ningún día puede superar el 40% del profit total acumulado al solicitar retiro).",
+              pros: ["$0 Cuota de activación en plan Rapid", "Retiros desde el Día 1 On-Demand en 24h", "Drawdown se congela en $50,100", "100% de los primeros $10,000 USD netos"],
+              cons: ["Regla de consistencia del 40% al retirar", "Requiere Add-on de Tradovate para TradingView"],
+              coupon: { code: "300K", discount: "50% OFF" },
+              officialUrl: "https://myfundedfutures.com/",
+            },
+            tradeify: {
+              name: "Tradeify",
+              badge: "PASE DIRECTO / $0 FEE",
+              founded: "2024",
+              hq: "Miami, FL, USA",
+              platforms: "Tradovate, NinjaTrader 8, TradingView Web/Desktop",
+              commissions: "Mini: ~$3.00 RT | Micro: ~$1.08 RT",
+              activation: "$0 USD (Plan Growth y Straight to Funded)",
+              drawdown: "EOD Trailing ($2,000 en 50K)",
+              ddModel: "Calcula al cierre EOD. En cuentas Straight to Funded el drawdown es estático o EOD.",
+              bots: "100% Permitidos para sistemas automáticos y Trade Copiers locales.",
+              payouts: "Día 1 On-Demand sin esperar quincenas. 90% profit split.",
+              buffer: "Buffer de seguridad de $2,000 antes de retirar el 100% de excedentes.",
+              finePrint: "Regla de consistencia del 30% en planes Straight to Funded. Prohibido arbitraje de latencia.",
+              pros: ["$0 cuota de activación", "Opciones Straight to Funded (Pase directo sin examen)", "Retiros en 24 horas", "Conexión nativa con Tradovate y TradingView"],
+              cons: ["Firma fundada en 2024", "Regla de consistencia del 30%"],
+              coupon: { code: "TNT", discount: "40% OFF" },
+              officialUrl: "https://tradeify.co/",
+            },
+            tradeday: {
+              name: "TradeDay",
+              badge: "FONDOS REALES CFTC",
+              founded: "2020",
+              hq: "Chicago, IL, USA",
+              platforms: "Tradovate, NinjaTrader 8, TradingView, Quantower, Jigsaw Daytradr",
+              commissions: "Mini: ~$3.20 RT | Micro: ~$1.12 RT",
+              activation: "$0 USD (Cero comisiones de pase o fondeo)",
+              drawdown: "EOD Trailing ($2,000 en 50K, $3,500 en 100K)",
+              ddModel: "Calcula al cierre del día. Se congela en el balance inicial al pasar a Live con broker regulado.",
+              bots: "Permitidos algoritmos y bots en NinjaTrader 8.",
+              payouts: "Retiros procesados el mismo día hábil. 100% de primeros $10,000.",
+              buffer: "Requiere dejar el buffer de seguridad para mantener la cuenta abierta.",
+              finePrint: "Cuentas fondeadas reales con brokers regulados por CFTC (Dorman / Phillip Capital). Prueba gratuita de 14 días.",
+              pros: ["$0 cuota de activación", "Brokers reales regulados por CFTC", "Retiros el mismo día hábil", "Prueba gratis de 14 días"],
+              cons: ["Daily Loss Limit intradía riguroso", "Evaluación estricta"],
+              coupon: { code: "FLASH55", discount: "55% OFF" },
+              officialUrl: "https://tradeday.com/",
+              demoUrl: "https://tradeday.com/free-trial/",
+            },
+            blusky: {
+              name: "BluSky Trading",
+              badge: "DRAWDOWN ESTÁTICO PURO",
+              founded: "2022",
+              hq: "Dallas, TX, USA",
+              platforms: "NinjaTrader 8, Rithmic, Tradovate, Quantower",
+              commissions: "Mini: ~$3.10 RT | Micro: ~$1.05 RT",
+              activation: "$0 USD (En programas Static Growth)",
+              drawdown: "100% Estático (Static Drawdown Inmutable)",
+              ddModel: "El nivel de liquidación NUNCA sube con los beneficios. En 50K, el stop de ruina se fija en $48,000 de forma permanente.",
+              bots: "100% Permitidos para bots y EAs desatendidos en VPS (la mejor firma para StrategyQuant X).",
+              payouts: "Retiros semanales tras 8 días de operativa. 100% primeros $10,000.",
+              buffer: "Permite retirar beneficios por encima del balance inicial más colchón de $1,000.",
+              finePrint: "No hay trailing persiguiendo flotante positivo. Máxima libertad para aguantar retrocesos normales de mercado.",
+              pros: ["Drawdown 100% Estático (Inmutable y seguro)", "El mejor entorno para bots de SQX y Swing", "$0 cuota de activación", "Soporte oficial de NinjaTrader 8"],
+              cons: ["Retiros semanales (no día 1 inmediato)", "Target ligeramente superior en static"],
+              coupon: { code: "BLU25", discount: "25% OFF" },
+              officialUrl: "https://blusky.pro/",
+            },
+            takeprofit: {
+              name: "Take Profit Trader (TPT)",
+              badge: "DÍA 1 / SIN MÍNIMOS",
+              founded: "2021",
+              hq: "Orlando, FL, USA",
+              platforms: "Tradovate, NinjaTrader 8, TradingView, Quantower",
+              commissions: "Mini: ~$3.40 RT | Micro: ~$1.15 RT",
+              activation: "$130 USD (Cuenta PRO única)",
+              drawdown: "EOD Trailing ($2,000 en 50K)",
+              ddModel: "Calcula a las 17:00 ET. Sin trailing intradía en la evaluación.",
+              bots: "Permitidos bots siempre que respeten el Daily Loss Limit.",
+              payouts: "Día 1 en cuenta PRO. Retiros el mismo día sin días mínimos de espera.",
+              buffer: "Buffer de seguridad correspondiente al DD máximo.",
+              finePrint: "Regla de consistencia del 50% en el examen. Daily Loss Limit es de fin de día.",
+              pros: ["Retiros desde el Día 1 en cuenta Pro", "Sin días mínimos de examen (puedes pasar en 1 día)", "Tradovate + TradingView"],
+              cons: ["Cuota de activación Pro de $130", "Consistencia del 50%"],
+              coupon: { code: "TPT50", discount: "50% OFF" },
+              officialUrl: "https://takeprofittrader.com/",
+            },
+            apex: {
+              name: "Apex Trader Funding",
+              badge: "HASTA 20 CUENTAS",
+              founded: "2021",
+              hq: "Austin, TX, USA",
+              platforms: "Tradovate, NinjaTrader 8, Rithmic",
+              commissions: "Mini: ~$3.90 RT | Micro: ~$1.20 RT",
+              activation: "$140 - $160 USD (Fee único de cuenta PA)",
+              drawdown: "Intraday Peak Trailing ($2,500 en 50K, $3,000 en 100K)",
+              ddModel: "El trailing persigue el flotante positivo tick a tick en tiempo real.",
+              bots: "PROHIBIDO bots autónomos en PA. Solo permite manual o Trade Copiers locales.",
+              payouts: "2 ventanas mensuales (días 1-5 y 15-20). Máximo $2,000 por cuenta en primeros 3 meses.",
+              buffer: "Buffer de seguridad obligatorio ($52,600 en cuenta 50K).",
+              finePrint: "Regla de consistencia del 30%. Máximo 20 cuentas financiadas PA por usuario.",
+              pros: ["Pases muy baratos con cupones de hasta 80% OFF", "Permite hasta 20 cuentas PA simultáneas", "Pase en 1 solo día"],
+              cons: ["Trailing Intraday agresivo", "Bots automáticos prohibidos en PA", "Cuota de activación obligatoria"],
+              coupon: { code: "SAVINGS", discount: "80% OFF" },
+              officialUrl: "https://apextraderfunding.com/",
+            },
+            bulenox: {
+              name: "Bulenox",
+              badge: "HASTA 89% DESCUENTO",
+              founded: "2022",
+              hq: "Delaware, USA",
+              platforms: "NinjaTrader 8, Rithmic",
+              commissions: "Mini: ~$3.60 RT | Micro: ~$1.18 RT",
+              activation: "$148 - $178 USD (Pase a Master)",
+              drawdown: "Intraday Trailing (Opción 1) o EOD (Opción 2)",
+              ddModel: "Ofrece dos modalidades: Opción 1 con trailing intraday más barata, u Opción 2 con EOD.",
+              bots: "Permitidos bots y EAs en NinjaTrader 8.",
+              payouts: "2 solicitudes mensuales (días 1-5 y 16-20). 100% de primeros $10,000.",
+              buffer: "Buffer de seguridad estricto antes de cada retiro.",
+              finePrint: "Hasta 11 cuentas Master por usuario. Descuentos agresivos de hasta 89% con cupón GUIDE.",
+              pros: ["Cupones de hasta 89% OFF", "Permite elegir entre Trailing EOD o Intraday", "11 cuentas simultáneas"],
+              cons: ["Cuota de activación elevada", "Ventanas de retiro fijas de 5 días"],
+              coupon: { code: "GUIDE", discount: "89% OFF" },
+              officialUrl: "https://bulenox.com/",
+            },
+            fundednext: {
+              name: "FundedNext Futures",
+              badge: "15% PROFIT EN EXAMEN",
+              founded: "2024",
+              hq: "Dubai, UAE",
+              platforms: "Tradovate, NinjaTrader 8, TradingView",
+              commissions: "Mini: ~$3.00 RT | Micro: ~$1.05 RT",
+              activation: "$0 USD (Cero activation fee)",
+              drawdown: "EOD Trailing ($2,000 en 50K)",
+              ddModel: "Calcula al cierre de sesión. 15% de profit share acumulado en la evaluación.",
+              bots: "Permitidos bots y sistemas automáticos.",
+              payouts: "Quincenal en 24h tras solicitud.",
+              buffer: "Buffer estándar de cuenta.",
+              finePrint: "Te reembolsa el precio de la prueba más un 15% de las ganancias generadas durante la evaluación.",
+              pros: ["$0 cuota de activación", "Paga el 15% de ganancias del examen", "Soporte TradingView"],
+              cons: ["Firma nueva en el sector de futuros (2024)"],
+              coupon: { code: "FNFUTURES", discount: "20% OFF" },
+              officialUrl: "https://fundednext.com/",
+            },
+            ticktick: {
+              name: "TickTick Trader",
+              badge: "100% PRIMEROS $25K",
+              founded: "2022",
+              hq: "Cheyenne, WY, USA",
+              platforms: "Tradovate, NinjaTrader 8, Rithmic, Bookmap, Quantower",
+              commissions: "Mini: ~$3.40 RT | Micro: ~$1.10 RT",
+              activation: "$149 USD (Incluye licencia de NT8 y datos CME)",
+              drawdown: "EOD Trailing ($2,500 en 50K)",
+              ddModel: "Calcula al final del día EOD. Congela en el balance inicial.",
+              bots: "Permitidos bots algorítmicos en NinjaTrader 8.",
+              payouts: "Retiros desde el día 1 en cuenta TTTPerformance. 100% primeros $25,000 netos.",
+              buffer: "Buffer de seguridad fijado en $52,500.",
+              finePrint: "Cuenta con el programa Express sin días mínimos de trading.",
+              pros: ["100% de los primeros $25,000 USD netos", "Licencia de NinjaTrader 8 incluida", "Soporte Bookmap y Quantower"],
+              cons: ["Cuota de activación de $149 USD"],
+              coupon: { code: "TTT50", discount: "50% OFF" },
+              officialUrl: "https://tickticktrader.com/",
+            },
+            oneup: {
+              name: "OneUp Trader",
+              badge: "DATOS CME INCLUIDOS",
+              founded: "2017",
+              hq: "Delaware, USA",
+              platforms: "NinjaTrader 8, Tradovate, Rithmic, ATAS, Sierra Chart, VolFix",
+              commissions: "Mini: ~$3.50 RT | Micro: ~$1.15 RT",
+              activation: "$0 USD (Datos de mercado incluidos sin coste)",
+              drawdown: "EOD Trailing ($2,500 en 50K)",
+              ddModel: "Calcula a las 17:00 ET. Se fija en balance inicial.",
+              bots: "Permitidos bots en NinjaTrader y Sierra Chart.",
+              payouts: "Retiros bajo demanda en 24-48h. 100% primeros $10,000.",
+              buffer: "Buffer equivalente al trailing drawdown.",
+              finePrint: "Requiere 15 días mínimos de trading en la evaluación.",
+              pros: ["$0 cuota de activación", "Datos CME de nivel 1 incluidos", "Soporte Sierra Chart, ATAS y VolFix"],
+              cons: ["15 días mínimos de evaluación", "Precios mensuales sin cupón más elevados"],
+              coupon: { code: "ONEUP20", discount: "20% OFF" },
+              officialUrl: "https://oneuptrader.com/",
+            },
+            fasttrack: {
+              name: "Fast Track Trading",
+              badge: "EXAMEN ULTRARRÁPIDO",
+              founded: "2024",
+              hq: "Fort Lauderdale, FL, USA",
+              platforms: "Tradovate, TradingView Web",
+              commissions: "Mini: ~$3.20 RT | Micro: ~$1.10 RT",
+              activation: "$0 USD (Cuentas directas)",
+              drawdown: "EOD Trailing ($2,500 en 50K)",
+              ddModel: "Calcula al cierre de día.",
+              bots: "Permitidos bots vía API Tradovate.",
+              payouts: "Retiros quincenales en 24-48h.",
+              buffer: "Buffer estándar.",
+              finePrint: "Enfoque en cuentas directas sin fase de examen largo.",
+              pros: ["$0 cuota de activación", "Pase muy rápido", "Soporte TradingView"],
+              cons: ["Reglas de consistencia estrictas"],
+              coupon: { code: "FTT30", discount: "30% OFF" },
+              officialUrl: "https://fasttracktrading.net/",
+            },
+            uprofit: {
+              name: "UProfit Trader",
+              badge: "TARGET BAJO (5%)",
+              founded: "2019",
+              hq: "Sugar Land, TX, USA",
+              platforms: "NinjaTrader 8, Rithmic, Quantower",
+              commissions: "Mini: ~$3.70 RT | Micro: ~$1.15 RT",
+              activation: "$150 USD (Live Account Fee)",
+              drawdown: "Intraday Peak Trailing ($2,500 en 50K)",
+              ddModel: "Persigue el flotante intra-sesión. Daily Loss Limit estricto.",
+              bots: "Permitidos bots en NinjaTrader 8.",
+              payouts: "Retiros procesados en 24h tras 4 días de trading. 100% primeros $8,000.",
+              buffer: "Buffer de seguridad obligatorio.",
+              finePrint: "Target bajo del 5% ($2,500 en 50K). Mínimo 4 días de evaluación.",
+              pros: ["Target muy accesible del 5%", "Evaluación superable en solo 4 días", "100% de primeros $8,000"],
+              cons: ["Cuota de activación de $150 USD", "Trailing Intraday y Daily Loss Limit"],
+              coupon: { code: "UPROFIT40", discount: "40% OFF" },
+              officialUrl: "https://uprofit.com/",
+            },
+            elitetrader: {
+              name: "Elite Trader Funding",
+              badge: "100% PRIMEROS $12.5K",
+              founded: "2022",
+              hq: "Delaware, USA",
+              platforms: "Tradovate, NinjaTrader 8, Rithmic, TradingView",
+              commissions: "Mini: ~$3.50 RT | Micro: ~$1.12 RT",
+              activation: "$150 USD (Activation Fee o opción mensual)",
+              drawdown: "EOD Trailing ($2,000 en 50K) o Static (Opción Diamond)",
+              ddModel: "Permite elegir entre evaluación EOD o cuentas Static.",
+              bots: "Permitidos bots y Trade Copiers locales.",
+              payouts: "Retiros quincenales. 100% primeros $12,500.",
+              buffer: "Buffer de seguridad según cuenta.",
+              finePrint: "Hasta 20 cuentas financiadas simultáneas.",
+              pros: ["100% primeros $12,500 netos", "Opción de Drawdown Estático", "Hasta 20 cuentas simultáneas"],
+              cons: ["Cuota de activación si no se elige suscripción"],
+              coupon: { code: "ETF70", discount: "70% OFF" },
+              officialUrl: "https://elitetraderfunding.com/",
+            },
+            earn2trade: {
+              name: "Earn2Trade (Helios)",
+              badge: "BROKER LIVE REAL",
+              founded: "2016",
+              hq: "Wyoming, USA",
+              platforms: "NinjaTrader 8, Rithmic, Finamark",
+              commissions: "Mini: ~$3.40 RT | Micro: ~$1.10 RT",
+              activation: "$0 USD (Cuenta Live Helios real)",
+              drawdown: "EOD Trailing ($2,000 en 50K) escalable hasta $400K",
+              ddModel: "Calcula a las 17:00 ET. Plan de escalado institucional a cuentas live reales.",
+              bots: "Permitidos bots en NinjaTrader en la fase de evaluación.",
+              payouts: "Retiros semanales procesados en 24h. 80% split inicial escalando al 90%.",
+              buffer: "Buffer de cuenta live regulada.",
+              finePrint: "Cuentas live reales con broker Helios Trading. Licencia de NinjaTrader 8 gratuita incluida durante el examen.",
+              pros: ["$0 cuota de activación", "Cuentas reales reguladas (No solo simulación)", "Licencia NinjaTrader 8 gratuita", "Escalado hasta $400,000 USD"],
+              cons: ["Regla de escalado de contratos estricta", "Split inicial del 80%"],
+              coupon: { code: "E2T50", discount: "50% OFF" },
+              officialUrl: "https://earn2trade.com/",
+            },
+            leeloo: {
+              name: "Leeloo Trading",
+              badge: "SIN DAILY LOSS LIMIT",
+              founded: "2019",
+              hq: "Montana, USA",
+              platforms: "NinjaTrader 8, Rithmic",
+              commissions: "Mini: ~$3.60 RT | Micro: ~$1.15 RT",
+              activation: "$140 USD",
+              drawdown: "Intraday Peak Trailing ($2,500 en 50K)",
+              ddModel: "Calcula en tiempo real. Congela en balance inicial en cuenta fondeada.",
+              bots: "Permitidos bots en NinjaTrader 8.",
+              payouts: "Retiros mensuales. 100% de primeros $8,000 netos.",
+              buffer: "Buffer de seguridad de $2,600.",
+              finePrint: "10 días mínimos de trading en examen. Sin Daily Loss Limit en planes Express.",
+              pros: ["Sin Daily Loss Limit", "100% de primeros $8,000 netos", "Permite operar con micro contratos"],
+              cons: ["Cuota de activación de $140 USD", "Retiros con periodicidad mensual"],
+              coupon: { code: "LEELOO50", discount: "50% OFF" },
+              officialUrl: "https://leelootrading.com/",
+            },
+            lucid: {
+              name: "Lucid Trading",
+              badge: "EUROPEA / SEPA & CRYPTO",
+              founded: "2025",
+              hq: "Tallinn, Estonia (EU)",
+              platforms: "Tradovate, NinjaTrader 8, TradingView, Quantower",
+              commissions: "Mini: ~$2.80 RT | Micro: ~$0.98 RT",
+              activation: "$0 USD (Sin activación)",
+              drawdown: "EOD Trailing ($2,000 en 50K)",
+              ddModel: "Calcula a las 17:00 ET. Bloqueo en balance inicial.",
+              bots: "100% Permitidos para trading algorítmico institucional.",
+              payouts: "Día 1 On-Demand vía Rise / Transferencia SEPA y Crypto en < 24h.",
+              buffer: "Buffer de seguridad bajo.",
+              finePrint: "Firma europea con soporte institucional multi-broker y comisiones ultra-bajas.",
+              pros: ["$0 cuota de activación", "Comisiones más bajas del mercado", "Pagos Día 1 en Cripto/SEPA", "Soporte Quantower y Tradovate"],
+              cons: ["Firma muy reciente (fundada en 2025)"],
+              coupon: { code: "LUCID30", discount: "30% OFF" },
+              officialUrl: "https://lucidtrading.com/",
+            },
+          };
 
-            <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: "20px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px", background: "rgba(0,0,0,0.25)", padding: "10px", borderRadius: "var(--radius-md)", maxHeight: "550px", overflowY: "auto" }}>
+          const currentFirm = wikiData[selectedWikiFirm] || wikiData.topstep;
+
+          return (
+            <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: 900, margin: "0 0 4px 0", color: "var(--accent-bright)" }}>
+                📚 Enciclopedia Técnica de Firmas de Futuros CME (17 Firmas Auditadas)
+              </h2>
+              <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "var(--text-secondary)" }}>
+                Fichas técnicas exhaustivas con microestructura, comisiones por contrato, escalado, plataformas y auditoría forense de letra pequeña.
+              </p>
+
+              <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "20px" }}>
+                {/* LISTA LATERAL DE LAS 17 FIRMAS */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "var(--radius-md)", maxHeight: "620px", overflowY: "auto" }}>
+                  {Object.keys(wikiData).map((fKey) => {
+                    const item = wikiData[fKey];
+                    const isSelected = selectedWikiFirm === fKey;
+                    return (
+                      <button
+                        key={fKey}
+                        onClick={() => setSelectedWikiFirm(fKey)}
+                        style={{
+                          textAlign: "left",
+                          padding: "10px 12px",
+                          borderRadius: "6px",
+                          background: isSelected ? "linear-gradient(90deg, rgba(0, 240, 255, 0.18), rgba(34, 197, 94, 0.08))" : "transparent",
+                          border: isSelected ? "1px solid var(--accent)" : "1px solid transparent",
+                          color: isSelected ? "#fff" : "var(--text-secondary)",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: "12px", fontWeight: 800 }}>{item.name}</span>
+                          <span style={{ fontSize: "9px", padding: "1px 5px", borderRadius: "3px", background: "rgba(255,255,255,0.06)", color: "var(--accent-bright)", fontWeight: 700 }}>
+                            {item.founded}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>{item.badge}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* FICHA DETALLADA DE LA FIRMA SELECCIONADA */}
+                <div style={{ background: "rgba(0,0,0,0.25)", padding: "24px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "18px" }}>
+                  {/* CABECERA */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid var(--border)", paddingBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <h3 style={{ fontSize: "20px", fontWeight: 900, color: "#fff", margin: 0 }}>🏛️ {currentFirm.name}</h3>
+                        <span style={{ fontSize: "10px", fontWeight: 900, padding: "2px 8px", borderRadius: "999px", background: "rgba(0, 240, 255, 0.15)", color: "var(--accent-bright)", border: "1px solid var(--accent)" }}>
+                          {currentFirm.badge}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: "11px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>
+                        📍 Sede: <strong>{currentFirm.hq}</strong> · Fundada en: <strong>{currentFirm.founded}</strong> · Plataformas: <strong>{currentFirm.platforms}</strong>
+                      </p>
+                    </div>
+
+                    {/* BOTONES DE ACCIÓN RÁPIDA */}
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      <a
+                        href={currentFirm.officialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          padding: "6px 12px",
+                          background: "var(--accent)",
+                          color: "#000",
+                          borderRadius: "6px",
+                          fontSize: "11px",
+                          fontWeight: 900,
+                          textDecoration: "none",
+                        }}
+                      >
+                        <span>🌐 Sitio Oficial</span>
+                        <span style={{ fontSize: "10px" }}>↗</span>
+                      </a>
+                      {currentFirm.demoUrl && (
+                        <a
+                          href={currentFirm.demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            padding: "6px 12px",
+                            background: "rgba(34, 197, 94, 0.2)",
+                            border: "1px solid var(--success)",
+                            color: "var(--success)",
+                            borderRadius: "6px",
+                            fontSize: "11px",
+                            fontWeight: 800,
+                            textDecoration: "none",
+                          }}
+                        >
+                          <span>🎮 Demo / Trial Gratis</span>
+                          <span style={{ fontSize: "10px" }}>↗</span>
+                        </a>
+                      )}
+                      {currentFirm.coupon && (
+                        <button
+                          onClick={() => handleCopyCode(currentFirm.coupon!.code)}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            padding: "6px 12px",
+                            background: copiedCode === currentFirm.coupon.code ? "rgba(34, 197, 94, 0.2)" : "rgba(255, 255, 255, 0.06)",
+                            border: copiedCode === currentFirm.coupon.code ? "1px solid var(--success)" : "1px dashed var(--accent)",
+                            color: copiedCode === currentFirm.coupon.code ? "var(--success)" : "var(--accent-bright)",
+                            borderRadius: "6px",
+                            fontSize: "11px",
+                            fontWeight: 800,
+                            cursor: "pointer",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <span>{copiedCode === currentFirm.coupon.code ? "✓ ¡Copiado!" : `🎟️ Cupón: ${currentFirm.coupon.code} (${currentFirm.coupon.discount})`}</span>
+                          <span>📋</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* GRID 4 ATRIBUTOS TÉCNICOS */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px" }}>
+                    <div style={{ background: "rgba(0,0,0,0.3)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: 800 }}>COMISIONES ALL-IN</div>
+                      <div style={{ fontSize: "12px", fontWeight: 800, color: "#fff", marginTop: "2px" }}>{currentFirm.commissions}</div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,0.3)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: 800 }}>CUOTA DE ACTIVACIÓN</div>
+                      <div style={{ fontSize: "12px", fontWeight: 800, color: currentFirm.activation.includes("$0") ? "var(--accent)" : "var(--danger)", marginTop: "2px" }}>
+                        {currentFirm.activation}
+                      </div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,0.3)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: 800 }}>MODELO DE DRAWDOWN</div>
+                      <div style={{ fontSize: "12px", fontWeight: 800, color: "var(--warning)", marginTop: "2px" }}>{currentFirm.drawdown}</div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,0.3)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: 800 }}>PAGOS & RETIROS</div>
+                      <div style={{ fontSize: "12px", fontWeight: 800, color: "var(--success)", marginTop: "2px" }}>{currentFirm.payouts}</div>
+                    </div>
+                  </div>
+
+                  {/* POLÍTICA DE BOTS Y DRAWDOWN */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", borderLeft: "3px solid var(--accent)" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 900, color: "var(--accent-bright)", marginBottom: "4px" }}>
+                        🛡️ Comportamiento del Drawdown:
+                      </div>
+                      <div style={{ fontSize: "12px", lineHeight: "1.5", color: "var(--text-secondary)" }}>
+                        {currentFirm.ddModel}
+                      </div>
+                    </div>
+                    <div style={{ background: "rgba(0,0,0,0.3)", padding: "14px", borderRadius: "8px", borderLeft: "3px solid var(--success)" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 900, color: "var(--success)", marginBottom: "4px" }}>
+                        🤖 Política de Bots & Automatización:
+                      </div>
+                      <div style={{ fontSize: "12px", lineHeight: "1.5", color: "var(--text-secondary)" }}>
+                        {currentFirm.bots}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* LETRA PEQUEÑA CLAVE */}
+                  <div style={{ background: "rgba(239, 68, 68, 0.06)", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "8px", padding: "14px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 900, color: "var(--danger)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span>⚠️ Radar de Letra Pequeña & Reglas Críticas:</span>
+                    </div>
+                    <div style={{ fontSize: "12px", lineHeight: "1.5", color: "var(--text-secondary)" }}>
+                      {currentFirm.finePrint}
+                    </div>
+                  </div>
+
+                  {/* PROS Y CONTRAS */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div style={{ background: "rgba(34, 197, 94, 0.05)", border: "1px solid rgba(34, 197, 94, 0.2)", borderRadius: "8px", padding: "14px" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 900, color: "var(--success)", marginBottom: "6px" }}>
+                        ✓ Puntos Fuertes:
+                      </div>
+                      <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "var(--text-secondary)", lineHeight: "1.6" }}>
+                        {currentFirm.pros.map((p, pIdx) => (
+                          <li key={pIdx}>{p}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: "8px", padding: "14px" }}>
+                      <div style={{ fontSize: "11px", fontWeight: 900, color: "var(--danger)", marginBottom: "6px" }}>
+                        ✕ Consideraciones y Contras:
+                      </div>
+                      <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "var(--text-secondary)", lineHeight: "1.6" }}>
+                        {currentFirm.cons.map((c, cIdx) => (
+                          <li key={cIdx}>{c}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ========================================================================= */}
+        {/* MÓDULO 6: GUÍAS TÉCNICAS (7 GUÍAS COMPLETAS PASO A PASO)                   */}
+        {/* ========================================================================= */}
+        {activeModule === "GUIAS" && (() => {
+          const guidesData: Record<string, {
+            title: string;
+            subtitle: string;
+            steps: { title: string; desc: string; tip?: string }[];
+            proTip: string;
+          }> = {
+            "rithmic-nt8": {
+              title: "Protocolo de Conexión: Rithmic R|Trader Pro ➔ NinjaTrader 8 (Multi-Provider)",
+              subtitle: "Configura Rithmic Plug-in Brokerage para operar cuentas de Apex, Bulenox y UProfit con menos de 3ms de latencia.",
+              steps: [
+                { title: "Paso 1: Abrir y Configurar R|Trader Pro", desc: "Abre R|Trader Pro, introduce tu usuario y contraseña, selecciona tu firma (Apex, Bulenox, UProfit) en System y Chicago Area en Gateway. Activa la casilla 'Allow Plug-in Brokerage' antes de hacer Login.", tip: "Si no activas Allow Plug-in Brokerage, NinjaTrader devolverá error de conexión rechazada." },
+                { title: "Paso 2: Aceptar Acuerdos de Datos CME", desc: "La primera vez que entres, aparecerán dos popups de acuerdos de mercado CME Non-Professional. Acepta ambos documentos para que el flujo de datos de futuros (MES, MNQ, ES, NQ) quede desbloqueado.", tip: "Debes aceptarlos en R|Trader antes de conectar NinjaTrader." },
+                { title: "Paso 3: Activar Modo Multi-Provider en NinjaTrader 8", desc: "En NinjaTrader 8, ve a la barra superior Tools ➔ Options ➔ General y marca la casilla 'Multi-provider'. Haz clic en Aplicar y OK. Esto te permite conectar múltiples proveedores simultáneos.", tip: "Requiere reiniciar NinjaTrader si estaba desmarcado." },
+                { title: "Paso 4: Configurar la Conexión Rithmic", desc: "En el menú Connections ➔ configure, selecciona 'Rithmic for NinjaTrader 8' y pulsa Add. En System selecciona tu firma, y en Connect Options marca obligatoriamente 'Connect via Plug-in'.", tip: "Marca 'Connect on startup' para que se conecte solo al abrir NT8." },
+                { title: "Paso 5: Conectar y Verificar Luz Verde", desc: "Ve a Connections ➔ selecciona tu conexión Rithmic. En 2-3 segundos el punto inferior izquierdo del Control Center se pondrá en verde brillante 🟢.", tip: "Ya puedes abrir gráficos o ejecutar bots con datos CME en vivo." },
+              ],
+              proTip: "Mantén siempre R|Trader Pro abierto en segundo plano como pasarela plug-in. Esto evita consumir sesiones concurrentes de datos CME.",
+            },
+            "tradovate-tv": {
+              title: "Protocolo de Conexión: Tradovate ➔ TradingView Web/Desktop & Cloud",
+              subtitle: "Conecta tu cuenta de Tradovate (MFFU, Tradeify, Topstep, FundedNext) a TradingView para operar directamente desde sus gráficos.",
+              steps: [
+                { title: "Paso 1: Activar Add-on de TradingView en Tradovate", desc: "Inicia sesión en trader.tradovate.com, ve a Settings (icono de engranaje) ➔ Add-Ons ➔ TradingView y pulsa 'Activate'. Es gratuito en la mayoría de firmas de fondeo.", tip: "En algunas firmas viene activado por defecto con el registro." },
+                { title: "Paso 2: Abrir Gráfico de Futuros en TradingView", desc: "Abre es.tradingview.com y busca el contrato continuo o frontal del activo que vas a operar (ej. CME_MINI:ES1!, CME_MINI:NQ1!, CBOT_MINI:YM1!).", tip: "Asegúrate de tener habilitados los datos en tiempo real de CME en TradingView." },
+                { title: "Paso 3: Abrir Panel de Trading e Iniciar Sesión", desc: "En la parte inferior de TradingView, abre la pestaña 'Panel de Trading', localiza el broker 'Tradovate' y pulsa 'Conectar'.", tip: "En el popup, selecciona 'Demo / Simulation' si estás en fase de examen." },
+                { title: "Paso 4: Seleccionar Cuenta Activa y Operar", desc: "Una vez conectado, verás el desplegable con tus cuentas de fondeo (ej. MFFU-12345, TRD-67890). Selecciona la cuenta deseada y activa los botones Buy/Sell en el gráfico.", tip: "Las órdenes se sincronizan en la nube con Tradovate al instante." },
+              ],
+              proTip: "Configura siempre una orden Bracket (Stop Loss + Take Profit) antes de enviar la orden desde TradingView para proteger el Drawdown EOD.",
+            },
+            "trade-copier": {
+              title: "Setup de Trade Copier Multi-Cuenta (Replicanto en NinjaTrader 8)",
+              subtitle: "Replica operaciones en tiempo real entre múltiples cuentas de fondeo con conversión de ratio y protección de desincronización.",
+              steps: [
+                { title: "Paso 1: Instalar Replicanto en NinjaTrader 8", desc: "Descarga el archivo .zip de Replicanto (FlowBots), ve a NinjaTrader 8 ➔ Tools ➔ Import ➔ NinjaScript Add-On y selecciona el archivo.", tip: "Reinicia NinjaTrader para que aparezca en el menú superior." },
+                { title: "Paso 2: Abrir Panel de Replicanto y Asignar Líder", desc: "Abre New ➔ Replicanto. En la columna 'Master / Leader', selecciona tu cuenta principal donde ejecutas tus entradas manuales o de tu bot.", tip: "La cuenta líder enviará las órdenes a todas las demás." },
+                { title: "Paso 3: Añadir Cuentas Seguidoras (Followers)", desc: "Añade en la lista inferior todas las cuentas esclavas que deben copiar las órdenes (ej. 5 cuentas de Apex, 3 de Bulenox, 2 de MFFU).", tip: "Puedes mezclar cuentas de diferentes prop firms siempre que estén conectadas en NT8." },
+                { title: "Paso 4: Configurar Conversión de Minis a Micros (1:10)", desc: "Si replicas órdenes de contratos Mini (ES/NQ) a cuentas de menor tamaño (25K), activa en la fila de esa cuenta 'Convert Mini to Micro (1:10)'.", tip: "Evita quemar cuentas pequeñas por apalancamiento excesivo." },
+                { title: "Paso 5: Activar 'Flatten Followers on Disconnect'", desc: "En las opciones globales de Replicanto, marca 'Flatten followers on disconnect' y 'Auto-flatten on master SL'.", tip: "Garantiza que si se corta internet o salta el stop, todas las cuentas cierren a la vez." },
+              ],
+              proTip: "Ejecuta siempre un trade de prueba con 1 micro (MES) para confirmar que todas las cuentas seguidoras abren y cierran sincronizadas.",
+            },
+            "topstepx-setup": {
+              title: "Configuración Avanzada de TopstepX: Bracket Orders & Auto-Risk Guard",
+              subtitle: "Optimiza la plataforma web propietaria de Topstep con controles de riesgo automáticos para no quebrar nunca la regla de pérdida diaria.",
+              steps: [
+                { title: "Paso 1: Acceso a TopstepX Web", desc: "Entra a topstepx.com con tus credenciales de Topstep. La plataforma corre directamente en el navegador con motor TradingView integrado y cero latencia.", tip: "No requiere instalar ningún ejecutable en Windows ni configurar gateways." },
+                { title: "Paso 2: Configurar Auto-Risk Daily Loss Circuit Breaker", desc: "Ve a Settings ➔ Risk Controls. Introduce tu límite de pérdida diaria personalizada (ej. $800 en una cuenta 50K con DLL de $1,000) y marca 'Lock out account on breach'.", tip: "TopstepX cerrará todas tus posiciones y bloqueará nuevas órdenes hasta la siguiente sesión." },
+                { title: "Paso 3: Plantillas de Órdenes Bracket (Auto-SL y TP)", desc: "En el panel de Order Entry, crea una plantilla Bracket fijando tu Stop Loss en ticks fijos (ej. 15 ticks en NQ / $75) y Take Profit (ej. 30 ticks / $150).", tip: "Al entrar a mercado, el Stop Loss se coloca en el servidor de forma instantánea." },
+                { title: "Paso 4: Monitorear el Trailing Drawdown en Tiempo Real", desc: "En la barra superior de TopstepX verás el medidor de Drawdown EOD en vivo, mostrando exactamente cuántos dólares te quedan de colchón antes de tocar el stop.", tip: "Se actualiza tras cada cierre de sesión a las 17:00 ET." },
+              ],
+              proTip: "Utiliza el modo 'Simulator / Practice' de TopstepX para probar tus estrategias antes de operar la cuenta Express funded.",
+            },
+            "sqx-nt8-deploy": {
+              title: "Deploy de Bots StrategyQuant X en NinjaTrader 8 (VPS 24/7 con < 3ms)",
+              subtitle: "Compila y despliega carteras de sistemas algorítmicos generados en StrategyQuant X en tu VPS para operar desatendido.",
+              steps: [
+                { title: "Paso 1: Exportar Estrategia desde StrategyQuant X", desc: "En SQX, selecciona tu estrategia aprobada en el Databank y pulsa 'Export to NinjaScript (NT8)'. Se generará un archivo .cs con el código C# del bot.", tip: "Verifica que los parámetros de gestión de riesgo coincidan con las reglas de la firma." },
+                { title: "Paso 2: Importar NinjaScript en NinjaTrader 8", desc: "En NinjaTrader 8 en tu VPS, ve a Tools ➔ Import ➔ NinjaScript Add-On y selecciona el archivo .cs exportado de SQX.", tip: "NinjaTrader compilará el script automáticamente." },
+                { title: "Paso 3: Abrir Gráfico y Asignar la Estrategia", desc: "Abre el gráfico del instrumento (ej. NQ 5-min), clic derecho ➔ Strategies ➔ selecciona tu bot de SQX. Configura tu cuenta de fondeo (BluSky, MFFU, Tradeify) y marca 'Enabled: True'.", tip: "Asegúrate de que la conexión Rithmic o Tradovate esté activa con luz verde." },
+                { title: "Paso 4: Configurar Disyuntor Horario y Cierre Diario", desc: "Programa en el bot la hora límite de cierre a las 15:00 CT para cumplir con la regla de no mantener posiciones overnight.", tip: "Evita sanciones por mantener posiciones abiertas fuera de sesión." },
+              ],
+              proTip: "Aloja tu NinjaTrader 8 en una VPS en Chicago (ej. Equinix NY4 / CME Aurora) para reducir la latencia de ejecución a menos de 2 milisegundos.",
+            },
+            "cme-data-fees": {
+              title: "Gestión de Acuerdos de Datos CME Non-Professional & Pasarelas de Datos",
+              subtitle: "Evita recargos profesionales y desbloquea el book de órdenes nivel 1 (Top of Book) y nivel 2 (Depth of Market) en futuros CME.",
+              steps: [
+                { title: "Paso 1: Clasificación como Trader No Profesional", desc: "Al registrarte en cualquier prop firm, declara tu condición de Non-Professional (persona física que opera con fines propios).", tip: "Los datos para no profesionales son gratuitos o incluidos en el precio del examen." },
+                { title: "Paso 2: Firma de Acuerdos Electrónicos en R|Trader", desc: "En Rithmic R|Trader Pro, pulsa en los dos acuerdos que aparecen al conectar por primera vez y selecciona 'I Agree'.", tip: "Sin esta firma, NinjaTrader no recibirá cotizaciones del CME." },
+                { title: "Paso 3: Suscripción de Nivel 2 (DOM / Depth of Market)", desc: "Si utilizas herramientas de order flow como Bookmap o Jigsaw, puedes solicitar datos de Nivel 2 (Depth) directamente en el panel de usuario de Tradovate o Rithmic.", tip: "El nivel 1 estándar (Top of Book) es suficiente para gráficos de velas y bots." },
+              ],
+              proTip: "Nunca inicies sesión en Rithmic desde dos ordenadores a la vez con las mismas credenciales para evitar bloqueos por sesión duplicada.",
+            },
+            "payout-buffer": {
+              title: "Estrategia Matemática de Retiro de Beneficios & Mantenimiento del Buffer",
+              subtitle: "Calcula exactamente cuánto retirar en cada ciclo para no quebrar la cuenta con el primer pago y maximizar el interés compuesto.",
+              steps: [
+                { title: "Paso 1: Identificar el Nivel de Bloqueo del Drawdown", desc: "En cuentas con Drawdown EOD (MFFU, Tradeify, Topstep), el drawdown se congela en el balance inicial (ej. $50,100 en 50K) una vez alcanzado el umbral fijado.", tip: "Comprueba en la ficha técnica de la firma si el trailing se congela o sigue subiendo." },
+                { title: "Paso 2: Calcular el Colchón de Seguridad Mínimo (Buffer)", desc: "Para una cuenta de 50K con $2,000 de Drawdown, mantén siempre al menos $2,500 de ganancias acumuladas antes de retirar.", tip: "Si tu balance es $53,000 y retiras $3,000, tu balance volverá a $50,000 y quebrarás con una pérdida de solo $1." },
+                { title: "Paso 3: Fórmula de Retiro Seguro (50/50)", desc: "Aplica la regla institucional: Retira el 50% de las ganancias que excedan el buffer de seguridad, y deja el otro 50% para aumentar tu margen de maniobra.", tip: "Ejemplo: Balance $54,000 ➔ Buffer $2,000 ➔ Excedente $2,000 ➔ Retirar $1,000 y dejar $3,000 de colchón total." },
+                { title: "Paso 4: Cumplir la Regla de Consistencia al Retirar", desc: "Verifica que tu mejor día de ganancias no represente más del 30%-40% del profit total acumulado al momento de emitir la solicitud.", tip: "Evita rechazos de pago por operar con volumen desproporcionado en una sola sesión." },
+              ],
+              proTip: "Revisa siempre la ventana de solicitud de retiros (Día 1 On-Demand en MFFU/Tradeify vs Días 1-5 en Apex/Bulenox) para planificar tus transferencias a Rise o Cripto.",
+            },
+          };
+
+          const activeGuide = guidesData[selectedGuide] || guidesData["rithmic-nt8"];
+
+          return (
+            <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
+              <h2 style={{ fontSize: "20px", fontWeight: 900, margin: "0 0 4px 0", color: "var(--accent-bright)" }}>
+                🔧 Guías Técnicas de Conectividad e Infraestructura CME (7 Protocolos Paso a Paso)
+              </h2>
+              <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "var(--text-secondary)" }}>
+                Protocolos de configuración profesional para conectar plataformas de futuros, pasarelas de datos y trade copiers con menos de 3ms de latencia.
+              </p>
+
+              {/* SELECTOR DE LAS 7 GUÍAS */}
+              <div style={{ display: "flex", gap: "8px", marginBottom: "20px", flexWrap: "wrap" }}>
                 {[
-                  { id: "topstep", name: "Topstep (Chicago)", founded: "2012" },
-                  { id: "mffu", name: "MyFundedFutures (MFFU)", founded: "2023" },
-                  { id: "tradeify", name: "Tradeify (Miami)", founded: "2024" },
-                  { id: "apex", name: "Apex Trader Funding", founded: "2021" },
-                  { id: "tradeday", name: "TradeDay (Chicago)", founded: "2020" },
-                  { id: "takeprofit", name: "Take Profit Trader", founded: "2021" },
-                  { id: "bulenox", name: "Bulenox", founded: "2022" },
-                  { id: "fundednext", name: "FundedNext Futures", founded: "2024" },
-                  { id: "blusky", name: "BluSky Trading (Static)", founded: "2022" },
-                  { id: "ticktick", name: "TickTick Trader", founded: "2022" },
-                  { id: "oneup", name: "OneUp Trader", founded: "2017" },
-                  { id: "fasttrack", name: "Fast Track Trading", founded: "2024" },
-                  { id: "uprofit", name: "UProfit Trader", founded: "2019" },
-                  { id: "elitetrader", name: "Elite Trader Funding", founded: "2022" },
-                  { id: "earn2trade", name: "Earn2Trade (Helios)", founded: "2016" },
-                  { id: "leeloo", name: "Leeloo Trading", founded: "2019" },
-                  { id: "lucid", name: "Lucid Trading", founded: "2025" },
-                ].map((f) => (
+                  { id: "rithmic-nt8", label: "🔧 1. Rithmic ➔ NinjaTrader 8" },
+                  { id: "tradovate-tv", label: "📈 2. Tradovate ➔ TradingView" },
+                  { id: "trade-copier", label: "👥 3. Trade Copier (Replicanto)" },
+                  { id: "topstepx-setup", label: "⚡ 4. Setup TopstepX & Risk" },
+                  { id: "sqx-nt8-deploy", label: "🤖 5. Deploy Bots SQX en VPS" },
+                  { id: "cme-data-fees", label: "📊 6. Acuerdos de Datos CME" },
+                  { id: "payout-buffer", label: "🛡️ 7. Retiros & Buffer Seguro" },
+                ].map((g) => (
                   <button
-                    key={f.id}
-                    onClick={() => setSelectedWikiFirm(f.id)}
+                    key={g.id}
+                    onClick={() => setSelectedGuide(g.id)}
                     style={{
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      borderRadius: "4px",
-                      background: selectedWikiFirm === f.id ? "rgba(99, 225, 180, 0.15)" : "transparent",
-                      border: selectedWikiFirm === f.id ? "1px solid var(--accent)" : "1px solid transparent",
-                      color: selectedWikiFirm === f.id ? "var(--accent-bright)" : "var(--text-secondary)",
-                      fontSize: "12px",
-                      fontWeight: 700,
+                      padding: "8px 14px",
+                      borderRadius: "6px",
+                      background: selectedGuide === g.id ? "rgba(0, 240, 255, 0.15)" : "var(--bg-2)",
+                      border: selectedGuide === g.id ? "1px solid var(--accent)" : "1px solid var(--border)",
+                      color: selectedGuide === g.id ? "var(--accent-bright)" : "var(--text-secondary)",
+                      fontSize: "11px",
+                      fontWeight: 800,
                       cursor: "pointer",
+                      transition: "all 0.15s ease",
                     }}
                   >
-                    <div>{f.name}</div>
-                    <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Fundada: {f.founded}</div>
+                    {g.label}
                   </button>
                 ))}
               </div>
 
-              <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border)" }}>
-                {selectedWikiFirm === "topstep" && (
-                  <div>
-                    <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#fff", marginBottom: "4px" }}>🏛️ Topstep — Ficha Enciclopédica Oficial</h3>
-                    <p style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "14px" }}>Fundada en 2012 en Chicago, IL. Firma #1 en solvencia institucional con plataforma TopstepX integrada con TradingView.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px", marginBottom: "14px" }}>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>COMISIONES ALL-IN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800 }}>Mini: ~$3.80 RT | Micro: ~$1.10 RT</div>
-                      </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>CUOTA ACTIVACIÓN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--danger)" }}>$149 USD (Pass Fee)</div>
-                      </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>PAGOS & RETIROS</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--success)" }}>Diarios tras 5d ganadores de más de $200</div>
-                      </div>
-                    </div>
-                    <div style={{ fontSize: "12px", lineHeight: "1.6", color: "var(--text-secondary)" }}>
-                      <strong>Letra Pequeña Clave:</strong> Prohibido VPS comercial de data center público o proxies residenciales. Posiciones deben cerrarse a las 15:10 CT (16:10 ET). Trading de noticias permitido sin restricción.
-                    </div>
-                  </div>
-                )}
+              {/* CONTENIDO DE LA GUÍA SELECCIONADA */}
+              <div style={{ background: "rgba(0,0,0,0.25)", padding: "24px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div>
+                  <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#fff", margin: "0 0 4px 0" }}>
+                    {activeGuide.title}
+                  </h3>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: 0 }}>
+                    {activeGuide.subtitle}
+                  </p>
+                </div>
 
-                {selectedWikiFirm === "mffu" && (
-                  <div>
-                    <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#fff", marginBottom: "4px" }}>🏛️ MyFundedFutures (MFFU) — Ficha Enciclopédica</h3>
-                    <p style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "14px" }}>Fundada en 2023 en Austin, TX. Modelo Rapid pionero con $0 activación y retiros Día 1 On-Demand.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px", marginBottom: "14px" }}>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>COMISIONES ALL-IN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800 }}>Mini: ~$2.90 RT | Micro: ~$1.04 RT</div>
+                {/* PASOS NUMERADOS */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {activeGuide.steps.map((st, sIdx) => (
+                    <div
+                      key={sIdx}
+                      style={{
+                        display: "flex",
+                        gap: "12px",
+                        padding: "14px",
+                        background: "rgba(255, 255, 255, 0.02)",
+                        border: "1px solid rgba(255, 255, 255, 0.06)",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          minWidth: "28px",
+                          height: "28px",
+                          borderRadius: "6px",
+                          background: "rgba(0, 240, 255, 0.18)",
+                          border: "1px solid var(--accent)",
+                          color: "var(--accent-bright)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "12px",
+                          fontWeight: 900,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {sIdx + 1}
                       </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>CUOTA ACTIVACIÓN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--accent)" }}>$0 USD (Rapid Plan)</div>
-                      </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>PAGOS & RETIROS</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--success)" }}>Día 1 On-Demand en 12-24h</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: "13px", fontWeight: 800, color: "#fff", marginBottom: "4px" }}>
+                          {st.title}
+                        </div>
+                        <div style={{ fontSize: "12px", lineHeight: "1.5", color: "var(--text-secondary)" }}>
+                          {st.desc}
+                        </div>
+                        {st.tip && (
+                          <div style={{ marginTop: "6px", fontSize: "11px", color: "var(--accent-bright)", display: "flex", alignItems: "center", gap: "4px" }}>
+                            <span>💡 Tip Pro:</span>
+                            <span style={{ color: "var(--text-muted)" }}>{st.tip}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div style={{ fontSize: "12px", lineHeight: "1.6", color: "var(--text-secondary)" }}>
-                      <strong>Letra Pequeña Clave:</strong> Trailing DD se congela en $50,100 una vez alcanzado el balance de $52,000. 100% de los primeros $10,000 netos. Permitidos bots en VPS sin restricciones.
-                    </div>
-                  </div>
-                )}
+                  ))}
+                </div>
 
-                {selectedWikiFirm === "blusky" && (
-                  <div>
-                    <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#fff", marginBottom: "4px" }}>🏛️ BluSky Trading — Ficha Enciclopédica</h3>
-                    <p style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "14px" }}>Fundada en 2022 en Texas. Especialista en Drawdown Estático Puro (inmutable).</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px", marginBottom: "14px" }}>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>TIPO DRAWDOWN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--accent)" }}>100% Estático (Static)</div>
-                      </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>CUOTA ACTIVACIÓN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--accent)" }}>$0 USD</div>
-                      </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: "10px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>RETIROS</div>
-                        <div style={{ fontSize: "13px", fontWeight: 800, color: "var(--info)" }}>Semanales tras 8 días</div>
-                      </div>
-                    </div>
-                    <div style={{ fontSize: "12px", lineHeight: "1.6", color: "var(--text-secondary)" }}>
-                      <strong>Ventaja Matemática:</strong> El nivel de pérdida se fija en $48,000 en la cuenta 50K y jamás sube, permitiendo aguantar retrocesos normales de mercado sin arrastrar el stop de liquidación.
-                    </div>
-                  </div>
-                )}
-
-                {selectedWikiFirm !== "topstep" && selectedWikiFirm !== "mffu" && selectedWikiFirm !== "blusky" && (
-                  <div>
-                    <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#fff", marginBottom: "4px" }}>🏛️ Ficha Técnica Oficial</h3>
-                    <p style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "14px" }}>Información detallada verificada en tiempo real en la base de datos de Ultrarentable.</p>
-                    <div style={{ padding: "12px", background: "rgba(0,0,0,0.3)", borderRadius: "4px", fontSize: "12px" }}>
-                      Consulta los datos específicos de examen y fondeado en la pestaña del Catálogo Maestro o ejecuta la simulación Monte Carlo.
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* MÓDULO 6: GUÍAS TÉCNICAS                                                  */}
-        {/* ========================================================================= */}
-        {activeModule === "GUIAS" && (
-          <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
-            <h2 style={{ fontSize: "20px", fontWeight: 900, margin: "0 0 4px 0", color: "var(--accent-bright)" }}>
-              🔧 Guías Técnicas de Conectividad e Infraestructura CME
-            </h2>
-            <p style={{ margin: "0 0 20px 0", fontSize: "12px", color: "var(--text-secondary)" }}>
-              Protocolos de configuración profesional para conectar plataformas de futuros, pasarelas de datos y trade copiers con menos de 5ms de latencia.
-            </p>
-
-            <div style={{ display: "flex", gap: "8px", marginBottom: "20px" }}>
-              {[
-                { id: "rithmic-nt8", label: "🔧 Guía 1: Rithmic R|Trader Pro ➔ NinjaTrader 8" },
-                { id: "tradovate-tv", label: "📈 Guía 2: Tradovate ➔ TradingView Web/Desktop" },
-                { id: "trade-copier", label: "👥 Guía 3: Setup de Trade Copier Multi-Cuenta" },
-              ].map((g) => (
-                <button
-                  key={g.id}
-                  onClick={() => setSelectedGuide(g.id)}
+                {/* PRO TIP DESTACADO */}
+                <div
                   style={{
-                    padding: "8px 16px",
-                    borderRadius: "6px",
-                    background: selectedGuide === g.id ? "rgba(99, 225, 180, 0.15)" : "var(--bg-2)",
-                    border: selectedGuide === g.id ? "1px solid var(--accent)" : "1px solid var(--border)",
-                    color: selectedGuide === g.id ? "var(--accent-bright)" : "var(--text-secondary)",
-                    fontSize: "12px",
-                    fontWeight: 800,
-                    cursor: "pointer",
+                    padding: "14px",
+                    background: "linear-gradient(90deg, rgba(0, 240, 255, 0.08), rgba(34, 197, 94, 0.08))",
+                    border: "1px solid var(--accent)",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
                   }}
                 >
-                  {g.label}
-                </button>
-              ))}
+                  <span style={{ fontSize: "20px" }}>⚡</span>
+                  <div style={{ fontSize: "12px", color: "#fff" }}>
+                    <strong style={{ color: "var(--accent-bright)" }}>Recomendación Institucional:</strong> {activeGuide.proTip}
+                  </div>
+                </div>
+              </div>
             </div>
+          );
+        })()}
 
-            <div style={{ background: "rgba(0,0,0,0.25)", padding: "20px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border)", fontSize: "12px", lineHeight: "1.6" }}>
-              {selectedGuide === "rithmic-nt8" && (
-                <div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 800, color: "#fff", marginBottom: "8px" }}>Protocolo de Conexión: R|Trader Pro ➔ NinjaTrader 8 (Multi-Provider)</h3>
-                  <ol style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <li><strong>Paso 1:</strong> Abre R|Trader Pro, ingresa tus credenciales, selecciona tu firma (Apex, Bulenox, UProfit) y activa <code>Allow Plug-in Brokerage</code> en el servidor <code>Chicago Area</code>.</li>
-                    <li><strong>Paso 2:</strong> Acepta los dos acuerdos de datos CME Non-Professional en R|Trader Pro antes de abrir NinjaTrader.</li>
-                    <li><strong>Paso 3:</strong> En NinjaTrader 8, ve a <code>Tools ➔ Options ➔ General</code> y marca <code>Multi-provider</code>.</li>
-                    <li><strong>Paso 4:</strong> En <code>Connections ➔ configure</code>, añade <code>Rithmic for NinjaTrader 8</code> y marca <code>Connect via Plug-in</code>.</li>
-                  </ol>
-                </div>
-              )}
 
-              {selectedGuide === "tradovate-tv" && (
-                <div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 800, color: "#fff", marginBottom: "8px" }}>Protocolo de Conexión: Tradovate ➔ TradingView</h3>
-                  <ol style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <li><strong>Paso 1:</strong> En <code>trader.tradovate.com</code>, ve a <code>Settings ➔ Add-Ons</code> y verifica que TradingView esté activo.</li>
-                    <li><strong>Paso 2:</strong> En TradingView, abre el gráfico de futuros CME (ej. <code>CME_MINI:ES1!</code>, <code>CME_MINI:NQ1!</code>).</li>
-                    <li><strong>Paso 3:</strong> Abre la pestaña inferior <code>Trading Panel</code>, selecciona <code>Tradovate</code> e ingresa tus credenciales en modo <code>Demo / Simulation</code>.</li>
-                  </ol>
-                </div>
-              )}
-
-              {selectedGuide === "trade-copier" && (
-                <div>
-                  <h3 style={{ fontSize: "16px", fontWeight: 800, color: "#fff", marginBottom: "8px" }}>Setup de Trade Copier Multi-Cuenta (Replicanto NT8)</h3>
-                  <ol style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <li><strong>Paso 1:</strong> Instala el Add-on de Replicanto en NinjaTrader 8.</li>
-                    <li><strong>Paso 2:</strong> Define tu <code>Leader Account</code> (cuenta maestra) y añade las <code>Follower Accounts</code> esclavas.</li>
-                    <li><strong>Paso 3:</strong> Si clonas órdenes de minis a cuentas de menor tamaño, habilita <code>Convert Mini to Micro (1:10)</code>.</li>
-                    <li><strong>Paso 4:</strong> Activa siempre <code>Flatten followers on disconnect</code> para evitar posiciones desincronizadas huérfanas.</li>
-                  </ol>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* MODAL COMPARADOR LADO A LADO */}
         {showCompareModal && compareList.length > 0 && (
@@ -2936,20 +3997,21 @@ export default function WorldClassFuturesPropFirmsPage() {
           ) : (
             <div
               style={{
-                width: "420px",
-                height: "560px",
-                background: "rgba(10, 16, 26, 0.96)",
-                backdropFilter: "blur(16px)",
+                width: "480px",
+                height: "620px",
+                maxWidth: "calc(100vw - 32px)",
+                background: "rgba(10, 16, 26, 0.98)",
+                backdropFilter: "blur(20px)",
                 border: "1px solid var(--accent)",
                 borderRadius: "16px",
                 display: "flex",
                 flexDirection: "column",
                 overflow: "hidden",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.85)",
               }}
             >
               {/* CABECERA POPUP */}
-              <div style={{ padding: "14px 16px", background: "rgba(0,0,0,0.4)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ padding: "14px 16px", background: "rgba(0,0,0,0.5)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <span style={{ fontSize: "20px" }}>🤖</span>
                   <div>
@@ -2984,23 +4046,23 @@ export default function WorldClassFuturesPropFirmsPage() {
                     key={m.id}
                     style={{
                       alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                      maxWidth: "90%",
-                      padding: "10px 14px",
+                      maxWidth: "94%",
+                      padding: "12px 14px",
                       borderRadius: m.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
-                      background: m.role === "user" ? "rgba(0, 240, 255, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                      background: m.role === "user" ? "rgba(0, 240, 255, 0.15)" : "rgba(255, 255, 255, 0.04)",
                       border: m.role === "user" ? "1px solid var(--accent)" : "1px solid var(--border)",
                       fontSize: "12px",
                       lineHeight: "1.5",
                       color: "#fff",
-                      whiteSpace: "pre-wrap",
                     }}
                   >
-                    {m.content}
+                    <VisualChatContent content={m.content} />
                   </div>
                 ))}
                 {isChatLoading && (
-                  <div style={{ color: "var(--accent)", fontSize: "11px", fontWeight: 700 }}>
-                    ⏳ UltraBot AI analizando...
+                  <div style={{ color: "var(--accent)", fontSize: "11px", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
+                    <div style={{ width: "12px", height: "12px", border: "2px solid var(--accent)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                    <span>UltraBot AI analizando en vivo...</span>
                   </div>
                 )}
               </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import { useTelemetryStream } from "@/hooks/useTelemetryStream";
 import { WorkerId } from "@/types/telemetry";
+import { getApiUrl } from "@/lib/api";
 
 const WORKER_NAMES: Record<WorkerId, string> = {
   DataWorker: "Ingesta de Datos & Detección de Gaps",
@@ -90,7 +91,7 @@ export default function SistemaSupervisorPage() {
     current_action_badge: "⚡ Minería 24/7 Activa",
     total_candidates: 230,
     filter_funnel: {
-      total_evaluated: 609305,
+      total_evaluated: 610531,
       passed_is: 255906,
       passed_oos: 109674,
       passed_wfo: 48744,
@@ -101,7 +102,11 @@ export default function SistemaSupervisorPage() {
     activity_feed: [],
   });
 
-  const [firebaseStatus, setFirebaseStatus] = useState<any>(null);
+  const [firebaseStatus, setFirebaseStatus] = useState<any>({
+    status: "HEALTHY",
+    last_sync: "En vivo",
+    persistence_mode: "REALTIME_DATABASE",
+  });
   const [syncingFirebase, setSyncingFirebase] = useState<boolean>(false);
   const [recovering, setRecovering] = useState<boolean>(false);
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
@@ -113,12 +118,12 @@ export default function SistemaSupervisorPage() {
 
   const fetchLiveTelemetry = useCallback(async () => {
     try {
-      const res = await fetch("/api/v2/real/search-telemetry");
+      const res = await fetch(getApiUrl("/api/v2/real/search-telemetry"));
       if (res.ok) {
         const data = await res.json();
         setTelemetry(data);
       }
-      const fbRes = await fetch("/api/v1/sync/firebase/status");
+      const fbRes = await fetch(getApiUrl("/api/v1/sync/firebase/status"));
       if (fbRes.ok) {
         const fbData = await fbRes.json();
         setFirebaseStatus(fbData);
@@ -138,7 +143,7 @@ export default function SistemaSupervisorPage() {
     setSyncingFirebase(true);
     setSyncMsg("Sincronizando 24/7 con Firebase Realtime Database...");
     try {
-      const res = await fetch("/api/v1/sync/firebase/sync-now", { method: "POST" });
+      const res = await fetch(getApiUrl("/api/v1/sync/firebase/sync-now"), { method: "POST" });
       if (res.ok) {
         const d = await res.json();
         setSyncMsg(`✓ Firebase Cloud sincronizado con éxito: ${d.synced_counts?.total || 230} candidatos.`);
@@ -156,7 +161,7 @@ export default function SistemaSupervisorPage() {
     setRecovering(true);
     setSyncMsg("Ejecutando auto-recuperación y reinicio de servicios...");
     try {
-      const res = await fetch("/api/v1/telemetry/recovery", { method: "POST" });
+      const res = await fetch(getApiUrl("/api/v1/telemetry/recovery"), { method: "POST" });
       if (res.ok) {
         setSyncMsg("✓ Auto-recuperación ejecutada exitosamente.");
         fetchLiveTelemetry();

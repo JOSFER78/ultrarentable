@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1H",
-  "strategy_snapshot_hash": "5efbe26ba119e86eb176a4f45d79373f5415f78602f76420c45ddc7ff49aae01",
+  "strategy_snapshot_hash": "ab0164e80b063af0ebccd1e477baf27ca4b49eb6e5e59023e56bc955dc1e91aa",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "95af929f4a2041f794ed3150bd948ef9a3ef7bc34b8b3124ad6d6c54bbb218e2",
-  "output_hash": "04d81ed1de436ef2f5061ef5090d2f730e3c79b72e3d83f40bd20314d8e94e04",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "aaf84e7d1a2de4a73667e0516cb5c1bea765b6ce3c772860ebc416a28a549765",
+  "output_hash": "17f1885c60b558922ddb378de7d4ea1fec131986ffa546b44b781a9b5c8db2d9",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +6156231160240.03%)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +15097.11%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 491,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 45,
       "BEAR_TREND": 65,
-      "CHOP_RANGING": 149,
-      "HIGH_VOLATILITY": 111
+      "CHOP_RANGING": 173,
+      "HIGH_VOLATILITY": 120
     },
     "regime_return_pct": {
-      "BULL_TREND": -1039894988746.17,
-      "BEAR_TREND": -6508281514309.19,
-      "CHOP_RANGING": 13664363256851.64,
-      "HIGH_VOLATILITY": 40044406443.75
+      "BULL_TREND": 1567.35,
+      "BEAR_TREND": 2688.83,
+      "CHOP_RANGING": 6681.4,
+      "HIGH_VOLATILITY": 4159.53
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 6156231160240.03
+    "total_oos_return_pct": 15097.11
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T01:46:39.910360+00:00"
+  "created_at_utc": "2026-08-22T03:48:01.343847+00:00"
 }

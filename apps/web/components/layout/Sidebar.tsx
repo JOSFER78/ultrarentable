@@ -20,28 +20,30 @@ interface NavGroup {
 
 const NAVIGATION: NavGroup[] = [
   {
-    group: "ESTRATEGIAS (6 FASES DETERMINISTAS)",
+    group: "ESTRATEGIAS (HUB & 6 FASES)",
     items: [
-      { code: "1", icon: "⚡", label: "1. Motor 24/7 en Vivo", href: "/sistema", badge: "24/7", highlight: true },
-      { code: "2", icon: "📊", label: "2. Explorador Cuantitativo Excel", href: "/strategies", badge: "230 CAND" },
-      { code: "3", icon: "🧬", label: "3. Pipeline 11 Pasos (FSM)", href: "/candidatos", badge: "11-GATES" },
-      { code: "4", icon: "🔬", label: "4. Panel Investigador Semántico", href: "/research", badge: "LAB I+D" },
-      { code: "5", icon: "🏆", label: "5. Estrategias Aprobadas (11/11)", href: "/gates", badge: "CERTIFICADAS" },
-      { code: "6", icon: "🧩", label: "6. Meta-Estrategia Ensamblada", href: "/portfolio", badge: "PORTFOLIO" },
+      { code: "HUB", icon: "🧬", label: "Estrategias (Portada & Hub)", href: "/estrategias", badge: "PORTADA", highlight: true },
+      { code: "1", icon: "⚡", label: "1. Motor 24/7 Autónomo", href: "/panel", badge: "24/7 AUTO" },
+      { code: "2", icon: "📊", label: "2. Catálogo de Estrategias (230)", href: "/estrategias?fase=2", badge: "230 CAND" },
+      { code: "3", icon: "🧬", label: "3. Pipeline 11 Pasos (FSM)", href: "/estrategias?fase=3", badge: "11-GATES" },
+      { code: "4", icon: "🔬", label: "4. Panel Investigador Semántico", href: "/estrategias?fase=4", badge: "LAB I+D" },
+      { code: "5", icon: "🏆", label: "5. Estrategias Aprobadas (11/11)", href: "/estrategias?fase=5", badge: "CERTIFICADAS" },
+      { code: "6", icon: "🧩", label: "6. Meta-Estrategia Ensamblada", href: "/estrategias?fase=6", badge: "PORTFOLIO" },
     ],
   },
   {
     group: "RUTAS DE TRADING DUAL",
     items: [
       { code: "ULT", icon: "🔥", label: "Ultra Lab (BingX 500x)", href: "/ultra", badge: "BALA" },
-      { code: "FND", icon: "🛡️", label: "Track Fondeo (CME)", href: "/fondeo", badge: "DD 4%" },
+      { code: "FND", icon: "🛡️", label: "Track Fondeo (CME Guard)", href: "/fondeo", badge: "DD 4%" },
       { code: "PF", icon: "🏛️", label: "Catálogo 34 Prop Firms", href: "/prop-firms", badge: "APEX/TOP" },
     ],
   },
   {
-    group: "EJECUCIÓN & INFRAESTRUCTURA",
+    group: "EJECUCIÓN & TELEMETRÍA EN VIVO",
     items: [
-      { code: "PPR", icon: "📦", label: "Paper Sandbox (14d)", href: "/ejecucion", badge: "LIVE" },
+      { code: "NT8", icon: "⚡", label: "NinjaTrader 8 & Live Exec", href: "/ejecucion", badge: "CME LIVE", highlight: true },
+      { code: "MCP", icon: "📡", label: "Proveedores & Gateways API", href: "/proveedores", badge: "MCP/API", highlight: true },
       { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-11-nautilus-trader", badge: "EVENT" },
     ],
   },
@@ -68,7 +70,18 @@ export default function Sidebar() {
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
+    if (href.includes("?")) {
+      const [base, query] = href.split("?");
+      if (pathname !== base) return false;
+      if (typeof window !== "undefined") {
+        return window.location.search.includes(query);
+      }
+      return false;
+    }
+    if (href === "/estrategias") {
+      return pathname === "/estrategias" && (typeof window === "undefined" || !window.location.search);
+    }
+    return pathname === href || (pathname.startsWith(href) && href !== "/estrategias");
   };
 
   return (

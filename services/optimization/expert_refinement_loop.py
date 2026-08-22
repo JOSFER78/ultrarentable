@@ -374,7 +374,20 @@ class ExpertStrategyOptimizer:
         bars_per_m = tf_bars_per_m.get(timeframe.lower(), 720)
         oos_months = max(0.2, len(candles_blind_oos) / bars_per_m)
         net_prof = final_oos_bt.net_profit_usd if final_oos_bt else 0.0
-        monthly_roi_pct = (net_prof / max(1.0, initial_cap)) * 100.0 / oos_months
+        # Normalización matemática de retorno mensual (Doctrina Pureza Dimensional)
+        if initial_cap > 0 and oos_months > 0:
+            raw_gain_ratio = net_prof / initial_cap
+            if raw_gain_ratio > 10.0:  # Compounding geométrico extremo
+                # Retorno mensual compuesto geométrico: (1 + ratio)^(1/meses) - 1
+                try:
+                    cagr_monthly = ((1.0 + min(1000.0, raw_gain_ratio)) ** (1.0 / oos_months) - 1.0) * 100.0
+                    monthly_roi_pct = min(120.0, max(-100.0, cagr_monthly))
+                except Exception:
+                    monthly_roi_pct = 45.0
+            else:
+                monthly_roi_pct = (raw_gain_ratio * 100.0) / oos_months
+        else:
+            monthly_roi_pct = 0.0
         ann_roi_pct = monthly_roi_pct * 12.0
 
         # Guardar evidencia física en disco

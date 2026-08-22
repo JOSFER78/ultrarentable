@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_1H",
   "strategy_id": "UR_ULTRA_BTC_USDT_1H",
-  "strategy_snapshot_hash": "50d052ed085443eae02c6820ab874e05b89efda8859360596e50d565cbc333ad",
+  "strategy_snapshot_hash": "0b463c7e24a8456df3aa9e743c7e7cb11c21dcaf4d624b0e52c9c17ad412a386",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "1fa2e0b821905eec9cddde8ef8a744f5150d7a875f9fa8516b94d55cf977e642",
-  "output_hash": "3e177697b9f7f765c2e5e87914135b0a8722ed91c16eba0fe495c6f98b2e18de",
+  "input_hash": "fc6035024bdcb776aa779b950d3cc3fd5d5f115dc1b3e37c5f00978a3f748e12",
+  "output_hash": "d64af93c61b52dfdc4c7aec5386e6702bf84b1af19cc8dd5a6d1fd4960218d50",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +12369.53%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +6835748746668073.00%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
-      "BULL_TREND": 24,
-      "BEAR_TREND": 37,
-      "CHOP_RANGING": 201,
-      "HIGH_VOLATILITY": 87
+      "BULL_TREND": 18,
+      "BEAR_TREND": 24,
+      "CHOP_RANGING": 112,
+      "HIGH_VOLATILITY": 85
     },
     "regime_return_pct": {
-      "BULL_TREND": 686.63,
-      "BEAR_TREND": 1960.9,
-      "CHOP_RANGING": 6860.3,
-      "HIGH_VOLATILITY": 2861.7
+      "BULL_TREND": -2.726276286236315e16,
+      "BEAR_TREND": -1502610149513261.5,
+      "CHOP_RANGING": 3.5763006985145e16,
+      "HIGH_VOLATILITY": -161885226600513.06
     },
-    "regimes_profitable_count": 4,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 12369.53
+    "total_oos_return_pct": 6835748746668073.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T02:42:48.953747+00:00"
+  "created_at_utc": "2026-08-22T03:57:10.617546+00:00"
 }

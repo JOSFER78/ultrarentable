@@ -302,16 +302,29 @@ class LegacyRevalidationService:
         now_iso = datetime.now(timezone.utc).isoformat()
         is_promoted = verdict.is_certified and gates_passed_count >= 10
 
-        new_status = "APPROVED" if is_promoted else verdict.certified_status
-        new_engine_ver = CURRENT_ENGINE_VERSION if is_promoted else (old_engine_ver or "1.00")
-        reason = f"Superó los 11 Gates con Score {overall_score:.1f}/100" if is_promoted else f"Rechazada en Gates v1.03 ({gates_passed_count}/11 Gates superados)"
+        if gates_passed_count == 11 or (verdict.is_certified and gates_passed_count >= 10):
+            new_status = "CERTIFICADA_TIER_1"
+        elif gates_passed_count in (9, 10):
+            new_status = "REFINADO_TIER_2"
+        elif gates_passed_count in (5, 6, 7, 8):
+            new_status = "INCUBADORA_REPROGRAMACION"
+        else:
+            new_status = "REJECTED_ESTRUCTURAL"
 
-        # 9. Calcular métricas finales exactas
+        new_engine_ver = CURRENT_ENGINE_VERSION
+        reason = f"Revalidación v{CURRENT_ENGINE_VERSION}: {gates_passed_count}/11 Gates superados (Score: {overall_score:.1f}/100)"
+
+        # 9. Calcular métricas finales exactas (CAGR Geométrico Bounded)
         tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
         bars_per_m = tf_bars_per_month.get(timeframe.lower(), 720)
         total_months = max(0.5, total_bars / bars_per_m)
         oos_months = max(0.2, len(candles_blind_oos) / bars_per_m)
-        monthly_roi_pct = (oos_bt.net_profit_usd / max(1.0, initial_cap)) * 100.0 / oos_months
+
+        if oos_bt.net_profit_usd > -initial_cap and oos_months > 0:
+            cagr = ((1.0 + (oos_bt.net_profit_usd / max(1.0, initial_cap))) ** (1.0 / oos_months) - 1.0) * 100.0
+            monthly_roi_pct = max(-100.0, min(500.0, cagr))
+        else:
+            monthly_roi_pct = -100.0 / max(0.2, oos_months)
         annual_roi_pct = monthly_roi_pct * 12.0
 
         updated_scorecard = {

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_4H_g09",
   "run_id": "run_UR_FONDEO_EURUSD_4H",
   "strategy_id": "UR_FONDEO_EURUSD_4H",
-  "strategy_snapshot_hash": "260ff041e2af2cecec8daf85a41aa34cdd4069043d148bc1fcb7bf98d95646ba",
+  "strategy_snapshot_hash": "0df2b27d8db21da855c01cdfd6a92f8dfcf270884f6ea952aadffb78419af919",
   "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "926c9244e9b822f08871a469313a9e001f328b636ff7f2e65f7634063f22bc4c",
-  "output_hash": "7e877da0d90f05060e255da3abfd65a000dfbb3e88c10ef3e407bdb59b68ff6e",
-  "status": "PASSED",
-  "score": 89.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.5 trades/param, Estabilidad Vecindario: 106.7%, Re-backtest PFs: [0.6, 0.6, 0.74, 0.62])",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "0048c423cdd5476e38106dc1fec707ce06249c6199db393f21c46b8bf3b9ebcd",
+  "output_hash": "10ffbbad022b0379b053273357d77a45cd1fa96eaca79b2a52bc5a6bee55c418",
+  "status": "FAILED",
+  "score": 31.8,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 14.2 o Estabilidad 79.5% < 60.0%)",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 18.5,
+    "degrees_of_freedom_ratio": 14.2,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 106.7,
+    "parameter_neighborhood_stability_pct": 79.5,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.6,
-      0.6,
-      0.74,
-      0.62
+      0.58,
+      0.69,
+      0.77,
+      0.44
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:28:25.268679+00:00"
+  "created_at_utc": "2026-08-22T06:01:33.252884+00:00"
 }

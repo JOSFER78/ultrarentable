@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_RTY_4H_g07",
   "run_id": "run_UR_FONDEO_RTY_4H",
   "strategy_id": "UR_FONDEO_RTY_4H",
-  "strategy_snapshot_hash": "43c296e1daa4d35257700612ee7e46568a7f23c250df35fa324f63134e15df5b",
+  "strategy_snapshot_hash": "4e3026dbe9a2b0f6eb091de346f8685d0fbf992b6626535b3379fc189e0fbdec",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "93fbbd483bf4471fb2a6fcf8d6316d03321c61a7f87510cc351ddbe88323b2f8",
-  "output_hash": "390cf182b7c8af9fb61e0cd8cb760e1c68f3a8272757a4c6c84561555ca4af1c",
-  "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -2072.32%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "158ec41d406b4e71a734dcaf8155819ea3b189e06d5d8811e8ba7c92ae34e0ec",
+  "output_hash": "d36dc0d3730fd406f5d1022e7d664dac97dd097a5205fd0304b64756567415aa",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +1771.46%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 127,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 112
     },
     "regime_trades_count": {
-      "BULL_TREND": 2,
-      "BEAR_TREND": 2,
-      "CHOP_RANGING": 5,
-      "HIGH_VOLATILITY": 1
+      "BULL_TREND": 1,
+      "BEAR_TREND": 3,
+      "CHOP_RANGING": 2,
+      "HIGH_VOLATILITY": 4
     },
     "regime_return_pct": {
-      "BULL_TREND": -1029.2,
-      "BEAR_TREND": -1023.74,
-      "CHOP_RANGING": -614.49,
-      "HIGH_VOLATILITY": 595.11
+      "BULL_TREND": -31.05,
+      "BEAR_TREND": -4112.11,
+      "CHOP_RANGING": 2610.77,
+      "HIGH_VOLATILITY": 3303.85
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -2072.32
+    "total_oos_return_pct": 1771.46
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:27:52.650414+00:00"
+  "created_at_utc": "2026-08-22T06:02:04.368280+00:00"
 }

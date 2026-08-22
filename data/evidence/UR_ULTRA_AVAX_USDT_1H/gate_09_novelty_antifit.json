@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1H",
-  "strategy_snapshot_hash": "757d71e2a1598a088e4d78f141535bc3d94caf2ef69dc85bf91608e0487817c1",
+  "strategy_snapshot_hash": "8513887ef85a98d5e5659c63fdfd2846308bc62a68509a66cf4082e4b7501240",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "2163be47f51fd99cc37485f0cbd71d1e0386b3a1adb03e34688e1f9a207ba0b5",
-  "output_hash": "db923bc8e5761927aa85f8bd1831b77700a3843f1c163b0e8eab6695ce4c7422",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "ac72d8ccca3e15c3051b7a9472d00ecf88565ebb9df1de32a5256137d10ecbfb",
+  "output_hash": "c6a6fd1dc8f891672df5ee8face5a6d448ec8de2db185d6ed49bc138c2dd781a",
   "status": "PASSED",
-  "score": 98.8,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 493.5 trades/param, Estabilidad Vecindario: 98.0%, Re-backtest PFs: [1.05, 1.09, 1.1, 1.11])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 427.0 trades/param, Estabilidad Vecindario: 107.7%, Re-backtest PFs: [1.1, 1.1, 1.2, 1.51])",
   "metrics": {
-    "parameters_count": 4,
-    "degrees_of_freedom_ratio": 493.5,
+    "parameters_count": 5,
+    "degrees_of_freedom_ratio": 427.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 98.0,
+    "parameter_neighborhood_stability_pct": 107.7,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.05,
-      1.09,
       1.1,
-      1.11
+      1.1,
+      1.2,
+      1.51
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T01:44:34.946809+00:00"
+  "created_at_utc": "2026-08-22T03:45:21.252917+00:00"
 }

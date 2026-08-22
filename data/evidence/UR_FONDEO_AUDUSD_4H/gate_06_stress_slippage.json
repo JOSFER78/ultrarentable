@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_4H_g06",
   "run_id": "run_UR_FONDEO_AUDUSD_4H",
   "strategy_id": "UR_FONDEO_AUDUSD_4H",
-  "strategy_snapshot_hash": "763e6bf1d40aa58be89e2db55fdda206f898b943afa231322273f8a6725e14fe",
+  "strategy_snapshot_hash": "79d2f62b33e846e37f2163eb4b681f1dceee0f07d602126aa08fbf4e109c48d7",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "a2b35efec703bdfc55334f58d6aefdf3831dcd2c951c3860766181089b437fca",
-  "output_hash": "3e387c51cc15afdfadfb2e406e354e85eee9f80e59b9a342ab5479eca4f1f59c",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "0746901df421ea1402a678cbd8f9531f07c9152161ae9062073d26d2ce329cb9",
+  "output_hash": "b504b9efd1842cc3034f7b8aefab5752557ee29b48d42248321619d844ecb3d7",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.06,
-        "stressed_profit_factor": 0.44,
+        "stressed_net_pnl_usd": -0.0,
+        "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.06,
-        "stressed_profit_factor": 0.42,
+        "stressed_net_pnl_usd": -0.0,
+        "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.07,
-        "stressed_profit_factor": 0.4,
+        "stressed_net_pnl_usd": -0.0,
+        "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.07,
-        "stressed_profit_factor": 0.38,
+        "stressed_net_pnl_usd": -0.01,
+        "stressed_profit_factor": 0.0,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:28:22.483033+00:00"
+  "created_at_utc": "2026-08-22T06:00:52.394418+00:00"
 }

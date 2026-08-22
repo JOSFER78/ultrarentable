@@ -1,37 +1,141 @@
-"""NinjaTrader 8 C# Code Exporter for Prop Firm Combine Automation.
+"""NinjaTrader 8 C# Code Exporter for Prop Firm Combine Automation & Real-Time Telemetry.
 
-Generates complete, compilable NinjaScript (.cs) code tailored for Topstep / Apex / TradeDay 50K combines:
-- Daily Loss Limit Guard (Hard flat & disable when Daily PnL <= -$900).
-- Session close enforcer (Flatten at 15:45 US/Central).
-- Trailing Stop & ATR Profit Target.
-- Dynamic Micro ES (MES) contract sizing.
+Generates complete, compilable NinjaScript (.cs) code tailored for Topstep / Apex / TradeDay / MFFU combines:
+- Multi-asset CME catalog (MNQ, MES, NQ, ES, MGC, MCL, 6E).
+- Daily Loss Limit Guard (Hard flat & disable when Daily PnL <= -$1,000).
+- Max Trailing Drawdown Guard (Hard flat & disable when peak drawdown >= $2,000).
+- Automated Break-Even Stop at +1.5R.
+- Session close enforcer (Flatten at 15:45 US/Central / 20:45 UTC).
+- Optional HTTP Webhook Telemetry to Ultrarentable API.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
+
+
+CME_INSTRUMENT_SPECS: dict[str, dict[str, Any]] = {
+    "MNQ": {
+        "name": "Micro E-mini Nasdaq-100",
+        "tick_size": 0.25,
+        "point_value": 2.0,
+        "tick_value_usd": 0.50,
+        "default_qty": 2,
+        "default_sl_ticks": 40,   # 10 points ($20/contract)
+        "default_tp_ticks": 100,  # 25 points ($50/contract)
+        "default_be_ticks": 60,   # 15 points (+1.5R)
+    },
+    "MES": {
+        "name": "Micro E-mini S&P 500",
+        "tick_size": 0.25,
+        "point_value": 5.0,
+        "tick_value_usd": 1.25,
+        "default_qty": 2,
+        "default_sl_ticks": 16,   # 4 points ($20/contract)
+        "default_tp_ticks": 48,   # 12 points ($60/contract)
+        "default_be_ticks": 24,   # 6 points (+1.5R)
+    },
+    "NQ": {
+        "name": "E-mini Nasdaq-100",
+        "tick_size": 0.25,
+        "point_value": 20.0,
+        "tick_value_usd": 5.00,
+        "default_qty": 1,
+        "default_sl_ticks": 32,   # 8 points ($160/contract)
+        "default_tp_ticks": 80,   # 20 points ($400/contract)
+        "default_be_ticks": 48,   # 12 points (+1.5R)
+    },
+    "ES": {
+        "name": "E-mini S&P 500",
+        "tick_size": 0.25,
+        "point_value": 50.0,
+        "tick_value_usd": 12.50,
+        "default_qty": 1,
+        "default_sl_ticks": 16,   # 4 points ($200/contract)
+        "default_tp_ticks": 48,   # 12 points ($600/contract)
+        "default_be_ticks": 24,   # 6 points (+1.5R)
+    },
+    "MGC": {
+        "name": "Micro Gold Futures",
+        "tick_size": 0.10,
+        "point_value": 10.0,
+        "tick_value_usd": 1.00,
+        "default_qty": 2,
+        "default_sl_ticks": 20,   # $2.0 pt ($20/contract)
+        "default_tp_ticks": 60,   # $6.0 pt ($60/contract)
+        "default_be_ticks": 30,   # +1.5R
+    },
+    "GC": {
+        "name": "Gold Futures",
+        "tick_size": 0.10,
+        "point_value": 100.0,
+        "tick_value_usd": 10.00,
+        "default_qty": 1,
+        "default_sl_ticks": 20,   # $2.0 pt ($200/contract)
+        "default_tp_ticks": 60,   # $6.0 pt ($600/contract)
+        "default_be_ticks": 30,   # +1.5R
+    },
+    "MCL": {
+        "name": "Micro Crude Oil Futures",
+        "tick_size": 0.01,
+        "point_value": 100.0,
+        "tick_value_usd": 1.00,
+        "default_qty": 2,
+        "default_sl_ticks": 25,   # $0.25 ($25/contract)
+        "default_tp_ticks": 75,   # $0.75 ($75/contract)
+        "default_be_ticks": 38,   # +1.5R
+    },
+    "6E": {
+        "name": "Euro FX Futures",
+        "tick_size": 0.00005,
+        "point_value": 125000.0,
+        "tick_value_usd": 6.25,
+        "default_qty": 1,
+        "default_sl_ticks": 24,   # 12 pips ($150/contract)
+        "default_tp_ticks": 72,   # 36 pips ($450/contract)
+        "default_be_ticks": 36,   # +1.5R
+    },
+}
 
 
 def generate_ninjatrader_strategy_cs(
     strategy_name: str,
-    asset: str = "MES",
-    default_qty: int = 4,
+    asset: str = "MNQ",
+    default_qty: int | None = None,
     daily_loss_limit_usd: float = 1000.0,
-    profit_target_ticks: int = 48,  # 12 points
-    stop_loss_ticks: int = 16,      # 4 points
+    max_trailing_dd_usd: float = 2000.0,
+    profit_target_ticks: int | None = None,
+    stop_loss_ticks: int | None = None,
+    break_even_trigger_ticks: int | None = None,
     fast_ema_period: int = 21,
     slow_ema_period: int = 55,
-    donchian_period: int = 20
+    donchian_period: int = 20,
+    enable_telemetry_webhook: bool = True,
+    webhook_url: str = "http://127.0.0.1:8000/execution/ninjatrader/telemetry",
 ) -> str:
-    """Generate compilable NinjaTrader 8 C# Strategy."""
-    clean_name = strategy_name.replace(" ", "").replace(".", "_").replace("-", "_")
+    """Generate compilable NinjaTrader 8 C# Strategy with comprehensive Prop Firm Guards."""
+    asset_upper = asset.upper()
+    specs = CME_INSTRUMENT_SPECS.get(asset_upper, CME_INSTRUMENT_SPECS["MNQ"])
+
+    qty = default_qty if default_qty is not None else specs["default_qty"]
+    pt_ticks = profit_target_ticks if profit_target_ticks is not None else specs["default_tp_ticks"]
+    sl_ticks = stop_loss_ticks if stop_loss_ticks is not None else specs["default_sl_ticks"]
+    be_ticks = break_even_trigger_ticks if break_even_trigger_ticks is not None else specs["default_be_ticks"]
+
+    clean_name = strategy_name.replace(" ", "_").replace(".", "_").replace("-", "_")
+    if not clean_name[0].isalpha() and clean_name[0] != "_":
+        clean_name = f"Strategy_{clean_name}"
+
+    telemetry_flag = "true" if enable_telemetry_webhook else "false"
+
     cs_code = f"""#region Using declarations
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,7 +154,12 @@ using NinjaTrader.NinjaScript.Indicators;
 using NinjaTrader.NinjaScript.DrawingTools;
 #endregion
 
-// Ultrarentable Prop Firm Engine - Generated for NinjaTrader 8
+// ============================================================================
+// ULTRARENTABLE V2 PROP FIRM COMBINE ENGINE - NINJATRADER 8 C# STRATEGY
+// Strategy Name: {clean_name}
+// Asset: {asset_upper} ({specs['name']})
+// Hard DLL: ${daily_loss_limit_usd:,.2f} | Max DD: ${max_trailing_dd_usd:,.2f}
+// ============================================================================
 namespace NinjaTrader.NinjaScript.Strategies
 {{
     public class {clean_name} : Strategy
@@ -62,40 +171,72 @@ namespace NinjaTrader.NinjaScript.Strategies
         private ATR atrIndicator;
 
         private double dailyPnL = 0.0;
+        private double peakSessionEquity = 0.0;
         private DateTime lastTradeDate = DateTime.MinValue;
         private bool isDailyLossHalted = false;
+        private bool isTrailingDDHalted = false;
+        private bool breakEvenArmed = false;
+        private static readonly HttpClient httpClient = new HttpClient();
 
         [NinjaScriptProperty]
-        [Range(1, 10)]
-        [Display(Name="Quantity", Description="Contracts to trade (MES)", Order=1, GroupName="Parameters")]
-        public int Contracts {{ get; set; }} = {default_qty};
+        [Range(1, 20)]
+        [Display(Name="Quantity", Description="Contracts to trade ({asset_upper})", Order=1, GroupName="1. Risk & Sizing")]
+        public int Contracts {{ get; set; }} = {qty};
 
         [NinjaScriptProperty]
-        [Range(100, 5000)]
-        [Display(Name="Daily Loss Limit ($)", Description="Hard stop limit", Order=2, GroupName="Parameters")]
+        [Range(100, 10000)]
+        [Display(Name="Daily Loss Limit ($)", Description="Hard daily loss limit in USD", Order=2, GroupName="1. Risk & Sizing")]
         public double DailyLossLimit {{ get; set; }} = {daily_loss_limit_usd};
 
         [NinjaScriptProperty]
-        [Range(4, 200)]
-        [Display(Name="Profit Target (Ticks)", Description="Target ticks", Order=3, GroupName="Parameters")]
-        public int ProfitTargetTicks {{ get; set; }} = {profit_target_ticks};
+        [Range(500, 20000)]
+        [Display(Name="Max Trailing Drawdown ($)", Description="Maximum allowed drawdown before kill-switch", Order=3, GroupName="1. Risk & Sizing")]
+        public double MaxTrailingDrawdown {{ get; set; }} = {max_trailing_dd_usd};
 
         [NinjaScriptProperty]
-        [Range(4, 100)]
-        [Display(Name="Stop Loss (Ticks)", Description="Stop ticks", Order=4, GroupName="Parameters")]
-        public int StopLossTicks {{ get; set; }} = {stop_loss_ticks};
+        [Range(4, 500)]
+        [Display(Name="Profit Target (Ticks)", Description="Target ticks ({specs['tick_size']} tick size)", Order=4, GroupName="2. Order Management")]
+        public int ProfitTargetTicks {{ get; set; }} = {pt_ticks};
+
+        [NinjaScriptProperty]
+        [Range(4, 300)]
+        [Display(Name="Stop Loss (Ticks)", Description="Stop ticks ({specs['tick_size']} tick size)", Order=5, GroupName="2. Order Management")]
+        public int StopLossTicks {{ get; set; }} = {sl_ticks};
+
+        [NinjaScriptProperty]
+        [Range(4, 300)]
+        [Display(Name="Break-Even Trigger (Ticks)", Description="Ticks in profit to move SL to Entry (+1.5R)", Order=6, GroupName="2. Order Management")]
+        public int BreakEvenTriggerTicks {{ get; set; }} = {be_ticks};
+
+        [NinjaScriptProperty]
+        [Display(Name="Enable Webhook Telemetry", Description="Send fill events to Ultrarentable API", Order=7, GroupName="3. Telemetry")]
+        public bool EnableTelemetry {{ get; set; }} = {telemetry_flag};
+
+        [NinjaScriptProperty]
+        [Display(Name="Telemetry Webhook URL", Description="FastAPI endpoint for real-time tracking", Order=8, GroupName="3. Telemetry")]
+        public string TelemetryUrl {{ get; set; }} = "{webhook_url}";
+
+        [NinjaScriptProperty]
+        [Display(Name="Enable Remote Trading Bot Control", Description="Receive orders and trade signals from Ultrarentable 24/7", Order=9, GroupName="3. Telemetry & Remote Bridge")]
+        public bool EnableRemoteTrading {{ get; set; }} = true;
+
+        [NinjaScriptProperty]
+        [Display(Name="Remote Signals Poll URL", Description="FastAPI endpoint for remote orders polling", Order=10, GroupName="3. Telemetry & Remote Bridge")]
+        public string SignalsPollUrl {{ get; set; }} = "http://127.0.0.1:8000/api/v1/execution/ninjatrader/signals/poll";
+
+        private DateTime lastPollTime = DateTime.MinValue;
 
         protected override void OnStateChange()
         {{
             if (State == State.SetDefaults)
             {{
-                Description = "Ultrarentable Prop Firm Strategy for {asset} with Automated DLL Kill-Switch.";
+                Description = "Ultrarentable Prop Firm Certified Strategy for {asset_upper}. Hard DLL, Trailing DD & Auto Break-Even.";
                 Name = "{clean_name}";
-                Calculate = Calculate.OnBarClose;
+                Calculate = Calculate.OnPriceChange;
                 EntriesPerDirection = 1;
                 EntryHandling = EntryHandling.AllEntries;
                 IsExitOnSessionCloseStrategy = true;
-                ExitOnSessionCloseSeconds = 900; // 15 mins before close
+                ExitOnSessionCloseSeconds = 900; // 15 mins before close (15:45 CT)
                 IsFillLimitOnTouch = false;
                 MaximumBarsLookBack = MaximumBarsLookBack.TwoHundredFiftySix;
                 OrderFillResolution = OrderFillResolution.Standard;
@@ -105,7 +246,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                 TraceOrders = false;
                 RealtimeErrorHandling = RealtimeErrorHandling.StopCancelClose;
                 StopTargetHandling = StopTargetHandling.PerEntryExecution;
-                BarsRequiredToTrade = 60;
+                BarsRequiredToTrade = 20;
             }}
             else if (State == State.DataLoaded)
             {{
@@ -130,7 +271,9 @@ namespace NinjaTrader.NinjaScript.Strategies
             {{
                 lastTradeDate = Time[0].Date;
                 dailyPnL = 0.0;
+                peakSessionEquity = Account.Get(AccountItem.RealizedProfitLoss, Currency.UsDollar);
                 isDailyLossHalted = false;
+                isTrailingDDHalted = false;
             }}
 
             // Check Hard Daily Loss Limit
@@ -138,31 +281,74 @@ namespace NinjaTrader.NinjaScript.Strategies
             {{
                 if (!isDailyLossHalted)
                 {{
-                    Print(string.Format("{{0}}: DAILY LOSS LIMIT REACHED (${{1:F2}}). Halting trading for the day.", Time[0], dailyPnL));
-                    if (Position.MarketPosition != MarketPosition.Flat)
-                    {{
-                        if (Position.MarketPosition == MarketPosition.Long)
-                            ExitLong();
-                        else if (Position.MarketPosition == MarketPosition.Short)
-                            ExitShort();
-                    }}
+                    Print(string.Format("{{0}}: 🚨 HARD DAILY LOSS LIMIT REACHED (${{1:F2}}). Halting trading for the day.", Time[0], dailyPnL));
+                    EmergencyFlatten("DAILY_LOSS_LIMIT");
                     isDailyLossHalted = true;
                 }}
                 return;
             }}
 
-            if (isDailyLossHalted)
+            // Check Max Trailing Drawdown
+            double currentRealized = Account.Get(AccountItem.RealizedProfitLoss, Currency.UsDollar);
+            if (currentRealized > peakSessionEquity)
+                peakSessionEquity = currentRealized;
+
+            double currentDrawdown = peakSessionEquity - currentRealized;
+            if (currentDrawdown >= MaxTrailingDrawdown)
+            {{
+                if (!isTrailingDDHalted)
+                {{
+                    Print(string.Format("{{0}}: 🚨 MAX TRAILING DRAWDOWN REACHED (${{1:F2}}). Kill-switch activated.", Time[0], currentDrawdown));
+                    EmergencyFlatten("TRAILING_DRAWDOWN");
+                    isTrailingDDHalted = true;
+                }}
+                return;
+            }}
+
+            if (isDailyLossHalted || isTrailingDDHalted)
                 return;
 
-            // Trend and Breakout Conditions
-            bool trendUp = fastEma[0] > slowEma[0] && Close[0] > fastEma[0];
-            bool trendDown = fastEma[0] < slowEma[0] && Close[0] < fastEma[0];
+            // Poll Remote Orders from Ultrarentable every 500ms
+            if (State == State.Realtime && EnableRemoteTrading && (DateTime.UtcNow - lastPollTime).TotalMilliseconds >= 500)
+            {{
+                lastPollTime = DateTime.UtcNow;
+                CheckAndExecuteRemoteOrders();
+            }}
 
-            bool longBreakout = Close[0] >= highestHigh[1] && trendUp;
-            bool shortBreakout = Close[0] <= lowestLow[1] && trendDown;
+            // Automated Break-Even at +1.5R (+BreakEvenTriggerTicks)
+            if (Position.MarketPosition == MarketPosition.Long && !breakEvenArmed)
+            {{
+                double profitTicks = (Close[0] - Position.AveragePrice) / TickSize;
+                if (profitTicks >= BreakEvenTriggerTicks)
+                {{
+                    SetStopLoss(CalculationMode.Price, Position.AveragePrice + (2 * TickSize));
+                    breakEvenArmed = true;
+                    Print(string.Format("{{0}}: 🛡️ Break-Even armed for LONG position at price ${{1:F2}}", Time[0], Position.AveragePrice));
+                }}
+            }}
+            else if (Position.MarketPosition == MarketPosition.Short && !breakEvenArmed)
+            {{
+                double profitTicks = (Position.AveragePrice - Close[0]) / TickSize;
+                if (profitTicks >= BreakEvenTriggerTicks)
+                {{
+                    SetStopLoss(CalculationMode.Price, Position.AveragePrice - (2 * TickSize));
+                    breakEvenArmed = true;
+                    Print(string.Format("{{0}}: 🛡️ Break-Even armed for SHORT position at price ${{1:F2}}", Time[0], Position.AveragePrice));
+                }}
+            }}
 
             if (Position.MarketPosition == MarketPosition.Flat)
             {{
+                breakEvenArmed = false;
+                SetStopLoss(CalculationMode.Ticks, StopLossTicks); // Reset to default
+
+                // Trend and Breakout Conditions
+                bool trendUp = fastEma[0] > slowEma[0] && Close[0] > fastEma[0];
+                bool trendDown = fastEma[0] < slowEma[0] && Close[0] < fastEma[0];
+
+                bool longBreakout = Close[0] >= highestHigh[1] && trendUp;
+                bool shortBreakout = Close[0] <= lowestLow[1] && trendDown;
+
                 if (longBreakout)
                 {{
                     EnterLong(Contracts, "LongEntry");
@@ -174,21 +360,98 @@ namespace NinjaTrader.NinjaScript.Strategies
             }}
         }}
 
+        private async void CheckAndExecuteRemoteOrders()
+        {{
+            try
+            {{
+                string pollUrl = string.Format("{{0}}?account_name={{1}}&symbol={{2}}", SignalsPollUrl, Uri.EscapeDataString(Account.Name), Uri.EscapeDataString("{asset_upper}"));
+                var response = await httpClient.GetAsync(pollUrl);
+                if (response.IsSuccessStatusCode)
+                {{
+                    string json = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(json) && json != "[]")
+                    {{
+                        // Parse commands (BUY, SELL, FLATTEN, KILL_SWITCH)
+                        if (json.Contains("\\"action\\":\\"BUY\\""))
+                        {{
+                            Print("⚡ UR Remote Command: BUY");
+                            if (Position.MarketPosition == MarketPosition.Short)
+                                ExitShort("RemoteFlip");
+                            if (Position.MarketPosition == MarketPosition.Flat)
+                                EnterLong(Contracts, "UR_Remote_Long");
+                        }}
+                        else if (json.Contains("\\"action\\":\\"SELL\\""))
+                        {{
+                            Print("⚡ UR Remote Command: SELL");
+                            if (Position.MarketPosition == MarketPosition.Long)
+                                ExitLong("RemoteFlip");
+                            if (Position.MarketPosition == MarketPosition.Flat)
+                                EnterShort(Contracts, "UR_Remote_Short");
+                        }}
+                        else if (json.Contains("\\"action\\":\\"FLATTEN\\""))
+                        {{
+                            Print("🛑 UR Remote Command: FLATTEN");
+                            EmergencyFlatten("MANUAL_REMOTE_FLATTEN");
+                        }}
+                        else if (json.Contains("\\"action\\":\\"KILL_SWITCH\\""))
+                        {{
+                            Print("🚨 UR Remote Command: KILL_SWITCH");
+                            EmergencyFlatten("REMOTE_KILL_SWITCH");
+                            isDailyLossHalted = true;
+                        }}
+                    }}
+                }}
+            }}
+            catch (Exception ex)
+            {{
+                Print("Signals poll error: " + ex.Message);
+            }}
+        }}
+
+        private void EmergencyFlatten(string reason)
+        {{
+            if (Position.MarketPosition != MarketPosition.Flat)
+            {{
+                if (Position.MarketPosition == MarketPosition.Long)
+                    ExitLong("KillSwitchLong");
+                else if (Position.MarketPosition == MarketPosition.Short)
+                    ExitShort("KillSwitchShort");
+            }}
+        }}
+
         protected override void OnExecutionUpdate(Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
         {{
             if (execution.Order != null && execution.Order.OrderState == OrderState.Filled)
             {{
-                // Track cumulative daily realized PnL
                 if (SystemPerformance.RealtimeTrades.Count > 0)
                 {{
-                    var lastTrade = SystemPerformance.RealtimeTrades[SystemPerformance.RealtimeTrades.Count - 1];
-                    if (lastTrade.ExitTime.Date == Time[0].Date)
-                    {{
-                        dailyPnL = SystemPerformance.RealtimeTrades
-                            .Where(t => t.ExitTime.Date == Time[0].Date)
-                            .Sum(t => t.ProfitCurrency);
-                    }}
+                    dailyPnL = SystemPerformance.RealtimeTrades
+                        .Where(t => t.ExitTime.Date == Time[0].Date)
+                        .Sum(t => t.ProfitCurrency);
                 }}
+
+                if (EnableTelemetry && !string.IsNullOrEmpty(TelemetryUrl))
+                {{
+                    SendTelemetryWebhook(execution, price, quantity, marketPosition, time);
+                }}
+            }}
+        }}
+
+        private async void SendTelemetryWebhook(Execution execution, double price, int quantity, MarketPosition marketPosition, DateTime time)
+        {{
+            try
+            {{
+                string jsonStr = string.Format(
+                    "\\{{\\"strategy_name\\":\\"{clean_name}\\",\\"symbol\\":\\"{asset_upper}\\",\\"account_name\\":\\"{0}\\",\\"execution_id\\":\\"{1}\\",\\"side\\":\\"{2}\\",\\"price\\":{3},\\"quantity\\":{4},\\"daily_pnl_usd\\":{5},\\"timestamp_utc\\":\\"{6}\\"\\}}",
+                    Account.Name, execution.ExecutionId, marketPosition.ToString(), price, quantity, dailyPnL, time.ToUniversalTime().ToString("o")
+                );
+
+                var content = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+                await httpClient.PostAsync(TelemetryUrl, content);
+            }}
+            catch (Exception ex)
+            {{
+                Print("Telemetry send error: " + ex.Message);
             }}
         }}
     }}
@@ -197,18 +460,61 @@ namespace NinjaTrader.NinjaScript.Strategies
     return cs_code
 
 
-def export_strategy_to_file(strategy_name: str, output_dir: Path) -> Path:
+def export_strategy_to_file(
+    strategy_name: str,
+    output_dir: Path,
+    asset: str = "MNQ",
+    daily_loss_limit_usd: float = 1000.0,
+    max_trailing_dd_usd: float = 2000.0,
+) -> Path:
     """Save generated C# strategy to disk."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    clean_name = strategy_name.replace(" ", "").replace(".", "_").replace("-", "_")
+    clean_name = strategy_name.replace(" ", "_").replace(".", "_").replace("-", "_")
+    if not clean_name[0].isalpha() and clean_name[0] != "_":
+        clean_name = f"Strategy_{clean_name}"
     target_path = output_dir / f"{clean_name}.cs"
-    code = generate_ninjatrader_strategy_cs(strategy_name)
+    code = generate_ninjatrader_strategy_cs(
+        strategy_name=strategy_name,
+        asset=asset,
+        daily_loss_limit_usd=daily_loss_limit_usd,
+        max_trailing_dd_usd=max_trailing_dd_usd,
+    )
     target_path.write_text(code, encoding="utf-8")
     return target_path
 
 
+def export_all_cme_presets(output_dir: Path) -> dict[str, Path]:
+    """Export standardized baseline strategies for all CME supported assets."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    results = {}
+    for sym in CME_INSTRUMENT_SPECS:
+        name = f"UR_Prop_{sym}_TrendBreakout"
+        path = export_strategy_to_file(name, output_dir, asset=sym)
+        results[sym] = path
+    return results
+
+
+def generate_csharp_strategy(
+    strategy_name: str,
+    cme_symbol: str = "MNQ",
+    asset: str | None = None,
+    webhook_url: str | None = None,
+    **kwargs: Any,
+) -> str:
+    """Universal wrapper for generating NinjaScript C# code."""
+    sym = asset or cme_symbol
+    wh = webhook_url or "http://127.0.0.1:8000/api/v1/execution/ninjatrader/telemetry"
+    return generate_ninjatrader_strategy_cs(
+        strategy_name=strategy_name,
+        asset=sym,
+        webhook_url=wh,
+        **kwargs,
+    )
+
+
 if __name__ == "__main__":
-    out_dir = Path(__file__).resolve().parent.parent.parent.parent / "data" / "exports" / "ninjatrader"
-    p1 = export_strategy_to_file("Strategy 1.4.125 Low Drawdown", out_dir)
-    p2 = export_strategy_to_file("Strategy 1.4.140 Dual Pass OOS", out_dir)
-    print(f"Exported NinjaTrader Strategies:\n - {p1} ({p1.stat().st_size} bytes)\n - {p2} ({p2.stat().st_size} bytes)")
+    out_dir = Path(__file__).resolve().parents[4] / "data" / "exports" / "ninjatrader"
+    exported = export_all_cme_presets(out_dir)
+    print(f"Exported {len(exported)} NinjaTrader 8 CME Strategies to {out_dir}")
+    for k, v in exported.items():
+        print(f" - [{k}]: {v.name} ({v.stat().st_size} bytes)")

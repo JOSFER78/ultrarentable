@@ -32,6 +32,7 @@ from services.api.app.api.version_router import version_router
 from services.api.app.api.discovery_router import router as discovery_router
 from services.api.app.api.portfolios_router import portfolios_router
 from services.api.app.api.research_router import router as research_router
+from services.api.app.api.gateways_router import gateways_router
 
 # Routers V2 Modulares
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
@@ -150,6 +151,7 @@ app.include_router(candidates_router, prefix="/api/v1", tags=["v1-candidates"])
 app.include_router(execution_router, prefix="/api/v1", tags=["v1-execution"])
 app.include_router(audit_router, prefix="/api/v1", tags=["v1-audit"])
 app.include_router(system_health_router, prefix="/api/v1", tags=["v1-health"])
+app.include_router(gateways_router, prefix="/api/v1", tags=["v1-gateways"])
 app.include_router(gates_router, prefix="/api/v1", tags=["v1-gates"])
 app.include_router(firebase_sync_router, prefix="/api/v1", tags=["v1-firebase-sync"])
 app.include_router(version_router, prefix="/api/v1", tags=["v1-versions"])

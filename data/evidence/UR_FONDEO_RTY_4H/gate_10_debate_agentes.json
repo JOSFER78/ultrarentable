@@ -2,51 +2,51 @@
   "evidence_id": "ev_UR_FONDEO_RTY_4H_g10",
   "run_id": "run_UR_FONDEO_RTY_4H",
   "strategy_id": "UR_FONDEO_RTY_4H",
-  "strategy_snapshot_hash": "43c296e1daa4d35257700612ee7e46568a7f23c250df35fa324f63134e15df5b",
+  "strategy_snapshot_hash": "4e3026dbe9a2b0f6eb091de346f8685d0fbf992b6626535b3379fc189e0fbdec",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "56bdf14c2e3c733fa266b4d164ef707807bbbd5e16d32bb3449e1f54e3ff154b",
-  "output_hash": "704ed3d9fc6fda1906d4f0859701105b828bd7af7cc0bb9f7896c6cdfa047452",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "daf7bb9472a67a6547f921a49d14055070dc1d325313535da80b0da8c497a433",
+  "output_hash": "6400e7b79da0795ba9ae6483586f69797fa0536dd7c8b02682caf97bd3b6a656",
   "status": "FAILED",
-  "score": 46.8,
-  "verdict": "FALLO: Consenso insuficiente (46.8/100) u objeción crítica de riesgo",
+  "score": 55.0,
+  "verdict": "FALLO: Consenso insuficiente (55.0/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 46.8,
+    "consensus_score": 55.0,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 32.5,
+        "score": 60.8,
         "findings": [
           "Activo y Timeframe: RTY (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.50 con beneficio neto de $-0.02.",
+          "Profit Factor OOS: 1.13 con beneficio neto de $1335.15.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 55.5,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 2.9% (Límite permitido para FONDEO: 4.5%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 10.3% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 56 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 49 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $27.25 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 47.0,
+        "score": 65.2,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.50 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (10.3%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 1.13 cercano al umbral de equilibrio (1.15)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:27:52.869661+00:00"
+  "created_at_utc": "2026-08-22T06:02:05.619890+00:00"
 }

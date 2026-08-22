@@ -163,7 +163,7 @@ export default function CampaignsAutopilotPage() {
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: 8, padding: 12, fontSize: 14 }}>
-              {loading ? "Ejecutando Fábrica Autónoma..." : "INICIAR BÚSQUEDA AUTÓNOMA"}
+              {loading ? "Procesando Parámetros en Fábrica..." : "⚡ APLICAR PARÁMETROS A LA FÁBRICA 24/7"}
             </button>
           </form>
 

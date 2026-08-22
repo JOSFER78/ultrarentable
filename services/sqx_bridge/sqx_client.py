@@ -128,8 +128,22 @@ class SQXMCPClient:
             raise SQXMCPError(f"Error calling {tool_name}: {e.reason}") from e
 
     def check_connection(self) -> Dict[str, Any]:
-        """Verify connection status with SQX MCP server."""
+        """Verify connection status with SQX MCP server with fast 200ms socket probe."""
+        import socket
+        from urllib.parse import urlparse
         try:
+            parsed = urlparse(self.base_url)
+            host = parsed.hostname or "127.0.0.1"
+            port = parsed.port or 8081
+
+            # Fast socket probe (200ms)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.2)
+            res = sock.connect_ex((host, port))
+            sock.close()
+            if res != 0:
+                return {"status": "OFFLINE", "base_url": self.base_url, "error": "Port unreachable"}
+
             info = self.initialize()
             return {
                 "status": "ONLINE",

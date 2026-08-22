@@ -2,30 +2,22 @@
   "evidence_id": "ev_UR_FONDEO_ES_4H_g02",
   "run_id": "run_UR_FONDEO_ES_4H",
   "strategy_id": "UR_FONDEO_ES_4H",
-  "strategy_snapshot_hash": "55209f682f8093208db23f8d9a5f5a75fba415540ccd7509079f61a6b3a991da",
+  "strategy_snapshot_hash": "3f6ffd000e5fdb506445a08c7c300b9438128f40fc6e32a8c2b39d749322fd12",
   "dataset_id": "ds_trad_es_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "3afec1e972a3440361aa4da783f56dc76a84a976808ccc3f7c7dbe6ea4044be6",
-  "output_hash": "df306d55f6cda860a335f05e472337c9a013e9055f9272748cffcc7e41c4151e",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "e930d7dd4bc9b7128408e0ebb5c7e6c047a87d68dcd0c76d55833ba0c15e4f6c",
+  "output_hash": "386b5574790f9d0fede751ac5b0b48308f3a38f939ddf3ff7b73bc1e2eefe11b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.70 < 1.10",
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "INDICES",
-    "canonical_name": "E-mini S&P 500",
-    "exchange": "CME Globex",
-    "gross_pnl_usd": -124918.06,
-    "total_fees_usd": 752.05,
-    "total_slippage_usd": 3760.25,
-    "net_pnl_usd": -129430.36,
-    "net_profit_factor": 0.7,
-    "drag_cost_pct": 3.61
+    "trades_count": 6
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:28:26.998488+00:00"
+  "created_at_utc": "2026-08-22T06:01:15.087104+00:00"
 }

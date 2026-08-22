@@ -151,37 +151,7 @@ export default function ResearchLabPage() {
     }
   }, [selectedCandidateId, loadCandidateDetail]);
 
-  const handleStartDaemon = async () => {
-    try {
-      setActionLoading(true);
-      const res = await fetch("/api/v1/research/start", { method: "POST" });
-      if (res.ok) {
-        setActionMsg("✓ Bucle Autónomo 24/7 activado. Procesando candidatos en segundo plano.");
-        await fetchStatus();
-      }
-    } catch {
-      setActionMsg("Error al iniciar el bucle autónomo.");
-    } finally {
-      setActionLoading(false);
-      setTimeout(() => setActionMsg(null), 4000);
-    }
-  };
 
-  const handlePauseDaemon = async () => {
-    try {
-      setActionLoading(true);
-      const res = await fetch("/api/v1/research/pause", { method: "POST" });
-      if (res.ok) {
-        setActionMsg("⏸ Bucle Autónomo pausado.");
-        await fetchStatus();
-      }
-    } catch {
-      setActionMsg("Error al pausar.");
-    } finally {
-      setActionLoading(false);
-      setTimeout(() => setActionMsg(null), 4000);
-    }
-  };
 
   const handleProcessNext = async () => {
     try {
@@ -258,49 +228,23 @@ export default function ResearchLabPage() {
 
         {/* Action Controls */}
         <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-          {status.is_running ? (
-            <button
-              onClick={handlePauseDaemon}
-              disabled={actionLoading}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                background: "rgba(239, 68, 68, 0.18)",
-                border: "1px solid rgba(239, 68, 68, 0.4)",
-                color: "#f87171",
-                fontSize: "12px",
-                fontWeight: 800,
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              ⏸ Pausar Bucle 24/7
-            </button>
-          ) : (
-            <button
-              onClick={handleStartDaemon}
-              disabled={actionLoading}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                background: "rgba(16, 185, 129, 0.2)",
-                border: "1px solid rgba(16, 185, 129, 0.5)",
-                color: "#34d399",
-                fontSize: "12px",
-                fontWeight: 800,
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              ▶ Iniciar Auto-Refinamiento 24/7
-            </button>
-          )}
+          <div
+            style={{
+              padding: "8px 16px",
+              borderRadius: "8px",
+              background: "rgba(16, 185, 129, 0.15)",
+              border: "1px solid rgba(16, 185, 129, 0.4)",
+              color: "#34d399",
+              fontSize: "12px",
+              fontWeight: 800,
+              fontFamily: "var(--font-mono, monospace)",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
+            🟢 Bucle 24/7 Autónomo Activo
+          </div>
 
           <button
             onClick={handleProcessNext}

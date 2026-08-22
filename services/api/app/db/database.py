@@ -441,6 +441,46 @@ class AuditEventModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class NinjaTraderAccountModel(Base):
+    __tablename__ = "ninjatrader_accounts"
+    account_id = Column(String, primary_key=True, index=True)
+    account_name = Column(String, nullable=False)
+    account_type = Column(String, default="SIM101")  # SIM101, APEX, TOPSTEP, TRADOVATE, RITHMIC, LIVE_BROKER
+    broker = Column(String, default="NinjaTrader Continuum")
+    base_capital_usd = Column(Float, default=50000.0)
+    current_equity_usd = Column(Float, default=50000.0)
+    daily_pnl_usd = Column(Float, default=0.0)
+    realized_pnl_usd = Column(Float, default=0.0)
+    unrealized_pnl_usd = Column(Float, default=0.0)
+    peak_equity_usd = Column(Float, default=50000.0)
+    max_trailing_dd_limit_usd = Column(Float, default=2000.0)
+    daily_loss_limit_usd = Column(Float, default=1000.0)
+    profit_target_usd = Column(Float, default=3000.0)
+    status = Column(String, default="CONNECTED")  # CONNECTED, IDLE, KILL_SWITCH_TRIGGERED, TARGET_PASSED
+    webhook_token = Column(String, nullable=True)
+    last_sync_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class GatewayProviderModel(Base):
+    __tablename__ = "gateway_providers"
+    provider_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    category = Column(String, default="BROKER_BRIDGE")  # BROKER_BRIDGE, CRYPTO_EXCHANGE, PROP_FIRM_BRIDGE, MARKET_DATA, HIGH_FREQUENCY_ENGINE
+    auth_token = Column(String, nullable=False)
+    api_key = Column(String, nullable=True)
+    api_secret = Column(String, nullable=True)
+    endpoint_url = Column(String, nullable=False)
+    is_enabled = Column(Boolean, default=True)
+    status = Column(String, default="IDLE_WAITING")  # CONNECTED, IDLE_WAITING, DEGRADED, ERROR, DISABLED
+    last_ping_at = Column(DateTime, nullable=True)
+    latency_ms = Column(Float, default=0.0)
+    telemetry_packets_count = Column(Integer, default=0)
+    config_json = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+
 from sqlalchemy import text
 
 
@@ -560,28 +600,6 @@ def init_db():
             ]
             for e in events:
                 db.add(e)
-            db.commit()
-
-        # Seed initial Execution Session demo
-        if db.query(ExecutionSessionModel).count() == 0:
-            db.add(
-                ExecutionSessionModel(
-                    session_id="session_bingx_demo_01",
-                    route="ULTRA",
-                    environment="PAPER_BINGX",
-                    candidate_id="strat_1_0_32",
-                    symbol="BTC-USDT",
-                    status="RUNNING",
-                    current_pnl_usd=14.50,
-                    daily_pnl_usd=5.20,
-                    current_drawdown_pct=0.85,
-                    peak_equity_usd=1014.50,
-                    last_signal="BUY @ 60,420.00 (Momentum Breakout H1)",
-                    last_order="FILLED SIM 0.05 BTC @ 60,421.50",
-                    open_positions_json='[{"symbol":"BTC-USDT","side":"LONG","qty":0.05,"entryPrice":60421.5,"unrealizedPnl":14.50,"leverage":5}]',
-                    kill_switch_active=False
-                )
-            )
             db.commit()
 
     return DB_PATH

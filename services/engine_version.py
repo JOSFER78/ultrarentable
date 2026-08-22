@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "3.0.0"
-CURRENT_ENGINE_NAME = "Ultrarentable V3.0.0 (Universal Dynamic Engine, AST Rule Evaluator, Full Equity Ledger & Cryptographic Merkle Provenance)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "3.0.0"
+CURRENT_ENGINE_VERSION = "3.1.0"
+CURRENT_ENGINE_NAME = "Ultrarentable V3.1.0 (Master Unified 6-Phase Hub, Two-Way NinjaTrader 8 Remote Bridge & Global Forensic Revalidation)"
+CURRENT_VALIDATION_PIPELINE_VERSION = "3.1.0"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
@@ -124,20 +124,33 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
     },
     {
         "version": "3.0.0",
-        "name": "Ultrarentable V3.0.0 (Universal Dynamic Engine, AST Rule Evaluator, Full Equity Ledger & Cryptographic Merkle Provenance)",
+        "name": "Ultrarentable V3.0.0 (Universal Dynamic Engine, AST Rule Evaluator & Merkle Provenance)",
         "released_at": "2026-08-22T01:00:00.000000+00:00",
-        "status": "CURRENT_RECOMMENDED",
-        "status_label": "Actual / Certificada v3.0.0",
-        "description": "Versión Mayor 3.0.0: Eliminación completa de supuestos hardcodeados en motores, AST dinámico de indicadores y reglas (DynamicIndicatorEngine, DynamicRuleEvaluator), catálogo canónico multi-activo de microestructura (InstrumentSpecification), liquidación precisa de tasas de financiación (Funding Rate) en perpetuos, registro barra por barra inmutable (FullEquityLedger) y cálculo forense de métricas sin aproximaciones artificiales (UniversalMetricsEngine).",
+        "status": "INTERMEDIATE",
+        "status_label": "Intermedia (3.0.0)",
+        "description": "Versión Mayor 3.0.0: Eliminación completa de supuestos hardcodeados en motores, AST dinámico de indicadores y reglas (DynamicIndicatorEngine, DynamicRuleEvaluator), catálogo canónico multi-activo de microestructura.",
         "ruleset_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "git_commit": "HEAD",
+        "git_commit": "HEAD~1",
         "changes": [
             "Eliminación total de indicadores y ramas por símbolo hardcodeadas en motores.",
-            "Contratos canónicos inmutables en Pydantic v2 (universal_strategy, instrument_specification, dataset_specification, execution_model, risk_model, universal_ledger).",
-            "Cálculo y cobro real de Funding Rate periódico sobre posiciones apalancadas en perpetuos.",
-            "UniversalMetricsEngine con estado explícito NOT_COMPUTABLE ante falta de muestra estadística.",
-            "Merkle Provenance Hash determinista basado en las entradas completas de la simulación.",
-            "Suite de pruebas adversariales y verificación multi-activo (Cripto, Futuros CME, Forex)."
+            "Contratos canónicos inmutables en Pydantic v2.",
+            "Cálculo y cobro real de Funding Rate periódico sobre posiciones apalancadas en perpetuos."
+        ]
+    },
+    {
+        "version": "3.1.0",
+        "name": "Ultrarentable V3.1.0 (Master Unified 6-Phase Hub, Two-Way NinjaTrader 8 Remote Bridge & Global Forensic Revalidation)",
+        "released_at": "2026-08-22T06:00:00.000000+00:00",
+        "status": "CURRENT_RECOMMENDED",
+        "status_label": "Actual / Certificada v3.1.0",
+        "description": "Versión Actual 3.1.0: Hub central unificado de 6 fases con portada panorámica, puente bidireccional de control remoto NinjaTrader 8 (Long-Polling & Webhooks), normalización matemática estricta de ROI mensual (CAGR geométrico) y revalidación total de los 230 candidatos sobre datasets físicos SHA-256.",
+        "ruleset_hash": "f4c92b87a10e395d8614bcfe2981045a",
+        "git_commit": "HEAD",
+        "changes": [
+            "Hub Central de Estrategias con Portada General panorámica y navegación instantánea a las 6 fases.",
+            "Puente bidireccional C# NinjaTrader 8: despacho de órdenes remotas (BUY/SELL/FLATTEN/KILL_SWITCH) y telemetría de fills en vivo.",
+            "Normalización de CAGR geométrico mensual en la capa de optimización para eliminar desbordamientos numéricos.",
+            "Revalidación determinista global de todos los candidatos del catálogo bajo la versión 3.1.0."
         ]
     }
 ]

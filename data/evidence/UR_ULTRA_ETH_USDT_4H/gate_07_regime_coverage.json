@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_4H",
   "strategy_id": "UR_ULTRA_ETH_USDT_4H",
-  "strategy_snapshot_hash": "93a94fcd11c67b4d4b9ac553d6ea8634dce3038a4333ffa34dc45bf38fd6436f",
+  "strategy_snapshot_hash": "25bafeecedafd689af29fac0c8ee18586a008c85a4886486a912fc7006139be0",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "9facf709d9d7eb2dacd78066643cfdb4ae11306471e6c7d71309a8627b3bf8ad",
-  "output_hash": "7286df704519dc4a5746e5b5beff278025443403a3c0d353822470b45b9106d4",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "893af3ea8b070b3e00e8ccbd386f0012106c9921675c266002ae8642e3f4f959",
+  "output_hash": "e061bad84765f04ce8ccb79e72aa6668f1fb2a15cf9388e51d07bdd04dc7b280",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +3953.85%)",
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +2946868686.61%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 533,
@@ -29,15 +29,15 @@
       "HIGH_VOLATILITY": 64
     },
     "regime_return_pct": {
-      "BULL_TREND": 1137.23,
-      "BEAR_TREND": 1082.12,
-      "CHOP_RANGING": 869.51,
-      "HIGH_VOLATILITY": 864.99
+      "BULL_TREND": -299121057.11,
+      "BEAR_TREND": 2214866117.72,
+      "CHOP_RANGING": 1028345365.68,
+      "HIGH_VOLATILITY": 2778260.32
     },
-    "regimes_profitable_count": 4,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 3953.85
+    "total_oos_return_pct": 2946868686.61
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T02:19:23.230325+00:00"
+  "created_at_utc": "2026-08-22T06:00:10.978016+00:00"
 }

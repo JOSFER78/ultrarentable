@@ -12,6 +12,7 @@ import {
   SelfHealingAlert, 
   SystemOverviewMetrics 
 } from '../types/telemetry';
+import { getApiUrl } from '../lib/api';
 
 const INITIAL_WORKERS: Record<WorkerId, WorkerTelemetry> = {
   DataWorker: { workerId: 'DataWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 40, opsPerSec: 12, tasksCompleted: 1420, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Ingesta de Velas 1m/5m', uptimeSeconds: 3600, version: '2.2.0' },
@@ -26,7 +27,7 @@ const INITIAL_WORKERS: Record<WorkerId, WorkerTelemetry> = {
 
 const MAX_LOGS_BUFFER = 300;
 
-export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
+export function useTelemetryStream(customStreamUrl?: string) {
   const [workers, setWorkers] = useState<Record<WorkerId, WorkerTelemetry>>(INITIAL_WORKERS);
   const [logs, setLogs] = useState<TelemetryLogEvent[]>([]);
   const [healingAlerts, setHealingAlerts] = useState<SelfHealingAlert[]>([]);
@@ -66,7 +67,8 @@ export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
     }
 
     try {
-      const es = new EventSource(streamUrl);
+      const targetUrl = customStreamUrl || getApiUrl('/api/v2/telemetry/stream');
+      const es = new EventSource(targetUrl);
       eventSourceRef.current = es;
 
       es.onopen = () => {
@@ -107,7 +109,7 @@ export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
               setLogs(prev => [newLog, ...prev.slice(0, MAX_LOGS_BUFFER - 1)]);
             }
           }
-        } catch (err) {
+        } catch {
           // parse error
         }
       };
@@ -128,10 +130,10 @@ export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
           connect();
         }, baseDelay);
       };
-    } catch (err) {
+    } catch {
       // Error creating EventSource
     }
-  }, [streamUrl]);
+  }, [customStreamUrl, logs.length]);
 
   useEffect(() => {
     connect();
@@ -139,7 +141,8 @@ export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
     // Polling de respaldo para healthcheck cada 3s
     const healthTimer = setInterval(async () => {
       try {
-        const res = await fetch('/api/v2/telemetry/health');
+        const healthUrl = getApiUrl('/api/v2/telemetry/health');
+        const res = await fetch(healthUrl);
         if (res.ok) {
           const data = await res.json();
           if (data.workers) {
@@ -169,7 +172,7 @@ export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
             }));
           }
         }
-      } catch (err) {
+      } catch {
         // network fetch error
       }
     }, 3000);

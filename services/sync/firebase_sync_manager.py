@@ -47,12 +47,16 @@ class FirebaseSyncManager:
         self.last_sync_status: str = "INITIALIZING"
         self.last_synced_counts: Dict[str, int] = {}
         self._lock = threading.Lock()
+        self._next_refresh_attempt = 0
 
     def _get_valid_token(self) -> Optional[str]:
-        """Obtiene un token de acceso OAuth válido refrescando si es necesario."""
+        """Obtiene un token de acceso OAuth válido refrescando si es necesario con backoff."""
         try:
             if not os.path.exists(self.config_path):
-                logger.warning(f"No se encontró archivo de configuración Firebase en {self.config_path}")
+                return None
+
+            now_ms = int(time.time() * 1000)
+            if now_ms < self._next_refresh_attempt:
                 return None
 
             with open(self.config_path, "r", encoding="utf-8") as f:
@@ -62,7 +66,6 @@ class FirebaseSyncManager:
             access_token = tokens.get("access_token")
             refresh_token = tokens.get("refresh_token")
             expires_at = tokens.get("expires_at", 0)
-            now_ms = int(time.time() * 1000)
 
             # Refrescar si expira en menos de 2 minutos
             if refresh_token and (now_ms >= expires_at - 120000 or not access_token):
@@ -74,7 +77,7 @@ class FirebaseSyncManager:
                         "grant_type": "refresh_token",
                         "refresh_token": refresh_token,
                     },
-                    timeout=8.0,
+                    timeout=5.0,
                 )
                 if resp.status_code == 200:
                     r_data = resp.json()
@@ -87,10 +90,12 @@ class FirebaseSyncManager:
                         json.dump(data, fw, indent=2)
                     logger.info("Token de Firebase refrescado y guardado con éxito.")
                 else:
-                    logger.warning(f"Error refrescando token: HTTP {resp.status_code}")
+                    self._next_refresh_attempt = now_ms + 300000  # 5 minutos backoff
+                    logger.warning(f"Error refrescando token: HTTP {resp.status_code} (pausando reintentos 5m)")
 
             return access_token
         except Exception as e:
+            self._next_refresh_attempt = int(time.time() * 1000) + 300000
             logger.error(f"Error resolviendo token Firebase: {e}")
             return None
 
@@ -118,6 +123,14 @@ class FirebaseSyncManager:
         with self._lock:
             now_iso = datetime.now(timezone.utc).isoformat()
             now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+            token = self._get_valid_token()
+            if not token:
+                return {
+                    "status": "AUTH_PENDING",
+                    "message": "Firebase sync pausado por autenticación.",
+                    "last_sync_utc": now_iso,
+                }
 
             # 1. Extraer candidatos reales desde SQLite WAL
             candidates_map: Dict[str, Any] = {}

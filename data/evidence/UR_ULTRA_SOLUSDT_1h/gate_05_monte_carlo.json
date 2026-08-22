@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g05",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "6c587869362cf24a2cabf10c38ff6e1e5c5dbd47747e80c9a84cd81cc1f84599",
+  "strategy_snapshot_hash": "23ae38dc6ebb30cad0e6f34c5cf5f496b8397eb409a5dbf0eee866ff1a2e5679",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "626bd69b0abaad9ea38efdd26953ec0296fc22e11bcfc7f50232fbe38a79d62f",
-  "output_hash": "59d5ca9e713397e6d65e9107fd0315ac5d01d002f8b73e091b52c11b5ff38c3e",
+  "input_hash": "42416411815f62931ebe0a3f45d15ba014dba827fa12eef3dabf715606c9f2e4",
+  "output_hash": "a8c3decbecd1169b60636477bc791fe000963a70c5faaa478bad8472fbb36f2a",
   "status": "PASSED",
-  "score": 98.7,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 2.7%)",
+  "score": 97.8,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.3%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.7,
-    "drawdown_95th_percentile_pct": 2.7,
-    "max_simulated_drawdown_pct": 5.9
+    "drawdown_median_pct": 2.7,
+    "drawdown_95th_percentile_pct": 4.3,
+    "max_simulated_drawdown_pct": 6.9
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T02:44:15.456937+00:00"
+  "created_at_utc": "2026-08-22T03:44:20.581673+00:00"
 }

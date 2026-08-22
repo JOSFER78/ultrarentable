@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "2ed72f293b1b1566dde2cb3bee23eb32398d936b23d0436e446155ee92175c79",
-  "output_hash": "48f91941432e33c32634b172d28262dc89175d0a439f8cf0b79533bb99cf9d0a",
-  "status": "FAILED",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "9e7fa197a285f8ac4460826a8ed2e2c331942956102860b8290eefa62b92b36e",
+  "output_hash": "c76efba3a9942148cc105960592786a79a969c245e19c565c23fa63e45c9903d",
+  "status": "PASSED",
   "score": 100.0,
-  "verdict": "FALLO: Muestra insuficiente (91 IS < 15 ó 28 OOS < 10)",
+  "verdict": "PASSED: Muestra robusta (92 IS / 32 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 91,
-    "trades_oos": 28,
-    "top2_outlier_dependency_pct": 100.0,
+    "trades_is": 92,
+    "trades_oos": 32,
+    "top2_outlier_dependency_pct": 64.4,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:23:39.094227+00:00"
+  "created_at_utc": "2026-08-22T06:00:54.937361+00:00"
 }
