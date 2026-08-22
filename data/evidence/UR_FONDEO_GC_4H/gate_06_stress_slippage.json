@@ -10,42 +10,42 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "62895d8f8654afc3a988cc5a98138a5c79ce92892e145e798bc2c5230e9f9c90",
-  "output_hash": "7de2665ff9391a49c098dcf3c7f7de6ef70b83948c11f4a524189a5c779c9876",
-  "status": "PASSED",
-  "score": 50.0,
-  "verdict": "PASSED (MODERADO): Resiste fricción base con observación (2/4 escenarios superados)",
+  "input_hash": "be189857aaa2fd98ca759303a65dad554b2d409e43a1220f4ef327700a8edfef",
+  "output_hash": "1c3290813bf7aadea615d2124047ece4ee5f5502a25abd8b1f2a6f16c378d457",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.01,
-        "stressed_profit_factor": 1.24,
-        "survived": true
+        "stressed_net_pnl_usd": -0.02,
+        "stressed_profit_factor": 0.97,
+        "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.0,
-        "stressed_profit_factor": 1.15,
-        "survived": true
+        "stressed_net_pnl_usd": -0.03,
+        "stressed_profit_factor": 0.96,
+        "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.0,
-        "stressed_profit_factor": 1.03,
+        "stressed_net_pnl_usd": -0.04,
+        "stressed_profit_factor": 0.94,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.0,
+        "stressed_net_pnl_usd": -0.06,
         "stressed_profit_factor": 0.92,
         "survived": false
       }
     },
-    "passed_scenarios_count": 2,
+    "passed_scenarios_count": 0,
     "min_required_scenarios": 2,
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:28:43.592151+00:00"
+  "created_at_utc": "2026-08-22T01:34:31.560776+00:00"
 }

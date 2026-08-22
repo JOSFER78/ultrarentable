@@ -2,20 +2,20 @@
   "gate_id": 10,
   "name": "DEBATE_AGENTES",
   "passed": false,
-  "score": 60.5,
-  "verdict": "FALLO: Consenso insuficiente (60.5/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "score": 60.8,
+  "verdict": "FALLO: Consenso insuficiente (60.8/100) u objeci\u00f3n cr\u00edtica de riesgo",
   "evidence": {
-    "consensus_score": 60.5,
+    "consensus_score": 60.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
-        "score": 28.0,
+        "score": 28.9,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.40 con beneficio neto de $-0.15.",
+          "Profit Factor OOS: 0.42 con beneficio neto de $-0.17.",
           "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -35,7 +35,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 77 operaciones evaluadas (M\u00ednimo requerido: 20).",
+          "Muestra fuera de muestra: 88 operaciones evaluadas (M\u00ednimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -53,9 +53,9 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
-        "score": 57.0,
+        "score": 57.2,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.40 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.42 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": true
       }
