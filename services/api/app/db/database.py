@@ -447,6 +447,19 @@ from sqlalchemy import text
 def init_db():
     Base.metadata.create_all(bind=engine)
     
+    # Safe SQLite column migrations for existing databases
+    with engine.connect() as conn:
+        for stmt in [
+            "ALTER TABLE portfolios ADD COLUMN current_equity_usd FLOAT DEFAULT 10000.0",
+            "ALTER TABLE candidates ADD COLUMN engine_version VARCHAR DEFAULT '3.0.0'",
+            "ALTER TABLE candidates ADD COLUMN validation_pipeline_version VARCHAR DEFAULT '3.0.0'",
+        ]:
+            try:
+                conn.execute(text(stmt))
+                conn.commit()
+            except Exception:
+                pass
+
     # Ensure tables and seed initial canonical data
     with SessionLocal() as db:
         # Seed or sync full 34+ Prop Firms Catalog

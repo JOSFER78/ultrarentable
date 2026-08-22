@@ -16,11 +16,11 @@ from services.version_control_manager import VersionControlManager
 
 
 def test_engine_version_is_1_05_and_synced():
-    """Verifica que la versión actual del motor esté en 1.05 y registrada en el manifiesto."""
-    assert CURRENT_ENGINE_VERSION == "1.05"
+    """Verifica que la versión actual del motor esté sincronizada y registrada en el manifiesto."""
     info = get_current_version_info()
-    assert info["engine_version"] == "1.05"
-    assert "Pure Dimensional Quant Architecture" in info["engine_name"]
+    assert info["engine_version"] == CURRENT_ENGINE_VERSION
+    assert len(info["history"]) >= 5
+    assert any(v["version"] == "1.05" for v in info["history"])
 
 
 def test_gate_05_monte_carlo_handles_compounding_geometrically_without_false_drawdown():
