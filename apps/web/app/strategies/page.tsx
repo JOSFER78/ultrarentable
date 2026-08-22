@@ -689,7 +689,7 @@ export default function StrategiesExplorerPage() {
             <div style={{ fontSize: "10px", color: "#fbbf24", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>DATASETS FÍSICOS AUDITADOS</div>
             <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "3px" }}>22 Activos · 4 Mercados</div>
             <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-              <strong>97 Datasets</strong> (1.103.251 velas físicas con SHA-256)
+              <strong>Datasets</strong> (recuento de velas: N/D hasta conectar telemetría)
             </div>
           </div>
 

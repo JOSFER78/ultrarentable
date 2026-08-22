@@ -4,6 +4,9 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { STRATEGY_PHASES, StrategyPhase } from "@/lib/strategyPhases";
+
+// Derivado del catálogo canónico: si cambia una fase, badge o ruta, cambia aquí automáticamente.
 interface EstrategiaTab {
   step: number;
   label: string;
@@ -15,68 +18,18 @@ interface EstrategiaTab {
   color: string;
 }
 
-const ESTRATEGIAS_TABS: EstrategiaTab[] = [
-  {
-    step: 1,
-    label: "1. Motor 24/7 en Vivo",
-    shortLabel: "Motor 24/7",
-    href: "/estrategias/1-motor-en-vivo",
-    altHrefs: ["/panel", "/sistema", "/estrategias/1-motor-en-vivo"],
-    icon: "⚡",
-    badge: "24/7",
-    color: "#34d399",
-  },
-  {
-    step: 2,
-    label: "2. Catálogo de Estrategias (230)",
-    shortLabel: "Catálogo Estrategias",
-    href: "/estrategias/2-explorador-excel",
-    altHrefs: ["/estrategias", "/strategies", "/estrategias/2-explorador-excel"],
-    icon: "📊",
-    badge: "230 CAND",
-    color: "#38bdf8",
-  },
-  {
-    step: 3,
-    label: "3. Pipeline 10 Gates (FSM)",
-    shortLabel: "Pipeline 10-G",
-    href: "/estrategias/3-pipeline-11-gates",
-    altHrefs: ["/candidatos", "/pasos", "/estrategias/3-pipeline-11-gates"],
-    icon: "🧬",
-    badge: "10 GATES",
-    color: "#818cf8",
-  },
-  {
-    step: 4,
-    label: "4. Panel Investigador Semántico",
-    shortLabel: "Lab Investigador",
-    href: "/estrategias/4-panel-investigador",
-    altHrefs: ["/research", "/backtest", "/estrategias/4-panel-investigador"],
-    icon: "🔬",
-    badge: "LAB I+D",
-    color: "#facc15",
-  },
-  {
-    step: 5,
-    label: "5. Estrategias Aprobadas (10/10)",
-    shortLabel: "Aprobadas 10/10",
-    href: "/estrategias/5-estrategias-aprobadas",
-    altHrefs: ["/gates", "/leaderboard", "/estrategias/5-estrategias-aprobadas"],
-    icon: "🏆",
-    badge: "CERTIFICADAS",
-    color: "#10b981",
-  },
-  {
-    step: 6,
-    label: "6. Meta-Estrategia Ensamblada",
-    shortLabel: "Meta-Estrategia",
-    href: "/estrategias/6-meta-estrategia",
-    altHrefs: ["/portfolio", "/estrategias/6-meta-estrategia"],
-    icon: "🧩",
-    badge: "PORTFOLIO",
-    color: "#ec4899",
-  },
-];
+const ESTRATEGIAS_TABS: EstrategiaTab[] = STRATEGY_PHASES.filter(
+  (p: StrategyPhase) => p.id > 0 && p.route
+).map((p) => ({
+  step: p.id,
+  label: p.label,
+  shortLabel: p.shortLabel,
+  href: p.route as string,
+  altHrefs: [...(p.legacyRoutes ?? []), p.route as string],
+  icon: p.icon,
+  badge: p.badge,
+  color: p.color,
+}));
 
 export default function EstrategiasHeaderNav() {
   const pathname = usePathname();

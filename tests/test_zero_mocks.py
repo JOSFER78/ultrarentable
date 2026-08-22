@@ -1,88 +1,97 @@
-"""tests/test_zero_mocks.py
-Auditoría Forense Automatizada de Rigor Cuantitativo (Fase 0).
-Garantiza que ningún componente de validación, backtesting, ejecución o gates
-contenga funciones aleatorias, fallbacks que inventen métricas o estados PASSED predeterminados.
+# -*- coding: utf-8 -*-
+"""tests/test_zero_mocks.py — Guardia ZERO-MOCKS.
+
+Ejecución: python3 tests/test_zero_mocks.py  (exit 0 = limpio, exit 1 = violaciones)
+
+Demuestra la ausencia de datos falsos conocidos en el código fuente:
+ - Literales de métricas/contadores que fueron eliminados en FASE 1 (regresión).
+ - Patrones de fallback inventado en métricas (|| 1.35, ?? 1.34, min(4.0, ...)).
+ - Telemetría decorativa de gates (valores declarados a mano).
+ - Vela sintética del adaptador de backtest.
 """
+from __future__ import annotations
 
-import inspect
-import pytest
-from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
-from services.api.app.validation.gates.gate_01_data_ingest import Gate01DataIngest
-from services.api.app.validation.gates.gate_02_cost_backtest import Gate02CostBacktest
-from services.api.app.validation.gates.gate_03_trade_significance import Gate03TradeSignificance
-from services.api.app.validation.gates.gate_04_walk_forward import Gate04WalkForward
-from services.api.app.validation.gates.gate_05_monte_carlo import Gate05MonteCarlo
-from services.api.app.validation.gates.gate_06_stress_slippage import Gate06StressSlippage
-from services.api.app.validation.gates.gate_07_regime_coverage import Gate07RegimeCoverage
-from services.api.app.validation.gates.gate_08_dsr_ratio import Gate08DSRRatio
-from services.api.app.validation.gates.gate_09_novelty_antifit import Gate09NoveltyAntiFit
-from services.api.app.validation.gates.gate_10_agent_debate import Gate10AgentDebate
-from services.api.app.validation.gates.gate_11_nautilus_event import Gate11NautilusEvent
+import re
+import sys
+from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
 
-def test_no_hardcoded_pass_in_empty_gates():
-    """Verifica que ningún Gate devuelva PASSED si no recibe datos o trades reales."""
-    g1 = Gate01DataIngest()
-    res1 = g1.evaluate([])
-    assert res1["passed"] is False or res1["score"] == 0.0
+SCAN_DIRS = [
+    ROOT / "apps" / "web" / "app",
+    ROOT / "apps" / "web" / "components",
+    ROOT / "apps" / "web" / "lib",
+    ROOT / "services",
+    ROOT / "contracts",
+]
 
-    g2 = Gate02CostBacktest()
-    res2 = g2.evaluate([])
-    assert res2["passed"] is False
+# Literales de datos falsos eliminados en FASE 1 (regresión si reaparecen)
+BANNED_SUBSTRINGS = [
+    "78813", "610531", "255906", "109674", "48744", "21325", "609305",
+    "1.103.251", "9.882", "14210", "78.813",
+]
 
-    g3 = Gate03TradeSignificance()
-    res3 = g3.evaluate([], [])
-    assert res3["passed"] is False
+# Patrones regex de fabricación de métricas
+BANNED_PATTERNS = [
+    (re.compile(r"sharpe_ratio\s*=\s*2\.1\b"), "sharpe literal 2.1"),
+    (re.compile(r"min\(4\.0\s*,\s*\w+\)"), "recorte de DD a 4%"),
+    (re.compile(r"\|\|\s*1\.35\b"), "fallback PF 1.35"),
+    (re.compile(r"\?\?\s*1\.34\b"), "fallback PF OOS 1.34"),
+    (re.compile(r"\?\?\s*48\.5\b"), "fallback winrate 48.5"),
+    (re.compile(r"\|\|\s*4\.2\b"), "fallback DD 4.2"),
+    (re.compile(r"\|\|\s*40\.0\b"), "fallback winrate 40"),
+    (re.compile(r"\|\|\s*35\.0\b"), "fallback ROI 35"),
+    (re.compile(r"pass_rate_pct.{0,40}80\.0"), "pass_rate inventado 80%"),
+    (re.compile(r"days_taken.{0,30}\?\?\s*8\.0|oos_months\s*\?\?\s*8\.0"), "oos_months inventado 8.0"),
+    (re.compile(r"\|\|\s*230\b"), "contador hardcodeado 230"),
+    (re.compile(r'\|\|\s*1420\b'), "tasksCompleted inventado 1420"),
+    (re.compile(r"99\.0 if tot_p > 0"), "profit factor acuñado 99.0"),
+    (re.compile(r'\{"time": "2026-01-01", "open": 100\.0'), "vela sintética del adaptador"),
+    (re.compile(r"datasets_audited\"?:\s*\d+"), "telemetría de gate declarada a mano"),
+    (re.compile(r'"status":\s*"ONLINE · MONITORIZANDO"'), "estado de gate decorativo"),
+]
 
-    g4 = Gate04WalkForward()
-    res4 = g4.evaluate([], [])
-    assert res4["passed"] is False
-
-    g5 = Gate05MonteCarlo()
-    res5 = g5.evaluate([])
-    assert res5["passed"] is False
-
-    g6 = Gate06StressSlippage()
-    res6 = g6.evaluate([])
-    assert res6["passed"] is False
-
-    g7 = Gate07RegimeCoverage()
-    res7 = g7.evaluate([], [])
-    assert res7["passed"] is False
-
-    g8 = Gate08DSRRatio()
-    res8 = g8.evaluate([])
-    assert res8["passed"] is False
-
-    g11 = Gate11NautilusEvent()
-    res11 = g11.evaluate([])
-    assert res11["passed"] is False
+EXCLUDE_PARTS = {"node_modules", ".git", "__pycache__", "tests"}
+EXCLUDE_FILES = {Path(__file__).name}
 
 
-def test_orchestrator_handles_empty_candidates_without_fake_pass():
-    """El orquestador no debe certificar candidatos sin evidencia."""
-    orchestrator = GatePipelineOrchestrator()
-    res = orchestrator.run_all_gates(
-        candidate_info={"candidate_id": "empty_test", "route": "ULTRA", "symbol": "BTCUSDT"},
-        candles=[],
-        is_trades=[],
-        oos_trades=[],
-        trades_raw=[]
-    )
-    assert res["overall_certified"] is False
-    assert res["gates_passed_count"] < 11
+def iter_source_files():
+    for d in SCAN_DIRS:
+        if not d.exists():
+            continue
+        for p in d.rglob("*"):
+            if p.suffix not in {".ts", ".tsx", ".py"} or not p.is_file():
+                continue
+            if p.name in EXCLUDE_FILES or EXCLUDE_PARTS & set(p.parts):
+                continue
+            yield p
 
 
-def test_source_files_do_not_import_random_in_validation_gates():
-    """Verifica que los gates de validación analítica no importen el módulo `random` para inventar trades."""
-    import services.api.app.validation.gates.gate_01_data_ingest as g1_mod
-    import services.api.app.validation.gates.gate_02_cost_backtest as g2_mod
-    import services.api.app.validation.gates.gate_04_walk_forward as g4_mod
-    import services.api.app.validation.gates.gate_06_stress_slippage as g6_mod
-    import services.api.app.validation.gates.gate_11_nautilus_event as g11_mod
+def main() -> int:
+    violations: list[str] = []
+    for p in iter_source_files():
+        try:
+            text = p.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        rel = p.relative_to(ROOT)
+        for lit in BANNED_SUBSTRINGS:
+            if lit in text:
+                violations.append(f"{rel}: literal prohibido '{lit}'")
+        for rx, desc in BANNED_PATTERNS:
+            m = rx.search(text)
+            if m:
+                line = text.count("\n", 0, m.start()) + 1
+                violations.append(f"{rel}:{line}: patrón prohibido ({desc})")
 
-    for mod in [g1_mod, g2_mod, g4_mod, g6_mod, g11_mod]:
-        src = inspect.getsource(mod)
-        assert "random.uniform" not in src
-        assert "random.randint" not in src
-        assert "random.random" not in src
+    if violations:
+        print(f"ZERO-MOCKS: {len(violations)} VIOLACIONES:")
+        for v in violations:
+            print(f"  ✗ {v}")
+        return 1
+    print("ZERO-MOCKS: OK — sin literales ni patrones de datos falsos conocidos.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

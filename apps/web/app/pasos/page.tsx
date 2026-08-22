@@ -44,10 +44,10 @@ const GLOBAL_STEPS: StepConfig[] = [
       "Generación de matrices de volatilidad y regímenes de mercado para los motores de backtest."
     ],
     whatItsDoingNow: {
-      status: "ONLINE · MONITORIZANDO",
-      statusColor: "#34d399",
-      liveMetric: "97 CSVs auditados en disco (1.103.251 velas reales)",
-      throughput: "25.500 velas/bloque",
+      status: "SIN TELEMETRÍA REAL CONECTADA",
+      statusColor: "#94a3b8",
+      liveMetric: "N/D (telemetría no conectada en esta vista)",
+      throughput: "N/D",
       currentTask: "Supervisión de continuidad en feeds Binance / BingX / CME",
       lastVerdict: "0 Gaps detectados · Integridad 100%"
     },

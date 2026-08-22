@@ -1489,12 +1489,12 @@ def get_autopilot_status(db: Session = Depends(get_db)):
         "currentSymbol": current_cell.get("symbol", "BTC-USDT"),
         "currentInterval": current_cell.get("timeframe", "15m"),
         "bestCandidateId": "sqx_ultra_auto_pilot_strategy_1.12.108",
-        "bestFastReturnPct": 1250.4,
-        "bestCanonicalReturnPct": 1250.4,
-        "evaluatedStrategiesCount": speed.get("total_evaluations", 610531),
-        "exploredSymbolsCount": len(daemon_tel.get("datasets_inventory", [])) or 22,
+        "bestFastReturnPct": 0.0,
+        "bestCanonicalReturnPct": 0.0,
+        "evaluatedStrategiesCount": speed.get("total_evaluations", 0),
+        "exploredSymbolsCount": len(daemon_tel.get("datasets_inventory", [])),
         "watchdog_active": ha_watchdog._is_running,
-        "evaluations_per_sec": speed.get("evaluations_per_sec", 0.5),
+        "evaluations_per_sec": speed.get("evaluations_per_sec", 0.0),
         "createdAt": datetime.now(timezone.utc).isoformat(),
     }
 

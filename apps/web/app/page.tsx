@@ -574,7 +574,7 @@ export default function GeneticDiscoveryLabPage() {
             </span>
           </div>
           <div style={{ fontSize: "11px", color: "#cbd5e1", marginTop: "8px" }}>
-            Auditado en disco: <strong style={{ color: "#38bdf8" }}>97 CSVs (1.103.251 velas reales)</strong>
+            Auditado en disco: <strong style={{ color: "#38bdf8" }}>inventario en vivo en /estrategias (Fase 1)</strong>
           </div>
           <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
             Modo: 100% datos reales en disco (Zero Mocks / Zero Simulaciones)

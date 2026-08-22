@@ -9,90 +9,9 @@ import CandidatosFSMPage from "../candidatos/page";
 import ResearchLabPage from "../research/page";
 import ApprovedStrategiesAndGatesHubPage from "../gates/page";
 import PortfolioStudioPage from "../portfolio/page";
+import { STRATEGY_PHASES } from "@/lib/strategyPhases";
 
-interface PhaseConfig {
-  id: number;
-  key: string;
-  name: string;
-  shortName: string;
-  icon: string;
-  badge: string;
-  color: string;
-  description: string;
-}
-
-const PHASES: PhaseConfig[] = [
-  {
-    id: 0,
-    key: "portada",
-    name: "0. Portada & Panel General de Estrategias",
-    shortName: "Portada General",
-    icon: "🗺️",
-    badge: "HUB GLOBAL",
-    color: "#63e1b4",
-    description: "Visión panorámica global, KPIs consolidados, embudo de 6 etapas y estado de las 6 fases del sistema.",
-  },
-  {
-    id: 1,
-    key: "motor",
-    name: "1. Motor Cuantitativo 24/7 en Vivo & Supervisión",
-    shortName: "1. Motor 24/7",
-    icon: "⚡",
-    badge: "24/7 AUTO",
-    color: "#34d399",
-    description: "Monitoreo en tiempo real de la minería continua (FastEngine 24/7 + SQX Bridge), pool de 8 workers y supervisión de datos.",
-  },
-  {
-    id: 2,
-    key: "catalogo",
-    name: "2. Catálogo y Explorador Cuantitativo",
-    shortName: "2. Catálogo",
-    icon: "📊",
-    badge: "CATÁLOGO",
-    color: "#38bdf8",
-    description: "Explorador de estrategias con filtros por activo, temporalidad, métricas OOS, Scorecards, DNA y exportador C# / Pine.",
-  },
-  {
-    id: 3,
-    key: "pipeline",
-    name: "3. Pipeline 11 Gates (FSM & Gates Institucionales)",
-    shortName: "3. Pipeline 11-G",
-    icon: "🧬",
-    badge: "11 GATES",
-    color: "#818cf8",
-    description: "Evaluación rigurosa a través de los 11 Gates matemáticos deterministas de control de calidad y robustez.",
-  },
-  {
-    id: 4,
-    key: "investigador",
-    name: "4. Panel Investigador Semántico (Laboratorio I+D)",
-    shortName: "4. Lab I+D",
-    icon: "🔬",
-    badge: "LAB I+D",
-    color: "#facc15",
-    description: "Análisis semántico de fallos, base de conocimiento de sobreajuste y bucle de mejora continua de estrategias.",
-  },
-  {
-    id: 5,
-    key: "aprobadas",
-    name: "5. Estrategias Aprobadas (Certificación 11 Gates)",
-    shortName: "5. Aprobadas",
-    icon: "🏆",
-    badge: "CERTIFICADAS",
-    color: "#10b981",
-    description: "Ranking oficial de estrategias que han superado los 10 Gates con evidencia matemática completa.",
-  },
-  {
-    id: 6,
-    key: "portfolio",
-    name: "6. Meta-Estrategia Ensamblada & Bóveda Ratchet",
-    shortName: "6. Meta-Estrategia",
-    icon: "🧩",
-    badge: "PORTFOLIO",
-    color: "#ec4899",
-    description: "Ensamblaje de portafolios multiactivo no correlacionados, interés compuesto y protección de bóveda.",
-  },
-];
+// FASES: fuente única en lib/strategyPhases.ts (prohibido re-declarar aquí)
 
 // COMPONENTE: PORTADA GENERAL DE ESTRATEGIAS (PANEL HERO CONSOLIDADO)
 function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: number) => void }) {
@@ -264,7 +183,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px" }}>
-          {PHASES.filter(p => p.id > 0).map((phase) => (
+          {STRATEGY_PHASES.filter(p => p.id > 0).map((phase) => (
             <div
               key={phase.id}
               onClick={() => onSelectFase(phase.id)}
@@ -310,7 +229,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
                 </div>
 
                 <div style={{ fontSize: "15px", fontWeight: 900, color: "#ffffff", marginBottom: "6px" }}>
-                  {phase.name}
+                  {phase.label}
                 </div>
 
                 <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0, lineHeight: "1.5" }}>
@@ -519,7 +438,7 @@ function EstrategiasHubContent() {
             width: "100%",
           }}
         >
-          {PHASES.map((phase) => {
+          {STRATEGY_PHASES.map((phase) => {
             const isSelected = activeFase === phase.id;
             return (
               <button
@@ -573,7 +492,7 @@ function EstrategiasHubContent() {
                     width: "100%",
                   }}
                 >
-                  {phase.shortName}
+                  {phase.shortLabel}
                 </div>
               </button>
             );
