@@ -2,16 +2,16 @@
   "evidence_id": "ev_TEST_CAND_BTC_g06",
   "run_id": "run_TEST_CAND_BTC",
   "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "208e2ea36959cc089f6fa344459dec9e6578e480d2a243c1fb2ad138f4db9219",
+  "strategy_snapshot_hash": "9a29de0b5daf3cdc34c5c5a29a8915cfb0a38c1e34f06763c44e56147c4e1949",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "6e90cf35339bcc8642d316364f1e6169b1f210544879c4d7caa30f646d60bcf5",
-  "output_hash": "45846590e8074832633c6899335533b3fad4a2dd0c42cfd50a82ca0ad57875ac",
+  "input_hash": "4e7815d0d6d5f61d9ac910ad9274da8ee741fc4fb93684753bd10e763cb7b046",
+  "output_hash": "fd35aa07ad2b0619c1bf9c35322974190dbbeff34e44df8241c48b7ef8307185",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.73,
-        "stressed_profit_factor": 0.88,
+        "stressed_net_pnl_usd": -3.26,
+        "stressed_profit_factor": 0.6,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.86,
-        "stressed_profit_factor": 0.87,
+        "stressed_net_pnl_usd": -3.37,
+        "stressed_profit_factor": 0.59,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -1.01,
-        "stressed_profit_factor": 0.85,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -3.49,
+        "stressed_profit_factor": 0.58,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -1.27,
-        "stressed_profit_factor": 0.81,
+        "stressed_net_pnl_usd": -3.7,
+        "stressed_profit_factor": 0.57,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T06:00:52.459456+00:00"
+  "created_at_utc": "2026-08-22T13:57:08.666437+00:00"
 }

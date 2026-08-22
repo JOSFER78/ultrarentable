@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1H",
-  "strategy_snapshot_hash": "b689404b68ca0f2f89092b3b97e2435e580f0ba854d0c3f94b4530a6f2302807",
+  "strategy_snapshot_hash": "bdea282a7a8a6dbd1c9c190395a5799d48d1ebd1b42081eaa2520a030104bd57",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "7570523bfa3c7b138ccbb3724dc9fccd5a51840c72f440d408612e364763aade",
-  "output_hash": "747f8b37f1e0148a2abcb3bbe1aee18d0781cc053581e7bb2db22bf7a523be5b",
+  "input_hash": "30816d6504587bcba21eeca44736f42b7e7a5a055ee67a0810bbd35f87ff8076",
+  "output_hash": "c7731ebd476401b15472886c5fd0eea6133760250dc1078c4a7fc21cf786284b",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 496.4 trades/param, Estabilidad Vecindario: 105.1%, Re-backtest PFs: [0.95, 0.92, 1.13, 1.16])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 309.4 trades/param, Estabilidad Vecindario: 104.7%, Re-backtest PFs: [0.97, 0.92, 1.15, 1.15])",
   "metrics": {
-    "parameters_count": 5,
-    "degrees_of_freedom_ratio": 496.4,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 309.4,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 105.1,
+    "parameter_neighborhood_stability_pct": 104.7,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.95,
+      0.97,
       0.92,
-      1.13,
-      1.16
+      1.15,
+      1.15
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T06:28:36.088920+00:00"
+  "created_at_utc": "2026-08-22T13:47:59.482869+00:00"
 }

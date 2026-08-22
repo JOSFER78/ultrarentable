@@ -2,31 +2,31 @@
   "evidence_id": "ev_TEST_CAND_BTC_g10",
   "run_id": "run_TEST_CAND_BTC",
   "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "208e2ea36959cc089f6fa344459dec9e6578e480d2a243c1fb2ad138f4db9219",
+  "strategy_snapshot_hash": "9a29de0b5daf3cdc34c5c5a29a8915cfb0a38c1e34f06763c44e56147c4e1949",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "c3e1aec16a164d48b4ed3adeba567ec2f4d3294be6a69d0e70f6d54690e5a3ed",
-  "output_hash": "11ff61cdb2fe67bcfa4f82e850652999b7ad03408ca682bd92fa6d82ac782431",
+  "input_hash": "e068296595cc04422c7bd16a79ba7c2dcf861b3db95ab9fa1ecb25e452c80826",
+  "output_hash": "214a1cc3e6134b8ec0eb76f80eac2d00f804aad60e59930e14cdd8e6de53ae78",
   "status": "FAILED",
-  "score": 31.6,
-  "verdict": "FALLO: Consenso insuficiente (31.6/100) u objeción crítica de riesgo",
+  "score": 26.5,
+  "verdict": "FALLO: Consenso insuficiente (26.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 31.6,
+    "consensus_score": 26.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 44.6,
+        "score": 27.1,
         "findings": [
           "Activo y Timeframe: BTCUSDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.77 con beneficio neto de $-0.70.",
+          "Profit Factor OOS: 0.38 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 86 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 112 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.01 USD.",
+          "Beneficio medio por operación: $-8.93 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 36.2,
+        "score": 31.8,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.77 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 0.38 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:00:58.926720+00:00"
+  "created_at_utc": "2026-08-22T13:57:10.024110+00:00"
 }

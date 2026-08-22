@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_XRP_USDT_1H",
   "strategy_id": "UR_ULTRA_XRP_USDT_1H",
-  "strategy_snapshot_hash": "2019dcb4b54d4145321e71f1feafe531d39567cee0af3f3ffb6f23854885d60d",
+  "strategy_snapshot_hash": "c2765634ba3f9d1c72302938f271c428ad4a62161e06c7aefe91f2c240eaa88c",
   "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "d05d2aa9bd3e3c8750886a563b1bf5d3bbba230667ea665f218e0148182eb3fd",
-  "output_hash": "85bf36cbb841acd3977b7da471f804bf36cca587dcc36f365cef5b3be53760a3",
+  "input_hash": "74c277fe5cfa689f5a1203d2fd3dec2a1e13a9cbe86bbcdd2fe8d1cc5700680d",
+  "output_hash": "94b7bc75b5c5c0a98e11bccd183e5b06513ab92e4333aecacacf0db07ea34d32",
   "status": "FAILED",
-  "score": 29.5,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 53.2 o Estabilidad 73.7% < 50.0%)",
+  "score": 48.3,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 188.9 o Estabilidad 120.8% < 50.0%)",
   "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 53.2,
+    "degrees_of_freedom_ratio": 188.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 73.7,
+    "parameter_neighborhood_stability_pct": 120.8,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.08,
-      0.89,
-      1.4,
+      1.15,
+      1.05,
+      1.21,
       1.23
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T07:35:13.368637+00:00"
+  "created_at_utc": "2026-08-22T13:53:47.158264+00:00"
 }

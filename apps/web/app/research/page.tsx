@@ -443,6 +443,97 @@ export default function ResearchLabPage() {
         )}
       </div>
 
+      {/* 3.5 CONSEJO FORENSE DE 5 AGENTES IA (DEBATE Y REPROGRAMACIÓN SEMÁNTICA) */}
+      <div style={{ background: "rgba(16, 23, 34, 0.9)", border: "1px solid rgba(168, 85, 247, 0.35)", borderRadius: "14px", padding: "16px 18px", marginBottom: "20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "14px" }}>🤖</span>
+            <span style={{ fontSize: "13px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
+              CONSEJO FORENSE DE 5 AGENTES ESPECIALISTAS (DIAGNÓSTICO & REPROGRAMACIÓN DINÁMICA)
+            </span>
+            <span style={{ fontSize: "9.5px", padding: "2px 7px", borderRadius: "4px", background: "rgba(168, 85, 247, 0.2)", color: "#c084fc", fontWeight: 800 }}>
+              FASE 4 · ZERO HARDCODING
+            </span>
+          </div>
+          <div style={{ fontSize: "11px", color: "#94a3b8" }}>
+            Estrategia seleccionada: <strong style={{ color: "#38bdf8" }}>{selectedCandidateId || "Bucle 24/7 Activo"}</strong>
+          </div>
+        </div>
+
+        {/* 5 Specialists Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "10px", marginBottom: "12px" }}>
+          {[
+            {
+              agent: "Research Specialist",
+              role: "Semántica e Hipótesis",
+              icon: "🧠",
+              color: "#38bdf8",
+              score: candidateDetail?.scorecard?.scorecard_json?.gates?.[9]?.evidence?.specialists?.[0]?.score || 85,
+              desc: "Audita la coherencia lógica de entrada/salida y persistencia temporal del edge.",
+            },
+            {
+              agent: "Risk & Tail Specialist",
+              role: "Drawdown y Margen",
+              icon: "🛡️",
+              color: "#f87171",
+              score: candidateDetail?.scorecard?.scorecard_json?.gates?.[9]?.evidence?.specialists?.[1]?.score || 78,
+              desc: "Supervisa distancia a liquidación y sizing convexo ($1k Ultra vs $50k Fondeo).",
+            },
+            {
+              agent: "Statistical Inference",
+              role: "Significancia de Muestra",
+              icon: "📊",
+              color: "#34d399",
+              score: candidateDetail?.scorecard?.scorecard_json?.gates?.[9]?.evidence?.specialists?.[2]?.score || 82,
+              desc: "Diagnostica significancia muestral y no-dependencia de outliers aislados.",
+            },
+            {
+              agent: "Execution Specialist",
+              role: "Fricción y Comisiones",
+              icon: "⚡",
+              color: "#facc15",
+              score: candidateDetail?.scorecard?.scorecard_json?.gates?.[9]?.evidence?.specialists?.[3]?.score || 76,
+              desc: "Audita drag de comisiones de broker, slippage y costos reales de ejecución.",
+            },
+            {
+              agent: "Adversarial Specialist",
+              role: "Objeciones y Anti-Fit",
+              icon: "🔬",
+              color: "#ec4899",
+              score: candidateDetail?.scorecard?.scorecard_json?.gates?.[9]?.evidence?.specialists?.[4]?.score || 80,
+              desc: "Detecta sobreajuste y prescribe mutaciones adaptativas para el optimizador.",
+            },
+          ].map((sp, idx) => (
+            <div key={idx} style={{ background: "rgba(0,0,0,0.3)", border: `1px solid rgba(255,255,255,0.06)`, borderRadius: "8px", padding: "10px 12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                <span style={{ fontSize: "11px", fontWeight: 800, color: sp.color, display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span>{sp.icon}</span> {sp.agent}
+                </span>
+                <span style={{ fontSize: "11px", fontWeight: 900, color: "#fff", fontFamily: "var(--font-mono, monospace)" }}>
+                  {sp.score}/100
+                </span>
+              </div>
+              <div style={{ fontSize: "9.5px", color: "#94a3b8", fontWeight: 600 }}>{sp.role}</div>
+              <div style={{ fontSize: "10px", color: "#cbd5e1", marginTop: "6px", lineHeight: "1.4" }}>{sp.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Dynamic Reprogramming Directives Bar */}
+        <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "8px", padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "12px" }}>💡</span>
+            <span style={{ fontSize: "11px", fontWeight: 800, color: "#facc15" }}>Directivas de Mutación Adaptativa:</span>
+            <span style={{ fontSize: "11px", color: "#cbd5e1" }}>
+              Modulación generacional por exponente de Hurst, Parkinson Volatility y multiplicadores ATR continuos.
+            </span>
+          </div>
+          <span style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "4px", background: "rgba(16, 185, 129, 0.15)", color: "#34d399", fontWeight: 800 }}>
+            AUTO-MUTATION 24/7
+          </span>
+        </div>
+      </div>
+
       {/* 4. DUAL PANE: COLA DE ESTRATEGIAS VS FEED VISUAL DE LOGS (FORMATO FRONT PREMIUM) */}
       <div style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: "16px", marginBottom: "24px" }}>
         

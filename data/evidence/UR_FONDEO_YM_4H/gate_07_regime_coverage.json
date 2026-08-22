@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_YM_4H_g07",
   "run_id": "run_UR_FONDEO_YM_4H",
   "strategy_id": "UR_FONDEO_YM_4H",
-  "strategy_snapshot_hash": "d6ac0c172122a6685af672a52f5964ddffb35652a5a94a97dd052386942dd0dd",
+  "strategy_snapshot_hash": "4a813e18da40848d9cf6ad2a076d7d6f5079926484c5aa920772bb722f65f5a6",
   "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "895063c947f3195326a2697ba4cc337b5f8484f341fbcd219a49c16ac926a4cc",
-  "output_hash": "e01898952f42693f9a0280754363d08cf500f340d09076245f860db7c6b018f7",
-  "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +17.65%)",
+  "input_hash": "5fd57ad3eeb0ea190327ecdf8192ef6177782a4bec3f4496dcc5021e0147d323",
+  "output_hash": "3baf19ca4305ce54391a459aa995b21d8267c567e805d33bbd643ff2a0111cc0",
+  "status": "FAILED",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -15.69%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 75,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 11,
+      "CHOP_RANGING": 13,
       "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 2.24,
-      "HIGH_VOLATILITY": 15.41
+      "CHOP_RANGING": -30.91,
+      "HIGH_VOLATILITY": 15.22
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 17.65
+    "total_oos_return_pct": -15.69
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T07:39:25.835166+00:00"
+  "created_at_utc": "2026-08-22T13:57:14.592557+00:00"
 }

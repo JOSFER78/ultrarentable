@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGEUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_DOGEUSDT_1h",
   "strategy_id": "UR_ULTRA_DOGEUSDT_1h",
-  "strategy_snapshot_hash": "2c7ae4631026c1197d4dde72595364a637b6547856700095700f7d402d51d0a0",
+  "strategy_snapshot_hash": "c6a2d2e08607d4286d173015cd441f8df88173126bfffb658b3bc0aa533d4c67",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "1780b88473bfc36e526d59f98a5382125776f4463f840e505379ae9247a587d3",
-  "output_hash": "c90dddbe5c5fac6fc32db4b675e009292a2dc1dcb1e0263d76fbebdd3793ced8",
+  "input_hash": "5732d9fd5144b03117594026a70d15b18ffc7fbcc2255acfb00a07bee8050b53",
+  "output_hash": "a5fe9b5bd70a990db409911727c0d0c7c094cfd45dbe0a1faaaa5c4872546b36",
   "status": "FAILED",
-  "score": 34.4,
-  "verdict": "FALLO: Consenso insuficiente (34.4/100) u objeción crítica de riesgo",
+  "score": 34.6,
+  "verdict": "FALLO: Consenso insuficiente (34.6/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 34.4,
+    "consensus_score": 34.6,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 54.5,
+        "score": 55.0,
         "findings": [
           "Activo y Timeframe: DOGEUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.99 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 1.00 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2482 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2475 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.6,
+        "score": 38.8,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.99 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 1.00 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:29:13.211943+00:00"
+  "created_at_utc": "2026-08-22T13:51:45.330866+00:00"
 }

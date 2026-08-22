@@ -184,12 +184,32 @@ class UniversalStrategyOptimizer:
             f"ATR_Mean={profile.atr_mean:.4f}, ATR_P25={profile.atr_p25:.4f}, ATR_P75={profile.atr_p75:.4f}"
         )
 
+        # 1.1 Debate Semántico de los 5 Agentes Especialistas Cuantitativos (Guía de Reprogramación)
+        from services.api.app.validation.gates.gate_10_agent_debate import Gate10AgentDebate
+        semantic_agent_debate = Gate10AgentDebate()
+        debate_result = semantic_agent_debate.evaluate({
+            "candidate_id": cid,
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "route": route_str,
+            "trades_count": int(row["trades_oos"] or 20),
+            "profit_factor_oos": float(row["profit_factor_oos"] or 1.1),
+            "max_drawdown_pct": float(row["max_dd_oos_pct"] or 0.0),
+            "net_profit_oos_usd": float(row["net_profit_oos"] or 100.0),
+        })
+
+        specialists = debate_result.get("evidence", {}).get("specialists", [])
+        semantic_recommendations = debate_result.get("evidence", {}).get("recommendations", [])
+
         if on_step_callback:
             on_step_callback("1. PERFIL_MICROESTRUCTURA", {
                 "hurst": profile.hurst_exponent,
                 "regime": profile.dominant_regime,
                 "parkinson_vol": profile.parkinson_volatility,
                 "squeeze_active": profile.is_squeeze_active,
+                "specialists": specialists,
+                "recommendations": semantic_recommendations,
+                "consensus_score": debate_result.get("score", 75.0),
             })
 
         # 2. Extracción de Parámetros Base Dinámicos

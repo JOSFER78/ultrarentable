@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "7601be976e2b5222edc0ecbda233c95168582926f344673acbb0c64a13779844",
+  "strategy_snapshot_hash": "b0179696061aee201adc5eeeda27e4a9de7587c852a1c2c5c0dcb49515c5f015",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "471ae84dc1cf0b6699e603312eda958b166ac2055007db953901492af7c7c2a8",
-  "output_hash": "1e4d7706c4db7cac0f1dcbeb812d552ed33eaeb9162f560f6b2f450b99323188",
+  "input_hash": "e62e365cdcbaed19efcd9b33ce8edd87da7e1d78fae67a863a1ec18e77877466",
+  "output_hash": "54879240a2f346a1289efc4dcfd3451b76c0cd263de8cd862e236b9ca446ec9e",
   "status": "PASSED",
-  "score": 95.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 23.5 trades/param, Estabilidad Vecindario: 95.6%, Re-backtest PFs: [0.89, 1.14, 0.87, 1.27])",
+  "score": 97.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 26.1 trades/param, Estabilidad Vecindario: 95.9%, Re-backtest PFs: [1.02, 0.95, 1.08, 1.17])",
   "metrics": {
-    "parameters_count": 6,
-    "degrees_of_freedom_ratio": 23.5,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 26.1,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 95.6,
+    "parameter_neighborhood_stability_pct": 95.9,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.89,
-      1.14,
-      0.87,
-      1.27
+      1.02,
+      0.95,
+      1.08,
+      1.17
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T06:16:13.476713+00:00"
+  "created_at_utc": "2026-08-22T13:55:06.380718+00:00"
 }

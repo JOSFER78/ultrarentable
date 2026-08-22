@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_XRP_USDT_1H",
   "strategy_id": "UR_ULTRA_XRP_USDT_1H",
-  "strategy_snapshot_hash": "2019dcb4b54d4145321e71f1feafe531d39567cee0af3f3ffb6f23854885d60d",
+  "strategy_snapshot_hash": "c2765634ba3f9d1c72302938f271c428ad4a62161e06c7aefe91f2c240eaa88c",
   "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "68ebd6a72c1fcbd7cbb7a02589d15fdb6837586a6870dc3ab83c816e7f125c62",
-  "output_hash": "85974d76d2418d4039521243c10e88b399ab4d0f27b8688b0d7ae0be58769ea3",
+  "input_hash": "b73acba851bfcc81db19813011e9b990e169456d0a438007dbc3550578becdce",
+  "output_hash": "951f2f3ceafc58f1243f31c7acccaba81dee107283ff690ab5b195e91e79edf1",
   "status": "FAILED",
-  "score": 60.5,
-  "verdict": "FALLO: Consenso insuficiente (60.5/100) u objeción crítica de riesgo",
+  "score": 34.0,
+  "verdict": "FALLO: Consenso insuficiente (34.0/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 60.5,
+    "consensus_score": 34.0,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 80.2,
+        "score": 53.2,
         "findings": [
           "Activo y Timeframe: XRP-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.56 con beneficio neto de $333747371772260086826531405382398509056.00.",
+          "Profit Factor OOS: 0.96 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 99.2% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 532 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1889 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $627344683782443791647947531315314688.00 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $-0.53 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 70.0,
+        "score": 38.3,
         "objections": [
-          "Alerta de Drawdown: DD (99.2%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.96 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T07:35:13.369448+00:00"
+  "created_at_utc": "2026-08-22T13:53:47.179485+00:00"
 }

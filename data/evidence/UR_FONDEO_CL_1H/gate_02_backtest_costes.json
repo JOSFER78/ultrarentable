@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_CL_1H_g02",
   "run_id": "run_UR_FONDEO_CL_1H",
   "strategy_id": "UR_FONDEO_CL_1H",
-  "strategy_snapshot_hash": "2fdb909dfbb56cac12ea3f78610cdcc40fc27f8f3fb6b64d09d1ac87a0f1291e",
+  "strategy_snapshot_hash": "8d85281b76e095225ebb50109d064bf84677afbdb7f09e9e444fb501189742aa",
   "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "40fefb844a0e812c0127c213e9e2c48af9cce17b323cddc1f3d0d774c49d66a3",
-  "output_hash": "eb1c762a43fd7b1cd82b31e31e39ddc8b13291991c25e0a07a7890f2def72832",
-  "status": "PASSED",
-  "score": 26.4,
-  "verdict": "PASSED: PF Neto tras costes = 1.26 (COMMODITIES)",
+  "input_hash": "deef9afce552e0fd31d4af411ad844d25fac2f807d35c6bb06340e0bfecbd46a",
+  "output_hash": "0ba0abf93029108e7d49bb5b101196d4ce117bb17c580044b47b82d91d46e7d0",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 1.00 < 1.10",
   "metrics": {
     "market_category": "COMMODITIES",
     "canonical_name": "Petróleo Crudo WTI",
     "exchange": "NYMEX Globex",
-    "gross_pnl_usd": 14640.0,
+    "gross_pnl_usd": 1540.0,
     "total_fees_usd": 175.0,
     "total_slippage_usd": 1400.0,
-    "net_pnl_usd": 13065.0,
-    "net_profit_factor": 1.26,
-    "drag_cost_pct": 10.76
+    "net_pnl_usd": -35.0,
+    "net_profit_factor": 1.0,
+    "drag_cost_pct": 102.27
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_1H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T07:32:04.559887+00:00"
+  "created_at_utc": "2026-08-22T13:54:39.123838+00:00"
 }

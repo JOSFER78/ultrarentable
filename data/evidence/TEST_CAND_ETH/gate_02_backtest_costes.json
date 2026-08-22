@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_ETH_g02",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "f682afaa5d8da4bff588879bd786dfd116d3c3b6feae41b759a240630c887414",
+  "strategy_snapshot_hash": "8e0b31e4f57bc633c5ba46f4ad8178bf70a02671bd2b0f6e1b5f72f384c7e260",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "2e729951ade98c95649b12d6bd3baa76e13507c61bf6cdfc30ad0187aad24952",
-  "output_hash": "55e32628dd4bf55b9ee82e2b16ef398a3fd96ba42314e3247bdae35eac3e2731",
+  "input_hash": "23782dfb7c45a15aed58d8228a04128f0776ed1651f308680ede5a19778ce2a2",
+  "output_hash": "4abd293220eb4bc7b9349da0a965e51e206d47b9f01b2d6bfaa40a1cec639f57",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.95 < 1.10",
+  "score": 2.0,
+  "verdict": "FALLO: PF Neto 1.02 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Ethereum Perpetuo",
     "exchange": "Binance / BingX / FTMO",
-    "gross_pnl_usd": 144001068.89,
-    "total_fees_usd": 278301952.58,
-    "total_slippage_usd": 4795193.87,
-    "net_pnl_usd": -139096077.55,
-    "net_profit_factor": 0.95,
-    "drag_cost_pct": 196.59
+    "gross_pnl_usd": 149518784679629.2,
+    "total_fees_usd": 130753564570577.72,
+    "total_slippage_usd": 2306005863344.39,
+    "net_pnl_usd": 16459214245707.06,
+    "net_profit_factor": 1.02,
+    "drag_cost_pct": 88.99
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T07:34:18.974088+00:00"
+  "created_at_utc": "2026-08-22T13:52:28.830201+00:00"
 }

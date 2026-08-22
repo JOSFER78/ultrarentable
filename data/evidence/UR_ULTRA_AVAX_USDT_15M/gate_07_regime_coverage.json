@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "6eae05d0785e1f0deaf7532a92d156f48dc0b2ddf936074436d6f81fe6e23271",
+  "strategy_snapshot_hash": "6ac726517c5d7b85ccc5bb6250f8c9d474b01cc7ce2011da8f9465e6f0c02954",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "6aa44029c15c5bdf50236eda08245f1d1286bdebc8abb5c915b90da63371fc8d",
-  "output_hash": "964276be516acb2a4bd9ba9d9cecb4569cad020ce8fb7c5e1aab85299e4725eb",
+  "input_hash": "bc1e64a68a5432de1e054225c31609ab5b70a2eeaf46012110aa0d376b39a4d5",
+  "output_hash": "3b4987533dd030e508193880b60ee7f24fe14130a6a2ad34e99edccd5b1c072d",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +14702.90%)",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +873.07%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 28,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 3,
-      "BEAR_TREND": 1,
-      "CHOP_RANGING": 53,
-      "HIGH_VOLATILITY": 15
+      "BEAR_TREND": 5,
+      "CHOP_RANGING": 124,
+      "HIGH_VOLATILITY": 28
     },
     "regime_return_pct": {
-      "BULL_TREND": 4778.62,
-      "BEAR_TREND": -21.23,
-      "CHOP_RANGING": 9935.6,
-      "HIGH_VOLATILITY": 9.91
+      "BULL_TREND": 115.9,
+      "BEAR_TREND": -84.84,
+      "CHOP_RANGING": 1052.29,
+      "HIGH_VOLATILITY": -210.28
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 14702.9
+    "total_oos_return_pct": 873.07
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T07:34:36.757978+00:00"
+  "created_at_utc": "2026-08-22T13:56:57.331556+00:00"
 }

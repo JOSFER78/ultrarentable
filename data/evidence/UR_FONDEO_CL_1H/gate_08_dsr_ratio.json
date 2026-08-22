@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_CL_1H_g08",
   "run_id": "run_UR_FONDEO_CL_1H",
   "strategy_id": "UR_FONDEO_CL_1H",
-  "strategy_snapshot_hash": "2fdb909dfbb56cac12ea3f78610cdcc40fc27f8f3fb6b64d09d1ac87a0f1291e",
+  "strategy_snapshot_hash": "8d85281b76e095225ebb50109d064bf84677afbdb7f09e9e444fb501189742aa",
   "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "893d671c1471876b34114e6309bda658e577a9fe2018f9de230300f1f53c6087",
-  "output_hash": "96cc2cd60135a934e12e07296e22c1f5d0d3e9186e6cdf44a088f61eb16fe98e",
+  "input_hash": "8c1943e005fdb15d3601745fd160948a30c361d2456bea16ddc78f37fcb72818",
+  "output_hash": "fcd24eea11b0cb928511b235ef95c7cb245b0944f1ef95e572a5efb8201febc3",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.113,
+    "raw_sharpe_ratio": 0.062,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 1.145,
-    "kurtosis": 4.901,
+    "skewness": 1.422,
+    "kurtosis": 5.54,
     "sample_trades_count": 35
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_1H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T07:32:04.795519+00:00"
+  "created_at_utc": "2026-08-22T13:54:39.721650+00:00"
 }

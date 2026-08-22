@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "7601be976e2b5222edc0ecbda233c95168582926f344673acbb0c64a13779844",
+  "strategy_snapshot_hash": "b0179696061aee201adc5eeeda27e4a9de7587c852a1c2c5c0dcb49515c5f015",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "0494299b596ff1fe28fbc702b140766b234c16a4991e9e98f2a9007867f377f2",
-  "output_hash": "b35e99072b0857301ea270cb14a40e47c69e6532a22d695ab25565e0f67315b2",
+  "input_hash": "281d71cd20058382cae6aada9d383998ba90ced390547ae10a85e31c32310f3a",
+  "output_hash": "ad9884eb78b000a931289a33a1afa8c604d27b56bacab0d27f6106486a006424",
   "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +19.46%)",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +158.45%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 56,
-      "HIGH_VOLATILITY": 10
+      "CHOP_RANGING": 107,
+      "HIGH_VOLATILITY": 21
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -103.87,
-      "HIGH_VOLATILITY": 123.33
+      "CHOP_RANGING": 3.72,
+      "HIGH_VOLATILITY": 154.73
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 19.46
+    "total_oos_return_pct": 158.45
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:16:10.314980+00:00"
+  "created_at_utc": "2026-08-22T13:55:05.350101+00:00"
 }

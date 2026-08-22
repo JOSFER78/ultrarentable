@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_ETH_g08",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "f682afaa5d8da4bff588879bd786dfd116d3c3b6feae41b759a240630c887414",
+  "strategy_snapshot_hash": "8e0b31e4f57bc633c5ba46f4ad8178bf70a02671bd2b0f6e1b5f72f384c7e260",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "99529423ba65c7f27475678528d58eeec3bc040b1fee5bf49ad6d043dcdcbc12",
-  "output_hash": "5b9e7e6a2a5430c7afe2eb334d97970485f8f2dc62f5bd98f54347fc9450c561",
+  "input_hash": "fd151b84d17900d7ee7fcdf9d8110582f6c5014e43324f4753a7102e9ad90626",
+  "output_hash": "13052d1bd92e8d27f627782aa79bf9de1a44dda6c9accfde7998c40ceb5154bf",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.376,
+    "raw_sharpe_ratio": 0.28,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 3.325,
-    "kurtosis": 14.609,
-    "sample_trades_count": 30
+    "skewness": 4.228,
+    "kurtosis": 26.581,
+    "sample_trades_count": 235
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T07:34:19.396912+00:00"
+  "created_at_utc": "2026-08-22T13:52:30.241988+00:00"
 }

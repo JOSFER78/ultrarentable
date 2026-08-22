@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.168_g06",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.168",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.168",
-  "strategy_snapshot_hash": "88786c8aaf0827f5b6829c68131e869d4ae9afda60847709ca6754d1e45ea177",
+  "strategy_snapshot_hash": "6345f7b921943a206ed19ee3a1dd25dc180f3f94cbcdcf30ae8255e9d0f047b3",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "af45ac7ce86c01a0e261bd124ac3010b3be6904195d97ba38efafd70e4f5ae35",
-  "output_hash": "214d58fcff587f93a65e1b6ea8946d7a745bd9a43192de3826294c4525107aa7",
+  "input_hash": "e83b197e0edafe567ef7b4abb74def9f1edfd372d08a94a744a93a6f534f21be",
+  "output_hash": "51ca99abac0fbb1bdba96e42e9e3337e2b7a834265463b81713d1d309d1aa002",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 214.56,
-        "stressed_profit_factor": 8.66,
+        "stressed_net_pnl_usd": 72.0,
+        "stressed_profit_factor": 3.36,
         "survived": true
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.02,
-        "stressed_net_pnl_usd": 209.84,
-        "stressed_profit_factor": 7.62,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 70.6,
+        "stressed_profit_factor": 3.24,
         "survived": true
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.04,
-        "stressed_net_pnl_usd": 205.07,
-        "stressed_profit_factor": 6.79,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 69.12,
+        "stressed_profit_factor": 3.11,
         "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.08,
-        "stressed_net_pnl_usd": 195.7,
-        "stressed_profit_factor": 5.58,
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 66.37,
+        "stressed_profit_factor": 2.91,
         "survived": true
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.168/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T07:20:28.416964+00:00"
+  "created_at_utc": "2026-08-22T13:36:22.937020+00:00"
 }

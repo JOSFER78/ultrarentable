@@ -127,10 +127,26 @@ class MetaValidationPipeline:
         # Desviación estándar
         std_r = float(np.std(combined_returns)) if len(combined_returns) > 1 else 0.02
 
-        # Diversification Ratio (DR = sum(w_i * sigma_i) / sigma_p)
+        # 2. Diversification Ratio analítico exacto de Markowitz (DR = sum(w_i * sigma_i) / sqrt(w^T Sigma w))
         indiv_vols = [float(c.get("volatility", 0.02)) for c in components_data]
         weighted_vol_sum = sum(weights.get(c["candidate_id"], 1.0 / n_components) * indiv_vols[i] for i, c in enumerate(components_data))
-        div_ratio = round(float(weighted_vol_sum / max(1e-6, std_r)), 2)
+
+        port_var = 0.0
+        for i, c_i in enumerate(components_data):
+            for j, c_j in enumerate(components_data):
+                w_i = weights.get(c_i["candidate_id"], 1.0 / n_components)
+                w_j = weights.get(c_j["candidate_id"], 1.0 / n_components)
+                vol_i = indiv_vols[i]
+                vol_j = indiv_vols[j]
+                sym_i = c_i["symbol"]
+                sym_j = c_j["symbol"]
+                rho = correlation_matrix.get(sym_i, {}).get(sym_j, 1.0 if i == j else avg_corr)
+                if math.isnan(rho):
+                    rho = avg_corr
+                port_var += w_i * w_j * rho * vol_i * vol_j
+
+        port_vol = math.sqrt(max(1e-6, port_var))
+        div_ratio = round(float(max(1.0, min(3.5, weighted_vol_sum / port_vol))), 2)
 
         gates: list[MetaGateResult] = []
 

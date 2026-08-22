@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGEUSDT_1h_g07",
   "run_id": "run_UR_ULTRA_DOGEUSDT_1h",
   "strategy_id": "UR_ULTRA_DOGEUSDT_1h",
-  "strategy_snapshot_hash": "2c7ae4631026c1197d4dde72595364a637b6547856700095700f7d402d51d0a0",
+  "strategy_snapshot_hash": "c6a2d2e08607d4286d173015cd441f8df88173126bfffb658b3bc0aa533d4c67",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "09a018f152ba3f4f75b95fa25034a448c8b55babb783b7a30f7c7930dd4ad159",
-  "output_hash": "2905b1aebb444a42944127027193331b4a69251caea662e7713180cc3886084f",
+  "input_hash": "f0c883bfebd30b5d02af0d37d7929a12b99735ae08d7763f8a7657f1ff70488f",
+  "output_hash": "2ca0780b8093ed71ddadbc79cd266ece632b07200e61442af3c4f9934b415b0b",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +33088.29%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +18124.17%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 491,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 985
     },
     "regime_trades_count": {
-      "BULL_TREND": 52,
-      "BEAR_TREND": 75,
-      "CHOP_RANGING": 173,
-      "HIGH_VOLATILITY": 142
+      "BULL_TREND": 51,
+      "BEAR_TREND": 76,
+      "CHOP_RANGING": 171,
+      "HIGH_VOLATILITY": 130
     },
     "regime_return_pct": {
-      "BULL_TREND": 4557.71,
-      "BEAR_TREND": 4138.51,
-      "CHOP_RANGING": 17654.99,
-      "HIGH_VOLATILITY": 6737.08
+      "BULL_TREND": 2851.9,
+      "BEAR_TREND": 3721.34,
+      "CHOP_RANGING": 7506.51,
+      "HIGH_VOLATILITY": 4044.42
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 33088.29
+    "total_oos_return_pct": 18124.17
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:29:10.709841+00:00"
+  "created_at_utc": "2026-08-22T13:51:39.576853+00:00"
 }

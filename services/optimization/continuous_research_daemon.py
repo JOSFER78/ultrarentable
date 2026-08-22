@@ -357,11 +357,13 @@ class ContinuousResearchDaemon:
             if step_name == "1. PERFIL_MICROESTRUCTURA":
                 self.progress_pct = 25.0
                 self.current_math_telemetry = step_data
+                recs = step_data.get("recommendations", [])
+                recs_summary = f" · 💡 Guía Semántica 5 Agentes: {'; '.join(recs[:2])}" if recs else ""
                 self.add_log(
                     "INFO",
-                    f"Microestructura calculada para {self.current_symbol}: Hurst={step_data.get('hurst', 0.5):.3f} ({step_data.get('regime')}), "
-                    f"ParkinsonVol={step_data.get('parkinson_vol', 0.0):.5f}, Squeeze={'ACTIVO' if step_data.get('squeeze_active') else 'INACTIVO'}",
-                    step="2. SÍNTESIS PARAMÉTRICA",
+                    f"Microestructura para {self.current_symbol}: Hurst={step_data.get('hurst', 0.5):.3f} ({step_data.get('regime')}), "
+                    f"ParkinsonVol={step_data.get('parkinson_vol', 0.0):.5f}{recs_summary}",
+                    step="2. SÍNTESIS_SEMÁNTICA_5_AGENTES",
                     event_type="MICROESTRUCTURA",
                     math=step_data,
                     candidate_id=self.current_candidate_id,

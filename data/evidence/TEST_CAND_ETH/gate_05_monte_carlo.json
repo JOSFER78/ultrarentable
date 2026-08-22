@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_ETH_g05",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "f682afaa5d8da4bff588879bd786dfd116d3c3b6feae41b759a240630c887414",
+  "strategy_snapshot_hash": "8e0b31e4f57bc633c5ba46f4ad8178bf70a02671bd2b0f6e1b5f72f384c7e260",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "74f49cef09f95a84f7da3eaa701820d0602186520a86c96c51f9ea36c98092a9",
-  "output_hash": "d84ede474b5716082f4fc6ee5acf69974d68017621b833e496d99ea6a7ddac1c",
+  "input_hash": "07beb11f03b5d049cf2f04e02aba5d5156f78ea073afc07b5b75c9f59a5e44ec",
+  "output_hash": "2619cbd687ba280dda8758a02cf59af769d5f1f674bbd87b2350943defea71a3",
   "status": "PASSED",
-  "score": 98.7,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 2.6%)",
+  "score": 98.1,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.7%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.3,
-    "drawdown_95th_percentile_pct": 2.6,
-    "max_simulated_drawdown_pct": 4.4
+    "drawdown_median_pct": 2.3,
+    "drawdown_95th_percentile_pct": 3.7,
+    "max_simulated_drawdown_pct": 7.3
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T07:34:19.291000+00:00"
+  "created_at_utc": "2026-08-22T13:52:30.085667+00:00"
 }

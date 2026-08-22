@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_ETH_USDT_15M",
   "strategy_id": "UR_ULTRA_ETH_USDT_15M",
-  "strategy_snapshot_hash": "75a412401d859e0dee6300b3c3506f39d3deb3935d435877faca0dd422ac7e2b",
+  "strategy_snapshot_hash": "55ba97b3ec79d0e9bf8beaef76967d9b60941722cc163e77da57759c766c413e",
   "dataset_id": "ds_binance_ethusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "4b2df149a72eaf22ad662df803223b0f0d43e4534b93351ce935eebb2905bee4",
-  "output_hash": "44f3660753189c0348fec75a09e825d72cd3b9847f11eed6b40ee640628aa2bf",
+  "input_hash": "1400a6e0185cc2f95c63be1c3211c2ed807e754696e302b95dcdb8bcbe3c815f",
+  "output_hash": "e5722a97bbc97401ceef34f208a70405b7b1c162ae551b24fe84bf75fa9af814",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 82.6 trades/param, Estabilidad Vecindario: 110.1%, Re-backtest PFs: [1.0, 1.07, 0.9, 0.86])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 26.8 trades/param, Estabilidad Vecindario: 238.5%, Re-backtest PFs: [0.58, 0.84, 0.3, 0.76])",
   "metrics": {
-    "parameters_count": 5,
-    "degrees_of_freedom_ratio": 82.6,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 26.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 110.1,
+    "parameter_neighborhood_stability_pct": 238.5,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.0,
-      1.07,
-      0.9,
-      0.86
+      0.58,
+      0.84,
+      0.3,
+      0.76
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T07:32:25.741518+00:00"
+  "created_at_utc": "2026-08-22T13:54:29.297424+00:00"
 }

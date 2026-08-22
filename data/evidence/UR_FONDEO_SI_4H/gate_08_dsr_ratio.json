@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_SI_4H_g08",
   "run_id": "run_UR_FONDEO_SI_4H",
   "strategy_id": "UR_FONDEO_SI_4H",
-  "strategy_snapshot_hash": "abcd1d334a89a7f54fd5b4c89c1a67927ba9923db6001567ec1d58cc6338ef3d",
+  "strategy_snapshot_hash": "6dc3a361c7192034f28b1c0a06ec74704774f19f1a210abd7dc467bfe77aacb9",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,15 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "8580cf506678eef9382b8eff446a6b2b1ae41769941b4bcd5dba75b439576d19",
-  "output_hash": "55fd6770147a2b697ce420c8d1212264b06893ea7ba3e2fa6ab55ad67dc23892",
+  "input_hash": "44594f417edda1abd4f6964233a7544c1bf6edd77c96654ec58a9067d4e4a737",
+  "output_hash": "9c6f44470c9bd7f11c30fd2696e5a2086f75c54231eeccac8506b554edd2d896",
   "status": "FAILED",
-  "score": 0.3,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.3% < 50.0% tras penalizar 3 trials)",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
   "metrics": {
-    "raw_sharpe_ratio": 0.221,
-    "deflated_sharpe_probability_pct": 0.31,
-    "trials_penalized_count": 3,
-    "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 1.576,
-    "kurtosis": 4.188,
-    "sample_trades_count": 14
+    "trials_penalized": 3,
+    "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_4H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T07:30:32.877192+00:00"
+  "created_at_utc": "2026-08-22T13:54:04.332468+00:00"
 }

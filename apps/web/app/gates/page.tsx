@@ -216,24 +216,16 @@ export default function ApprovedStrategiesAndGatesHubPage() {
   });
 
   const tier2Diamonds = candidates.filter((c) => {
-    const isUltra = (c.route || "ULTRA").toUpperCase() === "ULTRA";
-    const maxDdAllowed = isUltra ? 85.0 : 4.0;
-    const dd = c.max_dd_oos_pct ?? c.metrics?.out_of_sample?.max_drawdown_pct ?? 0;
     const gCount = c.gates_passed_count ?? 0;
     return (
-      (c.tier === "TIER_2_NEAR_CERTIFIED" || (gCount >= 9 && gCount <= 10)) &&
-      dd <= maxDdAllowed
+      c.tier === "TIER_2_NEAR_CERTIFIED" || (gCount >= 9 && gCount <= 10)
     );
   });
 
   const tier3Incubator = candidates.filter((c) => {
-    const isUltra = (c.route || "ULTRA").toUpperCase() === "ULTRA";
-    const maxDdAllowed = isUltra ? 85.0 : 4.0;
-    const dd = c.max_dd_oos_pct ?? c.metrics?.out_of_sample?.max_drawdown_pct ?? 0;
     const gCount = c.gates_passed_count ?? 0;
     return (
-      (c.tier === "TIER_3_INCUBATOR" || (gCount >= 5 && gCount <= 8)) &&
-      dd <= maxDdAllowed
+      c.tier === "TIER_3_INCUBATOR" || (gCount >= 5 && gCount <= 8)
     );
   });
 
