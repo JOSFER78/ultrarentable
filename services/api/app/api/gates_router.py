@@ -46,13 +46,13 @@ GATES_DIRECTORY = [
             "storage_mode": {"label": "Modo de Persistencia", "value": "SQLITE_WAL", "type": "select", "options": ["SQLITE_WAL", "PARQUET", "MEMORY_STREAM"], "desc": "Formato de almacenamiento de alta velocidad."}
         },
         "live_telemetry": {
-            "status": "ONLINE · MONITORIZANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 44,
-            "candles_verified": 1103251,
-            "pass_rate_pct": 100.0,
-            "avg_latency_ms": 1.2,
-            "last_verdict": "APROBADO · 0 Gaps detectados en 44 mercados"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -73,13 +73,13 @@ GATES_DIRECTORY = [
             "min_profit_factor_after_costs": {"label": "Profit Factor Mínimo Post-Costes", "value": 1.15, "unit": "PF", "type": "number", "min": 1.0, "max": 3.0, "step": 0.05, "desc": "Umbral mínimo de rentabilidad neta para superar la prueba."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · AUDITANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 284000,
-            "pass_rate_pct": 86.5,
-            "avg_latency_ms": 4.8,
-            "last_verdict": "APROBADO · Deslizamiento institucional verificado"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -100,13 +100,13 @@ GATES_DIRECTORY = [
             "min_win_loss_ratio": {"label": "Ratio Promedio Ganador/Perdedor", "value": 1.2, "unit": "ratio", "type": "number", "min": 0.8, "max": 5.0, "step": 0.1, "desc": "Relación entre el beneficio medio y la pérdida media."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · EVALUANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 48200,
-            "pass_rate_pct": 89.2,
-            "avg_latency_ms": 2.4,
-            "last_verdict": "APROBADO · Sin concentración excesiva en outliers"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -127,13 +127,13 @@ GATES_DIRECTORY = [
             "cluster_similarity_threshold": {"label": "Similitud en Clúster de Parámetros", "value": 0.75, "unit": "%", "type": "number", "min": 0.5, "max": 0.95, "step": 0.05, "desc": "Estabilidad de los parámetros óptimos vecinos."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · ANALIZANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 192000,
-            "pass_rate_pct": 78.4,
-            "avg_latency_ms": 8.1,
-            "last_verdict": "APROBADO · WFE promedio 74.2% (Resistencia OOS probada)"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -154,13 +154,13 @@ GATES_DIRECTORY = [
             "resampling_method": {"label": "Método de Remuestreo", "value": "BOOTSTRAP_WITH_SLIPPAGE", "type": "select", "options": ["BOOTSTRAP_WITH_SLIPPAGE", "RANDOMIZE_ENTRY_PRICES", "BAR_SHUFFLE"], "desc": "Técnica de perturbación estadística."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · SIMULANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 356000,
-            "pass_rate_pct": 82.1,
-            "avg_latency_ms": 14.5,
-            "last_verdict": "APROBADO · 0.0% Riesgo de Ruina en 1,000 iteraciones"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -181,13 +181,13 @@ GATES_DIRECTORY = [
             "min_stressed_profit_factor": {"label": "Profit Factor Mínimo en Estrés", "value": 1.05, "unit": "PF", "type": "number", "min": 1.0, "max": 2.0, "step": 0.05, "desc": "Debe mantenerse estrictamente rentable bajo estrés."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · ESTRESANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 284000,
-            "pass_rate_pct": 76.8,
-            "avg_latency_ms": 6.3,
-            "last_verdict": "APROBADO · Positiva con 2.0x slippage"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -208,13 +208,13 @@ GATES_DIRECTORY = [
             "volatility_expansion_ratio": {"label": "Ratio de Expansión de Volatilidad", "value": 1.5, "unit": "ratio", "type": "number", "min": 1.1, "max": 3.0, "step": 0.1, "desc": "Factor de ATR respecto a la media de 50 periodos."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · CLASIFICANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 450000,
-            "pass_rate_pct": 91.0,
-            "avg_latency_ms": 5.7,
-            "last_verdict": "APROBADO · Cobertura en Bull, Bear y Chop certificada"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -235,13 +235,13 @@ GATES_DIRECTORY = [
             "enforce_skew_kurtosis_adjustment": {"label": "Ajuste por Asimetría & Curtosis", "value": True, "type": "boolean", "desc": "Considera colas pesadas de la distribución de retornos."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · CALCULANDO DSR",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 356000,
-            "pass_rate_pct": 81.5,
-            "avg_latency_ms": 3.9,
-            "last_verdict": "APROBADO · DSR promedio 1.84 (P-Value 0.0012)"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -262,13 +262,13 @@ GATES_DIRECTORY = [
             "active_failure_categories": {"label": "Categorías de Fallo Activas", "value": 11, "unit": "cat", "type": "number", "min": 5, "max": 20, "step": 1, "desc": "Patologías cuantitativas monitorizadas en tiempo real."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · INOCULANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 356000,
-            "pass_rate_pct": 94.6,
-            "avg_latency_ms": 1.8,
-            "last_verdict": "APROBADO · 0 Colisiones con FailureKnowledgeDB"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -289,13 +289,13 @@ GATES_DIRECTORY = [
             "debate_rounds": {"label": "Rondas de Deliberación", "value": 3, "unit": "rondas", "type": "number", "min": 1, "max": 5, "step": 1, "desc": "Intercambios dialécticos entre los agentes antes de emitir veredicto."}
         },
         "live_telemetry": {
-            "status": "ACTIVO · DELIBERANDO",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 356000,
-            "pass_rate_pct": 88.0,
-            "avg_latency_ms": 11.2,
-            "last_verdict": "CONSENSO CERTIFICADO · 92.5/100 Aprobado por los 5 Agentes"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     },
     {
@@ -316,13 +316,13 @@ GATES_DIRECTORY = [
             "fill_model": {"label": "Modelo de Ejecución de Órdenes", "value": "TICK_BY_TICK_QUEUE", "type": "select", "options": ["TICK_BY_TICK_QUEUE", "BAR_MAGNIFIER_1M", "LAST_PRICE_FILL"], "desc": "Resolución del motor de matching."}
         },
         "live_telemetry": {
-            "status": "ONLINE · RUST/CYTHON CORE",
-            "status_color": "#34d399",
-            "datasets_audited": 356,
-            "candles_verified": 850000,
-            "pass_rate_pct": 93.4,
-            "avg_latency_ms": 0.8,
-            "last_verdict": "VERIFICADO INSTITUCIONAL · Colchón de liquidación seguro (22.4%)"
+            "status": "SIN TELEMETRÍA REAL CONECTADA",
+            "status_color": "#94a3b8",
+            "datasets_audited": None,
+            "candles_verified": None,
+            "pass_rate_pct": None,
+            "avg_latency_ms": None,
+            "last_verdict": "N/D · ZERO-MOCKS: la telemetría de este gate debe medirse, no declararse"
         }
     }
 ]

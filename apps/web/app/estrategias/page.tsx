@@ -45,22 +45,22 @@ const PHASES: PhaseConfig[] = [
   {
     id: 2,
     key: "catalogo",
-    name: "2. Catálogo y Explorador Cuantitativo (230 Candidatos)",
-    shortName: "2. Catálogo (230)",
+    name: "2. Catálogo y Explorador Cuantitativo",
+    shortName: "2. Catálogo",
     icon: "📊",
-    badge: "230 CAND",
+    badge: "CATÁLOGO",
     color: "#38bdf8",
     description: "Explorador de estrategias con filtros por activo, temporalidad, métricas OOS, Scorecards, DNA y exportador C# / Pine.",
   },
   {
     id: 3,
     key: "pipeline",
-    name: "3. Pipeline 10 Gates (FSM & Gates Institucionales)",
-    shortName: "3. Pipeline 10-G",
+    name: "3. Pipeline 11 Gates (FSM & Gates Institucionales)",
+    shortName: "3. Pipeline 11-G",
     icon: "🧬",
-    badge: "10 GATES",
+    badge: "11 GATES",
     color: "#818cf8",
-    description: "Evaluación rigurosa a través de los 10 Gates matemáticos deterministas de control de calidad y robustez.",
+    description: "Evaluación rigurosa a través de los 11 Gates matemáticos deterministas de control de calidad y robustez.",
   },
   {
     id: 4,
@@ -75,8 +75,8 @@ const PHASES: PhaseConfig[] = [
   {
     id: 5,
     key: "aprobadas",
-    name: "5. Estrategias Aprobadas (10/10 Certificadas)",
-    shortName: "5. Aprobadas 10/10",
+    name: "5. Estrategias Aprobadas (Certificación 11 Gates)",
+    shortName: "5. Aprobadas",
     icon: "🏆",
     badge: "CERTIFICADAS",
     color: "#10b981",
@@ -119,14 +119,9 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
     return () => clearInterval(interval);
   }, [fetchTelemetry]);
 
-  const funnel = telemetry?.filter_funnel || {
-    generated: 78813,
-    is_passed: 14210,
-    oos_passed: 2450,
-    wfo_passed: 580,
-    monte_carlo_passed: 120,
-    approved: 12,
-  };
+  // ZERO-MOCKS: si el backend no entrega funnel, se muestra N/D — nunca cifras inventadas
+  const funnel = telemetry?.filter_funnel;
+  const fv = (v?: number | null): string => (v === undefined || v === null ? "N/D" : v.toLocaleString());
 
   return (
     <div style={{ padding: "24px 32px", maxWidth: "1600px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -167,7 +162,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
             </span>
           </div>
           <p style={{ fontSize: "13px", color: "#94a3b8", margin: 0, maxWidth: "750px", lineHeight: "1.5" }}>
-            Centro de mando integral del laboratorio. Supervisa el flujo completo desde la minería autónoma 24/7, el catálogo de 230 candidatos, la validación estricta en 10 Gates, la investigación semántica hasta el portafolio multiactivo.
+            Centro de mando integral del laboratorio. Supervisa el flujo completo desde la minería autónoma 24/7, el catálogo de candidatos, la validación estricta en 11 Gates, la investigación semántica hasta el portafolio multiactivo.
           </p>
         </div>
 
@@ -208,7 +203,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
               gap: "6px",
             }}
           >
-            📊 Explorar 230 Estrategias →
+            📊 Explorar Catálogo →
           </button>
         </div>
       </div>
@@ -218,41 +213,47 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
         <div style={{ background: "rgba(12, 18, 28, 0.8)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>ESTRATEGIAS EVALUADAS</div>
           <div style={{ fontSize: "22px", fontWeight: 900, color: "#ffffff", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            78.813
+            {fv(funnel?.generated ?? funnel?.total_evaluated)}
           </div>
-          <div style={{ fontSize: "11px", color: "#34d399", marginTop: "2px" }}>⚡ Minería continua 24/7 activa</div>
+          <div style={{ fontSize: "11px", color: telemetry?.running ? "#34d399" : "#94a3b8", marginTop: "2px" }}>
+            {telemetry?.running ? "⚡ Motor en ejecución" : "Estado del motor: N/D"}
+          </div>
         </div>
 
         <div style={{ background: "rgba(12, 18, 28, 0.8)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>TRIALS FÍSICOS EN DISCO</div>
           <div style={{ fontSize: "22px", fontWeight: 900, color: "#38bdf8", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            9.882
+            N/D
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Guardados en SQLite WAL</div>
+          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Sin fuente de datos expuesta</div>
         </div>
 
         <div style={{ background: "rgba(12, 18, 28, 0.8)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>CANDIDATOS EN CATÁLOGO</div>
           <div style={{ fontSize: "22px", fontWeight: 900, color: "#818cf8", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            230
+            {fv(telemetry?.total_candidates)}
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>172 Ultra · 58 Fondeo</div>
+          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Catálogo canónico</div>
         </div>
 
         <div style={{ background: "rgba(12, 18, 28, 0.8)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>GATES MATEMÁTICOS</div>
           <div style={{ fontSize: "22px", fontWeight: 900, color: "#facc15", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            11 / 11
+            11
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Doctrina Real-Only & Zero Mocks</div>
+          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Gates canónicos del pipeline</div>
         </div>
 
         <div style={{ background: "rgba(12, 18, 28, 0.8)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>DATASETS AUDITADOS</div>
           <div style={{ fontSize: "22px", fontWeight: 900, color: "#10b981", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            1.103.251
+            {(() => {
+              const inv = telemetry?.datasets_inventory || [];
+              const bars = inv.reduce((s: number, d: any) => s + (d?.bars || 0), 0);
+              return inv.length > 0 ? fv(bars) : "N/D";
+            })()}
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Velas con SHA-256 verificado</div>
+          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>Velas en inventario de datasets</div>
         </div>
       </div>
 
@@ -350,7 +351,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           </div>
 
           <div style={{ fontSize: "11px", color: "#63e1b4", fontFamily: "var(--font-mono, monospace)", fontWeight: 800 }}>
-            Tasa de Aprobación Final: {((funnel.approved / Math.max(1, funnel.generated)) * 100).toFixed(3)}%
+            Tasa de Aprobación Final: {funnel?.approved != null && funnel?.generated ? `${((funnel.approved / funnel.generated) * 100).toFixed(3)}%` : "N/D"}
           </div>
         </div>
 
@@ -358,7 +359,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           <div style={{ background: "#06090e", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
             <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 700 }}>1. GENERADAS</div>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-              {funnel.generated.toLocaleString()}
+              {fv(funnel?.generated ?? funnel?.total_evaluated)}
             </div>
             <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>100% Universo</div>
           </div>
@@ -366,7 +367,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           <div style={{ background: "#06090e", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
             <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 700 }}>2. IN-SAMPLE</div>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#38bdf8", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-              {funnel.is_passed.toLocaleString()}
+              {fv(funnel?.is_passed ?? funnel?.passed_is)}
             </div>
             <div style={{ fontSize: "9.5px", color: "#38bdf8" }}>PF &gt; 1.30</div>
           </div>
@@ -374,7 +375,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           <div style={{ background: "#06090e", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
             <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 700 }}>3. CIEGO OOS</div>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#818cf8", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-              {funnel.oos_passed.toLocaleString()}
+              {fv(funnel?.oos_passed ?? funnel?.passed_oos)}
             </div>
             <div style={{ fontSize: "9.5px", color: "#818cf8" }}>PF OOS &gt; 1.20</div>
           </div>
@@ -382,7 +383,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           <div style={{ background: "#06090e", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
             <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 700 }}>4. WFO ROLLING</div>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#facc15", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-              {funnel.wfo_passed.toLocaleString()}
+              {fv(funnel?.wfo_passed ?? funnel?.passed_wfo)}
             </div>
             <div style={{ fontSize: "9.5px", color: "#facc15" }}>WFE &gt; 0.50</div>
           </div>
@@ -390,7 +391,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           <div style={{ background: "#06090e", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
             <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 700 }}>5. MONTE CARLO</div>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#ec4899", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-              {funnel.monte_carlo_passed.toLocaleString()}
+              {fv(funnel?.monte_carlo_passed ?? funnel?.passed_monte_carlo)}
             </div>
             <div style={{ fontSize: "9.5px", color: "#ec4899" }}>Score &gt; 85/100</div>
           </div>
@@ -398,9 +399,9 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           <div style={{ background: "#06090e", borderRadius: "8px", padding: "12px", border: "1px solid rgba(16, 185, 129, 0.4)", textAlign: "center" }}>
             <div style={{ fontSize: "10px", color: "#10b981", fontWeight: 800 }}>6. CERTIFICADAS</div>
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#10b981", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
-              {funnel.approved.toLocaleString()}
+              {fv(funnel?.approved)}
             </div>
-            <div style={{ fontSize: "9.5px", color: "#10b981" }}>11/10 Gates</div>
+            <div style={{ fontSize: "9.5px", color: "#10b981" }}>11 Gates canónicos</div>
           </div>
         </div>
       </div>

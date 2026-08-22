@@ -399,19 +399,19 @@ export default function GateDetailPage() {
               <div style={{ background: "rgba(255, 255, 255, 0.03)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
                 <div style={{ fontSize: "10px", color: "#64748b" }}>Candidatos Auditados</div>
                 <div style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-                  {gate.live_telemetry.datasets_audited}
+                  {gate.live_telemetry.datasets_audited ?? "N/D"}
                 </div>
               </div>
               <div style={{ background: "rgba(255, 255, 255, 0.03)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
                 <div style={{ fontSize: "10px", color: "#64748b" }}>Tasa de Aprobación</div>
                 <div style={{ fontSize: "16px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                  {gate.live_telemetry.pass_rate_pct}%
+                  {gate.live_telemetry.pass_rate_pct != null ? `${gate.live_telemetry.pass_rate_pct}%` : "N/D"}
                 </div>
               </div>
               <div style={{ background: "rgba(255, 255, 255, 0.03)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
                 <div style={{ fontSize: "10px", color: "#64748b" }}>Latencia Media</div>
                 <div style={{ fontSize: "16px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                  {gate.live_telemetry.avg_latency_ms} ms
+                  {gate.live_telemetry.avg_latency_ms != null ? `${gate.live_telemetry.avg_latency_ms} ms` : "N/D"}
                 </div>
               </div>
             </div>

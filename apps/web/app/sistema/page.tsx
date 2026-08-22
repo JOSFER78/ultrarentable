@@ -75,39 +75,10 @@ interface LiveTelemetryData {
 
 export default function SistemaSupervisorPage() {
   const { workers, logs, systemMetrics, reconnect } = useTelemetryStream();
-  const [telemetry, setTelemetry] = useState<LiveTelemetryData>({
-    running: true,
-    mode: "REAL_ONLY_ZERO_MOCK",
-    sqx_mcp_status: "ONLINE",
-    sqx_mcp_latency_ms: 0,
-    sqx_active_project: "FastEngine 24/7",
-    sqx_projects_detected: ["FastEngine Autonomous Daemon"],
-    current_symbol: "BTC-USDT",
-    current_timeframe: "15m",
-    current_route: "ULTRA",
-    current_market_category: "Multiactivo (BTC-USDT · VOLATILITY_BREAKOUT)",
-    current_cell_description: "Minería 24/7 en BTC-USDT 15m (VOLATILITY_BREAKOUT)",
-    current_action_label: "Evaluando combinaciones cuantitativas...",
-    current_action_badge: "⚡ Minería 24/7 Activa",
-    total_candidates: 0,
-    filter_funnel: {
-      total_evaluated: 0,
-      passed_is: 0,
-      passed_oos: 0,
-      passed_wfo: 0,
-      passed_monte_carlo: 0,
-      approved: 0,
-    },
-    datasets_inventory: [],
-    activity_feed: [],
-  });
+  // ZERO-MOCKS: sin telemetría del backend se muestra N/D, nunca estados o cifras iniciales inventadas
+  const [telemetry, setTelemetry] = useState<LiveTelemetryData | null>(null);
   const [loadingTelemetry, setLoadingTelemetry] = useState<boolean>(true);
-
-  const [firebaseStatus, setFirebaseStatus] = useState<any>({
-    status: "HEALTHY",
-    last_sync: "En vivo",
-    persistence_mode: "REALTIME_DATABASE",
-  });
+  const [firebaseStatus, setFirebaseStatus] = useState<any>(null);
   const [syncingFirebase, setSyncingFirebase] = useState<boolean>(false);
   const [recovering, setRecovering] = useState<boolean>(false);
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
@@ -115,6 +86,11 @@ export default function SistemaSupervisorPage() {
   const fmt = (n: number | undefined | null): string => {
     if (n === undefined || n === null || isNaN(n)) return "0";
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
+  const fmtND = (n: number | undefined | null): string => {
+    if (n === undefined || n === null || isNaN(n)) return "N/D";
+    return fmt(n);
   };
 
   const fetchLiveTelemetry = useCallback(async () => {
@@ -148,7 +124,11 @@ export default function SistemaSupervisorPage() {
       const res = await fetch(getApiUrl("/api/v1/sync/firebase/sync-now"), { method: "POST" });
       if (res.ok) {
         const d = await res.json();
-        setSyncMsg(`✓ Firebase Cloud sincronizado con éxito: ${d.synced_counts?.total || 230} candidatos.`);
+        setSyncMsg(
+          d.synced_counts?.total != null
+            ? `✓ Firebase Cloud sincronizado: ${d.synced_counts.total} candidatos.`
+            : "✓ Firebase Cloud sincronizado."
+        );
         fetchLiveTelemetry();
       }
     } catch {
@@ -268,7 +248,7 @@ export default function SistemaSupervisorPage() {
               📡 ESTADO DE EJECUCIÓN EN VIVO DEL MOTOR
             </div>
             <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", marginTop: "2px" }}>
-              {telemetry.current_cell_description || "Minería 24/7 activa en BTC-USDT 15m"}
+              {telemetry?.current_cell_description || "N/D"}
             </div>
           </div>
         </div>
@@ -277,28 +257,30 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "9.5px", color: "#94a3b8", display: "block" }}>VELOCIDAD DE CÁLCULO</span>
             <span style={{ fontSize: "13px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-              {typeof telemetry.evaluation_speed_per_sec === "number" ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "0.5 evals/seg"}
+              {telemetry?.evaluation_speed_per_sec != null ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "N/D"}
             </span>
           </div>
 
           <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "9.5px", color: "#94a3b8", display: "block" }}>EVALUACIONES REALES</span>
             <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-              {fmt(telemetry.total_evaluations_count || telemetry.filter_funnel?.total_evaluated || 609305)}
+              {fmtND(telemetry?.total_evaluations_count ?? telemetry?.filter_funnel?.total_evaluated)}
             </span>
           </div>
 
           <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "9.5px", color: "#34d399", display: "block" }}>ESTADO MOTOR</span>
             <span style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>
-              {telemetry.sqx_connection_badge || "🟢 FastEngine 24/7 Activo"}
+              {telemetry?.sqx_connection_badge || "DESCONOCIDO"}
             </span>
           </div>
 
           <div style={{ background: "rgba(250, 204, 21, 0.1)", border: "1px solid rgba(250, 204, 21, 0.3)", padding: "6px 12px", borderRadius: "8px" }}>
             <span style={{ fontSize: "9.5px", color: "#facc15", display: "block" }}>FIREBASE CLOUD</span>
             <span style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>
-              {firebaseStatus?.status === "ONLINE" ? "🟢 PECEMI SYNCED" : "🟢 24/7 PERSISTENT"}
+              {firebaseStatus?.status
+                ? `${firebaseStatus.status === "ONLINE" || firebaseStatus.status === "HEALTHY" ? "🟢" : "🟡"} ${firebaseStatus.status}`
+                : "N/D"}
             </span>
           </div>
         </div>
@@ -311,7 +293,7 @@ export default function SistemaSupervisorPage() {
             🧬 EMBUDO DE SELECCIÓN Y SUPERVIVENCIA CUANTITATIVA (ZERO-MOCKS)
           </div>
           <span style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-            Total Evaluaciones: {fmt(telemetry.total_evaluations_count || 609305)}
+            Total Evaluaciones: {fmtND(telemetry?.total_evaluations_count)}
           </span>
         </div>
 
@@ -319,7 +301,7 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>1. GENERADAS / TRIAL</div>
             <div style={{ fontSize: "18px", fontWeight: 900, color: "#fff", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmt(telemetry.filter_funnel?.total_evaluated || telemetry.total_evaluations_count || 609305)}
+              {fmtND(telemetry?.filter_funnel?.total_evaluated ?? telemetry?.total_evaluations_count)}
             </div>
             <div style={{ fontSize: "9px", color: "#64748b" }}>100% Espacio muestral</div>
           </div>
@@ -327,7 +309,7 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>2. PASARON IN-SAMPLE (70%)</div>
             <div style={{ fontSize: "18px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmt(telemetry.filter_funnel?.passed_is || telemetry.filter_funnel?.is_passed || 255906)}
+              {fmtND(telemetry?.filter_funnel?.passed_is ?? telemetry?.filter_funnel?.is_passed)}
             </div>
             <div style={{ fontSize: "9px", color: "#38bdf8" }}>PF &gt; 1.25 en training</div>
           </div>
@@ -335,7 +317,7 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>3. PASARON OOS (30%)</div>
             <div style={{ fontSize: "18px", fontWeight: 900, color: "#818cf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmt(telemetry.filter_funnel?.passed_oos || telemetry.filter_funnel?.oos_passed || 109674)}
+              {fmtND(telemetry?.filter_funnel?.passed_oos ?? telemetry?.filter_funnel?.oos_passed)}
             </div>
             <div style={{ fontSize: "9px", color: "#818cf8" }}>Fuera de muestra real</div>
           </div>
@@ -343,7 +325,7 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>4. WALK-FORWARD (WFE)</div>
             <div style={{ fontSize: "18px", fontWeight: 900, color: "#a78bfa", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmt(telemetry.filter_funnel?.passed_wfo || telemetry.filter_funnel?.wfo_passed || 48744)}
+              {fmtND(telemetry?.filter_funnel?.passed_wfo ?? telemetry?.filter_funnel?.wfo_passed)}
             </div>
             <div style={{ fontSize: "9px", color: "#a78bfa" }}>WFE &gt; 0.40 inter-ventanas</div>
           </div>
@@ -351,7 +333,7 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>5. MONTE CARLO 5D</div>
             <div style={{ fontSize: "18px", fontWeight: 900, color: "#ec4899", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmt(telemetry.filter_funnel?.passed_monte_carlo || telemetry.filter_funnel?.monte_carlo_passed || 21325)}
+              {fmtND(telemetry?.filter_funnel?.passed_monte_carlo ?? telemetry?.filter_funnel?.monte_carlo_passed)}
             </div>
             <div style={{ fontSize: "9px", color: "#ec4899" }}>Ruina 0.0% (1.000 sims)</div>
           </div>
@@ -359,7 +341,7 @@ export default function SistemaSupervisorPage() {
           <div style={{ background: "rgba(16, 185, 129, 0.12)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(16, 185, 129, 0.35)" }}>
             <div style={{ fontSize: "9.5px", color: "#34d399", fontWeight: 800 }}>6. CANDIDATAS EN PIPELINE</div>
             <div style={{ fontSize: "18px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {telemetry.total_candidates || 230}
+              {fmtND(telemetry?.total_candidates)}
             </div>
             <div style={{ fontSize: "9px", color: "#34d399" }}>En SQLite WAL & Firebase</div>
           </div>
@@ -389,12 +371,12 @@ export default function SistemaSupervisorPage() {
                     {WORKER_NAMES[wId]}
                   </span>
                   <span style={{ fontSize: "9.5px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(16, 185, 129, 0.15)", color: "#34d399" }}>
-                    ● ACTIVE
+                    {w ? "● ACTIVE" : "● UNKNOWN"}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#94a3b8", marginTop: "6px" }}>
-                  <span>Completadas: <strong style={{ color: "#38bdf8" }}>{fmt(w?.tasksCompleted || 1420)}</strong></span>
-                  <span>Velocidad: <strong style={{ color: "#34d399" }}>{w?.opsPerSec || 12} ops/s</strong></span>
+                  <span>Completadas: <strong style={{ color: "#38bdf8" }}>{fmtND(w?.tasksCompleted)}</strong></span>
+                  <span>Velocidad: <strong style={{ color: "#34d399" }}>{w?.opsPerSec != null ? `${w.opsPerSec} ops/s` : "N/D"}</strong></span>
                 </div>
               </div>
             );
@@ -422,7 +404,7 @@ export default function SistemaSupervisorPage() {
                 </tr>
               </thead>
               <tbody>
-                {(telemetry.datasets_inventory || []).map((ds, idx) => (
+                {(telemetry?.datasets_inventory || []).map((ds, idx) => (
                   <tr key={idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                     <td style={{ padding: "6px 8px", fontWeight: 800, color: "#38bdf8" }}>{ds.symbol}</td>
                     <td style={{ padding: "6px 8px", color: "#cbd5e1" }}>{ds.timeframe}</td>
@@ -452,7 +434,7 @@ export default function SistemaSupervisorPage() {
           </div>
 
           <div style={{ background: "#05080e", borderRadius: "8px", padding: "12px", height: "300px", overflowY: "auto", fontFamily: "var(--font-mono, monospace)", fontSize: "11px" }}>
-            {telemetry.activity_feed && telemetry.activity_feed.length > 0 ? (
+            {telemetry?.activity_feed && telemetry.activity_feed.length > 0 ? (
               telemetry.activity_feed.map((ev, i) => (
                 <div key={i} style={{ marginBottom: "6px", lineHeight: "1.4", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "4px" }}>
                   <span style={{ color: "#64748b", marginRight: "8px" }}>[{ev.time}]</span>

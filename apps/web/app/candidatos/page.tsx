@@ -215,8 +215,8 @@ export default function CandidatosFSMPage() {
           setSelectedEnsembleIds(top5Ultra);
         }
       }
-    } catch {
-      // quiet fallback
+    } catch (err) {
+      console.warn("[candidatos] backend sin respuesta (se muestra sin datos):", err);
     } finally {
       setLoading(false);
     }
@@ -236,8 +236,8 @@ export default function CandidatosFSMPage() {
           fetchCandidates();
         }
       }
-    } catch {
-      // quiet fallback
+    } catch (err) {
+      console.warn("[candidatos] backend sin respuesta (se muestra sin datos):", err);
     }
   }, [fetchCandidates]);
 
@@ -338,9 +338,10 @@ export default function CandidatosFSMPage() {
           symbol: candidate.symbol,
           timeframe: candidate.timeframe,
           route: candidate.route,
-          profit_factor_oos: oos?.profit_factor || 1.35,
-          max_dd_pct: oos?.max_drawdown_pct || 4.2,
-          win_rate: oos?.win_rate_pct || 40.0,
+          // ZERO-MOCKS: sin dato real se envía null, nunca una métrica inventada
+          profit_factor_oos: oos?.profit_factor ?? null,
+          max_dd_pct: oos?.max_drawdown_pct ?? null,
+          win_rate: oos?.win_rate_pct ?? null,
         }),
       });
 
@@ -348,8 +349,8 @@ export default function CandidatosFSMPage() {
         const d = await res.json();
         setDebateResult(d);
       }
-    } catch {
-      // fallback
+    } catch (err) {
+      console.warn("[candidatos] operación sin respuesta del backend:", err);
     } finally {
       setDebateLoading(false);
     }
@@ -365,11 +366,12 @@ export default function CandidatosFSMPage() {
           name: c.name,
           symbol: c.symbol,
           timeframe: c.timeframe,
-          annualized_roi: c.metrics?.out_of_sample?.annualized_roi_pct || 35.0,
-          monthly_roi: c.metrics?.out_of_sample?.monthly_roi_pct || 3.0,
-          max_dd_pct: c.metrics?.out_of_sample?.max_drawdown_pct || 4.0,
-          win_rate: c.metrics?.out_of_sample?.win_rate_pct || 42.0,
-          profit_factor: c.metrics?.out_of_sample?.profit_factor || 1.35,
+          // ZERO-MOCKS: sin dato real se envía null, nunca una métrica inventada
+          annualized_roi: c.metrics?.out_of_sample?.annualized_roi_pct ?? null,
+          monthly_roi: c.metrics?.out_of_sample?.monthly_roi_pct ?? null,
+          max_dd_pct: c.metrics?.out_of_sample?.max_drawdown_pct ?? null,
+          win_rate: c.metrics?.out_of_sample?.win_rate_pct ?? null,
+          profit_factor: c.metrics?.out_of_sample?.profit_factor ?? null,
         }));
 
       if (strats.length === 0) return;
@@ -387,8 +389,8 @@ export default function CandidatosFSMPage() {
         const d = await res.json();
         setEnsembleResult(d);
       }
-    } catch {
-      // fallback
+    } catch (err) {
+      console.warn("[candidatos] operación sin respuesta del backend:", err);
     } finally {
       setEnsembleLoading(false);
     }

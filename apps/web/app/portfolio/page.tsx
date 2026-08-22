@@ -797,8 +797,8 @@ export default function PortfolioStudioPage() {
                         <td style={{ padding: "6px 8px", textAlign: "right", color: "#ef4444", fontWeight: 700 }}>{c.max_drawdown}%</td>
                         <td style={{ padding: "6px 8px", textAlign: "right" }}>{c.profit_factor}</td>
                         <td style={{ padding: "6px 8px", textAlign: "center" }}>
-                          <span style={{ fontSize: 9.5, padding: "1px 5px", borderRadius: 3, background: c.gates_passed_count >= 10 ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: c.gates_passed_count >= 10 ? "#10b981" : "#f59e0b", fontWeight: 800 }}>
-                            {c.gates_passed_count}/11
+                          <span style={{ fontSize: 9.5, padding: "1px 5px", borderRadius: 3, background: (c.gates_passed_count ?? 0) >= 11 ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: (c.gates_passed_count ?? 0) >= 11 ? "#10b981" : "#f59e0b", fontWeight: 800 }}>
+                            {c.gates_passed_count ?? "N/D"}/11
                           </span>
                         </td>
                       </tr>

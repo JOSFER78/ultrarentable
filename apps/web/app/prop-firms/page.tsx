@@ -1699,7 +1699,7 @@ export default function WorldClassFuturesPropFirmsPage() {
       if (sortBy === "TOTAL_PRICE") return totalA - totalB;
       if (sortBy === "EXAM_PRICE") return priceA - priceB;
       if (sortBy === "MAX_DD") return b.max_trailing_dd_usd - a.max_trailing_dd_usd;
-      if (sortBy === "SCORE") return (b.trust_score ?? 90) - (a.trust_score ?? 90);
+      if (sortBy === "SCORE") return (b.trust_score ?? 0) - (a.trust_score ?? 0);
       return 0;
     });
   }, [providers, selectedTier, selectedDrawdown, selectedBotPolicy, onlyZeroActivation, onlyDayOnePayout, searchQuery, sortBy]);
@@ -1707,12 +1707,12 @@ export default function WorldClassFuturesPropFirmsPage() {
   // Algoritmo del Wizard
   const wizardRecommendations = useMemo(() => {
     return providers.map((p) => {
-      const price = p.promo_price_usd ?? p.monthly_cost_usd ?? p.regular_price_usd ?? 50;
+      const price = p.promo_price_usd ?? p.monthly_cost_usd ?? p.regular_price_usd ?? 0;
       const activation = p.activation_fee_usd ?? 0;
       const totalCost = price + (wizIncludeActivation ? activation : 0);
       const pros: string[] = [];
       const cons: string[] = [];
-      let score = Number(p.trust_score ?? 90);
+      let score = Number(p.trust_score ?? 0);
 
       if (totalCost <= wizBudget) {
         score += 18;
@@ -1765,8 +1765,9 @@ export default function WorldClassFuturesPropFirmsPage() {
     setIsSimulating(true);
     setTimeout(() => {
       const selected = providers.find((p) => p.provider_id === simSelectedFirmId) || providers[0];
-      const target = selected?.target_usd ?? 3000;
-      const maxDD = selected?.max_trailing_dd_usd ?? 2000;
+      // ZERO-MOCKS: sin datos del catálogo se usa 0 (visible), no valores inventados
+      const target = selected?.target_usd ?? 0;
+      const maxDD = selected?.max_trailing_dd_usd ?? 0;
       const isEOD = selected?.trailing_dd_type.includes("EOD") ?? true;
       const isStatic = selected?.trailing_dd_type.includes("Static") ?? false;
 
@@ -2274,7 +2275,7 @@ export default function WorldClassFuturesPropFirmsPage() {
                                       {p.payout_frequency ?? "Quincenal"}
                                     </td>
                                     <td style={{ padding: "12px 10px", fontSize: "11px", fontWeight: 800 }}>
-                                      {p.payout_split_pct ?? 90}% (100% 1st 10k)
+                                      {p.payout_split_pct != null ? `${p.payout_split_pct}% (100% 1st 10k)` : "N/D"}
                                     </td>
                                     <td style={{ padding: "12px 10px", fontSize: "10px", color: "var(--text-muted)" }}>
                                       {p.funded_trailing_lock === "LOCKS_AT_INITIAL_BALANCE" ? "Se congela en Balance Inicial" : p.funded_trailing_lock}
@@ -2448,7 +2449,7 @@ export default function WorldClassFuturesPropFirmsPage() {
                         <div>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
                             <span style={{ fontSize: "10px", fontWeight: 900, padding: "2px 6px", borderRadius: "4px", background: "rgba(96, 165, 250, 0.2)", color: "#60a5fa" }}>FUTUROS CME</span>
-                            <span style={{ fontSize: "10px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(34, 197, 94, 0.15)", color: "var(--success)" }}>SCORE {p.trust_score ?? 90}/100</span>
+                            <span style={{ fontSize: "10px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(34, 197, 94, 0.15)", color: "var(--success)" }}>SCORE {p.trust_score ?? "N/D"}/100</span>
                           </div>
                           <div style={{ fontSize: "15px", fontWeight: 900, color: "#fff" }}>{p.name}</div>
                           <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{p.provider_name} · <strong>{p.program_type}</strong></div>
@@ -2542,7 +2543,7 @@ export default function WorldClassFuturesPropFirmsPage() {
                               </div>
                               <div>
                                 <div style={{ color: "var(--text-muted)", fontWeight: 700 }}>PAYOUT SPLIT</div>
-                                <div style={{ fontSize: "14px", fontWeight: 900, color: "var(--success)" }}>{p.payout_split_pct ?? 90}% (100% 1st $10k)</div>
+                                <div style={{ fontSize: "14px", fontWeight: 900, color: "var(--success)" }}>{p.payout_split_pct != null ? `${p.payout_split_pct}% (100% 1st $10k)` : "N/D"}</div>
                               </div>
                               <div>
                                 <div style={{ color: "var(--text-muted)", fontWeight: 700 }}>FRECUENCIA RETIRO</div>

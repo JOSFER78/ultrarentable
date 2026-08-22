@@ -202,16 +202,17 @@ export default function ApprovedStrategiesAndGatesHubPage() {
     fetchCandidates();
   }, [fetchCandidates]);
 
-  // Guardarraíl Estricto: Sólo estrategias con 11/10 Gates, DD <= 85% (Ultra) y DD <= 4.0% (Fondeo)
+  // Guardarraíl Estricto: Sólo estrategias con 11 Gates, DD <= 85% (Ultra) y DD <= 4.0% (Fondeo)
+  // ZERO-MOCKS: si falta DD o PF el candidato NO pasa el guarda (no se asume 0 / 1.0)
   const approvedStrategies = candidates.filter((c) => {
     const isUltra = (c.route || "ULTRA").toUpperCase() === "ULTRA";
     const maxDdAllowed = isUltra ? 85.0 : 4.0;
-    const dd = c.max_dd_oos_pct ?? c.metrics?.out_of_sample?.max_drawdown_pct ?? 0;
-    const pf = c.profit_factor_oos ?? c.metrics?.out_of_sample?.profit_factor ?? 1.0;
+    const dd = c.max_dd_oos_pct ?? c.metrics?.out_of_sample?.max_drawdown_pct ?? null;
+    const pf = c.profit_factor_oos ?? c.metrics?.out_of_sample?.profit_factor ?? null;
     return (
       (c.tier === "TIER_1_CERTIFIED" || c.gates_passed_count === 11) &&
-      dd <= maxDdAllowed &&
-      pf >= 1.05
+      dd !== null && dd <= maxDdAllowed &&
+      pf !== null && pf >= 1.05
     );
   });
 
@@ -488,7 +489,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                         </td>
                         <td style={{ padding: "12px", textAlign: "center" }}>
                           <span style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "3px 8px", borderRadius: "4px", fontWeight: 900, fontSize: "10.5px" }}>
-                            {m.gates_passed_count || 11}/11 ✓
+                            {m.gates_passed_count ?? "N/D"}/11
                           </span>
                         </td>
                         <td style={{ padding: "12px", textAlign: "center" }}>
@@ -560,25 +561,15 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                   <tbody>
                     {approvedStrategies.map((s) => {
                       const dur = s.duration_info;
-                      const oosMonths = Math.max(1.0, dur?.oos_months ?? 8.0);
-                      const baseCap = s.route === "ULTRA" ? 1000.0 : 50000.0;
-                      const rawNetProfit = s.metrics?.out_of_sample?.net_profit_usd ?? s.net_profit_oos ?? 0;
-
-                      let monRoi = s.metrics?.out_of_sample?.monthly_roi_pct;
-                      if (monRoi === undefined || monRoi === null || isNaN(monRoi) || monRoi > 80) {
-                        if (rawNetProfit > 0) {
-                          const endingEquity = baseCap + rawNetProfit;
-                          monRoi = (Math.pow(endingEquity / baseCap, 1.0 / oosMonths) - 1.0) * 100.0;
-                        } else {
-                          monRoi = (rawNetProfit / baseCap / oosMonths) * 100.0;
-                        }
-                      }
-                      const annRoi = s.metrics?.out_of_sample?.annualized_roi_pct ?? (monRoi * 12.0);
-                      const pfIs = s.metrics?.in_sample?.profit_factor ?? 1.18;
-                      const pfOos = s.metrics?.out_of_sample?.profit_factor ?? s.profit_factor_oos ?? 1.34;
-                      const wr = s.metrics?.out_of_sample?.win_rate_pct ?? s.metrics?.in_sample?.win_rate_pct ?? s.win_rate_pct ?? 48.5;
-                      const tradesOos = s.metrics?.out_of_sample?.trades ?? s.trades_oos ?? 68;
-                      const dd = s.metrics?.out_of_sample?.max_drawdown_pct ?? s.max_dd_oos_pct ?? 69.1;
+                      // ZERO-MOCKS: métricas solo desde datos reales; si faltan se muestra N/D (nunca se estiman con capital supuesto)
+                      const monRoi = s.metrics?.out_of_sample?.monthly_roi_pct ?? null;
+                      const annRoi = s.metrics?.out_of_sample?.annualized_roi_pct ?? (monRoi !== null ? monRoi * 12.0 : null);
+                      const pfIs = s.metrics?.in_sample?.profit_factor ?? null;
+                      const pfOos = s.metrics?.out_of_sample?.profit_factor ?? s.profit_factor_oos ?? null;
+                      const wr = s.metrics?.out_of_sample?.win_rate_pct ?? s.metrics?.in_sample?.win_rate_pct ?? s.win_rate_pct ?? null;
+                      const tradesOos = s.metrics?.out_of_sample?.trades ?? s.trades_oos ?? null;
+                      const dd = s.metrics?.out_of_sample?.max_drawdown_pct ?? s.max_dd_oos_pct ?? null;
+                      const isNum = (v: number | null | undefined): v is number => v !== null && v !== undefined && !isNaN(v);
 
                       return (
                         <tr key={s.candidate_id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
@@ -603,35 +594,35 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                             </span>
                           </td>
                           <td style={{ padding: "12px", color: "#cbd5e1" }}>
-                            {dur ? `${dur.total_months || 24}m Totales (${dur.oos_months || 6}m OOS)` : "24m Totales (6m OOS)"}
+                            {dur ? `${dur.total_months ?? "?"}m Totales (${dur.oos_months ?? "?"}m OOS)` : "N/D"}
                           </td>
                           <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
                             <div style={{ color: "#34d399", fontWeight: 800 }}>
-                              +{monRoi.toFixed(1)}%/mes
+                              {isNum(monRoi) ? `+${monRoi.toFixed(1)}%/mes` : "N/D"}
                             </div>
                             <div style={{ color: "#6ee7b7", fontSize: "10px" }}>
-                              +{annRoi.toFixed(0)}%/año
+                              {isNum(annRoi) ? `+${annRoi.toFixed(0)}%/año` : "N/D"}
                             </div>
                           </td>
                           <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
-                            <span style={{ color: "#94a3b8", fontSize: "11px" }}>{pfIs.toFixed(2)}</span>
+                            <span style={{ color: "#94a3b8", fontSize: "11px" }}>{isNum(pfIs) ? pfIs.toFixed(2) : "N/D"}</span>
                             <span style={{ color: "rgba(255,255,255,0.2)", margin: "0 4px" }}>/</span>
-                            <strong style={{ color: pfOos >= 1.2 ? "#34d399" : "#f59e0b" }}>
-                              {pfOos.toFixed(2)}
+                            <strong style={{ color: isNum(pfOos) && pfOos >= 1.2 ? "#34d399" : "#f59e0b" }}>
+                              {isNum(pfOos) ? pfOos.toFixed(2) : "N/D"}
                             </strong>
                           </td>
                           <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>
-                            {wr.toFixed(1)}%
+                            {isNum(wr) ? `${wr.toFixed(1)}%` : "N/D"}
                           </td>
                           <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", color: "#94a3b8" }}>
-                            {tradesOos}
+                            {isNum(tradesOos) ? String(tradesOos) : "N/D"}
                           </td>
-                          <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: dd <= 5.0 ? "#34d399" : (dd <= 85.0 ? "#fbbf24" : "#f87171") }}>
-                            {dd.toFixed(1)}%
+                          <td style={{ padding: "12px", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: isNum(dd) ? (dd <= 5.0 ? "#34d399" : (dd <= 85.0 ? "#fbbf24" : "#f87171")) : "#94a3b8" }}>
+                            {isNum(dd) ? `${dd.toFixed(1)}%` : "N/D"}
                           </td>
                           <td style={{ padding: "12px", textAlign: "center" }}>
                             <span style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "3px 8px", borderRadius: "4px", fontWeight: 900, fontSize: "10.5px" }}>
-                              10/10 ✓
+                              {s.gates_passed_count ?? "N/D"}/11
                             </span>
                           </td>
                           <td style={{ padding: "12px", textAlign: "center" }}>

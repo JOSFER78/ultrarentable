@@ -364,7 +364,7 @@ class UltraRiskControlledEngine:
             l = [t for t in sub if t.net_pnl <= 0]
             tot_p = sum(t.net_pnl for t in w)
             tot_l = abs(sum(t.net_pnl for t in l))
-            pf = round(tot_p / tot_l, 2) if tot_l > 0 else (99.0 if tot_p > 0 else 0.0)
+            pf = round(tot_p / tot_l, 2) if tot_l > 0 else (None if tot_p > 0 else 0.0)  # ZERO-MOCKS: PF sin pérdidas se reporta como None, no 99.0 acuñado
             wr = round(len(w) / len(sub) * 100, 2)
             np_val = round(sum(t.net_pnl for t in sub), 2)
             roi = round(np_val / initial_equity * 100.0, 2)
@@ -642,19 +642,22 @@ class UltraRiskControlledEngine:
                         break
                     if cum_pnl >= profit_target_usd:
                         win_passed = True
-                        days_used = max(4, min(14, int(idx_tr * 1.3)))
+                        # ZERO-MOCKS: días reales entre barras (antes: fórmula sintética idx*1.3)
+                        d_end = self._parse_bar_date(self.bars[min(tr.idx_exit, self.n_bars - 1)]) if self.bars else None
+                        d_start = self._parse_bar_date(self.bars[min(sub_w[0].idx_exit, self.n_bars - 1)]) if self.bars else None
+                        days_used = max(1, (d_end - d_start).days) if (d_end and d_start) else idx_tr
                         break
                 challenge_windows.append({
                     "passed": win_passed,
-                    "days_taken": days_used if win_passed else 14,
+                    "days_taken": days_used if win_passed else None,
                     "max_dd_usd": w_dd,
                     "max_dd_pct": round(w_dd / account_size_usd * 100.0, 2)
                 })
 
         pass_count = sum(1 for w in challenge_windows if w["passed"])
-        pass_rate = round(pass_count / len(challenge_windows) * 100.0, 1) if challenge_windows else 80.0
+        pass_rate = round(pass_count / len(challenge_windows) * 100.0, 1) if challenge_windows else None  # ZERO-MOCKS: sin ventanas => sin tasa inventada
         pass_days = [w["days_taken"] for w in challenge_windows if w["passed"]]
-        avg_days_to_pass = round(float(np.mean(pass_days)), 1) if pass_days else 6.0
+        avg_days_to_pass = round(float(np.mean(pass_days)), 1) if pass_days else None
 
         def calc_prop_metrics(sub: List[TradeLog], sub_days: int) -> Dict[str, Any]:
             if not sub:
@@ -662,20 +665,25 @@ class UltraRiskControlledEngine:
                     "trades": 0, "net_profit": 0.0, "net_profit_usd": 0.0, "roi_pct": 0.0,
                     "annualized_roi_pct": 0.0, "monthly_roi_pct": 0.0, "trades_per_month": 0.0,
                     "duration_days": sub_days, "profit_factor": 0.0, "win_rate": 0.0, "win_rate_pct": 0.0,
-                    "max_drawdown_pct": 0.0, "days_to_pass": 6.0, "pass_rate_pct": 80.0, "account_base_usd": account_size_usd
+                    "max_drawdown_pct": 0.0, "days_to_pass": None, "pass_rate_pct": None, "account_base_usd": account_size_usd
                 }
             w = [t for t in sub if t.net_pnl > 0]
             l = [t for t in sub if t.net_pnl <= 0]
             tot_p = sum(t.net_pnl for t in w)
             tot_l = abs(sum(t.net_pnl for t in l))
-            pf = round(tot_p / tot_l, 2) if tot_l > 0 else (99.0 if tot_p > 0 else 0.0)
+            pf = round(tot_p / tot_l, 2) if tot_l > 0 else (None if tot_p > 0 else 0.0)  # ZERO-MOCKS: PF sin pérdidas se reporta como None, no 99.0 acuñado
             wr = round(len(w) / len(sub) * 100, 2)
             np_val = round(sum(t.net_pnl for t in sub), 2)
             roi = round(np_val / account_size_usd * 100.0, 2)
             
-            # Sprint velocity annualized ROI: (+6.0% achieved in avg_days_to_pass)
-            ann_velocity = round((6.0 / max(3.0, avg_days_to_pass)) * 252.0, 1) # 252 trading days/year
-            m_velocity = round((6.0 / max(3.0, avg_days_to_pass)) * 21.0, 1)    # 21 trading days/month
+            # ZERO-MOCKS: anualización compuesta del retorno REAL del sub-periodo (antes: 'velocity' inventada de 6% en N días)
+            _base = 1.0 + roi / 100.0
+            if _base <= 0.0:
+                ann_velocity = -100.0
+                m_velocity = -100.0
+            else:
+                ann_velocity = round((_base ** (365.25 / max(1.0, float(sub_days))) - 1.0) * 100.0, 1)
+                m_velocity = round((_base ** (1.0 / max(0.03, sub_days / 30.4375)) - 1.0) * 100.0, 1)
 
             tpm = round(len(sub) / max(0.1, sub_days / 30.4375), 1)
 
@@ -702,7 +710,7 @@ class UltraRiskControlledEngine:
                 "profit_factor": pf,
                 "win_rate": wr,
                 "win_rate_pct": wr,
-                "max_drawdown_pct": round(min(4.0, sub_max_dd), 2),
+                "max_drawdown_pct": round(sub_max_dd, 2),  # ZERO-MOCKS: DD real, sin recorte a 4%
                 "days_to_pass": avg_days_to_pass,
                 "pass_rate_pct": pass_rate,
                 "account_base_usd": account_size_usd,
@@ -721,6 +729,15 @@ class UltraRiskControlledEngine:
         net_profit = round(equity - initial_equity, 2)
         roi_pct = round(net_profit / account_size_usd * 100.0, 2)
 
+        # ZERO-MOCKS: Sharpe real por trade anualizado (antes: literal 2.1)
+        _pnls = [t.net_pnl for t in trades]
+        _std = float(np.std(_pnls)) if len(_pnls) > 1 else 0.0
+        if _std > 0.0:
+            _tpy = len(_pnls) / max(1e-9, total_days / 365.25)
+            sharpe_real = round(float(np.mean(_pnls) / _std * np.sqrt(_tpy)), 2)
+        else:
+            sharpe_real = 0.0
+
         return RiskControlledResult(
             name=name,
             symbol=self.symbol,
@@ -730,13 +747,13 @@ class UltraRiskControlledEngine:
             final_equity=round(equity, 2),
             net_profit_usd=net_profit,
             roi_pct=roi_pct,
-            annualized_roi_pct=oos_m.get("annualized_roi_pct", 150.0),
-            monthly_roi_pct=oos_m.get("monthly_roi_pct", 12.5),
+            annualized_roi_pct=oos_m.get("annualized_roi_pct", 0.0),
+            monthly_roi_pct=oos_m.get("monthly_roi_pct", 0.0),
             total_trades=len(trades),
             win_rate_pct=overall_wr,
             profit_factor=overall_pf,
-            max_drawdown_pct=round(min(4.0, max_dd_pct), 2),
-            sharpe_ratio=2.1,
+            max_drawdown_pct=round(max_dd_pct, 2),  # ZERO-MOCKS: DD real, sin recorte a 4%
+            sharpe_ratio=sharpe_real,
             duration_info=duration_info,
             is_metrics=is_m,
             oos_metrics=oos_m,
@@ -905,7 +922,7 @@ class UltraRiskControlledEngine:
             l = [t for t in sub if t.net_pnl <= 0]
             tot_p = sum(t.net_pnl for t in w)
             tot_l = abs(sum(t.net_pnl for t in l))
-            pf = round(tot_p / tot_l, 2) if tot_l > 0 else (99.0 if tot_p > 0 else 0.0)
+            pf = round(tot_p / tot_l, 2) if tot_l > 0 else (None if tot_p > 0 else 0.0)  # ZERO-MOCKS: PF sin pérdidas se reporta como None, no 99.0 acuñado
             wr = round(len(w) / len(sub) * 100, 2)
             np_val = round(sum(t.net_pnl for t in sub), 2)
             roi = round(np_val / initial_equity * 100.0, 2)
