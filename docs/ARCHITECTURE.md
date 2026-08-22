@@ -105,3 +105,19 @@ contracts/gate_directory.py ◀── gates_router (y futuros consumidores)
    datos, nunca fuerza aprobaciones.
 3. APIs/servicios: `ultrarentable-api.service` (user unit) reiniciada con los fixes;
    el discovery worker sigue activo en su hilo.
+
+## SQX 144 oficial ARM64 (2026-08-22, sustituye al estado anterior del motor SQX)
+
+- El paquete ARM antiguo (instalacion manual incompleta, splash NPE) queda como legacy en
+   (no borrar hasta confirmar migracion completa).
+- **Instalado el build OFICIAL 144.2953 ARM64** en 
+  (descarga directa de api.strategyquant.com, 1.28GB, con  y j64 completo).
+-  (user unit) apunta al nuevo directorio, DISPLAY=:99 (XFCE+Xvfb),
+   (ya no hay crash-storm; kill-switch: ).
+- **Estado actual: EJECUTANDOSE y estable**, esperando activacion de licencia en el dialogo
+  Electron (Hardware ID: ). Web server Jetty en .
+- Activacion automatizable: ventana  accesible via 
+  (instalado). Flujo pendiente: licencia -> verificar servidor MCP -> fijar 
+  (ojo: 8080 esta ocupado por otro proyecto; el cliente usa 8081 por defecto) ->
+   -> estrategias nuevas al pipeline.
+- Proyecto  ya migrado a .
