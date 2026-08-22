@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g09",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "0b7dfbcc1d25599669e2169591f38365f985b45f7517166900be704f933e564a",
+  "strategy_snapshot_hash": "0b917ee52615ee3cf7e6fa9732f85ec9a85578d2c0fb8e573432951213b5e087",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "932dbd61ae79898b9b7aa2f3246e91c1940a48aede853e8df0a58c7e93372ee2",
-  "output_hash": "3a8f18140346dfbd065d81e09917aa2f8f66f3493b7f58aa933288d40d51cc84",
+  "input_hash": "eeeb100aacd660f1899a6c621c980182ece561c0fed4e3fdd104fa4a2beea7e3",
+  "output_hash": "3c11fee3e539758aeed284eb261e068b65e983ac3da6d3d1db7ec532672b2db0",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 34.0 trades/param, Estabilidad Vecindario: 171.3%, Re-backtest PFs: [0.7, 0.6, 0.33, 0.7])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 27.9 trades/param, Estabilidad Vecindario: 100.5%, Re-backtest PFs: [0.55, 0.37, 0.56, 0.41])",
   "metrics": {
-    "parameters_count": 7,
-    "degrees_of_freedom_ratio": 34.0,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 27.9,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 171.3,
+    "parameter_neighborhood_stability_pct": 100.5,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.7,
-      0.6,
-      0.33,
-      0.7
+      0.55,
+      0.37,
+      0.56,
+      0.41
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T07:40:55.615394+00:00"
+  "created_at_utc": "2026-08-22T14:04:01.080127+00:00"
 }

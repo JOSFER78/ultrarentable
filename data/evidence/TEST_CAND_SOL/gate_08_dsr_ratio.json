@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g08",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "51bc06113d008054b547a4e423d2f1e337c2f89bc60378de65b9eb505e38371c",
+  "strategy_snapshot_hash": "9677663a48b820a77186745d057ce4db6910a4ca604268fb0e8d54ed08256c9f",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "70d84c7ce2398fae406881b0559db3cecbf4ffae063e3a7d60df12d79a84da90",
-  "output_hash": "ee19bc97d874424551f678488a85597336ebe389ff7e3ee893e846b35c420952",
+  "input_hash": "deab19379aa6385d561cc8321f471c55805e64f39b0059fb96a77a507c5ac1b7",
+  "output_hash": "1aa8fba7b8332b20d6b46c5b4439aba13d1290e0dc2cd954e7019330d4d06335",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.109,
+    "raw_sharpe_ratio": 0.032,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 2.288,
-    "kurtosis": 7.808,
-    "sample_trades_count": 62
+    "skewness": 1.864,
+    "kurtosis": 5.592,
+    "sample_trades_count": 120
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T07:40:26.066061+00:00"
+  "created_at_utc": "2026-08-22T14:00:29.867772+00:00"
 }

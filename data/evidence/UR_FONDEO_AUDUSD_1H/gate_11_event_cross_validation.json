@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g11",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "0b7dfbcc1d25599669e2169591f38365f985b45f7517166900be704f933e564a",
+  "strategy_snapshot_hash": "0b917ee52615ee3cf7e6fa9732f85ec9a85578d2c0fb8e573432951213b5e087",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "f0418d35b61fc3effdb0cce1eb80ea7b275a27d21504c7af039c429002a1bef4",
-  "output_hash": "0bc4fd059200d1aacc9cb22c757802073d74850e276d2a8d11f21e533fdf3aa5",
+  "input_hash": "763226a60381e359c1b8a048d369e7d65bd5ef9eb5d6200e17b6daf213f3ef72",
+  "output_hash": "0ee8b091deb0a205908fc3a2baceb09899f19b4a31d30940be915c5610febe85",
   "status": "PASSED",
   "score": 99.6,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $49580.00, Apalancamiento Pico: 1.0x, Dist. Mín. Liquidación: 100.0%, Comisiones+Funding: $420.00)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $49615.45, Apalancamiento Pico: 1.0x, Dist. Mín. Liquidación: 100.0%, Comisiones+Funding: $384.00)",
   "metrics": {
     "initial_capital_usd": 50000.0,
-    "final_equity_usd": 49580.0,
+    "final_equity_usd": 49615.45,
     "peak_equity_usd": 50000.0,
-    "min_equity_usd": 49580.0,
+    "min_equity_usd": 49615.45,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 3.0,
     "min_distance_to_liquidation_pct": 100.0,
     "margin_call_triggered": false,
-    "total_fees_paid_usd": 420.0,
+    "total_fees_paid_usd": 384.0,
     "total_funding_cost_usd": 0.0,
-    "execution_events_count": 70
+    "execution_events_count": 64
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T07:40:55.656577+00:00"
+  "created_at_utc": "2026-08-22T14:04:01.110913+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_15M_g08",
   "run_id": "run_UR_ULTRA_BTC_USDT_15M",
   "strategy_id": "UR_ULTRA_BTC_USDT_15M",
-  "strategy_snapshot_hash": "c7a19e5a474bfe3972ffc845a6f00a22ec06ddfe599d1cb39949e748cef84177",
+  "strategy_snapshot_hash": "f75a931d340b3c3cff2fa00ecec85045a00766e4d858ce863fce1556cfbeda70",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b23ea9a1deb8921deea5c95e28f9511b922b809f70a8a1d9fa5dc38845c3f08e",
-  "output_hash": "4feefb887be6bc7a2b63857e8433bdc143c9cfe3d9ca653ad69df57796abc6fb",
+  "input_hash": "0e09e3ef8df6b09c10e5c39517e76ad6d69898661cd8bdae876946894b6a0439",
+  "output_hash": "46ae5775ed96210b71eeae1f3b049dd2db05666d5322fc0639904c5688b6bf2a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.082,
+    "raw_sharpe_ratio": -0.314,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 4.318,
-    "kurtosis": 23.302,
-    "sample_trades_count": 64
+    "skewness": 1.951,
+    "kurtosis": 5.372,
+    "sample_trades_count": 54
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T07:32:33.519175+00:00"
+  "created_at_utc": "2026-08-22T14:04:55.362057+00:00"
 }

@@ -34,9 +34,9 @@ export interface EngineVersionData {
 
 export function useEngineVersion() {
   const [data, setData] = useState<EngineVersionData>({
-    current_version: "3.0.0",
-    current_name: "Ultrarentable V3.0.0 (Universal Dynamic Engine, AST Rule Evaluator, Full Equity Ledger & Cryptographic Merkle Provenance)",
-    pipeline_version: "3.0.0",
+    current_version: "3.2.0",
+    current_name: "Ultrarentable V3.2.0 (Unified Multi-Asset 6-Phase Matrix, Dynamic Semantic Reprogramming & Exact Markowitz ERC Ensembles)",
+    pipeline_version: "3.2.0",
     git_commit_short: "HEAD",
     git_branch: "main",
     history: [],

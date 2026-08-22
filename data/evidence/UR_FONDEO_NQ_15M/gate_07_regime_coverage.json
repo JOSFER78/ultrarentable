@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_NQ_15M_g07",
   "run_id": "run_UR_FONDEO_NQ_15M",
   "strategy_id": "UR_FONDEO_NQ_15M",
-  "strategy_snapshot_hash": "cd2adf97c59fdc84519857590109a03cf49afa3f304ccd21df27e8c8fedfea3b",
+  "strategy_snapshot_hash": "6fed17a13009295ae4d4d4b153c8e53f54afc22d8060b7fbfa19fca63e3027d7",
   "dataset_id": "ds_trad_nq_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "7c790c549141ae6e3b7546b66923e8642c84c83370488a227500d4b0edc296a9",
-  "output_hash": "115f188273b52baaf495d31831720e44075c71c834b34b5514e6509f25acd517",
+  "input_hash": "dd7ccb0a2507dc1c74b2b05a41809a37cdd1f6820feb2abca72065a07e4cd8eb",
+  "output_hash": "c34d5a1d1cb5ac114660362ae3cce3aa3b9e7f45f420ef0a1569c73667d31ea5",
   "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +3104.90%)",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +14.44%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -26,18 +26,18 @@
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
       "CHOP_RANGING": 12,
-      "HIGH_VOLATILITY": 1
+      "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -5470.41,
-      "HIGH_VOLATILITY": 8575.31
+      "CHOP_RANGING": 3.16,
+      "HIGH_VOLATILITY": 11.28
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 3104.9
+    "total_oos_return_pct": 14.44
   },
   "artifact_path": "data/evidence/UR_FONDEO_NQ_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:01:51.528088+00:00"
+  "created_at_utc": "2026-08-22T14:00:15.392840+00:00"
 }

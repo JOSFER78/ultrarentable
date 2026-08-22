@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_5M_g10",
   "run_id": "run_UR_ULTRA_SOL_USDT_5M",
   "strategy_id": "UR_ULTRA_SOL_USDT_5M",
-  "strategy_snapshot_hash": "eaa2cb7082a8a2b7c95855fcfc18cc86cbac0d15ba990e5776e079c1d40e4312",
+  "strategy_snapshot_hash": "2572f7f68c8a4963b6d4e1f1c4256b7cb4c39920475f74a4796a1eb9cdf06f75",
   "dataset_id": "ds_binance_solusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "1cea886ebb95f8a3bab1999f2011e6c9e886ee00f4e469583338ebce4588f33f",
-  "output_hash": "6a6604e3601c39ace2a7d0f18b3b447d062bdc9abdfd20113d27794487111cd3",
+  "input_hash": "88de27e31b0b493f46ace1998d8abb016f695d38d4166a99f6e70b8ef2280414",
+  "output_hash": "f462d40275ab3564a97f17eef87e73f94c15319b45133d9b38740a85c0280232",
   "status": "FAILED",
-  "score": 34.8,
-  "verdict": "FALLO: Consenso insuficiente (34.8/100) u objeción crítica de riesgo",
+  "score": 31.6,
+  "verdict": "FALLO: Consenso insuficiente (31.6/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 34.8,
+    "consensus_score": 31.6,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 55.9,
+        "score": 44.6,
         "findings": [
           "Activo y Timeframe: SOL-USDT (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.02 con beneficio neto de $-1.87.",
+          "Profit Factor OOS: 0.77 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 191 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 140 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.01 USD.",
+          "Beneficio medio por operación: $-7.14 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.0,
+        "score": 36.2,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 1.02 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 0.77 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:06:12.988667+00:00"
+  "created_at_utc": "2026-08-22T14:00:43.010211+00:00"
 }

@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "3.1.0"
-CURRENT_ENGINE_NAME = "Ultrarentable V3.1.0 (Master Unified 6-Phase Hub, Two-Way NinjaTrader 8 Remote Bridge & Global Forensic Revalidation)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "3.1.0"
+CURRENT_ENGINE_VERSION = "3.2.0"
+CURRENT_ENGINE_NAME = "Ultrarentable V3.2.0 (Unified Multi-Asset 6-Phase Matrix, Dynamic Semantic Reprogramming & Exact Markowitz ERC Ensembles)"
+CURRENT_VALIDATION_PIPELINE_VERSION = "3.2.0"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {

@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_5M_g06",
   "run_id": "run_UR_ULTRA_ETH_USDT_5M",
   "strategy_id": "UR_ULTRA_ETH_USDT_5M",
-  "strategy_snapshot_hash": "db23c6548cd58c89ba42fe1a1680cd6e183ef03ea608599880a94e47a16398ba",
+  "strategy_snapshot_hash": "b9ad9e08d9069106ed1489b5f1e885a69574f7e6199b72b2a3344b35c421e976",
   "dataset_id": "ds_binance_ethusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "fac7dfed656803deb73ded3270c1352c0c343553bb05efb7fb2eb37122cd3aed",
-  "output_hash": "9eae61f31cbe5374add62d7173ab2b0266162bc9cd6be3b4ac1f63edf4aa4e59",
+  "input_hash": "726856f3b51a0764a6bdd182336607e49356b117f672395f7894f19b5a282a52",
+  "output_hash": "0a062ed291f709f8ba6d2d071ba77c0f2259dbdad403d5583757032c510787f0",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.55,
-        "stressed_profit_factor": 0.53,
+        "stressed_net_pnl_usd": -3.87,
+        "stressed_profit_factor": 0.36,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.63,
-        "stressed_profit_factor": 0.53,
+        "stressed_net_pnl_usd": -3.95,
+        "stressed_profit_factor": 0.35,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.73,
-        "stressed_profit_factor": 0.52,
+        "stressed_net_pnl_usd": -4.04,
+        "stressed_profit_factor": 0.35,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.88,
-        "stressed_profit_factor": 0.5,
+        "stressed_net_pnl_usd": -4.19,
+        "stressed_profit_factor": 0.34,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T06:05:03.451052+00:00"
+  "created_at_utc": "2026-08-22T14:05:05.734246+00:00"
 }

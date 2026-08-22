@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g10",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "0b7dfbcc1d25599669e2169591f38365f985b45f7517166900be704f933e564a",
+  "strategy_snapshot_hash": "0b917ee52615ee3cf7e6fa9732f85ec9a85578d2c0fb8e573432951213b5e087",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "089cef25646b896f49d68647b4c85cc3e282484688e9980541639abd44beb2fe",
-  "output_hash": "7404db6aba82c1bc6d1985c519e1ca770869d9f425eabe29dd178e341e04440b",
+  "input_hash": "9f3ef4e2e940d165a3d595039028832570bae6a280fc1a62d4b5028eb474420d",
+  "output_hash": "5091d564eabeb517c0f803ef43b94ed5e1152076e706ec2753f4b353b25d8742",
   "status": "FAILED",
-  "score": 59.8,
-  "verdict": "FALLO: Consenso insuficiente (59.8/100) u objeción crítica de riesgo",
+  "score": 61.5,
+  "verdict": "FALLO: Consenso insuficiente (61.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 59.8,
+    "consensus_score": 61.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 25.3,
+        "score": 31.1,
         "findings": [
           "Activo y Timeframe: AUDUSD (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.34 con beneficio neto de $-1.18.",
+          "Profit Factor OOS: 0.47 con beneficio neto de $-0.92.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 238 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 223 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 56.3,
+        "score": 57.8,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.34 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.47 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T07:40:55.640007+00:00"
+  "created_at_utc": "2026-08-22T14:04:01.097224+00:00"
 }

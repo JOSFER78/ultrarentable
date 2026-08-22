@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_1H_g09",
   "run_id": "run_UR_FONDEO_USDCHF_1H",
   "strategy_id": "UR_FONDEO_USDCHF_1H",
-  "strategy_snapshot_hash": "69524bb5061bfab699516774945807564838c6b7ce01bd532d7c8d20bda07723",
+  "strategy_snapshot_hash": "76da94446f10a555a30a8d33de5381bfc0da4e55ad522013821dcc2b2dc8963d",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "24fde74476f743295bf22b963eb2a48b62d9117549c60c2308637035e4f114d7",
-  "output_hash": "ab67332708edb8e71462e6be86754a8be2b2391a72eea9465db60e1195c09f5f",
+  "input_hash": "3455760c2f00006b6be9f6a9d54c0a87ad0373110fc888b452fcaae39d716361",
+  "output_hash": "19a8f7eb116b9e2b0ecbf0628c59870249162f206af2cfaba17e007d64851cb1",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 28.6 trades/param, Estabilidad Vecindario: 142.4%, Re-backtest PFs: [0.76, 0.7, 0.31, 0.68])",
+  "score": 94.8,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 21.8 trades/param, Estabilidad Vecindario: 182.6%, Re-backtest PFs: [0.75, 0.56, 0.59, 0.51])",
   "metrics": {
-    "parameters_count": 7,
-    "degrees_of_freedom_ratio": 28.6,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 21.8,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 142.4,
+    "parameter_neighborhood_stability_pct": 182.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.76,
-      0.7,
-      0.31,
-      0.68
+      0.75,
+      0.56,
+      0.59,
+      0.51
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T07:40:14.642457+00:00"
+  "created_at_utc": "2026-08-22T14:03:48.846190+00:00"
 }

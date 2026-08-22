@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g03",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "0b7dfbcc1d25599669e2169591f38365f985b45f7517166900be704f933e564a",
+  "strategy_snapshot_hash": "0b917ee52615ee3cf7e6fa9732f85ec9a85578d2c0fb8e573432951213b5e087",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "1ab2712f945ced67564aec63bc5be25cd3c3eb4c5d8b1d8f04bd0d8c2df5b3ff",
-  "output_hash": "40fa3b310fdeadb7ba7f8c7a0614b8ebaade51c05996fc5432afc3386a17f28f",
+  "input_hash": "e466ad76e47465cc4dbb5844c89ab05fd0192e090677f2ddc152df48e43b4cba",
+  "output_hash": "f450a98049cab79a9122216d2e8c98dd2c84df726fd01c91ffc6a05037ac68fb",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (168 IS / 70 OOS · Fondeo)",
+  "verdict": "PASSED: Muestra robusta (159 IS / 64 OOS · Fondeo)",
   "metrics": {
-    "trades_is": 168,
-    "trades_oos": 70,
-    "top2_outlier_dependency_pct": 33.3,
+    "trades_is": 159,
+    "trades_oos": 64,
+    "top2_outlier_dependency_pct": 36.4,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-22T07:40:53.766832+00:00"
+  "created_at_utc": "2026-08-22T14:03:59.160427+00:00"
 }

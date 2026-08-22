@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g06",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "03be6a4d608326458b61706093bdb9d58671dcaf02ff79dfc4f2f7a643d30096",
+  "strategy_snapshot_hash": "4c1afc35737d484cfac4a3debe5f7a332ae711f607a8f140717f89a2130f8e44",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "4f32c02b6c8a47c1cb084bef788eb997b182d6bad80f7eadb07b2b5ad2b310d3",
-  "output_hash": "d5730546b4d35f0ad72614b63020551fc468d48f5ff660823325b2b78391b125",
+  "input_hash": "d0d360647d63fc54ec3bf940ae738a011212858fe9f82c2722758b107e210030",
+  "output_hash": "5143c930727fc25f78e9c241fab36673cd9d03829aa1e4e1e089c32f85b6ea6f",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -37,7 +37,7 @@
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.0,
+        "stressed_net_pnl_usd": -0.01,
         "stressed_profit_factor": 0.0,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T07:39:59.810610+00:00"
+  "created_at_utc": "2026-08-22T14:02:33.897692+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g03",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "03be6a4d608326458b61706093bdb9d58671dcaf02ff79dfc4f2f7a643d30096",
+  "strategy_snapshot_hash": "4c1afc35737d484cfac4a3debe5f7a332ae711f607a8f140717f89a2130f8e44",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b9986a11189c20065c31f75e03727c91de6225039e397b6c8accf174b5616d38",
-  "output_hash": "1f7a84c03a36e5b702435e1c1c5f762471d5da82a8898a368e8da0f9dd0c2b79",
+  "input_hash": "0ee74879391aaeac3024a020bdcd68581200dc740ce9bc6769339588e2ebb749",
+  "output_hash": "29682c49aa6a69dd0a9368e7ffc76018c75a7aeb069971857107e50b4478979f",
   "status": "FAILED",
-  "score": 25.0,
-  "verdict": "FALLO: Muestra insuficiente (58 IS < 30 ó 10 OOS < 20)",
+  "score": 27.5,
+  "verdict": "FALLO: Muestra insuficiente (59 IS < 30 ó 11 OOS < 20)",
   "metrics": {
-    "trades_is": 58,
-    "trades_oos": 10,
-    "top2_outlier_dependency_pct": 71.4,
+    "trades_is": 59,
+    "trades_oos": 11,
+    "top2_outlier_dependency_pct": 65.1,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-22T07:39:59.372583+00:00"
+  "created_at_utc": "2026-08-22T14:02:33.641868+00:00"
 }

@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1M_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_1M",
   "strategy_id": "UR_ULTRA_LINK_USDT_1M",
-  "strategy_snapshot_hash": "4b17847123be98b71d6812a4fb572998bf9601a9d413bffd7c1352b3aba3ed1b",
+  "strategy_snapshot_hash": "f9d30f0088aed8fa1a6f0fc4fcb71c662fa61c68aeff11476a3326fb9e8e698a",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "35e70fd26cbf3b563955664e0d347833e3d39539dc7f743669a4ce37afbef5f9",
-  "output_hash": "1100533be7deb74965938f9373c3c96c7402df142ab35e59101056784369c1c8",
+  "input_hash": "605e419b769dae9867fee04dae3f0a9e597560624913a35378b22e407f00d5a1",
+  "output_hash": "4a7eb821182fd9c50abe882f9f243e782855d626e5bbf994c56732d6735b605f",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: LINK-USDT (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.10 con beneficio neto de $-3.31.",
+          "Profit Factor OOS: 0.17 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 120 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 171 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.03 USD.",
+          "Beneficio medio por operación: $-5.85 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -67,12 +67,12 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.10 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 0.17 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:05:30.441209+00:00"
+  "created_at_utc": "2026-08-22T14:07:28.403523+00:00"
 }

@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_15M_g10",
   "run_id": "run_UR_ULTRA_USDJPY_15M",
   "strategy_id": "UR_ULTRA_USDJPY_15M",
-  "strategy_snapshot_hash": "57de02e35d32105c3f22dd789580f81f3b0301d36eaef97c9f0c6fb48b08fc6f",
+  "strategy_snapshot_hash": "1394f150860e034aebb042faacc5818193a34c87963899eb385bc11e58f38ec3",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "6f1ae245f25d464d35b3a1c4aa6d99cd7bfb56573cef3c7b34cbc851f1bf0919",
-  "output_hash": "2df55f06f9e8360d3694b6fe3245f5b8b59b08e57e62726fee4f007113c9f6cd",
+  "input_hash": "8bad37b2bbfd7408bedaea655dc38f19fe84b710b4e5849c1c100006cb3cfd4c",
+  "output_hash": "44e3372d4c4dbcef4cfc07a70719b152e79e591027e5b22c2810e9c3f855df8e",
   "status": "FAILED",
-  "score": 49.3,
-  "verdict": "FALLO: Consenso insuficiente (49.3/100) u objeción crítica de riesgo",
+  "score": 25.2,
+  "verdict": "FALLO: Consenso insuficiente (25.2/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 49.3,
+    "consensus_score": 25.2,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 26.6,
+        "score": 22.6,
         "findings": [
           "Activo y Timeframe: USDJPY (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.37 con beneficio neto de $-0.61.",
+          "Profit Factor OOS: 0.28 con beneficio neto de $-848.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 67.8,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 68.5% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 85.4% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 116 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 193 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.01 USD.",
+          "Beneficio medio por operación: $-4.39 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 48.6,
+        "score": 30.6,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.37 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (85.4%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.28 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:06:59.982718+00:00"
+  "created_at_utc": "2026-08-22T14:01:56.907712+00:00"
 }

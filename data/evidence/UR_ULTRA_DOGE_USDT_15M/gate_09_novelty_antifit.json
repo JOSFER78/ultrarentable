@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_DOGE_USDT_15M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_15M",
-  "strategy_snapshot_hash": "866a3bea69b167aa0d6baa98f937526f080a07773acb777e6b5959e73a85ccae",
+  "strategy_snapshot_hash": "be22eee5c1479ad25daeaa9e811b00050afc01ce201fd268bdf58224d4a9493e",
   "dataset_id": "ds_binance_dogeusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "828e1d9c4c4de3d6d97619b334b356bfd7d7ac25877992b43e7d833733cb357b",
-  "output_hash": "9cffbf69e8efffc7991ae1eba95ffcc7bd0601646ae44bb826b4f2d08e9065a9",
+  "input_hash": "f3f700c6f7e1c7f7732f4d50643bc56fd73f1662e31496c4070151beedbd3dc7",
+  "output_hash": "2e0672919e4595a22b29f8c73238eeab06b57b8f7529df202680975ce4e7ec09",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 81.8 trades/param, Estabilidad Vecindario: 136.0%, Re-backtest PFs: [0.0, 0.45, 0.59, 1.0])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 70.2 trades/param, Estabilidad Vecindario: 130.1%, Re-backtest PFs: [0.27, 0.37, 0.76, 0.89])",
   "metrics": {
-    "parameters_count": 5,
-    "degrees_of_freedom_ratio": 81.8,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 70.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 136.0,
+    "parameter_neighborhood_stability_pct": 130.1,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.0,
-      0.45,
-      0.59,
-      1.0
+      0.27,
+      0.37,
+      0.76,
+      0.89
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T07:39:47.645080+00:00"
+  "created_at_utc": "2026-08-22T14:03:37.026150+00:00"
 }

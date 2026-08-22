@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_GC_15M_g03",
   "run_id": "run_UR_FONDEO_GC_15M",
   "strategy_id": "UR_FONDEO_GC_15M",
-  "strategy_snapshot_hash": "7e527db40bf45d0de74b5ad9477daa745a5c97aa9964389451db6d0952656bbd",
+  "strategy_snapshot_hash": "f7f09a0566df2177d55a9fcfda40280e1307b2b08ba65c1dd3cc009d60cd6488",
   "dataset_id": "ds_trad_gc_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "cfe674f6d31ad5162cc63e732a50aa8f19ea42e278260e15573db667be27803d",
-  "output_hash": "9825741d493e783af40321931f5423c001bcf057c9202d37310c42a6f4a8b557",
+  "input_hash": "64532d2f75e2f0e0663bd65905ec49953601c6ee7b6bc8fb57ffe314f0ff94a7",
+  "output_hash": "23bfb0393335c499c37656f34ab526fc595806610bb9ef672a18ba9d23884805",
   "status": "FAILED",
-  "score": 47.5,
-  "verdict": "FALLO: Muestra insuficiente (37 IS < 30 ó 19 OOS < 20)",
+  "score": 42.5,
+  "verdict": "FALLO: Muestra insuficiente (37 IS < 30 ó 17 OOS < 20)",
   "metrics": {
     "trades_is": 37,
-    "trades_oos": 19,
-    "top2_outlier_dependency_pct": 46.5,
+    "trades_oos": 17,
+    "top2_outlier_dependency_pct": 46.8,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-22T07:39:31.579279+00:00"
+  "created_at_utc": "2026-08-22T14:00:59.810767+00:00"
 }

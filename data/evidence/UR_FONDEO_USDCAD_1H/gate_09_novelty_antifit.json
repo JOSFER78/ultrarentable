@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_1H_g09",
   "run_id": "run_UR_FONDEO_USDCAD_1H",
   "strategy_id": "UR_FONDEO_USDCAD_1H",
-  "strategy_snapshot_hash": "10150f374a9cd58215e0284f3c8b3a12314dfdedd6c43ce154166e2723b38146",
+  "strategy_snapshot_hash": "d5b0c49eb85b0ddee85a7fd499df5af2880a9685fe84861eafaf24ad60468b2c",
   "dataset_id": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b9a4ce8d4eb094e703ebc0f8024566c3f90934a45f5a638e803c3bcd44e6d5e8",
-  "output_hash": "a5df307e7cbf25ffd68aa37e4393cc49903e8b4debf2cd782187df40e3f49b29",
+  "input_hash": "36b578b4370065037b6cb11749d145aa5386d81e59e972e263805ac5f75ccb33",
+  "output_hash": "0faf99bcde3cd730731f0faab8e6c7b0420cb6931c183be681b78c8cafa1ec77",
   "status": "PASSED",
-  "score": 84.4,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 25.9 trades/param, Estabilidad Vecindario: 73.9%, Re-backtest PFs: [0.51, 0.72, 1.01, 0.57])",
+  "score": 72.2,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 21.9 trades/param, Estabilidad Vecindario: 61.9%, Re-backtest PFs: [0.52, 0.79, 0.62, 0.87])",
   "metrics": {
-    "parameters_count": 7,
-    "degrees_of_freedom_ratio": 25.9,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 21.9,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 73.9,
+    "parameter_neighborhood_stability_pct": 61.9,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.51,
-      0.72,
-      1.01,
-      0.57
+      0.52,
+      0.79,
+      0.62,
+      0.87
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T07:40:41.806430+00:00"
+  "created_at_utc": "2026-08-22T14:00:54.606488+00:00"
 }

@@ -1,12 +1,12 @@
 """services/validation/legacy_revalidation_service.py
-Servicio Forense de Revalidación de Estrategias con el Motor Cuantitativo Actual (v1.03 Dual-Engine).
-Somete estrategias históricas o legacy a la auditoría estricta de 11 Gates:
+Servicio Forense de Revalidación de Estrategias con el Motor Cuantitativo Actual (v3.2.0).
+Somete estrategias históricas o legacy a la auditoría estricta del pipeline cuantitativo:
 - Costes reales por activo (CANONICAL_COST_REGISTRY).
 - Particionado físico ciego (Blind Holdout 20%).
 - Estrés 3x slippage y Monte Carlo (0.0% ruina).
-- Reconciliación matemática trade-a-trade NautilusTrader (Gate 11).
+- Reconciliación matemática trade-a-trade NautilusTrader.
 
-Si la estrategia supera los 11 Gates, es promovida a v1.03 con certificación completa.
+Si la estrategia supera las compuertas, es promovida a v3.2.0 con certificación completa.
 Si no los supera, queda marcada como RECHAZADA con su causa de rechazo forense en la base de datos.
 """
 

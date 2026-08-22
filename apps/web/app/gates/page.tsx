@@ -310,7 +310,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
             }}
           >
             <span>{revalidating ? "⏳" : "⚡"}</span>
-            <span>{revalidating ? "Re-evaluando Catálogo..." : `Re-evaluar Todo el Catálogo a v${version || "3.0.0"}`}</span>
+            <span>{revalidating ? "Re-evaluando Catálogo..." : `Re-evaluar Todo el Catálogo a v${version || "3.2.0"}`}</span>
           </button>
         </div>
       </div>
