@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_1H",
   "strategy_id": "UR_ULTRA_SOL_USDT_1H",
-  "strategy_snapshot_hash": "311445937142443c1f5ab397c7f9044a7211e7251ce64ed6e5f2e1ee47b05700",
+  "strategy_snapshot_hash": "b6ccd507932eccd11c6c951a1114c68386680e420a9190344a8ff2044e8b3814",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "6a4d1682698467e32c219806f885b32357d2e22028da2228398ba280d39e72d8",
-  "output_hash": "7f8451212066cb1e3c65d9f7e61161e8eb02462c93ab48a522301dd8099b2843",
+  "input_hash": "15f5f17f517ad1a32445156cf0708977bfc576194c0703c1908916461be88664",
+  "output_hash": "9c398297cce365accb574c8ef3a6eebf5c572f56655d582ea89c0fcfee1f519c",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +49975401742982696.00%)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +11765.93%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 641,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 877
     },
     "regime_trades_count": {
-      "BULL_TREND": 47,
-      "BEAR_TREND": 68,
-      "CHOP_RANGING": 172,
-      "HIGH_VOLATILITY": 92
+      "BULL_TREND": 51,
+      "BEAR_TREND": 72,
+      "CHOP_RANGING": 170,
+      "HIGH_VOLATILITY": 95
     },
     "regime_return_pct": {
-      "BULL_TREND": -2565300661943095.5,
-      "BEAR_TREND": 766279030721517.5,
-      "CHOP_RANGING": 5.181250170278828e16,
-      "HIGH_VOLATILITY": -38078328584005.97
+      "BULL_TREND": 1932.28,
+      "BEAR_TREND": 2920.62,
+      "CHOP_RANGING": 4287.7,
+      "HIGH_VOLATILITY": 2625.33
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 4.9975401742982696e16
+    "total_oos_return_pct": 11765.93
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T01:55:51.652429+00:00"
+  "created_at_utc": "2026-08-22T02:43:33.650879+00:00"
 }

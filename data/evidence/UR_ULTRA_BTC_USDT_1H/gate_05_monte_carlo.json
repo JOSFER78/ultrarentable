@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1H_g05",
   "run_id": "run_UR_ULTRA_BTC_USDT_1H",
   "strategy_id": "UR_ULTRA_BTC_USDT_1H",
-  "strategy_snapshot_hash": "81b0d06686ff1d049efa3744b669839cc4444f68e228d12504e6842b36b5c63a",
+  "strategy_snapshot_hash": "50d052ed085443eae02c6820ab874e05b89efda8859360596e50d565cbc333ad",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "6ad325b09d1d9959b8b9a48f32ba3179a3b47226383106c73ceaa32c761da6a1",
-  "output_hash": "a1008246518e90a7c41134c429e6502a6b8ba87fae131eeb60ea670d407a7b77",
+  "input_hash": "65a7055bee6cbc377f1c75a78d41cbb1aaa09da85de07a863c5f68a96c1509eb",
+  "output_hash": "2bcbcf95ce45fe1d1a23a26b4924a209d375517b22a03353db7d11c981881bda",
   "status": "PASSED",
-  "score": 98.5,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.1%)",
+  "score": 98.2,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.6%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.9,
-    "drawdown_95th_percentile_pct": 3.1,
-    "max_simulated_drawdown_pct": 6.1
+    "drawdown_median_pct": 2.3,
+    "drawdown_95th_percentile_pct": 3.6,
+    "max_simulated_drawdown_pct": 5.7
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T02:03:05.873128+00:00"
+  "created_at_utc": "2026-08-22T02:42:48.886994+00:00"
 }
