@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_SI_1h_g07",
   "run_id": "run_UR_FONDEO_SI_1h",
   "strategy_id": "UR_FONDEO_SI_1h",
-  "strategy_snapshot_hash": "731319889785dbe6b7bde21a70c700d4d1a370af11c5860782336ce36947bf45",
+  "strategy_snapshot_hash": "68284ca5067732d909bbe997af734a413b6e5c2c44725d25c55643c3acf74c65",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "8b4968af5b9870446fe70f9668bd55874c592d17037b58f3f778d54668291d02",
-  "output_hash": "63796860cda4320da92c3a4d1d0fad965739511589b3c47dff414600a685c4a7",
+  "input_hash": "6c7aeb70293ef9301f18fd23acac6d9294a4630591f2ad0c8535fa12c3d77deb",
+  "output_hash": "fc16056ea5992721085037121a93a97dbf7d9948aeb84e2e29cbdc2042a8f5dd",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +24089.83%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +202.08%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 511,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 9,
-      "BEAR_TREND": 8,
+      "BEAR_TREND": 7,
       "CHOP_RANGING": 19,
       "HIGH_VOLATILITY": 5
     },
     "regime_return_pct": {
-      "BULL_TREND": -7005.76,
-      "BEAR_TREND": 12771.61,
-      "CHOP_RANGING": 24444.1,
-      "HIGH_VOLATILITY": -6120.12
+      "BULL_TREND": -4.54,
+      "BEAR_TREND": -53.21,
+      "CHOP_RANGING": 274.36,
+      "HIGH_VOLATILITY": -14.53
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 24089.83
+    "total_oos_return_pct": 202.08
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:58:39.690474+00:00"
+  "created_at_utc": "2026-08-22T16:16:14.148297+00:00"
 }

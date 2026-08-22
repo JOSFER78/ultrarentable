@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g09",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "fba28ec45eb1bc6cabae2e4fc54e9163e3261ae7b6d3d1d7b20b3f06421e4ccb",
+  "strategy_snapshot_hash": "5385ba3d186419b1213c08eccfec2aa6ab71433fc35b1c6a6f21eca9c8f8dac9",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "ee2f62795edfb6f1e0f962a6ad5ecbfb15461d58bd2aa215351cd2271088b83f",
-  "output_hash": "da450882852423fe8b24c2727162cb4c048e3f367b198dffb9832b7afa295f6a",
+  "input_hash": "73e4aec0557fc8d03aea5effe83e8e498668e7605b40a8668e533ad83ac7469d",
+  "output_hash": "979b3a1c9e47e6a7b972aa3888969f872fb73ddd17af1334ba1a6f9736933075",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 283.8 trades/param, Estabilidad Vecindario: 119.0%, Re-backtest PFs: [1.09, 1.08, 1.11, 1.67])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 269.9 trades/param, Estabilidad Vecindario: 143.7%, Re-backtest PFs: [1.09, 1.08, 1.19, 2.56])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 283.8,
+    "degrees_of_freedom_ratio": 269.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 119.0,
+    "parameter_neighborhood_stability_pct": 143.7,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       1.09,
       1.08,
-      1.11,
-      1.67
+      1.19,
+      2.56
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:58:16.808119+00:00"
+  "created_at_utc": "2026-08-22T16:21:40.607335+00:00"
 }
