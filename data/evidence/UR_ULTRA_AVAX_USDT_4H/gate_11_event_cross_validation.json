@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4H_g11",
   "run_id": "run_UR_ULTRA_AVAX_USDT_4H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_4H",
-  "strategy_snapshot_hash": "340d4991626da4fbbffcc608d7d958aa6fb95a9d03fb0c9826f4cd5779f225d5",
+  "strategy_snapshot_hash": "8aa6b1b49b4ce35b5203349d20e34b3a05b2a58e5decfe32def55f70515fabc5",
   "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "f33613ca258ed8d2a76d05cfe96e030b8b6e6dd8582a176cac05275fc4adb4a2",
-  "output_hash": "0c1e61ea841eb99b4e456abb0aabf5421bf9c407b832544c36b494204c642cd5",
+  "input_hash": "082916a3eb90107d9b469de10a37dacf5e3b4c24e896350b6a2921129d3b6b14",
+  "output_hash": "63262e0166cd0d6f0c9e47a06486b53d846607dd5058560af8fa2fe84bb77577",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1.0x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -444264716615.78,
-    "peak_equity_usd": 460549449932128.5,
-    "min_equity_usd": -444264716615.78,
+    "final_equity_usd": -257364021442854.94,
+    "peak_equity_usd": 4.54933300841614e+16,
+    "min_equity_usd": -257364021442854.94,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 59196156078511.99,
-    "total_funding_cost_usd": 5919615607851.2,
-    "execution_events_count": 406
+    "total_fees_paid_usd": 5935685387069607.0,
+    "total_funding_cost_usd": 593568538706960.9,
+    "execution_events_count": 402
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T12:31:01.868187+00:00"
+  "created_at_utc": "2026-08-22T13:03:42.653719+00:00"
 }
