@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_GC_5M_g10",
   "run_id": "run_UR_FONDEO_GC_5M",
   "strategy_id": "UR_FONDEO_GC_5M",
-  "strategy_snapshot_hash": "1f3177c029c66ec671e23bbe01f4ecb7a8994b1200f2349d900a60ec3a432c20",
+  "strategy_snapshot_hash": "2f5b80a7f317410aa30af306c543b0ac0572051907a9189fda6f9aec897a1cfe",
   "dataset_id": "ds_trad_gc_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "c2cb1625f4d2b2baece25d1e9df1826eb5cc93f3f96ac5b591655587e421730e",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "22bc0b48e4c0630b0fdedf7b9bbc1b518582798d7c80cc4450d86c961c56d178",
-  "output_hash": "1df2043ff78f0801b1f68b38c771f80ad3f88e7ade2f234d48722b8a9284cbd9",
+  "input_hash": "88772ae827388750fa7684f0fc6d30a10d9d4bc5efa013044af04f19ad6ad0fe",
+  "output_hash": "ae1b4c6ef782dc86ac493e39499285ff13e6a2d58b743edf33627c6ba332c255",
   "status": "FAILED",
-  "score": 29.4,
-  "verdict": "FALLO: Consenso insuficiente (29.4/100) u objeción crítica de riesgo",
+  "score": 31.6,
+  "verdict": "FALLO: Consenso insuficiente (31.6/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 29.4,
+    "consensus_score": 31.6,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 37.0,
+        "score": 44.6,
         "findings": [
           "Activo y Timeframe: GC (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.60 con beneficio neto de $-12045.89.",
+          "Profit Factor OOS: 0.77 con beneficio neto de $-0.07.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 27.1% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 21.4% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 73 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 286 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-165.01 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 34.2,
+        "score": 36.2,
         "objections": [
-          "Alerta de Drawdown: DD (27.1%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.60 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (21.4%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.77 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:07:11.103568+00:00"
+  "created_at_utc": "2026-08-21T22:28:38.522288+00:00"
 }
