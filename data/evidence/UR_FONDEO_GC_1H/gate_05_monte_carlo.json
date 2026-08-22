@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_FONDEO_GC_1H_g05",
   "run_id": "run_UR_FONDEO_GC_1H",
   "strategy_id": "UR_FONDEO_GC_1H",
-  "strategy_snapshot_hash": "f31475f68a9811a16ac17db8ee1be5b8f10f337d5c89a105dac5db17983413fa",
+  "strategy_snapshot_hash": "62616a25929c41eff3b75cc79c164fc353a49ac4651c73ae60574d4a78c0e737",
   "dataset_id": "ds_trad_gc_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "9c224f8e88726b1232706506be7e2c5eb03c42a47d4fcafaee5b235858a59694",
-  "output_hash": "e896c7b5e27814bfca1e09275973971ad1fb1ae462b50b57ae42a6cb8fef4f43",
+  "input_hash": "4ac41d72eaf73cfa81a19215546e51836966acff89d005b05a82119608436ac1",
+  "output_hash": "0f6105a4c1bb88ce48b5a2e326be7f48843498dabd1095907feb08cda17ad71d",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 148.6%)",
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 179.8%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 100.0,
-    "drawdown_median_pct": 78.9,
-    "drawdown_95th_percentile_pct": 148.6,
-    "max_simulated_drawdown_pct": 193.8
+    "drawdown_median_pct": 63.4,
+    "drawdown_95th_percentile_pct": 179.8,
+    "max_simulated_drawdown_pct": 288.6
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T15:56:41.366474+00:00"
+  "created_at_utc": "2026-08-22T17:17:04.819995+00:00"
 }

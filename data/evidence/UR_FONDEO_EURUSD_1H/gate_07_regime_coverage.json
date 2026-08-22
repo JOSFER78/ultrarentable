@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_1H_g07",
   "run_id": "run_UR_FONDEO_EURUSD_1H",
   "strategy_id": "UR_FONDEO_EURUSD_1H",
-  "strategy_snapshot_hash": "67f92aca57d21c175d0a7b63f95978321478462d881017784877cad3f5818102",
+  "strategy_snapshot_hash": "44ca07562f07ac00fd35031d52ca452337552e14fdb526d9ae518b90eac1d069",
   "dataset_id": "ds_trad_eurusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a896e7954ba876b078c3ac4bb7b4dce744152fde6eb98fc221871bf67f176277",
-  "output_hash": "5768ba057f8a97c440822f7fd39de4d9aafb6e1d1c5304270dd3c4a74e222ee8",
+  "input_hash": "78aa5c6e0d279b054682e9bc68c352deccea1d4df432549a7ec14c94f7b4dba7",
+  "output_hash": "e533bb1142f2ff189e9cc64ae742d4fdb6be64541800fb0b28e81a1a0788021f",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.58%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -17.10%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 49,
+      "CHOP_RANGING": 46,
       "HIGH_VOLATILITY": 6
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.5,
-      "HIGH_VOLATILITY": -0.08
+      "CHOP_RANGING": -16.86,
+      "HIGH_VOLATILITY": -0.24
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.58
+    "total_oos_return_pct": -17.1
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:56:30.709822+00:00"
+  "created_at_utc": "2026-08-22T17:07:30.196435+00:00"
 }

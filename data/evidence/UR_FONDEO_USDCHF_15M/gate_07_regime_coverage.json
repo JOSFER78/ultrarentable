@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_15M_g07",
   "run_id": "run_UR_FONDEO_USDCHF_15M",
   "strategy_id": "UR_FONDEO_USDCHF_15M",
-  "strategy_snapshot_hash": "bc6e25c20319ff6d17eb3b9387ebc12cccf0bb2cae5006c9ea57c9a7d429bab7",
+  "strategy_snapshot_hash": "73761612097c9ecaaa85ba82575f11dcd7014d0363dd52b3965f3099681485a2",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "13140bbe8ebde1f990e4713878d95c55c77d658414b413254985ac8be3dac05f",
-  "output_hash": "25a060e28afa811a4e0b45191b20e96315c49114c0672f15a8e0d167f0b29b39",
+  "input_hash": "645fb29769b2cac97cbc04589258e4ffebacf2cd65635f9df2ee793cc63c15e3",
+  "output_hash": "76218e52fd3010784376a70cfe3c890927d8997d45caf589b3ac9223571b81f0",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.16%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -10.38%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 17,
+      "CHOP_RANGING": 18,
       "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.13,
-      "HIGH_VOLATILITY": -0.03
+      "CHOP_RANGING": -9.43,
+      "HIGH_VOLATILITY": -0.95
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.16
+    "total_oos_return_pct": -10.38
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:57:46.789359+00:00"
+  "created_at_utc": "2026-08-22T17:20:29.417428+00:00"
 }

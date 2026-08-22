@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g11",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "5ec4f5f77b10a45fd858c6e0440873ead4118f2b09d57f4ea10b2cf415544c40",
+  "strategy_snapshot_hash": "4c1afc35737d484cfac4a3debe5f7a332ae711f607a8f140717f89a2130f8e44",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c76c27267c92214ad4a138ba67664952af4591d5227df758d86a28d35e294a40",
-  "output_hash": "e9e56ff93564da6bae3dce2c01e9186a15851a7f15610332176dbecddc1da9fe",
+  "input_hash": "74ebed24e17aefab07e598d49dba9091241eedfbf8ed511c0e5be2d869a23e59",
+  "output_hash": "8833aef0f56f7cfb179e38b3315809d0c847e0b2af1295e0ec66ed9bba0e22ca",
   "status": "PASSED",
   "score": 99.5,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $50001.90, Bóveda Cosechada: $0.00, Apalancamiento: 1.0x, Dist. Mín. Liq: 99.2%)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $50009.45, Bóveda Cosechada: $0.00, Apalancamiento: 1.0x, Dist. Mín. Liq: 99.2%)",
   "metrics": {
     "initial_capital_usd": 50000.0,
-    "final_equity_usd": 50001.9,
-    "peak_equity_usd": 50009.3,
+    "final_equity_usd": 50009.45,
+    "peak_equity_usd": 50021.3,
     "min_equity_usd": 50000.0,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 3.0,
@@ -29,5 +29,5 @@
     "execution_events_count": 11
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T15:57:52.315745+00:00"
+  "created_at_utc": "2026-08-22T17:08:17.099509+00:00"
 }

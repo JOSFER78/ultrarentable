@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_4H_g07",
   "run_id": "run_UR_FONDEO_USDJPY_4H",
   "strategy_id": "UR_FONDEO_USDJPY_4H",
-  "strategy_snapshot_hash": "082f7006cb957b9723ef39cf41f474ec4195b4f8fd8acab0053c5f125d6e41a8",
+  "strategy_snapshot_hash": "b659515675dd72a55e9c68bd9e61c3075b5581014dcc24a21080e77cdcdf2af5",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "164a1dde1ae8d7d42f3a627f7af6e7cd070812f1042dc641bafbd73e7d7f5946",
-  "output_hash": "2b45fa8b9154506b5e33da0d52cbb786b17a671dfd7f8fc5cb0772548f8f2460",
+  "input_hash": "6b88d33d71a1fe55c032c504b9e6c496278fa5674d23447953b0ee4084eabddc",
+  "output_hash": "c2d8666592694884d2cc2c40d0cb9e40ffce517c35fe5cfb71eeaeb76e3c692b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -71.22%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.11%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 7,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 11,
+      "CHOP_RANGING": 9,
       "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -41.58,
-      "HIGH_VOLATILITY": -29.64
+      "CHOP_RANGING": -0.05,
+      "HIGH_VOLATILITY": -0.06
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -71.22
+    "total_oos_return_pct": -0.11
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:57:55.180632+00:00"
+  "created_at_utc": "2026-08-22T17:20:20.745959+00:00"
 }

@@ -2,30 +2,30 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_5M_g04",
   "run_id": "run_UR_FONDEO_USDJPY_5M",
   "strategy_id": "UR_FONDEO_USDJPY_5M",
-  "strategy_snapshot_hash": "c5487778f3075fcf996e771f839b81cb66b20e7cad3a86ad8f17c77b531d6729",
+  "strategy_snapshot_hash": "9e17d37520fd77f1f33caf682fda0273da35523090ce1ca892d841094f61e21a",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5e85385c085be05af8ea72d7de4174d9f3aed9dba2b5307dffa268c4a8775f3e",
-  "output_hash": "37a4b39448728aaf34637e256651b9e03ba6d3a39201b525331a696994d88c67",
+  "input_hash": "9b1ee36f4beee7f12148b1b1b6cb2e29bde346dd6a51c4182d0d3e870546ce29",
+  "output_hash": "d70b0faa7e7b7108bccc319ece7487fcc6c31099d7964874f9d6483c666e19ac",
   "status": "FAILED",
-  "score": 0.6,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.01 < 0.40 ó Consistencia 0.0% < 40%)",
+  "score": 0.1,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.00 < 0.40 ó Consistencia 0.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 225,
+    "total_trades_analyzed": 147,
     "windows_count": 5,
-    "walk_forward_efficiency": 0.01,
+    "walk_forward_efficiency": 0.0,
     "oos_consistency_pct": 0.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
+        "is_trades_count": 20,
+        "oos_trades_count": 9,
         "pf_is": 0.0,
         "pf_oos": 0.0,
         "net_profit_oos_usd": -0.0,
@@ -33,26 +33,26 @@
       },
       {
         "window_index": 2,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
+        "is_trades_count": 20,
+        "oos_trades_count": 9,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 20,
+        "oos_trades_count": 9,
         "pf_is": 0.0,
         "pf_oos": 0.0,
         "net_profit_oos_usd": -0.0,
         "wfe": 0.01
       },
       {
-        "window_index": 3,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.0,
-        "wfe": 0.02
-      },
-      {
         "window_index": 4,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
+        "is_trades_count": 20,
+        "oos_trades_count": 9,
         "pf_is": 0.0,
         "pf_oos": 0.0,
         "net_profit_oos_usd": -0.0,
@@ -60,15 +60,15 @@
       },
       {
         "window_index": 5,
-        "is_trades_count": 31,
-        "oos_trades_count": 14,
-        "pf_is": 0.0,
+        "is_trades_count": 20,
+        "oos_trades_count": 9,
+        "pf_is": 0.01,
         "pf_oos": 0.0,
         "net_profit_oos_usd": -0.0,
-        "wfe": 0.03
+        "wfe": 0.0
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5M/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T15:57:56.570405+00:00"
+  "created_at_utc": "2026-08-22T17:11:06.981967+00:00"
 }

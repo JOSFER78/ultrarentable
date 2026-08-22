@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "2a9ad4bd8e415c30dc1682638758274521312bd6164f10db0cf8778e712913c1",
+  "strategy_snapshot_hash": "ab1469e4c6fe564d12f7215e36b30bff458402744b357093d86d067a8f191428",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5ecc4143f0092f212eb619e8c457a72526fb459a7e86a279e6505020040b7516",
-  "output_hash": "4a2ef8f4c5d101462873fb043a7300859436ecfe8045ac003fe276f982369dab",
+  "input_hash": "f824fd4b13237a84b2c854f0afb849e8573931b77e37006c4741d6996c2ef8cf",
+  "output_hash": "36c9cab033ee691fbf536aca7c55df7c640376e7644eb403b37488365671fd0e",
   "status": "PASSED",
   "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +141.43%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +137.27%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 106,
+      "CHOP_RANGING": 104,
       "HIGH_VOLATILITY": 19
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -34.02,
-      "HIGH_VOLATILITY": 175.45
+      "CHOP_RANGING": -39.67,
+      "HIGH_VOLATILITY": 176.94
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 141.43
+    "total_oos_return_pct": 137.27
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T16:15:22.366194+00:00"
+  "created_at_utc": "2026-08-22T17:42:07.298108+00:00"
 }

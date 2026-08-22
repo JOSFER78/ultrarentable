@@ -2,33 +2,33 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g09",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "d5e1f985eb488ef0922e0bda9d0c68cb868331d58359168d093e5b69b707d4f3",
+  "strategy_snapshot_hash": "c9c3bacbf90dbbe0656bb1a815bf3b5c2c394930f48e6c6d3cda7b42e912aed1",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "ba18594cb49a1640d78efd1473cef96dc200440e9cee60deaa01f113214d24cb",
-  "output_hash": "b078096e8f2b1c5b1a5f1bf1e59e60226983b9dd723872e6c86b861b6a8caa93",
-  "status": "FAILED",
-  "score": 25.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 9.6 o Estabilidad 62.5% < 50.0%)",
+  "input_hash": "0b3904889d5ebb27661f59c54a3759108de9b7eb8af466260aacdfe8a733f614",
+  "output_hash": "7ab9cfec4b58d7c83130d470d342d3dbcce880982e4442b5bd11166af9a18a28",
+  "status": "PASSED",
+  "score": 79.7,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 13.2 trades/param, Estabilidad Vecindario: 97.5%, Re-backtest PFs: [0.05, 0.19, 0.06, 0.09])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 9.6,
+    "degrees_of_freedom_ratio": 13.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 62.5,
+    "parameter_neighborhood_stability_pct": 97.5,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.07,
+      0.05,
+      0.19,
       0.06,
-      0.08,
-      0.14
+      0.09
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:58:04.987587+00:00"
+  "created_at_utc": "2026-08-22T17:23:22.662668+00:00"
 }

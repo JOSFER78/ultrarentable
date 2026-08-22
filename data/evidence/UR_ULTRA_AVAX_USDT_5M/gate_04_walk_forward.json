@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g04",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "2a9ad4bd8e415c30dc1682638758274521312bd6164f10db0cf8778e712913c1",
+  "strategy_snapshot_hash": "ab1469e4c6fe564d12f7215e36b30bff458402744b357093d86d067a8f191428",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,15 +10,15 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "fee7ddbaddf3e7f3819c277318fdbf9500a92b39964444eab1a17a1784ecfe0e",
-  "output_hash": "0581a44727e46ba617d54aba5639b4f2a77d554d833830b5c6a7eca768b1d764",
+  "input_hash": "268304f45d2b998f36efb7807e11976a2fadfcca0d7044062e5aecb74ec75df2",
+  "output_hash": "65d122c540d152a0152134d1f59bbaa669efddd449ebd01371882c9405cc8c78",
   "status": "FAILED",
-  "score": 100.0,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 2.27 < 0.40 ó Consistencia 20.0% < 40%)",
+  "score": 84.4,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 1.69 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
     "total_trades_analyzed": 82,
     "windows_count": 5,
-    "walk_forward_efficiency": 2.27,
+    "walk_forward_efficiency": 1.69,
     "oos_consistency_pct": 20.0,
     "min_wfe_required": 0.5,
     "windows_details": [
@@ -45,30 +45,30 @@
         "is_trades_count": 11,
         "oos_trades_count": 5,
         "pf_is": 0.63,
-        "pf_oos": 6.3,
-        "net_profit_oos_usd": 1.98,
-        "wfe": 10.02
+        "pf_oos": 4.48,
+        "net_profit_oos_usd": 1.83,
+        "wfe": 7.13
       },
       {
         "window_index": 4,
         "is_trades_count": 11,
         "oos_trades_count": 5,
-        "pf_is": 2.62,
+        "pf_is": 2.63,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.81,
+        "net_profit_oos_usd": -0.8,
         "wfe": 0.0
       },
       {
         "window_index": 5,
         "is_trades_count": 11,
         "oos_trades_count": 5,
-        "pf_is": 0.33,
+        "pf_is": 0.37,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.93,
+        "net_profit_oos_usd": -0.94,
         "wfe": 0.0
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T16:15:21.792296+00:00"
+  "created_at_utc": "2026-08-22T17:42:05.715248+00:00"
 }

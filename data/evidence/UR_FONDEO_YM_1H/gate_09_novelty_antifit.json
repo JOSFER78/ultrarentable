@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_YM_1H_g09",
   "run_id": "run_UR_FONDEO_YM_1H",
   "strategy_id": "UR_FONDEO_YM_1H",
-  "strategy_snapshot_hash": "e250c193721ea4658c683526d55deceba22db61bdb2c19d8e42f96fe79cf28ea",
+  "strategy_snapshot_hash": "2c4c0b1aa51a774027469e0aed24cc5439e95211698eeeb44f180df0cb290710",
   "dataset_id": "ds_trad_ym_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "3b6b70c7eebfca908a1c0669b0fbe85c14fc37d61b568c20f5bc5019977eb00f",
-  "output_hash": "e09cda4626cace44b3de4c76624cd66031e975b0002a40d1e7ccd0450c516240",
+  "input_hash": "885534044411a7730049abd070fb98a4cecbb59344f9d1f1b4b678dda36ad2ee",
+  "output_hash": "925dd869d3eb7a7040b310b792107aa42f12bba9349b4af505b3e065be8b1d41",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.0 trades/param, Estabilidad Vecindario: 93.6%, Re-backtest PFs: [1.29, 0.69, 1.0, 0.84])",
+  "score": 77.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 17.9 trades/param, Estabilidad Vecindario: 81.6%, Re-backtest PFs: [0.76, 0.92, 0.74, 0.68])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 18.0,
+    "degrees_of_freedom_ratio": 17.9,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 93.6,
+    "parameter_neighborhood_stability_pct": 81.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.29,
-      0.69,
-      1.0,
-      0.84
+      0.76,
+      0.92,
+      0.74,
+      0.68
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:57:20.145753+00:00"
+  "created_at_utc": "2026-08-22T17:06:24.505918+00:00"
 }

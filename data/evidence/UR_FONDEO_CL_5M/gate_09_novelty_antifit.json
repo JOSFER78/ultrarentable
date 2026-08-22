@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_CL_5M_g09",
   "run_id": "run_UR_FONDEO_CL_5M",
   "strategy_id": "UR_FONDEO_CL_5M",
-  "strategy_snapshot_hash": "dc6a3fa75efac03c137293ced40d661ea4cdd6fc007eb9125ed3cd4f1dd40ca4",
+  "strategy_snapshot_hash": "80a823b2710b949bcf43a3d192cae34fa45a09b2f882bfb7892466535c81185d",
   "dataset_id": "ds_trad_cl_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a1c6c59431391b0dcda6bded0c7370853c6c72653a5bd70ffbbb4e4c53d74610",
-  "output_hash": "39ea8c437d05df6a1d7337a7a431c49dfb0a0f02a1c01d480f5f5071b6af0921",
+  "input_hash": "78f722e2dece8537301433ee3192dabaebac746ef9857675bc19f25422f170cb",
+  "output_hash": "f74c0e9b4138c93873dd67b7eaed00b99f5d2ef9f04bdcdffa90372a5f979934",
   "status": "PASSED",
-  "score": 88.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 17.5 trades/param, Estabilidad Vecindario: 125.0%, Re-backtest PFs: [0.43, 0.51, 0.12, 0.19])",
+  "score": 86.8,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 16.8 trades/param, Estabilidad Vecindario: 233.3%, Re-backtest PFs: [0.33, 0.13, 0.31, 0.35])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 17.5,
+    "degrees_of_freedom_ratio": 16.8,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 125.0,
+    "parameter_neighborhood_stability_pct": 233.3,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.43,
-      0.51,
-      0.12,
-      0.19
+      0.33,
+      0.13,
+      0.31,
+      0.35
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:56:23.909922+00:00"
+  "created_at_utc": "2026-08-22T17:14:51.032699+00:00"
 }

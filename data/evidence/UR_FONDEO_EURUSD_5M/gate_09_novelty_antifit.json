@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_5M_g09",
   "run_id": "run_UR_FONDEO_EURUSD_5M",
   "strategy_id": "UR_FONDEO_EURUSD_5M",
-  "strategy_snapshot_hash": "1fb0ff78eb230becef0420bb0490ed94de6975854bec731e4c2d9523168f11f8",
+  "strategy_snapshot_hash": "897457bba58671235f9a99e33f1a3d5114e158cd525d98cf6ec1a3248bfbd0a2",
   "dataset_id": "ds_trad_eurusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "420138d4e0757f266fbbc1ffec6170170f279a5b08ede36d3a650902d6619b42",
-  "output_hash": "d559a57646c1c2ca42418e0ae5f91b259ba96abe31102b911640531dfa2b956d",
+  "input_hash": "269bf0113bf4e888a02189e3831dde0857e618ac3fda79bc15e36c5c5d776ad4",
+  "output_hash": "d09bb61f96fdc35ec53db4fef52fbe5188e0e46d3a5090fee8ae929efb774204",
   "status": "FAILED",
   "score": 8.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 26.0 o Estabilidad 20.0% < 60.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 24.6 o Estabilidad 20.0% < 60.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 26.0,
+    "degrees_of_freedom_ratio": 24.6,
     "min_dof_required": 15.0,
     "parameter_neighborhood_stability_pct": 20.0,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.0,
       0.02,
       0.02,
-      0.02
+      0.02,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:56:34.027585+00:00"
+  "created_at_utc": "2026-08-22T17:17:33.941042+00:00"
 }

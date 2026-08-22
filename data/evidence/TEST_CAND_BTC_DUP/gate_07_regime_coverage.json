@@ -2,19 +2,19 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g07",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "d5e1f985eb488ef0922e0bda9d0c68cb868331d58359168d093e5b69b707d4f3",
+  "strategy_snapshot_hash": "c9c3bacbf90dbbe0656bb1a815bf3b5c2c394930f48e6c6d3cda7b42e912aed1",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a583f509b86d6b06840566653b46afda8e8fb2fb16d540946f1aaaa65ffd67a6",
-  "output_hash": "233c3c7d8954bb634e941a66c8916644672aa4855622bf43fbc5f6936f0e1a97",
+  "input_hash": "018a97ab39cc03df5bdbbca0c47745ad0d6d778c98aacc48a4ff09efff85df39",
+  "output_hash": "9374cbaaecbb56798e390dc1cab7683ec877d411643e235527b0c4ed1bbb83db",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -64.71%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -391.12%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 31,
-      "HIGH_VOLATILITY": 5
+      "CHOP_RANGING": 39,
+      "HIGH_VOLATILITY": 15
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -45.69,
-      "HIGH_VOLATILITY": -19.02
+      "CHOP_RANGING": -255.0,
+      "HIGH_VOLATILITY": -136.12
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -64.71
+    "total_oos_return_pct": -391.12
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:58:04.696395+00:00"
+  "created_at_utc": "2026-08-22T17:23:21.673982+00:00"
 }

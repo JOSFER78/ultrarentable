@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_CL_15M_g07",
   "run_id": "run_UR_FONDEO_CL_15M",
   "strategy_id": "UR_FONDEO_CL_15M",
-  "strategy_snapshot_hash": "f625927b6de7b2d2009d0b8b2199e01ba11e4a1aaf684977c34da597c1064bb7",
+  "strategy_snapshot_hash": "aeb8c20b8e33523f120886dba4de800f551cf6fe5637f2f5361da1f4ea00f8ca",
   "dataset_id": "ds_trad_cl_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "4beb324487f8e63af8098c331787e4ed5913f67e604fd07cf6c8ddcf5121208c",
-  "output_hash": "6c02d0338d58a185f43e5ea266e5395ad860efc81b17562afdb191fe9d6bc7f7",
+  "input_hash": "01dba47cb8cd3050ec3cf694b0d87f8a17619cbe3fc61e8d4e29a4aa576d36a5",
+  "output_hash": "ae9ad398c6aadcd4e806aaea984527b30652c710a8313b7d89ba51d955d7d9b8",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -10947.73%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -22.06%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 51,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 14,
-      "HIGH_VOLATILITY": 3
+      "CHOP_RANGING": 20,
+      "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -8961.86,
-      "HIGH_VOLATILITY": -1985.87
+      "CHOP_RANGING": -19.86,
+      "HIGH_VOLATILITY": -2.2
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -10947.73
+    "total_oos_return_pct": -22.06
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:56:19.790855+00:00"
+  "created_at_utc": "2026-08-22T17:20:41.159223+00:00"
 }

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g09",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "a8cd0bc160fed29c92c5be25715d04574424d2a83a9fd62641ad413ecd17377b",
+  "strategy_snapshot_hash": "516218fd7cd8bccc01decf2c6717e5f7c11092ea2bace4c191cc4ee4e7a4120a",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "50b27181e39121d1cba58abbd4227ffd0d789580551553213de01471ffbab094",
-  "output_hash": "37911b4e0922c7bcf377937767af889dfc71b422e03a2b9926ab7d3b0aeab29a",
+  "input_hash": "80fb6b9dc98ff8ea86bbb6e4b3d9bb225475a8535d7630f20cfb9a6e05ba7e7a",
+  "output_hash": "24a87cd4f287124df404c126a5fc16362b11f0aaae020e106c99b63c0c829fed",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 47.1 trades/param, Estabilidad Vecindario: 102.8%, Re-backtest PFs: [0.31, 0.2, 0.14, 0.09])",
+  "score": 98.3,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 83.6 trades/param, Estabilidad Vecindario: 97.2%, Re-backtest PFs: [0.45, 0.4, 0.25, 0.3])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 47.1,
+    "degrees_of_freedom_ratio": 83.6,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 102.8,
+    "parameter_neighborhood_stability_pct": 97.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.31,
-      0.2,
-      0.14,
-      0.09
+      0.45,
+      0.4,
+      0.25,
+      0.3
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:56:16.070896+00:00"
+  "created_at_utc": "2026-08-22T17:18:08.158471+00:00"
 }

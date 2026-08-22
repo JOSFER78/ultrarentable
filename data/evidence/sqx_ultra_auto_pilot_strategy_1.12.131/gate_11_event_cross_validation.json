@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.131_g11",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.131",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.131",
-  "strategy_snapshot_hash": "7d1147c0f077fe72fd5aa0614081979af71204c391159ba910d67b8f67483413",
+  "strategy_snapshot_hash": "a8506033cc64973273aab0bd6d55ebbe7595c936014d8fc7046232bda2200cda",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "4784b27a5e227923c24849c40967024881292817e0b4f97b5141a2e883499f19",
-  "output_hash": "6d06e618a4d1236a3382db0f3c42048bb5d8884b2d31822904d30ed382b96132",
+  "input_hash": "d83b478ead90430cd681b757dc14b0c9b9daf2d9efb5522d4a17c59d640baa26",
+  "output_hash": "3aef32c67dd07e75d468067d12c6256d4c087889477435aa61572d7aa301b166",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -74.03,
-    "peak_equity_usd": 111459.73,
-    "min_equity_usd": -74.03,
+    "final_equity_usd": -85.92,
+    "peak_equity_usd": 116668.49,
+    "min_equity_usd": -85.92,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 207.27,
-    "execution_events_count": 242
+    "total_funding_cost_usd": 243.62,
+    "execution_events_count": 245
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.131/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T16:42:52.843886+00:00"
+  "created_at_utc": "2026-08-22T17:57:48.058025+00:00"
 }

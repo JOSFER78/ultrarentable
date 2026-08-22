@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_15M_g09",
   "run_id": "run_UR_ULTRA_AUDUSD_15M",
   "strategy_id": "UR_ULTRA_AUDUSD_15M",
-  "strategy_snapshot_hash": "011c52724bb72cfba046e3746c73bb4555b8aeabe01f2fa2836d9edb83e6161c",
+  "strategy_snapshot_hash": "a63a1781d950e4607c67e23bfed5523d8a353e3b9bc6091adf9ecc7982fbf050",
   "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "31291c8fa611a20e49656d62a6e5defdbb44c5456b58ff3cc1e1dd9b418e1a79",
-  "output_hash": "4037f2a94b45ca75a12f5ccc8138012ef81f60e168ec3f008809c850beda685a",
+  "input_hash": "3e1adf36e9d0411894953aa1560b586c76237fb404dac2c1db5eacf25ef49c75",
+  "output_hash": "50fb6645aa6ee82f76de4db1b631c8d3f76c44fdea7273b43a442a08d8cc0c7a",
   "status": "PASSED",
-  "score": 78.3,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 20.0 trades/param, Estabilidad Vecindario: 77.2%, Re-backtest PFs: [0.27, 0.27, 0.32, 0.19])",
+  "score": 85.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 37.4 trades/param, Estabilidad Vecindario: 75.0%, Re-backtest PFs: [0.16, 0.19, 0.19, 0.18])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 20.0,
+    "degrees_of_freedom_ratio": 37.4,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 77.2,
+    "parameter_neighborhood_stability_pct": 75.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.27,
-      0.27,
-      0.32,
-      0.19
+      0.16,
+      0.19,
+      0.19,
+      0.18
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T15:56:13.722220+00:00"
+  "created_at_utc": "2026-08-22T17:18:24.061923+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SI_15M_g07",
   "run_id": "run_UR_ULTRA_SI_15M",
   "strategy_id": "UR_ULTRA_SI_15M",
-  "strategy_snapshot_hash": "93202efdb80b2423b613a909d0ce092e75e4c85162ba2d7e5c3920051fa6279b",
+  "strategy_snapshot_hash": "cfee48f844d25194c6eec284fcd2bed526e782f8472c0512bf4257b29de5cbc8",
   "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "6dc690636770f2b9d119a3527aae3d6d3f617370566f1a2690b5a3e3bf1ac617",
-  "output_hash": "ff5f2e33b88f4dd712330f6afcb6de28ff1ebbb252ad352b0fccc1893adb4ff6",
+  "input_hash": "3fd4497d2e51b4bad6c581fcf2522701352aedb289a442c1e5c253d07084ce39",
+  "output_hash": "57d2031fb78caf434e94e7446a40e5de335d44eb0d6d39646e154d19d053656b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -64.52%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -181.48%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 38,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 1,
-      "HIGH_VOLATILITY": 0
+      "CHOP_RANGING": 0,
+      "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -64.52,
-      "HIGH_VOLATILITY": 0.0
+      "CHOP_RANGING": 0.0,
+      "HIGH_VOLATILITY": -181.48
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_return_pct": -64.52
+    "total_oos_return_pct": -181.48
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:56:52.855496+00:00"
+  "created_at_utc": "2026-08-22T17:24:43.301776+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g07",
   "run_id": "run_UR_FONDEO_GBPUSD_1H",
   "strategy_id": "UR_FONDEO_GBPUSD_1H",
-  "strategy_snapshot_hash": "6a8aca00245402f8f4255c6d96aeb0962783a9c26c0f47cc4c9d48a3b71e34a2",
+  "strategy_snapshot_hash": "89af271f842113e21a5b62396afb082d5d162df168dd08e34deb71d5a6528cc8",
   "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "66449c16d49d86c37774314ca9910a76369f9cbd28756aafc07c115b0eb9a900",
-  "output_hash": "7e21a944893c98072a3d70c7c391ca3f5e131fc39e81962e526406972a2abf76",
+  "input_hash": "105889797273c464cd2deec3cbaa74610a7963433f8aa643a678ac6e93bb0a92",
+  "output_hash": "c9adffebefcce62ee32a720fa7a6560f55c660c632e6051676a260966ed44ea7",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -1.29%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -4.81%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 48,
+      "CHOP_RANGING": 40,
       "HIGH_VOLATILITY": 10
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.79,
-      "HIGH_VOLATILITY": -0.5
+      "CHOP_RANGING": -4.41,
+      "HIGH_VOLATILITY": -0.4
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -1.29
+    "total_oos_return_pct": -4.81
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T15:56:36.317004+00:00"
+  "created_at_utc": "2026-08-22T17:09:36.810831+00:00"
 }

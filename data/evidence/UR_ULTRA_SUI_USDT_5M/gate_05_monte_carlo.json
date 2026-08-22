@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_5M_g05",
   "run_id": "run_UR_ULTRA_SUI_USDT_5M",
   "strategy_id": "UR_ULTRA_SUI_USDT_5M",
-  "strategy_snapshot_hash": "60c75fedaf3a18c341cbebdf32002e509a759606299fb4f6a64cf9db3e5e327b",
+  "strategy_snapshot_hash": "d2e308d554c90d7e18510af652f1107dc4c85a7181e52ced9a78517d333a54e9",
   "dataset_id": "ds_binance_suiusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "111526f60b7a01b9cb8f50303488c378708196907908adb2344e0825f311948c",
-  "output_hash": "9829918de3b0f1784a4e1e5316b9b23ff1e7bd635a962879a03ca9180271de2e",
-  "status": "PASSED",
-  "score": 97.4,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 5.3%)",
+  "input_hash": "123e8cca52ae941ff1d2d82613dcfbbbb4be7dbfe087f05dd172b9bfd5b70575",
+  "output_hash": "2a19ffce1f33bf014514598c5fade037bb0c46491a866da77a4206e46b023614",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 99.9% > 1.0% (DD 95% = 99.9%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 2.9,
-    "drawdown_95th_percentile_pct": 5.3,
-    "max_simulated_drawdown_pct": 6.8
+    "ruin_probability_pct": 99.9,
+    "drawdown_median_pct": 99.5,
+    "drawdown_95th_percentile_pct": 99.9,
+    "max_simulated_drawdown_pct": 100.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T15:55:38.321469+00:00"
+  "created_at_utc": "2026-08-22T17:10:08.588752+00:00"
 }
