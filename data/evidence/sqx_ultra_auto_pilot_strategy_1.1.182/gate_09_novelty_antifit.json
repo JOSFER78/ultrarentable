@@ -2,33 +2,33 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.1.182_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.1.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.1.182",
-  "strategy_snapshot_hash": "ae9a3585ddfe1842ec59111eb5f4afa730f6333a953d57c23ddee535ef6bdbe3",
+  "strategy_snapshot_hash": "44c4ba9120bb61cbdd6f4854c07c23b6256cdf4a91ca32fd5ba7e99ea529e93b",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "94ec418fc25bde140f9fe6cbd085974a1d96c2cfbfe4b408976dd612f81b2ad6",
-  "output_hash": "b83d5fed11117896f8d8afeffebd5adc4d17ed71c10b5cdeb6e7929542007304",
+  "input_hash": "17480b36aa7ef2091f42fae95e73e914e8479e68ac801d99012ca6d5496a65b7",
+  "output_hash": "076420f1a38a517539a8120073ae8ff3ca43466484670d82bcf9bb82ade1fb93",
   "status": "FAILED",
-  "score": 42.4,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 29.9 o Estabilidad 105.9% < 50.0%)",
+  "score": 36.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 171.2 o Estabilidad 90.0% < 50.0%)",
   "metrics": {
     "parameters_count": 9,
-    "degrees_of_freedom_ratio": 29.9,
+    "degrees_of_freedom_ratio": 171.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 105.9,
+    "parameter_neighborhood_stability_pct": 90.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.2,
+      0.51,
       1.1,
       1.09,
-      1.27
+      1.19
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.1.182/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:05:35.571825+00:00"
+  "created_at_utc": "2026-08-22T18:02:54.419542+00:00"
 }

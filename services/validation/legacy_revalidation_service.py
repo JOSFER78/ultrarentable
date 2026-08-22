@@ -13,6 +13,7 @@ Si no los supera, queda marcada como RECHAZADA con su causa de rechazo forense e
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import logging
 import sqlite3
@@ -73,6 +74,43 @@ class LegacyRevalidationService:
         conn.execute("PRAGMA journal_mode=WAL;")
         conn.execute("PRAGMA busy_timeout = 30000;")
         return conn
+
+    @staticmethod
+    def _format_indicator(ind) -> str:
+        if ind is None:
+            return "?"
+        name = getattr(ind, "name", None) or str(ind)
+        period = getattr(ind, "period", None)
+        return f"{name}({period})" if period else str(name)
+
+    def _summarize_snapshot_rules(self, snapshot) -> List[str]:
+        """ZERO-MOCKS: reglas reales derivadas del RuleTree del snapshot (antes: lista fija)."""
+        rules: List[str] = []
+        try:
+            tree = getattr(snapshot, "entry_rules", None)
+            for cond in getattr(tree, "long_conditions", None) or []:
+                left = self._format_indicator(getattr(cond, "left_indicator", None))
+                op = getattr(cond, "operator", None)
+                op_str = getattr(op, "value", None) or str(op) if op is not None else "?"
+                right_ind = getattr(cond, "right_indicator", None)
+                right = self._format_indicator(right_ind) if right_ind is not None else getattr(cond, "threshold_value", None)
+                rules.append(f"{left} {op_str} {right if right is not None else '?'}")
+        except Exception:
+            logger.exception("No se pudieron extraer reglas del snapshot")
+        return rules or ["NO_RULES_EXTRACTED"]
+
+    def _count_snapshot_indicators(self, snapshot) -> int:
+        """Cuenta indicadores distintos referenciados en las reglas del snapshot."""
+        names = set()
+        try:
+            tree = getattr(snapshot, "entry_rules", None)
+            for cond in getattr(tree, "long_conditions", None) or []:
+                for side in (getattr(cond, "left_indicator", None), getattr(cond, "right_indicator", None)):
+                    if side is not None:
+                        names.add(str(getattr(side, "name", side)))
+        except Exception:
+            pass
+        return len(names)
 
     def find_dataset_file(self, symbol: str, timeframe: str) -> Optional[Path]:
         """Localiza el dataset físico normalizado para un símbolo y timeframe."""
@@ -152,6 +190,9 @@ class LegacyRevalidationService:
                 "gates_passed": 0,
             }
 
+        # ZERO-MOCKS: SHA-256 real del dataset físico (antes: string falso "dataset_revalidation_sha256")
+        ds_sha256 = hashlib.sha256(Path(ds_file).read_bytes()).hexdigest()
+
         # 2. Leer velas del dataset físico
         try:
             with open(ds_file, "r", encoding="utf-8") as f:
@@ -223,7 +264,7 @@ class LegacyRevalidationService:
                 symbol=symbol,
                 timeframe=timeframe,
                 dataset_id=ds_file.name,
-                dataset_sha256="dataset_revalidation_sha256",
+                dataset_sha256=ds_sha256,
                 sl_atr_mult=float(params.get("sl_atr_mult", 2.0)),
                 tp_atr_mult=float(params.get("tp_atr_mult", 6.0)),
                 ema_fast=int(params.get("ema_fast", 20)),
@@ -236,7 +277,7 @@ class LegacyRevalidationService:
                 symbol=symbol,
                 timeframe=timeframe,
                 dataset_id=ds_file.name,
-                dataset_sha256="dataset_revalidation_sha256",
+                dataset_sha256=ds_sha256,
                 ema_fast=int(params.get("ema_fast", 20)),
                 ema_slow=int(params.get("ema_slow", 50)),
             )
@@ -267,15 +308,15 @@ class LegacyRevalidationService:
             "symbol": symbol,
             "timeframe": timeframe,
             "dataset_id": ds_file.name,
-            "dataset_sha256": "revalidated_sha256",
+            "dataset_sha256": ds_sha256,
             "dataset_filepath": str(ds_file),
             "profit_factor_oos": oos_bt.profit_factor,
             "max_drawdown_pct": oos_bt.max_drawdown_pct,
             "trades_count": len(oos_trades),
             "trials_tested": 1,
             "parameters": params,
-            "rules": ["EMA_FAST > EMA_SLOW", "RSI > 50", "VOLATILITY_EXPANSION"],
-            "indicators_count": 3,
+            "rules": self._summarize_snapshot_rules(strat_snapshot),
+            "indicators_count": self._count_snapshot_indicators(strat_snapshot),
         }
 
         gates_eval = self.gates_orchestrator.run_all_gates(
