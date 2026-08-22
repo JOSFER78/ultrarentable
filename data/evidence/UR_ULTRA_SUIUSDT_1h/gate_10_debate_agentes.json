@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SUIUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_SUIUSDT_1h",
   "strategy_id": "UR_ULTRA_SUIUSDT_1h",
-  "strategy_snapshot_hash": "09356b64dc7177471044a4983929228fd556cf2be243a2f27ade241762e3fec5",
+  "strategy_snapshot_hash": "4de1aaae2d649f3757518a2019dd898f40715e8ddf73f91afb081daecb9bd73b",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "91ecf4dfd1d29d2a0b804b4a7e42912d61e482fea1d490b39286767d3692b592",
-  "output_hash": "79db6ef413804b374954a6fb5a1ee3593e4b8aaea9d412be14592726d67ad5bf",
+  "input_hash": "933b8c3628744baf159380afec2ed7da917d8eaa4c48c16dbb85ba6f31a38ca3",
+  "output_hash": "d4146fd929bbed652acbdc34dbaa56a6894ab8edf161fb3f0cfe8ba8fc95dd27",
   "status": "FAILED",
   "score": 54.4,
   "verdict": "FALLO: Consenso insuficiente (54.4/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 58.6,
         "findings": [
           "Activo y Timeframe: SUIUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $105625453820418764704388743168.00.",
+          "Profit Factor OOS: 1.08 con beneficio neto de $281983389970965043883672600576.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 3032 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 3058 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $34836891101721228090540032.00 USD.",
+          "Beneficio medio por operación: $92211703718431991397351424.00 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T12:58:30.754636+00:00"
+  "created_at_utc": "2026-08-22T14:26:33.265492+00:00"
 }

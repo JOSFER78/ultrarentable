@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1H_g11",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1H",
-  "strategy_snapshot_hash": "bdea282a7a8a6dbd1c9c190395a5799d48d1ebd1b42081eaa2520a030104bd57",
+  "strategy_snapshot_hash": "81d25cc955c362bc6ad45fa3afd3c70185d48de3889b3095709ad42a2054e190",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "625e519a2b54bdd1ab7435592464a152e98cdc58908de89a9ec3fedf97e5c6c3",
-  "output_hash": "d45b5563cc69e6d3bca541c8fddc40731a43d74297ad18af61c4fea4fc9ad185",
+  "input_hash": "4369f73811a81a1fb4a1ebe61fc1bd6425f6b32fe1b4831ea81ba76bc606d28d",
+  "output_hash": "63c88803d6c778b98692b30556c86157d966532205a6f75e2633ef4b8ecf4e3e",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1.0x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -94953286550672.56,
-    "peak_equity_usd": 1.5265747792009224e+16,
-    "min_equity_usd": -94953286550672.56,
+    "final_equity_usd": -94252226213346.56,
+    "peak_equity_usd": 1.395555667146707e+16,
+    "min_equity_usd": -94252226213346.56,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 3647916026674957.0,
-    "total_funding_cost_usd": 364791602667495.6,
-    "execution_events_count": 428
+    "total_fees_paid_usd": 3353876636393999.0,
+    "total_funding_cost_usd": 335387663639399.9,
+    "execution_events_count": 433
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T13:47:59.515619+00:00"
+  "created_at_utc": "2026-08-22T14:29:27.177055+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g11",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "8e58c71d91fdcc4f2842687ac244cf6131d088c02f1f57a6f72c1e8628100f85",
+  "strategy_snapshot_hash": "855acd0a64b617099eab849eabbe9cf323f0375bff4c411b6eed81fb10d85543",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b0dba1bc9d3ee4465c5e5ae8a4fe07387d0b8e4bac8175461a3b899b249ccb4a",
-  "output_hash": "e5074fbc2022e44946473f90d4bb42aff8bc5191b3031de5d09cf46bd37bcc3a",
+  "input_hash": "9410a65803d7db10e8b0671e2fd2740c9d7fad4ddadc52c892f88c4be151f69a",
+  "output_hash": "bae05fa3d359664f4ea763b79174f2bbb3afea43f10d990d71b1e151573d82f8",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1.0x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -287799943796537.7,
-    "peak_equity_usd": 1.461046697580044e+16,
-    "min_equity_usd": -287799943796537.7,
+    "final_equity_usd": -2043071945652506.0,
+    "peak_equity_usd": 8.00942352209693e+16,
+    "min_equity_usd": -2043071945652506.0,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 6161792911566760.0,
-    "total_funding_cost_usd": 616179291156676.2,
-    "execution_events_count": 258
+    "total_fees_paid_usd": 3.4664891535240452e+16,
+    "total_funding_cost_usd": 3466489153524044.0,
+    "execution_events_count": 261
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T13:49:50.992721+00:00"
+  "created_at_utc": "2026-08-22T14:31:22.120476+00:00"
 }

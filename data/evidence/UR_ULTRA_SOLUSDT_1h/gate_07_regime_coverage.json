@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g07",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "8e58c71d91fdcc4f2842687ac244cf6131d088c02f1f57a6f72c1e8628100f85",
+  "strategy_snapshot_hash": "855acd0a64b617099eab849eabbe9cf323f0375bff4c411b6eed81fb10d85543",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "9ff6dd0e65900151b18e88d3fe7851badd8bebf6c3ff599a4af5d14526818cfc",
-  "output_hash": "db3b04dadb99acbe36507ee761ac6d5fbf5ac6d8480063e6a74d171e1f62f061",
+  "input_hash": "48a89c8a319930444a067b89ddcb050102533efe7c1fa02ec9b94d5c089bc548",
+  "output_hash": "937fb4a78a75568afb5ab17f1da7f954ea40e1a333bcc399ab1a836a359d3f89",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9071.48%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +10011.27%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 641,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 877
     },
     "regime_trades_count": {
-      "BULL_TREND": 25,
+      "BULL_TREND": 26,
       "BEAR_TREND": 49,
-      "CHOP_RANGING": 85,
-      "HIGH_VOLATILITY": 99
+      "CHOP_RANGING": 88,
+      "HIGH_VOLATILITY": 98
     },
     "regime_return_pct": {
-      "BULL_TREND": 934.62,
+      "BULL_TREND": 918.32,
       "BEAR_TREND": 2614.91,
-      "CHOP_RANGING": 1760.12,
-      "HIGH_VOLATILITY": 3761.83
+      "CHOP_RANGING": 2037.2,
+      "HIGH_VOLATILITY": 4440.84
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 9071.48
+    "total_oos_return_pct": 10011.27
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T13:49:46.569418+00:00"
+  "created_at_utc": "2026-08-22T14:31:17.372381+00:00"
 }

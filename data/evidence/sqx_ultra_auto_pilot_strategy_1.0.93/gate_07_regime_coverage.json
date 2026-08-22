@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.93_g07",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.93",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.93",
-  "strategy_snapshot_hash": "7db7843d6e33ec58a2485998718f4cf42ee745f63f73d08a5bf46386bf4171ee",
+  "strategy_snapshot_hash": "4609c60eaf2a067c3d278c088e3a34c7bde9ab7f928ff225f9d8e0ef56cbc70f",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "bfc881a5c6534e0c6f9204b98dc922e48d0e077ae84fd587984069fe2ee3b582",
-  "output_hash": "e735c6701b500accac5d769bb53f32db2455f790ba65c0559c83f1109bc16039",
+  "input_hash": "486d1ce43ce513fa8bacc7c6816af7cc0207d2f0ac5aaf17f6cfa27f7a654407",
+  "output_hash": "da7bbf1907cff5c544c16e60ec44615fa6319f7efc2543f9fc92c349e26b3e5c",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7004.92%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7177.42%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 17,
-      "BEAR_TREND": 30,
-      "CHOP_RANGING": 110,
-      "HIGH_VOLATILITY": 89
+      "BEAR_TREND": 29,
+      "CHOP_RANGING": 114,
+      "HIGH_VOLATILITY": 88
     },
     "regime_return_pct": {
       "BULL_TREND": 521.94,
-      "BEAR_TREND": 1224.79,
-      "CHOP_RANGING": 2001.68,
-      "HIGH_VOLATILITY": 3256.51
+      "BEAR_TREND": 736.86,
+      "CHOP_RANGING": 2729.56,
+      "HIGH_VOLATILITY": 3189.06
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 7004.92
+    "total_oos_return_pct": 7177.42
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.93/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T12:59:15.318493+00:00"
+  "created_at_utc": "2026-08-22T14:27:07.310232+00:00"
 }

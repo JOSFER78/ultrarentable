@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_4H",
   "strategy_id": "UR_ULTRA_SOL_USDT_4H",
-  "strategy_snapshot_hash": "778d8748ff0138a668cc02590c6cbe3be4e099d0953854625f5c36d9db4a1af3",
+  "strategy_snapshot_hash": "e23a6b77ad069eb914c1431d0dacfd92d1563164898047152e6cc8c913f5196b",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "a119d44417d4c77f007289a3cd2087c36f0c7717d08aeba01c715b30f1df4a70",
-  "output_hash": "2f1af3bb381d51425ec7e88e9903dc18c3c6e9849714d468e01fc57ee9aabb7b",
+  "input_hash": "bad310db6a9e741b1e4784c88b75c3ad7ddc74bd5a1f08a50f0ebaecb09a00f2",
+  "output_hash": "c4c144f0ef47da0e4bc6e6ac8a7c84d8e9c15804191699bf959f89071e13697c",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7599.85%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7671.71%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 477,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 535
     },
     "regime_trades_count": {
-      "BULL_TREND": 95,
+      "BULL_TREND": 96,
       "BEAR_TREND": 91,
       "CHOP_RANGING": 62,
-      "HIGH_VOLATILITY": 121
+      "HIGH_VOLATILITY": 126
     },
     "regime_return_pct": {
-      "BULL_TREND": 2234.12,
-      "BEAR_TREND": 1838.57,
-      "CHOP_RANGING": 1598.45,
-      "HIGH_VOLATILITY": 1928.71
+      "BULL_TREND": 2476.25,
+      "BEAR_TREND": 1896.37,
+      "CHOP_RANGING": 1384.02,
+      "HIGH_VOLATILITY": 1915.07
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 7599.85
+    "total_oos_return_pct": 7671.71
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T12:55:02.186908+00:00"
+  "created_at_utc": "2026-08-22T14:22:36.013813+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_4H",
   "strategy_id": "UR_ULTRA_BTC_USDT_4H",
-  "strategy_snapshot_hash": "8862a9eab730ef432fab9820bb4fac9f4f2540f7ee9de7bd29ec62812522d849",
+  "strategy_snapshot_hash": "1def19c6df6c4ed3c189fc19ae1cc4194c2c06b245a3fa5ff813875883384e94",
   "dataset_id": "ds_binance_btcusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "a213e68c46b05557d5b84fd6ce4880fda2121badd5ecd0e7be867e73da940542",
-  "output_hash": "82233080b16f0d4c36be36d9556505e7ee50d87a39722d5504aad449daba259f",
+  "input_hash": "ae2b99d1578a9c2634c4952adab137fda42012459c9630e0c079fa30289c6f33",
+  "output_hash": "3225e49d0ed9246226d45e51aa72529a1f15fdb9c362823b8eb9cb2707e558c0",
   "status": "FAILED",
-  "score": 54.9,
-  "verdict": "FALLO: Consenso insuficiente (54.9/100) u objeción crítica de riesgo",
+  "score": 55.0,
+  "verdict": "FALLO: Consenso insuficiente (55.0/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 54.9,
+    "consensus_score": 55.0,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.4,
+        "score": 60.8,
         "findings": [
           "Activo y Timeframe: BTC-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.12 con beneficio neto de $4176959154697409536.00.",
+          "Profit Factor OOS: 1.13 con beneficio neto de $434978930729689472.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 98.1% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 97.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1113 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1124 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $3752883337553827.00 USD.",
+          "Beneficio medio por operación: $386991931254172.12 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 65.1,
+        "score": 65.2,
         "objections": [
-          "Alerta de Drawdown: DD (98.1%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (97.5%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T12:54:44.005050+00:00"
+  "created_at_utc": "2026-08-22T14:22:14.336150+00:00"
 }

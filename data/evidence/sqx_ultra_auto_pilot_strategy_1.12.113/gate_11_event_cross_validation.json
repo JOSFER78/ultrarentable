@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.113_g11",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.113",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.113",
-  "strategy_snapshot_hash": "8c4ad85a62cba7c0b8f2246e1f67adcb0992b79948a129c9278f16f10d882b40",
+  "strategy_snapshot_hash": "18ec8f5c039b820416cc0c66f42ec07482c6bfc4dd119ba7b0252bea5b6664c7",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "7cc45bf42a6deec7e0933f79aa53ad7b23ddc98fe9270100a9a5aac8334b8da9",
-  "output_hash": "8f0fdf2efc4978ad6f62e48af63c7c76899068d5c0e235b4b37aab7eb3f9da0b",
+  "input_hash": "3f7adc10e931ddbe2f8f6ecb7f1be89b58e2a90753d69837d4af543d8c43e8bb",
+  "output_hash": "0d2126cf859ef71eb46cd5b9efbe891f097b73d3dbad8b1e553ca48eeae540fa",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1.0x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -21551920782.96,
-    "peak_equity_usd": 1425533277066.06,
-    "min_equity_usd": -21551920782.96,
+    "final_equity_usd": -12208799683.26,
+    "peak_equity_usd": 888299050010.32,
+    "min_equity_usd": -12208799683.26,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 444078075590.61,
-    "total_funding_cost_usd": 55509759448.83,
-    "execution_events_count": 253
+    "total_fees_paid_usd": 273642568783.45,
+    "total_funding_cost_usd": 34205321097.93,
+    "execution_events_count": 257
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.113/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T13:17:00.549087+00:00"
+  "created_at_utc": "2026-08-22T14:48:48.440525+00:00"
 }

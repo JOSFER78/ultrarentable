@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "8e58c71d91fdcc4f2842687ac244cf6131d088c02f1f57a6f72c1e8628100f85",
+  "strategy_snapshot_hash": "855acd0a64b617099eab849eabbe9cf323f0375bff4c411b6eed81fb10d85543",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "e8f3a033f85ff78b2394b44e80cb164ae38bfc2930b1710f0b38d9cccb017423",
-  "output_hash": "da4c1fa908ccf7ab7f3993194f205117f19c55f97625da24447c6d1d25e04567",
+  "input_hash": "2786699371623b31d41851f52c1903c4e15845a7b7baf6574d20ad6ec0ddc597",
+  "output_hash": "a84a1680f2ea1da7cb0236236049c8bdc5b3658ef56c6524f054b13f0917bb47",
   "status": "FAILED",
   "score": 35.1,
   "verdict": "FALLO: Consenso insuficiente (35.1/100) u objeción crítica de riesgo",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2230 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2252 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.45 USD.",
+          "Beneficio medio por operación: $-0.44 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -74,5 +74,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T13:49:50.974720+00:00"
+  "created_at_utc": "2026-08-22T14:31:22.117501+00:00"
 }
