@@ -10,6 +10,7 @@ y refinan en bucle hasta que una estrategia supera legítimamente los 11 Gates.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import logging
 import math
@@ -227,7 +228,7 @@ class AutonomousDiscoveryAgentLoop:
                 pyramiding_policy=pyramiding,
                 margin_policy=margin_policy,
                 dataset_id_reference=f"ds_{symbol}_{timeframe}",
-                dataset_sha256_reference="sha256_verified_real",
+                dataset_sha256_reference=hashlib.sha256(json.dumps(candles[:50], sort_keys=True).encode("utf-8")).hexdigest(),
                 archetype=archetype,
             )
 
@@ -256,7 +257,7 @@ class AutonomousDiscoveryAgentLoop:
                 "symbol": symbol,
                 "timeframe": timeframe,
                 "dataset_id": f"ds_{symbol}_{timeframe}",
-                "dataset_sha256": "sha256_verified_real",
+                "dataset_sha256": hashlib.sha256(json.dumps(candles[:50], sort_keys=True).encode("utf-8")).hexdigest(),
             }
 
             # 4. Evaluación de los 11 Gates

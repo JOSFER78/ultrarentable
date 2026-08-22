@@ -756,59 +756,85 @@ function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
-  const allAssets = [
-    // === 1. CRIPTO (18 ACTIVOS) ===
-    { symbol: "SUIUSDT", name: "Sui Network", category: "CRYPTO", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 2.17, roi: "+26.98%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "Trend Expansion", candles: "25.500", icon: "💧", exchange: "BingX Perps" },
-    { symbol: "LINKUSDT", name: "Chainlink", category: "CRYPTO", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 2.13, roi: "+11.53%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "Momentum Breakout", candles: "25.500", icon: "🔗", exchange: "BingX Perps" },
-    { symbol: "ETHUSDT", name: "Ethereum", category: "CRYPTO", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.22, roi: "+3.40%/m", status: "CERTIFIED", statusColor: "#38bdf8", regime: "Donchian Trend", candles: "25.500", icon: "⟠", exchange: "Binance / BingX" },
-    { symbol: "SOLUSDT", name: "Solana", category: "CRYPTO", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.26, roi: "+2.76%/m", status: "CERTIFIED", statusColor: "#38bdf8", regime: "EMA Pullback", candles: "25.500", icon: "☀️", exchange: "Binance / BingX" },
-    { symbol: "BTCUSDT", name: "Bitcoin", category: "CRYPTO", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.13, roi: "+1.12%/m", status: "CERTIFIED", statusColor: "#facc15", regime: "Vol Expansion", candles: "25.500", icon: "₿", exchange: "Binance / BingX" },
-    { symbol: "AVAXUSDT", name: "Avalanche", category: "CRYPTO", tf: "1h", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.28, roi: "+2.45%/m", status: "AUDITING", statusColor: "#38bdf8", regime: "Breakout Range", candles: "25.500", icon: "🔺", exchange: "BingX Perps" },
-    { symbol: "BNBUSDT", name: "BNB Chain", category: "CRYPTO", tf: "1h", stage: "GATE 8 (DSR RATIO)", stageNum: 8, pf: 1.44, roi: "+3.10%/m", status: "AUDITING", statusColor: "#a855f7", regime: "Mean Reversion", candles: "25.500", icon: "🟡", exchange: "Binance" },
-    { symbol: "NEARUSDT", name: "Near Protocol", category: "CRYPTO", tf: "1h", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.68, roi: "+5.40%/m", status: "AUDITING", statusColor: "#34d399", regime: "Volatility Breakout", candles: "25.500", icon: "🌐", exchange: "BingX Perps" },
-    { symbol: "APTUSDT", name: "Aptos", category: "CRYPTO", tf: "1h", stage: "GATE 9 (NOVELTY ANTI-FIT)", stageNum: 9, pf: 1.52, roi: "+4.80%/m", status: "AUDITING", statusColor: "#38bdf8", regime: "Trend Momentum", candles: "25.500", icon: "⚡", exchange: "BingX Perps" },
-    { symbol: "INJUSDT", name: "Injective", category: "CRYPTO", tf: "1h", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.74, roi: "+6.20%/m", status: "AUDITING", statusColor: "#34d399", regime: "Momentum Expansion", candles: "25.500", icon: "🎯", exchange: "BingX Perps" },
-    { symbol: "RENDERUSDT", name: "Render", category: "CRYPTO", tf: "1h", stage: "GATE 8 (DSR RATIO)", stageNum: 8, pf: 1.48, roi: "+4.10%/m", status: "AUDITING", statusColor: "#a855f7", regime: "AI Narrative Break", candles: "25.500", icon: "🎨", exchange: "BingX Perps" },
-    { symbol: "ARBUSDT", name: "Arbitrum", category: "CRYPTO", tf: "1h", stage: "GATE 7 (REGIME COVERAGE)", stageNum: 7, pf: 1.31, roi: "+2.90%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Compression Break", candles: "25.500", icon: "🔵", exchange: "BingX Perps" },
-    { symbol: "OPUSDT", name: "Optimism", category: "CRYPTO", tf: "1h", stage: "GATE 6 (STRESS SLIPPAGE)", stageNum: 6, pf: 1.25, roi: "+2.15%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Pullback Trend", candles: "25.500", icon: "🔴", exchange: "BingX Perps" },
-    { symbol: "TIAUSDT", name: "Celestia", category: "CRYPTO", tf: "1h", stage: "GATE 5 (MONTE CARLO)", stageNum: 5, pf: 1.39, roi: "+3.80%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "High Beta Trend", candles: "25.500", icon: "🟣", exchange: "BingX Perps" },
-    { symbol: "FETUSDT", name: "Fetch.ai", category: "CRYPTO", tf: "1h", stage: "GATE 6 (STRESS SLIPPAGE)", stageNum: 6, pf: 1.33, roi: "+3.25%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Channel Breakout", candles: "25.500", icon: "🤖", exchange: "BingX Perps" },
-    { symbol: "DOGEUSDT", name: "Dogecoin", category: "CRYPTO", tf: "1h", stage: "GATE 4 (WALK-FORWARD)", stageNum: 4, pf: 0.98, roi: "-0.40%/m", status: "REJECTED", statusColor: "#f87171", regime: "Chop Market", candles: "25.500", icon: "🐕", exchange: "BingX Perps" },
-    { symbol: "XRPUSDT", name: "XRP", category: "CRYPTO", tf: "1h", stage: "GATE 2 (COST BACKTEST)", stageNum: 2, pf: 0.94, roi: "-0.85%/m", status: "REJECTED", statusColor: "#f87171", regime: "Low Liquidity", candles: "25.500", icon: "✕", exchange: "BingX Perps" },
-    { symbol: "ADAUSDT", name: "Cardano", category: "CRYPTO", tf: "1h", stage: "GATE 3 (TRADE SIGNIFICANCE)", stageNum: 3, pf: 0.91, roi: "-1.10%/m", status: "REJECTED", statusColor: "#f87171", regime: "Low Vol Chop", candles: "25.500", icon: "🔷", exchange: "BingX Perps" },
-
-    // === 2. ÍNDICES GLOBALES (9 FUTUROS / CFDS) ===
-    { symbol: "NQ_FUTURE", name: "Nasdaq 100 E-mini", category: "INDICES", tf: "15m", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.52, roi: "+4.80%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "Opening Range Break", candles: "38.200", icon: "📈", exchange: "CME Globex" },
-    { symbol: "ES_FUTURE", name: "S&P 500 E-mini", category: "INDICES", tf: "15m", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.42, roi: "+3.90%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "NY Session Trend", candles: "38.200", icon: "🏛️", exchange: "CME Globex" },
-    { symbol: "FDAX_FUTURE", name: "DAX 40 Alemania", category: "INDICES", tf: "15m", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.46, roi: "+4.10%/m", status: "AUDITING", statusColor: "#34d399", regime: "Frankfurt Open Trend", candles: "34.500", icon: "🇩🇪", exchange: "Eurex" },
-    { symbol: "YM_FUTURE", name: "Dow Jones E-mini", category: "INDICES", tf: "15m", stage: "GATE 8 (DSR RATIO)", stageNum: 8, pf: 1.34, roi: "+2.70%/m", status: "AUDITING", statusColor: "#a855f7", regime: "Value Rotation Trend", candles: "38.200", icon: "🏭", exchange: "CBOT Globex" },
-    { symbol: "NK225_FUTURE", name: "Nikkei 225 Japón", category: "INDICES", tf: "15m", stage: "GATE 7 (REGIME COVERAGE)", stageNum: 7, pf: 1.38, roi: "+3.40%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Tokyo Breakout Flow", candles: "32.000", icon: "🇯🇵", exchange: "OSE / CME" },
-    { symbol: "HSI_FUTURE", name: "Hang Seng Hong Kong", category: "INDICES", tf: "15m", stage: "GATE 5 (MONTE CARLO)", stageNum: 5, pf: 1.45, roi: "+4.50%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "High Vol Open Gap", candles: "28.500", icon: "🇭🇰", exchange: "HKEX" },
-    { symbol: "RTY_FUTURE", name: "Russell 2000 E-mini", category: "INDICES", tf: "15m", stage: "GATE 7 (REGIME COVERAGE)", stageNum: 7, pf: 1.29, roi: "+2.50%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Small-Cap Expansion", candles: "38.200", icon: "🏢", exchange: "CME Globex" },
-    { symbol: "FTSE_FUTURE", name: "FTSE 100 Reino Unido", category: "INDICES", tf: "1h", stage: "GATE 6 (STRESS SLIPPAGE)", stageNum: 6, pf: 1.22, roi: "+1.95%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "London Open Momentum", candles: "34.500", icon: "🇬🇧", exchange: "ICE Futures" },
-    { symbol: "STOXX50", name: "Euro Stoxx 50", category: "INDICES", tf: "1h", stage: "GATE 6 (STRESS SLIPPAGE)", stageNum: 6, pf: 1.20, roi: "+1.80%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "European Bluechip Trend", candles: "34.500", icon: "🇪🇺", exchange: "Eurex" },
-
-    // === 3. FOREX (10 PARES MAYORES Y CRUCES) ===
-    { symbol: "EURUSD", name: "Euro / US Dollar", category: "FOREX", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.28, roi: "+2.40%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "London-NY Overlap", candles: "42.000", icon: "💶", exchange: "Interbank Forex" },
-    { symbol: "USDJPY", name: "US Dollar / Yen Japonés", category: "FOREX", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.39, roi: "+3.20%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "Yield Divergence Trend", candles: "42.000", icon: "💴", exchange: "Interbank Forex" },
-    { symbol: "GBPJPY", name: "British Pound / Yen", category: "FOREX", tf: "1h", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.55, roi: "+4.80%/m", status: "AUDITING", statusColor: "#34d399", regime: "Guppy High Beta Trend", candles: "42.000", icon: "🐉", exchange: "Interbank Forex" },
-    { symbol: "GBPUSD", name: "British Pound / USD", category: "FOREX", tf: "1h", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.35, roi: "+2.95%/m", status: "AUDITING", statusColor: "#34d399", regime: "Cable London Breakout", candles: "42.000", icon: "💷", exchange: "Interbank Forex" },
-    { symbol: "EURJPY", name: "Euro / Japanese Yen", category: "FOREX", tf: "1h", stage: "GATE 9 (NOVELTY ANTI-FIT)", stageNum: 9, pf: 1.41, roi: "+3.50%/m", status: "AUDITING", statusColor: "#38bdf8", regime: "Cross Carry Momentum", candles: "42.000", icon: "🗼", exchange: "Interbank Forex" },
-    { symbol: "USDCAD", name: "US Dollar / Canadian Dollar", category: "FOREX", tf: "1h", stage: "GATE 8 (DSR RATIO)", stageNum: 8, pf: 1.27, roi: "+2.10%/m", status: "AUDITING", statusColor: "#a855f7", regime: "Oil Correlation Flow", candles: "42.000", icon: "🍁", exchange: "Interbank Forex" },
-    { symbol: "AUDUSD", name: "Australian Dollar / USD", category: "FOREX", tf: "1h", stage: "GATE 7 (REGIME COVERAGE)", stageNum: 7, pf: 1.21, roi: "+1.75%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Commodity Flow Trend", candles: "42.000", icon: "🦘", exchange: "Interbank Forex" },
-    { symbol: "USDCHF", name: "US Dollar / Franco Suizo", category: "FOREX", tf: "1h", stage: "GATE 6 (STRESS SLIPPAGE)", stageNum: 6, pf: 1.16, roi: "+1.40%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Safe Haven Reversion", candles: "42.000", icon: "🇨🇭", exchange: "Interbank Forex" },
-    { symbol: "NZDUSD", name: "New Zealand Dollar / USD", category: "FOREX", tf: "1h", stage: "GATE 5 (MONTE CARLO)", stageNum: 5, pf: 1.19, roi: "+1.60%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Pacific Session Flow", candles: "42.000", icon: "🥝", exchange: "Interbank Forex" },
-    { symbol: "EURGBP", name: "Euro / British Pound", category: "FOREX", tf: "1h", stage: "GATE 3 (TRADE SIGNIFICANCE)", stageNum: 3, pf: 0.96, roi: "-0.30%/m", status: "REJECTED", statusColor: "#f87171", regime: "Tight Range Chop", candles: "42.000", icon: "⚖️", exchange: "Interbank Forex" },
-
-    // === 4. COMMODITIES (7 METALES & ENERGÍAS) ===
-    { symbol: "XAUUSD (GC)", name: "Oro Spot & Futuros", category: "COMMODITIES", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.62, roi: "+5.60%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "Macro Safe Haven Trend", candles: "38.500", icon: "🥇", exchange: "COMEX / Spot" },
-    { symbol: "WTI_CRUDE (CL)", name: "Petróleo WTI Crudo", category: "COMMODITIES", tf: "1h", stage: "GATE 11 (NAUTILUS)", stageNum: 11, pf: 1.49, roi: "+4.40%/m", status: "CERTIFIED", statusColor: "#34d399", regime: "OPEC Trend Expansion", candles: "38.500", icon: "🛢️", exchange: "NYMEX" },
-    { symbol: "XAGUSD (SI)", name: "Plata Spot & Futuros", category: "COMMODITIES", tf: "1h", stage: "GATE 10 (AGENT DEBATE)", stageNum: 10, pf: 1.58, roi: "+5.20%/m", status: "AUDITING", statusColor: "#34d399", regime: "High Beta Silver Breakout", candles: "38.500", icon: "🥈", exchange: "COMEX / Spot" },
-    { symbol: "BRENT_CRUDE", name: "Petróleo Brent Mar del Norte", category: "COMMODITIES", tf: "1h", stage: "GATE 9 (NOVELTY ANTI-FIT)", stageNum: 9, pf: 1.44, roi: "+3.90%/m", status: "AUDITING", statusColor: "#38bdf8", regime: "Geopolitical Flow Trend", candles: "38.500", icon: "⛽", exchange: "ICE Futures" },
-    { symbol: "NATGAS (NG)", name: "Gas Natural Henry Hub", category: "COMMODITIES", tf: "1h", stage: "GATE 7 (REGIME COVERAGE)", stageNum: 7, pf: 1.72, roi: "+7.80%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Extreme Volatility Shock", candles: "38.500", icon: "🔥", exchange: "NYMEX" },
-    { symbol: "COPPER (HG)", name: "Cobre Industrial High Grade", category: "COMMODITIES", tf: "1h", stage: "GATE 8 (DSR RATIO)", stageNum: 8, pf: 1.36, roi: "+2.85%/m", status: "AUDITING", statusColor: "#a855f7", regime: "Dr. Copper Macro Cycle", candles: "38.500", icon: "🥉", exchange: "COMEX" },
-    { symbol: "PLATINUM (PL)", name: "Platino Industrial", category: "COMMODITIES", tf: "1h", stage: "GATE 6 (STRESS SLIPPAGE)", stageNum: 6, pf: 1.24, roi: "+1.95%/m", status: "EVALUATING", statusColor: "#38bdf8", regime: "Industrial Reversion", candles: "38.500", icon: "⚙️", exchange: "NYMEX" },
+  // Universo de activos base con mapeo dinámico a evidencia real
+  const baseRegistry: Array<{ symbol: string; name: string; category: "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES"; tf: string; icon: string; exchange: string }> = [
+    // CRIPTO
+    { symbol: "BTC-USDT", name: "Bitcoin", category: "CRYPTO", tf: "1h", icon: "₿", exchange: "BingX / Binance" },
+    { symbol: "ETH-USDT", name: "Ethereum", category: "CRYPTO", tf: "1h", icon: "⟠", exchange: "BingX / Binance" },
+    { symbol: "SOL-USDT", name: "Solana", category: "CRYPTO", tf: "1h", icon: "☀️", exchange: "BingX / Binance" },
+    { symbol: "SUI-USDT", name: "Sui Network", category: "CRYPTO", tf: "1h", icon: "💧", exchange: "BingX Perps" },
+    { symbol: "LINK-USDT", name: "Chainlink", category: "CRYPTO", tf: "1h", icon: "🔗", exchange: "BingX Perps" },
+    { symbol: "AVAX-USDT", name: "Avalanche", category: "CRYPTO", tf: "1h", icon: "🔺", exchange: "BingX Perps" },
+    { symbol: "DOGE-USDT", name: "Dogecoin", category: "CRYPTO", tf: "1h", icon: "🐕", exchange: "BingX Perps" },
+    { symbol: "BNB-USDT", name: "BNB Chain", category: "CRYPTO", tf: "1h", icon: "🟡", exchange: "Binance" },
+    { symbol: "NEAR-USDT", name: "Near Protocol", category: "CRYPTO", tf: "1h", icon: "🌐", exchange: "BingX Perps" },
+    { symbol: "APT-USDT", name: "Aptos", category: "CRYPTO", tf: "1h", icon: "⚡", exchange: "BingX Perps" },
+    { symbol: "XRP-USDT", name: "XRP", category: "CRYPTO", tf: "1h", icon: "✕", exchange: "BingX Perps" },
+    { symbol: "ADA-USDT", name: "Cardano", category: "CRYPTO", tf: "1h", icon: "🔷", exchange: "BingX Perps" },
+    // ÍNDICES FUTUROS CME
+    { symbol: "NQ", name: "Nasdaq 100 E-mini", category: "INDICES", tf: "5m", icon: "📈", exchange: "CME Globex" },
+    { symbol: "ES", name: "S&P 500 E-mini", category: "INDICES", tf: "5m", icon: "🏛️", exchange: "CME Globex" },
+    { symbol: "YM", name: "Dow Jones E-mini", category: "INDICES", tf: "5m", icon: "🏭", exchange: "CBOT Globex" },
+    { symbol: "RTY", name: "Russell 2000 E-mini", category: "INDICES", tf: "5m", icon: "🏢", exchange: "CME Globex" },
+    { symbol: "FDAX", name: "DAX 40 Alemania", category: "INDICES", tf: "15m", icon: "🇩🇪", exchange: "Eurex" },
+    { symbol: "NK225", name: "Nikkei 225 Japón", category: "INDICES", tf: "15m", icon: "🇯🇵", exchange: "OSE / CME" },
+    // FOREX
+    { symbol: "EURUSD", name: "Euro / US Dollar", category: "FOREX", tf: "15m", icon: "💶", exchange: "Interbank Forex" },
+    { symbol: "GBPUSD", name: "British Pound / USD", category: "FOREX", tf: "15m", icon: "💷", exchange: "Interbank Forex" },
+    { symbol: "USDJPY", name: "US Dollar / Yen Japonés", category: "FOREX", tf: "1h", icon: "💴", exchange: "Interbank Forex" },
+    { symbol: "USDCHF", name: "US Dollar / Franco Suizo", category: "FOREX", tf: "15m", icon: "🇨🇭", exchange: "Interbank Forex" },
+    { symbol: "AUDUSD", name: "Australian Dollar / USD", category: "FOREX", tf: "4h", icon: "🦘", exchange: "Interbank Forex" },
+    { symbol: "USDCAD", name: "US Dollar / Canadian Dollar", category: "FOREX", tf: "1h", icon: "🍁", exchange: "Interbank Forex" },
+    // COMMODITIES
+    { symbol: "GC", name: "Oro Spot & Futuros", category: "COMMODITIES", tf: "1h", icon: "🥇", exchange: "COMEX / Spot" },
+    { symbol: "SI", name: "Plata Spot & Futuros", category: "COMMODITIES", tf: "1h", icon: "🥈", exchange: "COMEX / Spot" },
+    { symbol: "CL", name: "Petróleo WTI Crudo", category: "COMMODITIES", tf: "5m", icon: "🛢️", exchange: "NYMEX" },
+    { symbol: "NG", name: "Gas Natural Henry Hub", category: "COMMODITIES", tf: "1h", icon: "🔥", exchange: "NYMEX" },
   ];
+
+  // Mapear cada activo con la evidencia real de telemetría / candidatos
+  const allAssets = baseRegistry.map((item) => {
+    const matchedCandidate = telemetry.recent_discoveries?.find(
+      (c) => c.symbol?.replace(/[^a-zA-Z0-9]/g, "").toUpperCase() === item.symbol.replace(/[^a-zA-Z0-9]/g, "").toUpperCase()
+    );
+
+    if (matchedCandidate) {
+      const isApproved = ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(matchedCandidate.status);
+      return {
+        symbol: item.symbol,
+        name: item.name,
+        category: item.category,
+        tf: matchedCandidate.timeframe || item.tf,
+        stage: isApproved ? "GATE 11 (CERTIFICADA)" : "AUDITORÍA FORENSE",
+        stageNum: isApproved ? 11 : 8,
+        pf: matchedCandidate.profit_factor_oos ?? 0.0,
+        roi: matchedCandidate.net_profit_oos ? `+$${matchedCandidate.net_profit_oos.toFixed(0)}` : "0.0%",
+        status: isApproved ? "CERTIFIED" : "AUDITING",
+        statusColor: isApproved ? "#34d399" : "#38bdf8",
+        regime: "Cuantitativo Real",
+        candles: "Verificada",
+        icon: item.icon,
+        exchange: item.exchange,
+      };
+    }
+
+    return {
+      symbol: item.symbol,
+      name: item.name,
+      category: item.category,
+      tf: item.tf,
+      stage: "EN ESPERA DE EVIDENCIA",
+      stageNum: 0,
+      pf: 0.0,
+      roi: "--",
+      status: "PENDING_DATA",
+      statusColor: "#64748b",
+      regime: "Microestructura Registrada",
+      candles: "--",
+      icon: item.icon,
+      exchange: item.exchange,
+    };
+  });
 
   const filteredAssets = allAssets.filter((a) => {
     if (selectedCategory !== "ALL" && a.category !== selectedCategory) return false;

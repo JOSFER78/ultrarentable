@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from services.engine_version import CURRENT_ENGINE_VERSION
 from services.sync.firebase_sync_manager import firebase_sync_manager
 
 logger = logging.getLogger("firebase_sync")
@@ -158,8 +159,8 @@ def export_survivors_to_cloud(
                 "symbol": r[3],
                 "timeframe": r[4],
                 "status": r[5],
-                "engine_version": r[13] or "1.02",
-                "validation_pipeline_version": r[14] or "1.02",
+                "engine_version": r[13] or CURRENT_ENGINE_VERSION,
+                "validation_pipeline_version": r[14] or CURRENT_ENGINE_VERSION,
                 "metrics": {
                     "net_profit_oos": r[6],
                     "profit_factor_oos": r[7],

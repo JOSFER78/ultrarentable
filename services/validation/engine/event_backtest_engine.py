@@ -90,9 +90,11 @@ class TradeRecord:
     slippage_usd: float
     exit_reason: str
     pyramid_level: int = 0
-    equity_before_usd: float = 1000.0
-    equity_after_usd: float = 1000.0
+    equity_before_usd: float = 0.0
+    equity_after_usd: float = 0.0
     r_multiple: float = 0.0
+    funding_usd: float = 0.0
+    leverage_used: float = 1.0
 
 
 @dataclass
@@ -113,6 +115,7 @@ class EventBacktestResult:
     min_liquidation_distance_pct: float
     total_fees_usd: float
     total_slippage_usd: float
+    total_funding_usd: float = 0.0
     trades: List[TradeRecord] = field(default_factory=list)
     equity_curve: List[float] = field(default_factory=list)
     drawdown_curve: List[float] = field(default_factory=list)
@@ -123,13 +126,25 @@ class EventBacktestResult:
     def to_canonical_ledger(self, symbol: str = "BTCUSDT", execution_config_hash: str = "") -> CanonicalExecutionLedger:
         """Convierte el resultado de backtest determinista a CanonicalExecutionLedger oficial con Hash-Chain Merkle."""
         canonical_trades = []
+        peak_leverage = 1.0
         for t in self.trades:
             side_enum = OrderSide.BUY if t.side == "LONG" else OrderSide.SELL
-            exit_reason_enum = (
-                ExitReason.TAKE_PROFIT if t.exit_reason == "TAKE_PROFIT"
-                else ExitReason.STOP_LOSS if t.exit_reason == "STOP_LOSS"
-                else ExitReason.KILL_SWITCH
-            )
+            if t.exit_reason == "TAKE_PROFIT":
+                exit_reason_enum = ExitReason.TAKE_PROFIT
+            elif t.exit_reason == "STOP_LOSS":
+                exit_reason_enum = ExitReason.STOP_LOSS
+            elif t.exit_reason == "LIQUIDATION":
+                exit_reason_enum = ExitReason.LIQUIDATION
+            elif t.exit_reason == "TIME_EXIT":
+                exit_reason_enum = ExitReason.TIME_EXIT
+            else:
+                exit_reason_enum = ExitReason.KILL_SWITCH
+
+            notional = round(t.entry_price * t.qty, 2)
+            lev = max(1.0, t.leverage_used)
+            peak_leverage = max(peak_leverage, lev)
+            margin_used = round(notional / lev, 2)
+
             canonical_trades.append(
                 ExecutionTruth(
                     trade_id=t.trade_id,
@@ -149,15 +164,15 @@ class EventBacktestResult:
                     take_profit_px=None,
                     commission_usd=t.fees_usd,
                     slippage_usd=t.slippage_usd,
-                    funding_usd=0.0,
-                    total_friction_cost_usd=round(t.fees_usd + t.slippage_usd, 4),
+                    funding_usd=t.funding_usd,
+                    total_friction_cost_usd=round(t.fees_usd + t.slippage_usd + t.funding_usd, 4),
                     gross_pnl_usd=t.gross_pnl_usd,
                     net_pnl_usd=t.net_pnl_usd,
                     return_r=t.r_multiple,
                     exit_reason=exit_reason_enum,
-                    notional_usd=round(t.entry_price * t.qty, 2),
-                    margin_used_usd=max(1.0, round((t.entry_price * t.qty) / 10.0, 2)),
-                    leverage_actual=10.0,
+                    notional_usd=notional,
+                    margin_used_usd=margin_used,
+                    leverage_actual=lev,
                     equity_before_usd=t.equity_before_usd,
                     equity_after_usd=t.equity_after_usd,
                     drawdown_after_pct=0.0,
@@ -180,13 +195,13 @@ class EventBacktestResult:
             profit_factor=self.profit_factor,
             win_rate_pct=self.win_rate_pct,
             max_drawdown_pct=self.max_drawdown_pct,
-            peak_leverage_used=10.0,
+            peak_leverage_used=peak_leverage,
             total_trades_count=self.total_trades,
             winning_trades_count=self.winning_trades,
             losing_trades_count=self.losing_trades,
             total_commission_paid_usd=self.total_fees_usd,
             total_slippage_paid_usd=self.total_slippage_usd,
-            total_funding_paid_usd=0.0,
+            total_funding_paid_usd=self.total_funding_usd,
             trades=canonical_trades,
         )
         return ledger

@@ -384,6 +384,8 @@ class CandidateModel(Base):
     wfo_pass_pct = Column(Float, nullable=True)
     monte_carlo_score = Column(Float, nullable=True)
     scorecard_json = Column(Text, nullable=True)
+    engine_version = Column(String, default="3.0.0", nullable=True)
+    validation_pipeline_version = Column(String, default="3.0.0", nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -415,6 +417,7 @@ class PortfolioModel(Base):
     name = Column(String, nullable=False)
     target_route = Column(String, default="ULTRA")  # ULTRA, FONDEO
     base_capital_usd = Column(Float, default=10000.0)
+    current_equity_usd = Column(Float, default=10000.0, nullable=True)
     components_json = Column(Text, nullable=False)
     correlation_matrix_json = Column(Text, nullable=True)
     equity_growth_curve_json = Column(Text, nullable=True)

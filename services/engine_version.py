@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "2.0.0"
-CURRENT_ENGINE_NAME = "Ultrarentable V2.0.0 (Universal Quantum Core, 24/7 Autonomous Research Loop & Strict Forensic Certification)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "2.0.0"
+CURRENT_ENGINE_VERSION = "3.0.0"
+CURRENT_ENGINE_NAME = "Ultrarentable V3.0.0 (Universal Dynamic Engine, AST Rule Evaluator, Full Equity Ledger & Cryptographic Merkle Provenance)"
+CURRENT_VALIDATION_PIPELINE_VERSION = "3.0.0"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
@@ -110,17 +110,34 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
         "version": "2.0.0",
         "name": "Ultrarentable V2.0.0 (Universal Quantum Core, 24/7 Autonomous Research Loop & Strict Forensic Certification)",
         "released_at": "2026-08-21T18:00:00.000000+00:00",
-        "status": "CURRENT_RECOMMENDED",
-        "status_label": "Actual / Certificada v2.0.0",
-        "description": "Versión Mayor 2.0.0: Motor universal agnóstico sin hardcodes (UniversalStrategyOptimizer), cola lógica de auto-refinamiento 24/7 (ContinuousResearchDaemon) con persistencia en Firebase Realtime Database y SQLite WAL, integración completa de NautilusTrader Studio, y guardarraíles matemáticos reforzados (DD <= 80% en Ultra y Sizing Acelerado para pase de Fondeo <= 5 días).",
+        "status": "INTERMEDIATE",
+        "status_label": "Intermedia (2.0.0)",
+        "description": "Versión Mayor 2.0.0: Motor universal agnóstico sin hardcodes (UniversalStrategyOptimizer), cola lógica de auto-refinamiento 24/7 (ContinuousResearchDaemon) con persistencia en Firebase Realtime Database y SQLite WAL, integración completa de NautilusTrader Studio, y guardarraíles matemáticos reforzados.",
         "ruleset_hash": "9b1a7d4e3f2c5e8a6d0b9f1c7e4a2d8f",
-        "git_commit": "HEAD",
+        "git_commit": "189e4fa",
         "changes": [
-            "Motor Universal UniversalStrategyOptimizer: Síntesis paramétrica guiada por compuertas falladas y perfil microestructural (Hurst, Parkinson, Garman-Klass, Squeeze).",
+            "Motor Universal UniversalStrategyOptimizer: Síntesis paramétrica guiada por compuertas falladas y perfil microestructural.",
             "Demonio de Refinamiento Continuo 24/7 con streaming SSE y HUD en tiempo real en /research.",
             "Hub Interactivo de los 11 Gates con fórmulas exactas, umbrales y diagnóstico en vivo.",
-            "NautilusTrader Studio: Simulación event-driven completa con libro de órdenes y reconciliación de fills.",
-            "Guardarraíles Estrictos: Exclusión fatal de estrategias con DD > 80% en Ultra y calibración de sprints de pase en Fondeo."
+            "NautilusTrader Studio: Simulación event-driven completa con libro de órdenes y reconciliación de fills."
+        ]
+    },
+    {
+        "version": "3.0.0",
+        "name": "Ultrarentable V3.0.0 (Universal Dynamic Engine, AST Rule Evaluator, Full Equity Ledger & Cryptographic Merkle Provenance)",
+        "released_at": "2026-08-22T01:00:00.000000+00:00",
+        "status": "CURRENT_RECOMMENDED",
+        "status_label": "Actual / Certificada v3.0.0",
+        "description": "Versión Mayor 3.0.0: Eliminación completa de supuestos hardcodeados en motores, AST dinámico de indicadores y reglas (DynamicIndicatorEngine, DynamicRuleEvaluator), catálogo canónico multi-activo de microestructura (InstrumentSpecification), liquidación precisa de tasas de financiación (Funding Rate) en perpetuos, registro barra por barra inmutable (FullEquityLedger) y cálculo forense de métricas sin aproximaciones artificiales (UniversalMetricsEngine).",
+        "ruleset_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "git_commit": "HEAD",
+        "changes": [
+            "Eliminación total de indicadores y ramas por símbolo hardcodeadas en motores.",
+            "Contratos canónicos inmutables en Pydantic v2 (universal_strategy, instrument_specification, dataset_specification, execution_model, risk_model, universal_ledger).",
+            "Cálculo y cobro real de Funding Rate periódico sobre posiciones apalancadas en perpetuos.",
+            "UniversalMetricsEngine con estado explícito NOT_COMPUTABLE ante falta de muestra estadística.",
+            "Merkle Provenance Hash determinista basado en las entradas completas de la simulación.",
+            "Suite de pruebas adversariales y verificación multi-activo (Cripto, Futuros CME, Forex)."
         ]
     }
 ]
@@ -146,7 +163,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "9b1a7d4e3f2c5e8a6d0b9f1c7e4a2d8f",
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload

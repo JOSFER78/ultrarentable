@@ -112,6 +112,7 @@ class UniversalDeterministicBacktestEngine:
         position_entry_time = 0
         position_equity_before = base_capital
         position_initial_risk_usd = 0.0
+        position_funding_cum = 0.0
         stop_loss_price = 0.0
         take_profit_price = 0.0
         highest_price_in_trade = 0.0
@@ -136,7 +137,7 @@ class UniversalDeterministicBacktestEngine:
             bar_atr = max(instrument.tick_size, atr_series[i])
             ts = timestamps[i]
 
-            # A. Actualizar PnL No Realizado y Margen si estamos en posición
+            # A. Actualizar PnL No Realizado, Funding y Margen si estamos en posición
             unrealized_pnl = 0.0
             margin_used = 0.0
             if position_side is not None:
@@ -153,6 +154,15 @@ class UniversalDeterministicBacktestEngine:
                 margin_used = notional / max(1.0, max_leverage)
                 margin_util_pct = (margin_used / max(1.0, current_equity)) * 100.0
                 peak_margin_utilization = max(peak_margin_utilization, margin_util_pct)
+
+                # Cobro de Funding Rate real en perpetuos apalancados
+                if instrument.is_perpetual or execution_model.funding_settlement_enabled:
+                    bar_hours = (ts - timestamps[i - 1]) / (1000.0 * 3600.0) if i > 0 else 1.0
+                    f_rate = execution_model.funding_rate_8h or instrument.default_funding_rate
+                    bar_funding = notional * f_rate * (max(0.01, bar_hours) / 8.0)
+                    cash_balance -= bar_funding
+                    funding_cum += bar_funding
+                    position_funding_cum += bar_funding
 
             current_equity = max(0.0, cash_balance + unrealized_pnl)
             peak_equity = max(peak_equity, current_equity)
@@ -242,7 +252,7 @@ class UniversalDeterministicBacktestEngine:
                     notional_exit = exit_price * position_qty * instrument.point_value
                     comm_exit = execution_model.calculate_commission(notional_exit, position_qty)
                     slip_exit = execution_model.calculate_slippage_cost(notional_exit, bar_atr)
-                    net_pnl = gross_pnl - comm_exit - slip_exit
+                    net_pnl = gross_pnl - comm_exit - slip_exit - position_funding_cum
 
                     cash_balance += (gross_pnl - comm_exit - slip_exit)
                     current_equity = max(0.0, cash_balance)
@@ -273,7 +283,7 @@ class UniversalDeterministicBacktestEngine:
                             gross_pnl_usd=round(gross_pnl, 2),
                             commission_usd=round(comm_exit, 4),
                             slippage_usd=round(slip_exit, 4),
-                            funding_usd=0.0,
+                            funding_usd=round(position_funding_cum, 4),
                             net_pnl_usd=round(net_pnl, 2),
                             return_pct=round(ret_pct, 4),
                             return_r=round(ret_r, 4),
@@ -286,6 +296,7 @@ class UniversalDeterministicBacktestEngine:
 
                     position_side = None
                     position_qty = 0.0
+                    position_funding_cum = 0.0
 
             # C. Evaluación de Entradas si estamos planos
             if position_side is None and i >= warmup_bars and current_equity > 0:

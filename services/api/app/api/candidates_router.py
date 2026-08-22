@@ -13,6 +13,7 @@ from services.api.app.export.sqx_to_tradingview import generate_pinescript_v5
 from services.api.app.export.sqx_to_ninjatrader import generate_ninjatrader_strategy_cs
 from services.api.app.factory.robustness_verifier import verify_strategy_robustness
 from services.api.app.validation.market_specs import get_market_spec
+from services.engine_version import CURRENT_ENGINE_VERSION
 from services.validation.legacy_revalidation_service import legacy_revalidation_service
 
 candidates_router = APIRouter(prefix="/candidates", tags=["Strategy Candidates & Scorecards"])
@@ -111,23 +112,13 @@ def list_candidates(
 
         is_m = sc.get("is_metrics") or {}
         oos_m = sc.get("oos_metrics") or {}
-        dur = sc.get("duration_info") or {
-            "start_date": "2025-10-01",
-            "split_date": "2026-02-15",
-            "end_date": "2026-04-16",
-            "total_days": 197,
-            "total_months": 6.5,
-            "total_years": 0.54,
-            "oos_days": 59,
-            "oos_months": 1.9,
-        }
+        dur = sc.get("duration_info")
 
         is_fondeo = (c.route == "FONDEO")
         base_cap = float(sc.get("initial_capital_usd") or oos_m.get("account_base_usd") or (50000.0 if is_fondeo else 1000.0))
         net_prof_oos = float(c.net_profit_oos if c.net_profit_oos is not None else oos_m.get("net_profit_usd", 0.0))
 
         # Real Monthly ROI y Annual ROI (Zero-Simulation & Paridad Matemática Exacta)
-        # 1. Usar métrica calculada directamente por el pipeline si existe
         if "monthly_return_pct" in sc:
             monthly_roi = float(sc["monthly_return_pct"])
             ann_roi = float(sc.get("annual_return_pct", monthly_roi * 12.0))
@@ -137,41 +128,35 @@ def list_candidates(
         elif "monthly_roi_pct" in oos_m:
             monthly_roi = float(oos_m["monthly_roi_pct"])
             ann_roi = float(oos_m.get("annualized_roi_pct", monthly_roi * 12.0))
-        else:
-            # Calcular duración OOS exacta a partir del timeframe y número de velas
-            tf_bars_per_m = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
-            bars_per_m = tf_bars_per_m.get((c.timeframe or "1h").lower(), 720)
-            
-            if "blind_oos_bars" in dur:
-                oos_months = max(0.2, float(dur["blind_oos_bars"]) / bars_per_m)
-            elif "oos_months" in dur:
-                oos_months = max(0.2, float(dur["oos_months"]))
-            elif "total_months" in dur:
-                # OOS representa el 20% del total de meses del dataset
-                oos_months = max(0.2, float(dur["total_months"]) * 0.20)
-            else:
-                oos_months = 6.0  # Duración representativa estándar de 6 meses
-
+        elif dur and dur.get("oos_months"):
+            oos_months = max(0.2, float(dur["oos_months"]))
             monthly_roi = (net_prof_oos / max(1.0, base_cap)) * 100.0 / oos_months
             ann_roi = monthly_roi * 12.0
+        else:
+            monthly_roi = None
+            ann_roi = None
 
-        roi_oos = round(monthly_roi * (dur.get("oos_months") or 6.0), 2)
-        wr_is = float(is_m.get("win_rate_pct") or is_m.get("win_rate") or 0.0)
-        wr_oos = float(sc.get("win_rate_pct") or oos_m.get("win_rate_pct") or oos_m.get("win_rate") or 0.0)
-        pf_oos = float(c.profit_factor_oos if c.profit_factor_oos is not None else (oos_m.get("profit_factor") or 0.0))
-        dd_oos = float(c.max_dd_oos_pct if c.max_dd_oos_pct is not None else (oos_m.get("max_drawdown_pct") or 0.0))
-        dd_is = float(c.max_dd_is_pct if c.max_dd_is_pct is not None else (is_m.get("max_drawdown_pct") or 0.0))
-        trades_count_oos = int(c.trades_oos if c.trades_oos is not None else (oos_m.get("trades") or 0))
+        roi_oos = round(monthly_roi * float(dur["oos_months"]), 2) if (monthly_roi is not None and dur and dur.get("oos_months")) else None
+        wr_is = float(is_m.get("win_rate_pct") or is_m.get("win_rate")) if (is_m.get("win_rate_pct") is not None or is_m.get("win_rate") is not None) else None
+        wr_oos = float(sc.get("win_rate_pct") or oos_m.get("win_rate_pct") or oos_m.get("win_rate")) if (sc.get("win_rate_pct") is not None or oos_m.get("win_rate_pct") is not None or oos_m.get("win_rate") is not None) else None
+        pf_oos = float(c.profit_factor_oos) if c.profit_factor_oos is not None else (float(oos_m["profit_factor"]) if "profit_factor" in oos_m else None)
+        dd_oos = float(c.max_dd_oos_pct) if c.max_dd_oos_pct is not None else (float(oos_m["max_drawdown_pct"]) if "max_drawdown_pct" in oos_m else None)
+        dd_is = float(c.max_dd_is_pct) if c.max_dd_is_pct is not None else (float(is_m["max_drawdown_pct"]) if "max_drawdown_pct" in is_m else None)
+        trades_count_oos = int(c.trades_oos) if c.trades_oos is not None else (int(oos_m["trades"]) if "trades" in oos_m else 0)
         
-        # Calcular trades por mes
-        eff_oos_months = float(dur.get("oos_months") or 6.0)
-        tpm = float(oos_m.get("trades_per_month") or (trades_count_oos / max(0.2, eff_oos_months)))
+        # Trades por mes reales
+        if oos_m.get("trades_per_month") is not None:
+            tpm = float(oos_m["trades_per_month"])
+        elif dur and dur.get("oos_months"):
+            tpm = round(trades_count_oos / max(0.2, float(dur["oos_months"])), 2)
+        else:
+            tpm = None
 
         # Respetar el estado determinista de la base de datos (SSOT inmutable)
         resolved_status = c.status or "REJECTED_SIN_EVIDENCIA"
         resolved_reason = c.status_reason or "Sin razón registrada"
 
-        # Multi-Tier & Gate Scoring
+        # Multi-Tier & Gate Scoring real sin adivinaciones
         passed_count = sc.get("gates_passed_count")
         if passed_count is None:
             if "gates" in sc and isinstance(sc["gates"], list):
@@ -181,16 +166,7 @@ def list_candidates(
             else:
                 import re
                 m = re.search(r"(\d+)/11", resolved_reason)
-                if m:
-                    passed_count = int(m.group(1))
-                elif pf_oos >= 1.40 and dd_oos <= 45.0 and trades_count_oos >= 20:
-                    passed_count = 10
-                elif pf_oos >= 1.20 and dd_oos <= 65.0 and trades_count_oos >= 10:
-                    passed_count = 9
-                elif pf_oos >= 1.05 and dd_oos <= 80.0:
-                    passed_count = 7
-                else:
-                    passed_count = 5
+                passed_count = int(m.group(1)) if m else None
 
         cand_tier = sc.get("tier")
         if not cand_tier:
@@ -251,19 +227,19 @@ def list_candidates(
                     "monthly_roi_pct": monthly_roi,
                     "trades_per_month": tpm,
                     "base_capital_usd": base_cap,
-                    "trades": c.trades_oos if c.trades_oos is not None else oos_m.get("trades", 15),
+                    "trades": trades_count_oos,
                     "profit_factor": pf_oos,
                     "win_rate_pct": wr_oos,
                     "max_drawdown_pct": dd_oos,
                 },
                 "anti_overfit": {
-                    "ratio_oos_is": c.ratio_oos_is if c.ratio_oos_is is not None else 0.85,
-                    "wfo_pass_pct": c.wfo_pass_pct if c.wfo_pass_pct is not None else 85.0,
-                    "monte_carlo_score": c.monte_carlo_score if c.monte_carlo_score is not None else 90.0,
+                    "ratio_oos_is": c.ratio_oos_is,
+                    "wfo_pass_pct": c.wfo_pass_pct,
+                    "monte_carlo_score": c.monte_carlo_score,
                 }
             },
-            "engine_version": getattr(c, "engine_version", None) or "1.02",
-            "validation_pipeline_version": getattr(c, "validation_pipeline_version", None) or "1.02",
+            "engine_version": getattr(c, "engine_version", None) or CURRENT_ENGINE_VERSION,
+            "validation_pipeline_version": getattr(c, "validation_pipeline_version", None) or CURRENT_ENGINE_VERSION,
             "created_at": c.created_at.isoformat() if c.created_at else None,
         })
         
