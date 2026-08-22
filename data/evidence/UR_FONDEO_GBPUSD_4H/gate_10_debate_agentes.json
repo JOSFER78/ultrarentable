@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_4H_g10",
   "run_id": "run_UR_FONDEO_GBPUSD_4H",
   "strategy_id": "UR_FONDEO_GBPUSD_4H",
-  "strategy_snapshot_hash": "ca6bf06af54a46144d699c8e596b43fb00c7cc441472b6ebc842400be34480dd",
+  "strategy_snapshot_hash": "7965cf5eefbeac16d1f7a162f49364a33a229a6bea088520ec22f91b6ba52cde",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "02a186ee06c20b70fb96a3688b03e8db206c2d6580dcade063308c91ee09b256",
-  "output_hash": "5461f8c1d908ca005d81171ebda6477129fe5472ad5ac86a5074fc7123f4aa3b",
+  "input_hash": "bc6ab59b6f9b106c1bea9397ddc5299b878df70e44584c882ef5efffa5701608",
+  "output_hash": "29b3d88d1b08660b28bd5bf5ab8002a11ca7500625c1161c2d8e68c4767d4b78",
   "status": "FAILED",
-  "score": 66.6,
-  "verdict": "FALLO: Consenso insuficiente (66.6/100) u objeción crítica de riesgo",
+  "score": 65.5,
+  "verdict": "FALLO: Consenso insuficiente (65.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 66.6,
+    "consensus_score": 65.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 49.1,
+        "score": 45.1,
         "findings": [
           "Activo y Timeframe: GBPUSD (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.87 con beneficio neto de $-0.00.",
+          "Profit Factor OOS: 0.78 con beneficio neto de $-0.28.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 63 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 65 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 62.3,
+        "score": 61.3,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.87 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.78 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:01:41.715596+00:00"
+  "created_at_utc": "2026-08-22T14:08:03.666944+00:00"
 }

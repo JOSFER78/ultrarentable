@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_SUI_USDT_4H",
   "strategy_id": "UR_ULTRA_SUI_USDT_4H",
-  "strategy_snapshot_hash": "7872249ee3420974c6d45a6e79896af1ddbebe163ac47a0e8a8526c72cf31f42",
+  "strategy_snapshot_hash": "e0e2a46cb8b4f66fa12927f55cc15350101a1b8812ac0cc57b95996382a07e2d",
   "dataset_id": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "92449eb0ba53fabf3a7a423e1dd691bb4957fb9f550c6ef4470aedf907551500",
-  "output_hash": "5b23fb4e994d0e8c9458ad065c4301b03693fb9d62a009d20a7d7e6ac973b660",
+  "input_hash": "1311b3d5fa1efbfc55502b43db7c745d3514cf505e878cef0fa6b878d37736ad",
+  "output_hash": "ad0832ddce572910f68b654a4b5a0f216a7da5fd757dedf4ad2ab7d4617368f7",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8250.51%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8290.77%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 337,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 269
     },
     "regime_trades_count": {
-      "BULL_TREND": 66,
-      "BEAR_TREND": 81,
-      "CHOP_RANGING": 56,
-      "HIGH_VOLATILITY": 58
+      "BULL_TREND": 65,
+      "BEAR_TREND": 80,
+      "CHOP_RANGING": 58,
+      "HIGH_VOLATILITY": 62
     },
     "regime_return_pct": {
-      "BULL_TREND": 2415.54,
-      "BEAR_TREND": 2006.93,
-      "CHOP_RANGING": 1322.64,
-      "HIGH_VOLATILITY": 2505.4
+      "BULL_TREND": 2478.39,
+      "BEAR_TREND": 2015.35,
+      "CHOP_RANGING": 1310.27,
+      "HIGH_VOLATILITY": 2486.76
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 8250.51
+    "total_oos_return_pct": 8290.77
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T12:49:20.991434+00:00"
+  "created_at_utc": "2026-08-22T14:16:26.901840+00:00"
 }

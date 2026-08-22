@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_XRP_USDT_4H",
   "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "1fb8148db5185d7bf23f524f16dd5abce1cc9170797b99b9e649cda7bfbc2e90",
+  "strategy_snapshot_hash": "642287115f3e2f81fff02a6ca6d5d02b6874abec06d0cbbfa0ee61950ba8f1ff",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "9b380929ef77a533e8ac4e5a703faccfc365894b5b95fdf78dedac819f271601",
-  "output_hash": "37fd322b36080ee6270c0ff2ad8a0b46ad2a7341dec6617234fb735d0c0b3e63",
+  "input_hash": "46effeb3ea4d91f24b544dfebdee1d0869cfa291efeec9f5cf9070119d5143e1",
+  "output_hash": "4d5e821103808e1fab9c56176dad88cadb94d3f52c8981a168c057bc659cfbda",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9921.16%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9521.30%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 358,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 59,
-      "BEAR_TREND": 62,
-      "CHOP_RANGING": 70,
-      "HIGH_VOLATILITY": 70
+      "BEAR_TREND": 65,
+      "CHOP_RANGING": 69,
+      "HIGH_VOLATILITY": 71
     },
     "regime_return_pct": {
-      "BULL_TREND": 3506.6,
-      "BEAR_TREND": 2180.0,
-      "CHOP_RANGING": 2717.28,
-      "HIGH_VOLATILITY": 1517.28
+      "BULL_TREND": 3329.26,
+      "BEAR_TREND": 2190.49,
+      "CHOP_RANGING": 2488.89,
+      "HIGH_VOLATILITY": 1512.66
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 9921.16
+    "total_oos_return_pct": 9521.3
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T12:49:09.910109+00:00"
+  "created_at_utc": "2026-08-22T14:16:13.687652+00:00"
 }

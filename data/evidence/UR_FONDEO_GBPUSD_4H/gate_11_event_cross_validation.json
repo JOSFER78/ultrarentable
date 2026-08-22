@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_4H_g11",
   "run_id": "run_UR_FONDEO_GBPUSD_4H",
   "strategy_id": "UR_FONDEO_GBPUSD_4H",
-  "strategy_snapshot_hash": "ca6bf06af54a46144d699c8e596b43fb00c7cc441472b6ebc842400be34480dd",
+  "strategy_snapshot_hash": "7965cf5eefbeac16d1f7a162f49364a33a229a6bea088520ec22f91b6ba52cde",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "08b63905d31e561830bcb10fd1c9840cb5c6510d5832206306217827fff6a9d1",
-  "output_hash": "6e7ccd7f24b43dc989ebd86c27d1416efb0282e2f61dcf29f1f62a6a6488c8b8",
+  "input_hash": "91c1d6abd14cf53e017eaf3ef8a7b3fbab31c5b7b00007de5c0a2be43969ab54",
+  "output_hash": "00df3ed95e50cb0a4d2665a7e4cf2da151f4eeef7322148bec950e8d01a3a1bb",
   "status": "PASSED",
   "score": 99.9,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $49916.00, Apalancamiento Pico: 1.0x, Dist. Mín. Liquidación: 100.0%, Comisiones+Funding: $84.00)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $49915.85, Apalancamiento Pico: 1.0x, Dist. Mín. Liquidación: 100.0%, Comisiones+Funding: $84.00)",
   "metrics": {
     "initial_capital_usd": 50000.0,
-    "final_equity_usd": 49916.0,
+    "final_equity_usd": 49915.85,
     "peak_equity_usd": 50000.0,
-    "min_equity_usd": 49916.0,
+    "min_equity_usd": 49915.85,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 3.0,
     "min_distance_to_liquidation_pct": 100.0,
@@ -29,5 +29,5 @@
     "execution_events_count": 14
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T06:01:41.741104+00:00"
+  "created_at_utc": "2026-08-22T14:08:03.667386+00:00"
 }

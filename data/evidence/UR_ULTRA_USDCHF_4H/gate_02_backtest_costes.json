@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_4H_g02",
   "run_id": "run_UR_ULTRA_USDCHF_4H",
   "strategy_id": "UR_ULTRA_USDCHF_4H",
-  "strategy_snapshot_hash": "c826c7a7c10d20e56214a3914b57b3f22bab578a37aa89020d7add5319c707dc",
+  "strategy_snapshot_hash": "bfd50b87918e52b219614acdaae83ada8d73c392725955ba1fc7f31b91bc7d8b",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "1ed83f7c88d53a2da961d80d5e70782d955afbaf625c434e5ac4cf7cd7ea8801",
-  "output_hash": "bac9e05bbb52ac36082dadf3fc1dc54cc4586f80b8913c62b32e7558c7edd71a",
+  "input_hash": "27394ded22ae0c08514b2868231fbbbcf9db20da0a2ad7c9147d82a7734b42c5",
+  "output_hash": "006e0cdb8d945d2d37f1b680f83ffcd1cb528b8a17ea2b09ad7e9932a6ffd3f0",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.00 < 1.10",
+  "verdict": "FALLO: PF Neto 0.36 < 1.10",
   "metrics": {
     "market_category": "FOREX",
     "canonical_name": "US Dollar / Franco Suizo",
     "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": -5743877.62,
-    "total_fees_usd": 166006.08,
-    "total_slippage_usd": 332012.16,
-    "net_pnl_usd": -6241895.86,
-    "net_profit_factor": 0.0,
-    "drag_cost_pct": 8.67
+    "gross_pnl_usd": -5363316.18,
+    "total_fees_usd": 247559.64,
+    "total_slippage_usd": 495119.28,
+    "net_pnl_usd": -6105995.1,
+    "net_profit_factor": 0.36,
+    "drag_cost_pct": 13.85
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T14:07:53.669986+00:00"
+  "created_at_utc": "2026-08-22T14:07:56.231531+00:00"
 }

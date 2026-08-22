@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_5M_g06",
   "run_id": "run_UR_FONDEO_USDCAD_5M",
   "strategy_id": "UR_FONDEO_USDCAD_5M",
-  "strategy_snapshot_hash": "212f6869fdf5cdba6ac978acd5cc0388a2c0e5c99640b1aed7f88c3fce0c236f",
+  "strategy_snapshot_hash": "56e4a20c3f1998bd621132fd46efb5287ecf25b2bbae41bacc3159e22d93e2f3",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b5c8383bc505a96f6064474467adbfb023e318365fdabb5b84f248cfd5a96b15",
-  "output_hash": "223ebf63230223880047c02b501ab529c153b0a83c2955e0a2651054386e75cb",
+  "input_hash": "f298911af5cca9cf40ce2c1305530cce71dbf0f530a83204d2ee7189814d9ffd",
+  "output_hash": "3e87f29667f89e6af2310cce8427a4a2561aaed79d0777383fbda42efd9296ff",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -25,7 +25,7 @@
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.0,
+        "stressed_net_pnl_usd": -0.01,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T06:02:35.863496+00:00"
+  "created_at_utc": "2026-08-22T14:08:15.566831+00:00"
 }

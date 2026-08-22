@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_CL_15M_g07",
   "run_id": "run_UR_FONDEO_CL_15M",
   "strategy_id": "UR_FONDEO_CL_15M",
-  "strategy_snapshot_hash": "77f16d7e38c173793733c317e5bfc28ad0dc9e7a2bf20c712251641172c99f56",
+  "strategy_snapshot_hash": "32be63711266b2ac1b46ae86bcc7096d4f70f256785d231da903e98027ccadda",
   "dataset_id": "ds_trad_cl_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "6a2e7881548cd5b45e68033411f19246ac86d9ed42599991de0a8ffc8c9a2915",
-  "output_hash": "e94be4500aef6f83834159aad47d24f158acf23b2675a57639b58bedfcd8065b",
+  "input_hash": "f1840d797ac0055169480fb49792b499802e7080761ea4f27b43b41d74111550",
+  "output_hash": "0caa6833ae8ef2ef2ecc2fb848b59cfbdf7fa37536ee61345c292b8aab23fb64",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -9420.10%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -24.58%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 51,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 12,
+      "CHOP_RANGING": 14,
       "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -7434.26,
-      "HIGH_VOLATILITY": -1985.84
+      "CHOP_RANGING": -20.39,
+      "HIGH_VOLATILITY": -4.19
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -9420.1
+    "total_oos_return_pct": -24.58
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:00:59.471754+00:00"
+  "created_at_utc": "2026-08-22T14:12:53.997397+00:00"
 }

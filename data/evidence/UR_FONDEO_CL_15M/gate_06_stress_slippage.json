@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_CL_15M_g06",
   "run_id": "run_UR_FONDEO_CL_15M",
   "strategy_id": "UR_FONDEO_CL_15M",
-  "strategy_snapshot_hash": "77f16d7e38c173793733c317e5bfc28ad0dc9e7a2bf20c712251641172c99f56",
+  "strategy_snapshot_hash": "32be63711266b2ac1b46ae86bcc7096d4f70f256785d231da903e98027ccadda",
   "dataset_id": "ds_trad_cl_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "e3241e1cb50eed44fff0cbf3ebc9468864ad0e4388ebd766f6526ed2e47cf58a",
-  "output_hash": "45c3a304c8d209051d237c5a7ece3c83bdd2860343ce1a54f915e3cb712c28ba",
+  "input_hash": "dffca82898e7e3ab3316cdfe120114b0bef0571bf161f7f7f60d72c299691586",
+  "output_hash": "21538521c48a6d1f1b6b81157bf2421c414ce002e392bce6de2f23ba0ebc093b",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,25 +19,25 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.1,
+        "stressed_net_pnl_usd": -0.25,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.1,
+        "stressed_net_pnl_usd": -0.25,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.1,
+        "stressed_net_pnl_usd": -0.25,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.11,
+        "stressed_net_pnl_usd": -0.26,
         "stressed_profit_factor": 0.0,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_15M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T06:00:59.438053+00:00"
+  "created_at_utc": "2026-08-22T14:12:53.964480+00:00"
 }

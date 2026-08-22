@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_15M_g07",
   "run_id": "run_UR_FONDEO_GBPUSD_15M",
   "strategy_id": "UR_FONDEO_GBPUSD_15M",
-  "strategy_snapshot_hash": "9388d5da68628607934cf86623bf8fc451178366b637ed865d79c83f154e9df5",
+  "strategy_snapshot_hash": "73c7ba6a7946957453e1d73ac008ae29f15130106e64c0ce1a6f8a470add8d64",
   "dataset_id": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b3fa16550aba1a6a73940bab89b57047e3b86805f7a5c5927b650b4df0349f3b",
-  "output_hash": "b0bed4da59ea634eab4fee6edbbdf52d32eacb67b685064d2b2dcb894b103492",
+  "input_hash": "85a6cdcbd0a91f138f69bba3a6c760faae63140f44ee59c2d87ecb30f0369282",
+  "output_hash": "111b3539ce83b2613d17a5d40f36041de70a48576f543904cbb643ecaa3a45bb",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.30%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -29.30%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 14,
+      "CHOP_RANGING": 13,
       "HIGH_VOLATILITY": 4
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.23,
-      "HIGH_VOLATILITY": -0.07
+      "CHOP_RANGING": -24.28,
+      "HIGH_VOLATILITY": -5.02
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.3
+    "total_oos_return_pct": -29.3
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:01:35.885267+00:00"
+  "created_at_utc": "2026-08-22T14:12:36.640711+00:00"
 }

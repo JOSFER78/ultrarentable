@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g10",
   "run_id": "run_UR_FONDEO_USDCHF_4H",
   "strategy_id": "UR_FONDEO_USDCHF_4H",
-  "strategy_snapshot_hash": "61d27836128a5fb80a2224875bd311e5e1334fef8991a2d23bfb134143cc3357",
+  "strategy_snapshot_hash": "ae217f224f83613bc92c1ca23e5fde4bde6e581bcee2d16cd14183d73ebc8e16",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "db674f299bf8f6fa285f6712fe6c2a3aa1fdc8d64d752cb4753b029072ac8098",
-  "output_hash": "9433fdb7b95a283901b90fae5d510dd7c237cb7967c724179c1c8e106850b8ed",
+  "input_hash": "bdf833732e63169ae596a61d7ed5b2a733c5444277e2acfd1a99cf28b34592c5",
+  "output_hash": "9e85131e4bb76dcc316efbc3579970ad629f29a2cc36036625f665949ab75a02",
   "status": "FAILED",
-  "score": 59.0,
-  "verdict": "FALLO: Consenso insuficiente (59.0/100) u objeción crítica de riesgo",
+  "score": 62.0,
+  "verdict": "FALLO: Consenso insuficiente (62.0/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 59.0,
+    "consensus_score": 62.0,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 22.6,
+        "score": 33.0,
         "findings": [
           "Activo y Timeframe: USDCHF (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.28 con beneficio neto de $-0.00.",
+          "Profit Factor OOS: 0.51 con beneficio neto de $-0.31.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 59 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 62 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 55.6,
+        "score": 58.2,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.28 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.51 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:02:37.313822+00:00"
+  "created_at_utc": "2026-08-22T14:12:08.458032+00:00"
 }

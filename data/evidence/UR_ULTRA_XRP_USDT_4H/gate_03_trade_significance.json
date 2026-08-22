@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g03",
   "run_id": "run_UR_ULTRA_XRP_USDT_4H",
   "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "1fb8148db5185d7bf23f524f16dd5abce1cc9170797b99b9e649cda7bfbc2e90",
+  "strategy_snapshot_hash": "642287115f3e2f81fff02a6ca6d5d02b6874abec06d0cbbfa0ee61950ba8f1ff",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "7d805948c0e37a788c91f496a348f403460cad0b5c21c2b34eda812eb7d14f60",
-  "output_hash": "a940bdac122e850dc638e7044836a554ef6db9d17230019fe47ad0b26714abe3",
+  "input_hash": "6bc568beb16152d44a43eef7885203ac07d77afbe778ba3f63aeac597749c07b",
+  "output_hash": "c6a871cdf54695ac8ff69358974938741f0db3680fda4ec000caf2524950e0d9",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (1001 IS / 261 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (1004 IS / 264 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 1001,
-    "trades_oos": 261,
-    "top2_outlier_dependency_pct": 11.8,
+    "trades_is": 1004,
+    "trades_oos": 264,
+    "top2_outlier_dependency_pct": 12.2,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-22T12:49:08.953366+00:00"
+  "created_at_utc": "2026-08-22T14:16:12.527757+00:00"
 }

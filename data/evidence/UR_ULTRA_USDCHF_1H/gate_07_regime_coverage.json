@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_1H_g07",
   "run_id": "run_UR_ULTRA_USDCHF_1H",
   "strategy_id": "UR_ULTRA_USDCHF_1H",
-  "strategy_snapshot_hash": "064ff3c5263de53cf8ec19aa8ee8ba7328f0e86173702f46cf65262b2df0887b",
+  "strategy_snapshot_hash": "d927d0a5ced98ef0e2666d63431553f94abac258eaf20dccf017b45013ac0b34",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "39d4d893351fb542bf5527bfb3753f925b6e4039894cc0ae0218570f6103384d",
-  "output_hash": "4fd93e1884af01d5f10c3dfee8b0b5705570c7bac6a249e3b7d8de1cb613c01c",
+  "input_hash": "34ebb41f6339d79cfa8f5a1a220e9af3fb48bd6332190b754370f45cad53c4f6",
+  "output_hash": "7eaef05a7af8e0c25db96bb0e930232f433fa40499e91c6045f12ca90a8c5b2a",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -76.04%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -485.96%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 70,
-      "HIGH_VOLATILITY": 14
+      "CHOP_RANGING": 150,
+      "HIGH_VOLATILITY": 20
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -25.69,
-      "HIGH_VOLATILITY": -50.35
+      "CHOP_RANGING": -330.06,
+      "HIGH_VOLATILITY": -155.9
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -76.04
+    "total_oos_return_pct": -485.96
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:07:03.832839+00:00"
+  "created_at_utc": "2026-08-22T14:13:36.654127+00:00"
 }

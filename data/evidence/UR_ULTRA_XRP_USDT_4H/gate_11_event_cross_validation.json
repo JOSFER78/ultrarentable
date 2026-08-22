@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g11",
   "run_id": "run_UR_ULTRA_XRP_USDT_4H",
   "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "1fb8148db5185d7bf23f524f16dd5abce1cc9170797b99b9e649cda7bfbc2e90",
+  "strategy_snapshot_hash": "642287115f3e2f81fff02a6ca6d5d02b6874abec06d0cbbfa0ee61950ba8f1ff",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "4a46c59a730d0dc040b2a3c71877e11c6ae6844075bb727d83974e0cca2b938e",
-  "output_hash": "8cdbbfc31e7f6dc45ef5a9b82c9ebb46e323fc068c5cd3739098bf31b2a89b59",
+  "input_hash": "5c17a693bb6036a8ec9c3ec8f74982b4dd16fccb462dda7c88528dd9f95cf482",
+  "output_hash": "9f6608d397bafe10e1d617fce40ee1a0dd8b4c311a1ece01eb9ff4da096d77b7",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $868145823468854528.00, Apalancamiento Pico: 1.0x, Dist. Mín. Liquidación: 84.4%, Comisiones+Funding: $130221701195768720.00)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $218129179644716992.00, Apalancamiento Pico: 1.0x, Dist. Mín. Liquidación: 84.5%, Comisiones+Funding: $51458170159286416.00)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 8.681458234688545e+17,
-    "peak_equity_usd": 8.681458234688545e+17,
+    "final_equity_usd": 2.18129179644717e+17,
+    "peak_equity_usd": 2.18129179644717e+17,
     "min_equity_usd": 682.7,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 84.35,
+    "min_distance_to_liquidation_pct": 84.46,
     "margin_call_triggered": false,
-    "total_fees_paid_usd": 1.1838336472342611e+17,
-    "total_funding_cost_usd": 1.1838336472342612e+16,
-    "execution_events_count": 261
+    "total_fees_paid_usd": 4.6780154690260376e+16,
+    "total_funding_cost_usd": 4678015469026039.0,
+    "execution_events_count": 264
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T12:49:11.111090+00:00"
+  "created_at_utc": "2026-08-22T14:16:14.646121+00:00"
 }

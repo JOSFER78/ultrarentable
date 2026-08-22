@@ -2,22 +2,30 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15M_g02",
   "run_id": "run_UR_ULTRA_USDCAD_15M",
   "strategy_id": "UR_ULTRA_USDCAD_15M",
-  "strategy_snapshot_hash": "19e71e5831d1012b5a6ea424aca0406b08f0823a6bb46832265ec2315d6853fa",
+  "strategy_snapshot_hash": "9623b8f78285d6019fbf23251fcfe629d2d3c8692274d22a90a16114ac0c4ef5",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "462451f7c2280617679a35e42635f9d63443f900c6d73a4cb6a7e777bdbacd26",
-  "output_hash": "4fa6caac3a12b1504547e8d0ff3c24371803dc75e99069eab23f60838b2d9e01",
+  "input_hash": "e42d4320ce77264fbf3f7283d47203e252185ffb43bca1d0bdc153eaa0558b13",
+  "output_hash": "c2dca293b606748948beedb212c31b75b6492aa6dbb4224baa1e7d0c5aedfd30",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
+  "verdict": "FALLO: PF Neto 0.71 < 1.10",
   "metrics": {
-    "trades_count": 4
+    "market_category": "FOREX",
+    "canonical_name": "US Dollar / Canadian Dollar",
+    "exchange": "Interbank / FTMO",
+    "gross_pnl_usd": -432208.07,
+    "total_fees_usd": 187645.14,
+    "total_slippage_usd": 375290.28,
+    "net_pnl_usd": -995143.49,
+    "net_profit_factor": 0.71,
+    "drag_cost_pct": 130.25
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T06:06:36.318084+00:00"
+  "created_at_utc": "2026-08-22T14:10:53.860687+00:00"
 }

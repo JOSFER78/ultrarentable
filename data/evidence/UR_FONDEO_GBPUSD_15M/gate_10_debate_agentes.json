@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_15M_g10",
   "run_id": "run_UR_FONDEO_GBPUSD_15M",
   "strategy_id": "UR_FONDEO_GBPUSD_15M",
-  "strategy_snapshot_hash": "9388d5da68628607934cf86623bf8fc451178366b637ed865d79c83f154e9df5",
+  "strategy_snapshot_hash": "73c7ba6a7946957453e1d73ac008ae29f15130106e64c0ce1a6f8a470add8d64",
   "dataset_id": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "dd1f127f41094ea284cb05b23728a03b8cfee906d67b0e094158fedd8f15b7fb",
-  "output_hash": "c06d1826b3e0c9671b50aae4fa2bc70d99f784a982083f2d9be29662e7cfa11e",
+  "input_hash": "b61fa2021990ff4212f5506e8c01fdf6489493fe1116f69f78fb3fcefe6a32fc",
+  "output_hash": "b5de51837ffa6496afa9c1b9c3652d2237cc2270d3fc4c3240a158e2f74ab05e",
   "status": "FAILED",
   "score": 58.2,
   "verdict": "FALLO: Consenso insuficiente (58.2/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: GBPUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.03 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.04 con beneficio neto de $-0.43.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 71 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 70 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,12 +66,12 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 55.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.03 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.04 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:01:37.691176+00:00"
+  "created_at_utc": "2026-08-22T14:12:37.541216+00:00"
 }

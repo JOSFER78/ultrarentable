@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_SI_15M_g08",
   "run_id": "run_UR_ULTRA_SI_15M",
   "strategy_id": "UR_ULTRA_SI_15M",
-  "strategy_snapshot_hash": "bd443f7bd3e69ba9296c2ad9e627f4975ee9b999fc04650f407cbdbefa05a9d9",
+  "strategy_snapshot_hash": "91a04eacc96c1ed2c81dcfa162aaa30a8462e875b2876568c71723c6e8de7446",
   "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "885d61647986c07101cfb8798046d03d2a9f21e37bd968864233734be90502a7",
-  "output_hash": "fb283776fa0a25469b48eb5cd6acf8c5e08121f4cbe1e52f9ce0474dba42279d",
+  "input_hash": "0c2fefb0daa80e15316e501367a34626b538f0d653633f3c6595a3c90f316774",
+  "output_hash": "9c6f44470c9bd7f11c30fd2696e5a2086f75c54231eeccac8506b554edd2d896",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
   "metrics": {
-    "trials_penalized": 1,
+    "trials_penalized": 3,
     "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_15M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T06:05:39.443276+00:00"
+  "created_at_utc": "2026-08-22T14:15:20.751016+00:00"
 }

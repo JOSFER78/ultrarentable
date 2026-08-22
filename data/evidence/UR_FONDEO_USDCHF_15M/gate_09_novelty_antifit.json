@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_15M_g09",
   "run_id": "run_UR_FONDEO_USDCHF_15M",
   "strategy_id": "UR_FONDEO_USDCHF_15M",
-  "strategy_snapshot_hash": "bc6e25c20319ff6d17eb3b9387ebc12cccf0bb2cae5006c9ea57c9a7d429bab7",
+  "strategy_snapshot_hash": "73761612097c9ecaaa85ba82575f11dcd7014d0363dd52b3965f3099681485a2",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "015bf7b45a6459933298ea26f2db2a0f80f649ada9d36eb86fd409c9b7a451e1",
-  "output_hash": "b3649355e798271d8a3c32ddac106abe27ad49bef028b6aaedd1b92f6709a9c4",
-  "status": "PASSED",
-  "score": 84.8,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 15.5 trades/param, Estabilidad Vecindario: 106.5%, Re-backtest PFs: [0.16, 0.22, 0.42, 0.35])",
+  "input_hash": "8018577eeada296b0381a462c3ce23f155f2907df56bd7d097505b8e4e0e28c9",
+  "output_hash": "321b9a13f8109433360ab5aaa1b769c23f5212e0dfe0d0d76c37dbf164f0b8e4",
+  "status": "FAILED",
+  "score": 33.1,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.9 o Estabilidad 82.6% < 60.0%)",
   "metrics": {
-    "parameters_count": 4,
-    "degrees_of_freedom_ratio": 15.5,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 7.9,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 106.5,
+    "parameter_neighborhood_stability_pct": 82.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.16,
-      0.22,
+      0.18,
+      0.17,
       0.42,
-      0.35
+      0.42
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T06:02:31.887568+00:00"
+  "created_at_utc": "2026-08-22T14:09:02.931048+00:00"
 }

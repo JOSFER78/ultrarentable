@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_5M_g10",
   "run_id": "run_UR_FONDEO_USDCAD_5M",
   "strategy_id": "UR_FONDEO_USDCAD_5M",
-  "strategy_snapshot_hash": "212f6869fdf5cdba6ac978acd5cc0388a2c0e5c99640b1aed7f88c3fce0c236f",
+  "strategy_snapshot_hash": "56e4a20c3f1998bd621132fd46efb5287ecf25b2bbae41bacc3159e22d93e2f3",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "83bf03c499b4e2a95fc107d43b9a37df59f6d13af7b6573c232dbc98789d41df",
-  "output_hash": "b9a7272a09c0e7f3577650a5e0fa3114192e7f8a859284e6cb7945bdc48f7c1f",
+  "input_hash": "bc4168dd70783209a710dc46818f8c13e7a778e64f13eae54a0cabaa693bf303",
+  "output_hash": "0faf5a08ee7273f190555384225000048a2dea1d8928156074a6d6a3faa33e3b",
   "status": "FAILED",
   "score": 58.2,
   "verdict": "FALLO: Consenso insuficiente (58.2/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCAD (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.17 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.16 con beneficio neto de $-0.67.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 126 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 123 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,12 +66,12 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 55.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.17 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.16 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:02:40.525274+00:00"
+  "created_at_utc": "2026-08-22T14:08:17.211065+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SI_5M_g07",
   "run_id": "run_UR_ULTRA_SI_5M",
   "strategy_id": "UR_ULTRA_SI_5M",
-  "strategy_snapshot_hash": "0eda1ce22039b6971555789a9805e7b04652b4b5d8d7b538e88943e0947b0d85",
+  "strategy_snapshot_hash": "56614a9a911a4e9ea27f1bca3f46c543bf6fc347062b2bab235d1716a3cea608",
   "dataset_id": "ds_trad_si_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "8702085750330ba9cac6f85441f346463f47324f85b3f3a53cd37d30a5f55b68",
-  "output_hash": "3a5e40f69449a3a8a7ab77c603fd9f808be26380b79b961c6785f4f7f45d5aef",
+  "input_hash": "7287ad7ed3fcb0885080987487d98bd4b28ff6b21eb44cd7d1b404b4d0f6486c",
+  "output_hash": "c55b1bdca57b6e30336a8ba01264dffe3ef801bd444d1675aafac98e492684b6",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -63.49%)",
+  "score": 55.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: +48.71%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 2,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 1,
+      "CHOP_RANGING": 13,
       "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -63.49,
+      "CHOP_RANGING": 48.71,
       "HIGH_VOLATILITY": 0.0
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 1,
-    "total_oos_return_pct": -63.49
+    "total_oos_return_pct": 48.71
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:05:47.843831+00:00"
+  "created_at_utc": "2026-08-22T14:15:41.783497+00:00"
 }

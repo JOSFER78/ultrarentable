@@ -180,15 +180,15 @@ def list_candidates(
                 cand_tier_label = "🏆 Producción Certificada (11/11)"
             elif passed_count in (9, 10):
                 cand_tier = "TIER_2_NEAR_CERTIFIED"
-                cand_tier_label = "💎 Diamante en Bruto (9-10/11)"
-            elif passed_count in (7, 8):
+                cand_tier_label = "💎 Diamante en I+D (9-10/11)"
+            elif passed_count is not None and passed_count >= 5:
                 cand_tier = "TIER_3_INCUBATOR"
-                cand_tier_label = "🧪 Incubadora de I+D (7-8/11)"
+                cand_tier_label = "🧪 Incubadora de I+D (5-8/11)"
             else:
                 cand_tier = "TIER_4_REJECTED"
-                cand_tier_label = "❌ Rechazada Estructural"
+                cand_tier_label = "❌ Rechazada Estructural (<5/11)"
         else:
-            cand_tier_label = sc.get("tier_label") or ("🏆 Producción Certificada" if cand_tier == "TIER_1_CERTIFIED" else ("💎 Diamante en Bruto" if cand_tier == "TIER_2_NEAR_CERTIFIED" else "🧪 Incubadora de I+D"))
+            cand_tier_label = sc.get("tier_label") or ("🏆 Producción Certificada" if cand_tier == "TIER_1_CERTIFIED" else ("💎 Diamante en I+D" if cand_tier == "TIER_2_NEAR_CERTIFIED" else ("🧪 Incubadora de I+D" if cand_tier == "TIER_3_INCUBATOR" else "❌ Rechazada Estructural")))
 
         # Filtro de Tier si fue solicitado
         if tier and tier.upper() != "ALL":

@@ -229,16 +229,23 @@ export default function ApprovedStrategiesAndGatesHubPage() {
     );
   });
 
-  // Re-evaluación en lote al motor v3.0.0
+  const tier4Rejected = candidates.filter((c) => {
+    const gCount = c.gates_passed_count ?? 0;
+    return (
+      c.tier === "TIER_4_REJECTED" || (gCount < 5 && c.tier !== "TIER_1_CERTIFIED" && c.tier !== "TIER_2_NEAR_CERTIFIED" && c.tier !== "TIER_3_INCUBATOR")
+    );
+  });
+
+  // Re-evaluación en lote al motor v3.2.0
   const handleRevalidateAll = async () => {
     if (revalidating) return;
     setRevalidating(true);
-    setRevalidationProgress(`Iniciando auditoría y re-evaluación del catálogo al Motor v${version || "3.0.0"}...`);
+    setRevalidationProgress(`Iniciando auditoría y re-evaluación del catálogo al Motor v${version || "3.2.0"}...`);
     try {
       const res = await fetch("/api/v1/candidates/revalidate-legacy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ target_version: version || "3.0.0", force_rebacktest: true }),
+        body: JSON.stringify({ target_version: version || "3.2.0", force_rebacktest: true }),
       });
       if (res.ok) {
         setRevalidationProgress("Re-evaluación completada exitosamente.");
@@ -270,14 +277,14 @@ export default function ApprovedStrategiesAndGatesHubPage() {
             </Link>
             <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
             <span style={{ fontSize: "11px", fontWeight: 800, color: "#10b981", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-              PUNTO 5 · ESTRATEGIAS APROBADAS & HUB DE 11 GATES
+              PUNTO 5 · ESTRATEGIAS APROBADAS & HUB DE COMPUERTAS
             </span>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-            🏆 Registro de Certificación Oficial & 11 Gates Hub
+            🏆 Registro de Certificación Oficial (Tier 1)
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
-            Estrategias 100% aprobadas en producción bajo la <strong>Versión Oficial v{version || "3.0.0"}</strong> y especificación interactiva de compuertas.
+            Estrategias 100% aprobadas en producción bajo la <strong>Versión Oficial v{version || "3.2.0"}</strong> y especificación interactiva de compuertas.
           </p>
         </div>
 
@@ -287,7 +294,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
             <span style={{ fontSize: "14px" }}>⚡</span>
             <div>
               <div style={{ fontSize: "9px", color: "#6ee7b7", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>MOTOR ACTIVO</div>
-              <div style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>v{version || "3.0.0"} (Actualizada)</div>
+              <div style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>v{version || "3.2.0"} (Actualizada)</div>
             </div>
           </div>
 
@@ -298,15 +305,16 @@ export default function ApprovedStrategiesAndGatesHubPage() {
               padding: "10px 18px",
               borderRadius: "8px",
               background: revalidating ? "rgba(100, 116, 139, 0.4)" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
-              border: "1px solid rgba(59, 130, 246, 0.5)",
+              border: "none",
               color: "#ffffff",
-              fontSize: "12.5px",
               fontWeight: 800,
+              fontSize: "12.5px",
               cursor: revalidating ? "not-allowed" : "pointer",
               display: "flex",
               alignItems: "center",
               gap: "8px",
-              boxShadow: "0 4px 14px rgba(37, 99, 235, 0.3)",
+              boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)",
+              transition: "all 0.2s",
             }}
           >
             <span>{revalidating ? "⏳" : "⚡"}</span>
@@ -316,16 +324,16 @@ export default function ApprovedStrategiesAndGatesHubPage() {
       </div>
 
       {revalidationProgress && (
-        <div style={{ background: "rgba(37, 99, 235, 0.15)", border: "1px solid rgba(59, 130, 246, 0.3)", borderRadius: "8px", padding: "10px 16px", marginBottom: "20px", fontSize: "12px", color: "#93c5fd", display: "flex", alignItems: "center", gap: "8px" }}>
+        <div style={{ padding: "10px 16px", background: "rgba(37, 99, 235, 0.15)", border: "1px solid rgba(37, 99, 235, 0.3)", borderRadius: "8px", marginBottom: "20px", fontSize: "12.5px", color: "#93c5fd", display: "flex", alignItems: "center", gap: "8px" }}>
           <span>🔄</span> {revalidationProgress}
         </div>
       )}
 
-      {/* 2. TARJETAS DE ESTADO DEL CATÁLOGO */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px", marginBottom: "24px" }}>
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "12px", padding: "16px" }}>
+      {/* 2. RESUMEN DE COMPUERTAS & 4 TIERS */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "12px", marginBottom: "24px" }}>
+        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.4)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>
-            TIER 1 · CERTIFICADAS OFICIALES (11/11 GATES)
+            🏆 TIER 1 · CERTIFICADAS (11/11 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {approvedStrategies.length}
@@ -337,7 +345,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
 
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-            TIER 2 · DIAMANTES EN REVISIÓN (9-10 GATES)
+            💎 TIER 2 · DIAMANTES EN I+D (9-10 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {tier2Diamonds.length}
@@ -349,13 +357,25 @@ export default function ApprovedStrategiesAndGatesHubPage() {
 
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(250, 204, 21, 0.3)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
-            TIER 3 · INCUBADORA DE I+D (7-8 GATES)
+            🧪 TIER 3 · INCUBADORA DE I+D (5-8 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {tier3Incubator.length}
           </div>
           <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
             En reprogramación guiada por microestructura y debate de agentes IA.
+          </div>
+        </div>
+
+        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(244, 63, 94, 0.3)", borderRadius: "12px", padding: "16px" }}>
+          <div style={{ fontSize: "11px", fontWeight: 800, color: "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
+            ❌ TIER 4 · RECHAZADAS (&lt;5 GATES)
+          </div>
+          <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
+            {tier4Rejected.length}
+          </div>
+          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
+            Descartadas por fallos estructurales o sin ventaja estadística.
           </div>
         </div>
       </div>
@@ -539,14 +559,26 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                   </thead>
                   <tbody>
                     {approvedStrategies.map((s) => {
-                      const monRoi = s.metrics?.out_of_sample?.monthly_roi_pct ?? (s.metrics?.out_of_sample?.net_profit_usd ? (s.metrics.out_of_sample.net_profit_usd / 1000.0 * 100.0 / 1.9) : 24.5);
+                      const dur = s.duration_info;
+                      const oosMonths = Math.max(1.0, dur?.oos_months ?? 8.0);
+                      const baseCap = s.route === "ULTRA" ? 1000.0 : 50000.0;
+                      const rawNetProfit = s.metrics?.out_of_sample?.net_profit_usd ?? s.net_profit_oos ?? 0;
+
+                      let monRoi = s.metrics?.out_of_sample?.monthly_roi_pct;
+                      if (monRoi === undefined || monRoi === null || isNaN(monRoi) || monRoi > 80) {
+                        if (rawNetProfit > 0) {
+                          const endingEquity = baseCap + rawNetProfit;
+                          monRoi = (Math.pow(endingEquity / baseCap, 1.0 / oosMonths) - 1.0) * 100.0;
+                        } else {
+                          monRoi = (rawNetProfit / baseCap / oosMonths) * 100.0;
+                        }
+                      }
                       const annRoi = s.metrics?.out_of_sample?.annualized_roi_pct ?? (monRoi * 12.0);
                       const pfIs = s.metrics?.in_sample?.profit_factor ?? 1.18;
                       const pfOos = s.metrics?.out_of_sample?.profit_factor ?? s.profit_factor_oos ?? 1.34;
                       const wr = s.metrics?.out_of_sample?.win_rate_pct ?? s.metrics?.in_sample?.win_rate_pct ?? s.win_rate_pct ?? 48.5;
                       const tradesOos = s.metrics?.out_of_sample?.trades ?? s.trades_oos ?? 68;
                       const dd = s.metrics?.out_of_sample?.max_drawdown_pct ?? s.max_dd_oos_pct ?? 69.1;
-                      const dur = s.duration_info;
 
                       return (
                         <tr key={s.candidate_id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
@@ -613,7 +645,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                               border: "1px solid rgba(52, 211, 153, 0.4)",
                               fontFamily: "var(--font-mono, monospace)",
                             }}>
-                              🟢 v{s.engine_version || version || "3.0.0"}
+                              🟢 v{s.engine_version || version || "3.2.0"}
                             </span>
                           </td>
                           <td style={{ padding: "12px", textAlign: "right" }}>

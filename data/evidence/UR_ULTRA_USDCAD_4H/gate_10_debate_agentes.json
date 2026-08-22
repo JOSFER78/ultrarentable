@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g10",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "132113a4f44c334b4a40b837bf48e7e8b53058b740e220d1764c87baa18fb49c",
+  "strategy_snapshot_hash": "8723d1c5487a3641fc9ff3e38a6549ab728faa3043def10d253dceedab4138a0",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "0699a4d97642523faec4590f965fe0494a4ac8d5f4084a3cb84371933bbf4532",
-  "output_hash": "9b924598c8522d81d596ec3a75f91dfdc4a276e52667bce09819aaadbee012cc",
+  "input_hash": "1552e126f91ec60fee3e89dd41bd3baa42c4697edd542aedf62908c63dfb52ed",
+  "output_hash": "1b7a29325993949d01fca96c0250c2d67886594f0f8bba450eab9dbf00398c8e",
   "status": "FAILED",
-  "score": 59.0,
-  "verdict": "FALLO: Consenso insuficiente (59.0/100) u objeción crítica de riesgo",
+  "score": 58.7,
+  "verdict": "FALLO: Consenso insuficiente (58.7/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 59.0,
+    "consensus_score": 58.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 55.0,
+        "score": 54.1,
         "findings": [
           "Activo y Timeframe: USDCAD (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.00 con beneficio neto de $-414.79.",
+          "Profit Factor OOS: 0.98 con beneficio neto de $-459.82.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 196 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 205 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.12 USD.",
+          "Beneficio medio por operación: $-2.24 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 56.9,
+        "score": 56.6,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 1.00 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 0.98 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T12:53:44.844571+00:00"
+  "created_at_utc": "2026-08-22T14:21:05.421793+00:00"
 }

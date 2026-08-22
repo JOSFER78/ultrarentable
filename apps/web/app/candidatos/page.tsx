@@ -440,10 +440,11 @@ export default function CandidatosFSMPage() {
 
   const tier1Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_1_CERTIFIED" || isApprovedStatus(c.status, c.tier)).length, [candidates]);
   const tier2Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 10 || c.gates_passed_count === 9).length, [candidates]);
-  const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || c.gates_passed_count === 8 || c.gates_passed_count === 7).length, [candidates]);
+  const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || (c.gates_passed_count !== undefined && c.gates_passed_count >= 5 && c.gates_passed_count <= 8)).length, [candidates]);
+  const tier4Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_4_REJECTED" || (c.gates_passed_count !== undefined && c.gates_passed_count < 5)).length, [candidates]);
   const approvedCount = tier1Count;
   const discoveryCount = useMemo(() => tier2Count + tier3Count, [tier2Count, tier3Count]);
-  const rejectedCount = useMemo(() => candidates.filter((c) => isCandidateRejected(c.status, c.tier)).length, [candidates]);
+  const rejectedCount = tier4Count;
 
   const top5Ultra = useMemo(() => {
     const sorted = [...candidates.filter((c) => c.route === "ULTRA" && !isCandidateRejected(c.status))].sort((a, b) => {
@@ -1416,8 +1417,9 @@ ${entryLogic}`;
                   {[
                     { id: "ALL", label: `🌐 TODOS LOS TIERS` },
                     { id: "TIER_1_CERTIFIED", label: `🏆 TIER 1: 11/11 (${tier1Count})` },
-                    { id: "TIER_2_NEAR_CERTIFIED", label: `💎 TIER 2: DIAMANTES BRUTO 9-10 (${tier2Count})` },
-                    { id: "TIER_3_INCUBATOR", label: `🧪 TIER 3: INCUBADORA IA 7-8 (${tier3Count})` },
+                    { id: "TIER_2_NEAR_CERTIFIED", label: `💎 TIER 2: DIAMANTES I+D 9-10 (${tier2Count})` },
+                    { id: "TIER_3_INCUBATOR", label: `🧪 TIER 3: INCUBADORA I+D 5-8 (${tier3Count})` },
+                    { id: "TIER_4_REJECTED", label: `❌ TIER 4: DESCARTADAS <5 (${tier4Count})` },
                   ].map((tf) => (
                     <button
                       key={tf.id}

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_15M_g07",
   "run_id": "run_UR_FONDEO_USDCAD_15M",
   "strategy_id": "UR_FONDEO_USDCAD_15M",
-  "strategy_snapshot_hash": "2b3eb763c4e5d58abeafb3365b1a13f86da5bdaace0b2ebd61731333df262611",
+  "strategy_snapshot_hash": "6a4c153d4f54c92d3ef03ef9cb5c6d289d5c3b28c7fd1e58d247dd5bae91d2de",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "3066fbddb6a2d2e238e3caafd9cf3a4b40d216d880a09d97b976297f839a3eea",
-  "output_hash": "6694602d719b4113917eb520d72ce29d62fe7910e47f69f0e9446cb06cd0ad1a",
+  "input_hash": "754fb0a5a4fda37d1daff6dc477df03217a73a4af841f9e3177116317bb5fd71",
+  "output_hash": "e247d6d1f6644b176e8e44fd682e0a50812aedd3a9be333b8fec4979bb8bfec9",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.23%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -1.71%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 7,
+      "CHOP_RANGING": 6,
       "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.2,
-      "HIGH_VOLATILITY": -0.03
+      "CHOP_RANGING": -1.71,
+      "HIGH_VOLATILITY": -0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.23
+    "total_oos_return_pct": -1.71
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:02:15.856715+00:00"
+  "created_at_utc": "2026-08-22T14:14:50.505607+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15M_g07",
   "run_id": "run_UR_ULTRA_USDCAD_15M",
   "strategy_id": "UR_ULTRA_USDCAD_15M",
-  "strategy_snapshot_hash": "19e71e5831d1012b5a6ea424aca0406b08f0823a6bb46832265ec2315d6853fa",
+  "strategy_snapshot_hash": "9623b8f78285d6019fbf23251fcfe629d2d3c8692274d22a90a16114ac0c4ef5",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "d84029526030d006424b700777f7225d8055176af625b43cf29142602ea02d7a",
-  "output_hash": "55a0dbfe69264d61341157b921c2d0e236541dbfbef42b8f3f2c83e17f406de1",
+  "input_hash": "c6ab12585482013fc4499d13e0146edacb2835ae9c344b80877d232c40b157f0",
+  "output_hash": "d1f7f3f2bf2c27339ace4c0fc5187ea593ad95291c70b82ad937b717ec4bca2d",
   "status": "FAILED",
-  "score": 55.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: +9.46%)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -55.43%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 4,
+      "CHOP_RANGING": 26,
       "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 9.46,
+      "CHOP_RANGING": -55.43,
       "HIGH_VOLATILITY": 0.0
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_return_pct": 9.46
+    "total_oos_return_pct": -55.43
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:06:36.459969+00:00"
+  "created_at_utc": "2026-08-22T14:10:54.179265+00:00"
 }
