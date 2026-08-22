@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "e3ab60c0a9455236a43806d527330a25b05bc6309f45483929c9f0455044b7b6",
-  "output_hash": "2fa851edc3e3a3b59139b2b19a49dbd9c19fe86984a632b195f1779feaa10e6c",
-  "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +44.86%)",
+  "input_hash": "5e002533ac15278f8b679444900bc93e14b6850d5d2624838e9e9a8dd0702d97",
+  "output_hash": "28277d99870f04219b5460ea168b3de4a8147ef48424513133d64b1479475b44",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -23911.46%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 210,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 127
     },
     "regime_trades_count": {
-      "BULL_TREND": 9,
-      "BEAR_TREND": 6,
-      "CHOP_RANGING": 6,
-      "HIGH_VOLATILITY": 7
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 0,
+      "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
-      "BULL_TREND": 135.17,
-      "BEAR_TREND": -54.18,
-      "CHOP_RANGING": -20.68,
-      "HIGH_VOLATILITY": -15.45
+      "BULL_TREND": 0.0,
+      "BEAR_TREND": 0.0,
+      "CHOP_RANGING": 0.0,
+      "HIGH_VOLATILITY": -23911.46
     },
-    "regimes_profitable_count": 1,
-    "regimes_active_count": 4,
-    "total_oos_return_pct": 44.86
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 1,
+    "total_oos_return_pct": -23911.46
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:17:58.353237+00:00"
+  "created_at_utc": "2026-08-22T01:46:07.883230+00:00"
 }

@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "276247d977b7ad218c8da554285b7cfb016f4f6bcc362b1b55b10bda29403715",
-  "output_hash": "e5a70cd45ff7753b625cdc2b3683086dfe22716609bd5666471590fccb66613d",
+  "input_hash": "f278a7f6f841b9833de3897ff1ccf150112f82a801ce740ba82198d36805e106",
+  "output_hash": "049b66458854f8714f77af4434673e1248317190af3b687a71719c3854176dac",
   "status": "FAILED",
-  "score": 27.7,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 92.5%, Peak Lev: 14.8x > 100.0x)",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 2921.0x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 432.31,
+    "final_equity_usd": -305.84,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": 432.31,
-    "peak_leverage_used": 14.85,
+    "min_equity_usd": -305.84,
+    "peak_leverage_used": 2921.01,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 92.46,
-    "margin_call_triggered": false,
-    "total_fees_paid_usd": 525.69,
-    "total_funding_cost_usd": 52.57,
-    "execution_events_count": 183
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 1200.54,
+    "total_funding_cost_usd": 120.05,
+    "execution_events_count": 379
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-21T22:27:10.839990+00:00"
+  "created_at_utc": "2026-08-22T01:46:07.294558+00:00"
 }

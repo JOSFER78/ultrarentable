@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "0e4219cdb0d18c27f862a1062bcbf81a518d41b2630d90a8901fedd98e45a824",
-  "output_hash": "a47650af3784557763bd668093819d808dc4bc5f328bf44d4a921204ae6482e8",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 28.2 trades/param, Estabilidad Vecindario: 119.3%, Re-backtest PFs: [1.07, 1.04, 1.18, 1.34])",
+  "input_hash": "290639df293c2743fdcbcf143caddd626aa4b359fb46085d66d30c245f69026b",
+  "output_hash": "440457fe11cfa01c3b0c501e75d079bde2a2210b00481552b0e91b679900029a",
+  "status": "FAILED",
+  "score": 40.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 0.5 o Estabilidad 100.0% < 50.0%)",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 28.2,
+    "degrees_of_freedom_ratio": 0.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 119.3,
+    "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.07,
-      1.04,
-      1.18,
-      1.34
+      0.0,
+      0.0,
+      0.0,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:18:04.631229+00:00"
+  "created_at_utc": "2026-08-22T01:47:07.238069+00:00"
 }

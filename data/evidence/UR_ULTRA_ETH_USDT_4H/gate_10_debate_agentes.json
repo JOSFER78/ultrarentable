@@ -10,43 +10,43 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "e8ad39f0821a64f5e04d36bd4c1f6988cb5a4a6ce8829610a3858486853383d2",
-  "output_hash": "4d7ba65bbb0fa137d1483fa8d5845ff65443b0529bb50f21c4958b6709a7d194",
-  "status": "FAILED",
-  "score": 37.1,
-  "verdict": "FALLO: Consenso insuficiente (37.1/100) u objeción crítica de riesgo",
+  "input_hash": "b587063aa43eec4b8722f70332ac5fec8cb021923ee4035df6576099f20b9890",
+  "output_hash": "bbeeb38477a033724f544d4786b6bfc2307c1b25bce710781b29378dda0cda5b",
+  "status": "PASSED",
+  "score": 63.6,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (63.6/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 37.1,
+    "consensus_score": 63.6,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 57.2,
+        "score": 72.5,
         "findings": [
           "Activo y Timeframe: ETH-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.05 con beneficio neto de $2.88.",
+          "Profit Factor OOS: 1.39 con beneficio neto de $39.88.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 65.5,
         "findings": [
-          "Drawdown Máximo Observado: 91.6% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 73.3% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 331 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1041 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.01 USD.",
+          "Beneficio medio por operación: $0.04 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 41.8,
+        "score": 62.0,
         "objections": [
-          "Alerta de Drawdown: DD (91.6%) consume más del 90% del margen tolerable."
+          "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:18:00.796188+00:00"
+  "created_at_utc": "2026-08-22T01:46:19.692507+00:00"
 }

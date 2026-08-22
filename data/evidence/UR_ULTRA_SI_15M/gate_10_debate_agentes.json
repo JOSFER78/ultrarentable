@@ -10,69 +10,15 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a6bc4f6723c93dabea2c054458cfed500792c82d64d61213eeb2003e10129674",
-  "output_hash": "19ceaf150d4f17e6ea3787891e21adbdddbc56da828889ec36928873ac3fef2c",
+  "input_hash": "c672ff60325342b17e2fcc711112a1ecec0c5dc527ac1f8fc05b4bcd7e250595",
+  "output_hash": "f16b9f8a7ca92d9d91d0efd8b2e5a99ecc7aa0863027ea79904231b60d0ad000",
   "status": "FAILED",
-  "score": 36.0,
-  "verdict": "FALLO: Consenso insuficiente (36.0/100) u objeción crítica de riesgo",
+  "score": 0.0,
+  "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para auditoría multi-especialista",
   "metrics": {
-    "consensus_score": 36.0,
-    "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
-    "specialists": [
-      {
-        "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 53.6,
-        "findings": [
-          "Activo y Timeframe: SI (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.97 con beneficio neto de $2.31.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
-        ],
-        "approved": false
-      },
-      {
-        "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
-        "findings": [
-          "Drawdown Máximo Observado: 92.4% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
-        ],
-        "approved": false
-      },
-      {
-        "agent": "Statistical Inference Specialist",
-        "role": "Significancia de Muestra y Outlier Risk",
-        "score": 100.0,
-        "findings": [
-          "Muestra fuera de muestra: 113 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: ALTO."
-        ],
-        "approved": true
-      },
-      {
-        "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
-        "findings": [
-          "Beneficio medio por operación: $0.02 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
-        ],
-        "approved": false
-      },
-      {
-        "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 40.9,
-        "objections": [
-          "Alerta de Drawdown: DD (92.4%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.97 cercano al umbral de equilibrio (1.05)."
-        ],
-        "approved": false
-      }
-    ]
+    "trades_count": 0,
+    "verdict_status": "BLOCKED_NO_TRADES"
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:18:04.634328+00:00"
+  "created_at_utc": "2026-08-22T01:47:07.249339+00:00"
 }

@@ -10,22 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "eaf2fb7bdddae94f32db8981fb515cb78327c4fa09bb94af29e7f2af083b323a",
-  "output_hash": "f6b94b10140e90a2889428462e9fa423e97232ca92de5fdc0e5ba425e68b391a",
-  "status": "PASSED",
-  "score": 46.2,
-  "verdict": "PASSED: PF Neto tras costes = 1.46 (COMMODITIES)",
+  "input_hash": "f045ff00dffc8a9266378a48cde7a564e13310f574aa14a1f4b70beff12acca9",
+  "output_hash": "71b7a0515276b0224f266a75204d21177f2d57f69190d645a7aaa61e2a41793b",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "COMMODITIES",
-    "canonical_name": "Plata COMEX Silver Futures",
-    "exchange": "COMEX Globex",
-    "gross_pnl_usd": 294953.2,
-    "total_fees_usd": 1470.1,
-    "total_slippage_usd": 29401.94,
-    "net_pnl_usd": 264081.16,
-    "net_profit_factor": 1.46,
-    "drag_cost_pct": 10.47
+    "trades_count": 1
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:17:58.302695+00:00"
+  "created_at_utc": "2026-08-22T01:46:07.847896+00:00"
 }

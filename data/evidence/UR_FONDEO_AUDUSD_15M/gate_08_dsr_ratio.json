@@ -1,11 +1,24 @@
 {
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g08",
+  "run_id": "run_UR_FONDEO_AUDUSD_15M",
+  "strategy_id": "UR_FONDEO_AUDUSD_15M",
+  "strategy_snapshot_hash": "060d12395a8ebd61b68b9e5eb9609220ddaf8eb08897c6ff63a534d880442380",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
-  "name": "DSR_RATIO",
-  "passed": false,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "b299c722055cd6632d97e3b0be5463378bcc47fd648b4a2203dd0e74e1e83673",
+  "output_hash": "c12184583b344be8541a9b1a836761dd7b844e3883f2b9727b5ba8d1228a4787",
+  "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Desviaci\u00f3n est\u00e1ndar nula en retornos",
-  "evidence": {
+  "verdict": "RECHAZADO: Desviación estándar nula en retornos",
+  "metrics": {
     "raw_sharpe": 0.0,
     "dsr_probability": 0.0
-  }
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-22T01:46:10.261676+00:00"
 }

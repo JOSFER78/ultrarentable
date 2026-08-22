@@ -11,10 +11,10 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "1c5eec9bcfd4f05c19470c4abb66ddf3c58a8ed9a3fe3b8892184c0f41403ffd",
-  "output_hash": "383dd275d2760b54f7886a05e40a50eca12a77ce00faf274c5479c22499b1246",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -18.79%)",
+  "output_hash": "bfdc2b47b8f2f7aa717c8c8a0c00a44fb1925b5cf54ca8cb6c0a3de095807dc7",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +34.78%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -5.82,
-      "HIGH_VOLATILITY": -12.97
+      "CHOP_RANGING": 51.95,
+      "HIGH_VOLATILITY": -17.17
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -18.79
+    "total_oos_return_pct": 34.78
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:25:55.117024+00:00"
+  "created_at_utc": "2026-08-22T01:47:08.687663+00:00"
 }

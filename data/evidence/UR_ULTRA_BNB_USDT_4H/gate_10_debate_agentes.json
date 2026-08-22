@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "f514293c00df719a8b813ae530f0a4aaaa4446e44c554aeb3f726448a60d2e8e",
-  "output_hash": "f0638e45a2ef19303ed85b082cc47cd8a17629399ab5dfe0c9a6a3e96d78914a",
-  "status": "PASSED",
-  "score": 58.6,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (58.6/100 · 5/5 Evaluadores Conformes)",
+  "input_hash": "5b2199e782762ee485ff8fc7f7f34a9c2f7a905853653da26ec42179acc0e5c1",
+  "output_hash": "810f5dc49416fbd95ccfc089fdbb4f5a887667b8f311162acfbd98ba33694471",
+  "status": "FAILED",
+  "score": 39.9,
+  "verdict": "FALLO: Consenso insuficiente (39.9/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 58.6,
+    "consensus_score": 39.9,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.4,
+        "score": 67.2,
         "findings": [
           "Activo y Timeframe: BNB-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.12 con beneficio neto de $4.42.",
+          "Profit Factor OOS: 1.27 con beneficio neto de $64.67.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 61.0,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 82.9% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 92.9% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 284 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1009 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.02 USD.",
+          "Beneficio medio por operación: $0.06 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 57.8,
+        "score": 44.3,
         "objections": [
-          "Alerta de Drawdown: DD (82.9%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (92.9%) consume más del 90% del margen tolerable."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:22:37.783206+00:00"
+  "created_at_utc": "2026-08-22T01:45:44.001776+00:00"
 }

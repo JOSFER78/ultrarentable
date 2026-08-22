@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "77b47a00ebf3974a1c28489eae04dda9b2ca12e15bce95caef3b607e4485f174",
-  "output_hash": "f2e46f7d40f80cf019da75ca570dacedd05e94ce9c3069275767c6ec49b4a2f6",
+  "input_hash": "74f5129a0e7eff3197ae4f0b7e9aaf6744fc53badb3bd1553208790ea28733ec",
+  "output_hash": "7d639981c9bab1b8ad6a76f6240980faae95781cb9cf8edd2712cdfa83b6371e",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 5.34,
-        "stressed_profit_factor": 1.49,
+        "stressed_net_pnl_usd": 69.82,
+        "stressed_profit_factor": 3.87,
         "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 5.02,
-        "stressed_profit_factor": 1.45,
+        "stressed_net_pnl_usd": 68.24,
+        "stressed_profit_factor": 3.66,
         "survived": true
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 4.65,
-        "stressed_profit_factor": 1.41,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 66.56,
+        "stressed_profit_factor": 3.46,
         "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 4.04,
-        "stressed_profit_factor": 1.34,
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 63.49,
+        "stressed_profit_factor": 3.15,
         "survived": true
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:18:02.751133+00:00"
+  "created_at_utc": "2026-08-22T01:46:39.833681+00:00"
 }

@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b93ebfd339f8714efcc108d9a0a01d0b20311474b7c3ccb574410c313553aac2",
-  "output_hash": "160a5ee59d3f13eff1cef794983e81624b9837edeea8d3c8c7c2d8b1a36515e4",
-  "status": "PASSED",
-  "score": 89.8,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $820.57, Apalancamiento Pico: 5.0x, Dist. Mín. Liquidación: 97.5%, Comisiones+Funding: $182.31)",
+  "input_hash": "bfd999e0aa7fa78dbc7e8ed12f6a44e7e6967fd6b21bec1abc62a905b59cd16c",
+  "output_hash": "ff5ffc368160fa08aa6d409dbea0ab45f22ea6f2ad106c4ff12adeb42703e8cd",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 4283.0x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 820.57,
+    "final_equity_usd": -45.27,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": 820.57,
-    "peak_leverage_used": 4.99,
+    "min_equity_usd": -45.27,
+    "peak_leverage_used": 4282.97,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 97.49,
-    "margin_call_triggered": false,
-    "total_fees_paid_usd": 165.74,
-    "total_funding_cost_usd": 16.57,
-    "execution_events_count": 89
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 959.61,
+    "total_funding_cost_usd": 95.96,
+    "execution_events_count": 232
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-21T22:18:00.797494+00:00"
+  "created_at_utc": "2026-08-22T01:46:19.708602+00:00"
 }

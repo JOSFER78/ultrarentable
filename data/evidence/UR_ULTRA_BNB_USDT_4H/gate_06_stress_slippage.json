@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "0bb41af025b7c882efabc2da4f8e8c37f408d790a95c92511fccaa150b589d3d",
-  "output_hash": "81113b321ba2599c887e56b4c468875c4583d494f87156af802feed8ef61b825",
+  "input_hash": "51917396de64decc1ac657f5c09ceec0f9cc0c5c69bc63dd40cf562b08b667e0",
+  "output_hash": "aca32fcaa36c86de830dfebddf113673f494588b040c1c4dd93568cfd15750de",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 4.39,
-        "stressed_profit_factor": 2.38,
+        "stressed_net_pnl_usd": 64.55,
+        "stressed_profit_factor": 5.71,
         "survived": true
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 4.21,
-        "stressed_profit_factor": 2.26,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 63.2,
+        "stressed_profit_factor": 5.26,
         "survived": true
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 4.01,
-        "stressed_profit_factor": 2.14,
+        "stressed_net_pnl_usd": 61.78,
+        "stressed_profit_factor": 4.86,
         "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 3.66,
-        "stressed_profit_factor": 1.95,
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 59.14,
+        "stressed_profit_factor": 4.25,
         "survived": true
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:22:37.247194+00:00"
+  "created_at_utc": "2026-08-22T01:45:43.040893+00:00"
 }

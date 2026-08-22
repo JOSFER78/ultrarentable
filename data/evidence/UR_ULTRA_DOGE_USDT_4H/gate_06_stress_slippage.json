@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "bf1526f717f5fe15a27d5a20b4aa4e7032c1ef51cde102b5a644e4600b2fdfe7",
-  "output_hash": "ad4465a80e463fabd02bdc90d561eb02e05c48c0922a5908a1422f7b01a07fb3",
+  "input_hash": "bd9b613e60d5a00dcbe81a41f02fe28c1107abf58241f160265b049b4b223801",
+  "output_hash": "9c5f6e77a21a0528fd96777cd27989a5e6e4517d624c6ad4dcc792d9f2a48def",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 18.9,
-        "stressed_profit_factor": 5.72,
+        "stressed_net_pnl_usd": 52.65,
+        "stressed_profit_factor": 7.05,
         "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 18.07,
-        "stressed_profit_factor": 4.76,
+        "stressed_net_pnl_usd": 51.5,
+        "stressed_profit_factor": 6.3,
         "survived": true
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.02,
-        "stressed_net_pnl_usd": 17.21,
-        "stressed_profit_factor": 4.06,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 50.3,
+        "stressed_profit_factor": 5.67,
         "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.04,
-        "stressed_net_pnl_usd": 15.57,
-        "stressed_profit_factor": 3.16,
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 48.07,
+        "stressed_profit_factor": 4.77,
         "survived": true
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:30:51.646224+00:00"
+  "created_at_utc": "2026-08-22T01:45:13.341589+00:00"
 }
