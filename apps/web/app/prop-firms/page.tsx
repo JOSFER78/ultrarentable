@@ -1003,144 +1003,8 @@ export const DEFAULT_FUTURES_PROVIDERS: Provider[] = [
 ];
 
 // ============================================================================
-// MOTOR ANALÍTICO NLP CLIENT-SIDE (FALLBACK RESILIENTE PARA EL CHATBOT AI)
+// COMPONENTE PRINCIPAL
 // ============================================================================
-export function generateClientSideExpertResponse(rawQuery: string): {
-  response: string;
-  suggested_actions: string[];
-  active_coupons: Array<{ firm: string; code: string; discount: string }>;
-} {
-  const q = rawQuery.toLowerCase();
-
-  // INTENT 1: CUENTAS DEMO O PRUEBAS GRATIS
-  if (q.includes("demo") || q.includes("gratis") || q.includes("probar") || q.includes("simulador") || q.includes("free trial")) {
-    return {
-      response:
-        "### 🎯 Cuentas Demo y Entornos de Prueba Gratuitos en Fondeo de Futuros CME\n\n" +
-        "Sí, existen varias opciones oficiales para probar plataformas y practicar antes de comprar un examen de fondeo:\n\n" +
-        "1. **🏆 TopstepX Free Simulator (Topstep):**\n" +
-        "   - Topstep ofrece una **prueba gratuita de 14 días** en su plataforma propia **TopstepX** (con gráficos integrados de TradingView y ejecución CME simulada en tiempo real) para familiarizarse con el entorno y las reglas sin coste.\n\n" +
-        "2. **🟢 Tradeify Free Demo (Tradovate):**\n" +
-        "   - Puedes solicitar una demo de 14 días en **Tradovate / TradingView** con datos de mercado simulados para probar la latencia y la conexión de tus órdenes antes de adquirir tu cuenta Growth.\n\n" +
-        "3. **🟡 Take Profit Trader Practice:**\n" +
-        "   - TPT ofrece cuentas de prueba en su plataforma **Pro Platform** para que pruebes los atajos de teclado y la ejecución.\n\n" +
-        "4. **🛡️ NinjaTrader 8 Official Demo (Recomendación Experta para Bots):**\n" +
-        "   - Si vas a operar con bots de **StrategyQuant X** o **NinjaScript**, puedes descargar NinjaTrader 8 de forma 100% gratuita y abrir una cuenta demo de 14 días con **datos CME en vivo (MES, MNQ, ES, NQ)** directamente desde `ninjatrader.com`. Así puedes realizar el backtesting y forward testing de tus algoritmos antes de pagar ningún examen.",
-      suggested_actions: [
-        "Ver MFFU Rapid 50K ($39.50)",
-        "Ver Tradeify Growth 50K ($58.20)",
-        "¿Qué cuenta es la más barata hoy?",
-      ],
-      active_coupons: [
-        { firm: "MFFU", code: "300K", discount: "50% OFF" },
-        { firm: "Tradeify", code: "TNT", discount: "40% OFF" },
-        { firm: "TradeDay", code: "FLASH55", discount: "55% OFF" },
-      ],
-    };
-  }
-
-  // INTENT 2: BOTS / AUTOMATIZACIÓN
-  if (q.includes("bot") || q.includes("ea") || q.includes("algorit") || q.includes("strategyquant") || q.includes("python") || q.includes("webhook")) {
-    return {
-      response:
-        "### 🤖 Auditoría de Bots & Trading Algorítmico en Futuros CME\n\n" +
-        "Si operas con **StrategyQuant X, EAs en NinjaTrader 8, Webhooks de TradingView o scripts de Python**, estas son las reglas oficiales:\n\n" +
-        "1. **🏆 TOP Recomendadas para Bots (100% Permitidos + $0 Activación):**\n" +
-        "   - **MyFundedFutures (MFFU Rapid 50K):** Permite bots sin restricciones en NinjaTrader y VPS. Examen a **$39.50 USD** con cupón `300K`, **$0 activación**, Drawdown EOD Fin de Día y retiros Día 1 On-Demand.\n" +
-        "   - **Tradeify (Growth 50K):** Soporte total de webhooks y NinjaTrader. Examen a **$58.20 USD** con cupón `TNT`, **$0 activación** y Soft Breach DLL ($1,000).\n" +
-        "   - **TradeDay (Day Trader 50K):** Brokerage real Dorman Trading. Examen a **$59.00 USD** con cupón `FLASH55`, **$0 activación** y pagos el mismo día hábil.\n" +
-        "   - **BluSky Trading (Static 50K):** Drawdown 100% Estático que nunca sube ($110 USD cupón `BLU25`, $0 activación).\n\n" +
-        "2. **🚨 ALERTA CRÍTICA — FIRMAS PROHIBIDAS PARA BOTS:**\n" +
-        "   - **Apex Trader Funding:** En cuentas financiadas PA, **los bots totalmente automatizados están estrictamente PROHIBIDOS**. Solo permiten operativa manual (el Trade Copier manual sí está permitido). Si detectan operativa desatendida, te cancelan la cuenta.",
-      suggested_actions: ["Ver MFFU Rapid 50K", "Ver Tradeify Growth 50K", "Ver BluSky Static 50K"],
-      active_coupons: [
-        { firm: "MFFU", code: "300K", discount: "50% OFF" },
-        { firm: "Tradeify", code: "TNT", discount: "40% OFF" },
-        { firm: "BluSky", code: "BLU25", "discount": "25% OFF" },
-      ],
-    };
-  }
-
-  // INTENT 3: COSTES & PROMOCIONES
-  if (q.includes("barat") || q.includes("precio") || q.includes("coste") || q.includes("activacion") || q.includes("cupon") || q.includes("promo") || q.includes("oferta")) {
-    return {
-      response:
-        "### 💰 Tabla de Coste Real Total: Examen + Cuota de Activación ($0 vs $149)\n\n" +
-        "Muchas empresas anuncian exámenes a $20–$35 pero luego te cobran **$140 a $150 USD extra** al aprobar. Aquí tienes el coste real neto auditado a día de hoy para cuentas de **$50,000 USD**:\n\n" +
-        "| Firma & Programa | Precio Examen (Cupón) | Cuota Activación | Coste Total Real | Retiros |\n" +
-        "|---|:---:|:---:|:---:|:---:|\n" +
-        "| **MFFU Rapid 50K** | **$39.50** (`300K`) | **$0 USD** | **$39.50 USD** | Día 1 On-Demand |\n" +
-        "| **Tradeify Growth 50K** | **$58.20** (`TNT`) | **$0 USD** | **$58.20 USD** | 24-48h On-Demand |\n" +
-        "| **TradeDay Day Trader 50K**| **$59.00** (`FLASH55`) | **$0 USD** | **$59.00 USD** | Mismo día hábil |\n" +
-        "| **FundedNext Futures 50K**| **$99.00** | **$0 USD** | **$99.00 USD** | Quincenal (+15% bonus) |\n" +
-        "| **BluSky Static 50K** | **$110.00** (`BLU25`) | **$0 USD** | **$110.00 USD** | Semanal |\n" +
-        "| **LucidFlex 50K** | **$118.30** (`LUCID30`)| **$0 USD** | **$118.30 USD** | 15-30 Minutos |\n" +
-        "| **Bulenox Opción 1 50K** | **$19.25** (`GUIDE`) | $148.00 USD | **$167.25 USD** | Quincenal |\n" +
-        "| **Apex Full 50K** | **$33.40** (`SAVINGS`) | $140.00 USD | **$173.40 USD** | Quincenal |\n" +
-        "| **Topstep Combine 50K** | **$49.00** / mes | $149.00 USD | **$198.00 USD** | Diario (5d > $200) |\n" +
-        "| **Take Profit Trader 50K**| **$85.00** (`PRO50`) | $130.00 USD | **$215.00 USD** | Día 1 en Pro |\n\n" +
-        "💡 **Conclusión:** Si buscas el menor gasto total para pasar y cobrar, **MFFU Rapid ($39.50)** y **Tradeify Growth ($58.20)** son las opciones #1 al no cobrar cuota de activación.",
-      suggested_actions: ["Copiar Cupón 300K", "Copiar Cupón TNT", "Ver Cuentas $0 Activación"],
-      active_coupons: [
-        { firm: "MFFU", code: "300K", discount: "50% OFF" },
-        { firm: "Tradeify", code: "TNT", discount: "40% OFF"},
-        { firm: "Bulenox", code: "GUIDE", discount: "89% OFF" },
-        { firm: "Apex", code: "SAVINGS", discount: "80% OFF" },
-      ],
-    };
-  }
-
-  // INTENT 4: EXPLICACIÓN DE DRAWDOWN
-  if (q.includes("drawdown") || q.includes("dd") || q.includes("trailing") || q.includes("static") || q.includes("eod") || q.includes("intraday")) {
-    return {
-      response:
-        "### 📉 Guía Definitiva de Tipos de Drawdown en Futuros CME\n\n" +
-        "1. **🛡️ Drawdown Estático (Static Drawdown — Máxima Seguridad):**\n" +
-        "   - *Firma líder:* **BluSky Trading (Static Growth 50K)**.\n" +
-        "   - *Mecánica:* El nivel de pérdida se fija en $48,500 y **JAMÁS sube** con tus ganancias. Si tu cuenta sube a $56,000, tu stop de liquidación sigue en $48,500 (tienes $7,500 de colchón acumulado).\n\n" +
-        "2. **🟢 Drawdown EOD Fin de Día (End of Day Trailing — El Estándar Recomendado):**\n" +
-        "   - *Firmas líderes:* **MFFU Rapid, Tradeify Growth, TradeDay, Topstep, FundedNext, Lucid, Earn2Trade**.\n" +
-        "   - *Mecánica:* El nivel de pérdida se recalcula **únicamente al cierre de la sesión (17:00 ET)** sobre el balance cerrado. Si tienes una posición con flotante de +$2,000 que retrocede a +$500 antes del cierre, el drawdown NO te persigue durante el trade. En fondeo, **se congela en el balance inicial ($50,100)**.\n\n" +
-        "3. **🔴 Drawdown Intraday Peak Trailing (Tiempo Real Tick-a-Tick — Alto Riesgo):**\n" +
-        "   - *Firmas:* **Bulenox Opción 1, Apex Trader Funding, Leeloo**.\n" +
-        "   - *Mecánica:* Persigue el equity máximo no realizado en tiempo real. Si vas ganando +$1,500 y cierras en +$300, el stop subió $1,500.",
-      suggested_actions: ["Ver BluSky Static Drawdown", "Ver MFFU EOD Trailing", "Comparar 4 Firmas"],
-      active_coupons: [
-        { firm: "BluSky", code: "BLU25", discount: "25% OFF" },
-        { firm: "MFFU", code: "300K", discount: "50% OFF" },
-      ],
-    };
-  }
-
-  // INTENT DEFAULT
-  return {
-    response:
-      `### 🏛️ Asistente Cuantitativo de Futuros CME — Análisis en Tiempo Real\n\n` +
-      `He analizado tu consulta sobre **'${rawQuery}'** en base a la base de datos oficial de las **17 firmas de futuros CME** auditadas en 2026.\n\n` +
-      "Aquí tienes el resumen ejecutivo para elegir con rigor matemático:\n\n" +
-      "- **Si buscas el menor coste total ($0 activación + EOD DD):** **MyFundedFutures Rapid 50K** ($39.50 con cupón `300K`) o **Tradeify Growth 50K** ($58.20 con cupón `TNT`).\n" +
-      "- **Si buscas máxima seguridad sin trailing que te persiga:** **BluSky Trading Static 50K** ($110 con cupón `BLU25`, Drawdown 100% Estático).\n" +
-      "- **Si buscas solvencia institucional y cuenta real:** **TradeDay 50K** ($59 con cupón `FLASH55`, retiros en el mismo día) o **Topstep 50K** ($49/mes).\n" +
-      "- **Si buscas el precio de examen más barato:** **Bulenox 50K** ($19.25 con cupón `GUIDE`, 89% descuento).\n\n" +
-      "¿Deseas que profundice en la política de bots de alguna firma, en el cálculo de coste total o en la letra pequeña de retiros?",
-    suggested_actions: [
-      "¿Qué cuenta de 50K comprar hoy?",
-      "¿Qué firmas permiten bots 24/7?",
-      "Explicar Drawdown EOD vs Static",
-      "Ver cupones oficiales activos",
-    ],
-    active_coupons: [
-      { firm: "MFFU", code: "300K", discount: "50% OFF" },
-      { firm: "Tradeify", code: "TNT", discount: "40% OFF" },
-      { firm: "TradeDay", code: "FLASH55", discount: "55% OFF" },
-      { firm: "Bulenox", code: "GUIDE", discount: "89% OFF" },
-      { firm: "Apex", code: "SAVINGS", discount: "80% OFF" },
-      { firm: "BluSky", code: "BLU25", "discount": "25% OFF" },
-    ],
-  };
-}
-
-
 export default function WorldClassFuturesPropFirmsPage() {
   const [activeModule, setActiveModule] = useState<MainNavModule>("CATALOGO");
   const [providers, setProviders] = useState<Provider[]>(DEFAULT_FUTURES_PROVIDERS);
@@ -1296,7 +1160,7 @@ export default function WorldClassFuturesPropFirmsPage() {
     setExpandedRowId(expandedRowId === providerId ? null : providerId);
   };
 
-  // Enviar mensaje al Chatbot Experto con Fallback NLP
+  // Enviar mensaje al Chatbot Experto AI Real
   const handleSendChatMessage = async (textToSend?: string) => {
     const query = (textToSend || chatInput).trim();
     if (!query || isChatLoading) return;
@@ -1318,7 +1182,8 @@ export default function WorldClassFuturesPropFirmsPage() {
         content: m.content,
       }));
 
-      const res = await fetch("/api/v1/providers/chat", {
+      // Intentar primero con la ruta Next.js con LLM Real
+      let res = await fetch("/api/prop-firms/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1326,6 +1191,18 @@ export default function WorldClassFuturesPropFirmsPage() {
           history: historyPayload,
         }),
       });
+
+      // Si falla, reintentar con el backend FastAPI
+      if (!res.ok) {
+        res = await fetch("/api/v1/providers/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: query,
+            history: historyPayload,
+          }),
+        });
+      }
 
       if (!res.ok) {
         throw new Error(`HTTP_${res.status}`);
@@ -1342,18 +1219,20 @@ export default function WorldClassFuturesPropFirmsPage() {
       };
 
       setChatMessages((prev) => [...prev, botMessageObj]);
-    } catch (err) {
-      // Fallback NLP Client-Side Inteligente
-      const fallbackResult = generateClientSideExpertResponse(query);
-      const fallbackBotMessageObj: ChatMessage = {
-        id: `bot-${Date.now()}`,
+    } catch (err: any) {
+      console.error("Error en Chatbot AI:", err);
+      const errorBotMessageObj: ChatMessage = {
+        id: `bot-err-${Date.now()}`,
         role: "assistant",
-        content: fallbackResult.response,
+        content: "⚠️ Hubo una interrupción al consultar con el modelo de IA. Por favor realiza tu consulta de nuevo.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        suggested_actions: fallbackResult.suggested_actions,
-        active_coupons: fallbackResult.active_coupons,
+        suggested_actions: [
+          "¿Qué cuenta de 50K es la más barata hoy?",
+          "¿Qué firmas permiten bots 24/7?",
+          "Explicar Drawdown EOD vs Static",
+        ],
       };
-      setChatMessages((prev) => [...prev, fallbackBotMessageObj]);
+      setChatMessages((prev) => [...prev, errorBotMessageObj]);
     } finally {
       setIsChatLoading(false);
     }

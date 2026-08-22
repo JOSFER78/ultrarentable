@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_15M_g10",
   "run_id": "run_UR_ULTRA_BNB_USDT_15M",
   "strategy_id": "UR_ULTRA_BNB_USDT_15M",
-  "strategy_snapshot_hash": "4b200fd12576afe9290b985ecc94169d28ac068773ec93c04e5b413af1e3ea3a",
+  "strategy_snapshot_hash": "d97c0c123ff4e83b6011caa6fcbacf79efdeeeada833330f940571abb6e6bd6c",
   "dataset_id": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "9d90aa4a995189605c2845d34f85ae65fcb865a0be9e4bd4eec2c61c7c1f47b4",
-  "output_hash": "816167c0e4e05692440414d33b147acaed5b549e2a0b81184da2dc0b86a5b32c",
-  "status": "PASSED",
-  "score": 75.2,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (75.2/100 · 5/5 Evaluadores Conformes)",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "b9444bcc06a0baf4cf35d249bdc8b3734c254c0e409dd5dde95f305ebb290217",
+  "output_hash": "ba0b2828860805035fb75d84bd59e389d6a97afb71874571fb4a40e83f5c15c9",
+  "status": "FAILED",
+  "score": 33.9,
+  "verdict": "FALLO: Consenso insuficiente (33.9/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 75.2,
+    "consensus_score": 33.9,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 58.6,
+        "score": 52.8,
         "findings": [
           "Activo y Timeframe: BNB-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $3284.17.",
+          "Profit Factor OOS: 0.95 con beneficio neto de $-998.89.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 61.6,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 81.6% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 99.9% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 212 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 348 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $15.49 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $-2.87 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 80.1,
+        "score": 38.2,
         "objections": [
-          "Alerta de Drawdown: DD (81.6%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (99.9%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.95 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:30:51.035099+00:00"
+  "created_at_utc": "2026-08-22T02:18:30.114712+00:00"
 }

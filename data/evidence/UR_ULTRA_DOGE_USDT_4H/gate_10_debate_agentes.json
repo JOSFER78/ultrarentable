@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
-  "strategy_snapshot_hash": "218448240663c9d568d35f9e436b8aed9791d17ecaecb8d8f817eb552c3737b9",
+  "strategy_snapshot_hash": "1e0da3a8c4a910090e5f90d92e720188d44927bfa9415253d2e9fa66e657662e",
   "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "9b44dc7ea13976b5af6b4c1639f2323ed8cebcd586cd4db83d8ed69e55f0fab0",
-  "output_hash": "18e3d632ba2993ffe0cd75d8b068aed5d18b99aa67addbc49824498c015f955d",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "e000ce6e75ce9ff9a7407bd7b46128be28b51abab9456eadfa059157bbcba49d",
+  "output_hash": "82788a594993763bedd4b6f607c08dc0d8ce33f1624e7e601a1d0e26d98ff9ae",
   "status": "PASSED",
-  "score": 62.7,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (62.7/100 · 5/5 Evaluadores Conformes)",
+  "score": 80.4,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (80.4/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 62.7,
+    "consensus_score": 80.4,
     "evaluators_count": 5,
     "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 73.9,
+        "score": 78.0,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.42 con beneficio neto de $52.77.",
+          "Profit Factor OOS: 1.51 con beneficio neto de $85395637210970752.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 61.7,
+        "score": 60.8,
         "findings": [
-          "Drawdown Máximo Observado: 81.3% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 83.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1311 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1405 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.04 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $60779812961545.02 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 61.4,
+        "score": 84.7,
         "objections": [
-          "Alerta de Drawdown: DD (81.3%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (83.3%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T01:45:14.897738+00:00"
+  "created_at_utc": "2026-08-22T02:20:07.267009+00:00"
 }

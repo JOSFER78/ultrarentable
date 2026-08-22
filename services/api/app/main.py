@@ -54,17 +54,17 @@ async def _periodic_sqx_sync():
     worker = SQXSyncWorker()
     client = SQXMCPClient()
     
-    # Auto-conectar y asegurar que Ultra_Auto_Pilot esté corriendo en SQX
+    # Auto-conectar y asegurar que Ultra_Auto_Pilot esté corriendo en SQX (sin bloquear el event loop)
     try:
-        client.run_project("Ultra_Auto_Pilot")
+        await asyncio.to_thread(client.run_project, "Ultra_Auto_Pilot")
         logger.info("SQX Auto-Connect: Proyecto Ultra_Auto_Pilot lanzado en VPS.")
     except Exception as e:
         logger.debug(f"SQX initial launch note: {e}")
 
     while True:
         try:
-            worker.sync_databank("Ultra_Auto_Pilot", "Results")
-            worker.sync_databank("Ultra_Auto_Pilot", "Last generation")
+            await asyncio.to_thread(worker.sync_databank, "Ultra_Auto_Pilot", "Results")
+            await asyncio.to_thread(worker.sync_databank, "Ultra_Auto_Pilot", "Last generation")
         except Exception as e:
             logger.debug(f"SQX periodic sync notice: {e}")
         await asyncio.sleep(30)
@@ -73,10 +73,13 @@ async def _periodic_sqx_sync():
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Ciclo de vida de FastAPI: Inicializa DB, arranca workers, demonio 24/7 y sincronizador SQX."""
+    print("DEBUG LIFESPAN: 1. Iniciando DB...", flush=True)
     logger.info("Iniciando infraestructura Ultrarentable V2...")
     init_db()
+    print("DEBUG LIFESPAN: 2. DB inicializada. Arrancando supervisor...", flush=True)
     await supervisor_instance.start_all()
     logger.info("SystemSupervisor activo: 8 workers operando y emitiendo heartbeats.")
+    print("DEBUG LIFESPAN: 3. Supervisor iniciado. Arrancando continuous_search_daemon...", flush=True)
     
     # Arrancar Demonio de Búsqueda y Optimización Continua 24/7
     try:
@@ -85,6 +88,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error(f"Error iniciando continuous_search_daemon: {e}")
 
+    print("DEBUG LIFESPAN: 4. continuous_search_daemon iniciado. Arrancando continuous_research_daemon...", flush=True)
     # Arrancar Demonio de Refinamiento Cuantitativo & Bucle Autónomo 24/7 (Panel 4)
     from services.optimization.continuous_research_daemon import continuous_research_daemon
     try:
@@ -93,14 +97,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error(f"Error iniciando continuous_research_daemon: {e}")
 
+    print("DEBUG LIFESPAN: 5. continuous_research_daemon iniciado. Arrancando ha_watchdog...", flush=True)
     # Iniciar Watchdog de Alta Disponibilidad y Self-Healing 24/7
     from services.monitoring.high_availability_watchdog import ha_watchdog
     ha_watchdog.start()
 
+    print("DEBUG LIFESPAN: 6. ha_watchdog iniciado. Arrancando periodic SQX sync...", flush=True)
     # Iniciar tarea asíncrona de sincronización y supervisión 24/7 con StrategyQuant X
     sync_task = asyncio.create_task(_periodic_sqx_sync())
     
+    print("DEBUG LIFESPAN: 7. Yielding to FastAPI/Uvicorn server...", flush=True)
     yield
+    print("DEBUG LIFESPAN: 8. Apagando infraestructura...", flush=True)
     
     sync_task.cancel()
     ha_watchdog.stop()

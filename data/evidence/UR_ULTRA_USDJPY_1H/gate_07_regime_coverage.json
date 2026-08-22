@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g07",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "b48f45dfbe326b70d9f017b6c633eaecf1124f4d99355dde52ad7982a9fa8272",
+  "strategy_snapshot_hash": "9c77a218edf425da441e0ed2996a2a0a437e91c126ede439b9773b52a0694d08",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "72cfe50701600e65e70fcbfd6b97710e33fc4e0e12546dcbc88fdb2fb07f0fbe",
-  "output_hash": "08437f4a7287d43764a74051f63c6b9837c3d34813d65eeb6b930aa7e4d5d93b",
-  "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +15.95%)",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "f605949796cc9d021b3bc26f682213aeaa873b62c53ec6fda259c3c16dec7845",
+  "output_hash": "50eedff1928c3e2a8d8eb71b013519d3273067ba44092cf34dbfb74b6166355c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -366.32%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 38,
-      "HIGH_VOLATILITY": 9
+      "CHOP_RANGING": 93,
+      "HIGH_VOLATILITY": 15
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -21.43,
-      "HIGH_VOLATILITY": 37.38
+      "CHOP_RANGING": -310.31,
+      "HIGH_VOLATILITY": -56.01
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 15.95
+    "total_oos_return_pct": -366.32
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:30:48.635166+00:00"
+  "created_at_utc": "2026-08-22T02:18:52.533916+00:00"
 }

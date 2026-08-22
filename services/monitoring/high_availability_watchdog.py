@@ -65,11 +65,12 @@ class HighAvailabilityWatchdog:
     def _watchdog_loop(self) -> None:
         """Bucle principal de comprobación periódica y auto-reparación."""
         while not self._stop_event.is_set():
+            if self._stop_event.wait(self.check_interval_seconds):
+                break
             try:
                 self.perform_health_and_recovery_cycle()
             except Exception as e:
                 logger.error(f"Error en ciclo de vigilancia HA Watchdog: {e}")
-            self._stop_event.wait(self.check_interval_seconds)
 
     def perform_health_and_recovery_cycle(self) -> Dict[str, Any]:
         """Ejecuta un ciclo completo de auditoría y auto-recuperación."""

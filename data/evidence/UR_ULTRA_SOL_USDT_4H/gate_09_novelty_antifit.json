@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g09",
   "run_id": "run_UR_ULTRA_SOL_USDT_4H",
   "strategy_id": "UR_ULTRA_SOL_USDT_4H",
-  "strategy_snapshot_hash": "0911a7e4bd72b3abfe761fbe7c5de81b6cf1d64e506dd971f6766f3c00e211b0",
+  "strategy_snapshot_hash": "98761781b4509e2dec0964937fd454793ccef26fba8d5eda7e3dd0f72a0c4c5c",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "b59b6f9dd1e9317f5258ab48bea39081d8479cf1a5e620a27deb2e9529b75b6d",
-  "output_hash": "5b04f3b6eafb00b810a099d44f622253ac04c8145a04b41d04f6de2f0bdc76fd",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "aa53f780d1b47e7e78d13c095156e4724091faa4afc5c34077f55ff4e175f2be",
+  "output_hash": "0e07c84af049cc3905f81873937e8fcc33b746bf6d12df529d50094e98c39c4e",
   "status": "PASSED",
-  "score": 97.1,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 335.5 trades/param, Estabilidad Vecindario: 95.2%, Re-backtest PFs: [1.2, 1.18, 1.28, 1.25])",
+  "score": 96.7,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 311.2 trades/param, Estabilidad Vecindario: 94.5%, Re-backtest PFs: [1.35, 1.31, 1.2, 1.17])",
   "metrics": {
-    "parameters_count": 4,
-    "degrees_of_freedom_ratio": 335.5,
+    "parameters_count": 5,
+    "degrees_of_freedom_ratio": 311.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 95.2,
+    "parameter_neighborhood_stability_pct": 94.5,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
+      1.35,
+      1.31,
       1.2,
-      1.18,
-      1.28,
-      1.25
+      1.17
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T01:45:04.989246+00:00"
+  "created_at_utc": "2026-08-22T02:20:39.076601+00:00"
 }

@@ -58,7 +58,7 @@ class ContinuousResearchDaemon:
         self.is_running = False
         self._stop_event = threading.Event()
         self._worker_thread: Optional[threading.Thread] = None
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
         # Estado en vivo de la ejecución
         self.current_candidate_id: Optional[str] = None
