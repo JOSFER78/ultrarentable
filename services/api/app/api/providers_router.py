@@ -112,6 +112,14 @@ def list_providers(
     db: Session = Depends(get_db)
 ) -> List[Dict[str, Any]]:
     """List all prop firm providers with multidimensional filtering."""
+    # Auto-seed if database is empty
+    total_existing = db.query(ProviderRuleSetModel).count()
+    if total_existing == 0:
+        for item in PROP_FIRMS_CATALOG:
+            item_copy = {k: v for k, v in item.items() if hasattr(ProviderRuleSetModel, k)}
+            db.add(ProviderRuleSetModel(**item_copy))
+        db.commit()
+
     query = db.query(ProviderRuleSetModel)
     
     if market_type and market_type.upper() != "ALL":

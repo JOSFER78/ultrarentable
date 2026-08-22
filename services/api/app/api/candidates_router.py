@@ -136,6 +136,8 @@ def list_candidates(
             monthly_roi = None
             ann_roi = None
 
+        roi_oos = round(monthly_roi * float(dur["oos_months"]), 2) if (monthly_roi is not None and dur and dur.get("oos_months")) else None
+
         raw_wr_is = is_m.get("win_rate_pct") if is_m.get("win_rate_pct") is not None else is_m.get("win_rate")
         wr_is = float(raw_wr_is) if raw_wr_is is not None else None
 
