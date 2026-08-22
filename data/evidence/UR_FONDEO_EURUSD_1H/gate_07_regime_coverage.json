@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_1H_g07",
   "run_id": "run_UR_FONDEO_EURUSD_1H",
   "strategy_id": "UR_FONDEO_EURUSD_1H",
-  "strategy_snapshot_hash": "010026eaca84282344c5bcfc7562830db98b86e0aa8f937f3967fbe39d4a031d",
+  "strategy_snapshot_hash": "b101bf77b2c624c28b47b0756e800913762be69b3b71b7eb697e848c647f4f31",
   "dataset_id": "ds_trad_eurusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "7253b91cc97fa71afe1fbe0167beb2a39f37537518ac76cdae849e9bbebcc3b7",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "ab460ae999bc6e45ebe0d470f87200aea3ac29304832c2e4e4528c5288f4a465",
-  "output_hash": "2c9a9a66a0b56ec7a506ba4b5586615d8a4711316826eaf6bc26136a3ce24e4b",
+  "input_hash": "b4c1e70b99c287458368504a7266b15f0cc3f264440e284632e353468147120d",
+  "output_hash": "620fa5d6a2bd67fb85a42947c2e730db295df33fa7b8de4356cdaa4effde4136",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, PnL Total: $-12407.98)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -23890.33%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 85,
-      "HIGH_VOLATILITY": 12
+      "CHOP_RANGING": 80,
+      "HIGH_VOLATILITY": 15
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -12743.19,
-      "HIGH_VOLATILITY": 335.21
+      "CHOP_RANGING": -19262.69,
+      "HIGH_VOLATILITY": -4627.64
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -12407.98
+    "total_oos_return_pct": -23890.33
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:04:35.560134+00:00"
+  "created_at_utc": "2026-08-21T22:29:14.076475+00:00"
 }

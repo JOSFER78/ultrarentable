@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_5M_g05",
   "run_id": "run_UR_FONDEO_AUDUSD_5M",
   "strategy_id": "UR_FONDEO_AUDUSD_5M",
-  "strategy_snapshot_hash": "fa059a901ed2696430f93cc0c4b21c21bc9c6ff06ee5c1c1e4e14eff3d25dcc8",
+  "strategy_snapshot_hash": "16c67db8a10f5534a85b86a37934f20958117c76c5e715cf6761828cad6c59b6",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "791582be13d2358c0afb31e724009b591f8cbe965872b8d6b9464816325c0530",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "13d987a3e01a236a896f1528fa4cbb6472c0a573934f5e58f5654b70e1af0cc4",
-  "output_hash": "8bf0b97aa34d61d8455cd0bcb50e4f857d26692b0928af2faaef98ab08b8d5d7",
+  "input_hash": "78b5d9754a4d839a020d7f9cb2ad5182291516f295f7569eb6f8e4657a92762a",
+  "output_hash": "bab0b4c01eac9f57810df2c87acd60a43bab80e549592f4e656e8860b7787e80",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 42.1%)",
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 70.7%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 100.0,
-    "drawdown_median_pct": 38.6,
-    "drawdown_95th_percentile_pct": 42.1,
-    "max_simulated_drawdown_pct": 44.6
+    "drawdown_median_pct": 64.0,
+    "drawdown_95th_percentile_pct": 70.7,
+    "max_simulated_drawdown_pct": 76.6
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T15:02:16.139552+00:00"
+  "created_at_utc": "2026-08-21T22:29:18.036040+00:00"
 }

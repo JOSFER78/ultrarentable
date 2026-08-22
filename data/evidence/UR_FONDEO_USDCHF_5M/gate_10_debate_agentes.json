@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_5M_g10",
   "run_id": "run_UR_FONDEO_USDCHF_5M",
   "strategy_id": "UR_FONDEO_USDCHF_5M",
-  "strategy_snapshot_hash": "6ccf07c7c0e5d25515a9669231c7be29e04e5ea53d11ce186209b097f3039bf2",
+  "strategy_snapshot_hash": "7901f4796ee7e40d25f567479c7c14cefd1ab12bb92bc231421a91ee3e99864b",
   "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "f9c373f468a836d7cfde86d31959c5620083f2fb887c373025cf9613adaac0f4",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "cf053af10885335649fc1a9258fb48536c805e9d4103ac4e9239f8ab3edf8728",
-  "output_hash": "eec0f10a5684d5f792586cf2481112294227111e2dfd19e2dc38b38525bf3483",
+  "input_hash": "00e7145fc74a31283ac06beaa3b33503ac5fd8d98976bd123e86f765689e6d43",
+  "output_hash": "f5f274ddaa431402e553f9a2bf2a7d26e3aa312d44068eb1ae325f44b39a8be2",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCHF (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.14 con beneficio neto de $-18853.11.",
+          "Profit Factor OOS: 0.11 con beneficio neto de $-0.36.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 37.8% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 45.1% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 73 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 294 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-258.26 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,13 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (37.8%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.14 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (45.1%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.11 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:11:59.251551+00:00"
+  "created_at_utc": "2026-08-21T22:28:57.643638+00:00"
 }

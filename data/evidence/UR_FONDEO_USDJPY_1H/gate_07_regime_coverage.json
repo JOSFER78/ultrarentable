@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g07",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "31bb1febdf86cf5ca96836c459f27a6b5221aa8d4111444657ab2e8ede7a4319",
+  "strategy_snapshot_hash": "10fe76b37a850c36eac87b126c623099d67734f05aa0b01b796e9c7d6cfcdc62",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "4ff709fa43e7cc03ac822633045eb5719d1b361459beeeb851afe1fea61bb18c",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5b73c6a86ee375e13a3cc2d6f598cf868b848e22421b864ce48bfd206f8ea067",
-  "output_hash": "5eb0736142a6e9ef41336096f0b88e25ad2297b7c134167d603e32358bed5f81",
+  "input_hash": "fe71f5bf8e48d244792a912976a1185cb067fb2ba857af5a0dd7099703b0e1b4",
+  "output_hash": "ced795d931156896f1cb0cc2e8c70d1134172a4be406ce9d09dd2ba7c6e7ec0b",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-7109.97)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -15490.21%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 70,
-      "HIGH_VOLATILITY": 12
+      "CHOP_RANGING": 66,
+      "HIGH_VOLATILITY": 10
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -6901.86,
-      "HIGH_VOLATILITY": -208.11
+      "CHOP_RANGING": -16199.01,
+      "HIGH_VOLATILITY": 708.8
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -7109.97
+    "total_oos_return_pct": -15490.21
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:12:33.427191+00:00"
+  "created_at_utc": "2026-08-21T22:28:40.832553+00:00"
 }

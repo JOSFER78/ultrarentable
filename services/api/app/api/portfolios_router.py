@@ -20,31 +20,52 @@ class AssemblePortfolioRequest(BaseModel):
 
 @portfolios_router.get("/available-candidates")
 def get_available_candidates_for_meta(route: Optional[str] = Query(None)) -> List[Dict[str, Any]]:
-    """Retorna candidatos certificados disponibles agrupados por activo para ensamblar Meta-Portafolios."""
+    """Retorna candidatos disponibles agrupados por activo para ensamblar Meta-Portafolios."""
+    import json
     db = SessionLocal()
     try:
         q = db.query(CandidateModel)
         if route:
             q = q.filter(CandidateModel.route == route.upper())
-        candidates = q.order_by(CandidateModel.profit_factor.desc()).all()
+        candidates = q.order_by(CandidateModel.profit_factor_oos.desc()).all()
 
-        return [
-            {
+        results = []
+        for c in candidates:
+            sc = {}
+            if c.scorecard_json:
+                try:
+                    sc = json.loads(c.scorecard_json)
+                except Exception:
+                    sc = {}
+
+            gates_count = sc.get("gates_passed_count")
+            if gates_count is None:
+                gates = sc.get("gates", [])
+                gates_count = sum(1 for g in gates if g.get("passed")) if gates else 0
+
+            is_ultra = ((c.route or "ULTRA").upper() == "ULTRA")
+            base_cap = 1000.0 if is_ultra else 50000.0
+            mon_roi = sc.get("monthly_roi_pct") or ((c.net_profit_oos or 0.0) / base_cap * 100.0 / 1.9)
+            ann_roi = sc.get("annual_roi_pct") or (mon_roi * 12.0)
+            wr = sc.get("win_rate_pct") or sc.get("oos_metrics", {}).get("win_rate_pct") or 45.0
+
+            results.append({
                 "candidate_id": c.candidate_id,
-                "name": c.name,
+                "name": c.name or c.candidate_id,
                 "route": c.route,
                 "symbol": c.symbol,
                 "timeframe": c.timeframe,
-                "annualized_roi": c.annualized_roi,
-                "max_drawdown": c.max_drawdown,
-                "profit_factor": c.profit_factor,
-                "win_rate": c.win_rate,
-                "total_trades": c.total_trades,
-                "gates_passed_count": c.gates_passed_count or 11,
-                "is_certified": (c.gates_passed_count == 11),
-            }
-            for c in candidates
-        ]
+                "annualized_roi": round(float(ann_roi), 1),
+                "monthly_roi": round(float(mon_roi), 2),
+                "max_drawdown": round(float(c.max_dd_oos_pct or 0.0), 1),
+                "profit_factor": round(float(c.profit_factor_oos or 0.0), 2),
+                "win_rate": round(float(wr), 1),
+                "total_trades": int(c.trades_oos or 0),
+                "gates_passed_count": gates_count,
+                "is_certified": (gates_count == 11),
+            })
+
+        return results
     finally:
         db.close()
 
@@ -186,3 +207,26 @@ def get_ultra_hyperscale_portfolios() -> List[Dict[str, Any]]:
         }
         for p in ports
     ]
+
+
+@portfolios_router.get("/autonomous-ensembles")
+def get_autonomous_ensembles(route: Optional[str] = Query("ULTRA")) -> List[Dict[str, Any]]:
+    """Obtiene los Meta-Portafolios optimizados y explorados autónomamente por el demonio 24/7."""
+    from services.portfolio.autonomous_meta_daemon import AutonomousMetaDaemon
+    daemon = AutonomousMetaDaemon()
+    return daemon.run_synthesis_cycle(route=route.upper() if route else "ULTRA", ensemble_sizes=(2, 3), max_evaluations=12)
+
+
+@portfolios_router.post("/trigger-autonomous-cycle")
+def trigger_autonomous_portfolio_cycle(route: Optional[str] = Query("ULTRA")) -> Dict[str, Any]:
+    """Dispara un ciclo de exploración multi-activo bajo demanda con el comité de 5 agentes."""
+    from services.portfolio.autonomous_meta_daemon import AutonomousMetaDaemon
+    daemon = AutonomousMetaDaemon()
+    results = daemon.run_synthesis_cycle(route=route.upper() if route else "ULTRA", ensemble_sizes=(2, 3, 4), max_evaluations=15)
+    return {
+        "status": "SUCCESS",
+        "route": route,
+        "total_synthesized": len(results),
+        "approved_count": sum(1 for r in results if r.get("is_approved")),
+        "ensembles": results,
+    }

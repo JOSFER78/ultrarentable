@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_5M_g05",
   "run_id": "run_UR_FONDEO_GBPUSD_5M",
   "strategy_id": "UR_FONDEO_GBPUSD_5M",
-  "strategy_snapshot_hash": "d4c7b967638f82810741ea36c779d86542695b5e56631c1b10e09b8521604ece",
+  "strategy_snapshot_hash": "b7bba07c51f46b84c273c73a464c7f814912fa7b27aeaaefe512b9cdd499a0b3",
   "dataset_id": "ds_trad_gbpusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "9d1a198f5621c2609bac3d5be9b6b883237bbf4ea9ce9e0f1f0154c354289a30",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b33194033d84917a1c808f8cbaf1d7501e5bc1c98043c13f726306e4a7e3b41b",
-  "output_hash": "bde9f7dd69da20d9cd4bf5c1fe4743c431ab874f3c0abf54741dad1862ca1188",
+  "input_hash": "6a050a4013a605a41616ca0ea8618ce1952e46ce33fd802e5de33feb8a24e1c6",
+  "output_hash": "820fb3dd100490a16f86f15dd5f8f75095ffa9550bb9545994d47e8cc0066de0",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 50.8%)",
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 110.8%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 100.0,
-    "drawdown_median_pct": 48.7,
-    "drawdown_95th_percentile_pct": 50.8,
-    "max_simulated_drawdown_pct": 52.3
+    "drawdown_median_pct": 103.0,
+    "drawdown_95th_percentile_pct": 110.8,
+    "max_simulated_drawdown_pct": 120.1
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-20T15:06:17.887777+00:00"
+  "created_at_utc": "2026-08-21T22:29:26.307720+00:00"
 }

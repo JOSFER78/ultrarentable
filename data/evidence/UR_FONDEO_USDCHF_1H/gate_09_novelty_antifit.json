@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_1H_g09",
   "run_id": "run_UR_FONDEO_USDCHF_1H",
   "strategy_id": "UR_FONDEO_USDCHF_1H",
-  "strategy_snapshot_hash": "f1dc56dd6f97fe2c37c812415ab50c6c7defe576636afda06e13dbf18817f289",
+  "strategy_snapshot_hash": "47648c770f5d9ee047befc2832f77cb66d45ffc25e82c259141ed70079cfc461",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "8182d83d5859cbf72d177be07a85df1ea5f407eb91e23d6ed7e8fca901ce2bb4",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "0ecfcdd0082c4aee6b4d3251898f8f4c75183aff8fe33ff9bb6fdaafbb263924",
-  "output_hash": "b2b21bb6e8aac73bfc652fbfe149648e97cfe0b6d1a17aa5296d4b8a7a63b578",
+  "input_hash": "f2cc26a271ac48c2a97731b36838f86b36699e1a490c8c5ea9f3e77cc8a59000",
+  "output_hash": "4d84e8dff5dfb02fd555a4a2d1632360ed06f0d4e318165c65abdfc4072977da",
   "status": "PASSED",
-  "score": 99.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 38.9 trades/param, Estabilidad Vecindario: 99.4%, Re-backtest PFs: [0.41, 0.38, 0.42, 0.38])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 70.2 trades/param, Estabilidad Vecindario: 105.6%, Re-backtest PFs: [0.44, 0.43, 0.33, 0.32])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 38.9,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 70.2,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 99.4,
-    "min_stability_required_pct": 70.0,
+    "parameter_neighborhood_stability_pct": 105.6,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.41,
-      0.38,
-      0.42,
-      0.38
+      0.44,
+      0.43,
+      0.33,
+      0.32
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:11:27.926602+00:00"
+  "created_at_utc": "2026-08-21T22:29:11.403552+00:00"
 }

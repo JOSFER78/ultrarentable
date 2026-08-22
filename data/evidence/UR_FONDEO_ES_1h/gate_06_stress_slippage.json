@@ -1,0 +1,51 @@
+{
+  "evidence_id": "ev_UR_FONDEO_ES_1h_g06",
+  "run_id": "run_UR_FONDEO_ES_1h",
+  "strategy_id": "UR_FONDEO_ES_1h",
+  "strategy_snapshot_hash": "4f0191d52e71380304c1710d58ae7ee498048fb4a4a995757e2c93083066aa6c",
+  "dataset_id": "ds_trad_es_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 6,
+  "gate_name": "STRESS_SLIPPAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "02f9ab340e98ef5dbec70c89f1567df261acea904e948ca639b05eb85d8c2514",
+  "output_hash": "5dac8cc34bc51359198dd0441b758be8d833b7325feb12d5ecf0b6bfbfa40a00",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
+  "metrics": {
+    "scenarios": {
+      "Base": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.05,
+        "stressed_profit_factor": 0.8,
+        "survived": false
+      },
+      "+1_Sigma": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.06,
+        "stressed_profit_factor": 0.78,
+        "survived": false
+      },
+      "+2_Sigma": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.07,
+        "stressed_profit_factor": 0.74,
+        "survived": false
+      },
+      "+3_Sigma": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.09,
+        "stressed_profit_factor": 0.7,
+        "survived": false
+      }
+    },
+    "passed_scenarios_count": 0,
+    "min_required_scenarios": 2,
+    "base_friction_usd": 3.0
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_ES_1h/gate_06_stress_slippage.json",
+  "created_at_utc": "2026-08-21T22:29:39.266753+00:00"
+}

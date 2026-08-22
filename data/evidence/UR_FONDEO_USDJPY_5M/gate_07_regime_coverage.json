@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_5M_g07",
   "run_id": "run_UR_FONDEO_USDJPY_5M",
   "strategy_id": "UR_FONDEO_USDJPY_5M",
-  "strategy_snapshot_hash": "ff3ef7d2eab41eeccdee1c928ccdd708ce559270f1f3153d7bb7eb015dff2510",
+  "strategy_snapshot_hash": "b85a177113f2df2f869354872b9804c15a6e67fa152f6dd731ca997220fb69b5",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "d20524302ad47dec9553b7f5880dbf6b28149b325e0e50cf2b9311c6b3ecf246",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "41d52f276c16707e1cf205217959bad894e030033dbec02683dcbdf5ca48d0fc",
-  "output_hash": "7d89e1838b3d3b98e4e560b1e37e953ba27c7b5b8c7661d7e0057597abbd6b0f",
+  "input_hash": "ffed0eab708ebbcd5e7d724ed25a91e7997190ea5605023bb2d32701bf4bc188",
+  "output_hash": "f4b3e20f6e166259ae7373da269bf04cd652bd18486446bbf1f31c662cf40c0c",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, PnL Total: $-11652.04)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -23304.09%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -28,16 +28,16 @@
       "CHOP_RANGING": 51,
       "HIGH_VOLATILITY": 16
     },
-    "regime_net_pnl_usd": {
+    "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -7900.7,
-      "HIGH_VOLATILITY": -3751.34
+      "CHOP_RANGING": -15801.4,
+      "HIGH_VOLATILITY": -7502.69
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_pnl_usd": -11652.04
+    "total_oos_return_pct": -23304.09
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-20T15:13:06.184865+00:00"
+  "created_at_utc": "2026-08-21T22:29:04.090768+00:00"
 }

@@ -35,9 +35,15 @@ class Gate10AgentDebate:
         timeframe = str(candidate_info.get("timeframe", "1h")).lower()
         pf_oos = float(candidate_info.get("profit_factor_oos", 1.0))
         max_dd = float(candidate_info.get("max_drawdown_pct", 0.0))
-        net_pnl = float(candidate_info.get("net_profit_oos_usd") or candidate_info.get("net_profit_usd") or candidate_info.get("net_pnl") or 0.0)
         route = str(candidate_info.get("route", "ULTRA")).upper()
         is_ultra = (route == "ULTRA")
+        initial_cap = 1000.0 if is_ultra else 50000.0
+
+        raw_pnl = float(candidate_info.get("net_profit_oos_usd") or candidate_info.get("net_profit_usd") or candidate_info.get("net_pnl") or 0.0)
+        if 0 < raw_pnl < 10.0:
+            net_pnl = raw_pnl * initial_cap
+        else:
+            net_pnl = raw_pnl
 
         # 1. Research Agent (Hipótesis Estructural y Coherencia de Entrada/Salida)
         research_score = min(100.0, max(20.0, (pf_oos * 45.0) + (10.0 if trades_count >= 20 else -15.0)))

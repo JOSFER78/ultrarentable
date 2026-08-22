@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_5M_g09",
   "run_id": "run_UR_FONDEO_AUDUSD_5M",
   "strategy_id": "UR_FONDEO_AUDUSD_5M",
-  "strategy_snapshot_hash": "fa059a901ed2696430f93cc0c4b21c21bc9c6ff06ee5c1c1e4e14eff3d25dcc8",
+  "strategy_snapshot_hash": "16c67db8a10f5534a85b86a37934f20958117c76c5e715cf6761828cad6c59b6",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "791582be13d2358c0afb31e724009b591f8cbe965872b8d6b9464816325c0530",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "16af608c6573143b65af8633f8deeedabdb955be208e29876bb0f7b866582cb6",
-  "output_hash": "23991a5b8b501f2a9a77fe46f99a695b4a638d70bc1ee99aef3da8cb34a25722",
+  "input_hash": "bab66b9c96a2c81c44fb80be7385c5aadfd37708db847dad4f60e303a20d0743",
+  "output_hash": "ba8247c29320c3c2fcd5c7150ba8561c24969ae3f8dcc6898b2ea424f7c111d9",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 70.6 trades/param, Estabilidad Vecindario: 75.0%, Re-backtest PFs: [0.08, 0.07, 0.07, 0.08])",
+  "score": 83.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 140.5 trades/param, Estabilidad Vecindario: 72.5%, Re-backtest PFs: [0.07, 0.08, 0.07, 0.07])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 70.6,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 140.5,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 75.0,
-    "min_stability_required_pct": 70.0,
+    "parameter_neighborhood_stability_pct": 72.5,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
+      0.07,
       0.08,
       0.07,
-      0.07,
-      0.08
+      0.07
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:02:16.530391+00:00"
+  "created_at_utc": "2026-08-21T22:29:18.855221+00:00"
 }

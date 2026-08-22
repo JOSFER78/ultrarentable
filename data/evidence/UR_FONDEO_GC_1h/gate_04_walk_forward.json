@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GC_1h_g04",
+  "run_id": "run_UR_FONDEO_GC_1h",
+  "strategy_id": "UR_FONDEO_GC_1h",
+  "strategy_snapshot_hash": "ed70d10b5ba06a55b2528a9cf3f3ea32059e133091de5d0f57c645a763249dce",
+  "dataset_id": "ds_trad_gc_1h_1711425600000_1787090400000.json",
+  "dataset_sha256": "revalidated_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "2.0.0",
+  "formula_version": "2.0.0",
+  "input_hash": "49388bc88a461c0b9c6010b37f360acea1fe998a21c9ba471552349a5f4e1607",
+  "output_hash": "a4f4f94465376c54a3ee4d52bee44dd5d50a712988eaf794e8800e671d926084",
+  "status": "PASSED",
+  "score": 96.6,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.08, Consistencia: 80.0%)",
+  "metrics": {
+    "total_trades_analyzed": 215,
+    "windows_count": 5,
+    "walk_forward_efficiency": 1.08,
+    "oos_consistency_pct": 80.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 30,
+        "oos_trades_count": 13,
+        "pf_is": 0.94,
+        "pf_oos": 0.45,
+        "net_profit_oos_usd": -0.03,
+        "wfe": 0.48
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 30,
+        "oos_trades_count": 13,
+        "pf_is": 0.63,
+        "pf_oos": 1.13,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 1.8
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 30,
+        "oos_trades_count": 13,
+        "pf_is": 1.09,
+        "pf_oos": 1.17,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 1.08
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 30,
+        "oos_trades_count": 13,
+        "pf_is": 1.27,
+        "pf_oos": 1.11,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 0.88
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 30,
+        "oos_trades_count": 13,
+        "pf_is": 1.06,
+        "pf_oos": 1.22,
+        "net_profit_oos_usd": 0.01,
+        "wfe": 1.15
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GC_1h/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-21T22:29:28.721257+00:00"
+}

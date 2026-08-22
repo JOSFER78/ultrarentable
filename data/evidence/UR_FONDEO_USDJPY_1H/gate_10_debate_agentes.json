@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g10",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "31bb1febdf86cf5ca96836c459f27a6b5221aa8d4111444657ab2e8ede7a4319",
+  "strategy_snapshot_hash": "10fe76b37a850c36eac87b126c623099d67734f05aa0b01b796e9c7d6cfcdc62",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "4ff709fa43e7cc03ac822633045eb5719d1b361459beeeb851afe1fea61bb18c",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b03d012b9a9f422648eedd4444f534454450b4f14e669892c33c893515341fe2",
-  "output_hash": "01c4c9fe81e418dab7c9430b6009c02c69ca08a978ad965f326b718fdd33f60e",
+  "input_hash": "e6dfdef48b458a67e524a293d133dcd42ff7d46787b3f681f90fbf0579b7e423",
+  "output_hash": "95d86142d15ce6a0c6c96b6d6e08b6b4743d662354c93bd35b2bb223178ead1a",
   "status": "FAILED",
-  "score": 29.4,
-  "verdict": "FALLO: Consenso insuficiente (29.4/100) u objeción crítica de riesgo",
+  "score": 28.7,
+  "verdict": "FALLO: Consenso insuficiente (28.7/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 29.4,
+    "consensus_score": 28.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 37.0,
+        "score": 34.8,
         "findings": [
           "Activo y Timeframe: USDJPY (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.60 con beneficio neto de $-12951.13.",
+          "Profit Factor OOS: 0.55 con beneficio neto de $-0.18.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 27.9% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 28.5% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 82 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 333 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-157.94 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 34.2,
+        "score": 33.7,
         "objections": [
-          "Alerta de Drawdown: DD (27.9%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.60 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (28.5%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.55 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:12:33.780998+00:00"
+  "created_at_utc": "2026-08-21T22:28:41.711742+00:00"
 }

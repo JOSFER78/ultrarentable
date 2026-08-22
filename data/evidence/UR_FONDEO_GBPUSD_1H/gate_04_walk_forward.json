@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g04",
   "run_id": "run_UR_FONDEO_GBPUSD_1H",
   "strategy_id": "UR_FONDEO_GBPUSD_1H",
-  "strategy_snapshot_hash": "d8e6c228caeda15304f7a3e2e036816d6a34389bf0f2aa503a57dcabad769ddc",
+  "strategy_snapshot_hash": "9448c175e9c43911f69ee5b41a714e02909e73464a459df8d0b4a468003eb24b",
   "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "d74a3c5759a3784d19e06048fa883eca827c8566617348db4a6203e3a155e52f",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "447bf022bd17bc819036feda7a05ed3aafb876a3972bb79448f37130e84ac0b4",
-  "output_hash": "22153e8ef7ae09633d45f35bb257b74cb710bf654a0f145919b90a9c6354cf20",
+  "input_hash": "dabde63cc1b9149b1159b0067b144f0f92038f5935ce266cfd8c60ce4d82a3ce",
+  "output_hash": "84393b6a739c06a6e520a82cc0afccae8bd45a27ebce1a97546505c2822b51ed",
   "status": "FAILED",
-  "score": 49.0,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.98 < 0.50 ó Consistencia 0.0% < 50%)",
+  "score": 48.7,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.97 < 0.40 ó Consistencia 0.0% < 40%)",
   "metrics": {
     "total_trades_analyzed": 399,
     "windows_count": 5,
-    "walk_forward_efficiency": 0.98,
+    "walk_forward_efficiency": 0.97,
     "oos_consistency_pct": 0.0,
     "min_wfe_required": 0.5,
     "windows_details": [
@@ -26,49 +26,49 @@
         "window_index": 1,
         "is_trades_count": 55,
         "oos_trades_count": 24,
-        "pf_is": 0.42,
+        "pf_is": 0.39,
         "pf_oos": 0.36,
-        "net_profit_oos_usd": -3341.54,
-        "wfe": 0.85
+        "net_profit_oos_usd": -0.09,
+        "wfe": 0.94
       },
       {
         "window_index": 2,
         "is_trades_count": 55,
         "oos_trades_count": 24,
-        "pf_is": 0.3,
-        "pf_oos": 0.42,
-        "net_profit_oos_usd": -2393.14,
-        "wfe": 1.39
+        "pf_is": 0.33,
+        "pf_oos": 0.43,
+        "net_profit_oos_usd": -0.08,
+        "wfe": 1.3
       },
       {
         "window_index": 3,
         "is_trades_count": 55,
         "oos_trades_count": 24,
-        "pf_is": 0.6,
-        "pf_oos": 0.93,
-        "net_profit_oos_usd": -193.59,
-        "wfe": 1.56
+        "pf_is": 0.61,
+        "pf_oos": 0.94,
+        "net_profit_oos_usd": -0.01,
+        "wfe": 1.55
       },
       {
         "window_index": 4,
         "is_trades_count": 55,
         "oos_trades_count": 24,
         "pf_is": 0.77,
-        "pf_oos": 0.53,
-        "net_profit_oos_usd": -1274.69,
-        "wfe": 0.69
+        "pf_oos": 0.54,
+        "net_profit_oos_usd": -0.06,
+        "wfe": 0.7
       },
       {
         "window_index": 5,
         "is_trades_count": 55,
         "oos_trades_count": 24,
-        "pf_is": 0.5,
+        "pf_is": 0.51,
         "pf_oos": 0.2,
-        "net_profit_oos_usd": -2107.75,
-        "wfe": 0.4
+        "net_profit_oos_usd": -0.11,
+        "wfe": 0.39
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-20T15:05:43.963761+00:00"
+  "created_at_utc": "2026-08-21T22:28:59.885036+00:00"
 }

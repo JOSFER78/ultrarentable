@@ -79,12 +79,36 @@ interface CanonicalPortfolio {
   pass_rate_pct?: number;
 }
 
+interface AutonomousEnsemble {
+  portfolio_id: string;
+  name: string;
+  route: string;
+  symbols: string[];
+  components_count: number;
+  combined_annualized_roi_pct: number;
+  combined_monthly_roi_pct: number;
+  combined_max_dd_pct: number;
+  combined_sharpe_ratio: number;
+  combined_profit_factor: number;
+  diversification_ratio: number;
+  avg_cross_correlation: number;
+  consensus_score: number;
+  consensus_verdict: string;
+  is_approved: boolean;
+  created_at_utc: string;
+}
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export default function PortfolioStudioPage() {
   const [track, setTrack] = useState<"ULTRA" | "FONDEO">("ULTRA");
-  const [activeTab, setActiveTab] = useState<"CUSTOM_STUDIO" | "CANONICAL_PRESETS">("CUSTOM_STUDIO");
+  const [activeTab, setActiveTab] = useState<"AUTONOMOUS_DAEMON" | "CUSTOM_STUDIO" | "CANONICAL_PRESETS">("AUTONOMOUS_DAEMON");
   
+  // Autonomous Daemon State
+  const [autonomousEnsembles, setAutonomousEnsembles] = useState<AutonomousEnsemble[]>([]);
+  const [loadingAuto, setLoadingAuto] = useState(false);
+  const [triggeringAuto, setTriggeringAuto] = useState(false);
+
   // Custom Studio State
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
@@ -95,6 +119,44 @@ export default function PortfolioStudioPage() {
   // Presets State
   const [canonicalPresets, setCanonicalPresets] = useState<CanonicalPortfolio[]>([]);
   const [loadingPresets, setLoadingPresets] = useState(false);
+
+  // Fetch autonomous ensembles
+  const loadAutonomousEnsembles = async () => {
+    setLoadingAuto(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/portfolios/autonomous-ensembles?route=${track}`);
+      if (res.ok) {
+        const data = await res.json();
+        setAutonomousEnsembles(data);
+      }
+    } catch (err) {
+      console.error("Error loading autonomous ensembles:", err);
+    } finally {
+      setLoadingAuto(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAutonomousEnsembles();
+  }, [track]);
+
+  const handleTriggerAutonomousCycle = async () => {
+    setTriggeringAuto(true);
+    setErrorMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/portfolios/trigger-autonomous-cycle?route=${track}`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok && data.status === "SUCCESS") {
+        setAutonomousEnsembles(data.ensembles || []);
+      }
+    } catch (err) {
+      setErrorMsg("Error ejecutando ciclo de síntesis: " + String(err));
+    } finally {
+      setTriggeringAuto(false);
+    }
+  };
 
   // Fetch available candidates
   useEffect(() => {
@@ -266,6 +328,27 @@ export default function PortfolioStudioPage() {
       {/* Tabs */}
       <div style={{ display: "flex", gap: 12, borderBottom: "1px solid var(--border)", marginTop: 24, marginBottom: 20 }}>
         <button
+          onClick={() => setActiveTab("AUTONOMOUS_DAEMON")}
+          style={{
+            padding: "10px 18px",
+            background: "none",
+            border: "none",
+            borderBottom: activeTab === "AUTONOMOUS_DAEMON" ? "2px solid #ec4899" : "2px solid transparent",
+            color: activeTab === "AUTONOMOUS_DAEMON" ? "var(--text-primary)" : "var(--text-muted)",
+            fontWeight: activeTab === "AUTONOMOUS_DAEMON" ? 700 : 500,
+            cursor: "pointer",
+            fontSize: 14,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <span>🤖 Síntesis Autónoma 24/7 (Sinergia Multi-Activo)</span>
+          <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "10px", background: "rgba(236, 72, 153, 0.2)", color: "#ec4899", fontWeight: 800 }}>
+            {autonomousEnsembles.length} COMB
+          </span>
+        </button>
+        <button
           onClick={() => setActiveTab("CUSTOM_STUDIO")}
           style={{
             padding: "10px 18px",
@@ -300,6 +383,193 @@ export default function PortfolioStudioPage() {
       {errorMsg && (
         <div style={{ padding: 12, borderRadius: 8, background: "rgba(239, 68, 68, 0.15)", border: "1px solid rgba(239, 68, 68, 0.3)", color: "#ef4444", marginBottom: 16, fontSize: 13 }}>
           ⚠️ {errorMsg}
+        </div>
+      )}
+
+      {activeTab === "AUTONOMOUS_DAEMON" && (
+        <div>
+          {/* Action and Daemon Header */}
+          <div
+            style={{
+              background: "linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(16, 185, 129, 0.05))",
+              border: "1px solid rgba(236, 72, 153, 0.3)",
+              borderRadius: 14,
+              padding: "20px 24px",
+              marginBottom: 24,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ec4899", boxShadow: "0 0 10px #ec4899" }} />
+                <span style={{ fontSize: 13, fontWeight: 900, color: "#ec4899", letterSpacing: "1px", fontFamily: "var(--font-mono, monospace)" }}>
+                  DEMONIO 24/7 MULTI-AGENTE AUTÓNOMO ACTIVO
+                </span>
+              </div>
+              <h2 style={{ fontSize: 20, fontWeight: 800, margin: "0 0 4px", color: "var(--text-primary)" }}>
+                Explorador de Ensambles & Sinergias Multi-Activo
+              </h2>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, maxWidth: 850 }}>
+                El motor analiza de forma continua combinaciones de 2 a 5 submáquinas en activos ortogonales distintos (Cripto, CME Futuros, Forex), calcula la matriz de covarianza real, pondera por Paridad de Riesgo Inversa y somete cada combinación al veredicto de los 5 agentes.
+              </p>
+            </div>
+
+            <button
+              onClick={handleTriggerAutonomousCycle}
+              disabled={triggeringAuto}
+              style={{
+                padding: "12px 22px",
+                borderRadius: 10,
+                border: "none",
+                background: triggeringAuto ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #ec4899, #be185d)",
+                color: "#ffffff",
+                fontWeight: 800,
+                fontSize: 13,
+                cursor: triggeringAuto ? "not-allowed" : "pointer",
+                boxShadow: "0 4px 14px rgba(236, 72, 153, 0.35)",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <span>{triggeringAuto ? "⏳ Minando Combinaciones..." : "⚡ Disparar Ciclo de Exploración Multi-Agente"}</span>
+            </button>
+          </div>
+
+          {/* Autonomous Results Grid */}
+          {loadingAuto ? (
+            <div style={{ padding: 60, textAlign: "center", color: "var(--text-muted)" }}>
+              Cargando Meta-Portafolios explorados por el demonio autónomo...
+            </div>
+          ) : autonomousEnsembles.length === 0 ? (
+            <div style={{ padding: 40, textAlign: "center", background: "var(--bg-panel)", borderRadius: 12, border: "1px solid var(--border)" }}>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>🧩</div>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>No hay ensambles calculados para la ruta {track}</div>
+              <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
+                Haz clic en el botón superior para que el comité de 5 agentes explore y sintetice combinaciones óptimas.
+              </p>
+              <button
+                onClick={handleTriggerAutonomousCycle}
+                style={{ padding: "10px 20px", borderRadius: 8, background: "#ec4899", border: "none", color: "#fff", fontWeight: 700, cursor: "pointer" }}
+              >
+                ⚡ Iniciar Exploración Ahora
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 18 }}>
+              {autonomousEnsembles.map((ens) => (
+                <div
+                  key={ens.portfolio_id}
+                  style={{
+                    background: "var(--bg-panel)",
+                    border: `1px solid ${ens.is_approved ? "rgba(16, 185, 129, 0.4)" : "var(--border)"}`,
+                    borderRadius: 12,
+                    padding: 20,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    position: "relative",
+                  }}
+                >
+                  <div>
+                    {/* Header */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}>
+                          <span>{ens.name}</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "var(--font-mono, monospace)", marginTop: 2 }}>
+                          {ens.portfolio_id}
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 10.5,
+                          padding: "3px 8px",
+                          borderRadius: 6,
+                          background: ens.is_approved ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)",
+                          color: ens.is_approved ? "#10b981" : "#f59e0b",
+                          fontWeight: 800,
+                          border: `1px solid ${ens.is_approved ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
+                        }}
+                      >
+                        {ens.is_approved ? "✅ CON SENSO 5/5" : "⚠️ REVISIÓN"}
+                      </span>
+                    </div>
+
+                    {/* Metric Cards */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, background: "rgba(255,255,255,0.02)", padding: 12, borderRadius: 8, marginBottom: 14 }}>
+                      <div>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)" }}>ROI Anual Combinado</div>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: ens.combined_annualized_roi_pct >= 0 ? "#10b981" : "#f87171", fontFamily: "var(--font-mono, monospace)" }}>
+                          {ens.combined_annualized_roi_pct >= 0 ? `+${ens.combined_annualized_roi_pct}%` : `${ens.combined_annualized_roi_pct}%`}
+                        </div>
+                        <div style={{ fontSize: 10, color: "#6ee7b7" }}>
+                          +{ens.combined_monthly_roi_pct}%/mes
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Drawdown Combinado</div>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: ens.combined_max_dd_pct <= 5.0 ? "#10b981" : (ens.combined_max_dd_pct <= 80.0 ? "#fbbf24" : "#f87171"), fontFamily: "var(--font-mono, monospace)" }}>
+                          {ens.combined_max_dd_pct}%
+                        </div>
+                        <div style={{ fontSize: 10, color: "var(--text-muted)" }}>
+                          Correlación: {ens.avg_cross_correlation.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Secondary Metrics */}
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-muted)", background: "rgba(0,0,0,0.2)", padding: "8px 12px", borderRadius: 6, marginBottom: 14 }}>
+                      <span>Ratio Diversificación: <strong style={{ color: "#38bdf8" }}>{ens.diversification_ratio.toFixed(2)}x</strong></span>
+                      <span>Sharpe Ratio: <strong style={{ color: "#34d399" }}>{ens.combined_sharpe_ratio}</strong></span>
+                      <span>Score Agentes: <strong style={{ color: "#ec4899" }}>{ens.consensus_score}/100</strong></span>
+                    </div>
+
+                    {/* Symbols Tags */}
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 6 }}>
+                      Activos Ortogonales:
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+                      {ens.symbols.map((sym, sIdx) => (
+                        <span key={sIdx} style={{ fontSize: 10.5, padding: "2px 8px", borderRadius: 4, background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.3)", fontWeight: 700 }}>
+                          💎 {sym}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      // Switch to custom studio and assemble this combination
+                      setActiveTab("CUSTOM_STUDIO");
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      borderRadius: 8,
+                      border: "1px solid rgba(236, 72, 153, 0.4)",
+                      background: "rgba(236, 72, 153, 0.1)",
+                      color: "#ec4899",
+                      fontWeight: 800,
+                      fontSize: 12.5,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <span>🔬 Inspeccionar y Ajustar en Studio Interactivo</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

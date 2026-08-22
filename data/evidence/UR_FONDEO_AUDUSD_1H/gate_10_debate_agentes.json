@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g10",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "dfdd7e6ee68f6d4cbc4eec188fbd940448f503aef9f2bba60f97b249b6190b88",
+  "strategy_snapshot_hash": "2486f6ffce0522cad83f6506b91f0c467959a73248bf108ee552f01b78d42f78",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "0796c269facd8bc0f09aede821a3bfbf57e08aa0900151d8f6790e14219431e6",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b295e496c30623d825c7b8644c1e1799196e791c00cc9e462b0a6dfc422b5a76",
-  "output_hash": "0efde9a569ece0b1479ddcee1db14c62aba8a9fc43e784c4ada67d4409985d1b",
+  "input_hash": "b5954bdcd249c6a6767b8e456fa41549f71030f33774c94d13f3294cacbc6ef0",
+  "output_hash": "a4cd1f371e979b8129779c6f4e5264f3397613477c666a7c47d5934660b7774c",
   "status": "FAILED",
-  "score": 27.3,
-  "verdict": "FALLO: Consenso insuficiente (27.3/100) u objeción crítica de riesgo",
+  "score": 26.7,
+  "verdict": "FALLO: Consenso insuficiente (26.7/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 27.3,
+    "consensus_score": 26.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 29.8,
+        "score": 27.6,
         "findings": [
           "Activo y Timeframe: AUDUSD (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.44 con beneficio neto de $-17098.40.",
+          "Profit Factor OOS: 0.39 con beneficio neto de $-0.31.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 34.4% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 36.5% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 101 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 323 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-169.29 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 32.5,
+        "score": 31.9,
         "objections": [
-          "Alerta de Drawdown: DD (34.4%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.44 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (36.5%) consume más del 70% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.39 cercano al umbral de equilibrio (1.15)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:01:43.318369+00:00"
+  "created_at_utc": "2026-08-21T22:29:07.993999+00:00"
 }

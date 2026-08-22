@@ -11,12 +11,12 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "6dca81567fd55d9f1e5aee0f03bc3a765577b64ccc725faa46f3ee851b2dd6d3",
-  "output_hash": "d3021767732a7beaa4b7fc697b15f3213b4f47c9276d8a8cb756b07fb126dbda",
+  "output_hash": "549d3a7f3c712fe056409efb5d91a471367cfa0ce2b125347c2c630f298fa861",
   "status": "FAILED",
-  "score": 37.0,
-  "verdict": "FALLO: Consenso insuficiente (37.0/100) u objeción crítica de riesgo",
+  "score": 53.8,
+  "verdict": "FALLO: Consenso insuficiente (53.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 37.0,
+    "consensus_score": 53.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 56.8,
         "findings": [
           "Activo y Timeframe: USDJPY (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.04 con beneficio neto de $1.16.",
+          "Profit Factor OOS: 1.04 con beneficio neto de $1161.20.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -54,25 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.01 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $6.83 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 41.7,
+        "score": 64.2,
         "objections": [
           "Alerta de Drawdown: DD (100.5%) consume más del 90% del margen tolerable.",
           "Alerta de Rentabilidad: Profit factor 1.04 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:23:25.389392+00:00"
+  "created_at_utc": "2026-08-21T22:30:49.130926+00:00"
 }

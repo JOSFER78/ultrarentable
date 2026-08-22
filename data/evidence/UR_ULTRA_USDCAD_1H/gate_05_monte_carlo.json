@@ -2,26 +2,22 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_1H_g05",
   "run_id": "run_UR_ULTRA_USDCAD_1H",
   "strategy_id": "UR_ULTRA_USDCAD_1H",
-  "strategy_snapshot_hash": "b6ea7a95973733e284443b23e8880df6b960e3fc4354d50cd7091695ec607832",
+  "strategy_snapshot_hash": "89a24ee08e929c3df3ff08c0cb6ad46360dd8924fe6298c7ff1f487efe9d9cd3",
   "dataset_id": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9b88d6b5d1ebb0ebadfc5219e5a71d35bf90bf2aa4094d90302d3644e29b8694",
-  "output_hash": "c998b534ba2fd207d285827c15d0abb707da50f6acac43c2bef9821e97b7d58d",
-  "status": "PASSED",
-  "score": 97.9,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.2%)",
+  "input_hash": "ceaa9b7ff6683af32d53f9c3b4c2406e9ed28c6626442697e0cf6ed0de76c3a6",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
   "metrics": {
-    "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 2.2,
-    "drawdown_95th_percentile_pct": 4.2,
-    "max_simulated_drawdown_pct": 8.2
+    "simulations_run": 0
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-21T22:22:02.374489+00:00"
+  "created_at_utc": "2026-08-21T22:31:24.106822+00:00"
 }

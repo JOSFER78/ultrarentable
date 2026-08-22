@@ -11,12 +11,12 @@
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
   "input_hash": "9d90aa4a995189605c2845d34f85ae65fcb865a0be9e4bd4eec2c61c7c1f47b4",
-  "output_hash": "d4d0a8fc4029d88439db47de2e32094bca8ab3cbc8385ad9e6777b803ffac011",
+  "output_hash": "816167c0e4e05692440414d33b147acaed5b549e2a0b81184da2dc0b86a5b32c",
   "status": "PASSED",
-  "score": 58.3,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (58.3/100 · 5/5 Evaluadores Conformes)",
+  "score": 75.2,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (75.2/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 58.3,
+    "consensus_score": 75.2,
     "evaluators_count": 5,
     "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 58.6,
         "findings": [
           "Activo y Timeframe: BNB-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $3.28.",
+          "Profit Factor OOS: 1.08 con beneficio neto de $3284.17.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -54,17 +54,17 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.02 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $15.49 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 57.6,
+        "score": 80.1,
         "objections": [
           "Alerta de Drawdown: DD (81.6%) consume más del 90% del margen tolerable."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:22:44.047206+00:00"
+  "created_at_utc": "2026-08-21T22:30:51.035099+00:00"
 }

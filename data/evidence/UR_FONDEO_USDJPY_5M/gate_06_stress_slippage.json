@@ -2,50 +2,50 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_5M_g06",
   "run_id": "run_UR_FONDEO_USDJPY_5M",
   "strategy_id": "UR_FONDEO_USDJPY_5M",
-  "strategy_snapshot_hash": "ff3ef7d2eab41eeccdee1c928ccdd708ce559270f1f3153d7bb7eb015dff2510",
+  "strategy_snapshot_hash": "b85a177113f2df2f869354872b9804c15a6e67fa152f6dd731ca997220fb69b5",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "d20524302ad47dec9553b7f5880dbf6b28149b325e0e50cf2b9311c6b3ecf246",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "5ef304f2082a41e7e667254137dd611b91fa2024fbdcbf5a9d3f16546f318120",
-  "output_hash": "d0120b1fcc1a90f51cc3d3ddcc4270e2e13e22e9167b70b974fc343dae3c2f2f",
+  "input_hash": "8b5bedcad0d3756a038970b2eadbbd9c8c77e061a5521e12505913133a4ff21a",
+  "output_hash": "0a58deef8044e7b21294ec40755e82668be8fc5d6b714fc3b5c914d529bef953",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Estrategia vulnerable a deslizamiento y spread (0/4 escenarios superados)",
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
-        "friction_penalty_per_trade_usd": 3.0,
-        "stressed_net_pnl_usd": -11853.04,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.3,
         "stressed_profit_factor": 0.09,
         "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 8.59,
-        "stressed_net_pnl_usd": -12227.6,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.3,
         "stressed_profit_factor": 0.09,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 16.98,
-        "stressed_net_pnl_usd": -12789.42,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.31,
         "stressed_profit_factor": 0.08,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 27.95,
-        "stressed_net_pnl_usd": -13524.8,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -0.33,
         "stressed_profit_factor": 0.07,
         "survived": false
       }
     },
     "passed_scenarios_count": 0,
-    "min_required_scenarios": 3,
+    "min_required_scenarios": 2,
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-20T15:13:06.157734+00:00"
+  "created_at_utc": "2026-08-21T22:29:04.035657+00:00"
 }

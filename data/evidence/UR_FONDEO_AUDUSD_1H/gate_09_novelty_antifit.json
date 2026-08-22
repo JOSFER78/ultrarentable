@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g09",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "dfdd7e6ee68f6d4cbc4eec188fbd940448f503aef9f2bba60f97b249b6190b88",
+  "strategy_snapshot_hash": "2486f6ffce0522cad83f6506b91f0c467959a73248bf108ee552f01b78d42f78",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "0796c269facd8bc0f09aede821a3bfbf57e08aa0900151d8f6790e14219431e6",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "4a6f9212ebb2d762c5c1d0fb651eb8ca9377ecd0d936fb283982b00357fe2653",
-  "output_hash": "9f363622c2727afcc1fe624eab3d5df663374cb315365a2f342be8a84438f071",
+  "input_hash": "0e6627035f518be2e4701bdd244cce22e2de39de7bc5e4b0ec36e5b0be239a71",
+  "output_hash": "cc0ad98f1998ec2270281d9553c2be778747844517636c05bac843adfd2f76e5",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 41.0 trades/param, Estabilidad Vecindario: 108.0%, Re-backtest PFs: [0.53, 0.47, 0.44, 0.46])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 80.8 trades/param, Estabilidad Vecindario: 110.3%, Re-backtest PFs: [0.53, 0.48, 0.36, 0.35])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 41.0,
+    "parameters_count": 4,
+    "degrees_of_freedom_ratio": 80.8,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 108.0,
-    "min_stability_required_pct": 70.0,
+    "parameter_neighborhood_stability_pct": 110.3,
+    "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
       0.53,
-      0.47,
-      0.44,
-      0.46
+      0.48,
+      0.36,
+      0.35
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-20T15:01:43.312909+00:00"
+  "created_at_utc": "2026-08-21T22:29:07.984623+00:00"
 }

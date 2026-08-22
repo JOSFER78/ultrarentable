@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_5M_g10",
   "run_id": "run_UR_FONDEO_USDJPY_5M",
   "strategy_id": "UR_FONDEO_USDJPY_5M",
-  "strategy_snapshot_hash": "ff3ef7d2eab41eeccdee1c928ccdd708ce559270f1f3153d7bb7eb015dff2510",
+  "strategy_snapshot_hash": "b85a177113f2df2f869354872b9804c15a6e67fa152f6dd731ca997220fb69b5",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "d20524302ad47dec9553b7f5880dbf6b28149b325e0e50cf2b9311c6b3ecf246",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "41584691510c3e3d93e45fec9717c8896aa597f2cdc13a09e681e6436dda3a1f",
-  "output_hash": "98eca7d41f90764a98a3db51d598eba9d926a391e4e2fdee6ac9dc9eafc32a05",
+  "input_hash": "8034a503dcfc5692f600f94f29fe04c343dd5427d43b19580c68efa4cf7ed19d",
+  "output_hash": "8008668951c0bbe6939976e7237cce4bdec6ff7d703bab4aaab86a040b05b5ce",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDJPY (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.09 con beneficio neto de $-18652.56.",
+          "Profit Factor OOS: 0.09 con beneficio neto de $-0.29.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 67 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 301 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-278.40 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -74,5 +74,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-20T15:13:06.510610+00:00"
+  "created_at_utc": "2026-08-21T22:29:04.835397+00:00"
 }

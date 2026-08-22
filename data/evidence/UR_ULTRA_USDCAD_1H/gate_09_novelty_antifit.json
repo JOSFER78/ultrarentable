@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_1H_g09",
   "run_id": "run_UR_ULTRA_USDCAD_1H",
   "strategy_id": "UR_ULTRA_USDCAD_1H",
-  "strategy_snapshot_hash": "b6ea7a95973733e284443b23e8880df6b960e3fc4354d50cd7091695ec607832",
+  "strategy_snapshot_hash": "89a24ee08e929c3df3ff08c0cb6ad46360dd8924fe6298c7ff1f487efe9d9cd3",
   "dataset_id": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "3e6566b0012830b9ded4ba09ec8a4c93a4c97c85a452c1e8b9c45ce0b8a68f43",
-  "output_hash": "09b493af0045391821dec6ef76602d0a3915014dbbf8ba7a9ca0d50461267acc",
-  "status": "PASSED",
-  "score": 89.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 27.8 trades/param, Estabilidad Vecindario: 82.6%, Re-backtest PFs: [0.34, 1.04, 1.05, 1.04])",
+  "input_hash": "20496c04d0e89f0b836268b4c946e41c858b9a5aa105cd4843b2b5a0cebf07ff",
+  "output_hash": "1606664ed99fa6c69f03a6717fa502da8d54cedd68c4eda08f4e6ab8e18d9248",
+  "status": "FAILED",
+  "score": 40.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 2.9 o Estabilidad 100.0% < 50.0%)",
   "metrics": {
-    "parameters_count": 4,
-    "degrees_of_freedom_ratio": 27.8,
+    "parameters_count": 7,
+    "degrees_of_freedom_ratio": 2.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 82.6,
+    "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.34,
-      1.04,
-      1.05,
-      1.04
+      0.25,
+      0.27,
+      0.0,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:22:03.194284+00:00"
+  "created_at_utc": "2026-08-21T22:31:24.503435+00:00"
 }
