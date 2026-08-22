@@ -108,16 +108,16 @@ contracts/gate_directory.py ◀── gates_router (y futuros consumidores)
 
 ## SQX 144 oficial ARM64 (2026-08-22, sustituye al estado anterior del motor SQX)
 
-- El paquete ARM antiguo (instalacion manual incompleta, splash NPE) queda como legacy en
-   (no borrar hasta confirmar migracion completa).
-- **Instalado el build OFICIAL 144.2953 ARM64** en 
-  (descarga directa de api.strategyquant.com, 1.28GB, con  y j64 completo).
--  (user unit) apunta al nuevo directorio, DISPLAY=:99 (XFCE+Xvfb),
-   (ya no hay crash-storm; kill-switch: ).
-- **Estado actual: EJECUTANDOSE y estable**, esperando activacion de licencia en el dialogo
-  Electron (Hardware ID: ). Web server Jetty en .
-- Activacion automatizable: ventana  accesible via 
-  (instalado). Flujo pendiente: licencia -> verificar servidor MCP -> fijar 
-  (ojo: 8080 esta ocupado por otro proyecto; el cliente usa 8081 por defecto) ->
-   -> estrategias nuevas al pipeline.
-- Proyecto  ya migrado a .
+- El paquete ARM antiguo (instalación manual incompleta, splash NPE) queda como legacy en
+  /home/ubuntu/StrategyQuantX (no borrar hasta confirmar migración completa).
+- Instalado el build OFICIAL 144.2953 ARM64 en /home/ubuntu/StrategyQuantX144
+  (descarga directa de api.strategyquant.com, 1.28GB, con StrategyQuantX.config y j64 completo).
+- strategyquantx.service (user unit) apunta al nuevo directorio, DISPLAY=:99 (XFCE+Xvfb),
+  Restart=on-failure (ya no hay crash-storm; kill-switch: /tmp/sqx_disabled).
+- Estado actual: EJECUTÁNDOSE y estable, esperando activación de licencia en el diálogo
+  Electron (Hardware ID: C0E825359957). Web server Jetty en 0.0.0.0:5050.
+- Activación automatizable: ventana StrategyQuantX accesible via DISPLAY=:99 xdotool
+  (instalado). Flujo pendiente: licencia -> verificar servidor MCP -> fijar SQX_MCP_URL
+  (ojo: 8080 está ocupado por otro proyecto; el cliente usa 8081 por defecto) ->
+  systemctl --user start ultra-bg-search.service -> estrategias nuevas al pipeline.
+- Proyecto Ultra_Auto_Pilot ya migrado a StrategyQuantX144/user/projects/.
