@@ -5,10 +5,11 @@ Cálculos estadísticos y cuantitativos rigurosos para la validación antifraude
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 import numpy as np
 
 from contracts.backtest import BacktestResult, TradeLog
+from services.engine.metrics_engine import UniversalMetricsEngine
 
 
 def calculate_deflated_sharpe_ratio(
@@ -100,17 +101,18 @@ def calculate_burst_ruin_probability(
     trades: List[TradeLog],
     burst_size: int = 20,
     iterations: int = 500,
+    seed: int = 42,
 ) -> float:
-    """Simulación Monte Carlo de ráfagas para verificar probabilidad de quiebra de la ráfaga de balas."""
+    """Simulación Monte Carlo determinista de ráfagas para verificar probabilidad de quiebra de la ráfaga de balas."""
     if not trades:
         return 0.0
 
-    returns_r = [t.return_r for t in trades]
+    returns_r = [getattr(t, "return_r", 0.0) for t in trades]
     bust_count = 0
 
-    np.random.seed(42)
+    rng = np.random.default_rng(seed)
     for _ in range(iterations):
-        sample = np.random.choice(returns_r, size=burst_size, replace=True)
+        sample = rng.choice(returns_r, size=burst_size, replace=True)
         equity = float(burst_size)  # Presupuesto total de la ráfaga (burst_size R)
         for r in sample:
             equity += r

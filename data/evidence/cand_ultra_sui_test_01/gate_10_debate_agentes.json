@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "a3859e1efc762c46703f5ff2e7d9005f74f96f44c1f121ef96c81955181f4298",
-  "output_hash": "5a83706f567d97c0b5697725245e817a15945ecd1c4b6fabcf95e1f7c0520fe4",
+  "input_hash": "d7811f24305841f40043e96b5747aa2bb0e5991fa28d944c90d4920ba9aeb466",
+  "output_hash": "9b6397125061c04d3c300b10a5e0688ba3d44db397009c5960e3cd7b37c81482",
   "status": "FAILED",
-  "score": 54.1,
-  "verdict": "FALLO: Consenso insuficiente (54.1/100) u objeción crítica de riesgo",
+  "score": 60.3,
+  "verdict": "FALLO: Consenso insuficiente (60.3/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 54.1,
+    "consensus_score": 60.3,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 57.7,
+        "score": 79.3,
         "findings": [
           "Activo y Timeframe: SUIUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.06 con beneficio neto de $3600.49.",
+          "Profit Factor OOS: 1.54 con beneficio neto de $6390606766531503488921239552.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 96.7% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 93.1% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 642 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2657 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $5.61 USD.",
+          "Beneficio medio por operación: $2405196374306173594107904.00 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 64.4,
+        "score": 69.8,
         "objections": [
-          "Alerta de Drawdown: DD (96.7%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (93.1%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:25:51.544585+00:00"
+  "created_at_utc": "2026-08-22T00:59:02.154779+00:00"
 }
