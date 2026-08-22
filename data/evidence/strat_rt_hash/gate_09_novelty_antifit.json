@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "bf8a01c64bffc445137f4611965421fe66f630b38930787609b2a25b49cfb58c",
-  "output_hash": "4b3b6f7f42bd6d006335427376d5ac644a504fb035abcf51bd6b94bc7d635758",
+  "input_hash": "f719190ffcb2d0b803553644ff3cc54153ebd6cd96095881394f7fd3f5ca2eae",
+  "output_hash": "e44bef7865fda0f1f23660401ea9df78728de3bf25cd5233361076a7a12d6b31",
   "status": "FAILED",
-  "score": 100.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 2.0 o Estabilidad 455.6% < 50.0%)",
+  "score": 49.4,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 4.0 o Estabilidad 123.4% < 50.0%)",
   "metrics": {
     "parameters_count": 2,
-    "degrees_of_freedom_ratio": 2.0,
+    "degrees_of_freedom_ratio": 4.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 455.6,
+    "parameter_neighborhood_stability_pct": 123.4,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.65,
-      0.83,
-      2.92,
-      2.16
+      0.44,
+      0.14,
+      1.32,
+      1.21
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/strat_rt_hash/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:26:08.077164+00:00"
+  "created_at_utc": "2026-08-22T01:29:50.899052+00:00"
 }

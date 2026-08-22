@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "e8b1f0396fb248d5bd6596d526cc53810bc7b6fbcb482763230e0a9f2e6a01f0",
-  "output_hash": "09c9d3dffe7e05b0d0d020c55f1504aa1d4d00210542fe04e511b8fef4691928",
+  "input_hash": "3b35b44d5fadd9e10add43718cd4c12db71f24bf790c1b3aa29134282b3159fe",
+  "output_hash": "cfac1f722d2ed50302be6daf80cbe70544a4f8550a0f1ddfbf92605551399be7",
   "status": "FAILED",
-  "score": 37.6,
-  "verdict": "FALLO: Consenso insuficiente (37.6/100) u objeción crítica de riesgo",
+  "score": 49.4,
+  "verdict": "FALLO: Consenso insuficiente (49.4/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 37.6,
+    "consensus_score": 49.4,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 59.1,
+        "score": 100.0,
         "findings": [
           "Activo y Timeframe: BTC-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.09 con beneficio neto de $12.49.",
+          "Profit Factor OOS: 2.80 con beneficio neto de $70.92.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 99.4% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 87.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 633 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1184 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.02 USD.",
+          "Beneficio medio por operación: $0.06 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 42.3,
+        "score": 52.5,
         "objections": [
-          "Alerta de Drawdown: DD (99.4%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (87.9%) consume más del 90% del margen tolerable."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:25:54.857083+00:00"
+  "created_at_utc": "2026-08-22T01:29:26.418424+00:00"
 }

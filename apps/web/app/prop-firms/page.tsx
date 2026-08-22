@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import Link from "next/link";
 
 // ============================================================================
@@ -48,9 +48,18 @@ export interface Provider {
   notes?: string;
 }
 
-export type MainNavModule = "CATALOGO" | "WIZARD" | "SIMULADOR" | "ENCICLOPEDIA" | "GUIAS";
+export type MainNavModule = "CATALOGO" | "WIZARD" | "SIMULADOR" | "ENCICLOPEDIA" | "GUIAS" | "CHATBOT";
 export type ComparativePhase = "ALL_360" | "COSTES" | "EXAMEN" | "FONDEADO";
 export type ViewMode = "TABLE" | "CARDS";
+
+interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: string;
+  suggested_actions?: string[];
+  active_coupons?: Array<{ firm: string; code: string; discount: string }>;
+}
 
 // ============================================================================
 // DICCIONARIO DE EXPLICACIONES TÉCNICAS PROFUNDAS POR FIRMA
@@ -127,7 +136,7 @@ const FIRM_DETAILS: Record<string, FirmTechnicalDetail> = {
     cost_profit_how_it_works: "Examen $85 USD con cupón PRO50. Cuota de Activación: $130 USD en cuenta Pro. Target: $3,000 USD. Split: 80/20 base en Pro, 90/10 en Pro+.",
     daily_dd_how_it_works: "Daily Loss Limit Estricto ($1,100 en 50K): Es un hard breach tanto en examen como en fondeo.",
     payout_how_it_works: "Retiros Día 1 en Cuenta Pro: Puedes retirar tus beneficios desde el primer día que superes el umbral de ganancias sin esperar semanas.",
-    fine_print_warning: "Regla de consistencia del 50% en examen (ningún día puede representar más del 50% del profit target total).",
+    fine_print_warning: "Regla de consistencia del 50% en examen (ningún día puede superar el 50% del profit target total).",
   },
   "FundedNext Futures": {
     drawdown_how_it_works: "Drawdown EOD Fin de Día: Recalculado tras el cierre a las 17:00 ET. En cuenta financiada se bloquea en balance inicial + buffer.",
@@ -174,7 +183,7 @@ export default function WorldClassFuturesPropFirmsPage() {
 
   // Filtros del Módulo 1 (Catálogo y Comparativa Unificada)
   const [viewMode, setViewMode] = useState<ViewMode>("TABLE");
-  const [selectedTier, setSelectedTier] = useState<string>("50K"); // Default 50K para comparar peras con peras
+  const [selectedTier, setSelectedTier] = useState<string>("50K"); // Default 50K
   const [selectedPhase, setSelectedPhase] = useState<ComparativePhase>("ALL_360");
   const [selectedDrawdown, setSelectedDrawdown] = useState<string>("ALL");
   const [selectedBotPolicy, setSelectedBotPolicy] = useState<string>("ALL");
@@ -192,6 +201,36 @@ export default function WorldClassFuturesPropFirmsPage() {
   // Comparador Cara a Cara (Side-by-Side 4-Way)
   const [compareList, setCompareList] = useState<Provider[]>([]);
   const [showCompareModal, setShowCompareModal] = useState<boolean>(false);
+
+  // ==========================================================================
+  // ESTADO DEL CHATBOT EXPERTO AI (ULTRABOT AI)
+  // ==========================================================================
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: "msg-init",
+      role: "assistant",
+      content: "👋 ¡Hola! Soy **UltraBot AI**, el Consultor Cuantitativo Experto en Firmas de Fondeo de Futuros CME.\n\nTengo acceso a la base de datos oficial 100% en tiempo real de **todas las 17 firmas de futuros**, sus precios netos con cupones, reglas de examen vs fondeado, modelos de drawdown (EOD vs Static vs Intraday), políticas de bots y letra pequeña.\n\n¿En qué te puedo ayudar hoy?",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      suggested_actions: [
+        "¿Qué cuenta de 50K es la más barata hoy sumando examen y activación?",
+        "Quiero operar con bots en NinjaTrader, ¿qué firmas lo permiten sin riesgo?",
+        "¿Cómo funciona el Drawdown Estático de BluSky vs EOD de MFFU?",
+        "¿Qué firmas pagan el Día 1 sin esperar quincenas?",
+        "¿Cuál es la letra pequeña y consistencia de Apex, Tradeify y Topstep?",
+        "Tengo $80 de presupuesto, ¿cuál es mi mejor opción?",
+      ],
+      active_coupons: [
+        { firm: "MFFU", code: "300K", discount: "50% OFF" },
+        { firm: "Tradeify", code: "TNT", discount: "40% OFF" },
+        { firm: "TradeDay", code: "FLASH55", discount: "55% OFF" },
+        { firm: "Bulenox", code: "GUIDE", discount: "89% OFF" },
+      ],
+    },
+  ]);
+  const [chatInput, setChatInput] = useState<string>("");
+  const [isChatLoading, setIsChatLoading] = useState<boolean>(false);
+  const [isFloatingChatOpen, setIsFloatingChatOpen] = useState<boolean>(false);
+  const chatBottomRef = useRef<HTMLDivElement>(null);
 
   // Módulo 2: Wizard / Asistente de Decisión (4 Pasos)
   const [wizardStep, setWizardStep] = useState<number>(1);
@@ -242,6 +281,10 @@ export default function WorldClassFuturesPropFirmsPage() {
     fetchCatalog();
   }, []);
 
+  useEffect(() => {
+    chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, isChatLoading]);
+
   const handleSyncNow = async () => {
     setIsSyncing(true);
     setSyncMessage("Sincronizando fuentes oficiales de futuros CME...");
@@ -278,6 +321,61 @@ export default function WorldClassFuturesPropFirmsPage() {
 
   const toggleRowExpansion = (providerId: string) => {
     setExpandedRowId(expandedRowId === providerId ? null : providerId);
+  };
+
+  // Enviar mensaje al Chatbot Experto
+  const handleSendChatMessage = async (textToSend?: string) => {
+    const query = (textToSend || chatInput).trim();
+    if (!query || isChatLoading) return;
+
+    const userMessageObj: ChatMessage = {
+      id: `usr-${Date.now()}`,
+      role: "user",
+      content: query,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setChatMessages((prev) => [...prev, userMessageObj]);
+    if (!textToSend) setChatInput("");
+    setIsChatLoading(true);
+
+    try {
+      const historyPayload = chatMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
+      const res = await fetch("/api/v1/providers/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: query,
+          history: historyPayload,
+        }),
+      });
+
+      const data = await res.json();
+      const botMessageObj: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        role: "assistant",
+        content: data.response || "No se pudo generar una respuesta en este momento.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        suggested_actions: data.suggested_actions || [],
+        active_coupons: data.active_coupons || [],
+      };
+
+      setChatMessages((prev) => [...prev, botMessageObj]);
+    } catch (err) {
+      const errorMessageObj: ChatMessage = {
+        id: `bot-err-${Date.now()}`,
+        role: "assistant",
+        content: "⚠️ Hubo un problema al conectar con el motor analítico del chatbot. Por favor verifica la conexión.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      setChatMessages((prev) => [...prev, errorMessageObj]);
+    } finally {
+      setIsChatLoading(false);
+    }
   };
 
   // Filtrado y Ordenación de cuentas
@@ -446,7 +544,7 @@ export default function WorldClassFuturesPropFirmsPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-0)", color: "var(--text-primary)", padding: "24px 20px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-0)", color: "var(--text-primary)", padding: "24px 20px", position: "relative" }}>
       <div style={{ maxWidth: "1560px", margin: "0 auto" }}>
         
         {/* HEADER MAESTRO */}
@@ -464,15 +562,35 @@ export default function WorldClassFuturesPropFirmsPage() {
             <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.03em", margin: "0 0 4px 0", display: "flex", alignItems: "center", gap: "12px" }}>
               🏛️ Plataforma Mundial de Fondeo de Futuros CME
               <span style={{ fontSize: "11px", fontWeight: 900, padding: "3px 10px", borderRadius: "999px", background: "rgba(99, 225, 180, 0.15)", color: "var(--accent)", border: "1px solid var(--accent-dim)" }}>
-                WIKI & COMPARATIVA 2026
+                TODO EL UNIVERSO CME · AI CHATBOT 2026
               </span>
             </h1>
             <p style={{ color: "var(--text-secondary)", fontSize: "13px", margin: 0, maxWidth: "920px", lineHeight: "1.5" }}>
-              Comparativa técnica unificada para un mismo tamaño de cuenta y fase con <strong>desglose técnico y explicaciones detalladas para cada firma</strong> (Drawdown, Permiso de Bots, Daily DD, Coste Real, Retiros y Letra Pequeña).
+              Universo integral de firmas de futuros CME con ofertas al día de hoy, cupones oficiales, letra pequeña auditada, comparativa unificada y <strong>Chatbot Experto AI</strong> para consultar cualquier regla o combinación.
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px" }}>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <button
+              onClick={() => setActiveModule("CHATBOT")}
+              style={{
+                padding: "8px 16px",
+                background: "linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(34, 197, 94, 0.2))",
+                border: "1px solid var(--accent)",
+                borderRadius: "var(--radius-sm)",
+                color: "var(--accent-bright)",
+                fontSize: "12px",
+                fontWeight: 900,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                boxShadow: "0 4px 14px rgba(0, 240, 255, 0.2)",
+              }}
+            >
+              <span>🤖</span> Abrir Chatbot Experto AI
+            </button>
+
             <button
               onClick={handleSyncNow}
               disabled={isSyncing}
@@ -491,7 +609,7 @@ export default function WorldClassFuturesPropFirmsPage() {
               }}
             >
               <span>{isSyncing ? "⏳" : "🔄"}</span>
-              {isSyncing ? "Sincronizando..." : "Sincronizar Datos Oficiales"}
+              {isSyncing ? "Sincronizando..." : "Sincronizar Datos"}
             </button>
           </div>
         </div>
@@ -503,21 +621,22 @@ export default function WorldClassFuturesPropFirmsPage() {
           </div>
         )}
 
-        {/* SELECTOR DE LOS 5 MÓDULOS */}
+        {/* SELECTOR DE LOS 6 MÓDULOS */}
         <div style={{ display: "flex", gap: "8px", background: "var(--bg-panel)", padding: "6px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border)", marginBottom: "20px", overflowX: "auto" }}>
           {[
             { id: "CATALOGO", icon: "📊", title: "1. Comparativa Global Multi-Firma", badge: `${providers.length} Cuentas` },
-            { id: "WIZARD", icon: "🧠", title: "2. Asistente 'Find My Firm'", badge: "4 Pasos" },
-            { id: "SIMULADOR", icon: "🎲", title: "3. Simulador Monte Carlo", badge: "Stress Test" },
-            { id: "ENCICLOPEDIA", icon: "📚", title: "4. Enciclopedia & Wiki Técnica", badge: "17 Firmas" },
-            { id: "GUIAS", icon: "🔧", title: "5. Guías de Conexión & Copiers", badge: "Setup" },
+            { id: "CHATBOT", icon: "🤖", title: "2. Chatbot Experto AI (UltraBot)", badge: "RAG Vivo" },
+            { id: "WIZARD", icon: "🧠", title: "3. Asistente 'Find My Firm'", badge: "4 Pasos" },
+            { id: "SIMULADOR", icon: "🎲", title: "4. Simulador Monte Carlo", badge: "Stress Test" },
+            { id: "ENCICLOPEDIA", icon: "📚", title: "5. Enciclopedia & Wiki Técnica", badge: "17 Firmas" },
+            { id: "GUIAS", icon: "🔧", title: "6. Guías de Conexión & Copiers", badge: "Setup" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveModule(tab.id as MainNavModule)}
               style={{
                 flex: 1,
-                minWidth: "170px",
+                minWidth: "165px",
                 padding: "10px 14px",
                 borderRadius: "var(--radius-md)",
                 border: activeModule === tab.id ? "1px solid var(--accent)" : "1px solid transparent",
@@ -766,7 +885,7 @@ export default function WorldClassFuturesPropFirmsPage() {
               </div>
             )}
 
-            {/* TABLA COMPARATIVA MAESTRA (VISTA TABULAR CON DRAWER DE EXPLICACIÓN DETALLADA) */}
+            {/* TABLA COMPARATIVA MAESTRA */}
             {viewMode === "TABLE" && (
               <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", overflow: "hidden" }}>
                 <div style={{ overflowX: "auto" }}>
@@ -824,7 +943,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                   transition: "background 0.15s ease",
                                 }}
                               >
-                                {/* FIRMA Y PROGRAMA */}
                                 <td style={{ padding: "12px 14px" }}>
                                   <div style={{ fontWeight: 800, color: "#fff", fontSize: "13px" }}>{p.name}</div>
                                   <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>
@@ -832,7 +950,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                   </div>
                                 </td>
 
-                                {/* PRECIO EXAMEN */}
                                 <td style={{ padding: "12px 10px" }}>
                                   <div style={{ fontSize: "13px", fontWeight: 900, color: "var(--success)", fontFamily: "monospace" }}>
                                     ${price.toFixed(2)}
@@ -847,14 +964,12 @@ export default function WorldClassFuturesPropFirmsPage() {
                                   )}
                                 </td>
 
-                                {/* CUOTA ACTIVACIÓN */}
                                 <td style={{ padding: "12px 10px" }}>
                                   <div style={{ fontSize: "12px", fontWeight: 800, color: activation === 0 ? "var(--accent)" : "var(--danger)", fontFamily: "monospace" }}>
                                     {activation === 0 ? "$0 (Gratis)" : `$${activation.toFixed(2)}`}
                                   </div>
                                 </td>
 
-                                {/* COSTE TOTAL REAL */}
                                 <td style={{ padding: "12px 10px", background: "rgba(99, 225, 180, 0.04)" }}>
                                   <div style={{ fontSize: "14px", fontWeight: 900, color: "#fff", fontFamily: "monospace" }}>
                                     ${totalPrice.toFixed(2)} USD
@@ -862,7 +977,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                   <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Examen + Pase</div>
                                 </td>
 
-                                {/* COLUMNAS EXAMEN */}
                                 {(selectedPhase === "ALL_360" || selectedPhase === "EXAMEN") && (
                                   <>
                                     <td style={{ padding: "12px 10px", fontWeight: 800, color: "var(--success)" }}>
@@ -886,7 +1000,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                   </>
                                 )}
 
-                                {/* COLUMNAS FONDEADO */}
                                 {(selectedPhase === "ALL_360" || selectedPhase === "FONDEADO") && (
                                   <>
                                     <td style={{ padding: "12px 10px", fontSize: "11px", fontWeight: 800, color: "var(--info)" }}>
@@ -901,7 +1014,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                   </>
                                 )}
 
-                                {/* ACCIONES */}
                                 <td style={{ padding: "12px 14px", textAlign: "right" }}>
                                   <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", alignItems: "center" }}>
                                     <button
@@ -942,7 +1054,7 @@ export default function WorldClassFuturesPropFirmsPage() {
                                 </td>
                               </tr>
 
-                              {/* DRAWER EXPANDIBLE CON EXPLICACIÓN TÉCNICA COMPLETA DE CADA APARTADO */}
+                              {/* DRAWER EXPANDIBLE */}
                               {isExpanded && (
                                 <tr style={{ background: "rgba(10, 16, 26, 0.98)", borderBottom: "2px solid var(--accent)" }}>
                                   <td colSpan={12} style={{ padding: "20px 24px" }}>
@@ -966,10 +1078,7 @@ export default function WorldClassFuturesPropFirmsPage() {
                                       </button>
                                     </div>
 
-                                    {/* GRID DE 6 TARJETAS EXPLICATIVAS POR CADA APARTADO */}
                                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "14px" }}>
-                                      
-                                      {/* 1. DRAWDOWN EXPLICADO */}
                                       <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
                                           <span style={{ fontSize: "14px" }}>📉</span>
@@ -982,7 +1091,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                         </p>
                                       </div>
 
-                                      {/* 2. BOTS & ALGORITMOS EXPLICADO */}
                                       <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
                                           <span style={{ fontSize: "14px" }}>🤖</span>
@@ -995,7 +1103,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                         </p>
                                       </div>
 
-                                      {/* 3. COSTE REAL & PROFIT EXPLICADO */}
                                       <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
                                           <span style={{ fontSize: "14px" }}>💰</span>
@@ -1008,7 +1115,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                         </p>
                                       </div>
 
-                                      {/* 4. DAILY LOSS LIMIT EXPLICADO */}
                                       <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
                                           <span style={{ fontSize: "14px" }}>🛑</span>
@@ -1021,7 +1127,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                         </p>
                                       </div>
 
-                                      {/* 5. RETIROS & BUFFER EXPLICADO */}
                                       <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid var(--border)", borderRadius: "8px", padding: "14px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
                                           <span style={{ fontSize: "14px" }}>⚡</span>
@@ -1034,7 +1139,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                         </p>
                                       </div>
 
-                                      {/* 6. LETRA PEQUEÑA & TRAMPAS */}
                                       <div style={{ background: "rgba(245, 158, 11, 0.06)", border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: "8px", padding: "14px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
                                           <span style={{ fontSize: "14px" }}>⚠️</span>
@@ -1046,7 +1150,6 @@ export default function WorldClassFuturesPropFirmsPage() {
                                           {details.fine_print_warning}
                                         </p>
                                       </div>
-
                                     </div>
                                   </td>
                                 </tr>
@@ -1061,7 +1164,7 @@ export default function WorldClassFuturesPropFirmsPage() {
               </div>
             )}
 
-            {/* VISTA TARJETAS (VISTA DETALLADA) */}
+            {/* VISTA TARJETAS */}
             {viewMode === "CARDS" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                 {filteredAndSortedProviders.map((p) => {
@@ -1219,7 +1322,179 @@ export default function WorldClassFuturesPropFirmsPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* MÓDULO 2: WIZARD "FIND MY FIRM"                                           */}
+        {/* MÓDULO 2: CHATBOT EXPERTO AI (ULTRABOT AI) EN PANTALLA COMPLETA          */}
+        {/* ========================================================================= */}
+        {activeModule === "CHATBOT" && (
+          <div style={{ background: "var(--bg-panel)", border: "1px solid var(--accent)", borderRadius: "var(--radius-xl)", padding: "24px", boxShadow: "0 12px 40px rgba(0, 240, 255, 0.15)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px solid var(--border)", paddingBottom: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "42px", height: "42px", borderRadius: "10px", background: "linear-gradient(135deg, var(--accent), #22c55e)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", color: "#000", fontWeight: 900 }}>
+                  🤖
+                </div>
+                <div>
+                  <h2 style={{ fontSize: "18px", fontWeight: 900, margin: 0, color: "#fff", display: "flex", alignItems: "center", gap: "8px" }}>
+                    UltraBot AI — Consultor Cuantitativo de Futuros CME
+                    <span style={{ fontSize: "10px", fontWeight: 900, padding: "2px 8px", borderRadius: "999px", background: "rgba(34, 197, 94, 0.2)", color: "var(--success)", border: "1px solid var(--success)" }}>
+                      ONLINE · BASE DE DATOS REAL
+                    </span>
+                  </h2>
+                  <p style={{ margin: 0, fontSize: "11px", color: "var(--text-muted)" }}>
+                    Pregunta sobre cualquier firma, política de bots, promociones del día, cálculo de coste de extracción o trampas de letra pequeña.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setChatMessages([chatMessages[0]])}
+                style={{ background: "var(--bg-2)", border: "1px solid var(--border)", color: "var(--text-muted)", padding: "6px 12px", borderRadius: "6px", fontSize: "11px", cursor: "pointer", fontWeight: 700 }}
+              >
+                Limpiar Conversación
+              </button>
+            </div>
+
+            {/* ZONA DE MENSAJES */}
+            <div style={{ height: "460px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px", paddingRight: "8px", marginBottom: "16px" }}>
+              {chatMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: msg.role === "user" ? "flex-end" : "flex-start",
+                  }}
+                >
+                  <div style={{ fontSize: "10px", color: "var(--text-muted)", marginBottom: "4px", padding: "0 4px" }}>
+                    {msg.role === "user" ? "Tú" : "🤖 UltraBot AI"} · {msg.timestamp}
+                  </div>
+
+                  <div
+                    style={{
+                      maxWidth: "85%",
+                      padding: "16px 20px",
+                      borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                      background: msg.role === "user" ? "linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(59, 130, 246, 0.2))" : "rgba(10, 16, 26, 0.85)",
+                      border: msg.role === "user" ? "1px solid var(--accent)" : "1px solid var(--border)",
+                      color: "#fff",
+                      fontSize: "13px",
+                      lineHeight: "1.6",
+                      whiteSpace: "pre-wrap",
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                    }}
+                  >
+                    {msg.content}
+
+                    {/* CUPONES ACTIVOS SUGERIDOS */}
+                    {msg.active_coupons && msg.active_coupons.length > 0 && (
+                      <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                        {msg.active_coupons.map((c, cIdx) => (
+                          <button
+                            key={cIdx}
+                            onClick={() => handleCopyCode(c.code)}
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "4px",
+                              background: "rgba(99, 225, 180, 0.15)",
+                              border: "1px solid var(--accent-dim)",
+                              color: "var(--accent-bright)",
+                              fontSize: "10px",
+                              fontWeight: 800,
+                              cursor: "pointer",
+                            }}
+                          >
+                            🏷️ {c.firm}: {copiedCode === c.code ? "✓ Copiado" : `${c.code} (${c.discount})`}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ACCIONES O PREGUNTAS SUGERIDAS */}
+                  {msg.suggested_actions && msg.suggested_actions.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px", maxWidth: "85%" }}>
+                      {msg.suggested_actions.map((act, aIdx) => (
+                        <button
+                          key={aIdx}
+                          onClick={() => handleSendChatMessage(act)}
+                          style={{
+                            padding: "4px 10px",
+                            borderRadius: "999px",
+                            background: "rgba(255, 255, 255, 0.04)",
+                            border: "1px solid var(--border)",
+                            color: "var(--accent-bright)",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                          }}
+                        >
+                          💬 {act}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {isChatLoading && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--accent)", fontSize: "12px", fontWeight: 700 }}>
+                  <span>⏳ UltraBot AI analizando base de datos cuantitativa...</span>
+                </div>
+              )}
+              <div ref={chatBottomRef} />
+            </div>
+
+            {/* INPUT DE ENTRADA DEL CHAT */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendChatMessage();
+              }}
+              style={{ display: "flex", gap: "10px" }}
+            >
+              <input
+                type="text"
+                placeholder="Pregunta lo que sea sobre firmas de futuros (ej. ¿Qué firma me conviene si uso bots y tengo $60?...)"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                disabled={isChatLoading}
+                style={{
+                  flex: 1,
+                  padding: "12px 16px",
+                  background: "var(--bg-2)",
+                  border: "1px solid var(--border-hover)",
+                  borderRadius: "var(--radius-md)",
+                  color: "#fff",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  outline: "none",
+                }}
+              />
+              <button
+                type="submit"
+                disabled={isChatLoading || !chatInput.trim()}
+                style={{
+                  padding: "12px 24px",
+                  background: "var(--accent)",
+                  color: "#06090e",
+                  border: "none",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "13px",
+                  fontWeight: 900,
+                  cursor: isChatLoading || !chatInput.trim() ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <span>Enviar</span>
+                <span>➔</span>
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* MÓDULO 3: WIZARD "FIND MY FIRM"                                           */}
         {/* ========================================================================= */}
         {activeModule === "WIZARD" && (
           <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
@@ -1407,7 +1682,7 @@ export default function WorldClassFuturesPropFirmsPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* MÓDULO 3: SIMULADOR MONTE CARLO                                           */}
+        {/* MÓDULO 4: SIMULADOR MONTE CARLO                                           */}
         {/* ========================================================================= */}
         {activeModule === "SIMULADOR" && (
           <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
@@ -1469,7 +1744,7 @@ export default function WorldClassFuturesPropFirmsPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* MÓDULO 4: ENCICLOPEDIA & WIKI                                             */}
+        {/* MÓDULO 5: ENCICLOPEDIA & WIKI                                             */}
         {/* ========================================================================= */}
         {activeModule === "ENCICLOPEDIA" && (
           <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
@@ -1610,7 +1885,7 @@ export default function WorldClassFuturesPropFirmsPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* MÓDULO 5: GUÍAS TÉCNICAS                                                  */}
+        {/* MÓDULO 6: GUÍAS TÉCNICAS                                                  */}
         {/* ========================================================================= */}
         {activeModule === "GUIAS" && (
           <div style={{ background: "var(--bg-panel)", border: "1px solid var(--border)", borderRadius: "var(--radius-xl)", padding: "24px" }}>
@@ -1771,6 +2046,150 @@ export default function WorldClassFuturesPropFirmsPage() {
             </div>
           </div>
         )}
+
+        {/* ========================================================================= */}
+        {/* WIDGET FLOTANTE DEL CHATBOT AI (ACCESIBLE DESDE CUALQUIER MÓDULO)         */}
+        {/* ========================================================================= */}
+        <div style={{ position: "fixed", bottom: "24px", right: "24px", zIndex: 999 }}>
+          {!isFloatingChatOpen ? (
+            <button
+              onClick={() => setIsFloatingChatOpen(true)}
+              style={{
+                padding: "12px 20px",
+                background: "linear-gradient(135deg, #00f0ff, #22c55e)",
+                color: "#06090e",
+                border: "none",
+                borderRadius: "999px",
+                fontSize: "13px",
+                fontWeight: 900,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                boxShadow: "0 8px 30px rgba(0, 240, 255, 0.4)",
+                transition: "transform 0.2s ease",
+              }}
+            >
+              <span style={{ fontSize: "18px" }}>🤖</span>
+              <span>Preguntar al Experto AI</span>
+            </button>
+          ) : (
+            <div
+              style={{
+                width: "420px",
+                height: "560px",
+                background: "rgba(10, 16, 26, 0.96)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid var(--accent)",
+                borderRadius: "16px",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
+              }}
+            >
+              {/* CABECERA POPUP */}
+              <div style={{ padding: "14px 16px", background: "rgba(0,0,0,0.4)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "20px" }}>🤖</span>
+                  <div>
+                    <div style={{ fontSize: "13px", fontWeight: 900, color: "#fff" }}>UltraBot AI · Futuros CME</div>
+                    <div style={{ fontSize: "10px", color: "var(--success)" }}>● Conectado a Base de Datos en Vivo</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: "6px" }}>
+                  <button
+                    onClick={() => {
+                      setIsFloatingChatOpen(false);
+                      setActiveModule("CHATBOT");
+                    }}
+                    title="Maximizar en pestaña principal"
+                    style={{ background: "transparent", border: "none", color: "var(--accent)", cursor: "pointer", fontSize: "13px", fontWeight: 800 }}
+                  >
+                    ⛶
+                  </button>
+                  <button
+                    onClick={() => setIsFloatingChatOpen(false)}
+                    style={{ background: "transparent", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: "16px", fontWeight: 800 }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              {/* MENSAJES POPUP */}
+              <div style={{ flex: 1, overflowY: "auto", padding: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                {chatMessages.map((m) => (
+                  <div
+                    key={m.id}
+                    style={{
+                      alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+                      maxWidth: "90%",
+                      padding: "10px 14px",
+                      borderRadius: m.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
+                      background: m.role === "user" ? "rgba(0, 240, 255, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                      border: m.role === "user" ? "1px solid var(--accent)" : "1px solid var(--border)",
+                      fontSize: "12px",
+                      lineHeight: "1.5",
+                      color: "#fff",
+                      whiteSpace: "pre-wrap",
+                    }}
+                  >
+                    {m.content}
+                  </div>
+                ))}
+                {isChatLoading && (
+                  <div style={{ color: "var(--accent)", fontSize: "11px", fontWeight: 700 }}>
+                    ⏳ UltraBot AI analizando...
+                  </div>
+                )}
+              </div>
+
+              {/* INPUT POPUP */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSendChatMessage();
+                }}
+                style={{ padding: "12px", borderTop: "1px solid var(--border)", display: "flex", gap: "8px", background: "rgba(0,0,0,0.3)" }}
+              >
+                <input
+                  type="text"
+                  placeholder="Escribe tu duda aquí..."
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  disabled={isChatLoading}
+                  style={{
+                    flex: 1,
+                    padding: "8px 12px",
+                    background: "var(--bg-2)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    color: "#fff",
+                    fontSize: "12px",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={isChatLoading || !chatInput.trim()}
+                  style={{
+                    padding: "8px 14px",
+                    background: "var(--accent)",
+                    color: "#000",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontWeight: 900,
+                    fontSize: "12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ➔
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
 
       </div>
     </div>

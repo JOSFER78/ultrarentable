@@ -1,78 +1,64 @@
 {
-  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g10",
-  "run_id": "run_UR_FONDEO_AUDUSD_15M",
-  "strategy_id": "UR_FONDEO_AUDUSD_15M",
-  "strategy_snapshot_hash": "6a6be00cdff5f35628ab16162759b36eac6b061081d3cb5b1dfa1dc8938b41a8",
-  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
-  "gate_name": "DEBATE_AGENTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "a2ae979089cfeebf4f45c5a8008e71fd454ffbaa14a757bae0975a2ee64f437d",
-  "output_hash": "b2ab01395d3dd8f0eb116bd78fbb1a0408e0b4218bc8cd3427ef788adbe20d4f",
-  "status": "FAILED",
-  "score": 24.7,
-  "verdict": "FALLO: Consenso insuficiente (24.7/100) u objeción crítica de riesgo",
-  "metrics": {
-    "consensus_score": 24.7,
+  "name": "DEBATE_AGENTES",
+  "passed": false,
+  "score": 60.5,
+  "verdict": "FALLO: Consenso insuficiente (60.5/100) u objeci\u00f3n cr\u00edtica de riesgo",
+  "evidence": {
+    "consensus_score": 60.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.8,
+        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
+        "score": 28.0,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.24 con beneficio neto de $-0.12.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 0.40 con beneficio neto de $-0.15.",
+          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
+        "score": 100.0,
         "findings": [
-          "Drawdown Máximo Observado: 20.2% (Límite permitido para FONDEO: 4.5%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown M\u00e1ximo Observado: 0.0% (L\u00edmite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 155 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 77 operaciones evaluadas (M\u00ednimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
+        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
+          "Beneficio medio por operaci\u00f3n: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.2,
+        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
+        "score": 57.0,
         "objections": [
-          "Alerta de Drawdown: DD (20.2%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.24 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Rentabilidad: Profit factor 0.40 cercano al umbral de equilibrio (1.15)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:28:53.735138+00:00"
+  }
 }

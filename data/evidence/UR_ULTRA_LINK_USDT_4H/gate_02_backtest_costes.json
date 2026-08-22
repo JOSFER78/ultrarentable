@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g02",
   "run_id": "run_UR_ULTRA_LINK_USDT_4H",
   "strategy_id": "UR_ULTRA_LINK_USDT_4H",
-  "strategy_snapshot_hash": "9abe9a491b1e645be82b54240d6c48b0088f3f7e331a5659e2458bbba9bb240d",
+  "strategy_snapshot_hash": "4df470b3041d16aad8dab0750a7f66cefc36b055738f1c0bba9d03fd6355b441",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,14 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "cd0c24572206c75aa9d524882cc9979b4d7c1d4c11e3332744b2c1ef3f94760f",
-  "output_hash": "cc6fcb36a4ef8b1e7cc4d39c8beb0ceca4d5700ce231235745cf116ae1b1b92f",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
+  "input_hash": "a91f298747d330712bcd26165865f9cecba28dfa5a43aeb53152995ce3e4c23b",
+  "output_hash": "0c537cb61f46e0c28f4b5ab65156a4a0872f04c5841e52630e69d7e3d4430eec",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: PF Neto tras costes = 6.88 (CRYPTO)",
   "metrics": {
-    "trades_count": 8
+    "market_category": "CRYPTO",
+    "canonical_name": "Chainlink Perpetuo",
+    "exchange": "Binance / FTMO Perps",
+    "gross_pnl_usd": 2.2253066346953426e21,
+    "total_fees_usd": 7.708403093575426e19,
+    "total_slippage_usd": 5.317710577579892e19,
+    "net_pnl_usd": 2.0950454979837894e21,
+    "net_profit_factor": 6.88,
+    "drag_cost_pct": 5.85
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:26:08.902505+00:00"
+  "created_at_utc": "2026-08-22T01:29:52.556957+00:00"
 }

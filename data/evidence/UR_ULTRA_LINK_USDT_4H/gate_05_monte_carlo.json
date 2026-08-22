@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g05",
   "run_id": "run_UR_ULTRA_LINK_USDT_4H",
   "strategy_id": "UR_ULTRA_LINK_USDT_4H",
-  "strategy_snapshot_hash": "9abe9a491b1e645be82b54240d6c48b0088f3f7e331a5659e2458bbba9bb240d",
+  "strategy_snapshot_hash": "4df470b3041d16aad8dab0750a7f66cefc36b055738f1c0bba9d03fd6355b441",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,14 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "71bbceb854171fdbf82c1892ccc88208aeb57dfc88cd1d38244e3b912c6d6f0f",
-  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
+  "input_hash": "c0e64659662703a68e362c3c254015a61f6fd3bb54199704d3ec902f1c951876",
+  "output_hash": "15f200bde53eb60d1b3c530459610fd8a1d7fe0f175569e992dec61abaac14fe",
+  "status": "PASSED",
+  "score": 98.2,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.6%)",
   "metrics": {
-    "simulations_run": 0
+    "simulations_count": 1000,
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 2.3,
+    "drawdown_95th_percentile_pct": 3.6,
+    "max_simulated_drawdown_pct": 6.7
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-21T22:26:08.903635+00:00"
+  "created_at_utc": "2026-08-22T01:29:52.846544+00:00"
 }

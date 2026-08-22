@@ -1,28 +1,15 @@
 {
-  "evidence_id": "ev_TEST_CAND_BTC_g03",
-  "run_id": "run_TEST_CAND_BTC",
-  "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "05d92360c2280c2072ea92ae62b0f1e8762a8239c89bb637a9641f4ebfac6f71",
-  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 3,
-  "gate_name": "TRADE_SIGNIFICANCE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "34e13da0b5213560930b3a176ce6f893f96a92d8da72198c632e6772cb0c8233",
-  "output_hash": "0519765146487252d83caad6b1f8981d8e810ffb304a7db83496a8411c42bbad",
-  "status": "FAILED",
-  "score": 95.0,
-  "verdict": "FALLO: Muestra insuficiente (15 IS < 15 ó 19 OOS < 10)",
-  "metrics": {
-    "trades_is": 15,
-    "trades_oos": 19,
-    "top2_outlier_dependency_pct": 100.0,
+  "name": "TRADE_SIGNIFICANCE",
+  "passed": true,
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (62 IS / 52 OOS \u00b7 Ultra Convex)",
+  "evidence": {
+    "trades_is": 62,
+    "trades_oos": 52,
+    "top2_outlier_dependency_pct": 78.7,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
-  },
-  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:27:50.903794+00:00"
+  }
 }

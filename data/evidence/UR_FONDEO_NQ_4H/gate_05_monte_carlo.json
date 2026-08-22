@@ -10,18 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9b9409b80acc7b64ca87c12f10011f456a7fc880276e3d6f682169b67cbf5dd3",
-  "output_hash": "7b9ab8105a158b59db6d038d44989d842e95d4a4c331163998bd3b7055d4b57d",
-  "status": "PASSED",
-  "score": 76.9,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 2.3%)",
+  "input_hash": "89eb16bedf7d0b640646a09b94c030d055c320594ab66c61e32cef8d787f238a",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
   "metrics": {
-    "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.1,
-    "drawdown_95th_percentile_pct": 2.3,
-    "max_simulated_drawdown_pct": 4.2
+    "simulations_run": 0
   },
   "artifact_path": "data/evidence/UR_FONDEO_NQ_4H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-21T22:28:43.943712+00:00"
+  "created_at_utc": "2026-08-22T01:27:02.750782+00:00"
 }
