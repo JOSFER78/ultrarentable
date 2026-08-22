@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "d7e7a1dac79b768b79118c924c12f7978ba204a1ebc33f5944c9061e2c5f3039",
-  "output_hash": "5ece72a9e915d450af3419daf20db70f873e7b0401cfc6e6c4f20a892e9830c4",
+  "input_hash": "41d60e5a55aa810e315a77b28d5095a6b10403b78e04053398fae6f3f5985bd7",
+  "output_hash": "6d4a6a970b2627e3b48ac8c4fd06de31b067b593967ea45727f89c74ba692485",
   "status": "FAILED",
-  "score": 33.7,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 12.8 o Estabilidad 84.2% < 50.0%)",
+  "score": 26.5,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 144.4 o Estabilidad 66.4% < 50.0%)",
   "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 12.8,
+    "degrees_of_freedom_ratio": 144.4,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 84.2,
+    "parameter_neighborhood_stability_pct": 66.4,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.21,
-      3.68,
-      3.48,
-      3.52
+      2.53,
+      5.88,
+      9.99,
+      9.18
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:17:46.409247+00:00"
+  "created_at_utc": "2026-08-22T01:43:39.549718+00:00"
 }

@@ -10,24 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "f91fd9e8f95daa7f39bc848de49fbaf114f95c48939493c841fc69ed533ed244",
-  "output_hash": "8fcdd31180ad13308ff7971674a8ad9964c1bc3e1cf9653e74c0897a1e8b331a",
-  "status": "PASSED",
-  "score": 58.4,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $532.47, Apalancamiento Pico: 18.1x, Dist. Mín. Liquidación: 63.5%, Comisiones+Funding: $475.00)",
+  "input_hash": "0775396cf17f44ad40562d707ec6a4ae08633e79a70ce05af4c9bd732099aa4f",
+  "output_hash": "3c884c39e7621cfe05e7da0b4c9bd2464530e3e96b5c97a9d553ac8ace1e85b8",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para validación cruzada orientada a eventos (< 5 trades)",
   "metrics": {
-    "initial_capital_usd": 1000.0,
-    "final_equity_usd": 532.47,
-    "peak_equity_usd": 1000.0,
-    "min_equity_usd": 532.47,
-    "peak_leverage_used": 18.1,
-    "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 63.47,
-    "margin_call_triggered": false,
-    "total_fees_paid_usd": 475.0,
-    "total_funding_cost_usd": 0.0,
-    "execution_events_count": 95
+    "execution_events_count": 0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-21T22:22:33.165101+00:00"
+  "created_at_utc": "2026-08-22T01:43:45.052919+00:00"
 }

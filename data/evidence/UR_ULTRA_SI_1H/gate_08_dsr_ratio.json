@@ -10,20 +10,15 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "b665f656e6ceaaa7ce8b3246aba88222dbaa5b9046731becf74921d9b7369096",
-  "output_hash": "26a39fde33045269b7f07df87797f8af8998476ba0798919103a95e6858e47ac",
-  "status": "PASSED",
-  "score": 99.2,
-  "verdict": "PASSED: DSR = 99.2% (Sharpe Bruto: 0.17, Trials Penalizados: 1, Skew: 4.26, Kurt: 25.12)",
+  "input_hash": "74910bd7070cf07eb382b18d80aa619011d08a9b1c1810a74d6a632ac4743ed5",
+  "output_hash": "fb283776fa0a25469b48eb5cd6acf8c5e08121f4cbe1e52f9ce0474dba42279d",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
   "metrics": {
-    "raw_sharpe_ratio": 0.167,
-    "deflated_sharpe_probability_pct": 99.15,
-    "trials_penalized_count": 1,
-    "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 4.255,
-    "kurtosis": 25.118,
-    "sample_trades_count": 95
+    "trials_penalized": 1,
+    "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:22:32.734754+00:00"
+  "created_at_utc": "2026-08-22T01:43:43.731162+00:00"
 }

@@ -322,54 +322,84 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
             "duration_info": duration_info,
         })
 
-    # 4. Inventario dinámico real de datasets en disco y SQX
+    # 4. Inventario dinámico real de datasets en disco (Cripto, Futuros CME, Forex)
     sqx_imports_dir = Path(__file__).resolve().parents[4] / "data" / "sqx_imports"
+    datasets_map: Dict[str, Any] = {}
     
-    catalog_targets = [
-        {"symbol": "BTC-USDT", "tf_code": "1h", "tf_label": "1m, 5m, 15m, 1h, 4h", "file_match": "BTCUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "StrategyQuant X / Binance", "in_sqx": True},
-        {"symbol": "ETH-USDT", "tf_code": "1h", "tf_label": "1m, 5m, 15m, 1h, 4h", "file_match": "ETHUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "SOL-USDT", "tf_code": "1h", "tf_label": "1m, 5m, 15m, 1h, 4h", "file_match": "SOLUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "DOGE-USDT", "tf_code": "1h", "tf_label": "5m, 15m, 1h, 4h", "file_match": "DOGEUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "AVAX-USDT", "tf_code": "1h", "tf_label": "5m, 15m, 1h, 4h", "file_match": "AVAXUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "LINK-USDT", "tf_code": "1h", "tf_label": "5m, 15m, 1h, 4h", "file_match": "LINKUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "XRP-USDT", "tf_code": "1h", "tf_label": "5m, 15m, 1h, 4h", "file_match": "XRPUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "BNB-USDT", "tf_code": "1h", "tf_label": "5m, 15m, 1h, 4h", "file_match": "BNBUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "SUI-USDT", "tf_code": "1h", "tf_label": "5m, 15m, 1h, 4h", "file_match": "SUIUSDT_1H.csv", "route": "TRACK_ULTRA", "engine": "Binance Futures Real", "in_sqx": False},
-        {"symbol": "NQ", "tf_code": "1h", "tf_label": "15m, 1h", "file_match": "NQ_1H.csv", "route": "TRACK_FONDEO", "engine": "CME Futures", "in_sqx": False},
-        {"symbol": "ES", "tf_code": "1h", "tf_label": "15m, 1h", "file_match": "ES_1H.csv", "route": "TRACK_FONDEO", "engine": "CME Futures", "in_sqx": False},
-        {"symbol": "EURUSD", "tf_code": "1h", "tf_label": "15m, 1h", "file_match": "EURUSD_1H.csv", "route": "TRACK_FONDEO", "engine": "Forex Spot", "in_sqx": False},
-    ]
+    if sqx_imports_dir.exists():
+        import re
+        for csv_file in sorted(sqx_imports_dir.glob("*.csv")):
+            m = re.match(r"([A-Za-z0-9]+)_([0-9]+[A-Za-z]+)\.csv", csv_file.name)
+            if not m:
+                continue
+            sym_raw, tf = m.group(1), m.group(2).lower()
+            
+            # Clasificación de activo y ruta canónica
+            if "USDT" in sym_raw:
+                base = sym_raw.replace("USDT", "")
+                display_sym = f"{base}-USDT"
+                engine = "BingX / Binance Perps"
+                route = "TRACK_ULTRA"
+            elif sym_raw in ["NQ", "ES", "YM", "RTY", "GC", "SI", "CL", "NG", "FDAX", "FTSE", "NK225"]:
+                display_sym = sym_raw
+                engine = "CME Globex Futures"
+                route = "TRACK_FONDEO"
+            else:
+                display_sym = sym_raw
+                engine = "Interbank Forex"
+                route = "TRACK_FONDEO"
 
-    datasets_inventory = []
-    for item in catalog_targets:
-        csv_file = sqx_imports_dir / item["file_match"]
-        bars_count = 0
-        if csv_file.exists():
+            if display_sym not in datasets_map:
+                datasets_map[display_sym] = {
+                    "symbol": display_sym,
+                    "timeframes": set(),
+                    "engine": engine,
+                    "route": route,
+                    "bars": 0,
+                    "in_sqx": (display_sym == "BTC-USDT"),
+                }
+            
+            datasets_map[display_sym]["timeframes"].add(tf)
             try:
                 with open(csv_file, "r", encoding="utf-8") as f:
-                    bars_count = max(0, sum(1 for _ in f) - 1)
+                    cnt = max(0, sum(1 for _ in f) - 1)
+                    if tf == "1h" or datasets_map[display_sym]["bars"] == 0:
+                        datasets_map[display_sym]["bars"] = cnt
             except Exception:
-                bars_count = 0
+                pass
 
-        if item["in_sqx"]:
-            status = "CARGADO_EN_SQX"
-            has_data = True
-            bars_count = 3840 if bars_count == 0 else bars_count
-        elif bars_count > 0:
-            status = "DISPONIBLE_EN_DISCO"
-            has_data = True
+    def _asset_sort_key(item: Dict[str, Any]):
+        sym = item["symbol"]
+        route = item["route"]
+        if route == "TRACK_ULTRA":
+            priority = 0
+            crypto_order = ["BTC-USDT", "ETH-USDT", "SOL-USDT", "SUI-USDT", "DOGE-USDT", "AVAX-USDT", "BNB-USDT", "LINK-USDT", "XRP-USDT"]
+            sub_prio = crypto_order.index(sym) if sym in crypto_order else 99
+        elif "CME" in item["engine"]:
+            priority = 1
+            cme_order = ["NQ", "ES", "YM", "RTY", "GC", "SI", "CL"]
+            sub_prio = cme_order.index(sym) if sym in cme_order else 99
         else:
-            status = "PENDIENTE_HISTORICO"
-            has_data = False
+            priority = 2
+            forex_order = ["EURUSD", "GBPUSD", "USDJPY", "USDCAD", "USDCHF", "AUDUSD"]
+            sub_prio = forex_order.index(sym) if sym in forex_order else 99
+        return (priority, sub_prio, sym)
 
+    datasets_inventory = []
+    for d in sorted(datasets_map.values(), key=_asset_sort_key):
+        tf_order = {"1m": 0, "5m": 1, "15m": 2, "1h": 3, "4h": 4, "1d": 5}
+        tf_list = sorted(list(d["timeframes"]), key=lambda x: tf_order.get(x, 99))
+        tf_label = ", ".join(tf_list) if tf_list else "1h"
+        bars_count = d["bars"]
+        status = "CARGADO_EN_SQX" if d["in_sqx"] else ("DISPONIBLE_EN_DISCO" if bars_count > 0 else "PENDIENTE_HISTORICO")
         datasets_inventory.append({
-            "symbol": item["symbol"],
-            "timeframe": item["tf_label"],
+            "symbol": d["symbol"],
+            "timeframe": tf_label,
             "bars": bars_count,
-            "engine": item["engine"],
+            "engine": d["engine"],
             "status": status,
-            "route": item["route"],
-            "has_data": has_data,
+            "route": d["route"],
+            "has_data": bars_count > 0,
         })
 
     # 5. Eventos reales leídos del EventBus

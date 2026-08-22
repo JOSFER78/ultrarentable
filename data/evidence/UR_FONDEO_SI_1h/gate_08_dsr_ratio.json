@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_SI_1h_g08",
   "run_id": "run_UR_FONDEO_SI_1h",
   "strategy_id": "UR_FONDEO_SI_1h",
-  "strategy_snapshot_hash": "56ac8947f493a9689cd4c4f9ee5d2927197d5325abbb0cf5d252959672d83849",
+  "strategy_snapshot_hash": "3fb79f579c12321db5b282c9ed06d191e03240eecc0ab465b16b38825df57686",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c355a8cd826d23977e018b3872cc4efb5fda6495f544933e1988bbe8adbdf945",
-  "output_hash": "7aec80a0e92032f7480a7c8c2519688543f49295a669fa7e2fa23891abca87b1",
-  "status": "PASSED",
-  "score": 97.3,
-  "verdict": "PASSED: DSR = 97.3% (Sharpe Bruto: 0.24, Trials Penalizados: 1, Skew: 0.50, Kurt: 1.24)",
+  "input_hash": "28f257e9dc05d6f94c72cd44c055f73de20319468b64fedeee34841dd87ace6c",
+  "output_hash": "07e89bd90150290f2d0796b4068c3045fcd8e1240068334db544d476ef301044",
+  "status": "FAILED",
+  "score": 49.4,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (49.4% < 50.0% tras penalizar 1 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.243,
-    "deflated_sharpe_probability_pct": 97.35,
+    "raw_sharpe_ratio": -0.002,
+    "deflated_sharpe_probability_pct": 49.41,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 0.498,
-    "kurtosis": 1.237,
-    "sample_trades_count": 57
+    "skewness": 1.947,
+    "kurtosis": 6.435,
+    "sample_trades_count": 46
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:29:23.291079+00:00"
+  "created_at_utc": "2026-08-22T01:42:54.232036+00:00"
 }

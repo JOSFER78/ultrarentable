@@ -85,6 +85,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as e:
         logger.error(f"Error iniciando continuous_search_daemon: {e}")
 
+    # Arrancar Demonio de Refinamiento Cuantitativo & Bucle Autónomo 24/7 (Panel 4)
+    from services.optimization.continuous_research_daemon import continuous_research_daemon
+    try:
+        continuous_research_daemon.start_autonomous()
+        logger.info("24/7 Continuous Research & Refinement Daemon (Panel 4) ACTIVO.")
+    except Exception as e:
+        logger.error(f"Error iniciando continuous_research_daemon: {e}")
+
     # Iniciar Watchdog de Alta Disponibilidad y Self-Healing 24/7
     from services.monitoring.high_availability_watchdog import ha_watchdog
     ha_watchdog.start()
@@ -96,6 +104,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     
     sync_task.cancel()
     ha_watchdog.stop()
+    continuous_research_daemon.pause()
     continuous_search_daemon.stop()
     logger.info("Deteniendo SystemSupervisor y cerrando conexiones...")
     await supervisor_instance.stop_all()

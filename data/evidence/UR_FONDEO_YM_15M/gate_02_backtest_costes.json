@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_YM_15M_g02",
   "run_id": "run_UR_FONDEO_YM_15M",
   "strategy_id": "UR_FONDEO_YM_15M",
-  "strategy_snapshot_hash": "0fd1edb13cdd88464a09de3e368acc1eb911ed0ec781c2c229950abebf59cc61",
+  "strategy_snapshot_hash": "a7c57ac7333a6dec3a2e198840ef4e335bcba5995c1781df658ea046c7953407",
   "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 2,
@@ -10,14 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "9c8af193aadd7a76b009beb1a8c0eb6f793f3fb1e89932792d8e8e4684cf8d42",
-  "output_hash": "386b5574790f9d0fede751ac5b0b48308f3a38f939ddf3ff7b73bc1e2eefe11b",
+  "input_hash": "a93dbc27af8600cf4ce966be67a84a11a7d331ca6b3463c6a080a40003c8b7ef",
+  "output_hash": "ad5cc9b1a3eeb275561efdf383aa34689d75e4d165f13f4fadeca3fd2768d058",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
+  "verdict": "FALLO: PF Neto 0.25 < 1.10",
   "metrics": {
-    "trades_count": 6
+    "market_category": "INDICES",
+    "canonical_name": "E-mini Dow Jones ($5)",
+    "exchange": "CBOT Globex",
+    "gross_pnl_usd": -3040.0,
+    "total_fees_usd": 60.0,
+    "total_slippage_usd": 120.0,
+    "net_pnl_usd": -3220.0,
+    "net_profit_factor": 0.25,
+    "drag_cost_pct": 5.92
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_15M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:26:07.313758+00:00"
+  "created_at_utc": "2026-08-22T01:44:07.178760+00:00"
 }

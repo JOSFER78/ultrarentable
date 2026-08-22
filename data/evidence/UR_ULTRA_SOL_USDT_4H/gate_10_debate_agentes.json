@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "86d06e08ac2c25a2f76d610174de481c5c393d9f60e0153bc69248e4c2661368",
-  "output_hash": "23434692f846d6b4d4525d8766213729d099a3b0173019324dd6b518d95e71ec",
+  "input_hash": "96a656fafe3c87271dcfe7c3cb115f5a6418062bdf3dc70f8bcfa3249a9da38f",
+  "output_hash": "54d324f2dcc8044d44c907976a66094ac713c64d6237ebab091c26e6635b0b17",
   "status": "PASSED",
-  "score": 60.9,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (60.9/100 · 5/5 Evaluadores Conformes)",
+  "score": 61.1,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (61.1/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 60.9,
+    "consensus_score": 61.1,
     "evaluators_count": 5,
     "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 66.7,
+        "score": 68.1,
         "findings": [
           "Activo y Timeframe: SOL-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.26 con beneficio neto de $6.51.",
+          "Profit Factor OOS: 1.29 con beneficio neto de $26.84.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 62.5,
+        "score": 61.9,
         "findings": [
-          "Drawdown Máximo Observado: 79.7% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 80.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 410 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1342 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 59.8,
+        "score": 60.0,
         "objections": [
-          "Alerta de Drawdown: DD (79.7%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (80.9%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:22:35.875218+00:00"
+  "created_at_utc": "2026-08-22T01:45:04.990492+00:00"
 }

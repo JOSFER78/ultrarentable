@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "148695dc24c913af7faaca055777287fbb23a9bd52ab660929544024eec74769",
-  "output_hash": "fa9a5496a191622cae7de32e0ec687af074a67d7c692b7d805f976fcf1ad7c02",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (251 IS / 95 OOS · Ultra Convex)",
+  "input_hash": "7db57cd9f210cc5f1aaf76d510ddbfdafde119c63c85b402887c141a67c2d999",
+  "output_hash": "1dd6a366af87a0581e95318066ccdec9925bb043d6711225f9080fd2a10f3175",
+  "status": "FAILED",
+  "score": 10.0,
+  "verdict": "FALLO: Muestra insuficiente (2 IS < 15 ó 1 OOS < 10)",
   "metrics": {
-    "trades_is": 251,
-    "trades_oos": 95,
-    "top2_outlier_dependency_pct": 36.9,
+    "trades_is": 2,
+    "trades_oos": 1,
+    "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:22:32.540774+00:00"
+  "created_at_utc": "2026-08-22T01:43:43.647201+00:00"
 }

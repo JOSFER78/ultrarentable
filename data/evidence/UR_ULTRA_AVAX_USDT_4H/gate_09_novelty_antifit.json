@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "c89fc1d64c7ea0ac94feb851a2779d856ef25e01b859115e6bef3268fae9fe5b",
-  "output_hash": "8131efa44da6843004a4d9c83de82ed3b4160dca02a75df5ba7c4c9a790579a3",
+  "input_hash": "c356609d17dc13b9970bfac62202851ad8a96ff7d3db6b490461c35660b57411",
+  "output_hash": "c8cb600ee540e4918f5408e1c8759b4702f10872aa111cf7d075470952fc8977",
   "status": "FAILED",
-  "score": 26.1,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 33.8 o Estabilidad 65.3% < 50.0%)",
+  "score": 39.6,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 195.9 o Estabilidad 99.1% < 50.0%)",
   "metrics": {
     "parameters_count": 9,
-    "degrees_of_freedom_ratio": 33.8,
+    "degrees_of_freedom_ratio": 195.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 65.3,
+    "parameter_neighborhood_stability_pct": 99.1,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.88,
-      2.79,
-      3.05,
-      1.27
+      1.07,
+      1.08,
+      1.08,
+      1.09
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:17:45.550290+00:00"
+  "created_at_utc": "2026-08-22T01:43:26.961622+00:00"
 }

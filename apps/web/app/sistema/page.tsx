@@ -415,17 +415,7 @@ export default function SistemaSupervisorPage() {
                 </tr>
               </thead>
               <tbody>
-                {(telemetry.datasets_inventory && telemetry.datasets_inventory.length > 0
-                  ? telemetry.datasets_inventory
-                  : [
-                      { symbol: "BTC-USDT", timeframe: "1m, 5m, 15m, 1h, 4h", bars: 25500, engine: "Binance Futures", route: "ULTRA", has_data: true, status: "OK" },
-                      { symbol: "ETH-USDT", timeframe: "1m, 5m, 15m, 1h, 4h", bars: 25500, engine: "Binance Futures", route: "ULTRA", has_data: true, status: "OK" },
-                      { symbol: "SOL-USDT", timeframe: "1m, 5m, 15m, 1h, 4h", bars: 25500, engine: "Binance Futures", route: "ULTRA", has_data: true, status: "OK" },
-                      { symbol: "NQ", timeframe: "15m, 1h", bars: 13699, engine: "CME Futures", route: "FONDEO", has_data: true, status: "OK" },
-                      { symbol: "ES", timeframe: "15m, 1h", bars: 13701, engine: "CME Futures", route: "FONDEO", has_data: true, status: "OK" },
-                      { symbol: "EURUSD", timeframe: "15m, 1h", bars: 17236, engine: "Forex Spot", route: "FONDEO", has_data: true, status: "OK" },
-                    ]
-                ).map((ds, idx) => (
+                {(telemetry.datasets_inventory || []).map((ds, idx) => (
                   <tr key={idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                     <td style={{ padding: "6px 8px", fontWeight: 800, color: "#38bdf8" }}>{ds.symbol}</td>
                     <td style={{ padding: "6px 8px", color: "#cbd5e1" }}>{ds.timeframe}</td>

@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "42fd774a55ab9978e36bffbc236e520860a17471e5c99663617d0e080db4501b",
-  "output_hash": "b125db9aaafff3712bac07179ad14366b00bcadb177b41e3d9f5d01bb8a74408",
+  "input_hash": "5074564115b241638e1d415dab972dd2b53bc444fc3fdad7a5ad4e3c9085e4e1",
+  "output_hash": "b924c19d1d822959ab1363dc4c0d42dc64cb100c1ab28f69a707250322321784",
   "status": "FAILED",
-  "score": 38.1,
-  "verdict": "FALLO: Consenso insuficiente (38.1/100) u objeción crítica de riesgo",
+  "score": 37.9,
+  "verdict": "FALLO: Consenso insuficiente (37.9/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 38.1,
+    "consensus_score": 37.9,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.8,
+        "score": 60.0,
         "findings": [
           "Activo y Timeframe: AVAXUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.13 con beneficio neto de $9.63.",
+          "Profit Factor OOS: 1.11 con beneficio neto de $60.17.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 95.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 98.8% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 811 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1974 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $0.01 USD.",
+          "Beneficio medio por operación: $0.03 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 42.7,
+        "score": 42.5,
         "objections": [
-          "Alerta de Drawdown: DD (95.0%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (98.8%) consume más del 90% del margen tolerable."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:27:05.614549+00:00"
+  "created_at_utc": "2026-08-22T01:44:56.900585+00:00"
 }

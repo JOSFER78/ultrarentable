@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "2.0.0",
   "formula_version": "2.0.0",
-  "input_hash": "acf5f4abf3440b569fa8abb17e8738040709e44fe8bf194899e40cacafb13fa0",
-  "output_hash": "514dba906f210527d42469cfa4fe46308eca4be6f9753fbbe3c7ba4ef5904fcf",
+  "input_hash": "a5f46ef815bdec76961bce58cef3836d83a9211d1559ff51261f4b52f2b0033a",
+  "output_hash": "056c9b16012b838fb861f064638b702970630c6674d2b2f222641f5957b5534c",
   "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +1307.59%)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9349781542587073560576.00%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 358,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 461
     },
     "regime_trades_count": {
-      "BULL_TREND": 6,
-      "BEAR_TREND": 12,
-      "CHOP_RANGING": 6,
-      "HIGH_VOLATILITY": 13
+      "BULL_TREND": 69,
+      "BEAR_TREND": 76,
+      "CHOP_RANGING": 70,
+      "HIGH_VOLATILITY": 99
     },
     "regime_return_pct": {
-      "BULL_TREND": -150.8,
-      "BEAR_TREND": 1703.98,
-      "CHOP_RANGING": -58.82,
-      "HIGH_VOLATILITY": -186.77
+      "BULL_TREND": 3.580053273652409e+20,
+      "BEAR_TREND": 6.184237139084136e+21,
+      "CHOP_RANGING": 2.807539065375294e+21,
+      "HIGH_VOLATILITY": 10762402223053.32
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 1307.59
+    "total_oos_return_pct": 9.349781542587074e+21
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:17:46.157502+00:00"
+  "created_at_utc": "2026-08-22T01:43:36.938354+00:00"
 }

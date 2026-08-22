@@ -72,7 +72,7 @@ class InstrumentRegistry:
                 default_funding_rate=0.0001,
             )
 
-        # 2. Futuros CME (NQ, ES, GC, SI, CL, YM, RTY, etc.)
+        # 2. Futuros CME & Materias Primas (NQ, ES, GC, SI, CL, YM, RTY, NG, FDAX, etc.)
         cme_specs = {
             "NQ": {"tick_size": 0.25, "point_value": 20.0, "cme_fee": 2.50, "prec": 2, "name": "Nasdaq 100 E-mini"},
             "MNQ": {"tick_size": 0.25, "point_value": 2.0, "cme_fee": 0.60, "prec": 2, "name": "Micro Nasdaq 100"},
@@ -87,6 +87,10 @@ class InstrumentRegistry:
             "MYM": {"tick_size": 1.0, "point_value": 0.5, "cme_fee": 0.60, "prec": 0, "name": "Micro Dow Jones"},
             "RTY": {"tick_size": 0.10, "point_value": 50.0, "cme_fee": 2.50, "prec": 1, "name": "Russell 2000 E-mini"},
             "M2K": {"tick_size": 0.10, "point_value": 5.0, "cme_fee": 0.60, "prec": 1, "name": "Micro Russell 2000"},
+            "NG": {"tick_size": 0.001, "point_value": 10000.0, "cme_fee": 2.50, "prec": 3, "name": "Natural Gas Futures"},
+            "FDAX": {"tick_size": 0.50, "point_value": 25.0, "cme_fee": 2.50, "prec": 1, "name": "DAX Futures"},
+            "FTSE": {"tick_size": 0.50, "point_value": 10.0, "cme_fee": 2.50, "prec": 1, "name": "FTSE 100 Futures"},
+            "NK225": {"tick_size": 5.0, "point_value": 5.0, "cme_fee": 2.50, "prec": 0, "name": "Nikkei 225 Futures"},
         }
 
         for cme_key, info in cme_specs.items():
@@ -113,8 +117,11 @@ class InstrumentRegistry:
                     is_perpetual=False,
                 )
 
-        # 3. Forex Majors & Cruces (EURUSD, GBPUSD, USDJPY, USDCAD, AUDUSD, etc.)
-        forex_pairs = ["EURUSD", "GBPUSD", "USDJPY", "USDCAD", "USDCHF", "AUDUSD", "NZDUSD", "EURJPY", "GBPJPY"]
+        # 3. Forex Majors & Cruces (EURUSD, GBPUSD, USDJPY, USDCAD, USDCHF, AUDUSD, NZDUSD, EURJPY, GBPJPY, EURGBP, CADJPY)
+        forex_pairs = [
+            "EURUSD", "GBPUSD", "USDJPY", "USDCAD", "USDCHF", "AUDUSD", "NZDUSD",
+            "EURJPY", "GBPJPY", "EURGBP", "CADJPY", "AUDJPY", "NZDJPY", "CHFJPY",
+        ]
         for fx in forex_pairs:
             if norm.startswith(fx):
                 is_jpy = "JPY" in fx
@@ -122,7 +129,7 @@ class InstrumentRegistry:
                     symbol=fx,
                     raw_symbol=symbol,
                     asset_class=AssetClass.FOREX_MAJOR if ("EUR" in fx or "GBP" in fx or "JPY" in fx) else AssetClass.FOREX_CROSS,
-                    exchange_or_venue="OANDA",
+                    exchange_or_venue="INTERBANK",
                     base_currency=fx[:3],
                     quote_currency=fx[3:],
                     tick_size=0.001 if is_jpy else 0.00001,
@@ -164,7 +171,15 @@ class InstrumentRegistry:
 
 
 # Pre-cargar catálogo canónico al importar
-for sym in ["BTC-USDT", "ETH-USDT", "SOL-USDT", "SUI-USDT", "DOGE-USDT", "AVAX-USDT", "BNB-USDT", "LINK-USDT", "XRP-USDT",
-            "NQ", "MNQ", "ES", "MES", "GC", "MGC", "SI", "CL", "MCL", "YM", "MYM", "RTY", "M2K",
-            "EURUSD", "GBPUSD", "USDJPY", "USDCAD", "USDCHF", "AUDUSD", "NZDUSD"]:
+_CANONICAL_SYMBOLS = [
+    # 1. Cripto Perpetuos (Ruta ULTRA 100% de activos)
+    "BTC-USDT", "ETH-USDT", "SOL-USDT", "SUI-USDT", "DOGE-USDT", "AVAX-USDT", "BNB-USDT", "LINK-USDT", "XRP-USDT",
+    "ADA-USDT", "DOT-USDT", "NEAR-USDT", "APT-USDT", "MATIC-USDT", "PEPE-USDT", "SHIB-USDT", "ARB-USDT", "OP-USDT", "TIA-USDT",
+    # 2. Futuros CME & Materias Primas (Ruta FONDEO y ULTRA)
+    "NQ", "MNQ", "ES", "MES", "YM", "MYM", "RTY", "M2K", "GC", "MGC", "SI", "CL", "MCL", "NG", "FDAX", "FTSE", "NK225",
+    # 3. Forex Majors & Cruces (Ruta FONDEO y ULTRA)
+    "EURUSD", "GBPUSD", "USDJPY", "USDCAD", "USDCHF", "AUDUSD", "NZDUSD", "EURJPY", "GBPJPY", "EURGBP", "CADJPY",
+]
+
+for sym in _CANONICAL_SYMBOLS:
     InstrumentRegistry.register(InstrumentRegistry._create_inferred_spec(sym))
