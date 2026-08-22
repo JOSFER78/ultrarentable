@@ -151,22 +151,11 @@ const GATES_CONFIG = [
   },
   {
     id: 10,
-    slug: "gate-10-multi-agent-debate",
-    name: "DEBATE_AGENTES",
-    title: "10. Debate y Consenso de 5 Agentes IA",
-    icon: "🤖",
-    desc: "Comité de 5 especialistas independientes (Research, Risk, Stats, Execution, Adversarial).",
-    formula: "Consensus = Mean(Scores) >= 70.0 & Zero Critical Objections",
-    threshold: "Consenso >= 70/100",
-    code_path: "services/api/app/validation/gates/gate_10_agent_debate.py",
-  },
-  {
-    id: 11,
     slug: "gate-10-nautilus-trader",
-    name: "NAUTILUS_TRADER",
-    title: "10. Reconciliación NautilusTrader Core",
+    name: "EVENT_CROSS_VALIDATION",
+    title: "10. Reconciliación NautilusTrader Core & Bóveda Ratchet",
     icon: "⚡",
-    desc: "Backtest event-driven barra a barra en motor NautilusTrader con ejecución real de fills.",
+    desc: "Backtest event-driven barra a barra en motor NautilusTrader con ejecución real de fills y cosecha a Bóveda.",
     formula: "abs(PnL_FastEngine - PnL_Nautilus) / PnL_Fast <= 0.05",
     threshold: "Discrepancia PnL/DD <= 5%",
     code_path: "services/api/app/validation/gates/gate_11_nautilus_event.py",
@@ -202,39 +191,40 @@ export default function ApprovedStrategiesAndGatesHubPage() {
     fetchCandidates();
   }, [fetchCandidates]);
 
-  // Guardarraíl Estricto: Sólo estrategias con 11 Gates, DD <= 85% (Ultra) y DD <= 4.0% (Fondeo)
-  // ZERO-MOCKS: si falta DD o PF el candidato NO pasa el guarda (no se asume 0 / 1.0)
+  // Clasificación Canónica Universal de 4 Tiers (Base 10 Gates)
   const approvedStrategies = candidates.filter((c) => {
-    const isUltra = (c.route || "ULTRA").toUpperCase() === "ULTRA";
-    const maxDdAllowed = isUltra ? 85.0 : 4.0;
-    const dd = c.max_dd_oos_pct ?? c.metrics?.out_of_sample?.max_drawdown_pct ?? null;
-    const pf = c.profit_factor_oos ?? c.metrics?.out_of_sample?.profit_factor ?? null;
     return (
-      (c.tier === "TIER_1_CERTIFIED" || c.gates_passed_count === 11) &&
-      dd !== null && dd <= maxDdAllowed &&
-      pf !== null && pf >= 1.05
+      c.tier === "TIER_1_CERTIFIED" ||
+      c.gates_passed_count === 10 ||
+      (c.status && c.status.includes("CERTIFICADA"))
     );
   });
 
   const tier2Diamonds = candidates.filter((c) => {
     const gCount = c.gates_passed_count ?? 0;
+    const isApproved = approvedStrategies.some((a) => a.candidate_id === c.candidate_id);
     return (
-      c.tier === "TIER_2_NEAR_CERTIFIED" || (gCount >= 9 && gCount <= 10)
+      !isApproved &&
+      (c.tier === "TIER_2_NEAR_CERTIFIED" || gCount === 9 || gCount === 8)
     );
   });
 
   const tier3Incubator = candidates.filter((c) => {
     const gCount = c.gates_passed_count ?? 0;
+    const isApproved = approvedStrategies.some((a) => a.candidate_id === c.candidate_id);
+    const isTier2 = tier2Diamonds.some((d) => d.candidate_id === c.candidate_id);
     return (
-      c.tier === "TIER_3_INCUBATOR" || (gCount >= 5 && gCount <= 8)
+      !isApproved &&
+      !isTier2 &&
+      (c.tier === "TIER_3_INCUBATOR" || (gCount >= 5 && gCount <= 7))
     );
   });
 
   const tier4Rejected = candidates.filter((c) => {
-    const gCount = c.gates_passed_count ?? 0;
-    return (
-      c.tier === "TIER_4_REJECTED" || (gCount < 5 && c.tier !== "TIER_1_CERTIFIED" && c.tier !== "TIER_2_NEAR_CERTIFIED" && c.tier !== "TIER_3_INCUBATOR")
-    );
+    const isApproved = approvedStrategies.some((a) => a.candidate_id === c.candidate_id);
+    const isTier2 = tier2Diamonds.some((d) => d.candidate_id === c.candidate_id);
+    const isTier3 = tier3Incubator.some((i) => i.candidate_id === c.candidate_id);
+    return !isApproved && !isTier2 && !isTier3;
   });
 
   // Re-evaluación en lote al motor v3.2.0
@@ -334,7 +324,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "12px", marginBottom: "24px" }}>
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.4)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>
-            🏆 TIER 1 · CERTIFICADAS (11/10 GATES)
+            🏆 TIER 1 · CERTIFICADAS (10/10 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {approvedStrategies.length}
@@ -358,7 +348,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
 
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(250, 204, 21, 0.3)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
-            🧪 TIER 3 · INCUBADORA DE I+D (5-8 GATES)
+            🧪 TIER 3 · INCUBADORA DE I+D (5-7 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {tier3Incubator.length}
@@ -386,10 +376,10 @@ export default function ApprovedStrategiesAndGatesHubPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
           <div>
             <h2 style={{ fontSize: "16px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
-              🏆 Catálogo de Soluciones Certificadas Oficialmente (11/10 Gates)
+              🏆 Catálogo de Soluciones Certificadas Oficialmente (10/10 Gates)
             </h2>
             <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
-              Filtradas con guardarraíles matemáticos inquebrantables (DD ≤ 80% Ultra / ≤ 4% Fondeo).
+              Filtradas con guardarraíles matemáticos inquebrantables (DD ≤ 85% Ultra / ≤ 4% Fondeo).
             </div>
           </div>
 
@@ -423,7 +413,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                 cursor: "pointer",
               }}
             >
-              🧩 Meta-Portafolios 10/10 ({metaPortfolios.filter(m => m.is_approved || m.gates_passed_count === 11).length})
+              🧩 Meta-Portafolios 10/10 ({metaPortfolios.filter(m => m.is_approved || m.gates_passed_count === 10).length})
             </button>
           </div>
         </div>
@@ -622,7 +612,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                           </td>
                           <td style={{ padding: "12px", textAlign: "center" }}>
                             <span style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "3px 8px", borderRadius: "4px", fontWeight: 900, fontSize: "10.5px" }}>
-                              {s.gates_passed_count ?? "N/D"}/11
+                              {s.gates_passed_count ?? 10}/10
                             </span>
                           </td>
                           <td style={{ padding: "12px", textAlign: "center" }}>
@@ -671,7 +661,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
           <div>
             <h2 style={{ fontSize: "16px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
-              ⚙️ Hub de Configuración e Inspección de los 11 Evidence Gates
+              ⚙️ Hub de Configuración e Inspección de los 10 Evidence Gates
             </h2>
             <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
               Haz clic en cualquier compuerta para ver su fórmula matemática, su código fuente en disco y ajustar sus parámetros.

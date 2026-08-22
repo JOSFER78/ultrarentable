@@ -5,7 +5,7 @@
 // DOCTRINA ZERO-MOCKS: los labels no contienen métricas hardcodeadas (p.ej. "230 candidatos")
 // porque las métricas viven en el backend y cambian; si cambian aquí, se desincronizan.
 
-export const CANONICAL_GATES_COUNT = 11;
+export const CANONICAL_GATES_COUNT = 10;
 
 export interface StrategyPhase {
   /** 0 = portada/hub global; 1-6 = fases del pipeline */
@@ -68,8 +68,8 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     icon: "🧬",
     badge: `${CANONICAL_GATES_COUNT} GATES`,
     color: "#818cf8",
-    route: "/estrategias/3-pipeline-11-gates",
-    legacyRoutes: ["/candidatos", "/pasos"],
+    route: "/estrategias/3-pipeline-10-gates",
+    legacyRoutes: ["/estrategias/3-pipeline-11-gates", "/candidatos", "/pasos"],
   },
   {
     id: 4,
