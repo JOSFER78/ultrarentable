@@ -8,22 +8,22 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "e63538f0d8feb91bd736803c4a08c8acf40e8a515a26545023185bffa274fccf",
-  "output_hash": "bab67ad24ff4ffb727ddb01690589087e96aaead7b6de9ae002423033eb77515",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "14262eb9ea9149dae3c261644db05f17b1f65b0a3ec6d0d068371671b90e6372",
+  "output_hash": "bc01094149150d15c90952b5df79fbf3bd5a0ca906d2d4bc77b580c781bebdc8",
   "status": "PASSED",
-  "score": 99.3,
-  "verdict": "PASSED: DSR = 99.3% (Sharpe Bruto: 0.13, Trials Penalizados: 1, Skew: 5.81, Kurt: 47.65)",
+  "score": 100.0,
+  "verdict": "PASSED: DSR = 100.0% (Sharpe Bruto: 0.30, Trials Penalizados: 1, Skew: 2.92, Kurt: 12.38)",
   "metrics": {
-    "raw_sharpe_ratio": 0.131,
-    "deflated_sharpe_probability_pct": 99.3,
+    "raw_sharpe_ratio": 0.302,
+    "deflated_sharpe_probability_pct": 100.0,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 5.81,
-    "kurtosis": 47.649,
-    "sample_trades_count": 156
+    "skewness": 2.917,
+    "kurtosis": 12.378,
+    "sample_trades_count": 279
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTCUSDT_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:27:25.230091+00:00"
+  "created_at_utc": "2026-08-22T06:04:06.505512+00:00"
 }

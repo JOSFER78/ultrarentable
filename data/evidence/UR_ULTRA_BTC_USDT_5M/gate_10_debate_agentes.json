@@ -8,25 +8,25 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "78c6690f384f6208cc9beedd95288dc23547dd2869e241c58876cf9f14e8d297",
-  "output_hash": "952c42e05cc4bcff9a105c6662bc4601072cf9d03bf0417709449ee9e3db5202",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "ba062b0550d256eda534558f965e5b14b8a97a12a77e29851dfd8e9b75cd4cc6",
+  "output_hash": "8d2e588da8b86747f019d09c2897eee1dffa79c3731ebb8dee498a8405868fa6",
   "status": "FAILED",
-  "score": 25.9,
-  "verdict": "FALLO: Consenso insuficiente (25.9/100) u objeción crítica de riesgo",
+  "score": 24.5,
+  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 25.9,
+    "consensus_score": 24.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 24.9,
+        "score": 20.0,
         "findings": [
           "Activo y Timeframe: BTC-USDT (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.33 con beneficio neto de $-2.21.",
+          "Profit Factor OOS: 0.17 con beneficio neto de $-3.01.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 119 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 124 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 31.2,
+        "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (100.5%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.33 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.17 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:26:41.196781+00:00"
+  "created_at_utc": "2026-08-22T06:04:02.944938+00:00"
 }

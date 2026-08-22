@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_15M",
   "strategy_id": "UR_ULTRA_BNB_USDT_15M",
-  "strategy_snapshot_hash": "d97c0c123ff4e83b6011caa6fcbacf79efdeeeada833330f940571abb6e6bd6c",
+  "strategy_snapshot_hash": "6581b2e287147072515e71f30b5626453d6e026f84535a5587f459885e75d5f9",
   "dataset_id": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "a2229857d59b35dc5e7776f24479cac1047edbd9286fb0740a2a746ab79e0caf",
-  "output_hash": "7c7c1d1f1646ede75b7173e92c70412a4ab59e0a1cd74ab439751a51ca6a665c",
-  "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +96.15%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "9c4d188e9d792578ee707606b66aea62519aea269d62d1aacf9905eda557ba51",
+  "output_hash": "31c9b795e4253c6045e18cfaafc9ef3f1225ada702098574b85b5a4b86ba2a8c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -45.74%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 65,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 51,
+      "HIGH_VOLATILITY": 8
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 106.11,
-      "HIGH_VOLATILITY": -9.96
+      "CHOP_RANGING": -45.19,
+      "HIGH_VOLATILITY": -0.55
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 96.15
+    "total_oos_return_pct": -45.74
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T02:18:26.865058+00:00"
+  "created_at_utc": "2026-08-22T06:03:28.841257+00:00"
 }

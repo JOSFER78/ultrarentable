@@ -8,25 +8,25 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "0c1b2e2b452443ae4a86dd1479e0cb07581527f9cd60a131559209dd945a539a",
-  "output_hash": "8af6ceee58111cb4969a36310082f5ca1636816968dcd03dae33d488724aff79",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "0f57ea28210684df91aedd2be4f6be453a86fbd49ec44b9fb79aa30d6ee1da05",
+  "output_hash": "d583499468c3fd556fc3908efb381a9787d28456fd5458b8fdf6ad9524a937fc",
   "status": "FAILED",
-  "score": 35.3,
-  "verdict": "FALLO: Consenso insuficiente (35.3/100) u objeción crítica de riesgo",
+  "score": 53.8,
+  "verdict": "FALLO: Consenso insuficiente (53.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 35.3,
+    "consensus_score": 53.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 51.0,
+        "score": 56.8,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.91 con beneficio neto de $1.02.",
+          "Profit Factor OOS: 1.04 con beneficio neto de $4632.21.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 96.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 98.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 193 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 281 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,25 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.01 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $16.48 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 40.2,
+        "score": 64.2,
         "objections": [
-          "Alerta de Drawdown: DD (96.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.91 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (98.3%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 1.04 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:26:09.752570+00:00"
+  "created_at_utc": "2026-08-22T06:04:08.009809+00:00"
 }

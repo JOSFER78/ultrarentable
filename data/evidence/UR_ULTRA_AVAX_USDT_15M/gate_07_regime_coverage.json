@@ -8,13 +8,13 @@
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "6783a29f2625a8af81825206bbbe3ad96e91f9954f02337a3b7a062b0017daad",
-  "output_hash": "60b4e7a477bb8d91405ec0f68a1f08b88c3886b7b5f59265d10932ca313d9f32",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -97.22%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "213505e826ff21a58733cc9eec20d26072cb627ea8faa11ab5c8e7022d73bf2c",
+  "output_hash": "ccc56c712c8d1567a6a7fcd8d41186f81c61f8effa219241d17cccdb96df965d",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +16416159.01%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 28,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 257
     },
     "regime_trades_count": {
-      "BULL_TREND": 1,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 10,
-      "HIGH_VOLATILITY": 0
+      "BULL_TREND": 3,
+      "BEAR_TREND": 2,
+      "CHOP_RANGING": 61,
+      "HIGH_VOLATILITY": 18
     },
     "regime_return_pct": {
-      "BULL_TREND": -2.74,
-      "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -94.48,
-      "HIGH_VOLATILITY": 0.0
+      "BULL_TREND": 24552.3,
+      "BEAR_TREND": -8521176.23,
+      "CHOP_RANGING": 25973303.14,
+      "HIGH_VOLATILITY": -1060520.2
     },
-    "regimes_profitable_count": 0,
-    "regimes_active_count": 2,
-    "total_oos_return_pct": -97.22
+    "regimes_profitable_count": 2,
+    "regimes_active_count": 4,
+    "total_oos_return_pct": 16416159.01
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:27:42.499201+00:00"
+  "created_at_utc": "2026-08-22T06:03:11.235606+00:00"
 }

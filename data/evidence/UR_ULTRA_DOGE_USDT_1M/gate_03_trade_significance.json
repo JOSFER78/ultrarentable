@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "349f3944feda8639132fc71f6e7a6003de779f28d39dd6e206210906e2cce0a7",
-  "output_hash": "898f44f07b676a72ddd8481982f292dfc4eda6734bfcdb8008dc021063d2980f",
-  "status": "FAILED",
-  "score": 75.0,
-  "verdict": "FALLO: Muestra insuficiente (58 IS < 15 ó 15 OOS < 10)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "62e7df24dd6ccdfccb214a94001a3af969b3f13785c596bf105041a18a8c4bc2",
+  "output_hash": "cb59d4086660181093dfce6f306b0650719ad25326f3051341aeabeb4103c89a",
+  "status": "PASSED",
+  "score": 95.0,
+  "verdict": "PASSED: Muestra robusta (90 IS / 19 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 58,
-    "trades_oos": 15,
-    "top2_outlier_dependency_pct": 100.0,
+    "trades_is": 90,
+    "trades_oos": 19,
+    "top2_outlier_dependency_pct": 84.1,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:26:15.531187+00:00"
+  "created_at_utc": "2026-08-22T06:04:14.106064+00:00"
 }

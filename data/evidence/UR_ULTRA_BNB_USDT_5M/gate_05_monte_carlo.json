@@ -8,20 +8,20 @@
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "746697b7169459da88c5b59b220b4215c3c3417adadc88b0808e42976e30c01d",
-  "output_hash": "711ed4b58bcddd7564e516c3d3a74c4f01c108a50e1574f7abd1bb1b4e17152c",
-  "status": "PASSED",
-  "score": 96.7,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.6%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "e10432427ebecaf5b317fd3d1be874f613eb45929b7564552659b3d2c4263d27",
+  "output_hash": "fd687d365f8869e6fe97e516f24fbc782429cdf96572e573de43464c26837551",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 97.0% > 1.0% (DD 95% = 99.6%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 3.5,
-    "drawdown_95th_percentile_pct": 6.6,
-    "max_simulated_drawdown_pct": 9.2
+    "ruin_probability_pct": 97.0,
+    "drawdown_median_pct": 97.8,
+    "drawdown_95th_percentile_pct": 99.6,
+    "max_simulated_drawdown_pct": 99.9
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-21T22:26:33.111782+00:00"
+  "created_at_utc": "2026-08-22T06:03:29.016686+00:00"
 }

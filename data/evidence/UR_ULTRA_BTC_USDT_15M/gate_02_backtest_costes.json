@@ -8,24 +8,24 @@
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "5af2bf646a48a47ca891ee241fd69175585d3049c2e80aa8f649f37139dc9a04",
-  "output_hash": "c121d4118d903cfeb7e6d43a2d9eba752fd13c8637cf1e6ebba3c5b100b95cd3",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.85 < 1.10",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "9726eede856244ad53fe2f71e5aa9610087d6a1c70268a769f99b4fde17e54a4",
+  "output_hash": "bf83d19a32e0ae535e973415d8d20749d045db3052c455c206ce2b575dfcec03",
+  "status": "PASSED",
+  "score": 10.1,
+  "verdict": "PASSED: PF Neto tras costes = 1.10 (CRYPTO)",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Bitcoin Perpetuo",
     "exchange": "Binance / BingX / FTMO",
-    "gross_pnl_usd": 59.69,
-    "total_fees_usd": 102.82,
-    "total_slippage_usd": 0.81,
-    "net_pnl_usd": -43.94,
-    "net_profit_factor": 0.85,
-    "drag_cost_pct": 173.61
+    "gross_pnl_usd": 483.43,
+    "total_fees_usd": 353.35,
+    "total_slippage_usd": 2.78,
+    "net_pnl_usd": 127.3,
+    "net_profit_factor": 1.1,
+    "drag_cost_pct": 73.67
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:26:19.613928+00:00"
+  "created_at_utc": "2026-08-22T06:03:39.799338+00:00"
 }

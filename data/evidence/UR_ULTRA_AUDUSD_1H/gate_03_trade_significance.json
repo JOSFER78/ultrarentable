@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "170c9a2e2211ddf60d8d6f1357bdbd21d1b674a53c839cbe7bc5459ca1f5449e",
-  "output_hash": "fdc8225c82151a561289dccefe7abd65293ed818397428e9b9cdc59e81a3273a",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "62bbddc115483a491fbd51b22f804b2377b4af47d313879a2a7984948e6642d8",
+  "output_hash": "a05d15e6351689337d6cb38ad55db7c3437a414864c3d7f457dbec0b9fc3da2c",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (54 IS / 72 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (278 IS / 123 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 54,
-    "trades_oos": 72,
-    "top2_outlier_dependency_pct": 57.4,
+    "trades_is": 278,
+    "trades_oos": 123,
+    "top2_outlier_dependency_pct": 21.1,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:22:55.958032+00:00"
+  "created_at_utc": "2026-08-22T06:03:12.238001+00:00"
 }

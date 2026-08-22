@@ -8,24 +8,24 @@
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "39fc4fa59bc0425289bc6f9f65beef5d278eb4ca94cedae97c887077ca74866d",
-  "output_hash": "193568ddd28fe8c35d3ede2dcefd905459a7804823248f44f88926ab7499ae9b",
-  "status": "PASSED",
-  "score": 26.6,
-  "verdict": "PASSED: PF Neto tras costes = 1.27 (FOREX)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "a119aebc81edd1d37c74c6f5b1198b38887e49518c4fce31f5bd5d0311f9fcbd",
+  "output_hash": "84c0147add2982d162501f0eb6922d0d62fb458cd4877c955b79a182ab2692ba",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.36 < 1.10",
   "metrics": {
     "market_category": "FOREX",
     "canonical_name": "Australian Dollar / USD",
     "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": 3762517.69,
-    "total_fees_usd": 923588.72,
-    "total_slippage_usd": 1847177.43,
-    "net_pnl_usd": 991751.54,
-    "net_profit_factor": 1.27,
-    "drag_cost_pct": 73.64
+    "gross_pnl_usd": -48984.85,
+    "total_fees_usd": 58025.34,
+    "total_slippage_usd": 116050.68,
+    "net_pnl_usd": -223060.87,
+    "net_profit_factor": 0.36,
+    "drag_cost_pct": 355.37
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_5M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:23:41.687982+00:00"
+  "created_at_utc": "2026-08-22T06:03:15.447969+00:00"
 }

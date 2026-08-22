@@ -8,22 +8,22 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "ee018174a1092dde4cb031f70cb3d445a9e44be3f6f39e7ebc20f84f498f2a3e",
-  "output_hash": "301a5c83829455fe8bdc488ad0cb7234c89b9538d98c9c96ecb3aec68ca3c2e0",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "cb3bbcfa41cc901250288e9056756e347437648b59633cc19beef54c5eea4b05",
+  "output_hash": "7dc47bf18a6cf6a989ee991808c58ca7ab3f39bc9d089bef6bb18c9065c4f26b",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 1 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.5,
+    "raw_sharpe_ratio": -0.78,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": -3.139,
-    "kurtosis": 16.532,
-    "sample_trades_count": 35
+    "skewness": -0.102,
+    "kurtosis": 1.994,
+    "sample_trades_count": 289
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_5M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:23:42.048927+00:00"
+  "created_at_utc": "2026-08-22T06:03:21.497388+00:00"
 }

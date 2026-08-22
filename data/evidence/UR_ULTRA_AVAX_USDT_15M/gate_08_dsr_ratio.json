@@ -8,22 +8,22 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "e4b4cbd24ead4e0b95c78726e76017bd78d54cfe781d23292bb19b652b90b701",
-  "output_hash": "d8ba0ddad4b5f7467bcc6674e59e1066ce8668ea6c68bc8e34a1d910410f9bf9",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 1 trials)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "4cd8d311017a8c147268195a504d778f193b9905b7de485a4816defd00d4e4a7",
+  "output_hash": "bc89847b4b9009de1987541a82ccb591dfebaf41b15a40f9b8ce784ecb59e416",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: DSR = 100.0% (Sharpe Bruto: 0.28, Trials Penalizados: 1, Skew: 3.31, Kurt: 13.38)",
   "metrics": {
-    "raw_sharpe_ratio": -0.548,
-    "deflated_sharpe_probability_pct": 0.0,
+    "raw_sharpe_ratio": 0.284,
+    "deflated_sharpe_probability_pct": 100.0,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": -2.291,
-    "kurtosis": 6.942,
-    "sample_trades_count": 11
+    "skewness": 3.312,
+    "kurtosis": 13.377,
+    "sample_trades_count": 84
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:27:42.512836+00:00"
+  "created_at_utc": "2026-08-22T06:03:11.252002+00:00"
 }
