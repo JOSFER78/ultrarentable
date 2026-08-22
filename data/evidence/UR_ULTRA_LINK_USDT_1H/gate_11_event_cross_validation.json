@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1H_g11",
   "run_id": "run_UR_ULTRA_LINK_USDT_1H",
   "strategy_id": "UR_ULTRA_LINK_USDT_1H",
-  "strategy_snapshot_hash": "bcb6a56f5ed738e1fbb7daa91d064931f3b7a64c675b2ba0fd999f14c6f638bf",
+  "strategy_snapshot_hash": "f32a5ce308514b16f0ca3602ac44a5a9f1c24bc0f9cae6f076bada0e52d941bd",
   "dataset_id": "ds_binance_linkusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "2d853be1460df58dadbc65346b05f7b3ac7293c21d0881025d1bba79f7977796",
-  "output_hash": "22ca3897dc8f2792a305ee766f590d414d67a0ca4b4c6ad0a3779f0bdab9c4d8",
+  "input_hash": "895f1df8923156b74d14f5beaf1330bfd9e581890f2261456c2338bfb24ee15a",
+  "output_hash": "82e586d829c8ee16ef7c75aa5f35c69ca2caffa680055b59660a9166ebb64bd6",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1153.7x > 100.0x)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 12225.1x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -25.02,
+    "final_equity_usd": -158.64,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": -25.02,
-    "peak_leverage_used": 1153.69,
+    "min_equity_usd": -158.64,
+    "peak_leverage_used": 12225.07,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 943.18,
-    "total_funding_cost_usd": 94.32,
-    "execution_events_count": 362
+    "total_fees_paid_usd": 1059.53,
+    "total_funding_cost_usd": 105.95,
+    "execution_events_count": 442
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T02:21:30.618545+00:00"
+  "created_at_utc": "2026-08-22T02:22:09.666350+00:00"
 }

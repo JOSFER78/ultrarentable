@@ -1182,8 +1182,8 @@ export default function WorldClassFuturesPropFirmsPage() {
         content: m.content,
       }));
 
-      // Intentar primero con la ruta Next.js con LLM Real
-      let res = await fetch("/api/prop-firms/chat", {
+      // Conexión directa al backend FastAPI + Puente de Antigravity de Hermes
+      let res = await fetch("/api/v1/providers/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1192,9 +1192,9 @@ export default function WorldClassFuturesPropFirmsPage() {
         }),
       });
 
-      // Si falla, reintentar con el backend FastAPI
+      // Si falla, reintentar con el endpoint Next.js
       if (!res.ok) {
-        res = await fetch("/api/v1/providers/chat", {
+        res = await fetch("/pro/ultrarentable/api/prop-firms/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
