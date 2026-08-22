@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.156_g07",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.156",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.156",
-  "strategy_snapshot_hash": "83b8aa91bca63b450a06670a0181149f9566eeb02d5a27e1d216aa99d9388333",
+  "strategy_snapshot_hash": "b460ed0ce7a30d82439e27db336fb9b90cfe518e7320d99ffc1db839b661bba8",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "83852bddc8b208cb55c3070a15078c72520d69aaac06cb84b4ba28a9f4a2d934",
-  "output_hash": "65c09af1c7e827be0ce9600ca099065803e0e09390c4d414b1044399daedc730",
+  "input_hash": "daa48818f6f648e8a5c40ed1122814d7463b8e83d9004b4a7ca6b382a8b8d4fb",
+  "output_hash": "b4971065018505e5478e1f59f7818d48ccbf273b4c54e27ca8ad84054b4d1dc3",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7955.92%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8212.76%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 18,
-      "BEAR_TREND": 24,
-      "CHOP_RANGING": 114,
-      "HIGH_VOLATILITY": 86
+      "BEAR_TREND": 26,
+      "CHOP_RANGING": 116,
+      "HIGH_VOLATILITY": 85
     },
     "regime_return_pct": {
       "BULL_TREND": 356.12,
-      "BEAR_TREND": 947.49,
-      "CHOP_RANGING": 3071.55,
-      "HIGH_VOLATILITY": 3580.76
+      "BEAR_TREND": 1555.26,
+      "CHOP_RANGING": 2914.43,
+      "HIGH_VOLATILITY": 3386.95
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 7955.92
+    "total_oos_return_pct": 8212.76
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.156/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T16:50:32.592597+00:00"
+  "created_at_utc": "2026-08-22T18:05:57.111351+00:00"
 }

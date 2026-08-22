@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_XRP_USDT_1H",
   "strategy_id": "UR_ULTRA_XRP_USDT_1H",
-  "strategy_snapshot_hash": "cf166bcc0d60c2fcc7166ad15161e81bceda012cfbad88b4bdbc86b85941f4dc",
+  "strategy_snapshot_hash": "a8d8a0ab37e7d7aa2d58fd1eeff8aa82047d7582790b7523946e0d272ec1d15f",
   "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "70013eec73839971f92f97ff182d0effeb7cf91c5649b18016debd1187d379db",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "96bd7ca4b4f186659f868adaa3e62e3354b084fac3244b8582335f54605df484",
-  "output_hash": "387981d44d32b9626a1198bc49263106a518c02620ad25c7e840039d79f84e1c",
+  "input_hash": "8aeb430467163761168713eb7110c59152ad8946b84060e3a9d9d0cab3558f89",
+  "output_hash": "19e55c622a6ebb4d1cfd46a100b0314f11951cfeef9d216829e800c5be284861",
   "status": "FAILED",
-  "score": 45.9,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 185.9 o Estabilidad 114.9% < 50.0%)",
+  "score": 52.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 29.2 o Estabilidad 130.0% < 50.0%)",
   "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 185.9,
+    "degrees_of_freedom_ratio": 29.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 114.9,
+    "parameter_neighborhood_stability_pct": 130.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.15,
-      1.05,
-      1.21,
-      1.23
+      1.07,
+      0.89,
+      1.66,
+      1.63
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:40:13.013923+00:00"
+  "created_at_utc": "2026-08-22T18:08:02.146633+00:00"
 }
