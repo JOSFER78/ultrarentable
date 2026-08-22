@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g06",
-  "run_id": "run_UR_FONDEO_AUDUSD_15M",
-  "strategy_id": "UR_FONDEO_AUDUSD_15M",
-  "strategy_snapshot_hash": "060d12395a8ebd61b68b9e5eb9609220ddaf8eb08897c6ff63a534d880442380",
-  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
-  "gate_name": "STRESS_SLIPPAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "edd6779021fa293acc86dbac3d275414b3b91a19f3834383dfc60667f6f603da",
-  "output_hash": "223ebf63230223880047c02b501ab529c153b0a83c2955e0a2651054386e75cb",
-  "status": "FAILED",
+  "name": "STRESS_SLIPPAGE",
+  "passed": false,
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
-  "metrics": {
+  "evidence": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
@@ -45,7 +34,5 @@
     "passed_scenarios_count": 0,
     "min_required_scenarios": 2,
     "base_friction_usd": 3.0
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T01:46:10.226646+00:00"
+  }
 }

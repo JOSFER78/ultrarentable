@@ -304,6 +304,7 @@ def chat_expert_advisor(
                 mentioned_firms.append(p.provider_name)
                 
     # Detectar palabras clave temáticas
+    is_demo = any(w in user_msg for w in ["demo", "prueba", "gratis", "simulad", "free trial", "practic"])
     is_bots = any(w in user_msg for w in ["bot", "ea", "algoritmo", "automat", "strategyquant", "sqx", "python", "webhook", "copier"])
     is_cheapest = any(w in user_msg for w in ["barat", "econom", "precio", "coste", "cupon", "descuento", "promo", "oferta"])
     is_activation = any(w in user_msg for w in ["activacion", "pass fee", "$0", "gratis", "tarifa de pase", "coste total"])
@@ -318,9 +319,31 @@ def chat_expert_advisor(
     suggested_actions = []
     related_firms = []
     active_coupons = []
-    
+
+    # INTENT: CUENTAS DEMO Y SIMULADORES GRATUITOS
+    if is_demo:
+        response_paragraphs.append("### 🎯 Cuentas Demo y Entornos de Prueba Gratuitos en Fondeo de Futuros CME\n")
+        response_paragraphs.append(
+            "Sí, existen varias opciones oficiales para probar plataformas y practicar antes de comprar un examen de fondeo:\n\n"
+            "1. **🏆 TopstepX Free Simulator (Topstep):**\n"
+            "   - Topstep ofrece una **prueba gratuita de 14 días** en su plataforma propia **TopstepX** (con gráficos integrados de TradingView y ejecución CME simulada en tiempo real) para familiarizarse con el entorno y las reglas sin coste.\n\n"
+            "2. **🟢 Tradeify Free Demo (Tradovate):**\n"
+            "   - Puedes solicitar una demo de 14 días en **Tradovate / TradingView** con datos de mercado simulados para probar la latencia y la conexión de tus órdenes antes de adquirir tu cuenta Growth.\n\n"
+            "3. **🟡 Take Profit Trader Practice:**\n"
+            "   - TPT ofrece cuentas de prueba en su plataforma **Pro Platform** para que pruebes los atajos de teclado y la ejecución.\n\n"
+            "4. **🛡️ NinjaTrader 8 Official Demo (Recomendación Experta para Bots):**\n"
+            "   - Si vas a operar con bots de **StrategyQuant X** o **NinjaScript**, puedes descargar NinjaTrader 8 de forma 100% gratuita y abrir una cuenta demo de 14 días con **datos CME en vivo (MES, MNQ, ES, NQ)** directamente desde `ninjatrader.com`. Así puedes realizar el backtesting y forward testing de tus algoritmos antes de pagar ningún examen."
+        )
+        suggested_actions = ["Ver MFFU Rapid 50K ($39.50)", "Ver Tradeify Growth 50K ($58.20)", "¿Qué cuenta es la más barata hoy?"]
+        related_firms = ["Topstep", "Tradeify", "Take Profit Trader", "My Funded Futures"]
+        active_coupons = [
+            {"firm": "MFFU", "code": "300K", "discount": "50% OFF"},
+            {"firm": "Tradeify", "code": "TNT", "discount": "40% OFF"},
+            {"firm": "TradeDay", "code": "FLASH55", "discount": "55% OFF"},
+        ]
+
     # INTENT: RECOMENDACIÓN PARA BOTS / ALGORITMOS
-    if is_bots and not is_drawdown:
+    elif is_bots and not is_drawdown:
         response_paragraphs.append("### 🤖 Auditoría de Bots & Trading Algorítmico en Futuros CME\n")
         response_paragraphs.append(
             "Si operas con **StrategyQuant X, EAs en NinjaTrader 8, Webhooks de TradingView o scripts de Python**, estas son las reglas oficiales auditadas:\n\n"

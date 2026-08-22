@@ -136,12 +136,15 @@ def list_candidates(
             monthly_roi = None
             ann_roi = None
 
-        roi_oos = round(monthly_roi * float(dur["oos_months"]), 2) if (monthly_roi is not None and dur and dur.get("oos_months")) else None
-        wr_is = float(is_m.get("win_rate_pct") or is_m.get("win_rate")) if (is_m.get("win_rate_pct") is not None or is_m.get("win_rate") is not None) else None
-        wr_oos = float(sc.get("win_rate_pct") or oos_m.get("win_rate_pct") or oos_m.get("win_rate")) if (sc.get("win_rate_pct") is not None or oos_m.get("win_rate_pct") is not None or oos_m.get("win_rate") is not None) else None
-        pf_oos = float(c.profit_factor_oos) if c.profit_factor_oos is not None else (float(oos_m["profit_factor"]) if "profit_factor" in oos_m else None)
-        dd_oos = float(c.max_dd_oos_pct) if c.max_dd_oos_pct is not None else (float(oos_m["max_drawdown_pct"]) if "max_drawdown_pct" in oos_m else None)
-        dd_is = float(c.max_dd_is_pct) if c.max_dd_is_pct is not None else (float(is_m["max_drawdown_pct"]) if "max_drawdown_pct" in is_m else None)
+        raw_wr_is = is_m.get("win_rate_pct") if is_m.get("win_rate_pct") is not None else is_m.get("win_rate")
+        wr_is = float(raw_wr_is) if raw_wr_is is not None else None
+
+        raw_wr_oos = sc.get("win_rate_pct") if sc.get("win_rate_pct") is not None else (oos_m.get("win_rate_pct") if oos_m.get("win_rate_pct") is not None else oos_m.get("win_rate"))
+        wr_oos = float(raw_wr_oos) if raw_wr_oos is not None else None
+
+        pf_oos = float(c.profit_factor_oos) if c.profit_factor_oos is not None else (float(oos_m["profit_factor"]) if ("profit_factor" in oos_m and oos_m["profit_factor"] is not None) else None)
+        dd_oos = float(c.max_dd_oos_pct) if c.max_dd_oos_pct is not None else (float(oos_m["max_drawdown_pct"]) if ("max_drawdown_pct" in oos_m and oos_m["max_drawdown_pct"] is not None) else None)
+        dd_is = float(c.max_dd_is_pct) if c.max_dd_is_pct is not None else (float(is_m["max_drawdown_pct"]) if ("max_drawdown_pct" in is_m and is_m["max_drawdown_pct"] is not None) else None)
         trades_count_oos = int(c.trades_oos) if c.trades_oos is not None else (int(oos_m["trades"]) if "trades" in oos_m else 0)
         
         # Trades por mes reales
@@ -368,13 +371,16 @@ def get_candidate_gate_audit(candidate_id: str, db: Session = Depends(get_db)) -
 
     candles = load_candles(c.symbol, c.timeframe) or load_candles("BTCUSDT", "1h") or []
     
+    import hashlib
+    ds_hash = hashlib.sha256(json.dumps(candles[:50], sort_keys=True, default=str).encode("utf-8")).hexdigest() if candles else hashlib.sha256(f"dataset_{c.symbol}_{c.timeframe}".encode("utf-8")).hexdigest()
+
     discovery = UltraDiscoveryEngine()
     strategy = discovery.generate_candidate_blueprint(
         strategy_id=c.candidate_id,
         symbol=c.symbol,
         timeframe=c.timeframe,
         dataset_id=c.dataset_id or f"ds_{c.symbol}_{c.timeframe}",
-        dataset_sha256="sha256_verified",
+        dataset_sha256=ds_hash,
     )
 
     bt_engine = EventBacktestEngine()
@@ -458,13 +464,16 @@ def get_candidate_nautilus_audit(candidate_id: str, db: Session = Depends(get_db
     from services.api.app.validation.gates.gate_11_nautilus_event import Gate11NautilusEvent
 
     candles = load_candles(c.symbol, c.timeframe) or load_candles("BTCUSDT", "1h") or []
+    import hashlib
+    ds_hash = hashlib.sha256(json.dumps(candles[:50], sort_keys=True, default=str).encode("utf-8")).hexdigest() if candles else hashlib.sha256(f"dataset_{c.symbol}_{c.timeframe}".encode("utf-8")).hexdigest()
+
     discovery = UltraDiscoveryEngine()
     strategy = discovery.generate_candidate_blueprint(
         strategy_id=c.candidate_id,
         symbol=c.symbol,
         timeframe=c.timeframe,
         dataset_id=c.dataset_id or f"ds_{c.symbol}_{c.timeframe}",
-        dataset_sha256="sha256_verified",
+        dataset_sha256=ds_hash,
     )
 
     bt_engine = EventBacktestEngine()
