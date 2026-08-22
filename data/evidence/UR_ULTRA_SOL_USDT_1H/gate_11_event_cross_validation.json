@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1H_g11",
   "run_id": "run_UR_ULTRA_SOL_USDT_1H",
   "strategy_id": "UR_ULTRA_SOL_USDT_1H",
-  "strategy_snapshot_hash": "b6ccd507932eccd11c6c951a1114c68386680e420a9190344a8ff2044e8b3814",
+  "strategy_snapshot_hash": "881571ba0a12aba4f8660c5fd71092013b495453105c018b15cb23d89a807417",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.0.0",
   "formula_version": "3.0.0",
-  "input_hash": "0efa4661b8809be56f42646ba8504f6c67399c81d4114b542860d1963a30ca30",
-  "output_hash": "492a05d0106b59b6d10dfcec408723bdf313d681cda15d371405f2849bc56e71",
+  "input_hash": "c40ec92049bf449c417cd5c4bdff5f53c8e798231e3b3e9dfdfa076d9a0158c1",
+  "output_hash": "2558690f9009361e6c26157e58ae9870c024a5f0bfa93fc9ed3d3235251aa338",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 2157.0x > 100.0x)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 11413.1x > 100.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -36.07,
+    "final_equity_usd": -102.3,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": -36.07,
-    "peak_leverage_used": 2156.97,
+    "min_equity_usd": -102.3,
+    "peak_leverage_used": 11413.1,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
-    "total_fees_paid_usd": 950.71,
-    "total_funding_cost_usd": 95.07,
-    "execution_events_count": 388
+    "total_fees_paid_usd": 1014.08,
+    "total_funding_cost_usd": 101.41,
+    "execution_events_count": 418
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T02:43:40.831740+00:00"
+  "created_at_utc": "2026-08-22T02:44:00.358969+00:00"
 }
