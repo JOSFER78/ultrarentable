@@ -2,21 +2,21 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.140_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.140",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.140",
-  "strategy_snapshot_hash": "06225595850e6d8f86d4b762140b112a960f9b3a29ee0deb4d9713fafeced9c8",
+  "strategy_snapshot_hash": "cacde5e92906f144d219ed25c08f40b548e619a9500e460cdd4db018504a144a",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "3c7813ac6acb3d6943d71c910fc3ada1876b0e1889a7808c30a75069b1209384",
-  "output_hash": "f86c80922441f593d9f8a0f77eb5bd2e85ac2afe9d8f178465efb3827b6d587e",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "6e702c6a47b629d352271fbe7e94c55f8822a3da43bfbd040f29026333d71394",
+  "output_hash": "93917d104166a95e6c495a0b7fc7c247416144317915a92388a997578a36099a",
   "status": "FAILED",
-  "score": 49.4,
-  "verdict": "FALLO: Consenso insuficiente (49.4/100) u objeción crítica de riesgo",
+  "score": 66.2,
+  "verdict": "FALLO: Consenso insuficiente (66.2/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 49.4,
+    "consensus_score": 66.2,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 100.0,
         "findings": [
           "Activo y Timeframe: BTC-USDT (h1) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 2.80 con beneficio neto de $70.92.",
+          "Profit Factor OOS: 2.10 con beneficio neto de $70161128611699834880.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 87.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 88.2% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1184 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1417 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.06 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $49513852231263112.00 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 52.5,
+        "score": 75.0,
         "objections": [
-          "Alerta de Drawdown: DD (87.9%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (88.2%) consume más del 90% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.140/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T01:49:13.603679+00:00"
+  "created_at_utc": "2026-08-22T02:28:16.349146+00:00"
 }

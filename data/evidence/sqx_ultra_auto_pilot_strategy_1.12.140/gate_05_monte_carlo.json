@@ -2,26 +2,26 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.140_g05",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.140",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.140",
-  "strategy_snapshot_hash": "06225595850e6d8f86d4b762140b112a960f9b3a29ee0deb4d9713fafeced9c8",
+  "strategy_snapshot_hash": "cacde5e92906f144d219ed25c08f40b548e619a9500e460cdd4db018504a144a",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "381463bf9eeb7222d880687f95ffb0da4ddd157e5427e838e0b34536e7210104",
-  "output_hash": "a1008246518e90a7c41134c429e6502a6b8ba87fae131eeb60ea670d407a7b77",
+  "engine_version": "3.0.0",
+  "formula_version": "3.0.0",
+  "input_hash": "ac87a1e2faa05f1556499b48e9f3b628202305f03ced9efe8402cbf75e80a990",
+  "output_hash": "2bcbcf95ce45fe1d1a23a26b4924a209d375517b22a03353db7d11c981881bda",
   "status": "PASSED",
-  "score": 98.5,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.1%)",
+  "score": 98.2,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 3.6%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.9,
-    "drawdown_95th_percentile_pct": 3.1,
-    "max_simulated_drawdown_pct": 6.1
+    "drawdown_median_pct": 2.3,
+    "drawdown_95th_percentile_pct": 3.6,
+    "max_simulated_drawdown_pct": 5.7
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.140/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T01:49:08.408073+00:00"
+  "created_at_utc": "2026-08-22T02:28:09.562083+00:00"
 }
