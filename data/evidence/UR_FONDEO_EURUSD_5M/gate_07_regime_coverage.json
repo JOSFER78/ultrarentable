@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_5M_g07",
   "run_id": "run_UR_FONDEO_EURUSD_5M",
   "strategy_id": "UR_FONDEO_EURUSD_5M",
-  "strategy_snapshot_hash": "6fb13cae1ec4e1d6da2666c677d968d13d6392901f6fe48c8646a360db5655da",
+  "strategy_snapshot_hash": "1fb0ff78eb230becef0420bb0490ed94de6975854bec731e4c2d9523168f11f8",
   "dataset_id": "ds_trad_eurusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "a3c078a1e4dc7d42aa3c875bce56c5dd52ee9a02e6e401ba810e437cd4671f5f",
-  "output_hash": "8959b94c92c4f28e1bf5460cf455925fa9a25989ebcab889a57076b03edefd11",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "5b93e8be7b2a14be41111c8677a801fc5d48f5cfd55e025555f2443d378321ad",
+  "output_hash": "4645d41faec8aa8c66f6ba8f02abfaae6cdd5642217dee198853c51defe5094d",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -152.05%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.41%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -139.52,
-      "HIGH_VOLATILITY": -12.53
+      "CHOP_RANGING": -0.36,
+      "HIGH_VOLATILITY": -0.05
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -152.05
+    "total_oos_return_pct": -0.41
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:10:12.885055+00:00"
+  "created_at_utc": "2026-08-22T15:56:33.498842+00:00"
 }

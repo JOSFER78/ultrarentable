@@ -139,7 +139,7 @@ class UniversalStrategyOptimizer:
         row = cur.execute(
             """
             SELECT candidate_id, name, route, symbol, timeframe, status,
-                   net_profit_oos, profit_factor_oos, max_dd_oos_pct, scorecard_json, engine_version
+                   net_profit_oos, profit_factor_oos, max_dd_oos_pct, trades_oos, scorecard_json, engine_version
             FROM candidates WHERE candidate_id = ?
             """,
             (candidate_id,)
@@ -187,15 +187,20 @@ class UniversalStrategyOptimizer:
         # 1.1 Debate Semántico de los 5 Agentes Especialistas Cuantitativos (Guía de Reprogramación)
         from services.api.app.validation.gates.gate_10_agent_debate import Gate10AgentDebate
         semantic_agent_debate = Gate10AgentDebate()
+        trades_cnt = int(row["trades_oos"] or 20) if "trades_oos" in row.keys() else 20
+        pf_val = float(row["profit_factor_oos"] or 1.1) if "profit_factor_oos" in row.keys() else 1.1
+        dd_val = float(row["max_dd_oos_pct"] or 0.0) if "max_dd_oos_pct" in row.keys() else 0.0
+        pnl_val = float(row["net_profit_oos"] or 100.0) if "net_profit_oos" in row.keys() else 100.0
+
         debate_result = semantic_agent_debate.evaluate({
             "candidate_id": cid,
             "symbol": symbol,
             "timeframe": timeframe,
             "route": route_str,
-            "trades_count": int(row["trades_oos"] or 20),
-            "profit_factor_oos": float(row["profit_factor_oos"] or 1.1),
-            "max_drawdown_pct": float(row["max_dd_oos_pct"] or 0.0),
-            "net_profit_oos_usd": float(row["net_profit_oos"] or 100.0),
+            "trades_count": trades_cnt,
+            "profit_factor_oos": pf_val,
+            "max_drawdown_pct": dd_val,
+            "net_profit_oos_usd": pnl_val,
         })
 
         specialists = debate_result.get("evidence", {}).get("specialists", [])

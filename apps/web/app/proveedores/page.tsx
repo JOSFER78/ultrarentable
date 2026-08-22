@@ -505,7 +505,7 @@ export default function ProveedoresGatewayPage() {
 
                     {isNautilus && (
                       <Link
-                        href="/gates/gate-11-nautilus-trader"
+                        href="/gates/gate-10-nautilus-trader"
                         style={{
                           padding: "8px 14px",
                           borderRadius: "6px",

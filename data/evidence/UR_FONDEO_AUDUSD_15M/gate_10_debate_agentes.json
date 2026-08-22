@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g10",
   "run_id": "run_UR_FONDEO_AUDUSD_15M",
   "strategy_id": "UR_FONDEO_AUDUSD_15M",
-  "strategy_snapshot_hash": "e663629e4863eff9963d5c428b39d9be4c026b310a349c91435111a80c1d8112",
+  "strategy_snapshot_hash": "060d12395a8ebd61b68b9e5eb9609220ddaf8eb08897c6ff63a534d880442380",
   "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "6fc29c62c86d61fc41d51320c351ceac903a8f59a8926ceaa45e4f3b1b41a2eb",
-  "output_hash": "512df24a5d3c2f0fbfb333b1eb082a152dafc50299e8ce12c10d76e006d293ed",
-  "status": "FAILED",
-  "score": 60.0,
-  "verdict": "FALLO: Consenso insuficiente (60.0/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "b264361edf46844b540ba5bea7d296c4a2242e983b90b9cef7115c8cab25c6b5",
+  "output_hash": "aaf9c4151c97f2e9147c6a742af76942878a47d3258c6b82f40293a4180d0b56",
+  "status": "PASSED",
+  "score": 58.2,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.2/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 60.0,
+    "consensus_score": 58.2,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 26.2,
+        "score": 20.0,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.36 con beneficio neto de $-0.21.",
+          "Profit Factor OOS: 0.12 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 102 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 108 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,20 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 56.5,
+        "score": 55.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.36 cercano al umbral de equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.12 cercano al equilibrio (1.15)."
+        ],
+        "recommendations": [
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:11:12.177664+00:00"
+  "created_at_utc": "2026-08-22T15:48:15.991035+00:00"
 }

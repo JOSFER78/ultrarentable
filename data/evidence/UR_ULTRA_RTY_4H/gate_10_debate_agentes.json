@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_RTY_4H_g10",
   "run_id": "run_UR_ULTRA_RTY_4H",
   "strategy_id": "UR_ULTRA_RTY_4H",
-  "strategy_snapshot_hash": "e9e54cae15280aad63c1c8226f88e10b9cc215c0cc85a8259ab4d3e071902631",
+  "strategy_snapshot_hash": "f9d8ae240ab9eae818da7c7144f8bfdb369c437fdd92e6ac9f6b32e9faa858ff",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "378a5aac38a2edeb36dc3d6458c8f0aee96c32d98f9591796f2602387e621200",
-  "output_hash": "7ee6713e682cba93518661360f037db78fe61928408d2021d82cc57c3cc2af90",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "4f154e36d36a586ea6be80fc48f48fccfb1e2b695ecfcc3f113ebae60ff26d1e",
+  "output_hash": "51883e6c72b7d3ffe397fb0f5bea7aff6ea971dec1caa414ceb4fc045d6f674c",
   "status": "FAILED",
-  "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "score": 17.0,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (17.0/100)",
   "metrics": {
-    "consensus_score": 24.5,
+    "consensus_score": 17.0,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: RTY (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.00 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.00 con beneficio neto de $-0.89.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -44,10 +44,10 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 100.0,
+        "score": 60.0,
         "findings": [
-          "Muestra fuera de muestra: 29 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: MODERADO."
+          "Muestra fuera de muestra: 12 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: LIMITADO."
         ],
         "approved": true
       },
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-34.48 USD.",
+          "Beneficio medio por operación: $-0.07 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
+        "score": 20.0,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.00 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:15:08.473881+00:00"
+  "created_at_utc": "2026-08-22T15:47:42.954555+00:00"
 }

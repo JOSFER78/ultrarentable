@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_RTY_5M_g10",
   "run_id": "run_UR_FONDEO_RTY_5M",
   "strategy_id": "UR_FONDEO_RTY_5M",
-  "strategy_snapshot_hash": "40413e65360bfcd1b1ef7b99fc92b24ee3c008fd13a2b9cdfea48e2800d8120e",
+  "strategy_snapshot_hash": "31b78b34aebfb1331ac613e25510adc3d790e7918e5a5bcc05f827546bae2c8c",
   "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "ccc02224ea2940aea18de0ab4ee7afa3470e2f647edeaf50e7ee03dfb7bc2955",
-  "output_hash": "2507869f47b80e546ebb10c9976c70aabfe93438854248195962cac23aa515a7",
-  "status": "FAILED",
-  "score": 30.4,
-  "verdict": "FALLO: Consenso insuficiente (30.4/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "5938e9fcf32e2b28d3dff785e7b123c1fff5df2761ad1900c7c5af472c17825d",
+  "output_hash": "0a4a397261852782e32fba7662f52c1f03d8ea32db622cef6f26fc9ea3e49b22",
+  "status": "PASSED",
+  "score": 48.7,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (48.7/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 30.4,
+    "consensus_score": 48.7,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 40.6,
+        "score": 41.0,
         "findings": [
           "Activo y Timeframe: RTY (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.68 con beneficio neto de $-2591.15.",
+          "Profit Factor OOS: 0.69 con beneficio neto de $-0.02.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 53.8,
         "findings": [
-          "Drawdown Máximo Observado: 5.5% (Límite permitido para FONDEO: 4.5%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 3.0% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 156 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 163 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-16.61 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,20 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 35.1,
+        "score": 48.7,
         "objections": [
-          "Alerta de Drawdown: DD (5.5%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.68 cercano al umbral de equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.69 cercano al equilibrio (1.15)."
         ],
-        "approved": false
+        "recommendations": [
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:07:49.081525+00:00"
+  "created_at_utc": "2026-08-22T15:48:26.066272+00:00"
 }

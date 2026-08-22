@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_NQ_1H_g07",
   "run_id": "run_UR_FONDEO_NQ_1H",
   "strategy_id": "UR_FONDEO_NQ_1H",
-  "strategy_snapshot_hash": "8503cf4a92f61344ac4b2925d0cc4604ecd927aa6bf02ebe1e5170c32dd36d46",
+  "strategy_snapshot_hash": "fb9ea56ed69cb7658bf97560e6117c62923787b9100d9a21f12e34097b3519ed",
   "dataset_id": "ds_trad_nq_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "3b295f30a75328becff117f1f6226286de4dd65e4e361a3e25a94723e8b04f05",
-  "output_hash": "3b91d255a2a9d1a9cf3b4012920f285fa6bd3321b4c6031773aa065ba46ea7a7",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "fc25a810e076a069e4fbad84daa9577d34b2d953adae1abe1bb8bf8195ae8fae",
+  "output_hash": "497ee3b4f4c5a330e10fd0983cfcf1e16239e03c374f7ed367d77f4853794453",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +116.83%)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +56088.78%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 119,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 375
     },
     "regime_trades_count": {
-      "BULL_TREND": 4,
+      "BULL_TREND": 3,
       "BEAR_TREND": 1,
-      "CHOP_RANGING": 23,
-      "HIGH_VOLATILITY": 4
+      "CHOP_RANGING": 21,
+      "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
-      "BULL_TREND": -14.87,
-      "BEAR_TREND": -15.07,
-      "CHOP_RANGING": 106.3,
-      "HIGH_VOLATILITY": 40.47
+      "BULL_TREND": 19089.58,
+      "BEAR_TREND": 10706.21,
+      "CHOP_RANGING": 284.05,
+      "HIGH_VOLATILITY": 26008.94
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 116.83
+    "total_oos_return_pct": 56088.78
   },
   "artifact_path": "data/evidence/UR_FONDEO_NQ_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:22:46.572678+00:00"
+  "created_at_utc": "2026-08-22T15:56:46.113771+00:00"
 }

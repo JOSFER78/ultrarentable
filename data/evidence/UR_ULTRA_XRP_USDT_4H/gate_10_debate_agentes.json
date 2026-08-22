@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_XRP_USDT_4H",
   "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "642287115f3e2f81fff02a6ca6d5d02b6874abec06d0cbbfa0ee61950ba8f1ff",
+  "strategy_snapshot_hash": "6d2d4a6de75fb9a6fec0ffe721077c297dbe9760b7dc29802aeef49aeb952c3b",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "5d0abebf564db4b3554c1879f5ed5285b050baa1a8ea893791165bda18ece09d",
-  "output_hash": "e2a6427580d26a538958d7bda6e65aabca34aa373d37870f6ddb3610c9ad24e6",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "53d43cac149b057d035a42ac92a4e3161e3df741b8b0111026e9a64af2653772",
+  "output_hash": "2ee9f1768045cdbe01f354ef72737f316e686f32abfb07d4b5cc470788354aaa",
   "status": "PASSED",
-  "score": 87.3,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (87.3/100 · 5/5 Evaluadores Conformes)",
+  "score": 70.3,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (70.3/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 87.3,
+    "consensus_score": 70.3,
     "evaluators_count": 5,
-    "verdict_status": "APPROVED_BY_CONSENSUS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 100.0,
         "findings": [
           "Activo y Timeframe: XRP-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 2.11 con beneficio neto de $247592196627755680.00.",
+          "Profit Factor OOS: 10.39 con beneficio neto de $116.74.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 62.4,
+        "score": 62.2,
         "findings": [
-          "Drawdown Máximo Observado: 79.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 80.4% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1268 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1497 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $195261984722204.78 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.08 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 90.6,
+        "score": 68.0,
         "objections": [
-          "Alerta de Drawdown: DD (79.9%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (80.4%) cercano o superior al límite tolerable (85.0%)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:16:14.629148+00:00"
+  "created_at_utc": "2026-08-22T15:47:00.393346+00:00"
 }

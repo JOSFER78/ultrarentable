@@ -2,51 +2,51 @@
   "evidence_id": "ev_UR_FONDEO_RTY_15M_g10",
   "run_id": "run_UR_FONDEO_RTY_15M",
   "strategy_id": "UR_FONDEO_RTY_15M",
-  "strategy_snapshot_hash": "1d70cbd4a9e67cfb7f6c16db5ec3cc0a6183ae449abcf0e2e11b53c1c984ff5e",
+  "strategy_snapshot_hash": "9342a547866c5ceeaa02aadc6dcd44404f49f829bfeb98c44150af11687be7c2",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "04766125d4050692450e4549e52edf3b81376994e425acc70a9d7a9a9384125a",
-  "output_hash": "106dff4bff992d6b01317b7442bcd23907283bbd9130cf6a40c660796cc20e05",
-  "status": "FAILED",
-  "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "d5a9489cd17ab1606570b301796fa21d38ca28257886212221548599f573c066",
+  "output_hash": "2767dc60604a4c418412a03ea4415c343a7a1ce0ffdc5a56f814aec44796baf2",
+  "status": "PASSED",
+  "score": 67.2,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (67.2/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 24.5,
+    "consensus_score": 67.2,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 68.1,
         "findings": [
           "Activo y Timeframe: RTY (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.16 con beneficio neto de $-3735.79.",
+          "Profit Factor OOS: 1.29 con beneficio neto de $151.55.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 72.2,
         "findings": [
-          "Drawdown Máximo Observado: 7.5% (Límite permitido para FONDEO: 4.5%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 1.8% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 69 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 63 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 24.1,
         "findings": [
-          "Beneficio medio por operación: $-54.14 USD.",
+          "Beneficio medio por operación: $2.41 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,20 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
+        "score": 66.1,
         "objections": [
-          "Alerta de Drawdown: DD (7.5%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.16 cercano al umbral de equilibrio (1.15)."
+          "Cero objeciones críticas: Hipótesis robusta respaldada por evidencia empírica."
         ],
-        "approved": false
+        "recommendations": [
+          "Candidato óptimo listo para integración en Meta-Portafolios."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Candidato óptimo listo para integración en Meta-Portafolios."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:12:13.248182+00:00"
+  "created_at_utc": "2026-08-22T15:48:21.831756+00:00"
 }

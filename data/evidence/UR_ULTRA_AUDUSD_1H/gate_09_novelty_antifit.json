@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g09",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "966dc58b2a7cd1b4cb6112778f0279c9e78ece7ff3bb643346d6ef0af121a1e6",
+  "strategy_snapshot_hash": "a8cd0bc160fed29c92c5be25715d04574424d2a83a9fd62641ad413ecd17377b",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "8c8841e65bd5a676f4af67965b1fcad647713d18e034889cc3bf2e1c06d9cd19",
-  "output_hash": "e8996f5538b4834ae7007571b39c70be0a07a1be45689c5e612b446f78df4292",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "50b27181e39121d1cba58abbd4227ffd0d789580551553213de01471ffbab094",
+  "output_hash": "37911b4e0922c7bcf377937767af889dfc71b422e03a2b9926ab7d3b0aeab29a",
   "status": "PASSED",
-  "score": 83.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 73.4 trades/param, Estabilidad Vecindario: 72.1%, Re-backtest PFs: [0.47, 0.44, 0.29, 0.27])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 47.1 trades/param, Estabilidad Vecindario: 102.8%, Re-backtest PFs: [0.31, 0.2, 0.14, 0.09])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 73.4,
+    "degrees_of_freedom_ratio": 47.1,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 72.1,
+    "parameter_neighborhood_stability_pct": 102.8,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.47,
-      0.44,
-      0.29,
-      0.27
+      0.31,
+      0.2,
+      0.14,
+      0.09
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T14:10:01.966432+00:00"
+  "created_at_utc": "2026-08-22T15:56:16.070896+00:00"
 }

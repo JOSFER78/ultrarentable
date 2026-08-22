@@ -92,13 +92,13 @@ const GLOBAL_STEPS: StepConfig[] = [
   {
     number: 3,
     id: "QUANT_VALIDATION_11_GATES",
-    title: "3. Backtest y Validación por los 11 Gates Cuantitativos",
+    title: "3. Backtest y Validación por los 10 Gates Cuantitativos",
     category: "GLOBAL",
     badge: "Validación Anti-Sobreajuste",
     icon: "🔬",
     actionText: "Ir a Candidatos & Gates →",
     actionHref: "/candidatos",
-    description: "Somete a cada estrategia a una batería determinista e independiente de 11 Gates (Monte Carlo, Walk-Forward, DSR, Slippage 2x, Nautilus Event).",
+    description: "Somete a cada estrategia a una batería determinista e independiente de 10 Gates (Monte Carlo, Walk-Forward, DSR, Slippage 2x, Nautilus Event).",
     whatItDoes: [
       "Comprueba la significancia estadística (mínimo 20 trades OOS, outlier ratio < 15%).",
       "Calcula Walk-Forward Efficiency (WFE) y Deflated Sharpe Ratio (DSR) penalizando el número de ensayos.",
@@ -106,9 +106,9 @@ const GLOBAL_STEPS: StepConfig[] = [
       "Revalida en el segundo motor independiente NautilusTrader con modelado de margen y liquidación."
     ],
     whatItsDoingNow: {
-      status: "ACTIVO · EVALUANDO 11 GATES",
+      status: "ACTIVO · EVALUANDO 10 GATES",
       statusColor: "#c084fc",
-      liveMetric: "11 Gates Modulares Desacoplados",
+      liveMetric: "10 Gates Modulares Desacoplados",
       throughput: "0.5 evals/seg (alta precisión)",
       currentTask: "Evaluación secuencial determinista fuera de SQX",
       lastVerdict: "Cero tolerancia a lookahead bias o curve-fitting"
@@ -475,7 +475,7 @@ const GATE_STEPS: StepConfig[] = [
     badge: "G11 · NautilusTrader",
     icon: "🔱",
     actionText: "Ver Subpágina & Motor Nautilus →",
-    actionHref: "/gates/gate-11-nautilus-trader",
+    actionHref: "/gates/gate-10-nautilus-trader",
     description: "Revalidación canónica en NautilusTrader v1.231.0 (núcleo en Rust). Simula contabilidad trade a trade, margen dinámico, funding rates y distancia exacta a liquidación.",
     whatItDoes: [
       "Ejecuta simulación orientada a eventos fuera del entorno de StrategyQuant X.",
@@ -668,7 +668,7 @@ export default function WizardPasoAPasoPage() {
         </div>
       </div>
 
-      {/* 2. SELECTOR DE VISTA: ETAPAS GLOBALES VS 11 GATES */}
+      {/* 2. SELECTOR DE VISTA: ETAPAS GLOBALES VS 10 GATES */}
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
         <button
           onClick={() => {
@@ -696,7 +696,7 @@ export default function WizardPasoAPasoPage() {
             </span>
           </div>
           <div style={{ fontSize: "11px", color: "#94a3b8" }}>
-            Datos Reales → Fábrica Genética SQX → 11 Gates → Bifurcación Fondeo/Ultra → Autopiloto en Vivo
+            Datos Reales → Fábrica Genética SQX → 10 Gates → Bifurcación Fondeo/Ultra → Autopiloto en Vivo
           </div>
         </button>
 
@@ -719,7 +719,7 @@ export default function WizardPasoAPasoPage() {
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
             <span style={{ fontSize: "13px", fontWeight: 900, color: activeTab === "GATES" ? "#c084fc" : "#cbd5e1" }}>
-              🔬 LOS 11 GATES CUANTITATIVOS DE VALIDACIÓN
+              🔬 LOS 10 GATES CUANTITATIVOS DE VALIDACIÓN
             </span>
             <span style={{ fontSize: "10px", fontWeight: 800, padding: "2px 8px", borderRadius: "4px", background: "rgba(168, 85, 247, 0.2)", color: "#c084fc" }}>
               FILTRADO & NAUTILUS

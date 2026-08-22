@@ -2,41 +2,41 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.97_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.97",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.97",
-  "strategy_snapshot_hash": "24ddb692b26db308c5439c1e2ac2115ddcf79826ac501479193927dba32a4d77",
+  "strategy_snapshot_hash": "911a03a9e7872f8dec86646a75402688b2121b7e68c9ab4e9c057ef7ab9190fe",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "06f2cfe8c28252240d9e406aedccdb8b7155ff32dff8deedc5c85d963f1bfe22",
-  "output_hash": "4e0c0a6dc6a9b068ee044e6a8e7bfd5c685f1857123e3645f069f40b6c4c0dc1",
-  "status": "FAILED",
-  "score": 35.6,
-  "verdict": "FALLO: Consenso insuficiente (35.6/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "97ee251ac26973871098eccbbf49c4de872934b8a0f03aa9c47fce1fd050008a",
+  "output_hash": "85700ee497668f6ae0d1b359b7541920bf4483c09415fc504b28781b110bff2e",
+  "status": "PASSED",
+  "score": 44.3,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (44.3/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 35.6,
+    "consensus_score": 44.3,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 58.6,
+        "score": 82.5,
         "findings": [
           "Activo y Timeframe: BTC-USDT (h1) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 1.61 con beneficio neto de $183.74.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 91.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1796 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1584 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.56 USD.",
+          "Beneficio medio por operación: $0.12 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,20 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.6,
+        "score": 48.1,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (91.3%) cercano o superior al límite tolerable (85.0%)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.97/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:17:48.822173+00:00"
+  "created_at_utc": "2026-08-22T15:44:43.440572+00:00"
 }

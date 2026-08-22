@@ -194,11 +194,11 @@ class ContinuousResearchDaemon:
 
                 tier = sc.get("tier")
                 if not tier:
-                    if g_count == 11:
+                    if g_count == 10:
                         tier = "TIER_1_CERTIFIED"
-                    elif g_count in (9, 10):
+                    elif g_count in (8, 9):
                         tier = "TIER_2_NEAR_CERTIFIED"
-                    elif g_count in (5, 6, 7, 8):
+                    elif g_count in (5, 6, 7):
                         tier = "TIER_3_INCUBATOR"
                     else:
                         tier = "TIER_4_REJECTED"

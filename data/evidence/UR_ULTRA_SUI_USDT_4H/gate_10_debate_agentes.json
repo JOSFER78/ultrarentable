@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_SUI_USDT_4H",
   "strategy_id": "UR_ULTRA_SUI_USDT_4H",
-  "strategy_snapshot_hash": "e0e2a46cb8b4f66fa12927f55cc15350101a1b8812ac0cc57b95996382a07e2d",
+  "strategy_snapshot_hash": "dc0231cafe795a1dff6df98e28124964f3e18da6f6eb1944983ec56e50819495",
   "dataset_id": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "c62fa4bd952b62dcf0aa6fdfb14970d83f65a64b5248d05ba726101d6d445b62",
-  "output_hash": "45a4e2158c519b368c442cd27a2105aa7bfc5d8d585c0405f89baaa3285b9d8a",
-  "status": "FAILED",
-  "score": 55.4,
-  "verdict": "FALLO: Consenso insuficiente (55.4/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "37071c28c3d261f2f568358af25f9dc974ac3bef309df1f4c6f30c2b631f4bd3",
+  "output_hash": "a336529f2376568795a068129ea25d389c77491c0125aa1f7f8d2e1dd962b5d7",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (70.0/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 55.4,
+    "consensus_score": 70.0,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 62.2,
+        "score": 100.0,
         "findings": [
           "Activo y Timeframe: SUI-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.16 con beneficio neto de $145733861758081.53.",
+          "Profit Factor OOS: 2.35 con beneficio neto de $121.29.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 61.0,
         "findings": [
-          "Drawdown Máximo Observado: 92.8% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 82.8% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1358 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1263 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $107315067568.54 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.10 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 65.5,
+        "score": 67.8,
         "objections": [
-          "Alerta de Drawdown: DD (92.8%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (82.8%) cercano o superior al límite tolerable (85.0%)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:16:27.481286+00:00"
+  "created_at_utc": "2026-08-22T15:46:22.852356+00:00"
 }

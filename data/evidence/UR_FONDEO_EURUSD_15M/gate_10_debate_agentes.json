@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_15M_g10",
   "run_id": "run_UR_FONDEO_EURUSD_15M",
   "strategy_id": "UR_FONDEO_EURUSD_15M",
-  "strategy_snapshot_hash": "3e69fa6d56e97f408a76480d9612ec2ecf36322444cb9a36b5299bb520334b1d",
+  "strategy_snapshot_hash": "f362747d6bc7839ee34987bd49db50c032e0076bde8b534a75a46f7dbd6dd04a",
   "dataset_id": "ds_trad_eurusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "c43e10007b793f5ca039d051efb465154c4bbd2387dfde880d531a8172a71b8f",
-  "output_hash": "677d191ac7e8a7663bee190b39cccef21d2a9ba96677fa327384420a863a77e8",
-  "status": "FAILED",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "a927e6fb2a249bbb750127d7e80d37cc48755969ad1a561c49c72847a0e0b651",
+  "output_hash": "812798c8eb13a591418896c4aa11c778c9f1247e101e6da2cda6c89644eda56c",
+  "status": "PASSED",
   "score": 58.2,
-  "verdict": "FALLO: Consenso insuficiente (58.2/100) u objeción crítica de riesgo",
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.2/100 · Guía de Mejora Generada)",
   "metrics": {
     "consensus_score": 58.2,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: EURUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.05 con beneficio neto de $-0.35.",
+          "Profit Factor OOS: 0.10 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 76 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 77 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,12 +66,18 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 55.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.05 cercano al umbral de equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.10 cercano al equilibrio (1.15)."
+        ],
+        "recommendations": [
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:08:54.940937+00:00"
+  "created_at_utc": "2026-08-22T15:47:19.744683+00:00"
 }

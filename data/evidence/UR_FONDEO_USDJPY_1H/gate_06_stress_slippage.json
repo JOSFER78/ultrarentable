@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g06",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "15ce99dffbbe6404067a39db63d646eb5177efcc908152e66db73dee970aed70",
+  "strategy_snapshot_hash": "c8276034d32e9f309d5146b90afe78b4f13f44a6ad6ed117a2e0fcf36f62228b",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "66fa5a6d29be54724830b3c69bf87cf0c231f7320e86a31f7ff2cdbc9cf5e559",
-  "output_hash": "838507b43c68fada56ed68efd566388338184c458ed5beb0f491a99348cb6726",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "1988e57a65c1198d866b346515482b514c90050a93af067dc03bf64b52a7bcc0",
+  "output_hash": "ad0f17c9781399257919880f77d75196b7a3eb619b99fa07ca09d0236a95a33c",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -20,13 +20,13 @@
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
         "stressed_net_pnl_usd": -0.01,
-        "stressed_profit_factor": 0.14,
+        "stressed_profit_factor": 0.02,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
         "stressed_net_pnl_usd": -0.01,
-        "stressed_profit_factor": 0.05,
+        "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+2_Sigma": {
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T14:02:21.952874+00:00"
+  "created_at_utc": "2026-08-22T15:57:53.879845+00:00"
 }

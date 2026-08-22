@@ -70,9 +70,12 @@ class ContinuousSearchDaemon:
         self._sync_persistent_counters()
 
     def _sync_persistent_counters(self) -> None:
-        """Sync persistent telemetry counters from SQLite and AI Learning Engine."""
-        tot_evals = max(595055, ai_learning_engine.total_evaluations)
+        """Sync persistent telemetry counters from SQLite 100% physically grounded."""
         db_candidates_count = 0
+        passed_is_count = 0
+        passed_oos_count = 0
+        passed_wfo_count = 0
+        passed_mc_count = 0
         try:
             conn = sqlite3.connect(self.db_path)
             c = conn.cursor()
@@ -80,9 +83,32 @@ class ContinuousSearchDaemon:
             row = c.fetchone()
             if row:
                 db_candidates_count = row[0]
+            
+            c.execute("SELECT count(*) FROM candidates WHERE net_profit_is > 0 OR profit_factor_is >= 1.0")
+            r_is = c.fetchone()
+            if r_is:
+                passed_is_count = r_is[0]
+
+            c.execute("SELECT count(*) FROM candidates WHERE net_profit_oos > 0 OR profit_factor_oos >= 1.0")
+            r_oos = c.fetchone()
+            if r_oos:
+                passed_oos_count = r_oos[0]
+
+            c.execute("SELECT count(*) FROM candidates WHERE wfo_pass_pct >= 50.0")
+            r_wfo = c.fetchone()
+            if r_wfo:
+                passed_wfo_count = r_wfo[0]
+
+            c.execute("SELECT count(*) FROM candidates WHERE monte_carlo_score >= 60.0")
+            r_mc = c.fetchone()
+            if r_mc:
+                passed_mc_count = r_mc[0]
+
             conn.close()
         except Exception:
-            db_candidates_count = 100
+            pass
+
+        tot_evals = ai_learning_engine.total_evaluations or db_candidates_count
 
         self.telemetry = {
             "is_running": False,
@@ -96,16 +122,16 @@ class ContinuousSearchDaemon:
                 "archetype": "VOLATILITY_BREAKOUT"
             },
             "speed": {
-                "evaluations_per_sec": 1.2,
+                "evaluations_per_sec": 0.0,
                 "total_evaluations": tot_evals,
             },
             "funnel": {
                 "total_generated": tot_evals,
-                "passed_is": int(tot_evals * 0.42),
-                "passed_oos": int(tot_evals * 0.18),
-                "passed_wfo": int(tot_evals * 0.08),
-                "passed_monte_carlo": int(tot_evals * 0.035),
-                "approved_saved_db": max(db_candidates_count, 100),
+                "passed_is": passed_is_count,
+                "passed_oos": passed_oos_count,
+                "passed_wfo": passed_wfo_count,
+                "passed_monte_carlo": passed_mc_count,
+                "approved_saved_db": db_candidates_count,
             },
             "recent_discoveries": [],
             "matrix_coverage": {},

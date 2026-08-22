@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_1M",
   "strategy_id": "UR_ULTRA_LINK_USDT_1M",
-  "strategy_snapshot_hash": "f9d30f0088aed8fa1a6f0fc4fcb71c662fa61c68aeff11476a3326fb9e8e698a",
+  "strategy_snapshot_hash": "4f10842a3d01ac4bfb15df8eec2ae8807de17bdea48826657b7e58d7defb7d96",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "d61acb4539648b16556b91f0cb1dd19f64b31ec9b13293381c62fc0e0484a94b",
-  "output_hash": "c9458738f10bccfb67cc251d6a1c9c20a07906e9934a7688c6e56e12c6e2b108",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "c0a2788635e81e66894c7ce2d7020964647a7b32d209c85dc6ccf547c7726ddf",
+  "output_hash": "5ffe0103bb825b70ec5a27abe191b8baba0a2f50eda7ff80132ccb971a5f7c08",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -450.23%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -74.67%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 65,
-      "HIGH_VOLATILITY": 16
+      "CHOP_RANGING": 47,
+      "HIGH_VOLATILITY": 8
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -359.45,
-      "HIGH_VOLATILITY": -90.78
+      "CHOP_RANGING": -65.02,
+      "HIGH_VOLATILITY": -9.65
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -450.23
+    "total_oos_return_pct": -74.67
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:07:27.621552+00:00"
+  "created_at_utc": "2026-08-22T15:55:15.812423+00:00"
 }

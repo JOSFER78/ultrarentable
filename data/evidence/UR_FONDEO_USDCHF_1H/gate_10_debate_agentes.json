@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_1H_g10",
   "run_id": "run_UR_FONDEO_USDCHF_1H",
   "strategy_id": "UR_FONDEO_USDCHF_1H",
-  "strategy_snapshot_hash": "76da94446f10a555a30a8d33de5381bfc0da4e55ad522013821dcc2b2dc8963d",
+  "strategy_snapshot_hash": "b072dc09bfc4997789f0ef2853c60288f26b2cfb574f914bbca8863d5b888a88",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "bd92b5b60c35186b27319bbb668483e3f7839cee755958a3be6a925fe47f10e1",
-  "output_hash": "1b5a02a51b0ad9d89983ae92432c66c3330a73acf17c6e1a289328c05626f4ed",
-  "status": "FAILED",
-  "score": 59.6,
-  "verdict": "FALLO: Consenso insuficiente (59.6/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "1f81737b2ef6a67c6ccd1a599353f79c94403e2342b63261da34e4803c141b7b",
+  "output_hash": "f2702d2660be49d173f6a316005299952bffdda61b18527bea4517a0d195514d",
+  "status": "PASSED",
+  "score": 61.9,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (61.9/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 59.6,
+    "consensus_score": 61.9,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 24.9,
+        "score": 26.2,
         "findings": [
           "Activo y Timeframe: USDCHF (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.33 con beneficio neto de $-0.89.",
+          "Profit Factor OOS: 0.36 con beneficio neto de $0.15.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 174 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 197 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.01 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,20 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 56.2,
+        "score": 59.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.33 cercano al umbral de equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.36 cercano al equilibrio (1.15)."
+        ],
+        "recommendations": [
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:03:48.866276+00:00"
+  "created_at_utc": "2026-08-22T15:48:39.752882+00:00"
 }

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_XRP_USDT_15M",
   "strategy_id": "UR_ULTRA_XRP_USDT_15M",
-  "strategy_snapshot_hash": "f1d8b0d04a3685e0e929a3892e7632d8147d8f735bbf8bd2f9f38ef00b539630",
+  "strategy_snapshot_hash": "f23ac51b28b0fc02c06b8ecca6ab723fddbc1d81bc3be1c4054426f60833312f",
   "dataset_id": "ds_binance_xrpusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "7523c27fcd7ad6a097e25d8fa45fccef41f216669c889dded4a307067e90b4a8",
-  "output_hash": "7dbba450d8848b40023ac6f7a46e0937698421d76b1568625fec1a5c2f5cf686",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "8c226896768c31f28d189caa33e8183e089430f256394893d39d011acf9363cd",
+  "output_hash": "452d672fd448ac8c833efd747be936d51e99a8c1d86bd14e9e1b349e9fde77e2",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +208.45%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +10.86%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 1,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 113,
-      "HIGH_VOLATILITY": 28
+      "CHOP_RANGING": 81,
+      "HIGH_VOLATILITY": 15
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 202.88,
-      "HIGH_VOLATILITY": 5.57
+      "CHOP_RANGING": -71.12,
+      "HIGH_VOLATILITY": 81.98
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 208.45
+    "total_oos_return_pct": 10.86
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T13:54:15.624859+00:00"
+  "created_at_utc": "2026-08-22T15:55:39.948054+00:00"
 }

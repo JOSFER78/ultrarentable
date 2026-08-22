@@ -213,7 +213,7 @@ export default function ResearchLabPage() {
       });
       if (res.ok) {
         const d = await res.json();
-        setActionMsg(`✓ Refinamiento completado: ${d.gates_passed_count}/11 Gates superados.`);
+        setActionMsg(`✓ Refinamiento completado: ${d.gates_passed_count}/10 Gates superados.`);
         await fetchStatus();
         if (selectedCandidateId === cid) {
           loadCandidateDetail(cid);
@@ -374,7 +374,7 @@ export default function ResearchLabPage() {
         </div>
 
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(236, 72, 153, 0.25)", borderRadius: "10px", padding: "12px 14px" }}>
-          <div style={{ fontSize: "9.5px", color: "#ec4899", fontFamily: "var(--font-mono, monospace)" }}>CERTIFICADAS (11/11)</div>
+          <div style={{ fontSize: "9.5px", color: "#ec4899", fontFamily: "var(--font-mono, monospace)" }}>CERTIFICADAS (10/10)</div>
           <div style={{ fontSize: "18px", fontWeight: 900, color: "#ec4899", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
             {status.stats.total_certified}
           </div>
@@ -659,7 +659,7 @@ export default function ResearchLabPage() {
                             fontFamily: "var(--font-mono, monospace)",
                           }}
                         >
-                          {item.current_gates}/11 GATES
+                          {item.current_gates}/10 GATES
                         </span>
                       </td>
                       <td style={{ padding: "6px 8px", fontFamily: "var(--font-mono, monospace)", color: item.profit_factor >= 1.2 ? "#34d399" : "#cbd5e1" }}>
@@ -850,7 +850,7 @@ export default function ResearchLabPage() {
                 if (isCert) {
                   cardBorder = "rgba(245, 158, 11, 0.45)";
                   cardBg = "rgba(245, 158, 11, 0.08)";
-                  badgeLabel = "🏆 CERTIFICADA 11/11";
+                  badgeLabel = "🏆 CERTIFICADA 10/10";
                   badgeBg = "rgba(245, 158, 11, 0.25)";
                   badgeColor = "#f59e0b";
                   badgeIcon = "🏆";
@@ -1051,7 +1051,7 @@ export default function ResearchLabPage() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "6px" }}>
                   <span style={{ fontSize: "10.5px", color: "#38bdf8" }}>{rec.symbol} {rec.timeframe} ({rec.route})</span>
                   <span style={{ fontSize: "10.5px", fontWeight: 900, color: rec.gate_delta > 0 ? "#34d399" : "#cbd5e1" }}>
-                    {rec.initial_gates}/11 → {rec.final_gates}/11 Gates ({rec.gate_delta >= 0 ? `+${rec.gate_delta}` : rec.gate_delta})
+                    {rec.initial_gates}/11 → {rec.final_gates}/10 Gates ({rec.gate_delta >= 0 ? `+${rec.gate_delta}` : rec.gate_delta})
                   </span>
                 </div>
               </div>

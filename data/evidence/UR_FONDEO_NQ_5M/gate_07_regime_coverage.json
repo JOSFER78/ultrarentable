@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_NQ_5M_g07",
   "run_id": "run_UR_FONDEO_NQ_5M",
   "strategy_id": "UR_FONDEO_NQ_5M",
-  "strategy_snapshot_hash": "afa0903c1c0918e76a043e92579b395d4fbc0581accb2b79a8fe6b78c3f1d83e",
+  "strategy_snapshot_hash": "eb9ab2ce0044a8e928f15b9520b529ad063eb7d0de3869ca4fe82883a8cdffa8",
   "dataset_id": "ds_trad_nq_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "62dd251fe5f1e256731ef9a620d64bfecf77dd61e5112d0aa326e631768901a4",
-  "output_hash": "1acaaaf8124237bbf145ab53329fee948d989f15997f41378e39cbfedcd80b46",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "3f17181105821766db49a66bd7651fc261f7c188fc9e688d3d384f65bdef14c2",
+  "output_hash": "71b716ce8a1e7477735deae6a20061b7d7c0d86fb6d5b8dc80485ac06468aa80",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -13.08%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -6180.40%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 27,
+      "CHOP_RANGING": 19,
       "HIGH_VOLATILITY": 6
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -12.54,
-      "HIGH_VOLATILITY": -0.54
+      "CHOP_RANGING": -6462.59,
+      "HIGH_VOLATILITY": 282.19
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -13.08
+    "total_oos_return_pct": -6180.4
   },
   "artifact_path": "data/evidence/UR_FONDEO_NQ_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:11:05.221767+00:00"
+  "created_at_utc": "2026-08-22T15:56:48.531844+00:00"
 }

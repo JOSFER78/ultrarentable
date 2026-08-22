@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_15M_g09",
   "run_id": "run_UR_ULTRA_USDCHF_15M",
   "strategy_id": "UR_ULTRA_USDCHF_15M",
-  "strategy_snapshot_hash": "8dc973a6fbef5e6c707c938eb2d474b1d9dffdb9f33b42bb252656c4c73535b5",
+  "strategy_snapshot_hash": "aa062a5a993adf333fc4065224c92633af4364ee24477343ce5498614ac7fc07",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "81349f6a9c848ff1a3ebc7024fcc7f279adef3b17dfc50b8c4a4e9601b3077f0",
-  "output_hash": "03d583d4be194a9d77e19e82bd55e24274a0ef9132b2bd553e70aa7d644b79ab",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "7fa324ecdd6d3395dc1472caa9f7f04766fa6ddf3767386e96938c8402b02b07",
+  "output_hash": "7512a3a99f2ee76ab7028f527e0b3c5ada798b797f5525e9122e7454ff584eae",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 31.5 trades/param, Estabilidad Vecindario: 75.0%, Re-backtest PFs: [0.08, 0.03, 0.09, 0.1])",
+  "score": 78.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 11.2 trades/param, Estabilidad Vecindario: 100.0%, Re-backtest PFs: [0.1, 0.12, 0.12, 0.0])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 31.5,
+    "degrees_of_freedom_ratio": 11.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 75.0,
+    "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.08,
-      0.03,
-      0.09,
-      0.1
+      0.1,
+      0.12,
+      0.12,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T14:08:35.421108+00:00"
+  "created_at_utc": "2026-08-22T15:57:02.939680+00:00"
 }

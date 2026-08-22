@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_RTY_15M_g07",
   "run_id": "run_UR_ULTRA_RTY_15M",
   "strategy_id": "UR_ULTRA_RTY_15M",
-  "strategy_snapshot_hash": "d08b137a01a61d4eb26eb5633ebf03647f712650fbcc85d277afccbf04e502b1",
+  "strategy_snapshot_hash": "50192fc0d465941bb4dcc3850e33718e365eab04cfa927c0e6bc0561dc50f512",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "d6344faf37cd61a7e52cb9973a42f1d18bfca75295e5bc89b1beac8e2b7d7e17",
-  "output_hash": "72376590db097b1d3ded8cbfb21a624bf4586955a3e81063696758fbf4284159",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "3c92debf861b44cfbdb7278610574e6b3c9ffc964775ce2f70780ee4d248fb10",
+  "output_hash": "84480c8e8587470ae92dad496686e1caebe394b8a9f21c0299b4d2a05daae7ec",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -279.11%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -383.01%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 3,
-      "HIGH_VOLATILITY": 1
+      "CHOP_RANGING": 1,
+      "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -106.99,
-      "HIGH_VOLATILITY": -172.12
+      "CHOP_RANGING": -383.01,
+      "HIGH_VOLATILITY": 0.0
     },
     "regimes_profitable_count": 0,
-    "regimes_active_count": 2,
-    "total_oos_return_pct": -279.11
+    "regimes_active_count": 1,
+    "total_oos_return_pct": -383.01
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:14:54.416576+00:00"
+  "created_at_utc": "2026-08-22T15:56:49.494667+00:00"
 }

@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1H_g06",
   "run_id": "run_UR_ULTRA_BNB_USDT_1H",
   "strategy_id": "UR_ULTRA_BNB_USDT_1H",
-  "strategy_snapshot_hash": "78ff51808279213766f03d038528b5a2478f126353501c1798719c4ee5a57fa0",
+  "strategy_snapshot_hash": "702bc719bd83e65c0b910426094a901f58825302b0b70b56b4433f1897d5afba",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "4658b8cfa994a8ff1e8f882fd340e088924694c8d0026277b01427b37b120c76",
-  "output_hash": "8b72c1fa8726eb2d760d57a8aede0e12abdd9cd4c8b9d7cc689dc0a9f65eae02",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "e99adbccb36cd72476dc77b270946fbef51708a427501b5a5a7c9469da432732",
+  "output_hash": "8bf2a2a712c506fe8310c4cfa8f11b0afc42b485d590a87033940acb5a497d3f",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 96.83,
-        "stressed_profit_factor": 4.04,
+        "stressed_net_pnl_usd": 165.35,
+        "stressed_profit_factor": 3.95,
         "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 95.0,
-        "stressed_profit_factor": 3.87,
+        "stressed_net_pnl_usd": 162.33,
+        "stressed_profit_factor": 3.79,
         "survived": true
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 93.12,
-        "stressed_profit_factor": 3.7,
+        "stressed_net_pnl_usd": 159.19,
+        "stressed_profit_factor": 3.63,
         "survived": true
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.03,
-        "stressed_net_pnl_usd": 89.54,
-        "stressed_profit_factor": 3.41,
+        "stressed_net_pnl_usd": 153.27,
+        "stressed_profit_factor": 3.36,
         "survived": true
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T13:57:40.504297+00:00"
+  "created_at_utc": "2026-08-22T15:54:32.707081+00:00"
 }

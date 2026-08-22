@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_15M_g09",
   "run_id": "run_UR_FONDEO_GBPUSD_15M",
   "strategy_id": "UR_FONDEO_GBPUSD_15M",
-  "strategy_snapshot_hash": "73c7ba6a7946957453e1d73ac008ae29f15130106e64c0ce1a6f8a470add8d64",
+  "strategy_snapshot_hash": "57fc960d1707ab2c22ca1a10fb14949291b8ba72fba1f95cbf04bffd7f18ada4",
   "dataset_id": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "f5dbf71d96e509b87b1a52a5159f9faa9cef2f311f940252d1d740c34f6f4c2e",
-  "output_hash": "d041bfa16765e64a5dba02a91a0fb723a0899ad68e0031240c10a1abd4cfb06b",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "4514cb0ef897461885af87785ae04e44871f4247184a5e8a0bec75c8c10a4975",
+  "output_hash": "190486ee4f9ba09781d13ffd6563e81c9ad4575603fa1e13f3a65cb2928c71ec",
   "status": "FAILED",
-  "score": 26.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 8.8 o Estabilidad 65.0% < 60.0%)",
+  "score": 40.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.5 o Estabilidad 100.0% < 60.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 8.8,
+    "degrees_of_freedom_ratio": 7.5,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 65.0,
+    "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.09,
-      0.04,
+      0.03,
       0.0,
-      0.0
+      0.03,
+      0.08
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T14:12:37.530847+00:00"
+  "created_at_utc": "2026-08-22T15:56:34.734471+00:00"
 }

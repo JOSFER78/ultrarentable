@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_1H_g10",
   "run_id": "run_UR_ULTRA_USDCHF_1H",
   "strategy_id": "UR_ULTRA_USDCHF_1H",
-  "strategy_snapshot_hash": "d927d0a5ced98ef0e2666d63431553f94abac258eaf20dccf017b45013ac0b34",
+  "strategy_snapshot_hash": "e113a782ad318e4b4bd041ecb9ef3326c75adf01ae28ac8ae26b1fa9a1784e94",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "aca9e313d6b8604392761a46246a957736152680072927d6784e4bc3c2ea7635",
-  "output_hash": "51f9256a6f9f54b6b40eaee4ae14c1a378b90e15e7ba6e12be1b433ea453253a",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "80593abd2a970d3f435b5268d51904ae6680388c3a4388e1b46f7ada3e6a13a4",
+  "output_hash": "ae5e1e4432a8bf374d956ab251c67e6002dfde0accd1b4b5a64ac8602abc57b2",
   "status": "FAILED",
   "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
   "metrics": {
     "consensus_score": 24.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCHF (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.14 con beneficio neto de $-999.95.",
+          "Profit Factor OOS: 0.20 con beneficio neto de $-3.40.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 515 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 379 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.94 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,21 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.14 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (99.9%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.20 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:13:38.893495+00:00"
+  "created_at_utc": "2026-08-22T15:47:57.857291+00:00"
 }

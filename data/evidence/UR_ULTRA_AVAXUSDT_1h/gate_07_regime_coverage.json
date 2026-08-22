@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g07",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "3ff23005956e78f0f32681bf2ae529bb27d52538433b234b71447a2431d0c8c9",
+  "strategy_snapshot_hash": "d3ad330f723d0cfbaf861e11f420fb8c6b6ab62301dc58c5fa9e1bf19798f182",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "9197816da7b8b306d080be14b1f8b7faa3ac8b3af8afdbfcfa864991c849a486",
-  "output_hash": "56f156bf4a6ddfc77c7bfd32d1cdf85d6c0cd47da4807ca4530f8892ee16af3c",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +15327.05%)",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "24601254d83d08f5ffb643fedec7d181221e266e3d09371f9dad5c5cc7cf27df",
+  "output_hash": "49e19267c433a212013d47b3adf26bec3d75e45dd58d0f46786d1a424a13b84c",
+  "status": "FAILED",
+  "score": 30.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, Retorno Total: -1877206747150459644869083136.00%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 632,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 793
     },
     "regime_trades_count": {
-      "BULL_TREND": 48,
-      "BEAR_TREND": 71,
-      "CHOP_RANGING": 171,
-      "HIGH_VOLATILITY": 110
+      "BULL_TREND": 47,
+      "BEAR_TREND": 66,
+      "CHOP_RANGING": 172,
+      "HIGH_VOLATILITY": 106
     },
     "regime_return_pct": {
-      "BULL_TREND": 850.01,
-      "BEAR_TREND": 4254.78,
-      "CHOP_RANGING": 4453.81,
-      "HIGH_VOLATILITY": 5768.45
+      "BULL_TREND": -4.4612010525921846e27,
+      "BEAR_TREND": 4.575917132923713e24,
+      "CHOP_RANGING": -1.4410328406674917e27,
+      "HIGH_VOLATILITY": 4.020451228976293e27
     },
-    "regimes_profitable_count": 4,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 15327.05
+    "total_oos_return_pct": -1.8772067471504596e27
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T13:50:45.766188+00:00"
+  "created_at_utc": "2026-08-22T15:58:26.570654+00:00"
 }

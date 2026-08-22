@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_15M_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_15M",
   "strategy_id": "UR_ULTRA_BTC_USDT_15M",
-  "strategy_snapshot_hash": "f75a931d340b3c3cff2fa00ecec85045a00766e4d858ce863fce1556cfbeda70",
+  "strategy_snapshot_hash": "3dd8b19deda749617e79b41eee4d29a263e2e7655275fd65e4dd761913473159",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "335fb106b2f4786dfeef8f114072ea7ceaceaf96dc027b6bc76800616bfdb80b",
-  "output_hash": "3186d9a0f8b4850b2a6487b353b7dd72ce5c18460be0cbabf20a44ed3ff16f18",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "12e85a4288c053c8db701ecd7b3b22264c12ac1dbadc2be4981539734eb2ae3a",
+  "output_hash": "7bff6fbfccef43fae08c403aaba254cd4f669daa6332cd4177b4e65e081fe841",
   "status": "FAILED",
-  "score": 24.9,
-  "verdict": "FALLO: Consenso insuficiente (24.9/100) u objeción crítica de riesgo",
+  "score": 33.1,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (33.1/100)",
   "metrics": {
-    "consensus_score": 24.9,
+    "consensus_score": 33.1,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 21.2,
+        "score": 50.0,
         "findings": [
           "Activo y Timeframe: BTC-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.25 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.89 con beneficio neto de $-0.69.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 103 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 116 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-9.71 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.3,
+        "score": 37.5,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.25 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.89 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:04:56.134270+00:00"
+  "created_at_utc": "2026-08-22T15:45:25.014268+00:00"
 }

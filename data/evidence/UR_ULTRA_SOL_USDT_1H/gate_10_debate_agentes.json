@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_SOL_USDT_1H",
   "strategy_id": "UR_ULTRA_SOL_USDT_1H",
-  "strategy_snapshot_hash": "45b470d12a67603ae59f2b8b7ec2fe1ba19402f36f3a46b7edece2a20dfc7244",
+  "strategy_snapshot_hash": "9d3f8627d3ca4a6bc86c8abf3f37bd3fe7d4558679b966609a611f5a0fdae672",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "f04d46ec9f162fef22fad2caa6c39dd56e3ecfced2e286003ceedfa30663ce8c",
-  "output_hash": "e025a98257594709a6714ade1c02999d17a36b70189d41d2c2ecf84db4766104",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "67bb78f200c60269346f9718733053ab90a4e2073a423b0d752920365aec25b7",
+  "output_hash": "09de91a74ab05fa86b8547e2823f637efccdbacee635755622a5825c4ffa3afc",
   "status": "FAILED",
-  "score": 35.1,
-  "verdict": "FALLO: Consenso insuficiente (35.1/100) u objeción crítica de riesgo",
+  "score": 37.0,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (37.0/100)",
   "metrics": {
-    "consensus_score": 35.1,
+    "consensus_score": 37.0,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 56.8,
         "findings": [
           "Activo y Timeframe: SOL-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.04 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 1.04 con beneficio neto de $103.44.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2252 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2270 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.44 USD.",
+          "Beneficio medio por operación: $0.05 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.2,
+        "score": 41.7,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 1.04 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 1.04 cercano al equilibrio (1.05)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:30:24.247843+00:00"
+  "created_at_utc": "2026-08-22T15:46:10.903240+00:00"
 }

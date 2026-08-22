@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_ES_5M_g07",
   "run_id": "run_UR_FONDEO_ES_5M",
   "strategy_id": "UR_FONDEO_ES_5M",
-  "strategy_snapshot_hash": "69d25d11279c531bbde5e6fe675d783edb26816b62f44517b6a4f5910a11ad44",
+  "strategy_snapshot_hash": "092b214f5e23b15fe87ec9b69048d1cada6c06ff687fb22440ab77abd6ae580b",
   "dataset_id": "ds_trad_es_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "a9faa691773c7c25e800bc5ff71d8dddca7ba77b98efd29abe7fce008c6de08f",
-  "output_hash": "93b01fe0db8cee962acfca60e0270ef169dd45b7870c67714ff96a4808b04c6f",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "e7cc3ac7bf9fac8e1df36a6d009030c3d9a34ff0c512bbb97abf3efbf4d1c048",
+  "output_hash": "b8ac26884f3f9783e8a214d9aceb89f02559ccdaf9232173288d867e5bceea4f",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -16.64%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -2758.79%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 17,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 24,
+      "HIGH_VOLATILITY": 6
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -8.46,
-      "HIGH_VOLATILITY": -8.18
+      "CHOP_RANGING": -4415.41,
+      "HIGH_VOLATILITY": 1656.62
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -16.64
+    "total_oos_return_pct": -2758.79
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:12:29.574406+00:00"
+  "created_at_utc": "2026-08-22T15:56:28.226423+00:00"
 }

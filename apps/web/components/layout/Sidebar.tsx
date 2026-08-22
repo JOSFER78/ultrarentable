@@ -25,9 +25,9 @@ const NAVIGATION: NavGroup[] = [
       { code: "HUB", icon: "🧬", label: "Estrategias (Portada & Hub)", href: "/estrategias", badge: "PORTADA", highlight: true },
       { code: "1", icon: "⚡", label: "1. Motor 24/7 Autónomo", href: "/estrategias/1-motor-en-vivo", badge: "24/7 AUTO" },
       { code: "2", icon: "📊", label: "2. Catálogo de Estrategias (230)", href: "/estrategias/2-explorador-excel", badge: "230 CAND" },
-      { code: "3", icon: "🧬", label: "3. Pipeline 11 Pasos (FSM)", href: "/estrategias/3-pipeline-11-gates", badge: "11-GATES" },
+      { code: "3", icon: "🧬", label: "3. Pipeline 10 Gates (FSM)", href: "/estrategias/3-pipeline-11-gates", badge: "10-GATES" },
       { code: "4", icon: "🔬", label: "4. Panel Investigador Semántico", href: "/estrategias/4-panel-investigador", badge: "LAB I+D" },
-      { code: "5", icon: "🏆", label: "5. Estrategias Aprobadas (11/11)", href: "/estrategias/5-estrategias-aprobadas", badge: "CERTIFICADAS" },
+      { code: "5", icon: "🏆", label: "5. Estrategias Aprobadas (10/10)", href: "/estrategias/5-estrategias-aprobadas", badge: "CERTIFICADAS" },
       { code: "6", icon: "🧩", label: "6. Meta-Estrategia Ensamblada", href: "/estrategias/6-meta-estrategia", badge: "PORTFOLIO" },
     ],
   },
@@ -44,7 +44,7 @@ const NAVIGATION: NavGroup[] = [
     items: [
       { code: "NT8", icon: "⚡", label: "NinjaTrader 8 & Live Exec", href: "/ejecucion", badge: "CME LIVE", highlight: true },
       { code: "MCP", icon: "📡", label: "Proveedores & Gateways API", href: "/proveedores", badge: "MCP/API", highlight: true },
-      { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-11-nautilus-trader", badge: "EVENT" },
+      { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-10-nautilus-trader", badge: "EVENT" },
     ],
   },
 ];

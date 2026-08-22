@@ -55,12 +55,12 @@ const PHASES: PhaseConfig[] = [
   {
     id: 3,
     key: "pipeline",
-    name: "3. Pipeline 11 Pasos (FSM & Gates Institucionales)",
-    shortName: "3. Pipeline 11-G",
+    name: "3. Pipeline 10 Gates (FSM & Gates Institucionales)",
+    shortName: "3. Pipeline 10-G",
     icon: "🧬",
-    badge: "11 GATES",
+    badge: "10 GATES",
     color: "#818cf8",
-    description: "Evaluación rigurosa a través de los 11 Gates matemáticos deterministas de control de calidad y robustez.",
+    description: "Evaluación rigurosa a través de los 10 Gates matemáticos deterministas de control de calidad y robustez.",
   },
   {
     id: 4,
@@ -75,12 +75,12 @@ const PHASES: PhaseConfig[] = [
   {
     id: 5,
     key: "aprobadas",
-    name: "5. Estrategias Aprobadas (11/11 Certificadas)",
-    shortName: "5. Aprobadas 11/11",
+    name: "5. Estrategias Aprobadas (10/10 Certificadas)",
+    shortName: "5. Aprobadas 10/10",
     icon: "🏆",
     badge: "CERTIFICADAS",
     color: "#10b981",
-    description: "Ranking oficial de estrategias que han superado los 11 Gates con evidencia matemática completa.",
+    description: "Ranking oficial de estrategias que han superado los 10 Gates con evidencia matemática completa.",
   },
   {
     id: 6,
@@ -167,7 +167,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
             </span>
           </div>
           <p style={{ fontSize: "13px", color: "#94a3b8", margin: 0, maxWidth: "750px", lineHeight: "1.5" }}>
-            Centro de mando integral del laboratorio. Supervisa el flujo completo desde la minería autónoma 24/7, el catálogo de 230 candidatos, la validación estricta en 11 Gates, la investigación semántica hasta el portafolio multiactivo.
+            Centro de mando integral del laboratorio. Supervisa el flujo completo desde la minería autónoma 24/7, el catálogo de 230 candidatos, la validación estricta en 10 Gates, la investigación semántica hasta el portafolio multiactivo.
           </p>
         </div>
 
@@ -400,7 +400,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
             <div style={{ fontSize: "16px", fontWeight: 900, color: "#10b981", marginTop: "2px", fontFamily: "var(--font-mono, monospace)" }}>
               {funnel.approved.toLocaleString()}
             </div>
-            <div style={{ fontSize: "9.5px", color: "#10b981" }}>11/11 Gates</div>
+            <div style={{ fontSize: "9.5px", color: "#10b981" }}>11/10 Gates</div>
           </div>
         </div>
       </div>

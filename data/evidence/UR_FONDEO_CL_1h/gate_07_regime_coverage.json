@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_CL_1h_g07",
   "run_id": "run_UR_FONDEO_CL_1h",
   "strategy_id": "UR_FONDEO_CL_1h",
-  "strategy_snapshot_hash": "9714d546210a6a2b3417a3add35c97335b39dc82dfa2c0d1704c4817df10a7fc",
+  "strategy_snapshot_hash": "2105f159eb9719b7d2b34eab07a46d42b023d1eb8a6290394966af495b2c597e",
   "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "1f9a5141eaad7c914de6c11e19eccaa80207f85353ce82538081e953f97f57ec",
-  "output_hash": "ee31a7897e60b94181f35e20ad7a822d53af60edc84b9f3057303fc02d2e16c1",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "7253e26dd805c8c538b62a73a0231b6bc2d10cdcfde24b17d88d3721f9610147",
+  "output_hash": "8ee270efa5f624825734ff0c3b73070be669db220e57b2e15cf9f9ac04588c96",
   "status": "FAILED",
   "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -201.36%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -24730.17%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 649,
@@ -29,15 +29,15 @@
       "HIGH_VOLATILITY": 8
     },
     "regime_return_pct": {
-      "BULL_TREND": -64.83,
-      "BEAR_TREND": 8.43,
-      "CHOP_RANGING": -88.09,
-      "HIGH_VOLATILITY": -56.87
+      "BULL_TREND": -3198.09,
+      "BEAR_TREND": 12570.18,
+      "CHOP_RANGING": -14452.22,
+      "HIGH_VOLATILITY": -19650.04
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -201.36
+    "total_oos_return_pct": -24730.17
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:04:21.306501+00:00"
+  "created_at_utc": "2026-08-22T15:58:41.400469+00:00"
 }

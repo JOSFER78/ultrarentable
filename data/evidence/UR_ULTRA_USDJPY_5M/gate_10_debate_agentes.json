@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_5M_g10",
   "run_id": "run_UR_ULTRA_USDJPY_5M",
   "strategy_id": "UR_ULTRA_USDJPY_5M",
-  "strategy_snapshot_hash": "0a63cb1559a2d04db575f3c03a9ac94185e703be0d6a1391151d85eb93919945",
+  "strategy_snapshot_hash": "78896df3f4ef676f0afdc21b04e52bb0833d0e93a3e55ffec105724a5b319958",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "c4cbcdba67c1d57cc27051da1c22619285cc10a902ce956cc89e2e7e81721ea0",
-  "output_hash": "c7c27de25928b926e8749f48cc8069bd934195b6670b00d6b60aa06f2cf1fd9d",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "d442b007f75fc860ae01da4adefe6d76077dd52ffdab1ba1c3d475a551677015",
+  "output_hash": "4b2d03861cfd52f01a33371a8ea71e6511ac7149e595f8f8fc3bef4b34fbcb9b",
   "status": "FAILED",
   "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
   "metrics": {
     "consensus_score": 24.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDJPY (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.08 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.12 con beneficio neto de $-3.04.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.4% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 390 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 238 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.56 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,21 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.08 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (99.4%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.12 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:13:55.113836+00:00"
+  "created_at_utc": "2026-08-22T15:48:07.469085+00:00"
 }

@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_FONDEO_ES_15M_g10",
   "run_id": "run_UR_FONDEO_ES_15M",
   "strategy_id": "UR_FONDEO_ES_15M",
-  "strategy_snapshot_hash": "c13ad63dcdb5f76c2fe076208406d421a56a0709a972a520c5e35cd73a0901f9",
+  "strategy_snapshot_hash": "48ada314b4a5811dae657695832b622f4b77c678c40e58d3b706862194671567",
   "dataset_id": "ds_trad_es_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "078c529548ef59cb1281a72130a24cbbd5f8f8cc1373b6dfd6185d8b73936b81",
-  "output_hash": "f888d5702c429e1827a2c15d86f3aa49209f8a2c4f30b008aa3b20051e7b6e29",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "b210d65fd01fdf884eee90690f35fafea9a517395f032eb6a6e9fdd503740755",
+  "output_hash": "fb6a6213a78177204858e4698c350ba5891a04abea02a4104fdf9bc63a50ee9e",
   "status": "FAILED",
-  "score": 29.0,
-  "verdict": "FALLO: Consenso insuficiente (29.0/100) u objeción crítica de riesgo",
+  "score": 27.5,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (27.5/100)",
   "metrics": {
-    "consensus_score": 29.0,
+    "consensus_score": 27.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 35.6,
+        "score": 30.2,
         "findings": [
           "Activo y Timeframe: ES (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.57 con beneficio neto de $-2481.24.",
+          "Profit Factor OOS: 0.45 con beneficio neto de $-0.03.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 10.6% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 6.4% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 56 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 57 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-44.31 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 33.9,
+        "score": 32.6,
         "objections": [
-          "Alerta de Drawdown: DD (10.6%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.57 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (6.4%) cercano o superior al límite tolerable (4.5%).",
+          "Margen ajustado: Profit Factor 0.45 cercano al equilibrio (1.15)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:14:39.814110+00:00"
+  "created_at_utc": "2026-08-22T15:47:14.743491+00:00"
 }

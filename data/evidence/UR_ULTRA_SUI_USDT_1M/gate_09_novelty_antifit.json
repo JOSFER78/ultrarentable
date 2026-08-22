@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_1M_g09",
   "run_id": "run_UR_ULTRA_SUI_USDT_1M",
   "strategy_id": "UR_ULTRA_SUI_USDT_1M",
-  "strategy_snapshot_hash": "fa8cbbccf36f1dcf697232176ccaecbef0acc2e1af62a38d1eda91ab8fca7697",
+  "strategy_snapshot_hash": "5826692bb982f35e95a903f669524db7bdb15bbc063de0ab6d24e0509ce8e2d7",
   "dataset_id": "ds_binance_suiusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "89eb4f6e1f63ba5892ca5fc574678705f1373b25a89ba0c9473e0b08e6366e62",
-  "output_hash": "4ba9a5d9c90c58d66b70130f588fe9a8fec7e6e2408423b420490cfea9143ddd",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "f14e0ce555c9e99dfbfa46ccd49ffd0fe43b8301903a50f1853e92c47070fa98",
+  "output_hash": "e95a419e39466050cd654d86e8e72e22f78f3da1292da9bf16c6f9d31daad206",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 30.5 trades/param, Estabilidad Vecindario: 172.5%, Re-backtest PFs: [0.34, 0.35, 0.0, 0.0])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 33.4 trades/param, Estabilidad Vecindario: 181.6%, Re-backtest PFs: [0.34, 0.35, 0.0, 0.0])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 30.5,
+    "degrees_of_freedom_ratio": 33.4,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 172.5,
+    "parameter_neighborhood_stability_pct": 181.6,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.34,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T14:10:29.142918+00:00"
+  "created_at_utc": "2026-08-22T15:55:34.797365+00:00"
 }

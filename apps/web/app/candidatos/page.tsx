@@ -6,7 +6,7 @@ import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import { useEngineVersion } from "@/hooks/useEngineVersion";
 import { StrategyLifecycleStatus } from "@/types/telemetry";
 
-const FSM_11_STEPS: { key: string; label: string; desc: string; color: string; step: number; slug: string }[] = [
+const FSM_10_STEPS: { key: string; label: string; desc: string; color: string; step: number; slug: string }[] = [
   { key: "INGEST_SANITY", label: "1. DATA INGEST", desc: "Saneamiento OHLCV & Gaps", color: "#94a3b8", step: 1, slug: "gate-1-data-ingest" },
   { key: "BACKTEST_DETERMINISTIC", label: "2. BACKTEST COSTES", desc: "Costes CME/FX/Crypto Reales", color: "#38bdf8", step: 2, slug: "gate-2-cost-backtest" },
   { key: "TRADE_SIGNIFICANCE", label: "3. TRADE SIGNIFICANCE", desc: "Trades OOS >= 20 & Outliers", color: "#60a5fa", step: 3, slug: "gate-3-trade-significance" },
@@ -16,8 +16,7 @@ const FSM_11_STEPS: { key: string; label: string; desc: string; color: string; s
   { key: "REGIME_COVERAGE", label: "7. REGIME COVERAGE", desc: "Bull / Bear / Lateral", color: "#e879f9", step: 7, slug: "gate-7-regime-coverage" },
   { key: "DEFLATED_SHARPE", label: "8. DSR RATIO", desc: "DSR > 1.50 (Bailey & López)", color: "#f43f5e", step: 8, slug: "gate-8-dsr-ratio" },
   { key: "NOVELTY_ANTIOVERFIT", label: "9. NOVELTY / ANTI-FIT", desc: "FailureKnowledgeDB", color: "#fb923c", step: 9, slug: "gate-9-novelty-antifit" },
-  { key: "SEMANTIC_DEBATE", label: "10. DEBATE 5 AGENTES", desc: "Comité IA de Riesgo", color: "#facc15", step: 10, slug: "gate-10-multi-agent-debate" },
-  { key: "PORTFOLIO_ENSEMBLE", label: "11. NAUTILUS TRADER", desc: "Event-Driven & Margen Cross", color: "#34d399", step: 11, slug: "gate-11-nautilus-trader" },
+  { key: "PORTFOLIO_ENSEMBLE", label: "10. NAUTILUS TRADER", desc: "Event-Driven & Margen Cross", color: "#34d399", step: 10, slug: "gate-10-nautilus-trader" },
 ];
 
 interface CandidateItem {
@@ -141,7 +140,7 @@ export default function CandidatosFSMPage() {
     name: "",
   });
 
-  // 11 Gates & Nautilus Deep Dive Modal State
+  // 10 Gates & Nautilus Deep Dive Modal State
   const [gateModal, setGateModal] = useState<{
     open: boolean;
     candidate: CandidateItem | null;
@@ -438,9 +437,9 @@ export default function CandidatosFSMPage() {
     );
   };
 
-  const tier1Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_1_CERTIFIED" || isApprovedStatus(c.status, c.tier)).length, [candidates]);
-  const tier2Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 10 || c.gates_passed_count === 9).length, [candidates]);
-  const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || (c.gates_passed_count !== undefined && c.gates_passed_count >= 5 && c.gates_passed_count <= 8)).length, [candidates]);
+  const tier1Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_1_CERTIFIED" || (c.gates_passed_count !== undefined && c.gates_passed_count === 10) || isApprovedStatus(c.status, c.tier)).length, [candidates]);
+  const tier2Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_2_NEAR_CERTIFIED" || c.gates_passed_count === 9 || c.gates_passed_count === 8).length, [candidates]);
+  const tier3Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_3_INCUBATOR" || (c.gates_passed_count !== undefined && c.gates_passed_count >= 5 && c.gates_passed_count <= 7)).length, [candidates]);
   const tier4Count = useMemo(() => candidates.filter((c) => c.tier === "TIER_4_REJECTED" || (c.gates_passed_count !== undefined && c.gates_passed_count < 5)).length, [candidates]);
   const approvedCount = tier1Count;
   const discoveryCount = useMemo(() => tier2Count + tier3Count, [tier2Count, tier3Count]);
@@ -767,14 +766,14 @@ ${entryLogic}`;
             </Link>
             <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
             <span style={{ fontSize: "10px", fontWeight: 800, color: "#818cf8", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-              PUNTO 3 · PIPELINE CUANTITATIVO DE 11 PASOS (FSM 11 GATES)
+              PUNTO 3 · PIPELINE CUANTITATIVO DE 10 GATES (FSM 10 GATES)
             </span>
           </div>
           <h1 style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-            🧬 Pipeline Cuantitativo de los 11 Pasos & Candidatos FSM
+            🧬 Pipeline Cuantitativo de los 10 Gates & Candidatos FSM
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "12px", marginTop: "3px", margin: 0 }}>
-            Auditoría determinista de compuertas de evidencia inmutables: separación estricta entre <strong>Tier 1 (11/11 Certificadas)</strong>, <strong>Tier 2 (9-10/11 Diamantes en Bruto)</strong>, <strong>Tier 3 (7-8/11 Incubadora)</strong> y <strong>Tier 4 (Descartadas)</strong>.
+            Auditoría determinista de compuertas de evidencia inmutables: separación estricta entre <strong>Tier 1 (10/10 Certificadas)</strong>, <strong>Tier 2 (8-9/10 Diamantes en I+D)</strong>, <strong>Tier 3 (5-7/10 Incubadora)</strong> y <strong>Tier 4 (Descartadas)</strong>.
           </p>
         </div>
 
@@ -818,7 +817,7 @@ ${entryLogic}`;
         </div>
       </div>
 
-      {/* 2. PIPELINE DE 11 PASOS DETERMINISTAS VISUALIZADOR */}
+      {/* 2. PIPELINE DE 10 GATES DETERMINISTAS VISUALIZADOR */}
       <div
         style={{
           background: "rgba(16, 23, 34, 0.75)",
@@ -832,15 +831,15 @@ ${entryLogic}`;
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
           <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
-            PIPELINE CUANTITATIVO DE 11 GATES DETERMINISTAS (ZERO-MOCKS & REAL-ONLY)
+            PIPELINE CUANTITATIVO DE 10 GATES DETERMINISTAS (ZERO-MOCKS & REAL-ONLY)
           </div>
           <div style={{ fontSize: "10px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
-            📊 23 DIAMANTES (9-10 GATES) · 16 EN INCUBADORA (7-8 GATES) · 0 APROBADAS (11/11)
+            📊 {tier2Count} DIAMANTES (8-9 GATES) · {tier3Count} EN INCUBADORA (5-7 GATES) · {tier1Count} APROBADAS (10/10)
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "5px", minWidth: "1200px", paddingBottom: "4px" }}>
-          {FSM_11_STEPS.filter((s) => s.step < 90).map((state, idx) => {
+          {FSM_10_STEPS.filter((s) => s.step < 90).map((state, idx) => {
             const isPassed = state.step <= 10;
             return (
               <React.Fragment key={state.key}>
@@ -1416,9 +1415,9 @@ ${entryLogic}`;
                 <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(234, 179, 8, 0.25)" }}>
                   {[
                     { id: "ALL", label: `🌐 TODOS LOS TIERS` },
-                    { id: "TIER_1_CERTIFIED", label: `🏆 TIER 1: 11/11 (${tier1Count})` },
-                    { id: "TIER_2_NEAR_CERTIFIED", label: `💎 TIER 2: DIAMANTES I+D 9-10 (${tier2Count})` },
-                    { id: "TIER_3_INCUBATOR", label: `🧪 TIER 3: INCUBADORA I+D 5-8 (${tier3Count})` },
+                    { id: "TIER_1_CERTIFIED", label: `🏆 TIER 1: 10/10 (${tier1Count})` },
+                    { id: "TIER_2_NEAR_CERTIFIED", label: `💎 TIER 2: DIAMANTES I+D 8-9 (${tier2Count})` },
+                    { id: "TIER_3_INCUBATOR", label: `🧪 TIER 3: INCUBADORA I+D 5-7 (${tier3Count})` },
                     { id: "TIER_4_REJECTED", label: `❌ TIER 4: DESCARTADAS <5 (${tier4Count})` },
                   ].map((tf) => (
                     <button
@@ -1535,7 +1534,7 @@ ${entryLogic}`;
                       whiteSpace: "nowrap",
                       boxShadow: "0 2px 10px rgba(236, 72, 153, 0.15)",
                     }}
-                    title={`Revalidar estrategias históricas bajo el motor cuantitativo y 11 Gates actuales (v${version})`}
+                    title={`Revalidar estrategias históricas bajo el motor cuantitativo y 10 Gates actuales (v${version})`}
                   >
                     <span>🛡️</span>
                     <span>Revalidar con Motor v{version} (Actual)</span>
@@ -1587,7 +1586,7 @@ ${entryLogic}`;
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>% MES</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>PF OOS</th>
                     <th style={{ padding: "8px 10px", textAlign: "right" }}>MAX DD</th>
-                    <th style={{ padding: "8px 10px", textAlign: "center" }}>GATE 11 (NAUTILUS)</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>GATE 10 (NAUTILUS)</th>
                     <th style={{ padding: "8px 10px", textAlign: "center" }}>EXPORTAR</th>
                   </tr>
                 </thead>
@@ -1772,9 +1771,9 @@ ${entryLogic}`;
                                 fontWeight: 800,
                                 cursor: "pointer",
                               }}
-                              title="Ver auditoría de los 11 Gates Cuantitativos"
+                              title="Ver auditoría de los 10 Gates Cuantitativos"
                             >
-                              🔬 11 Gates
+                              🔬 10 Gates
                             </button>
                             <button
                               onClick={(e) => {
@@ -1841,9 +1840,9 @@ ${entryLogic}`;
                       fontWeight: 800,
                       cursor: "pointer",
                     }}
-                    title="Auditoría de los 11 Gates Cuantitativos y simulación NautilusTrader"
+                    title="Auditoría de los 10 Gates Cuantitativos y simulación NautilusTrader"
                   >
-                    🔬 11 Gates & Nautilus
+                    🔬 10 Gates & Nautilus
                   </button>
                   <button
                     onClick={() => setDnaCandidate(selectedCandidate)}
@@ -1919,7 +1918,7 @@ ${entryLogic}`;
                     cursor: "pointer",
                   }}
                 >
-                  🔬 11 Gates & Nautilus
+                  🔬 10 Gates & Nautilus
                 </button>
                 <button
                   onClick={() => openCodeExport(selectedCandidate, "pine")}
@@ -2019,7 +2018,7 @@ ${entryLogic}`;
         </div>
       )}
 
-      {/* 4.5 MODAL INTERACTIVO DE INSPECCIÓN DE LOS 11 GATES Y VISOR NAUTILUSTRADER */}
+      {/* 4.5 MODAL INTERACTIVO DE INSPECCIÓN DE LOS 10 GATES Y VISOR NAUTILUSTRADER */}
       {gateModal.open && (
         <div
           onClick={() => setGateModal({ ...gateModal, open: false })}
@@ -2073,7 +2072,7 @@ ${entryLogic}`;
                       borderRadius: "4px",
                     }}
                   >
-                    {gateModal.gateData?.overall_certified ? "✓ 11 GATES CERTIFICADOS" : "❌ GATES RECHAZADOS"} ({gateModal.gateData?.gates_passed_count ?? 0}/{gateModal.gateData?.total_gates ?? 11})
+                    {gateModal.gateData?.overall_certified ? "✓ 10 GATES CERTIFICADOS" : "❌ GATES RECHAZADOS"} ({gateModal.gateData?.gates_passed_count ?? 0}/{gateModal.gateData?.total_gates ?? 11})
                   </span>
                 </div>
                 <h2 style={{ fontSize: "18px", fontWeight: 900, margin: "2px 0 0 0", color: "#fff" }}>
@@ -2101,7 +2100,7 @@ ${entryLogic}`;
                       cursor: "pointer",
                     }}
                   >
-                    🔬 11 Gates Cuantitativos
+                    🔬 10 Gates Cuantitativos
                   </button>
                   <button
                     onClick={() => setGateModal({ ...gateModal, tab: "debate" })}
@@ -2148,7 +2147,7 @@ ${entryLogic}`;
             {gateModal.loading ? (
               <div style={{ padding: "60px 20px", textAlign: "center", color: "#38bdf8" }}>
                 <div style={{ fontSize: "28px", marginBottom: "10px" }}>⚡</div>
-                <div style={{ fontWeight: 800 }}>Auditando los 11 Gates y generando simulación NautilusTrader...</div>
+                <div style={{ fontWeight: 800 }}>Auditando los 10 Gates y generando simulación NautilusTrader...</div>
               </div>
             ) : gateModal.tab === "gates" ? (
               <div>
@@ -2712,7 +2711,7 @@ ${entryLogic}`;
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
                       {revalStatus.promoted_count}
                     </div>
-                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Superaron los 11 Gates</div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Superaron los 10 Gates</div>
                   </div>
 
                   <div style={{ background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
@@ -2810,7 +2809,7 @@ ${entryLogic}`;
                     </div>
                   </div>
                   <div style={{ marginTop: "12px", padding: "10px", background: "rgba(56, 189, 248, 0.08)", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)", fontSize: "11px", color: "#38bdf8" }}>
-                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v{version} ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
+                    💡 <strong>Resultado:</strong> Las que superen los 10 Gates serán promovidas a <strong>v{version} ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
                   </div>
                 </div>
 

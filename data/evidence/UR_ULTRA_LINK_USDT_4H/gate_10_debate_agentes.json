@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_4H",
   "strategy_id": "UR_ULTRA_LINK_USDT_4H",
-  "strategy_snapshot_hash": "03ef040dd6d0cec126f74ddb260c846fa3c2ccd086686c23cd8713d46a2405f5",
+  "strategy_snapshot_hash": "39245e3b198d7416f173279fd2b7004c5a517564013b606598ae326563253810",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "cf3438e21d3b031437325b7d3b9f4b01f20422be0200c9afbca3cde9cd66907b",
-  "output_hash": "656a872f0c5bab4ae1b66f8a275ffeaf1c02f2df45a42f5f7f6d59f450c4dca0",
-  "status": "FAILED",
-  "score": 66.2,
-  "verdict": "FALLO: Consenso insuficiente (66.2/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "94609eae30e39a8f03348f5ec474cf25a4b4ca7879744000141e8d8af3670b61",
+  "output_hash": "3f4b31ff61d5a893d2c0abed6a6cd415950044e4d59c4730e5daf848d5427625",
+  "status": "PASSED",
+  "score": 49.4,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (49.4/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 66.2,
+    "consensus_score": 49.4,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 100.0,
         "findings": [
           "Activo y Timeframe: LINK-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 2.09 con beneficio neto de $294912317505951296.00.",
+          "Profit Factor OOS: 15.60 con beneficio neto de $171.76.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 98.2% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 91.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2026 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1763 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $145563828976283.97 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.10 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 75.0,
+        "score": 52.5,
         "objections": [
-          "Alerta de Drawdown: DD (98.2%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (91.3%) cercano o superior al límite tolerable (85.0%)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:17:02.887005+00:00"
+  "created_at_utc": "2026-08-22T15:46:04.412207+00:00"
 }

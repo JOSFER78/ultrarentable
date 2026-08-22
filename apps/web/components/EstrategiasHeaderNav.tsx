@@ -38,12 +38,12 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
   },
   {
     step: 3,
-    label: "3. Pipeline 11 Pasos (FSM)",
-    shortLabel: "Pipeline 11-G",
+    label: "3. Pipeline 10 Gates (FSM)",
+    shortLabel: "Pipeline 10-G",
     href: "/estrategias/3-pipeline-11-gates",
     altHrefs: ["/candidatos", "/pasos", "/estrategias/3-pipeline-11-gates"],
     icon: "🧬",
-    badge: "11 GATES",
+    badge: "10 GATES",
     color: "#818cf8",
   },
   {
@@ -58,8 +58,8 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = [
   },
   {
     step: 5,
-    label: "5. Estrategias Aprobadas (11/11)",
-    shortLabel: "Aprobadas 11/11",
+    label: "5. Estrategias Aprobadas (10/10)",
+    shortLabel: "Aprobadas 10/10",
     href: "/estrategias/5-estrategias-aprobadas",
     altHrefs: ["/gates", "/leaderboard", "/estrategias/5-estrategias-aprobadas"],
     icon: "🏆",

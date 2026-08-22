@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_ETH_USDT_15M",
   "strategy_id": "UR_ULTRA_ETH_USDT_15M",
-  "strategy_snapshot_hash": "55ba97b3ec79d0e9bf8beaef76967d9b60941722cc163e77da57759c766c413e",
+  "strategy_snapshot_hash": "6bf40d8dcc741d5aba7e16d2724f3e0deec0fdcd0a7396044f9ee2e539d9d8c6",
   "dataset_id": "ds_binance_ethusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "1400a6e0185cc2f95c63be1c3211c2ed807e754696e302b95dcdb8bcbe3c815f",
-  "output_hash": "e5722a97bbc97401ceef34f208a70405b7b1c162ae551b24fe84bf75fa9af814",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "170a2ad37d6eaec182a713845712548b900f313986b5f8ae77e51f47be99a5cd",
+  "output_hash": "3c66a9863de4e90fa9a9d51d7463d83fa1acce9eb680e3822020d3be23f5acbb",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 26.8 trades/param, Estabilidad Vecindario: 238.5%, Re-backtest PFs: [0.58, 0.84, 0.3, 0.76])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 48.0 trades/param, Estabilidad Vecindario: 106.4%, Re-backtest PFs: [1.08, 0.59, 0.9, 0.92])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 26.8,
+    "degrees_of_freedom_ratio": 48.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 238.5,
+    "parameter_neighborhood_stability_pct": 106.4,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.58,
-      0.84,
-      0.3,
-      0.76
+      1.08,
+      0.59,
+      0.9,
+      0.92
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T13:54:29.297424+00:00"
+  "created_at_utc": "2026-08-22T15:55:01.316296+00:00"
 }

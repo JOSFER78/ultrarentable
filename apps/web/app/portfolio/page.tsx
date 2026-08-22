@@ -337,7 +337,7 @@ export default function PortfolioStudioPage() {
       {/* MINIMALIST 4 TABS NAV */}
       <div style={{ display: "flex", gap: 6, borderBottom: "1px solid var(--border)", marginBottom: 16 }}>
         {[
-          { id: "CERTIFIED_LIVE", label: "1. Meta-Portafolios Certificados (11/11)", icon: "🏆", count: autonomousEnsembles.filter(e => e.is_approved).length },
+          { id: "CERTIFIED_LIVE", label: "1. Meta-Portafolios Certificados (10/10)", icon: "🏆", count: autonomousEnsembles.filter(e => e.is_approved).length },
           { id: "AUTONOMOUS_DAEMON", label: "2. Demonio Autónomo 24/7 & Telemetría", icon: "⚡", count: autonomousEnsembles.length },
           { id: "CUSTOM_STUDIO", label: "3. Meta-Studio Interactivo (Constructor)", icon: "🎛️", count: candidates.length },
           { id: "RATCHET_VAULT", label: "4. Bóveda Ratchet & Tesorería", icon: "🔐" },
@@ -445,7 +445,7 @@ export default function PortfolioStudioPage() {
                   <th style={{ padding: "8px 10px", textAlign: "right" }}>Max DD</th>
                   <th style={{ padding: "8px 10px", textAlign: "right" }}>Sharpe</th>
                   <th style={{ padding: "8px 10px", textAlign: "right" }}>Diversificación</th>
-                  <th style={{ padding: "8px 10px", textAlign: "center" }}>11 Gates</th>
+                  <th style={{ padding: "8px 10px", textAlign: "center" }}>10 Gates</th>
                   <th style={{ padding: "8px 12px", textAlign: "right" }}>Acciones</th>
                 </tr>
               </thead>
@@ -516,7 +516,7 @@ export default function PortfolioStudioPage() {
 
                         <td style={{ padding: "10px 10px", textAlign: "center" }}>
                           <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: ens.is_approved ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)", color: ens.is_approved ? "#10b981" : "#f59e0b", fontWeight: 800 }}>
-                            {ens.is_approved ? "11/11 ✓" : "10/11"}
+                            {ens.is_approved ? "10/10 ✓" : "10/11"}
                           </span>
                         </td>
 
@@ -612,7 +612,7 @@ export default function PortfolioStudioPage() {
                 </div>
               )}
 
-              {/* 11 Gates */}
+              {/* 10 Gates */}
               {inspectingEnsemble.scorecard?.gates && (
                 <div>
                   <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 6 }}>

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g07",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "15ce99dffbbe6404067a39db63d646eb5177efcc908152e66db73dee970aed70",
+  "strategy_snapshot_hash": "c8276034d32e9f309d5146b90afe78b4f13f44a6ad6ed117a2e0fcf36f62228b",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "98494be1b1611922a5e9a0bcfb85c9fc56ff43ef80a01b7bba67f0c755bb04a6",
-  "output_hash": "3fa73f6fcb193c66364d7282292503f3f98769df76bd4f2ff040953e89ea0fdb",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "d7050bdcc9915c8e5d274ec29ebbb2712397935c35c5ceef7df6982553f800d6",
+  "output_hash": "241630717cd46259f7980dc8245675a5cac57261a06420a9ee7a51c6c3c17361",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -0.11%)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -106.42%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 41,
+      "CHOP_RANGING": 46,
       "HIGH_VOLATILITY": 11
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.12,
-      "HIGH_VOLATILITY": 0.01
+      "CHOP_RANGING": -90.24,
+      "HIGH_VOLATILITY": -16.18
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.11
+    "total_oos_return_pct": -106.42
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:02:22.024939+00:00"
+  "created_at_utc": "2026-08-22T15:57:53.907234+00:00"
 }

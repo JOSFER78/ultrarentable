@@ -217,6 +217,11 @@ def list_candidates(
             "archetype": sc.get("archetype") or "QUANT_PATTERN",
             "scorecard_json": c.scorecard_json,
             "duration_info": dur,
+            "profit_factor_oos": pf_oos,
+            "max_dd_oos_pct": dd_oos,
+            "net_profit_oos": net_prof_oos,
+            "win_rate_pct": wr_oos,
+            "trades_oos": trades_count_oos,
             "metrics": {
                 "in_sample": {
                     "net_profit_usd": c.net_profit_is if c.net_profit_is is not None else is_m.get("net_profit_usd"),

@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1H",
-  "strategy_snapshot_hash": "81d25cc955c362bc6ad45fa3afd3c70185d48de3889b3095709ad42a2054e190",
+  "strategy_snapshot_hash": "72b98b7570fb65e5221632fb1e66d53cb34a35ec516f969a7c5c53be95af4be7",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "d9cbaf85c688d2b6e3994c87559b00790677f3621f6aad43fb58849cc829583f",
-  "output_hash": "8739329969d78e60b753b150cd83fc1de166b9de61547b8a0a3e970ff69e54ee",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "61a3ead6a7b343be3ec9144f99bc37fdd3d41d75929841bd259c8bcc6a7eb9d8",
+  "output_hash": "2c7950dd6308ce4a6a5f3cfd90436cdc4e539299dda7d6b3a98c55b22e10e588",
   "status": "FAILED",
-  "score": 34.6,
-  "verdict": "FALLO: Consenso insuficiente (34.6/100) u objeción crítica de riesgo",
+  "score": 36.4,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (36.4/100)",
   "metrics": {
-    "consensus_score": 34.6,
+    "consensus_score": 36.4,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 55.0,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.00 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 1.00 con beneficio neto de $183.54.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2504 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2518 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.40 USD.",
+          "Beneficio medio por operación: $0.07 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.8,
+        "score": 41.2,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 1.00 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 1.00 cercano al equilibrio (1.05)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:29:27.153124+00:00"
+  "created_at_utc": "2026-08-22T15:45:40.542274+00:00"
 }

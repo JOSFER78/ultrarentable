@@ -546,10 +546,10 @@ export default function StrategiesExplorerPage() {
               gap: "4px",
             }}
           >
-            🔬 11 Gates & IA
+            🔬 10 Gates & IA
           </Link>
           <Link
-            href="/gates/gate-11-nautilus-trader"
+            href="/gates/gate-10-nautilus-trader"
             style={{
               background: "rgba(168, 85, 247, 0.12)",
               border: "1px solid rgba(168, 85, 247, 0.3)",
@@ -697,7 +697,7 @@ export default function StrategiesExplorerPage() {
             <div style={{ fontSize: "10px", color: "#34d399", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>PARTICIÓN CIEGA INMUTABLE</div>
             <div style={{ fontSize: "12px", fontWeight: 700, color: "#e2e8f0", marginTop: "3px" }}>60% IS · 20% Val · 20% Holdout</div>
             <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "4px" }}>
-              Cero Mocks · Evaluación en 11 Gates
+              Cero Mocks · Evaluación en 10 Gates
             </div>
           </div>
         </div>
@@ -1084,7 +1084,7 @@ export default function StrategiesExplorerPage() {
                 fontFamily: "var(--font-mono, monospace)",
                 boxShadow: "0 2px 8px rgba(236, 72, 153, 0.15)",
               }}
-              title={`Revalidar estrategias históricas bajo el motor cuantitativo y 11 Gates actuales (v${version})`}
+              title={`Revalidar estrategias históricas bajo el motor cuantitativo y 10 Gates actuales (v${version})`}
             >
               <span>🛡️</span>
               <span>Revalidar con v{version}</span>
@@ -1170,7 +1170,7 @@ export default function StrategiesExplorerPage() {
                           0 ESTRATEGIAS APROBADAS BAJO EL MOTOR v{version}
                         </div>
                         <div style={{ fontSize: "12px", color: "#94a3b8", maxWidth: "620px", margin: "0 auto 16px auto", lineHeight: "1.6" }}>
-                          Por directiva estricta <strong>Zero-Mock & Real-Only</strong>, el sistema no maquilla resultados ni muestra estrategias que no superen los 11 Gates cuantitativos. Las {rejectedCount} estrategias históricas evaluadas fueron descartadas por no cumplir los criterios de microestructura, costes reales o drawdown.
+                          Por directiva estricta <strong>Zero-Mock & Real-Only</strong>, el sistema no maquilla resultados ni muestra estrategias que no superen los 10 Gates cuantitativos. Las {rejectedCount} estrategias históricas evaluadas fueron descartadas por no cumplir los criterios de microestructura, costes reales o drawdown.
                         </div>
 
                         {/* Status sync indicator */}
@@ -1832,7 +1832,7 @@ export default function StrategiesExplorerPage() {
                     <div style={{ fontSize: "28px", fontWeight: 900, color: "#34d399", margin: "4px 0" }}>
                       {revalStatus.promoted_count}
                     </div>
-                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Superaron los 11 Gates</div>
+                    <div style={{ fontSize: "10.5px", color: "#cbd5e1" }}>Superaron los 10 Gates</div>
                   </div>
 
                   <div style={{ background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.3)", borderRadius: "10px", padding: "14px", textAlign: "center" }}>
@@ -1930,7 +1930,7 @@ export default function StrategiesExplorerPage() {
                     </div>
                   </div>
                   <div style={{ marginTop: "12px", padding: "10px", background: "rgba(56, 189, 248, 0.08)", borderRadius: "8px", border: "1px solid rgba(56, 189, 248, 0.2)", fontSize: "11px", color: "#38bdf8" }}>
-                    💡 <strong>Resultado:</strong> Las que superen los 11 Gates serán promovidas a <strong>v{version} ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
+                    💡 <strong>Resultado:</strong> Las que superen los 10 Gates serán promovidas a <strong>v{version} ACTUAL</strong> y la lista se actualizará dinámicamente. Las que no cumplan los criterios quedarán rechazadas con su motivo forense sin alterar los datos de origen.
                   </div>
                 </div>
 

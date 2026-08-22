@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g07",
   "run_id": "run_UR_FONDEO_GBPUSD_1H",
   "strategy_id": "UR_FONDEO_GBPUSD_1H",
-  "strategy_snapshot_hash": "35f37a16350865a614a765e0437c45663aedce0bed0ebd2de20b666834ea4275",
+  "strategy_snapshot_hash": "6a8aca00245402f8f4255c6d96aeb0962783a9c26c0f47cc4c9d48a3b71e34a2",
   "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "6bfc3cbf8933a2302632f62940743df3c857fd719d3cd19fb376a17b0f790981",
-  "output_hash": "ad9bc25b27ac72f8719fd4d78edddeefa0c9afd3b3abbe2d43c64bbd2aca87dd",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "66449c16d49d86c37774314ca9910a76369f9cbd28756aafc07c115b0eb9a900",
+  "output_hash": "7e21a944893c98072a3d70c7c391ca3f5e131fc39e81962e526406972a2abf76",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -5.26%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -1.29%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -4.87,
-      "HIGH_VOLATILITY": -0.39
+      "CHOP_RANGING": -0.79,
+      "HIGH_VOLATILITY": -0.5
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -5.26
+    "total_oos_return_pct": -1.29
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:04:45.009416+00:00"
+  "created_at_utc": "2026-08-22T15:56:36.317004+00:00"
 }

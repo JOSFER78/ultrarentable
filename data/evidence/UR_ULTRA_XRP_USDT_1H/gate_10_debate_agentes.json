@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_XRP_USDT_1H",
   "strategy_id": "UR_ULTRA_XRP_USDT_1H",
-  "strategy_snapshot_hash": "c2765634ba3f9d1c72302938f271c428ad4a62161e06c7aefe91f2c240eaa88c",
+  "strategy_snapshot_hash": "56297d63da1b7c3a3d2197bcfbdc64f0473dd0fdb170c19290df70ca7e328d6c",
   "dataset_id": "ds_binance_xrpusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "b73acba851bfcc81db19813011e9b990e169456d0a438007dbc3550578becdce",
-  "output_hash": "951f2f3ceafc58f1243f31c7acccaba81dee107283ff690ab5b195e91e79edf1",
-  "status": "FAILED",
-  "score": 34.0,
-  "verdict": "FALLO: Consenso insuficiente (34.0/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "38daecc6f924803da9764d641ea955ce4db56d4621b875534736616067092612",
+  "output_hash": "7f062ce9d06ce7b8bca0794c5d68c560410d3cb5df635a924b9c429b0c01670a",
+  "status": "PASSED",
+  "score": 41.5,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (41.5/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 34.0,
+    "consensus_score": 41.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 53.2,
+        "score": 56.4,
         "findings": [
           "Activo y Timeframe: XRP-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.96 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 1.03 con beneficio neto de $220.26.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1889 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 315 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 35.0,
         "findings": [
-          "Beneficio medio por operación: $-0.53 USD.",
+          "Beneficio medio por operación: $0.70 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.3,
+        "score": 47.8,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.96 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 1.03 cercano al equilibrio (1.05)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T13:53:47.179485+00:00"
+  "created_at_utc": "2026-08-22T15:46:56.022641+00:00"
 }

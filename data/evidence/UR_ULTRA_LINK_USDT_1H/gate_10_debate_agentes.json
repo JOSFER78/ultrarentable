@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_1H",
   "strategy_id": "UR_ULTRA_LINK_USDT_1H",
-  "strategy_snapshot_hash": "8d0a75374845949c2e59f54e34beb5cd86e24dab665f282af1ae850809aac023",
+  "strategy_snapshot_hash": "adc019e5ab9e594cf85bccef767b2d346b6969ac77884d3f92870a48593318c0",
   "dataset_id": "ds_binance_linkusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "c2229925d369e8f0be0bbfd712c608969173dafd4a4718cc941648c60dc5012d",
-  "output_hash": "6b696763d692c82fa6a532c7cfb0821f07c3f63fcfab61954c89567b82a5de78",
-  "status": "FAILED",
-  "score": 57.6,
-  "verdict": "FALLO: Consenso insuficiente (57.6/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "94f086148368b3633f85baf1595bde5a2c545634208a0e193449302b813fc042",
+  "output_hash": "80d742c09fced422e86c2aadba36803f0f31e3a0906921d7c3d6a99a6f245ee5",
+  "status": "PASSED",
+  "score": 43.1,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (43.1/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 57.6,
+    "consensus_score": 43.1,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 69.8,
+        "score": 72.1,
         "findings": [
           "Activo y Timeframe: LINK-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.33 con beneficio neto de $168416328849657180912057581568.00.",
+          "Profit Factor OOS: 1.38 con beneficio neto de $270.53.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 95.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 97.4% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2089 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 692 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 19.5,
         "findings": [
-          "Beneficio medio por operación: $80620549951966103193255936.00 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $0.39 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 67.5,
+        "score": 47.9,
         "objections": [
-          "Alerta de Drawdown: DD (95.9%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (97.4%) cercano o superior al límite tolerable (85.0%)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:21:54.055335+00:00"
+  "created_at_utc": "2026-08-22T15:46:00.800540+00:00"
 }

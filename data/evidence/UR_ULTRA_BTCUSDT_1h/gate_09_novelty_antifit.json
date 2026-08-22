@@ -2,22 +2,22 @@
   "evidence_id": "ev_UR_ULTRA_BTCUSDT_1h_g09",
   "run_id": "run_UR_ULTRA_BTCUSDT_1h",
   "strategy_id": "UR_ULTRA_BTCUSDT_1h",
-  "strategy_snapshot_hash": "8959cfe8bd4a4116e0dfe32a708ebcb7a4a2e605659af2852d61ebd5044f4b52",
+  "strategy_snapshot_hash": "944bfd0350d19b8a6f67f1c28e5bd8823aef19f18bdcc49c62964eb242f6c34f",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "2ad0e5b98e97ebb6c6f1921f2d963906ef3f9177a00c98def53bc2bffe43f0da",
-  "output_hash": "ad0460db78f4a2d7508f0d6adadce6a7ee2891b48a59684cdf507494e50f7076",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "167dbe8600cc8261c20850da1e0e49590f8927b87c9b7f34e3f666c334d080dd",
+  "output_hash": "671889df5b4d4a3a1dcefbe38a08ac385d02acb0041fae9cf63a12cd09137dff",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 216.1 trades/param, Estabilidad Vecindario: 107.1%, Re-backtest PFs: [1.18, 1.11, 1.09, 1.29])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 218.4 trades/param, Estabilidad Vecindario: 107.1%, Re-backtest PFs: [1.18, 1.11, 1.09, 1.29])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 216.1,
+    "degrees_of_freedom_ratio": 218.4,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 107.1,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTCUSDT_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T14:28:32.548268+00:00"
+  "created_at_utc": "2026-08-22T15:58:09.119404+00:00"
 }

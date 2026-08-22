@@ -50,7 +50,7 @@ export default function NautilusTraderStudioPage() {
 
     try {
       // Llamar al endpoint de backtest determinista / Nautilus reconciler
-      const res = await fetch(`/api/v1/gates/gate-11-nautilus-trader/test`, {
+      const res = await fetch(`/api/v1/gates/gate-10-nautilus-trader/test`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

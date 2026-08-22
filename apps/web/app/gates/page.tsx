@@ -162,9 +162,9 @@ const GATES_CONFIG = [
   },
   {
     id: 11,
-    slug: "gate-11-nautilus-trader",
+    slug: "gate-10-nautilus-trader",
     name: "NAUTILUS_TRADER",
-    title: "11. Reconciliación NautilusTrader Core",
+    title: "10. Reconciliación NautilusTrader Core",
     icon: "⚡",
     desc: "Backtest event-driven barra a barra en motor NautilusTrader con ejecución real de fills.",
     formula: "abs(PnL_FastEngine - PnL_Nautilus) / PnL_Fast <= 0.05",
@@ -202,7 +202,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
     fetchCandidates();
   }, [fetchCandidates]);
 
-  // Guardarraíl Estricto: Sólo estrategias con 11/11 Gates, DD <= 85% (Ultra) y DD <= 4.0% (Fondeo)
+  // Guardarraíl Estricto: Sólo estrategias con 11/10 Gates, DD <= 85% (Ultra) y DD <= 4.0% (Fondeo)
   const approvedStrategies = candidates.filter((c) => {
     const isUltra = (c.route || "ULTRA").toUpperCase() === "ULTRA";
     const maxDdAllowed = isUltra ? 85.0 : 4.0;
@@ -333,7 +333,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "12px", marginBottom: "24px" }}>
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.4)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>
-            🏆 TIER 1 · CERTIFICADAS (11/11 GATES)
+            🏆 TIER 1 · CERTIFICADAS (11/10 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {approvedStrategies.length}
@@ -345,7 +345,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
 
         <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "16px" }}>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-            💎 TIER 2 · DIAMANTES EN I+D (9-10 GATES)
+            💎 TIER 2 · DIAMANTES EN I+D (8-9 GATES)
           </div>
           <div style={{ fontSize: "24px", fontWeight: 900, color: "#ffffff", marginTop: "4px" }}>
             {tier2Diamonds.length}
@@ -385,7 +385,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
           <div>
             <h2 style={{ fontSize: "16px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
-              🏆 Catálogo de Soluciones Certificadas Oficialmente (11/11 Gates)
+              🏆 Catálogo de Soluciones Certificadas Oficialmente (11/10 Gates)
             </h2>
             <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
               Filtradas con guardarraíles matemáticos inquebrantables (DD ≤ 80% Ultra / ≤ 4% Fondeo).
@@ -407,7 +407,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                 cursor: "pointer",
               }}
             >
-              🏆 Individuales 11/11 ({approvedStrategies.length})
+              🏆 Individuales 10/10 ({approvedStrategies.length})
             </button>
             <button
               onClick={() => setViewMode("META")}
@@ -422,7 +422,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                 cursor: "pointer",
               }}
             >
-              🧩 Meta-Portafolios 11/11 ({metaPortfolios.filter(m => m.is_approved || m.gates_passed_count === 11).length})
+              🧩 Meta-Portafolios 10/10 ({metaPortfolios.filter(m => m.is_approved || m.gates_passed_count === 11).length})
             </button>
           </div>
         </div>
@@ -433,7 +433,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
               <div style={{ padding: "40px 20px", textAlign: "center", background: "rgba(0,0,0,0.3)", borderRadius: "10px" }}>
                 <div style={{ fontSize: "32px", marginBottom: "8px" }}>🧩</div>
                 <div style={{ fontSize: "15px", fontWeight: 800, color: "#f8fafc" }}>
-                  Sintetizando Meta-Portafolios 11/11 en segundo plano...
+                  Sintetizando Meta-Portafolios 10/10 en segundo plano...
                 </div>
               </div>
             ) : (
@@ -520,7 +520,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                   No hay estrategias 100% aprobadas en este instante (Doctrina Zero-Mocks)
                 </div>
                 <p style={{ fontSize: "12px", color: "#94a3b8", maxWidth: "600px", margin: "8px auto 16px" }}>
-                  El evaluador de 11 Gates es estricto y no inventa métricas. Actualmente hay <strong>{tier2Diamonds.length} Diamantes (9-10 Gates)</strong> en el laboratorio de investigación siendo procesados por el demonio 24/7 para alcanzar la certificación 11/11.
+                  El evaluador de 10 Gates es estricto y no inventa métricas. Actualmente hay <strong>{tier2Diamonds.length} Diamantes (8-9 Gates)</strong> en el laboratorio de investigación siendo procesados por el demonio 24/7 para alcanzar la certificación 10/10.
                 </p>
                 <Link
                   href="/research"
@@ -631,7 +631,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                           </td>
                           <td style={{ padding: "12px", textAlign: "center" }}>
                             <span style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "3px 8px", borderRadius: "4px", fontWeight: 900, fontSize: "10.5px" }}>
-                              11/11 ✓
+                              10/10 ✓
                             </span>
                           </td>
                           <td style={{ padding: "12px", textAlign: "center" }}>
@@ -675,7 +675,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
         )}
       </div>
 
-      {/* 4. HUB INTERACTIVO: ESPECIFICACIÓN & CONFIGURACIÓN DE LOS 11 GATES */}
+      {/* 4. HUB INTERACTIVO: ESPECIFICACIÓN & CONFIGURACIÓN DE LOS 10 GATES */}
       <div style={{ background: "rgba(16, 23, 34, 0.9)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
           <div>

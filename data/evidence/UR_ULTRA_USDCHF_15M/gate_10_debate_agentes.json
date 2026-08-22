@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_15M_g10",
   "run_id": "run_UR_ULTRA_USDCHF_15M",
   "strategy_id": "UR_ULTRA_USDCHF_15M",
-  "strategy_snapshot_hash": "8dc973a6fbef5e6c707c938eb2d474b1d9dffdb9f33b42bb252656c4c73535b5",
+  "strategy_snapshot_hash": "aa062a5a993adf333fc4065224c92633af4364ee24477343ce5498614ac7fc07",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "5c7ed3d515bf00c321ef0dce3c8737e47a64eec1f27c65104df9c4bdf432b0de",
-  "output_hash": "5b9c16dfa9598f1db23dc283b4002686b09cfba2f50dfe2c03fee8989cd77296",
-  "status": "FAILED",
-  "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "e9f6b43276f2bb1fc71bf61943d6ab2bb90529365bccdaec27ee05b54c800193",
+  "output_hash": "5042f172c0e452f2c456cc6c83d1d2184c1b66cc10ec7f762a228b2909ed81e1",
+  "status": "PASSED",
+  "score": 45.5,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (45.5/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 24.5,
+    "consensus_score": 45.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCHF (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.08 con beneficio neto de $-956.40.",
+          "Profit Factor OOS: 0.00 con beneficio neto de $-1.11.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 62.2,
         "findings": [
-          "Drawdown Máximo Observado: 95.8% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 80.3% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 252 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 90 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.80 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
+        "score": 45.5,
         "objections": [
-          "Alerta de Drawdown: DD (95.8%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.08 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (80.3%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:08:35.440202+00:00"
+  "created_at_utc": "2026-08-22T15:47:55.388064+00:00"
 }

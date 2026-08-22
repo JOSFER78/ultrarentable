@@ -300,19 +300,26 @@ class LegacyRevalidationService:
         )
 
         now_iso = datetime.now(timezone.utc).isoformat()
-        is_promoted = verdict.is_certified and gates_passed_count >= 10
-
-        if gates_passed_count == 11 or (verdict.is_certified and gates_passed_count >= 10):
+        is_promoted = (gates_passed_count == 10)
+        if is_promoted:
             new_status = "CERTIFICADA_TIER_1"
-        elif gates_passed_count in (9, 10):
+            cand_tier = "TIER_1_CERTIFIED"
+            cand_tier_label = "🏆 Producción Certificada (10/10)"
+        elif gates_passed_count in (8, 9):
             new_status = "REFINADO_TIER_2"
-        elif gates_passed_count in (5, 6, 7, 8):
+            cand_tier = "TIER_2_NEAR_CERTIFIED"
+            cand_tier_label = "💎 Diamante en I+D (8-9/10)"
+        elif gates_passed_count in (5, 6, 7):
             new_status = "INCUBADORA_REPROGRAMACION"
+            cand_tier = "TIER_3_INCUBATOR"
+            cand_tier_label = "🧪 Incubadora de I+D (5-7/10)"
         else:
             new_status = "REJECTED_ESTRUCTURAL"
+            cand_tier = "TIER_4_REJECTED"
+            cand_tier_label = "❌ Rechazada Estructural (<5/10)"
 
         new_engine_ver = CURRENT_ENGINE_VERSION
-        reason = f"Revalidación v{CURRENT_ENGINE_VERSION}: {gates_passed_count}/11 Gates superados (Score: {overall_score:.1f}/100)"
+        reason = f"Revalidación v{CURRENT_ENGINE_VERSION}: {gates_passed_count}/10 Gates superados (Score: {overall_score:.1f}/100)"
 
         # 9. Calcular métricas finales exactas (CAGR Geométrico Bounded)
         tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
@@ -332,9 +339,12 @@ class LegacyRevalidationService:
             "revalidated_at": now_iso,
             "revalidation_pipeline_version": CURRENT_ENGINE_VERSION,
             "gates_passed_count": gates_passed_count,
+            "total_gates": 10,
+            "tier": cand_tier,
+            "tier_label": cand_tier_label,
             "overall_score": overall_score,
-            "gates": gates_eval.get("gates", {}),
-            "nautilus_gate_11": gates_eval.get("nautilus_gate_11", {}),
+            "gates": gates_eval.get("gates", []),
+            "nautilus_gate_10": gates_eval.get("nautilus_gate_11", {}),
             "parameters": params,
             "certified_by": "CertificationRegistry",
         }

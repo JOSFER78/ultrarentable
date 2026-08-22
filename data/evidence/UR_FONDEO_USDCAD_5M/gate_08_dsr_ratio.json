@@ -2,28 +2,23 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_5M_g08",
   "run_id": "run_UR_FONDEO_USDCAD_5M",
   "strategy_id": "UR_FONDEO_USDCAD_5M",
-  "strategy_snapshot_hash": "56e4a20c3f1998bd621132fd46efb5287ecf25b2bbae41bacc3159e22d93e2f3",
+  "strategy_snapshot_hash": "212f6869fdf5cdba6ac978acd5cc0388a2c0e5c99640b1aed7f88c3fce0c236f",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "21a6f0391ec1ecbdb4441172043f277b9c3a2494e9f80ccc2ad471298f404a47",
-  "output_hash": "a03d09581f7070232f37303148bb932caf4d4df64936c5ac1c641106465884ae",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "b8e150cae3386e304fd4b56cecf6aed81ee5fae126145d4b26f52edb7a4efbca",
+  "output_hash": "c12184583b344be8541a9b1a836761dd7b844e3883f2b9727b5ba8d1228a4787",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
+  "verdict": "RECHAZADO: Desviación estándar nula en retornos",
   "metrics": {
-    "raw_sharpe_ratio": 0.112,
-    "deflated_sharpe_probability_pct": 0.01,
-    "trials_penalized_count": 3,
-    "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 0.62,
-    "kurtosis": 7.873,
-    "sample_trades_count": 26
+    "raw_sharpe": 0.0,
+    "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_5M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T14:08:15.690706+00:00"
+  "created_at_utc": "2026-08-22T15:57:45.583891+00:00"
 }

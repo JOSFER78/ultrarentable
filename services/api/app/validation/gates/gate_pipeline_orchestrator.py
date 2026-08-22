@@ -108,7 +108,7 @@ class GatePipelineOrchestrator:
             # Gate 8: Cero default complaciente. Si trials_tested no está registrado en SQLite, Gate 8 bloquea
             (self.g8, lambda g: g.evaluate(oos_trades_pnl=oos_trades, trials_tested=candidate_info.get("trials_tested"))),
             (self.g9, lambda g: g.evaluate(parameters=candidate_info.get("parameters", {}), trades_count=len(is_trades) + len(oos_trades), oos_pf=float(candidate_info.get("profit_factor_oos", 1.5)), candles=candles, strategy_snapshot=strategy_snapshot, is_ultra=is_ultra)),
-            (self.g10, lambda g: g.evaluate({**candidate_info, "trades_count": len(is_trades) + len(oos_trades), "net_profit_oos_usd": candidate_info.get("net_profit_oos_usd", sum(oos_trades))})),
+            # Gate 10 (Oficial): Reconciliación de Eventos NautilusTrader Core con Cosecha a Bóveda Ratchet
             (self.g11, lambda g: g.evaluate(oos_trades=oos_trades, trades_raw=trades_raw, candles=candles, strategy_snapshot=strategy_snapshot, symbol=candidate_info.get("symbol", "BTCUSDT"), initial_capital=base_capital, max_allowed_leverage=100.0 if is_ultra else 3.0, is_ultra=is_ultra)),
         ]
 

@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g07",
   "run_id": "run_UR_ULTRA_AUDUSD_4H",
   "strategy_id": "UR_ULTRA_AUDUSD_4H",
-  "strategy_snapshot_hash": "e6608e1047fd1e34f9e06a256e0dd164891f333321e67abfcf365e6b4874af5c",
+  "strategy_snapshot_hash": "31f3985fe8d66c33fe84a16aa7340c3092ae6e176f090f31ac6bfa9985d7d577",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "3ec7e9bb85a4c74d25f3abc1f3141754a56efb277f69d1eeaccb9a432b842c97",
-  "output_hash": "a8c59e440d42fa31574ed7807162818940253f80054d85845ddb019a7003256a",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "1a00d0190ac7d3685e71d9924939a887de6f6d2bae01d939856b4369f6aad91a",
+  "output_hash": "93f807d95edc11705ba9e478e93493d614bbdfdb3c7481635da57b316250ba9c",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -364.48%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -85.25%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 20,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 128
     },
     "regime_trades_count": {
-      "BULL_TREND": 2,
+      "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 42,
-      "HIGH_VOLATILITY": 9
+      "CHOP_RANGING": 26,
+      "HIGH_VOLATILITY": 5
     },
     "regime_return_pct": {
-      "BULL_TREND": -27.1,
+      "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -233.57,
-      "HIGH_VOLATILITY": -103.81
+      "CHOP_RANGING": -73.16,
+      "HIGH_VOLATILITY": -12.09
     },
     "regimes_profitable_count": 0,
-    "regimes_active_count": 3,
-    "total_oos_return_pct": -364.48
+    "regimes_active_count": 2,
+    "total_oos_return_pct": -85.25
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:07:08.346861+00:00"
+  "created_at_utc": "2026-08-22T15:56:16.527148+00:00"
 }

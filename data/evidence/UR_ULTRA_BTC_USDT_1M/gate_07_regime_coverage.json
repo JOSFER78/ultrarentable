@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_1M",
   "strategy_id": "UR_ULTRA_BTC_USDT_1M",
-  "strategy_snapshot_hash": "bb61da03eaa26971da27fd5896bb958819ccd526992a7dea09aa3751c9a64828",
+  "strategy_snapshot_hash": "89ff26ae4a2b67f143427da2903b25389c5a173c625405116393ae6b9fae9198",
   "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "13677379785cb74db4ac480979df2b97a1240d6cbd9563d21fc6dda14a7c23fa",
-  "output_hash": "4336eb2c5171327e9e68c0350ac5e76fc0e97fc75ad1b19f16e836d7b2501a69",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "37eeac0237c683993362ab78f4db68315e924cb8a7b756cb9845592878ef441b",
+  "output_hash": "53f22cd6d12d57095daa76844c17e1791faee6698e9dcd0f3f8838deacfe2d6b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -404.69%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -65.22%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 30,
-      "HIGH_VOLATILITY": 26
+      "CHOP_RANGING": 22,
+      "HIGH_VOLATILITY": 14
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -216.08,
-      "HIGH_VOLATILITY": -188.61
+      "CHOP_RANGING": -33.76,
+      "HIGH_VOLATILITY": -31.46
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -404.69
+    "total_oos_return_pct": -65.22
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T14:08:45.039082+00:00"
+  "created_at_utc": "2026-08-22T15:54:44.527706+00:00"
 }

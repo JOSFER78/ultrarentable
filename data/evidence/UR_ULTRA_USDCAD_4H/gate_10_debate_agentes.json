@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g10",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "8723d1c5487a3641fc9ff3e38a6549ab728faa3043def10d253dceedab4138a0",
+  "strategy_snapshot_hash": "31dba384c392ec4187824913687d293005c25b6c03d9ea7593866810c75f8eff",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "1552e126f91ec60fee3e89dd41bd3baa42c4697edd542aedf62908c63dfb52ed",
-  "output_hash": "1b7a29325993949d01fca96c0250c2d67886594f0f8bba450eab9dbf00398c8e",
-  "status": "FAILED",
-  "score": 58.7,
-  "verdict": "FALLO: Consenso insuficiente (58.7/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "88ae08b99ef93e78961287cd0c4c0a8b3f6f8a7bef7d82d1426af6ea517272b3",
+  "output_hash": "aeae8e55aaafd09fa26d26d4e5a1bce1e0e2ec5f8c30781d8130f42c14f0784f",
+  "status": "PASSED",
+  "score": 90.0,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (90.0/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 58.7,
+    "consensus_score": 90.0,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 54.1,
+        "score": 84.2,
         "findings": [
           "Activo y Timeframe: USDCAD (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.98 con beneficio neto de $-459.82.",
+          "Profit Factor OOS: 1.65 con beneficio neto de $863.66.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 72.4,
+        "score": 83.9,
         "findings": [
-          "Drawdown Máximo Observado: 58.6% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 34.2% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 205 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 135 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $-2.24 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $6.40 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 56.6,
+        "score": 92.0,
         "objections": [
-          "Alerta de Rentabilidad: Profit factor 0.98 cercano al umbral de equilibrio (1.05)."
+          "Cero objeciones críticas: Hipótesis robusta respaldada por evidencia empírica."
+        ],
+        "recommendations": [
+          "Candidato óptimo listo para integración en Meta-Portafolios."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Candidato óptimo listo para integración en Meta-Portafolios."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:21:05.421793+00:00"
+  "created_at_utc": "2026-08-22T15:47:51.743117+00:00"
 }

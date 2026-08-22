@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_RTY_5M_g04",
   "run_id": "run_UR_ULTRA_RTY_5M",
   "strategy_id": "UR_ULTRA_RTY_5M",
-  "strategy_snapshot_hash": "f3fd9e2d8b79289d9e1ab8fa294bc2acf57934865c4da374dac268feeb550376",
+  "strategy_snapshot_hash": "8181a2b485b20c4013addd3388afde4a91c5f1fac869ca3aaff4afcefae96e25",
   "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "c8b937a341c6d8e615a32c39278ac8ad44fa2f9325a53c98dd88f572acb1eab8",
-  "output_hash": "a370964fb21a54ee9b1f8a2ca215d072bcbfd0867f3d6ebd239ae69cb9c4757a",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "81dab09d3c1b749ba53965a7086b64546241fed82331905a09c656ec26a77a14",
+  "output_hash": "9560b919c4e25a1b31f986e126c3166c232575e2242e7c8a734f62a2fde5a37a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
   "metrics": {
-    "total_trades": 12,
+    "total_trades": 8,
     "windows_evaluated": 0,
     "walk_forward_efficiency": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_5M/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T14:15:15.016213+00:00"
+  "created_at_utc": "2026-08-22T15:56:52.253914+00:00"
 }

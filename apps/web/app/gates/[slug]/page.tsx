@@ -53,7 +53,7 @@ const ALL_GATES = [
   { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe (DSR)", icon: "📐", badge: "López de Prado" },
   { num: 9, slug: "gate-9-novelty-antifit", name: "9. Novedad & Inoculación", icon: "🧬", badge: "Failure DB" },
   { num: 10, slug: "gate-10-multi-agent-debate", name: "10. Debate 5 Agentes IA", icon: "🤖", badge: "Comité Semántico" },
-  { num: 11, slug: "gate-11-nautilus-trader", name: "11. NautilusTrader Core", icon: "⚡", badge: "Event-Driven" },
+  { num: 11, slug: "gate-10-nautilus-trader", name: "10. NautilusTrader Core", icon: "⚡", badge: "Event-Driven" },
 ];
 
 export default function GateDetailPage() {
@@ -110,7 +110,7 @@ export default function GateDetailPage() {
 
   // Load candidate list for Nautilus simulation
   const fetchCandidatesForNautilus = useCallback(async () => {
-    if (rawSlug !== "gate-11-nautilus-trader") return;
+    if (rawSlug !== "gate-10-nautilus-trader") return;
     try {
       const res = await fetch("/api/v1/candidates?limit=100");
       if (res.ok) {
@@ -127,7 +127,7 @@ export default function GateDetailPage() {
 
   // Load detailed Nautilus backtest for candidate
   const fetchNautilusBacktest = useCallback(async (cId: string) => {
-    if (!cId || rawSlug !== "gate-11-nautilus-trader") return;
+    if (!cId || rawSlug !== "gate-10-nautilus-trader") return;
     try {
       setNautilusLoading(true);
       const res = await fetch(`/api/v1/gates/nautilus/detailed-backtest/${cId}`);
@@ -253,13 +253,13 @@ export default function GateDetailPage() {
         <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
           <Link href="/" style={{ color: "#94a3b8", textDecoration: "none" }}>Inicio</Link>
           <span>/</span>
-          <Link href="/candidatos" style={{ color: "#94a3b8", textDecoration: "none" }}>11 Gates</Link>
+          <Link href="/candidatos" style={{ color: "#94a3b8", textDecoration: "none" }}>10 Gates</Link>
           <span>/</span>
           <span style={{ color: "#38bdf8", fontWeight: 800 }}>{gate.slug}</span>
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
           <Link href="/candidatos" style={{ padding: "5px 12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "6px", color: "#cbd5e1", fontSize: "11px", fontWeight: 700, textDecoration: "none" }}>
-            ← Ver Matriz 11 Gates
+            ← Ver Matriz 10 Gates
           </Link>
           <Link href="/strategies" style={{ padding: "5px 12px", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "6px", color: "#38bdf8", fontSize: "11px", fontWeight: 700, textDecoration: "none" }}>
             Explorador Multiactivo →
@@ -640,7 +640,7 @@ export default function GateDetailPage() {
       </div>
 
       {/* ── SECCIÓN ESPECIAL PARA GATE 11 (NAUTILUSTRADER CORE & BACKTEST DETALLADO) ── */}
-      {rawSlug === "gate-11-nautilus-trader" && (
+      {rawSlug === "gate-10-nautilus-trader" && (
         <div style={{ background: "#0a0e17", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "24px", marginTop: "24px" }}>
           
           {/* Header Nautilus */}

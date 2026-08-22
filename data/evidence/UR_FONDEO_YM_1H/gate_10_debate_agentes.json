@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_FONDEO_YM_1H_g10",
   "run_id": "run_UR_FONDEO_YM_1H",
   "strategy_id": "UR_FONDEO_YM_1H",
-  "strategy_snapshot_hash": "2c5feb8c95f350ed2d0bcb6bb0607787c3c330dc0716782664b0c04761ddaab1",
+  "strategy_snapshot_hash": "e250c193721ea4658c683526d55deceba22db61bdb2c19d8e42f96fe79cf28ea",
   "dataset_id": "ds_trad_ym_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "fee5f414ceed6f6cf68f5d54e96ed22d34caba04fb2e713c2aac8d0238507f8d",
-  "output_hash": "b7a05f60009887a4ed827b45cf9e788f9740b8865367f6855529d7eb3abe742d",
-  "status": "FAILED",
-  "score": 34.8,
-  "verdict": "FALLO: Consenso insuficiente (34.8/100) u objeción crítica de riesgo",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "6a36887316ba340b7df0aa5caf484e48960cea57a2817c36527a2a77d433af1e",
+  "output_hash": "e786d0f95fee9f9731c1de4e9e00cd22e4776cb64e235f78675b9967350d1707",
+  "status": "PASSED",
+  "score": 45.5,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (45.5/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 34.8,
+    "consensus_score": 45.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 55.9,
         "findings": [
           "Activo y Timeframe: YM (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 1.02 con beneficio neto de $-1671.72.",
+          "Profit Factor OOS: 1.02 con beneficio neto de $819.95.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 16.8% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 9.0% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -54,25 +54,33 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 56.9,
         "findings": [
-          "Beneficio medio por operación: $-11.61 USD.",
+          "Beneficio medio por operación: $5.69 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.0,
+        "score": 53.2,
         "objections": [
-          "Alerta de Drawdown: DD (16.8%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 1.02 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (9.0%) cercano o superior al límite tolerable (4.5%).",
+          "Margen ajustado: Profit Factor 1.02 cercano al equilibrio (1.15)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:04:32.348358+00:00"
+  "created_at_utc": "2026-08-22T15:48:10.367196+00:00"
 }

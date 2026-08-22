@@ -193,7 +193,7 @@ export default function GeneticDiscoveryLabPage() {
             Centro de Control & Monitoreo Cuantitativo
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", maxWidth: "900px" }}>
-            Supervisión 100% verificada en disco. Minería genética en <strong>StrategyQuant X v144.2953</strong>, motor de failover continuo en <strong>FastEngine 24/7</strong> y certificación determinista por los <strong>11 Gates</strong>.
+            Supervisión 100% verificada en disco. Minería genética en <strong>StrategyQuant X v144.2953</strong>, motor de failover continuo en <strong>FastEngine 24/7</strong> y certificación determinista por los <strong>10 Gates</strong>.
           </p>
         </div>
 
@@ -340,10 +340,10 @@ export default function GeneticDiscoveryLabPage() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "12px", fontWeight: 900, color: "#818cf8", fontFamily: "var(--font-mono, monospace)" }}>
-                  3. PIPELINE 11 PASOS (FSM)
+                  3. PIPELINE 10 GATES (FSM)
                 </span>
                 <span style={{ fontSize: "9px", background: "rgba(129, 140, 248, 0.2)", color: "#818cf8", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  11 GATES
+                  10 GATES
                 </span>
               </div>
               <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
@@ -351,7 +351,7 @@ export default function GeneticDiscoveryLabPage() {
               </p>
             </div>
             <div style={{ fontSize: "10px", fontWeight: 800, color: "#818cf8", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Ver Embudo 11-G →
+              Ver Embudo 10-G →
             </div>
           </Link>
 
@@ -408,7 +408,7 @@ export default function GeneticDiscoveryLabPage() {
                   5. ESTRATEGIAS APROBADAS
                 </span>
                 <span style={{ fontSize: "9px", background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  11/11 CERT
+                  10/10 CERT
                 </span>
               </div>
               <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
@@ -868,7 +868,7 @@ function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }
               🌐 MATRIZ DE BARRIDO MULTIACTIVO 24/7 EN VIVO · UNIVERSO GLOBAL ({allAssets.length} ACTIVOS)
             </h3>
             <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
-              Criptoactivos Top, Futuros CME de Índices, Forex Mayor e Interbancario, Metales y Energías evaluados en paralelo por los 11 Gates Cuantitativos
+              Criptoactivos Top, Futuros CME de Índices, Forex Mayor e Interbancario, Metales y Energías evaluados en paralelo por los 10 Gates Cuantitativos
             </div>
           </div>
         </div>
@@ -878,15 +878,15 @@ function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }
             <span style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>⚡ {typeof telemetry.evaluation_speed_per_sec === "number" ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "0.0 evals/seg"}</span>
           </div>
           <Link href="/gates/gate-1-data-ingest" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>🔬 11 GATES AISLADOS →</span>
+            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>🔬 10 GATES AISLADOS →</span>
           </Link>
-          <Link href="/gates/gate-11-nautilus-trader" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(168, 85, 247, 0.12)", border: "1px solid rgba(168, 85, 247, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
+          <Link href="/gates/gate-10-nautilus-trader" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(168, 85, 247, 0.12)", border: "1px solid rgba(168, 85, 247, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
             <span style={{ fontSize: "11px", color: "#c084fc", fontWeight: 800 }}>🛡️ NAUTILUS EVENT GATE 11 →</span>
           </Link>
         </div>
       </div>
 
-      {/* Interactive 11-Gate Fast Pipeline Navigator */}
+      {/* Interactive 10-Gate Fast Pipeline Navigator */}
       <div style={{ background: "rgba(10, 14, 23, 0.85)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "10px 14px", marginBottom: "18px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
           <span style={{ fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
@@ -908,7 +908,7 @@ function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }
             { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe", icon: "📐", badge: "DSR > 1.5" },
             { num: 9, slug: "gate-9-novelty-antifit", name: "9. Inoculación", icon: "🧬", badge: "Failure DB" },
             { num: 10, slug: "gate-10-multi-agent-debate", name: "10. Debate 5 IA", icon: "🤖", badge: "Comité IA" },
-            { num: 11, slug: "gate-11-nautilus-trader", name: "11. Nautilus Core", icon: "💎", badge: "Event-Driven" },
+            { num: 11, slug: "gate-10-nautilus-trader", name: "11. Nautilus Core", icon: "💎", badge: "Event-Driven" },
           ].map((g) => (
             <Link
               key={g.slug}

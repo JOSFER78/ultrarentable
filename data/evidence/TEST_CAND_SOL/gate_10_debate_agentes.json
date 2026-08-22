@@ -2,31 +2,31 @@
   "evidence_id": "ev_TEST_CAND_SOL_g10",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "9677663a48b820a77186745d057ce4db6910a4ca604268fb0e8d54ed08256c9f",
+  "strategy_snapshot_hash": "39f3c09aa1c2d3d33be4856b4f93c5f12f2d97e660eb93c5936e4c57bfea2eb2",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "3c673c433645e4ddbc3f49f4c3904a7a86f8df5136775dfe8246788b033de77d",
-  "output_hash": "dac4279f6fc1b8b4af3a8180b65fe995c0e4785b3f94aba83d128e53e0613f8c",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "091283a4d00d918d79bf76b90cfb5022a680a89d301b03560dc4f32a803be519",
+  "output_hash": "f8a62b392654bb3c0cacff7ed3cf09d87314b45d89150652ea4ddf6860997417",
   "status": "FAILED",
-  "score": 33.9,
-  "verdict": "FALLO: Consenso insuficiente (33.9/100) u objeción crítica de riesgo",
+  "score": 25.2,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (25.2/100)",
   "metrics": {
-    "consensus_score": 33.9,
+    "consensus_score": 25.2,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 52.8,
+        "score": 22.6,
         "findings": [
           "Activo y Timeframe: SOLUSDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.95 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.28 con beneficio neto de $-1.09.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 319 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 302 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.13 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.2,
+        "score": 30.6,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.95 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.28 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:00:30.875498+00:00"
+  "created_at_utc": "2026-08-22T15:48:55.280631+00:00"
 }

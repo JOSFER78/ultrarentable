@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1H",
-  "strategy_snapshot_hash": "f265ef8a38c682a0b327a4d0ebfbd1ea9dae0337bea3e381a7689bd243980b8c",
+  "strategy_snapshot_hash": "5f7986b7b1c5d25326178095bcb189f76d3fbc7304e1303bd266931294d4388d",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "56b12152dd8a8344122ca7e0bba61292b701469b1bd3631363b749f2a7958a20",
-  "output_hash": "01dd3aecf4b71a086bd6dce6c5bf0cfeca987aa925d97ea4ec4baf21c422a3dc",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "076de041fad21b7e7ceb34cc287df839aeca39e6f81191339d6ee67e5de1780e",
+  "output_hash": "6e0664f8ed67ae173769afe5ae1d463b337f7802f98c9eff7d0df86bbf82b3ab",
   "status": "FAILED",
-  "score": 34.0,
-  "verdict": "FALLO: Consenso insuficiente (34.0/100) u objeción crítica de riesgo",
+  "score": 36.0,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (36.0/100)",
   "metrics": {
-    "consensus_score": 34.0,
+    "consensus_score": 36.0,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 53.2,
+        "score": 53.6,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.96 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.97 con beneficio neto de $273.84.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2530 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2400 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.40 USD.",
+          "Beneficio medio por operación: $0.11 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,23 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.3,
+        "score": 40.9,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.96 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.97 cercano al equilibrio (1.05)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T13:47:02.756934+00:00"
+  "created_at_utc": "2026-08-22T15:45:10.093217+00:00"
 }
