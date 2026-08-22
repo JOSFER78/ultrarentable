@@ -1,28 +1,15 @@
 {
-  "evidence_id": "ev_UR_ULTRA_USDCAD_5M_g03",
-  "run_id": "run_UR_ULTRA_USDCAD_5M",
-  "strategy_id": "UR_ULTRA_USDCAD_5M",
-  "strategy_snapshot_hash": "a70f07749355313b423ec283443fb93ce88456d09997ed07cb30528a99ad47b7",
-  "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "37237e9c000099121df419cd1aa6d63d963ec04b512edddab57dc8706c52cadf",
   "gate_id": 3,
-  "gate_name": "TRADE_SIGNIFICANCE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "5900da65a3099cc2a37ae68c6ff45beec7a5f8b5608d098136d050910e741ef0",
-  "output_hash": "37daacd214fb14e2c4af65ae950477cee3f138bd8d9d143f60f48df26ce8c8f0",
-  "status": "PASSED",
-  "score": 80.0,
-  "verdict": "PASSED: Muestra robusta (126 IS / 16 OOS · Ultra Convex)",
-  "metrics": {
-    "trades_is": 126,
-    "trades_oos": 16,
-    "top2_outlier_dependency_pct": 51.3,
+  "name": "TRADE_SIGNIFICANCE",
+  "passed": false,
+  "score": 50.0,
+  "verdict": "FALLO: Muestra insuficiente (94 IS < 15 \u00f3 10 OOS < 10)",
+  "evidence": {
+    "trades_is": 94,
+    "trades_oos": 10,
+    "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-22T18:09:33.058997+00:00"
+  }
 }

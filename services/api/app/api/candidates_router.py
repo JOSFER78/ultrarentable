@@ -64,16 +64,16 @@ def list_candidates(
     if status and status.upper() != "ALL":
         if status.upper() == "APPROVED":
             query = query.filter(
-                CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]),
+                CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFICADA_TIER_1"]),
                 CandidateModel.scorecard_json.isnot(None)
             )
         elif status.upper() == "REJECTED":
-            query = query.filter(~CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]))
+            query = query.filter(~CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFICADA_TIER_1"]))
         else:
             query = query.filter(CandidateModel.status == status)
     elif not include_rejected and (not tier or tier.upper() in ("TIER_1_CERTIFIED", "APPROVED")):
         query = query.filter(
-            CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"]),
+            CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFICADA_TIER_1"]),
             CandidateModel.scorecard_json.isnot(None)
         )
 
@@ -166,7 +166,7 @@ def list_candidates(
         if passed_count is None:
             if "gates" in sc and isinstance(sc["gates"], list):
                 passed_count = sum(1 for g in sc["gates"] if g.get("passed"))
-            elif resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"):
+            elif resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFICADA_TIER_1"):
                 passed_count = 11
             else:
                 import re
@@ -175,7 +175,7 @@ def list_candidates(
 
         cand_tier = sc.get("tier")
         if not cand_tier:
-            if passed_count == 11 or resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"):
+            if passed_count == 11 or resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFICADA_TIER_1"):
                 cand_tier = "TIER_1_CERTIFIED"
                 cand_tier_label = "🏆 Producción Certificada (11/11)"
             elif passed_count in (9, 10):

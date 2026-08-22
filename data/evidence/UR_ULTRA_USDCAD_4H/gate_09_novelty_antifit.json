@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g09",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "4293bfb95e5e6b83b105fcab288222daa1bcfe8e5ef8f63136d9a89ce72e2f13",
+  "strategy_snapshot_hash": "e108be29f00ab3c60d8f133009d6f341dc0fb2c990544cf5e76bbc18f9f414a3",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "4c5f24b34a25bcac73109935c05d30c5f4dcdc38772ab0b124f99b494993d4dd",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "b3acfeae6488f65a7d0214c2b7e45497b7d15f8c944537f7f1871f4767a680cf",
-  "output_hash": "e58fadd99bec928f0466464271448871ec8d5ff028c6e2d6323b049151806276",
+  "input_hash": "21048a538f719aa4732937100930ccb65e487f3dde01cd62787b692b9a3a18b7",
+  "output_hash": "fdd690a9b805e5a1f2c29f77c6eaece86116cf24a8b938f4fa595929d37cf90f",
   "status": "PASSED",
-  "score": 92.8,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 23.6 trades/param, Estabilidad Vecindario: 91.7%, Re-backtest PFs: [0.42, 0.81, 1.59, 1.14])",
+  "score": 93.1,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 24.1 trades/param, Estabilidad Vecindario: 90.8%, Re-backtest PFs: [0.42, 0.81, 1.59, 1.14])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 23.6,
+    "degrees_of_freedom_ratio": 24.1,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 91.7,
+    "parameter_neighborhood_stability_pct": 90.8,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.42,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:09:34.536922+00:00"
+  "created_at_utc": "2026-08-22T18:17:54.204148+00:00"
 }

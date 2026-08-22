@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_XRP_USDT_4H",
   "strategy_id": "UR_ULTRA_XRP_USDT_4H",
-  "strategy_snapshot_hash": "001677e3a671e3015db2f865166d0652c4c5ef907af903479fd5d0a1ce19488d",
+  "strategy_snapshot_hash": "c1f9f1d0ef46739cd76d3e106d20e0aa83a2b4002dfa1fc57a066ac210db9a2e",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "a79483d3453bf82b9c3304d5ac606d8030a4ed51083292ea517313113112eb60",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "33ac793dc4f207ab865fbc11ccc4be58e8e9b997a65bd26b9bdaff5167e59906",
-  "output_hash": "152c9f58b0f13f265cfd3f679b93efcce5803bd196ddb230ddcc35087b188e98",
+  "input_hash": "dae27e4b914cfd0f5487704139f9910d33676d64c19ee1fe759f212b39f0ca72",
+  "output_hash": "37fd322b36080ee6270c0ff2ad8a0b46ad2a7341dec6617234fb735d0c0b3e63",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +1978573004482686976.00%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9921.16%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 358,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 461
     },
     "regime_trades_count": {
-      "BULL_TREND": 69,
-      "BEAR_TREND": 80,
+      "BULL_TREND": 59,
+      "BEAR_TREND": 62,
       "CHOP_RANGING": 70,
-      "HIGH_VOLATILITY": 100
+      "HIGH_VOLATILITY": 70
     },
     "regime_return_pct": {
-      "BULL_TREND": 7.57666663480278e+16,
-      "BEAR_TREND": 1.3086895024835684e+18,
-      "CHOP_RANGING": 5.941168290218998e+17,
-      "HIGH_VOLATILITY": 6629191118.97
+      "BULL_TREND": 3506.6,
+      "BEAR_TREND": 2180.0,
+      "CHOP_RANGING": 2717.28,
+      "HIGH_VOLATILITY": 1517.28
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 1.978573004482687e+18
+    "total_oos_return_pct": 9921.16
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:08:28.238589+00:00"
+  "created_at_utc": "2026-08-22T18:17:59.656836+00:00"
 }

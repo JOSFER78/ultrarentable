@@ -1,27 +1,14 @@
 {
-  "evidence_id": "ev_UR_ULTRA_USDCAD_5M_g05",
-  "run_id": "run_UR_ULTRA_USDCAD_5M",
-  "strategy_id": "UR_ULTRA_USDCAD_5M",
-  "strategy_snapshot_hash": "a70f07749355313b423ec283443fb93ce88456d09997ed07cb30528a99ad47b7",
-  "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "37237e9c000099121df419cd1aa6d63d963ec04b512edddab57dc8706c52cadf",
   "gate_id": 5,
-  "gate_name": "MONTE_CARLO",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "45e750800fa50d1963be9d2d8ed1a6d8d577a129f068b8f3fa0d9e3202f27ca3",
-  "output_hash": "3231aed1b2f8744fa52d12f60a25fc3b4d0fe91083a716eb37cd8045b35e4cde",
-  "status": "PASSED",
-  "score": 79.4,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 41.3%)",
-  "metrics": {
+  "name": "MONTE_CARLO",
+  "passed": true,
+  "score": 82.6,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 34.8%)",
+  "evidence": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 25.8,
-    "drawdown_95th_percentile_pct": 41.3,
-    "max_simulated_drawdown_pct": 51.9
-  },
-  "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T18:09:33.088475+00:00"
+    "drawdown_median_pct": 21.9,
+    "drawdown_95th_percentile_pct": 34.8,
+    "max_simulated_drawdown_pct": 36.4
+  }
 }

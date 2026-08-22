@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_SI_1H_g07",
   "run_id": "run_UR_FONDEO_SI_1H",
   "strategy_id": "UR_FONDEO_SI_1H",
-  "strategy_snapshot_hash": "fa468da9671880c38e645940e9a433ea06bf16a771cdd606b46759d4f5e9b0ea",
+  "strategy_snapshot_hash": "1518170a79c994d0f0be16a2c1d130b279b6d7942886b4eceff8db0468968b57",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "34e668861a72da0b5983474de0bc31169b3461f267de794348331b8d96134e91",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5ae8b7c6c6ae7217503a704fa68f7004366beb83694c634a1953e633f143b60d",
-  "output_hash": "63796860cda4320da92c3a4d1d0fad965739511589b3c47dff414600a685c4a7",
+  "input_hash": "d614a753127fc117327f85b07818622897a532badf4e4a7c65195990b791a188",
+  "output_hash": "fc16056ea5992721085037121a93a97dbf7d9948aeb84e2e29cbdc2042a8f5dd",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +24089.83%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +202.08%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 511,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 9,
-      "BEAR_TREND": 8,
+      "BEAR_TREND": 7,
       "CHOP_RANGING": 19,
       "HIGH_VOLATILITY": 5
     },
     "regime_return_pct": {
-      "BULL_TREND": -7005.76,
-      "BEAR_TREND": 12771.61,
-      "CHOP_RANGING": 24444.1,
-      "HIGH_VOLATILITY": -6120.12
+      "BULL_TREND": -4.54,
+      "BEAR_TREND": -53.21,
+      "CHOP_RANGING": 274.36,
+      "HIGH_VOLATILITY": -14.53
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 24089.83
+    "total_oos_return_pct": 202.08
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:08:50.230090+00:00"
+  "created_at_utc": "2026-08-22T18:16:44.712169+00:00"
 }

@@ -75,3 +75,33 @@ contracts/gate_directory.py ◀── gates_router (y futuros consumidores)
 - La automatización escribe `data/evidence/*` en vivo: no hacer `git reset --hard`
   ni `checkout` que descarte el árbol de trabajo sin revisar.
 - Guardia de regresión: `python3 tests/test_zero_mocks.py`.
+
+## Operación SQX y bucle verificado (2026-08-22)
+
+### Estado del motor SQX en el VPS (ARM64)
+- `strategyquantx.service` (user unit, DISPLAY=:99/Xvfb) **nunca ha funcionado** en este
+  VPS: el binario aarch64 arranca Jetty (:5050) y muere con NPE en `AppSplash` (imagen
+  de splash ilegible; jars ofuscados, JRE `j64` incompleto parcheado con symlink al
+  JVM del sistema). Crash-loop cada ~13s desde el 17-ago.
+- **Detenido** con el kill-switch diseñado en la unit: `touch /tmp/sqx_disabled` +
+  `systemctl --user stop strategyquantx.service`. Para reintentar:
+  `rm /tmp/sqx_disabled && systemctl --user start strategyquantx.service`.
+- La vía viable para "SQX al máximo" hoy: SQX corriendo en el PC Windows del usuario
+  (o un runner x86_64) y sus resultados entrando por ingestión (`services/sqx_bridge/`).
+  Los 92 candidatos `sqx_*` actuales provienen de esa vía (proyecto `Ultra_Auto_Pilot`).
+- `ultra-bg-search.service` (buscador SQX 24/7) está dead; depende de strategyquantx y
+  usa `SQX_MCP_URL=127.0.0.1:8080/mcp` (ojo: el cliente por defecto usa 8081 —
+  discrepancia de puertos documentada, 8080 está ocupado por otro proyecto).
+
+### Bucle buscar→validar→mejorar (verificado end-to-end)
+1. **Revalidación real de los 230 candidatos** (92 SQX + 138 ULTRA/FONDEO) bajo el
+   motor v3.2.0 y los 11 Gates, con SHA-256 real del dataset en la evidencia
+   (antes: strings falsos `dataset_revalidation_sha256`).
+   Resultado: 13 CERTIFICADA_TIER_1 (ULTRA), 85 REFINADO_TIER_2, 66 INCUBADORA,
+   66 REJECTED_ESTRUCTURAL. Informes: `data/reports/reval_{sqx,rest}_report.json`.
+2. **Mejora honesta verificada**: `POST /api/v1/candidates/{id}/refine-loop` sobre
+   `UR_ULTRA_USDCAD_5M` (2 iteraciones) → `REJECTED_AFTER_REFINEMENT` con métricas
+   reales (PF OOS 0.66) y prescripciones por gate. El bucle mejora o rechaza según
+   datos, nunca fuerza aprobaciones.
+3. APIs/servicios: `ultrarentable-api.service` (user unit) reiniciada con los fixes;
+   el discovery worker sigue activo en su hilo.
