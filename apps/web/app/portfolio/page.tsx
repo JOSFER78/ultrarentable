@@ -84,6 +84,7 @@ interface AutonomousEnsemble {
   route: string;
   symbols: string[];
   components_count: number;
+  components?: MetaComponent[];
   combined_annualized_roi_pct: number;
   combined_monthly_roi_pct: number;
   combined_max_dd_pct: number;
@@ -94,6 +95,7 @@ interface AutonomousEnsemble {
   consensus_score: number;
   consensus_verdict: string;
   is_approved: boolean;
+  scorecard?: any;
   created_at_utc: string;
 }
 
