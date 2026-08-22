@@ -2,42 +2,42 @@
   "evidence_id": "ev_UR_FONDEO_YM_4H_g10",
   "run_id": "run_UR_FONDEO_YM_4H",
   "strategy_id": "UR_FONDEO_YM_4H",
-  "strategy_snapshot_hash": "bb68162dc9d75b6403e1033422944294732beb2c137eb6045ff8bb1238adecc1",
+  "strategy_snapshot_hash": "a7ba771b9ba645edd4a9434780a3966e21de7d26dd059262b80dd2f33c219824",
   "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "66be4f60322eab00be2c31656129b4b5ccf7742e08a16a8aa678cee36883d27e",
-  "output_hash": "711d10a0ced7d20925a5b6d73c259632cdcab9f00a31638e75450be01a6da156",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "8db5d42c623bbd5e031a5692c6612f502e73f5170ac94ec7d25575c42dfae5f4",
+  "output_hash": "8cecb37f679306a09f901337076e4ef3c5c7d92f9317906acb35ab3a5a31e494",
   "status": "FAILED",
-  "score": 43.1,
-  "verdict": "FALLO: Consenso insuficiente (43.1/100) u objeción crítica de riesgo",
+  "score": 57.2,
+  "verdict": "FALLO: Consenso insuficiente (57.2/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 43.1,
+    "consensus_score": 57.2,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 33.9,
+        "score": 68.5,
         "findings": [
           "Activo y Timeframe: YM (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.53 con beneficio neto de $-0.03.",
+          "Profit Factor OOS: 1.30 con beneficio neto de $3702.95.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 43.4,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 3.6% (Límite permitido para FONDEO: 4.5%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 10.4% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
       },
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 72 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 45 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,25 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $82.29 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 44.3,
+        "score": 67.1,
         "objections": [
-          "Alerta de Drawdown: DD (3.6%) consume más del 70% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.53 cercano al umbral de equilibrio (1.15)."
+          "Alerta de Drawdown: DD (10.4%) consume más del 70% del margen tolerable."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:27:55.462908+00:00"
+  "created_at_utc": "2026-08-22T06:02:50.415963+00:00"
 }

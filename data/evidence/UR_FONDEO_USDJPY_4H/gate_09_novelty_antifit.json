@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_4H_g09",
   "run_id": "run_UR_FONDEO_USDJPY_4H",
   "strategy_id": "UR_FONDEO_USDJPY_4H",
-  "strategy_snapshot_hash": "aeac065d25888d50758c2f7938d17d4ed02cf161084aea57efb138c0e0c48109",
+  "strategy_snapshot_hash": "af0e491462e2131f89615ecd219fd0a34ca7abd000c104326c42b88452a5ff59",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "bc2f9b92c6f96e1278a3c07f1267ddb6d06edcac7bccf43785cc9e38ce4db014",
-  "output_hash": "8d3fa4ae1627d1e7b9fa13bf9807a201540d77b2c2231e1f34a04dd5852a3197",
-  "status": "PASSED",
-  "score": 92.4,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 20.2 trades/param, Estabilidad Vecindario: 107.3%, Re-backtest PFs: [0.77, 0.82, 0.85, 1.08])",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "cdd934179da1f77656ba4e165c4a9593907c8ed698af11936e18d6a5c1255699",
+  "output_hash": "9e6a614e5efe5061f13d3ddbb9662edd66c69a7f529d9903c260a9fd72851bd7",
+  "status": "FAILED",
+  "score": 43.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 11.8 o Estabilidad 107.4% < 60.0%)",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 20.2,
+    "degrees_of_freedom_ratio": 11.8,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 107.3,
+    "parameter_neighborhood_stability_pct": 107.4,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.77,
-      0.82,
-      0.85,
-      1.08
+      0.0,
+      0.27,
+      0.0,
+      0.31
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:28:14.896240+00:00"
+  "created_at_utc": "2026-08-22T06:02:45.563002+00:00"
 }

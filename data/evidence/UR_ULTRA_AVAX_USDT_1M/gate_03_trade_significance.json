@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "9e2db8c516ba332e246e97a3dba170c43d4ca31ee9a399ab5b89a522bfe4a3b0",
-  "output_hash": "660ad7ca3c376aa9300ac87b820c7bec6c1594f7df3f71c9d59184934c065eaa",
-  "status": "FAILED",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "4d87395365d9dc7e1b8db66e426b36d3286f5108c2a58c0b9ce32ea94e91b0ed",
+  "output_hash": "049ad0d1a2f7be0440a2f105766a4ddd669235b9f09f4a8f17d18ea5f168184a",
+  "status": "PASSED",
   "score": 100.0,
-  "verdict": "FALLO: Muestra insuficiente (38 IS < 15 ó 25 OOS < 10)",
+  "verdict": "PASSED: Muestra robusta (61 IS / 70 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 38,
-    "trades_oos": 25,
-    "top2_outlier_dependency_pct": 100.0,
+    "trades_is": 61,
+    "trades_oos": 70,
+    "top2_outlier_dependency_pct": 22.6,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:26:29.446604+00:00"
+  "created_at_utc": "2026-08-22T06:03:10.921026+00:00"
 }

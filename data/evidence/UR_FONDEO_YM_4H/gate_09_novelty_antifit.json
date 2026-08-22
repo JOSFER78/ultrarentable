@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_YM_4H_g09",
   "run_id": "run_UR_FONDEO_YM_4H",
   "strategy_id": "UR_FONDEO_YM_4H",
-  "strategy_snapshot_hash": "bb68162dc9d75b6403e1033422944294732beb2c137eb6045ff8bb1238adecc1",
+  "strategy_snapshot_hash": "a7ba771b9ba645edd4a9434780a3966e21de7d26dd059262b80dd2f33c219824",
   "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "7171e1d52bf6c0036f9759d3df88c28a3928d96a1cfa7b326384c5d45ed9170b",
-  "output_hash": "eb5b504bf3eafe86b9f0865fbd9c16634c4753d691a88c939fa29fffb0f77e0c",
-  "status": "PASSED",
-  "score": 88.8,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.0 trades/param, Estabilidad Vecindario: 106.6%, Re-backtest PFs: [0.41, 0.41, 0.53, 0.91])",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "163a388b9e3a8f100bca2dbee2495daabb5905395695fe5b80474a2d9c2ce69c",
+  "output_hash": "4fa2dc9fed1d5b7e5c904a5e81c2a7a54047c9342116189d5980d567add16051",
+  "status": "FAILED",
+  "score": 63.9,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 11.2 o Estabilidad 159.8% < 60.0%)",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 18.0,
+    "degrees_of_freedom_ratio": 11.2,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 106.6,
+    "parameter_neighborhood_stability_pct": 159.8,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.41,
-      0.41,
-      0.53,
-      0.91
+      0.88,
+      1.29,
+      2.97,
+      3.17
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:27:55.454046+00:00"
+  "created_at_utc": "2026-08-22T06:02:50.399106+00:00"
 }

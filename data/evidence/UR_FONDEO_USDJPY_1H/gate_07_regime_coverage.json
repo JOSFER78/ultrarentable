@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g07",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "10fe76b37a850c36eac87b126c623099d67734f05aa0b01b796e9c7d6cfcdc62",
+  "strategy_snapshot_hash": "c8276034d32e9f309d5146b90afe78b4f13f44a6ad6ed117a2e0fcf36f62228b",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "fe71f5bf8e48d244792a912976a1185cb067fb2ba857af5a0dd7099703b0e1b4",
-  "output_hash": "ced795d931156896f1cb0cc2e8c70d1134172a4be406ce9d09dd2ba7c6e7ec0b",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "e84f581e5eec66a4d3bc67aafb58fcb9bc657e6b3a008043a81ba1b2c7caba76",
+  "output_hash": "241630717cd46259f7980dc8245675a5cac57261a06420a9ee7a51c6c3c17361",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -15490.21%)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -106.42%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 66,
-      "HIGH_VOLATILITY": 10
+      "CHOP_RANGING": 46,
+      "HIGH_VOLATILITY": 11
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -16199.01,
-      "HIGH_VOLATILITY": 708.8
+      "CHOP_RANGING": -90.24,
+      "HIGH_VOLATILITY": -16.18
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -15490.21
+    "total_oos_return_pct": -106.42
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:28:40.832553+00:00"
+  "created_at_utc": "2026-08-22T06:02:50.899217+00:00"
 }

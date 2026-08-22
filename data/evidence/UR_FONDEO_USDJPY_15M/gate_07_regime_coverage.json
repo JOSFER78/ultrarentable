@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g07",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "053e4926a2e70347d25819b44940f4f53d0db14f90cff00013f3acaefead93a2",
+  "strategy_snapshot_hash": "1abfa72745f05df69e6c830ae4ab1100d04da126bd9c07bfe239d12521ae004b",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "revalidated_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "aa0ad1bb4436d964660f259ac075009079bb34b74468ec04cbc414d978054992",
-  "output_hash": "9ff224e5aa57df3f104bd3a7851a44cac4b2e709b26c9a3cb4c5da05a6c373b0",
-  "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -3098.98%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "5d3b689032a8937bcf7f66998bb1948335b59b5b2e1610fbbeb8134136e1fc3c",
+  "output_hash": "1970e5fce37764fa28e9d6c11e6858530a3862adb24ab8fd46e306b37bf4206d",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +8.23%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 13,
+      "CHOP_RANGING": 8,
       "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -3193.41,
-      "HIGH_VOLATILITY": 94.43
+      "CHOP_RANGING": 4.99,
+      "HIGH_VOLATILITY": 3.24
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -3098.98
+    "total_oos_return_pct": 8.23
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:28:15.983047+00:00"
+  "created_at_utc": "2026-08-22T06:02:40.640574+00:00"
 }
