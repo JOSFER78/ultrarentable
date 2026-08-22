@@ -89,18 +89,19 @@ export default function SistemaSupervisorPage() {
     current_cell_description: "Minería 24/7 en BTC-USDT 15m (VOLATILITY_BREAKOUT)",
     current_action_label: "Evaluando combinaciones cuantitativas...",
     current_action_badge: "⚡ Minería 24/7 Activa",
-    total_candidates: 230,
+    total_candidates: 0,
     filter_funnel: {
-      total_evaluated: 610531,
-      passed_is: 255906,
-      passed_oos: 109674,
-      passed_wfo: 48744,
-      passed_monte_carlo: 21325,
-      approved: 230,
+      total_evaluated: 0,
+      passed_is: 0,
+      passed_oos: 0,
+      passed_wfo: 0,
+      passed_monte_carlo: 0,
+      approved: 0,
     },
     datasets_inventory: [],
     activity_feed: [],
   });
+  const [loadingTelemetry, setLoadingTelemetry] = useState<boolean>(true);
 
   const [firebaseStatus, setFirebaseStatus] = useState<any>({
     status: "HEALTHY",
@@ -128,6 +129,7 @@ export default function SistemaSupervisorPage() {
         const fbData = await fbRes.json();
         setFirebaseStatus(fbData);
       }
+      setLoadingTelemetry(false);
     } catch (err) {
       console.error("Error fetching live telemetry:", err);
     }
