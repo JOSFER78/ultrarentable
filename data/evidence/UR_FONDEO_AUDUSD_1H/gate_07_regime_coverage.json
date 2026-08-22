@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g07",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "0b917ee52615ee3cf7e6fa9732f85ec9a85578d2c0fb8e573432951213b5e087",
+  "strategy_snapshot_hash": "7366ee26f52ff2987ffc7fed4cbcb0fe294b13f45aa207b5bf1f7b4e9a0f75e1",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "0796c269facd8bc0f09aede821a3bfbf57e08aa0900151d8f6790e14219431e6",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "8eee85064e072c633f104787cd3efddc7c6ceacfe6664f3be7da4e0ba9da32ff",
-  "output_hash": "d58d672bc4f8b617915a1bd2630a094f1ed85a2723bbd9a1a11592cff818bc9e",
+  "input_hash": "4ef80ab8edeffda219b8afc5933e7ade53c8ea89c42bb6ce132284262db16ff7",
+  "output_hash": "0836e05e563cd584df41e0785e5bfac4108989987b0b6a9e96363f53a9ed1ab7",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -37.29%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.61%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -26,18 +26,18 @@
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
       "CHOP_RANGING": 51,
-      "HIGH_VOLATILITY": 13
+      "HIGH_VOLATILITY": 12
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -36.66,
-      "HIGH_VOLATILITY": -0.63
+      "CHOP_RANGING": -0.27,
+      "HIGH_VOLATILITY": -0.34
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -37.29
+    "total_oos_return_pct": -0.61
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:08:08.687945+00:00"
+  "created_at_utc": "2026-08-22T18:09:16.087812+00:00"
 }

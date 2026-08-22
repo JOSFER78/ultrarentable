@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_CL_1h_g07",
   "run_id": "run_UR_FONDEO_CL_1h",
   "strategy_id": "UR_FONDEO_CL_1h",
-  "strategy_snapshot_hash": "2ad4f314db246dc4a814ffaa649f6dd1d07abc28b8cc5e39ed6de88807a1b9a4",
+  "strategy_snapshot_hash": "c1d2e19fd85e46fc768435a903c0a2a8bc7150d0b041d129443304a930805b99",
   "dataset_id": "ds_trad_cl_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "bf4eff97263c12c6c261277bb37ba2b8b84e27184833648fb5400a6f4acad7f9",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "1b47d5949568ec8e8e756cbbcdef14fef961a94cc803c18117eac34dda578f40",
-  "output_hash": "1a22c7f2a6b6a1809e463c940a543c779935a003dfeaf1463c4597ea8bf2fa71",
+  "input_hash": "7dcac7f13dbfed7208ec972ef446ef42707ba8e053f2f682ab3a3f9dad6d4fa8",
+  "output_hash": "8fa8bc5eb3eff66485ae793cb9bce8a5e135f40778237ad36801ad846aa75fcc",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -1.30%)",
+  "score": 30.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, Retorno Total: -7535.61%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 649,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 421
     },
     "regime_trades_count": {
-      "BULL_TREND": 8,
+      "BULL_TREND": 12,
       "BEAR_TREND": 8,
-      "CHOP_RANGING": 9,
-      "HIGH_VOLATILITY": 8
+      "CHOP_RANGING": 8,
+      "HIGH_VOLATILITY": 7
     },
     "regime_return_pct": {
-      "BULL_TREND": -6.19,
-      "BEAR_TREND": 47.49,
-      "CHOP_RANGING": -5.34,
-      "HIGH_VOLATILITY": -37.26
+      "BULL_TREND": -13064.77,
+      "BEAR_TREND": 11394.44,
+      "CHOP_RANGING": 9251.24,
+      "HIGH_VOLATILITY": -15116.52
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -1.3
+    "total_oos_return_pct": -7535.61
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:14:09.638575+00:00"
+  "created_at_utc": "2026-08-22T18:11:55.453186+00:00"
 }

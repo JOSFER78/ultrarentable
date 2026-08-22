@@ -2,28 +2,23 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_15M_g08",
   "run_id": "run_UR_FONDEO_GBPUSD_15M",
   "strategy_id": "UR_FONDEO_GBPUSD_15M",
-  "strategy_snapshot_hash": "413779b094e2cc9de2446b9cf1d6e466b8901e63ab0555c7379c51a99cfe4ae9",
+  "strategy_snapshot_hash": "855ee9dd1df221ca4ebf77a91a80a34442a88356f7d235904aefe9d7e5cc629e",
   "dataset_id": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "a71187094aa428bcbf4af246123be644c4ab08ba756151d44e76749370ad0dc4",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "bd25e29e03f349014032e73597ab3b8cbfccc7ca80b0ff7903e650c6e8ea6711",
-  "output_hash": "3381cb1f38446fed41b3311d79c365bf4a4f02f347a8015b6d8c1d4d98adc2ca",
+  "input_hash": "81ed94855799d861135e8b6b6ec071b11142cb518c3c59a95566a294fce5d202",
+  "output_hash": "c12184583b344be8541a9b1a836761dd7b844e3883f2b9727b5ba8d1228a4787",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
+  "verdict": "RECHAZADO: Desviación estándar nula en retornos",
   "metrics": {
-    "raw_sharpe_ratio": -0.25,
-    "deflated_sharpe_probability_pct": 0.0,
-    "trials_penalized_count": 3,
-    "expected_max_sharpe_under_selection": 0.853,
-    "skewness": -3.281,
-    "kurtosis": 12.363,
-    "sample_trades_count": 16
+    "raw_sharpe": 0.0,
+    "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_15M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T17:20:47.766512+00:00"
+  "created_at_utc": "2026-08-22T18:09:04.125256+00:00"
 }

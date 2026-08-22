@@ -2,73 +2,73 @@
   "evidence_id": "ev_UR_ULTRA_ETHUSDT_1h_g04",
   "run_id": "run_UR_ULTRA_ETHUSDT_1h",
   "strategy_id": "UR_ULTRA_ETHUSDT_1h",
-  "strategy_snapshot_hash": "0e0b1247d3d92c23eae9455719da6584cc549f862e92e94ccc819758f58c4eed",
+  "strategy_snapshot_hash": "bd85f6939b2122fac12726f277296d8cfe11af8db1d47fd51efd48f2144eecd6",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "1f4155362aa6bd4fc98a58afd7a6051e9608a3e8d81de9db7ca55fa9d9f0afe7",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "6fcca42743f9b9210c6916da6fa03c1608756fe1e3e1594898539229d12d4a95",
-  "output_hash": "0ae4c857a37001fb5a7cadaa20bce29be06c053aab4dc6f8debffccce5a31739",
+  "input_hash": "fe85e12ab44cf575c4c0ec0f1f240d077d8c70791e62675fb6d51365c78b93fd",
+  "output_hash": "f40a720ea5154e2015b97838c048a6d42fe53bee1203d8f70fe5d3c37696fdeb",
   "status": "PASSED",
-  "score": 91.7,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 0.86, Consistencia: 100.0%)",
+  "score": 100.0,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 3.30, Consistencia: 100.0%)",
   "metrics": {
-    "total_trades_analyzed": 1564,
+    "total_trades_analyzed": 169,
     "windows_count": 5,
-    "walk_forward_efficiency": 0.86,
+    "walk_forward_efficiency": 3.3,
     "oos_consistency_pct": 100.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 218,
-        "oos_trades_count": 94,
-        "pf_is": 4.87,
-        "pf_oos": 4.36,
-        "net_profit_oos_usd": 38.14,
-        "wfe": 0.9
+        "is_trades_count": 23,
+        "oos_trades_count": 10,
+        "pf_is": 6.05,
+        "pf_oos": 40.96,
+        "net_profit_oos_usd": 37.66,
+        "wfe": 6.77
       },
       {
         "window_index": 2,
-        "is_trades_count": 218,
-        "oos_trades_count": 94,
-        "pf_is": 6.21,
-        "pf_oos": 4.35,
-        "net_profit_oos_usd": 25.79,
-        "wfe": 0.7
+        "is_trades_count": 23,
+        "oos_trades_count": 10,
+        "pf_is": 15.57,
+        "pf_oos": 36.84,
+        "net_profit_oos_usd": 40.78,
+        "wfe": 2.37
       },
       {
         "window_index": 3,
-        "is_trades_count": 218,
-        "oos_trades_count": 94,
-        "pf_is": 6.38,
-        "pf_oos": 4.77,
-        "net_profit_oos_usd": 37.38,
-        "wfe": 0.75
+        "is_trades_count": 23,
+        "oos_trades_count": 10,
+        "pf_is": 19.37,
+        "pf_oos": 1.56,
+        "net_profit_oos_usd": 0.59,
+        "wfe": 0.08
       },
       {
         "window_index": 4,
-        "is_trades_count": 218,
-        "oos_trades_count": 94,
-        "pf_is": 5.65,
-        "pf_oos": 4.47,
-        "net_profit_oos_usd": 32.51,
-        "wfe": 0.79
+        "is_trades_count": 23,
+        "oos_trades_count": 10,
+        "pf_is": 12.95,
+        "pf_oos": 8.16,
+        "net_profit_oos_usd": 10.81,
+        "wfe": 0.63
       },
       {
         "window_index": 5,
-        "is_trades_count": 218,
-        "oos_trades_count": 94,
-        "pf_is": 5.99,
-        "pf_oos": 7.02,
-        "net_profit_oos_usd": 62.12,
-        "wfe": 1.17
+        "is_trades_count": 23,
+        "oos_trades_count": 10,
+        "pf_is": 5.2,
+        "pf_oos": 34.54,
+        "net_profit_oos_usd": 41.13,
+        "wfe": 6.65
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETHUSDT_1h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T17:03:22.402845+00:00"
+  "created_at_utc": "2026-08-22T18:11:31.959846+00:00"
 }

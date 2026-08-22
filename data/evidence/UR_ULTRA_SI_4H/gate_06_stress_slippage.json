@@ -2,50 +2,22 @@
   "evidence_id": "ev_UR_ULTRA_SI_4H_g06",
   "run_id": "run_UR_ULTRA_SI_4H",
   "strategy_id": "UR_ULTRA_SI_4H",
-  "strategy_snapshot_hash": "1bcda7a049c81c71c8e5ca2f3ff83203f1bd11bb67f091df249c714cd5ab2d2e",
+  "strategy_snapshot_hash": "d5664ea5130da5638878ff1b692a0458b9a2a4a73f988aab2f3795f88b0f2942",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "dde4f6c8117b0430561a179978224b9c9aee60dc618d3d5d397db17732b95142",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "0d829169cb3d496c48c022b4c1e1fc8874528c79004c8cabfbd7f88c3d114bd3",
-  "output_hash": "9051d3b5a3d64f6eea7956b4a7bf17a6904474c56b16323b36e59a82fb17312c",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
+  "input_hash": "ebda57d5ae9c62b38f2dbacf90aa827819df96268066d5e308fabf4a58d97913",
+  "output_hash": "0d1282b4e5c953d875d05c1b1fde76dfe9e1864646f9d86e50b9fbae83d64919",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para prueba de estrés de fricción",
   "metrics": {
-    "scenarios": {
-      "Base": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 28.25,
-        "stressed_profit_factor": 2.29,
-        "survived": true
-      },
-      "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.07,
-        "stressed_net_pnl_usd": 27.27,
-        "stressed_profit_factor": 2.2,
-        "survived": true
-      },
-      "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.14,
-        "stressed_net_pnl_usd": 26.3,
-        "stressed_profit_factor": 2.12,
-        "survived": true
-      },
-      "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.28,
-        "stressed_net_pnl_usd": 24.35,
-        "stressed_profit_factor": 1.97,
-        "survived": true
-      }
-    },
-    "passed_scenarios_count": 4,
-    "min_required_scenarios": 1,
-    "base_friction_usd": 0.35
+    "stressed_scenarios": []
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T17:24:56.841708+00:00"
+  "created_at_utc": "2026-08-22T18:11:15.915235+00:00"
 }

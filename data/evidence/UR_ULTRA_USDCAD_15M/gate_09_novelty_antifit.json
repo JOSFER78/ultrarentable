@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15M_g09",
   "run_id": "run_UR_ULTRA_USDCAD_15M",
   "strategy_id": "UR_ULTRA_USDCAD_15M",
-  "strategy_snapshot_hash": "403b9ac5df6e7cf049db52119d19aaf68731a7708c1b7c0038f438892bfab6e4",
+  "strategy_snapshot_hash": "7e7e68b62aa8e045689eacb9f0fda2b24fb9f1a7d2c95e7e25cbce630335c67d",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "75804a650891b49aff173770295f6dccaa7d885a348142160ae721be5815fb29",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a3ad6eac17496afcbe97f6426776e6c0e872b43dd79def8440ad0ef5152afc49",
-  "output_hash": "1cfe884a03ad420505fba1e116d054382a941d14589f1db8599a5526b3e82558",
+  "input_hash": "89fcd810c944938121807f390e7f21996fcc01b3d0f6ce197adcfa0b9646ed55",
+  "output_hash": "15d9f1a567774b864ac5948a48b73a83163bf2b5628d2b9c48f5d45ea83432f7",
   "status": "PASSED",
-  "score": 88.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 25.4 trades/param, Estabilidad Vecindario: 80.4%, Re-backtest PFs: [0.07, 0.06, 0.14, 0.18])",
+  "score": 81.4,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 24.5 trades/param, Estabilidad Vecindario: 70.3%, Re-backtest PFs: [0.07, 0.06, 0.14, 0.18])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 25.4,
+    "degrees_of_freedom_ratio": 24.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 80.4,
+    "parameter_neighborhood_stability_pct": 70.3,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.07,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:19:49.433953+00:00"
+  "created_at_utc": "2026-08-22T18:09:39.093351+00:00"
 }

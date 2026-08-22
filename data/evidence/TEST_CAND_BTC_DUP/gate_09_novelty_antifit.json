@@ -2,22 +2,22 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g09",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "c9c3bacbf90dbbe0656bb1a815bf3b5c2c394930f48e6c6d3cda7b42e912aed1",
+  "strategy_snapshot_hash": "2029813644f8a289bcfa33789bfdaa4120b43f6787ece88922a5af33d21ba494",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "0b3904889d5ebb27661f59c54a3759108de9b7eb8af466260aacdfe8a733f614",
-  "output_hash": "7ab9cfec4b58d7c83130d470d342d3dbcce880982e4442b5bd11166af9a18a28",
+  "input_hash": "a3838599401c31050c4d93b68e0209af7da97dee7151eeb6d82e451b9697f333",
+  "output_hash": "5c3a569bc63f4bdfc6c22f09973cb6e9b1ab2f72ae5a93298b96156302ad8884",
   "status": "PASSED",
-  "score": 79.7,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 13.2 trades/param, Estabilidad Vecindario: 97.5%, Re-backtest PFs: [0.05, 0.19, 0.06, 0.09])",
+  "score": 75.3,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 10.5 trades/param, Estabilidad Vecindario: 97.5%, Re-backtest PFs: [0.05, 0.19, 0.06, 0.09])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 13.2,
+    "degrees_of_freedom_ratio": 10.5,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 97.5,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:23:22.662668+00:00"
+  "created_at_utc": "2026-08-22T18:11:25.758487+00:00"
 }

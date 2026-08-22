@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_CL_15M_g07",
   "run_id": "run_UR_FONDEO_CL_15M",
   "strategy_id": "UR_FONDEO_CL_15M",
-  "strategy_snapshot_hash": "aeb8c20b8e33523f120886dba4de800f551cf6fe5637f2f5361da1f4ea00f8ca",
+  "strategy_snapshot_hash": "579ec51dd006348392bd418d6030151dc7993dc7010ad56e4cadd6156606b2ad",
   "dataset_id": "ds_trad_cl_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "43183d38bceee493d016df4d408192ddd0e3fa95815c3850fcb2ddc2286316cd",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "01dba47cb8cd3050ec3cf694b0d87f8a17619cbe3fc61e8d4e29a4aa576d36a5",
-  "output_hash": "ae9ad398c6aadcd4e806aaea984527b30652c710a8313b7d89ba51d955d7d9b8",
+  "input_hash": "1d7b340403fa39f8a4e87156676087eba18042fd62b4c13b87376ae684ba33d9",
+  "output_hash": "3433389b1d44bd26fb127384d93c902ac944836ce2c43ec26941f773e410261e",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -22.06%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -9960.41%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 51,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -19.86,
-      "HIGH_VOLATILITY": -2.2
+      "CHOP_RANGING": -8932.27,
+      "HIGH_VOLATILITY": -1028.14
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -22.06
+    "total_oos_return_pct": -9960.41
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:20:41.159223+00:00"
+  "created_at_utc": "2026-08-22T18:12:01.802509+00:00"
 }

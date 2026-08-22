@@ -2,38 +2,38 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g04",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "c9c3bacbf90dbbe0656bb1a815bf3b5c2c394930f48e6c6d3cda7b42e912aed1",
+  "strategy_snapshot_hash": "2029813644f8a289bcfa33789bfdaa4120b43f6787ece88922a5af33d21ba494",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "7a2149558228097aa73e49d680564e7fd75c744c69311c33bdb20242e6f323e0",
-  "output_hash": "b4336b82d326ca8aa67bb2d231064e21c0bc898f481713e24fa47b6f75b4fe20",
-  "status": "PASSED",
-  "score": 99.2,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.39, Consistencia: 40.0%)",
+  "input_hash": "324c09d406abd1c902a8d127bba4e64b683d8a3d23a84efa0242a14f1982a07c",
+  "output_hash": "80d465043681c56bda13e451041f7a1f3e482162aa002f4961499135c3fccf14",
+  "status": "FAILED",
+  "score": 100.0,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 25.69 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 52,
+    "total_trades_analyzed": 46,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.39,
-    "oos_consistency_pct": 40.0,
+    "walk_forward_efficiency": 25.69,
+    "oos_consistency_pct": 20.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 7,
+        "is_trades_count": 6,
         "oos_trades_count": 3,
-        "pf_is": 0.49,
+        "pf_is": 0.57,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.3,
+        "net_profit_oos_usd": -0.41,
         "wfe": 0.0
       },
       {
         "window_index": 2,
-        "is_trades_count": 7,
+        "is_trades_count": 6,
         "oos_trades_count": 3,
         "pf_is": 0.0,
         "pf_oos": 0.0,
@@ -42,33 +42,33 @@
       },
       {
         "window_index": 3,
-        "is_trades_count": 7,
+        "is_trades_count": 6,
         "oos_trades_count": 3,
         "pf_is": 0.0,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.47,
+        "net_profit_oos_usd": -0.4,
         "wfe": 0.0
       },
       {
         "window_index": 4,
-        "is_trades_count": 7,
+        "is_trades_count": 6,
         "oos_trades_count": 3,
-        "pf_is": 0.42,
-        "pf_oos": 1.55,
-        "net_profit_oos_usd": 0.21,
-        "wfe": 3.73
+        "pf_is": 0.0,
+        "pf_oos": 12.85,
+        "net_profit_oos_usd": 0.77,
+        "wfe": 128.46
       },
       {
         "window_index": 5,
-        "is_trades_count": 7,
+        "is_trades_count": 6,
         "oos_trades_count": 3,
-        "pf_is": 1.06,
-        "pf_oos": 3.39,
-        "net_profit_oos_usd": 0.87,
-        "wfe": 3.21
+        "pf_is": 3.81,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.52,
+        "wfe": 0.0
       }
     ]
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T17:23:20.699941+00:00"
+  "created_at_utc": "2026-08-22T18:11:25.415292+00:00"
 }

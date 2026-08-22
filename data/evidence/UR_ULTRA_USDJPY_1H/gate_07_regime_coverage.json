@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g07",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "2700759609383d4098849f4ce79ebf1257d54b5ff75d6f99114de6630a4f2429",
+  "strategy_snapshot_hash": "ad5d9db0ca527b29395c0507870c2cee57777cdbd7e5ba9a12c381799cd89020",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4ff709fa43e7cc03ac822633045eb5719d1b361459beeeb851afe1fea61bb18c",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "168a4c610d14ef5aa0dd3be15ff2aadacd5da0813c511c01d4cf6c747381482c",
-  "output_hash": "8abb9533f11d190ee5ccc2153bce2dd92e013af33429e55404356401cb9649f9",
+  "input_hash": "7d9ee12548707506b0f8549255e07943f9d03c5125771e329aa996e50c699670",
+  "output_hash": "7a6d6dffa451328160eb705eefed3f63a1dfc3e17b12aadbde0ab829de33063e",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -487.18%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -26.85%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 129,
-      "HIGH_VOLATILITY": 28
+      "CHOP_RANGING": 34,
+      "HIGH_VOLATILITY": 9
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -407.22,
-      "HIGH_VOLATILITY": -79.96
+      "CHOP_RANGING": 35.87,
+      "HIGH_VOLATILITY": -62.72
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -487.18
+    "total_oos_return_pct": -26.85
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:16:52.792542+00:00"
+  "created_at_utc": "2026-08-22T18:09:41.233579+00:00"
 }

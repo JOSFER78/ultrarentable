@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_CL_5M_g07",
   "run_id": "run_UR_FONDEO_CL_5M",
   "strategy_id": "UR_FONDEO_CL_5M",
-  "strategy_snapshot_hash": "80a823b2710b949bcf43a3d192cae34fa45a09b2f882bfb7892466535c81185d",
+  "strategy_snapshot_hash": "b09a68109d39d080dced21ff874a9c06c52d301758468a112bbe9084a30dc9f8",
   "dataset_id": "ds_trad_cl_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "6e8121e904629e44f41c59ccc730c7f369d72074d88378c5e98a4940049f605b",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "b31940336fea8f251c92f756466191264bdbafa53204a7fd9b6feec1da39974b",
-  "output_hash": "fe3ac70dcdd9b9cb0f668210fb490776cbf4dcd96fc8149408e3eccda44eb071",
+  "input_hash": "9ab5df4e3c1692b403a75c3f9d12b31dd12ec1c4dcb7b450d0a190b79ed7d56c",
+  "output_hash": "afe5ad8e3b23325893860812f7403825859193ff5bce53f2e4b047658ee54e7e",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -21.01%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -7556.73%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 4,
@@ -26,18 +26,18 @@
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
       "CHOP_RANGING": 24,
-      "HIGH_VOLATILITY": 8
+      "HIGH_VOLATILITY": 9
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -12.91,
-      "HIGH_VOLATILITY": -8.1
+      "CHOP_RANGING": -3938.95,
+      "HIGH_VOLATILITY": -3617.78
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -21.01
+    "total_oos_return_pct": -7556.73
   },
   "artifact_path": "data/evidence/UR_FONDEO_CL_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:14:50.082103+00:00"
+  "created_at_utc": "2026-08-22T18:11:57.136038+00:00"
 }

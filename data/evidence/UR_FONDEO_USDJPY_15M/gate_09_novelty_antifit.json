@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g09",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "4c1afc35737d484cfac4a3debe5f7a332ae711f607a8f140717f89a2130f8e44",
+  "strategy_snapshot_hash": "c29ba31ce528cd6fd20083be383880753a3c2c5ceb54304a367c09a7a51d011e",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "9c210ff108bbd9884508aa7c791aa9feecc710ab936cb1b2e9c4fdf040f5a3dd",
-  "output_hash": "12aefa073af18f361528f1862005a9702bec6b8cb14fe216e893dbbf5b922d3a",
+  "input_hash": "0e99fe074f8f93028d50fd53b275db901b5fe442e6cbdb24690f94dd1aa83f27",
+  "output_hash": "c3a8f3f6eba89d63f56d02eea848a923af7f62c38f864895a6c7d004dd96d482",
   "status": "FAILED",
-  "score": 19.4,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 8.8 o Estabilidad 48.4% < 60.0%)",
+  "score": 25.2,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 8.1 o Estabilidad 63.1% < 60.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 8.8,
+    "degrees_of_freedom_ratio": 8.1,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 48.4,
+    "parameter_neighborhood_stability_pct": 63.1,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.69,
-      0.72,
-      1.51,
-      0.2
+      0.75,
+      0.77,
+      1.32,
+      0.19
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:08:17.089660+00:00"
+  "created_at_utc": "2026-08-22T18:09:27.121969+00:00"
 }

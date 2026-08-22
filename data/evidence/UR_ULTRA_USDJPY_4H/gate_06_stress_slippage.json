@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_4H_g06",
   "run_id": "run_UR_ULTRA_USDJPY_4H",
   "strategy_id": "UR_ULTRA_USDJPY_4H",
-  "strategy_snapshot_hash": "95655e211e1fc889dfc8cc42161396cb6a854366c20792ec4291ba7ff44f28c3",
+  "strategy_snapshot_hash": "c82f7d39cf8fd4db33ec20fc5c832d649b502068cea99ccfe55cb2b7882ac1a7",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "f3d314f1f902530723bb91acdb432b641b662b65666ed995ba01d7928dc5df2e",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "227f6bac6c3125f1e44ef5623dbdb503cc6cf1ce9ad7cd9fb491a726672b19d0",
-  "output_hash": "c4bd378860b0c038abc8c4500b7d865cffb7dc17ac850a7f98db82a984d46cf3",
+  "input_hash": "c8355f894cd32185e570c84a6201571f3213d6c2532de2cc4a73beed760c1caf",
+  "output_hash": "78d1f9df12b3d9edd1c9222d1f854094afe6961da2b86a41f58df8337fe5ea49",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.55,
-        "stressed_profit_factor": 0.48,
+        "stressed_net_pnl_usd": -0.23,
+        "stressed_profit_factor": 0.78,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.63,
-        "stressed_profit_factor": 0.48,
+        "stressed_net_pnl_usd": -0.25,
+        "stressed_profit_factor": 0.77,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.72,
-        "stressed_profit_factor": 0.47,
+        "stressed_net_pnl_usd": -0.28,
+        "stressed_profit_factor": 0.75,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.86,
-        "stressed_profit_factor": 0.45,
+        "stressed_net_pnl_usd": -0.31,
+        "stressed_profit_factor": 0.72,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T17:22:25.335952+00:00"
+  "created_at_utc": "2026-08-22T18:09:35.005554+00:00"
 }

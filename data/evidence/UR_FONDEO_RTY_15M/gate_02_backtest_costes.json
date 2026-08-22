@@ -2,30 +2,22 @@
   "evidence_id": "ev_UR_FONDEO_RTY_15M_g02",
   "run_id": "run_UR_FONDEO_RTY_15M",
   "strategy_id": "UR_FONDEO_RTY_15M",
-  "strategy_snapshot_hash": "10b56db01bd23dc416db4fd0b507f6eac8e56e9607ea2cbdb712bbe5570bfbba",
+  "strategy_snapshot_hash": "77718f1674588ebfdafe54f01f615799e96d2567f66a234dbac0a4ec91faf5ec",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "df39f580a7b6030634929d44d890723a0b8597b9fbd1563b850042663c1c0d85",
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "0f48caeec36f926c25e4e02bc8747a395e06c9abf944f7ca830406f0d8df459d",
-  "output_hash": "aa8b6c41cd18bf5b7e5e0d488f5158a75ae4b873addfcf24b77747f5534253f9",
+  "input_hash": "68f065b5395680a24e3cb72f7989cf804e2e395daa512272ea681fbcca820fde",
+  "output_hash": "cc6fcb36a4ef8b1e7cc4d39c8beb0ceca4d5700ce231235745cf116ae1b1b92f",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.97 < 1.10",
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "INDICES",
-    "canonical_name": "E-mini Russell 2000",
-    "exchange": "CME Globex",
-    "gross_pnl_usd": 110.0,
-    "total_fees_usd": 50.0,
-    "total_slippage_usd": 100.0,
-    "net_pnl_usd": -40.0,
-    "net_profit_factor": 0.97,
-    "drag_cost_pct": 136.36
+    "trades_count": 8
   },
   "artifact_path": "data/evidence/UR_FONDEO_RTY_15M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T17:17:21.864623+00:00"
+  "created_at_utc": "2026-08-22T18:08:58.739006+00:00"
 }

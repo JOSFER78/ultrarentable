@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_4H_g07",
   "run_id": "run_UR_ULTRA_SUI_USDT_4H",
   "strategy_id": "UR_ULTRA_SUI_USDT_4H",
-  "strategy_snapshot_hash": "b59c3706cb3038594a9bff48bcb1eb57fd1b13044ecc930b89150742626486ae",
+  "strategy_snapshot_hash": "ecb3834a8fa8dd9d63bf65fe2e4912a76ab350d3fafac76c3cb1da47c81204f6",
   "dataset_id": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4a408a645da2d8005cafc980d1bb2b9b477a4391f0b706b8999a8551da31c9d0",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "8758036aedc3dc0ad92f88afb11ff18efd4e8a8330b15b88040c765c5075fff1",
-  "output_hash": "2c2ccc30fd4212d9816efdf5ca05fa396bef2b853740e791b23522e408bd8201",
+  "input_hash": "5a76f306e964412e08145941f6d1ac0427be95ff8d7abf802682b125423225fb",
+  "output_hash": "94d8ccad6a7224934e72fa669cfeec547751e0b52059ab9f5a9443416cbcc73d",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8070.26%)",
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +106575928260620544.00%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 337,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 269
     },
     "regime_trades_count": {
-      "BULL_TREND": 63,
-      "BEAR_TREND": 73,
-      "CHOP_RANGING": 51,
-      "HIGH_VOLATILITY": 61
+      "BULL_TREND": 64,
+      "BEAR_TREND": 72,
+      "CHOP_RANGING": 50,
+      "HIGH_VOLATILITY": 65
     },
     "regime_return_pct": {
-      "BULL_TREND": 2613.32,
-      "BEAR_TREND": 2212.62,
-      "CHOP_RANGING": 750.39,
-      "HIGH_VOLATILITY": 2493.93
+      "BULL_TREND": -3343975281878834.0,
+      "BEAR_TREND": 1.8979466586730896e+16,
+      "CHOP_RANGING": 8.914648653994571e+16,
+      "HIGH_VOLATILITY": 1793950415822772.0
     },
-    "regimes_profitable_count": 4,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 8070.26
+    "total_oos_return_pct": 1.0657592826062054e+17
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:31:55.157528+00:00"
+  "created_at_utc": "2026-08-22T18:08:26.498921+00:00"
 }

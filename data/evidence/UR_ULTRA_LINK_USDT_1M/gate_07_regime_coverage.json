@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_1M",
   "strategy_id": "UR_ULTRA_LINK_USDT_1M",
-  "strategy_snapshot_hash": "075bcfb1c2029144deb9a78a73512d295c4595248d00a4398a64f6321f3005bb",
+  "strategy_snapshot_hash": "dcac3c3d42f0d96df2611afca2914a11e8393de779adfc485d456f4fb6489e3f",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "050eb395e423bcbe1b88d7fdc20d4395df27745174d0f7bc962a7f26d339b307",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "0ce8711d542a5f9c811ee4721bff10a130d6b14b1f0a86a7f67fb0dcf8979d27",
-  "output_hash": "28d72c752d3d6f3eb8b12239efadca62f93d60686156c9bcc47363226de4c5db",
+  "input_hash": "68402c70bfb0fab0f1f4a1ba516302199a9adf5b1593220913fa6d4cff6819c6",
+  "output_hash": "5ffe0103bb825b70ec5a27abe191b8baba0a2f50eda7ff80132ccb971a5f7c08",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -476.18%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -74.67%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 50,
-      "HIGH_VOLATILITY": 20
+      "CHOP_RANGING": 47,
+      "HIGH_VOLATILITY": 8
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -320.28,
-      "HIGH_VOLATILITY": -155.9
+      "CHOP_RANGING": -65.02,
+      "HIGH_VOLATILITY": -9.65
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -476.18
+    "total_oos_return_pct": -74.67
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:22:34.796016+00:00"
+  "created_at_utc": "2026-08-22T18:10:37.773015+00:00"
 }

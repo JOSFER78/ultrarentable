@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_4H_g09",
   "run_id": "run_UR_FONDEO_AUDUSD_4H",
   "strategy_id": "UR_FONDEO_AUDUSD_4H",
-  "strategy_snapshot_hash": "04f28c43edbb971f1370cb2068cb688bdcb20d33d4a16b6348aad86e59e8f5bb",
+  "strategy_snapshot_hash": "c6cd6a220d7ebc554cfa5abe80fe6b2fb4de42580d8922fe372cda1759390d7d",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "e08297ffabee22cf266b06618bad1ac33472470b1c8ae8eac2dd337c55917a69",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "0f6162891cd5cc76c3ec145190d959c3c309f939f8f13e3d120d9ca5d6fef676",
-  "output_hash": "f8c4b595bebb62909a5fe262359c86363444851be7b241c9ae91f47e88744d24",
+  "input_hash": "c3238220b2aa320bdd51f6597a0b3159a159e66627e08df8fb9194be7f98c62a",
+  "output_hash": "832fa8061034a25b48cfcf7fc69c80c1ca8bf46956247eaf73e3b1330d5c81d3",
   "status": "FAILED",
-  "score": 66.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 6.6 o Estabilidad 165.0% < 60.0%)",
+  "score": 100.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.0 o Estabilidad 271.4% < 60.0%)",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 6.6,
+    "parameters_count": 7,
+    "degrees_of_freedom_ratio": 7.0,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 165.0,
+    "parameter_neighborhood_stability_pct": 271.4,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.39,
-      0.31,
-      0.14,
-      0.15
+      0.49,
+      0.29,
+      0.15,
+      0.59
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:19:28.752245+00:00"
+  "created_at_utc": "2026-08-22T18:09:11.213370+00:00"
 }

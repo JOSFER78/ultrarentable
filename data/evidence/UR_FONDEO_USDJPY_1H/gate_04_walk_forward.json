@@ -2,73 +2,73 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g04",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "15ce99dffbbe6404067a39db63d646eb5177efcc908152e66db73dee970aed70",
+  "strategy_snapshot_hash": "d7b908ff1ccb6c7f6689ea56eed1440923af41951a469317f73249ec1e4508b2",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4ff709fa43e7cc03ac822633045eb5719d1b361459beeeb851afe1fea61bb18c",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "611011429af342330f9a1d665297188ef4e3f2c651cc4577de1c8225b13f2b86",
-  "output_hash": "bfba639552e855b92b4b98243a58fb025c40a7e4fbdbbac541318b75cb9f7626",
+  "input_hash": "bdaede1d9c9234668330804b05f2eb3127b1ce3dc34e8c4e804e414e00c30daa",
+  "output_hash": "900ba1a73e809d1d8ae4cce9347ce3dbee519c6292bc807bbab79a27e71ae736",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.30 < 0.40 ó Consistencia 0.0% < 40%)",
+  "score": 16.1,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.32 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 136,
+    "total_trades_analyzed": 213,
     "windows_count": 5,
-    "walk_forward_efficiency": 0.3,
-    "oos_consistency_pct": 0.0,
+    "walk_forward_efficiency": 0.32,
+    "oos_consistency_pct": 20.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 18,
-        "oos_trades_count": 9,
-        "pf_is": 0.18,
-        "pf_oos": 0.02,
+        "is_trades_count": 29,
+        "oos_trades_count": 13,
+        "pf_is": 0.12,
+        "pf_oos": 0.01,
         "net_profit_oos_usd": -0.0,
-        "wfe": 0.12
+        "wfe": 0.07
       },
       {
         "window_index": 2,
-        "is_trades_count": 18,
-        "oos_trades_count": 9,
-        "pf_is": 0.08,
-        "pf_oos": 0.05,
+        "is_trades_count": 29,
+        "oos_trades_count": 13,
+        "pf_is": 0.02,
+        "pf_oos": 0.01,
         "net_profit_oos_usd": -0.0,
-        "wfe": 0.46
+        "wfe": 0.11
       },
       {
         "window_index": 3,
-        "is_trades_count": 18,
-        "oos_trades_count": 9,
-        "pf_is": 0.08,
-        "pf_oos": 0.02,
-        "net_profit_oos_usd": -0.0,
-        "wfe": 0.22
+        "is_trades_count": 29,
+        "oos_trades_count": 13,
+        "pf_is": 0.03,
+        "pf_oos": 0.07,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.69
       },
       {
         "window_index": 4,
-        "is_trades_count": 18,
-        "oos_trades_count": 9,
-        "pf_is": 0.07,
-        "pf_oos": 0.03,
+        "is_trades_count": 29,
+        "oos_trades_count": 13,
+        "pf_is": 0.11,
+        "pf_oos": 0.04,
         "net_profit_oos_usd": -0.0,
-        "wfe": 0.31
+        "wfe": 0.37
       },
       {
         "window_index": 5,
-        "is_trades_count": 18,
-        "oos_trades_count": 9,
-        "pf_is": 0.09,
+        "is_trades_count": 29,
+        "oos_trades_count": 13,
+        "pf_is": 0.08,
         "pf_oos": 0.04,
         "net_profit_oos_usd": -0.0,
-        "wfe": 0.39
+        "wfe": 0.37
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T17:10:31.628765+00:00"
+  "created_at_utc": "2026-08-22T18:09:30.923775+00:00"
 }

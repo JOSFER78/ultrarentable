@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_5M",
   "strategy_id": "UR_ULTRA_BTC_USDT_5M",
-  "strategy_snapshot_hash": "9b850926c494a216e274cb7b703d10bcb9639f36c0f51403ccf374e8929a3ce2",
+  "strategy_snapshot_hash": "c22f86f196b1bf4455b09063cf0d841e1fc8604a3b06b698b7800a83cc81472b",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5f56139e584d83b32a21cb0a6ad022d26546116534c40eacc7222db2bdced7bd",
-  "output_hash": "9374cbaaecbb56798e390dc1cab7683ec877d411643e235527b0c4ed1bbb83db",
+  "input_hash": "3adec487cfed96d6e34e76d6f7e7ab771d2ba920c33ed509d052a5a51c1910fe",
+  "output_hash": "e5c20fda7df0f339c083f5ecdd0888a85db70dda2d933d658b373288fcbdedcb",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -391.12%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -66.82%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 39,
-      "HIGH_VOLATILITY": 15
+      "CHOP_RANGING": 32,
+      "HIGH_VOLATILITY": 6
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -255.0,
-      "HIGH_VOLATILITY": -136.12
+      "CHOP_RANGING": -49.44,
+      "HIGH_VOLATILITY": -17.38
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -391.12
+    "total_oos_return_pct": -66.82
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:23:12.177978+00:00"
+  "created_at_utc": "2026-08-22T18:10:25.274000+00:00"
 }

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1H_g09",
   "run_id": "run_UR_FONDEO_USDJPY_1H",
   "strategy_id": "UR_FONDEO_USDJPY_1H",
-  "strategy_snapshot_hash": "15ce99dffbbe6404067a39db63d646eb5177efcc908152e66db73dee970aed70",
+  "strategy_snapshot_hash": "d7b908ff1ccb6c7f6689ea56eed1440923af41951a469317f73249ec1e4508b2",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4ff709fa43e7cc03ac822633045eb5719d1b361459beeeb851afe1fea61bb18c",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "1711bfe52579f9a2774a872b17011be7398be3d0b79005e2822a325589a09908",
-  "output_hash": "b10d86e75d351310386118e89864b4eb2f4af14f9ec282af549a851e7e09c447",
+  "input_hash": "c893fef3844907842dc548f45eff22e978cbb577d1ad466823f5e4a6857c9d3e",
+  "output_hash": "34616f1163eee671bed73c71b5bd196603f9648e1dd62b184d586fa43301160b",
   "status": "PASSED",
-  "score": 78.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 23.5 trades/param, Estabilidad Vecindario: 67.3%, Re-backtest PFs: [0.54, 0.52, 0.33, 0.44])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 30.4 trades/param, Estabilidad Vecindario: 100.5%, Re-backtest PFs: [0.53, 0.43, 0.62, 0.39])",
   "metrics": {
-    "parameters_count": 8,
-    "degrees_of_freedom_ratio": 23.5,
+    "parameters_count": 7,
+    "degrees_of_freedom_ratio": 30.4,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 67.3,
+    "parameter_neighborhood_stability_pct": 100.5,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.54,
-      0.52,
-      0.33,
-      0.44
+      0.53,
+      0.43,
+      0.62,
+      0.39
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:10:33.918631+00:00"
+  "created_at_utc": "2026-08-22T18:09:31.651670+00:00"
 }

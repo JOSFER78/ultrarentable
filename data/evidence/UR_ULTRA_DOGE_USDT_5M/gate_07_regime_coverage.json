@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_DOGE_USDT_5M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_5M",
-  "strategy_snapshot_hash": "7744a225c567bc8806e1b48a73342f6b1587ee25f7902b8e30a9825abee3e16b",
+  "strategy_snapshot_hash": "40909d1bc5569c1f25cc899d9a41b97f751452b39c57fabe40c543f62557fac6",
   "dataset_id": "ds_binance_dogeusdt_5m_1784389200000_1787088900000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4444e251fd4a4ae2b2bc1b869202436c814529915f5e5d9a77b32210a250395e",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a882a0db11597f90722306c9141319a1486f90b9e8ad099fdfd3e523c17e6f68",
-  "output_hash": "0a566c663938f905307b41a0653736bdc3d1abcc1726a4abde1ed13e01938049",
+  "input_hash": "a50578bc0cecc855de5ef9c8d3755a24850514c0d0edf372217797417ead1910",
+  "output_hash": "305f6c6e6e2c6fe15685f4d2607d05a69d7223e5c4ce04a0d67d7c48c21c52be",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -404.28%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -24.11%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 67,
-      "HIGH_VOLATILITY": 27
+      "CHOP_RANGING": 62,
+      "HIGH_VOLATILITY": 15
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -217.49,
-      "HIGH_VOLATILITY": -186.79
+      "CHOP_RANGING": 119.87,
+      "HIGH_VOLATILITY": -143.98
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -404.28
+    "total_oos_return_pct": -24.11
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:14:22.798051+00:00"
+  "created_at_utc": "2026-08-22T18:10:32.508463+00:00"
 }

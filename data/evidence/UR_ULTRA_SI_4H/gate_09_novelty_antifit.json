@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_SI_4H_g09",
   "run_id": "run_UR_ULTRA_SI_4H",
   "strategy_id": "UR_ULTRA_SI_4H",
-  "strategy_snapshot_hash": "1bcda7a049c81c71c8e5ca2f3ff83203f1bd11bb67f091df249c714cd5ab2d2e",
+  "strategy_snapshot_hash": "d5664ea5130da5638878ff1b692a0458b9a2a4a73f988aab2f3795f88b0f2942",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "dde4f6c8117b0430561a179978224b9c9aee60dc618d3d5d397db17732b95142",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "94280bb6e88c40ed3e0f3d8174e7c50c831b936254512037195e62da6731c847",
-  "output_hash": "a7ed6551474f61f279a749dda5082322a78051a0982781f63472a510764f4e66",
+  "input_hash": "0def3967e9d35d0b943402ed54565b99be834b1303c4d107bd213a2c505aa7e4",
+  "output_hash": "bb7db3745567d7ea8a3c975cbe7f3ecfb2f2f51b35b8b62e720bc9e4bbc83492",
   "status": "FAILED",
-  "score": 45.7,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 2.4 o Estabilidad 114.1% < 50.0%)",
+  "score": 40.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 0.2 o Estabilidad 100.0% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 2.4,
+    "degrees_of_freedom_ratio": 0.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 114.1,
+    "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.0,
-      1.13,
       0.0,
-      0.97
+      0.84,
+      0.91
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:24:57.348811+00:00"
+  "created_at_utc": "2026-08-22T18:11:16.023358+00:00"
 }

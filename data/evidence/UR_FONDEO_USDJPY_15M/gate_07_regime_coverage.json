@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g07",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "4c1afc35737d484cfac4a3debe5f7a332ae711f607a8f140717f89a2130f8e44",
+  "strategy_snapshot_hash": "c29ba31ce528cd6fd20083be383880753a3c2c5ceb54304a367c09a7a51d011e",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "2e55b51e656c9198c9554e922610672920867212bbd6e3793276e1b81fd7f967",
-  "output_hash": "954774fbd9e4bd5f574600fe48ff219f7d9fecd39eedfaa738ab3a9c1e274b26",
+  "input_hash": "6499d189643db02106f6dd2ce7f38dd9439c0372623d1453574b51c853d8d5bc",
+  "output_hash": "fe8bca2fa77fa27adf17f584d8cb0a087efd356cb304996324886020f2e3974f",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +0.02%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +3.68%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 0.01,
-      "HIGH_VOLATILITY": 0.01
+      "CHOP_RANGING": -0.13,
+      "HIGH_VOLATILITY": 3.81
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 0.02
+    "total_oos_return_pct": 3.68
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T17:08:16.581182+00:00"
+  "created_at_utc": "2026-08-22T18:09:26.865640+00:00"
 }

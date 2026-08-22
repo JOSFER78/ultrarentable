@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_1H_g06",
   "run_id": "run_UR_FONDEO_USDCHF_1H",
   "strategy_id": "UR_FONDEO_USDCHF_1H",
-  "strategy_snapshot_hash": "76da94446f10a555a30a8d33de5381bfc0da4e55ad522013821dcc2b2dc8963d",
+  "strategy_snapshot_hash": "3c36747dc01136535aba0f930dbb901f93d817eaf32a10706a6db58b1388a8b3",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "8182d83d5859cbf72d177be07a85df1ea5f407eb91e23d6ed7e8fca901ce2bb4",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c96b55364ff91c30fab1fcbfe3f468e6970262c971c151e4f7e8e4dda0d9450e",
-  "output_hash": "1402173a6617368750b579c1831cdf9debe0e73960d4a94bac7d9ec92a861ddd",
+  "input_hash": "c0a66aaefefd52586b0fd785a49501cc811eb800bce73d8332f15a1582757684",
+  "output_hash": "477e731f7940489711aa4ab0b15ea52a4caa19eddcdd93f84e6d014fc1d6c399",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,7 +19,7 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.0,
+        "stressed_net_pnl_usd": -0.01,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
@@ -37,7 +37,7 @@
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.02,
+        "stressed_net_pnl_usd": -0.03,
         "stressed_profit_factor": 0.0,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T17:07:54.521178+00:00"
+  "created_at_utc": "2026-08-22T18:09:17.836181+00:00"
 }

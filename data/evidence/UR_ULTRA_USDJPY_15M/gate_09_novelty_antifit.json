@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_15M_g09",
   "run_id": "run_UR_ULTRA_USDJPY_15M",
   "strategy_id": "UR_ULTRA_USDJPY_15M",
-  "strategy_snapshot_hash": "1394f150860e034aebb042faacc5818193a34c87963899eb385bc11e58f38ec3",
+  "strategy_snapshot_hash": "283ce3a2cf08e69485a5ab0bad1d4a89bab13f3687e3a46fc24d9d94da7537c0",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "1ab79d08106dc8e6a7367dfa624ee578fb33c1f7314b307114a2c5bcc5efe187",
-  "output_hash": "6fececa880b219af0221f65f698c32cca9e2a39f9c348116e48f02e30f35691f",
+  "input_hash": "52378eb625b492a8bdda64e60f2a0d8950dce506c121cb665de8e0ac83ca8d4c",
+  "output_hash": "4dd5cd5e24eba6ed9cf4888cae3db21f7b7309cc11a7478e7adb31dc9695c85c",
   "status": "PASSED",
-  "score": 98.6,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 24.1 trades/param, Estabilidad Vecindario: 107.1%, Re-backtest PFs: [0.21, 0.24, 0.38, 0.37])",
+  "score": 96.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 22.5 trades/param, Estabilidad Vecindario: 111.1%, Re-backtest PFs: [0.21, 0.24, 0.38, 0.37])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 24.1,
+    "degrees_of_freedom_ratio": 22.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 107.1,
+    "parameter_neighborhood_stability_pct": 111.1,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.21,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T17:15:58.447927+00:00"
+  "created_at_utc": "2026-08-22T18:09:39.764329+00:00"
 }

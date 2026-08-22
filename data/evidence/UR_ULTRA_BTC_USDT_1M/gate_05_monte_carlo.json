@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1M_g05",
   "run_id": "run_UR_ULTRA_BTC_USDT_1M",
   "strategy_id": "UR_ULTRA_BTC_USDT_1M",
-  "strategy_snapshot_hash": "f7f537770e5b3a73c59768e418b6e11c8f9bbc06f2c8813a6606a0d56e3a2a97",
+  "strategy_snapshot_hash": "6c16266550c1e6dc1e6a10b58c22eec4e1eb98c8b33c24f676ff102ecc09afa0",
   "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "2653252ef614a71230d7ca14340110e3874027379b353fad2f68bf9c5f5a1db9",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "0a7bbfe6ffe41ceba1d2d7e4b875e8c31ab40d80de1eef39826ae57e6c8cdc8e",
-  "output_hash": "d9a2b5ed713d0d3355871df42d8ff9ac8340ce1d16cdf3602c4b72769bdfb7c3",
+  "input_hash": "185988460e5a2be9cd231fe54ac5f2abee98a2c25b1e318dd83a0f739ee288b9",
+  "output_hash": "368c04d0476bf64e7bbe95db693bd410a069c44d2b996264cefcccf7da2dcf3d",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 99.5%)",
+  "verdict": "FALLO: Riesgo Ruina 99.9% > 1.0% (DD 95% = 98.4%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 100.0,
-    "drawdown_median_pct": 99.0,
-    "drawdown_95th_percentile_pct": 99.5,
-    "max_simulated_drawdown_pct": 99.8
+    "ruin_probability_pct": 99.9,
+    "drawdown_median_pct": 97.1,
+    "drawdown_95th_percentile_pct": 98.4,
+    "max_simulated_drawdown_pct": 99.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T17:24:12.807339+00:00"
+  "created_at_utc": "2026-08-22T18:10:24.301694+00:00"
 }
