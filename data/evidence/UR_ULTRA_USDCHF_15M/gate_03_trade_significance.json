@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "d7d2889668aa77c089db5923e48991955154bdb3211ff9f8c706a38d6b22bd48",
-  "output_hash": "a070c65975af22ef5b32d83c798e37707970b99454079ca5a62fe0233e00f1f9",
-  "status": "FAILED",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "833bd0ce5058a802f2755a280a5d8abd314a7453875b60f7b5313b6e77b18e54",
+  "output_hash": "86735495fb544372021ef07f552d00df1086ae2f275a297f8bb8a5aa090e85fa",
+  "status": "PASSED",
   "score": 100.0,
-  "verdict": "FALLO: Muestra insuficiente (29 IS < 15 ó 21 OOS < 10)",
+  "verdict": "PASSED: Muestra robusta (100 IS / 33 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 29,
-    "trades_oos": 21,
+    "trades_is": 100,
+    "trades_oos": 33,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:22:18.971292+00:00"
+  "created_at_utc": "2026-08-22T06:06:47.607620+00:00"
 }

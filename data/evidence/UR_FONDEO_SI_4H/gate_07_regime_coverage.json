@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_SI_4H_g07",
   "run_id": "run_UR_FONDEO_SI_4H",
   "strategy_id": "UR_FONDEO_SI_4H",
-  "strategy_snapshot_hash": "98aaca2e14f9ecdd8260635741fb94022b6ea5d4c6d6488adad9cd2cb7a68330",
+  "strategy_snapshot_hash": "abcd1d334a89a7f54fd5b4c89c1a67927ba9923db6001567ec1d58cc6338ef3d",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "8739a676f83ec28abd1577376fbdf5246e415ba6c10017646f0f8d5ed533e602",
-  "output_hash": "7a43c5bcbaacfab6b7158a369b542b3a948e5ea7c92ffe8e2f3ad097c01a9220",
+  "input_hash": "fcf60cccd58c7d2bea05897914d2e32b9b85d79ca6216b74fd32db5850689f68",
+  "output_hash": "949c06b617bd1773fbac0a781dbf05afcbefde0704f98b96640d98341e1d4a11",
   "status": "PASSED",
   "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +25690.11%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +140.07%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 210,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 6,
-      "BEAR_TREND": 3,
+      "BEAR_TREND": 5,
       "CHOP_RANGING": 2,
-      "HIGH_VOLATILITY": 2
+      "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
-      "BULL_TREND": -25564.25,
-      "BEAR_TREND": -25892.2,
-      "CHOP_RANGING": 39823.8,
-      "HIGH_VOLATILITY": 37322.76
+      "BULL_TREND": -20.43,
+      "BEAR_TREND": -54.61,
+      "CHOP_RANGING": 84.81,
+      "HIGH_VOLATILITY": 130.3
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 25690.11
+    "total_oos_return_pct": 140.07
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:02:17.086502+00:00"
+  "created_at_utc": "2026-08-22T07:30:32.876619+00:00"
 }

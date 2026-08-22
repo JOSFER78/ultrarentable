@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g05",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "9c77a218edf425da441e0ed2996a2a0a437e91c126ede439b9773b52a0694d08",
+  "strategy_snapshot_hash": "b36836f5495e96579bd29692dade66ed7abc7e671ca505d8b13b4e865ca91e2b",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "revalidated_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "9f3ba2226b057fd096e0d6673a50f7b9b12a8a63a91f8e425073c8e1883a03e3",
-  "output_hash": "29debf1607eef584228d1b7d7f672cc102a89a4f4c2082b80bb434af6a9cd16d",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "98587e257454a7e0198bbeac04f74c6b63f053ac087ad99bebdf36d9694f48df",
+  "output_hash": "83c26508af141fab4580d9405155806225be9cc54fda8da078f9acac515a7c59",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 99.5% > 1.0% (DD 95% = 99.6%)",
+  "verdict": "FALLO: Riesgo Ruina 99.3% > 1.0% (DD 95% = 99.0%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 99.5,
-    "drawdown_median_pct": 98.6,
-    "drawdown_95th_percentile_pct": 99.6,
-    "max_simulated_drawdown_pct": 99.8
+    "ruin_probability_pct": 99.3,
+    "drawdown_median_pct": 97.3,
+    "drawdown_95th_percentile_pct": 99.0,
+    "max_simulated_drawdown_pct": 99.4
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T02:18:52.467933+00:00"
+  "created_at_utc": "2026-08-22T06:07:06.485393+00:00"
 }

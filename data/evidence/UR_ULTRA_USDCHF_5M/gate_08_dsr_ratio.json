@@ -8,22 +8,22 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "cf73d06ac41631e8658321c89346c36346ec1a50779f87e270774b176b23fac9",
-  "output_hash": "49784aecbe75145f38dca729e712236491187c131c2a39fb0ae4e795ba662e2b",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "036888ada92f21d4a84ad08471337ae35e9aee86fe11cb995d43f313fced4d3f",
+  "output_hash": "10018eea82def8ed882ec132218a169c17bb52f7e9cbc61a91ae74dd4ed53b9c",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 1 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.788,
+    "raw_sharpe_ratio": -0.963,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": -2.357,
-    "kurtosis": 7.256,
-    "sample_trades_count": 21
+    "skewness": 1.883,
+    "kurtosis": 5.346,
+    "sample_trades_count": 116
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:23:46.924059+00:00"
+  "created_at_utc": "2026-08-22T06:07:09.574127+00:00"
 }

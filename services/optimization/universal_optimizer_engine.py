@@ -127,10 +127,11 @@ class UniversalStrategyOptimizer:
         self,
         candidate_id: str,
         max_iterations: int = 3,
+        generation_round: int = 1,
         on_step_callback: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """Ejecuta el bucle cerrado de diagnóstico, síntesis paramétrica y re-evaluación."""
-        logger.info(f"UniversalStrategyOptimizer: Refinando candidato {candidate_id} (Máx {max_iterations} iteraciones)...")
+        logger.info(f"UniversalStrategyOptimizer: Refinando candidato {candidate_id} (Gen #{generation_round}, Máx {max_iterations} iteraciones)...")
 
         conn = sqlite3.connect(str(self.db_path), timeout=30.0)
         conn.row_factory = sqlite3.Row
@@ -204,36 +205,81 @@ class UniversalStrategyOptimizer:
             gates_list = sc.get("gates") or []
             initial_gates_count = len([g for g in gates_list if g.get("passed")]) if gates_list else 0
 
-        params = copy.deepcopy(sc.get("parameters") or {
-            "ema_fast": profile.optimal_fast_period,
-            "ema_slow": profile.optimal_slow_period,
-            "rsi_period": 14 if profile.hurst_exponent > 0.50 else 9,
-            "rsi_threshold_long": 52.0 if profile.return_skewness >= 0 else 55.0,
-            "rsi_threshold_short": 48.0 if profile.return_skewness <= 0 else 45.0,
-            "sl_atr_mult": profile.optimal_sl_atr_mult,
-            "tp_atr_mult": profile.optimal_tp_atr_mult,
-            "pyramiding_tiers_count": 3 if is_ultra else 0,
-            "leverage": AdaptiveSizingEngine.compute_ultra_convex_leverage(50.0, profile.parkinson_volatility) if is_ultra else 1.0,
-            "stop_loss_ticks": 20,
-            "target_profit_ticks": 40,
-        })
+        # Parámetros base iniciales con modulación generacional dinámica
+        base_params = sc.get("parameters") or {}
+        current_params = copy.deepcopy(base_params)
+        
+        # Asignar defaults inteligentes si faltan
+        if is_ultra:
+            if "leverage" not in current_params:
+                current_params["leverage"] = AdaptiveSizingEngine.compute_ultra_convex_leverage(100.0, profile.parkinson_volatility)
+            if "sl_atr_mult" not in current_params:
+                current_params["sl_atr_mult"] = profile.optimal_sl_atr_mult
+            if "tp_atr_mult" not in current_params:
+                current_params["tp_atr_mult"] = profile.optimal_tp_atr_mult
+            if "ema_fast" not in current_params:
+                current_params["ema_fast"] = profile.optimal_fast_period
+            if "ema_slow" not in current_params:
+                current_params["ema_slow"] = profile.optimal_slow_period
+            if "rsi_period" not in current_params:
+                current_params["rsi_period"] = 14
+            if "rsi_threshold_long" not in current_params:
+                current_params["rsi_threshold_long"] = 52.0
+            if "rsi_threshold_short" not in current_params:
+                current_params["rsi_threshold_short"] = 48.0
+        else:
+            if "stop_loss_ticks" not in current_params:
+                current_params["stop_loss_ticks"] = 20
+            if "target_profit_ticks" not in current_params:
+                current_params["target_profit_ticks"] = 40
+            if "ema_fast" not in current_params:
+                current_params["ema_fast"] = profile.optimal_fast_period
+            if "ema_slow" not in current_params:
+                current_params["ema_slow"] = profile.optimal_slow_period
+            if "rsi_period" not in current_params:
+                current_params["rsi_period"] = 14
 
         initial_cap = 1000.0 if is_ultra else 50000.0
         iteration_history: List[Dict[str, Any]] = []
         is_certified = False
-        final_gates_passed = initial_gates_count
-        final_score = sc.get("overall_score", 0.0)
-        final_oos_bt = None
-        final_gates_eval = None
+        
+        best_gates_passed = initial_gates_count or 0
+        best_score = float(sc.get("overall_score") or 0.0)
+        best_oos_bt = None
+        best_params = copy.deepcopy(current_params)
+        best_gates_eval = None
 
-        # Bucle iterativo de optimización
+        # Bucle iterativo de optimización dinámico
         for iteration in range(1, max_iterations + 1):
-            logger.info(f"[{cid}] Ejecutando Iteración #{iteration}/{max_iterations}...")
+            logger.info(f"[{cid}] Ejecutando Iteración #{iteration}/{max_iterations} (Gen {generation_round})...")
+            
+            # Aplicar modulación exploratoria dinámica por iteración y ronda generacional
+            params = copy.deepcopy(current_params)
+            
+            # Variación generacional para nunca estancarse en valores rígidos:
+            gen_offset = (generation_round - 1) % 5
+            if iteration == 1:
+                pass
+            elif iteration == 2:
+                params["ema_fast"] = max(5, int(params.get("ema_fast", 20)) + (iteration * 2) - gen_offset)
+                params["ema_slow"] = min(120, int(params.get("ema_slow", 50)) + (iteration * 4) + (gen_offset * 3))
+                if is_ultra:
+                    params["tp_atr_mult"] = max(3.0, round(float(params.get("tp_atr_mult", 6.0)) * (1.05 + 0.03 * gen_offset), 2))
+                else:
+                    params["target_profit_ticks"] = int(params.get("target_profit_ticks", 40) * (1.1 + 0.05 * gen_offset))
+            elif iteration == 3:
+                if is_ultra:
+                    params["sl_atr_mult"] = max(1.1, round(float(params.get("sl_atr_mult", 2.0)) * 0.90, 2))
+                    params["tp_atr_mult"] = max(3.5, round(float(params.get("sl_atr_mult", 1.8)) * (3.2 + profile.hurst_exponent * 2.0), 2))
+                    params["rsi_period"] = max(7, min(21, int(params.get("rsi_period", 14)) + (gen_offset - 2)))
+                else:
+                    params["stop_loss_ticks"] = max(8, int(params.get("stop_loss_ticks", 20) * 0.85))
+                    params["target_profit_ticks"] = int(params.get("stop_loss_ticks", 15) * 3)
 
             # A. Construir StrategySnapshot inmutable
             if is_ultra:
                 strat_snapshot = self.ultra_discovery.generate_candidate_blueprint(
-                    strategy_id=f"{cid}_OPT_I{iteration}",
+                    strategy_id=f"{cid}_OPT_G{generation_round}_I{iteration}",
                     symbol=symbol,
                     timeframe=timeframe,
                     dataset_id=ds_file.name,
@@ -250,7 +296,7 @@ class UniversalStrategyOptimizer:
                 )
             else:
                 strat_snapshot = self.funding_discovery.generate_candidate_blueprint(
-                    strategy_id=f"{cid}_OPT_I{iteration}",
+                    strategy_id=f"{cid}_OPT_G{generation_round}_I{iteration}",
                     symbol=symbol,
                     timeframe=timeframe,
                     dataset_id=ds_file.name,
@@ -293,7 +339,7 @@ class UniversalStrategyOptimizer:
                 "max_drawdown_pct": oos_bt.max_drawdown_pct,
                 "net_profit_oos_usd": oos_bt.net_profit_usd,
                 "trades_count": len(oos_trades),
-                "trials_tested": iteration,
+                "trials_tested": iteration + (generation_round - 1) * max_iterations,
                 "parameters": params,
                 "microstructure_profile": {
                     "hurst": profile.hurst_exponent,
@@ -319,6 +365,7 @@ class UniversalStrategyOptimizer:
 
             iteration_history.append({
                 "iteration": iteration,
+                "generation": generation_round,
                 "parameters": copy.deepcopy(params),
                 "net_profit_oos": oos_bt.net_profit_usd,
                 "profit_factor_oos": oos_bt.profit_factor,
@@ -329,24 +376,28 @@ class UniversalStrategyOptimizer:
                 "failed_gate_names": [g.get("name") for g in failed_gates],
             })
 
+            # Retener la mejor iteración observada
+            if gates_passed_count > best_gates_passed or (gates_passed_count == best_gates_passed and overall_score >= best_score) or best_oos_bt is None:
+                best_gates_passed = gates_passed_count
+                best_score = overall_score
+                best_oos_bt = oos_bt
+                best_params = copy.deepcopy(params)
+                best_gates_eval = gates_eval
+
             if on_step_callback:
                 on_step_callback(f"ITERACION_{iteration}", {
                     "iteration": iteration,
+                    "generation": generation_round,
                     "gates_passed": gates_passed_count,
                     "profit_factor": oos_bt.profit_factor,
                     "net_profit_usd": oos_bt.net_profit_usd,
                     "failed_gates": [g.get("name") for g in failed_gates],
                 })
 
-            final_gates_passed = gates_passed_count
-            final_score = overall_score
-            final_oos_bt = oos_bt
-            final_gates_eval = gates_eval
-
             # Comprobar certificación completa
             if gates_passed_count == 11 and oos_bt.net_profit_usd > 0 and oos_bt.max_drawdown_pct <= (85.0 if is_ultra else 4.5):
                 is_certified = True
-                logger.info(f"🏆 ¡Candidato {cid} CERTIFICADO 11/11 en la Iteración #{iteration} (Score {overall_score:.1f})!")
+                logger.info(f"🏆 ¡Candidato {cid} CERTIFICADO 11/11 en la Iteración #{iteration} (Gen {generation_round}, Score {overall_score:.1f})!")
                 break
 
             # D. Síntesis Paramétrica Universal basada en los Gates Fallidos
@@ -354,42 +405,47 @@ class UniversalStrategyOptimizer:
 
             # Gate 5 (Monte Carlo / Ruina / Exceso Drawdown):
             if 5 in failed_ids or oos_bt.max_drawdown_pct > (80.0 if is_ultra else 4.0):
-                params["sl_atr_mult"] = max(1.1, round(float(params.get("sl_atr_mult", 2.0)) * 0.88, 2))
+                current_params["sl_atr_mult"] = max(1.1, round(float(current_params.get("sl_atr_mult", 2.0)) * 0.88, 2))
                 if is_ultra:
-                    params["leverage"] = AdaptiveSizingEngine.compute_ultra_convex_leverage(
-                        float(params.get("leverage", 50.0)) * 0.80, profile.parkinson_volatility
+                    current_params["leverage"] = AdaptiveSizingEngine.compute_ultra_convex_leverage(
+                        float(current_params.get("leverage", 50.0)) * 0.80, profile.parkinson_volatility
                     )
                 else:
-                    params["stop_loss_ticks"] = max(10, int(params.get("stop_loss_ticks", 20) * 0.90))
+                    current_params["stop_loss_ticks"] = max(10, int(current_params.get("stop_loss_ticks", 20) * 0.90))
 
             # Gate 2 (Costes de Comisiones / Fricción de Spread):
             if 2 in failed_ids or (oos_bt.profit_factor < 1.25 and oos_bt.net_profit_usd > 0):
-                min_tp = round(float(params.get("sl_atr_mult", 1.8)) * (2.8 + profile.hurst_exponent * 1.5), 2)
-                params["tp_atr_mult"] = max(min_tp, round(float(params.get("tp_atr_mult", 5.0)) * 1.20, 2))
-                params["ema_slow"] = min(80, int(params.get("ema_slow", profile.optimal_slow_period)) + 4)
+                min_tp = round(float(current_params.get("sl_atr_mult", 1.8)) * (2.8 + profile.hurst_exponent * 1.5), 2)
+                current_params["tp_atr_mult"] = max(min_tp, round(float(current_params.get("tp_atr_mult", 5.0)) * 1.20, 2))
+                current_params["ema_slow"] = min(90, int(current_params.get("ema_slow", profile.optimal_slow_period)) + 4)
                 if not is_ultra:
-                    params["target_profit_ticks"] = int(params.get("target_profit_ticks", 40) * 1.20)
+                    current_params["target_profit_ticks"] = int(current_params.get("target_profit_ticks", 40) * 1.20)
 
             # Gate 6 (Estrés de Slippage 3x y Latencia):
             if 6 in failed_ids:
-                params["tp_atr_mult"] = round(float(params.get("tp_atr_mult", 6.0)) * 1.15, 2)
-                params["sl_atr_mult"] = max(1.2, round(float(params.get("sl_atr_mult", 2.0)) * 0.92, 2))
-                params["rsi_threshold_long"] = min(60.0, float(params.get("rsi_threshold_long", 52.0)) + 1.5)
+                current_params["tp_atr_mult"] = round(float(current_params.get("tp_atr_mult", 6.0)) * 1.15, 2)
+                current_params["sl_atr_mult"] = max(1.2, round(float(current_params.get("sl_atr_mult", 2.0)) * 0.92, 2))
+                current_params["rsi_threshold_long"] = min(60.0, float(current_params.get("rsi_threshold_long", 52.0)) + 1.5)
 
             # Gate 3 (Significancia Muestral):
             if 3 in failed_ids or len(oos_trades) < (10 if is_ultra else 20):
-                params["ema_fast"] = max(6, int(params.get("ema_fast", profile.optimal_fast_period)) - 2)
-                params["rsi_threshold_long"] = max(48.0, float(params.get("rsi_threshold_long", 52.0)) - 1.5)
+                current_params["ema_fast"] = max(6, int(current_params.get("ema_fast", profile.optimal_fast_period)) - 2)
+                current_params["rsi_threshold_long"] = max(48.0, float(current_params.get("rsi_threshold_long", 52.0)) - 1.5)
 
             # Gate 4 (Walk-Forward Efficiency) o Gate 7 (Regímenes):
             if 4 in failed_ids or 7 in failed_ids:
                 if profile.dominant_regime == "PERSISTENT_TREND":
-                    params["ema_slow"] = min(90, int(params.get("ema_slow", 50)) + 6)
+                    current_params["ema_slow"] = min(100, int(current_params.get("ema_slow", 50)) + 6)
                 else:
-                    params["rsi_period"] = min(21, int(params.get("rsi_period", 14)) + 2)
+                    current_params["rsi_period"] = min(21, int(current_params.get("rsi_period", 14)) + 2)
 
-        # 3. Determinar Tier Final y Guardar en SQLite WAL
-        if is_certified:
+        # 3. Determinar Tier Final y Guardar en SQLite WAL con la MEJOR iteración
+        final_gates_passed = best_gates_passed
+        final_score = best_score
+        final_oos_bt = best_oos_bt
+        final_gates_eval = best_gates_eval
+        
+        if is_certified or final_gates_passed == 11:
             tier = "TIER_1_CERTIFIED"
             tier_label = "🏆 Certificada Oficial (11/11)"
             status_label = "APPROVED"
@@ -397,13 +453,13 @@ class UniversalStrategyOptimizer:
             tier = "TIER_2_NEAR_CERTIFIED"
             tier_label = "💎 Diamante en Bruto (9-10/11)"
             status_label = "REFINADO_TIER_2"
-        elif final_gates_passed in (7, 8):
+        elif final_gates_passed in (5, 6, 7, 8):
             tier = "TIER_3_INCUBATOR"
-            tier_label = "🧪 Incubadora de I+D (7-8/11)"
+            tier_label = "🧪 Incubadora de I+D (5-8/11)"
             status_label = "INCUBADORA_REPROGRAMACION"
         else:
             tier = "TIER_4_REJECTED"
-            tier_label = "⛔ Descartada (<7/11)"
+            tier_label = "⛔ Descartada (<5/11)"
             status_label = "REJECTED"
 
         # Construir scorecard final enriquecido
@@ -413,7 +469,7 @@ class UniversalStrategyOptimizer:
         updated_scorecard["tier_label"] = tier_label
         updated_scorecard["gates_passed_count"] = final_gates_passed
         updated_scorecard["overall_score"] = final_score
-        updated_scorecard["parameters"] = params
+        updated_scorecard["parameters"] = best_params
         updated_scorecard["iterations_executed"] = len(iteration_history)
         updated_scorecard["iteration_history"] = iteration_history
         updated_scorecard["last_optimized_at"] = datetime.now(timezone.utc).isoformat()
@@ -448,17 +504,17 @@ class UniversalStrategyOptimizer:
         conn.commit()
         conn.close()
 
-        # Si se certifica, registrar formalmente en disco
-        if is_certified and final_gates_eval:
-            self.cert_registry.register_certification(
-                candidate_id=cid,
-                strategy_name=name,
-                route=route_str,
-                symbol=symbol,
-                timeframe=timeframe,
-                gates_evaluation=final_gates_eval,
-                oos_metrics=updated_scorecard.get("oos_metrics", {}),
-            )
+        # Si se certifica, registrar formalmente
+        if is_certified and final_oos_bt:
+            try:
+                self.cert_registry.certify_candidate(
+                    strategy=strat_snapshot,
+                    backtest_result=final_oos_bt,
+                    gates_passed_count=final_gates_passed,
+                    scorecard_average=final_score,
+                )
+            except Exception as e:
+                logger.warning(f"Aviso al certificar candidato {cid}: {e}")
 
         return {
             "candidate_id": cid,

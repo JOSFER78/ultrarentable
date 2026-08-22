@@ -8,10 +8,10 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "0ba610ae3676983f428674c833f27f86ed5155af085274155f62753bbd7a4b6f",
-  "output_hash": "c066cdda52e89d2b2d365550143795712af34c300fae9e5197b700ed634b187a",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "bb398639ce13d630ca97676a40f2cd768e92987f35b29ff62fc3f67cc91a0a93",
+  "output_hash": "979a01f3368a103de0bc8bced6ca94a9b0b926160849613d955076aa24a23f88",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDJPY (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.13 con beneficio neto de $-4.89.",
+          "Profit Factor OOS: 0.12 con beneficio neto de $-3.04.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 101.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.4% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 70 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 238 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.07 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,13 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (101.5%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.13 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (99.4%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.12 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:23:45.295080+00:00"
+  "created_at_utc": "2026-08-22T06:07:15.502127+00:00"
 }

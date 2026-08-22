@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_1H_g07",
   "run_id": "run_UR_FONDEO_USDCHF_1H",
   "strategy_id": "UR_FONDEO_USDCHF_1H",
-  "strategy_snapshot_hash": "9572979839e16224a0d55c4f16e658e9edffa1b2ca3e41e5fe163d5d3ed46eb1",
+  "strategy_snapshot_hash": "69524bb5061bfab699516774945807564838c6b7ce01bd532d7c8d20bda07723",
   "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "5f3b20bf4f1e812f796255311ac7705986d27fe1b6d6433584417b3e233790ba",
-  "output_hash": "fa98dfe47c5277cb23c1eff7aa83efc71fe76fecd2c1f9d7adda61f6c529081b",
+  "input_hash": "d1226d57303d7b8be9b3dd3a9da0f0f78de4eddf1d8b4cc77762dd5e558bc456",
+  "output_hash": "bfd405818d85628dff738dde1d13a15ee11bc41077e5c060f1a8ed0d8f2a15e4",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.50%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -15.39%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 53,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 52,
+      "HIGH_VOLATILITY": 4
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.4,
-      "HIGH_VOLATILITY": -0.1
+      "CHOP_RANGING": -15.39,
+      "HIGH_VOLATILITY": -0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.5
+    "total_oos_return_pct": -15.39
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:02:41.553586+00:00"
+  "created_at_utc": "2026-08-22T07:40:13.248927+00:00"
 }

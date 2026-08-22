@@ -2,16 +2,16 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.174_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.174",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.174",
-  "strategy_snapshot_hash": "7ae34799e6d426d3082bd796dc713e61f5ec769795745ff56c891d84cdffe804",
+  "strategy_snapshot_hash": "8fcd93df3fe66b0e413658f51dbfeb538dcaf5b32354b1430687a24bb58ae485",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "550b8a51398789896c108f85ae845919161ae91d7dda14c4c594c940aa16821c",
-  "output_hash": "01a9ae9409d05d20af3645a1e6d2418a28922bf69eb5ff513855c94f39b55560",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "279962f026a49b7e12da7670df73deb856b394b86e030f08d33991e136c5d8bc",
+  "output_hash": "77ec16729cafb36c7f33390761a374fba1c838b27d82e847e0c206251f9975d6",
   "status": "FAILED",
   "score": 35.6,
   "verdict": "FALLO: Consenso insuficiente (35.6/100) u objeción crítica de riesgo",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1695 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1574 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.59 USD.",
+          "Beneficio medio por operación: $-0.64 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.174/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T05:44:06.594398+00:00"
+  "created_at_utc": "2026-08-22T07:14:20.021666+00:00"
 }

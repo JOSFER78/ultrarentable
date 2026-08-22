@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_ES_1H_g07",
   "run_id": "run_UR_FONDEO_ES_1H",
   "strategy_id": "UR_FONDEO_ES_1H",
-  "strategy_snapshot_hash": "adf4fd3907d50c2882dda3a574a72f5e488f97f52109ad9c23d7c2171568ac26",
+  "strategy_snapshot_hash": "1271bc605607bdb66c6896e514839b4e6133c59562bc8690c53aed82f2d81610",
   "dataset_id": "ds_trad_es_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "78f32d202aa810ef5c2f9039fad3f87a12501dbe39f75f8ed1fce1224152333b",
-  "output_hash": "5a8769f121134e465e848ad59c9ba0d8f2ddda60d18bee5361f84c2eba203163",
+  "input_hash": "33917e2ce681861224a6e08f076cea12b020fcb812d5ac0f214c031b95ac9bea",
+  "output_hash": "cc8034f291f0d66c00de56c08f73aabc19bf16013281092ea6dc59f65fd93506",
   "status": "PASSED",
   "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +15667.73%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +39.77%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 15,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 24,
+      "CHOP_RANGING": 26,
       "HIGH_VOLATILITY": 7
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 7435.41,
-      "HIGH_VOLATILITY": 8232.32
+      "CHOP_RANGING": 30.78,
+      "HIGH_VOLATILITY": 8.99
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 15667.73
+    "total_oos_return_pct": 39.77
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:01:21.514787+00:00"
+  "created_at_utc": "2026-08-22T12:42:23.053428+00:00"
 }

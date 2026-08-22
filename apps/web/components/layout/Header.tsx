@@ -30,6 +30,7 @@ export default function Header() {
 
   return (
     <header
+      suppressHydrationWarning
       style={{
         display: "flex",
         justifyContent: "space-between",

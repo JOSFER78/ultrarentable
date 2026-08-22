@@ -863,20 +863,65 @@ export default function GateDetailPage() {
                 </div>
               </div>
 
-              {/* Real Logs Console */}
-              <div style={{ background: "#05080e", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "12px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                  <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>
-                    📡 Consola de Logs Reales: StrategyQuant X & Backend (VPS 24/7)
+              {/* Real Logs Visual Feed */}
+              <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "14px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ fontSize: "11px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
+                      📡 Telemetría y Logs del Gate (VPS 24/7)
+                    </span>
+                    <span style={{ fontSize: "9px", color: "#34d399", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(52, 211, 153, 0.15)" }}>
+                      ● ZERO-MOCKS
+                    </span>
                   </div>
-                  <span style={{ fontSize: "9px", color: "#34d399", fontWeight: 800 }}>● ZERO SIMULACIÓN · 100% REAL</span>
+                  <span style={{ fontSize: "9.5px", color: "#94a3b8" }}>
+                    {nautilusReport.event_log?.length || 0} eventos registrados
+                  </span>
                 </div>
-                <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "10px", color: "#cbd5e1", display: "flex", flexDirection: "column", gap: "4px", maxHeight: "150px", overflowY: "auto" }}>
-                  {(nautilusReport.event_log || []).map((line: string, i: number) => (
-                    <div key={i} style={{ color: line.includes("ERROR") ? "#fb7185" : line.includes("Sincronización") || line.includes("Starting") ? "#34d399" : "#94a3b8" }}>
-                      {line}
-                    </div>
-                  ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "180px", overflowY: "auto" }}>
+                  {(nautilusReport.event_log || []).map((line: string, i: number) => {
+                    const isErr = line.includes("ERROR") || line.includes("REJECTED") || line.includes("BREACH");
+                    const isSuccess = line.includes("PASSED") || line.includes("SUCCESS") || line.includes("Sincronización") || line.includes("Starting");
+                    const badgeBg = isErr ? "rgba(248, 113, 113, 0.2)" : isSuccess ? "rgba(52, 211, 153, 0.2)" : "rgba(56, 189, 248, 0.15)";
+                    const badgeColor = isErr ? "#f87171" : isSuccess ? "#34d399" : "#38bdf8";
+
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          background: "rgba(5, 8, 14, 0.8)",
+                          border: `1px solid ${isErr ? "rgba(248, 113, 113, 0.25)" : isSuccess ? "rgba(52, 211, 153, 0.2)" : "rgba(255, 255, 255, 0.05)"}`,
+                          borderRadius: "6px",
+                          padding: "8px 10px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          fontSize: "11px",
+                          gap: "10px",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <span
+                            style={{
+                              fontSize: "9px",
+                              fontWeight: 900,
+                              padding: "1px 5px",
+                              borderRadius: "3px",
+                              background: badgeBg,
+                              color: badgeColor,
+                              fontFamily: "var(--font-mono, monospace)",
+                            }}
+                          >
+                            {isErr ? "❌ FALLO" : isSuccess ? "✓ OK" : "ℹ️ EVENTO"}
+                          </span>
+                          <span style={{ color: "#f1f5f9" }}>{line}</span>
+                        </div>
+                        <span style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)", flexShrink: 0 }}>
+                          Evento #{i + 1}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

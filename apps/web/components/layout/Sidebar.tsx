@@ -69,14 +69,19 @@ export default function Sidebar() {
   };
 
   const isActive = (href: string) => {
+    if (!mounted) {
+      if (href === "/") return pathname === "/";
+      if (href.includes("?")) {
+        const [base] = href.split("?");
+        return pathname === base;
+      }
+      return pathname === href || (pathname.startsWith(href) && href !== "/estrategias");
+    }
     if (href === "/") return pathname === "/";
     if (href.includes("?")) {
       const [base, query] = href.split("?");
       if (pathname !== base) return false;
-      if (typeof window !== "undefined") {
-        return window.location.search.includes(query);
-      }
-      return false;
+      return typeof window !== "undefined" ? window.location.search.includes(query) : false;
     }
     if (href === "/estrategias") {
       return pathname === "/estrategias" && (typeof window === "undefined" || !window.location.search);
@@ -86,9 +91,10 @@ export default function Sidebar() {
 
   return (
     <aside
+      suppressHydrationWarning
       style={{
-        width: collapsed ? "68px" : "230px",
-        minWidth: collapsed ? "68px" : "230px",
+        width: mounted && collapsed ? "68px" : "230px",
+        minWidth: mounted && collapsed ? "68px" : "230px",
         height: "100vh",
         background: "rgba(8, 12, 18, 0.96)",
         backdropFilter: "blur(20px)",

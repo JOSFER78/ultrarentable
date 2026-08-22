@@ -2,34 +2,34 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "b7b39b8ad936d65f0a658695d3d9f544ff7bf48eb69c6aa1e6cce237c3751f8b",
+  "strategy_snapshot_hash": "c881a9af82872fda6fe6e35302355cbca5dcd48e7e0a98483e2ab1b89c892e5e",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "6dfa83b597f42b32b91f9f0dff9066e7b828c5759b4592d05e2baaef9a6748a7",
-  "output_hash": "ab8537946a5b0451720b8ae932b0bb98048bc556b362fbec946a26355253b998",
+  "input_hash": "3b05fe67f2787ee7c8fc659e16463d3078183cb36e9ac34c07ed06616013865f",
+  "output_hash": "004e8eb6bc5d42f7dc9dec21b0059bbc5eb55621bf56290b1ac4c51dcc541a17",
   "status": "FAILED",
-  "score": 41.9,
-  "verdict": "FALLO: Consenso insuficiente (41.9/100) u objeción crítica de riesgo",
+  "score": 34.4,
+  "verdict": "FALLO: Consenso insuficiente (34.4/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 41.9,
+    "consensus_score": 34.4,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 73.9,
+        "score": 54.5,
         "findings": [
           "Activo y Timeframe: AVAXUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.42 con beneficio neto de $249.42.",
+          "Profit Factor OOS: 0.99 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2284 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2569 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.11 USD.",
+          "Beneficio medio por operación: $-0.39 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 46.0,
+        "score": 38.6,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.99 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:04:26.859111+00:00"
+  "created_at_utc": "2026-08-22T06:33:34.499588+00:00"
 }

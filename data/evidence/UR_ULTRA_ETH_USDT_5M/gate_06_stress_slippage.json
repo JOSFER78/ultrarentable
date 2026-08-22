@@ -8,10 +8,10 @@
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "039c0e19190f87e326e32032f62be7a2163b9cda788df497d9d6ead20ab96b30",
-  "output_hash": "6906056f2b02f81f8e4eb19f0897e9604b99839aca1a817c41ac0483738a0c73",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "fac7dfed656803deb73ded3270c1352c0c343553bb05efb7fb2eb37122cd3aed",
+  "output_hash": "9eae61f31cbe5374add62d7173ab2b0266162bc9cd6be3b4ac1f63edf4aa4e59",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.88,
-        "stressed_profit_factor": 0.71,
+        "stressed_net_pnl_usd": -2.55,
+        "stressed_profit_factor": 0.53,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.02,
-        "stressed_profit_factor": 0.69,
+        "stressed_net_pnl_usd": -2.63,
+        "stressed_profit_factor": 0.53,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.16,
-        "stressed_profit_factor": 0.68,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.73,
+        "stressed_profit_factor": 0.52,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.41,
-        "stressed_profit_factor": 0.65,
+        "stressed_net_pnl_usd": -2.88,
+        "stressed_profit_factor": 0.5,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:27:30.556881+00:00"
+  "created_at_utc": "2026-08-22T06:05:03.451052+00:00"
 }

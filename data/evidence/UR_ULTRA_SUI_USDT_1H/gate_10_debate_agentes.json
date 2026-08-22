@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_1H_g10",
   "run_id": "run_UR_ULTRA_SUI_USDT_1H",
   "strategy_id": "UR_ULTRA_SUI_USDT_1H",
-  "strategy_snapshot_hash": "2d60dc5ab173030c434054a65a39d0d1fb7f6020f5fb95b67d9f70de1ea21b51",
+  "strategy_snapshot_hash": "fe12e4110cefccc3edcdfd05856fc35cc8d2f573ad1e37812c61c23b5f1d2b36",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "4ecaae5580bec4baa34f4139d81326599cbd65bc0a0e415baf30e49942e153ba",
-  "output_hash": "a2a3c2f68e359053dfb99be275fafbdf2858c3ca6b3fae36a9e2784b00e6bef2",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "5d0c9d7bb08123b25693648ede6a6ad057eb88a6b85a9bf64087cc41121018c1",
+  "output_hash": "81d2973f51873d0953cc88f50ee169e8efee3c08e68b1f24105055c054a09290",
   "status": "FAILED",
-  "score": 34.8,
-  "verdict": "FALLO: Consenso insuficiente (34.8/100) u objeción crítica de riesgo",
+  "score": 54.9,
+  "verdict": "FALLO: Consenso insuficiente (54.9/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 34.8,
+    "consensus_score": 54.9,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 49.1,
+        "score": 60.4,
         "findings": [
           "Activo y Timeframe: SUI-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.87 con beneficio neto de $17.36.",
+          "Profit Factor OOS: 1.12 con beneficio neto de $19488350858543444456017756160.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 525 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2852 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,25 +54,24 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.03 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $6833222601172315508047872.00 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.8,
+        "score": 65.1,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.87 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (99.0%) consume más del 90% del margen tolerable."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:23:35.410407+00:00"
+  "created_at_utc": "2026-08-22T12:43:42.683650+00:00"
 }

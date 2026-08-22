@@ -68,19 +68,25 @@ class Gate11NautilusEvent:
                 target_lev = 10.0 if is_ultra else 1.0
                 nominal_position = equity * target_lev
 
-            # Apalancamiento efectivo en esta operación
-            eff_leverage = nominal_position / max(1.0, equity)
-            peak_leverage_used = max(peak_leverage_used, eff_leverage)
+            # PnL bruto de la operación en USD
+            if trades_raw and i < len(trades_raw):
+                raw_trade_pnl = float(trades_raw[i].get("net_pnl_usd") or 0.0)
+                if raw_trade_pnl != 0.0:
+                    gross_trade_pnl = raw_trade_pnl
+                else:
+                    gross_trade_pnl = equity * pnl
+            else:
+                gross_trade_pnl = equity * pnl
 
             # Comisiones de entrada y salida
             if spec.fee_fixed_usd > 0:
-                fee = spec.fee_fixed_usd * 2.0
+                fee = spec.fee_fixed_usd * (2.0 if spec.category != "CRYPTO" else 1.0)
             else:
                 fee = nominal_position * (spec.fee_rate * 2.0)
 
             # Financiación (Funding) para Perpetuos (tasa media 0.01% por sesión de 8h)
             funding = nominal_position * 0.0001 if spec.category == "CRYPTO" else 0.0
-            net_trade = pnl - fee - funding
+            net_trade = gross_trade_pnl - fee - funding
             equity += net_trade
 
             total_fees += fee

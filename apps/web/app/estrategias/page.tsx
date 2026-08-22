@@ -513,9 +513,9 @@ function EstrategiasHubContent() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            gap: "6px",
-            overflowX: "auto",
+            gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
+            gap: "8px",
+            width: "100%",
           }}
         >
           {PHASES.map((phase) => {
@@ -528,31 +528,34 @@ function EstrategiasHubContent() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  padding: "7px 10px",
+                  padding: "8px 12px",
                   borderRadius: "8px",
                   background: isSelected
-                    ? `linear-gradient(135deg, ${phase.color}22 0%, rgba(16, 24, 38, 0.95) 100%)`
+                    ? `linear-gradient(135deg, ${phase.color}22 0%, rgba(16, 24, 38, 0.98) 100%)`
                     : "rgba(255, 255, 255, 0.03)",
                   border: isSelected
                     ? `1px solid ${phase.color}`
-                    : "1px solid rgba(255, 255, 255, 0.06)",
+                    : "1px solid rgba(255, 255, 255, 0.07)",
                   cursor: "pointer",
                   textAlign: "left",
-                  transition: "all 0.15s ease",
-                  boxShadow: isSelected ? `0 0 14px ${phase.color}33` : "none",
+                  transition: "all 0.18s ease",
+                  boxShadow: isSelected ? `0 0 12px ${phase.color}28` : "none",
+                  minWidth: 0,
+                  width: "100%",
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", marginBottom: "2px" }}>
-                  <span style={{ fontSize: "13px" }}>{phase.icon}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", marginBottom: "4px" }}>
+                  <span style={{ fontSize: "14px" }}>{phase.icon}</span>
                   <span
                     style={{
                       fontSize: "8.5px",
-                      fontWeight: 900,
-                      padding: "1px 4px",
-                      borderRadius: "3px",
-                      background: isSelected ? `${phase.color}33` : "rgba(255,255,255,0.05)",
-                      color: isSelected ? phase.color : "#64748b",
+                      fontWeight: 800,
+                      padding: "1px 5px",
+                      borderRadius: "4px",
+                      background: isSelected ? `${phase.color}33` : "rgba(255,255,255,0.06)",
+                      color: isSelected ? phase.color : "#94a3b8",
                       fontFamily: "var(--font-mono, monospace)",
+                      letterSpacing: "0.5px",
                     }}
                   >
                     {phase.badge}
@@ -561,8 +564,8 @@ function EstrategiasHubContent() {
                 <div
                   style={{
                     fontSize: "11px",
-                    fontWeight: isSelected ? 900 : 700,
-                    color: isSelected ? "#ffffff" : "#94a3b8",
+                    fontWeight: isSelected ? 800 : 600,
+                    color: isSelected ? "#ffffff" : "#cbd5e1",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",

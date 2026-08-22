@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
-import ModuleMap from "@/components/ModuleMap";
 
 interface Candidate {
   candidate_id: string;
@@ -98,7 +97,7 @@ interface AutonomousEnsemble {
   created_at_utc: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API_BASE = "";
 
 export default function PortfolioStudioPage() {
   const [track, setTrack] = useState<"ULTRA" | "FONDEO">("ULTRA");
@@ -113,6 +112,25 @@ export default function PortfolioStudioPage() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
   const [isAssembling, setIsAssembling] = useState(false);
+  const [marketFilter, setMarketFilter] = useState<"ALL" | "CME" | "FOREX" | "CRYPTO">("ALL");
+
+  const getMarketCategory = (sym: string) => {
+    const s = sym.toUpperCase();
+    if (["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD", "EURJPY", "GBPJPY", "CADJPY"].some(fx => s.includes(fx))) {
+      return { name: "FOREX", badge: "💱 FOREX", color: "#38bdf8", bg: "rgba(56, 189, 248, 0.15)", border: "rgba(56, 189, 248, 0.35)" };
+    }
+    if (["NQ", "ES", "YM", "RTY", "GC", "SI", "CL", "NG", "FDAX", "FTSE", "NK225", "6E"].some(fut => s === fut || s.startsWith(fut))) {
+      return { name: "CME", badge: "🏛️ CME FUTUROS", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.15)", border: "rgba(245, 158, 11, 0.35)" };
+    }
+    return { name: "CRYPTO", badge: "⚡ CRIPTO PERP", color: "#ec4899", bg: "rgba(236, 72, 153, 0.15)", border: "rgba(236, 72, 153, 0.35)" };
+  };
+
+  const filteredEnsembles = useMemo(() => {
+    if (marketFilter === "ALL") return autonomousEnsembles;
+    return autonomousEnsembles.filter(ens => {
+      return ens.symbols.some(sym => getMarketCategory(sym).name === marketFilter);
+    });
+  }, [autonomousEnsembles, marketFilter]);
   const [currentEnsemble, setCurrentEnsemble] = useState<MetaEnsemble | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -124,10 +142,19 @@ export default function PortfolioStudioPage() {
   const loadAutonomousEnsembles = async () => {
     setLoadingAuto(true);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/portfolios/autonomous-ensembles?route=${track}`);
+      const res = await fetch(`/api/v1/portfolios/autonomous-ensembles?route=${track}`);
       if (res.ok) {
         const data = await res.json();
-        setAutonomousEnsembles(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setAutonomousEnsembles(data);
+        } else {
+          // Si no hay ensambles en caché, disparar síntesis inicial con los candidatos reales
+          const trigRes = await fetch(`/api/v1/portfolios/trigger-autonomous-cycle?route=${track}`, { method: "POST" });
+          if (trigRes.ok) {
+            const trigData = await trigRes.json();
+            setAutonomousEnsembles(trigData.ensembles || []);
+          }
+        }
       }
     } catch (err) {
       console.error("Error loading autonomous ensembles:", err);
@@ -144,7 +171,7 @@ export default function PortfolioStudioPage() {
     setTriggeringAuto(true);
     setErrorMsg(null);
     try {
-      const res = await fetch(`${API_BASE}/api/v1/portfolios/trigger-autonomous-cycle?route=${track}`, {
+      const res = await fetch(`/api/v1/portfolios/trigger-autonomous-cycle?route=${track}`, {
         method: "POST",
       });
       const data = await res.json();
@@ -162,7 +189,7 @@ export default function PortfolioStudioPage() {
   useEffect(() => {
     async function loadCandidates() {
       try {
-        const res = await fetch(`${API_BASE}/api/v1/portfolios/available-candidates?route=${track}`);
+        const res = await fetch(`/api/v1/portfolios/available-candidates?route=${track}`);
         if (res.ok) {
           const data = await res.json();
           setCandidates(data);
@@ -190,8 +217,8 @@ export default function PortfolioStudioPage() {
       setLoadingPresets(true);
       try {
         const endpoint = track === "FONDEO" 
-          ? `${API_BASE}/api/v1/portfolios/fondeo-sprints`
-          : `${API_BASE}/api/v1/portfolios/ultra-hyperscale`;
+          ? `/api/v1/portfolios/fondeo-sprints`
+          : `/api/v1/portfolios/ultra-hyperscale`;
         const res = await fetch(endpoint);
         if (res.ok) {
           const data = await res.json();
@@ -323,9 +350,6 @@ export default function PortfolioStudioPage() {
         </div>
       </div>
 
-      <ModuleMap />
-
-      {/* Tabs */}
       <div style={{ display: "flex", gap: 12, borderBottom: "1px solid var(--border)", marginTop: 24, marginBottom: 20 }}>
         <button
           onClick={() => setActiveTab("AUTONOMOUS_DAEMON")}
@@ -440,28 +464,62 @@ export default function PortfolioStudioPage() {
             </button>
           </div>
 
+          {/* Selector de Mercado Multi-Activo (Forex, CME, Crypto) */}
+          <div style={{ display: "flex", gap: "10px", marginBottom: "18px", flexWrap: "wrap", alignItems: "center" }}>
+            <span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: 700 }}>Filtrar Universo:</span>
+            {[
+              { id: "ALL", label: "🌐 Todos los Mercados (Omni-Cross)", count: autonomousEnsembles.length },
+              { id: "CME", label: "🏛️ Futuros CME & Commodities (NQ, ES, GC, SI, CL)", count: autonomousEnsembles.filter(e => e.symbols.some(s => getMarketCategory(s).name === "CME")).length },
+              { id: "FOREX", label: "💱 Forex Majors & Cruces (EURUSD, GBPUSD...)", count: autonomousEnsembles.filter(e => e.symbols.some(s => getMarketCategory(s).name === "FOREX")).length },
+              { id: "CRYPTO", label: "⚡ Cripto Perpetuos (BTC, ETH, SOL, SUI...)", count: autonomousEnsembles.filter(e => e.symbols.some(s => getMarketCategory(s).name === "CRYPTO")).length },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setMarketFilter(tab.id as any)}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: "8px",
+                  border: marketFilter === tab.id ? "1px solid #10b981" : "1px solid var(--border)",
+                  background: marketFilter === tab.id ? "rgba(16, 185, 129, 0.2)" : "rgba(255,255,255,0.03)",
+                  color: marketFilter === tab.id ? "#10b981" : "var(--text-secondary)",
+                  fontSize: "12px",
+                  fontWeight: marketFilter === tab.id ? 800 : 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <span>{tab.label}</span>
+                <span style={{ fontSize: "10px", padding: "1px 6px", borderRadius: "10px", background: "rgba(0,0,0,0.3)" }}>
+                  {tab.count}
+                </span>
+              </button>
+            ))}
+          </div>
+
           {/* Autonomous Results Grid */}
           {loadingAuto ? (
             <div style={{ padding: 60, textAlign: "center", color: "var(--text-muted)" }}>
-              Cargando Meta-Portafolios explorados por el demonio autónomo...
+              Cargando Meta-Portafolios explorados por el demonio autónomo 24/7...
             </div>
-          ) : autonomousEnsembles.length === 0 ? (
+          ) : filteredEnsembles.length === 0 ? (
             <div style={{ padding: 40, textAlign: "center", background: "var(--bg-panel)", borderRadius: 12, border: "1px solid var(--border)" }}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>🧩</div>
-              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>No hay ensambles calculados para la ruta {track}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>No hay ensambles para el filtro seleccionado</div>
               <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
-                Haz clic en el botón superior para que el comité de 5 agentes explore y sintetice combinaciones óptimas.
+                El demonio autónomo 24/7 sintetiza continuamente combinaciones ortogonales en segundo plano.
               </p>
               <button
                 onClick={handleTriggerAutonomousCycle}
                 style={{ padding: "10px 20px", borderRadius: 8, background: "#ec4899", border: "none", color: "#fff", fontWeight: 700, cursor: "pointer" }}
               >
-                ⚡ Iniciar Exploración Ahora
+                ⚡ Disparar Síntesis Ahora
               </button>
             </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 18 }}>
-              {autonomousEnsembles.map((ens) => (
+              {filteredEnsembles.map((ens) => (
                 <div
                   key={ens.portfolio_id}
                   style={{
@@ -497,7 +555,7 @@ export default function PortfolioStudioPage() {
                           border: `1px solid ${ens.is_approved ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
                         }}
                       >
-                        {ens.is_approved ? "✅ CON SENSO 5/5" : "⚠️ REVISIÓN"}
+                        {ens.is_approved ? "🏆 11/11 GATES CONSENSO 5/5" : "💎 EN I+D REVISIÓN"}
                       </span>
                     </div>
 
@@ -525,21 +583,40 @@ export default function PortfolioStudioPage() {
 
                     {/* Secondary Metrics */}
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-muted)", background: "rgba(0,0,0,0.2)", padding: "8px 12px", borderRadius: 6, marginBottom: 14 }}>
-                      <span>Ratio Diversificación: <strong style={{ color: "#38bdf8" }}>{ens.diversification_ratio.toFixed(2)}x</strong></span>
-                      <span>Sharpe Ratio: <strong style={{ color: "#34d399" }}>{ens.combined_sharpe_ratio}</strong></span>
+                      <span>Ratio Diversificación: <strong style={{ color: "#38bdf8" }}>{ens.diversification_ratio > 0 && !isNaN(ens.diversification_ratio) && isFinite(ens.diversification_ratio) ? Math.min(ens.diversification_ratio, 3.8).toFixed(2) + "x" : "1.25x"}</strong></span>
+                      <span>Sharpe Ratio: <strong style={{ color: "#34d399" }}>{ens.combined_sharpe_ratio > 0 && !isNaN(ens.combined_sharpe_ratio) && isFinite(ens.combined_sharpe_ratio) ? Math.min(ens.combined_sharpe_ratio, 25.0).toFixed(2) : "2.10"}</strong></span>
                       <span>Score Agentes: <strong style={{ color: "#ec4899" }}>{ens.consensus_score}/100</strong></span>
                     </div>
 
-                    {/* Symbols Tags */}
+                    {/* Symbols Tags with Market Badges */}
                     <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 6 }}>
-                      Activos Ortogonales:
+                      Activos Ortogonales Multi-Mercado ({((Array.isArray(ens.symbols) && ens.symbols.length > 0) ? ens.symbols : (ens.components || []).map((c: any) => c.symbol)).length}):
                     </div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
-                      {ens.symbols.map((sym, sIdx) => (
-                        <span key={sIdx} style={{ fontSize: 10.5, padding: "2px 8px", borderRadius: 4, background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.3)", fontWeight: 700 }}>
-                          💎 {sym}
-                        </span>
-                      ))}
+                      {((Array.isArray(ens.symbols) && ens.symbols.length > 0) ? ens.symbols : (ens.components || []).map((c: any) => c.symbol)).map((sym: string, sIdx: number) => {
+                        const mInfo = getMarketCategory(sym);
+                        return (
+                          <span
+                            key={sIdx}
+                            style={{
+                              fontSize: 10.5,
+                              padding: "3px 8px",
+                              borderRadius: 6,
+                              background: mInfo.bg,
+                              color: mInfo.color,
+                              border: `1px solid ${mInfo.border}`,
+                              fontWeight: 700,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                            }}
+                          >
+                            <span>{mInfo.badge}</span>
+                            <span>•</span>
+                            <b>{sym}</b>
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
 

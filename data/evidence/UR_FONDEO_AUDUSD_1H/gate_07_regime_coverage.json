@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g07",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "47f509e5d2c15e361f27ba1426d8058097dd95415e5a9d801446fba2065857c1",
+  "strategy_snapshot_hash": "0b7dfbcc1d25599669e2169591f38365f985b45f7517166900be704f933e564a",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "0845b1d30d02f8dc4a260757742542cc36b09f5821d16ebdfda1bce7bb7ddcae",
-  "output_hash": "cb6ed43f538c291cffca28ec7201f344d47355cc613d7d8cf7dfe62e3606161e",
+  "input_hash": "01e346850efa8c70f534a7f78130187ea5105811b763c0b7cb8177ef14324b8e",
+  "output_hash": "d9f33f8de65011e6ce2a5882616f2d6a2873bf084cfc05d75b493393f423b5af",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.34%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -42.37%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 56,
+      "CHOP_RANGING": 59,
       "HIGH_VOLATILITY": 11
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.25,
-      "HIGH_VOLATILITY": -0.09
+      "CHOP_RANGING": -41.92,
+      "HIGH_VOLATILITY": -0.45
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.34
+    "total_oos_return_pct": -42.37
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:01:01.747272+00:00"
+  "created_at_utc": "2026-08-22T07:40:54.593512+00:00"
 }

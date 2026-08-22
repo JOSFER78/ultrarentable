@@ -8,24 +8,16 @@
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "afc14673339745db350d544b90a3eee82123ae101b14ed8c041fc660e901238b",
-  "output_hash": "78d65576f595001438beeefe0cc887b28e13ec300534fa0bf3056a9d0fa8a1ca",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "462451f7c2280617679a35e42635f9d63443f900c6d73a4cb6a7e777bdbacd26",
+  "output_hash": "4fa6caac3a12b1504547e8d0ff3c24371803dc75e99069eab23f60838b2d9e01",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.38 < 1.10",
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "FOREX",
-    "canonical_name": "US Dollar / Canadian Dollar",
-    "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": -1845742.03,
-    "total_fees_usd": 265687.52,
-    "total_slippage_usd": 531375.05,
-    "net_pnl_usd": -2642804.61,
-    "net_profit_factor": 0.38,
-    "drag_cost_pct": 43.18
+    "trades_count": 4
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:21:33.960086+00:00"
+  "created_at_utc": "2026-08-22T06:06:36.318084+00:00"
 }

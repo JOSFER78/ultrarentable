@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "6b3ddd0adc8d5bcdee28f59c7c3a5cabbc03439248c5316c49f40a8a88b94859",
-  "output_hash": "b6daf707907e58f3ae7a9874ddcdc668b733c9024727096df291e0b477846297",
-  "status": "FAILED",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "f0e29ca8afb670bea4aa821f4fcf03c5e75e29b9817fd4f4a68b4aad394ae306",
+  "output_hash": "d6fb469db22871c444450e04e8d5413c9e11b22393eaa8e6f667cee18fe20466",
+  "status": "PASSED",
   "score": 100.0,
-  "verdict": "FALLO: Muestra insuficiente (2 IS < 15 ó 78 OOS < 10)",
+  "verdict": "PASSED: Muestra robusta (1627 IS / 32 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 2,
-    "trades_oos": 78,
-    "top2_outlier_dependency_pct": 87.5,
+    "trades_is": 1627,
+    "trades_oos": 32,
+    "top2_outlier_dependency_pct": 60.2,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:27:45.265883+00:00"
+  "created_at_utc": "2026-08-22T06:05:28.429226+00:00"
 }

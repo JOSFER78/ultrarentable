@@ -8,22 +8,17 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "c5200ae083c40c9ee23844e1153762a2a08d5ed2658be2765b461b9b246ccca8",
-  "output_hash": "48aba8ba2950c081408e69f0b33cb4b802c7b43611ceb8e44dd5a00550a4bc56",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "61b83f1706873d772a456553bea2f8a9a54bdf26838d952e4f664bede65f4b3a",
+  "output_hash": "fb283776fa0a25469b48eb5cd6acf8c5e08121f4cbe1e52f9ce0474dba42279d",
   "status": "FAILED",
-  "score": 0.5,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.5% < 50.0% tras penalizar 1 trials)",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
   "metrics": {
-    "raw_sharpe_ratio": -0.465,
-    "deflated_sharpe_probability_pct": 0.48,
-    "trials_penalized_count": 1,
-    "expected_max_sharpe_under_selection": 0.0,
-    "skewness": -1.65,
-    "kurtosis": 10.374,
-    "sample_trades_count": 24
+    "trials_penalized": 1,
+    "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:21:50.025752+00:00"
+  "created_at_utc": "2026-08-22T06:05:31.785712+00:00"
 }

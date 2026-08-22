@@ -8,67 +8,18 @@
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "8f3ed1ec54897c80936564de281b9be45fb741ada1d7fd408e326ebf4a6488f6",
-  "output_hash": "ed1dd853fceb1dada947d216558c4a194fef848fa3bbe80d2f0ae10383c6a37c",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "6be96316028a8d6c567d9f75be3f88ed1d8f53ce11606d8edd67996d3a42287a",
+  "output_hash": "7f751f683ca93e18bbd07829b09965fbb88ce0b18b3900db4eba2a3be4c09def",
   "status": "FAILED",
-  "score": 100.0,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 18.32 < 0.40 ó Consistencia 20.0% < 40%)",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
   "metrics": {
-    "total_trades_analyzed": 45,
-    "windows_count": 5,
-    "walk_forward_efficiency": 18.32,
-    "oos_consistency_pct": 20.0,
-    "min_wfe_required": 0.5,
-    "windows_details": [
-      {
-        "window_index": 1,
-        "is_trades_count": 6,
-        "oos_trades_count": 3,
-        "pf_is": 0.58,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.31,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 2,
-        "is_trades_count": 6,
-        "oos_trades_count": 3,
-        "pf_is": 3.49,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.43,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 3,
-        "is_trades_count": 6,
-        "oos_trades_count": 3,
-        "pf_is": 4.44,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.4,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 4,
-        "is_trades_count": 6,
-        "oos_trades_count": 3,
-        "pf_is": 0.0,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.58,
-        "wfe": 0.0
-      },
-      {
-        "window_index": 5,
-        "is_trades_count": 6,
-        "oos_trades_count": 3,
-        "pf_is": 0.0,
-        "pf_oos": 9.16,
-        "net_profit_oos_usd": 3.02,
-        "wfe": 91.58
-      }
-    ]
+    "total_trades": 1,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15M/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-21T22:21:49.583755+00:00"
+  "created_at_utc": "2026-08-22T06:05:31.410371+00:00"
 }

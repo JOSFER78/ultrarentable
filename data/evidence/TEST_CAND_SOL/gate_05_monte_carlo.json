@@ -2,26 +2,26 @@
   "evidence_id": "ev_TEST_CAND_SOL_g05",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "00079e8ca5e778cd689bd3dc06765fdab224d5e68dd5a750010629fa5bbccdd8",
+  "strategy_snapshot_hash": "51bc06113d008054b547a4e423d2f1e337c2f89bc60378de65b9eb505e38371c",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "d4677cca72fd4a931d885f411e08224a4f3b25e19f97f7dc8423be51fc7e4ec2",
-  "output_hash": "56fb0ec2566542956196038778bef514a690b3611cb53bdf4c83d7f318caf574",
+  "input_hash": "c5511008e69a28a33e30dc5b05d9bb3014c8240d5835cc4d073cc24b0c34ecac",
+  "output_hash": "9d51e77aef13ed49cde5b3bb5bfdf5d57e1e090f389137cbda603b4dc057a901",
   "status": "PASSED",
-  "score": 96.9,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.2%)",
+  "score": 97.0,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.1%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 3.3,
-    "drawdown_95th_percentile_pct": 6.2,
-    "max_simulated_drawdown_pct": 9.0
+    "drawdown_median_pct": 3.5,
+    "drawdown_95th_percentile_pct": 6.1,
+    "max_simulated_drawdown_pct": 8.3
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T06:01:09.016497+00:00"
+  "created_at_utc": "2026-08-22T07:40:25.976470+00:00"
 }

@@ -214,7 +214,12 @@ def get_autonomous_ensembles(route: Optional[str] = Query("ULTRA")) -> List[Dict
     """Obtiene los Meta-Portafolios optimizados y explorados autónomamente por el demonio 24/7."""
     from services.portfolio.autonomous_meta_daemon import AutonomousMetaDaemon
     daemon = AutonomousMetaDaemon()
-    return daemon.run_synthesis_cycle(route=route.upper() if route else "ULTRA", ensemble_sizes=(2, 3), max_evaluations=12)
+    r = (route or "ULTRA").upper()
+    if r == "ALL":
+        u = daemon.get_cached_ensembles(route="ULTRA")
+        f = daemon.get_cached_ensembles(route="FONDEO")
+        return u + f
+    return daemon.get_cached_ensembles(route=r)
 
 
 @portfolios_router.post("/trigger-autonomous-cycle")

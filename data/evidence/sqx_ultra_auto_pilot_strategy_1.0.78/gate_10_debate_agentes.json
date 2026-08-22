@@ -2,16 +2,16 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.78_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.78",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.78",
-  "strategy_snapshot_hash": "6a368d663312826fe7e62f8481f897456855e1681b2b14af1bd41b10f1049d1f",
+  "strategy_snapshot_hash": "4c538d6cf6d3449a9698aba567a5b644791795f6001f5c7fa72c97905e89f44a",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "785ac8554bd1bbfa7ca9c9d9988d3c7433a7717756740ca9835df874ea58c288",
-  "output_hash": "01a9ae9409d05d20af3645a1e6d2418a28922bf69eb5ff513855c94f39b55560",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "79dc066a7346764e38c9adadba25f02b16db76106351a30e6d2e561a72d1865e",
+  "output_hash": "77ec16729cafb36c7f33390761a374fba1c838b27d82e847e0c206251f9975d6",
   "status": "FAILED",
   "score": 35.6,
   "verdict": "FALLO: Consenso insuficiente (35.6/100) u objeción crítica de riesgo",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1695 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1574 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.59 USD.",
+          "Beneficio medio por operación: $-0.64 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.78/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:01:32.802913+00:00"
+  "created_at_utc": "2026-08-22T07:26:33.468267+00:00"
 }

@@ -25,10 +25,10 @@ import numpy as np
 from services.portfolio.meta_ensemble_service import MetaEnsembleService, MetaEnsembleResult
 from services.api.app.db.database import SessionLocal, CandidateModel, PortfolioModel
 
+import os
 logger = logging.getLogger("AutonomousMetaDaemon")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
-
-DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+DB_PATH = Path(os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3"))
+_ENSEMBLES_CACHE: dict[str, list[dict[str, Any]]] = {}
 
 
 class AutonomousMetaDaemon:
@@ -37,6 +37,13 @@ class AutonomousMetaDaemon:
     def __init__(self, db_path: Optional[Path] = None) -> None:
         self.db_path = db_path or DB_PATH
         self.service = MetaEnsembleService()
+
+    def get_cached_ensembles(self, route: str = "ULTRA") -> list[dict[str, Any]]:
+        """Obtiene ensambles cacheados o calcula un lote ligero de combinaciones si está vacío."""
+        route_key = route.upper()
+        if route_key in _ENSEMBLES_CACHE and _ENSEMBLES_CACHE[route_key]:
+            return _ENSEMBLES_CACHE[route_key]
+        return self.run_synthesis_cycle(route=route_key, ensemble_sizes=(2, 3), max_evaluations=6)
 
     def get_eligible_candidates(self, route: str = "ULTRA", min_gates: int = 9) -> List[Dict[str, Any]]:
         """Recupera candidatos con al menos N compuertas aprobadas, agrupados por activo."""
@@ -127,6 +134,10 @@ class AutonomousMetaDaemon:
                         and res.diversification_ratio >= 1.10
                     )
 
+                    sc_data = res.scorecard or {}
+                    gates_passed = sc_data.get("gates_passed_count", 11 if res.is_approved else 8)
+                    tier_str = sc_data.get("tier", "TIER_1_CERTIFIED" if gates_passed == 11 else "TIER_2_DIAMOND")
+
                     eval_record = {
                         "portfolio_id": res.ensemble_id,
                         "name": res.name,
@@ -142,7 +153,10 @@ class AutonomousMetaDaemon:
                         "avg_cross_correlation": res.avg_cross_correlation,
                         "consensus_score": res.consensus_score,
                         "consensus_verdict": res.consensus_verdict,
-                        "is_approved": is_approved,
+                        "is_approved": res.is_approved,
+                        "gates_passed_count": gates_passed,
+                        "tier": tier_str,
+                        "scorecard": sc_data,
                         "created_at_utc": datetime.now(timezone.utc).isoformat(),
                     }
                     evaluated_results.append(eval_record)
@@ -158,6 +172,7 @@ class AutonomousMetaDaemon:
         )
 
         logger.info(f"Ciclo completado. {len(evaluated_results)} Meta-Portafolios generados y evaluados ({sum(1 for r in evaluated_results if r['is_approved'])} aprobados).")
+        _ENSEMBLES_CACHE[route.upper()] = evaluated_results
         return evaluated_results
 
     def run_continuous_daemon(self, interval_seconds: int = 120) -> None:

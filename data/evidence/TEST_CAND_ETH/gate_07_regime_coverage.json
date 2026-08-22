@@ -2,19 +2,19 @@
   "evidence_id": "ev_TEST_CAND_ETH_g07",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "abf8b7d604a89a0d4a1d34f30b2964896051d7e0063ec616c209007c3d0239ed",
+  "strategy_snapshot_hash": "f682afaa5d8da4bff588879bd786dfd116d3c3b6feae41b759a240630c887414",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "63e6f6fb5792d6ca3f213d25ffdc68e8158f2ff1bf5842a81245716e2e5a295f",
-  "output_hash": "d3e794e17f73e874b1e2a66bc860ef19b2dd3a87bdd312918b456a1efcbfe490",
-  "status": "FAILED",
-  "score": 30.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, Retorno Total: -563911.53%)",
+  "input_hash": "feaa13c561358f34ca7c6e3fc9d6ab93dc17f22846ceb79cc24ab1d4fe57c8b8",
+  "output_hash": "6536843237aae00d6300fe359a5311c7f3abecb98569e0bc2bc7ff2de69abfae",
+  "status": "PASSED",
+  "score": 85.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +6818.06%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 497,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 2,
-      "CHOP_RANGING": 7,
-      "HIGH_VOLATILITY": 24
+      "CHOP_RANGING": 6,
+      "HIGH_VOLATILITY": 22
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
-      "BEAR_TREND": 25726.86,
-      "CHOP_RANGING": 2724.76,
-      "HIGH_VOLATILITY": -592363.15
+      "BEAR_TREND": 1140.63,
+      "CHOP_RANGING": 2941.53,
+      "HIGH_VOLATILITY": 2735.9
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 3,
-    "total_oos_return_pct": -563911.53
+    "total_oos_return_pct": 6818.06
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:01:06.193952+00:00"
+  "created_at_utc": "2026-08-22T07:34:19.384858+00:00"
 }

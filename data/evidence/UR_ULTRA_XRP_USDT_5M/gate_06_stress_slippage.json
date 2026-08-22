@@ -8,10 +8,10 @@
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "de2a1abc42f264bb578f3bc8610a959dbb988491790c89c6fc1c03f0fcd5fbef",
-  "output_hash": "4294c62525cfd933d66afe69841bdb6bf8d6248140a053808ce64d6094ed7d2e",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "53e4648d0a9facadcba0a4c1a01951423f2a597a79b625f8552b301cabdd88b7",
+  "output_hash": "0a5bb51ec00746541881ce17e4d2b87e66e7901b8325f65c482ff8e446f6c76e",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.87,
-        "stressed_profit_factor": 0.87,
+        "stressed_net_pnl_usd": -2.82,
+        "stressed_profit_factor": 0.46,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.01,
-        "stressed_profit_factor": 0.86,
+        "stressed_net_pnl_usd": -2.91,
+        "stressed_profit_factor": 0.45,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -1.17,
-        "stressed_profit_factor": 0.84,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -3.01,
+        "stressed_profit_factor": 0.44,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.02,
-        "stressed_net_pnl_usd": -1.45,
-        "stressed_profit_factor": 0.8,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": -3.17,
+        "stressed_profit_factor": 0.42,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:27:36.527997+00:00"
+  "created_at_utc": "2026-08-22T06:07:22.672987+00:00"
 }

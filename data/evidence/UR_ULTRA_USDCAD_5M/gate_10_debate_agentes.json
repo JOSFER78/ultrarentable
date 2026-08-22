@@ -8,25 +8,25 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "dc3a6ca88ebd6e276101f424125a0a4c5274032fcd824427df158be476d3ddae",
-  "output_hash": "2c4217905fd6c6510fe71ba3f1cb78cb54eeac88ded1c2b8ce6f114ee869bcd9",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "27e938c4dcb1f718656785cc6c94e07bf487382be5946c2ea47ae04ac6aca962",
+  "output_hash": "a633771981fc1ab157e8acbe93b7e3917c6a7377cfb9db72eb33ca78f860e23e",
   "status": "FAILED",
-  "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "score": 55.5,
+  "verdict": "FALLO: Consenso insuficiente (55.5/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 24.5,
+    "consensus_score": 55.5,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 35.2,
         "findings": [
           "Activo y Timeframe: USDCAD (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.12 con beneficio neto de $-4.40.",
+          "Profit Factor OOS: 0.56 con beneficio neto de $-0.17.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 79.0,
         "findings": [
-          "Drawdown Máximo Observado: 101.1% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 44.6% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 49 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 142 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.09 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
+        "score": 53.5,
         "objections": [
-          "Alerta de Drawdown: DD (101.1%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.12 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Rentabilidad: Profit factor 0.56 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": false
+        "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:22:48.608533+00:00"
+  "created_at_utc": "2026-08-22T06:06:50.607700+00:00"
 }

@@ -8,27 +8,27 @@
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "07b193e967fdeba75db201f54c8e75595e2053daa6deeeb1763ee32740f82dbb",
-  "output_hash": "dcfb164e2beb5d46dad246c8894756fe7967cd04e30f4ccf1473250275a69337",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "3d17cf81f6e94a8df76bbaec5c29b4da7f64b7d97e10016f2751e6487fb7d50a",
+  "output_hash": "9e9bec5bb532524d7d3b892c889597e327c572e8d153c3ef2ba5786ae617bb82",
   "status": "FAILED",
-  "score": 40.6,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.3 o Estabilidad 101.5% < 50.0%)",
+  "score": 38.9,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 150.8 o Estabilidad 97.2% < 50.0%)",
   "metrics": {
     "parameters_count": 11,
-    "degrees_of_freedom_ratio": 7.3,
+    "degrees_of_freedom_ratio": 150.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 101.5,
+    "parameter_neighborhood_stability_pct": 97.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.02,
-      0.98,
-      1.03,
-      1.07
+      0.7,
+      0.84,
+      1.11,
+      1.12
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:27:46.967390+00:00"
+  "created_at_utc": "2026-08-22T06:05:50.246125+00:00"
 }

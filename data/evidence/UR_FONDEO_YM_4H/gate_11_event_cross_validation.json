@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_FONDEO_YM_4H_g11",
   "run_id": "run_UR_FONDEO_YM_4H",
   "strategy_id": "UR_FONDEO_YM_4H",
-  "strategy_snapshot_hash": "a7ba771b9ba645edd4a9434780a3966e21de7d26dd059262b80dd2f33c219824",
+  "strategy_snapshot_hash": "d6ac0c172122a6685af672a52f5964ddffb35652a5a94a97dd052386942dd0dd",
   "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "4407b84f60e251b6e03aa66925409f55cfe5bbced7430bfb3e1411d53f77c1f0",
-  "output_hash": "c3bd7bef748469f5b260f62f268a240a6a5d0ed9bf2e2d88198e171ff7a61264",
+  "input_hash": "5aaa457da30a2b7df9a19ad165672366141ac5c9c1f4ad84d44e6ff2cabfc88b",
+  "output_hash": "5ada13517a66e7f515a80c8740e1de4ac95f16a0643eaafe3f5470a34e03d8d3",
   "status": "PASSED",
   "score": 98.9,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $49935.07, Apalancamiento Pico: 1.1x, Dist. Mín. Liquidación: 97.9%, Comisiones+Funding: $65.00)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $49935.18, Apalancamiento Pico: 1.1x, Dist. Mín. Liquidación: 97.9%, Comisiones+Funding: $65.00)",
   "metrics": {
     "initial_capital_usd": 50000.0,
-    "final_equity_usd": 49935.07,
+    "final_equity_usd": 49935.18,
     "peak_equity_usd": 50000.0,
-    "min_equity_usd": 49935.07,
+    "min_equity_usd": 49935.18,
     "peak_leverage_used": 1.06,
     "max_allowed_leverage_ceiling": 3.0,
     "min_distance_to_liquidation_pct": 97.87,
@@ -29,5 +29,5 @@
     "execution_events_count": 13
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T06:02:50.427508+00:00"
+  "created_at_utc": "2026-08-22T07:39:26.554168+00:00"
 }

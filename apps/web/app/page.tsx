@@ -570,7 +570,7 @@ export default function GeneticDiscoveryLabPage() {
               {telemetry.current_symbol || "MULTIACTIVO"}
             </span>
             <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 700 }}>
-              ({telemetry.current_timeframe || "5m, 15m, 1h, 4h"})
+              ({telemetry.current_timeframe || "1m, 5m, 15m, 1h, 4h, 1d"})
             </span>
           </div>
           <div style={{ fontSize: "11px", color: "#cbd5e1", marginTop: "8px" }}>

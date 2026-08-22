@@ -2,21 +2,21 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_ETH_USDT_4H",
   "strategy_id": "UR_ULTRA_ETH_USDT_4H",
-  "strategy_snapshot_hash": "25bafeecedafd689af29fac0c8ee18586a008c85a4886486a912fc7006139be0",
+  "strategy_snapshot_hash": "cdd305c2891f069ccffdfb7a649dca47e546737092c715c5ce98b60a3e9a073f",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "b587063aa43eec4b8722f70332ac5fec8cb021923ee4035df6576099f20b9890",
-  "output_hash": "bbeeb38477a033724f544d4786b6bfc2307c1b25bce710781b29378dda0cda5b",
+  "input_hash": "53a26a3cabe9e6586ca202bd5dd4d4e2acd6ead2ce1afd3e86bb62b452fda223",
+  "output_hash": "69843cfeb5e48d8439622f3a8119a86bbbcaa237395386e259b4d1efb8b934bf",
   "status": "PASSED",
-  "score": 63.6,
-  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (63.6/100 · 5/5 Evaluadores Conformes)",
+  "score": 80.5,
+  "verdict": "PASSED: Consenso Multi-Especialista Aprobado (80.5/100 · 5/5 Evaluadores Conformes)",
   "metrics": {
-    "consensus_score": 63.6,
+    "consensus_score": 80.5,
     "evaluators_count": 5,
     "verdict_status": "APPROVED_BY_CONSENSUS",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 72.5,
         "findings": [
           "Activo y Timeframe: ETH-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.39 con beneficio neto de $39.88.",
+          "Profit Factor OOS: 1.39 con beneficio neto de $20583814012.32.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -54,17 +54,17 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.04 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $19773116.25 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 62.0,
+        "score": 84.5,
         "objections": [
           "Cero objeciones críticas encontradas: La evidencia empírica respalda el candidato."
         ],
@@ -73,5 +73,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:00:11.666672+00:00"
+  "created_at_utc": "2026-08-22T11:57:19.284684+00:00"
 }

@@ -8,27 +8,27 @@
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "279da75424f33b0099850e320f8fe63e7de12c843240f4954dba43f13b77ad25",
-  "output_hash": "71e371d9e56e8e8974c9b867dc71793a48301556073a1817f53f4e0f59d78d77",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "234c35405201de4eafb4583e6325f8f766b0ed7db7fa03e37796f398aa8e5d25",
+  "output_hash": "2a6b7a4f724e181326232da2d1b16e971cf85136253c7b0b3b5efcd17537a99d",
   "status": "PASSED",
-  "score": 59.1,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 10.8 trades/param, Estabilidad Vecindario: 69.9%, Re-backtest PFs: [0.4, 0.44, 0.74, 0.74])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 29.0 trades/param, Estabilidad Vecindario: 100.7%, Re-backtest PFs: [0.29, 0.38, 0.4, 0.42])",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 10.8,
+    "degrees_of_freedom_ratio": 29.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 69.9,
+    "parameter_neighborhood_stability_pct": 100.7,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
+      0.29,
+      0.38,
       0.4,
-      0.44,
-      0.74,
-      0.74
+      0.42
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:21:37.041759+00:00"
+  "created_at_utc": "2026-08-22T06:06:59.948016+00:00"
 }

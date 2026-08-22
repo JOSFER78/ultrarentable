@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15M_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_15M",
   "strategy_id": "UR_ULTRA_LINK_USDT_15M",
-  "strategy_snapshot_hash": "79a0f1d534b96d7f3b2913fae9eaaee9945d2c595b198d1e8267cc35030ed99e",
+  "strategy_snapshot_hash": "17a5f10f541545cff3894a12cac2c656a5c34df72f483e190362a419f492cff3",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "78adb4af4db68f21d49d306381a6f2faae0fd506b8ec732d5b0a9480224cf50a",
-  "output_hash": "7aac5d5a3a802b53d542925bf2acafb09477966a896a5acdd4a055dc171e957a",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "b03a8f99896a273a84841255ee1800cafbe74b8c3d4269ec33fb341e56d6fdda",
+  "output_hash": "fbc481bc8ab784ff1095f3e9a40cf75eaae7ebbb94ed3c0514d28ef1e91e3970",
   "status": "FAILED",
-  "score": 55.0,
-  "verdict": "FALLO: Consenso insuficiente (55.0/100) u objeción crítica de riesgo",
+  "score": 34.7,
+  "verdict": "FALLO: Consenso insuficiente (34.7/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 55.0,
+    "consensus_score": 34.7,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.8,
+        "score": 55.5,
         "findings": [
           "Activo y Timeframe: LINK-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.13 con beneficio neto de $752.67.",
+          "Profit Factor OOS: 1.01 con beneficio neto de $-998.56.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 99.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 249 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 323 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $3.02 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $-3.09 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 65.2,
+        "score": 38.9,
         "objections": [
-          "Alerta de Drawdown: DD (99.9%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 1.01 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T03:46:14.555427+00:00"
+  "created_at_utc": "2026-08-22T07:29:33.429766+00:00"
 }

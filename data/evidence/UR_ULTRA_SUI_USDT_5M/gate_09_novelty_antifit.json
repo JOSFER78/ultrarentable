@@ -8,27 +8,27 @@
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "acd1d4fe824f193229cf1af22a3d3c04c78b84394fb9fa063dcdb68c0af2396a",
-  "output_hash": "9ac703d891db3307e6d8dde0835a0e2fe61723e86e6c3e3a5ea4bb1736d3b6bb",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "dfcf85b818c3c1ed2b8c3f2ab54ff081eb5a083eb4b6db5537f0d8ffe8a15b5a",
+  "output_hash": "170a347d78aa84789424133d1c179e922863aace8955f71fbf8e5568f7a2325f",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 48.0 trades/param, Estabilidad Vecindario: 130.8%, Re-backtest PFs: [0.95, 1.02, 0.6, 0.83])",
+  "score": 90.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 75.5 trades/param, Estabilidad Vecindario: 83.3%, Re-backtest PFs: [0.63, 0.55, 0.2, 0.52])",
   "metrics": {
     "parameters_count": 4,
-    "degrees_of_freedom_ratio": 48.0,
+    "degrees_of_freedom_ratio": 75.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 130.8,
+    "parameter_neighborhood_stability_pct": 83.3,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.95,
-      1.02,
-      0.6,
-      0.83
+      0.63,
+      0.55,
+      0.2,
+      0.52
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-21T22:26:11.944752+00:00"
+  "created_at_utc": "2026-08-22T06:06:35.687142+00:00"
 }

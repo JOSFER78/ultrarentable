@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5M",
-  "strategy_snapshot_hash": "3f8821cf9a2c880aeb6dade971b9bbf9b03ccb5439d55a30dbb78b125913b9a5",
+  "strategy_snapshot_hash": "7601be976e2b5222edc0ecbda233c95168582926f344673acbb0c64a13779844",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "a0490bbf2d7f66bdacf61d4f833286604cb918a342cbea5ef475b655d82db2ad",
-  "output_hash": "a4f733216debfc061cf3b528e922c64b561ba25a3101054ba47fc5b790c62c84",
+  "input_hash": "0494299b596ff1fe28fbc702b140766b234c16a4991e9e98f2a9007867f377f2",
+  "output_hash": "b35e99072b0857301ea270cb14a40e47c69e6532a22d695ab25565e0f67315b2",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +606.14%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +19.46%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 60,
-      "HIGH_VOLATILITY": 9
+      "CHOP_RANGING": 56,
+      "HIGH_VOLATILITY": 10
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 239.96,
-      "HIGH_VOLATILITY": 366.18
+      "CHOP_RANGING": -103.87,
+      "HIGH_VOLATILITY": 123.33
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 606.14
+    "total_oos_return_pct": 19.46
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:03:14.626556+00:00"
+  "created_at_utc": "2026-08-22T06:16:10.314980+00:00"
 }

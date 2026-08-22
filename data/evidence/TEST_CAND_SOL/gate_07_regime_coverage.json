@@ -2,19 +2,19 @@
   "evidence_id": "ev_TEST_CAND_SOL_g07",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "00079e8ca5e778cd689bd3dc06765fdab224d5e68dd5a750010629fa5bbccdd8",
+  "strategy_snapshot_hash": "51bc06113d008054b547a4e423d2f1e337c2f89bc60378de65b9eb505e38371c",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "e5114537889cf4f83c9ceefacecf2eeb2d412984eb33136304d81f2731ae20f5",
-  "output_hash": "aed359cc6b174f36d9922fa10f5a71745fb1b4d8ea732cd510418c9762c1e7c5",
+  "input_hash": "5485011b87f8fc5b72ea42c3aa45f45f645302b360444a557c7ef1c8ae90cbb7",
+  "output_hash": "5530e03ada55d942f858f1a10367916a52622d0437e3af6e4bb6a1795e415630",
   "status": "FAILED",
-  "score": 30.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, Retorno Total: -51.79%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -209.04%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 7,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 312
     },
     "regime_trades_count": {
-      "BULL_TREND": 1,
+      "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 96,
-      "HIGH_VOLATILITY": 22
+      "CHOP_RANGING": 45,
+      "HIGH_VOLATILITY": 17
     },
     "regime_return_pct": {
-      "BULL_TREND": 13.04,
+      "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 20.77,
-      "HIGH_VOLATILITY": -85.6
+      "CHOP_RANGING": 50.29,
+      "HIGH_VOLATILITY": -259.33
     },
-    "regimes_profitable_count": 2,
-    "regimes_active_count": 3,
-    "total_oos_return_pct": -51.79
+    "regimes_profitable_count": 1,
+    "regimes_active_count": 2,
+    "total_oos_return_pct": -209.04
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T06:01:09.132374+00:00"
+  "created_at_utc": "2026-08-22T07:40:26.044783+00:00"
 }

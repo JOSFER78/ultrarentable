@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_GC_5M_g10",
   "run_id": "run_UR_FONDEO_GC_5M",
   "strategy_id": "UR_FONDEO_GC_5M",
-  "strategy_snapshot_hash": "65726e5b30ea141b823c34610da64eb3df52b9b48ccfd8015fa3b3501bb3e14f",
+  "strategy_snapshot_hash": "83dda8dc0f23cf97118095a1523aa0cf5f16f20bed76a0a95713874c942fe46f",
   "dataset_id": "ds_trad_gc_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "879d4e66bb361edc6812ea748c7b206de689c1b8056985c14d1c899405e34275",
-  "output_hash": "9f2671d038b2f58a79ee1d874db37b4091d91580ba510943368b9e0b0054f42d",
+  "input_hash": "922fe557f20e0c8e7e493c2b260e5346b2e35996fb4ad723bd5a40ffce122011",
+  "output_hash": "ea31b17c143051f2ad81765f982699cdf1ebf617e697b5d719002602787f4e95",
   "status": "FAILED",
   "score": 66.2,
   "verdict": "FALLO: Consenso insuficiente (66.2/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 100.0,
         "findings": [
           "Activo y Timeframe: GC (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 2.09 con beneficio neto de $10580.50.",
+          "Profit Factor OOS: 2.09 con beneficio neto de $18273.70.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 7.9% (Límite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 15.5% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $64.52 USD.",
+          "Beneficio medio por operación: $111.43 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -66,12 +66,12 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 75.0,
         "objections": [
-          "Alerta de Drawdown: DD (7.9%) consume más del 70% del margen tolerable."
+          "Alerta de Drawdown: DD (15.5%) consume más del 70% del margen tolerable."
         ],
         "approved": true
       }
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T06:02:02.942666+00:00"
+  "created_at_utc": "2026-08-22T12:43:54.483737+00:00"
 }

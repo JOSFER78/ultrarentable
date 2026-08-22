@@ -8,25 +8,25 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "987e3484a2b2c78fc136bfcd67bfdc8e3a62bed813e5c7a298a77553f2e2b5c0",
-  "output_hash": "248f0001c95152127b194473c1f808745bbb573bdcdaa79b22117c7318398046",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "1cea886ebb95f8a3bab1999f2011e6c9e886ee00f4e469583338ebce4588f33f",
+  "output_hash": "6a6604e3601c39ace2a7d0f18b3b447d062bdc9abdfd20113d27794487111cd3",
   "status": "FAILED",
-  "score": 29.3,
-  "verdict": "FALLO: Consenso insuficiente (29.3/100) u objeción crítica de riesgo",
+  "score": 34.8,
+  "verdict": "FALLO: Consenso insuficiente (34.8/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 29.3,
+    "consensus_score": 34.8,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 36.5,
+        "score": 55.9,
         "findings": [
           "Activo y Timeframe: SOL-USDT (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.59 con beneficio neto de $-4.46.",
+          "Profit Factor OOS: 1.02 con beneficio neto de $-1.87.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 82 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 191 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.05 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,15 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 34.1,
+        "score": 39.0,
         "objections": [
-          "Alerta de Drawdown: DD (100.9%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.59 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 1.02 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:26:18.217909+00:00"
+  "created_at_utc": "2026-08-22T06:06:12.988667+00:00"
 }

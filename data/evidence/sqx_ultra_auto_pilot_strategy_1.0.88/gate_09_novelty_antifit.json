@@ -2,33 +2,33 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.88_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.88",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.88",
-  "strategy_snapshot_hash": "85693a5ca0ccd04cf00f57839e3e2fe64a4b5ca5ae1d89d665a482b4d1699fba",
+  "strategy_snapshot_hash": "1593ce858ff0093a0874dd7b0d166473e2cc9a2f4b54bf611e7e501ef5bf3122",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "d90c97950aa391e4e4985b649f06e6709223f07505ad81ccd52da6bbef764fb9",
-  "output_hash": "1f52bd96c471f1e82b4909244c0f58b3f728581a9e4806875a81baa778ae7646",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "6bd585386d0434146f88994fdf13b9809f0ea269dfde84a1fc026b1a3b1954f5",
+  "output_hash": "a02cec54c182246dc6f899a847afd2a6af0d97f0c3f6064c18bf822fd6c650e6",
   "status": "PASSED",
-  "score": 89.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 283.4 trades/param, Estabilidad Vecindario: 81.7%, Re-backtest PFs: [1.14, 2.3, 2.05, 1.37])",
+  "score": 94.3,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 314.8 trades/param, Estabilidad Vecindario: 90.5%, Re-backtest PFs: [0.51, 1.09, 1.09, 1.22])",
   "metrics": {
     "parameters_count": 5,
-    "degrees_of_freedom_ratio": 283.4,
+    "degrees_of_freedom_ratio": 314.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 81.7,
+    "parameter_neighborhood_stability_pct": 90.5,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.14,
-      2.3,
-      2.05,
-      1.37
+      0.51,
+      1.09,
+      1.09,
+      1.22
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.88/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T05:27:29.822957+00:00"
+  "created_at_utc": "2026-08-22T07:37:53.066334+00:00"
 }

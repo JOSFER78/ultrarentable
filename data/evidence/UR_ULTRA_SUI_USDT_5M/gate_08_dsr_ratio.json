@@ -8,22 +8,22 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "bf0993801caece823e6b5b8fef9ae7fdadb50e5370685475bc22b2e0151b5eae",
-  "output_hash": "445b401bef758f06b56a85e5e2d16e846961b3ddc4fc4d1d90a319fe51071925",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "89aa1a3860266aec7ff533d6857601ecbf924772ec1d7be4a379ef78a4009d10",
+  "output_hash": "a70e7e3e12758e6182c70c45c3bbb616c145051889ae887a6df85e3577f71fd4",
   "status": "FAILED",
-  "score": 46.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (46.0% < 50.0% tras penalizar 1 trials)",
+  "score": 21.1,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (21.1% < 50.0% tras penalizar 1 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.014,
-    "deflated_sharpe_probability_pct": 46.01,
+    "raw_sharpe_ratio": -0.105,
+    "deflated_sharpe_probability_pct": 21.15,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 1.743,
-    "kurtosis": 8.075,
-    "sample_trades_count": 50
+    "skewness": 2.203,
+    "kurtosis": 8.957,
+    "sample_trades_count": 74
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_5M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:26:11.547952+00:00"
+  "created_at_utc": "2026-08-22T06:06:31.681830+00:00"
 }

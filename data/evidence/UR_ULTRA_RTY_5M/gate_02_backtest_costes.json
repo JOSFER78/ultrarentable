@@ -8,24 +8,16 @@
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "391e367c7946e9634dcd914448e1fac14821b27660969c84260d7dc7927bbaa4",
-  "output_hash": "ab6491294fa23c5a990739294bf69dab9b8c20025dac898e32a47296690a615f",
-  "status": "PASSED",
-  "score": 20.7,
-  "verdict": "PASSED: PF Neto tras costes = 1.21 (INDICES)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "d69870703a94e6f8893ba01fbc4ee64675e777df7e71aea409caaecc264a9c0d",
+  "output_hash": "b93e8b0aadb2dac011d79bed793aceb95c72083db3b298c657a6dd381a31662c",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "INDICES",
-    "canonical_name": "E-mini Russell 2000",
-    "exchange": "CME Globex",
-    "gross_pnl_usd": 1002.64,
-    "total_fees_usd": 159.45,
-    "total_slippage_usd": 318.9,
-    "net_pnl_usd": 524.29,
-    "net_profit_factor": 1.21,
-    "drag_cost_pct": 47.71
+    "trades_count": 2
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_5M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-21T22:23:36.851554+00:00"
+  "created_at_utc": "2026-08-22T06:05:39.781810+00:00"
 }

@@ -245,7 +245,10 @@ def get_real_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
     
     # 3. Top candidatos reales: Deduplicación estricta (1 solo campeón por activo)
     top_cands_query = db.query(CandidateModel).filter(
-        CandidateModel.status.in_(["OOS_PASSED", "APPROVED", "CANDIDATA_ULTRA", "CANDIDATA_FONDEO"])
+        CandidateModel.status.in_([
+            "CERTIFICADA_TIER_1", "REFINADO_TIER_2", "APPROVED", "OOS_PASSED",
+            "CANDIDATA_ULTRA", "CANDIDATA_FONDEO", "INCUBADORA_REPROGRAMACION"
+        ])
     ).all()
 
     champions_by_asset: Dict[str, Any] = {}

@@ -8,13 +8,13 @@
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "a106143294515f21861672c859e3e3142713980c1a80f0f5ee328438c8f35280",
-  "output_hash": "201da8a940e12b7a72b6f0d9dcf5a3a5870930e33e7e85e3702eea92908c5181",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "e42133ff901e6df8cce843dbaa7227d14617c655d258d8a08a077559904ccd76",
+  "output_hash": "78ee02be3dd9ac8b5542f4b9f6304143ea2b3ad9cb403e23e69e50dab761ca94",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -22.55%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -1.49%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 33,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 39,
+      "HIGH_VOLATILITY": 15
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -15.21,
-      "HIGH_VOLATILITY": -7.34
+      "CHOP_RANGING": -61.77,
+      "HIGH_VOLATILITY": 60.28
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -22.55
+    "total_oos_return_pct": -1.49
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-21T22:27:30.606429+00:00"
+  "created_at_utc": "2026-08-22T06:05:03.515529+00:00"
 }

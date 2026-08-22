@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "a193d3de87f57315ea2363aa9705859dba6fcd02a12e6483a150504974b3825e",
-  "output_hash": "2b53bf363d3b7b3eb2df4b39e8c5bfc5836df3bdcec7a2af7055753487a34e96",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "06efbc86074a33cfadf85262f7797fd79f699b48e4c0c41ebbb3e256e5ec5a99",
+  "output_hash": "dc8d564be639307dad982c58db52078ced7b3c66b542ee56939190e4bbb7a6b0",
   "status": "FAILED",
-  "score": 65.0,
-  "verdict": "FALLO: Muestra insuficiente (45 IS < 15 ó 13 OOS < 10)",
+  "score": 10.0,
+  "verdict": "FALLO: Muestra insuficiente (3 IS < 15 ó 1 OOS < 10)",
   "metrics": {
-    "trades_is": 45,
-    "trades_oos": 13,
+    "trades_is": 3,
+    "trades_oos": 1,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_1H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:21:38.557719+00:00"
+  "created_at_utc": "2026-08-22T06:05:35.138063+00:00"
 }

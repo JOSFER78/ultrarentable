@@ -29,6 +29,7 @@ class Timeframe(str, Enum):
     M15 = "15m"
     H1 = "1h"
     H4 = "4h"
+    D1 = "1d"
 
 
 class StrategyArchetype(str, Enum):

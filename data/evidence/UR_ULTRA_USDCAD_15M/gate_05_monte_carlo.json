@@ -8,20 +8,16 @@
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "d2ea1c2a14e0f7ac81170e1b99b7f68a52558d8795305da1f0b40df6122cd1ee",
-  "output_hash": "8b4fe10d10fe15ae2003fedf97ef29191af9873dd87ea2c01578cd1c1ffbc922",
-  "status": "PASSED",
-  "score": 98.6,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 2.9%)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "ec68bfa4baa7d66a76692885354f27cff32692eeb993ff72fcc3dfd470e5ef16",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
   "metrics": {
-    "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 1.9,
-    "drawdown_95th_percentile_pct": 2.9,
-    "max_simulated_drawdown_pct": 3.2
+    "simulations_run": 0
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-21T22:21:34.123823+00:00"
+  "created_at_utc": "2026-08-22T06:06:36.383896+00:00"
 }

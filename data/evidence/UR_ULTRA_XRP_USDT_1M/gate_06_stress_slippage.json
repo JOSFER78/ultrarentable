@@ -8,44 +8,44 @@
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "cb21d5efc3c1d61904d8f4f35d5a08fe898f3125c7fbeb136914e5a7403843b5",
-  "output_hash": "93e94cb5df0be1214e76d6d99402323662bb49bb2cec4b1afb76f6f119ec7993",
-  "status": "PASSED",
-  "score": 75.0,
-  "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (3/4 escenarios aprobados)",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "7070b37baf4895b564325210216b84502c6f310a228a53d08b339e61e7b79a65",
+  "output_hash": "545e692579a17e71f8abadadf995c0bd57d618e53f48241f2eebcd1649fd6dc8",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
   "metrics": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.35,
-        "stressed_profit_factor": 1.05,
-        "survived": true
+        "stressed_net_pnl_usd": -2.62,
+        "stressed_profit_factor": 0.4,
+        "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.19,
-        "stressed_profit_factor": 1.02,
-        "survived": true
+        "stressed_net_pnl_usd": -2.7,
+        "stressed_profit_factor": 0.39,
+        "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 0.02,
-        "stressed_profit_factor": 1.0,
-        "survived": true
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.81,
+        "stressed_profit_factor": 0.38,
+        "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -0.28,
-        "stressed_profit_factor": 0.96,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.95,
+        "stressed_profit_factor": 0.36,
         "survived": false
       }
     },
-    "passed_scenarios_count": 3,
+    "passed_scenarios_count": 0,
     "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:26:58.911497+00:00"
+  "created_at_utc": "2026-08-22T06:07:17.205732+00:00"
 }

@@ -8,26 +8,26 @@
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "256cf8bf1837528df006d87fe7fcadb02a76517f4a565f58ecdc6d8d764bbfc0",
-  "output_hash": "efdc84d122ea746f2a71dba93994c6deb23c1c72038d260cd070324dc86fe86e",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "012d287816566e3844af49459cf1da43d5dc12f820fd30aa0f57d9e8530cc11b",
+  "output_hash": "8cf50228ba4ae703e5acd21d9315d1957bd427d4e189f497fca37a53743a9599",
   "status": "PASSED",
-  "score": 94.4,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $931.42, Apalancamiento Pico: 8.5x, Dist. Mín. Liquidación: 95.7%, Comisiones+Funding: $65.07)",
+  "score": 94.9,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Equity Final: $940.10, Apalancamiento Pico: 8.5x, Dist. Mín. Liquidación: 95.7%, Comisiones+Funding: $56.54)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 931.42,
+    "final_equity_usd": 940.1,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": 931.42,
+    "min_equity_usd": 940.1,
     "peak_leverage_used": 8.5,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 95.71,
     "margin_call_triggered": false,
-    "total_fees_paid_usd": 59.16,
-    "total_funding_cost_usd": 5.92,
-    "execution_events_count": 23
+    "total_fees_paid_usd": 51.4,
+    "total_funding_cost_usd": 5.14,
+    "execution_events_count": 38
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1M/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-21T22:27:35.421924+00:00"
+  "created_at_utc": "2026-08-22T06:04:49.169162+00:00"
 }

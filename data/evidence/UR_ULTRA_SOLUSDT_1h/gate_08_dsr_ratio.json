@@ -2,28 +2,28 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g08",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "23ae38dc6ebb30cad0e6f34c5cf5f496b8397eb409a5dbf0eee866ff1a2e5679",
+  "strategy_snapshot_hash": "cb9c716163d911a5cedb8c56e5945cb0b74bd14e9fe8669d4046c87449e0c4b0",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "56926530891a96298f1e3d0a32970a44026074a9ba39e1d74009eedd59f15ad3",
-  "output_hash": "1c3365f99238af539b4d1e89943b2ca478b79981a39ecd2069670e9b2795370f",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "72a5236b6179216b981d7ca01c28731fcab318f59a493178188025b9e1850e77",
+  "output_hash": "c7439b8d633ee9caebca274ff0ac027b3acd4c3801dea20d7cf7013efcfce414",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.237,
+    "raw_sharpe_ratio": 0.23,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 7.795,
-    "kurtosis": 82.88,
-    "sample_trades_count": 267
+    "skewness": 6.635,
+    "kurtosis": 52.573,
+    "sample_trades_count": 264
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T03:44:20.678062+00:00"
+  "created_at_utc": "2026-08-22T06:32:50.424092+00:00"
 }

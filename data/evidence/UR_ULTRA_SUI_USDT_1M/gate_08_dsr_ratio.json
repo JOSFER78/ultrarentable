@@ -8,22 +8,22 @@
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "94e1d86197d293e570c43ca44c7abdf587c62f43d4c954865cdc4b942c5b8928",
-  "output_hash": "81a746dbd89840bbfe6fdf28123e7accddb308e0b39997d88d66479d92a5f04f",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "719ab987c3252fa6aa38ff5c4f99273715d3ab9b1fe6852770abe43f5a0079d5",
+  "output_hash": "3bc25a94c658615975dde05e3b931744ae60207acfb2460709854440c4f5e082",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 1 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.912,
+    "raw_sharpe_ratio": -0.61,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 1,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": -2.89,
-    "kurtosis": 10.555,
-    "sample_trades_count": 17
+    "skewness": -0.005,
+    "kurtosis": 2.469,
+    "sample_trades_count": 64
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-21T22:26:34.820297+00:00"
+  "created_at_utc": "2026-08-22T06:06:20.007899+00:00"
 }

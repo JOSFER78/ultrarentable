@@ -2,28 +2,28 @@
   "evidence_id": "ev_UR_ULTRA_DOGEUSDT_1h_g08",
   "run_id": "run_UR_ULTRA_DOGEUSDT_1h",
   "strategy_id": "UR_ULTRA_DOGEUSDT_1h",
-  "strategy_snapshot_hash": "c3e4b08a33e51a30b68ff52ed2b09c220b3625bc66a40f253ba6a146b7612398",
+  "strategy_snapshot_hash": "2c7ae4631026c1197d4dde72595364a637b6547856700095700f7d402d51d0a0",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "8909b930bf23eada3dcd0eae4a7bed83e3ebeefbc57adfd78e1d929e6379e47d",
-  "output_hash": "f22d53625189b7942a96a2395779c6284925166d2c1b0b76224cff9c83ce3b2a",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "5d6d8e20c29a18f5d77d20f08b99da74a4dec73c289048829eaa219fe31e425e",
+  "output_hash": "e9c5c93f8e6906eb1ce92ad9321052759accba173bbe7860aa26c9f9c76a3c02",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.29,
+    "raw_sharpe_ratio": 0.294,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 3.527,
-    "kurtosis": 16.829,
-    "sample_trades_count": 403
+    "skewness": 4.441,
+    "kurtosis": 26.449,
+    "sample_trades_count": 442
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T03:49:39.971117+00:00"
+  "created_at_utc": "2026-08-22T06:29:10.726420+00:00"
 }

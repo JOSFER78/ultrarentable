@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_5M_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_5M",
   "strategy_id": "UR_ULTRA_LINK_USDT_5M",
-  "strategy_snapshot_hash": "0cbf0b226090697547aac46bf7ac97e8972c989bb540f13b97414df56a3bc5b0",
+  "strategy_snapshot_hash": "cc9068434310fe840de23a418e9f0bbb5fcb8089d9d15034b5f89d3e12cd8064",
   "dataset_id": "ds_binance_linkusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "8c677d9b731f5bcce93f32e19bf55715c860246e84e0f629586c25fed202f5f4",
-  "output_hash": "343ce25e2481b9918dd47b96d7721921d7b9d5b503bacbf46d5a39b02cec1c30",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "3c942b02bb80a959133d30fab9f3f4644cd23d595fc4260ec9f0c81f93970fab",
+  "output_hash": "4ecffe23baeff94967cfdd90e25be9eef9f97cc10d1d27928251c389fb7da276",
   "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +1706.41%)",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +491.79%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 78,
-      "HIGH_VOLATILITY": 21
+      "CHOP_RANGING": 72,
+      "HIGH_VOLATILITY": 19
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 208.77,
-      "HIGH_VOLATILITY": 1497.64
+      "CHOP_RANGING": -399.21,
+      "HIGH_VOLATILITY": 891.0
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 1706.41
+    "total_oos_return_pct": 491.79
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T03:02:55.418997+00:00"
+  "created_at_utc": "2026-08-22T07:32:44.031689+00:00"
 }

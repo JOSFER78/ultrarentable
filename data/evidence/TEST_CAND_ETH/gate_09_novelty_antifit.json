@@ -2,33 +2,33 @@
   "evidence_id": "ev_TEST_CAND_ETH_g09",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "abf8b7d604a89a0d4a1d34f30b2964896051d7e0063ec616c209007c3d0239ed",
+  "strategy_snapshot_hash": "f682afaa5d8da4bff588879bd786dfd116d3c3b6feae41b759a240630c887414",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "f4874e1fb8a4f9c9b77b422b088ce3bafe5d5bbcf0e4da40baed7eeb01047c29",
-  "output_hash": "c95c0162fdbe0b9cc46ceb7b87270da866b27f919f927b4fe1c5af815b9e0623",
+  "input_hash": "40fd7514d1630d399874aa65baa14583df9ca13ad86e6a405f0e50b70db67d97",
+  "output_hash": "ec12e86420a1cd01ea1054755bafe7ab88a92aa11737059c73501ccb344c6e51",
   "status": "PASSED",
-  "score": 97.4,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 34.2 trades/param, Estabilidad Vecindario: 95.7%, Re-backtest PFs: [0.65, 0.85, 1.12, 1.17])",
+  "score": 97.7,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 32.0 trades/param, Estabilidad Vecindario: 96.1%, Re-backtest PFs: [0.63, 0.84, 1.11, 1.15])",
   "metrics": {
     "parameters_count": 6,
-    "degrees_of_freedom_ratio": 34.2,
+    "degrees_of_freedom_ratio": 32.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 95.7,
+    "parameter_neighborhood_stability_pct": 96.1,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.65,
-      0.85,
-      1.12,
-      1.17
+      0.63,
+      0.84,
+      1.11,
+      1.15
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T06:01:40.153136+00:00"
+  "created_at_utc": "2026-08-22T07:34:24.616637+00:00"
 }

@@ -8,10 +8,10 @@
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "7f597117e8823fb23e03f3ce09c7fdc2cd6887c37f8b26ebda9203fa550abc83",
-  "output_hash": "cceab5b7328ee4680cfd963fb44455fab398972ff7b4d456588b8d9077954571",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "96f428e3c3b940050c222e3dd9300002b34cbcf2f69783f3f873caaa7c7e52b2",
+  "output_hash": "93b45b041d58e98312e97d33771504ccfe2736625bb3b733c4c2637337ffb925",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.5,
-        "stressed_profit_factor": 0.5,
+        "stressed_net_pnl_usd": -3.34,
+        "stressed_profit_factor": 0.26,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.57,
-        "stressed_profit_factor": 0.5,
+        "stressed_net_pnl_usd": -3.41,
+        "stressed_profit_factor": 0.25,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.65,
-        "stressed_profit_factor": 0.49,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -3.5,
+        "stressed_profit_factor": 0.24,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.79,
-        "stressed_profit_factor": 0.47,
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -3.63,
+        "stressed_profit_factor": 0.23,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-21T22:26:38.531426+00:00"
+  "created_at_utc": "2026-08-22T06:05:25.978791+00:00"
 }

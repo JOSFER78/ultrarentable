@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_DOGEUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_DOGEUSDT_1h",
   "strategy_id": "UR_ULTRA_DOGEUSDT_1h",
-  "strategy_snapshot_hash": "c3e4b08a33e51a30b68ff52ed2b09c220b3625bc66a40f253ba6a146b7612398",
+  "strategy_snapshot_hash": "2c7ae4631026c1197d4dde72595364a637b6547856700095700f7d402d51d0a0",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
-  "input_hash": "4db9ba57828c556a363f7083f09457222037fc3f9caaf175d8ba0d49959b2e29",
-  "output_hash": "68b375e758e666d9027273b4ba63a92655fb1088adb53bcc292ca16c9aba57ee",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "1780b88473bfc36e526d59f98a5382125776f4463f840e505379ae9247a587d3",
+  "output_hash": "c90dddbe5c5fac6fc32db4b675e009292a2dc1dcb1e0263d76fbebdd3793ced8",
   "status": "FAILED",
-  "score": 56.2,
-  "verdict": "FALLO: Consenso insuficiente (56.2/100) u objeción crítica de riesgo",
+  "score": 34.4,
+  "verdict": "FALLO: Consenso insuficiente (34.4/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 56.2,
+    "consensus_score": 34.4,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 64.9,
+        "score": 54.5,
         "findings": [
           "Activo y Timeframe: DOGEUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.22 con beneficio neto de $97466909998123732434944.00.",
+          "Profit Factor OOS: 0.99 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 98.7% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2127 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2482 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,24 +54,25 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $45823653031557939200.00 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $-0.40 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 66.2,
+        "score": 38.6,
         "objections": [
-          "Alerta de Drawdown: DD (98.7%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.99 cercano al umbral de equilibrio (1.05)."
         ],
-        "approved": true
+        "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T03:49:47.875454+00:00"
+  "created_at_utc": "2026-08-22T06:29:13.211943+00:00"
 }

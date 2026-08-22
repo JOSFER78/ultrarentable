@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "57c8afe0b48795ad4cabc2d1414040d46a240cd4c9e3d4e628fa48d19d1cd8cc",
-  "output_hash": "d551f8fb9932d9b00f4e671a8278de628a8157ecccc0ba99be7f7c972f732710",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "5b4b215cf75c473744d6972fc24a35a5a2ad67e1d6952147aad949494737ccb8",
+  "output_hash": "737a841795ded04fcdcc84f81008437f8981e54e5adb6c89faa24346d67a6957",
   "status": "FAILED",
-  "score": 95.0,
-  "verdict": "FALLO: Muestra insuficiente (40 IS < 15 ó 19 OOS < 10)",
+  "score": 20.0,
+  "verdict": "FALLO: Muestra insuficiente (51 IS < 15 ó 4 OOS < 10)",
   "metrics": {
-    "trades_is": 40,
-    "trades_oos": 19,
+    "trades_is": 51,
+    "trades_oos": 4,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:21:33.967855+00:00"
+  "created_at_utc": "2026-08-22T06:06:36.341216+00:00"
 }

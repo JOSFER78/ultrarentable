@@ -8,71 +8,17 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "faac5f42216ce1db870e15599d59a4ac52386c730e6dc35e0ed6246baa73d65a",
-  "output_hash": "ba8d2add4982946c34b17d4acf1d0df52f856e81330cf5c8fc21f716ff3435fc",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "2df24cb98349b8a1b577f94e00ea27816b3fe2ba78564b8e34b4a67d769d7f25",
+  "output_hash": "f16b9f8a7ca92d9d91d0efd8b2e5a99ecc7aa0863027ea79904231b60d0ad000",
   "status": "FAILED",
-  "score": 24.5,
-  "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
+  "score": 0.0,
+  "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para auditoría multi-especialista",
   "metrics": {
-    "consensus_score": 24.5,
-    "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
-    "specialists": [
-      {
-        "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
-        "findings": [
-          "Activo y Timeframe: RTY (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.19 con beneficio neto de $-4.20.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
-        ],
-        "approved": false
-      },
-      {
-        "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
-        "findings": [
-          "Drawdown Máximo Observado: 100.7% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
-        ],
-        "approved": false
-      },
-      {
-        "agent": "Statistical Inference Specialist",
-        "role": "Significancia de Muestra y Outlier Risk",
-        "score": 100.0,
-        "findings": [
-          "Muestra fuera de muestra: 69 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: ALTO."
-        ],
-        "approved": true
-      },
-      {
-        "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
-        "findings": [
-          "Beneficio medio por operación: $-0.06 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
-        ],
-        "approved": false
-      },
-      {
-        "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
-        "objections": [
-          "Alerta de Drawdown: DD (100.7%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.19 cercano al umbral de equilibrio (1.05)."
-        ],
-        "approved": false
-      }
-    ]
+    "trades_count": 0,
+    "verdict_status": "BLOCKED_NO_TRADES"
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:21:50.253146+00:00"
+  "created_at_utc": "2026-08-22T06:05:33.725024+00:00"
 }

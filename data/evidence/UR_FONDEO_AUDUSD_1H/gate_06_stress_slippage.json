@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1H_g06",
   "run_id": "run_UR_FONDEO_AUDUSD_1H",
   "strategy_id": "UR_FONDEO_AUDUSD_1H",
-  "strategy_snapshot_hash": "47f509e5d2c15e361f27ba1426d8058097dd95415e5a9d801446fba2065857c1",
+  "strategy_snapshot_hash": "0b7dfbcc1d25599669e2169591f38365f985b45f7517166900be704f933e564a",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.1.0",
   "formula_version": "3.1.0",
-  "input_hash": "ea2a2151fa2ecc4634d689717fc543e3e2d7742bbfba09e87a04fdc819fa1458",
-  "output_hash": "477e731f7940489711aa4ab0b15ea52a4caa19eddcdd93f84e6d014fc1d6c399",
+  "input_hash": "4d93e414dd5c45c5b35167908681b99a18c049a80bdeb65b3dee67ac94a38dc6",
+  "output_hash": "ce81075bfaf300b0bae00daaa5dadfb9c9444507ee9407c9087b181ca0745982",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -37,7 +37,7 @@
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.03,
+        "stressed_net_pnl_usd": -0.04,
         "stressed_profit_factor": 0.0,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T06:01:01.636887+00:00"
+  "created_at_utc": "2026-08-22T07:40:54.527158+00:00"
 }

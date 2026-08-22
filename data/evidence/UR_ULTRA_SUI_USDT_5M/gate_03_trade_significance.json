@@ -8,21 +8,21 @@
   "gate_id": 3,
   "gate_name": "TRADE_SIGNIFICANCE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "69e09fbb81111020982b81047c2ef2f3646ac30df6beb118ff2ba118cc0021d3",
-  "output_hash": "b0d16d31a9cabab58dd53b6db5724eeb3038cdeb8293057b52021469edfa7c22",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "cd3ac2d3df02874684f36d228d387616ca6cf5ccbcfcc2a3f2fbe0b87386568b",
+  "output_hash": "5ca6947fedc2fe586e42251ce8f7eb6e84d5841a9034cf8f8d5b2b55202453ec",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (142 IS / 50 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (228 IS / 74 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 142,
-    "trades_oos": 50,
-    "top2_outlier_dependency_pct": 45.6,
+    "trades_is": 228,
+    "trades_oos": 74,
+    "top2_outlier_dependency_pct": 35.6,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_5M/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-21T22:26:10.751283+00:00"
+  "created_at_utc": "2026-08-22T06:06:30.488782+00:00"
 }

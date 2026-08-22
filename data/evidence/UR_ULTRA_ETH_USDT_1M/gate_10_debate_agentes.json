@@ -8,10 +8,10 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "8a8a1cd1af3f704b5a2875c082fff5a047494563c6c1d9c0f0818c72ba59164f",
-  "output_hash": "93180a53ec59d894c361c76d86cc33cac33338f378acdc11b9cc96debb987677",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "a0ac90eda1f0393636f3c7c0c0aa3924c783637db7c9edc830efeb88c6810b28",
+  "output_hash": "8089e397da48759aaa13213a9b0509cc375cf2147f3c46e385f40324af00ca1c",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "FALLO: Consenso insuficiente (24.5/100) u objeción crítica de riesgo",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: ETH-USDT (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.13 con beneficio neto de $-3.50.",
+          "Profit Factor OOS: 0.16 con beneficio neto de $-3.36.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.3% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 52 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 79 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.07 USD.",
+          "Beneficio medio por operación: $-0.04 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,13 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (100.3%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.13 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
+          "Alerta de Rentabilidad: Profit factor 0.16 cercano al umbral de equilibrio (1.05)."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:27:35.398878+00:00"
+  "created_at_utc": "2026-08-22T06:04:49.150770+00:00"
 }

@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_15M_g10",
   "run_id": "run_UR_ULTRA_XRP_USDT_15M",
   "strategy_id": "UR_ULTRA_XRP_USDT_15M",
-  "strategy_snapshot_hash": "e554052e09923015e2889feb8f8eaae7993fa7ecf2920594749a1e4bb040f927",
+  "strategy_snapshot_hash": "4933e34fba0f489bd41b6cbca4d3f76450f7988ea7400674506db0b319f4da30",
   "dataset_id": "ds_binance_xrpusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "2.0.0",
-  "formula_version": "2.0.0",
-  "input_hash": "77fcefb5fad87b9b0c81471e65bf263168b880bdeb6459dd8919dcc1dc81903f",
-  "output_hash": "f7bde5e2cfe0a2826f24a854506e0e0f894979e7f63f0c53e173903656eb073d",
+  "engine_version": "3.1.0",
+  "formula_version": "3.1.0",
+  "input_hash": "f67436e3d3e6f4ac32807639cf8e0ea8ffa6386853ff0108dace475e897c6505",
+  "output_hash": "b2a0228efaeb9e3a5d4675cda0cb5fc36aa174adba9ad3857e0feeea7d92620b",
   "status": "FAILED",
-  "score": 33.3,
-  "verdict": "FALLO: Consenso insuficiente (33.3/100) u objeción crítica de riesgo",
+  "score": 36.2,
+  "verdict": "FALLO: Consenso insuficiente (36.2/100) u objeción crítica de riesgo",
   "metrics": {
-    "consensus_score": 33.3,
+    "consensus_score": 36.2,
     "evaluators_count": 5,
     "verdict_status": "REJECTED_BY_SPECIALISTS",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 50.5,
+        "score": 60.8,
         "findings": [
           "Activo y Timeframe: XRP-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.90 con beneficio neto de $-2.32.",
+          "Profit Factor OOS: 1.13 con beneficio neto de $-998.88.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 211 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 378 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.01 USD.",
+          "Beneficio medio por operación: $-2.64 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 37.6,
+        "score": 40.2,
         "objections": [
-          "Alerta de Drawdown: DD (100.5%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 0.90 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable."
         ],
         "approved": false
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-21T22:26:49.324614+00:00"
+  "created_at_utc": "2026-08-22T06:29:23.611022+00:00"
 }
