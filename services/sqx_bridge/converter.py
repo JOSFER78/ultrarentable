@@ -58,7 +58,7 @@ def sqx_candidate_to_canonical(
     tick_sz = 0.25 if symbol in ("NQ", "ES", "MES", "MNQ") else 0.1
 
     return CanonicalStrategy(
-        schema_version="2.0.0",
+        schema_version="3.0.0",
         strategy_id=spec_id,
         name=strategy_name,
         target_track=target_track,

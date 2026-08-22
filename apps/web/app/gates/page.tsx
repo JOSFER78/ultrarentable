@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 
 interface Candidate {
   candidate_id: string;
@@ -173,6 +174,7 @@ const GATES_CONFIG = [
 ];
 
 export default function ApprovedStrategiesAndGatesHubPage() {
+  const { version } = useEngineVersion();
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [revalidating, setRevalidating] = useState<boolean>(false);
@@ -227,16 +229,16 @@ export default function ApprovedStrategiesAndGatesHubPage() {
     );
   });
 
-  // Re-evaluación en lote al motor v2.0.0
+  // Re-evaluación en lote al motor v3.0.0
   const handleRevalidateAll = async () => {
     if (revalidating) return;
     setRevalidating(true);
-    setRevalidationProgress("Iniciando auditoría y re-evaluación del catálogo al Motor v2.0.0...");
+    setRevalidationProgress(`Iniciando auditoría y re-evaluación del catálogo al Motor v${version || "3.0.0"}...`);
     try {
       const res = await fetch("/api/v1/candidates/revalidate-legacy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ target_version: "2.0.0", force_rebacktest: true }),
+        body: JSON.stringify({ target_version: version || "3.0.0", force_rebacktest: true }),
       });
       if (res.ok) {
         setRevalidationProgress("Re-evaluación completada exitosamente.");
@@ -275,7 +277,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
             🏆 Registro de Certificación Oficial & 11 Gates Hub
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
-            Estrategias 100% aprobadas en producción bajo la <strong>Versión Oficial v2.0.0</strong> y especificación interactiva de compuertas.
+            Estrategias 100% aprobadas en producción bajo la <strong>Versión Oficial v{version || "3.0.0"}</strong> y especificación interactiva de compuertas.
           </p>
         </div>
 
@@ -285,7 +287,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
             <span style={{ fontSize: "14px" }}>⚡</span>
             <div>
               <div style={{ fontSize: "9px", color: "#6ee7b7", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>MOTOR ACTIVO</div>
-              <div style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>v2.0.0 (Actualizada)</div>
+              <div style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>v{version || "3.0.0"} (Actualizada)</div>
             </div>
           </div>
 
@@ -308,7 +310,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
             }}
           >
             <span>{revalidating ? "⏳" : "⚡"}</span>
-            <span>{revalidating ? "Re-evaluando Catálogo..." : "Re-evaluar Todo el Catálogo a v2.0.0"}</span>
+            <span>{revalidating ? "Re-evaluando Catálogo..." : `Re-evaluar Todo el Catálogo a v${version || "3.0.0"}`}</span>
           </button>
         </div>
       </div>
@@ -516,7 +518,7 @@ export default function ApprovedStrategiesAndGatesHubPage() {
                           border: "1px solid rgba(52, 211, 153, 0.4)",
                           fontFamily: "var(--font-mono, monospace)",
                         }}>
-                          🟢 v2.0.0
+                          🟢 v{s.engine_version || version || "3.0.0"}
                         </span>
                       </td>
                       <td style={{ padding: "12px", textAlign: "right" }}>

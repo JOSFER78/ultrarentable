@@ -74,8 +74,8 @@ class RawIngestLogModel(Base):
     exchange_end_time = Column(Integer, nullable=True)
     receive_time = Column(Integer)
     status_code = Column(Integer, default=200)
-    client_version = Column(String, default="v2.0.0")
-    transformer_version = Column(String, default="v1.0.0")
+    client_version = Column(String, default="v3.0.0")
+    transformer_version = Column(String, default="v3.0.0")
 
 class StrategyModel(Base):
     __tablename__ = "strategies"

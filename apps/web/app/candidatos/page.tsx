@@ -1974,7 +1974,7 @@ ${entryLogic}`;
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
               <div>
                 <span style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                  ADN DE ESTRATEGIA CANÓNICA · V2.0.0
+                  ADN DE ESTRATEGIA CANÓNICA · V3.0.0
                 </span>
                 <h3 style={{ fontSize: "18px", fontWeight: 900, margin: "4px 0 0 0" }}>
                   {dnaCandidate.name}

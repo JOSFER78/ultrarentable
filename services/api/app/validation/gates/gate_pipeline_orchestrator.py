@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 
 from contracts.snapshots.evidence_record import EvidenceRecord, GateStatus
+from services.engine_version import CURRENT_ENGINE_VERSION
 from services.api.app.validation.gates.gate_01_data_ingest import Gate01DataIngest
 from services.api.app.validation.gates.gate_02_cost_backtest import Gate02CostBacktest
 from services.api.app.validation.gates.gate_03_trade_significance import Gate03TradeSignificance
@@ -152,8 +153,8 @@ class GatePipelineOrchestrator:
                     gate_id=gate_id,
                     gate_name=gate_name,
                     engine="UltrarentableQuantitativeCore",
-                    engine_version="2.0.0",
-                    formula_version="2.0.0",
+                    engine_version=CURRENT_ENGINE_VERSION,
+                    formula_version=CURRENT_ENGINE_VERSION,
                     input_hash=inp_hash,
                     output_hash=out_hash,
                     status=GateStatus.PASSED if res.get("passed") else GateStatus.FAILED,

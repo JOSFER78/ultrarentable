@@ -159,7 +159,7 @@ class ImproverAgent:
         new_id = f"UR-SEM-{base_strategy.instrument.symbol}-{u_suffix}"
 
         return CanonicalStrategy(
-            schema_version="2.0.0",
+            schema_version="3.0.0",
             strategy_id=new_id,
             name=f"Mutant {base_strategy.name} {u_suffix}",
             target_track=base_strategy.target_track,
@@ -295,7 +295,7 @@ class SemanticQuantEngine:
         )
 
         return CanonicalStrategy(
-            schema_version="2.0.0",
+            schema_version="3.0.0",
             strategy_id=strat_id,
             name=f"Semantic {symbol} {timeframe.upper()} {track.value}",
             target_track=track,
