@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_4H",
   "strategy_id": "UR_ULTRA_DOGE_USDT_4H",
-  "strategy_snapshot_hash": "5f8807b61c12e3bd4e9db80cae67b3ca857f41d4fb329f7f3d114280d4064af2",
+  "strategy_snapshot_hash": "a6912650132ebda27327d668757f4a00198af772233462ff3cb37ac132f7f48b",
   "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "476ba428437ad8f2d268c70e3d58437a0c47af85b5b911241dbe9fcee9761612",
-  "output_hash": "71acc2f8baba252bb143cef496caf1428394372b8b8e814413d747d7f73002cf",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "02bc424d3a51dcf2184eadd59e9b35f659e4aa8952d7e7534b77cf4547416580",
+  "output_hash": "a25ea1a12456a93735d8bf7ab6a604db4707725f1a24abd0178dc24a4561929a",
   "status": "PASSED",
-  "score": 41.5,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (41.5/100 · Guía de Mejora Generada)",
+  "score": 59.7,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (59.7/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 41.5,
+    "consensus_score": 59.7,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 72.5,
+        "score": 77.0,
         "findings": [
           "Activo y Timeframe: DOGE-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.39 con beneficio neto de $175.43.",
+          "Profit Factor OOS: 1.49 con beneficio neto de $24126256207224479744.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 91.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 94.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1588 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1732 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,19 +54,19 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $0.11 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $13929709126573026.00 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 45.6,
+        "score": 69.3,
         "objections": [
-          "Alerta de Drawdown: DD (91.5%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (94.5%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:45:44.351190+00:00"
+  "created_at_utc": "2026-08-23T23:45:44.855062+00:00"
 }

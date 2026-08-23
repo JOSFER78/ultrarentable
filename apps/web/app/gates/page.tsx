@@ -120,6 +120,7 @@ export default function QualityGatesPage() {
           const pfIs = Number(c.profit_factor_is ?? (pfOos > 0 ? pfOos : 0));
 
           const isApproved = (isFondeo ? realizedDD <= 4.5 : realizedDD <= 75.0) && pfOos >= 1.15 && !marginCallDetected;
+          const canonicalStatus = c.status || (isApproved ? "APPROVED_CERTIFIED" : "INCUBADORA_REPROGRAMACION");
 
           return {
             candidate_id: c.candidate_id || c.strategy_id || `GATE-CAND-${String(idx + 1).padStart(3, "0")}`,
@@ -127,7 +128,7 @@ export default function QualityGatesPage() {
             route: normRoute,
             symbol: sym,
             timeframe: c.timeframe || "15m",
-            status: isApproved ? "APPROVED_CERTIFIED" : "INCUBADORA_REPROGRAMACION",
+            status: canonicalStatus,
             annual_return_pct: annualRet,
             monthly_return_pct: monthlyRet,
             net_profit_oos_usd: netPnl,

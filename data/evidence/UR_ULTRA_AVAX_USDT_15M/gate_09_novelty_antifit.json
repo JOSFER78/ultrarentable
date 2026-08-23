@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "9b0e4b412c159fed7e508943fe49882e1cbc9488cca22c3c3378826e76e7522d",
+  "strategy_snapshot_hash": "0419abba138778f82533b99e54a247acd2b69e779c24c5cc9b7fe0eaa73395da",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "6df80bf6c353cc547fb0c4b131a2f09fc94f401cfae161d6e48a845eb2166ca0",
-  "output_hash": "76af01091767d08c925703c53d392da3003abf710c00f041be7e58571dcdb755",
+  "input_hash": "1773ea7daa635fb1a2e1be9177234687090cd1a727667b57d45204054e74ce0f",
+  "output_hash": "d4e18d680e532def97e051c2a3882b2479a8cfe1981de7ce4897c939260e6321",
   "status": "FAILED",
   "score": 37.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 59.6 o Estabilidad 92.5% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 59.7 o Estabilidad 92.5% < 50.0%)",
   "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 59.6,
+    "degrees_of_freedom_ratio": 59.7,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 92.5,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-23T22:29:36.038433+00:00"
+  "created_at_utc": "2026-08-23T23:45:07.231226+00:00"
 }

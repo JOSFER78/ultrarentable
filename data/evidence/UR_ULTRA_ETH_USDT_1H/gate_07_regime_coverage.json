@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_1H",
   "strategy_id": "UR_ULTRA_ETH_USDT_1H",
-  "strategy_snapshot_hash": "a6b722e3c0f6695d88cb574edac866ec000a84c8d03877dc58c622e81049472f",
+  "strategy_snapshot_hash": "42a20b7dbf2de7c3561804ac13593a2718a6618dea62c5ce751f2b33531b6776",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "d9da44eacb009f49e4f57c0c7e07ab19a829ea244ce854141f42a487fbd3c0bd",
-  "output_hash": "a19f099bc73b423282b299eca30f3b18fd7021182c1301cb3c368400e59e9360",
+  "input_hash": "63bb58b5f92b44e8c33d77960b2bd11fb61a50e4ff78544141f89fd5a1c3d205",
+  "output_hash": "a62a7fbb975fd089681b9b2cfd650c7430a2ba739f88fafc4f81c6b34adca716",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +18799.63%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +18782.62%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 497,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 910
     },
     "regime_trades_count": {
-      "BULL_TREND": 51,
-      "BEAR_TREND": 75,
-      "CHOP_RANGING": 237,
+      "BULL_TREND": 52,
+      "BEAR_TREND": 77,
+      "CHOP_RANGING": 236,
       "HIGH_VOLATILITY": 116
     },
     "regime_return_pct": {
-      "BULL_TREND": 1682.27,
-      "BEAR_TREND": 4480.48,
-      "CHOP_RANGING": 6555.67,
-      "HIGH_VOLATILITY": 6081.21
+      "BULL_TREND": 1854.15,
+      "BEAR_TREND": 4430.73,
+      "CHOP_RANGING": 6424.35,
+      "HIGH_VOLATILITY": 6073.39
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 18799.63
+    "total_oos_return_pct": 18782.62
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T22:29:19.164772+00:00"
+  "created_at_utc": "2026-08-23T23:44:45.430946+00:00"
 }

@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import math
 import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, Query
@@ -252,3 +253,61 @@ def list_real_strategies(
         "route_filter": route,
         "strategies": strategies_out,
     }
+
+
+@router.get("/search-telemetry")
+def get_search_telemetry(db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Retorna la telemetría real del motor de exploración continua y el inventario físico de datasets."""
+    total_strategies = db.query(func.count(StrategyModel.id)).scalar() or 0
+    total_candidates = db.query(func.count(CandidateModel.id)).scalar() or 0
+    approved_count = db.query(func.count(CandidateModel.id)).filter(
+        CandidateModel.status.in_(["CERTIFIED_PASS", "ULTRA_CERTIFIED", "TIER_1_CERTIFIED", "APPROVED"])
+    ).scalar() or 0
+
+    # Escanear datasets físicos reales en data/
+    data_dir = Path("data")
+    dataset_list = []
+    total_bars = 0
+    if data_dir.exists():
+        for f in data_dir.glob("**/*.parquet"):
+            try:
+                import pyarrow.parquet as pq
+                meta = pq.read_metadata(str(f))
+                bars = meta.num_rows
+                total_bars += bars
+                dataset_list.append({
+                    "dataset_id": f.stem,
+                    "filename": f.name,
+                    "bars": bars,
+                    "format": "parquet",
+                })
+            except Exception:
+                pass
+        for f in data_dir.glob("**/*.csv"):
+            try:
+                bars = sum(1 for _ in open(f, "r", encoding="utf-8", errors="ignore")) - 1
+                total_bars += max(0, bars)
+                dataset_list.append({
+                    "dataset_id": f.stem,
+                    "filename": f.name,
+                    "bars": max(0, bars),
+                    "format": "csv",
+                })
+            except Exception:
+                pass
+
+    return {
+        "status": "ONLINE",
+        "total_evaluations_count": total_strategies,
+        "total_candidates": total_candidates,
+        "filter_funnel": {
+            "total_evaluated": total_strategies,
+            "candidates_extracted": total_candidates,
+            "approved": approved_count,
+            "rejection_rate_pct": round(((total_strategies - approved_count) / max(1, total_strategies)) * 100.0, 2),
+        },
+        "datasets_inventory": dataset_list,
+        "total_bars_available": total_bars,
+        "last_sync_utc": datetime.now(timezone.utc).isoformat(),
+    }
+

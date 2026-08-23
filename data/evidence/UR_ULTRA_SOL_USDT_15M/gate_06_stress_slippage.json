@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_15M_g06",
   "run_id": "run_UR_ULTRA_SOL_USDT_15M",
   "strategy_id": "UR_ULTRA_SOL_USDT_15M",
-  "strategy_snapshot_hash": "b0feec373979227771fea8b4f5f67664dcaa8a9fe3e402148849372244798b4a",
+  "strategy_snapshot_hash": "9c9518bacb24e63c368283800a8bb05fae393f6b76d35c9d0b6b9c016595f026",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "e4a41c5f700f485bfb2449fda89b0dcf89f1c25102bb35657fcd76d9034e4b1c",
-  "output_hash": "3f18bd2a1197430839952fa6d2c94531f8121f6ddc551a7e24434a62c4068c8a",
+  "input_hash": "0d1fc86f6695b900f62e9c60852b6946d176babfef7ee2af5b47718d030be582",
+  "output_hash": "04b26dd7176276ac2a6ee87ff78a6aef38bfb2460d0426d537c037c8408b107c",
   "status": "PASSED",
   "score": 75.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (3/4 escenarios aprobados)",
@@ -19,25 +19,25 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.85,
+        "stressed_net_pnl_usd": 0.83,
         "stressed_profit_factor": 1.06,
         "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.59,
+        "stressed_net_pnl_usd": 0.57,
         "stressed_profit_factor": 1.04,
         "survived": true
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 0.3,
+        "stressed_net_pnl_usd": 0.28,
         "stressed_profit_factor": 1.02,
         "survived": true
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -0.19,
+        "stressed_net_pnl_usd": -0.21,
         "stressed_profit_factor": 0.99,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_15M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-23T22:28:25.370489+00:00"
+  "created_at_utc": "2026-08-23T23:43:58.820478+00:00"
 }

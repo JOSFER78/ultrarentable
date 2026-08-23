@@ -28,6 +28,8 @@ from services.api.app.api.audit_router import audit_router
 from services.api.app.api.system_health_router import system_health_router
 from services.api.app.api.real_data_router import router as real_data_router
 from services.api.app.api.research_router import router as research_router
+from services.api.app.api.gates_router import gates_router
+from services.api.app.api.firebase_sync_router import firebase_sync_router
 
 # Routers V2 Modulares
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
@@ -130,6 +132,8 @@ app.include_router(execution_router, prefix="/api/v1", tags=["v1-execution"])
 app.include_router(audit_router, prefix="/api/v1", tags=["v1-audit"])
 app.include_router(system_health_router, prefix="/api/v1", tags=["v1-health"])
 app.include_router(research_router, tags=["v1-research"])
+app.include_router(gates_router, prefix="/api/v1", tags=["v1-gates"])
+app.include_router(firebase_sync_router, prefix="/api/v1", tags=["v1-firebase"])
 app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["v1-portfolio"])
 
 # ----------------------------------------------------------------------------

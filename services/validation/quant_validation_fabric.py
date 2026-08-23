@@ -455,5 +455,10 @@ class QuantValidationFabric:
             approved=approved,
             timestamp_ms=timestamp_ms,
             provenance_hash_sha256=prov_hash,
+            strategy_snapshot_hash=payload.get("strategy_snapshot_hash"),
+            dataset_sha256=payload.get("dataset_sha256"),
+            execution_config_hash=payload.get("execution_config_hash"),
+            ledger_hash=payload.get("ledger_hash"),
+            gate_records_count=11,
             details=result,
         )

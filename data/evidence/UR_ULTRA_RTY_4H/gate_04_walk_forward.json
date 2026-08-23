@@ -2,24 +2,73 @@
   "evidence_id": "ev_UR_ULTRA_RTY_4H_g04",
   "run_id": "run_UR_ULTRA_RTY_4H",
   "strategy_id": "UR_ULTRA_RTY_4H",
-  "strategy_snapshot_hash": "15d30bde47250ff20e3165f3b903c220a863b99f4bc2c9a5dc7fa2fe03db37de",
+  "strategy_snapshot_hash": "835acf5f4a2058a9c4886a05591d7cc61ba509740697c3e156b98486989b344c",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "4807127e8afd2744833448f50364a4866ff0812d20a2c75e0c1212700889c7c4",
-  "output_hash": "ef9c5adda533912ad2e59745efd7b2ace12168cebd84c62360af9ec19471b026",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "16aba96b8c9aa9b38712fd97770bef652c610eafe2ecdf02fc55a87be4d96b90",
+  "output_hash": "6f60080bebb46428a8ed3cec7e6d98f4dfe134ab3229be9eb065a54925a73477",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
+  "score": 100.0,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 855.71 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
-    "total_trades": 9,
-    "windows_evaluated": 0,
-    "walk_forward_efficiency": 0.0
+    "total_trades_analyzed": 24,
+    "windows_count": 5,
+    "walk_forward_efficiency": 855.71,
+    "oos_consistency_pct": 20.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 2,
+        "oos_trades_count": 2,
+        "pf_is": 379.27,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.2,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 2,
+        "oos_trades_count": 2,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.41,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 2,
+        "oos_trades_count": 2,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.79,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 2,
+        "oos_trades_count": 2,
+        "pf_is": 0.0,
+        "pf_oos": 427.86,
+        "net_profit_oos_usd": 4.27,
+        "wfe": 4278.57
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 2,
+        "oos_trades_count": 2,
+        "pf_is": 427.86,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.35,
+        "wfe": 0.0
+      }
+    ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_4H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-23T16:44:45.064842+00:00"
+  "created_at_utc": "2026-08-23T23:27:30.481938+00:00"
 }

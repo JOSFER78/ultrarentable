@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_15M_g11",
   "run_id": "run_UR_ULTRA_SOL_USDT_15M",
   "strategy_id": "UR_ULTRA_SOL_USDT_15M",
-  "strategy_snapshot_hash": "b0feec373979227771fea8b4f5f67664dcaa8a9fe3e402148849372244798b4a",
+  "strategy_snapshot_hash": "9c9518bacb24e63c368283800a8bb05fae393f6b76d35c9d0b6b9c016595f026",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "cc28c9d024c28e555f9bf1736622a779fe674a19f271e7974342b015253fa01e",
-  "output_hash": "9068136eef803bdae4539183a35b2eba7a82112ca17c0838ee292da2dc08bab3",
+  "input_hash": "71ec2ab41748544bdc014a95f2db351753b3272f7d3a6cbd405e22197914eec5",
+  "output_hash": "46283fcbef50bc22b8dd7e3ca36061104628bd1f574e23e071f3546a208b5a4a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 96.1%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 19.39,
+    "final_equity_usd": 19.46,
     "peak_equity_usd": 1000.0,
     "min_equity_usd": 14.94,
     "peak_leverage_used": 6.0,
@@ -25,9 +25,9 @@
     "min_distance_to_liquidation_pct": 96.05,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 13.9,
-    "execution_events_count": 126
+    "total_funding_cost_usd": 13.88,
+    "execution_events_count": 125
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_15M/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-23T22:28:26.153715+00:00"
+  "created_at_utc": "2026-08-23T23:43:59.480105+00:00"
 }

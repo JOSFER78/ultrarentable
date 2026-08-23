@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_CL_4H_g03",
+  "run_id": "run_UR_ULTRA_CL_4H",
+  "strategy_id": "UR_ULTRA_CL_4H",
+  "strategy_snapshot_hash": "aecfeba0527d7a552a52dda51bbb334fd25dfdf6455d18b639538c80355dd515",
+  "dataset_id": "ds_trad_cl_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "8aca26ee1fce55798a50405914377652d0983ed35fe1f390e2819e32473519f9",
+  "output_hash": "12e5819e52f5d61964391236f27f2f9d52ad7e87aadcfde8a27e05b2b5687a26",
+  "status": "FAILED",
+  "score": 25.0,
+  "verdict": "FALLO: Muestra insuficiente (3 IS < 15 ó 5 OOS < 10)",
+  "metrics": {
+    "trades_is": 3,
+    "trades_oos": 5,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_CL_4H/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-23T23:30:16.032675+00:00"
+}

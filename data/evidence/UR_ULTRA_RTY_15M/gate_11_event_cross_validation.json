@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_RTY_15M_g11",
   "run_id": "run_UR_ULTRA_RTY_15M",
   "strategy_id": "UR_ULTRA_RTY_15M",
-  "strategy_snapshot_hash": "b6e4c74b8aeeab2ccac9f3f985b81b644866f27873682d0b834e2a8145fc92e8",
+  "strategy_snapshot_hash": "e6249885eb9cd472ce22399abe1634e53d8eaa11c5bd6e8b562f514014d77cf6",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "dc39e57a99a9511cf5d06b2595e619fdd77567a3ceafc1c959c1c4983fd7acaf",
-  "output_hash": "3eb8654b0df2a5144ace064543a1f895904246d2346988a7e6bdd553e95031fa",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "f79cc3bcb4f1c0d167579604157042a2154f0cb831557ff069e18064fdb67a9e",
+  "output_hash": "f795cb01fcc4fb2da6cff8053bbbf916c17607477dd86f46e1c07fb2e3f6360f",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -298.65,
+    "final_equity_usd": -434.05,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": -298.65,
+    "min_equity_usd": -434.05,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
@@ -29,5 +29,5 @@
     "execution_events_count": 6
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15M/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-23T16:44:51.978756+00:00"
+  "created_at_utc": "2026-08-23T23:27:43.195357+00:00"
 }

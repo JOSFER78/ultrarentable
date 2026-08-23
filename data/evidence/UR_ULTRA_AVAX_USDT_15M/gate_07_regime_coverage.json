@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "9b0e4b412c159fed7e508943fe49882e1cbc9488cca22c3c3378826e76e7522d",
+  "strategy_snapshot_hash": "0419abba138778f82533b99e54a247acd2b69e779c24c5cc9b7fe0eaa73395da",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "aaf16178ecc3cac68ee0dab700205cfe78c2db2ec839dcb415a205e52b4203d1",
-  "output_hash": "53d0325215013a03cafb90d30a2b4c90136a3f2e5f90aebb3c6b5984956c8aa2",
+  "input_hash": "8ca5c98fe04eeca8a49ce4f45d847b4f77f4aafd65e97f6a282b4e7a364dc44e",
+  "output_hash": "55805872995d41a7b840e200ca5218e34d53d0869531612041c45843286265fd",
   "status": "PASSED",
   "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +727.04%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +748.74%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 28,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 4,
       "BEAR_TREND": 4,
-      "CHOP_RANGING": 115,
+      "CHOP_RANGING": 114,
       "HIGH_VOLATILITY": 24
     },
     "regime_return_pct": {
       "BULL_TREND": 98.4,
       "BEAR_TREND": -67.33,
-      "CHOP_RANGING": 853.73,
-      "HIGH_VOLATILITY": -157.76
+      "CHOP_RANGING": 875.44,
+      "HIGH_VOLATILITY": -157.77
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 727.04
+    "total_oos_return_pct": 748.74
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T22:29:35.355458+00:00"
+  "created_at_utc": "2026-08-23T23:45:06.601487+00:00"
 }

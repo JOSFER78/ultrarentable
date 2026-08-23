@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_SUIUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_SUIUSDT_1h",
   "strategy_id": "UR_ULTRA_SUIUSDT_1h",
-  "strategy_snapshot_hash": "4de1aaae2d649f3757518a2019dd898f40715e8ddf73f91afb081daecb9bd73b",
+  "strategy_snapshot_hash": "012da7db00c68652b0d73ceda7ce5964543a96dba4c023279ba8d59f28d85c3e",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "933b8c3628744baf159380afec2ed7da917d8eaa4c48c16dbb85ba6f31a38ca3",
-  "output_hash": "d4146fd929bbed652acbdc34dbaa56a6894ab8edf161fb3f0cfe8ba8fc95dd27",
-  "status": "FAILED",
-  "score": 54.4,
-  "verdict": "FALLO: Consenso insuficiente (54.4/100) u objeción crítica de riesgo",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "b3f5e633ee51da21c0c8a8aee3f7ba69e6000618fdefd10d1c5cef37f14bde0c",
+  "output_hash": "6f3242357d2249b9d8d93f6e762119d5ae395377372b72594b2f981784a7311a",
+  "status": "PASSED",
+  "score": 54.5,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (54.5/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 54.4,
+    "consensus_score": 54.5,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 58.6,
+        "score": 59.1,
         "findings": [
           "Activo y Timeframe: SUIUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $281983389970965043883672600576.00.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $399869522339362391405849739264.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 3058 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 3014 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $92211703718431991397351424.00 USD.",
+          "Beneficio medio por operación: $132670710796072454969098240.00 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -64,14 +64,20 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 64.7,
+        "score": 64.8,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
         "approved": true
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:26:33.265492+00:00"
+  "created_at_utc": "2026-08-23T23:42:44.663082+00:00"
 }

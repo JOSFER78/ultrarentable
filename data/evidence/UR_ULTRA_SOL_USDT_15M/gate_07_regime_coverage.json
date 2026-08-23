@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_15M",
   "strategy_id": "UR_ULTRA_SOL_USDT_15M",
-  "strategy_snapshot_hash": "b0feec373979227771fea8b4f5f67664dcaa8a9fe3e402148849372244798b4a",
+  "strategy_snapshot_hash": "9c9518bacb24e63c368283800a8bb05fae393f6b76d35c9d0b6b9c016595f026",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "8fc2230c38f1b84897ccfc1e53bb5b5d9a4ca6eb0bf390fa306bf06ece7a9fb0",
-  "output_hash": "046bd10dd2f43e6cf972ade25e139197ab6c094e4388d931a0ad55794e2f8710",
+  "input_hash": "169f6a21f6f5d02bd429818abbe2284e8f74413e898097b6ce8c4a526cd5917c",
+  "output_hash": "d4296e6167ae0fead0f2bc35bd8b1cddb2915eb626a70b48f2be813cc309a97c",
   "status": "PASSED",
   "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +91.19%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +89.04%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 7,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 99,
+      "CHOP_RANGING": 98,
       "HIGH_VOLATILITY": 27
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 326.18,
-      "HIGH_VOLATILITY": -234.99
+      "CHOP_RANGING": 320.49,
+      "HIGH_VOLATILITY": -231.45
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 91.19
+    "total_oos_return_pct": 89.04
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T22:28:25.431711+00:00"
+  "created_at_utc": "2026-08-23T23:43:58.864458+00:00"
 }

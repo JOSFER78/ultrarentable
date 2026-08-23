@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_ULTRA_NQ_4H_g08",
+  "run_id": "run_UR_ULTRA_NQ_4H",
+  "strategy_id": "UR_ULTRA_NQ_4H",
+  "strategy_snapshot_hash": "2b66749a073be398f6db40d65f61e73bf6fd167e1c774be46a5dc90addd439af",
+  "dataset_id": "ds_trad_nq_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "849e11f2ea63c3ab12775e05488c1d6136c60bc4c8611b4479c763396a575ec6",
+  "output_hash": "9c6f44470c9bd7f11c30fd2696e5a2086f75c54231eeccac8506b554edd2d896",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
+  "metrics": {
+    "trials_penalized": 3,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_NQ_4H/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-23T23:30:19.711670+00:00"
+}

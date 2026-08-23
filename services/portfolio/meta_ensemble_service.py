@@ -128,21 +128,22 @@ class MetaEnsembleService:
                         sc = {}
 
                 oos_m = sc.get("oos_metrics", {})
-                pf = float(c.profit_factor_oos or oos_m.get("profit_factor", 1.25))
-                dd = float(c.max_dd_oos_pct or oos_m.get("max_drawdown_pct", 5.0))
-                trades = int(c.trades_oos or oos_m.get("trades", 45))
-                net_p = float(c.net_profit_oos or oos_m.get("net_profit_usd", 2500.0))
-                wr = float(sc.get("win_rate_pct", sc.get("win_rate", 55.0)))
+                pf = float(c.profit_factor_oos or oos_m.get("profit_factor", getattr(c, "profit_factor_is", 0.0) or 0.0))
+                dd = float(c.max_dd_oos_pct or oos_m.get("max_drawdown_pct", getattr(c, "max_dd_is_pct", 0.0) or 0.0))
+                trades = int(c.trades_oos or oos_m.get("trades", getattr(c, "trades_is", 0) or 0))
+                net_p = float(c.net_profit_oos or oos_m.get("net_profit_usd", getattr(c, "net_profit_is", 0.0) or 0.0))
+                wr = float(sc.get("win_rate_pct", sc.get("win_rate", 0.0)))
                 ann_roi_raw = float(sc.get("annualized_roi_pct", sc.get("annual_roi_pct", 0.0)))
 
-                if not ann_roi_raw or ann_roi_raw <= 0 or math.isnan(ann_roi_raw) or math.isinf(ann_roi_raw):
-                    if net_p > 0:
-                        ann_roi_raw = (net_p / 1000.0 * 100.0) * (12.0 / max(1.0, float(sc.get("duration_months", 6.0))))
+                if not ann_roi_raw or math.isnan(ann_roi_raw) or math.isinf(ann_roi_raw):
+                    if net_p > 0 and base_cap > 0:
+                        dur_months = max(1.0, float(sc.get("duration_months", 6.0)))
+                        ann_roi_raw = (net_p / base_cap * 100.0) * (12.0 / dur_months)
                     else:
-                        ann_roi_raw = 120.0 if is_ultra else 22.0
+                        ann_roi_raw = 0.0
 
-                ann_roi = round(float(max(5.0, min(ann_roi_raw, 1200.0 if is_ultra else 250.0))), 1)
-                vol = max(0.005, dd / 100.0 / math.sqrt(20))
+                ann_roi = round(float(max(0.0, min(ann_roi_raw, 1200.0 if is_ultra else 250.0))), 1)
+                vol = max(0.005, dd / 100.0 / math.sqrt(20)) if dd > 0 else 0.01
 
                 components_raw.append({
                     "candidate_id": c.candidate_id,

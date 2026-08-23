@@ -39,12 +39,13 @@ export default function BifurcacionQVFPage() {
   const [candidatesList, setCandidatesList] = useState<any[]>([]);
 
   React.useEffect(() => {
-    fetch("/api/v2/candidates")
+    fetch("/api/v1/candidates?limit=250")
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setCandidatesList(data);
-          setStrategyId(data[0].candidate_id);
+        const list = Array.isArray(data) ? data : (data.candidates || []);
+        if (list.length > 0) {
+          setCandidatesList(list);
+          setStrategyId(list[0].candidate_id || list[0].strategy_id);
         }
       })
       .catch(() => setCandidatesList([]));
@@ -54,7 +55,7 @@ export default function BifurcacionQVFPage() {
     if (!strategyId) return;
     setEvaluating(true);
     try {
-      const res = await fetch(`/api/v2/candidates/${strategyId}/gates`);
+      const res = await fetch(`/api/v1/gates/${strategyId}`);
       if (res.ok) {
         const data = await res.json();
         setResult({

@@ -58,12 +58,22 @@ class EnsembleSynergyEngine:
 
         res = self.semantic_engine.ensemble_debate(route=route, strategies=strategies)
         comb = res.get("combined_metrics", {})
-        corr = float(comb.get("cross_correlation_avg", 0.22))
-        div_ratio = float(comb.get("diversification_ratio", 1.2))
-        comb_sharpe = float(comb.get("combined_sharpe_ratio", 3.0))
-        comb_dd = float(comb.get("combined_max_dd_pct", 4.0))
-        verdict = res.get("consensus_verdict", "APROBADO")
-        score = float(res.get("consensus_score", 90.0))
+        
+        if not comb and len(strategies) > 1:
+            errors.append("RECHAZADO / BLOCKED: Sin métricas de covarianza o correlación cruzada reales para el ensamble.")
+            corr = 1.0
+            div_ratio = 1.0
+            comb_sharpe = 0.0
+            comb_dd = max(float(s.get("max_dd", s.get("max_dd_pct", 0.0))) for s in strategies)
+            verdict = "RECHAZADO_SIN_EVIDENCIA"
+            score = 0.0
+        else:
+            corr = float(comb.get("cross_correlation_avg", 0.0))
+            div_ratio = float(comb.get("diversification_ratio", 1.0))
+            comb_sharpe = float(comb.get("combined_sharpe_ratio", float(strategies[0].get("profit_factor", 0.0) if strategies else 0.0)))
+            comb_dd = float(comb.get("combined_max_dd_pct", float(strategies[0].get("max_dd", 0.0) if strategies else 0.0)))
+            verdict = res.get("consensus_verdict", "EVALUADO")
+            score = float(res.get("consensus_score", 0.0))
         allocs = res.get("allocated_strategies", [])
 
         if corr > self.max_cross_correlation:
