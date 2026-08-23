@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_4H_g07",
   "run_id": "run_UR_FONDEO_GBPUSD_4H",
   "strategy_id": "UR_FONDEO_GBPUSD_4H",
-  "strategy_snapshot_hash": "3d50e9f55ed0f06fbb184e9fb18434b887615914bac5b22e6a8dc6a782a0735b",
+  "strategy_snapshot_hash": "64e7ada7fcf77fc52ce5e6e7e2dfdc41defbbb67ac660580a45618448e2dca28",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "a0df443be0d142d7679c8d079de67452cfa9f9cccfe292e84cba02f4ee32b59f",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "9116aa0e1a8c1cb889a506490e2e30bf98320859042da48e17bd136d717e25c6",
-  "output_hash": "5d2bd2c2f769cc7e1cffdfcd4ae1fadd2bd0acb39340a421783415805a2f238e",
+  "input_hash": "25c89d41ee4cb20d97fd09f549d692d7a61e7fb986598d005b7f6d129a71d997",
+  "output_hash": "d45bf611768ba48dc1d1a81761deb2bba7de4bb2081b0b14d65b4d8b6d0bf261",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -0.08%)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.64%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 12,
-      "HIGH_VOLATILITY": 2
+      "CHOP_RANGING": 8,
+      "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 0.16,
-      "HIGH_VOLATILITY": -0.24
+      "CHOP_RANGING": -0.64,
+      "HIGH_VOLATILITY": -0.0
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.08
+    "total_oos_return_pct": -0.64
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:08:59.973641+00:00"
+  "created_at_utc": "2026-08-23T18:02:00.780814+00:00"
 }

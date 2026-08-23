@@ -1,129 +1,124 @@
-# ESPECIFICACIÓN MAESTRA CANÓNICA: ULTRARENTABLE (ULTRA) VS FONDEO INSTITUCIONAL (FONDEO)
-
-> **ESTADO DE VERDAD ÚNICA (SSOT) — VERSIÓN V1.05**  
-> Este documento define de forma inmutable, matemática y operativa la totalidad de las reglas, filosofías, catálogos de activos, gestión de riesgo y criterios de validación para las dos rutas del sistema: **Ruta ULTRA** y **Ruta FONDEO**.  
-> **Cualquier agente de IA o desarrollador humano debe acatar estrictamente estas definiciones sin omitir ni alterar ninguna condición.**
+# 🏛️ ESPECIFICACIÓN MAESTRA DE BIFURCACIÓN CUANTITATIVA: TRACK_FONDEO VS TRACK_ULTRA
+### *Ultrarentable V2 (Canónico 2026) — Arquitectura Dual de Minería Genética, Ejecución y Meta-Portafolios*
 
 ---
 
-## 1. COMPARATIVA ESTRUCTURAL Y FILOSÓFICA
+> [!IMPORTANT]
+> **DOCUMENTO MAESTRO DE ESPECIFICACIÓN CUANTITATIVA DUAL:**
+> Este documento establece la formulación matemática exacta, los contratos de datos inmutables y la lógica de ejecución para la bifurcación dual entre **TRACK_FONDEO** y **TRACK_ULTRA**.
+> Queda prohibido mezclar las justificaciones o parámetros de una ruta con la otra.
 
-```mermaid
-flowchart TD
-    subgraph RUTA_ULTRA [RUTA ULTRA: ASIMETRÍA HIPER-RENTABLE]
-        U1[Subcuenta Bala Sacrificable: $1.000 USD] --> U2[Riesgo Base Agresivo: 7.5% por Trade]
-        U2 --> U3[Interés Compuesto Dinámico: Equity Compounding]
-        U3 --> U4[Piramidación en Beneficio: +1.5R con BE Stop]
-        U4 --> U5[Drawdown Permitido en Bala: Hasta 80%]
-        U5 --> U6[Cosecha Periódica a Bóveda Inviolable Ratchet Vault]
-    end
+---
 
-    subgraph RUTA_FONDEO [RUTA FONDEO: EXÁMENES INSTITUCIONALES & PROP FIRMS]
-        F1[Cuenta Institucional / Examen: $50.000 USD] --> F2[Riesgo Acotado: 0.5% - 1.0% por Trade]
-        F3[Lotes Fijos / Contratos CME: Cero Compounding] --> F4[Piramidación Prohibida: Exposición Fija]
-        F4 --> F5[Límite Máximo Trailing DD: 4.0% - 4.5%]
-        F5 --> F6[Límite de Pérdida Diaria: 1.5% - 2.0%]
-    end
+## 🎯 1. DIVERGENCIA ESTRUCTURAL Y FILOSOFÍA MATEMÁTICA
+
+```
+                                  ┌────────────────────────────────────────────────────────┐
+                                  │      MERCADOS GLOBALES (22 DATASETS EN DISCO)          │
+                                  └───────────────────────────┬────────────────────────────┘
+                                                              │
+                                            ┌─────────────────┴─────────────────┐
+                                            ▼                                   ▼
+                         ┌─────────────────────────────────────┐ ┌─────────────────────────────────────┐
+                         │      TRACK_FONDEO (Institucional)   │ │       TRACK_ULTRA (Convexidad)      │
+                         ├─────────────────────────────────────┤ ├─────────────────────────────────────┤
+                         │ • Objetivo: Max Retiros Prop Firms  │ │ • Objetivo: Hiperescalado Asimétrico │
+                         │ • Drawdown Realizado: <= 4.0%-4.5%  │ │ • Drawdown Realizado: Hasta 75.0%   │
+                         │ • Compounding: 0% (Contratos Fijos) │ │ • Compounding: Piramidación Convexa │
+                         │ • Posición: 1R Cerrado Intradía     │ │ • Posición: Balas Aisladas ($100-$1k)│
+                         │ • Distribución: Gaussiana Estable   │ │ • Distribución: Fat-Tail Right Skew │
+                         │ • Cero Margin Calls Toleradas       │ │ • Bóveda Ratchet Inviolable (50-85%)│
+                         └─────────────────────────────────────┘ └─────────────────────────────────────┘
 ```
 
-### Tabla Comparativa Completa
+---
 
-| Dimensión Operativa | Ruta ULTRA (Hiper-Rentable Asimétrico) | Ruta FONDEO (Cuentas de Fondeo / Prop Firms) |
-|---|---|---|
-| **Propósito Principal** | Búsqueda de convexidad asimétrica extrema mediante subcuentas independientes sacrificables ("Balas"). Multiplicar el capital agresivamente y cosechar a Bóveda. | Superar exámenes y mantener cuentas fondeadas (Apex, Topstep, FTMO, MyFundedFX) respetando límites estrictos de Daily Loss y Trailing DD. |
-| **Capital Inicial Base** | **$\$1.000\text{ USD}$** (Subcuenta Bala sacrificable). | **$\$50.000\text{ USD}$** (Cuenta tipo Prop Firm estándar). |
-| **Objetivo de Retorno** | Multiplicar la subcuenta $\times 3$, $\times 5$ o $\times 10$ ($+200\%$ a $+1000\%$) y transferir ganancias a la Bóveda. | $+6.0\%$ a $+10.0\%$ ($\$3.000$ a $\$5.000\text{ USD}$) para aprobar el examen; consistencia mensual sostenida en fondeo real. |
-| **Riesgo Base por Trade** | **$7.5\%$** de la equidad disponible de la subcuenta (Rango calibrado: $5.0\% - 10.0\%$). | **$0.5\% - 1.0\%$** del capital de la cuenta ($\$250 - \$500\text{ USD}$ por trade). |
-| **Gestión de Posición / Sizing** | **Interés Compuesto Dinámico (Equity Compounding)**: El tamaño de posición se recalcula barra a barra según la equidad disponible. | **Lotes / Contratos Fijos CME**: Contratos estándar/micro (1 o 2 contratos) fijos. Cero interés compuesto dentro del examen. |
-| **Piramidación (Pyramiding)** | **Habilitada (1 a 3 niveles)**: Solo sobre trades en beneficio flotante $\ge +1.5R$ moviendo el Stop Loss a Break-Even ($0R$) para riesgo nulo adicional. | **Deshabilitada / Prohibida**: Para evitar sobreapalancamiento intradía ante reversals repentinos. |
-| **Apalancamiento Máximo** | **$5\text{x} - 20\text{x}$** en futuros perpetuos cripto (según margen aislado). | **$1\text{x} - 3\text{x}$** en contratos de futuros regulados CME. |
-| **Drawdown Máximo Permitido** | **Hasta $80.0\%$** en la subcuenta bala. La bala solo muere si llega al $85.0\% - 100.0\%$ (liquidación de la bala). Las ganancias cosechadas en la Bóveda quedan 100% a salvo. | **$4.0\% - 4.5\%$** (Límite estricto de Apex/Topstep de $\$2.000 - \$2.500\text{ USD}$ sobre cuenta de $\$50.000$). DD $> 4.0\%$ = Descarte fatal. |
-| **Límite de Pérdida Diaria** | Sin límite diario artificial (permite swings de 4h/1d con stops técnicos amplios). | **$\le 2.0\%$ diario** ($\le \$1.000\text{ USD}$ al día). Auto-flatten automático al alcanzar el $1.5\%$. |
-| **Mecanismo de Bóveda** | **Ratchet Vault**: Cada vez que una bala supera $+200\%$, el $50\%$ del beneficio se traslada irrevocablemente a la Bóveda de Cosecha. | No aplica (el balance es administrado directamente por la firma de fondeo). |
+## 🏛️ 2. ESPECIFICACIÓN DE `TRACK_FONDEO` (PRESERVACIÓN INSTITUCIONAL & PROP FIRMS)
+
+### 2.1. Tesis Operativa, Mercados y Activos Aceptados
+- **Activos Operados:**
+  - **Futuros y Micro Futuros CME:** MES, MNQ, MYM, M2K, GC, MGC, CL, MCL.
+  - **Forex Majors:** EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD, USDCHF.
+  - **Criptoactivos Institucionales (Majors):** Micro Bitcoin (`MBT`), Micro Ether (`MET`) en CME Globex (Topstep, Apex), y pares CFD/Crypto (`BTCUSD`, `ETHUSD`) en firmas reguladas (FTMO, The5ers, FundedNext, E8, Funding Pips con apalancamiento 1:2 a 1:5).
+- **Modelo de Optimización Canónico:** Asignación de riesgo fijo acotado a $\le 0.3\% - 0.5\%$ del balance por operación ($R:R \ge 1:2.0$).
+- **Objetivo Financiero:** Maximizar la **Economía Real Neta**:
+  $$\text{Retornos Netos} = \sum \text{Retiros Fondeados} - \left( \sum \text{Coste Exámenes} + \sum \text{Cuotas Activación} + \sum \text{Resets} + \sum \text{Data/Licencias} \right)$$
+
+### 2.2. Restricciones Contractuales Auditadas
+1. **Trailing Drawdown Estricto:** $\text{Max DD} \le 4.00\% - 4.50\%$ en todo el historial.
+2. **Cumplimiento Estricto del Daily Loss Limit (DLL):** $0$ violaciones (pérdida máxima en un solo día $\le \$1,000$ en cuenta base \$50k).
+3. **Consistency Rule:** Ningún día o trade individual puede representar $> 30\%$ del beneficio total.
+4. **Cierre Obligatorio Intradía / Fin de Semana:** Cierre automático a las **16:59 EST** para CME/FX (cero riesgo *overnight* de fin de semana).
+5. **Cero Riesgo de Quiebra:** Probabilidad de ruina Monte Carlo $P(\text{Ruin}) = 0.00\%$ en 10,000 iteraciones.
 
 ---
 
-## 2. CATÁLOGO DE ACTIVOS POR RUTA
+## ⚡ 3. ESPECIFICACIÓN DE `TRACK_ULTRA` (CONVEXIDAD ASIMÉTRICA TALEB MULTI-ACTIVO)
 
-### 2.1 Universo ULTRA (Rastreo Obligatorio de los 23 Activos Globales / 112 Datasets)
-La Ruta ULTRA está diseñada para operar sobre **TODOS** los activos disponibles en disco, aprovechando tanto la volatilidad asimétrica del mercado cripto como las tendencias de futuros e índices tradicionales:
+### 3.1. Tesis Operativa y Mecánica de Balas
+- **Activos Operados:** 100% de los 22 Activos Globales (Perpetuos USDT en BingX, Futuros CME y Forex) bajo régimen de Margen Aislado por Subcuenta.
+- **Doctrina de Opción Sintética:** Riesgo estrictamente acotado a $1R$ ($M_0 \approx \$100\text{--}\$1,000$) por bala aislada, con beneficio ilimitado ($\text{Gamma Positiva } \frac{d^2 \Pi}{dP^2} > 0$).
 
-1. **Criptoactivos Líquidos y Volátiles (BingX Perpetual USDT Futures)**:
-   - `BTC-USDT` (Bitcoin) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `ETH-USDT` (Ethereum) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `SOL-USDT` (Solana) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `SUI-USDT` (Sui) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `DOGE-USDT` (Dogecoin) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `AVAX-USDT` (Avalanche) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `BNB-USDT` (Binance Coin) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `LINK-USDT` (Chainlink) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `XRP-USDT` (Ripple) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `ADA-USDT` (Cardano) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `DOT-USDT` (Polkadot) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `NEAR-USDT` (Near) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `APT-USDT` (Aptos) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `MATIC-USDT` / `POL-USDT` (Polygon) — 1m, 5m, 15m, 1h, 4h, 1d
-   - `PEPE-USDT` (Pepe) — 1m, 5m, 15m, 1h, 4h, 1d
-2. **Índices y Futuros Tradicionales (CME)**:
-   - `NQ` / `MNQ` (E-mini / Micro E-mini Nasdaq 100)
-   - `ES` / `MES` (E-mini / Micro E-mini S&P 500)
-   - `YM` / `MYM` (E-mini / Micro E-mini Dow Jones)
-   - `RTY` / `M2K` (E-mini / Micro E-mini Russell 2000)
-3. **Materias Primas & Metales Preciosos**:
-   - `GC` / `MGC` (Oro / Micro Gold)
-   - `SI` / `SIL` (Plata / Silver)
-   - `CL` / `MCL` (Petróleo Crudo / Micro Crude Oil)
-4. **Forex Mayor**:
-   - `EURUSD` / `6E` (Euro / US Dollar)
+### 3.2. Los 6 Estados Discretos de una Bala (`IsolatedBullet` / `ultra_engine.py`)
 
-### 2.2 Universo FONDEO (Activos Permitidos en Evaluaciones Institucionales)
-En la Ruta FONDEO se filtran únicamente activos compatibles con los catálogos oficiales de Apex Trader Funding, Topstep, MyFundedFutures y FTMO:
-- **Índices CME**: `NQ`, `MNQ`, `ES`, `MES`, `YM`, `RTY`.
-- **Metales y Energía CME**: `GC`, `MGC`, `CL`, `MCL`.
-- **Forex Spot / Futuros CME**: `6E`, `EURUSD`, `GBPUSD`, `USDJPY`.
+```
+[ Estado 0: INICIO ] ──► SL = -1.0R, Margen Aislado 1R ($100-$1,000 nominales)
+        │
+        ▼ (Si Retorno Flotante >= +1.0R a +1.5R)
+[ Estado 1: CONFIRMACIÓN ] ──► SL a BREAK-EVEN REAL (+0.1R / Comisión Cubierta)
+        │
+        ▼ (Si Retorno Flotante >= +2.0R a +3.0R)
+[ Estado 2: CRECIMIENTO / RECYCLING ] ──► Piramidación Nivel 2 (+40% House Money)
+        │                                  SL Free-Risk calculado: Garantiza >= +0.5R
+        ▼ (Si Retorno Flotante >= +3.0R)
+[ Estado 3: COSECHA / VAULT ] ──► Obsidian Milestones a Bóveda Ratchet (Spot USDT)
+        │                         - 2x (+100%): Bloquea 50%
+        │                         - 3x (+200%): Bloquea 65%
+        │                         - 5x (+400%): Bloquea 75%
+        │                         - >=10x (+900%): Bloquea 85%
+        ▼
+[ Estado 4: PROTECCIÓN ] ──► Chandelier Trailing ATR dinámico
+        │
+        ▼ (Al tocar SL en ganancia o Take Profit Terminal)
+[ Estado 5: CIERRE ] ──► Liquidación total y reciclaje de capital al cargador
+```
 
----
+### 3.3. Deducción Matemática del Stop Loss Free-Risk en Piramidación
+Cuando se añade una capa $k$ con capital financiado por la ganancia flotante $\Delta P_{\text{flotante}} \times 0.40$:
+$$\text{Nueva Cantidad Total: } Q_{\text{total}} = \sum_{i=0}^k Q_i$$
+$$\text{Precio Medio Ponderado: } \overline{P}_{\text{entry}} = \frac{\sum Q_i \cdot P_i}{Q_{\text{total}}}$$
+$$\text{Stop Loss Free-Risk: } SL_{\text{FreeRisk}} = \overline{P}_{\text{entry}} \pm \frac{0.5 \times \text{Margen}_0}{Q_{\text{total}}}$$
+Garantiza que incluso ante un gap o reversión instantánea al nuevo SL, el beneficio neto consolidado sea siempre $\ge +0.5\text{R}$.
 
-## 3. PROTOCOLO DE VALIDACIÓN EN LOS 11 GATES CUANTITATIVOS
-
-La plataforma somete a todas las estrategias a un pipeline inmutable de 11 Gates secuenciales. Los umbrales se adaptan rigurosamente a la naturaleza de cada ruta:
-
-| Gate | Nombre | Criterio Ruta ULTRA | Criterio Ruta FONDEO |
-|---|---|---|---|
-| **Gate 1** | Ingesta & Calidad de Datos | SHA-256 verificado en disco, 0 duplicados, 0 velas sintéticas. | SHA-256 verificado en disco, 0 duplicados, 0 velas sintéticas. |
-| **Gate 2** | Backtest con Fricción Real | Cost Drag $\le 30.0\%$ del beneficio bruto (Crypto Fees + Slippage). | Cost Drag $\le 20.0\%$ del beneficio bruto (Comisiones CME $\$2.50/\text{contrato}$). |
-| **Gate 3** | Significancia Estadística | $\ge 15$ trades IS, $\ge 10$ trades OOS, Outlier ratio $\le 85\%$. | $\ge 30$ trades IS, $\ge 20$ trades OOS, Outlier ratio $\le 50\%$. |
-| **Gate 4** | Rolling Walk-Forward (WFO) | WFE media $\ge 0.50$, consistencia ventanas OOS $\ge 50\%$. | WFE media $\ge 0.60$, consistencia ventanas OOS $\ge 60\%$. |
-| **Gate 5** | Monte Carlo Stress (1.000 sims) | **Remuestreo geométrico de retornos % ($r_t$)**: Ruina $\le 5.0\%$, DD 95th $\le 80.0\%$. | **Remuestreo aditivo de dólares nominales ($)**: Ruina $\le 0.5\%$, DD 95th $\le 4.0\%$. |
-| **Gate 6** | Slippage & Liquidity Shocks | Sobrevivir al menos escenario $+1\sigma$ de fricción. | Sobrevivir al menos escenario $+2\sigma$ de fricción. |
-| **Gate 7** | Cobertura de Regímenes | Rentable en al menos 2 de 3 regímenes (Alcista, Bajista, Lateral). | Rentable en al menos 2 de 3 regímenes con DD controlado en cada uno. |
-| **Gate 8** | Deflated Sharpe Ratio (DSR) | DSR Probability $\ge 50.0\%$ auditada contra trials reales en SQLite. | DSR Probability $\ge 65.0\%$ auditada contra trials reales en SQLite. |
-| **Gate 9** | Anti-Overfitting & Novelty | Retención de PF $\ge 60\%$ ante perturbación de parámetros $\pm 10\%$. | Retención de PF $\ge 70\%$ ante perturbación de parámetros $\pm 10\%$. |
-| **Gate 10** | Debate de Agentes IA | Consenso multidimensional positivo (Bull, Bear, Risk Officer). | Consenso multidimensional positivo con veto estricto por Drawdown. |
-| **Gate 11** | Reconciliación NautilusTrader | Reconciliación trade-by-trade FastEngine vs Nautilus (Leverage $\le 100x$). | Reconciliación trade-by-trade FastEngine vs Nautilus (Leverage $\le 3x$). |
+### 3.4. Matriz de Amortización y Asimetría
+- 10 Balas fallidas a $1R$: $10 \times (-1.0R) = -10.0R$.
+- 1 Bala ganadora en mega-tendencia (3 capas piramidadas): $+18.5R$.
+- **PnL Neto de Campaña:** $-10.0R + 18.5R = \mathbf{+8.5R}$ ($+77.27\%$ ROI). La Bóveda retiene $50\%$ ($+4.25R$) de forma física en Spot USDT.
 
 ---
 
-## 4. DOCTRINA DE PUREZA DIMENSIONAL (% Y MÚLTIPLOS R VS $)
+## 📊 4. COMPARATIVA CUANTITATIVA FONDEO VS ULTRA
 
-1. **Capa Cuantitativa (Señales, Gates, Optimización y Backtest)**:
-   - **TODO opera en $\%$ y múltiplos $R$**.
-   - Retorno por trade: $r_t = \frac{\text{pnl\_usd}}{\text{equity\_before\_usd}} \times 100\%$.
-   - Múltiplo $R$: $R = \frac{\text{pnl\_usd}}{\text{initial\_risk\_usd}}$.
-   - Drawdown: $\text{DD}_t = \frac{\text{Peak}_t - \text{Equity}_t}{\text{Peak}_t} \times 100\%$.
-   - **Prohibido evaluar la calidad de una estrategia en dólares nominales brutos**, para evitar distorsiones por tamaño de cuenta o interés compuesto.
-2. **Capa de Liquidación Contable (Broker & Vault)**:
-   - Los **$\$$ USD** se emplean exclusivamente para:
-     - Registrar el depósito inicial de la cuenta.
-     - Calcular el balance final liquidado.
-     - Ejecutar retiros y transferencias a la Bóveda (Ratchet Vault).
-     - Pagar tarifas de comisiones de red y exchange.
+| Dimensión Cuantitativa | TRACK_FONDEO (CME / Prop Firms) | TRACK_ULTRA (BingX Cripto Perps) | Justificación Matemática & Operativa |
+| :--- | :--- | :--- | :--- |
+| **Max Realized Drawdown** | **$\le 4.00\% - 4.50\%$** | **$\le 75.00\%$** | En Fondeo un DD > 5% quema la cuenta. En Ultra, el balance de trabajo soporta rachas de balas. |
+| **Max Floating Drawdown** | **$\le 80.00\%$** | **$\le 80.00\%$** | Absorbe el ruido intrabar sin cerrar antes de alcanzar el Break-Even (+1.5R). |
+| **Apalancamiento** | **Contratos Fijos** (1-3 Minis / 10-30 Micros) | **Hasta $500\text{x}$** (Margen Aislado 1R) | Fondeo prohíbe sobreapalancamiento. Ultra usa apalancamiento aislado por bala. |
+| **Deflated Sharpe Ratio (DSR)**| **$\ge 2.00$** | N/A (No penaliza *fat-tails*) | DSR ajusta el Sharpe por asimetría, curtosis y número de ensayos múltiples. |
+| **Payoff Ratio ($\frac{\overline{W}}{\overline{L}}$)** | $\ge 1.30 - 1.50$ | **$\ge 3.00$** (Típico 3.0R - 8.0R) | En Ultra la ganancia media DEBE ser al menos 3 veces la pérdida media. |
+| **Asimetría ($\text{Skewness}$)** | Indiferente ($\approx 0$) | **$\ge +0.50$** ($\text{Right-Skewed}$) | Obliga a que los retornos tengan cola derecha pesada (Taleb). |
+| **Tail Gain Ratio** | N/A | **$\ge 40.0\%$** | Al menos el 40% del beneficio proviene de trades $\ge 3\text{R}$. |
+| **Daily Loss Limit** | **$0$ violaciones** ($< \$1,000$ en 50k) | No aplica (Aislado por bala) | Un solo día con pérdida $> \$1,000$ cancela una cuenta fondeada. |
+| **Riesgo de Ruina (Monte Carlo)**| **$0.00\%$** | Ráfaga 10 Balas: **$\le 1.0\%$** | Fondeo no tolera ruina; Ultra evalúa supervivencia de ráfagas. |
+| **Bóveda Ratchet** | N/A (Retiros mensuales bancarios) | **$50\% - 85\%$ a Spot USDT** | Transferencia irrevocable que no se re-arriesga en la misma serie. |
 
 ---
 
-## 5. CONTROL DE VERSIONES Y TRAZABILIDAD CRIPTOGRÁFICA
+## 🏛️ 5. EXPLICACIÓN MATEMÁTICA: META-ESTRATEGIAS EN FONDEO VS ULTRA
 
-- **Versión Activa Oficial**: `v1.05`
-- **Sincronización Git**: Cada versión mayor o menor queda vinculada al commit hash de Git (`git rev-parse HEAD`), fecha UTC, mensaje de commit y autor.
-- **Huella SHA-256 del Código**: La integridad del motor se audita mediante `compute_codebase_fingerprint()`. Cualquier discrepancia activa la alerta `code_drift_detected: true`.
-- **Persistencia Inmutable**: Todo cambio se registra en `version_manifest.json`, `services/engine_version.py` y en la tabla SQLite WAL `engine_version_logs`.
+### ¿Por qué una Meta-Estrategia puede tener menor rentabilidad nominal que la mejor individual?
+1. **En TRACK_FONDEO:**
+   - La mejor estrategia individual puede marcar $+300\%$ de retorno, pero con un Drawdown de $35\%$. Para una Prop Firm institucional (Topstep/Apex), esa estrategia está **muerta y descalificada en el primer mes**.
+   - Al ensamblar 3 o 4 activos ortogonales (ej. `NQ` + `GC` + `EURUSD`), el efecto de la matriz de covarianza descorrelacionada comprime el Drawdown a **$2.8\%\text{--}3.5\%$**, permitiendo que la cuenta pase la evaluación, reciba fondeo y sea escalable a $\$150\text{k}\text{--}\$300\text{k}$.
+2. **En TRACK_ULTRA:**
+   - La meta-estrategia no busca restringir el retorno nominal, sino operar como un **cargador multi-bala descorrelacionado**. Al distribuir balas 1R entre `BTC`, `ETH`, `SOL` y `SUI`, se neutralizan los periodos laterales de unos activos con las expansiones parabólicas de otros, disparando el Ratio de Sharpe conjunto a $> 2.50$ y manteniendo una tasa de cosecha a Bóveda Ratchet continua.

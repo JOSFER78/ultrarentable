@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_YM_1H_g07",
   "run_id": "run_UR_FONDEO_YM_1H",
   "strategy_id": "UR_FONDEO_YM_1H",
-  "strategy_snapshot_hash": "5cea6d23477240f13b64a4222340ab6b595ed03cb9997bcbc4c9b6db765d3912",
+  "strategy_snapshot_hash": "0a0306052d55965b253c3101a1fc7d64f16f96afdd9dfeabf26cd866fba30ce5",
   "dataset_id": "ds_trad_ym_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "bda5f657311c9066dd408a18da2601ad302fc16c923ebaea7e74b5755fb7d6f6",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "24d7b645b665e8ac32428e13b1b92a4379cd732c5bc937a96e109294f99111d9",
-  "output_hash": "e60152a406d92ee999841ded9d6d026ccd9011168b524da5bb0ddca4894fb6b6",
-  "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +651.74%)",
+  "input_hash": "90670b5719eb58d0d118ac021f6e90f9d4f9e56319e7c8c5705aad5142d89439",
+  "output_hash": "02fdf8b5ad084f5a7cd820ac73f9017f9acb0e6eb9886c3b252d10df0ea96cbb",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -11.28%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 18,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 38,
+      "CHOP_RANGING": 40,
       "HIGH_VOLATILITY": 6
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 2122.88,
-      "HIGH_VOLATILITY": -1471.14
+      "CHOP_RANGING": -9.43,
+      "HIGH_VOLATILITY": -1.85
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 651.74
+    "total_oos_return_pct": -11.28
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:11:48.965636+00:00"
+  "created_at_utc": "2026-08-23T19:16:30.070025+00:00"
 }

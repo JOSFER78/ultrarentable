@@ -2,23 +2,28 @@
   "evidence_id": "ev_UR_ULTRA_SI_5M_g08",
   "run_id": "run_UR_ULTRA_SI_5M",
   "strategy_id": "UR_ULTRA_SI_5M",
-  "strategy_snapshot_hash": "3a791e5b6c35b68438ad03f5433720eb165a1b2081a4d8775cedb571078daa7d",
+  "strategy_snapshot_hash": "86c98b8ac93ee255cc8b58cfe309146d2b1210e3ca29705152372a7194e4bd57",
   "dataset_id": "ds_trad_si_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "0729e7d3f9682246e8e1ade0c47279812294aa0efe5a1461cd06e9c1b3f57ba8",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a53884627bfd26ab8f2737d04eedb41414d1d47aaa30a3d8ed2017e8651bf937",
-  "output_hash": "fb283776fa0a25469b48eb5cd6acf8c5e08121f4cbe1e52f9ce0474dba42279d",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
+  "input_hash": "adb6cc3d2582c8d1a1d23ff3c7df563501a5c1994f7f4a3868e140181c600477",
+  "output_hash": "b818026283109e62a9e22b7c5c913dcdb6f631a9eb395e1670d23e0f0b8672f3",
+  "status": "PASSED",
+  "score": 85.6,
+  "verdict": "PASSED: DSR = 85.6% (Sharpe Bruto: 0.21, Trials Penalizados: 132, Skew: 2.85, Kurt: 9.94)",
   "metrics": {
-    "trials_penalized": 1,
-    "dsr_probability": 0.0
+    "raw_sharpe_ratio": 0.209,
+    "deflated_sharpe_probability_pct": 85.63,
+    "trials_penalized_count": 132,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 2.853,
+    "kurtosis": 9.936,
+    "sample_trades_count": 14
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_5M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-22T18:11:16.924563+00:00"
+  "created_at_utc": "2026-08-23T16:39:45.397775+00:00"
 }

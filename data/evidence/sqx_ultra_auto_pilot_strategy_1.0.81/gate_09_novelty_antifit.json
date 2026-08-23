@@ -2,33 +2,33 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.81_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.81",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.81",
-  "strategy_snapshot_hash": "3773f1ca533de773c8839debcc91c0280183e6939796b2e191d7416d93930782",
+  "strategy_snapshot_hash": "2cb35688c4bdbb22410518a16a9bb2dd88815499bed5f0957676d8f0edc8f195",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "cd686d5024af36c1a50632451d3b68f10008ba5572342816aecae3705c4ff023",
-  "output_hash": "03dd5b78fad910b8ea792affbc3a16e554011b4880e9c2e0a7738b39aa9be914",
+  "input_hash": "56152bebc73652857f4e3db3dc213f7b1608950faf1b8a45c064d8fde8cb0ffe",
+  "output_hash": "5588261e2d172c135b87acbc714ec1261d815de34a6ef5d82587699a2be91cc2",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 34.9 trades/param, Estabilidad Vecindario: 103.9%, Re-backtest PFs: [1.19, 1.11, 1.09, 1.18])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 31.5 trades/param, Estabilidad Vecindario: 106.2%, Re-backtest PFs: [1.19, 1.1, 1.09, 1.25])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 34.9,
+    "degrees_of_freedom_ratio": 31.5,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 103.9,
+    "parameter_neighborhood_stability_pct": 106.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       1.19,
-      1.11,
+      1.1,
       1.09,
-      1.18
+      1.25
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.81/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:06:25.937440+00:00"
+  "created_at_utc": "2026-08-23T19:06:09.876493+00:00"
 }

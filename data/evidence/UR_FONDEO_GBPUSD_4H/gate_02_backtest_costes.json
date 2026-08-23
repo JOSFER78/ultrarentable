@@ -2,30 +2,22 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_4H_g02",
   "run_id": "run_UR_FONDEO_GBPUSD_4H",
   "strategy_id": "UR_FONDEO_GBPUSD_4H",
-  "strategy_snapshot_hash": "3d50e9f55ed0f06fbb184e9fb18434b887615914bac5b22e6a8dc6a782a0735b",
+  "strategy_snapshot_hash": "64e7ada7fcf77fc52ce5e6e7e2dfdc41defbbb67ac660580a45618448e2dca28",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "a0df443be0d142d7679c8d079de67452cfa9f9cccfe292e84cba02f4ee32b59f",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "169d92c7edf7879c9d18ede26a94b2005c8478462e61dd2d5f304f518d9a2abd",
-  "output_hash": "7d3f283fccc1553fe3f2f765c050d0273bed4a00b4f2ca2474f1ae366e26fabd",
+  "input_hash": "b75f4771fbef1837b471e9a5a7aca1dddd1e86940eda1d5d5b9bd96068b65e74",
+  "output_hash": "56cb3f7677bd096d116d015ba4c0f06343aeaebb78d2372295bf6d5e1f5aa164",
   "status": "FAILED",
-  "score": 5.8,
-  "verdict": "FALLO: PF Neto 1.06 < 1.10",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "FOREX",
-    "canonical_name": "British Pound / USD",
-    "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": 556.0,
-    "total_fees_usd": 84.0,
-    "total_slippage_usd": 168.0,
-    "net_pnl_usd": 304.0,
-    "net_profit_factor": 1.06,
-    "drag_cost_pct": 45.32
+    "trades_count": 9
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_4H/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T18:08:59.924947+00:00"
+  "created_at_utc": "2026-08-23T18:02:00.727929+00:00"
 }

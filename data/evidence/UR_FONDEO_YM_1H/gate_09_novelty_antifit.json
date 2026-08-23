@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_YM_1H_g09",
   "run_id": "run_UR_FONDEO_YM_1H",
   "strategy_id": "UR_FONDEO_YM_1H",
-  "strategy_snapshot_hash": "5cea6d23477240f13b64a4222340ab6b595ed03cb9997bcbc4c9b6db765d3912",
+  "strategy_snapshot_hash": "0a0306052d55965b253c3101a1fc7d64f16f96afdd9dfeabf26cd866fba30ce5",
   "dataset_id": "ds_trad_ym_1h_1711425600000_1787090400000.json",
-  "dataset_sha256": "bda5f657311c9066dd408a18da2601ad302fc16c923ebaea7e74b5755fb7d6f6",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "6aa2e8391079cac2fa6ea86ef8fd0750b65b67f538be26270554936858147da7",
-  "output_hash": "e09cda4626cace44b3de4c76624cd66031e975b0002a40d1e7ccd0450c516240",
+  "input_hash": "f51585eb4e08a9620939d77e2ff4422ee21ab626a841a569dea80e8b2955a561",
+  "output_hash": "9ffce29bb0d0e9f72d525b12ee80764186b9fe036e6bdd91d3e68c334acf3cb7",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.0 trades/param, Estabilidad Vecindario: 93.6%, Re-backtest PFs: [1.29, 0.69, 1.0, 0.84])",
+  "score": 80.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 18.0 trades/param, Estabilidad Vecindario: 86.2%, Re-backtest PFs: [0.7, 0.68, 0.7, 0.68])",
   "metrics": {
     "parameters_count": 8,
     "degrees_of_freedom_ratio": 18.0,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 93.6,
+    "parameter_neighborhood_stability_pct": 86.2,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.29,
-      0.69,
-      1.0,
-      0.84
+      0.7,
+      0.68,
+      0.7,
+      0.68
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_YM_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:11:49.488984+00:00"
+  "created_at_utc": "2026-08-23T19:16:31.467403+00:00"
 }

@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_ETH_USDT_1H",
   "strategy_id": "UR_ULTRA_ETH_USDT_1H",
-  "strategy_snapshot_hash": "c3a1dc0ec626fdef8707e9d0edc3a188d5bc6b9047aee954d8916d16da83f840",
+  "strategy_snapshot_hash": "a6b722e3c0f6695d88cb574edac866ec000a84c8d03877dc58c622e81049472f",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "1f4155362aa6bd4fc98a58afd7a6051e9608a3e8d81de9db7ca55fa9d9f0afe7",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "319fb73133dd4553a755597e36126b5a0426815ea5015c5f7e586629c962f2da",
-  "output_hash": "72b1778e2de1c4a7ab41c91b75657ff0a35070c38faff2b694344ba6cb77d384",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "4cb5e6bd0cb8288537bc096b7bbd98399208c36663af5b4cb7282ee89dda25f7",
+  "output_hash": "9e8f9345a43fbaf9d87cb46d9b06565c4924d8ea7965e6b6c574cb7c05c548e8",
   "status": "FAILED",
-  "score": 40.8,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 177.7 o Estabilidad 102.1% < 50.0%)",
+  "score": 39.6,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 86.0 o Estabilidad 99.1% < 50.0%)",
   "metrics": {
     "parameters_count": 11,
-    "degrees_of_freedom_ratio": 177.7,
+    "degrees_of_freedom_ratio": 86.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 102.1,
+    "parameter_neighborhood_stability_pct": 99.1,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.01,
+      1.03,
       1.12,
       1.11,
-      1.13
+      1.14
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:08:18.877486+00:00"
+  "created_at_utc": "2026-08-23T22:00:35.264839+00:00"
 }

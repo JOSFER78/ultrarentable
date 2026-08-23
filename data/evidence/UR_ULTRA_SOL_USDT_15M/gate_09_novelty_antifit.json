@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_15M_g09",
   "run_id": "run_UR_ULTRA_SOL_USDT_15M",
   "strategy_id": "UR_ULTRA_SOL_USDT_15M",
-  "strategy_snapshot_hash": "3465627ab32d19af2a0bc4b3b8af3f1876fa6f7276de035d7d159915f0684cc7",
+  "strategy_snapshot_hash": "b0feec373979227771fea8b4f5f67664dcaa8a9fe3e402148849372244798b4a",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "9127164004148bf2702d7818ffd0a33e473a993d4a34896f26c828febc515028",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "1a82a1162a81d9a009769442016f07338dd342bb019c4863580287473ee006bd",
-  "output_hash": "9672eb05d042d4027fb36d0752c298b260fa8e7da57477f4b6a1d0a2d7a5f900",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "6340ee9fad05cdbf8da1f0fbf95a2293c090c9a68f70a166ce58b5f2c8e6bb2d",
+  "output_hash": "80395a8b07232e4ab131f3a00e203dfaa4730e3c2fc3ef309491516ee5069aaf",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 57.4 trades/param, Estabilidad Vecindario: 148.2%, Re-backtest PFs: [0.34, 0.23, 0.48, 0.61])",
+  "score": 77.8,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 82.8 trades/param, Estabilidad Vecindario: 62.9%, Re-backtest PFs: [0.23, 0.11, 0.29, 0.83])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 57.4,
+    "degrees_of_freedom_ratio": 82.8,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 148.2,
+    "parameter_neighborhood_stability_pct": 62.9,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.34,
       0.23,
-      0.48,
-      0.61
+      0.11,
+      0.29,
+      0.83
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:10:39.711239+00:00"
+  "created_at_utc": "2026-08-23T21:59:48.601107+00:00"
 }

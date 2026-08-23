@@ -5,6 +5,7 @@ DOCTRINA ZERO-MOCKS & REAL-ONLY:
 - Gestiona una cola lógica persistente y continua sobre todo el catálogo (Tier 4, Tier 3, Tier 2 y Tier 1).
 - Procesa en bucle generacional 24/7 ininterrumpido aplicando mutaciones basadas en microestructura y gates fallidos.
 - Emite telemetría rica con formato frontend estructurado (fechas completas, deltas, scorecards, microestructura).
+- Resiliencia Indestructible: Auto-healing y recuperación automática ante cualquier fallo de worker o excepción.
 """
 
 from __future__ import annotations
@@ -40,7 +41,7 @@ class RefinementProgressEvent(DomainEvent):
 
 
 class ContinuousResearchDaemon:
-    """Demonio universal de optimización y cola 24/7 con visor en tiempo real."""
+    """Demonio universal de optimización y cola 24/7 con visor en tiempo real y auto-recuperación indestructible."""
 
     _instance: Optional["ContinuousResearchDaemon"] = None
 
@@ -90,7 +91,10 @@ class ContinuousResearchDaemon:
         }
 
         # Cargar cola inicial desde SQLite
-        self.refresh_queue_from_db(force_requeue=True)
+        try:
+            self.refresh_queue_from_db(force_requeue=True)
+        except Exception as e:
+            logger.error(f"Error cargando cola inicial: {e}")
 
     def add_log(
         self,
@@ -220,10 +224,6 @@ class ContinuousResearchDaemon:
                 })
 
             # Ordenamiento cuantitativo multi-mercado:
-            # 1. Tier 2 Diamantes (9-10/11) primero
-            # 2. Tier 3 Incubadora (5-8/11)
-            # 3. Tier 4 Rechazadas (<5/11)
-            # 4. Diversidad de activos (Forex, CME, Commodities, Crypto intercalados)
             tier_priority = {
                 "TIER_2_NEAR_CERTIFIED": 0,
                 "TIER_3_INCUBATOR": 1,
@@ -259,22 +259,31 @@ class ContinuousResearchDaemon:
             return []
 
     def _sync_queue_to_firebase(self):
-        """Sincroniza el estado de la cola con Firebase Realtime Database."""
+        """Sincroniza el estado de la cola con Firebase Realtime Database de forma asíncrona segura."""
         try:
             threading.Thread(target=firebase_sync_manager.sync_all, daemon=True).start()
         except Exception:
             pass
 
     def start_autonomous(self):
-        """Inicia el bucle continuo 24/7 en segundo plano."""
+        """Inicia el bucle continuo 24/7 en segundo plano de forma incondicional."""
         with self._lock:
-            if self.is_running:
+            if self.is_running and self._worker_thread and self._worker_thread.is_alive():
                 return
             self.is_running = True
             self._stop_event.clear()
-            self._worker_thread = threading.Thread(target=self._run_loop, daemon=True)
+            self._worker_thread = threading.Thread(
+                target=self._run_loop, 
+                daemon=True,
+                name="ContinuousResearch-24-7"
+            )
             self._worker_thread.start()
-            self.add_log("SUCCESS", "⚡ Bucle Autónomo de Refinamiento Cuantitativo 24/7 INICIADO.", event_type="SISTEMA_START", step="MOTOR_24_7_ACTIVO")
+            self.add_log(
+                "SUCCESS", 
+                "⚡ Bucle Autónomo de Refinamiento Cuantitativo 24/7 INICIADO.", 
+                event_type="SISTEMA_START", 
+                step="MOTOR_24_7_ACTIVO"
+            )
 
     def pause(self):
         """Pausa el bucle continuo."""
@@ -285,36 +294,49 @@ class ContinuousResearchDaemon:
             self.add_log("WARN", "⏸️ Demonio de Refinamiento 24/7 PAUSADO.", event_type="SISTEMA_PAUSE", step="PAUSA")
 
     def _run_loop(self):
-        """Bucle de ejecución continua 24/7 que procesa rondas generacionales sucesivas."""
-        logger.info("ContinuousResearchDaemon: Bucle autónomo activo 24/7.")
+        """Bucle indestructible de ejecución continua 24/7 que procesa rondas generacionales sucesivas."""
+        logger.info("ContinuousResearchDaemon: Bucle autónomo activo 24/7 con auto-recuperación.")
         while not self._stop_event.is_set():
-            candidate_to_process = None
-            with self._lock:
-                for item in self.queue:
-                    if item["status"] in ("EN_COLA", "REINTENTO"):
-                        candidate_to_process = item
-                        break
+            try:
+                candidate_to_process = None
+                with self._lock:
+                    for item in self.queue:
+                        if item["status"] in ("EN_COLA", "REINTENTO"):
+                            candidate_to_process = item
+                            break
 
-            # Si toda la cola se ha completado, iniciamos la SIGUIENTE GENERACIÓN
-            if not candidate_to_process:
-                self.stats["total_cycles"] += 1
-                self.generation_round += 1
-                self.stats["generation_round"] = self.generation_round
-                
-                self.add_log(
-                    "INFO",
-                    f"🔄 GENERACIÓN #{self.generation_round} INICIADA: Reiniciando cola con {len(self.queue)} estrategias para mutación continua...",
-                    event_type="NUEVA_GENERACION",
-                    step="GENERACION_CICLO",
-                )
-                # Reencolar todo el catálogo para la nueva ronda generacional
-                self.refresh_queue_from_db(force_requeue=True)
-                time.sleep(3)
-                continue
+                # Si toda la cola se ha completado, iniciamos la SIGUIENTE GENERACIÓN
+                if not candidate_to_process:
+                    self.stats["total_cycles"] += 1
+                    self.generation_round += 1
+                    self.stats["generation_round"] = self.generation_round
+                    
+                    self.add_log(
+                        "INFO",
+                        f"🔄 GENERACIÓN #{self.generation_round} INICIADA: Reiniciando cola con {len(self.queue)} estrategias para mutación continua...",
+                        event_type="NUEVA_GENERACION",
+                        step="GENERACION_CICLO",
+                    )
+                    # Reencolar todo el catálogo para la nueva ronda generacional
+                    self.refresh_queue_from_db(force_requeue=True)
+                    time.sleep(3)
+                    continue
 
-            cid = candidate_to_process["candidate_id"]
-            self._process_single_candidate(cid, max_iterations=3)
-            time.sleep(1.5)
+                cid = candidate_to_process["candidate_id"]
+                try:
+                    self._process_single_candidate(cid, max_iterations=3)
+                except Exception as cand_err:
+                    logger.error(f"ContinuousResearchDaemon: Error procesando candidato {cid}: {cand_err}")
+                    self.add_log("ERROR", f"Fallo al procesar {cid}: {cand_err}", step="ERROR_CANDIDATO", candidate_id=cid)
+                    with self._lock:
+                        if candidate_to_process:
+                            candidate_to_process["status"] = "ERROR_REINTENTO"
+
+                time.sleep(1.5)
+
+            except Exception as loop_err:
+                logger.critical(f"ContinuousResearchDaemon: Excepción en ciclo principal (Auto-recuperando): {loop_err}")
+                time.sleep(4.0)
 
     def refine_single_now(self, candidate_id: str, max_iterations: int = 3) -> Dict[str, Any]:
         """Ejecuta inmediatamente el refinamiento de un candidato específico."""
@@ -338,13 +360,20 @@ class ContinuousResearchDaemon:
                 self.current_tier = c_info.get("tier")
                 initial_gates = c_info.get("initial_gates", 0)
             else:
+                self.current_candidate_name = candidate_id
+                self.current_symbol = "BTC"
+                self.current_timeframe = "15m"
+                self.current_route = "ULTRA"
+                self.current_tier = "TIER_3_INCUBATOR"
                 initial_gates = 0
+
+            self.current_step = f"1. INICIANDO MUTACIÓN ({initial_gates}/11 Gates iniciales)"
 
         self.add_log(
             "INFO",
-            f"Iniciando evaluación de {candidate_id} ({self.current_symbol} {self.current_timeframe} · {self.current_route}). Tier: {self.current_tier or 'N/A'}.",
-            step="1. INGESTA Y PROFILER",
-            event_type="PROCESANDO_CANDIDATO",
+            f"Iniciando optimización 24/7 para {self.current_candidate_name} ({self.current_symbol} {self.current_timeframe}) · {self.current_tier}",
+            step=self.current_step,
+            event_type="INICIO_CANDIDATO",
             candidate_id=candidate_id,
             symbol=self.current_symbol,
             timeframe=self.current_timeframe,
@@ -354,18 +383,21 @@ class ContinuousResearchDaemon:
         )
 
         def step_callback(step_name: str, step_data: Dict[str, Any]):
-            if step_name == "1. PERFIL_MICROESTRUCTURA":
-                self.progress_pct = 25.0
-                self.current_math_telemetry = step_data
-                recs = step_data.get("recommendations", [])
-                recs_summary = f" · 💡 Guía Semántica 5 Agentes: {'; '.join(recs[:2])}" if recs else ""
+            with self._lock:
+                self.current_step = step_name
+                self.current_math_telemetry = step_data.get("math_telemetry", {})
+
+            if step_name == "ANALISIS_MICROESTRUCTURA":
+                self.progress_pct = 15.0
+                math_t = step_data.get("math_telemetry", {})
                 self.add_log(
                     "INFO",
-                    f"Microestructura para {self.current_symbol}: Hurst={step_data.get('hurst', 0.5):.3f} ({step_data.get('regime')}), "
-                    f"ParkinsonVol={step_data.get('parkinson_vol', 0.0):.5f}{recs_summary}",
-                    step="2. SÍNTESIS_SEMÁNTICA_5_AGENTES",
-                    event_type="MICROESTRUCTURA",
-                    math=step_data,
+                    f"Microestructura {self.current_symbol} {self.current_timeframe}: "
+                    f"ATR%={math_t.get('atr_norm_pct', 0.0):.2f}%, Hurst={math_t.get('hurst_exponent', 0.5):.2f}, "
+                    f"VolRegime={math_t.get('volatility_regime', 'NORMAL')}, TrendStrength={math_t.get('trend_strength_adx', 25.0):.1f}",
+                    step="2. ANÁLISIS MICROESTRUCTURA",
+                    event_type="MICROESTRUCTURA_ANALISIS",
+                    math=math_t,
                     candidate_id=self.current_candidate_id,
                     symbol=self.current_symbol,
                     timeframe=self.current_timeframe,
@@ -480,7 +512,7 @@ class ContinuousResearchDaemon:
 
         self._sync_queue_to_firebase()
 
-        # Auto-Síntesis 24/7 de Meta-Estrategias Multi-Activo (Punto 6)
+        # Auto-Síntesis 24/7 de Meta-Estrategias Multi-Activo
         if self.stats["total_processed"] % 3 == 0 or is_cert:
             try:
                 from services.portfolio.autonomous_meta_daemon import AutonomousMetaDaemon

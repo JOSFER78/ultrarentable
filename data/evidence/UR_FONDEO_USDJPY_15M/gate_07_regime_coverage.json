@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15M_g07",
   "run_id": "run_UR_FONDEO_USDJPY_15M",
   "strategy_id": "UR_FONDEO_USDJPY_15M",
-  "strategy_snapshot_hash": "c29ba31ce528cd6fd20083be383880753a3c2c5ceb54304a367c09a7a51d011e",
+  "strategy_snapshot_hash": "550eb33803e44e29dbf4e3a786b49c2c670be11278ed0ed22227fd5d28685ac4",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "4eab2e4f2a7cc63d92b14abe59cc82f8f69ff20a2a7ff000b2faeae347141c18",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "6499d189643db02106f6dd2ce7f38dd9439c0372623d1453574b51c853d8d5bc",
-  "output_hash": "fe8bca2fa77fa27adf17f584d8cb0a087efd356cb304996324886020f2e3974f",
-  "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +3.68%)",
+  "input_hash": "e0818caf1b064adbe836fb6402bb35b74fbc16cf06d538b26ca41d6e7184d57a",
+  "output_hash": "ec8c46954604ace5223d4f574b42c5ef05e22ed6249c21e887299274c52dc050",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.04%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 8,
+      "CHOP_RANGING": 14,
       "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.13,
-      "HIGH_VOLATILITY": 3.81
+      "CHOP_RANGING": -0.02,
+      "HIGH_VOLATILITY": -0.02
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 3.68
+    "total_oos_return_pct": -0.04
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:09:26.865640+00:00"
+  "created_at_utc": "2026-08-23T18:31:53.460895+00:00"
 }

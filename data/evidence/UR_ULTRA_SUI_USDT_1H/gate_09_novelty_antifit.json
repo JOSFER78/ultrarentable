@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_SUI_USDT_1H",
   "strategy_id": "UR_ULTRA_SUI_USDT_1H",
-  "strategy_snapshot_hash": "7a536c737aaa114f1f72bd5a5f07c160b34d07c1a1af17c1751747c7dce7b011",
+  "strategy_snapshot_hash": "fe12e4110cefccc3edcdfd05856fc35cc8d2f573ad1e37812c61c23b5f1d2b36",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "f43ea93a68ff0ed45feb5ba12fd09a0e2c2ce72fc154d6bc31bdff519fc92917",
-  "output_hash": "4c013bbaafce8280ec351397c47b20afaf619298951aa5e104980b178244b7ae",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "5d95bc3701bd3f1e8a44d4d4bd3a64a9c8ab438df538c544abf60d4ee4f2fd1a",
+  "output_hash": "c72ea2a4f33200dd0bdf9fa317f8fc0c5646cb820f0976344da7dbd34ed39c57",
   "status": "FAILED",
-  "score": 73.8,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 300.4 o Estabilidad 184.4% < 50.0%)",
+  "score": 40.9,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 285.2 o Estabilidad 102.2% < 50.0%)",
   "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 300.4,
+    "degrees_of_freedom_ratio": 285.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 184.4,
+    "parameter_neighborhood_stability_pct": 102.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.92,
+      1.08,
       1.06,
-      2.99,
-      2.85
+      1.15,
+      1.29
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:07:59.246638+00:00"
+  "created_at_utc": "2026-08-23T22:21:30.939368+00:00"
 }

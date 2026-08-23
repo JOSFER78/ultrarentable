@@ -24,8 +24,6 @@ class StrategyFamily(str, Enum):
     MOMENTUM = "momentum"
     VOLATILITY = "volatility"
     STATISTICAL_ARBITRAGE = "statistical_arbitrage"
-    HYPERSCALE = "hyperscale"
-    FONDEO_PRESERVATION = "fondeo_preservation"
 
 class StrategyOrigin(str, Enum):
     MANUAL = "MANUAL"
@@ -149,8 +147,8 @@ class Metadata(BaseModel):
 
 class Market(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    venue: Literal["BINGX", "CME", "PROP_FIRM"] = "BINGX"
-    symbol: str = Field(min_length=2, max_length=40)
+    venue: Literal["BINGX"] = "BINGX"
+    symbol: str = Field(min_length=3, max_length=40)
     timeframe: str
 
     @field_validator("timeframe")
@@ -168,7 +166,7 @@ class Pyramiding(BaseModel):
 class RiskManagement(BaseModel):
     model_config = ConfigDict(extra="forbid")
     stopLossPct: float = Field(gt=0.0, le=50.0)
-    takeProfitPct: float = Field(gt=0.0, le=500.0)
+    takeProfitPct: float = Field(gt=0.0, le=5000.0)
     trailingStopPct: float | None = Field(default=None, gt=0.0, le=50.0)
     maxHoldingBars: int = Field(ge=1, le=10_000)
 

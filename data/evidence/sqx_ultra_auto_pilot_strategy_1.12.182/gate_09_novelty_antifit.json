@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.182_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.182",
-  "strategy_snapshot_hash": "8634b7897df3da3419bdfa10f9626ec56e825ad25cbb49b569821787f83e96f1",
+  "strategy_snapshot_hash": "ab41ccc08186e2781d9a46b71256eecfb1be1d16dc6279235243abdd20b49ff2",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "861cf5d8d1bc3562edd38ebcedebda8262ccb0af8f126bba1befc3a4040e3ecf",
-  "output_hash": "70649b45697652ca73cd62c5206bc40ec05c6d5d5fcb6eca2b71a456bef44878",
+  "input_hash": "5b244ddf37071e8b846bd24ffd814f681267246b6a9d596ba09239120d462641",
+  "output_hash": "4aec049897c061eaab5829aa75710b7951d3694360be534038fe009a954f4771",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 33.9 trades/param, Estabilidad Vecindario: 105.5%, Re-backtest PFs: [1.2, 1.1, 1.09, 1.21])",
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 33.6 trades/param, Estabilidad Vecindario: 106.2%, Re-backtest PFs: [1.19, 1.1, 1.09, 1.25])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 33.9,
+    "degrees_of_freedom_ratio": 33.6,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 105.5,
+    "parameter_neighborhood_stability_pct": 106.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.2,
+      1.19,
       1.1,
       1.09,
-      1.21
+      1.25
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.182/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:09:05.068104+00:00"
+  "created_at_utc": "2026-08-23T18:59:43.962534+00:00"
 }

@@ -304,3 +304,72 @@ def build_risk_rules(
         taker_fee_rate=taker_fee_rate,
         maintenance_tiers=tuple(maintenance_tiers),
     )
+
+
+# ---------------------------------------------------------------------------
+# CME GLOBEX & MICRO FUTURES SPECIFICATIONS (CANONICAL PROP FIRM MATRIX)
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class CMEContractSpec:
+    symbol: str
+    name: str
+    is_micro: bool
+    point_value_usd: float
+    tick_size: float
+    tick_value_usd: float
+    exchange_fee_per_side_usd: float
+    parent_mini_symbol: str | None = None
+
+
+CME_CONTRACT_SPECS: dict[str, CMEContractSpec] = {
+    # Micro E-mini Index Futures
+    "MNQ": CMEContractSpec("MNQ", "Micro E-mini Nasdaq 100", True, 2.0, 0.25, 0.50, 0.62, "NQ"),
+    "MES": CMEContractSpec("MES", "Micro E-mini S&P 500", True, 5.0, 0.25, 1.25, 0.62, "ES"),
+    "MYM": CMEContractSpec("MYM", "Micro E-mini Dow Jones", True, 0.50, 1.0, 0.50, 0.62, "YM"),
+    "M2K": CMEContractSpec("M2K", "Micro E-mini Russell 2000", True, 5.0, 0.10, 0.50, 0.62, "RTY"),
+    # Micro Commodities
+    "MGC": CMEContractSpec("MGC", "Micro Gold", True, 10.0, 0.10, 1.00, 0.85, "GC"),
+    "MCL": CMEContractSpec("MCL", "Micro Crude Oil WTI", True, 100.0, 0.01, 1.00, 0.85, "CL"),
+    "MSI": CMEContractSpec("MSI", "Micro Silver", True, 1000.0, 0.005, 5.00, 1.25, "SI"),
+    # Standard Minis (Reference)
+    "NQ": CMEContractSpec("NQ", "E-mini Nasdaq 100", False, 20.0, 0.25, 5.00, 2.45),
+    "ES": CMEContractSpec("ES", "E-mini S&P 500", False, 50.0, 0.25, 12.50, 2.45),
+    "YM": CMEContractSpec("YM", "E-mini Dow Jones", False, 5.0, 1.0, 5.00, 2.45),
+    "RTY": CMEContractSpec("RTY", "E-mini Russell 2000", False, 50.0, 0.10, 5.00, 2.45),
+    "GC": CMEContractSpec("GC", "Gold Futures", False, 100.0, 0.10, 10.00, 2.45),
+    "CL": CMEContractSpec("CL", "Crude Oil WTI Futures", False, 1000.0, 0.01, 10.00, 2.45),
+    "SI": CMEContractSpec("SI", "Silver Futures", False, 5000.0, 0.005, 25.00, 2.45),
+}
+
+
+def calculate_cme_position_sizing(
+    symbol: str,
+    stop_loss_points: float,
+    max_risk_usd: float = 250.0,
+    prefer_micros: bool = True,
+) -> tuple[str, int, float]:
+    """Calculate exact contract count and risk for Prop Firm evaluation.
+    
+    Returns:
+        tuple[resolved_symbol, contract_count, actual_risk_usd]
+    """
+    sym_clean = symbol.upper().replace("-", "").replace("/", "").replace("=F", "")
+    
+    # Map mini to micro if preferred
+    target_sym = sym_clean
+    if prefer_micros:
+        micro_map = {"NQ": "MNQ", "ES": "MES", "YM": "MYM", "RTY": "M2K", "GC": "MGC", "CL": "MCL", "SI": "MSI"}
+        target_sym = micro_map.get(sym_clean, sym_clean)
+        
+    spec = CME_CONTRACT_SPECS.get(target_sym)
+    if not spec:
+        # Fallback to standard 1 contract
+        return (target_sym, 1, stop_loss_points * 20.0)
+        
+    risk_per_contract = max(1.0, stop_loss_points * spec.point_value_usd)
+    contracts = max(1, int(math.floor(max_risk_usd / risk_per_contract)))
+    actual_risk = round(contracts * risk_per_contract, 2)
+    
+    return (target_sym, contracts, actual_risk)
+

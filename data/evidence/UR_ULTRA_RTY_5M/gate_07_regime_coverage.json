@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_RTY_5M_g07",
   "run_id": "run_UR_ULTRA_RTY_5M",
   "strategy_id": "UR_ULTRA_RTY_5M",
-  "strategy_snapshot_hash": "426eda00f5b1b87f1b6331d83066a95c5c0418afa2237d203590fa7cfe7ab69f",
+  "strategy_snapshot_hash": "fc406563adee008c8d26a75532b5c912329d06736496d841d6cda1d101000c2f",
   "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "bdb1d47a77cfe072f3e89d1240f2cdba13d44dd53e66ffcfd3c5c03c9ee3881e",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "9f42cd8e5fd57c3dd702d2feaed054815854072d8b73ca1902a473601c4c7fb4",
-  "output_hash": "deb40ccfb329c9ceda6e6eec687ea885744432dbe1840b47c75bded58f221a34",
+  "input_hash": "95af1f180b96f8a1d2b4e025d4f4823a36bf811afc3310d58ce9ac033c8f8c0f",
+  "output_hash": "2c2c1cac6d9e5a2a9b6ecefc0fe7150e912ede348ffb6666c0906a3f93ff8946",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -98.04%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -542.98%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 1,
+      "CHOP_RANGING": 9,
       "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -98.04,
+      "CHOP_RANGING": -542.98,
       "HIGH_VOLATILITY": 0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_return_pct": -98.04
+    "total_oos_return_pct": -542.98
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:11:13.643478+00:00"
+  "created_at_utc": "2026-08-23T16:44:42.535506+00:00"
 }

@@ -2,26 +2,26 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g05",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "2029813644f8a289bcfa33789bfdaa4120b43f6787ece88922a5af33d21ba494",
+  "strategy_snapshot_hash": "16b0171a340f32a74de7890b50014798f22cfd92a129142a35fef0c158cb8cc8",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
-  "dataset_sha256": "27ac63910de2aa86ad83ab9d9e38c3696fbbf56f27b65094ef121f3823c0a88b",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "e2695de3354f7531123978881aa981ebd6f3a1090f868a0fb57ed94cd60abb07",
-  "output_hash": "4cd5fd84909ef4842f0bfc2d5ccf7fb5fd8eb2a942ffc5664b2c28f78dbbd931",
+  "input_hash": "88782154ba43c13028694eeaa15d9d81ca77309a4479a9b02116a96a33dd2a10",
+  "output_hash": "15dafba9f0ad67a62c2f76f1e82dc72e2fe5e221e382219c0ffd8155b9c6caa4",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 99.3% > 1.0% (DD 95% = 98.9%)",
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 99.8%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 99.3,
-    "drawdown_median_pct": 97.2,
-    "drawdown_95th_percentile_pct": 98.9,
-    "max_simulated_drawdown_pct": 99.5
+    "ruin_probability_pct": 100.0,
+    "drawdown_median_pct": 99.4,
+    "drawdown_95th_percentile_pct": 99.8,
+    "max_simulated_drawdown_pct": 100.0
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T18:11:25.456197+00:00"
+  "created_at_utc": "2026-08-23T16:41:44.746539+00:00"
 }

@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_4H_g05",
   "run_id": "run_UR_FONDEO_USDJPY_4H",
   "strategy_id": "UR_FONDEO_USDJPY_4H",
-  "strategy_snapshot_hash": "ea637e8c94610d9d4c96595eba51185028e0e44a20b770c3526c4f52f31a2fdc",
+  "strategy_snapshot_hash": "eb410dd91feb51e326b79745251946eb22227ca2888b205df843cc8c6df2d479",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "f3d314f1f902530723bb91acdb432b641b662b65666ed995ba01d7928dc5df2e",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5a21e765829990771e28f12116d610f9f466fdb28694e009ba3fb26e428f4419",
-  "output_hash": "f843afbbdaf102d29fe48379878ff7f50bd27d457279d14b24ce2728bd6c8639",
+  "input_hash": "61cab279f4dde63a3ab43f2a11242f1d32bfea40b48dda5df6d93be1e0d6934c",
+  "output_hash": "1ff415c131323c2def9cabb27aa6fcfa9c9f0b781ce578c34f8211138f0f733c",
   "status": "PASSED",
-  "score": 98.7,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 0.1%)",
+  "score": 97.5,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 0.3%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 0.1,
-    "drawdown_95th_percentile_pct": 0.1,
-    "max_simulated_drawdown_pct": 0.1
+    "drawdown_median_pct": 0.2,
+    "drawdown_95th_percentile_pct": 0.3,
+    "max_simulated_drawdown_pct": 0.3
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_4H/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T18:09:27.624288+00:00"
+  "created_at_utc": "2026-08-23T18:01:21.657447+00:00"
 }

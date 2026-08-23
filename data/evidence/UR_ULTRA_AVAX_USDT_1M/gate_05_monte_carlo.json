@@ -2,26 +2,26 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1M_g05",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1M",
-  "strategy_snapshot_hash": "47d92947d59b9ea8927e5d2a316c4d9f761a5b7776e650d3154194d5eca997c8",
+  "strategy_snapshot_hash": "4a74b90a93c13648ca8c25ebc82b4fcbaa5d32e84a2be486049865935a7145e3",
   "dataset_id": "ds_binance_avaxusdt_1m_1786461900000_1787091840000.json",
-  "dataset_sha256": "c0cdc87aaa782128713173e1da507b6664002dff7f642c37f2e5ef8116999a9e",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c179dd04e58925ca0527b3ab7686f8d4075d9839148103f7912e2e8f2978793c",
-  "output_hash": "f93283bfd6fd47c51418d54195a03dcb4e5a3c37ad6225c1c8b5dc0d21364d35",
+  "input_hash": "ca968e973b62b5f605e5f6e368b633c30d8f02f32c4ed769552f9ba548860c9e",
+  "output_hash": "dc2e4970906cbcd81271161bf10301d82593dabf631b04088fed0c6595a47d46",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 99.9% > 1.0% (DD 95% = 99.0%)",
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 99.8%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 99.9,
-    "drawdown_median_pct": 97.4,
-    "drawdown_95th_percentile_pct": 99.0,
-    "max_simulated_drawdown_pct": 99.6
+    "ruin_probability_pct": 100.0,
+    "drawdown_median_pct": 99.3,
+    "drawdown_95th_percentile_pct": 99.8,
+    "max_simulated_drawdown_pct": 99.9
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-22T18:10:10.022084+00:00"
+  "created_at_utc": "2026-08-23T16:43:23.289176+00:00"
 }

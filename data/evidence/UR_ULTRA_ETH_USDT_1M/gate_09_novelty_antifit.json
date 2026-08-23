@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1M_g09",
   "run_id": "run_UR_ULTRA_ETH_USDT_1M",
   "strategy_id": "UR_ULTRA_ETH_USDT_1M",
-  "strategy_snapshot_hash": "235bcfdcf4d484d23307027830f8bf88e37df0b82f458e03360f1636a4cc4928",
+  "strategy_snapshot_hash": "6588be4aef46953e3d715f6adc618cc6de2bb943cf3157267d143881d9be6019",
   "dataset_id": "ds_binance_ethusdt_1m_1786459140000_1787089080000.json",
-  "dataset_sha256": "e21fdfa1ffef2f154c16409610e1210f1b983f181c7904e96689d78dc2288c5b",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c6d7ba857fdca49be70bb4e14f07cfe8457b95ec24834fbaf26cf3a8ab2c6672",
-  "output_hash": "b7c027580bb6e92b286db9ad2c457cab181347765c439646da6bcb5fee7b4852",
-  "status": "FAILED",
-  "score": 51.9,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 9.9 o Estabilidad 129.7% < 50.0%)",
+  "input_hash": "4ffe9ba0863753fe918016ce27fa9c5695fdc893911d31ee87133404e11e3dfb",
+  "output_hash": "d7be6e999ef5e22f0af05566ad719f621c7ed2889cf671b1afaa37544238102c",
+  "status": "PASSED",
+  "score": 67.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 15.2 trades/param, Estabilidad Vecindario: 72.5%, Re-backtest PFs: [0.13, 0.25, 0.18, 0.02])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 9.9,
+    "degrees_of_freedom_ratio": 15.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 129.7,
+    "parameter_neighborhood_stability_pct": 72.5,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.24,
       0.13,
-      0.22,
-      0.24
+      0.25,
+      0.18,
+      0.02
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:10:35.457692+00:00"
+  "created_at_utc": "2026-08-23T16:43:27.144378+00:00"
 }

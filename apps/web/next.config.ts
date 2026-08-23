@@ -2,7 +2,9 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  basePath: "/pro/ultrarentable",
+  basePath: process.env.BASE_PATH || "",
+  poweredByHeader: false,
+  compress: true,
   turbopack: {
     root: path.resolve(__dirname, "../.."),
   },
@@ -11,12 +13,57 @@ const nextConfig: NextConfig = {
       {
         source: "/api/:path*",
         destination: "http://127.0.0.1:8000/api/:path*",
-        basePath: false,
       },
       {
         source: "/pro/ultrarentable/api/:path*",
         destination: "http://127.0.0.1:8000/api/:path*",
-        basePath: false,
+      },
+      {
+        source: "/pro/ultrarentable",
+        destination: "/",
+      },
+      {
+        source: "/pro/ultrarentable/:path*",
+        destination: "/:path*",
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+          },
+          {
+            key: "Pragma",
+            value: "no-cache",
+          },
+          {
+            key: "Expires",
+            value: "0",
+          },
+        ],
       },
     ];
   },

@@ -2,33 +2,33 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.92_g09",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.92",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.92",
-  "strategy_snapshot_hash": "380940af12a972bff5a7372817127c77c8856b713885bddf449480b8f79ac961",
+  "strategy_snapshot_hash": "8f447029481813f1db81ce724b58db55ce2c01a32f55d6b17153093b4b6127ac",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "31a50a210ce2602806e504579e27b13435465b6c28b1a531c0c56bfe74eec4a8",
-  "output_hash": "bc9586eae2967041bea0567fc16d1a70626567e411e96cfb2bb97abfd42a1049",
+  "input_hash": "8f18a6b2b7bebb6e184a8c72e9df7832b660a1a7c270813cfaf42f6886401ff9",
+  "output_hash": "bf70f20301c7a84d4c468ecaaf3c9855bf3afb58b0af5b5d230b870cd81560e8",
   "status": "PASSED",
-  "score": 93.9,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 193.8 trades/param, Estabilidad Vecindario: 89.8%, Re-backtest PFs: [0.51, 1.09, 1.09, 1.19])",
+  "score": 100.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 31.0 trades/param, Estabilidad Vecindario: 107.2%, Re-backtest PFs: [1.19, 1.1, 1.09, 1.25])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 193.8,
+    "degrees_of_freedom_ratio": 31.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 89.8,
+    "parameter_neighborhood_stability_pct": 107.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.51,
+      1.19,
+      1.1,
       1.09,
-      1.09,
-      1.19
+      1.25
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.92/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:06:47.989632+00:00"
+  "created_at_utc": "2026-08-23T19:08:39.660512+00:00"
 }

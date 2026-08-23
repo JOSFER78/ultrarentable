@@ -1,112 +1,110 @@
 // apps/web/lib/strategyPhases.ts
-// FUENTE ÚNICA DE VERDAD de las 6 fases del pipeline de estrategias (+ portada/hub).
-// Toda página, nav o hub que necesite las fases DEBE consumir este catálogo.
-// Prohibido re-declarar fases, badges, rutas o labels en componentes/páginas.
-// DOCTRINA ZERO-MOCKS: los labels no contienen métricas hardcodeadas (p.ej. "230 candidatos")
-// porque las métricas viven en el backend y cambian; si cambian aquí, se desincronizan.
-
-export const CANONICAL_GATES_COUNT = 10;
 
 export interface StrategyPhase {
-  /** 0 = portada/hub global; 1-6 = fases del pipeline */
   id: number;
-  key: string;
-  /** Nombre largo canónico */
-  label: string;
+  name: string;
+  label?: string;
   shortLabel: string;
-  description: string;
   icon: string;
   badge: string;
   color: string;
-  /** Ruta canónica de la fase (solo fases 1-6) */
+  description: string;
+  routePath: string;
   route?: string;
-  /** Rutas legadas que representan la misma fase (deben ser redirect/alias, nunca implementación paralela) */
   legacyRoutes?: string[];
 }
 
 export const STRATEGY_PHASES: StrategyPhase[] = [
   {
     id: 0,
-    key: "portada",
-    label: "0. Portada & Panel General de Estrategias",
-    shortLabel: "Portada General",
-    description: "Visión panorámica global, KPIs consolidados (solo desde telemetría real), embudo de 6 etapas y estado de las 6 fases del sistema.",
-    icon: "🗺️",
-    badge: "HUB GLOBAL",
+    name: "Portada General de Estrategias",
+    label: "Portada General",
+    shortLabel: "0. Portada",
+    icon: "🧬",
+    badge: "GLOBAL",
     color: "#63e1b4",
+    description: "Centro de mando integral del laboratorio cuantitativo, KPIs consolidados y acceso a las 6 fases.",
+    routePath: "/estrategias",
+    route: "/estrategias",
+    legacyRoutes: [],
   },
   {
     id: 1,
-    key: "motor",
-    label: "1. Motor Cuantitativo 24/7 en Vivo & Supervisión",
-    shortLabel: "1. Motor 24/7",
-    description: "Monitoreo en tiempo real de la minería continua (FastEngine 24/7 + SQX Bridge), pool de workers y supervisión de datos.",
+    name: "Fase 1: Supervisor 24/7 & Telemetría",
+    label: "Fase 1: Supervisor 24/7",
+    shortLabel: "1. Supervisor",
     icon: "⚡",
-    badge: "24/7",
-    color: "#34d399",
-    route: "/estrategias/1-motor-en-vivo",
-    legacyRoutes: ["/panel", "/sistema"],
+    badge: "24/7 SSE",
+    color: "#10b981",
+    description: "Monitorización de los 8 workers en tiempo real, eventos SSE y consola de autosanación.",
+    routePath: "/sistema",
+    route: "/sistema",
+    legacyRoutes: ["/panel"],
   },
   {
     id: 2,
-    key: "catalogo",
-    label: "2. Catálogo y Explorador Cuantitativo",
+    name: "Fase 2: Catálogo & Familias Cuánticas",
+    label: "Fase 2: Catálogo & Familias",
     shortLabel: "2. Catálogo",
-    description: "Explorador de estrategias con filtros por activo, temporalidad, métricas OOS, Scorecards, DNA y exportador C# / Pine.",
     icon: "📊",
-    badge: "CATÁLOGO",
+    badge: "FAMILIAS",
     color: "#38bdf8",
-    route: "/estrategias/2-explorador-excel",
-    legacyRoutes: ["/strategies"],
+    description: "Exploración de estrategias generadas, desglose por familias y DSL paramétrico.",
+    routePath: "/strategies",
+    route: "/strategies",
+    legacyRoutes: [],
   },
   {
     id: 3,
-    key: "pipeline",
-    label: `3. Pipeline ${CANONICAL_GATES_COUNT} Gates (FSM & Gates Institucionales)`,
-    shortLabel: `3. Pipeline ${CANONICAL_GATES_COUNT}-G`,
-    description: `Evaluación rigurosa a través de los ${CANONICAL_GATES_COUNT} Gates matemáticos deterministas de control de calidad y robustez.`,
-    icon: "🧬",
-    badge: `${CANONICAL_GATES_COUNT} GATES`,
+    name: "Fase 3: Candidatos & Máquina de Estados (FSM)",
+    label: "Fase 3: Candidatos FSM",
+    shortLabel: "3. Candidatos",
+    icon: "🚦",
+    badge: "10 ESTADOS",
     color: "#818cf8",
-    route: "/estrategias/3-pipeline-10-gates",
-    legacyRoutes: ["/estrategias/3-pipeline-11-gates", "/candidatos", "/pasos"],
+    description: "Ciclo de vida discreto de candidatos: GENERATED → BACKTESTED → CERTIFIED → LIVE.",
+    routePath: "/candidatos",
+    route: "/candidatos",
+    legacyRoutes: [],
   },
   {
     id: 4,
-    key: "investigador",
-    label: "4. Panel Investigador Semántico (Laboratorio I+D)",
-    shortLabel: "4. Lab I+D",
-    description: "Análisis semántico de fallos, base de conocimiento de sobreajuste y bucle de mejora continua de estrategias.",
+    name: "Fase 4: Research Semántico & Failure Knowledge",
+    label: "Fase 4: Research Lab",
+    shortLabel: "4. Research Lab",
     icon: "🔬",
-    badge: "LAB I+D",
-    color: "#facc15",
-    route: "/estrategias/4-panel-investigador",
-    legacyRoutes: ["/research", "/backtest"],
+    badge: "AI LOOP",
+    color: "#ec4899",
+    description: "Base de datos de autopsias de fallos, mutación genética y reparación profunda con agentes.",
+    routePath: "/research",
+    route: "/research",
+    legacyRoutes: [],
   },
   {
     id: 5,
-    key: "aprobadas",
-    label: `5. Estrategias Aprobadas (Certificación ${CANONICAL_GATES_COUNT} Gates)`,
-    shortLabel: "5. Aprobadas",
-    description: `Ranking oficial de estrategias que han superado los ${CANONICAL_GATES_COUNT} Gates con evidencia matemática completa.`,
-    icon: "🏆",
-    badge: "CERTIFICADAS",
-    color: "#10b981",
-    route: "/estrategias/5-estrategias-aprobadas",
-    legacyRoutes: ["/gates", "/leaderboard"],
+    name: "Fase 5: Quality Gates & Evidence Gate Hub",
+    label: "Fase 5: Quality Gates",
+    shortLabel: "5. Gates & Auditor",
+    icon: "🛡️",
+    badge: "EVIDENCE GATE",
+    color: "#facc15",
+    description: "Auditoría en 11 compuertas matemáticas estrictas, Monte Carlo 5D y WFE.",
+    routePath: "/gates",
+    route: "/gates",
+    legacyRoutes: [],
   },
   {
     id: 6,
-    key: "portfolio",
-    label: "6. Meta-Estrategia Ensamblada & Bóveda Ratchet",
-    shortLabel: "6. Meta-Estrategia",
-    description: "Ensamblaje de portafolios multiactivo no correlacionados, interés compuesto y protección de bóveda.",
-    icon: "🧩",
-    badge: "PORTFOLIO",
-    color: "#ec4899",
-    route: "/estrategias/6-meta-estrategia",
-    legacyRoutes: ["/portfolio"],
+    name: "Fase 6: Portfolio Studio & Debate Multi-Agente",
+    label: "Fase 6: Portfolio Studio",
+    shortLabel: "6. Meta-Portfolio",
+    icon: "🌌",
+    badge: "MULTI-AGENTE",
+    color: "#a855f7",
+    description: "Fusión de submáquinas ortogonales, paridad de riesgo ERC, correlación cruzada y debate entre los 5 agentes.",
+    routePath: "/portfolio",
+    route: "/portfolio",
+    legacyRoutes: [],
   },
 ];
 
-export const PIPELINE_PHASES = STRATEGY_PHASES.filter((p) => p.id > 0);

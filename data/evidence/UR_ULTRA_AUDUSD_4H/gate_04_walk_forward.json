@@ -2,73 +2,73 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g04",
   "run_id": "run_UR_ULTRA_AUDUSD_4H",
   "strategy_id": "UR_ULTRA_AUDUSD_4H",
-  "strategy_snapshot_hash": "03a2f4c8bb261d676ab86f1d871ffe9b33647cb67f4905d70d04d8a536612c87",
+  "strategy_snapshot_hash": "67c013b2ff8bc6e969ee60fd75ed871039bdc5a724299c00ad3cb75a408bd82b",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "e08297ffabee22cf266b06618bad1ac33472470b1c8ae8eac2dd337c55917a69",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "2e84a7ae5e70c3ed743f6b34a7e911e9714f0cadc437b900823c96f3b43629ee",
-  "output_hash": "d005671d730dae8da1bcb0312e5e507d98cd98f4d414acd59ed4528fe7c6b570",
+  "input_hash": "7f42b4d7e771d81742a5e69219b694e911f0b93aab6948ca6c776d2ef1c72bda",
+  "output_hash": "9388df3bca2b891d160509a8fa374c8550f4d3219740640008294209f76313f2",
   "status": "PASSED",
-  "score": 77.7,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.03, Consistencia: 40.0%)",
+  "score": 100.0,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 2.20, Consistencia: 40.0%)",
   "metrics": {
-    "total_trades_analyzed": 124,
+    "total_trades_analyzed": 155,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.03,
+    "walk_forward_efficiency": 2.2,
     "oos_consistency_pct": 40.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 16,
-        "oos_trades_count": 8,
-        "pf_is": 0.72,
-        "pf_oos": 0.44,
-        "net_profit_oos_usd": -0.54,
-        "wfe": 0.62
+        "is_trades_count": 21,
+        "oos_trades_count": 10,
+        "pf_is": 0.78,
+        "pf_oos": 0.47,
+        "net_profit_oos_usd": -0.4,
+        "wfe": 0.6
       },
       {
         "window_index": 2,
-        "is_trades_count": 16,
-        "oos_trades_count": 8,
-        "pf_is": 0.47,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -1.27,
-        "wfe": 0.0
+        "is_trades_count": 21,
+        "oos_trades_count": 10,
+        "pf_is": 0.46,
+        "pf_oos": 1.48,
+        "net_profit_oos_usd": 0.39,
+        "wfe": 3.18
       },
       {
         "window_index": 3,
-        "is_trades_count": 16,
-        "oos_trades_count": 8,
-        "pf_is": 0.61,
-        "pf_oos": 1.85,
-        "net_profit_oos_usd": 0.56,
-        "wfe": 3.04
+        "is_trades_count": 21,
+        "oos_trades_count": 10,
+        "pf_is": 0.87,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -1.07,
+        "wfe": 0.0
       },
       {
         "window_index": 4,
-        "is_trades_count": 16,
-        "oos_trades_count": 8,
-        "pf_is": 1.81,
-        "pf_oos": 2.69,
-        "net_profit_oos_usd": 1.1,
-        "wfe": 1.49
+        "is_trades_count": 21,
+        "oos_trades_count": 10,
+        "pf_is": 0.35,
+        "pf_oos": 2.28,
+        "net_profit_oos_usd": 0.73,
+        "wfe": 6.52
       },
       {
         "window_index": 5,
-        "is_trades_count": 16,
-        "oos_trades_count": 8,
+        "is_trades_count": 21,
+        "oos_trades_count": 10,
         "pf_is": 1.31,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.71,
-        "wfe": 0.0
+        "pf_oos": 0.9,
+        "net_profit_oos_usd": -0.09,
+        "wfe": 0.68
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-22T18:09:44.061399+00:00"
+  "created_at_utc": "2026-08-23T16:42:59.501729+00:00"
 }

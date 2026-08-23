@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_5M_g06",
   "run_id": "run_UR_ULTRA_DOGE_USDT_5M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_5M",
-  "strategy_snapshot_hash": "40909d1bc5569c1f25cc899d9a41b97f751452b39c57fabe40c543f62557fac6",
+  "strategy_snapshot_hash": "38d9ff6feba992162755237cb70fea7382f84eef11a214a86d4a2f6aec657672",
   "dataset_id": "ds_binance_dogeusdt_5m_1784389200000_1787088900000.json",
-  "dataset_sha256": "4444e251fd4a4ae2b2bc1b869202436c814529915f5e5d9a77b32210a250395e",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "3890eab427d68ec65bed920d74176e1ab98d8b6a5f545f91073f9ce222a5c567",
-  "output_hash": "e6ced6b6b3e5f01a681da853ccf8d81b2ffccd4f8411b22f48e0cda146a6d8a5",
+  "input_hash": "4096566693afe5bd2de0f52408ede32d19e2738f645165c62d4c4827df0dd8a4",
+  "output_hash": "75a3edbce5972cd297e69a01bbc516a0e5b5be9f11dc7cd4b99c5c169c3ef79c",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.56,
-        "stressed_profit_factor": 0.42,
+        "stressed_net_pnl_usd": -4.29,
+        "stressed_profit_factor": 0.3,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.68,
-        "stressed_profit_factor": 0.41,
+        "stressed_net_pnl_usd": -4.4,
+        "stressed_profit_factor": 0.3,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.83,
-        "stressed_profit_factor": 0.4,
+        "stressed_net_pnl_usd": -4.53,
+        "stressed_profit_factor": 0.29,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -3.06,
-        "stressed_profit_factor": 0.38,
+        "stressed_net_pnl_usd": -4.73,
+        "stressed_profit_factor": 0.28,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_5M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T18:10:32.496492+00:00"
+  "created_at_utc": "2026-08-23T16:42:08.452891+00:00"
 }

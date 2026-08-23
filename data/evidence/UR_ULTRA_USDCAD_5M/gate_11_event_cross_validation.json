@@ -1,20 +1,33 @@
 {
+  "evidence_id": "ev_UR_ULTRA_USDCAD_5M_g11",
+  "run_id": "run_UR_ULTRA_USDCAD_5M",
+  "strategy_id": "UR_ULTRA_USDCAD_5M",
+  "strategy_snapshot_hash": "a77628ac2ce7dd867f820af2da9e7af297a5ab35184dfe211215a2b10e369719",
+  "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
-  "name": "EVENT_CROSS_VALIDATION",
-  "passed": true,
-  "score": 88.4,
-  "verdict": "PASSED: Validaci\u00f3n cruzada de eventos completada (Riqueza Total: $899.03, B\u00f3veda Cosechada: $0.00, Apalancamiento: 6.0x, Dist. M\u00edn. Liq: 87.4%)",
-  "evidence": {
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "3.2.0",
+  "formula_version": "3.2.0",
+  "input_hash": "fcea1771236001f13dacfd28597d09f5cba75a45d6a3c357e7297fc45f5c7968",
+  "output_hash": "5dc02ec83258397ff8b91fb2a10306a35c48463ff8f5b3babe3038080e478602",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 87.5%, Peak Lev: 6.0x)",
+  "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 899.03,
-    "peak_equity_usd": 1022.58,
-    "min_equity_usd": 809.34,
+    "final_equity_usd": 110.25,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": 110.25,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 87.41,
+    "min_distance_to_liquidation_pct": 87.46,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
     "total_funding_cost_usd": 0.0,
-    "execution_events_count": 10
-  }
+    "execution_events_count": 79
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5M/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-23T16:42:04.538624+00:00"
 }

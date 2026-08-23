@@ -2,22 +2,30 @@
   "evidence_id": "ev_UR_ULTRA_SI_5M_g02",
   "run_id": "run_UR_ULTRA_SI_5M",
   "strategy_id": "UR_ULTRA_SI_5M",
-  "strategy_snapshot_hash": "3a791e5b6c35b68438ad03f5433720eb165a1b2081a4d8775cedb571078daa7d",
+  "strategy_snapshot_hash": "86c98b8ac93ee255cc8b58cfe309146d2b1210e3ca29705152372a7194e4bd57",
   "dataset_id": "ds_trad_si_5m_1780891200000_1787091000000.json",
-  "dataset_sha256": "0729e7d3f9682246e8e1ade0c47279812294aa0efe5a1461cd06e9c1b3f57ba8",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c4e1d711da20f39db2e881a279347dbfa7d5eebbd0989c38171dc8c782e970b1",
-  "output_hash": "71b7a0515276b0224f266a75204d21177f2d57f69190d645a7aaa61e2a41793b",
+  "input_hash": "bfaa465c19890dabdcace64c2d34f0a9e857efc814dbe253bb26cb3d4c354cf9",
+  "output_hash": "8727012f1e3f74984658d84ba5ae5aafc981890c59f3546c5c6449abc12bce98",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
+  "verdict": "FALLO: PF Neto 0.78 < 1.10",
   "metrics": {
-    "trades_count": 1
+    "market_category": "COMMODITIES",
+    "canonical_name": "Plata COMEX Silver Futures",
+    "exchange": "COMEX Globex",
+    "gross_pnl_usd": 350.0,
+    "total_fees_usd": 70.0,
+    "total_slippage_usd": 1400.0,
+    "net_pnl_usd": -1120.0,
+    "net_profit_factor": 0.78,
+    "drag_cost_pct": 420.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_5M/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-22T18:11:16.904643+00:00"
+  "created_at_utc": "2026-08-23T16:39:45.344924+00:00"
 }

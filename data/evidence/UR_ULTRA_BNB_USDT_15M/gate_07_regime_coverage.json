@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_15M",
   "strategy_id": "UR_ULTRA_BNB_USDT_15M",
-  "strategy_snapshot_hash": "e487cca14b549dee29fdf93c1bd1960edcf7e38f9893b75da9e0f7f19edd2156",
+  "strategy_snapshot_hash": "679b520d4666089ecd44f324e5ca809db2b98f66e3bc84079aecbd65f3ae53b6",
   "dataset_id": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
-  "dataset_sha256": "3cade86a5452925102db495a05f5f3f9777f1e7744b50be116b87ccad65e3f57",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "ee9c7545f0629cca6653354a88c0bfafeebd167cda942605605541e64d48a245",
-  "output_hash": "31c9b795e4253c6045e18cfaafc9ef3f1225ada702098574b85b5a4b86ba2a8c",
+  "input_hash": "61e0f50ff913bd3a3a58fa9efd791086d4faa9654ae8005d71563c2ff7a315c6",
+  "output_hash": "7a0c0202cc0932a1cd8647996304b0173409f5506233df83eded228eb9a10f29",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -45.74%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -268.10%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -45.19,
-      "HIGH_VOLATILITY": -0.55
+      "CHOP_RANGING": -198.81,
+      "HIGH_VOLATILITY": -69.29
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -45.74
+    "total_oos_return_pct": -268.1
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:10:12.210840+00:00"
+  "created_at_utc": "2026-08-23T16:40:10.390705+00:00"
 }

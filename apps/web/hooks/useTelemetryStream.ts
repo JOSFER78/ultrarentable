@@ -12,22 +12,21 @@ import {
   SelfHealingAlert, 
   SystemOverviewMetrics 
 } from '../types/telemetry';
-import { getApiUrl } from '../lib/api';
 
 const INITIAL_WORKERS: Record<WorkerId, WorkerTelemetry> = {
-  DataWorker: { workerId: 'DataWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 40, opsPerSec: 12, tasksCompleted: 1420, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Ingesta de Velas 1m/5m', uptimeSeconds: 3600, version: '2.2.0' },
-  SQXWorker: { workerId: 'SQXWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 120, opsPerSec: 45, tasksCompleted: 614280, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Bridge MCP :8081 Activo', uptimeSeconds: 3600, version: '2.2.0' },
-  FastBacktestWorker: { workerId: 'FastBacktestWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 60, opsPerSec: 120, tasksCompleted: 85200, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'FastEngine Margen Aislado 1R', uptimeSeconds: 3600, version: '2.2.0' },
-  ValidationWorker: { workerId: 'ValidationWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 50, opsPerSec: 25, tasksCompleted: 142, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Evidence Gates QVF Dual', uptimeSeconds: 3600, version: '2.2.0' },
-  MonteCarloWorker: { workerId: 'MonteCarloWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 80, opsPerSec: 15, tasksCompleted: 5000, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Bootstrap Permutations (10k)', uptimeSeconds: 3600, version: '2.2.0' },
-  SemanticAIWorker: { workerId: 'SemanticAIWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 90, opsPerSec: 8, tasksCompleted: 380, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'FailureKnowledgeDB & 5 Agentes', uptimeSeconds: 3600, version: '2.2.0' },
-  PortfolioWorker: { workerId: 'PortfolioWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 45, opsPerSec: 10, tasksCompleted: 64, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'HRP / ERC & Bóveda Ratchet', uptimeSeconds: 3600, version: '2.2.0' },
-  PaperTradingWorker: { workerId: 'PaperTradingWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 35, opsPerSec: 5, tasksCompleted: 18, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Sandbox 14 Días & Latencia 50ms', uptimeSeconds: 3600, version: '2.2.0' },
+  DataWorker: { workerId: 'DataWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 40, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Ingesta de Velas 1m/5m', uptimeSeconds: 0, version: '2.2.0' },
+  SQXWorker: { workerId: 'SQXWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 120, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Bridge MCP :8081 Activo', uptimeSeconds: 0, version: '2.2.0' },
+  FastBacktestWorker: { workerId: 'FastBacktestWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 60, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'FastEngine Margen Aislado 1R', uptimeSeconds: 0, version: '2.2.0' },
+  ValidationWorker: { workerId: 'ValidationWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 50, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Evidence Gates QVF Dual', uptimeSeconds: 0, version: '2.2.0' },
+  MonteCarloWorker: { workerId: 'MonteCarloWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 80, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Bootstrap Permutations (10k)', uptimeSeconds: 0, version: '2.2.0' },
+  SemanticAIWorker: { workerId: 'SemanticAIWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 90, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: '8 Agentes & FailureKnowledgeDB', uptimeSeconds: 0, version: '2.2.0' },
+  PortfolioWorker: { workerId: 'PortfolioWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 45, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'HRP / ERC & Bóveda Ratchet', uptimeSeconds: 0, version: '2.2.0' },
+  PaperTradingWorker: { workerId: 'PaperTradingWorker', status: 'ACTIVE', cpuPercent: 0, memoryMb: 35, opsPerSec: 0, tasksCompleted: 0, tasksFailed: 0, queueDepth: 0, lastHeartbeatMs: Date.now(), currentTaskName: 'Sandbox 14 Días & Latencia 50ms', uptimeSeconds: 0, version: '2.2.0' },
 };
 
 const MAX_LOGS_BUFFER = 300;
 
-export function useTelemetryStream(customStreamUrl?: string) {
+export function useTelemetryStream(streamUrl = '/api/v2/telemetry/stream') {
   const [workers, setWorkers] = useState<Record<WorkerId, WorkerTelemetry>>(INITIAL_WORKERS);
   const [logs, setLogs] = useState<TelemetryLogEvent[]>([]);
   const [healingAlerts, setHealingAlerts] = useState<SelfHealingAlert[]>([]);
@@ -67,8 +66,7 @@ export function useTelemetryStream(customStreamUrl?: string) {
     }
 
     try {
-      const targetUrl = customStreamUrl || getApiUrl('/api/v2/telemetry/stream');
-      const es = new EventSource(targetUrl);
+      const es = new EventSource(streamUrl);
       eventSourceRef.current = es;
 
       es.onopen = () => {
@@ -96,9 +94,8 @@ export function useTelemetryStream(customStreamUrl?: string) {
             }
 
             if (!isPausedRef.current && payload.event_type) {
-              const eventId = payload.event_id || `evt_${payload.event_type}_${Date.now()}_${logs.length}`;
               const newLog: TelemetryLogEvent = {
-                id: eventId,
+                id: payload.event_id || Math.random().toString(36).substring(7),
                 timestampMs: payload.timestamp_utc_ms || Date.now(),
                 workerId: 'SystemSupervisor',
                 eventType: payload.event_type,
@@ -109,7 +106,7 @@ export function useTelemetryStream(customStreamUrl?: string) {
               setLogs(prev => [newLog, ...prev.slice(0, MAX_LOGS_BUFFER - 1)]);
             }
           }
-        } catch {
+        } catch (err) {
           // parse error
         }
       };
@@ -130,10 +127,10 @@ export function useTelemetryStream(customStreamUrl?: string) {
           connect();
         }, baseDelay);
       };
-    } catch {
+    } catch (err) {
       // Error creating EventSource
     }
-  }, [customStreamUrl, logs.length]);
+  }, [streamUrl]);
 
   useEffect(() => {
     connect();
@@ -141,8 +138,7 @@ export function useTelemetryStream(customStreamUrl?: string) {
     // Polling de respaldo para healthcheck cada 3s
     const healthTimer = setInterval(async () => {
       try {
-        const healthUrl = getApiUrl('/api/v2/telemetry/health');
-        const res = await fetch(healthUrl);
+        const res = await fetch('/api/v2/telemetry/health');
         if (res.ok) {
           const data = await res.json();
           if (data.workers) {
@@ -172,7 +168,7 @@ export function useTelemetryStream(customStreamUrl?: string) {
             }));
           }
         }
-      } catch {
+      } catch (err) {
         // network fetch error
       }
     }, 3000);

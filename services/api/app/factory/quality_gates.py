@@ -1,4 +1,4 @@
-"""Quality Gates for strategy candidates.
+"""Quality Gates for strategy candidates in Ultrarentable V2.
 
 Central, auditable thresholds that decide whether a backtested strategy is
 allowed to be *ranked*, *validated* and *shown as rentable*. Every layer of the
@@ -9,18 +9,14 @@ ingestion/ranking) consults these constants and helpers so the exact same
 The project doctrine distinguishes TWO search modes that do NOT share the same
 acceptance logic:
 
-  * ULTRA (kamikaze): we seek extraordinary terminal multiples even if the
-    strategy is extremely aggressive. The ONLY hard stop is real ruin:
-    drawdown >= 100% (account liquidated / equity <= 0). High but non-ruinous
-    drawdown is tolerated; Calmar and sustainable-DD gates do NOT apply.
-  * FONDEO (conservative): we seek strategies that could pass prop-firm / funding
-    evaluations. Here low drawdown and a healthy return-to-drawdown profile
-    matter, so the sustainable-DD and Calmar gates DO apply in addition to ruin.
-
-Mode selection is explicit and backward compatible: functions that decide
-rankability / rentability accept an optional `mode` parameter defaulting to
-"ultra" so existing callers keep the same behaviour unless they opt into
-"fondeo".
+  * ULTRA (hiperescalado 500x / kamikaze): we seek extraordinary terminal multiples
+    via positive asymmetry (fat tails), isolated 1R bullets and Ratchet Vault harvesting.
+    Drawdown tolerance is up to 75.0% realized (closed equity) and up to 80.0% floating (intrabar).
+    The hard stop is real ruin: drawdown >= 100% (account liquidated / equity <= 0).
+  * FONDEO (CME Futures / prop firms): we seek strategies that pass prop-firm / funding
+    evaluations (25k to 300k accounts in Topstep, Apex, MFFU, etc.).
+    Here strict capital preservation is mandatory: Max Realized Drawdown <= 4.50%,
+    Daily Loss Limit <= 2.0%, DSR >= 2.0, WFE >= 0.60, and zero margin calls.
 """
 
 from __future__ import annotations
@@ -33,33 +29,30 @@ from typing import Mapping
 # signature may ever be validated, ranked or surfaced.
 RIVETING_DRAWDOWN_PCT: float = 100.0
 
-# Above this drawdown the candidate is technically solvent but the risk profile
-# is deemed too destructive for live capital in FONDEO mode. In ULTRA mode this
-# gate is ignored (kamikaze search tolerates aggressive-but-solvent drawdown).
-MAX_ACCEPTABLE_DRAWDOWN_PCT: float = 85.0
+# Max realized drawdown threshold for FONDEO mode (prop firms allow 4.0% - 4.5%)
+MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO: float = 4.50
+
+# Max realized drawdown threshold for ULTRA mode (allows up to 75.0% realized on closed balance)
+MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA: float = 75.0
+
+# Backward compatibility alias (defaults to Fondeo strict threshold)
+MAX_ACCEPTABLE_DRAWDOWN_PCT: float = 4.50
 
 # Minimum net-return-to-max-drawdown ratio required for a candidate to be
-# treated as genuinely rentable in FONDEO mode. net return 20% with drawdown
-# 260% has Calmar ~0.08 — far below this gate. In ULTRA mode this gate is
-# ignored.
+# treated as genuinely rentable in FONDEO mode. In ULTRA mode this gate is
+# replaced by Payoff Ratio and Tail Gain Ratio.
 MIN_CALMAR_RATIO: float = 0.5
 
 # Absolute minimum net return (%) for something to be surfaced as rentable, so
 # a barely-positive-by-noise result is not marketed as a winner.
 MIN_RENTABLE_NET_RETURN_PCT: float = 5.0
 
-# Absolute minimum profit factor for rentable ranking. Below this there is no
-# real asymmetric edge (gross wins barely exceed gross losses).
-MIN_RENTABLE_PROFIT_FACTOR: float = 1.5
+# Absolute minimum profit factor for rentable ranking.
+MIN_RENTABLE_PROFIT_FACTOR: float = 1.30
 
 
 def is_ruinous(drawdown_pct: float) -> bool:
-    """True if the (non-negative) drawdown guarantees account ruin.
-
-    Handles None / NaN defensively; an unknown drawdown is treated conservatively
-    as NOT ruinous so we never silently blank a candidate, but callers that need
-    strictness should use drawdown_acceptable() which defaults to False.
-    """
+    """True if the (non-negative) drawdown guarantees account ruin (DD >= 100%)."""
     if drawdown_pct is None:
         return False
     try:
@@ -72,10 +65,7 @@ def is_ruinous(drawdown_pct: float) -> bool:
 
 
 def drawdown_acceptable(drawdown_pct: float | None) -> bool:
-    """True if a candidate's drawdown does not indicate ruin.
-
-    Conservative default: if the drawdown is unknown we refuse to bless it.
-    """
+    """True if a candidate's drawdown does not indicate ruin."""
     if drawdown_pct is None:
         return False
     try:
@@ -88,16 +78,17 @@ def drawdown_acceptable(drawdown_pct: float | None) -> bool:
 
 
 def drawdown_sustainable(drawdown_pct: float | None, mode: str = "ultra") -> bool:
-    """True if drawdown is within the sustainable band (below the hard cap).
+    """True if drawdown is within the sustainable band for the specific mode.
 
-    In ULTRA mode any non-ruinous drawdown is accepted (kamikaze search).
-    In FONDEO mode the MAX_ACCEPTABLE_DRAWDOWN_PCT cap is enforced.
+    In ULTRA mode: Realized DD <= 75.0% and non-ruinous (DD < 100%).
+    In FONDEO mode: Realized DD <= 4.50%.
     """
     if not drawdown_acceptable(drawdown_pct):
         return False
+    dd = float(drawdown_pct)
     if str(mode).lower() == "fondeo":
-        return float(drawdown_pct) <= MAX_ACCEPTABLE_DRAWDOWN_PCT
-    return True
+        return dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO
+    return dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA
 
 
 def calmar_ratio(net_return_pct: float, drawdown_pct: float | None) -> float:
@@ -117,72 +108,6 @@ def calmar_ratio(net_return_pct: float, drawdown_pct: float | None) -> float:
     return ret / dd
 
 
-# Prop firm evaluation (Exam) limits:
-PROP_FIRM_EXAM_MAX_DD_PCT: float = 8.0
-PROP_FIRM_EXAM_DAILY_DD_PCT: float = 4.5
-PROP_FIRM_EXAM_PROFIT_TARGET_PCT: float = 6.0
-
-# Prop firm funded (Live) limits:
-PROP_FIRM_FUNDED_MAX_DD_PCT: float = 4.0
-PROP_FIRM_FUNDED_TRAILING_DD_PCT: float = 3.5
-PROP_FIRM_FUNDED_DAILY_DD_PCT: float = 2.5
-
-# Ultra Hyperscale asymmetric parameters:
-ULTRA_MIN_WIN_RATE_PCT: float = 18.0   # Tolerates ~20% winrate
-ULTRA_MIN_PAYOFF_RATIO: float = 3.5    # Enforces massive R:R asymmetry (1:4 to 1:50)
-
-
-def passes_fondeo_exam_gate(
-    net_return_pct: float,
-    max_dd_pct: float,
-    daily_dd_pct: float = 0.0
-) -> tuple[bool, str]:
-    """Validate if a strategy passes prop firm exam/evaluation phase."""
-    if max_dd_pct > PROP_FIRM_EXAM_MAX_DD_PCT:
-        return False, f"Max DD {max_dd_pct:.2f}% excede límite de examen ({PROP_FIRM_EXAM_MAX_DD_PCT}%)"
-    if daily_dd_pct > PROP_FIRM_EXAM_DAILY_DD_PCT:
-        return False, f"Daily DD {daily_dd_pct:.2f}% excede límite diario de examen ({PROP_FIRM_EXAM_DAILY_DD_PCT}%)"
-    if net_return_pct < PROP_FIRM_EXAM_PROFIT_TARGET_PCT:
-        return False, f"Retorno {net_return_pct:.2f}% no alcanza profit target ({PROP_FIRM_EXAM_PROFIT_TARGET_PCT}%)"
-    return True, "PASSED_EXAM_GATE"
-
-
-def passes_fondeo_funded_gate(
-    max_dd_pct: float,
-    trailing_dd_pct: float = 0.0,
-    daily_dd_pct: float = 0.0,
-    trades_count: int = 0
-) -> tuple[bool, str]:
-    """Validate if a strategy preserves a funded account (consistency, capital preservation)."""
-    if max_dd_pct > PROP_FIRM_FUNDED_MAX_DD_PCT:
-        return False, f"Max DD {max_dd_pct:.2f}% excede límite de cuenta fondeada ({PROP_FIRM_FUNDED_MAX_DD_PCT}%)"
-    if trailing_dd_pct > PROP_FIRM_FUNDED_TRAILING_DD_PCT:
-        return False, f"Trailing DD {trailing_dd_pct:.2f}% excede límite ({PROP_FIRM_FUNDED_TRAILING_DD_PCT}%)"
-    if daily_dd_pct > PROP_FIRM_FUNDED_DAILY_DD_PCT:
-        return False, f"Daily DD {daily_dd_pct:.2f}% excede límite ({PROP_FIRM_FUNDED_DAILY_DD_PCT}%)"
-    if trades_count < 15:
-        return False, f"Muestra insuficiente ({trades_count} trades < 15 mínimo)"
-    return True, "PASSED_FUNDED_GATE"
-
-
-def passes_ultra_hyperscale_gate(
-    net_return_pct: float,
-    win_rate_pct: float,
-    profit_factor: float,
-    max_dd_pct: float
-) -> tuple[bool, str]:
-    """Validate if strategy qualifies for Ultra Hyperscaling (high asymmetry, accepts ~20% WR)."""
-    if is_ruinous(max_dd_pct):
-        return False, f"Ruinous Drawdown ({max_dd_pct:.2f}% >= 100%)"
-    if win_rate_pct < ULTRA_MIN_WIN_RATE_PCT:
-        return False, f"WinRate {win_rate_pct:.1f}% menor al umbral asimétrico mínimo ({ULTRA_MIN_WIN_RATE_PCT}%)"
-    if profit_factor < 1.25:
-        return False, f"Profit Factor {profit_factor:.2f} insuficiente para apalancamiento ultra"
-    if net_return_pct < MIN_RENTABLE_NET_RETURN_PCT:
-        return False, f"Net return {net_return_pct:.1f}% insuficiente"
-    return True, "PASSED_ULTRA_HYPERSCALE_GATE"
-
-
 def rentable(
     net_return_pct: float,
     profit_factor: float,
@@ -191,24 +116,18 @@ def rentable(
 ) -> bool:
     """Full rentable gate: sustainable drawdown, positive Calmar, minimum edge.
 
-    In ULTRA mode only minimum net return and minimum profit factor are enforced;
-    drawdown sustainability and Calmar are intentionally ignored because the
-    search explicitly tolerates aggressive drawdown to maximise terminal multiple.
-
-    In FONDEO mode all gates apply, including real ruin (always rejected).
-
-    NOTE: Real ruin (drawdown >= 100%) is rejected in BOTH modes, even if the
-    other gates would otherwise allow the candidate.
+    In ULTRA mode: Realized DD <= 75.0%, non-ruinous, net return >= 5% and PF >= 1.30.
+    In FONDEO mode: Realized DD <= 4.50%, Calmar >= 0.5, net return >= 5% and PF >= 1.30.
     """
     if is_ruinous(drawdown_pct):
         return False
     if net_return_pct < MIN_RENTABLE_NET_RETURN_PCT:
         return False
-    if profit_factor < 1.20:
+    if profit_factor < MIN_RENTABLE_PROFIT_FACTOR:
+        return False
+    if not drawdown_sustainable(drawdown_pct, mode=mode):
         return False
     if str(mode).lower() == "fondeo":
-        if not drawdown_sustainable(drawdown_pct, mode=mode):
-            return False
         if calmar_ratio(net_return_pct, drawdown_pct) < MIN_CALMAR_RATIO:
             return False
     return True
@@ -224,47 +143,33 @@ def describe(metrics: Mapping[str, object], mode: str = "ultra") -> str:
 
 
 def drawdown_penalty_factor(drawdown_pct: float | None, mode: str = "ultra") -> float:
-    """Multiplier (0..1) applied to fitness to discourage destructive drawdown.
-
-    Unknown drawdown is treated as neutral (1.0) so search callers that do not
-    report max drawdown are not artificially zeroed out. Drawdown at/above the
-    ruin gate still yields 0.0. Drawdown at/below the sustainable cap yields
-    1.0. Between them the penalty grows linearly.
-
-    In ULTRA mode non-ruinous drawdown does NOT penalise fitness: the kamikaze
-    search deliberately tolerates aggressive drawdown. Only real ruin zeroes the
-    candidate out.
-    """
+    """Multiplier (0..1) applied to fitness to discourage destructive drawdown."""
     if drawdown_pct is None:
         return 1.0
     if not drawdown_acceptable(drawdown_pct):
         return 0.0
-    if str(mode).lower() == "ultra":
-        return 1.0
     dd = float(drawdown_pct)
-    if dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT:
-        return 1.0
-    span = RIVETING_DRAWDOWN_PCT - MAX_ACCEPTABLE_DRAWDOWN_PCT
-    frac = (RIVETING_DRAWDOWN_PCT - dd) / span if span > 0 else 0.0
-    return max(0.0, min(1.0, frac))
+    if str(mode).lower() == "ultra":
+        if dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA:
+            return 1.0
+        span = RIVETING_DRAWDOWN_PCT - MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA
+        frac = (RIVETING_DRAWDOWN_PCT - dd) / span if span > 0 else 0.0
+        return max(0.0, min(1.0, frac))
+    else:
+        if dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO:
+            return 1.0
+        span = RIVETING_DRAWDOWN_PCT - MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO
+        frac = (RIVETING_DRAWDOWN_PCT - dd) / span if span > 0 else 0.0
+        return max(0.0, min(1.0, frac))
 
 
 def risk_adjusted_fitness(net_return_pct: float, drawdown_pct: float | None, mode: str = "ultra") -> float:
-    """Fitness term that rewards return but multiplies down by drawdown risk.
-
-    Uses the Calmar ratio clamped into [0,1] to keep it comparable with the
-    existing evidence/validation terms. Zero when ruinous.
-
-    In ULTRA mode non-ruinous drawdown does NOT reduce this term: the search
-    is allowed to surface aggressive-but-solvent candidates.
-    """
+    """Fitness term that rewards return and scales with drawdown tolerance."""
     if not drawdown_acceptable(drawdown_pct):
         return 0.0
     if str(mode).lower() == "ultra":
         return 1.0
-    dd = abs(float(drawdown_pct))
     calmar = calmar_ratio(net_return_pct, drawdown_pct)
     if calmar == float("inf"):
         return 1.0
-    # Clamp Calmar into [0,1]; 1.0 means return >= drawdown (good edge).
     return max(0.0, min(1.0, calmar / 1.0))

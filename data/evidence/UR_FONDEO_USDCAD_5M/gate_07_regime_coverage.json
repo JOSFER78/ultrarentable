@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_5M_g07",
   "run_id": "run_UR_FONDEO_USDCAD_5M",
   "strategy_id": "UR_FONDEO_USDCAD_5M",
-  "strategy_snapshot_hash": "4da8604e5f063f8de2dd30ce38ffaa26e584986d0357205f386f0379e853ed96",
+  "strategy_snapshot_hash": "15c4cb9abebfc0bb239a01d051a190ce95892195d2ee12763b7fbe0e0d401f3e",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "37237e9c000099121df419cd1aa6d63d963ec04b512edddab57dc8706c52cadf",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "d82b37bb14308e39f3cac6cd07bc398e561a2b4afb2d82e43807b9361f0c9208",
-  "output_hash": "382ecf98a06ce5b94617a78c19b0393b65f2e8a4821aa45b634e27f15064c387",
+  "input_hash": "6d1ea6a58aa9a10e10de1e398d4b7187013835525b532111d1cc7256552a9f78",
+  "output_hash": "428759123d7a2fb646fd69fbb574fbbba9d497fb13e586497052924bb50ab055",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.34%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -27.12%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 23,
+      "CHOP_RANGING": 21,
       "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.34,
+      "CHOP_RANGING": -27.12,
       "HIGH_VOLATILITY": 0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_return_pct": -0.34
+    "total_oos_return_pct": -27.12
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_5M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:09:08.475371+00:00"
+  "created_at_utc": "2026-08-23T18:32:15.159434+00:00"
 }

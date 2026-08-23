@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g07",
   "run_id": "run_UR_FONDEO_USDCHF_4H",
   "strategy_id": "UR_FONDEO_USDCHF_4H",
-  "strategy_snapshot_hash": "0870cdd7bc37ccf5ebc817fb0547be0284b546897d5ea39a8402b419cd33cc33",
+  "strategy_snapshot_hash": "2c88c2a12a97c1ec50b0a1d5ed46b116f1bf58702b3b68a947aa508919e14e24",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "57217f54d58f168e95f7f56bab4b242d39150123f9f323d617442ad228a19bb2",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "8449e1884f822fb95eb0147e2e024114a6191cff9ae6b5b2ebb3ee46d520c6c2",
-  "output_hash": "4618eaa7e27f752e7ff84bc5cf5be1972184dcfd87cf0e0f3fc9743346c51786",
+  "input_hash": "e47928295736ff66fc56cf432eb1b1ec640e610402f7b19c530fc20ead0ca3ee",
+  "output_hash": "0b1e52760da464823c86cf8b93cfdfa21a1eb0efa16e14863a2058a60833f990",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.38%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.64%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 4,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 14,
+      "CHOP_RANGING": 16,
       "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.38,
+      "CHOP_RANGING": -0.64,
       "HIGH_VOLATILITY": 0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_return_pct": -0.38
+    "total_oos_return_pct": -0.64
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:09:07.083015+00:00"
+  "created_at_utc": "2026-08-23T18:01:16.037680+00:00"
 }

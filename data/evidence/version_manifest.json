@@ -1,10 +1,10 @@
 {
-  "active_version": "3.2.0",
-  "active_name": "Ultrarentable V3.2.0 (Unified Multi-Asset 6-Phase Matrix, Dynamic Semantic Reprogramming & Exact Markowitz ERC Ensembles)",
-  "pipeline_version": "3.2.0",
-  "codebase_fingerprint": "f4c92b87a10e395d8614bcfe2981045a",
-  "git_commit": "HEAD",
-  "last_bump_utc": "2026-08-22T06:00:00.000000+00:00",
+  "active_version": "5.3.0",
+  "active_name": "Ultrarentable V5.3.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)",
+  "pipeline_version": "5.3.0",
+  "codebase_fingerprint": "aec1453fb4a880b3247d8fb57a6374aa933f8b80a5e973573ae67fd7b339931b",
+  "git_commit": "1cd7516e57e2268ae4aa31db0af3c659eec742b8",
+  "last_bump_utc": "2026-08-23T18:55:31.552144+00:00",
   "history": [
     {
       "version": "1.00",
@@ -12,7 +12,7 @@
       "released_at": "2026-08-10T00:00:00Z",
       "status": "LEGACY_DEPRECATED",
       "status_label": "Legacy / Obsoleta",
-      "description": "Versión inicial del motor con StrategyQuant X.",
+      "description": "Versi\u00f3n inicial del motor con StrategyQuant X.",
       "ruleset_hash": "legacy_v1_00_unhardened",
       "git_commit": "legacy",
       "changes": [
@@ -26,12 +26,12 @@
       "released_at": "2026-08-18T00:00:00Z",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (11 Gates)",
-      "description": "Integración del pipeline de 11 Gates y NautilusTrader.",
+      "description": "Integraci\u00f3n del pipeline de 11 Gates y NautilusTrader.",
       "ruleset_hash": "a8f9c42b109e8751d3b4e209871fa093",
       "git_commit": "8b1668e",
       "changes": [
         "Arquitectura modular de 11 Gates Cuantitativos.",
-        "Gate 11 de reconciliación NautilusTrader."
+        "Gate 11 de reconciliaci\u00f3n NautilusTrader."
       ]
     },
     {
@@ -40,13 +40,13 @@
       "released_at": "2026-08-20T00:00:00Z",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (1.02)",
-      "description": "Endurecimiento Zero-Simulation, cálculo estricto de ROI OOS por velas reales y persistencia de versiones en DB y Firebase.",
+      "description": "Endurecimiento Zero-Simulation, c\u00e1lculo estricto de ROI OOS por velas reales y persistencia de versiones en DB y Firebase.",
       "ruleset_hash": "e6f498c17b520ad98341fbcd2981045a",
       "git_commit": "121caf5",
       "changes": [
-        "Normalización temporal exacta por recuento de velas OOS.",
-        "Eliminación de sobreescritura de estados.",
-        "Sincronización en Firebase Cloud."
+        "Normalizaci\u00f3n temporal exacta por recuento de velas OOS.",
+        "Eliminaci\u00f3n de sobreescritura de estados.",
+        "Sincronizaci\u00f3n en Firebase Cloud."
       ]
     },
     {
@@ -55,18 +55,18 @@
       "released_at": "2026-08-20T07:28:27.623229+00:00",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (1.03)",
-      "description": "Versión mayor de certificación forense. Implementación del CanonicalExecutionLedger trade-by-trade, reconciliación matemática multi-activo de 5 benchmarks reales (SUI, BTC, EURUSD, NQ, CL), blindaje de techo de apalancamiento en Gate 11, catálogo de microestructura y costes reales para 44+ activos, aislamiento físico del Blind Holdout 60/20/20, cálculo probabilístico de quiebra de cuentas Prop Firm y suite de 231 tests unitarios y de integración (100% aprobados).",
+      "description": "Versi\u00f3n mayor de certificaci\u00f3n forense. Implementaci\u00f3n del CanonicalExecutionLedger trade-by-trade, reconciliaci\u00f3n matem\u00e1tica multi-activo de 5 benchmarks reales (SUI, BTC, EURUSD, NQ, CL), blindaje de techo de apalancamiento en Gate 11, cat\u00e1logo de microestructura y costes reales para 44+ activos, aislamiento f\u00edsico del Blind Holdout 60/20/20, c\u00e1lculo probabil\u00edstico de quiebra de cuentas Prop Firm y suite de 231 tests unitarios y de integraci\u00f3n (100% aprobados).",
       "ruleset_hash": "be3018355b2027b7db2b668e50a8c4c3",
       "git_commit": "96b34e2e63f13c65914fcc704e35802434f671ff",
       "changes": [
-        "Capa canónica de ejecución física (ExecutionTruth & CanonicalExecutionLedger).",
-        "Reconciliación trade-by-trade FastEngine vs NautilusTrader en 5 activos globales.",
-        "Eliminación de la contradicción de leverage en Gate 11 (hard ceiling breach -> REJECTED).",
-        "Catálogo canónico de costes (InstrumentCostProfile) y bloqueo de activos sin modelo de fricción.",
-        "Aislamiento físico del dataset ciego OOS (Blind Holdout) frente a procesos de discovery.",
-        "PropFirmRiskEngine con cálculo de probabilidad real de violación de reglas diarias y trailing DD.",
-        "Estructura formal de Balas ULTRA con riesgo fijo, cero martingalas y cosecha a Bóveda.",
-        "Batería de tests adversariales Red-Team profunda y suite completa de 231 tests pasando."
+        "Capa can\u00f3nica de ejecuci\u00f3n f\u00edsica (ExecutionTruth & CanonicalExecutionLedger).",
+        "Reconciliaci\u00f3n trade-by-trade FastEngine vs NautilusTrader en 5 activos globales.",
+        "Eliminaci\u00f3n de la contradicci\u00f3n de leverage en Gate 11 (hard ceiling breach -> REJECTED).",
+        "Cat\u00e1logo can\u00f3nico de costes (InstrumentCostProfile) y bloqueo de activos sin modelo de fricci\u00f3n.",
+        "Aislamiento f\u00edsico del dataset ciego OOS (Blind Holdout) frente a procesos de discovery.",
+        "PropFirmRiskEngine con c\u00e1lculo de probabilidad real de violaci\u00f3n de reglas diarias y trailing DD.",
+        "Estructura formal de Balas ULTRA con riesgo fijo, cero martingalas y cosecha a B\u00f3veda.",
+        "Bater\u00eda de tests adversariales Red-Team profunda y suite completa de 231 tests pasando."
       ]
     },
     {
@@ -75,13 +75,13 @@
       "released_at": "2026-08-20T10:53:30.016392+00:00",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (1.04)",
-      "description": "Calibración agresiva de la Ruta ULTRA (7.5% de riesgo base por bala kamikaze en subcuenta $1.000 USD), rastreo sistemático de los 23 activos globales (112 datasets físicos) y control formal de versiones vinculado a commits de Git.",
+      "description": "Calibraci\u00f3n agresiva de la Ruta ULTRA (7.5% de riesgo base por bala kamikaze en subcuenta $1.000 USD), rastreo sistem\u00e1tico de los 23 activos globales (112 datasets f\u00edsicos) y control formal de versiones vinculado a commits de Git.",
       "ruleset_hash": "82120a73fe95cb1dc5773e46e4fc638d",
       "git_commit": "08dbec5bf43b9d4ec07b457300ca7dd2023b178c",
       "changes": [
-        "Calibración de Sizing ULTRA: Entrada agresiva al 7.5% de riesgo base (rango 5.0%-10.0%) con apalancamiento dinámico 5x-15x y reinversión sobre equidad.",
-        "Rastreo Exhaustivo de los 23 Activos: Expansión de minería continua sobre los 112 datasets en disco (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, NQ, ES, GC, SI, EURUSD, etc.).",
-        "Control de Versiones Definitivo: Sincronización bidireccional con Git commits (hash, short, mensaje, autor, fecha, rama) y persistencia inmutable en SQLite WAL."
+        "Calibraci\u00f3n de Sizing ULTRA: Entrada agresiva al 7.5% de riesgo base (rango 5.0%-10.0%) con apalancamiento din\u00e1mico 5x-15x y reinversi\u00f3n sobre equidad.",
+        "Rastreo Exhaustivo de los 23 Activos: Expansi\u00f3n de miner\u00eda continua sobre los 112 datasets en disco (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, NQ, ES, GC, SI, EURUSD, etc.).",
+        "Control de Versiones Definitivo: Sincronizaci\u00f3n bidireccional con Git commits (hash, short, mensaje, autor, fecha, rama) y persistencia inmutable en SQLite WAL."
       ]
     },
     {
@@ -90,13 +90,13 @@
       "released_at": "2026-08-20T14:36:57.197722+00:00",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (1.05)",
-      "description": "Unificación dimensional universal: métricas, señales, optimización y los 11 Gates operan exclusivamente en % y múltiplos R, reservando USD solo para liquidación contable de balances. Sincronización dinámica de Git metadata y control de versiones autónomo.",
+      "description": "Unificaci\u00f3n dimensional universal: m\u00e9tricas, se\u00f1ales, optimizaci\u00f3n y los 11 Gates operan exclusivamente en % y m\u00faltiplos R, reservando USD solo para liquidaci\u00f3n contable de balances. Sincronizaci\u00f3n din\u00e1mica de Git metadata y control de versiones aut\u00f3nomo.",
       "ruleset_hash": "adae7675a7bd775be0cf451cda933ec2",
       "git_commit": "3055e14d696f28d764709bc3b0f75c59c7c4029d",
       "changes": [
-        "Pureza Dimensional Universal: Todo el motor cuantitativo opera en % de retorno y múltiplos R (Drawdown %, ROI %, R-Expectancy, Cost Drag % y WFE %).",
-        "Gate 5 Monte Carlo Geométrico: Remuestreo de retornos fraccionales con cálculo relativo de drawdown para compounding sin falsos drawdowns lineales.",
-        "Control de Versiones V1.05: Sincronización dinámica con commits de Git y persistencia inmutable en SQLite WAL."
+        "Pureza Dimensional Universal: Todo el motor cuantitativo opera en % de retorno y m\u00faltiplos R (Drawdown %, ROI %, R-Expectancy, Cost Drag % y WFE %).",
+        "Gate 5 Monte Carlo Geom\u00e9trico: Remuestreo de retornos fraccionales con c\u00e1lculo relativo de drawdown para compounding sin falsos drawdowns lineales.",
+        "Control de Versiones V1.05: Sincronizaci\u00f3n din\u00e1mica con commits de Git y persistencia inmutable en SQLite WAL."
       ]
     },
     {
@@ -105,14 +105,14 @@
       "released_at": "2026-08-21T18:00:00.000000+00:00",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (2.0.0)",
-      "description": "Versión Mayor 2.0.0: Motor universal agnóstico sin hardcodes (UniversalStrategyOptimizer), cola lógica de auto-refinamiento 24/7 (ContinuousResearchDaemon) con persistencia en Firebase Realtime Database y SQLite WAL, integración completa de NautilusTrader Studio, y guardarraíles matemáticos reforzados.",
+      "description": "Versi\u00f3n Mayor 2.0.0: Motor universal agn\u00f3stico sin hardcodes (UniversalStrategyOptimizer), cola l\u00f3gica de auto-refinamiento 24/7 (ContinuousResearchDaemon) con persistencia en Firebase Realtime Database y SQLite WAL, integraci\u00f3n completa de NautilusTrader Studio, y guardarra\u00edles matem\u00e1ticos reforzados.",
       "ruleset_hash": "9b1a7d4e3f2c5e8a6d0b9f1c7e4a2d8f",
       "git_commit": "189e4fa",
       "changes": [
-        "Motor Universal UniversalStrategyOptimizer: Síntesis paramétrica guiada por compuertas falladas y perfil microestructural.",
+        "Motor Universal UniversalStrategyOptimizer: S\u00edntesis param\u00e9trica guiada por compuertas falladas y perfil microestructural.",
         "Demonio de Refinamiento Continuo 24/7 con streaming SSE y HUD en tiempo real en /research.",
-        "Hub Interactivo de los 11 Gates con fórmulas exactas, umbrales y diagnóstico en vivo.",
-        "NautilusTrader Studio: Simulación event-driven completa con libro de órdenes y reconciliación de fills."
+        "Hub Interactivo de los 11 Gates con f\u00f3rmulas exactas, umbrales y diagn\u00f3stico en vivo.",
+        "NautilusTrader Studio: Simulaci\u00f3n event-driven completa con libro de \u00f3rdenes y reconciliaci\u00f3n de fills."
       ]
     },
     {
@@ -121,29 +121,45 @@
       "released_at": "2026-08-22T01:00:00.000000+00:00",
       "status": "INTERMEDIATE",
       "status_label": "Intermedia (3.0.0)",
-      "description": "Versión Mayor 3.0.0: AST dinámico de indicadores y reglas, catálogo canónico multi-activo de microestructura.",
+      "description": "Versi\u00f3n Mayor 3.0.0: AST din\u00e1mico de indicadores y reglas, cat\u00e1logo can\u00f3nico multi-activo de microestructura.",
       "ruleset_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "git_commit": "HEAD~1",
       "changes": [
-        "Eliminación total de indicadores y ramas por símbolo hardcodeadas en motores.",
-        "Contratos canónicos inmutables en Pydantic v2.",
-        "Cálculo y cobro real de Funding Rate periódico sobre posiciones apalancadas en perpetuos."
+        "Eliminaci\u00f3n total de indicadores y ramas por s\u00edmbolo hardcodeadas en motores.",
+        "Contratos can\u00f3nicos inmutables en Pydantic v2.",
+        "C\u00e1lculo y cobro real de Funding Rate peri\u00f3dico sobre posiciones apalancadas en perpetuos."
       ]
     },
     {
       "version": "3.1.0",
       "name": "Ultrarentable V3.1.0 (Master Unified 6-Phase Hub, Two-Way NinjaTrader 8 Remote Bridge & Global Forensic Revalidation)",
       "released_at": "2026-08-22T06:00:00.000000+00:00",
-      "status": "CURRENT_RECOMMENDED",
-      "status_label": "Actual / Certificada v3.1.0",
-      "description": "Versión Actual 3.1.0: Hub central unificado de 6 fases con portada panorámica, puente bidireccional de control remoto NinjaTrader 8 (Long-Polling & Webhooks), normalización matemática estricta de ROI mensual (CAGR geométrico) y revalidación total de los 230 candidatos sobre datasets físicos SHA-256.",
+      "status": "INTERMEDIATE",
+      "status_label": "Intermedia (3.1.0)",
+      "description": "Versi\u00f3n Actual 3.1.0: Hub central unificado de 6 fases con portada panor\u00e1mica, puente bidireccional de control remoto NinjaTrader 8 (Long-Polling & Webhooks), normalizaci\u00f3n matem\u00e1tica estricta de ROI mensual (CAGR geom\u00e9trico) y revalidaci\u00f3n total de los 230 candidatos sobre datasets f\u00edsicos SHA-256.",
       "ruleset_hash": "f4c92b87a10e395d8614bcfe2981045a",
       "git_commit": "HEAD",
       "changes": [
-        "Hub Central de Estrategias con Portada General panorámica y navegación instantánea a las 6 fases.",
-        "Puente bidireccional C# NinjaTrader 8: despacho de órdenes remotas (BUY/SELL/FLATTEN/KILL_SWITCH) y telemetría de fills en vivo.",
-        "Normalización de CAGR geométrico mensual en la capa de optimización para eliminar desbordamientos numéricos.",
-        "Revalidación determinista global de todos los candidatos del catálogo bajo la versión 3.1.0."
+        "Hub Central de Estrategias con Portada General panor\u00e1mica y navegaci\u00f3n instant\u00e1nea a las 6 fases.",
+        "Puente bidireccional C# NinjaTrader 8: despacho de \u00f3rdenes remotas (BUY/SELL/FLATTEN/KILL_SWITCH) y telemetr\u00eda de fills en vivo.",
+        "Normalizaci\u00f3n de CAGR geom\u00e9trico mensual en la capa de optimizaci\u00f3n para eliminar desbordamientos num\u00e9ricos.",
+        "Revalidaci\u00f3n determinista global de todos los candidatos del cat\u00e1logo bajo la versi\u00f3n 3.1.0."
+      ]
+    },
+    {
+      "version": "5.3.0",
+      "name": "Ultrarentable V5.3.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)",
+      "released_at": "2026-08-23T18:55:31.552144+00:00",
+      "status": "CURRENT_RECOMMENDED",
+      "status_label": "Actual / Certificada",
+      "description": "Versi??n Mayor 5.3.0: Soporte multitemporal (1m, 5m, 15m, 1h, 4h) en 22 activos globales para Ultra y 15 activos permitidos por Prop Firms para Fondeo. Sizing adaptativo de microcontratos CME ($250 USD riesgo) y cosecha irrevocable a B??veda Spot USDT.",
+      "ruleset_hash": "aec1453fb4a880b3247d8fb57a6374aa",
+      "git_commit": "1cd7516e57e2268ae4aa31db0af3c659eec742b8",
+      "changes": [
+        "Matriz Multitemporal 185 Celdas (1m, 5m, 15m, 1h, 4h) en Cripto, CME Futuros y Forex.",
+        "Integraci??n de Sizing CME Micros ($250 USD riesgo) para paso ??gil de ex??menes de fondeo en 5-8 d??as.",
+        "Auditor??a forense de Drawdown y verificaci??n de 0% de ruina en todas las estrategias certificadas.",
+        "Gr??fica de equidad real y curva de drawdown submarino interactiva en Quality Gates."
       ]
     }
   ]

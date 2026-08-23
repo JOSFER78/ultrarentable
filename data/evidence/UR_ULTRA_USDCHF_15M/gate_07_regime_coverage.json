@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_15M_g07",
   "run_id": "run_UR_ULTRA_USDCHF_15M",
   "strategy_id": "UR_ULTRA_USDCHF_15M",
-  "strategy_snapshot_hash": "cf865b94cbeae6979953e591fc886e3737f6452c5ae48e88561cda3714313ddf",
+  "strategy_snapshot_hash": "c0d4987d1af3a1d4c192617cb54ae567b70b7692bbd648cf3dda038c2043dfb4",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "d1774bf54505646584b992e587f391f0cfe8971f1457fce58f2e7efbb33b5de2",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "18de3afbc0583666f6729759a0710d4cb1db98e3894199960b33d179dccf4019",
-  "output_hash": "3cf8eaf30997aedeab1eef62211049654b52c5a258b3a9da2aa965761f18074a",
+  "input_hash": "64ce063c0170a8fcd6fdac9281ba0c8b40dc201675feb2b3950434f91f8bd8a5",
+  "output_hash": "c23c9cb6d67b3bb64bb85fe677ca2d64a8c01070913b3d78bdcd9a61c69b927d",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -64.64%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -147.97%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -26,18 +26,18 @@
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
       "CHOP_RANGING": 38,
-      "HIGH_VOLATILITY": 9
+      "HIGH_VOLATILITY": 10
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -51.4,
-      "HIGH_VOLATILITY": -13.24
+      "CHOP_RANGING": -105.73,
+      "HIGH_VOLATILITY": -42.24
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -64.64
+    "total_oos_return_pct": -147.97
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:09:43.365179+00:00"
+  "created_at_utc": "2026-08-23T16:41:48.294444+00:00"
 }

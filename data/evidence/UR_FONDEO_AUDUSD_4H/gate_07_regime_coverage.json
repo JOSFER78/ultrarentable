@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_4H_g07",
   "run_id": "run_UR_FONDEO_AUDUSD_4H",
   "strategy_id": "UR_FONDEO_AUDUSD_4H",
-  "strategy_snapshot_hash": "c6cd6a220d7ebc554cfa5abe80fe6b2fb4de42580d8922fe372cda1759390d7d",
+  "strategy_snapshot_hash": "a8eafd5fa15d9e1618dda9aa42bc598ecbad298854ac4f1f92dea071e0196974",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "e08297ffabee22cf266b06618bad1ac33472470b1c8ae8eac2dd337c55917a69",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5fd43d55c3f4418117c6261fdc55b712f5229a87c2e21d46726f6a9f5e1b4fa4",
-  "output_hash": "470ca93294d900a241f510f8b19f3b7813bc8eeec2ee28e78336fa6322d50023",
+  "input_hash": "5c614981c9b5ecc76207b799c07cc7f8a7c0c3e51cba4ae15aeb4fc0dde4c88e",
+  "output_hash": "e57e708d7fc608e6fe8261a13bf1326ebbcd99e91a45f2e8a8bcee9f8cb03f91",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.55%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.27%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 20,
@@ -26,18 +26,18 @@
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
       "CHOP_RANGING": 11,
-      "HIGH_VOLATILITY": 3
+      "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -0.32,
-      "HIGH_VOLATILITY": -0.23
+      "CHOP_RANGING": -0.27,
+      "HIGH_VOLATILITY": -0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -0.55
+    "total_oos_return_pct": -0.27
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:09:10.953086+00:00"
+  "created_at_utc": "2026-08-23T18:01:48.372887+00:00"
 }

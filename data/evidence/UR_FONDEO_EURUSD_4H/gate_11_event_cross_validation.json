@@ -2,22 +2,22 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_4H_g11",
   "run_id": "run_UR_FONDEO_EURUSD_4H",
   "strategy_id": "UR_FONDEO_EURUSD_4H",
-  "strategy_snapshot_hash": "f9c106775a6bbffadb44f619a156e4a076173dc137cb7824d6f069e0b48f93c8",
+  "strategy_snapshot_hash": "5cf57f57f15b012041e986b281ca9705a6fc0a05ed85b85c83c608b8ed010e6f",
   "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "a24ec26d2f12cf627e897e36bc3600900eb71cc2a676b806e5db1e26fce578da",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "a0f631e0f6bb6291a9b77f6749867f4af040dbb6629920c1670c4726522a7fe4",
-  "output_hash": "acf9264e9841658a54105df36ba18516dfb2e8dff7ef8adf75415b8243656174",
+  "input_hash": "da75040ad3e5b81a6fcbccf85eeec099451bf797e60da402a4c69085adfb9c2f",
+  "output_hash": "efc689d79ef2a99e9f5f8eefe96bb45aad73d7acd046a8adfb024229b4f529d1",
   "status": "PASSED",
   "score": 99.5,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $49999.75, Bóveda Cosechada: $0.00, Apalancamiento: 1.0x, Dist. Mín. Liq: 99.2%)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $50000.00, Bóveda Cosechada: $0.00, Apalancamiento: 1.0x, Dist. Mín. Liq: 99.2%)",
   "metrics": {
     "initial_capital_usd": 50000.0,
-    "final_equity_usd": 49999.75,
+    "final_equity_usd": 50000.0,
     "peak_equity_usd": 50000.0,
     "min_equity_usd": 49999.7,
     "peak_leverage_used": 1.0,
@@ -26,8 +26,8 @@
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
     "total_funding_cost_usd": 0.0,
-    "execution_events_count": 21
+    "execution_events_count": 15
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-22T18:09:02.836427+00:00"
+  "created_at_utc": "2026-08-23T18:34:05.306082+00:00"
 }

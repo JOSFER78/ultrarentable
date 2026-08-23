@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_4H_g07",
   "run_id": "run_UR_ULTRA_USDCAD_4H",
   "strategy_id": "UR_ULTRA_USDCAD_4H",
-  "strategy_snapshot_hash": "e108be29f00ab3c60d8f133009d6f341dc0fb2c990544cf5e76bbc18f9f414a3",
+  "strategy_snapshot_hash": "330f6915804e4ff2263f0d293b558fe1a1c36febd27c7d03a4fc47a6749bc4a9",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "644df1a718666d4866e398e3662757ba8fc976c1d82cf7f0668b81bb5d766a43",
-  "output_hash": "64145d9376d4c698e654856ce4611748cfcb0587d0e14767c2bd5f24892db3c7",
+  "input_hash": "f2b5d157cfa761e52a8d96ce7b80dfee3e3517811af73f856ae137e531b1efb9",
+  "output_hash": "3f80f3742fd705e443c74c2bcad74494fadfc5d9e03442750c719cfa7331f90c",
   "status": "PASSED",
   "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +41.99%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +77.69%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 34,
-      "HIGH_VOLATILITY": 2
+      "CHOP_RANGING": 29,
+      "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 53.88,
-      "HIGH_VOLATILITY": -11.89
+      "CHOP_RANGING": 87.8,
+      "HIGH_VOLATILITY": -10.11
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 41.99
+    "total_oos_return_pct": 77.69
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:17:52.918176+00:00"
+  "created_at_utc": "2026-08-23T18:20:59.174039+00:00"
 }

@@ -1,0 +1,40 @@
+# Línea Base de Tests — 2026-08-22 (FASE 0)
+
+> Ejecutado en el VPS (`aether-20260205-1334`, Ubuntu ARM64) con `.venv/bin/python -m pytest`
+> tras `uv sync --extra dev` (pytest 8.4.2, Python 3.12.3).
+> Commit: `1cd7516e` · Rama: `feature/desarrollo`
+
+## Resultado
+
+```
+8 failed, 317 passed, 6 skipped, 43 warnings in 146.89s (0:02:26)
+```
+
+## Fallos documentados
+
+| # | Test | Causa raíz | Clasificación |
+|---|------|-----------|---------------|
+| 1 | `tests/test_canonical_ssot.py::test_state_of_truth_document_generation` | El documento SSOT generado no contiene `v1.02` que el test exige | Test/SSOT desincronizados |
+| 2 | `tests/test_firebase_sync_manager.py::test_firebase_sync_manager_sync_execution` | Estado `AUTH_PENDING` (sin credenciales Firebase en el VPS); el test solo acepta `HEALTHY`/`PARTIAL_ERROR` | Entorno (creds ausentes) + test sin guard |
+| 3 | `tests/test_gates_modular_quad_state.py::test_11_gates_pipeline_evaluates_real_backtest` | Test espera 11 gates; el orquestador ejecuta 10 (Gate 10 AgentDebate fuera del pipeline tras deprecación `4fdc4832`) | Test desalineado con SSOT (10 gates) |
+| 4 | `tests/test_gates_multitier_and_incubator.py::test_tier_2_diamond_in_the_rough_classification` | Test espera `gates_passed_count in (9,10)`; el fixture produce 8 con la configuración actual | Test desalineado con SSOT |
+| 5 | `tests/test_p2_metrics_and_evidence_gates.py::test_11_gates_execution_and_evidence_records` | Test espera 11 gates; el pipeline devuelve 10 | Test desalineado con SSOT |
+| 6 | `services/api/tests/test_autopilot.py::test_autopilot_start_with_empty_payload_returns_202` | API devuelve `runId='continuous_24_7'`; el test exige prefijo `run_` | Contrato de API cambiado sin actualizar test |
+| 7 | `services/api/tests/test_dual_engine_api.py::test_candidates_endpoint_honest_reclassification` | Estado `REFINADO_TIER_2` (ciclo de refinamiento Tier 2) no está en la lista de estados honestos del test | Nuevo estado del lifecycle sin actualizar test |
+| 8 | `services/api/tests/test_dual_engine_api.py::test_audit_events_timeline` | El evento de auditoría creado no aparece en el timeline consultado | Bug real a investigar (posible filtro/orden) |
+
+## Bloqueador estructural detectado (FASE 1)
+
+- `services/validation/certification_registry.py` mantiene `TOTAL_REQUIRED_GATES = 11`
+  mientras el orquestador ejecuta **10 gates** → `gates_passed_count == 11` es imposible
+  y **ninguna estrategia puede certificarse** (0 certificados de 230 candidatos en BD).
+- `gate_pipeline_orchestrator.py` y `candidates_router.py` también reportan `total_gates: 11` duro.
+- El commit `4fdc4832` fijó el SSOT del frontend en `CANONICAL_GATES_COUNT = 10`
+  (`apps/web/lib/strategyPhases.ts`); el backend debe alinearse a ese mismo valor.
+
+## Notas de entorno
+
+- Conteo real de datasets físicos: **112** en `data/normalized/` (el número "224" contaba
+  dataset+manifest como dos archivos).
+- BD oficial: `~/.local/state/ultrarentable/ultrarentable.sqlite3` (148 MB, WAL).
+  `database.sqlite` en la raíz del repo está vacío (0 bytes) y no se usa.

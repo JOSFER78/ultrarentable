@@ -2,19 +2,19 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.109_g07",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.109",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.109",
-  "strategy_snapshot_hash": "a1f8e38958831406c6a9cb62b568d20c335b6ff18b853d31182af2338e886e5d",
+  "strategy_snapshot_hash": "3761836af0d434b0adf2e4f2ec20c9d57da6d56a731e47da19523348700f8a8f",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "0670ee56d141034daed176e8bd1c28ba65cc2b2022333b7436632a5d7a1ba723",
-  "output_hash": "e96feaf7c16e2a65c686d066c783d97ef45116566665885c770ca18098d0caeb",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "1fc7a25549566b454c2777ead0afcc08a4fd4c6e4ba952ae55f7ba0acf03a73d",
+  "output_hash": "307fb36244366518b5b82965fa736cfbada7346d18beff3b893bcfe45104ac7f",
   "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +695406170300.11%)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7491.58%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 17,
-      "BEAR_TREND": 26,
-      "CHOP_RANGING": 112,
-      "HIGH_VOLATILITY": 86
+      "BEAR_TREND": 27,
+      "CHOP_RANGING": 111,
+      "HIGH_VOLATILITY": 89
     },
     "regime_return_pct": {
-      "BULL_TREND": -605510877829.84,
-      "BEAR_TREND": 2912415463899.13,
-      "CHOP_RANGING": -1440876751872.32,
-      "HIGH_VOLATILITY": -170621663896.86
+      "BULL_TREND": 531.12,
+      "BEAR_TREND": 1189.54,
+      "CHOP_RANGING": 2168.47,
+      "HIGH_VOLATILITY": 3602.45
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 695406170300.11
+    "total_oos_return_pct": 7491.58
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.109/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:04:51.652447+00:00"
+  "created_at_utc": "2026-08-23T22:15:58.688394+00:00"
 }

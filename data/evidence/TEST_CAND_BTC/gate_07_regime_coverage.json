@@ -2,19 +2,19 @@
   "evidence_id": "ev_TEST_CAND_BTC_g07",
   "run_id": "run_TEST_CAND_BTC",
   "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "ac8b776796deb52fe8e357b78fc5ddc642daee0ff300931a61ab17de20d2e833",
+  "strategy_snapshot_hash": "8d027ea87527cf1136fff7a655a964db883c4e1dc28471adaf9ff34f168bf6f0",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "af00eb522e973773111ffac43608faf9c346b122296839b7bee380f63263b387",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5b817b92064be18bc5ce8ccf2b3d611524810f4a94bc815720822a74d0e4fa0f",
-  "output_hash": "58e6b69fa038f86b35e9b920d2bbf5a3b42119ecc08641f387a9abdd7004379b",
+  "input_hash": "c8dcfe499ed13f72e895f497f11eb9532d5ddbacd4248c7fe4fffb309640a852",
+  "output_hash": "15052bdf16f4fb52c5b0eba761ee2391f3da744c65a1e1403b05fb122f1b1350",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -71.53%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -332.61%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 31,
-      "HIGH_VOLATILITY": 18
+      "CHOP_RANGING": 36,
+      "HIGH_VOLATILITY": 21
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -59.62,
-      "HIGH_VOLATILITY": -11.91
+      "CHOP_RANGING": -374.77,
+      "HIGH_VOLATILITY": 42.16
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -71.53
+    "total_oos_return_pct": -332.61
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-22T18:11:18.974815+00:00"
+  "created_at_utc": "2026-08-23T16:40:30.896629+00:00"
 }

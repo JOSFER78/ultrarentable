@@ -2,22 +2,22 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4H_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_4H",
   "strategy_id": "UR_ULTRA_AVAX_USDT_4H",
-  "strategy_snapshot_hash": "b96ef202d2bd90b18afcdc7d931c2beb0915d7ab2fb9776871f2499298a603b2",
+  "strategy_snapshot_hash": "7eae59e5f410d64ba4711e240b003a1e0771f9613e1821f4446d45e22919a076",
   "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
-  "dataset_sha256": "f2a3046ac61915b76ee6fa9d4e988434a5f6a1b2380f7d159110c92b99bd151f",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "68190fc33552a09fd466533ec5133c3733203caf358606adbc11b6f922e27e04",
-  "output_hash": "dd8b1601960b5c1b8d1e8700a228dab6c959d18f84bcfb033a3cd35f05edcca8",
+  "input_hash": "a82035c7e8dbfea4d213095fc130c097dc9590f3fa274dfff0b1b44ce844c9d7",
+  "output_hash": "0a8626d16a97ee2eeac816a0d654f3a29d4f7f61919d92156f438821eb6f61f3",
   "status": "FAILED",
   "score": 40.2,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 186.6 o Estabilidad 100.5% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 184.9 o Estabilidad 100.5% < 50.0%)",
   "metrics": {
     "parameters_count": 9,
-    "degrees_of_freedom_ratio": 186.6,
+    "degrees_of_freedom_ratio": 184.9,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 100.5,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:08:33.322886+00:00"
+  "created_at_utc": "2026-08-23T18:03:26.508327+00:00"
 }

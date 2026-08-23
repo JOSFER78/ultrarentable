@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_1H_g06",
   "run_id": "run_UR_FONDEO_GBPUSD_1H",
   "strategy_id": "UR_FONDEO_GBPUSD_1H",
-  "strategy_snapshot_hash": "1f8ba6c5d490bced26e6e122b2a38a53b1b290aac0e7e9cadd673ad8923818dd",
+  "strategy_snapshot_hash": "6022a436a1363ad2d7184888cee6c37a6be50be7bb5933c4dab4631195a4aad6",
   "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "d74a3c5759a3784d19e06048fa883eca827c8566617348db4a6203e3a155e52f",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "5c75da8f7a52b8018ed5eed2e0a257b9fd89b5d2020172e1194fb97f23d77a82",
-  "output_hash": "477e731f7940489711aa4ab0b15ea52a4caa19eddcdd93f84e6d014fc1d6c399",
+  "input_hash": "fb78e489a3ec47d43487bb0bc1a2b2f6434824ccdbd595afd5128cecc03387db",
+  "output_hash": "1402173a6617368750b579c1831cdf9debe0e73960d4a94bac7d9ec92a861ddd",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,7 +19,7 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.01,
+        "stressed_net_pnl_usd": -0.0,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
@@ -37,7 +37,7 @@
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.03,
+        "stressed_net_pnl_usd": -0.02,
         "stressed_profit_factor": 0.0,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T18:09:25.410454+00:00"
+  "created_at_utc": "2026-08-23T18:33:05.320723+00:00"
 }

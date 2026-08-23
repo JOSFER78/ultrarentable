@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_4H_g09",
   "run_id": "run_UR_FONDEO_USDCAD_4H",
   "strategy_id": "UR_FONDEO_USDCAD_4H",
-  "strategy_snapshot_hash": "124041de4435353fdd8bf2b2fcced9c18742d6ee32ecb338028160b20630cfd0",
+  "strategy_snapshot_hash": "1051ed8782463e3dbb8e6b7cd74e5448e2deaa01ed555f52fd8bdd684c3c724f",
   "dataset_id": "ds_trad_usdcad_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "4c5f24b34a25bcac73109935c05d30c5f4dcdc38772ab0b124f99b494993d4dd",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c484d94d1455c20b3c3c57da619db1ed8ab8c0742aec03c85744c94fa2b0e93f",
-  "output_hash": "b9b023fe1c12c37ea9b071a275396abb8720351c275d07399b8d7e35a1e374fe",
+  "input_hash": "d75dd3d9ea88f29c1d8d5dabe9206bb972d3c03ef03b294b9403d67e93dd2c1c",
+  "output_hash": "3147d63424f549cf3743a0f1cc5e53189d08897de63155befab0bcae8a01ebcd",
   "status": "FAILED",
-  "score": 61.8,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 6.9 o Estabilidad 154.5% < 60.0%)",
+  "score": 48.4,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.6 o Estabilidad 120.9% < 60.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 6.9,
+    "degrees_of_freedom_ratio": 7.6,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 154.5,
+    "parameter_neighborhood_stability_pct": 120.9,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      7.25,
-      2.95,
-      1.58,
-      1.26
+      2.67,
+      2.28,
+      1.57,
+      0.88
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:08:59.547179+00:00"
+  "created_at_utc": "2026-08-23T16:39:40.950004+00:00"
 }

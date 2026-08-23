@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine, event, Column, Integer, String, Float, Text, Boolean, DateTime
+from sqlalchemy import create_engine, event, Column, Integer, String, Float, Text, Boolean, DateTime, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 from pathlib import Path
@@ -24,6 +24,10 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA journal_mode=WAL;")
     cursor.execute("PRAGMA synchronous=NORMAL;")
     cursor.execute("PRAGMA foreign_keys=ON;")
+    cursor.execute("PRAGMA mmap_size=268435456;")
+    cursor.execute("PRAGMA cache_size=-64000;")
+    cursor.execute("PRAGMA temp_store=MEMORY;")
+    cursor.execute("PRAGMA busy_timeout=15000;")
     cursor.close()
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -74,8 +78,8 @@ class RawIngestLogModel(Base):
     exchange_end_time = Column(Integer, nullable=True)
     receive_time = Column(Integer)
     status_code = Column(Integer, default=200)
-    client_version = Column(String, default="v3.0.0")
-    transformer_version = Column(String, default="v3.0.0")
+    client_version = Column(String, default="v2.0.0")
+    transformer_version = Column(String, default="v1.0.0")
 
 class StrategyModel(Base):
     __tablename__ = "strategies"
@@ -384,8 +388,7 @@ class CandidateModel(Base):
     wfo_pass_pct = Column(Float, nullable=True)
     monte_carlo_score = Column(Float, nullable=True)
     scorecard_json = Column(Text, nullable=True)
-    engine_version = Column(String, default="3.0.0", nullable=True)
-    validation_pipeline_version = Column(String, default="3.0.0", nullable=True)
+    engine_version = Column(String, default="5.3.0")
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -411,14 +414,36 @@ class ExecutionSessionModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class NinjaTraderAccountModel(Base):
+    __tablename__ = "ninjatrader_accounts"
+    account_id = Column(String, primary_key=True, index=True)
+    account_name = Column(String, nullable=False)
+    account_type = Column(String, default="SIM101")
+    broker = Column(String, default="NinjaTrader Continuum")
+    base_capital_usd = Column(Float, default=50000.0)
+    current_equity_usd = Column(Float, default=50000.0)
+    daily_pnl_usd = Column(Float, default=0.0)
+    realized_pnl_usd = Column(Float, default=0.0)
+    unrealized_pnl_usd = Column(Float, default=0.0)
+    peak_equity_usd = Column(Float, default=50000.0)
+    max_trailing_dd_limit_usd = Column(Float, default=2000.0)
+    daily_loss_limit_usd = Column(Float, default=1000.0)
+    profit_target_usd = Column(Float, default=3000.0)
+    status = Column(String, default="ACTIVE")
+    auto_liquidate_on_dll = Column(Boolean, default=True)
+    flatten_on_nightly_close = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+
 class PortfolioModel(Base):
     __tablename__ = "portfolios"
     portfolio_id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
     target_route = Column(String, default="ULTRA")  # ULTRA, FONDEO
     base_capital_usd = Column(Float, default=10000.0)
-    current_equity_usd = Column(Float, default=10000.0, nullable=True)
-    components_json = Column(Text, nullable=False)
+    current_equity_usd = Column(Float, default=10000.0)
+    components_json = Column(Text, default="[]")
     correlation_matrix_json = Column(Text, nullable=True)
     equity_growth_curve_json = Column(Text, nullable=True)
     annualized_roi_pct = Column(Float, default=0.0)
@@ -426,6 +451,8 @@ class PortfolioModel(Base):
     max_drawdown_pct = Column(Float, default=0.0)
     profit_factor = Column(Float, default=0.0)
     canonical_hash = Column(String, nullable=True)
+    status = Column(String, default="ACTIVE")
+    allocation_json = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -441,65 +468,12 @@ class AuditEventModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
-class NinjaTraderAccountModel(Base):
-    __tablename__ = "ninjatrader_accounts"
-    account_id = Column(String, primary_key=True, index=True)
-    account_name = Column(String, nullable=False)
-    account_type = Column(String, default="SIM101")  # SIM101, APEX, TOPSTEP, TRADOVATE, RITHMIC, LIVE_BROKER
-    broker = Column(String, default="NinjaTrader Continuum")
-    base_capital_usd = Column(Float, default=50000.0)
-    current_equity_usd = Column(Float, default=50000.0)
-    daily_pnl_usd = Column(Float, default=0.0)
-    realized_pnl_usd = Column(Float, default=0.0)
-    unrealized_pnl_usd = Column(Float, default=0.0)
-    peak_equity_usd = Column(Float, default=50000.0)
-    max_trailing_dd_limit_usd = Column(Float, default=2000.0)
-    daily_loss_limit_usd = Column(Float, default=1000.0)
-    profit_target_usd = Column(Float, default=3000.0)
-    status = Column(String, default="CONNECTED")  # CONNECTED, IDLE, KILL_SWITCH_TRIGGERED, TARGET_PASSED
-    webhook_token = Column(String, nullable=True)
-    last_sync_at = Column(DateTime, default=datetime.utcnow)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-
-class GatewayProviderModel(Base):
-    __tablename__ = "gateway_providers"
-    provider_id = Column(String, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    category = Column(String, default="BROKER_BRIDGE")  # BROKER_BRIDGE, CRYPTO_EXCHANGE, PROP_FIRM_BRIDGE, MARKET_DATA, HIGH_FREQUENCY_ENGINE
-    auth_token = Column(String, nullable=False)
-    api_key = Column(String, nullable=True)
-    api_secret = Column(String, nullable=True)
-    endpoint_url = Column(String, nullable=False)
-    is_enabled = Column(Boolean, default=True)
-    status = Column(String, default="IDLE_WAITING")  # CONNECTED, IDLE_WAITING, DEGRADED, ERROR, DISABLED
-    last_ping_at = Column(DateTime, nullable=True)
-    latency_ms = Column(Float, default=0.0)
-    telemetry_packets_count = Column(Integer, default=0)
-    config_json = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
-
-
 from sqlalchemy import text
 
 
 def init_db():
     Base.metadata.create_all(bind=engine)
     
-    # Safe SQLite column migrations for existing databases
-    with engine.connect() as conn:
-        for stmt in [
-            "ALTER TABLE portfolios ADD COLUMN current_equity_usd FLOAT DEFAULT 10000.0",
-            "ALTER TABLE candidates ADD COLUMN engine_version VARCHAR DEFAULT '3.0.0'",
-            "ALTER TABLE candidates ADD COLUMN validation_pipeline_version VARCHAR DEFAULT '3.0.0'",
-        ]:
-            try:
-                conn.execute(text(stmt))
-                conn.commit()
-            except Exception:
-                pass
-
     # Ensure tables and seed initial canonical data
     with SessionLocal() as db:
         # Seed or sync full 34+ Prop Firms Catalog
@@ -601,6 +575,53 @@ def init_db():
             for e in events:
                 db.add(e)
             db.commit()
+
+        # Seed initial Execution Session demo
+        if db.query(ExecutionSessionModel).count() == 0:
+            db.add(
+                ExecutionSessionModel(
+                    session_id="session_bingx_demo_01",
+                    route="ULTRA",
+                    environment="PAPER_BINGX",
+                    candidate_id="strat_1_0_32",
+                    symbol="BTC-USDT",
+                    status="RUNNING",
+                    current_pnl_usd=14.50,
+                    daily_pnl_usd=5.20,
+                    current_drawdown_pct=0.85,
+                    peak_equity_usd=1014.50,
+                    last_signal="BUY @ 60,420.00 (Momentum Breakout H1)",
+                    last_order="FILLED SIM 0.05 BTC @ 60,421.50",
+                    open_positions_json='[{"symbol":"BTC-USDT","side":"LONG","qty":0.05,"entryPrice":60421.5,"unrealizedPnl":14.50,"leverage":5}]',
+                    kill_switch_active=False
+                )
+            )
+            db.commit()
+
+        # Crear índices de alto rendimiento si no existen
+        try:
+            with engine.connect() as conn:
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_candidates_status_route ON candidates(status, route);"))
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_candidates_symbol_tf ON candidates(symbol, timeframe);"))
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_candidates_created_at ON candidates(created_at);"))
+                
+                # Migración de columnas de portfolios
+                try:
+                    conn.execute(text("ALTER TABLE portfolios ADD COLUMN status TEXT DEFAULT 'ACTIVE';"))
+                except Exception:
+                    pass
+                try:
+                    conn.execute(text("ALTER TABLE portfolios ADD COLUMN allocation_json TEXT;"))
+                except Exception:
+                    pass
+                try:
+                    conn.execute(text("ALTER TABLE candidates ADD COLUMN engine_version TEXT DEFAULT '5.3.0';"))
+                except Exception:
+                    pass
+                
+                conn.commit()
+        except Exception:
+            pass
 
     return DB_PATH
 

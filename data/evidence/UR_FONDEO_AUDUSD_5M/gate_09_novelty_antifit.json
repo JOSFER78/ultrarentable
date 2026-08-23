@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_5M_g09",
   "run_id": "run_UR_FONDEO_AUDUSD_5M",
   "strategy_id": "UR_FONDEO_AUDUSD_5M",
-  "strategy_snapshot_hash": "69dd4173ec4d6c2a836cc06b82361b13755b5e933da5b02aeb14bf74b2bf4c29",
+  "strategy_snapshot_hash": "44e7b91bd4f7f78fb2e524537de601ebcfe11d44918bc32253bbbfb7ef1c967d",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "791582be13d2358c0afb31e724009b591f8cbe965872b8d6b9464816325c0530",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "c69c2b1958f3be3382507b29ab86572d3120cf00b9ac4e4869ad04b90930e5c5",
-  "output_hash": "b183f0836814961b8a8061f0dea239887eccf623e2878f1df90c28032cec2f52",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 35.1 trades/param, Estabilidad Vecindario: 100.0%, Re-backtest PFs: [0.04, 0.04, 0.06, 0.1])",
+  "input_hash": "166f93a5129c58fbc05959aca70513fde4bb1346afb9ad0b8f5abfd4b79b1e87",
+  "output_hash": "27ef00f3b47d87ec95ede942a3eff39b8d441c0f0e8fd7602de8006d67fd8cea",
+  "status": "FAILED",
+  "score": 14.7,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 32.0 o Estabilidad 36.7% < 60.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 35.1,
+    "degrees_of_freedom_ratio": 32.0,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 100.0,
+    "parameter_neighborhood_stability_pct": 36.7,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
       0.04,
-      0.04,
-      0.06,
-      0.1
+      0.0,
+      0.03,
+      0.04
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:09:10.551541+00:00"
+  "created_at_utc": "2026-08-23T18:33:15.869100+00:00"
 }

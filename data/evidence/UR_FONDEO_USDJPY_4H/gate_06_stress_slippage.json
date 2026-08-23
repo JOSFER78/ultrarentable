@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_4H_g06",
   "run_id": "run_UR_FONDEO_USDJPY_4H",
   "strategy_id": "UR_FONDEO_USDJPY_4H",
-  "strategy_snapshot_hash": "ea637e8c94610d9d4c96595eba51185028e0e44a20b770c3526c4f52f31a2fdc",
+  "strategy_snapshot_hash": "eb410dd91feb51e326b79745251946eb22227ca2888b205df843cc8c6df2d479",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "f3d314f1f902530723bb91acdb432b641b662b65666ed995ba01d7928dc5df2e",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "959a3b3c685433e5c67002359510236d0c2cec3865b7e0c95595bc724cd9ac39",
-  "output_hash": "cc363a8e20486356310fe34b8e2b6d7e30b97774d25eb7ee660f096fd174351a",
+  "input_hash": "23ff48f1cc6102782524cd447aad07f6b628cc7c8876a2dcc75f4c6d10a846ce",
+  "output_hash": "54b216d5ddc3a561c7a2327bc694b47b9f87f9ef7a1ade49c64d6dfce3b92995",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -20,25 +20,25 @@
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
         "stressed_net_pnl_usd": -0.0,
-        "stressed_profit_factor": 0.02,
+        "stressed_profit_factor": 0.08,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
         "stressed_net_pnl_usd": -0.0,
-        "stressed_profit_factor": 0.01,
+        "stressed_profit_factor": 0.05,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
         "stressed_net_pnl_usd": -0.01,
-        "stressed_profit_factor": 0.0,
+        "stressed_profit_factor": 0.03,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
         "stressed_net_pnl_usd": -0.01,
-        "stressed_profit_factor": 0.0,
+        "stressed_profit_factor": 0.01,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 3.0
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-22T18:09:27.624982+00:00"
+  "created_at_utc": "2026-08-23T18:01:21.673576+00:00"
 }

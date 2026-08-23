@@ -20,6 +20,7 @@ from contracts.validation_contracts import (
     FondeoValidationResult,
     UltraValidationCriteria,
     UltraValidationResult,
+    ValidationTier,
     ValidationTrack,
 )
 
@@ -30,25 +31,63 @@ class FondeoEvidenceGate:
     def __init__(self, criteria: Optional[FondeoValidationCriteria] = None) -> None:
         self.criteria = criteria or FondeoValidationCriteria()
 
+    @staticmethod
+    def calculate_dsr(trades: List[float], k_trials: int = 100) -> float:
+        if len(trades) < 5:
+            return 0.0
+        arr = np.array(trades, dtype=float)
+        mean_val = float(np.mean(arr))
+        std_val = float(np.std(arr, ddof=1))
+        if std_val <= 1e-8:
+            return 0.0
+        sr = mean_val / std_val
+        n = len(arr)
+
+        m3 = float(np.mean((arr - mean_val) ** 3))
+        m4 = float(np.mean((arr - mean_val) ** 4))
+        skew = m3 / (std_val ** 3) if std_val > 0 else 0.0
+        kurt = m4 / (std_val ** 4) if std_val > 0 else 3.0
+
+        var_sr = (1.0 - skew * sr + ((kurt - 1.0) / 4.0) * (sr ** 2)) / (n - 1)
+        se_sr = math.sqrt(max(1e-6, var_sr))
+
+        euler_gamma = 0.5772156649
+        z1 = 2.3263 if k_trials >= 100 else 1.645
+        z2 = 2.6803 if k_trials >= 100 else 2.054
+        multiplier = (1.0 - euler_gamma) * z1 + euler_gamma * z2
+        sr_0 = se_sr * multiplier
+
+        z_dsr = (sr - sr_0) / se_sr
+        dsr = 0.5 * (1.0 + math.erf(z_dsr / math.sqrt(2.0)))
+        return float(round(dsr, 4))
+
     def evaluate(
         self,
         strategy_id: str,
         is_trades: List[float],
         oos_trades: List[float],
         daily_pnls: Optional[List[float]] = None,
-        dsr_score: float = 2.5,
+        dsr_score: Optional[float] = None,
         mc_ruin_pct: float = 0.0,
+        k_trials: int = 100,
+        floating_drawdowns: Optional[List[float]] = None,
+        margin_call_occurred: bool = False,
     ) -> FondeoValidationResult:
         rejection_reasons: List[str] = []
         daily_pnls = daily_pnls or []
+        floating_drawdowns = floating_drawdowns or []
 
-        # 1. Deflated Sharpe Ratio Check
-        if dsr_score < self.criteria.min_deflated_sharpe:
+        actual_dsr = (
+            dsr_score
+            if dsr_score is not None and dsr_score != 2.5
+            else self.calculate_dsr(oos_trades, k_trials=k_trials)
+        )
+
+        if actual_dsr < self.criteria.min_deflated_sharpe:
             rejection_reasons.append(
-                f"DSR insuficiente: {dsr_score:.2f} < {self.criteria.min_deflated_sharpe:.2f}"
+                f"DSR insuficiente: {actual_dsr:.2f} < {self.criteria.min_deflated_sharpe:.2f}"
             )
 
-        # 2. Profit Factor y Walk-Forward Efficiency (WFE)
         is_pf = self._calculate_profit_factor(is_trades)
         oos_pf = self._calculate_profit_factor(oos_trades)
         wfe = (oos_pf / is_pf) if is_pf > 0 else 0.0
@@ -66,17 +105,25 @@ class FondeoEvidenceGate:
                 f"WFE insuficiente: {wfe:.2f} < {self.criteria.min_walk_forward_efficiency:.2f}"
             )
 
-        # 3. Maximum Drawdown & Daily Loss Limit
         initial_cap = 50000.0
         equity_curve = initial_cap + np.cumsum([0.0] + oos_trades)
         peak = np.maximum.accumulate(equity_curve)
-        drawdowns = (peak - equity_curve) / peak * 100.0
-        max_dd_pct = float(np.max(drawdowns)) if len(drawdowns) > 0 else 0.0
+        drawdowns = (peak - equity_curve) / np.maximum(peak, 1e-6) * 100.0
+        max_realized_dd_pct = float(np.max(drawdowns)) if len(drawdowns) > 0 else 0.0
 
-        if max_dd_pct > self.criteria.max_drawdown_pct:
+        if max_realized_dd_pct > self.criteria.max_realized_drawdown_pct:
             rejection_reasons.append(
-                f"Max DD excesivo: {max_dd_pct:.2f}% > {self.criteria.max_drawdown_pct:.2f}%"
+                f"Max Realized DD excesivo: {max_realized_dd_pct:.2f}% > {self.criteria.max_realized_drawdown_pct:.2f}%"
             )
+
+        max_floating_dd_pct = float(np.max(floating_drawdowns)) if len(floating_drawdowns) > 0 else 0.0
+        if max_floating_dd_pct > self.criteria.max_floating_drawdown_pct:
+            rejection_reasons.append(
+                f"Max Floating DD intradía excesivo: {max_floating_dd_pct:.2f}% > {self.criteria.max_floating_drawdown_pct:.2f}%"
+            )
+
+        if margin_call_occurred:
+            rejection_reasons.append("Margin Call / Liquidación Forzosa detectada")
 
         daily_loss_violations = sum(
             1 for pnl in daily_pnls if pnl < -self.criteria.max_daily_loss_limit_usd
@@ -84,13 +131,11 @@ class FondeoEvidenceGate:
         if daily_loss_violations > 0:
             rejection_reasons.append(f"Violaciones de Daily Loss Limit: {daily_loss_violations}")
 
-        # 4. Probabilidad de Ruina
         if mc_ruin_pct > self.criteria.max_ruin_probability_pct:
             rejection_reasons.append(
                 f"Riesgo de Ruina MC excesivo: {mc_ruin_pct:.2f}% > {self.criteria.max_ruin_probability_pct:.2f}%"
             )
 
-        # 5. Outlier Dependency (Top 2 trades)
         total_pnl = sum(t for t in oos_trades if t > 0)
         sorted_pos = sorted([t for t in oos_trades if t > 0], reverse=True)
         top2_pct = (sum(sorted_pos[:2]) / total_pnl * 100.0) if total_pnl > 0 else 100.0
@@ -99,17 +144,41 @@ class FondeoEvidenceGate:
                 f"Dependencia excesiva de Top 2 trades: {top2_pct:.1f}% > {self.criteria.max_top2_outlier_dependency_pct:.1f}%"
             )
 
-        passed = len(rejection_reasons) == 0
-        mean_ret = float(np.mean(oos_trades)) if len(oos_trades) > 0 else 0.0
-        std_ret = float(np.std(oos_trades)) if len(oos_trades) > 0 else 1.0
-        sharpe = float((mean_ret / std_ret) * math.sqrt(252)) if std_ret > 0 else 0.0
+        instant_tier4_disqualification = (
+            margin_call_occurred
+            or max_realized_dd_pct > self.criteria.max_realized_drawdown_pct
+            or max_floating_dd_pct > self.criteria.max_floating_drawdown_pct
+        )
+
+        if instant_tier4_disqualification:
+            tier = ValidationTier.TIER_4_REJECTED
+            passed = False
+        elif len(rejection_reasons) > 0:
+            tier = ValidationTier.TIER_4_REJECTED
+            passed = False
+        else:
+            tier = ValidationTier.TIER_1_CERTIFIED
+            passed = True
+
+        if len(daily_pnls) > 1:
+            mean_d = float(np.mean(daily_pnls))
+            std_d = float(np.std(daily_pnls, ddof=1))
+            sharpe = float((mean_d / std_d) * math.sqrt(252)) if std_d > 0 else 0.0
+        else:
+            mean_ret = float(np.mean(oos_trades)) if len(oos_trades) > 0 else 0.0
+            std_ret = float(np.std(oos_trades, ddof=1)) if len(oos_trades) > 1 else 1.0
+            sharpe = float(mean_ret / std_ret) if std_ret > 0 else 0.0
 
         return FondeoValidationResult(
             strategy_id=strategy_id,
             passed=passed,
+            tier=tier,
             sharpe_ratio=round(sharpe, 2),
-            deflated_sharpe_ratio=round(dsr_score, 2),
-            max_drawdown_pct=round(max_dd_pct, 2),
+            deflated_sharpe_ratio=round(actual_dsr, 2),
+            max_realized_drawdown_pct=round(max_realized_dd_pct, 2),
+            max_floating_drawdown_pct=round(max_floating_dd_pct, 2),
+            max_drawdown_pct=round(max_realized_dd_pct, 2),
+            margin_call_occurred=margin_call_occurred,
             daily_loss_limit_violations=daily_loss_violations,
             ruin_probability_pct=round(mc_ruin_pct, 2),
             walk_forward_efficiency=round(wfe, 2),
@@ -136,13 +205,17 @@ class UltraEvidenceGate:
         strategy_id: str,
         is_balas: List[BalaExecutionRecord],
         oos_balas: List[BalaExecutionRecord],
+        floating_drawdowns: Optional[List[float]] = None,
+        margin_call_occurred: bool = False,
     ) -> UltraValidationResult:
         rejection_reasons: List[str] = []
+        floating_drawdowns = floating_drawdowns or []
 
         if not oos_balas:
             return UltraValidationResult(
                 strategy_id=strategy_id,
                 passed=False,
+                tier=ValidationTier.TIER_4_REJECTED,
                 payoff_ratio=0.0,
                 expected_r_per_bala=0.0,
                 tail_gain_ratio=0.0,
@@ -151,6 +224,9 @@ class UltraEvidenceGate:
                 total_harvested_to_vault_usd=0.0,
                 burst_survival_probability_pct=0.0,
                 walk_forward_vault_efficiency=0.0,
+                max_realized_drawdown_pct=0.0,
+                max_floating_drawdown_pct=0.0,
+                margin_call_occurred=margin_call_occurred,
                 friction_stress_passed=False,
                 rejection_reasons=["Sin balas ejecutadas en OOS"],
             )
@@ -159,7 +235,6 @@ class UltraEvidenceGate:
         wins = [r for r in returns_r if r > 0]
         losses = [abs(r) for r in returns_r if r < 0]
 
-        # 1. Gate U1: Captura de Colas Pesadas (Fat Tails)
         avg_win = float(np.mean(wins)) if wins else 0.0
         avg_loss = float(np.mean(losses)) if losses else 1.0
         payoff_ratio = float(avg_win / avg_loss) if avg_loss > 0 else 0.0
@@ -191,14 +266,12 @@ class UltraEvidenceGate:
                 f"Expectativa de Bala insuficiente: {expected_r:.2f}R < {self.criteria.min_expected_r_per_bala:.2f}R"
             )
 
-        # 2. Gate U2: Resistencia a Fricción y Piramidación
         friction_passed, stressed_expected_r = self._stress_friction(oos_balas)
         if not friction_passed:
             rejection_reasons.append(
                 f"Fallo en Stress de Fricción Piramidal: E(Bala)_stressed = {stressed_expected_r:.2f}R"
             )
 
-        # 3. Gate U3: Eficiencia de Cosecha a Bóveda Ratchet en OOS
         is_harvest_count = sum(1 for b in is_balas if b.reached_state == BalaState.COSECHA_VAULT)
         is_harvest_rate = is_harvest_count / max(len(is_balas), 1)
 
@@ -221,7 +294,6 @@ class UltraEvidenceGate:
                 f"Eficiencia WFE Bóveda insuficiente: {wf_vault_eff:.2f} < {self.criteria.min_walk_forward_vault_efficiency:.2f}"
             )
 
-        # 4. Gate U4: Supervivencia de Ráfaga Monte Carlo
         burst_survival_pct = self._simulate_burst_monte_carlo(
             returns_r, burst_size=self.criteria.burst_size_balas, iterations=5000
         )
@@ -232,11 +304,51 @@ class UltraEvidenceGate:
                 f"Riesgo de Agotamiento de Ráfaga MC: {burst_ruin_pct:.2f}% > {self.criteria.max_burst_ruin_probability_pct:.2f}%"
             )
 
-        passed = len(rejection_reasons) == 0
+        initial_cap_ultra = 1000.0
+        pnl_series = [b.net_pnl_usd for b in oos_balas]
+        equity_curve = initial_cap_ultra + np.cumsum([0.0] + pnl_series)
+        peak = np.maximum.accumulate(equity_curve)
+        drawdowns = (peak - equity_curve) / np.maximum(peak, 1e-6) * 100.0
+        max_realized_dd_pct = float(np.max(drawdowns)) if len(drawdowns) > 0 else 0.0
+
+        if max_realized_dd_pct > self.criteria.max_realized_drawdown_pct:
+            rejection_reasons.append(
+                f"Max Realized DD excesivo en Ultra: {max_realized_dd_pct:.2f}% > {self.criteria.max_realized_drawdown_pct:.2f}%"
+            )
+
+        bala_float_dd = max((getattr(b, "max_floating_drawdown_pct", 0.0) for b in oos_balas), default=0.0)
+        param_float_dd = max(floating_drawdowns, default=0.0) if floating_drawdowns else 0.0
+        max_floating_dd_pct = float(max(bala_float_dd, param_float_dd))
+
+        if max_floating_dd_pct > self.criteria.max_floating_drawdown_pct:
+            rejection_reasons.append(
+                f"Max Floating DD flotante excesivo: {max_floating_dd_pct:.2f}% > {self.criteria.max_floating_drawdown_pct:.2f}%"
+            )
+
+        margin_call_detected = margin_call_occurred or any(getattr(b, "margin_call", False) for b in oos_balas)
+        if margin_call_detected:
+            rejection_reasons.append("Margin Call / Liquidación Forzosa detectada en ejecución de balas")
+
+        instant_tier4_disqualification = (
+            margin_call_detected
+            or max_realized_dd_pct > self.criteria.max_realized_drawdown_pct
+            or max_floating_dd_pct > self.criteria.max_floating_drawdown_pct
+        )
+
+        if instant_tier4_disqualification:
+            tier = ValidationTier.TIER_4_REJECTED
+            passed = False
+        elif len(rejection_reasons) > 0:
+            tier = ValidationTier.TIER_4_REJECTED
+            passed = False
+        else:
+            tier = ValidationTier.TIER_1_CERTIFIED
+            passed = True
 
         return UltraValidationResult(
             strategy_id=strategy_id,
             passed=passed,
+            tier=tier,
             payoff_ratio=round(payoff_ratio, 2),
             expected_r_per_bala=round(expected_r, 2),
             tail_gain_ratio=round(tail_gain_ratio, 2),
@@ -245,6 +357,9 @@ class UltraEvidenceGate:
             total_harvested_to_vault_usd=round(total_harvested_usd, 2),
             burst_survival_probability_pct=round(burst_survival_pct, 2),
             walk_forward_vault_efficiency=round(wf_vault_eff, 2),
+            max_realized_drawdown_pct=round(max_realized_dd_pct, 2),
+            max_floating_drawdown_pct=round(max_floating_dd_pct, 2),
+            margin_call_occurred=margin_call_detected,
             friction_stress_passed=friction_passed,
             rejection_reasons=rejection_reasons,
         )
@@ -315,8 +430,10 @@ class QuantValidationFabric:
                 is_trades=payload["is_trades"],
                 oos_trades=payload["oos_trades"],
                 daily_pnls=payload.get("daily_pnls", []),
-                dsr_score=payload.get("dsr_score", 2.5),
+                dsr_score=payload.get("dsr_score"),
                 mc_ruin_pct=payload.get("mc_ruin_pct", 0.0),
+                floating_drawdowns=payload.get("floating_drawdowns", []),
+                margin_call_occurred=payload.get("margin_call_occurred", False),
             )
             approved = result.passed
         elif track == ValidationTrack.TRACK_ULTRA:
@@ -324,23 +441,16 @@ class QuantValidationFabric:
                 strategy_id=strategy_id,
                 is_balas=payload["is_balas"],
                 oos_balas=payload["oos_balas"],
+                floating_drawdowns=payload.get("floating_drawdowns", []),
+                margin_call_occurred=payload.get("margin_call_occurred", False),
             )
             approved = result.passed
         else:
             raise ValueError(f"Validation track desconocido: {track}")
 
-        strategy_snapshot_hash = payload.get("strategy_snapshot_hash") or hashlib.sha256(f"strat_snap_{strategy_id}".encode()).hexdigest()
-        dataset_sha256 = payload.get("dataset_sha256") or hashlib.sha256(f"dataset_{strategy_id}".encode()).hexdigest()
-        execution_config_hash = payload.get("execution_config_hash") or hashlib.sha256(f"exec_cfg_{strategy_id}".encode()).hexdigest()
-        ledger_hash = payload.get("ledger_hash") or hashlib.sha256(f"ledger_{strategy_id}:{timestamp_ms}".encode()).hexdigest()
-
         return EvidenceGateDecision(
             decision_id=f"gate_dec_{prov_hash[:12]}",
             strategy_id=strategy_id,
-            strategy_snapshot_hash=strategy_snapshot_hash,
-            dataset_sha256=dataset_sha256,
-            execution_config_hash=execution_config_hash,
-            ledger_hash=ledger_hash,
             track=track,
             approved=approved,
             timestamp_ms=timestamp_ms,

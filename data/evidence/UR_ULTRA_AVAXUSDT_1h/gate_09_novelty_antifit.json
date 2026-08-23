@@ -2,33 +2,33 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g09",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "e2de48d452d71765595a981c96cf2dc5e221bbac46779f07950bb09f03ee23e5",
+  "strategy_snapshot_hash": "2e564a31f8b06c25f28731220ed5bcbd74cfc57a763f120269b8242b4b942071",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "43558970dd3987c0e35c79d88737ed8991ae25a2d367cf9288df45ab964f4655",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "3.2.0",
   "formula_version": "3.2.0",
-  "input_hash": "965b55b16c72c6fc83c1f034171ec23854a32f4a075ad44c3eaf17e297c70b6f",
-  "output_hash": "790eb97437e8665d58bb2cf3e29985e3be8671d1c1030149a7a1b8fe3baafdde",
+  "input_hash": "fe76b3129447138034af8f6d8928d92ac967f3ddb64acbd36b27ac220ed880e7",
+  "output_hash": "63f92c8228471405b9c7bb3e7c55a51ec911d361fc60ee3ef2b7259683cd0c29",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 300.0 trades/param, Estabilidad Vecindario: 116.8%, Re-backtest PFs: [0.96, 0.85, 1.3, 1.42])",
+  "score": 99.2,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 308.2 trades/param, Estabilidad Vecindario: 98.7%, Re-backtest PFs: [1.02, 0.89, 1.08, 0.84])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 300.0,
+    "degrees_of_freedom_ratio": 308.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 116.8,
+    "parameter_neighborhood_stability_pct": 98.7,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.96,
-      0.85,
-      1.3,
-      1.42
+      1.02,
+      0.89,
+      1.08,
+      0.84
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-22T18:11:42.683184+00:00"
+  "created_at_utc": "2026-08-23T19:13:46.834787+00:00"
 }
