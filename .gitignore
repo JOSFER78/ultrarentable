@@ -1,52 +1,165 @@
-# Python
+# ==========================================
+# ULTRARENTABLE — REPO MASTER .gitignore
+# ==========================================
+
+# ------------------------------------------
+# 1. Python & Virtual Environments
+# ------------------------------------------
 .venv/
+venv/
+env/
+ENV/
+.env/
+virtualenv/
 __pycache__/
 *.py[cod]
 *$py.class
-*.egg-info/
+*.so
+
+# Python distribution & packaging
 dist/
 build/
+*.egg-info/
+*.egg
+.eggs/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+
+# Python Testing & Type Checking Caches
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
 
-# Node & Next.js
+# ------------------------------------------
+# 2. Node, TypeScript & Next.js Ecosystem
+# ------------------------------------------
 node_modules/
+**/node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Next.js build outputs & caches
 .next/
+**/.next/
 out/
+**/out/
+.turbo/
+.vercel/
+
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
+
+# ------------------------------------------
+# 3. Databases, Locks & Runtime State
+# ------------------------------------------
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.sqlite3-*
+*.duckdb
+*.duckdb.wal
+*.tmp.db
+*.temp.db
+.local/
+
+# ------------------------------------------
+# 4. Logs, Dumps & Diagnostics
+# ------------------------------------------
+logs/
+*.log
+*.log.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-tsconfig.tsbuildinfo
+*.out
+*.pid
+*.seed
 
-# Databases & runtime state
-*.db
-*.sqlite3
-*.sqlite3-*
-*.sqlite
-.local/
+# ------------------------------------------
+# 5. Heavy Datasets, Artifacts & Scratch
+# ------------------------------------------
+artifacts/
+data/artifacts/
+data/raw/
+data/quarantine/
+scratch/
+tmp/
+temp/
+.cache/
 
-# Sensitive & environment files
+# ------------------------------------------
+# 6. Environment Variables & Secrets
+# ------------------------------------------
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+.env*.local
+!.env.example
+!.env.template
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
 
-# OS & Editor
+# ------------------------------------------
+# 7. OS & IDE Configuration
+# ------------------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+ehthumbs_vista.db
 Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+# VS Code (preserve shared configuration)
 .vscode/*
 !.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 !.vscode/extensions.json
-.idea/
+idea/
 
 # Heavy/temporary data and artifacts
 data/raw/
 data/artifacts/
 artifacts/
-scratch/
 *.log
-.kilo/
-
