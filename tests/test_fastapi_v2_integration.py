@@ -9,10 +9,8 @@ from services.api.app.main import app
 
 @pytest.fixture
 def client():
-    # Evitar loops infinitos de red externa en tests unitarios
-    with patch("services.api.app.main._periodic_sqx_sync", new_callable=AsyncMock):
-        client_inst = TestClient(app, raise_server_exceptions=True)
-        yield client_inst
+    client_inst = TestClient(app, raise_server_exceptions=True)
+    yield client_inst
 
 
 def test_root_endpoint_reports_v2(client):

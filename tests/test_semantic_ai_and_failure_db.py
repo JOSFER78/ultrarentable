@@ -119,7 +119,7 @@ def test_closed_loop_ai_proposes_gate_approves():
     assert db.is_rule_tree_blacklisted(improved_strat.rules) is False
 
     # Step 5: Gate evaluates healthy run for improved candidate
-    good_is_trades = [100.0 if i % 2 == 0 else -50.0 for i in range(100)]
-    good_oos_trades = [95.0 if i % 2 == 0 else -50.0 for i in range(100)]
+    good_is_trades = [150.0 if i % 3 != 0 else -20.0 for i in range(120)]
+    good_oos_trades = [140.0 if i % 3 != 0 else -20.0 for i in range(120)]
     result_good = gate.evaluate(improved_strat.strategy_id, is_trades=good_is_trades, oos_trades=good_oos_trades)
     assert result_good.passed is True

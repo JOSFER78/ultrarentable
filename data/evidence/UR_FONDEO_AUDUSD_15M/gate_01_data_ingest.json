@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g01",
-  "run_id": "run_UR_FONDEO_AUDUSD_15M",
-  "strategy_id": "UR_FONDEO_AUDUSD_15M",
-  "strategy_snapshot_hash": "e663629e4863eff9963d5c428b39d9be4c026b310a349c91435111a80c1d8112",
-  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 1,
-  "gate_name": "DATA_INGEST",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "06feff8bd55bba2ab90ae4b1936be7b3345bd61c6344f270908ba42aacf1b084",
-  "output_hash": "d8fdec02812ccc19fab3165e1c8294d57401f73dfb2d83b2ef9125957999120a",
-  "status": "PASSED",
+  "name": "DATA_INGEST",
+  "passed": true,
   "score": 100.0,
   "verdict": "PASSED: Dataset verificado (1138 velas, SHA256: cb117c41..., 0 corruptas, 0 gaps tolerados)",
-  "metrics": {
+  "evidence": {
     "total_candles": 1138,
     "corrupt_bars": 0,
     "out_of_order_bars": 0,
@@ -25,7 +14,5 @@
     "zero_volume_bars": 0,
     "dataset_sha256": "cb117c4129f1edbc1aea50a12b5b9e7edb378d2e95be7ff9907bdfca1146a539",
     "integrity_pct": 100.0
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-23T18:01:41.281757+00:00"
+  }
 }

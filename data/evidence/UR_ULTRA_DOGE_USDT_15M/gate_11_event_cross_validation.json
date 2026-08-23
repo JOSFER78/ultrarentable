@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_15M_g11",
   "run_id": "run_UR_ULTRA_DOGE_USDT_15M",
   "strategy_id": "UR_ULTRA_DOGE_USDT_15M",
-  "strategy_snapshot_hash": "2aa5df2a5b2f4dcb611fab5de20de4811b258773c3d1911df37f6eae0ea91f3c",
+  "strategy_snapshot_hash": "be22eee5c1479ad25daeaa9e811b00050afc01ce201fd268bdf58224d4a9493e",
   "dataset_id": "ds_binance_dogeusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "d90b152c7f586ccb8d55f1a5c0fa6d33a3dc2510a34ad186efeab32769e5c82f",
-  "output_hash": "6b5e1fe54b25068d27324a7c7307c2debdae29883407bb15162483a2d5bc3292",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "6261d40a3c1c8b240606d9cfc311dd4903f32c95997d797db46ec053644d7911",
+  "output_hash": "6a84fb9c139d87bf42b391cc28848919f8430be14227c484b2dbc9fe7fb41623",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 96.0%, Peak Lev: 6.0x)",
@@ -22,12 +22,12 @@
     "min_equity_usd": 2.99,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 96.02,
+    "min_distance_to_liquidation_pct": 96.0,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 8.78,
-    "execution_events_count": 126
+    "total_funding_cost_usd": 7.47,
+    "execution_events_count": 128
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_15M/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-23T16:40:16.197622+00:00"
+  "created_at_utc": "2026-08-23T23:19:12.277027+00:00"
 }

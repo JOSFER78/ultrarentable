@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g11",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "3a663e5f8c7232765278271f2f4396924a54366bf27703446f29b4acaf9b00d0",
+  "strategy_snapshot_hash": "516218fd7cd8bccc01decf2c6717e5f7c11092ea2bace4c191cc4ee4e7a4120a",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
   "gate_name": "EVENT_CROSS_VALIDATION",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "90c90ea46061df8ee5400c4272a365047c58d87d090bc07511788c473cb9aa8b",
-  "output_hash": "0d395c18b4437a93480fa8d88d0cac359f2dc4663c749e32ecd4a794d65eae26",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "6b7c8bd97cc779bf6adf5982c74a0cf475be002f90a25ec6a5e656625373d39a",
+  "output_hash": "c2fd85251a20e506224eaa8a553201b6dc58ef038a75659d0084aeed55bb757b",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 86.1%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 5.86,
+    "final_equity_usd": 5.78,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": 5.86,
+    "min_equity_usd": 5.78,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 86.13,
@@ -29,5 +29,5 @@
     "execution_events_count": 224
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-23T16:43:57.921799+00:00"
+  "created_at_utc": "2026-08-23T23:25:27.022663+00:00"
 }

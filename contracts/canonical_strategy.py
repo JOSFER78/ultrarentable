@@ -9,7 +9,7 @@ import hashlib
 import json
 from enum import Enum
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class StrategyLifecycleStatus(str, Enum):
@@ -132,6 +132,16 @@ class CanonicalStrategy(BaseModel):
     
     provenance: ProvenanceMetadata
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("metadata")
+    @classmethod
+    def validate_metadata_purity(cls, v: Dict[str, Any]) -> Dict[str, Any]:
+        forbidden_keys = {"risk", "leverage", "stop_loss", "take_profit", "timeframe", "symbol", "rules", "sizing", "session"}
+        if v:
+            for k in v.keys():
+                if k.lower() in forbidden_keys:
+                    raise ValueError(f"VIOLACION_SSOT_METADATA: Parámetro funcional '{k}' prohibido en metadata administrativa.")
+        return v
 
     def compute_sha256(self) -> str:
         """Calcula el hash criptográfico SHA-256 inmutable de la definición canónica."""

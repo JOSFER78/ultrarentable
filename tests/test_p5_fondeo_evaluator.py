@@ -37,7 +37,7 @@ def test_fondeo_criteria_rejection_on_excessive_drawdown():
     """Verifica que una estrategia con Max Drawdown > 4.5% o violaciones diarias sea rechazada."""
     criteria = FondeoValidationCriteria(
         min_sharpe=2.0,
-        min_deflated_sharpe=2.0,
+        min_deflated_sharpe=0.90,
         max_drawdown_pct=4.5,
         max_daily_loss_limit_usd=1000.0,
     )

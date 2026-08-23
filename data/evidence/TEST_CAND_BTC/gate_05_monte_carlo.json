@@ -1,27 +1,14 @@
 {
-  "evidence_id": "ev_TEST_CAND_BTC_g05",
-  "run_id": "run_TEST_CAND_BTC",
-  "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "8d027ea87527cf1136fff7a655a964db883c4e1dc28471adaf9ff34f168bf6f0",
-  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
-  "gate_name": "MONTE_CARLO",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "db59114a5f95c869933e1eaf30eaa6bacd4c6d6771d9c2fdabe9fbfd286c8a04",
-  "output_hash": "79b7b4c1f122a499c84bcfff8ad57fabacad8caa179c81a41f2adb71344b0f0d",
-  "status": "PASSED",
-  "score": 96.7,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.6%)",
-  "metrics": {
+  "name": "MONTE_CARLO",
+  "passed": true,
+  "score": 96.8,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 6.3%)",
+  "evidence": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 4.4,
-    "drawdown_95th_percentile_pct": 6.6,
-    "max_simulated_drawdown_pct": 8.5
-  },
-  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-23T16:40:30.881621+00:00"
+    "drawdown_median_pct": 4.3,
+    "drawdown_95th_percentile_pct": 6.3,
+    "max_simulated_drawdown_pct": 6.9
+  }
 }

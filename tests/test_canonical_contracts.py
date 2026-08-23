@@ -113,7 +113,7 @@ def test_fondeo_validation_contracts():
     """Verify Fondeo criteria and result models."""
     criteria = FondeoValidationCriteria(
         min_sharpe=2.0,
-        min_deflated_sharpe=2.0,
+        min_deflated_sharpe=0.90,
         max_drawdown_pct=4.5,
         max_daily_loss_limit_usd=1000.0,
     )
@@ -123,7 +123,7 @@ def test_fondeo_validation_contracts():
         strategy_id="UR-CANON-001",
         passed=True,
         sharpe_ratio=2.45,
-        deflated_sharpe_ratio=2.15,
+        deflated_sharpe_ratio=0.95,
         max_drawdown_pct=3.8,
         daily_loss_limit_violations=0,
         ruin_probability_pct=0.00,

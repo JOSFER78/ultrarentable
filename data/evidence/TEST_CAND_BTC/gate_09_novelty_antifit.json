@@ -1,34 +1,21 @@
 {
-  "evidence_id": "ev_TEST_CAND_BTC_g09",
-  "run_id": "run_TEST_CAND_BTC",
-  "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "8d027ea87527cf1136fff7a655a964db883c4e1dc28471adaf9ff34f168bf6f0",
-  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "6d6edc5d61bd85df54acbb76fb517aead1c5db3fe0fe011781f0f4acad92ee1c",
-  "output_hash": "918ff16e08ed24e206ed6bd0cf7c45d7238af0504c6cca14681c806c911e012a",
-  "status": "PASSED",
-  "score": 62.5,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 13.8 trades/param, Estabilidad Vecindario: 67.6%, Re-backtest PFs: [0.25, 0.23, 0.64, 0.88])",
-  "metrics": {
+  "name": "NOVELTY_ANTIFIT",
+  "passed": true,
+  "score": 61.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada emp\u00edricamente (DoF: 11.1 trades/param, Estabilidad Vecindario: 73.4%, Re-backtest PFs: [0.21, 0.54, 0.72, 0.85])",
+  "evidence": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 13.8,
+    "degrees_of_freedom_ratio": 11.1,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 67.6,
+    "parameter_neighborhood_stability_pct": 73.4,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.25,
-      0.23,
-      0.64,
-      0.88
+      0.21,
+      0.54,
+      0.72,
+      0.85
     ],
     "rebacktest_performed": true
-  },
-  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-23T16:40:31.214732+00:00"
+  }
 }

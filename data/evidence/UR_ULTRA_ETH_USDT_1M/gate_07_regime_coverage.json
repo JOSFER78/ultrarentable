@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1M_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_1M",
   "strategy_id": "UR_ULTRA_ETH_USDT_1M",
-  "strategy_snapshot_hash": "6588be4aef46953e3d715f6adc618cc6de2bb943cf3157267d143881d9be6019",
+  "strategy_snapshot_hash": "30209c1870b472c89250194c80e455f3ed1b8ec28762d4edab592ccf51d82b3d",
   "dataset_id": "ds_binance_ethusdt_1m_1786459140000_1787089080000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "acbf5a4122f609807828b130202ad6f25dcb1a474043b28a1637c86d5ed5991e",
-  "output_hash": "6afa9a853d57364e72d673509c5fe8183779a1b3c859e6cf8cd04310e91dac36",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "497dad58965663033c957af09065307e56225b57777d3dfbeb379443adb9006f",
+  "output_hash": "e35e9aefc9540c2e377674242a39917faa41948ce1e519063c0da3b935260c71",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -442.27%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -449.45%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -26,18 +26,18 @@
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
       "CHOP_RANGING": 46,
-      "HIGH_VOLATILITY": 14
+      "HIGH_VOLATILITY": 13
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -284.86,
-      "HIGH_VOLATILITY": -157.41
+      "CHOP_RANGING": -285.02,
+      "HIGH_VOLATILITY": -164.43
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -442.27
+    "total_oos_return_pct": -449.45
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T16:43:26.855291+00:00"
+  "created_at_utc": "2026-08-23T23:24:10.780163+00:00"
 }

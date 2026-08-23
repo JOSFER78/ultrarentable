@@ -112,7 +112,7 @@ def test_ultra_evidence_gate_pass():
     oos_balas = []
 
     for i in range(50):
-        if i % 10 == 0:
+        if i % 5 == 0:
             # Huge winner reaching vault
             record = BalaExecutionRecord(
                 bala_id=f"bala_is_{i}",

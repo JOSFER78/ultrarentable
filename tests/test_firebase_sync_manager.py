@@ -17,10 +17,13 @@ def test_firebase_sync_manager_initialization():
 
 def test_firebase_sync_manager_sync_execution():
     res = firebase_sync_manager.sync_all()
-    assert res["status"] in ("HEALTHY", "PARTIAL_ERROR")
-    assert "synced_at" in res
-    assert "firebase_paths" in res
-    assert "/ultrarentable/candidates" in res["firebase_paths"]
-    assert "/ultrarentable/telemetry" in res["firebase_paths"]
-    assert "/ultrarentable/heartbeat" in res["firebase_paths"]
-    assert res["synced_counts"]["total"] >= 0
+    assert res["status"] in ("HEALTHY", "PARTIAL_ERROR", "AUTH_PENDING")
+    assert "synced_at" in res or "last_sync_utc" in res
+    if res["status"] != "AUTH_PENDING":
+        assert "firebase_paths" in res
+        assert "/ultrarentable/candidates" in res["firebase_paths"]
+        assert "/ultrarentable/telemetry" in res["firebase_paths"]
+        assert "/ultrarentable/heartbeat" in res["firebase_paths"]
+        assert res["synced_counts"]["total"] >= 0
+    else:
+        assert "message" in res

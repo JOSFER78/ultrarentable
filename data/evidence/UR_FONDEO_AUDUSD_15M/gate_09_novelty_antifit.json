@@ -1,34 +1,21 @@
 {
-  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g09",
-  "run_id": "run_UR_FONDEO_AUDUSD_15M",
-  "strategy_id": "UR_FONDEO_AUDUSD_15M",
-  "strategy_snapshot_hash": "e663629e4863eff9963d5c428b39d9be4c026b310a349c91435111a80c1d8112",
-  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "f745d537536c6ac550749a5749ed646ae535b0c8eff64db35e37fa552dbafc87",
-  "output_hash": "58cf1022146ac647a92e016f9b9223fd6b13309e51d979fa81c6d5b7d5917dce",
-  "status": "FAILED",
-  "score": 25.3,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 8.5 o Estabilidad 63.2% < 60.0%)",
-  "metrics": {
+  "name": "NOVELTY_ANTIFIT",
+  "passed": false,
+  "score": 97.7,
+  "verdict": "FALLO: Fragilidad ante perturbaci\u00f3n param\u00e9trica (DoF 9.0 o Estabilidad 244.2% < 60.0%)",
+  "evidence": {
     "parameters_count": 12,
-    "degrees_of_freedom_ratio": 8.5,
+    "degrees_of_freedom_ratio": 9.0,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 63.2,
+    "parameter_neighborhood_stability_pct": 244.2,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.14,
-      0.06,
-      0.38,
-      0.33
+      0.31,
+      0.16,
+      0.42,
+      0.38
     ],
     "rebacktest_performed": true
-  },
-  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-23T18:01:42.342113+00:00"
+  }
 }

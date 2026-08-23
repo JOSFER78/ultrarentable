@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_15M_g06",
   "run_id": "run_UR_ULTRA_BNB_USDT_15M",
   "strategy_id": "UR_ULTRA_BNB_USDT_15M",
-  "strategy_snapshot_hash": "679b520d4666089ecd44f324e5ca809db2b98f66e3bc84079aecbd65f3ae53b6",
+  "strategy_snapshot_hash": "31d82c3563703662280eaa8d5c97d1154af4c95fe5e2b378ec009fe98b90fb46",
   "dataset_id": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "8266c6ac5c9ae4a3f61128a83191fbd5454d07b13ff7cd9ea5e4feffe42adb64",
-  "output_hash": "8d4f7ef4c3dc2073ecb10c175b87f7d1671540032214b5ba2d31c34ec412eca1",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "7216e5ce06a9580a15e6c3461d6e037a93e765dd1b3e1d8c610a8127609fa249",
+  "output_hash": "8fa7514bd5d9b5daf6f0c179171f5a2c635b76975aafc409e2b4da26d2379b3a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -37,7 +37,7 @@
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -3.18,
+        "stressed_net_pnl_usd": -3.17,
         "stressed_profit_factor": 0.63,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-23T16:40:10.378480+00:00"
+  "created_at_utc": "2026-08-23T23:18:56.300645+00:00"
 }

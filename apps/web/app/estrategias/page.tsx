@@ -14,7 +14,7 @@ import { STRATEGY_PHASES } from "@/lib/strategyPhases";
 // COMPONENTE: PORTADA GENERAL DE ESTRATEGIAS (PANEL HERO CONSOLIDADO)
 function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: number) => void }) {
   const [telemetry, setTelemetry] = useState<any>(null);
-  const [candidateStats, setCandidateStats] = useState<any>({ total: 236, approved: 35 });
+  const [candidateStats, setCandidateStats] = useState<any>({ total: 0, approved: 0 });
   const [loading, setLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
@@ -43,7 +43,7 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
           c.status === "ULTRA_CERTIFIED" || 
           c.tier === "TIER_1_CERTIFIED"
         ).length;
-        setCandidateStats({ total: list.length || 236, approved: appCount || 35 });
+        setCandidateStats({ total: list.length, approved: appCount });
       }
       setLastSyncTime(new Date());
     } catch (e) {
@@ -59,13 +59,13 @@ function PortadaGeneralOverview({ onSelectFase }: { onSelectFase: (faseId: numbe
   }, [fetchTelemetry]);
 
   const funnel = telemetry?.filter_funnel;
-  const totalEvaluated = funnel?.total_evaluated ?? telemetry?.total_evaluations_count ?? 612397;
-  const totalCandidates = candidateStats.total || telemetry?.total_candidates || 236;
-  const totalApproved = candidateStats.approved || funnel?.approved || 35;
+  const totalEvaluated = funnel?.total_evaluated ?? telemetry?.total_evaluations_count ?? 0;
+  const totalCandidates = candidateStats.total || telemetry?.total_candidates || 0;
+  const totalApproved = candidateStats.approved || funnel?.approved || 0;
   const datasetList = telemetry?.datasets_inventory || [];
   const totalBars = datasetList.length > 0
     ? datasetList.reduce((acc: number, d: any) => acc + (d?.bars || 0), 0)
-    : 428600;
+    : 0;
 
   return (
     <div style={{ padding: "24px 32px", maxWidth: "1600px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>

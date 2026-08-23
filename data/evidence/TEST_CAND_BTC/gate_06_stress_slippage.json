@@ -1,51 +1,38 @@
 {
-  "evidence_id": "ev_TEST_CAND_BTC_g06",
-  "run_id": "run_TEST_CAND_BTC",
-  "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "8d027ea87527cf1136fff7a655a964db883c4e1dc28471adaf9ff34f168bf6f0",
-  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
-  "gate_name": "STRESS_SLIPPAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "ab7dbfdaf72e8dd3c839124210dcf653d062a77a0410a59b0213baf35587fefc",
-  "output_hash": "8cd6203d55c2418fd80c711e97261bcb5c03963df1de6cea681abd7aefd5d3f1",
-  "status": "FAILED",
+  "name": "STRESS_SLIPPAGE",
+  "passed": false,
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
-  "metrics": {
+  "evidence": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.35,
-        "stressed_profit_factor": 0.57,
+        "stressed_net_pnl_usd": -2.57,
+        "stressed_profit_factor": 0.58,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.46,
-        "stressed_profit_factor": 0.56,
+        "stressed_net_pnl_usd": -2.68,
+        "stressed_profit_factor": 0.57,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.58,
-        "stressed_profit_factor": 0.55,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": -2.8,
+        "stressed_profit_factor": 0.56,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -3.78,
-        "stressed_profit_factor": 0.53,
+        "stressed_net_pnl_usd": -3.01,
+        "stressed_profit_factor": 0.54,
         "survived": false
       }
     },
     "passed_scenarios_count": 0,
     "min_required_scenarios": 1,
     "base_friction_usd": 0.35
-  },
-  "artifact_path": "data/evidence/TEST_CAND_BTC/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-23T16:40:30.882194+00:00"
+  }
 }

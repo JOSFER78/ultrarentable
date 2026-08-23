@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15M_g07",
   "run_id": "run_UR_ULTRA_USDCAD_15M",
   "strategy_id": "UR_ULTRA_USDCAD_15M",
-  "strategy_snapshot_hash": "81e252c677cf0e2e17349f3705d869931d55662e90b85f31ce160a4620651f8e",
+  "strategy_snapshot_hash": "3385d3b5ecf0e61faf642e5589be5ddc70908f55f759bffac6d9c16c19631a64",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "04ace84af1a7411194ead61e83b293a0b480a4cd7626b5b4266e90c8eb17b92c",
-  "output_hash": "a8df2ddcae83a004d2b27a50d4123aa714b9913f3f8f753715a7215509bd0b5f",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "75628bfb9f347407ac4e52426ab69f22465f4d0ee0f996e5c4cef089c1c4f5bc",
+  "output_hash": "6b96812bd77376f32af6db0f2c100ffdcf287d87e103c8b756eb0ef170380d5f",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -53.27%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -56.40%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 26,
+      "CHOP_RANGING": 27,
       "HIGH_VOLATILITY": 0
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -53.27,
+      "CHOP_RANGING": -56.4,
       "HIGH_VOLATILITY": 0.0
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 1,
-    "total_oos_return_pct": -53.27
+    "total_oos_return_pct": -56.4
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T16:41:17.791766+00:00"
+  "created_at_utc": "2026-08-23T23:19:46.269041+00:00"
 }

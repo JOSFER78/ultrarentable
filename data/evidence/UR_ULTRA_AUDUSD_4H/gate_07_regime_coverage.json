@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g07",
   "run_id": "run_UR_ULTRA_AUDUSD_4H",
   "strategy_id": "UR_ULTRA_AUDUSD_4H",
-  "strategy_snapshot_hash": "67c013b2ff8bc6e969ee60fd75ed871039bdc5a724299c00ad3cb75a408bd82b",
+  "strategy_snapshot_hash": "e6608e1047fd1e34f9e06a256e0dd164891f333321e67abfcf365e6b4874af5c",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "9b94c6eaefd372f48f0f5edac8edc8e41351dc3d6af855fe18656f7a2cf25e9b",
-  "output_hash": "2bcce4ba6ea7176d40aec2b41aeec2d663075163e3cc9e1764513affe0d031c4",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "3ec7e9bb85a4c74d25f3abc1f3141754a56efb277f69d1eeaccb9a432b842c97",
+  "output_hash": "a8c59e440d42fa31574ed7807162818940253f80054d85845ddb019a7003256a",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -356.98%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -364.48%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 20,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 2,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 41,
+      "CHOP_RANGING": 42,
       "HIGH_VOLATILITY": 9
     },
     "regime_return_pct": {
       "BULL_TREND": -27.1,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -226.07,
+      "CHOP_RANGING": -233.57,
       "HIGH_VOLATILITY": -103.81
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 3,
-    "total_oos_return_pct": -356.98
+    "total_oos_return_pct": -364.48
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T16:42:59.554735+00:00"
+  "created_at_utc": "2026-08-23T23:23:11.493804+00:00"
 }

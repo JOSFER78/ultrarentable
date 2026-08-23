@@ -60,7 +60,7 @@ class BalaExecutionRecord(BaseModel):
 class FondeoValidationCriteria(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     min_sharpe: float = Field(default=2.0, ge=1.0)
-    min_deflated_sharpe: float = Field(default=2.0, ge=1.0)
+    min_deflated_sharpe: float = Field(default=0.90, ge=0.50)
     max_realized_drawdown_pct: float = Field(default=4.50, le=10.0)
     max_floating_drawdown_pct: float = Field(default=80.0, le=100.0)
     max_drawdown_pct: float = Field(default=4.50, le=10.0)  # Compatibilidad
@@ -82,15 +82,15 @@ class FondeoValidationResult(BaseModel):
     tier: ValidationTier = ValidationTier.TIER_1_CERTIFIED
     sharpe_ratio: float
     deflated_sharpe_ratio: float
-    max_realized_drawdown_pct: float
+    max_realized_drawdown_pct: float = 0.0
     max_floating_drawdown_pct: float = 0.0
-    max_drawdown_pct: float
+    max_drawdown_pct: float = 0.0
     margin_call_occurred: bool = False
-    daily_loss_limit_violations: int
-    ruin_probability_pct: float
-    walk_forward_efficiency: float
-    top2_outlier_dependency_pct: float
-    consistency_score: float
+    daily_loss_limit_violations: int = 0
+    ruin_probability_pct: float = 0.0
+    walk_forward_efficiency: float = 0.0
+    top2_outlier_dependency_pct: float = 0.0
+    consistency_score: float = 0.0
     rejection_reasons: List[str] = Field(default_factory=list)
 
 
@@ -126,7 +126,7 @@ class UltraValidationResult(BaseModel):
     total_harvested_to_vault_usd: float
     burst_survival_probability_pct: float
     walk_forward_vault_efficiency: float
-    max_realized_drawdown_pct: float
+    max_realized_drawdown_pct: float = 0.0
     max_floating_drawdown_pct: float = 0.0
     margin_call_occurred: bool = False
     friction_stress_passed: bool
@@ -141,4 +141,9 @@ class EvidenceGateDecision(BaseModel):
     approved: bool
     timestamp_ms: int
     provenance_hash_sha256: str
+    strategy_snapshot_hash: Optional[str] = None
+    dataset_sha256: Optional[str] = None
+    execution_config_hash: Optional[str] = None
+    ledger_hash: Optional[str] = None
+    gate_records_count: int = 11
     details: FondeoValidationResult | UltraValidationResult

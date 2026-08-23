@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g06",
   "run_id": "run_UR_ULTRA_AUDUSD_4H",
   "strategy_id": "UR_ULTRA_AUDUSD_4H",
-  "strategy_snapshot_hash": "67c013b2ff8bc6e969ee60fd75ed871039bdc5a724299c00ad3cb75a408bd82b",
+  "strategy_snapshot_hash": "e6608e1047fd1e34f9e06a256e0dd164891f333321e67abfcf365e6b4874af5c",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
   "gate_name": "STRESS_SLIPPAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "2e59206e112c63e2df5c6f38615a15423eff12c10fbe25d04afa2bef0de5456c",
-  "output_hash": "60bfeb3bbbc7a3a0f56589a6dc9ed509dd757985e8c5da46f2e6c21aac1523f8",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "b36023d9faaa158ac44c97dd4d729ef63c188ee2a7f0529e773afc4c49abce9f",
+  "output_hash": "39d100c1447a530aaf561fc7fc623cc56456ff51deb92bd4b185a2c89b6b59e6",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.6,
+        "stressed_net_pnl_usd": -3.67,
         "stressed_profit_factor": 0.27,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.65,
-        "stressed_profit_factor": 0.27,
+        "stressed_net_pnl_usd": -3.73,
+        "stressed_profit_factor": 0.26,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.73,
+        "stressed_net_pnl_usd": -3.8,
         "stressed_profit_factor": 0.26,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -3.83,
-        "stressed_profit_factor": 0.26,
+        "stressed_net_pnl_usd": -3.91,
+        "stressed_profit_factor": 0.25,
         "survived": false
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-23T16:42:59.548246+00:00"
+  "created_at_utc": "2026-08-23T23:23:11.454193+00:00"
 }

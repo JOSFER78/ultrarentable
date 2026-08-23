@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_15M_g07",
   "run_id": "run_UR_ULTRA_USDCHF_15M",
   "strategy_id": "UR_ULTRA_USDCHF_15M",
-  "strategy_snapshot_hash": "c0d4987d1af3a1d4c192617cb54ae567b70b7692bbd648cf3dda038c2043dfb4",
+  "strategy_snapshot_hash": "01c35bd2e8d0a57273160e40e38e8615aca8e326eeb5f627fc8dd083064673e6",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "64ce063c0170a8fcd6fdac9281ba0c8b40dc201675feb2b3950434f91f8bd8a5",
-  "output_hash": "c23c9cb6d67b3bb64bb85fe677ca2d64a8c01070913b3d78bdcd9a61c69b927d",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "a89044141bfbed790db88dc95ff31b80be460c14d2235c2fae69582e76b86f9a",
+  "output_hash": "ec5055e3bb4a59efb0a94b91b5b8b85c5c31db826dc759dc98240d8ea8ff2b8f",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -147.97%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -145.80%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 38,
+      "CHOP_RANGING": 39,
       "HIGH_VOLATILITY": 10
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -105.73,
+      "CHOP_RANGING": -103.56,
       "HIGH_VOLATILITY": -42.24
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -147.97
+    "total_oos_return_pct": -145.8
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T16:41:48.294444+00:00"
+  "created_at_utc": "2026-08-23T23:20:37.722105+00:00"
 }

@@ -350,6 +350,7 @@ class SemanticQuantEngine:
         regime_data = self.regime_analyst.analyze_regime(symbol, timeframe)
         stress_data = self.adversarial.stress_test(strategy_id, pf_oos, max_dd_pct, symbol=symbol)
 
+        structural_score = round(min(100.0, max(20.0, (pf_oos * 35.0) + (win_rate * 0.45))), 1)
         interpreter_analysis = {
             "agent": "Interpreter Agent (🧠)",
             "role": "Semántica & Hipótesis de Mercado",
@@ -359,22 +360,24 @@ class SemanticQuantEngine:
                 f"Lógica de Entrada: Confirmación multidimensional por Donchian / EMA con filtro de ruptura.",
                 f"Gestión de Salida: Stop Loss técnico acotado con ratio recompensa/riesgo asimétrico.",
             ],
-            "structural_quality_score": 92,
+            "structural_quality_score": structural_score,
         }
 
+        curvefit_score = round(min(100.0, max(20.0, 100.0 - (max_dd_pct * 1.2))), 1)
         critic_analysis = {
             "agent": "Critic Agent (🛡️)",
             "role": "Auditoría contra FailureKnowledgeDB",
             "color": "#f43f5e",
             "findings": [
                 "Verificación contra 11 categorías de fallos: CERO colisiones con árboles prohibidos.",
-                f"Análisis de Sobreajuste OOS: Degradación IS→OOS dentro del umbral de tolerancia (< 30%).",
+                f"Análisis de Sobreajuste OOS: Degradación IS→OOS evaluada contra evidencia física.",
                 f"Tail Risk: Drawdown máximo histórico ({max_dd_pct}%) dentro de los límites estrictos del Track {route}.",
             ],
-            "approved": True,
-            "anti_curvefit_score": 95,
+            "approved": curvefit_score >= 60.0,
+            "anti_curvefit_score": curvefit_score,
         }
 
+        improver_score = round(min(100.0, max(30.0, 50.0 + (profit_factor_oos * 18.0))), 1)
         improver_analysis = {
             "agent": "Improver Agent (⚡)",
             "role": "Mutación Genética & Propuestas de Mejora",
@@ -386,35 +389,38 @@ class SemanticQuantEngine:
             ],
             "expected_sharpe_delta": "+0.18 DSR",
             "mutation_readiness": "READY_FOR_EVALUATION",
+            "improver_score": improver_score,
         }
 
+        regime_fit = float(regime_data.get("compatibility_score", 75.0))
         regime_eval = {
             "agent": "Regime Analyst (📊)",
             "role": "Alineación de Régimen de Volatilidad",
             "color": "#a78bfa",
             "findings": [
                 f"Régimen Detectado: {regime_data['detected_regime']} (ADX {regime_data['adx_strength']}).",
-                f"Alineación Estructural: {regime_data['compatibility_score']}% de compatibilidad de reglas.",
+                f"Alineación Estructural: {regime_fit}% de compatibilidad de reglas.",
                 f"Recomendación de Posición: {regime_data['sizing_recommendation']}",
             ],
-            "regime_fit_pct": regime_data["compatibility_score"],
+            "regime_fit_pct": regime_fit,
         }
 
+        survival_score = float(stress_data.get("monte_carlo_burst_survival_pct", 85.0))
         adversarial_eval = {
             "agent": "Adversarial Researcher (⚔️)",
             "role": "Inyección de Fricción & Ruido",
             "color": "#fbbf24",
             "findings": [
                 f"Prueba de Fricción (+5 bps + 1 tick slippage): Profit Factor estresado {stress_data['stressed_profit_factor']}.",
-                f"Monte Carlo Ruin Stress: {stress_data['monte_carlo_burst_survival_pct']}% de supervivencia en rachas consecutivas.",
+                f"Monte Carlo Ruin Stress: {survival_score}% de supervivencia en rachas consecutivas.",
                 f"Veredicto de Estrés: {stress_data['verdict']}.",
             ],
-            "survival_score": stress_data["monte_carlo_burst_survival_pct"],
+            "survival_score": survival_score,
         }
 
-        # Consensus score calculation
+        # Consensus score calculation 100% dinámico desde los 5 componentes
         consensus_score = round(
-            (92 * 0.2 + 95 * 0.3 + 90 * 0.2 + regime_data["compatibility_score"] * 0.15 + stress_data["monte_carlo_burst_survival_pct"] * 0.15),
+            (structural_score * 0.25 + curvefit_score * 0.25 + improver_score * 0.20 + regime_fit * 0.15 + survival_score * 0.15),
             1,
         )
 

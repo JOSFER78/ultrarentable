@@ -25,13 +25,13 @@ SCAN_DIRS = [
     ROOT / "contracts",
 ]
 
-# Literales de datos falsos eliminados en FASE 1 (regresión si reaparecen)
+# Literales de datos falsos eliminados (regresión si reaparecen)
 BANNED_SUBSTRINGS = [
     "78813", "610531", "255906", "109674", "48744", "21325", "609305",
-    "1.103.251", "9.882", "14210", "78.813",
+    "1.103.251", "9.882", "14210", "78.813", "612397", "428600",
 ]
 
-# Patrones regex de fabricación de métricas
+# Patrones regex de fabricación de métricas y datos sintéticos
 BANNED_PATTERNS = [
     (re.compile(r"sharpe_ratio\s*=\s*2\.1\b"), "sharpe literal 2.1"),
     (re.compile(r"min\(4\.0\s*,\s*\w+\)"), "recorte de DD a 4%"),
@@ -49,6 +49,12 @@ BANNED_PATTERNS = [
     (re.compile(r'\{"time": "2026-01-01", "open": 100\.0'), "vela sintética del adaptador"),
     (re.compile(r"datasets_audited\"?:\s*\d+"), "telemetría de gate declarada a mano"),
     (re.compile(r'"status":\s*"ONLINE · MONITORIZANDO"'), "estado de gate decorativo"),
+    (re.compile(r"is_pf\s*=\s*1\.6\b"), "profit factor hardcodeado 1.6"),
+    (re.compile(r'BULL["\']?:\s*\w+\s*\*\s*0\.6'), "fabricación sintética de régimen BULL * 0.6"),
+    (re.compile(r'BEAR["\']?:\s*\w+\s*\*\s*0\.3'), "fabricación sintética de régimen BEAR * 0.3"),
+    (re.compile(r'EMA_DONCHIAN'), "firma de regla inventada EMA_DONCHIAN"),
+    (re.compile(r"expected_sharpe\s*=\s*2\.15"), "sharpe mock 2.15"),
+    (re.compile(r"diversification_ratio\s*=\s*1\.38"), "ratio diversificación mock 1.38"),
 ]
 
 EXCLUDE_PARTS = {"node_modules", ".git", "__pycache__", "tests"}

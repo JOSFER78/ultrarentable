@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR_ULTRA_SI_4H_g07",
   "run_id": "run_UR_ULTRA_SI_4H",
   "strategy_id": "UR_ULTRA_SI_4H",
-  "strategy_snapshot_hash": "49ffe41064001eb0d98d4612e941b5ca534d117e4fd4911fd7eb53efe272fc67",
+  "strategy_snapshot_hash": "333926d55158f51d2e3eae8cc1605c149cefdf33acbca788f54c39adb9910331",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "231e061d19927210d91907c30f83c75c64401a2b07b3fe1091c74754d77799b7",
-  "output_hash": "e35af97937c89e8c4ab387a18bbb3fd105c388e8c4bf7eb8d3d9b452fa4b26e7",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -1198.99%)",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "31f135a56c56024630925bc7a74ca89e62135e530e29fd0912b754940913e9cc",
+  "output_hash": "a6a42c3d4cd3c4f01bbd0e030eafbb621c9c9b4c97c864385f86fa7579e3424e",
+  "status": "PASSED",
+  "score": 55.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +8505.26%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 210,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 127
     },
     "regime_trades_count": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
+      "BULL_TREND": 3,
+      "BEAR_TREND": 2,
       "CHOP_RANGING": 0,
-      "HIGH_VOLATILITY": 1
+      "HIGH_VOLATILITY": 10
     },
     "regime_return_pct": {
-      "BULL_TREND": 0.0,
-      "BEAR_TREND": 0.0,
+      "BULL_TREND": -132.48,
+      "BEAR_TREND": -178.9,
       "CHOP_RANGING": 0.0,
-      "HIGH_VOLATILITY": -1198.99
+      "HIGH_VOLATILITY": 8816.64
     },
-    "regimes_profitable_count": 0,
-    "regimes_active_count": 1,
-    "total_oos_return_pct": -1198.99
+    "regimes_profitable_count": 1,
+    "regimes_active_count": 3,
+    "total_oos_return_pct": 8505.26
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T19:17:02.436062+00:00"
+  "created_at_utc": "2026-08-23T23:21:51.388327+00:00"
 }

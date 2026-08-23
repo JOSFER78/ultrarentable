@@ -116,19 +116,32 @@ class ModularValidationPipeline:
             all_passed = False
             failed_gate = failed_gate or 3
 
-        # Gate 04: Walk Forward Efficiency
-        is_pf = 1.6  # Default or calculated
-        oos_pf = g2_res.profit_factor
-        g4_res = self.g4.evaluate(is_pf, oos_pf)
+        # Gate 04: Walk Forward Efficiency (Calculado 100% real desde trades IS)
+        if not raw_trades_is:
+            g4_passed = False
+            g4_errors = ["RECHAZADO / BLOCKED: Sin trades In-Sample (IS) para calcular WFE real (CERO MOCKS)."]
+            wfe_val = 0.0
+            deg_val = 100.0
+        else:
+            pos_is = sum(t for t in raw_trades_is if t > 0)
+            neg_is = abs(sum(t for t in raw_trades_is if t < 0))
+            is_pf = (pos_is / max(1e-6, neg_is)) if neg_is > 0 else (2.0 if pos_is > 0 else 0.0)
+            oos_pf = g2_res.profit_factor
+            g4_res = self.g4.evaluate(is_pf, oos_pf)
+            g4_passed = g4_res.passed
+            g4_errors = g4_res.error_reasons
+            wfe_val = g4_res.walk_forward_efficiency
+            deg_val = g4_res.degradation_pct
+
         reports.append(GateExecutionReport(
             gate_id=4,
             gate_name="Walk-Forward Efficiency & OOS",
-            passed=g4_res.passed,
+            passed=g4_passed,
             execution_time_ms=0.5,
-            details={"wfe": g4_res.walk_forward_efficiency, "degradation": g4_res.degradation_pct},
-            rejection_reasons=g4_res.error_reasons,
+            details={"wfe": wfe_val, "degradation": deg_val},
+            rejection_reasons=g4_errors,
         ))
-        if not g4_res.passed:
+        if not g4_passed:
             all_passed = False
             failed_gate = failed_gate or 4
 
@@ -160,18 +173,26 @@ class ModularValidationPipeline:
             all_passed = False
             failed_gate = failed_gate or 6
 
-        # Gate 07: Market Regime Coverage
-        regime_pnls = regime_pnls or {"BULL": g2_res.net_profit_usd * 0.6, "BEAR": g2_res.net_profit_usd * 0.3, "CHOP": g2_res.net_profit_usd * 0.1}
-        g7_res = self.g7.evaluate(regime_pnls)
+        # Gate 07: Market Regime Coverage (CERO MOCKS: Requiere desglose empírico real)
+        if not regime_pnls:
+            g7_passed = False
+            g7_errors = ["RECHAZADO / BLOCKED: Sin datos reales de régimen (BULL/BEAR/CHOP) — Prohibido inventar distribución."]
+            g7_details = {"score": 0.0, "catastrophic": ["SIN_DATOS_REGIMEN"]}
+        else:
+            g7_res = self.g7.evaluate(regime_pnls)
+            g7_passed = g7_res.passed
+            g7_errors = g7_res.error_reasons
+            g7_details = {"score": g7_res.regime_alignment_score, "catastrophic": g7_res.catastrophic_regimes}
+
         reports.append(GateExecutionReport(
             gate_id=7,
             gate_name="Market Regime Coverage",
-            passed=g7_res.passed,
+            passed=g7_passed,
             execution_time_ms=0.5,
-            details={"score": g7_res.regime_alignment_score, "catastrophic": g7_res.catastrophic_regimes},
-            rejection_reasons=g7_res.error_reasons,
+            details=g7_details,
+            rejection_reasons=g7_errors,
         ))
-        if not g7_res.passed:
+        if not g7_passed:
             all_passed = False
             failed_gate = failed_gate or 7
 
@@ -189,17 +210,26 @@ class ModularValidationPipeline:
             all_passed = False
             failed_gate = failed_gate or 8
 
-        # Gate 09: Novelty & Anti-Overfit
-        g9_res = self.g9.evaluate(strategy_name=name, rules_text=rules_text or f"{symbol}_{timeframe}_EMA_DONCHIAN", symbol=symbol, timeframe=timeframe)
+        # Gate 09: Novelty & Anti-Overfit (CERO MOCKS: Requiere AST o reglas reales)
+        if not rules_text:
+            g9_passed = False
+            g9_errors = ["RECHAZADO / BLOCKED: Sin reglas ni AST formal para auditoría de novedad contra FailureKnowledgeDB."]
+            g9_details = {"novelty": 0.0, "sig": "NO_RULES_PROVIDED"}
+        else:
+            g9_res = self.g9.evaluate(strategy_name=name, rules_text=rules_text, symbol=symbol, timeframe=timeframe)
+            g9_passed = g9_res.passed
+            g9_errors = g9_res.error_reasons
+            g9_details = {"novelty": g9_res.novelty_score, "sig": g9_res.structural_signature}
+
         reports.append(GateExecutionReport(
             gate_id=9,
             gate_name="Novelty & FailureKnowledgeDB",
-            passed=g9_res.passed,
+            passed=g9_passed,
             execution_time_ms=0.5,
-            details={"novelty": g9_res.novelty_score, "sig": g9_res.structural_signature},
-            rejection_reasons=g9_res.error_reasons,
+            details=g9_details,
+            rejection_reasons=g9_errors,
         ))
-        if not g9_res.passed:
+        if not g9_passed:
             all_passed = False
             failed_gate = failed_gate or 9
 
@@ -225,6 +255,35 @@ class ModularValidationPipeline:
         if not g10_res.passed:
             all_passed = False
             failed_gate = failed_gate or 10
+
+        # Gate 11: Ensemble Synergy & Event Cross-Validation (Oficialmente encadenado)
+        g11_res = self.g11.evaluate(
+            route=route,
+            strategies=[{
+                "strategy_id": strategy_id,
+                "name": name,
+                "symbol": symbol,
+                "timeframe": timeframe,
+                "profit_factor": g2_res.profit_factor,
+                "max_dd": g2_res.max_drawdown_pct,
+            }],
+        )
+        reports.append(GateExecutionReport(
+            gate_id=11,
+            gate_name="Ensemble Synergy & Event Cross-Validation",
+            passed=g11_res.passed,
+            execution_time_ms=2.5,
+            details={
+                "cross_correlation_avg": g11_res.cross_correlation_avg,
+                "diversification_ratio": g11_res.diversification_ratio,
+                "combined_sharpe": g11_res.combined_sharpe_ratio,
+                "verdict": g11_res.consensus_verdict,
+            },
+            rejection_reasons=g11_res.error_reasons,
+        ))
+        if not g11_res.passed:
+            all_passed = False
+            failed_gate = failed_gate or 11
 
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
         return FullValidationReport(

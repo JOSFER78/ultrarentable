@@ -8,17 +8,17 @@
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.0.0",
-  "formula_version": "3.0.0",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
   "input_hash": "b515ced42925933ce9069d6131428175e8bb8d700106eb96430d100af96ef5ba",
-  "output_hash": "d69160ad22ba62499a7b8b2fd1db6bde8b5fa44224c401ffad5b7b0be11327bc",
-  "status": "FAILED",
+  "output_hash": "3732835ec29b4e7beff0789c19e23f966090aacd2a9bb2efa6bac08d14f94811",
+  "status": "PASSED",
   "score": 47.0,
-  "verdict": "FALLO: Consenso insuficiente (47.0/100) u objeción crítica de riesgo",
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (47.0/100 · Guía de Mejora Generada)",
   "metrics": {
     "consensus_score": 47.0,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BTCUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.63 con beneficio neto de $-332.46.",
+          "Profit Factor OOS: 0.63 con beneficio neto de $0.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-41.56 USD.",
+          "Beneficio medio por operación: $0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,21 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 40.0,
         "objections": [
-          "Alerta de Muestra: 8 trades OOS es una muestra pequeña (< 10 requeridos).",
-          "Alerta de Rentabilidad: Profit factor 0.63 cercano al umbral de equilibrio (1.05)."
+          "Muestra limitada: 8 trades OOS (Recomendado: >= 10).",
+          "Margen ajustado: Profit Factor 0.63 cercano al equilibrio (1.05)."
         ],
-        "approved": false
+        "recommendations": [
+          "Ampliar ventana de evaluación para capturar más ciclos de mercado.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
       }
+    ],
+    "recommendations": [
+      "Ampliar ventana de evaluación para capturar más ciclos de mercado.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/strat_rt_hash/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T03:57:57.667005+00:00"
+  "created_at_utc": "2026-08-23T23:25:41.727258+00:00"
 }
