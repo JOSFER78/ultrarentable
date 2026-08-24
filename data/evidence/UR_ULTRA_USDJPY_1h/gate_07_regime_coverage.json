@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1h_g07",
   "run_id": "run_UR_ULTRA_USDJPY_1h",
   "strategy_id": "UR_ULTRA_USDJPY_1h",
-  "strategy_snapshot_hash": "ae5fc1db30281ce9f1077bd246f6a8b7ed81757c7d13a18d0364956cad8f01bf",
+  "strategy_snapshot_hash": "00932742f18190a3179c52e385dddcabee8ed9ae075de795c0cd41a93ad80ea7",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "a9f217532c3d772a437c3bfa3089ef5754b32ec63460784291675b278d145893",
-  "output_hash": "d571fa5d2b7e12806d3d9e9254f5fb126811b370fcaeece90a18153a28739fc0",
+  "input_hash": "a159cc8ea0a5b57e6f7dd687a750b7bbef9c51090139195d88e1e7e7beb6feff",
+  "output_hash": "8d666ec0dfcc6e1870cda07345a13e8d33742d40482e8625f6ee88c237cc3a32",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -480.60%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -484.74%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 132,
+      "CHOP_RANGING": 130,
       "HIGH_VOLATILITY": 27
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -408.35,
-      "HIGH_VOLATILITY": -72.25
+      "CHOP_RANGING": -377.47,
+      "HIGH_VOLATILITY": -107.27
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -480.6
+    "total_oos_return_pct": -484.74
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T18:42:27.714529+00:00"
+  "created_at_utc": "2026-08-24T18:59:39.784555+00:00"
 }

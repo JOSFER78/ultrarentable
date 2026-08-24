@@ -8,9 +8,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 
-CURRENT_ENGINE_VERSION = "5.3.0"
-CURRENT_ENGINE_NAME = "Ultrarentable V5.3.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)"
-CURRENT_VALIDATION_PIPELINE_VERSION = "5.3.0"
+CURRENT_ENGINE_VERSION = "5.4.0"
+CURRENT_ENGINE_NAME = "Ultrarentable V5.4.0 (Multi-Phase Lineage Governance, Zero-Leakage Research Lab, 24/7 Durable Job Queue & Strictly Certified Views 5/6)"
+CURRENT_VALIDATION_PIPELINE_VERSION = "5.4.0"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
@@ -157,8 +157,8 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
         "version": "5.3.0",
         "name": "Ultrarentable V5.3.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)",
         "released_at": "2026-08-23T18:55:31.552144+00:00",
-        "status": "CURRENT_RECOMMENDED",
-        "status_label": "Actual / Certificada",
+        "status": "INTERMEDIATE",
+        "status_label": "Intermedia (5.3.0)",
         "description": "Versi??n Mayor 5.3.0: Soporte multitemporal (1m, 5m, 15m, 1h, 4h) en 22 activos globales para Ultra y 15 activos permitidos por Prop Firms para Fondeo. Sizing adaptativo de microcontratos CME ($250 USD riesgo) y cosecha irrevocable a B??veda Spot USDT.",
         "ruleset_hash": "aec1453fb4a880b3247d8fb57a6374aa",
         "git_commit": "1cd7516e57e2268ae4aa31db0af3c659eec742b8",
@@ -167,6 +167,24 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
             "Integraci??n de Sizing CME Micros ($250 USD riesgo) para paso ??gil de ex??menes de fondeo en 5-8 d??as.",
             "Auditor??a forense de Drawdown y verificaci??n de 0% de ruina en todas las estrategias certificadas.",
             "Gr??fica de equidad real y curva de drawdown submarino interactiva en Quality Gates."
+        ]
+    },
+    {
+        "version": "5.4.0",
+        "name": "Ultrarentable V5.4.0 (Multi-Phase Lineage Governance, Zero-Leakage Research Lab, 24/7 Durable Job Queue & Strictly Certified Views 5/6)",
+        "released_at": "2026-08-24T19:02:39.021714+00:00",
+        "status": "CURRENT_RECOMMENDED",
+        "status_label": "Actual / Certificada",
+        "description": "Versi\u00f3n 5.4.0: Gobernanza estricta de versiones SSOT, revalidaci\u00f3n y certificaci\u00f3n obligatoria de estrategias con Merkle root, filtrado exclusivo de estrategias aprobadas en Vistas 5 y 6 (ocultando mutaciones hacia el Research Lab), y unificaci\u00f3n de badges en Frontend.",
+        "ruleset_hash": "25048522fa052ca2617c6030db897c5b",
+        "git_commit": "265ddfc9cda6d4445fcf97f46736c5847cdf5f72",
+        "changes": [
+            "Incremento Decimal de Versi\u00f3n SSOT a v5.4.0 (Gobernanza Can\u00f3nica Unificada en Backend y Frontend).",
+            "Aislamiento Estricto en Vista 5 (Estrategias Aprobadas): Exposici\u00f3n exclusiva de estrategias con certificaci\u00f3n 11/11 Gates bajo v5.4.0 y Merkle root verificado.",
+            "Aislamiento Estricto en Vista 6 (Meta-Estrategia & Cartera): Ensamblaje restringido a estrategias 100% aprobadas de Vista 5 (0% estrategias en mutaci\u00f3n/investigaci\u00f3n).",
+            "Segregaci\u00f3n Autom\u00e1tica de Fallos: Estrategias en re-entrenamiento o con compuertas falladas se a\u00edslan en el Research Lab (Vista 4) y quedan 100% ocultas de producci\u00f3n.",
+            "Unificaci\u00f3n de Badges Din\u00e1micos en Frontend Next.js eliminando cadenas residuales obsoletas.",
+            "Contratos Can\u00f3nicos Inmutables y Registro de Linaje Criptogr\u00e1fico en SQLite WAL."
         ]
     }
 ]
@@ -192,7 +210,7 @@ def stamp_version_metadata(payload: Dict[str, Any], version: Optional[str] = Non
     payload["engine_name"] = CURRENT_ENGINE_NAME
     payload["engine_ruleset_hash"] = next(
         (v["ruleset_hash"] for v in VERSION_HISTORY if v["version"] == ver),
-        "aec1453fb4a880b3247d8fb57a6374aa",
+        "25048522fa052ca2617c6030db897c5b",
     )
     payload["version_stamped_at"] = datetime.now(timezone.utc).isoformat()
     return payload

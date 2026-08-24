@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_EURUSD_4h_g10",
   "run_id": "run_UR_ULTRA_EURUSD_4h",
   "strategy_id": "UR_ULTRA_EURUSD_4h",
-  "strategy_snapshot_hash": "a73cdddbc0727ec11d8712323ec9f433dc1d9e00d5ea47ab8b69e07d03ad045c",
+  "strategy_snapshot_hash": "78dc1e49cd9a620513cb37011e3cee9e9edf130fd8382599efa9ff3bc4230076",
   "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "5b76c8c9f6a1f11bbe61405c358f3033dae6bd21df88d5fb27ca49617d4c8d4d",
-  "output_hash": "ada0a149d30a2b646caad3c40b47ed2802203b159dae88a54a51c30341f472a0",
+  "input_hash": "6d40da3a5f3f47a634652895acd58a9f25656e91a91a13da61a3637c765ae9f6",
+  "output_hash": "30c47baff214252dc385a690c6f05ba57c7aa2d003267c30c6f6a568c6bd7a1e",
   "status": "FAILED",
   "score": 30.9,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (30.9/100)",
@@ -26,7 +26,7 @@
         "score": 42.4,
         "findings": [
           "Activo y Timeframe: EURUSD (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.72 con beneficio neto de $-970.07.",
+          "Profit Factor OOS: 0.72 con beneficio neto de $-969.68.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 240 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 239 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.04 USD.",
+          "Beneficio medio por operación: $-4.06 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_EURUSD_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T18:43:14.195617+00:00"
+  "created_at_utc": "2026-08-24T18:59:54.487170+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTCUSDT_1h_g11",
   "run_id": "run_UR_ULTRA_BTCUSDT_1h",
   "strategy_id": "UR_ULTRA_BTCUSDT_1h",
-  "strategy_snapshot_hash": "16892c55729cc4c66fa58d8d0f24af8febd460adce570a19aad6128532c56340",
+  "strategy_snapshot_hash": "cec6e22469b42f50b683430b135243e37c9d45b2cf674459530abfa965a0caba",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "a19dcc0d763ec16c01ddd1b46666e1392300e77c6c3ecfdc32e342ceff22bf1a",
-  "output_hash": "c31d9f3f1063a83fa05bb0ac334c0110426204c618582b9bda654860674fdbf8",
+  "input_hash": "196e2a307a21a5a4b0f3701bc0703ddea8818ef710b4d817a171963a8ea5e09c",
+  "output_hash": "aa35ed09c6e947578451aa8aa5ce00a3edd4b4cc76f0e6f2a17eb8b078b1172c",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -61.96,
-    "peak_equity_usd": 133357.36,
-    "min_equity_usd": -61.96,
+    "final_equity_usd": -100.37,
+    "peak_equity_usd": 170013.69,
+    "min_equity_usd": -100.37,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 233.3,
-    "execution_events_count": 263
+    "total_funding_cost_usd": 267.05,
+    "execution_events_count": 257
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTCUSDT_1h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-24T18:33:09.448554+00:00"
+  "created_at_utc": "2026-08-24T18:49:27.711963+00:00"
 }

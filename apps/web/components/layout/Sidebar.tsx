@@ -173,7 +173,7 @@ export default function Sidebar() {
                   whiteSpace: "nowrap",
                 }}
               >
-                QUANT LAB V3.2 (24/7 AUTO)
+                QUANT LAB V5.4 (24/7 AUTO)
               </span>
             </div>
           )}

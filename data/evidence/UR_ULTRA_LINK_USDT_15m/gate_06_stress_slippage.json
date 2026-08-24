@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15m_g06",
   "run_id": "run_UR_ULTRA_LINK_USDT_15m",
   "strategy_id": "UR_ULTRA_LINK_USDT_15m",
-  "strategy_snapshot_hash": "065ee0ab5b100999fb8dbafd5fe679c2282c87ff8196496bedfce31c6367408c",
+  "strategy_snapshot_hash": "e77c0fa503c1fefd226e92ee8223aa216da080bf3bb148bb7058b3fbb889086a",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "6da091af20f7ddc2056dc3836acee05cd43505b3a1bc3117d8371a42cac5e671",
-  "output_hash": "bb982e5141fe1ad3640f348972b392bca1cdf30541b14fe2a64ba4c788d621f1",
+  "input_hash": "7543d00d87df31c9010effe6c013624bcffd67a37c8e7dbad5d9563bb6261181",
+  "output_hash": "0c900cee00d40f9afb936ac9c7bce2541b12ec7f3df4d54aaea1ed2e30e44a69",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -25,7 +25,7 @@
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.83,
+        "stressed_net_pnl_usd": -1.82,
         "stressed_profit_factor": 0.44,
         "survived": false
       },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15m/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-24T18:42:00.106131+00:00"
+  "created_at_utc": "2026-08-24T18:59:16.616919+00:00"
 }

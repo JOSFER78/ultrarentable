@@ -2,19 +2,19 @@
   "evidence_id": "ev_UR-CANON-NQ-001_g07",
   "run_id": "run_UR-CANON-NQ-001",
   "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "e10361168a033dfc1f01994db3764831e98cbd22f24ecec9c1fdef2ce6ccf94e",
+  "strategy_snapshot_hash": "06bca8a789530993e44182f5e4f85a2fb0af1eaa78b5fff4f45b0dc2b53e7bac",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "5678558cc5f2e80ef2409a30c09e977cb341cc98d3421ba9619f2d070a84d5ad",
-  "output_hash": "b7543549a72bf089ada7be048b80e6cc9693576779332e9140d5c9eccb865014",
+  "engine_version": "5.4.0",
+  "formula_version": "5.4.0",
+  "input_hash": "9066ee927d280e6c26e2ecd1fa745bb1cca870c378823a0e9552f31d262d6195",
+  "output_hash": "970b71100df9b8a75bfae6c1eb651063906162f2b0ca2ffaff0c2ef5f5f48b7d",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8050.21%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7232.22%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
-      "BULL_TREND": 20,
+      "BULL_TREND": 19,
       "BEAR_TREND": 30,
-      "CHOP_RANGING": 106,
+      "CHOP_RANGING": 107,
       "HIGH_VOLATILITY": 83
     },
     "regime_return_pct": {
-      "BULL_TREND": 275.51,
-      "BEAR_TREND": 1328.39,
-      "CHOP_RANGING": 2074.92,
-      "HIGH_VOLATILITY": 4371.39
+      "BULL_TREND": 289.98,
+      "BEAR_TREND": 1709.57,
+      "CHOP_RANGING": 2096.66,
+      "HIGH_VOLATILITY": 3136.01
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 8050.21
+    "total_oos_return_pct": 7232.22
   },
   "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T18:43:02.877073+00:00"
+  "created_at_utc": "2026-08-24T19:26:17.534666+00:00"
 }

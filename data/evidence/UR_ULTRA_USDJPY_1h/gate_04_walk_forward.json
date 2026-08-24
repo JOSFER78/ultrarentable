@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1h_g04",
   "run_id": "run_UR_ULTRA_USDJPY_1h",
   "strategy_id": "UR_ULTRA_USDJPY_1h",
-  "strategy_snapshot_hash": "ae5fc1db30281ce9f1077bd246f6a8b7ed81757c7d13a18d0364956cad8f01bf",
+  "strategy_snapshot_hash": "00932742f18190a3179c52e385dddcabee8ed9ae075de795c0cd41a93ad80ea7",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,65 +10,65 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "86b778befc077a15321d79a33bbc3a3e10ad6eb440af9fc284b6154d2886b787",
-  "output_hash": "7c4a16bf4f7cb9779f1f58ebe4a65c260b425cd8bc9387424866504ecbfb6713",
+  "input_hash": "a42d40f6ce79c91e83d29d6dbd5c8964001ca818bcc9d1acbe2375e688e03f07",
+  "output_hash": "7078086d8a408fdcde412b3a1ea4c904bb59fc868c4ac8658e917f00b93dfd9a",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 2.05, Consistencia: 40.0%)",
+  "score": 78.8,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.05, Consistencia: 40.0%)",
   "metrics": {
-    "total_trades_analyzed": 219,
+    "total_trades_analyzed": 220,
     "windows_count": 5,
-    "walk_forward_efficiency": 2.05,
+    "walk_forward_efficiency": 1.05,
     "oos_consistency_pct": 40.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
         "is_trades_count": 30,
-        "oos_trades_count": 13,
-        "pf_is": 0.75,
-        "pf_oos": 1.04,
-        "net_profit_oos_usd": 0.04,
-        "wfe": 1.39
+        "oos_trades_count": 14,
+        "pf_is": 1.25,
+        "pf_oos": 0.41,
+        "net_profit_oos_usd": -0.7,
+        "wfe": 0.33
       },
       {
         "window_index": 2,
         "is_trades_count": 30,
-        "oos_trades_count": 13,
-        "pf_is": 0.89,
-        "pf_oos": 0.78,
-        "net_profit_oos_usd": -0.16,
-        "wfe": 0.88
+        "oos_trades_count": 14,
+        "pf_is": 0.9,
+        "pf_oos": 1.44,
+        "net_profit_oos_usd": 0.28,
+        "wfe": 1.6
       },
       {
         "window_index": 3,
         "is_trades_count": 30,
-        "oos_trades_count": 13,
-        "pf_is": 0.77,
-        "pf_oos": 0.2,
-        "net_profit_oos_usd": -0.66,
-        "wfe": 0.26
+        "oos_trades_count": 14,
+        "pf_is": 0.81,
+        "pf_oos": 0.37,
+        "net_profit_oos_usd": -0.5,
+        "wfe": 0.46
       },
       {
         "window_index": 4,
         "is_trades_count": 30,
-        "oos_trades_count": 13,
-        "pf_is": 0.39,
+        "oos_trades_count": 14,
+        "pf_is": 0.18,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.54,
+        "net_profit_oos_usd": -0.63,
         "wfe": 0.0
       },
       {
         "window_index": 5,
         "is_trades_count": 30,
-        "oos_trades_count": 13,
-        "pf_is": 0.28,
-        "pf_oos": 2.16,
-        "net_profit_oos_usd": 0.51,
-        "wfe": 7.75
+        "oos_trades_count": 14,
+        "pf_is": 0.45,
+        "pf_oos": 1.27,
+        "net_profit_oos_usd": 0.13,
+        "wfe": 2.84
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T18:42:27.586247+00:00"
+  "created_at_utc": "2026-08-24T18:59:39.658213+00:00"
 }

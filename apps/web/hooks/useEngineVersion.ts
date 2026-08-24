@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getApiUrl } from "@/lib/api";
 
 export interface VersionHistoryItem {
   version: string;
@@ -34,9 +35,9 @@ export interface EngineVersionData {
 
 export function useEngineVersion() {
   const [data, setData] = useState<EngineVersionData>({
-    current_version: "3.2.0",
-    current_name: "Ultrarentable V3.2.0 (Unified Multi-Asset 6-Phase Matrix, Dynamic Semantic Reprogramming & Exact Markowitz ERC Ensembles)",
-    pipeline_version: "3.2.0",
+    current_version: "5.4.0",
+    current_name: "Ultrarentable V5.4.0 (Multi-Phase Lineage Governance, Zero-Leakage Research Lab, 24/7 Durable Job Queue & Strictly Certified Views 5/6)",
+    pipeline_version: "5.4.0",
     git_commit_short: "HEAD",
     git_branch: "main",
     history: [],
@@ -49,7 +50,8 @@ export function useEngineVersion() {
 
     async function fetchVersion() {
       try {
-        const res = await fetch("/api/v1/versions");
+        const url = typeof window !== "undefined" ? "/api/v1/versions" : getApiUrl("/api/v1/versions");
+        const res = await fetch(url, { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
           if (mounted && json.current_version) {
@@ -57,7 +59,7 @@ export function useEngineVersion() {
           }
         }
       } catch {
-        // Keep default fallback
+        // Keep default fallback v5.4.0
       } finally {
         if (mounted) setLoading(false);
       }

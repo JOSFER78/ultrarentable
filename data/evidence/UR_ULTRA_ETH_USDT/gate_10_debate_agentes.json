@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g10",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "b7014e369d866f4225a054dd9f2e913281c11db421ca19de875619b3422e54af",
+  "strategy_snapshot_hash": "7bf1fa09bcb09b259de706a15a8b571fe8261dea2fb21f6eabef01f03fe6926f",
   "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "88d913964ae171a939ac232cb010925f3a025bf619484fe6130c7b9cafdcdd55",
-  "output_hash": "30bc6c2c12ab6af30a7216bcc3628befb3c1debe200e9f5d3b1f94bdecdf9db9",
+  "input_hash": "a11537b3b0bcdaa824833be0822125f0de2fdcb560b5842bf218e1181f064706",
+  "output_hash": "8b28c6446ff16158811547cc49b047f040a3cb2910f32a6147d09e2c5cfacd0a",
   "status": "PASSED",
   "score": 49.3,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (49.3/100 · Guía de Mejora Generada)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 136 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 133 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-5.54 USD.",
+          "Beneficio medio por operación: $-5.67 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T18:42:12.198134+00:00"
+  "created_at_utc": "2026-08-24T18:59:25.985614+00:00"
 }

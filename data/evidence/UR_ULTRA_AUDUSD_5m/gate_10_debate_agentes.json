@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_5m_g10",
   "run_id": "run_UR_ULTRA_AUDUSD_5m",
   "strategy_id": "UR_ULTRA_AUDUSD_5m",
-  "strategy_snapshot_hash": "d21cb414959870ce68bd9d07d9b2a52ad1b485a115b07685f6a1ea9cf8e4337c",
+  "strategy_snapshot_hash": "121765bb9eda4af8dc742167d3f585fb6905c1da0d11f6b51cb8bc199cfe8a47",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "b2dcbafa2a2594c2a03e570e9eb5b11da5bc150d89d22533b250b181f3c464e1",
-  "output_hash": "772d1139f11bb75c8d5cef1b896499c34fcf8c71d1497146e340b6b56b9e9774",
+  "input_hash": "3fb7204485aa259a80c32ab8075ed09af1df20c9dc9b5439fb0c75e391cea254",
+  "output_hash": "1809b06199acca026daa782192608eb0c977fd16670d17cbafd97c88fd533346",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1327 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1310 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.75 USD.",
+          "Beneficio medio por operación: $-0.76 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_5m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T18:43:24.185956+00:00"
+  "created_at_utc": "2026-08-24T19:00:03.835622+00:00"
 }

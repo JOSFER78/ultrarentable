@@ -114,7 +114,7 @@ function EstrategiasHubContent() {
                 border: "1px solid rgba(99, 225, 180, 0.3)",
               }}
             >
-              SSOT v5.3.0
+              SSOT v5.4.0
             </span>
           </div>
           <p style={{ margin: 0, fontSize: "13px", color: "#94a3b8", maxWidth: "900px", lineHeight: "1.5" }}>

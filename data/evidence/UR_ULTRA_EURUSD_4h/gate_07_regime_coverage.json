@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_EURUSD_4h_g07",
   "run_id": "run_UR_ULTRA_EURUSD_4h",
   "strategy_id": "UR_ULTRA_EURUSD_4h",
-  "strategy_snapshot_hash": "a73cdddbc0727ec11d8712323ec9f433dc1d9e00d5ea47ab8b69e07d03ad045c",
+  "strategy_snapshot_hash": "78dc1e49cd9a620513cb37011e3cee9e9edf130fd8382599efa9ff3bc4230076",
   "dataset_id": "ds_trad_eurusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "7504b42d9081d3069e7c1842f65123c943b9ed44b35345f0b754f028db2e01f7",
-  "output_hash": "a3058020d910e3f10eb6f707abd391a6d3e8226964a740b03094413f8dbcfa14",
+  "input_hash": "554e748a8a4fdf8c9f1a35d71554cd51ecce50ac34fed4a8c344fc829b9410a3",
+  "output_hash": "34d5d18cfc7b1b08f0d4f0c559b3a69b262f7ca17a53da2e745ca0f3978076ae",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -181.45%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -180.06%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -144.58,
+      "CHOP_RANGING": -143.19,
       "HIGH_VOLATILITY": -36.87
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -181.45
+    "total_oos_return_pct": -180.06
   },
   "artifact_path": "data/evidence/UR_ULTRA_EURUSD_4h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T18:43:13.950222+00:00"
+  "created_at_utc": "2026-08-24T18:59:54.296751+00:00"
 }

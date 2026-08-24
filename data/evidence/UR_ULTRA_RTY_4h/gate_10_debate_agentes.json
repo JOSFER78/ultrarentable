@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_RTY_4h_g10",
   "run_id": "run_UR_ULTRA_RTY_4h",
   "strategy_id": "UR_ULTRA_RTY_4h",
-  "strategy_snapshot_hash": "d20274e71945a96684f6be590c21cd98b46d94910626d9ce8a6fe88ff2b84b51",
+  "strategy_snapshot_hash": "e681a08391b5c1c1935a59478def5dc1b4b95a0e77e96f4e63e0a7f8bad234c2",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "90356089f37be952a1719535483e6b6cbcae3e1930ef1110c83abe2fcb1391f1",
-  "output_hash": "b64d83fd1129227e47f4095574bedec5fb028de3c7bd3cc98c2c4daa71e15bc8",
+  "input_hash": "6362c614fb3c76da15169f44464f5f900fcbf874ff69ec85b891f4857006edf5",
+  "output_hash": "620000005947bb601a8e7d7ab16e9f7361f546fdc44b4b06d49a9bbdd03ad936",
   "status": "FAILED",
-  "score": 17.9,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (17.9/100)",
+  "score": 16.1,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (16.1/100)",
   "metrics": {
-    "consensus_score": 17.9,
+    "consensus_score": 16.1,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
@@ -44,9 +44,9 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 65.0,
+        "score": 55.0,
         "findings": [
-          "Muestra fuera de muestra: 13 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 11 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: LIMITADO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-76.92 USD.",
+          "Beneficio medio por operación: $-90.91 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 21.2,
+        "score": 18.8,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
           "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T18:45:18.470496+00:00"
+  "created_at_utc": "2026-08-24T19:02:01.619429+00:00"
 }

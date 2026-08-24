@@ -147,7 +147,7 @@ def list_approved_candidates(
     db: Session = Depends(get_db),
 ) -> Dict[str, Any]:
     """Retorna las estrategias candidatas reales que han superado los filtros de validación."""
-    query = db.query(CandidateModel)
+    query = db.query(CandidateModel).filter(CandidateModel.status.in_(["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS"]))
     if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
     if symbol and symbol.upper() != "ALL":

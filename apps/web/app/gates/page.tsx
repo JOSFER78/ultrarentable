@@ -58,7 +58,7 @@ export default function QualityGatesPage() {
 
   // Filtros de Hoja de Cálculo
   const [routeFilter, setRouteFilter] = useState<"ALL" | "FONDEO" | "ULTRA">("ALL");
-  const [filterStatus, setFilterStatus] = useState<"ALL" | "APPROVED_ONLY" | "INCUBATOR_ONLY">("ALL");
+  const [filterStatus, setFilterStatus] = useState<"APPROVED_ONLY">("APPROVED_ONLY");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Ordenación de columnas
@@ -82,7 +82,7 @@ export default function QualityGatesPage() {
         setLoading(true);
       }
 
-      const res = await fetch("/api/v1/candidates/summary?limit=500", { cache: "no-store" });
+      const res = await fetch("/api/v1/candidates/summary?status=APPROVED&limit=500", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         const rawList = Array.isArray(data) ? data : (data.candidates || []);
@@ -192,9 +192,8 @@ export default function QualityGatesPage() {
       if (routeFilter === "FONDEO" && s.route !== "FONDEO") return false;
       if (routeFilter === "ULTRA" && s.route !== "ULTRA") return false;
 
-      // Filtro de Aprobación
-      if (filterStatus === "APPROVED_ONLY" && !s.status.includes("APPROVED") && !s.status.includes("CERTIFIED")) return false;
-      if (filterStatus === "INCUBATOR_ONLY" && (s.status.includes("APPROVED") || s.status.includes("CERTIFIED"))) return false;
+      // Filtro Estricto: En Vista 5 SOLO se muestran estrategias 100% Aprobadas y Certificadas
+      if (!s.status.includes("APPROVED") && !s.status.includes("CERTIFIED")) return false;
 
       // Filtro de Búsqueda
       if (searchQuery.trim() !== "") {

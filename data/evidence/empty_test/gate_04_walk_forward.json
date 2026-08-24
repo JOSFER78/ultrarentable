@@ -2,24 +2,24 @@
   "evidence_id": "ev_empty_test_g04",
   "run_id": "run_empty_test",
   "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "3af744f0c1cda97b9583d7b39c9f68065252bf92887b5028f6f0ae5cf99c786e",
+  "strategy_snapshot_hash": "10148925084d38112ccbcb2c28dd2d85c5f50dab1c6739f883502d6514e47bf3",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "44bd41eb095e0c20f777f8fec92890351829a28c7051813cfe5c2de4abe63f1e",
-  "output_hash": "8d5edf52af3e030deff1d67acb179f854493422dc0630a53eb4b4084a540d190",
-  "status": "PASSED",
+  "engine_version": "5.4.0",
+  "formula_version": "5.4.0",
+  "input_hash": "a94a0b0767ab1c3570c11bd3b02ff440ddcb4dbbd946ade8c754c6d5935fa882",
+  "output_hash": "da91dfb9dc9d83366036cc32c17511ac027b956fa6069f4320d6341aec1bb87f",
+  "status": "FAILED",
   "score": 100.0,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 18.87, Consistencia: 40.0%)",
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 15.10 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 25,
+    "total_trades_analyzed": 27,
     "windows_count": 5,
-    "walk_forward_efficiency": 18.87,
-    "oos_consistency_pct": 40.0,
+    "walk_forward_efficiency": 15.1,
+    "oos_consistency_pct": 20.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
@@ -28,7 +28,7 @@
         "oos_trades_count": 2,
         "pf_is": 0.0,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.36,
+        "net_profit_oos_usd": -0.21,
         "wfe": 0.0
       },
       {
@@ -37,7 +37,7 @@
         "oos_trades_count": 2,
         "pf_is": 0.0,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.58,
+        "net_profit_oos_usd": -0.36,
         "wfe": 0.0
       },
       {
@@ -45,30 +45,30 @@
         "is_trades_count": 3,
         "oos_trades_count": 2,
         "pf_is": 0.0,
-        "pf_oos": 7.65,
-        "net_profit_oos_usd": 1.12,
-        "wfe": 76.5
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.58,
+        "wfe": 0.0
       },
       {
         "window_index": 4,
         "is_trades_count": 3,
         "oos_trades_count": 2,
-        "pf_is": 3.01,
-        "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.28,
-        "wfe": 0.0
+        "pf_is": 0.0,
+        "pf_oos": 7.55,
+        "net_profit_oos_usd": 1.1,
+        "wfe": 75.48
       },
       {
         "window_index": 5,
         "is_trades_count": 3,
         "oos_trades_count": 2,
-        "pf_is": 0.0,
-        "pf_oos": 1.78,
-        "net_profit_oos_usd": 0.15,
-        "wfe": 17.84
+        "pf_is": 2.95,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.28,
+        "wfe": 0.0
       }
     ]
   },
   "artifact_path": "data/evidence/empty_test/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T18:42:52.131839+00:00"
+  "created_at_utc": "2026-08-24T19:25:58.366067+00:00"
 }

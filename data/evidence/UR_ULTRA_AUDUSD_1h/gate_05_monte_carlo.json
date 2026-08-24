@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1h_g05",
   "run_id": "run_UR_ULTRA_AUDUSD_1h",
   "strategy_id": "UR_ULTRA_AUDUSD_1h",
-  "strategy_snapshot_hash": "b0acb4b0b31be09101b5115647c9cf568f81e1a4aced53e09ce6fec532a61ea3",
+  "strategy_snapshot_hash": "1b0fd04047545f7b2ef00f6045839cec67d64f27d535c78c3c75350b68590bff",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "5b2846406aff9db702bbb4fb93120ee584cb1a45e58e879b5bf2b754a35b51ff",
-  "output_hash": "2a19ffce1f33bf014514598c5fade037bb0c46491a866da77a4206e46b023614",
+  "input_hash": "7b45306435b0f926d8c24c901548ac26a6a25f86b00c7b744f7e2316b5038986",
+  "output_hash": "510003116ef28d0f27a99dacba0b39cf1b8f9974a187c3d11ce6872f1f85347c",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 99.9% > 1.0% (DD 95% = 99.9%)",
+  "verdict": "FALLO: Riesgo Ruina 99.8% > 1.0% (DD 95% = 99.9%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 99.9,
+    "ruin_probability_pct": 99.8,
     "drawdown_median_pct": 99.5,
     "drawdown_95th_percentile_pct": 99.9,
     "max_simulated_drawdown_pct": 100.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1h/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T18:44:09.808934+00:00"
+  "created_at_utc": "2026-08-24T19:00:48.670375+00:00"
 }

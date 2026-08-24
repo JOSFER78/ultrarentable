@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_15m_g03",
   "run_id": "run_UR_ULTRA_SUI_USDT_15m",
   "strategy_id": "UR_ULTRA_SUI_USDT_15m",
-  "strategy_snapshot_hash": "2dcb5facc52ea25790432f3fa9f8ba90fdc025f6602341a087815f9fda4a4770",
+  "strategy_snapshot_hash": "20429bbf0fc246b9e96062f38db38944ae4a53de563c35683061f9e516932732",
   "dataset_id": "ds_binance_suiusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "361110d526ccc9e34b655af85190d0016b0755bcebfec8b6ed1dc628e3f42742",
-  "output_hash": "e3044e6033150cb60cd7504d8e55c030fb6e964f0c066ed0425bbd51ac27f920",
+  "input_hash": "c237e7da4448ff1a90e69d270a68245efdd987ce07ef32bca1615c64aef3716a",
+  "output_hash": "bb577e474ec3b45edf36b400b8f53e8a4352e87a19a0145429854b12d33b2f53",
   "status": "FAILED",
   "score": 85.0,
-  "verdict": "FALLO: Muestra insuficiente (202 IS < 15 ó 17 OOS < 10)",
+  "verdict": "FALLO: Muestra insuficiente (198 IS < 15 ó 17 OOS < 10)",
   "metrics": {
-    "trades_is": 202,
+    "trades_is": 198,
     "trades_oos": 17,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
@@ -24,5 +24,5 @@
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_15m/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T18:42:20.279241+00:00"
+  "created_at_utc": "2026-08-24T18:59:33.445728+00:00"
 }

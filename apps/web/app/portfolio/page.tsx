@@ -62,7 +62,7 @@ export default function PortfolioMasterExcelPage() {
   // ── 1. FILTROS PRINCIPALES (HOJA DE CÁLCULO EXCEL) ──
   const [routeFilter, setRouteFilter] = useState<"ALL" | "FONDEO" | "ULTRA">("ALL");
   const [tierFilter, setTierFilter] = useState<"ALL" | "TIER_1" | "TIER_2" | "TIER_3">("ALL");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | "CERTIFIED" | "INCUBATING">("ALL");
+  const [statusFilter, setStatusFilter] = useState<"CERTIFIED">("CERTIFIED");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("sharpe");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -140,7 +140,7 @@ export default function PortfolioMasterExcelPage() {
   // Carga de Candidatos para el Laboratorio Opcional
   const fetchEligibleCandidates = useCallback(async () => {
     try {
-      const res = await fetch(`/api/v2/portfolio/eligible-candidates?route=${studioRoute}&min_gates=7`, { cache: "no-store" });
+      const res = await fetch(`/api/v2/portfolio/eligible-candidates?route=${studioRoute}&min_gates=10&status=APPROVED`, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         setCandidatesGrouped(data.grouped_by_asset || {});
