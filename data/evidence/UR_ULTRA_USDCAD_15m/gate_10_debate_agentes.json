@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15m_g10",
   "run_id": "run_UR_ULTRA_USDCAD_15m",
   "strategy_id": "UR_ULTRA_USDCAD_15m",
-  "strategy_snapshot_hash": "472ef47b0cb71ae94f6f81737b4a64051b669afb5b439b7ed533ad14be758faf",
+  "strategy_snapshot_hash": "3337296fb268240684314304ca63c1b36afe9375aecbcdfbba10d39565c1f159",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "8b93631c95cd1f271bab91b1c6e3eee5c4520780c305b806df9c8601125acf67",
-  "output_hash": "fefff5d97b50a533eed6b05486bbc69a47800b7850ae2f9d5f37358f3eaef358",
+  "input_hash": "b19cb817626c497e8181605939087ab1121e76cf91829961ecfc1f2f5638bb69",
+  "output_hash": "f77a0237e9697370e3026211ad3ab33d02f77ff02f19b4e9a1bcf40bb0ba5677",
   "status": "PASSED",
-  "score": 48.4,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (48.4/100 · Guía de Mejora Generada)",
+  "score": 47.9,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (47.9/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 48.4,
+    "consensus_score": 47.9,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.8,
+        "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCAD (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.24 con beneficio neto de $-629.93.",
+          "Profit Factor OOS: 0.22 con beneficio neto de $-648.12.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 70.2,
+        "score": 69.3,
         "findings": [
-          "Drawdown Máximo Observado: 63.4% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 65.2% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 181 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 172 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.48 USD.",
+          "Beneficio medio por operación: $-3.77 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,9 +64,9 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 47.7,
+        "score": 47.3,
         "objections": [
-          "Margen ajustado: Profit Factor 0.24 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.22 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:57:42.263909+00:00"
+  "created_at_utc": "2026-08-24T18:40:19.367108+00:00"
 }

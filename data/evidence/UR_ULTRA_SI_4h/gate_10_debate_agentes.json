@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_4h_g10",
   "run_id": "run_UR_ULTRA_SI_4h",
   "strategy_id": "UR_ULTRA_SI_4h",
-  "strategy_snapshot_hash": "9729b0ed88b60093a644a092cf0fa28b3bbcfb207531a8b615dcac81a6a9bdd6",
+  "strategy_snapshot_hash": "a71b8199bc1ab838b93c40d731a3ed6dae7ed71da2149633ddc87e242be7711c",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "7acae23f90c15cb60d5b95e5a2886c129143dc353c9b2ac9c3574152e6282af0",
-  "output_hash": "a6a6cd154ff01f85d1f9a9167907c22f64e8da48cfcdeb06e7ac9072d35c6051",
+  "input_hash": "a17e21f13c941e5b6cad214316e35273c6ddbbab847d85e522b2898e936dccae",
+  "output_hash": "537a4b69119326710464004888cad8f29c57a4f37ad48b774d5c85f5597620ca",
   "status": "FAILED",
-  "score": 20.7,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (20.7/100)",
+  "score": 21.0,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (21.0/100)",
   "metrics": {
-    "consensus_score": 20.7,
+    "consensus_score": 21.0,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 26.4,
+        "score": 27.3,
         "findings": [
           "Activo y Timeframe: SI (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.92 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.94 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 24.1,
+        "score": 24.3,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.92 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.94 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:57:25.254334+00:00"
+  "created_at_utc": "2026-08-24T18:40:01.101012+00:00"
 }

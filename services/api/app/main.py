@@ -19,9 +19,14 @@ from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
 from services.api.app.api.version_router import version_router
+from services.api.app.api.lineage_router import lineage_router
+from services.api.app.api.policy_router import policy_router
+from services.api.app.api.research_lab_router import research_lab_router
+from services.api.app.api.job_queue_router import job_queue_router, forward_router
 
 # Routers V1 Legados
 from services.api.app.api.routes import router as legacy_routes
+from services.api.app.api.discovery_router import router as discovery_router
 from services.api.app.api.sqx_router import sqx_router
 from services.api.app.api.providers_router import providers_router
 from services.api.app.api.candidates_router import candidates_router
@@ -132,12 +137,18 @@ app.include_router(providers_router, prefix="/api/v1", tags=["v1-providers"])
 app.include_router(candidates_router, prefix="/api/v1", tags=["v1-candidates"])
 app.include_router(execution_router, prefix="/api/v1", tags=["v1-execution"])
 app.include_router(audit_router, prefix="/api/v1", tags=["v1-audit"])
+app.include_router(discovery_router, tags=["v1-discovery"])
 app.include_router(system_health_router, prefix="/api/v1", tags=["v1-health"])
 app.include_router(research_router, tags=["v1-research"])
 app.include_router(gates_router, prefix="/api/v1", tags=["v1-gates"])
 app.include_router(firebase_sync_router, prefix="/api/v1", tags=["v1-firebase"])
 app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["v1-portfolio"])
 app.include_router(version_router, prefix="/api/v1", tags=["v1-version"])
+app.include_router(lineage_router, prefix="/api/v1", tags=["v1-lineage"])
+app.include_router(policy_router, prefix="/api/v1", tags=["v1-policy"])
+app.include_router(research_lab_router, prefix="/api/v1", tags=["v1-research-lab"])
+app.include_router(job_queue_router, prefix="/api/v1", tags=["v1-jobs"])
+app.include_router(forward_router, prefix="/api/v1", tags=["v1-forward"])
 
 # ----------------------------------------------------------------------------
 # REGISTRO DE ROUTERS V2 (CLEAN ARCHITECTURE & DUAL-TRACK)
@@ -148,6 +159,11 @@ app.include_router(semantic_router, prefix="/api/v2/semantic", tags=["v2-semanti
 app.include_router(ultra_router, prefix="/api/v2/ultra", tags=["v2-ultra"])
 app.include_router(portfolio_router, prefix="/api/v2/portfolio", tags=["v2-portfolio"])
 app.include_router(paper_router, prefix="/api/v2/paper", tags=["v2-paper"])
+app.include_router(lineage_router, prefix="/api/v2", tags=["v2-lineage"])
+app.include_router(policy_router, prefix="/api/v2", tags=["v2-policy"])
+app.include_router(research_lab_router, prefix="/api/v2", tags=["v2-research-lab"])
+app.include_router(job_queue_router, prefix="/api/v2", tags=["v2-jobs"])
+app.include_router(forward_router, prefix="/api/v2", tags=["v2-forward"])
 
 # Montar real_data_router en /api/v2 y en /api/v2/real
 app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])

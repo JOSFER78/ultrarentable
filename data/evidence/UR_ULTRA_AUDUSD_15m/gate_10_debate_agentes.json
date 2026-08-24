@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_15m_g10",
   "run_id": "run_UR_ULTRA_AUDUSD_15m",
   "strategy_id": "UR_ULTRA_AUDUSD_15m",
-  "strategy_snapshot_hash": "5206adf4705a394ab08647379b7ad572a4693335d6c54bb856107b1476ea2e74",
+  "strategy_snapshot_hash": "bec022a436800ec8466128443bbe7ec8c399657c358137d9863341cdade11bbf",
   "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "a1500d05fdef7be672ae549e9957f1d76512f5ee2b31ea9f87902023b864353c",
-  "output_hash": "a37c3b702cf1b596032dc93c7332ee9be5523b957904246c45d0cb92541e52bf",
+  "input_hash": "148d5265c978d3da5c5c7d0ebbed46de8d96b4b22d0263cb9e99d56c8c7deb20",
+  "output_hash": "1c10928b3f1068ce05028e5fc94642c9e562c4c909fb0f582d28060df28d6f19",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.19 con beneficio neto de $-978.14.",
+          "Profit Factor OOS: 0.17 con beneficio neto de $-984.94.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 97.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 98.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 435 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 445 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.25 USD.",
+          "Beneficio medio por operación: $-2.21 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,8 +66,8 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (97.9%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.19 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (98.5%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.17 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_15m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:54:58.475389+00:00"
+  "created_at_utc": "2026-08-24T18:37:30.648552+00:00"
 }

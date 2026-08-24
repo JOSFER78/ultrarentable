@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_4h",
   "strategy_id": "UR_ULTRA_DOGE_USDT_4h",
-  "strategy_snapshot_hash": "46ded8ecaa2b39aa87099e59775b7dfb36b8ead0c33971ca4f64096d2ece23a3",
+  "strategy_snapshot_hash": "45649517a1b025aa0651e136597977365469df32df306983a34f42a73936a2f1",
   "dataset_id": "ds_binance_dogeusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c09795dea23037dd0a83d8fe54dbf5aa534c2cf6b9e71e7c40f1311bc722fa52",
-  "output_hash": "783e53cb8fc3dfe922856a0b47acb65fab0eafddb6427a87aec55bac97e75b1e",
+  "input_hash": "28748ac3029336349170b3180d117ad51981036cbef187e903e40e6c7e4a7d50",
+  "output_hash": "441a15fab4f5be2c275d87ac22509ba97ccee9f24673287866ab454ac2bd9ecd",
   "status": "PASSED",
-  "score": 91.4,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (91.4/100 · Guía de Mejora Generada)",
+  "score": 91.1,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (91.1/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 91.4,
+    "consensus_score": 91.1,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 100.0,
         "findings": [
           "Activo y Timeframe: DOGE (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 3.59 con beneficio neto de $1020687.23.",
+          "Profit Factor OOS: 3.58 con beneficio neto de $877564.51.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 74.5,
+        "score": 73.7,
         "findings": [
-          "Drawdown Máximo Observado: 54.2% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 55.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 175 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 174 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $5832.50 USD.",
+          "Beneficio medio por operación: $5043.47 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 93.6,
+        "score": 93.4,
         "objections": [
           "Cero objeciones críticas: Hipótesis robusta respaldada por evidencia empírica."
         ],
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:51:03.827173+00:00"
+  "created_at_utc": "2026-08-24T18:33:59.279585+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_ES_15m_g07",
   "run_id": "run_UR_FONDEO_ES_15m",
   "strategy_id": "UR_FONDEO_ES_15m",
-  "strategy_snapshot_hash": "365a730cf40af37d41fbfb9e8c93075d9935a68effcd135664e4985d44f30e2f",
+  "strategy_snapshot_hash": "570e875d58fa2aec2ab6e4bb01529389a150a1173d56e451f101c5a034823b81",
   "dataset_id": "ds_trad_es_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "4e8f3dade3e20e0a6c39a5f8b243e13c6300c9e1db21d960762a54d9e1cd7146",
-  "output_hash": "1108dbae822f17bc06c055140f6a2efd95493fbeff3998f3b6c98b87b01ee7b2",
+  "input_hash": "024b67c749b258a5cf26f359292e54c322c2c5f5f3f8a161db813a161f9e6823",
+  "output_hash": "d02f5d339316a0f8cf1cc1dda39b7ce5ae96683a75a438c177cdbe484aaf875f",
   "status": "PASSED",
   "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +0.08%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +0.64%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 9,
+      "CHOP_RANGING": 8,
       "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 1.7,
-      "HIGH_VOLATILITY": -1.62
+      "CHOP_RANGING": 2.38,
+      "HIGH_VOLATILITY": -1.74
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 0.08
+    "total_oos_return_pct": 0.64
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_15m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:57:17.998293+00:00"
+  "created_at_utc": "2026-08-24T18:39:54.030920+00:00"
 }

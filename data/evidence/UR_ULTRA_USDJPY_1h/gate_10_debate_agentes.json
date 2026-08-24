@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1h_g10",
   "run_id": "run_UR_ULTRA_USDJPY_1h",
   "strategy_id": "UR_ULTRA_USDJPY_1h",
-  "strategy_snapshot_hash": "954b212a5441f072aaf7fb99b2b6710b0d92eed00ef658b593661f54ebe2dc21",
+  "strategy_snapshot_hash": "ae5fc1db30281ce9f1077bd246f6a8b7ed81757c7d13a18d0364956cad8f01bf",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "09871c44bc9b0afb9144b822dbb32ac1933290b1d46490fbec3d3a00fb2cdaea",
-  "output_hash": "b7e0df542322a18c5b2e452b0f7fc3793cb1d25ae30fd28e5094f847002889c3",
+  "input_hash": "d53eb63ce15a22f48a2256eecc7111822a4d519a68f96ead86ff681ff2962321",
+  "output_hash": "95a04aaf7a567171e1490e2354fc7f685077d4d7eec802019d04c56e3040b90b",
   "status": "FAILED",
-  "score": 30.8,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (30.8/100)",
+  "score": 32.0,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (32.0/100)",
   "metrics": {
-    "consensus_score": 30.8,
+    "consensus_score": 32.0,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 42.0,
+        "score": 46.0,
         "findings": [
           "Activo y Timeframe: USDJPY (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.71 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.80 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 383 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 378 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.61 USD.",
+          "Beneficio medio por operación: $-2.65 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 35.5,
+        "score": 36.5,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.71 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.80 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T17:00:01.770523+00:00"
+  "created_at_utc": "2026-08-24T18:42:28.645829+00:00"
 }

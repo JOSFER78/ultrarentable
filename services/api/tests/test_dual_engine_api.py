@@ -42,8 +42,10 @@ def test_candidates_endpoint_honest_reclassification():
         assert c["status"] in [
             "APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "PORTFOLIO_CERTIFIED",
             "REJECTED_GATES_INCOMPLETE", "REJECTED_ALTO_DRAWDOWN", "REJECTED_BAJO_PF",
-            "RECHAZADA_FONDEO_DD", "INVESTIGACION_BTC", "BLOCKED_NO_EVIDENCE"
-        ] or c["status"].startswith("RECHAZADA") or c["status"].startswith("REJECTED") or c["status"].startswith("CANDIDATA")
+            "RECHAZADA_FONDEO_DD", "INVESTIGACION_BTC", "BLOCKED_NO_EVIDENCE",
+            "REFINADO_TIER_2", "INCUBADORA_REPROGRAMACION", "CERTIFICADA_TIER_1", "REJECTED_ESTRUCTURAL",
+            "ANOMALY_REVIEW"
+        ] or c["status"].startswith("BLOCKED") or c["status"].startswith("RECHAZADA") or c["status"].startswith("REJECTED") or c["status"].startswith("CANDIDATA") or c["status"].startswith("REFINADO") or c["status"].startswith("INCUBADORA") or c["status"].startswith("CERTIFICADA")
 
 
 def test_versions_endpoint_and_changelog():

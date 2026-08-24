@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g09",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "92b2686b4457423b00691ae9c6d2d0f0dfac6620c0e3625dfa641871be817158",
+  "strategy_snapshot_hash": "daf781bd8babb97d2273fa968eb5a49caeeaf8cd0b0f06e8c78a3722cd641589",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "3e5172a1afa409fea8677fbd4f56c9f2f5ed525c855827ddba385b779d468323",
-  "output_hash": "b8b9c9c4757f75f3dd3f4a4862412584158bf08d09b9e340723c793e0e430ae5",
+  "input_hash": "48a8908e3aa871959935b01f34d43780465dceb426530dd40e7286b0b7c73709",
+  "output_hash": "88aabd5ec8e04860422a10f45d1dad47e7ecebd9088df068a6ae55ff0933163c",
   "status": "FAILED",
   "score": 40.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 3.6 o Estabilidad 100.0% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 4.1 o Estabilidad 100.0% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 3.6,
+    "degrees_of_freedom_ratio": 4.1,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T17:01:55.171537+00:00"
+  "created_at_utc": "2026-08-24T18:44:59.034356+00:00"
 }

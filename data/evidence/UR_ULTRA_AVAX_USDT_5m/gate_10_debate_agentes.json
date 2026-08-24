@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5m_g10",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5m",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5m",
-  "strategy_snapshot_hash": "e1acce084014745c16a20b48350d25b1d707f46b9b88262cb98004ee6d3f3f21",
+  "strategy_snapshot_hash": "982b093da0f486b48f3c89da4d63d962c266a0b2724fe2ddeccae93a35c9a91b",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "bb4234cdbdf7c588916e58620bb41ecd4921b06a399574c89796fd9ad4e1b9cb",
-  "output_hash": "cfa18e65d59d2d078848ede584fd602fa906dd90f6cc6a286908f372b93b60f6",
+  "input_hash": "89d1412ab71afa916632c844a06c941fc9438e4bc23bdafb79258b839ae3abd7",
+  "output_hash": "92c4a012711e963a8afd4250a36931955f6326617ad56b356fc62e25183c30df",
   "status": "PASSED",
-  "score": 58.2,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.2/100 · Guía de Mejora Generada)",
+  "score": 58.7,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.7/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 58.2,
+    "consensus_score": 58.7,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 49.1,
+        "score": 51.9,
         "findings": [
           "Activo y Timeframe: AVAX (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.87 con beneficio neto de $-501.19.",
+          "Profit Factor OOS: 0.93 con beneficio neto de $-446.85.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 75.0,
+        "score": 74.2,
         "findings": [
-          "Drawdown Máximo Observado: 53.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 54.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 385 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 390 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.30 USD.",
+          "Beneficio medio por operación: $-1.15 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,9 +64,9 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 56.0,
+        "score": 56.5,
         "objections": [
-          "Margen ajustado: Profit Factor 0.87 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.93 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:54:36.473503+00:00"
+  "created_at_utc": "2026-08-24T18:37:08.622867+00:00"
 }

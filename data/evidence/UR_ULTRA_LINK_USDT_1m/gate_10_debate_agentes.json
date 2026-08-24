@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1m_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_1m",
   "strategy_id": "UR_ULTRA_LINK_USDT_1m",
-  "strategy_snapshot_hash": "2a84c7d8d09fb511c407ecb56f23de0e8644cfb6220939737457dfe6f7946a98",
+  "strategy_snapshot_hash": "7a8cde1db0bd7496834ae061249fd76c50ec65bf130564c85d596423416e1962",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "e94539ceca4d2a9df2b87226f27804fba5533a77b2c148481770a8caaf950224",
-  "output_hash": "b37e1c2297d108d3a8e142ed142b0505e1f474235e0c6f180ef4156c26de5e22",
+  "input_hash": "2df40783b789ce7ec58a7e2901a35f4d70f16f30536c4f0a26f15460b1c04ae7",
+  "output_hash": "06c05f8d9ef42c2578dab226d0f3cce419266058eede3b20a8cf937ac415d0aa",
   "status": "PASSED",
-  "score": 46.7,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (46.7/100 · Guía de Mejora Generada)",
+  "score": 46.4,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (46.4/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 46.7,
+    "consensus_score": 46.4,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: LINK (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.16 con beneficio neto de $-731.55.",
+          "Profit Factor OOS: 0.15 con beneficio neto de $-747.13.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 65.7,
+        "score": 64.9,
         "findings": [
-          "Drawdown Máximo Observado: 73.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 74.6% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 174 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 179 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.20 USD.",
+          "Beneficio medio por operación: $-4.17 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,9 +64,9 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 46.4,
+        "score": 46.2,
         "objections": [
-          "Margen ajustado: Profit Factor 0.16 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.15 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:57:14.989581+00:00"
+  "created_at_utc": "2026-08-24T18:39:51.046125+00:00"
 }

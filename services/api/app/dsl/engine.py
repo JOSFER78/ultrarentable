@@ -24,6 +24,12 @@ class StrategyFamily(str, Enum):
     MOMENTUM = "momentum"
     VOLATILITY = "volatility"
     STATISTICAL_ARBITRAGE = "statistical_arbitrage"
+    HYPERSCALE = "hyperscale"
+    KAMIKAZE = "kamikaze"
+    CONVEXITY = "convexity"
+    FONDEO_PRESERVATION = "fondeo_preservation"
+    SCALPING = "scalping"
+    ASYMMETRIC = "asymmetric"
 
 class StrategyOrigin(str, Enum):
     MANUAL = "MANUAL"
@@ -147,8 +153,8 @@ class Metadata(BaseModel):
 
 class Market(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    venue: Literal["BINGX"] = "BINGX"
-    symbol: str = Field(min_length=3, max_length=40)
+    venue: str = Field(default="BINGX", min_length=2, max_length=40)
+    symbol: str = Field(min_length=2, max_length=40)
     timeframe: str
 
     @field_validator("timeframe")

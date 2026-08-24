@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_5m_g05",
   "run_id": "run_UR_ULTRA_ETH_USDT_5m",
   "strategy_id": "UR_ULTRA_ETH_USDT_5m",
-  "strategy_snapshot_hash": "97884fcf307b2644469e60e011f29ad86efe557d91a5d8d109f9c71bf35a4dd5",
+  "strategy_snapshot_hash": "7bedd7c796495d194e221b450fcfd65367ff62f8ace6d241f85daa6f8d46a60a",
   "dataset_id": "ds_binance_ethusdt_5m_1783939200000_1787088900000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "51bc555d27944a294d42ddf7380fa217ee96dbf8712789ec6d27875542015193",
-  "output_hash": "d4e2497e34cb73e62cba1c842f362df8ed580f34b1b58ef0adff1ec905252c00",
+  "input_hash": "7bb775b5195c5ccaabfdd2a38a726fec69bb514147d8b6f989ef86e10920097b",
+  "output_hash": "b2668811989b7d4634a3b761e85ec81f5ce8b1ce32430a52089fc8ae8cd475c9",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 11.9% > 1.0% (DD 95% = 86.5%)",
+  "verdict": "FALLO: Riesgo Ruina 61.7% > 1.0% (DD 95% = 91.7%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 11.9,
-    "drawdown_median_pct": 80.6,
-    "drawdown_95th_percentile_pct": 86.5,
-    "max_simulated_drawdown_pct": 91.7
+    "ruin_probability_pct": 61.7,
+    "drawdown_median_pct": 86.2,
+    "drawdown_95th_percentile_pct": 91.7,
+    "max_simulated_drawdown_pct": 93.8
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_5m/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T16:57:05.305913+00:00"
+  "created_at_utc": "2026-08-24T18:39:40.975148+00:00"
 }

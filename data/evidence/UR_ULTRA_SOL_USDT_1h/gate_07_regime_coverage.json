@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1h_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_1h",
   "strategy_id": "UR_ULTRA_SOL_USDT_1h",
-  "strategy_snapshot_hash": "03fb58147a92b133d01e331dc372c3e135081ad989e3c075b2910cab20323622",
+  "strategy_snapshot_hash": "a9a08c213649b903043e3c11b4eb3e526613607b7c09e9fa3e531f65b53107ad",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "6924441b498ebf13708f1bd2dc75be84375544021031f51905092270537b0b8a",
-  "output_hash": "746abf12a8551f641ef49f3cab5efe22420cf22b3008ad0b8eb3ecc27a67267a",
-  "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +4.77%)",
+  "input_hash": "3c96ca2e06f2b555568dab8c28e33d0042bc207f274289e22a881413f718833e",
+  "output_hash": "99f9f5d2c29cdfa9e5eb6217023f30de23e9c56d00c721dd9e9859c42fd516fc",
+  "status": "FAILED",
+  "score": 45.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (3/4 rentables, Retorno Total: -39.98%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 641,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 877
     },
     "regime_trades_count": {
-      "BULL_TREND": 43,
-      "BEAR_TREND": 51,
-      "CHOP_RANGING": 158,
-      "HIGH_VOLATILITY": 66
+      "BULL_TREND": 40,
+      "BEAR_TREND": 50,
+      "CHOP_RANGING": 142,
+      "HIGH_VOLATILITY": 64
     },
     "regime_return_pct": {
-      "BULL_TREND": -2.78,
-      "BEAR_TREND": 5.9,
-      "CHOP_RANGING": -406.96,
-      "HIGH_VOLATILITY": 408.61
+      "BULL_TREND": 7.8,
+      "BEAR_TREND": 12.45,
+      "CHOP_RANGING": -344.64,
+      "HIGH_VOLATILITY": 284.41
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 3,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 4.77
+    "total_oos_return_pct": -39.98
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:53:09.050986+00:00"
+  "created_at_utc": "2026-08-24T18:42:42.502948+00:00"
 }

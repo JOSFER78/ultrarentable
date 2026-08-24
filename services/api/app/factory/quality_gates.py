@@ -80,15 +80,15 @@ def drawdown_acceptable(drawdown_pct: float | None) -> bool:
 def drawdown_sustainable(drawdown_pct: float | None, mode: str = "ultra") -> bool:
     """True if drawdown is within the sustainable band for the specific mode.
 
-    In ULTRA mode: Realized DD <= 75.0% and non-ruinous (DD < 100%).
-    In FONDEO mode: Realized DD <= 4.50%.
+    In ULTRA mode: Realized DD < 100.0% (kamikaze / convexity search allows high drawdown if not ruined).
+    In FONDEO mode: Realized DD <= MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO (4.50%).
     """
     if not drawdown_acceptable(drawdown_pct):
         return False
     dd = float(drawdown_pct)
     if str(mode).lower() == "fondeo":
         return dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO
-    return dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA
+    return dd < RIVETING_DRAWDOWN_PCT
 
 
 def calmar_ratio(net_return_pct: float, drawdown_pct: float | None) -> float:
@@ -116,7 +116,7 @@ def rentable(
 ) -> bool:
     """Full rentable gate: sustainable drawdown, positive Calmar, minimum edge.
 
-    In ULTRA mode: Realized DD <= 75.0%, non-ruinous, net return >= 5% and PF >= 1.30.
+    In ULTRA mode: Realized DD < 100.0%, net return >= 5% and PF >= 1.30.
     In FONDEO mode: Realized DD <= 4.50%, Calmar >= 0.5, net return >= 5% and PF >= 1.30.
     """
     if is_ruinous(drawdown_pct):
@@ -150,15 +150,13 @@ def drawdown_penalty_factor(drawdown_pct: float | None, mode: str = "ultra") -> 
         return 0.0
     dd = float(drawdown_pct)
     if str(mode).lower() == "ultra":
-        if dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA:
-            return 1.0
-        span = RIVETING_DRAWDOWN_PCT - MAX_ACCEPTABLE_DRAWDOWN_PCT_ULTRA
-        frac = (RIVETING_DRAWDOWN_PCT - dd) / span if span > 0 else 0.0
-        return max(0.0, min(1.0, frac))
+        return 1.0 if dd < RIVETING_DRAWDOWN_PCT else 0.0
     else:
-        if dd <= MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO:
+        if dd <= 20.0:
             return 1.0
-        span = RIVETING_DRAWDOWN_PCT - MAX_ACCEPTABLE_DRAWDOWN_PCT_FONDEO
+        if dd >= RIVETING_DRAWDOWN_PCT:
+            return 0.0
+        span = RIVETING_DRAWDOWN_PCT - 20.0
         frac = (RIVETING_DRAWDOWN_PCT - dd) / span if span > 0 else 0.0
         return max(0.0, min(1.0, frac))
 

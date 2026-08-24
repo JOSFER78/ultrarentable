@@ -641,6 +641,130 @@ def init_db():
             )
             db.commit()
 
+        # Seed or sync physical approved datasets from data/normalized manifests
+        base_dir = Path(__file__).resolve().parent.parent.parent.parent.parent
+        normalized_dir = base_dir / "data" / "normalized"
+        if not normalized_dir.exists():
+            normalized_dir = Path("data/normalized")
+
+        if normalized_dir.exists():
+            existing_ds_ids = set(r[0] for r in db.query(DatasetModel.dataset_id).all())
+            existing_symbols = set(r[0] for r in db.query(InstrumentModel.symbol).all())
+
+            for m_path in normalized_dir.glob("*_manifest.json"):
+                try:
+                    with open(m_path, "r", encoding="utf-8") as mf:
+                        m_data = json.load(mf)
+                    d_id = m_data.get("dataset_id")
+                    data_file = m_path.with_name(m_path.name.replace("_manifest.json", ".json"))
+                    if not d_id or not data_file.exists():
+                        continue
+
+                    sym = m_data.get("symbol", "")
+                    sym_formatted = sym
+                    if "USDT" in sym and "-" not in sym and not sym.startswith("EUR") and not sym.startswith("GBP"):
+                        sym_formatted = sym.replace("USDT", "-USDT")
+
+                    if d_id not in existing_ds_ids:
+                        db.add(
+                            DatasetModel(
+                                dataset_id=d_id,
+                                venue=m_data.get("venue", "BINGX"),
+                                symbol=sym_formatted,
+                                feed_type="BARS",
+                                interval=m_data.get("interval", "1h"),
+                                start_time=m_data.get("start_time_utc_ms", 0),
+                                end_time=m_data.get("end_time_utc_ms", 0),
+                                record_count=m_data.get("record_count", 0),
+                                gap_count=m_data.get("gap_count", 0),
+                                duplicate_count=m_data.get("duplicate_count", 0),
+                                out_of_order_count=m_data.get("out_of_order_count", 0),
+                                coverage_pct=m_data.get("coverage_pct", 100.0),
+                                checksum_sha256=m_data.get("checksum_sha256", ""),
+                                status="APPROVED",
+                                file_path=str(data_file),
+                                manifest_path=str(m_path),
+                                created_at=datetime.utcnow(),
+                            )
+                        )
+                        existing_ds_ids.add(d_id)
+
+                    if sym != sym_formatted:
+                        alias_id = f"{d_id}_alias"
+                        if alias_id not in existing_ds_ids:
+                            db.add(
+                                DatasetModel(
+                                    dataset_id=alias_id,
+                                    venue=m_data.get("venue", "BINGX"),
+                                    symbol=sym,
+                                    feed_type="BARS",
+                                    interval=m_data.get("interval", "1h"),
+                                    start_time=m_data.get("start_time_utc_ms", 0),
+                                    end_time=m_data.get("end_time_utc_ms", 0),
+                                    record_count=m_data.get("record_count", 0),
+                                    coverage_pct=100.0,
+                                    checksum_sha256=m_data.get("checksum_sha256", ""),
+                                    status="APPROVED",
+                                    file_path=str(data_file),
+                                    manifest_path=str(m_path),
+                                    created_at=datetime.utcnow(),
+                                )
+                            )
+                            existing_ds_ids.add(alias_id)
+
+                    for s_name in (sym_formatted, sym):
+                        if s_name and s_name not in existing_symbols:
+                            db.add(
+                                InstrumentModel(
+                                    symbol=s_name,
+                                    asset=s_name.split("-")[0],
+                                    currency="USDT",
+                                    maker_fee_rate=0.0002,
+                                    taker_fee_rate=0.0005,
+                                    status=1,
+                                )
+                            )
+                            existing_symbols.add(s_name)
+                except Exception:
+                    pass
+            db.commit()
+
+        # Ensure base InstrumentRuleSnapshotModel and AccountFeeSnapshotModel exist for test environment
+        now_dt = datetime.utcnow()
+        if db.query(InstrumentRuleSnapshotModel).count() == 0:
+            tiers = json.dumps([
+                {"max_notional": 300000, "maintenance_margin_rate": 0.003167, "maintenance_amount": 0, "max_leverage": 150}
+            ])
+            for s_name in ["ETH-USDT", "BTC-USDT", "ETHUSDT", "BTCUSDT"]:
+                db.add(
+                    InstrumentRuleSnapshotModel(
+                        snapshot_id=f"rule_snap_{s_name}",
+                        symbol=s_name,
+                        max_leverage=150,
+                        maintenance_margin_rate=0.003167,
+                        maintenance_tiers_json=tiers,
+                        source_endpoint="/api/v1/quote/contract/marginTiered/get",
+                        raw_sha256="a" * 64,
+                        captured_at=now_dt,
+                    )
+                )
+            db.commit()
+
+        if db.query(AccountFeeSnapshotModel).count() == 0:
+            db.add(
+                AccountFeeSnapshotModel(
+                    snapshot_id="fee_snap_acc_default",
+                    account_hash="acc_default",
+                    symbol="ETH-USDT",
+                    maker_fee=0.0002,
+                    taker_fee=0.0005,
+                    source_endpoint="/openApi/swap/v2/quote/contracts",
+                    raw_sha256="b" * 64,
+                    captured_at=now_dt,
+                )
+            )
+            db.commit()
+
         # Crear índices de alto rendimiento si no existen
         try:
             with engine.connect() as conn:

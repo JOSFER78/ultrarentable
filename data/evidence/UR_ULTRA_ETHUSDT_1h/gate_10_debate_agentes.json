@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETHUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_ETHUSDT_1h",
   "strategy_id": "UR_ULTRA_ETHUSDT_1h",
-  "strategy_snapshot_hash": "68444c5f36f3931c00f574511a6e66a627e0835661d6ae0610760d158a3d0480",
+  "strategy_snapshot_hash": "07e656dfdf79ebfb5458cc443d2fca235cf9866ee2a5038a66563d61c1fe1ac8",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "de5021e36e6e317ef25fafece2731548e88e53a667d98b3b855cf04f09aac93e",
-  "output_hash": "985d5d09ff7ffc0187f48ae3a32fc8d3d1268e98bb5865529477bb48fe3bd757",
+  "input_hash": "e6f5824d8d5e348b5b73e9dd3e0e24c3c7f5e82a31405ecb80d761a2dbd5a1b8",
+  "output_hash": "334a4c5f1a74567f5a6d1a85fda7cccf2b1969325d7eadbcde4900810c40748d",
   "status": "PASSED",
   "score": 54.6,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (54.6/100 · Guía de Mejora Generada)",
@@ -26,7 +26,7 @@
         "score": 59.5,
         "findings": [
           "Activo y Timeframe: ETH-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.10 con beneficio neto de $10570436634933115398127616.00.",
+          "Profit Factor OOS: 1.10 con beneficio neto de $17233229764210707648217088.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2282 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2298 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $4632093179199437144064.00 USD.",
+          "Beneficio medio por operación: $7499229662406748667904.00 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETHUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:50:43.867766+00:00"
+  "created_at_utc": "2026-08-24T18:33:38.431442+00:00"
 }

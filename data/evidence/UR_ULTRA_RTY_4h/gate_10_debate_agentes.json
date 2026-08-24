@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_RTY_4h_g10",
   "run_id": "run_UR_ULTRA_RTY_4h",
   "strategy_id": "UR_ULTRA_RTY_4h",
-  "strategy_snapshot_hash": "05a4fc4c148aacffb1fe358ae6282a6d23797faf0307c180702c6eadb3ece972",
+  "strategy_snapshot_hash": "d20274e71945a96684f6be590c21cd98b46d94910626d9ce8a6fe88ff2b84b51",
   "dataset_id": "ds_trad_rty_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "11bd5143559e21f11e1a29859d99db24d4d60d502cbea7f048687a12a7536061",
-  "output_hash": "44eac6d1c3d476f62e0cd7aa7bc06ff71a24621a4a504e33826bad6c9bc3a80e",
+  "input_hash": "90356089f37be952a1719535483e6b6cbcae3e1930ef1110c83abe2fcb1391f1",
+  "output_hash": "b64d83fd1129227e47f4095574bedec5fb028de3c7bd3cc98c2c4daa71e15bc8",
   "status": "FAILED",
-  "score": 12.3,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (12.3/100)",
+  "score": 17.9,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (17.9/100)",
   "metrics": {
-    "consensus_score": 12.3,
+    "consensus_score": 17.9,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
@@ -44,19 +44,19 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 35.0,
+        "score": 65.0,
         "findings": [
-          "Muestra fuera de muestra: 7 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 13 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: LIMITADO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-142.86 USD.",
+          "Beneficio medio por operación: $-76.92 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,13 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 13.8,
+        "score": 21.2,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Muestra limitada: 7 trades OOS (Recomendado: >= 10).",
           "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-          "Ampliar ventana de evaluación para capturar más ciclos de mercado.",
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
@@ -80,10 +78,9 @@
     ],
     "recommendations": [
       "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-      "Ampliar ventana de evaluación para capturar más ciclos de mercado.",
       "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T17:02:18.865329+00:00"
+  "created_at_utc": "2026-08-24T18:45:18.470496+00:00"
 }

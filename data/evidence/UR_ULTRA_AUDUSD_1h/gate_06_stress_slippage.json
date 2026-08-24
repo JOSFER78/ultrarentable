@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1h_g06",
   "run_id": "run_UR_ULTRA_AUDUSD_1h",
   "strategy_id": "UR_ULTRA_AUDUSD_1h",
-  "strategy_snapshot_hash": "c1ef878b521ffed331eb36016a4f8e6dc599801ec1eddd39ded75dae0b169a30",
+  "strategy_snapshot_hash": "b0acb4b0b31be09101b5115647c9cf568f81e1a4aced53e09ce6fec532a61ea3",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "f9abdc09ff91594211aadc55a36330b312778bc16e6ee49690211564b0b38c8a",
-  "output_hash": "09d3b982bb4bae312f7456290ad2f840866d00feab518d938c913758273f28fa",
+  "input_hash": "d1f08ab9db4cd11dd3c5a45a06e2abf32fcac0bbd4e54d15b14928e4bd039349",
+  "output_hash": "7d674f1470698e003446f01312372ea434c99b2f0a83146d441268212a105001",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,25 +19,25 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -4.57,
+        "stressed_net_pnl_usd": -4.59,
         "stressed_profit_factor": 0.47,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -4.79,
-        "stressed_profit_factor": 0.46,
+        "stressed_net_pnl_usd": -4.81,
+        "stressed_profit_factor": 0.45,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -5.07,
+        "stressed_net_pnl_usd": -5.09,
         "stressed_profit_factor": 0.44,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -5.44,
+        "stressed_net_pnl_usd": -5.47,
         "stressed_profit_factor": 0.42,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1h/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-24T17:01:07.638478+00:00"
+  "created_at_utc": "2026-08-24T18:44:09.809714+00:00"
 }

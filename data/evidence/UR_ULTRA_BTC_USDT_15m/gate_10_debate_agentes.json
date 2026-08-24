@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_15m_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_15m",
   "strategy_id": "UR_ULTRA_BTC_USDT_15m",
-  "strategy_snapshot_hash": "5cbeb186da93f5bb5e7f10c1cbe488595cd775bc239f980b572f5577cb673de8",
+  "strategy_snapshot_hash": "c8c9c2db20f6629063f21880bb94fa495afc063a4b205cb517a1fe0d37d85fe3",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "6b912cb586360aa888fb096e4ac4cc470da82c711c3f7816706dd623e7fecf4e",
-  "output_hash": "4d9003614883d0d3a5689a748f5c6132093fd986752a0039a0e9867ab33f10f9",
+  "input_hash": "2691b9504b5ea5ef3e90d898a9744074a84ff86204746cd3c57718d55b012d46",
+  "output_hash": "a0590be8f003362d5ffc36cda6730cb711956bc0585979630d2784e5bf24c6e7",
   "status": "FAILED",
   "score": 21.7,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (21.7/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BTC (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.54 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.53 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -67,7 +67,7 @@
         "score": 26.2,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.54 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.53 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T17:01:25.523754+00:00"
+  "created_at_utc": "2026-08-24T18:44:28.729621+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_GBPUSD_4h_g07",
   "run_id": "run_UR_ULTRA_GBPUSD_4h",
   "strategy_id": "UR_ULTRA_GBPUSD_4h",
-  "strategy_snapshot_hash": "2545ff54019e14950597f007070e533dfa9b5f86c4e1ebcf6274a88f2762b088",
+  "strategy_snapshot_hash": "6cd2b7d413139bdcc9c688451a162edda97ba0edea06553bb95d4cb6b93d4a1b",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "b04454b946d6003098ba5f0a7a1f050b358e7509564aed0b9b5f6f1d9e6493d5",
-  "output_hash": "f0d93de332eed555014963592069bf2d5731fc91c21b4a8e13d87b7a370cd8a0",
+  "input_hash": "e738831a9a42d220df51ff34b6c752058be155e50b86c7626e538b54d456f846",
+  "output_hash": "a1bcaa62c9f4c06dc43aa9efae1cc32f34a75528382463fd2285273791ab0aa1",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -243.39%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -200.28%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 46,
-      "HIGH_VOLATILITY": 7
+      "CHOP_RANGING": 43,
+      "HIGH_VOLATILITY": 5
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -180.22,
-      "HIGH_VOLATILITY": -63.17
+      "CHOP_RANGING": -159.04,
+      "HIGH_VOLATILITY": -41.24
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -243.39
+    "total_oos_return_pct": -200.28
   },
   "artifact_path": "data/evidence/UR_ULTRA_GBPUSD_4h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T17:00:32.831082+00:00"
+  "created_at_utc": "2026-08-24T18:43:33.664125+00:00"
 }

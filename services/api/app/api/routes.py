@@ -1454,7 +1454,7 @@ def start_autopilot(payload: dict[str, Any] = Body(default={}), db: Session = De
     return {
         "status": "SUCCESS",
         "autopilot": {
-            "runId": "continuous_24_7",
+            "runId": "run_continuous_24_7",
             "status": "RUNNING",
             "evaluated": tel.get("speed", {}).get("total_evaluations", 610000),
         },

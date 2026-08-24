@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_ETH_g11",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "f8dbd1698d4cadd6105a9a01e3294dd713cc5e0163698f0613eb7e11a19f4b56",
+  "strategy_snapshot_hash": "83b707bedc98a44e625914430ce0a19d47d3372910fe959afe7b97e0697308e6",
   "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "1bdb0e10ed918ba501fd4ac2fe6ca177b41796bbf5cca85b7e354790f23d04fb",
-  "output_hash": "cc6e6d7cb34ac6f418e0ef736e8474128d80c43beabacdb16f125c1dbdf0e8dc",
+  "input_hash": "5fbd22653ed2b402a216754407e77be79466971dd2d2a964010a57f1ebe86d2e",
+  "output_hash": "39ec39f3aad63f9614ffcc5531614088557ecfb73b12bb5c3bf4c07a9748861e",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 96.6%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 279.34,
+    "final_equity_usd": 260.83,
     "peak_equity_usd": 1312.51,
-    "min_equity_usd": 279.34,
+    "min_equity_usd": 260.83,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 96.62,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 15.13,
-    "execution_events_count": 34
+    "total_funding_cost_usd": 15.33,
+    "execution_events_count": 35
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-24T16:59:44.785508+00:00"
+  "created_at_utc": "2026-08-24T18:42:07.457954+00:00"
 }

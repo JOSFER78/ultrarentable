@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_5m_g03",
   "run_id": "run_UR_ULTRA_BNB_USDT_5m",
   "strategy_id": "UR_ULTRA_BNB_USDT_5m",
-  "strategy_snapshot_hash": "431c126c69ff2b05032d34b0d9997b3604781d8219f90d4a5f8be27dc03cc56d",
+  "strategy_snapshot_hash": "c15784b65c2e3b2f0a72f0a392e6bb89375d302b06efe7fdfb9f74ac8f8a4b5f",
   "dataset_id": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "360763d570e1f43e184bbfd42d52f3944096d0f52c89d42cbbc70d4343eba7fd",
-  "output_hash": "c1d981aeab88e0857d12cfe47819ec9fbea4a283b1e45897c4cf9d9dfd63dc87",
+  "input_hash": "a3efdfd42206e8f019941b9d8e918d5e5afa658292419b275aefa18af1df2b44",
+  "output_hash": "3ce45ce49598d4011d10408e64752acb38878d5ef9d367e915ce1e63a1171e80",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (244 IS / 137 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (246 IS / 146 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 244,
-    "trades_oos": 137,
-    "top2_outlier_dependency_pct": 17.5,
+    "trades_is": 246,
+    "trades_oos": 146,
+    "top2_outlier_dependency_pct": 16.6,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5m/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T16:57:45.759249+00:00"
+  "created_at_utc": "2026-08-24T18:40:23.244775+00:00"
 }

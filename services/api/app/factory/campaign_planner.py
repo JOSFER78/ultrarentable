@@ -40,6 +40,7 @@ class AutomaticCampaignPlanner:
         cpu_count: int | None = None,
         mode: str = "ultra",
     ) -> CampaignPlan:
+        interval = str(opportunity.get("interval") or opportunity.get("timeframe") or "15m")
         timeframe_minutes = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240, "1d": 1440}.get(interval, 60)
         history_days = max(1.0, float(opportunity["history_days"]))
         record_count = max(1, int(opportunity.get("record_count", 1)))

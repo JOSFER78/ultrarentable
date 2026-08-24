@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_4h_g07",
   "run_id": "run_UR_ULTRA_USDJPY_4h",
   "strategy_id": "UR_ULTRA_USDJPY_4h",
-  "strategy_snapshot_hash": "52e24d5214231fced463f271e6f7697c56fa669b72e7795c2efa503bc82f8623",
+  "strategy_snapshot_hash": "d07676d9e50eca93ab5c54cf57305b930e2ad64f92dbcf8c7b30fd592bcea95b",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "0020ff3b8c77a102958bcbedf5c4d9239eea45fd4100d54d5ddf768269d52e0e",
-  "output_hash": "14e687071ae0ae7a4b36ffc9f4e5508e16101bd609cc34d8c606bf7a329022ac",
+  "input_hash": "45ea33baf507688e61e99e75b14e928e355ba92a5a8d86a2fc1062991cba6e66",
+  "output_hash": "c043826f53df25ff0d059572d43b8ab5156154b4a4a8e38bb802c56d36db9b6c",
   "status": "FAILED",
-  "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -162.50%)",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -169.52%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 7,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 48,
-      "HIGH_VOLATILITY": 8
+      "CHOP_RANGING": 47,
+      "HIGH_VOLATILITY": 9
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -166.01,
-      "HIGH_VOLATILITY": 3.51
+      "CHOP_RANGING": -163.2,
+      "HIGH_VOLATILITY": -6.32
     },
-    "regimes_profitable_count": 1,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -162.5
+    "total_oos_return_pct": -169.52
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_4h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:52:21.980750+00:00"
+  "created_at_utc": "2026-08-24T18:35:18.513469+00:00"
 }

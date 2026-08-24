@@ -659,12 +659,46 @@ def revalidate_legacy_candidates(
     db: Session = Depends(get_db),
 ) -> Dict[str, Any]:
     """Revalida lote de candidatos legados usando el motor actual."""
+    if req.background:
+        job_id = legacy_revalidation_service.start_background_revalidation(
+            target_version=req.target_version or CURRENT_ENGINE_VERSION,
+            only_approved=req.only_approved,
+            max_candidates=req.max_candidates,
+        )
+        st = legacy_revalidation_service.get_revalidation_status()
+        return {
+            "status": "STARTED",
+            "job_id": job_id,
+            "total_candidates": st.get("total_candidates", 0),
+        }
+
     res = legacy_revalidation_service.revalidate_legacy_batch(
         target_version=req.target_version or CURRENT_ENGINE_VERSION,
         only_approved=req.only_approved,
         max_candidates=req.max_candidates,
     )
-    return {"status": "SUCCESS", "revalidation_result": res}
+    res["status"] = "COMPLETED"
+    return res
+
+
+@candidates_router.get("/revalidate-legacy/status")
+def get_revalidate_legacy_status() -> Dict[str, Any]:
+    return legacy_revalidation_service.get_revalidation_status()
+
+
+@candidates_router.post("/revalidate-legacy/cancel")
+def cancel_revalidate_legacy() -> Dict[str, Any]:
+    return legacy_revalidation_service.cancel_background_revalidation()
+
+
+@candidates_router.post("/{candidate_id}/revalidate")
+def revalidate_single_candidate(
+    candidate_id: str,
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Revalida una única estrategia histórica usando el motor actual."""
+    res = legacy_revalidation_service.revalidate_single_candidate(candidate_id)
+    return res
 
 
 @candidates_router.get("/{candidate_id}/export/pinescript")

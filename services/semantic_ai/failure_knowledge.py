@@ -1,37 +1,27 @@
 """services/semantic_ai/failure_knowledge.py
-Memoria de Fallos (FailureKnowledgeDB) para el Semantic Quant Engine.
+Fachada de compatibilidad para FailureKnowledgeDB con backend persistente LearningStore.
 Captura estructurada de por qué falló cada estrategia para evitar repetir errores y mapear regímenes hostiles.
 """
 
 from __future__ import annotations
 
 import hashlib
-import json
 import time
-from enum import Enum
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
-from contracts.canonical_strategy import CanonicalStrategy, RuleTree, RuleCondition
+from contracts.canonical_strategy import CanonicalStrategy, RuleTree
 from contracts.validation_contracts import ValidationTrack
-
-
-class FailureCategory(str, Enum):
-    OVERFITTING_IS_OOS = "OVERFITTING_IS_OOS"
-    OUTLIER_DEPENDENCY = "OUTLIER_DEPENDENCY"
-    MAX_DRAWDOWN_EXCEEDED = "MAX_DRAWDOWN_EXCEEDED"
-    DAILY_LOSS_VIOLATION = "DAILY_LOSS_VIOLATION"
-    LOW_PAYOFF_RATIO = "LOW_PAYOFF_RATIO"
-    LOW_EXPECTED_R = "LOW_EXPECTED_R"
-    SKEWNESS_INSUFFICIENT = "SKEWNESS_INSUFFICIENT"
-    VAULT_HARVEST_FAIL = "VAULT_HARVEST_FAIL"
-    FRICTION_SENSITIVE = "FRICTION_SENSITIVE"
-    BURST_RUIN_EXCEEDED = "BURST_RUIN_EXCEEDED"
-    REGIME_MISMATCH = "REGIME_MISMATCH"
+from contracts.learning_contracts import (
+    FailureCategory,
+    FailureRecordEntity,
+    LearningPatternRecord,
+)
+from services.semantic_ai.learning_store import learning_store, LearningStore
 
 
 class FailureRecord(BaseModel):
-    """Registro inmutable de fallo cuantitativo."""
+    """Registro inmutable de fallo cuantitativo (compatibilidad legacy)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     failure_id: str
@@ -48,13 +38,10 @@ class FailureRecord(BaseModel):
 
 
 class FailureKnowledgeDB:
-    """Base de conocimiento de fallos en memoria e indexada por patrones de reglas."""
+    """Base de conocimiento persistente de fallos respaldada por SQLite WAL (LearningStore)."""
 
-    def __init__(self) -> None:
-        self._records: List[FailureRecord] = []
-        self._blacklisted_signatures: set[str] = set()
-        self._indicator_failure_counts: Dict[str, int] = {}
-        self._category_counts: Dict[FailureCategory, int] = {cat: 0 for cat in FailureCategory}
+    def __init__(self, store: Optional[LearningStore] = None) -> None:
+        self._store = store or learning_store
 
     def record_failure(
         self,
@@ -65,21 +52,44 @@ class FailureKnowledgeDB:
         market_regime: str = "UNKNOWN",
         metrics_snapshot: Optional[Dict[str, float]] = None,
     ) -> FailureRecord:
-        """Registra un nuevo fallo e indexa la firma de reglas en la lista de exclusión."""
+        """Registra un nuevo fallo en el LearningStore persistente."""
         metrics_snapshot = metrics_snapshot or {}
         now_ms = int(time.time() * 1000)
+        now_utc = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now_ms / 1000.0))
 
-        # Extraer indicadores de las reglas
         indicators = []
-        for cond in strategy.rules.long_conditions + strategy.rules.short_conditions:
-            indicators.append(cond.left_indicator.name)
-            if cond.right_indicator:
-                indicators.append(cond.right_indicator.name)
+        if hasattr(strategy, "rules") and strategy.rules:
+            for cond in getattr(strategy.rules, "long_conditions", []) + getattr(strategy.rules, "short_conditions", []):
+                if hasattr(cond, "left_indicator") and cond.left_indicator:
+                    indicators.append(cond.left_indicator.name)
+                if hasattr(cond, "right_indicator") and cond.right_indicator:
+                    indicators.append(cond.right_indicator.name)
 
-        sig_hash = self._compute_rule_signature(strategy.rules)
+        sig_hash = self._compute_rule_signature(strategy.rules) if hasattr(strategy, "rules") and strategy.rules else hashlib.sha256(strategy.strategy_id.encode()).hexdigest()
         fail_id = f"fail_{sig_hash[:12]}_{now_ms}"
 
-        record = FailureRecord(
+        strat_hash = getattr(strategy, "strategy_hash", f"hash_{strategy.strategy_id}")
+
+        # Persistir en LearningStore durable
+        entity = FailureRecordEntity(
+            failure_id=fail_id,
+            strategy_hash=strat_hash,
+            strategy_id=strategy.strategy_id,
+            track=track.value if hasattr(track, "value") else str(track),
+            gate_name=rejection_reasons[0] if rejection_reasons else "GENERIC_GATE",
+            category=category,
+            market_regime=market_regime,
+            metrics_snapshot=metrics_snapshot,
+            rejection_reasons=rejection_reasons,
+            failing_indicators=list(set(indicators)),
+            rule_signature_hash=sig_hash,
+            root_cause_summary=f"Rechazado en {track} por {category.value}: {', '.join(rejection_reasons[:2])}",
+            created_at_utc=now_utc,
+            is_verified=True,
+        )
+        self._store.record_failure(entity)
+
+        return FailureRecord(
             failure_id=fail_id,
             strategy_id=strategy.strategy_id,
             track=track,
@@ -90,46 +100,51 @@ class FailureKnowledgeDB:
             metrics_snapshot=metrics_snapshot,
             rule_signature_hash=sig_hash,
             timestamp_utc_ms=now_ms,
-            root_cause_summary=f"Rechazado en {track.value} por {category.value}: {', '.join(rejection_reasons[:2])}",
+            root_cause_summary=entity.root_cause_summary,
         )
 
-        self._records.append(record)
-        self._blacklisted_signatures.add(sig_hash)
-        self._category_counts[category] = self._category_counts.get(category, 0) + 1
-
-        for ind in indicators:
-            self._indicator_failure_counts[ind] = self._indicator_failure_counts.get(ind, 0) + 1
-
-        return record
-
     def is_rule_tree_blacklisted(self, rules: RuleTree) -> bool:
-        """Comprueba si una combinación de reglas ya ha fallado sistemáticamente en el pasado."""
+        """Comprueba si una combinación de reglas ya ha fallado sistemáticamente en el LearningStore."""
         sig = self._compute_rule_signature(rules)
-        return sig in self._blacklisted_signatures
+        return self._store.is_rule_tree_blacklisted(sig)
 
     def get_failure_statistics(self) -> Dict[str, Any]:
-        """Devuelve un resumen analítico de los fallos registrados."""
+        """Devuelve un resumen analítico de los fallos registrados desde el LearningStore durable."""
+        stats = self._store.get_failure_statistics()
         return {
-            "total_failures_recorded": len(self._records),
-            "blacklisted_patterns_count": len(self._blacklisted_signatures),
-            "category_distribution": {k.value: v for k, v in self._category_counts.items() if v > 0},
-            "top_failing_indicators": sorted(
-                self._indicator_failure_counts.items(), key=lambda x: x[1], reverse=True
-            )[:5],
+            "total_failures_recorded": stats.get("total_failures_recorded", 0),
+            "blacklisted_patterns_count": stats.get("total_learning_patterns", 0),
+            "category_distribution": stats.get("category_distribution", {}),
+            "top_failing_gates": stats.get("top_failing_gates", []),
+            "total_strategy_versions": stats.get("total_strategy_versions", 0),
+            "total_validation_snapshots": stats.get("total_validation_snapshots", 0),
         }
 
-    def get_recent_failures(self, limit: int = 20) -> List[FailureRecord]:
-        return self._records[-limit:]
+    def get_cluster_stats(self) -> Dict[str, Any]:
+        """Alias para telemetría."""
+        return self.get_failure_statistics()
 
     @staticmethod
     def _compute_rule_signature(rules: RuleTree) -> str:
         """Calcula una firma estructural invariante de las condiciones de entrada."""
+        if not rules:
+            return hashlib.sha256(b"empty_rules").hexdigest()
         tokens = []
-        for cond in rules.long_conditions:
-            r_ind = cond.right_indicator.name if cond.right_indicator else str(cond.threshold_value)
-            tokens.append(f"L:{cond.left_indicator.name}_{cond.left_indicator.period}:{cond.operator.value}:{r_ind}")
-        for cond in rules.short_conditions:
-            r_ind = cond.right_indicator.name if cond.right_indicator else str(cond.threshold_value)
-            tokens.append(f"S:{cond.left_indicator.name}_{cond.left_indicator.period}:{cond.operator.value}:{r_ind}")
+        for cond in getattr(rules, "long_conditions", []):
+            r_ind = cond.right_indicator.name if getattr(cond, "right_indicator", None) else str(getattr(cond, "threshold_value", ""))
+            l_name = cond.left_indicator.name if hasattr(cond.left_indicator, "name") else str(cond.left_indicator)
+            l_per = getattr(cond.left_indicator, "period", 0)
+            op = cond.operator.value if hasattr(cond.operator, "value") else str(cond.operator)
+            tokens.append(f"L:{l_name}_{l_per}:{op}:{r_ind}")
+        for cond in getattr(rules, "short_conditions", []):
+            r_ind = cond.right_indicator.name if getattr(cond, "right_indicator", None) else str(getattr(cond, "threshold_value", ""))
+            l_name = cond.left_indicator.name if hasattr(cond.left_indicator, "name") else str(cond.left_indicator)
+            l_per = getattr(cond.left_indicator, "period", 0)
+            op = cond.operator.value if hasattr(cond.operator, "value") else str(cond.operator)
+            tokens.append(f"S:{l_name}_{l_per}:{op}:{r_ind}")
         raw = "|".join(sorted(tokens))
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+# Instancia singleton
+failure_db = FailureKnowledgeDB()

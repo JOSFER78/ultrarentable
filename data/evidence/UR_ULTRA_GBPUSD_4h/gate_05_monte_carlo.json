@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_GBPUSD_4h_g05",
   "run_id": "run_UR_ULTRA_GBPUSD_4h",
   "strategy_id": "UR_ULTRA_GBPUSD_4h",
-  "strategy_snapshot_hash": "2545ff54019e14950597f007070e533dfa9b5f86c4e1ebcf6274a88f2762b088",
+  "strategy_snapshot_hash": "6cd2b7d413139bdcc9c688451a162edda97ba0edea06553bb95d4cb6b93d4a1b",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "4df69d35af20ac3e9a2b6e649ba7d2c4936e4474105a64a182845e97d4395113",
-  "output_hash": "4a2d61f67a346942a3f369f6736b9a0a641d093b76d0ddfc81fc7b4a9180a0d1",
+  "input_hash": "2f2a3d9fa599eea88a04cf7f5f7a36bf0489b36cd745b15e82027ce278b10206",
+  "output_hash": "37c8f71f185c9f0af2ac7c8cad97cbe4bb4f19465ed5d8653c7ce0b661a8e420",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 93.9% > 1.0% (DD 95% = 97.7%)",
+  "verdict": "FALLO: Riesgo Ruina 80.9% > 1.0% (DD 95% = 96.5%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 93.9,
-    "drawdown_median_pct": 94.5,
-    "drawdown_95th_percentile_pct": 97.7,
-    "max_simulated_drawdown_pct": 98.9
+    "ruin_probability_pct": 80.9,
+    "drawdown_median_pct": 91.1,
+    "drawdown_95th_percentile_pct": 96.5,
+    "max_simulated_drawdown_pct": 98.1
   },
   "artifact_path": "data/evidence/UR_ULTRA_GBPUSD_4h/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T17:00:32.824188+00:00"
+  "created_at_utc": "2026-08-24T18:43:33.657289+00:00"
 }

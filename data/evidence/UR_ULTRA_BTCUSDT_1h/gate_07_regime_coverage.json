@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTCUSDT_1h_g07",
   "run_id": "run_UR_ULTRA_BTCUSDT_1h",
   "strategy_id": "UR_ULTRA_BTCUSDT_1h",
-  "strategy_snapshot_hash": "b1f25ac0cca84227dde0a076fd97a1630fc4637981ba05d072f715025ae52082",
+  "strategy_snapshot_hash": "16892c55729cc4c66fa58d8d0f24af8febd460adce570a19aad6128532c56340",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "8146535cb986fc5d5a6824f5b7e0397396b7bce70be8769ff75a00834bd2c9a6",
-  "output_hash": "383e08c61546ba21bcbb7e6874934a5fefe749b0ef99f4a6762392b69a55de4d",
+  "input_hash": "7f263e68931e4d6c59afa81fef8caee2a6333123dd0dd9314bd20b5e97aba741",
+  "output_hash": "2afc83adffca47ba42244687b170686a6cab81e72f577d3bdc9c9d453b5bf55a",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8637.11%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8850.92%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 19,
       "BEAR_TREND": 32,
-      "CHOP_RANGING": 118,
+      "CHOP_RANGING": 115,
       "HIGH_VOLATILITY": 97
     },
     "regime_return_pct": {
       "BULL_TREND": 50.92,
-      "BEAR_TREND": 1473.92,
-      "CHOP_RANGING": 2355.9,
-      "HIGH_VOLATILITY": 4756.37
+      "BEAR_TREND": 1474.25,
+      "CHOP_RANGING": 2576.37,
+      "HIGH_VOLATILITY": 4749.38
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 8637.11
+    "total_oos_return_pct": 8850.92
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTCUSDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:50:13.670862+00:00"
+  "created_at_utc": "2026-08-24T18:33:08.237386+00:00"
 }

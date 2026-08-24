@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g03",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "92b2686b4457423b00691ae9c6d2d0f0dfac6620c0e3625dfa641871be817158",
+  "strategy_snapshot_hash": "daf781bd8babb97d2273fa968eb5a49caeeaf8cd0b0f06e8c78a3722cd641589",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "ab84bc0745a205e66dd6b8b8626e70cf3bd530126629a3ecc47189c43528b8be",
-  "output_hash": "99d33b9811dcba4c57a852d385d0b1a36e969c402f751de250af3427164128f3",
+  "input_hash": "51827d1bf7e884d0713ef96deed5f6f5ed37edda18a8351c9d069463e2ce6aaf",
+  "output_hash": "271b3e2ba0e060200cb2b75de4b8ad35cf338a046b1aefa2d63b633e2a78b049",
   "status": "FAILED",
   "score": 15.0,
-  "verdict": "FALLO: Muestra insuficiente (26 IS < 15 ó 3 OOS < 10)",
+  "verdict": "FALLO: Muestra insuficiente (30 IS < 15 ó 3 OOS < 10)",
   "metrics": {
-    "trades_is": 26,
+    "trades_is": 30,
     "trades_oos": 3,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
@@ -24,5 +24,5 @@
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T17:01:54.519539+00:00"
+  "created_at_utc": "2026-08-24T18:44:58.232590+00:00"
 }

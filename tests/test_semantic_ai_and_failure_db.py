@@ -1,5 +1,7 @@
 """Unit tests for Semantic AI Engine and FailureKnowledgeDB (Fase 5)."""
 
+import os
+import tempfile
 import pytest
 
 from contracts import (
@@ -16,12 +18,24 @@ from services.semantic_ai import (
     InterpreterAgent,
     ImproverAgent,
 )
+from services.semantic_ai.learning_store import LearningStore
 from services.validation import FondeoEvidenceGate
 
 
-def test_failure_knowledge_db_recording_and_blacklisting():
+@pytest.fixture
+def isolated_db():
+    with tempfile.NamedTemporaryFile(suffix=".sqlite", delete=False) as tmp:
+        db_path = tmp.name
+    store = LearningStore(db_path=db_path)
+    db = FailureKnowledgeDB(store=store)
+    yield db
+    if os.path.exists(db_path):
+        os.remove(db_path)
+
+
+def test_failure_knowledge_db_recording_and_blacklisting(isolated_db):
     """Verify recording failure properly blacklists rule signatures and updates statistics."""
-    db = FailureKnowledgeDB()
+    db = isolated_db
     engine = SemanticQuantEngine(failure_db=db)
 
     strat = engine.generate_candidate(symbol="NQ", track=ExecutionTrack.TRACK_FONDEO)
@@ -45,9 +59,9 @@ def test_failure_knowledge_db_recording_and_blacklisting():
     assert "OUTLIER_DEPENDENCY" in stats["category_distribution"]
 
 
-def test_critic_agent_structural_and_failure_checks():
+def test_critic_agent_structural_and_failure_checks(isolated_db):
     """Verify CriticAgent blocks blacklisted patterns and missing risk controls."""
-    db = FailureKnowledgeDB()
+    db = isolated_db
     engine = SemanticQuantEngine(failure_db=db)
     critic = CriticAgent(failure_db=db)
 
@@ -69,9 +83,9 @@ def test_critic_agent_structural_and_failure_checks():
     assert any("FailureKnowledgeDB" in w for w in warnings_after)
 
 
-def test_improver_agent_mutation_avoids_blacklist():
+def test_improver_agent_mutation_avoids_blacklist(isolated_db):
     """Verify ImproverAgent mutates strategy and avoids known blacklisted patterns."""
-    db = FailureKnowledgeDB()
+    db = isolated_db
     engine = SemanticQuantEngine(failure_db=db)
     improver = ImproverAgent(failure_db=db)
 
@@ -90,9 +104,9 @@ def test_improver_agent_mutation_avoids_blacklist():
     assert db.is_rule_tree_blacklisted(mutant.rules) is False
 
 
-def test_closed_loop_ai_proposes_gate_approves():
+def test_closed_loop_ai_proposes_gate_approves(isolated_db):
     """Verify end-to-end closed loop: AI proposes -> Gate rejects -> Failure recorded -> AI mutates -> Gate approves."""
-    db = FailureKnowledgeDB()
+    db = isolated_db
     engine = SemanticQuantEngine(failure_db=db)
     gate = FondeoEvidenceGate()
 

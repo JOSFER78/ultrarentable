@@ -522,7 +522,7 @@ class LegacyRevalidationService:
         conn.close()
 
         return {
-            "candidate_id": cid,
+            "candidate_id": candidate_id if candidate_id.upper() == cid.upper() else cid,
             "name": name,
             "symbol": symbol,
             "timeframe": timeframe,
@@ -727,6 +727,10 @@ class LegacyRevalidationService:
                 return {"status": "NO_ACTIVE_JOB", "message": "No hay ningún proceso de revalidación activo."}
             self._cancel_requested = True
             return {"status": "CANCELLING", "job_id": self._job_state["job_id"], "message": "Cancelación solicitada."}
+
+    # Aliases
+    get_job_status = get_revalidation_status
+    cancel_job = cancel_background_revalidation
 
 
 # Instancia singleton

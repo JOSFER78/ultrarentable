@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_GBPUSD_4h_g10",
   "run_id": "run_UR_ULTRA_GBPUSD_4h",
   "strategy_id": "UR_ULTRA_GBPUSD_4h",
-  "strategy_snapshot_hash": "2545ff54019e14950597f007070e533dfa9b5f86c4e1ebcf6274a88f2762b088",
+  "strategy_snapshot_hash": "6cd2b7d413139bdcc9c688451a162edda97ba0edea06553bb95d4cb6b93d4a1b",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "4e33a71061b747bf3c511152c4822d8b2c59de778126e97ec5f52154e46e3fe5",
-  "output_hash": "45c14804418108d63e7ef23626baa41bddd79f6d60a692f8c2fb201712d9cd1e",
+  "input_hash": "168c7481d5612320b2e26e02ccff620bde3df664589debe9180a5a12b2245029",
+  "output_hash": "0892186c76b259c33a3e89702b943b53b9224414098c791ab6ab101d6f1af6d5",
   "status": "FAILED",
-  "score": 26.1,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (26.1/100)",
+  "score": 26.9,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (26.9/100)",
   "metrics": {
-    "consensus_score": 26.1,
+    "consensus_score": 26.9,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 25.8,
+        "score": 28.4,
         "findings": [
           "Activo y Timeframe: GBPUSD (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.35 con beneficio neto de $-976.94.",
+          "Profit Factor OOS: 0.41 con beneficio neto de $-959.99.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 97.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 96.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 208 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 209 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.70 USD.",
+          "Beneficio medio por operación: $-4.59 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 31.4,
+        "score": 32.1,
         "objections": [
-          "Alerta de Drawdown: DD (97.9%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.35 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (96.3%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.41 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_GBPUSD_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T17:00:33.024531+00:00"
+  "created_at_utc": "2026-08-24T18:43:33.861744+00:00"
 }

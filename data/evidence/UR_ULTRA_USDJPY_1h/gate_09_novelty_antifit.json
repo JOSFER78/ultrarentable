@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1h_g09",
   "run_id": "run_UR_ULTRA_USDJPY_1h",
   "strategy_id": "UR_ULTRA_USDJPY_1h",
-  "strategy_snapshot_hash": "954b212a5441f072aaf7fb99b2b6710b0d92eed00ef658b593661f54ebe2dc21",
+  "strategy_snapshot_hash": "ae5fc1db30281ce9f1077bd246f6a8b7ed81757c7d13a18d0364956cad8f01bf",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,16 +10,16 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "f8c34fefc1ca00c53888ef074d900568ae795e95e64ba83ff7fe8878cbd4ad30",
-  "output_hash": "96101b74d7b14c8c04ce1f38381af260274446666bd68c24ada8fb7c383b743b",
+  "input_hash": "91b9e6ae30d313fefcff81a695e5d58f4f59d15ef33a234aaf54a903482ae529",
+  "output_hash": "9a7dbe3949019a56c690c692542621c289f04e6441a96c84109d1f87cbd3d918",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 47.9 trades/param, Estabilidad Vecindario: 103.9%, Re-backtest PFs: [0.68, 0.84, 0.76, 0.67])",
+  "score": 95.3,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 47.2 trades/param, Estabilidad Vecindario: 92.2%, Re-backtest PFs: [0.68, 0.84, 0.76, 0.67])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 47.9,
+    "degrees_of_freedom_ratio": 47.2,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 103.9,
+    "parameter_neighborhood_stability_pct": 92.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.68,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T17:00:01.769992+00:00"
+  "created_at_utc": "2026-08-24T18:42:28.644192+00:00"
 }

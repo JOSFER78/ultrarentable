@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1h_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_1h",
   "strategy_id": "UR_ULTRA_BTC_USDT_1h",
-  "strategy_snapshot_hash": "7dbd67fc547fd323216c1d74efe9c27f97e5234a5912f9d7b0bf76e8b8440066",
+  "strategy_snapshot_hash": "0e7c2b0ef8af788f9e98135bdda950642fd25b90b56fb5bc14e8d97c911ff368",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "68c5428ee45eb0a35a05ca6e91338b10829ff650da5a157603f3909adeff4c60",
-  "output_hash": "a5e82a6bf82fe6c4d4bd15b8337997ac8c8be37f90dac5ac2a541d60227c1058",
+  "input_hash": "19188aef7cb2185bfd07a0b7ee2a88218a9dbd0092b92c2735a533b73c8e1ab2",
+  "output_hash": "ca795d6cb5cbe1707293978f17a2c271f2c365b5e88f59e5d0af76f729ff2fdd",
   "status": "FAILED",
-  "score": 17.0,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (17.0/100)",
+  "score": 19.8,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (19.8/100)",
   "metrics": {
-    "consensus_score": 17.0,
+    "consensus_score": 19.8,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
@@ -44,10 +44,10 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 60.0,
+        "score": 75.0,
         "findings": [
-          "Muestra fuera de muestra: 12 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: LIMITADO."
+          "Muestra fuera de muestra: 15 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: MODERADO."
         ],
         "approved": true
       },
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-83.33 USD.",
+          "Beneficio medio por operación: $-66.67 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 20.0,
+        "score": 23.8,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
           "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T17:02:08.000255+00:00"
+  "created_at_utc": "2026-08-24T18:45:46.774258+00:00"
 }

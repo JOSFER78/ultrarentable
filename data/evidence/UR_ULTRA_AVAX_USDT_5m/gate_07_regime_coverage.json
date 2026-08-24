@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5m_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_5m",
   "strategy_id": "UR_ULTRA_AVAX_USDT_5m",
-  "strategy_snapshot_hash": "e1acce084014745c16a20b48350d25b1d707f46b9b88262cb98004ee6d3f3f21",
+  "strategy_snapshot_hash": "982b093da0f486b48f3c89da4d63d962c266a0b2724fe2ddeccae93a35c9a91b",
   "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "57a58a740af4f2dff3dec034b8319e63ecc27d8f972f5b3992aee85a2e338830",
-  "output_hash": "e68388485177af4a36d3e15962154ef0be0010abbfc181cb34d376ffeb9e9ccb",
+  "input_hash": "8061654b4e47c0c464402466e0e8b5e161c2187cbda5527e91e5cfb11090dced",
+  "output_hash": "e04ddd92cbfd1533cac0ac7d4fdfaa01f10bed2cd50089e18692b78e71bb6742",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -17.93%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -9.55%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 63,
-      "HIGH_VOLATILITY": 13
+      "CHOP_RANGING": 59,
+      "HIGH_VOLATILITY": 14
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -5.41,
-      "HIGH_VOLATILITY": -12.52
+      "CHOP_RANGING": 6.23,
+      "HIGH_VOLATILITY": -15.78
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -17.93
+    "total_oos_return_pct": -9.55
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:54:36.052207+00:00"
+  "created_at_utc": "2026-08-24T18:37:08.221409+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1h_g07",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1h",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1h",
-  "strategy_snapshot_hash": "d1fa0974cde7b8bba697d6f1271c43b5d94ddf9dd55e9923c5491fdc49d9eb32",
+  "strategy_snapshot_hash": "4c78f1dc5130c60e447a66c5beddb71bc581f3ba087a7e1dc626e3ef5db8e104",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "d98c8ad00549938ffdad69c1451dce595315714778a9065a716d71981591ea28",
-  "output_hash": "4bbf1602327be61a09360ec5391ef662415271898c646273cca89312cf601926",
+  "input_hash": "609cb498d913b3f670a4ac312c862b1fc209bb8172f13316eb7fd3570e619d15",
+  "output_hash": "bc53c6b549f943f31d92055b25241a5423125c33d7ef2bffd22d2b36780590d1",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -471.62%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -459.80%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 632,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 793
     },
     "regime_trades_count": {
-      "BULL_TREND": 19,
+      "BULL_TREND": 18,
       "BEAR_TREND": 33,
-      "CHOP_RANGING": 78,
-      "HIGH_VOLATILITY": 43
+      "CHOP_RANGING": 81,
+      "HIGH_VOLATILITY": 42
     },
     "regime_return_pct": {
-      "BULL_TREND": -51.02,
-      "BEAR_TREND": -48.8,
-      "CHOP_RANGING": -334.84,
-      "HIGH_VOLATILITY": -36.96
+      "BULL_TREND": -87.34,
+      "BEAR_TREND": -48.61,
+      "CHOP_RANGING": -275.78,
+      "HIGH_VOLATILITY": -48.07
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -471.62
+    "total_oos_return_pct": -459.8
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:55:23.211213+00:00"
+  "created_at_utc": "2026-08-24T18:37:56.277452+00:00"
 }

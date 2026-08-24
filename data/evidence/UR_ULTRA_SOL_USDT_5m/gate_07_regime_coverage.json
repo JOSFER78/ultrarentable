@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_5m_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_5m",
   "strategy_id": "UR_ULTRA_SOL_USDT_5m",
-  "strategy_snapshot_hash": "5da828e69bece7ae1ea29102639e52cb8343dd60384376c216e5900c6ac4a349",
+  "strategy_snapshot_hash": "90a50ab09bd002fba3b74b54587dfc21d0bd501249e5201f64333577e07f6ee7",
   "dataset_id": "ds_binance_solusdt_5m_1783939200000_1787088900000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "0b5deba6fe3babb2bd41bd67867ea5e5aa7cfd313a9ee4af1ecdaec898184bf1",
-  "output_hash": "7780dea6714b79cfdffad2f15f453cad2573358a08538c572c20d636f97d5d20",
+  "input_hash": "34e89c19e3950d6d1231ed17abd943c2626862f9c79637528d5c8bad8532c7ed",
+  "output_hash": "e33a3ba2997a3972a29808ea58a84f0d34c5ed8a6d5e4399973e8f6b5937d8ae",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -130.07%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -131.86%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 116,
-      "HIGH_VOLATILITY": 21
+      "CHOP_RANGING": 120,
+      "HIGH_VOLATILITY": 22
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -114.49,
-      "HIGH_VOLATILITY": -15.58
+      "CHOP_RANGING": -114.97,
+      "HIGH_VOLATILITY": -16.89
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -130.07
+    "total_oos_return_pct": -131.86
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_5m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:55:28.653113+00:00"
+  "created_at_utc": "2026-08-24T18:38:02.526476+00:00"
 }

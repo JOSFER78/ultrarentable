@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_ETH_g09",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "f8dbd1698d4cadd6105a9a01e3294dd713cc5e0163698f0613eb7e11a19f4b56",
+  "strategy_snapshot_hash": "83b707bedc98a44e625914430ce0a19d47d3372910fe959afe7b97e0697308e6",
   "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "dcce3cc1efd198168dd1ed6cae85e7878f8170b74db364a8563da91e2e3bf7ea",
-  "output_hash": "9717c150de040d096f470185b45b523d08aedca3decf20a96708598204868d4d",
+  "input_hash": "b2a2a04f051f72d0bb4653e405979ddff31119ec34e56d912e12f2a70aa95ec4",
+  "output_hash": "490844650e47cc2fdb47880169104ad64bd005cc480ee68932e837f71632f48b",
   "status": "PASSED",
-  "score": 82.7,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 16.5 trades/param, Estabilidad Vecindario: 93.8%, Re-backtest PFs: [0.68, 0.7, 0.37, 0.35])",
+  "score": 83.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 17.0 trades/param, Estabilidad Vecindario: 93.8%, Re-backtest PFs: [0.68, 0.7, 0.37, 0.35])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 16.5,
+    "degrees_of_freedom_ratio": 17.0,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 93.8,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T16:59:44.784510+00:00"
+  "created_at_utc": "2026-08-24T18:42:07.457005+00:00"
 }

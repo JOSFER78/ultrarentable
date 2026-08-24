@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1h_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_1h",
   "strategy_id": "UR_ULTRA_LINK_USDT_1h",
-  "strategy_snapshot_hash": "f058be0473fe6727b1dd3b22407461051d9d87ff21162d4a7e3610b38e6f2a1c",
+  "strategy_snapshot_hash": "00db8bd9e515338848a3240ed8bfed757b7aca2cb1a77d25b87ac10d2e836d85",
   "dataset_id": "ds_binance_linkusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "56b053fb7d06bab402bfcfd77f9447d0554318628b12c0851dcd9815a18070e7",
-  "output_hash": "00961b2ba117e23dfed3c0e81f010ddae326ad7e9b10e8e01c9ca7f56bcb7e33",
+  "input_hash": "4eac9b195e633a399f3a01bd0b871b5a802c78ab60d83c5bd620ba75d85ea076",
+  "output_hash": "9116cd53bc4c4ba6cd2238ea8e5a6c3df6eaf3c2163f8799832e481f1e56bc84",
   "status": "FAILED",
   "score": 34.0,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.0/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 488 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 499 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.05 USD.",
+          "Beneficio medio por operación: $-2.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:55:12.228364+00:00"
+  "created_at_utc": "2026-08-24T18:37:45.502844+00:00"
 }

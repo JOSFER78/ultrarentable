@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_RTY_5m_g06",
   "run_id": "run_UR_ULTRA_RTY_5m",
   "strategy_id": "UR_ULTRA_RTY_5m",
-  "strategy_snapshot_hash": "027f4641508aa757734c18788ca47ef64d62c43da45ca2ac572e35b831b23d7e",
+  "strategy_snapshot_hash": "715d0bb22d516a716193f5676076aa77de6e3e271fecdf50625ec402a52fa23f",
   "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "5a916c5da5493bd2371133a9a32d4c54c63d95543f87195d24252f46229e6ded",
-  "output_hash": "65121ffec9aa332f39d620f57f67042c95a79b2243c19eff27ed961fa57ac7b5",
+  "input_hash": "efb3fecacdc19a4f9bf3af3ca31eb66ac96aed8066f3fd44963a06648c4457e5",
+  "output_hash": "1be0bf8d72672cf4b5803ce0f2d36ddaa9ee15b6a047337aefb8cc08ff7b4fa7",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,25 +19,25 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.08,
+        "stressed_net_pnl_usd": -2.91,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.09,
+        "stressed_net_pnl_usd": -2.94,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -2.1,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": -2.96,
         "stressed_profit_factor": 0.0,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.13,
+        "stressed_net_pnl_usd": -3.0,
         "stressed_profit_factor": 0.0,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_5m/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-24T17:01:48.449354+00:00"
+  "created_at_utc": "2026-08-24T18:44:52.008952+00:00"
 }

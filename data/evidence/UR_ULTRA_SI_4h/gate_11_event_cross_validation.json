@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SI_4h_g11",
   "run_id": "run_UR_ULTRA_SI_4h",
   "strategy_id": "UR_ULTRA_SI_4h",
-  "strategy_snapshot_hash": "9729b0ed88b60093a644a092cf0fa28b3bbcfb207531a8b615dcac81a6a9bdd6",
+  "strategy_snapshot_hash": "a71b8199bc1ab838b93c40d731a3ed6dae7ed71da2149633ddc87e242be7711c",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,16 +10,16 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "492090d1249299afd154c34983c5bf547a32ea7fc6dffbb1cf782cae40ea415e",
-  "output_hash": "f2d9b00b0f79581f88cad33362442444c3381da485e14c64c5af05382487ca17",
+  "input_hash": "2250e34b4335b097710f7823a0de70eeaad8c77d6bde03f0d9e40d268d8960e0",
+  "output_hash": "54efb7b3088ed7f1e152f95ebc33f1983734e74db91785037cecabb656c9664e",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -288.32,
+    "final_equity_usd": -229.57,
     "peak_equity_usd": 60345.99,
-    "min_equity_usd": -288.32,
+    "min_equity_usd": -229.57,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
@@ -29,5 +29,5 @@
     "execution_events_count": 9
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-24T16:57:25.254672+00:00"
+  "created_at_utc": "2026-08-24T18:40:01.102076+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETHUSDT_1h_g07",
   "run_id": "run_UR_ULTRA_ETHUSDT_1h",
   "strategy_id": "UR_ULTRA_ETHUSDT_1h",
-  "strategy_snapshot_hash": "68444c5f36f3931c00f574511a6e66a627e0835661d6ae0610760d158a3d0480",
+  "strategy_snapshot_hash": "07e656dfdf79ebfb5458cc443d2fca235cf9866ee2a5038a66563d61c1fe1ac8",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "544db64e1e8b8ec7af234f518005075d6b45ecce3a35aef764eb7fc929411e8c",
-  "output_hash": "cbe2df28a581da4f6bd577daceb63514f0f4bbfdb8f22a344f79b86f122c0a64",
+  "input_hash": "55f6c777a6657e601d483efc64a2f921027fcf3229046734ada8a4cfd6c2bc69",
+  "output_hash": "22b6353798205000840221d2c69088dbe085d74f784e6613ba162f5b2c1a81e7",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +20441.79%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +20588.83%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 497,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 49,
-      "BEAR_TREND": 93,
-      "CHOP_RANGING": 272,
-      "HIGH_VOLATILITY": 135
+      "BEAR_TREND": 94,
+      "CHOP_RANGING": 274,
+      "HIGH_VOLATILITY": 137
     },
     "regime_return_pct": {
       "BULL_TREND": 2144.69,
-      "BEAR_TREND": 5420.78,
-      "CHOP_RANGING": 6638.88,
-      "HIGH_VOLATILITY": 6237.44
+      "BEAR_TREND": 5403.78,
+      "CHOP_RANGING": 6619.92,
+      "HIGH_VOLATILITY": 6420.44
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 20441.79
+    "total_oos_return_pct": 20588.83
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETHUSDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:50:42.260930+00:00"
+  "created_at_utc": "2026-08-24T18:33:37.057500+00:00"
 }

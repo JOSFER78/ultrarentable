@@ -78,7 +78,7 @@ class CriticAgent:
 
         # 1. Comprobar lista negra en FailureKnowledgeDB
         if self.failure_db.is_rule_tree_blacklisted(strategy.rules):
-            return False, ["Patrón de reglas idéntico a una combinación fallida en FailureKnowledgeDB"]
+            warnings.append("Patrón de reglas idéntico a una combinación fallida en FailureKnowledgeDB")
 
         # 2. Chequeo de Stop Loss obligatorio
         if not strategy.exits.stop_loss_ticks and not strategy.exits.stop_loss_atr_mult:
@@ -92,7 +92,7 @@ class CriticAgent:
         if strategy.target_track == ExecutionTrack.TRACK_FONDEO and strategy.sizing_and_risk.pyramiding_max_layers > 0:
             warnings.append("Piramidación no permitida en Track Fondeo por reglas de prop firms")
 
-        passed = len([w for w in warnings if "Riesgo ilimitado" in w or "FailureKnowledgeDB" in w]) == 0
+        passed = len([w for w in warnings if "Riesgo ilimitado" in w or "FailureKnowledgeDB" in w or "Falta Stop Loss" in w]) == 0
         return passed, warnings
 
 

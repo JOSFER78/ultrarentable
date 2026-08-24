@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR-CANON-NQ-001_g03",
   "run_id": "run_UR-CANON-NQ-001",
   "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "a1b702edbbd89f51488fc6f7c38dc16fc021a44850ad962f3cc0665e8156d0c2",
+  "strategy_snapshot_hash": "e10361168a033dfc1f01994db3764831e98cbd22f24ecec9c1fdef2ce6ccf94e",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "fc46f9e15b6c4a6e90a1de03d9b584bb707e4a98f4725877ff23bc5b0c0967bf",
-  "output_hash": "60a40447d382aed61eec3bb2cd118ddeb89ebc75fd2cd41355598317c3685a7c",
+  "input_hash": "2e5bedfea584f76afbf42d2a60edd1b427155c32bba427768ce6547da358fd3d",
+  "output_hash": "da6d72ad470ac03f530072ccee33565fa2ed535145bf8404f43e57126ff96fa5",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (1335 IS / 236 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (25 IS / 239 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 1335,
-    "trades_oos": 236,
-    "top2_outlier_dependency_pct": 17.9,
+    "trades_is": 25,
+    "trades_oos": 239,
+    "top2_outlier_dependency_pct": 18.4,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T16:54:21.588599+00:00"
+  "created_at_utc": "2026-08-24T18:43:02.610907+00:00"
 }

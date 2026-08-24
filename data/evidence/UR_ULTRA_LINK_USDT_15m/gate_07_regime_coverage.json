@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15m_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_15m",
   "strategy_id": "UR_ULTRA_LINK_USDT_15m",
-  "strategy_snapshot_hash": "90ce69e9242f73c8610f2cfc40f9b150925067078105770d072f96c4df37fbd7",
+  "strategy_snapshot_hash": "065ee0ab5b100999fb8dbafd5fe679c2282c87ff8196496bedfce31c6367408c",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "248ca9f72d90565a3623e9a40a570116829de20a2fb6c793501641193f4f44b4",
-  "output_hash": "6c82b9b86b65a7e97016b20c46fee8dfcd714e41f9b03c21903a9e4873114955",
+  "input_hash": "deeb087b9193b4eb11a3c0813a12a07c05082b6d8513acefecc6c27c7e9684ff",
+  "output_hash": "f8d416a8b84ccd05112af4863f4c0e8cddfb7aa17724b670bde01c0b39468436",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -173.63%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -172.72%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 36,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 1,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 66,
-      "HIGH_VOLATILITY": 8
+      "CHOP_RANGING": 67,
+      "HIGH_VOLATILITY": 6
     },
     "regime_return_pct": {
       "BULL_TREND": -5.66,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -143.49,
-      "HIGH_VOLATILITY": -24.48
+      "CHOP_RANGING": -154.49,
+      "HIGH_VOLATILITY": -12.57
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 3,
-    "total_oos_return_pct": -173.63
+    "total_oos_return_pct": -172.72
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:59:38.168654+00:00"
+  "created_at_utc": "2026-08-24T18:42:00.118631+00:00"
 }

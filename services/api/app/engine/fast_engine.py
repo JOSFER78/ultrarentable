@@ -273,12 +273,12 @@ class FastEngine:
 
         # 4. Extract Price Series
         n_bars = len(records)
-        times = np.array([r["time"] for r in records], dtype=np.int64)
-        opens = np.array([r["open"] for r in records], dtype=np.float64)
-        highs = np.array([r["high"] for r in records], dtype=np.float64)
-        lows = np.array([r["low"] for r in records], dtype=np.float64)
-        closes = np.array([r["close"] for r in records], dtype=np.float64)
-        volumes = np.array([r["volume"] for r in records], dtype=np.float64)
+        times = np.array([int(r.get("time") or r.get("timestamp") or r.get("timestamp_utc_ms") or r.get("open_time") or idx) for idx, r in enumerate(records)], dtype=np.int64)
+        opens = np.array([float(r.get("open", 0.0)) for r in records], dtype=np.float64)
+        highs = np.array([float(r.get("high", 0.0)) for r in records], dtype=np.float64)
+        lows = np.array([float(r.get("low", 0.0)) for r in records], dtype=np.float64)
+        closes = np.array([float(r.get("close", 0.0)) for r in records], dtype=np.float64)
+        volumes = np.array([float(r.get("volume", 0.0)) for r in records], dtype=np.float64)
 
         # 5. Evaluate IR Registers deterministically
         registers: dict[str, np.ndarray] = {}

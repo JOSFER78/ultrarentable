@@ -2,7 +2,7 @@
   "evidence_id": "ev_empty_test_g05",
   "run_id": "run_empty_test",
   "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "b42e5b47672829ae4f235813ae39ca445b9ca7d515938aafbbdf8cc21da97b22",
+  "strategy_snapshot_hash": "3af744f0c1cda97b9583d7b39c9f68065252bf92887b5028f6f0ae5cf99c786e",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "98b1185474c8d557b71b3195ca3be3117636c3568bb178ca77a0bd5359a6fec1",
-  "output_hash": "55e57fce288127ca4b920954604bc7a0fe0e598ec78271f1b17c6c5b3b9843c0",
+  "input_hash": "6e777f2081d9a2c7050c6c73a915c14a51a8b45a9166b0af12a8e4244a25cb44",
+  "output_hash": "ec30388ba3dcebb8342c4fcf3d10044a130003095d71afcb5434e291da9adcfa",
   "status": "PASSED",
-  "score": 97.9,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.3%)",
+  "score": 97.5,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 5.0%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 2.5,
-    "drawdown_95th_percentile_pct": 4.3,
-    "max_simulated_drawdown_pct": 6.5
+    "drawdown_median_pct": 3.0,
+    "drawdown_95th_percentile_pct": 5.0,
+    "max_simulated_drawdown_pct": 9.2
   },
   "artifact_path": "data/evidence/empty_test/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T16:54:12.616836+00:00"
+  "created_at_utc": "2026-08-24T18:42:52.320642+00:00"
 }

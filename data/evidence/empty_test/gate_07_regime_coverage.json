@@ -2,7 +2,7 @@
   "evidence_id": "ev_empty_test_g07",
   "run_id": "run_empty_test",
   "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "b42e5b47672829ae4f235813ae39ca445b9ca7d515938aafbbdf8cc21da97b22",
+  "strategy_snapshot_hash": "3af744f0c1cda97b9583d7b39c9f68065252bf92887b5028f6f0ae5cf99c786e",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "0dc395e95aedd07a4e84ea3b5f63bf85620b02fd0794d5a7ada005393d4bd2a3",
-  "output_hash": "4b7bea988053245f4725f86306f71cd1a181c426024f78fe07f92aca761151af",
+  "input_hash": "cdde311f115316e618575599cbdcd60d4fde60d7041b071d309ab3967b035853",
+  "output_hash": "b7543549a72bf089ada7be048b80e6cc9693576779332e9140d5c9eccb865014",
   "status": "PASSED",
-  "score": 85.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (3/4 regímenes positivos, Retorno OOS: +8104.53%)",
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8050.21%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
-      "BULL_TREND": 16,
-      "BEAR_TREND": 22,
-      "CHOP_RANGING": 110,
-      "HIGH_VOLATILITY": 86
+      "BULL_TREND": 20,
+      "BEAR_TREND": 30,
+      "CHOP_RANGING": 106,
+      "HIGH_VOLATILITY": 83
     },
     "regime_return_pct": {
-      "BULL_TREND": -116.0,
-      "BEAR_TREND": 929.82,
-      "CHOP_RANGING": 3559.23,
-      "HIGH_VOLATILITY": 3731.48
+      "BULL_TREND": 275.51,
+      "BEAR_TREND": 1328.39,
+      "CHOP_RANGING": 2074.92,
+      "HIGH_VOLATILITY": 4371.39
     },
-    "regimes_profitable_count": 3,
+    "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 8104.53
+    "total_oos_return_pct": 8050.21
   },
   "artifact_path": "data/evidence/empty_test/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T16:54:12.651905+00:00"
+  "created_at_utc": "2026-08-24T18:42:52.358522+00:00"
 }

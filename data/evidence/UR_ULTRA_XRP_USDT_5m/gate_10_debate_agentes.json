@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_5m_g10",
   "run_id": "run_UR_ULTRA_XRP_USDT_5m",
   "strategy_id": "UR_ULTRA_XRP_USDT_5m",
-  "strategy_snapshot_hash": "a7c27a26dd07567517c90ac55a73966d340fb762ab90803e02d48ffedd3726b7",
+  "strategy_snapshot_hash": "57f256e7a48c2b85b0070f56bdf24d4877503d6e818e461fc9e5280f6c654a9a",
   "dataset_id": "ds_binance_xrpusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "30a9e640d5817fa6f70e9b28c55e0c28f3f2014e4053841dc68eabccaf1dd7e6",
-  "output_hash": "a47adf5a3bc3f12109187dfd740926e9fe4469c488e55bd41a22c456497072ac",
+  "input_hash": "405f307f57e8111d277735c6734422fdd4fd93568adc813b4dca00fa3eaddbff",
+  "output_hash": "c0141bb57b16d73e68dc20bc14aaffff53ca31de62bf498aaeb82b9fd29341e7",
   "status": "PASSED",
-  "score": 71.2,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (71.2/100 · Guía de Mejora Generada)",
+  "score": 73.0,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (73.0/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 71.2,
+    "consensus_score": 73.0,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
@@ -44,9 +44,9 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 80.0,
+        "score": 90.0,
         "findings": [
-          "Muestra fuera de muestra: 16 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 18 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: MODERADO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $4.73 USD.",
+          "Beneficio medio por operación: $4.21 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 73.5,
+        "score": 76.0,
         "objections": [
           "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
         ],
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_5m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T17:01:41.683180+00:00"
+  "created_at_utc": "2026-08-24T18:44:44.863819+00:00"
 }

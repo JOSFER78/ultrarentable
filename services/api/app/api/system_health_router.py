@@ -40,6 +40,7 @@ def _probe_port(host: str, port: int, timeout: float = 1.0) -> bool:
 
 
 @system_health_router.get("/health")
+@system_health_router.get("/status")
 def get_system_health(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """100% Real, non-mocked infrastructure health check."""
     now_iso = datetime.utcnow().isoformat()

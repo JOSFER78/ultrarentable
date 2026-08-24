@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_ES_15m_g02",
   "run_id": "run_UR_FONDEO_ES_15m",
   "strategy_id": "UR_FONDEO_ES_15m",
-  "strategy_snapshot_hash": "365a730cf40af37d41fbfb9e8c93075d9935a68effcd135664e4985d44f30e2f",
+  "strategy_snapshot_hash": "570e875d58fa2aec2ab6e4bb01529389a150a1173d56e451f101c5a034823b81",
   "dataset_id": "ds_trad_es_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "77cd8c89dc2f84f65c45bc0a3ada5585b2db502e4718aa8d359ce4c9c103ffc9",
-  "output_hash": "0c55222febb548d62a5c9acad63c8b55760492d97096c44062e175b45187e776",
-  "status": "PASSED",
-  "score": 15.2,
-  "verdict": "PASSED: PF Neto tras costes = 1.15 (INDICES)",
+  "input_hash": "3f6ae1f4a725c088a88393380c494ba4fa4eab642d8c00c7446b04d95aec6859",
+  "output_hash": "56cb3f7677bd096d116d015ba4c0f06343aeaebb78d2372295bf6d5e1f5aa164",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "INDICES",
-    "canonical_name": "E-mini S&P 500",
-    "exchange": "CME Globex",
-    "gross_pnl_usd": 775.0,
-    "total_fees_usd": 50.0,
-    "total_slippage_usd": 250.0,
-    "net_pnl_usd": 475.0,
-    "net_profit_factor": 1.15,
-    "drag_cost_pct": 38.71
+    "trades_count": 9
   },
   "artifact_path": "data/evidence/UR_FONDEO_ES_15m/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-24T16:57:17.952629+00:00"
+  "created_at_utc": "2026-08-24T18:39:54.022620+00:00"
 }

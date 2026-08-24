@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_SI_1h_g11",
   "run_id": "run_UR_FONDEO_SI_1h",
   "strategy_id": "UR_FONDEO_SI_1h",
-  "strategy_snapshot_hash": "008df93f5cb3f0df11785f5f3bd46dca9fb4c9f8ffdb192eda2ae0d094a5bb77",
+  "strategy_snapshot_hash": "661b4433b76cf20da6dfb5e7ca241b338f07e1ccc1f62d03a531a5ff719024a7",
   "dataset_id": "ds_trad_si_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "19e96e0c840809328fe01c4f7ec6f0f622355261f81e80d8ed014aab64a3681f",
-  "output_hash": "118eed8e3aaec12c1c29e426e8ed5f66095775f5c679cc8a27895ff2e29f9ed1",
+  "input_hash": "c4069961645cb88bcff616c8bd4fd446d66ce03558e28e2fe947dc9bfd431e29",
+  "output_hash": "2359e686c373b96768eec8c36fdad06bd0d54ec1d5c64f15c6aad7e05e870e53",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 98.9%, Peak Lev: 1.0x)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 1.0x)",
   "metrics": {
     "initial_capital_usd": 50000.0,
-    "final_equity_usd": 30875.39,
-    "peak_equity_usd": 92910.42,
-    "min_equity_usd": 20690.63,
+    "final_equity_usd": -465.48,
+    "peak_equity_usd": 60434.4,
+    "min_equity_usd": -465.48,
     "peak_leverage_used": 1.0,
     "max_allowed_leverage_ceiling": 3.0,
-    "min_distance_to_liquidation_pct": 98.89,
-    "margin_call_triggered": false,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
     "total_fees_paid_usd": 0.0,
     "total_funding_cost_usd": 0.0,
-    "execution_events_count": 40
+    "execution_events_count": 11
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_1h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-24T16:50:55.597451+00:00"
+  "created_at_utc": "2026-08-24T18:33:51.032741+00:00"
 }

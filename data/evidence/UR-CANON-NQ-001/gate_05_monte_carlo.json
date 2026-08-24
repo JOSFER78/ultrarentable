@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR-CANON-NQ-001_g05",
   "run_id": "run_UR-CANON-NQ-001",
   "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "a1b702edbbd89f51488fc6f7c38dc16fc021a44850ad962f3cc0665e8156d0c2",
+  "strategy_snapshot_hash": "e10361168a033dfc1f01994db3764831e98cbd22f24ecec9c1fdef2ce6ccf94e",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "fcd98e5d2a44e23ca2becccb6beab715ef2fb3b58cf793a864a6402d2b2b1886",
-  "output_hash": "b2f743b906cb72969e02390e6375728a1fc5fad5ab6226c4fdba4c703f1db82a",
+  "input_hash": "855722b6d8388a1b92cccda91968cb0cfda252e0beb6ed6db7ca7095e6887d3b",
+  "output_hash": "ec30388ba3dcebb8342c4fcf3d10044a130003095d71afcb5434e291da9adcfa",
   "status": "PASSED",
-  "score": 97.6,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.8%)",
+  "score": 97.5,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 5.0%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 2.9,
-    "drawdown_95th_percentile_pct": 4.8,
-    "max_simulated_drawdown_pct": 7.5
+    "drawdown_median_pct": 3.0,
+    "drawdown_95th_percentile_pct": 5.0,
+    "max_simulated_drawdown_pct": 9.2
   },
   "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T16:54:21.718136+00:00"
+  "created_at_utc": "2026-08-24T18:43:02.785373+00:00"
 }
