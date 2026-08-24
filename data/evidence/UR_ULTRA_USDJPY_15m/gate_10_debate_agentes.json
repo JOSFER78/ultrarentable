@@ -1,0 +1,86 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_15m_g10",
+  "run_id": "run_UR_ULTRA_USDJPY_15m",
+  "strategy_id": "UR_ULTRA_USDJPY_15m",
+  "strategy_snapshot_hash": "ae997050dcb7c78ad0566d8af929c2fb7f92972c98aa80d15e50c9354cb69447",
+  "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0922f39e28cbe48604915a01206edaf061256618651a159caba314a3bd578d3f",
+  "output_hash": "2a2c79705d2aca49f4784ea5fe518be2c49ae75dfa02d3e82c456826b03b1c7b",
+  "status": "FAILED",
+  "score": 25.0,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (25.0/100)",
+  "metrics": {
+    "consensus_score": 25.0,
+    "evaluators_count": 5,
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 21.7,
+        "findings": [
+          "Activo y Timeframe: USDJPY (15m) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.26 con beneficio neto de $-902.41.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 90.2% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 246 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-3.67 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 30.4,
+        "objections": [
+          "Alerta de Drawdown: DD (90.2%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.26 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": false
+      }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15m/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-24T16:43:53.470070+00:00"
+}

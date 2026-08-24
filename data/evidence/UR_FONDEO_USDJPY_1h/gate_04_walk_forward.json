@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_1h_g04",
+  "run_id": "run_UR_FONDEO_USDJPY_1h",
+  "strategy_id": "UR_FONDEO_USDJPY_1h",
+  "strategy_snapshot_hash": "c56d7c345bcfaca4e742e208c4bb678c386ec80579188fd49af0fe05d73aee61",
+  "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "db9318ed3a9f6c7324c25d229226ec2d4d0b6df05049c9cd74c802502f17563e",
+  "output_hash": "e03f57e1447cc368132d04648c0d440fcc995af0b94fb9dc8849514b95c0f3f4",
+  "status": "FAILED",
+  "score": 11.3,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.23 < 0.40 ó Consistencia 0.0% < 40%)",
+  "metrics": {
+    "total_trades_analyzed": 134,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.23,
+    "oos_consistency_pct": 0.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 18,
+        "oos_trades_count": 8,
+        "pf_is": 0.15,
+        "pf_oos": 0.03,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.17
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 18,
+        "oos_trades_count": 8,
+        "pf_is": 0.09,
+        "pf_oos": 0.02,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.16
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 18,
+        "oos_trades_count": 8,
+        "pf_is": 0.06,
+        "pf_oos": 0.02,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.22
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 18,
+        "oos_trades_count": 8,
+        "pf_is": 0.07,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 18,
+        "oos_trades_count": 8,
+        "pf_is": 0.03,
+        "pf_oos": 0.06,
+        "net_profit_oos_usd": -0.0,
+        "wfe": 0.57
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1h/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T16:39:36.939256+00:00"
+}

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_RTY_15m_g02",
   "run_id": "run_UR_ULTRA_RTY_15m",
   "strategy_id": "UR_ULTRA_RTY_15m",
-  "strategy_snapshot_hash": "eb1de646e0fd2824a49fb07e4cd80557cb1bf5318c569248c30752d75b240900",
+  "strategy_snapshot_hash": "c2f901897b699b68933521f0a6016f475a69cb6b6916d1e156d7cd963a81a750",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "28d3152cfbf6e3190d4e531900c31db2eee0d98f9999455a74d4dd197eb9fee6",
-  "output_hash": "d77e605d849d31821d2fc67bf8b6227639ab549142ff9f1c6fe07dd5ae1f100e",
+  "input_hash": "61a52d5242164bf1868672300301900fa49bb70cc4bb30a6a4d5d2b7e8689e7e",
+  "output_hash": "4fa6caac3a12b1504547e8d0ff3c24371803dc75e99069eab23f60838b2d9e01",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.51 < 1.10",
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "INDICES",
-    "canonical_name": "E-mini Russell 2000",
-    "exchange": "CME Globex",
-    "gross_pnl_usd": -470.0,
-    "total_fees_usd": 75.0,
-    "total_slippage_usd": 150.0,
-    "net_pnl_usd": -695.0,
-    "net_profit_factor": 0.51,
-    "drag_cost_pct": 47.87
+    "trades_count": 4
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15m/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-24T11:34:22.316148+00:00"
+  "created_at_utc": "2026-08-24T16:41:32.736994+00:00"
 }

@@ -1,21 +1,34 @@
 {
+  "evidence_id": "ev_UR-CANON-NQ-001_g09",
+  "run_id": "run_UR-CANON-NQ-001",
+  "strategy_id": "UR-CANON-NQ-001",
+  "strategy_snapshot_hash": "bf16657ea94ffe31e87653e993b22c368d99b591b1d3e936b19167af2cb66ccb",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
-  "name": "NOVELTY_ANTIFIT",
-  "passed": false,
-  "score": 43.4,
-  "verdict": "FALLO: Fragilidad ante perturbaci\u00f3n param\u00e9trica (DoF 23.8 o Estabilidad 108.4% < 50.0%)",
-  "evidence": {
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "2ca780bdd3cda076aa5a943ca6bea07d59103b0387fa8f6d242140ad831893c1",
+  "output_hash": "b3f82e7ccbfd5a7844fecb065a1a87615b9764944d930d02dace4cdec3d0b3fa",
+  "status": "FAILED",
+  "score": 42.5,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 26.3 o Estabilidad 106.2% < 50.0%)",
+  "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 23.8,
+    "degrees_of_freedom_ratio": 26.3,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 108.4,
+    "parameter_neighborhood_stability_pct": 106.2,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.19,
+      1.2,
+      1.11,
       1.09,
-      1.09,
-      1.27
+      1.23
     ],
     "rebacktest_performed": true
-  }
+  },
+  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-24T16:38:24.803493+00:00"
 }

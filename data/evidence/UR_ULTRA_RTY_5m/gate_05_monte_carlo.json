@@ -1,0 +1,23 @@
+{
+  "evidence_id": "ev_UR_ULTRA_RTY_5m_g05",
+  "run_id": "run_UR_ULTRA_RTY_5m",
+  "strategy_id": "UR_ULTRA_RTY_5m",
+  "strategy_snapshot_hash": "e2928f1a21c71cf765887f67a663a9f5bc805333c7d45f4fa90f0a0f0be5133b",
+  "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "3ad86fe61f44e38e00c5a7eec5da833d25e9bd00643ce39fba846536b023cfa6",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
+  "metrics": {
+    "simulations_run": 0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_RTY_5m/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-24T16:45:39.510210+00:00"
+}

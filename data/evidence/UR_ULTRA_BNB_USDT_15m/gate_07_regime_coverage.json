@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_15m_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_15m",
   "strategy_id": "UR_ULTRA_BNB_USDT_15m",
-  "strategy_snapshot_hash": "8018f5b0c1df1a3f137bdc4fa6abfc49beaa066d75fffc64aa4ce87bbe1250ba",
+  "strategy_snapshot_hash": "96c7472e37a83f6b721e5fc07cd63431112ebbe0531886d81d939d87954252a6",
   "dataset_id": "ds_binance_bnbusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "d4fc18b81cf617ec1374775074a0c8ae039c3239a135e072a492c5f64cc63bf7",
-  "output_hash": "a87d815fbe2379415c933461db89b88e489b2254ecfa5953f94f71e80ad8f610",
+  "input_hash": "68937efda3d5a4aaae86f8f138351781dfe55c228b5af39322ae7762fc844741",
+  "output_hash": "3af419d5a0b34af8ec1d6a1053e68562f3a6828fe92cdb64a2f3335355557cc7",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -85.83%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -120.61%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 94,
-      "HIGH_VOLATILITY": 16
+      "CHOP_RANGING": 97,
+      "HIGH_VOLATILITY": 20
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -60.76,
-      "HIGH_VOLATILITY": -25.07
+      "CHOP_RANGING": -67.99,
+      "HIGH_VOLATILITY": -52.62
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -85.83
+    "total_oos_return_pct": -120.61
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_15m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T11:30:40.433194+00:00"
+  "created_at_utc": "2026-08-24T16:41:12.751537+00:00"
 }

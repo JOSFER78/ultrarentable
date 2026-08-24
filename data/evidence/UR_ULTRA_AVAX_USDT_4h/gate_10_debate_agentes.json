@@ -1,0 +1,86 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4h_g10",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_4h",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_4h",
+  "strategy_snapshot_hash": "b0b603c2e092259dae02c04eb93f982e0ff8b0363e268844bfa30ab85ff328f0",
+  "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "354298bc56707736dc1f8858007ab498fa61e128bebe009ded08adec6abb9ac3",
+  "output_hash": "7801f743aa8931365641fb3fd51bed796a957cf874511331233408fa44de0340",
+  "status": "FAILED",
+  "score": 34.4,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.4/100)",
+  "metrics": {
+    "consensus_score": 34.4,
+    "evaluators_count": 5,
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 54.5,
+        "findings": [
+          "Activo y Timeframe: AVAX (4h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.99 con beneficio neto de $-999.84.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 706 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-1.42 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 38.6,
+        "objections": [
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.99 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": false
+      }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-24T16:35:47.957933+00:00"
+}

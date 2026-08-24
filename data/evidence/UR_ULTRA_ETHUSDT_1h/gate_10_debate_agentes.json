@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETHUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_ETHUSDT_1h",
   "strategy_id": "UR_ULTRA_ETHUSDT_1h",
-  "strategy_snapshot_hash": "27d0db9f27bb89c3bf353f5d7b40b9f46e8c863327fcbbb750f08e11c3e48b58",
+  "strategy_snapshot_hash": "68444c5f36f3931c00f574511a6e66a627e0835661d6ae0610760d158a3d0480",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "6ab8548b301609cf1f666c7677b34965c2ba5de3dbfcc3fe383a119b0ad0a393",
-  "output_hash": "1afea9c402c1eba8df8fae8a745d23b855730214bae3ba23e361647caf88e1ca",
+  "input_hash": "de5021e36e6e317ef25fafece2731548e88e53a667d98b3b855cf04f09aac93e",
+  "output_hash": "985d5d09ff7ffc0187f48ae3a32fc8d3d1268e98bb5865529477bb48fe3bd757",
   "status": "PASSED",
   "score": 54.6,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (54.6/100 · Guía de Mejora Generada)",
@@ -25,8 +25,8 @@
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
         "score": 59.5,
         "findings": [
-          "Activo y Timeframe: ETHUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.10 con beneficio neto de $3084199016903659749376.00.",
+          "Activo y Timeframe: ETH-USDT (1h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.10 con beneficio neto de $10570436634933115398127616.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 98.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2089 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2282 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $1476399720872982272.00 USD.",
+          "Beneficio medio por operación: $4632093179199437144064.00 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 64.9,
         "objections": [
-          "Alerta de Drawdown: DD (98.5%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (99.9%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETHUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T11:16:10.418478+00:00"
+  "created_at_utc": "2026-08-24T16:50:43.867766+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4h_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_4h",
   "strategy_id": "UR_ULTRA_SOL_USDT_4h",
-  "strategy_snapshot_hash": "ead39b652d34311a5a0e0e014bbbf28b9b15e775856c26b1658a8ed11c0898c5",
+  "strategy_snapshot_hash": "386a24ca3d4b7adb378778fe831d430d0b32014e4f78eb9de3febacb18d4c418",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "cd6acb92b2e7e36c52c4ac4319f0a114420a07d9ae989a9b24b686664f9120f3",
-  "output_hash": "21c7d8f5aa6fb0d91542d17cf199886711aef4c3258ba8b2e043ec6b71d534e8",
+  "input_hash": "0f939d4dd151932c257b82d3e9fa3fb082569651bc49b8714b9b29bf43ccf43a",
+  "output_hash": "8f3f420ccb655a3b994be8b1b3badd5c2e2c7f19fdcbdec37b603fe2a7c2f29d",
   "status": "PASSED",
   "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +615.52%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +725.54%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 477,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 535
     },
     "regime_trades_count": {
-      "BULL_TREND": 40,
-      "BEAR_TREND": 35,
-      "CHOP_RANGING": 42,
-      "HIGH_VOLATILITY": 51
+      "BULL_TREND": 33,
+      "BEAR_TREND": 37,
+      "CHOP_RANGING": 35,
+      "HIGH_VOLATILITY": 49
     },
     "regime_return_pct": {
-      "BULL_TREND": -98.24,
-      "BEAR_TREND": 112.46,
-      "CHOP_RANGING": -95.59,
-      "HIGH_VOLATILITY": 696.89
+      "BULL_TREND": -2.66,
+      "BEAR_TREND": 39.72,
+      "CHOP_RANGING": -1.43,
+      "HIGH_VOLATILITY": 689.91
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 615.52
+    "total_oos_return_pct": 725.54
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T11:32:19.387077+00:00"
+  "created_at_utc": "2026-08-24T16:51:08.257521+00:00"
 }

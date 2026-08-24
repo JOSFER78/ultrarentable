@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AUDUSD_1h_g08",
+  "run_id": "run_UR_ULTRA_AUDUSD_1h",
+  "strategy_id": "UR_ULTRA_AUDUSD_1h",
+  "strategy_snapshot_hash": "ef7efbfcb199c5d1bb88756bb1c52cbb6c93af9e5bb621c101210985d858d813",
+  "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "388013197392842a5a7da1c3346b27c0cd3fc8f51a04f3535398e1555cc5992b",
+  "output_hash": "f00ac48585265968070aeeb761c1a1f11f9762beea79076fb215227ec16b4cfb",
+  "status": "FAILED",
+  "score": 0.2,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.2% < 50.0% tras penalizar 117 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -0.242,
+    "deflated_sharpe_probability_pct": 0.16,
+    "trials_penalized_count": 117,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 2.316,
+    "kurtosis": 9.952,
+    "sample_trades_count": 250
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T16:44:57.659770+00:00"
+}

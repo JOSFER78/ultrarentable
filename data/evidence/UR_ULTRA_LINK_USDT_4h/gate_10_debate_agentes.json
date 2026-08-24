@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_4h",
   "strategy_id": "UR_ULTRA_LINK_USDT_4h",
-  "strategy_snapshot_hash": "7ed65f21ca1d429abc77553965a58336fda789843bc91b68415c05cac072e1a8",
+  "strategy_snapshot_hash": "7b359c2989cc8f82cd0dfb14d4bb15cc0710b4c205e293e76213aa5eb7d63ca0",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "e641fb262471d71d0b91ab1419c9f364df236907fb351e12f19e834692ec79c3",
-  "output_hash": "a53ab7824f2f51c7e31637a56a3ccb0de2bfc53fed265c8c1cc5a71fef99c4ed",
+  "input_hash": "18335da204ef486c6431ace3f6a3782613491d4fcc3998877955628d7967be02",
+  "output_hash": "02b66879d611136719a3a86946fbc648c3c2791266e62f910b90614f54ed3602",
   "status": "FAILED",
-  "score": 37.7,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (37.7/100)",
+  "score": 32.5,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (32.5/100)",
   "metrics": {
-    "consensus_score": 37.7,
+    "consensus_score": 32.5,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 56.4,
+        "score": 47.8,
         "findings": [
           "Activo y Timeframe: LINK (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.03 con beneficio neto de $141.73.",
+          "Profit Factor OOS: 0.84 con beneficio neto de $-998.57.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 97.8% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 481 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 734 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 14.7,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.29 USD.",
+          "Beneficio medio por operación: $-1.36 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,16 +64,16 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 42.8,
+        "score": 37.0,
         "objections": [
-          "Alerta de Drawdown: DD (97.8%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 1.03 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.84 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
-        "approved": true
+        "approved": false
       }
     ],
     "recommendations": [
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T11:33:19.037047+00:00"
+  "created_at_utc": "2026-08-24T16:36:38.529122+00:00"
 }

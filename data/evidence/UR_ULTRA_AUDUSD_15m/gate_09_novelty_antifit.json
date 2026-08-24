@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_15m_g09",
   "run_id": "run_UR_ULTRA_AUDUSD_15m",
   "strategy_id": "UR_ULTRA_AUDUSD_15m",
-  "strategy_snapshot_hash": "1ffb30d6f48bb40a3bbdebd1ca1140dddbc8726225300887bf3b30da55907156",
+  "strategy_snapshot_hash": "18b3107938b9dbeb45ef913791bdcb1b471437592b684599823a9cd59e044876",
   "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "2a74eb21b55fad999dfedf3848c0c32aaac99ec2a33febd346e949126a3aacb4",
-  "output_hash": "fcc74c9f60c7be677ad995a55badd7cfc5eec1347798ed6c6507244326c964c8",
+  "input_hash": "eb2dc0a9c8a8b92a743ade7704f9736b17309619bfa42572d161360710ea3e70",
+  "output_hash": "65de156c0685e560d39f8ebaf6261f47ef8ddf6c473792682c693aab838c7eb3",
   "status": "PASSED",
-  "score": 93.8,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 54.0 trades/param, Estabilidad Vecindario: 89.7%, Re-backtest PFs: [0.13, 0.11, 0.19, 0.18])",
+  "score": 88.9,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 54.4 trades/param, Estabilidad Vecindario: 81.6%, Re-backtest PFs: [0.08, 0.12, 0.19, 0.23])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 54.0,
+    "degrees_of_freedom_ratio": 54.4,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 89.7,
+    "parameter_neighborhood_stability_pct": 81.6,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.13,
-      0.11,
+      0.08,
+      0.12,
       0.19,
-      0.18
+      0.23
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_15m/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T11:32:29.031156+00:00"
+  "created_at_utc": "2026-08-24T16:39:01.399593+00:00"
 }

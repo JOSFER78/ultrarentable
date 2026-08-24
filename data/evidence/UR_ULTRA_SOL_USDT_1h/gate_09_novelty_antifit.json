@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1h_g09",
   "run_id": "run_UR_ULTRA_SOL_USDT_1h",
   "strategy_id": "UR_ULTRA_SOL_USDT_1h",
-  "strategy_snapshot_hash": "b718e331eaae9d5b9709d80f057bac75db4d912570c0c8a7fcf20665799face2",
+  "strategy_snapshot_hash": "86da856b567d78ed3fcd47ceae610346b5044ecbacd1d8e58a31d58274a3bb01",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "bb2c9a05c1ad56c0cbf4777d9b8da1bc3a429c36b8cdaac556efd17e80639244",
-  "output_hash": "3d73354d7a80bcea05a86d0fbc3b79937f3441df14418a4e142e55b03496ee7b",
+  "input_hash": "45e7c9c54aa2cb63e75e11b9fe0a3a30212c88ba459747e5f0c1c9883154e4d3",
+  "output_hash": "dc30f0d7801e019831d6feee958df871dca051d23e93bfed542cc641d36c90fe",
   "status": "PASSED",
-  "score": 96.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 152.8 trades/param, Estabilidad Vecindario: 93.8%, Re-backtest PFs: [0.92, 0.95, 0.95, 0.93])",
+  "score": 97.2,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 117.0 trades/param, Estabilidad Vecindario: 95.3%, Re-backtest PFs: [0.93, 1.01, 0.97, 0.98])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 152.8,
+    "degrees_of_freedom_ratio": 117.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 93.8,
+    "parameter_neighborhood_stability_pct": 95.3,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.92,
-      0.95,
-      0.95,
-      0.93
+      0.93,
+      1.01,
+      0.97,
+      0.98
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T11:35:31.226676+00:00"
+  "created_at_utc": "2026-08-24T16:37:06.087474+00:00"
 }

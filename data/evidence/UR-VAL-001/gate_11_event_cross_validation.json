@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR-VAL-001_g11",
   "run_id": "run_UR-VAL-001",
   "strategy_id": "UR-VAL-001",
-  "strategy_snapshot_hash": "42c3432af0584ed1ba24cc5fb7c919967b74750e334efaff5e79dd6072cef539",
+  "strategy_snapshot_hash": "5a9a732fc9ccc263d6bd6a026494a755ab1600d61b008a2f69f1fb22a1e9defc",
   "dataset_id": "ds_trad_nq_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "e10883f556efbf170a9222681b384ce226e142f8b8a0c202c177a953280d78e7",
-  "output_hash": "708192579d06e97b88d1b6a17cc4d03ddfa07e6b045707f302d409cba3807c31",
+  "input_hash": "308f2b8ae2b4fb355234d8a3686b3a2b0a17c5b6985f3466b6a472dc34566ed5",
+  "output_hash": "3c884c39e7621cfe05e7da0b4c9bd2464530e3e96b5c97a9d553ac8ace1e85b8",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 72.9%, Peak Lev: 6.0x)",
+  "verdict": "RECHAZADO: Trades insuficientes para validación cruzada orientada a eventos (< 5 trades)",
   "metrics": {
-    "initial_capital_usd": 1000.0,
-    "final_equity_usd": 212.13,
-    "peak_equity_usd": 1000.0,
-    "min_equity_usd": 212.13,
-    "peak_leverage_used": 6.0,
-    "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 72.9,
-    "margin_call_triggered": false,
-    "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 0.0,
-    "execution_events_count": 5
+    "execution_events_count": 0
   },
   "artifact_path": "data/evidence/UR-VAL-001/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-24T11:31:08.302376+00:00"
+  "created_at_utc": "2026-08-24T16:46:26.666018+00:00"
 }

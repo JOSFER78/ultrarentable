@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_4h_g08",
+  "run_id": "run_UR_ULTRA_XRP_USDT_4h",
+  "strategy_id": "UR_ULTRA_XRP_USDT_4h",
+  "strategy_snapshot_hash": "f61fe9f527798428dc998d855c32d1219940a801de8e77645ba1c80ba9ea2471",
+  "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "7414a7b18a1239d944f68fe071bde3eaca3034774b9597840ffd46cd66ffa606",
+  "output_hash": "a2f4a2c95cd12113bf9ce2bcf825abba97cce60462136abb2a06b857af6f15d5",
+  "status": "PASSED",
+  "score": 85.9,
+  "verdict": "PASSED: DSR = 85.9% (Sharpe Bruto: 0.08, Trials Penalizados: 117, Skew: 2.24, Kurt: 8.50)",
+  "metrics": {
+    "raw_sharpe_ratio": 0.077,
+    "deflated_sharpe_probability_pct": 85.91,
+    "trials_penalized_count": 117,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 2.241,
+    "kurtosis": 8.502,
+    "sample_trades_count": 164
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T16:35:18.848913+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_15m_g03",
+  "run_id": "run_UR_ULTRA_XRP_USDT_15m",
+  "strategy_id": "UR_ULTRA_XRP_USDT_15m",
+  "strategy_snapshot_hash": "f953b5e404dab81df0898bf241e2c66af9593790eb7ba2f88e092d485dba3fc7",
+  "dataset_id": "ds_binance_xrpusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "824eabab89b0c5749063d3bd192f097ed5d0472f558594e2823ceb839128f4ca",
+  "output_hash": "7a816967992f58b49bfd7888a111396b4126ae24276374316fd79600b940ec81",
+  "status": "FAILED",
+  "score": 90.0,
+  "verdict": "FALLO: Muestra insuficiente (169 IS < 15 ó 18 OOS < 10)",
+  "metrics": {
+    "trades_is": 169,
+    "trades_oos": 18,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_15m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T16:44:34.913345+00:00"
+}

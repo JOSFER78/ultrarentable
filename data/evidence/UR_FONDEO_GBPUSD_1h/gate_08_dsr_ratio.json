@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GBPUSD_1h_g08",
+  "run_id": "run_UR_FONDEO_GBPUSD_1h",
+  "strategy_id": "UR_FONDEO_GBPUSD_1h",
+  "strategy_snapshot_hash": "19510aa95abbdf4e9dab99e5cdeb1ca0216d68c42d5cf83e4683d39beb67e9d6",
+  "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "d152c56a830fccdf8ee4e34d213cd194f0568fc5ea22aed18c9e7fcfc606d147",
+  "output_hash": "7b3ace3878f6acaaa96f4cfb15dc39e487f977a8ec91858708e6d549a3e98cf6",
+  "status": "FAILED",
+  "score": 0.2,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.2% < 50.0% tras penalizar 117 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -0.579,
+    "deflated_sharpe_probability_pct": 0.16,
+    "trials_penalized_count": 117,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 1.476,
+    "kurtosis": 4.318,
+    "sample_trades_count": 56
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T16:40:23.365995+00:00"
+}

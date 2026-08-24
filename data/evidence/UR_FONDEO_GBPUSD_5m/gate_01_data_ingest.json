@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GBPUSD_5m_g01",
+  "run_id": "run_UR_FONDEO_GBPUSD_5m",
+  "strategy_id": "UR_FONDEO_GBPUSD_5m",
+  "strategy_snapshot_hash": "14373c45673e9c987e03cc5db16c1e08c0f2c428896e1b27190c0d9060bd22eb",
+  "dataset_id": "ds_trad_gbpusd_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "52b1cfd59071ad4e91eb71991a84f8f4986bdc0c059f1ba2afd56cbd64ecb67d",
+  "output_hash": "8e162a12cc3cfe21ba6de06a7f399c6277212502c412cca229d1bb45e76df865",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (3412 velas, SHA256: 9d1a198f..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 3412,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 300,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "9d1a198f5621c2609bac3d5be9b6b883237bbf4ea9ce9e0f1f0154c354289a30",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_5m/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-24T16:40:34.974274+00:00"
+}

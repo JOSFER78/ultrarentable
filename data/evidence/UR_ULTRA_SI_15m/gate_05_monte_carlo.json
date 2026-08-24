@@ -1,0 +1,23 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SI_15m_g05",
+  "run_id": "run_UR_ULTRA_SI_15m",
+  "strategy_id": "UR_ULTRA_SI_15m",
+  "strategy_snapshot_hash": "df2d8dc8c802e7ffbc5b2bb116042c4a1d510b310643f018059e7d7001bc90ae",
+  "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "80448de17234dc2bcb57f184fed7b9096a7aeb140be5b81fb7f267b6cf2b77e4",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
+  "metrics": {
+    "simulations_run": 0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SI_15m/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-24T16:46:19.410623+00:00"
+}

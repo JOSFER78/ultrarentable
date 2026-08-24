@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_5m_g09",
   "run_id": "run_UR_FONDEO_USDJPY_5m",
   "strategy_id": "UR_FONDEO_USDJPY_5m",
-  "strategy_snapshot_hash": "7af532aa9b917cf5d83b930e2a12132bd07ff4f6e360851694fd4091f6a19703",
+  "strategy_snapshot_hash": "0207438580103beaf16a6a477795454c482c08a95738a0f9734375ba0091f2b0",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "0942cd9ee1e7f29f8d64a82a5c6f5ad835b6428e238913f83eaa9eb432f32450",
-  "output_hash": "e95f5f409a9226ed4df267c7338f55d251ca264ea0f15a2f839cf3dedce5a8bb",
-  "status": "FAILED",
-  "score": 20.6,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 30.0 o Estabilidad 51.6% < 60.0%)",
+  "input_hash": "f1341b4a8a67129189555cf0bb0f12c596b950f6b373ad17afba06dbac902b73",
+  "output_hash": "cfaf5ceec0b3506b9961759a93baad256993219f4884b14f446a8fa6da169f98",
+  "status": "PASSED",
+  "score": 91.0,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 26.6 trades/param, Estabilidad Vecindario: 85.0%, Re-backtest PFs: [0.13, 0.04, 0.09, 0.08])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 30.0,
+    "degrees_of_freedom_ratio": 26.6,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 51.6,
+    "parameter_neighborhood_stability_pct": 85.0,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.12,
-      0.14,
-      0.03,
-      0.04
+      0.13,
+      0.04,
+      0.09,
+      0.08
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5m/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T11:35:05.060900+00:00"
+  "created_at_utc": "2026-08-24T16:40:58.996835+00:00"
 }

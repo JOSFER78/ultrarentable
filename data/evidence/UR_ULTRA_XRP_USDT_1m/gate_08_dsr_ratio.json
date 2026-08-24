@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_ULTRA_XRP_USDT_1m_g08",
+  "run_id": "run_UR_ULTRA_XRP_USDT_1m",
+  "strategy_id": "UR_ULTRA_XRP_USDT_1m",
+  "strategy_snapshot_hash": "c644c913777e33d63a8acd9dfeeb9b4a3b3a61fbb2edaee2ef994cb54cef1a1d",
+  "dataset_id": "ds_binance_xrpusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "e6f2c9607dcfb15a770dcadd0fd6c07e270773c85c257858342ae97e5a7c68e2",
+  "output_hash": "92664dff2ea43491fae571a88ab5f8ed8979b14daa557f0e076945af775dab98",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
+  "metrics": {
+    "trials_penalized": 117,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1m/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T16:46:43.352604+00:00"
+}

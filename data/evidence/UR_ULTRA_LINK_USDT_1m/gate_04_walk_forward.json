@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1m_g04",
   "run_id": "run_UR_ULTRA_LINK_USDT_1m",
   "strategy_id": "UR_ULTRA_LINK_USDT_1m",
-  "strategy_snapshot_hash": "7365089660c5616a8da4a73e01546930f9e8ff66e3c4774f88c533b789f7cd39",
+  "strategy_snapshot_hash": "09161694293ee9f0b78c37d927efd3c3ac5362e7a6600bf7b0f7f20d4a739162",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "ba818ce939f5cd9d92494756b22e207837c5336d8ccd63e99051759b3485555b",
-  "output_hash": "0051bbaa4a4f3aa3ffa850c0e9cb765064ddc03791dbbc5adb19165beb17f269",
+  "input_hash": "cd0b204122ad842e887b5d0cc88089ab9495bd470c70e36621d08385c3ee67fe",
+  "output_hash": "589bf6e59452cb20b8ae3b36ac17d5a94318688e7af3244d05ec7846ebff2224",
   "status": "FAILED",
   "score": 51.5,
   "verdict": "FALLO: Degradación temporal excesiva (WFE 1.03 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 120,
+    "total_trades_analyzed": 121,
     "windows_count": 5,
     "walk_forward_efficiency": 1.03,
     "oos_consistency_pct": 20.0,
@@ -70,5 +70,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1m/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T11:35:35.435642+00:00"
+  "created_at_utc": "2026-08-24T16:41:17.240294+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_5m_g10",
   "run_id": "run_UR_ULTRA_USDCAD_5m",
   "strategy_id": "UR_ULTRA_USDCAD_5m",
-  "strategy_snapshot_hash": "e9fddc9947931de272d2fb9a187799ee870bb8cb1afd9fa3f5afc592b522a387",
+  "strategy_snapshot_hash": "ff27987a76b93127b1b17ae75e078aa85f30c32873ea1ee85278e5f73d568136",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c4739016a8d828595597e7ab42198ac9f224809a9d7ef90d095e42d990b43cc1",
-  "output_hash": "1aeead6fb3013c81e5ed9601503bdd5b95025b7cbc828084bcb72ebeaf389f9e",
+  "input_hash": "33947c3a6771b38199c45123ee8018f5771c56ed6e6ffd83f1d4c9d031df9c2e",
+  "output_hash": "d9fedc07cf44969fb3c1f0e33f097d9f62679f72a1dd3364dadb8376e62924a2",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCAD (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.02 con beneficio neto de $-987.96.",
+          "Profit Factor OOS: 0.02 con beneficio neto de $-987.98.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 334 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 337 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.96 USD.",
+          "Beneficio medio por operación: $-2.93 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T11:33:47.007065+00:00"
+  "created_at_utc": "2026-08-24T16:40:53.678667+00:00"
 }

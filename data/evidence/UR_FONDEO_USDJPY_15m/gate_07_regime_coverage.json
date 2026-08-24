@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15m_g07",
   "run_id": "run_UR_FONDEO_USDJPY_15m",
   "strategy_id": "UR_FONDEO_USDJPY_15m",
-  "strategy_snapshot_hash": "25c25edc435271f71675a69e579fb40deec5621103ca19d7f76a130471f81139",
+  "strategy_snapshot_hash": "c59274df9b8c033179a06cb2f38422dd03104d835920676ae5ed9d5a1a569054",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "df46ba74b2537e23763e350da5245052f5330506575ff1684bf8137dfbdde329",
-  "output_hash": "954774fbd9e4bd5f574600fe48ff219f7d9fecd39eedfaa738ab3a9c1e274b26",
-  "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +0.02%)",
+  "input_hash": "1e0d835198d396326fe0d4db5917756722d5cc7a9f1ea1af4e4939a79a1f9e69",
+  "output_hash": "37180f47354a54c4dbc0a109d9ceb2bcc193ae5adff5b27011e83ba031815f48",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.02%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 8,
+      "CHOP_RANGING": 11,
       "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 0.01,
-      "HIGH_VOLATILITY": 0.01
+      "CHOP_RANGING": -0.0,
+      "HIGH_VOLATILITY": -0.02
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 0.02
+    "total_oos_return_pct": -0.02
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T11:33:10.593123+00:00"
+  "created_at_utc": "2026-08-24T16:38:30.502105+00:00"
 }

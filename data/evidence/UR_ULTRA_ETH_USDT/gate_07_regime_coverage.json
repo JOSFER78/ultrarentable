@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "a3e419d92c274ab782330a645b3aa03c5877ef386fcf69dd9f479fa3f357f11d",
+  "strategy_snapshot_hash": "757e6ca76e296c49f7e5bd4433efae768b10ef5fcb3a841708589a147081faae",
   "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "b994582526d3faf993be56b0c9b02f54ef81966f48278c398993e8470580dc7f",
-  "output_hash": "4cdcee3c7c4d6ca6a1a1e0fc170107cc34ad0026352f3e905bcb4af0e077b57a",
+  "input_hash": "4842397c4c58bae8284e421d397bc409328e2dede54fb1d0722734aa604a196f",
+  "output_hash": "4d6c8e98216765d3f37a626294b12be9af30221d0516fed1f5ad805b4989f7db",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -109.09%)",
+  "score": 15.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -103.79%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 135,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 36
     },
     "regime_trades_count": {
-      "BULL_TREND": 9,
-      "BEAR_TREND": 7,
-      "CHOP_RANGING": 23,
-      "HIGH_VOLATILITY": 3
+      "BULL_TREND": 5,
+      "BEAR_TREND": 3,
+      "CHOP_RANGING": 24,
+      "HIGH_VOLATILITY": 2
     },
     "regime_return_pct": {
-      "BULL_TREND": -4.2,
-      "BEAR_TREND": -23.29,
-      "CHOP_RANGING": -66.94,
-      "HIGH_VOLATILITY": -14.66
+      "BULL_TREND": 4.38,
+      "BEAR_TREND": -27.92,
+      "CHOP_RANGING": -70.19,
+      "HIGH_VOLATILITY": -10.06
     },
-    "regimes_profitable_count": 0,
+    "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -109.09
+    "total_oos_return_pct": -103.79
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T11:29:12.648886+00:00"
+  "created_at_utc": "2026-08-24T16:43:35.791473+00:00"
 }

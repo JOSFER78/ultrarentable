@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15m_g08",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_15m",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_15m",
+  "strategy_snapshot_hash": "35313785de625e3bf116fb9b55d8382bad6be0480c5ac34a7c211fe439be8710",
+  "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "545c0dad88613ab5fa1d4f4c4e6812d6b3f86fdb5817691cf8e38615e0b80502",
+  "output_hash": "05ffe30b5b435cf53970e9b1860ab851e6408c58989c5086939a85f6e6ae5f6d",
+  "status": "FAILED",
+  "score": 5.5,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (5.5% < 50.0% tras penalizar 117 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -0.172,
+    "deflated_sharpe_probability_pct": 5.52,
+    "trials_penalized_count": 117,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 1.571,
+    "kurtosis": 3.962,
+    "sample_trades_count": 112
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15m/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T16:43:22.182363+00:00"
+}

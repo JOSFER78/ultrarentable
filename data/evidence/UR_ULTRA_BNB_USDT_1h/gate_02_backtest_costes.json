@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BNB_USDT_1h_g02",
+  "run_id": "run_UR_ULTRA_BNB_USDT_1h",
+  "strategy_id": "UR_ULTRA_BNB_USDT_1h",
+  "strategy_snapshot_hash": "ee50c865ca00f73c9b8cc41218084c7bee31b26e3f2a942b5afb602abea3e695",
+  "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "78fb8c660c7b2f530cf98b413e18db9554f1a87cfe24e2900977ebb76ee5eb2c",
+  "output_hash": "6351390a600537469b6f73d51d6bedba542c902ddc89da7eea87be5ee3055bab",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.88 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "BNB Perpetuo",
+    "exchange": "Perpetual Swap",
+    "gross_pnl_usd": -115.9,
+    "total_fees_usd": 631.63,
+    "total_slippage_usd": 55.8,
+    "net_pnl_usd": -803.33,
+    "net_profit_factor": 0.88,
+    "drag_cost_pct": 593.12
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T16:37:12.968010+00:00"
+}

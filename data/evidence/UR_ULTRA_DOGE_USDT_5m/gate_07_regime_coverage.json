@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_5m_g07",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_5m",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_5m",
+  "strategy_snapshot_hash": "0a87837f2f421b7de17f34c883b33a80b9fe7804397ba668d0a5350a5c049392",
+  "dataset_id": "ds_binance_dogeusdt_5m_1784389200000_1787088900000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "7180ceb0e6e4864b84ace107826c0e851820066bbbcffc0086855c5a564597a7",
+  "output_hash": "d1744089cf597d3a122b54d89002cfd580eb1ee74713cd24261824c4adff5a52",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO / BLOCKED: Sin trades_raw físicos con timestamp/índice para mapeo temporal real",
+  "metrics": {
+    "trades_mapped_count": 0,
+    "active_regimes": []
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_5m/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T16:46:52.300527+00:00"
+}

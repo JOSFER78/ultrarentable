@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR-VAL-001_g06",
   "run_id": "run_UR-VAL-001",
   "strategy_id": "UR-VAL-001",
-  "strategy_snapshot_hash": "42c3432af0584ed1ba24cc5fb7c919967b74750e334efaff5e79dd6072cef539",
+  "strategy_snapshot_hash": "5a9a732fc9ccc263d6bd6a026494a755ab1600d61b008a2f69f1fb22a1e9defc",
   "dataset_id": "ds_trad_nq_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,42 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "3bc38dff96ab586bf2f0b52646be0be338e171f2cbed9fc54bc5015be8a5bc44",
-  "output_hash": "3fe67a9ba8a50f75d032adf9ae42c6a7ed9814b468a766403740543f36dc400d",
+  "input_hash": "503ef65fe5457fd62fc6702e2c0bc73c7fc8e14d7991a89803d27ecc9b692b59",
+  "output_hash": "0d1282b4e5c953d875d05c1b1fde76dfe9e1864646f9d86e50b9fbae83d64919",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
+  "verdict": "RECHAZADO: Trades insuficientes para prueba de estrés de fricción",
   "metrics": {
-    "scenarios": {
-      "Base": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.22,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      },
-      "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.23,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      },
-      "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.24,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      },
-      "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -1.25,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      }
-    },
-    "passed_scenarios_count": 0,
-    "min_required_scenarios": 1,
-    "base_friction_usd": 0.35
+    "stressed_scenarios": []
   },
   "artifact_path": "data/evidence/UR-VAL-001/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-24T11:31:07.887707+00:00"
+  "created_at_utc": "2026-08-24T16:46:26.291962+00:00"
 }

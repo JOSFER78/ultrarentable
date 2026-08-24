@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR-CANON-NQ-001_g07",
+  "run_id": "run_UR-CANON-NQ-001",
+  "strategy_id": "UR-CANON-NQ-001",
+  "strategy_snapshot_hash": "bf16657ea94ffe31e87653e993b22c368d99b591b1d3e936b19167af2cb66ccb",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
-  "name": "REGIME_COVERAGE",
-  "passed": true,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "f9ca1880f0cfdafcf71ff971142e8a92e2a865766d9828f7b242f641397ec346",
+  "output_hash": "bfa3f8225e101a0ff6a25f82fd3396f6c4f8b1b8ed1e26814a490eff4970088f",
+  "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (4/4 reg\u00edmenes positivos, Retorno OOS: +17296.90%)",
-  "evidence": {
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8303.79%)",
+  "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
       "BEAR_TREND": 469,
@@ -12,19 +23,21 @@
       "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
-      "BULL_TREND": 15,
-      "BEAR_TREND": 20,
-      "CHOP_RANGING": 103,
-      "HIGH_VOLATILITY": 81
+      "BULL_TREND": 19,
+      "BEAR_TREND": 30,
+      "CHOP_RANGING": 104,
+      "HIGH_VOLATILITY": 84
     },
     "regime_return_pct": {
-      "BULL_TREND": 701.43,
-      "BEAR_TREND": 1013.02,
-      "CHOP_RANGING": 7137.63,
-      "HIGH_VOLATILITY": 8444.82
+      "BULL_TREND": 289.98,
+      "BEAR_TREND": 1589.03,
+      "CHOP_RANGING": 2070.0,
+      "HIGH_VOLATILITY": 4354.78
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 17296.9
-  }
+    "total_oos_return_pct": 8303.79
+  },
+  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T16:38:23.380379+00:00"
 }

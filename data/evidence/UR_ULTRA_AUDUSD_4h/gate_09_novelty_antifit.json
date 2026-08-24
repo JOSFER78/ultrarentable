@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AUDUSD_4h_g09",
+  "run_id": "run_UR_ULTRA_AUDUSD_4h",
+  "strategy_id": "UR_ULTRA_AUDUSD_4h",
+  "strategy_snapshot_hash": "9f1418c288fb4777b8fa988f542e1a750a4a4b3807b34761c3025855e5387b92",
+  "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0b84a46c634734a26ca449b06e86b3720c07fdf751e6f1eb523b08491fa87599",
+  "output_hash": "e73b8de9db849aced2ff59172a1bddc25dcdbb335b684768c826186cda9db058",
+  "status": "FAILED",
+  "score": 6.4,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 25.8 o Estabilidad 16.1% < 50.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 25.8,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 16.1,
+    "min_stability_required_pct": 50.0,
+    "perturbed_neighborhood_pfs": [
+      0.03,
+      0.01,
+      0.02,
+      0.03
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4h/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-24T16:44:25.784883+00:00"
+}

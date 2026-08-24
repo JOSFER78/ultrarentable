@@ -1,0 +1,51 @@
+{
+  "evidence_id": "ev_UR_ULTRA_GBPUSD_4h_g06",
+  "run_id": "run_UR_ULTRA_GBPUSD_4h",
+  "strategy_id": "UR_ULTRA_GBPUSD_4h",
+  "strategy_snapshot_hash": "f5832c1d9cf1768ecadc53282cfbefe5dd6b6787c5347695fdbed3f21800ca6a",
+  "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 6,
+  "gate_name": "STRESS_SLIPPAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "4b737d2618180b4b3636cb66b649892014a9f011e8ffd2610b624241fa5fadb6",
+  "output_hash": "06cf4a562896171422df9cdfbf1f0be93275b7759e37834feb1af135d6eed16d",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
+  "metrics": {
+    "scenarios": {
+      "Base": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.46,
+        "stressed_profit_factor": 0.33,
+        "survived": false
+      },
+      "+1_Sigma": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.51,
+        "stressed_profit_factor": 0.33,
+        "survived": false
+      },
+      "+2_Sigma": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.58,
+        "stressed_profit_factor": 0.32,
+        "survived": false
+      },
+      "+3_Sigma": {
+        "friction_penalty_per_trade_usd": 0.0,
+        "stressed_net_pnl_usd": -2.67,
+        "stressed_profit_factor": 0.31,
+        "survived": false
+      }
+    },
+    "passed_scenarios_count": 0,
+    "min_required_scenarios": 1,
+    "base_friction_usd": 0.35
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_GBPUSD_4h/gate_06_stress_slippage.json",
+  "created_at_utc": "2026-08-24T16:44:22.123142+00:00"
+}

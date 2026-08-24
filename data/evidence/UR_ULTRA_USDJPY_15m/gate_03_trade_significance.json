@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_15m_g03",
+  "run_id": "run_UR_ULTRA_USDJPY_15m",
+  "strategy_id": "UR_ULTRA_USDJPY_15m",
+  "strategy_snapshot_hash": "ae997050dcb7c78ad0566d8af929c2fb7f92972c98aa80d15e50c9354cb69447",
+  "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "6caefd9ca4f05fc298c58d7ba414419874559425be4beeeffb25ca13d4707745",
+  "output_hash": "77fa4824567ce48c7f6f36ae3c292661b8c02e683b95b48d6a9e98bf3e65b11b",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (192 IS / 54 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 192,
+    "trades_oos": 54,
+    "top2_outlier_dependency_pct": 42.6,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T16:43:53.176019+00:00"
+}

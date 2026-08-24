@@ -1,12 +1,74 @@
 {
+  "evidence_id": "ev_UR-CANON-NQ-001_g04",
+  "run_id": "run_UR-CANON-NQ-001",
+  "strategy_id": "UR-CANON-NQ-001",
+  "strategy_snapshot_hash": "bf16657ea94ffe31e87653e993b22c368d99b591b1d3e936b19167af2cb66ccb",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
-  "name": "WALK_FORWARD",
-  "passed": false,
-  "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
-  "evidence": {
-    "total_trades": 19,
-    "windows_evaluated": 0,
-    "walk_forward_efficiency": 0.0
-  }
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "7f3f4fd24c3c5ec0a11933db0c06d53a0aa169cdcb11d1a103103e8653e94f39",
+  "output_hash": "bab477d0c6c6311c0c1f9f01835ddf1b4f3eed662f4aaec11fcc71efcef6f4fd",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 9.75, Consistencia: 40.0%)",
+  "metrics": {
+    "total_trades_analyzed": 26,
+    "windows_count": 5,
+    "walk_forward_efficiency": 9.75,
+    "oos_consistency_pct": 40.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 3,
+        "oos_trades_count": 2,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.21,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 3,
+        "oos_trades_count": 2,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.5,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 3,
+        "oos_trades_count": 2,
+        "pf_is": 0.0,
+        "pf_oos": 4.86,
+        "net_profit_oos_usd": 1.01,
+        "wfe": 48.56
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 3,
+        "oos_trades_count": 2,
+        "pf_is": 2.18,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.19,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 3,
+        "oos_trades_count": 2,
+        "pf_is": 6.81,
+        "pf_oos": 1.33,
+        "net_profit_oos_usd": 0.09,
+        "wfe": 0.2
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T16:38:23.182929+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_SI_15m_g09",
   "run_id": "run_UR_FONDEO_SI_15m",
   "strategy_id": "UR_FONDEO_SI_15m",
-  "strategy_snapshot_hash": "7a9d6c10e6d51f71b465bcfe15b1223af69c7fa663b5eb955866dd57102a518d",
+  "strategy_snapshot_hash": "2aef503b70276facc0ab0f159e9848dd651827d442f5428f1219a1b092e62801",
   "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "512ea724c1db2b9a0d6c93c8fb20ee3155725bced62db1c63701caf352036015",
-  "output_hash": "c2415f3999e0d1ce1a54b8e9b26572f554671cc504ec1393067cac6defb28984",
+  "input_hash": "06b3bf405fb5ac28db639007051faffd8101eba45eaa909df465213757efc09f",
+  "output_hash": "dc28f4efade7becbcde84c0222b20ae3f015c4870f40d18b7d88b04f09e16db3",
   "status": "FAILED",
-  "score": 43.9,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 8.9 o Estabilidad 109.8% < 60.0%)",
+  "score": 39.9,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 7.6 o Estabilidad 99.7% < 60.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 8.9,
+    "degrees_of_freedom_ratio": 7.6,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 109.8,
+    "parameter_neighborhood_stability_pct": 99.7,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      0.94,
-      1.21,
-      1.35,
-      1.11
+      1.49,
+      1.04,
+      0.57,
+      0.81
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_FONDEO_SI_15m/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T11:32:14.580688+00:00"
+  "created_at_utc": "2026-08-24T16:38:33.927868+00:00"
 }

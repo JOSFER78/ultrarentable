@@ -1,0 +1,25 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_5m_g04",
+  "run_id": "run_UR_ULTRA_SUI_USDT_5m",
+  "strategy_id": "UR_ULTRA_SUI_USDT_5m",
+  "strategy_snapshot_hash": "91c957ad08221dc1f187543393ba109f5dfa67f43b6483aa5aa8cc5496458a63",
+  "dataset_id": "ds_binance_suiusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "c8a08047b1b3d80eb578e9b7cb7bd541291e9e15b045ff616e37ecefbcf4d033",
+  "output_hash": "a370964fb21a54ee9b1f8a2ca215d072bcbfd0867f3d6ebd239ae69cb9c4757a",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
+  "metrics": {
+    "total_trades": 12,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_5m/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T16:46:02.837590+00:00"
+}

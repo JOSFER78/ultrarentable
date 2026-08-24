@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_ETH_USDT_5m_g04",
+  "run_id": "run_UR_ULTRA_ETH_USDT_5m",
+  "strategy_id": "UR_ULTRA_ETH_USDT_5m",
+  "strategy_snapshot_hash": "bb82299b543324d761945abceb9d605b8c54e55134ae24356b5589f9c89a5ba2",
+  "dataset_id": "ds_binance_ethusdt_5m_1783939200000_1787088900000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "c9d976b8d5433091739b81d1851c0a379738d82e5bcaf431cff7f1c6feab5ed4",
+  "output_hash": "1d12f31a5948aaa5858e72d03b66f82040568c223deb0ba30cb0f7c0ca8e13cc",
+  "status": "FAILED",
+  "score": 14.5,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.29 < 0.40 ó Consistencia 20.0% < 40%)",
+  "metrics": {
+    "total_trades_analyzed": 172,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.29,
+    "oos_consistency_pct": 20.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 23,
+        "oos_trades_count": 11,
+        "pf_is": 1.22,
+        "pf_oos": 0.34,
+        "net_profit_oos_usd": -0.17,
+        "wfe": 0.28
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 23,
+        "oos_trades_count": 11,
+        "pf_is": 1.31,
+        "pf_oos": 1.11,
+        "net_profit_oos_usd": 0.02,
+        "wfe": 0.84
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 23,
+        "oos_trades_count": 11,
+        "pf_is": 1.29,
+        "pf_oos": 0.42,
+        "net_profit_oos_usd": -0.15,
+        "wfe": 0.33
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 23,
+        "oos_trades_count": 11,
+        "pf_is": 0.56,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.14,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 23,
+        "oos_trades_count": 11,
+        "pf_is": 0.36,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.19,
+        "wfe": 0.0
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_5m/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T16:41:07.793030+00:00"
+}

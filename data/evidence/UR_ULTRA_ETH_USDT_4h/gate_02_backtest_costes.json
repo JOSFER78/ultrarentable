@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_ETH_USDT_4h_g02",
+  "run_id": "run_UR_ULTRA_ETH_USDT_4h",
+  "strategy_id": "UR_ULTRA_ETH_USDT_4h",
+  "strategy_snapshot_hash": "414762fcaa625f8f2b2fa1baab2f1e75a28e09df6f0d809be6131d0c0b193349",
+  "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "55083740249085c1210de97477a9798aecabd48d6440943483704737189a8f12",
+  "output_hash": "c00cd5a607691271f41cf6417f40b84bd69d1fc8a9d07e253f6185fc58a8d279",
+  "status": "FAILED",
+  "score": 0.7,
+  "verdict": "FALLO: PF Neto 1.01 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "ETH Perpetuo",
+    "exchange": "Perpetual Swap",
+    "gross_pnl_usd": 4008.34,
+    "total_fees_usd": 3487.07,
+    "total_slippage_usd": 90.12,
+    "net_pnl_usd": 431.15,
+    "net_profit_factor": 1.01,
+    "drag_cost_pct": 89.24
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T16:35:57.892838+00:00"
+}

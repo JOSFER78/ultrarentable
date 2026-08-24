@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_15m_g04",
   "run_id": "run_UR_FONDEO_USDJPY_15m",
   "strategy_id": "UR_FONDEO_USDJPY_15m",
-  "strategy_snapshot_hash": "25c25edc435271f71675a69e579fb40deec5621103ca19d7f76a130471f81139",
+  "strategy_snapshot_hash": "c59274df9b8c033179a06cb2f38422dd03104d835920676ae5ed9d5a1a569054",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "21c95e1becb50896d8dfe475cd487896ca242cad474a36c295cfb8f46d43e1b8",
-  "output_hash": "4e7817b83de844e74ab7bd5912947a6d3d4f18924d7d9b2de6cd44d27bb75d43",
+  "input_hash": "f0a9cb2f28f3388cc5bf4732254264534083668e534ff31f9088ad1519d9dfaf",
+  "output_hash": "753d69d78775907ee8c967789c7a15415bec1e4015de66bc1d29681c52f68bb7",
   "status": "FAILED",
-  "score": 0.7,
+  "score": 0.3,
   "verdict": "FALLO: Degradación temporal excesiva (WFE 0.01 < 0.40 ó Consistencia 0.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 59,
+    "total_trades_analyzed": 64,
     "windows_count": 5,
     "walk_forward_efficiency": 0.01,
     "oos_consistency_pct": 0.0,
@@ -24,7 +24,7 @@
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 7,
+        "is_trades_count": 8,
         "oos_trades_count": 4,
         "pf_is": 0.0,
         "pf_oos": 0.0,
@@ -33,16 +33,16 @@
       },
       {
         "window_index": 2,
-        "is_trades_count": 7,
+        "is_trades_count": 8,
         "oos_trades_count": 4,
-        "pf_is": 0.0,
-        "pf_oos": 0.01,
+        "pf_is": 0.01,
+        "pf_oos": 0.0,
         "net_profit_oos_usd": -0.0,
-        "wfe": 0.07
+        "wfe": 0.03
       },
       {
         "window_index": 3,
-        "is_trades_count": 7,
+        "is_trades_count": 8,
         "oos_trades_count": 4,
         "pf_is": 0.01,
         "pf_oos": 0.0,
@@ -51,7 +51,7 @@
       },
       {
         "window_index": 4,
-        "is_trades_count": 7,
+        "is_trades_count": 8,
         "oos_trades_count": 4,
         "pf_is": 0.0,
         "pf_oos": 0.0,
@@ -60,7 +60,7 @@
       },
       {
         "window_index": 5,
-        "is_trades_count": 7,
+        "is_trades_count": 8,
         "oos_trades_count": 4,
         "pf_is": 0.0,
         "pf_oos": 0.0,
@@ -70,5 +70,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_15m/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T11:33:10.544386+00:00"
+  "created_at_utc": "2026-08-24T16:38:30.454663+00:00"
 }

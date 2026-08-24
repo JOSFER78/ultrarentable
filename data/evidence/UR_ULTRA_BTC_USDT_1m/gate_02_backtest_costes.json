@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1m_g02",
   "run_id": "run_UR_ULTRA_BTC_USDT_1m",
   "strategy_id": "UR_ULTRA_BTC_USDT_1m",
-  "strategy_snapshot_hash": "2f2e8682bd397723fb5c86bd3a8e7eea6e2baa559ee573cf5b1673a714ca8735",
+  "strategy_snapshot_hash": "0e9e8a765215fee23a55567a403c51cca62b93651b91053b1f95a419716bd60e",
   "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "37013eb8e16b0da75709550caa18ef3529abaa8b7a4bc4f36f4b91365b686575",
-  "output_hash": "4a5e024d08deeda003af5d94834847e419bbbec4067ed3f849495f571f36355f",
+  "input_hash": "d70ab95ddeaba7cb96b74406029561f0561b6bbe20b1fce1b4eec8c5e5da9e77",
+  "output_hash": "56cb3f7677bd096d116d015ba4c0f06343aeaebb78d2372295bf6d5e1f5aa164",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.00 < 1.10",
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "CRYPTO",
-    "canonical_name": "BTC Perpetuo",
-    "exchange": "Perpetual Swap",
-    "gross_pnl_usd": -165.31,
-    "total_fees_usd": 636.58,
-    "total_slippage_usd": 0.6,
-    "net_pnl_usd": -802.49,
-    "net_profit_factor": 0.0,
-    "drag_cost_pct": 385.45
+    "trades_count": 9
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1m/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-24T11:31:59.082717+00:00"
+  "created_at_utc": "2026-08-24T16:45:35.348768+00:00"
 }

@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4h_g07",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_4h",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_4h",
+  "strategy_snapshot_hash": "b0b603c2e092259dae02c04eb93f982e0ff8b0363e268844bfa30ab85ff328f0",
+  "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "5072541d722b8390497c3db293d066d1dc39281af360c46feb462f0d902fd438",
+  "output_hash": "a3079220fadfab97027c9a3618670016ec3d5f12c5d6ac44f463f589341cdd46",
+  "status": "PASSED",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +1112.32%)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 510,
+      "BEAR_TREND": 625,
+      "CHOP_RANGING": 548,
+      "HIGH_VOLATILITY": 417
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 57,
+      "BEAR_TREND": 46,
+      "CHOP_RANGING": 48,
+      "HIGH_VOLATILITY": 24
+    },
+    "regime_return_pct": {
+      "BULL_TREND": -116.82,
+      "BEAR_TREND": 203.5,
+      "CHOP_RANGING": -396.6,
+      "HIGH_VOLATILITY": 1422.24
+    },
+    "regimes_profitable_count": 2,
+    "regimes_active_count": 4,
+    "total_oos_return_pct": 1112.32
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T16:35:47.345024+00:00"
+}

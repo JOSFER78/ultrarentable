@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GBPUSD_1h_g02",
+  "run_id": "run_UR_FONDEO_GBPUSD_1h",
+  "strategy_id": "UR_FONDEO_GBPUSD_1h",
+  "strategy_snapshot_hash": "19510aa95abbdf4e9dab99e5cdeb1ca0216d68c42d5cf83e4683d39beb67e9d6",
+  "dataset_id": "ds_trad_gbpusd_1h_1698796800000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "352ec98424490c04d9bdddf9831fcdf9d9054ad3bae5c88184c6e7528f2a2059",
+  "output_hash": "0f280e5990e39b3383019eef2a20886b33a0b4cbedc1d0a187a9f303f8dd1ebd",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.48 < 1.10",
+  "metrics": {
+    "market_category": "FOREX",
+    "canonical_name": "British Pound / USD",
+    "exchange": "Interbank / FTMO",
+    "gross_pnl_usd": -5987.0,
+    "total_fees_usd": 336.0,
+    "total_slippage_usd": 672.0,
+    "net_pnl_usd": -6995.0,
+    "net_profit_factor": 0.48,
+    "drag_cost_pct": 16.84
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_1h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T16:40:23.301038+00:00"
+}

@@ -1,20 +1,33 @@
 {
+  "evidence_id": "ev_UR-CANON-NQ-001_g11",
+  "run_id": "run_UR-CANON-NQ-001",
+  "strategy_id": "UR-CANON-NQ-001",
+  "strategy_snapshot_hash": "bf16657ea94ffe31e87653e993b22c368d99b591b1d3e936b19167af2cb66ccb",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
-  "name": "EVENT_CROSS_VALIDATION",
-  "passed": false,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "407062229679bafcb9164c4d9c344887effb5a74ed84acceb9f1b198ef34bb68",
+  "output_hash": "d4b337cd49bfa01e3d8e62d3660501b8235fcae274dcb3ed9ac0e0a359a8b589",
+  "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidaci\u00f3n (Margin Call: True, Dist. Liquidaci\u00f3n: 0.0%, Peak Lev: 6.0x)",
-  "evidence": {
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
+  "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -83.83,
-    "peak_equity_usd": 331027.09,
-    "min_equity_usd": -83.83,
+    "final_equity_usd": -164.06,
+    "peak_equity_usd": 100628.0,
+    "min_equity_usd": -164.06,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 326.03,
-    "execution_events_count": 219
-  }
+    "total_funding_cost_usd": 196.32,
+    "execution_events_count": 237
+  },
+  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-24T16:38:24.804719+00:00"
 }

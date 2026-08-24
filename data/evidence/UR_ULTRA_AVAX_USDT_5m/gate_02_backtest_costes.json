@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_5m_g02",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_5m",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_5m",
+  "strategy_snapshot_hash": "4f5878954ef658de2e8b4e6c3ff9363aba5679b634914660fd41d854c97fa2f6",
+  "dataset_id": "ds_binance_avaxusdt_5m_1784389500000_1787089200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "2e8f24efd6562de11045519bfea1bac27b924ddead6790872506d3667f82715d",
+  "output_hash": "2ebfe47e5c69f2c8a9e109a7920e2383392b95314c3408aa13561570fee034e3",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.01 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "AVAX Perpetuo",
+    "exchange": "Perpetual Swap",
+    "gross_pnl_usd": 195.76,
+    "total_fees_usd": 500.94,
+    "total_slippage_usd": 4702.92,
+    "net_pnl_usd": -5008.1,
+    "net_profit_factor": 0.01,
+    "drag_cost_pct": 2658.29
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_5m/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T16:38:37.661631+00:00"
+}

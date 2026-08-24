@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_1m_g03",
+  "run_id": "run_UR_ULTRA_SUI_USDT_1m",
+  "strategy_id": "UR_ULTRA_SUI_USDT_1m",
+  "strategy_snapshot_hash": "55d564cabcb2f0b6fd7a816105c37f388836584d0ee22288c4d9ff2227048124",
+  "dataset_id": "ds_binance_suiusdt_1m_1786461900000_1787091840000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "38dd2d8b8492d3b726cd8635c75838bda1717bd3c84b6576b7a051a978fb2dcb",
+  "output_hash": "5ac1d0e9be5852b004f7b4b452dcaee4fb7adfcb3f3d7eb08f1a268c51f90847",
+  "status": "FAILED",
+  "score": 10.0,
+  "verdict": "FALLO: Muestra insuficiente (5 IS < 15 ó 0 OOS < 10)",
+  "metrics": {
+    "trades_is": 5,
+    "trades_oos": 0,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T16:46:08.358958+00:00"
+}

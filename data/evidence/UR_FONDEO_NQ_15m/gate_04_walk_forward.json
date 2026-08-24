@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_FONDEO_NQ_15m_g04",
+  "run_id": "run_UR_FONDEO_NQ_15m",
+  "strategy_id": "UR_FONDEO_NQ_15m",
+  "strategy_snapshot_hash": "0d02eb64fb38bdded4eb8af19533a844a8dd38085344f3160af1fe46db8de16a",
+  "dataset_id": "ds_trad_nq_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "f3be25370b56bae676008e8601b3e76cd9bd9a7435a0f426479d63476a171f03",
+  "output_hash": "b9b7e93682752e011de52d7582edbfbbaaa9c3828debb7f36ddf613b8b5b1ad2",
+  "status": "FAILED",
+  "score": 19.5,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.39 < 0.40 ó Consistencia 20.0% < 40%)",
+  "metrics": {
+    "total_trades_analyzed": 62,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.39,
+    "oos_consistency_pct": 20.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 8,
+        "oos_trades_count": 4,
+        "pf_is": 1.48,
+        "pf_oos": 2.88,
+        "net_profit_oos_usd": 0.2,
+        "wfe": 1.95
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 8,
+        "oos_trades_count": 4,
+        "pf_is": 3.48,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.09,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 8,
+        "oos_trades_count": 4,
+        "pf_is": 2.39,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.17,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 8,
+        "oos_trades_count": 4,
+        "pf_is": 0.45,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.4,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 8,
+        "oos_trades_count": 4,
+        "pf_is": 0.72,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.23,
+        "wfe": 0.0
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_NQ_15m/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T16:38:41.228076+00:00"
+}

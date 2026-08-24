@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_SOL_USDT_4h",
   "strategy_id": "UR_ULTRA_SOL_USDT_4h",
-  "strategy_snapshot_hash": "ead39b652d34311a5a0e0e014bbbf28b9b15e775856c26b1658a8ed11c0898c5",
+  "strategy_snapshot_hash": "386a24ca3d4b7adb378778fe831d430d0b32014e4f78eb9de3febacb18d4c418",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "89eb1dbb8ba2560ee664b57009be57b5b0e2527e801c952453ad4e4175c879fd",
-  "output_hash": "60b6002e384b3060c1fffcf44c34625b17648f1a6ca2f36836bc3599a14fd0e9",
+  "input_hash": "e0dd3c51b075213a686719d77de5379c1c11b528e0bdd241d1a78a316b176cca",
+  "output_hash": "b46d7cabaf53fce7fd66791bee7bcf88c269e79a16837c4b5a73c3c928e4194a",
   "status": "FAILED",
-  "score": 34.3,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.3/100)",
+  "score": 34.7,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.7/100)",
   "metrics": {
-    "consensus_score": 34.3,
+    "consensus_score": 34.7,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 54.1,
+        "score": 55.5,
         "findings": [
           "Activo y Timeframe: SOL (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.98 con beneficio neto de $-883.00.",
+          "Profit Factor OOS: 1.01 con beneficio neto de $-584.79.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 98.4% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 94.3% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 666 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 648 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.33 USD.",
+          "Beneficio medio por operación: $-0.90 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.5,
+        "score": 38.9,
         "objections": [
-          "Alerta de Drawdown: DD (98.4%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.98 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (94.3%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 1.01 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T11:32:20.096691+00:00"
+  "created_at_utc": "2026-08-24T16:51:08.851947+00:00"
 }

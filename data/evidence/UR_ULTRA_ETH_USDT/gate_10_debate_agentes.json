@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g10",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "a3e419d92c274ab782330a645b3aa03c5877ef386fcf69dd9f479fa3f357f11d",
+  "strategy_snapshot_hash": "757e6ca76e296c49f7e5bd4433efae768b10ef5fcb3a841708589a147081faae",
   "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "26d805d0c61c6ca6cd0bacbc9547df989b0d9d2e58d8acc21146aa95fd3b1f8c",
-  "output_hash": "46c5b87aa6b1c2366ee1f5883834d97b50657fdfa18af32cf61dc416bdd46470",
-  "status": "FAILED",
-  "score": 29.8,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (29.8/100)",
+  "input_hash": "7b05e5f726676643f33429be68c3c8bacff5bbb42d47893dbc0fd0e6bf97dd07",
+  "output_hash": "80bfe55e21158f70d3929fd465edac61b2a5bad159412e65063265d36c66a1cd",
+  "status": "PASSED",
+  "score": 49.4,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (49.4/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 29.8,
+    "consensus_score": 49.4,
     "evaluators_count": 5,
-    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 38.4,
+        "score": 35.2,
         "findings": [
           "Activo y Timeframe: ETH (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.63 con beneficio neto de $-769.64.",
+          "Profit Factor OOS: 0.56 con beneficio neto de $-737.43.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 0.0,
+        "score": 61.0,
         "findings": [
-          "Drawdown Máximo Observado: 86.8% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+          "Drawdown Máximo Observado: 83.0% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 156 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 132 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.93 USD.",
+          "Beneficio medio por operación: $-5.59 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,16 +64,16 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 34.6,
+        "score": 49.0,
         "objections": [
-          "Alerta de Drawdown: DD (86.8%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.63 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (83.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.56 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
-        "approved": false
+        "approved": true
       }
     ],
     "recommendations": [
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T11:29:12.821095+00:00"
+  "created_at_utc": "2026-08-24T16:43:35.989651+00:00"
 }

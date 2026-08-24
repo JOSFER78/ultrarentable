@@ -1,0 +1,23 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_5m_g05",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_5m",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_5m",
+  "strategy_snapshot_hash": "0a87837f2f421b7de17f34c883b33a80b9fe7804397ba668d0a5350a5c049392",
+  "dataset_id": "ds_binance_dogeusdt_5m_1784389200000_1787088900000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "9d7018fd151ab6e3e5f9844bd7e272e274e313df4b6521de9791058c2453fca7",
+  "output_hash": "1382b63bf94d018a7e2c58005dbe474299cb7ac6d01c2f55a1fdcc26df58e9b5",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para simulación Monte Carlo (< 10 trades)",
+  "metrics": {
+    "simulations_run": 0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_5m/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-24T16:46:52.285744+00:00"
+}

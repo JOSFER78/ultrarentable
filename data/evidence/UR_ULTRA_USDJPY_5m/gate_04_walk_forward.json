@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDJPY_5m_g04",
+  "run_id": "run_UR_ULTRA_USDJPY_5m",
+  "strategy_id": "UR_ULTRA_USDJPY_5m",
+  "strategy_snapshot_hash": "1bff5f86535ae1b0c82a60495c92ec4950fb6545cd43853d62837fb5d808877a",
+  "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "b8cd3f21c005a235686bfde92c0aed4303b8230fd6ef78c36d0ed9f598bea3d2",
+  "output_hash": "c62d552847a0816725b04d43fa9975722309b74d106f43bbdca1f4599c8f8dcb",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.00 < 0.40 ó Consistencia 0.0% < 40%)",
+  "metrics": {
+    "total_trades_analyzed": 200,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.0,
+    "oos_consistency_pct": 0.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 28,
+        "oos_trades_count": 12,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.28,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 28,
+        "oos_trades_count": 12,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.29,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 28,
+        "oos_trades_count": 12,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.29,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 28,
+        "oos_trades_count": 12,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.29,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 28,
+        "oos_trades_count": 12,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": -0.28,
+        "wfe": 0.0
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5m/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T16:45:21.049123+00:00"
+}

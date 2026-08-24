@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_GC_1h_g02",
   "run_id": "run_UR_FONDEO_GC_1h",
   "strategy_id": "UR_FONDEO_GC_1h",
-  "strategy_snapshot_hash": "d91290a0c4057c64ccfa30c650972fbcd0f354c3bd507f379bdae9696971b6f7",
+  "strategy_snapshot_hash": "9a63363424c297aa2eed29b590230e4a47e33606d8ea99f40e12df5303b597d1",
   "dataset_id": "ds_trad_gc_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "2daf75342b100e9755eb62fdb078914d64f6c9df4c41ec9a547f8794446049fd",
-  "output_hash": "00cb328960ce7b6624fcb7a6450348b3ce6f8eccd58c1086b56344984320b9e9",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.59 < 1.10",
+  "input_hash": "35f8349d288788146cc425be17dfa91afa0f0b752fe26e1aa317689706309479",
+  "output_hash": "ba636e70f3b92e434a8ad2d602e263851f0b9502cfa41ed54ecf12ab6cb5a3df",
+  "status": "PASSED",
+  "score": 94.2,
+  "verdict": "PASSED: PF Neto tras costes = 1.94 (COMMODITIES)",
   "metrics": {
     "market_category": "COMMODITIES",
     "canonical_name": "Oro COMEX Gold Futures",
     "exchange": "COMEX Globex",
-    "gross_pnl_usd": -46870.0,
-    "total_fees_usd": 125.0,
-    "total_slippage_usd": 500.0,
-    "net_pnl_usd": -47495.0,
-    "net_profit_factor": 0.59,
-    "drag_cost_pct": 1.33
+    "gross_pnl_usd": 47120.0,
+    "total_fees_usd": 135.0,
+    "total_slippage_usd": 540.0,
+    "net_pnl_usd": 46445.0,
+    "net_profit_factor": 1.94,
+    "drag_cost_pct": 1.43
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_1h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-24T11:29:17.574649+00:00"
+  "created_at_utc": "2026-08-24T16:37:19.194936+00:00"
 }

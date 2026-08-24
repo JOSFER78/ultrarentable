@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_FONDEO_YM_15m_g09",
+  "run_id": "run_UR_FONDEO_YM_15m",
+  "strategy_id": "UR_FONDEO_YM_15m",
+  "strategy_snapshot_hash": "c0ad005a53c5f1399a1886d7a07115bbda1893f4aadc40ac944cc47f47ebbae4",
+  "dataset_id": "ds_trad_ym_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "6ceee87f5444e50f1e15b8c405f74461f6075ca61f8d22d47d0e8166299fa46f",
+  "output_hash": "e564dd13bfbe41c8b4859a8473ddcbf67261172ca10144869bffc7c660d6d4aa",
+  "status": "FAILED",
+  "score": 32.3,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 6.5 o Estabilidad 80.8% < 60.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 6.5,
+    "min_dof_required": 15.0,
+    "parameter_neighborhood_stability_pct": 80.8,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      0.08,
+      0.0,
+      0.26,
+      0.29
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_YM_15m/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-24T16:44:51.787130+00:00"
+}
