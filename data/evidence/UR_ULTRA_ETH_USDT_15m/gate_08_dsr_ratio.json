@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_15m_g08",
   "run_id": "run_UR_ULTRA_ETH_USDT_15m",
   "strategy_id": "UR_ULTRA_ETH_USDT_15m",
-  "strategy_snapshot_hash": "c8d949589a1033554deb2992ebd156cfd7a334da9db4817b7127acf3703fb38c",
+  "strategy_snapshot_hash": "64d4f8d59fb2c0d3621f6e49f8fc170d8ded166d0da4dff6e5f0d0f90ad9a070",
   "dataset_id": "ds_bingx_ETH_USDT_15m_1771749000000_1785571200000_32bc0d4520.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "60d06dad863b30a8861cb38679658537e8d4cc7b772e53b7bfacf1b2ba9e0501",
-  "output_hash": "90181902f2d725f6c1190fd1393f46e6abf41fc9ab0ec9a47b8f516ccaff88ef",
+  "input_hash": "60d1c4183c84be496ffc6d8eeb089a98abc287f6d3dcd7f2a8ae804fe4a39f16",
+  "output_hash": "7087063aea007bd20be708a71816077e03972a038c2aefa53465fc0c30b81c18",
   "status": "FAILED",
   "score": 24.6,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (24.6% < 50.0% tras penalizar 117 trials)",
+  "verdict": "FALLO: Deflated Sharpe insuficiente (24.6% < 50.0% tras penalizar 120 trials)",
   "metrics": {
     "raw_sharpe_ratio": -0.064,
     "deflated_sharpe_probability_pct": 24.56,
-    "trials_penalized_count": 117,
+    "trials_penalized_count": 120,
     "expected_max_sharpe_under_selection": 0.0,
     "skewness": 3.934,
     "kurtosis": 28.148,
     "sample_trades_count": 151
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_15m/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T16:38:46.992061+00:00"
+  "created_at_utc": "2026-08-24T16:54:45.482886+00:00"
 }

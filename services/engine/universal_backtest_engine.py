@@ -63,22 +63,38 @@ class UniversalDeterministicBacktestEngine:
         closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)
         volumes = np.array([float(c.get("volume", 1.0)) for c in candles], dtype=np.float64)
         def _parse_ts(c_val: Any) -> int:
-            raw_v = c_val.get("timestamp_utc_ms") or c_val.get("timestamp_ms") or c_val.get("timestamp") or c_val.get("time") or 0
+            raw_v = c_val.get("timestamp_utc_ms") or c_val.get("timestamp_ms") or c_val.get("timestamp") or c_val.get("time")
+            if raw_v is None:
+                raise ValueError(f"INVALID_TIMESTAMP: Candle is missing timestamp field: {c_val}")
             if isinstance(raw_v, (int, float)):
-                return int(raw_v)
+                ts_int = int(raw_v)
+                if ts_int <= 0:
+                    raise ValueError(f"INVALID_TIMESTAMP: Timestamp must be positive integer (got {ts_int})")
+                return ts_int
             if isinstance(raw_v, str):
                 try:
-                    return int(float(raw_v))
+                    ts_int = int(float(raw_v))
+                    if ts_int <= 0:
+                        raise ValueError(f"INVALID_TIMESTAMP: Timestamp must be positive integer (got {ts_int})")
+                    return ts_int
                 except ValueError:
                     try:
-                        from datetime import datetime
                         clean_iso = raw_v.replace("Z", "+00:00")
-                        return int(datetime.fromisoformat(clean_iso).timestamp() * 1000)
-                    except Exception:
-                        return 0
-            return 0
+                        ts_int = int(datetime.fromisoformat(clean_iso).timestamp() * 1000)
+                        if ts_int <= 0:
+                            raise ValueError(f"INVALID_TIMESTAMP: ISO parsed timestamp must be positive (got {ts_int})")
+                        return ts_int
+                    except Exception as e:
+                        raise ValueError(f"INVALID_TIMESTAMP: Unparseable ISO timestamp '{raw_v}': {e}") from e
+            raise ValueError(f"INVALID_TIMESTAMP: Unsupported timestamp format: {type(raw_v)} ({raw_v})")
 
         timestamps = [_parse_ts(c) for c in candles]
+        for idx in range(1, n_bars):
+            if timestamps[idx] <= timestamps[idx - 1]:
+                raise ValueError(
+                    f"NON_MONOTONIC_TIMESTAMPS: Timestamp order violated at candle index {idx} "
+                    f"({timestamps[idx]} <= {timestamps[idx - 1]}). Timestamps must be strictly monotonically increasing."
+                )
 
         # 1. Inicialización de Motores Dinámicos
         ind_engine = DynamicIndicatorEngine(opens, highs, lows, closes, volumes)

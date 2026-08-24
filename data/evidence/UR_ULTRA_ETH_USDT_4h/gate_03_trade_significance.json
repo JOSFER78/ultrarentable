@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4h_g03",
   "run_id": "run_UR_ULTRA_ETH_USDT_4h",
   "strategy_id": "UR_ULTRA_ETH_USDT_4h",
-  "strategy_snapshot_hash": "414762fcaa625f8f2b2fa1baab2f1e75a28e09df6f0d809be6131d0c0b193349",
+  "strategy_snapshot_hash": "1239b8f951f0f2b50906e2c75dfebdf914c66c54801ace78fab6ea21452c29f2",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "1bfe126b9c1323f659ab88653fe1034bd9bfe41cbf227777341dd19b82c27691",
-  "output_hash": "9369cb30f6335a3e3b43e48c154aa6e6242ade28403b04dad36499c82c016e63",
+  "input_hash": "307e375bc35478ca93253ed67ecb2b19ff51a2c245ae4350a7b36c055f9c04da",
+  "output_hash": "69a2c7eb67eb670b801605d433e68e921081a84ccd1551d14210c3b9a8437d9d",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (17 IS / 153 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (27 IS / 158 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 17,
-    "trades_oos": 153,
-    "top2_outlier_dependency_pct": 17.4,
+    "trades_is": 27,
+    "trades_oos": 158,
+    "top2_outlier_dependency_pct": 16.7,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4h/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T16:35:57.893182+00:00"
+  "created_at_utc": "2026-08-24T16:52:04.342591+00:00"
 }

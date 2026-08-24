@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR-CANON-NQ-001_g10",
   "run_id": "run_UR-CANON-NQ-001",
   "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "bf16657ea94ffe31e87653e993b22c368d99b591b1d3e936b19167af2cb66ccb",
+  "strategy_snapshot_hash": "a1b702edbbd89f51488fc6f7c38dc16fc021a44850ad962f3cc0665e8156d0c2",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "057660fb657a193cdd10c7e000dee1e67ca6639a2f08972543f1304daea62881",
-  "output_hash": "e45701094c88e3a83ef5b5637a19d25c334bb9ce3372ebc70aabb4dfa511e818",
+  "input_hash": "5865e65115c6d4e9fc5b59f7ac1303174b626a9ffaf05ab02b5d0b3cdac57102",
+  "output_hash": "b0c61b673a86d4f94810287b07776bb97debabfb05cb3e063969cdb71bd33a31",
   "status": "FAILED",
   "score": 35.7,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.7/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 263 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1571 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.80 USD.",
+          "Beneficio medio por operación: $-0.64 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:38:24.804000+00:00"
+  "created_at_utc": "2026-08-24T16:54:22.852364+00:00"
 }

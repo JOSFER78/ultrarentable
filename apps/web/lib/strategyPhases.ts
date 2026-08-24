@@ -1,20 +1,31 @@
 // apps/web/lib/strategyPhases.ts
+// SSOT: Catálogo Unificado de Fases de Producto (UX) y Fases del Pipeline Cuantitativo v5.3.0
 
 export interface StrategyPhase {
   id: number;
   name: string;
-  label?: string;
+  label: string;
   shortLabel: string;
   icon: string;
   badge: string;
   color: string;
   description: string;
-  routePath: string;
-  route?: string;
-  legacyRoutes?: string[];
+  canonicalRoute: string;
+  legacyRoutes: string[];
 }
 
-export const STRATEGY_PHASES: StrategyPhase[] = [
+export interface PipelineStage {
+  stageNumber: number;
+  key: string;
+  name: string;
+  description: string;
+  evidenceGateRequirement: string;
+}
+
+/**
+ * PRODUCT_PHASES: Las 6 Vistas Sincronizadas del Frontend (UX / Operativa).
+ */
+export const PRODUCT_PHASES: StrategyPhase[] = [
   {
     id: 0,
     name: "Portada General de Estrategias",
@@ -24,8 +35,7 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     badge: "GLOBAL",
     color: "#63e1b4",
     description: "Centro de mando integral del laboratorio cuantitativo, KPIs consolidados y acceso a las 6 fases.",
-    routePath: "/estrategias",
-    route: "/estrategias",
+    canonicalRoute: "/estrategias",
     legacyRoutes: [],
   },
   {
@@ -36,10 +46,9 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     icon: "⚡",
     badge: "24/7 SSE",
     color: "#10b981",
-    description: "Monitorización de los 8 workers en tiempo real, eventos SSE y consola de autosanación.",
-    routePath: "/sistema",
-    route: "/sistema",
-    legacyRoutes: ["/panel"],
+    description: "Monitorización de los 8 workers en tiempo real, eventos SSE y consola de telemetría física.",
+    canonicalRoute: "/estrategias/1-motor-en-vivo",
+    legacyRoutes: ["/sistema", "/panel"],
   },
   {
     id: 2,
@@ -49,23 +58,21 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     icon: "📊",
     badge: "FAMILIAS",
     color: "#38bdf8",
-    description: "Exploración de estrategias generadas, desglose por familias y DSL paramétrico.",
-    routePath: "/strategies",
-    route: "/strategies",
-    legacyRoutes: [],
+    description: "Exploración de estrategias generadas, desglose por familias y ejecución real en FastEngine.",
+    canonicalRoute: "/estrategias/2-explorador-excel",
+    legacyRoutes: ["/strategies"],
   },
   {
     id: 3,
-    name: "Fase 3: Candidatos & Máquina de Estados (FSM)",
-    label: "Fase 3: Candidatos FSM",
-    shortLabel: "3. Candidatos",
+    name: "Fase 3: Pipeline 11 Quality Gates & FSM",
+    label: "Fase 3: Pipeline 11 Gates",
+    shortLabel: "3. 11 Gates",
     icon: "🚦",
-    badge: "10 ESTADOS",
+    badge: "11 GATES",
     color: "#818cf8",
-    description: "Ciclo de vida discreto de candidatos: GENERATED → BACKTESTED → CERTIFIED → LIVE.",
-    routePath: "/candidatos",
-    route: "/candidatos",
-    legacyRoutes: [],
+    description: "Auditoría en 11 compuertas matemáticas estrictas, WFE, Monte Carlo y debate de consenso.",
+    canonicalRoute: "/estrategias/3-pipeline-11-gates",
+    legacyRoutes: ["/gates", "/candidatos"],
   },
   {
     id: 4,
@@ -75,36 +82,83 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     icon: "🔬",
     badge: "AI LOOP",
     color: "#ec4899",
-    description: "Base de datos de autopsias de fallos, mutación genética y reparación profunda con agentes.",
-    routePath: "/research",
-    route: "/research",
-    legacyRoutes: [],
+    description: "Base de datos de autopsias de fallos, mutación genética y optimización guiada por microestructura.",
+    canonicalRoute: "/estrategias/4-panel-investigador",
+    legacyRoutes: ["/research"],
   },
   {
     id: 5,
-    name: "Fase 5: Quality Gates & Evidence Gate Hub",
-    label: "Fase 5: Quality Gates",
-    shortLabel: "5. Gates & Auditor",
+    name: "Fase 5: Estrategias Certificadas (Motor Actual)",
+    label: "Fase 5: Aprobadas",
+    shortLabel: "5. Aprobadas",
     icon: "🛡️",
-    badge: "EVIDENCE GATE",
+    badge: "APPROVED v5.3.0",
     color: "#facc15",
-    description: "Auditoría en 11 compuertas matemáticas estrictas, Monte Carlo 5D y WFE.",
-    routePath: "/gates",
-    route: "/gates",
-    legacyRoutes: [],
+    description: "Exclusivamente estrategias con 11/11 gates aprobados bajo el motor actual y ledger verificado.",
+    canonicalRoute: "/estrategias/5-estrategias-aprobadas",
+    legacyRoutes: ["/leaderboard"],
   },
   {
     id: 6,
-    name: "Fase 6: Portfolio Studio & Debate Multi-Agente",
+    name: "Fase 6: Meta-Estrategia & Cartera Multi-Activo",
     label: "Fase 6: Portfolio Studio",
     shortLabel: "6. Meta-Portfolio",
     icon: "🌌",
     badge: "MULTI-AGENTE",
     color: "#a855f7",
-    description: "Fusión de submáquinas ortogonales, paridad de riesgo ERC, correlación cruzada y debate entre los 5 agentes.",
-    routePath: "/portfolio",
-    route: "/portfolio",
-    legacyRoutes: [],
+    description: "Carteras de componentes 100% certificados, aislamiento multi-activo (cero colisión) y ledger propio.",
+    canonicalRoute: "/estrategias/6-meta-estrategia",
+    legacyRoutes: ["/portfolio"],
   },
 ];
 
+// Alias para compatibilidad hacia atrás
+export const STRATEGY_PHASES = PRODUCT_PHASES;
+
+/**
+ * QUANT_PIPELINE_PHASES: Etapas del Pipeline Cuantitativo Interno.
+ */
+export const QUANT_PIPELINE_PHASES: PipelineStage[] = [
+  {
+    stageNumber: 1,
+    key: "GENERATION",
+    name: "1. Generación Cuántica & Discovery",
+    description: "Generación de hipótesis y extracción de series de precios.",
+    evidenceGateRequirement: "Dataset Ingest & Integrity SHA-256",
+  },
+  {
+    stageNumber: 2,
+    key: "NORMALIZATION",
+    name: "2. Normalización AST & Compilación Canónica",
+    description: "Validación de sintaxis, reglas y asignación de perfil de costes real.",
+    evidenceGateRequirement: "Cost Profile & Gate 02 Check",
+  },
+  {
+    stageNumber: 3,
+    key: "BACKTEST_IS_OOS",
+    name: "3. Backtest Aislado IS / OOS",
+    description: "Ejecución sobre Universal Engine con particionado temporal físico sin data-leakage.",
+    evidenceGateRequirement: "Canonical Execution Ledger & Merkle Hash",
+  },
+  {
+    stageNumber: 4,
+    key: "QUALITY_FABRIC",
+    name: "4. Evaluación 11 Quality Gates",
+    description: "Evaluación estadística estricta (WFE, Monte Carlo, DSR, Regímenes, Debate).",
+    evidenceGateRequirement: "11/11 Gates Pass + EvidenceBundle",
+  },
+  {
+    stageNumber: 5,
+    key: "INCUBATION",
+    name: "5. Incubación & Paper Forward",
+    description: "Verificación en tiempo real sin riesgo financiero.",
+    evidenceGateRequirement: "Live Drift < 15% vs OOS Expectation",
+  },
+  {
+    stageNumber: 6,
+    key: "LIVE_PORTFOLIO",
+    name: "6. Asignación a Cartera Multi-Activo",
+    description: "Ponderación por paridad de riesgo y ejecución live con ordenación atómica.",
+    evidenceGateRequirement: "Non-overlapping Symbol Portfolio Ledger",
+  },
+];

@@ -39,10 +39,15 @@ class DynamicRuleEvaluator:
         if cache_key in self._series_cache:
             return self._series_cache[cache_key]
 
-        if node.indicator_type is None:
-            raw = self.engine.closes
-        else:
+        if node.source_type == ValueSource.INDICATOR:
+            if node.indicator_type is None:
+                raise ValueError(f"INVALID_VALUE_NODE: Node of source '{node.source_type}' requires an explicit indicator_type (received None)")
             raw = self.engine.get_series(node.indicator_type, node.period, node.parameters)
+        elif node.source_type == ValueSource.SERIES:
+            target_ind = node.indicator_type or IndicatorType.PRICE_CLOSE
+            raw = self.engine.get_series(target_ind, node.period, node.parameters)
+        else:
+            raise ValueError(f"UNSUPPORTED_VALUE_SOURCE: ValueSource '{node.source_type}' is not supported")
 
         if node.offset_bars > 0:
             shifted = np.empty_like(raw)

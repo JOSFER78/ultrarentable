@@ -67,19 +67,20 @@ class RuleTree(BaseModel):
 
 class SessionWindow(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
-    timezone: str = "America/New_York"
-    start_time: str = "09:30"
-    end_time: str = "16:00"
-    force_close_at_end: bool = True
+    is_24_7: bool = Field(True, description="True si opera en régimen continuo 24/7 sin restricción horaria")
+    timezone: Optional[str] = Field(None, description="Zona horaria e.g. America/New_York, UTC")
+    start_time: Optional[str] = Field(None, description="Hora de inicio HH:MM")
+    end_time: Optional[str] = Field(None, description="Hora de fin HH:MM")
+    force_close_at_end: bool = Field(False, description="Cerrar forzosamente al fin de sesión diaria")
 
 
 class TargetInstrument(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
-    symbol: str = Field(..., description="e.g. NQ, ES, MES, MNQ, BTC-USDT, ETH-USDT")
-    exchange: str = Field("CME", description="CME, BINGX, BINANCE, RITHMIC")
-    contract_type: str = Field("FUTURES", description="FUTURES, PERPETUAL, SPOT")
-    point_value: float = Field(20.0, gt=0.0)
-    tick_size: float = Field(0.25, gt=0.0)
+    symbol: str = Field(..., description="Símbolo canónico e.g. NQ, ES, MES, MNQ, BTC-USDT, ETH-USDT")
+    exchange: Optional[str] = Field(None, description="CME, BINGX, BINANCE, RITHMIC (si es None, se resuelve de CANONICAL_COST_REGISTRY)")
+    contract_type: Optional[str] = Field(None, description="FUTURES, PERPETUAL, SPOT (si es None, se resuelve de CANONICAL_COST_REGISTRY)")
+    point_value: Optional[float] = Field(None, gt=0.0, description="Valor del punto monetario")
+    tick_size: Optional[float] = Field(None, gt=0.0, description="Tamaño mínimo de variación de precio")
 
 
 class ExitModel(BaseModel):

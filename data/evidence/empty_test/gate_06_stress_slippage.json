@@ -2,7 +2,7 @@
   "evidence_id": "ev_empty_test_g06",
   "run_id": "run_empty_test",
   "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "0a603315695f43acac09397f8754978f845638ac77b28bf54de273fcc17891e3",
+  "strategy_snapshot_hash": "b42e5b47672829ae4f235813ae39ca445b9ca7d515938aafbbdf8cc21da97b22",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "ee30153f13533cfa84a08243683cfde24c157d67a66fe48d2415c2004d46ab28",
-  "output_hash": "be785a6f01b38e425a0de08be25fe099b5cc9ad8cf0ad61976d6e40793e707cb",
+  "input_hash": "6af172fe1a2521e4ba5f1fbda8d37ad28f27ac0ac2cc54c0e40dfa1699e6edbf",
+  "output_hash": "f9db2e9c7eaa48f52fc6b945de564dc7967cf36a06108d06976c270223f46c36",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 78.92,
-        "stressed_profit_factor": 3.95,
+        "stressed_net_pnl_usd": 80.93,
+        "stressed_profit_factor": 3.99,
         "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 77.6,
-        "stressed_profit_factor": 3.8,
+        "stressed_net_pnl_usd": 79.58,
+        "stressed_profit_factor": 3.84,
         "survived": true
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 76.22,
-        "stressed_profit_factor": 3.66,
+        "stressed_net_pnl_usd": 78.16,
+        "stressed_profit_factor": 3.69,
         "survived": true
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.02,
-        "stressed_net_pnl_usd": 73.63,
-        "stressed_profit_factor": 3.41,
+        "stressed_net_pnl_usd": 75.52,
+        "stressed_profit_factor": 3.44,
         "survived": true
       }
     },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/empty_test/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-24T16:38:15.051507+00:00"
+  "created_at_utc": "2026-08-24T16:54:12.617508+00:00"
 }

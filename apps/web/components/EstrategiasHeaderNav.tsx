@@ -19,13 +19,13 @@ interface EstrategiaTab {
 }
 
 const ESTRATEGIAS_TABS: EstrategiaTab[] = STRATEGY_PHASES.filter(
-  (p: StrategyPhase) => p.id > 0 && p.route
+  (p: StrategyPhase) => p.id > 0 && p.canonicalRoute
 ).map((p) => ({
   step: p.id,
   label: p.label || p.name || "",
   shortLabel: p.shortLabel || "",
-  href: p.route as string,
-  altHrefs: [...(p.legacyRoutes ?? []), p.route as string],
+  href: p.canonicalRoute,
+  altHrefs: [...(p.legacyRoutes ?? []), p.canonicalRoute],
   icon: p.icon,
   badge: p.badge,
   color: p.color,

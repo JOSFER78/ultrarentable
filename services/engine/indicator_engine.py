@@ -27,8 +27,14 @@ class DynamicIndicatorEngine:
         self.n = len(self.closes)
         self._cache: Dict[str, np.ndarray] = {}
 
-    def get_series(self, indicator_type: IndicatorType, period: Optional[int] = None, params: Optional[Dict[str, Any]] = None) -> np.ndarray:
+    def get_series(self, indicator_type: IndicatorType | str, period: Optional[int] = None, params: Optional[Dict[str, Any]] = None) -> np.ndarray:
         """Obtiene o calcula la serie correspondiente de forma dinámica."""
+        if isinstance(indicator_type, str):
+            try:
+                indicator_type = IndicatorType(indicator_type)
+            except ValueError:
+                raise ValueError(f"UNSUPPORTED_INDICATOR: Indicator '{indicator_type}' is not supported by DynamicIndicatorEngine")
+
         cache_key = f"{indicator_type.value}_{period}_{params}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -143,8 +149,8 @@ class DynamicIndicatorEngine:
             vol_sma = self.calc_sma(self.volumes, p)
             return np.where(vol_sma > 0, self.volumes / vol_sma, 1.0)
 
-        # Fallback to closes if unknown
-        return self.closes
+        # Fail-Closed on unknown / unsupported indicator (ZERO-MOCKS & DETERMINISTIC ENGINE)
+        raise ValueError(f"UNSUPPORTED_INDICATOR: Indicator '{ind}' is not supported by DynamicIndicatorEngine")
 
     # === Mathematical Calculations ===
     @staticmethod

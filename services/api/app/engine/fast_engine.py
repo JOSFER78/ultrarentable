@@ -138,40 +138,28 @@ class FastEngine:
         # Historical compatibility may seed approximate fees only when a caller
         # opts in explicitly. Production campaigns use verified snapshots.
         symbol = strategy_dsl.market.symbol
-        inst = self.db.query(InstrumentModel).filter(InstrumentModel.symbol == symbol).first()
-        if self.allow_legacy_risk and (
-            not inst or inst.maker_fee_rate is None or inst.taker_fee_rate is None
-        ):
-            self.db.merge(
-                InstrumentModel(
-                    symbol=symbol,
-                    asset=symbol.split("-")[0] if "-" in symbol else symbol,
-                    currency="USDT",
-                    maker_fee_rate=0.0002,
-                    taker_fee_rate=0.0005,
-                    status=1,
-                )
-            )
-            self.db.commit()
+        timeframe = strategy_dsl.market.timeframe
 
-        # Find approved dataset if not specified
+        # Find approved dataset if not specified - strictly fail closed if not found
         if not dataset_id:
-            timeframe = strategy_dsl.market.timeframe
             ds = (
                 self.db.query(DatasetModel)
                 .filter(DatasetModel.symbol == symbol, DatasetModel.interval == timeframe, DatasetModel.status == "APPROVED")
                 .first()
             )
             if not ds:
-                ds = self.db.query(DatasetModel).filter(DatasetModel.status == "APPROVED").first()
-            if not ds:
-                ds = self.db.query(DatasetModel).first()
-                if ds:
-                    ds.status = "APPROVED"
-                    self.db.commit()
-            if not ds:
-                raise FastEngineException("DATASET_NOT_FOUND", "No approved dataset available for backtest")
+                raise FastEngineException(
+                    "DATASET_NOT_FOUND",
+                    f"No approved dataset available for symbol '{symbol}' and timeframe '{timeframe}' (ZERO-MOCKS FAIL-CLOSED)",
+                )
             dataset_id = ds.dataset_id
+        else:
+            ds = self.db.query(DatasetModel).filter(DatasetModel.dataset_id == dataset_id, DatasetModel.status == "APPROVED").first()
+            if not ds:
+                raise FastEngineException(
+                    "DATASET_NOT_APPROVED",
+                    f"Dataset '{dataset_id}' not found or not in APPROVED state",
+                )
 
         compiled_ir = compile_to_ir(strategy_dsl)
         res = self.execute(

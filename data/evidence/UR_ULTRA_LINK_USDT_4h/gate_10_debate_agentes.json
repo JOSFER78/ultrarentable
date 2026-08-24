@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_4h",
   "strategy_id": "UR_ULTRA_LINK_USDT_4h",
-  "strategy_snapshot_hash": "7b359c2989cc8f82cd0dfb14d4bb15cc0710b4c205e293e76213aa5eb7d63ca0",
+  "strategy_snapshot_hash": "05d1153af09a3ee51d99e9627f60f4a8a2bef8dccf80925440b813d4377b225b",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "18335da204ef486c6431ace3f6a3782613491d4fcc3998877955628d7967be02",
-  "output_hash": "02b66879d611136719a3a86946fbc648c3c2791266e62f910b90614f54ed3602",
+  "input_hash": "bdaa66ffcc9245b63e62543b86f1396b1545d6b4231389bbb30fffcf8d9445bb",
+  "output_hash": "b8554b669fc9ea5d638e2fec6c9ac668e01d6b66825f50f4d9719483f6a9b671",
   "status": "FAILED",
-  "score": 32.5,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (32.5/100)",
+  "score": 32.6,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (32.6/100)",
   "metrics": {
-    "consensus_score": 32.5,
+    "consensus_score": 32.6,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 47.8,
+        "score": 48.2,
         "findings": [
           "Activo y Timeframe: LINK (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.84 con beneficio neto de $-998.57.",
+          "Profit Factor OOS: 0.85 con beneficio neto de $-998.62.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 734 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 741 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.36 USD.",
+          "Beneficio medio por operación: $-1.35 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 37.0,
+        "score": 37.1,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.84 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.85 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:36:38.529122+00:00"
+  "created_at_utc": "2026-08-24T16:52:44.127160+00:00"
 }

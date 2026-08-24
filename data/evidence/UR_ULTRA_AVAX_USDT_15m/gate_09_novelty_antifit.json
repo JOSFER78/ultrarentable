@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15m_g09",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15m",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15m",
-  "strategy_snapshot_hash": "35313785de625e3bf116fb9b55d8382bad6be0480c5ac34a7c211fe439be8710",
+  "strategy_snapshot_hash": "98c770e156388384e3ddcb5f6134d730c84ed2863f39ebb747693971fbc09505",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "99413760d4cdb52a75b49527993da5a5187867159517f12fc1fe7cbbe617447d",
-  "output_hash": "c4c9e534b2e3a369f54110f7031e13ef2a905563b6752a6f7caf00e3394d8efe",
+  "input_hash": "e87c0016d752ed5104d5a185b25557bfffc26133e2239e514cfef73b95fc3075",
+  "output_hash": "39bd24280ad25f8aa58e924a4cbdecf3a002af66c46e56d66ce366205fdd399c",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 47.6 trades/param, Estabilidad Vecindario: 101.7%, Re-backtest PFs: [0.75, 0.77, 0.77, 0.72])",
+  "score": 91.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 39.9 trades/param, Estabilidad Vecindario: 85.9%, Re-backtest PFs: [0.76, 0.79, 0.79, 0.58])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 47.6,
+    "degrees_of_freedom_ratio": 39.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 101.7,
+    "parameter_neighborhood_stability_pct": 85.9,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.75,
-      0.77,
-      0.77,
-      0.72
+      0.76,
+      0.79,
+      0.79,
+      0.58
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15m/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T16:43:22.711701+00:00"
+  "created_at_utc": "2026-08-24T16:59:34.475476+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_AVAX_USDT_4h",
   "strategy_id": "UR_ULTRA_AVAX_USDT_4h",
-  "strategy_snapshot_hash": "b0b603c2e092259dae02c04eb93f982e0ff8b0363e268844bfa30ab85ff328f0",
+  "strategy_snapshot_hash": "3c55dad1021ea33a65f7f2683a80d0b163247ca05e52802cfca353f3d19fa1b4",
   "dataset_id": "ds_binance_avaxusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "354298bc56707736dc1f8858007ab498fa61e128bebe009ded08adec6abb9ac3",
-  "output_hash": "7801f743aa8931365641fb3fd51bed796a957cf874511331233408fa44de0340",
+  "input_hash": "79c8550750b393f2ece77d8b69a8930abe0ed9e4c2bd9de0c186487f986868f7",
+  "output_hash": "5259bfc6344bd8776ded48de6fead8784d53fa5ef39e39f4e8f105d0c014a0d0",
   "status": "FAILED",
   "score": 34.4,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.4/100)",
@@ -26,7 +26,7 @@
         "score": 54.5,
         "findings": [
           "Activo y Timeframe: AVAX (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.99 con beneficio neto de $-999.84.",
+          "Profit Factor OOS: 0.99 con beneficio neto de $-999.83.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 706 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 712 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.42 USD.",
+          "Beneficio medio por operación: $-1.40 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:35:47.957933+00:00"
+  "created_at_utc": "2026-08-24T16:51:55.046493+00:00"
 }

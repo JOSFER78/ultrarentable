@@ -58,6 +58,23 @@ falsos o patrones prohibidos.
 - Profit factor, Sharpe, DD, R, sortino: se calculan en el motor/validación, jamás
   en React ni con atajos (`sharpe*1.15` está prohibido; el sortino se mide).
 - El drawdown NO se recorta (`min(4.0, dd)` eliminado en FASE 1).
+
+---
+
+## Clarificación Doctrinal: Cero Datos Falsos vs Remuestreo Estadístico Real
+
+### ❌ PROHIBIDO
+- Simular u originar series de precios históricas inexistentes (velas falsas).
+- Inventar trades o curvas de equity sintéticas sin ejecución del motor.
+- Autocompletar métricas o perfiles de usuario con valores por defecto complacientes.
+- Promocionar o sustituir datasets arbitrarios para forzar la ejecución del pipeline.
+
+### ✅ PERMITIDO Y EXIGIDO (Robustez Cuantitativa)
+- **Monte Carlo de Trades Reales**: Remuestreo y permutación bootstrap sobre la secuencia real de operaciones generada por el `CanonicalExecutionLedger`.
+- **Stress Testing & Slippage Permutation**: Aplicación de multiplicadores de deslizamiento y fricción sobre observaciones de mercado reales.
+- **Walk-Forward Efficiency (WFE)**: Particionado temporal estricto IS / OOS sobre datos físicos históricos.
+- **Paper Trading Forward**: Simulación de ejecución en tiempo real sobre feeds de mercado en vivo etiquetada explícitamente como `INCUBATION_PAPER`.
+
 - La anualización es compuesta sobre el retorno real del periodo; prohibido
   "velocity" con supuestos de sprint.
 

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGEUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_DOGEUSDT_1h",
   "strategy_id": "UR_ULTRA_DOGEUSDT_1h",
-  "strategy_snapshot_hash": "af86114bf1bc5a1759ad401e68a8a8b3b84b45b67df6ed8a5fb2a9e593a5ed09",
+  "strategy_snapshot_hash": "a946628a41672b0669cc0b67c7a57ca18447db8170486e5ef9637ac0457df986",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "a182f07978357bd3bbe45615f9bb88fc5784788d221fb85231e0310015c72119",
-  "output_hash": "693d75ea56220fd9977fac5ff58d5b9f6d409dd456d8c97b0995178239cce1bf",
+  "input_hash": "a227a85754d20722dc36f9cd8bcb699e9a7872340804476209b1c8a9cb5f15ff",
+  "output_hash": "a0f48a5b058035c95e4b738fffb947b7b95f0799c757281c62422ae7ccb3a2bd",
   "status": "FAILED",
   "score": 34.7,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.7/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2974 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 3008 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.34 USD.",
+          "Beneficio medio por operación: $-0.33 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:35:30.738517+00:00"
+  "created_at_utc": "2026-08-24T16:51:38.147219+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR-CANON-NQ-001_g09",
   "run_id": "run_UR-CANON-NQ-001",
   "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "bf16657ea94ffe31e87653e993b22c368d99b591b1d3e936b19167af2cb66ccb",
+  "strategy_snapshot_hash": "a1b702edbbd89f51488fc6f7c38dc16fc021a44850ad962f3cc0665e8156d0c2",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "2ca780bdd3cda076aa5a943ca6bea07d59103b0387fa8f6d242140ad831893c1",
-  "output_hash": "b3f82e7ccbfd5a7844fecb065a1a87615b9764944d930d02dace4cdec3d0b3fa",
+  "input_hash": "86a029b51c16d36b9b9fb15fe1c1bbd903beb103e3ee4e1f6d9a7431559faea5",
+  "output_hash": "3f92b7fb405a181a015f67e052ffffb8bd1c3d4cca08d1fd5f4efad74b8f5f2b",
   "status": "FAILED",
   "score": 42.5,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 26.3 o Estabilidad 106.2% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 157.1 o Estabilidad 106.2% < 50.0%)",
   "metrics": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 26.3,
+    "degrees_of_freedom_ratio": 157.1,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 106.2,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T16:38:24.803493+00:00"
+  "created_at_utc": "2026-08-24T16:54:22.851274+00:00"
 }

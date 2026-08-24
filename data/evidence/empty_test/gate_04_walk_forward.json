@@ -2,7 +2,7 @@
   "evidence_id": "ev_empty_test_g04",
   "run_id": "run_empty_test",
   "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "0a603315695f43acac09397f8754978f845638ac77b28bf54de273fcc17891e3",
+  "strategy_snapshot_hash": "b42e5b47672829ae4f235813ae39ca445b9ca7d515938aafbbdf8cc21da97b22",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "b056e40f139764c348dafeb070efdeefa2822253c7fa25bf969129f111ae0bb6",
-  "output_hash": "cf5129710e6c0c8d9c6d0e14d26445921f2f1b27e691ebbc2fdba6fdfe955ef3",
+  "input_hash": "a78fa56ddaa432e6ce366cac14020881c17e72d306376cda0f720c407d51f609",
+  "output_hash": "483ce0b9c15b7503d89f783387d7fbef4efeb626e9e9a3d4d56d36c3b62da997",
   "status": "FAILED",
   "score": 100.0,
   "verdict": "FALLO: Degradación temporal excesiva (WFE 15.20 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 26,
+    "total_trades_analyzed": 25,
     "windows_count": 5,
     "walk_forward_efficiency": 15.2,
     "oos_consistency_pct": 20.0,
@@ -70,5 +70,5 @@
     ]
   },
   "artifact_path": "data/evidence/empty_test/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T16:38:14.906657+00:00"
+  "created_at_utc": "2026-08-24T16:54:12.489739+00:00"
 }

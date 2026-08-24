@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "d59cfdc19c68a1cb6396411555fe6cbd18718e3cbe9917b70f7e45bb76128503",
+  "strategy_snapshot_hash": "3680ff7126294adf50d5872bc9829cc0e1845c7b4538282b38daa5b948f27c22",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "4321e0e6c55b896e8542f02c1cbd2784b9df2677d56b11e9379dff1affdeebca",
-  "output_hash": "b9f6dbc3ecde505186a22cb1081b09640e96f1ca417cd65501b19ff3f8709d11",
+  "input_hash": "cd755b583e72b429792052d900d0b71ed0a2277f3c6663ec03a1fe2420fd8dc8",
+  "output_hash": "e89702c1c5087b5f73bd070ad061e7b8ee735a2b9243c04a114c37a4217d5e23",
   "status": "PASSED",
   "score": 54.4,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (54.4/100 · Guía de Mejora Generada)",
@@ -26,7 +26,7 @@
         "score": 58.6,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $24185845227490786672640.00.",
+          "Profit Factor OOS: 1.08 con beneficio neto de $128007265954362365575168.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 3354 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 3375 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $7211045088697312256.00 USD.",
+          "Beneficio medio por operación: $37928078801292550144.00 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T16:35:42.427682+00:00"
+  "created_at_utc": "2026-08-24T16:51:49.538812+00:00"
 }

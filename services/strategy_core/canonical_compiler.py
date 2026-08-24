@@ -295,10 +295,10 @@ class CanonicalCompiler:
         exit_rules = cls.compile_exit_rules(strategy)
 
         time_filter = TimeAndSessionFilter(
-            enabled=True,
-            timezone=strategy.session.timezone,
-            session_start=strategy.session.start_time,
-            session_end=strategy.session.end_time,
+            enabled=not strategy.session.is_24_7,
+            timezone=strategy.session.timezone or "UTC",
+            session_start=strategy.session.start_time or "00:00",
+            session_end=strategy.session.end_time or "23:59",
             close_all_positions_at_session_end=strategy.session.force_close_at_end,
         )
 
