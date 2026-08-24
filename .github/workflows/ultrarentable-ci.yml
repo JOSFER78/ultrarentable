@@ -1,0 +1,35 @@
+name: ULTRARENTABLE CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, 'plan/**']
+
+jobs:
+  python-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Python package and dev dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e '.[dev]'
+      - name: Run contract/lifecycle tests
+        run: python -m pytest tests/contracts -q
+
+  web-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build web application
+        run: npm run web:build
