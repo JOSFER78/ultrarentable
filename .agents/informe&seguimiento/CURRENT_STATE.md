@@ -4,7 +4,7 @@
 PHASE 0 — CONSTITUTION & SOURCE OF TRUTH
 
 ## Status
-IN_PROGRESS
+IN_PROGRESS — GITHUB FOUNDATION CHECKPOINT COMPLETE; VPS/FIREBASE AUDIT PENDING
 
 ## Branch
 `plan/foundation-autonomous-lab`
@@ -12,25 +12,51 @@ IN_PROGRESS
 ## Objective
 Establish one coherent development/architecture contract before modifying quantitative runtime behavior.
 
-## Completed
-- Master implementation plan created.
-- Explicit ULTRA/FONDEO objectives recorded.
-- Five-day funding evaluation ambition recorded as a hard strategic objective without evidence-forcing.
-- Ultra +100% monthly ambition recorded as a research target, never a fabricated guarantee.
-- Meta-strategy laboratory included as a first-class phase.
-- Phase-gated execution model defined.
+## Confirmed project intent
+- Permanent 24/7 autonomous quantitative research laboratory.
+- SQX is the primary hypothesis factory when available; it is not the final certifier.
+- One canonical strategy identity with immutable versions and lineage.
+- ULTRA and FONDEO share the technical core but use distinct objective/risk/evaluation policies.
+- Research may modify any strategy component allowed by policy, but every material change creates a new version and re-enters independent validation.
+- Promising failures go to Research; structural failures are discarded.
+- Meta-strategies are first-class: compatible strategies across assets/timeframes may be combined under a joint risk/correlation/exposure budget when evidence supports the combination.
+- The system must learn from real successes and failures without learning how to bypass the evaluation.
 
-## Pending Phase 0
-- Consolidate domain vocabulary and authority graph.
-- Resolve CanonicalStrategy vs runtime specification semantics.
-- Define StrategyVersion / CertificationSnapshot / PolicyVersion semantics.
-- Define LearningStore and Firebase recovery contract.
-- Define Research/Reprogramming contract.
-- Define MetaStrategy contract.
-- Reconcile documentation contradictions before code changes.
+## Current doctrine constraints
+- ZERO MOCKS.
+- ZERO SYNTHETIC DATA.
+- ZERO INVENTIONS.
+- ZERO SILENT FALLBACKS.
+- ZERO FORCED PASS.
+- ZERO FORCED PROFITABILITY.
+- Missing required evidence => BLOCKED / NO_EVIDENCE / NOT_COMPUTABLE.
+- UI never becomes the source of domain truth.
+- AI proposes; deterministic engines and evidence gates decide.
 
-## Gate to enter Phase 1
-All Phase 0 contracts documented, reviewed against current repository code, and no unresolved semantic contradiction remains in the source-of-truth documents.
+## Phase 0 completed on GitHub
+- Master implementation plan.
+- Phase/state/checkpoint workflow.
+- Product principles.
+- Source-of-truth authority model.
+- Strategy lifecycle and certification staleness semantics.
+- Persistent learning contract and blind-research contract.
+- Meta-strategy laboratory contract.
+- Evidence checklist.
+
+## Phase 0 still pending
+- VPS audit of Firebase/Firestore historical learning data.
+- Reconciliation of existing semantic_ai learning components with the new LearningStore contract.
+- Final code-level authority reconciliation: CanonicalStrategy → compiled runtime specification → engine.
+- Final reconciliation of existing lifecycle enum/status names against the semantic lifecycle contract.
+- Verify all current doctrine/runtime contradictions before Phase 1.
+
+## Important current code findings
+- Existing semantic_ai components include FailureKnowledgeDB, autonomous_discovery_engine, mutation_engine, semantic_engine and SQX feedback loop; do not create a parallel learning stack.
+- FailureKnowledgeDB currently keeps historical records in process memory and therefore cannot alone satisfy durable learning requirements.
+- Autonomous discovery currently contains deterministic parameter/track behavior; this must be treated as legacy implementation to be reconciled against the future Research Lab contract, not as the final autonomous research architecture.
+
+## Phase gate
+Phase 0 can only become PASS after the VPS/Firebase learning inventory is completed and all remaining authority/lifecycle contradictions are resolved in code + documentation.
 
 ## Evidence requirements
 A phase can only become PASS after:
@@ -39,10 +65,6 @@ A phase can only become PASS after:
 3. Red-team/negative-path checks are executed.
 4. Results are recorded here.
 5. No mock/synthetic/invented data is used.
-
-## Current blockers
-- Firebase/Firestore historical learning store must be located and audited on the VPS before learning migration is designed as final.
-- Current repository contains multiple existing semantic-ai components; they must be consolidated rather than duplicated.
 
 ## Rule
 DO NOT start Phase 1 until Phase 0 is marked PASS here.
