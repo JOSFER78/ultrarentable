@@ -1,15 +1,28 @@
 {
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g03",
+  "run_id": "run_UR_FONDEO_AUDUSD_15M",
+  "strategy_id": "UR_FONDEO_AUDUSD_15M",
+  "strategy_snapshot_hash": "e5dc190b8ce53991837e88213193bb98edb53673e04fb1ca0c0f3eec3fb756aa",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
-  "name": "TRADE_SIGNIFICANCE",
-  "passed": false,
-  "score": 52.5,
-  "verdict": "FALLO: Muestra insuficiente (87 IS < 30 \u00f3 21 OOS < 20)",
-  "evidence": {
-    "trades_is": 87,
-    "trades_oos": 21,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "292dabc1d5ce31f0fc1756314380554b9a85a443b3bb73f78757abc36e30422f",
+  "output_hash": "f8c168db3ae7e8c2b9127b302ff0560d437774855bf1ced5bb861a6f89f6e7a6",
+  "status": "FAILED",
+  "score": 55.0,
+  "verdict": "FALLO: Muestra insuficiente (80 IS < 30 ó 22 OOS < 20)",
+  "metrics": {
+    "trades_is": 80,
+    "trades_oos": 22,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
-  }
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:11:06.460192+00:00"
 }

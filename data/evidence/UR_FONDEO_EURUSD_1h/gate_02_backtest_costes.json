@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_EURUSD_1h_g02",
   "run_id": "run_UR_FONDEO_EURUSD_1h",
   "strategy_id": "UR_FONDEO_EURUSD_1h",
-  "strategy_snapshot_hash": "52a0eb442b04aabc7592356edecd5bf0a913a9a553a6a42020dca8bf6cafdb0b",
+  "strategy_snapshot_hash": "dcf22e20f823b98f058bd65a08c18b2944f54bfbf2a0023381106f853a9b42a6",
   "dataset_id": "ds_trad_eurusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c62746c1d743c82771c4eb5c158ad6edc5cd928ed80fad1c1e7a5c966467a5c9",
-  "output_hash": "b6feb2124e4f7f6ab9ac58c389137a9d561fa790fba26844022ca4ffe557a530",
+  "input_hash": "ce344be2708c4fdba26e0eeba5e9eb56b4fd969b5e9888e123d51119f475d9ce",
+  "output_hash": "44a7b76b3f79d500dca23db800bb7398683dd2d8d0a6090311e92b9c6073c546",
   "status": "FAILED",
-  "score": 1.1,
-  "verdict": "FALLO: PF Neto 1.01 < 1.10",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.93 < 1.10",
   "metrics": {
     "market_category": "FOREX",
     "canonical_name": "Euro / US Dollar",
     "exchange": "Interbank / FTMO",
-    "gross_pnl_usd": 897.0,
-    "total_fees_usd": 306.0,
-    "total_slippage_usd": 510.0,
-    "net_pnl_usd": 81.0,
-    "net_profit_factor": 1.01,
-    "drag_cost_pct": 90.97
+    "gross_pnl_usd": 395.0,
+    "total_fees_usd": 384.0,
+    "total_slippage_usd": 640.0,
+    "net_pnl_usd": -629.0,
+    "net_profit_factor": 0.93,
+    "drag_cost_pct": 259.24
   },
   "artifact_path": "data/evidence/UR_FONDEO_EURUSD_1h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-24T10:35:16.100689+00:00"
+  "created_at_utc": "2026-08-24T11:29:08.934630+00:00"
 }

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AUDUSD_15m_g03",
+  "run_id": "run_UR_ULTRA_AUDUSD_15m",
+  "strategy_id": "UR_ULTRA_AUDUSD_15m",
+  "strategy_snapshot_hash": "1ffb30d6f48bb40a3bbdebd1ca1140dddbc8726225300887bf3b30da55907156",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "44e3abb8f8556a604d2902f4004fd80fca4b99d5a61266ed8747e7f48a99e998",
+  "output_hash": "bf8d577267dece69b680aa748f62d5d08a1104edb1dc2ccd823ab0c3a72e583f",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (335 IS / 97 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 335,
+    "trades_oos": 97,
+    "top2_outlier_dependency_pct": 22.6,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_15m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:32:28.200234+00:00"
+}

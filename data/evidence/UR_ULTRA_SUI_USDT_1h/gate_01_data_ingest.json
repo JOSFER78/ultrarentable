@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SUI_USDT_1h_g01",
+  "run_id": "run_UR_ULTRA_SUI_USDT_1h",
+  "strategy_id": "UR_ULTRA_SUI_USDT_1h",
+  "strategy_snapshot_hash": "beea1c9e6c94f8d53eec52e225454894b365dcf2e4caf452d6be087dd9c41adb",
+  "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "ba1302f2b707d39539daf5c622e51214dd97138432321383c25b0ca8cf01d90e",
+  "output_hash": "e53e416629bfe7eca4741f0640f893c55e1077bcba38949837220c64b9532da5",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (5100 velas, SHA256: 49b44224..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 5100,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 3600,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "49b44224a9e022b8c34e37973b83f663f810dbe562ae565b8a6029656c3c9cbe",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1h/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-24T11:34:49.369689+00:00"
+}

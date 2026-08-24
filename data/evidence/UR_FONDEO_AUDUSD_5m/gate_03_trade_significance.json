@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_5m_g03",
+  "run_id": "run_UR_FONDEO_AUDUSD_5m",
+  "strategy_id": "UR_FONDEO_AUDUSD_5m",
+  "strategy_snapshot_hash": "5f45b0565b5125a74cce6a0f5d831ccaaafc5a95c2d7b5b23aa1407995735fb4",
+  "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "36e7751ad40f0816cb66dea3a224873f1eb18092c217a45e53cf793262157995",
+  "output_hash": "b957db00aca9dd210cf420a6ba54102512ed594f7afb460fd75060ad34f9a151",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (258 IS / 68 OOS · Fondeo)",
+  "metrics": {
+    "trades_is": 258,
+    "trades_oos": 68,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:31:37.873368+00:00"
+}

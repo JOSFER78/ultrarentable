@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1h_g11",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_1h",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_1h",
+  "strategy_snapshot_hash": "bad2963868aa87de9744d9194b720e449d3a96d108e4a601e4bfeccb69901b38",
+  "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "8b44b9a50e6d3c94e6bfb4547a9bc0e5824b8419faa22fe9bbd81afe7c0749ff",
+  "output_hash": "5a0c722b4d1dc3cb8f222d1a7bdad87bd079c43a323f31d278ac3a7b0e598806",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $2873.98, Bóveda Cosechada: $1757.76, Apalancamiento: 6.0x, Dist. Mín. Liq: 96.5%)",
+  "metrics": {
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": 1116.22,
+    "peak_equity_usd": 3515.53,
+    "min_equity_usd": 719.2,
+    "peak_leverage_used": 6.0,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 96.52,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 0.0,
+    "total_funding_cost_usd": 7.68,
+    "execution_events_count": 11
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1h/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-24T11:33:36.163067+00:00"
+}

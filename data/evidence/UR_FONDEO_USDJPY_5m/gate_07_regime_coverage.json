@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_5m_g07",
+  "run_id": "run_UR_FONDEO_USDJPY_5m",
+  "strategy_id": "UR_FONDEO_USDJPY_5m",
+  "strategy_snapshot_hash": "7af532aa9b917cf5d83b930e2a12132bd07ff4f6e360851694fd4091f6a19703",
+  "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "a64fa49b5824997efdeff22785496380fee7ccf35dfe67ba277244258958266e",
+  "output_hash": "dbf782ae8989daf97c4e06427fb3101f623d18963e963580a74bd39d41410305",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -0.15%)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 2797,
+      "HIGH_VOLATILITY": 592
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 47,
+      "HIGH_VOLATILITY": 6
+    },
+    "regime_return_pct": {
+      "BULL_TREND": 0.0,
+      "BEAR_TREND": 0.0,
+      "CHOP_RANGING": -0.14,
+      "HIGH_VOLATILITY": -0.01
+    },
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 2,
+    "total_oos_return_pct": -0.15
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5m/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T11:35:04.270432+00:00"
+}

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_5M_g09",
   "run_id": "run_UR_ULTRA_USDCHF_5M",
   "strategy_id": "UR_ULTRA_USDCHF_5M",
-  "strategy_snapshot_hash": "d68fe1fd591c38c67672a08ad3ebc5155eb76496b8f1dec3b90f1020bb8c0e11",
+  "strategy_snapshot_hash": "155d86bba6847782389109da4c5779c37b4620c7c40723cb0c622896c7f14633",
   "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "8d5b58f874d559dd81248e0ffc15342b735740c096ab56b9e6f3f0d5cd6546a7",
-  "output_hash": "e11a364e7ee26871649972abde63f7e36534266730797aff48fdee42d9e8e0bb",
+  "input_hash": "a74742264326a2631c3113866c2120e5467e755d27b00a7dfda00aa53a8a319e",
+  "output_hash": "79a0911d6a53a99e7af36063c76bc1159a7a52b8e22e2cb7caee53a12b21837a",
   "status": "FAILED",
   "score": 17.3,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 86.4 o Estabilidad 43.3% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 87.0 o Estabilidad 43.3% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 86.4,
+    "degrees_of_freedom_ratio": 87.0,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 43.3,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T10:20:27.663505+00:00"
+  "created_at_utc": "2026-08-24T11:13:02.229953+00:00"
 }

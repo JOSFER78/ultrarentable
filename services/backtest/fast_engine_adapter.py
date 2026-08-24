@@ -15,8 +15,10 @@ import datetime as _dt
 import hashlib
 import json
 import math
+from pathlib import Path
+import sqlite3
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from contracts.backtest import BacktestRequest, BacktestResult, DatasetSnapshot, EngineType, EquityPoint, TradeLog
 from contracts.dataset_specification import DatasetSpecification, DatasetQualityReport
@@ -41,6 +43,7 @@ from contracts.canonical_strategy import (
     StrategyLifecycleStatus,
     TargetInstrument,
 )
+from contracts.evidence_bundle import EvidenceBundle
 from services.api.app.data_feed.feed_loader import load_candles
 from services.backtest.engine_port import BacktestEnginePort
 from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, InstrumentCostProfile
@@ -60,62 +63,45 @@ def _candle_ms(candle: Dict[str, Any]) -> int:
         return 0
 
 
-def _build_fallback_canonical_strategy(strategy_id: str, symbol: str, timeframe: str) -> CanonicalStrategy:
-    """Construye un CanonicalStrategy válido por defecto cuando solo se pasa un ID textual."""
-    clean_sym = symbol.upper().replace("-", "").replace("/", "")
-    is_cme = clean_sym in ("NQ", "ES", "MES", "MNQ", "GC", "CL")
-    track = ExecutionTrack.TRACK_FONDEO if is_cme else ExecutionTrack.TRACK_ULTRA
-    point_val = 20.0 if clean_sym in ("NQ", "MNQ") else (50.0 if clean_sym in ("ES", "MES") else 1.0)
-    tick_sz = 0.25 if is_cme else (0.0001 if "USD" in clean_sym and len(clean_sym) == 6 else 0.1)
-
-    long_cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=20),
-        operator=CanCompOp.GREATER_THAN,
-        right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=50),
-    )
-
-    return CanonicalStrategy(
-        strategy_id=strategy_id,
-        name=f"Canonical {strategy_id} {symbol} {timeframe}",
-        target_track=track,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol=symbol,
-            exchange="CME" if is_cme else "BINGX",
-            contract_type="FUTURES" if is_cme else "PERPETUAL",
-            point_value=point_val,
-            tick_size=tick_sz,
-        ),
-        timeframe=timeframe,
-        session=SessionWindow(
-            timezone="America/New_York",
-            start_time="09:30",
-            end_time="16:00",
-            force_close_at_end=is_cme,
-        ),
-        rules=RuleTree(long_conditions=[long_cond]),
-        exits=ExitModel(stop_loss_atr_mult=2.0, take_profit_atr_mult=6.0, break_even_atr_mult=1.5),
-        sizing_and_risk=SizingAndRisk(
-            base_risk_pct=1.0 if is_cme else 5.0,
-            base_leverage=1.0 if is_cme else 20.0,
-            max_contracts_or_lots=4.0 if is_cme else 10.0,
-        ),
-        provenance=ProvenanceMetadata(
-            source_engine="fast_engine_adapter",
-            created_timestamp_utc=int(time.time() * 1000),
-            author_or_agent="FAST_ENGINE_COMPILER",
-        ),
-    )
-
-
-from contracts.evidence_bundle import EvidenceBundle
-
-
 class FastEngineAdapter(BacktestEnginePort):
     """Adaptador canónico universal para el UniversalDeterministicBacktestEngine."""
 
     def __init__(self) -> None:
         self.engine = UniversalDeterministicBacktestEngine()
+
+    def _lookup_strategy(self, strategy_id: str) -> Optional[CanonicalStrategy]:
+        """Busca una estrategia canónica persistida en base de datos o catálogo.
+        
+        Retorna None si no existe para que se aplique la doctrina fail-closed.
+        """
+        try:
+            from services.discovery.strategy_search_registry import StrategySearchRegistry
+            registry = StrategySearchRegistry()
+            with sqlite3.connect(registry.db_path, timeout=5.0) as conn:
+                cur = conn.cursor()
+                cur.execute(
+                    "SELECT rules_json FROM discovery_search_trials WHERE trial_id = ?",
+                    (strategy_id,),
+                )
+                row = cur.fetchone()
+                if row and row[0]:
+                    try:
+                        return CanonicalStrategy.model_validate_json(row[0])
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+        for cat_dir in [Path("data/catalogs"), Path("data/artifacts")]:
+            cat_path = cat_dir / f"{strategy_id}.json"
+            if cat_path.exists():
+                try:
+                    with open(cat_path, "r", encoding="utf-8") as f:
+                        return CanonicalStrategy.model_validate_json(f.read())
+                except Exception:
+                    pass
+
+        return None
 
     def execute_backtest(self, request: BacktestRequest) -> BacktestResult:
         symbol = request.dataset.symbol
@@ -137,13 +123,18 @@ class FastEngineAdapter(BacktestEnginePort):
         # 1. Obtener o compilar CanonicalStrategy
         strategy_obj = request.strategy
         if strategy_obj is None or not isinstance(strategy_obj, CanonicalStrategy):
-            strategy_obj = _build_fallback_canonical_strategy(request.strategy_id, symbol, timeframe)
+            strategy_obj = self._lookup_strategy(request.strategy_id)
+            if strategy_obj is None:
+                raise ValueError(
+                    f"MISSING_CANONICAL_STRATEGY: No se proporcionó definición de estrategia para {request.strategy_id}"
+                )
 
         strat_spec, inst_spec, exec_model, risk_model = CanonicalCompiler.compile(
             strategy=strategy_obj,
             dataset_id=request.dataset.dataset_id,
             dataset_sha256=request.dataset.sha256_hash,
             initial_capital_usd=request.initial_capital_usd,
+            override_symbol=symbol,
         )
 
         start_ts = _candle_ms(candles[0]) if candles else request.dataset.start_timestamp_utc_ms
@@ -282,12 +273,40 @@ class FastEngineAdapter(BacktestEnginePort):
                 EquityPoint(timestamp_utc_ms=first_ts, equity_usd=request.initial_capital_usd, drawdown_pct=0.0)
             ]
 
-        # 6. Sortino Ratio
-        pnls = [t.net_pnl_usd for t in univ_res.trades]
-        neg = [p for p in pnls if p < 0]
-        downside = math.sqrt(sum(x * x for x in neg) / len(neg)) if neg else 0.0
-        mean_pnl = (sum(pnls) / len(pnls)) if pnls else 0.0
-        sortino = round(mean_pnl / downside, 2) if downside > 0 else 0.0
+        # 6. Cálculo estadístico riguroso de Sharpe & Sortino Ratio sobre la serie de retornos porcentuales
+        trade_returns = [t.return_pct for t in univ_res.trades]
+        n_trades = len(trade_returns)
+        if n_trades >= 2:
+            span_ms = (end_ts - start_ts) if (end_ts > start_ts and start_ts > 0) else 0
+            if span_ms > 0:
+                span_years = max(1.0 / 365.25, (span_ms / (1000.0 * 86400.0)) / 365.25)
+            else:
+                span_years = 1.0
+            trades_per_year = n_trades / span_years
+
+            mean_ret = sum(trade_returns) / n_trades
+            variance = sum((r - mean_ret) ** 2 for r in trade_returns) / n_trades
+            std_ret = math.sqrt(variance)
+            if std_ret > 1e-8:
+                sharpe_val = (mean_ret / std_ret) * math.sqrt(trades_per_year)
+                sharpe_ratio = round(sharpe_val, 2)
+            else:
+                sharpe_ratio = 0.0
+
+            neg = [r for r in trade_returns if r < 0]
+            if neg:
+                downside_variance = sum(x * x for x in neg) / len(neg)
+                downside_std = math.sqrt(downside_variance)
+                if downside_std > 1e-8:
+                    sortino_val = (mean_ret / downside_std) * math.sqrt(trades_per_year)
+                    sortino_ratio = round(sortino_val, 2)
+                else:
+                    sortino_ratio = 0.0
+            else:
+                sortino_ratio = 0.0
+        else:
+            sharpe_ratio = 0.0
+            sortino_ratio = 0.0
 
         elapsed_ms = (time.perf_counter() - start_t) * 1000.0
 
@@ -308,8 +327,8 @@ class FastEngineAdapter(BacktestEnginePort):
             profit_factor=univ_res.profit_factor,
             max_drawdown_pct=univ_res.max_drawdown_pct,
             max_drawdown_usd=round((univ_res.max_drawdown_pct / 100.0) * request.initial_capital_usd, 2),
-            sharpe_ratio=round(float(univ_res.total_roi_pct / max(0.5, univ_res.max_drawdown_pct)), 2) if univ_res.max_drawdown_pct > 0 else 0.0,
-            sortino_ratio=sortino,
+            sharpe_ratio=sharpe_ratio,
+            sortino_ratio=sortino_ratio,
             trades=trades_logs,
             equity_curve=equity_curve,
             execution_time_ms=round(elapsed_ms, 2),
@@ -332,6 +351,14 @@ class FastEngineAdapter(BacktestEnginePort):
                 f"NO_DATA: dataset vacío para {symbol} {timeframe} — backtest cancelado (ZERO-MOCKS)"
             )
 
+        strategy_obj = request.strategy
+        if strategy_obj is None or not isinstance(strategy_obj, CanonicalStrategy):
+            strategy_obj = self._lookup_strategy(request.strategy_id)
+            if strategy_obj is None:
+                raise ValueError(
+                    f"MISSING_CANONICAL_STRATEGY: No se proporcionó definición de estrategia para {request.strategy_id}"
+                )
+
         n_bars = len(candles)
         split_idx = int(n_bars * split_ratio)
         if split_idx < 20 or (n_bars - split_idx) < 10:
@@ -353,6 +380,7 @@ class FastEngineAdapter(BacktestEnginePort):
         # 1. Backtest In-Sample
         req_is = request.model_copy(update={
             "request_id": f"{request.request_id}_IS",
+            "strategy": strategy_obj,
             "dataset": DatasetSnapshot(
                 dataset_id=f"{request.dataset.dataset_id}_IS",
                 symbol=symbol,
@@ -368,6 +396,7 @@ class FastEngineAdapter(BacktestEnginePort):
         # 2. Backtest Out-of-Sample
         req_oos = request.model_copy(update={
             "request_id": f"{request.request_id}_OOS",
+            "strategy": strategy_obj,
             "dataset": DatasetSnapshot(
                 dataset_id=f"{request.dataset.dataset_id}_OOS",
                 symbol=symbol,
@@ -382,10 +411,6 @@ class FastEngineAdapter(BacktestEnginePort):
 
         res_is = self._execute_on_candles(req_is, candles_is)
         res_oos = self._execute_on_candles(req_oos, candles_oos)
-
-        strategy_obj = request.strategy
-        if strategy_obj is None or not isinstance(strategy_obj, CanonicalStrategy):
-            strategy_obj = _build_fallback_canonical_strategy(request.strategy_id, symbol, timeframe)
 
         strat_sha256 = strategy_obj.compute_sha256()
         combined_ledger_hash = hashlib.sha256(f"{res_is.ledger_hash}:{res_oos.ledger_hash}".encode("utf-8")).hexdigest()
@@ -426,3 +451,4 @@ class FastEngineAdapter(BacktestEnginePort):
         )
 
         return res_is, res_oos, bundle
+

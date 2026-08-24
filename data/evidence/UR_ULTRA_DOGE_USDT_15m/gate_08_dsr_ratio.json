@@ -1,0 +1,24 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_15m_g08",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_15m",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_15m",
+  "strategy_snapshot_hash": "3256fb515f45ddd96b31f28488b969e8a184e632a1c4a03b0226118148a0bee7",
+  "dataset_id": "ds_binance_dogeusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "975a7b4e5f58dbdcf355530c096763010a8b49b774d9e2b0b2432a9ba31f3fff",
+  "output_hash": "576b52652e627173899391c3908261285c7c8ddc7979a3a368a102838d76c0b8",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
+  "metrics": {
+    "trials_penalized": 60,
+    "dsr_probability": 0.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_15m/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T11:29:35.857182+00:00"
+}

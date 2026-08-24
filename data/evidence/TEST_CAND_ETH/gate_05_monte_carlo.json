@@ -2,26 +2,26 @@
   "evidence_id": "ev_TEST_CAND_ETH_g05",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "acf95a95f1e2bd0468e3bb32aa3aa028c14c4d74946550b571b137cb87d581ae",
-  "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
+  "strategy_snapshot_hash": "b07e764613e20ef1db22fea49424b258c3f5e679a292911d31fb8fcb0d6752b0",
+  "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
   "gate_name": "MONTE_CARLO",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "3ab0a27a2baa91e483c7a2b0e9c5e058364ac680a853db025c296e71dd732d2d",
-  "output_hash": "abac0dc135749908712a0dbad7bbe943980f9da61aa63bf8773fc294570f2288",
-  "status": "PASSED",
-  "score": 97.6,
-  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.8%)",
+  "input_hash": "2531735ceaf55f512c51b33127b5e4da33c042d05c83ff8426d1fa3aa004c37e",
+  "output_hash": "9a9b63c2a65c2950077271463ebc9e3f9bfe3e0a924f6de3f846eec838646708",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 30.2% > 1.0% (DD 95% = 91.7%)",
   "metrics": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 0.0,
-    "drawdown_median_pct": 3.1,
-    "drawdown_95th_percentile_pct": 4.8,
-    "max_simulated_drawdown_pct": 9.5
+    "ruin_probability_pct": 30.2,
+    "drawdown_median_pct": 79.6,
+    "drawdown_95th_percentile_pct": 91.7,
+    "max_simulated_drawdown_pct": 96.2
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T10:23:25.789809+00:00"
+  "created_at_utc": "2026-08-24T11:30:26.704705+00:00"
 }

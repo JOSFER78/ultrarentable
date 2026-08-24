@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_1M_g09",
   "run_id": "run_UR_ULTRA_XRP_USDT_1M",
   "strategy_id": "UR_ULTRA_XRP_USDT_1M",
-  "strategy_snapshot_hash": "47f68be6746f6e098bbbceea6f59a6445cd3df22ec3974c4ed551e1400a13b2b",
+  "strategy_snapshot_hash": "3b0fe3a39686495985c8e2c2542c8497a45872ecb35c696d5b763b748fa3992e",
   "dataset_id": "ds_binance_xrpusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,16 +10,16 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "897abf85e5aeef646c8c125ad17b7a2e5840bdc6586993c26bd8d036e4532fb1",
-  "output_hash": "0c806c0ff9d26a3ff61b083027d6324c89eb1ce7664a3caf3f52b5ab4a43eef7",
+  "input_hash": "6a20ddafe74aa72103ba36177fdebd04ef1ed6d3d70b53eb2847e0cda2a969ce",
+  "output_hash": "7de12799dbd6f6c0ea076971a193674052004e5467cefa44ad8de15680272a32",
   "status": "PASSED",
-  "score": 81.7,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 28.2 trades/param, Estabilidad Vecindario: 69.4%, Re-backtest PFs: [0.05, 0.07, 0.24, 0.14])",
+  "score": 79.5,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 29.4 trades/param, Estabilidad Vecindario: 65.8%, Re-backtest PFs: [0.05, 0.07, 0.24, 0.14])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 28.2,
+    "degrees_of_freedom_ratio": 29.4,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 69.4,
+    "parameter_neighborhood_stability_pct": 65.8,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.05,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T10:20:01.374271+00:00"
+  "created_at_utc": "2026-08-24T11:12:35.687942+00:00"
 }

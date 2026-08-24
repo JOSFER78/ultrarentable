@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_FONDEO_SI_15m_g03",
+  "run_id": "run_UR_FONDEO_SI_15m",
+  "strategy_id": "UR_FONDEO_SI_15m",
+  "strategy_snapshot_hash": "7a9d6c10e6d51f71b465bcfe15b1223af69c7fa663b5eb955866dd57102a518d",
+  "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "7b05d2302ee3a2eca03a23d818d69a84853351c931325836d5a1f422de742330",
+  "output_hash": "2220568b1e5da1a4193fe61b763dce87c3bea76e9c8dc9d45b4dedbd3865bde9",
+  "status": "FAILED",
+  "score": 35.0,
+  "verdict": "FALLO: Muestra insuficiente (57 IS < 30 ó 14 OOS < 20)",
+  "metrics": {
+    "trades_is": 57,
+    "trades_oos": 14,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_SI_15m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:32:14.230279+00:00"
+}

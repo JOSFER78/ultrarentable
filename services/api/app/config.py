@@ -5,7 +5,10 @@ from pathlib import Path
 
 
 def repo_root() -> Path:
-    current = Path(__file__).resolve()
+    try:
+        current = Path(__file__).resolve()
+    except OSError:
+        current = Path(__file__).absolute()
     for parent in [current, *current.parents]:
         if (parent / "REAL_ONLY_START_HERE.md").exists() or (parent / "pyproject.toml").exists():
             return parent
@@ -15,7 +18,13 @@ def repo_root() -> Path:
 def resolve_local_path(env_name: str, default: str) -> Path:
     value = os.getenv(env_name, default)
     path = Path(value).expanduser()
-    return path if path.is_absolute() else (repo_root() / path).resolve()
+    if path.is_absolute():
+        return path
+    base = repo_root() / path
+    try:
+        return base.resolve()
+    except OSError:
+        return base.absolute()
 
 
 DATA_DIR = resolve_local_path("DATA_DIR", "data")

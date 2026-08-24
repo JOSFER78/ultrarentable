@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_5M_g09",
   "run_id": "run_UR_ULTRA_BNB_USDT_5M",
   "strategy_id": "UR_ULTRA_BNB_USDT_5M",
-  "strategy_snapshot_hash": "5193ff26ffd12fe3cca66164cba18fd395dc3c55a44ce1adb482afd924450642",
+  "strategy_snapshot_hash": "f84a1bf4c0701c0a08064910c0de00fb52057ce27cdd23f37d529960f57119c5",
   "dataset_id": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "cb4254a6321c22f2021cd54ee468eb87307fd913f8e3cc6a4aa4c5a37cc6157f",
-  "output_hash": "183d2f91600feac282b58f8959087f3ef6625bbd4795078d308c45002a55a0b4",
+  "input_hash": "96dc63006c9a5b851b8d3eb4151a00c2c034624e6fb91c6d74cd07e43cadda92",
+  "output_hash": "1e2cefe661397b309dc7ea0f384436eed7ec0848bbfdace0f89f67988585ee9f",
   "status": "FAILED",
   "score": 15.3,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 13.0 o Estabilidad 38.2% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 13.1 o Estabilidad 38.2% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 13.0,
+    "degrees_of_freedom_ratio": 13.1,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 38.2,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5M/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T10:40:19.187444+00:00"
+  "created_at_utc": "2026-08-24T11:12:11.268728+00:00"
 }

@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCAD_15m_g01",
+  "run_id": "run_UR_ULTRA_USDCAD_15m",
+  "strategy_id": "UR_ULTRA_USDCAD_15m",
+  "strategy_snapshot_hash": "3d02960c14240eeb1693e153527e37a6237c34edc1c14c57969c271918d5c5d0",
+  "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 1,
+  "gate_name": "DATA_INGEST",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "6a345e8c1cf0f7cf73658ae2d9fef3a51d19e136df5757e7acc3fecbbfc04312",
+  "output_hash": "bce09cda6289d1937afff1626fb8c265299647c71525834e96f249a30cd053ee",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Dataset verificado (1134 velas, SHA256: 75804a65..., 0 corruptas, 0 gaps tolerados)",
+  "metrics": {
+    "total_candles": 1134,
+    "corrupt_bars": 0,
+    "out_of_order_bars": 0,
+    "gaps_detected": 0,
+    "max_gap_seconds": 0,
+    "expected_timeframe_step_sec": 900,
+    "zero_volume_bars": 0,
+    "dataset_sha256": "75804a650891b49aff173770295f6dccaa7d885a348142160ae721be5815fb29",
+    "integrity_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15m/gate_01_data_ingest.json",
+  "created_at_utc": "2026-08-24T11:29:42.496433+00:00"
+}

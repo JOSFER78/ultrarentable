@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCAD_15m_g02",
+  "run_id": "run_UR_ULTRA_USDCAD_15m",
+  "strategy_id": "UR_ULTRA_USDCAD_15m",
+  "strategy_snapshot_hash": "3d02960c14240eeb1693e153527e37a6237c34edc1c14c57969c271918d5c5d0",
+  "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "faaadcc4ebbf13622f7e0ade0e71e17486043c0260f65ffee448084c4e06dd70",
+  "output_hash": "5b24070e8bfcbcc0de15fed5b4bdb9c4594ac0885cba311d2cf3da2f85e8786d",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.52 < 1.10",
+  "metrics": {
+    "market_category": "FOREX",
+    "canonical_name": "US Dollar / Canadian Dollar",
+    "exchange": "Interbank / FTMO",
+    "gross_pnl_usd": -828760.98,
+    "total_fees_usd": 166348.86,
+    "total_slippage_usd": 332697.72,
+    "net_pnl_usd": -1327807.56,
+    "net_profit_factor": 0.52,
+    "drag_cost_pct": 60.22
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15m/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T11:29:42.497033+00:00"
+}

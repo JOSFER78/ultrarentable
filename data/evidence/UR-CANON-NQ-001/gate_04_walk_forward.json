@@ -1,74 +1,12 @@
 {
-  "evidence_id": "ev_UR-CANON-NQ-001_g04",
-  "run_id": "run_UR-CANON-NQ-001",
-  "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "d824c77c94938fadf423fd3eb1273c8aafae1669f76f2d51fd266a3563c0dd21",
-  "dataset_id": "ds_primary",
-  "dataset_sha256": "sha256_unverified",
   "gate_id": 4,
-  "gate_name": "WALK_FORWARD",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "67db3ffcf17578fb9cd51ddf6b6d51a38353baaf666c77ebf2e721c2f0470f0a",
-  "output_hash": "268b69d70fb4c324770ab03946f15ca79065994d30ac87e24d268a35677eb760",
-  "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.49, Consistencia: 100.0%)",
-  "metrics": {
-    "total_trades_analyzed": 50,
-    "windows_count": 5,
-    "walk_forward_efficiency": 1.49,
-    "oos_consistency_pct": 100.0,
-    "min_wfe_required": 0.5,
-    "windows_details": [
-      {
-        "window_index": 1,
-        "is_trades_count": 7,
-        "oos_trades_count": 3,
-        "pf_is": 4.25,
-        "pf_oos": 6.33,
-        "net_profit_oos_usd": 320.0,
-        "wfe": 1.49
-      },
-      {
-        "window_index": 2,
-        "is_trades_count": 7,
-        "oos_trades_count": 3,
-        "pf_is": 4.25,
-        "pf_oos": 6.33,
-        "net_profit_oos_usd": 320.0,
-        "wfe": 1.49
-      },
-      {
-        "window_index": 3,
-        "is_trades_count": 7,
-        "oos_trades_count": 3,
-        "pf_is": 4.25,
-        "pf_oos": 6.33,
-        "net_profit_oos_usd": 320.0,
-        "wfe": 1.49
-      },
-      {
-        "window_index": 4,
-        "is_trades_count": 7,
-        "oos_trades_count": 3,
-        "pf_is": 4.25,
-        "pf_oos": 6.33,
-        "net_profit_oos_usd": 320.0,
-        "wfe": 1.49
-      },
-      {
-        "window_index": 5,
-        "is_trades_count": 7,
-        "oos_trades_count": 3,
-        "pf_is": 4.25,
-        "pf_oos": 6.33,
-        "net_profit_oos_usd": 320.0,
-        "wfe": 1.49
-      }
-    ]
-  },
-  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T10:37:56.876137+00:00"
+  "name": "WALK_FORWARD",
+  "passed": false,
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
+  "evidence": {
+    "total_trades": 19,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
+  }
 }

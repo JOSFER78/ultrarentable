@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GC_5m_g02",
+  "run_id": "run_UR_FONDEO_GC_5m",
+  "strategy_id": "UR_FONDEO_GC_5m",
+  "strategy_snapshot_hash": "78f88c7efd1627fc85f8a8ae0832b5b46e33a1193a6f70428bab0a0d3a108340",
+  "dataset_id": "ds_trad_gc_5m_1780891200000_1787091000000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "f306ce7d9a7330dedcba4f3592262bac180db644edc6d15221745439831f6cac",
+  "output_hash": "106fdb5eb5c010368fb7e87e3d66f03e3896b92b43224e8baf6d08c9ac7bd33f",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: PF Neto tras costes = 2.12 (COMMODITIES)",
+  "metrics": {
+    "market_category": "COMMODITIES",
+    "canonical_name": "Oro COMEX Gold Futures",
+    "exchange": "COMEX Globex",
+    "gross_pnl_usd": 22650.0,
+    "total_fees_usd": 230.0,
+    "total_slippage_usd": 920.0,
+    "net_pnl_usd": 21500.0,
+    "net_profit_factor": 2.12,
+    "drag_cost_pct": 5.08
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GC_5m/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T11:31:19.285778+00:00"
+}

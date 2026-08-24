@@ -1,31 +1,42 @@
 {
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g10",
+  "run_id": "run_UR_FONDEO_AUDUSD_15M",
+  "strategy_id": "UR_FONDEO_AUDUSD_15M",
+  "strategy_snapshot_hash": "e5dc190b8ce53991837e88213193bb98edb53673e04fb1ca0c0f3eec3fb756aa",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
-  "name": "DEBATE_AGENTES",
-  "passed": true,
-  "score": 58.2,
-  "verdict": "PASSED: Diagn\u00f3stico y Consenso Sem\u00e1ntico Completado (58.2/100 \u00b7 Gu\u00eda de Mejora Generada)",
-  "evidence": {
-    "consensus_score": 58.2,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "cb150f07d68151e1ef730e6b630ec14a57280407c0b42f035a72577f629f3aa1",
+  "output_hash": "34059bf0c4668d4e845f006170b1be0a1cc516e7565f57f1da260197389f719c",
+  "status": "PASSED",
+  "score": 60.0,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (60.0/100 · Guía de Mejora Generada)",
+  "metrics": {
+    "consensus_score": 60.0,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
-        "score": 20.0,
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 26.2,
         "findings": [
           "Activo y Timeframe: AUDUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.13 con beneficio neto de $-0.24.",
-          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 0.36 con beneficio neto de $-0.21.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 100.0,
         "findings": [
-          "Drawdown M\u00e1ximo Observado: 0.0% (L\u00edmite permitido para FONDEO: 4.5%).",
+          "Drawdown Máximo Observado: 0.0% (Límite permitido para FONDEO: 4.5%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -35,36 +46,38 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 108 operaciones evaluadas (M\u00ednimo requerido: 20).",
+          "Muestra fuera de muestra: 102 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
+        "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operaci\u00f3n: $-0.00 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
-        "score": 55.0,
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 56.5,
         "objections": [
-          "Margen ajustado: Profit Factor 0.13 cercano al equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.36 cercano al equilibrio (1.15)."
         ],
         "recommendations": [
-          "Refinar filtro de r\u00e9gimen y entrada con EMA/RSI para mejorar selecci\u00f3n de trades."
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": true
       }
     ],
     "recommendations": [
-      "Refinar filtro de r\u00e9gimen y entrada con EMA/RSI para mejorar selecci\u00f3n de trades."
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
-  }
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-24T11:11:06.727829+00:00"
 }

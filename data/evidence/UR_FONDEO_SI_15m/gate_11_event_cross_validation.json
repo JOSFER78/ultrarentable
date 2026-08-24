@@ -1,0 +1,33 @@
+{
+  "evidence_id": "ev_UR_FONDEO_SI_15m_g11",
+  "run_id": "run_UR_FONDEO_SI_15m",
+  "strategy_id": "UR_FONDEO_SI_15m",
+  "strategy_snapshot_hash": "7a9d6c10e6d51f71b465bcfe15b1223af69c7fa663b5eb955866dd57102a518d",
+  "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "a20a4170e89dc346ac85346d0ce8ca55575a2c4e79eb99e3c07dcf6b1ad962ee",
+  "output_hash": "58495de5deb5e3e487cd2e2b7ee67fa7e30fece2ca370dd2ba34332cdd6a9891",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $50752.63, Bóveda Cosechada: $0.00, Apalancamiento: 1.0x, Dist. Mín. Liq: 99.1%)",
+  "metrics": {
+    "initial_capital_usd": 50000.0,
+    "final_equity_usd": 50752.63,
+    "peak_equity_usd": 51879.86,
+    "min_equity_usd": 43308.14,
+    "peak_leverage_used": 1.0,
+    "max_allowed_leverage_ceiling": 3.0,
+    "min_distance_to_liquidation_pct": 99.13,
+    "margin_call_triggered": false,
+    "total_fees_paid_usd": 0.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 14
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_SI_15m/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-24T11:32:14.581526+00:00"
+}

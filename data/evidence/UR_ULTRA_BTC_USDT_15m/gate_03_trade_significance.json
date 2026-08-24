@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_15m_g03",
+  "run_id": "run_UR_ULTRA_BTC_USDT_15m",
+  "strategy_id": "UR_ULTRA_BTC_USDT_15m",
+  "strategy_snapshot_hash": "e772bd6c73c4a25776840b0f112b203492f4ba37bfc1c68d393de8be3e5d9125",
+  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "58600b16c45ba164b502963a87d78980f95e4ef33456a10df10bd5ef0e2eb7eb",
+  "output_hash": "f2ba464d6c58b1fd049dcdae1be8d8ad5b9402d1e32235524d741437f6a5c3bc",
+  "status": "FAILED",
+  "score": 30.0,
+  "verdict": "FALLO: Muestra insuficiente (8 IS < 15 ó 6 OOS < 10)",
+  "metrics": {
+    "trades_is": 8,
+    "trades_oos": 6,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:34:25.956761+00:00"
+}

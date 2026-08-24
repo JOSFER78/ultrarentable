@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1H_g07",
   "run_id": "run_UR_ULTRA_BNB_USDT_1H",
   "strategy_id": "UR_ULTRA_BNB_USDT_1H",
-  "strategy_snapshot_hash": "73aef85482c8b27034495eed7a80614ada6ade0ba07e1f9f93d296adf1a8b9d7",
+  "strategy_snapshot_hash": "0610cedeadbbd8e575672358b13bd1bf46ed9c4917050f7af2aa5f5800d1fc4a",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "52853162901f996832ef27ac55b30e77330d90a28737f350f3cfc1d8a05097c9",
-  "output_hash": "cb3f6eb85f746353d175bf843ccd63e366c0d9b39f3a55eda13a1a88f1b64e3b",
+  "input_hash": "365f17016ca39f79138720d2ffac13e133898ee42086fda0f537d6b693b5cf77",
+  "output_hash": "4d37245d4e73ac1f1d9388cabc9ecfea97e7dc221b26fc45350e13ccd86167c7",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9355.87%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +9829.54%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 343,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 32,
       "BEAR_TREND": 19,
-      "CHOP_RANGING": 141,
-      "HIGH_VOLATILITY": 67
+      "CHOP_RANGING": 139,
+      "HIGH_VOLATILITY": 71
     },
     "regime_return_pct": {
       "BULL_TREND": 518.04,
       "BEAR_TREND": 1643.44,
-      "CHOP_RANGING": 3673.09,
-      "HIGH_VOLATILITY": 3521.3
+      "CHOP_RANGING": 3919.95,
+      "HIGH_VOLATILITY": 3748.11
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 9355.87
+    "total_oos_return_pct": 9829.54
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1H/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T10:40:12.049424+00:00"
+  "created_at_utc": "2026-08-24T11:05:09.629793+00:00"
 }

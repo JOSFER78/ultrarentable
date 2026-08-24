@@ -2,30 +2,22 @@
   "evidence_id": "ev_TEST_CAND_BTC_g02",
   "run_id": "run_TEST_CAND_BTC",
   "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "d3fc6960ad6217d121e23dc1d300a86e3611b26e0eac3da1c857146e896c6656",
-  "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
+  "strategy_snapshot_hash": "2a040c15aedbcdead10519701e8e87c69aa181c2a89e51c8d0057d11a6ced686",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
   "gate_name": "BACKTEST_COSTES",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "d64ba9bf0b67b672f99cd66ad479a82a2626ee960dc1e518fbaa1b0eb9272f24",
-  "output_hash": "afe44c38811647f96df44949b3840023ff22d5f761933e8d09fcf0fc6185b465",
+  "input_hash": "4d841e72c97bc21b16841c4eb12b7a73c59d1130e833577f55a661d1019d31fa",
+  "output_hash": "67abbbb168c6343007987dee68037701c693b935c2f405b0c9633b891b4ec0ff",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.71 < 1.10",
+  "verdict": "RECHAZADO: Trades insuficientes para análisis de costes",
   "metrics": {
-    "market_category": "CRYPTO",
-    "canonical_name": "Bitcoin Perpetuo",
-    "exchange": "Binance / BingX / FTMO",
-    "gross_pnl_usd": 81.07,
-    "total_fees_usd": 610.02,
-    "total_slippage_usd": 4.81,
-    "net_pnl_usd": -533.76,
-    "net_profit_factor": 0.71,
-    "drag_cost_pct": 758.43
+    "trades_count": 3
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-24T10:37:51.364751+00:00"
+  "created_at_utc": "2026-08-24T11:29:31.328370+00:00"
 }

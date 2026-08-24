@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_5M_g05",
   "run_id": "run_UR_ULTRA_USDCHF_5M",
   "strategy_id": "UR_ULTRA_USDCHF_5M",
-  "strategy_snapshot_hash": "d68fe1fd591c38c67672a08ad3ebc5155eb76496b8f1dec3b90f1020bb8c0e11",
+  "strategy_snapshot_hash": "155d86bba6847782389109da4c5779c37b4620c7c40723cb0c622896c7f14633",
   "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 5,
@@ -10,18 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "d366f30712a4a0ca13601264000bc1c79d879d4f512262f7fddef6fa8315909b",
-  "output_hash": "8498322c97a9625c62ceca3b6b7ec7c36634ad890a957016bfd467a63670f7b0",
+  "input_hash": "5f2d782d93dc3db39ee94db890fabe5d1bbb93dee8a441a0d5188d43782cdce5",
+  "output_hash": "292e026e6e416aecd29eeb21ba8261c736b04ff1582e6204971ca647d4aa660b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 99.3%)",
+  "verdict": "FALLO: Riesgo Ruina 100.0% > 1.0% (DD 95% = 99.4%)",
   "metrics": {
     "simulations_count": 1000,
     "ruin_probability_pct": 100.0,
-    "drawdown_median_pct": 99.0,
-    "drawdown_95th_percentile_pct": 99.3,
+    "drawdown_median_pct": 99.1,
+    "drawdown_95th_percentile_pct": 99.4,
     "max_simulated_drawdown_pct": 99.5
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5M/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T10:20:26.954786+00:00"
+  "created_at_utc": "2026-08-24T11:13:01.514324+00:00"
 }

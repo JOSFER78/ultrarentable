@@ -1,27 +1,14 @@
 {
-  "evidence_id": "ev_UR-CANON-NQ-001_g05",
-  "run_id": "run_UR-CANON-NQ-001",
-  "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "d824c77c94938fadf423fd3eb1273c8aafae1669f76f2d51fd266a3563c0dd21",
-  "dataset_id": "ds_primary",
-  "dataset_sha256": "sha256_unverified",
   "gate_id": 5,
-  "gate_name": "MONTE_CARLO",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "68e4f87fa8b9cf95e713aeeea5be2073de9ebb978b23214ee3e4285e02eba9b2",
-  "output_hash": "cbf9adc6b1a9f8211447b04c0551aabe7ba56870724c02beb53f65ec21610ce5",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Riesgo Ruina 99.8% > 1.0% (DD 95% = 160.0%)",
-  "metrics": {
+  "name": "MONTE_CARLO",
+  "passed": true,
+  "score": 97.8,
+  "verdict": "PASSED: Riesgo de Ruina = 0.0% (DD 95% = 4.4%)",
+  "evidence": {
     "simulations_count": 1000,
-    "ruin_probability_pct": 99.8,
-    "drawdown_median_pct": 41.7,
-    "drawdown_95th_percentile_pct": 160.0,
-    "max_simulated_drawdown_pct": 400.0
-  },
-  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_05_monte_carlo.json",
-  "created_at_utc": "2026-08-24T10:37:56.918593+00:00"
+    "ruin_probability_pct": 0.0,
+    "drawdown_median_pct": 2.7,
+    "drawdown_95th_percentile_pct": 4.4,
+    "max_simulated_drawdown_pct": 6.4
+  }
 }

@@ -2,42 +2,42 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT",
   "strategy_id": "UR_ULTRA_ETH_USDT",
-  "strategy_snapshot_hash": "81f72b4a4f7f90242b28282187e55fe523496121d4ad3ad8cd41261d976860b3",
-  "dataset_id": "ds_bingx_ETH_USDT_1m_1771841100000_1785665040000_ee0b2e169d.json",
+  "strategy_snapshot_hash": "a3e419d92c274ab782330a645b3aa03c5877ef386fcf69dd9f479fa3f357f11d",
+  "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "f1bf74d7200ebf87db6c7e5b64c8e51e64b977e71d683058ae770af8e7a467d6",
-  "output_hash": "6efa9ee105b3764629fffa030b41a8563223d6088238af185b4ab7e4ea9dbbd1",
+  "input_hash": "b994582526d3faf993be56b0c9b02f54ef81966f48278c398993e8470580dc7f",
+  "output_hash": "4cdcee3c7c4d6ca6a1a1e0fc170107cc34ad0026352f3e905bcb4af0e077b57a",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -356.27%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -109.09%)",
   "metrics": {
     "regimes_candle_distribution": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 37223,
-      "HIGH_VOLATILITY": 8857
+      "BULL_TREND": 135,
+      "BEAR_TREND": 89,
+      "CHOP_RANGING": 508,
+      "HIGH_VOLATILITY": 36
     },
     "regime_trades_count": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 124,
-      "HIGH_VOLATILITY": 69
+      "BULL_TREND": 9,
+      "BEAR_TREND": 7,
+      "CHOP_RANGING": 23,
+      "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
-      "BULL_TREND": 0.0,
-      "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -123.38,
-      "HIGH_VOLATILITY": -232.89
+      "BULL_TREND": -4.2,
+      "BEAR_TREND": -23.29,
+      "CHOP_RANGING": -66.94,
+      "HIGH_VOLATILITY": -14.66
     },
     "regimes_profitable_count": 0,
-    "regimes_active_count": 2,
-    "total_oos_return_pct": -356.27
+    "regimes_active_count": 4,
+    "total_oos_return_pct": -109.09
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T10:36:43.441922+00:00"
+  "created_at_utc": "2026-08-24T11:29:12.648886+00:00"
 }

@@ -94,7 +94,18 @@ class MetaEnsembleService:
 
         db = SessionLocal()
         try:
-            candidates = db.query(CandidateModel).filter(CandidateModel.candidate_id.in_(candidate_ids)).all()
+            candidates = []
+            for cid in candidate_ids:
+                cand = db.query(CandidateModel).filter(
+                    (CandidateModel.candidate_id == cid) |
+                    (CandidateModel.candidate_id == cid.upper()) |
+                    (CandidateModel.candidate_id == cid.lower()) |
+                    (CandidateModel.candidate_id == cid.replace("_1H", "_1h").replace("_4H", "_4h").replace("_15M", "_15m").replace("_5M", "_5m")) |
+                    (CandidateModel.candidate_id == cid.replace("_1h", "_1H").replace("_4h", "_4H").replace("_15m", "_15M").replace("_5m", "_5M"))
+                ).first()
+                if cand:
+                    candidates.append(cand)
+
             if len(candidates) != len(candidate_ids):
                 found_ids = {c.candidate_id for c in candidates}
                 missing = set(candidate_ids) - found_ids

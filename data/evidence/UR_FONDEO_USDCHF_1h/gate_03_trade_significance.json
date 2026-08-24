@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDCHF_1h_g03",
+  "run_id": "run_UR_FONDEO_USDCHF_1h",
+  "strategy_id": "UR_FONDEO_USDCHF_1h",
+  "strategy_snapshot_hash": "5238cfa20eb94065d3b0e875dbb14dbd50c667429782ffe4707e3857c3d1cae6",
+  "dataset_id": "ds_trad_usdchf_1h_1698796800000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "3356c5b8b32959824eca6648d22e08e3fa87f682ad4bc40d807e70c184c558da",
+  "output_hash": "87b402d3bb84aa28b4d60b0a38366d18edc2bad9f6a3ad5593bdc6d9976ab77c",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (159 IS / 59 OOS · Fondeo)",
+  "metrics": {
+    "trades_is": 159,
+    "trades_oos": 59,
+    "top2_outlier_dependency_pct": 26.7,
+    "min_is_required": 30,
+    "min_oos_required": 20,
+    "route_mode": "FONDEO_CONSISTENCY"
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDCHF_1h/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:34:13.366548+00:00"
+}

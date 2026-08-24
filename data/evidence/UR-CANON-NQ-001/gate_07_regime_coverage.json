@@ -1,24 +1,30 @@
 {
-  "evidence_id": "ev_UR-CANON-NQ-001_g07",
-  "run_id": "run_UR-CANON-NQ-001",
-  "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "d824c77c94938fadf423fd3eb1273c8aafae1669f76f2d51fd266a3563c0dd21",
-  "dataset_id": "ds_primary",
-  "dataset_sha256": "sha256_unverified",
   "gate_id": 7,
-  "gate_name": "REGIME_COVERAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "ca213674fca8ef7279fd8a737323ef8c9ddfbde338a3450ceeccf2ccd0b30bff",
-  "output_hash": "d1744089cf597d3a122b54d89002cfd580eb1ee74713cd24261824c4adff5a52",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO / BLOCKED: Sin trades_raw físicos con timestamp/índice para mapeo temporal real",
-  "metrics": {
-    "trades_mapped_count": 0,
-    "active_regimes": []
-  },
-  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T10:37:56.922532+00:00"
+  "name": "REGIME_COVERAGE",
+  "passed": true,
+  "score": 100.0,
+  "verdict": "PASSED: Cobertura multir\u00e9gimen verificada (4/4 reg\u00edmenes positivos, Retorno OOS: +17296.90%)",
+  "evidence": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 322,
+      "BEAR_TREND": 469,
+      "CHOP_RANGING": 3428,
+      "HIGH_VOLATILITY": 881
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 15,
+      "BEAR_TREND": 20,
+      "CHOP_RANGING": 103,
+      "HIGH_VOLATILITY": 81
+    },
+    "regime_return_pct": {
+      "BULL_TREND": 701.43,
+      "BEAR_TREND": 1013.02,
+      "CHOP_RANGING": 7137.63,
+      "HIGH_VOLATILITY": 8444.82
+    },
+    "regimes_profitable_count": 4,
+    "regimes_active_count": 4,
+    "total_oos_return_pct": 17296.9
+  }
 }

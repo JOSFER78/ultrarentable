@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_DOGE_USDT_15m_g03",
+  "run_id": "run_UR_ULTRA_DOGE_USDT_15m",
+  "strategy_id": "UR_ULTRA_DOGE_USDT_15m",
+  "strategy_snapshot_hash": "3256fb515f45ddd96b31f28488b969e8a184e632a1c4a03b0226118148a0bee7",
+  "dataset_id": "ds_binance_dogeusdt_15m_1778989500000_1787088600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "a24f4ca1313f3bf3dee18df1555661553f4ea518c6736a6a2bb06b2f6816b8fb",
+  "output_hash": "d1d37017868a27ce67dde05a2543bdc6a9978704210be831e94c649a0c92ec56",
+  "status": "FAILED",
+  "score": 10.0,
+  "verdict": "FALLO: Muestra insuficiente (2 IS < 15 ó 0 OOS < 10)",
+  "metrics": {
+    "trades_is": 2,
+    "trades_oos": 0,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_15m/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:29:35.839377+00:00"
+}

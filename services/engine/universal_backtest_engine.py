@@ -62,16 +62,23 @@ class UniversalDeterministicBacktestEngine:
         lows = np.array([float(c["low"]) for c in candles], dtype=np.float64)
         closes = np.array([float(c["close"]) for c in candles], dtype=np.float64)
         volumes = np.array([float(c.get("volume", 1.0)) for c in candles], dtype=np.float64)
-        timestamps = [
-            int(
-                c.get("timestamp_utc_ms")
-                or c.get("timestamp_ms")
-                or c.get("timestamp")
-                or c.get("time")
-                or 0
-            )
-            for c in candles
-        ]
+        def _parse_ts(c_val: Any) -> int:
+            raw_v = c_val.get("timestamp_utc_ms") or c_val.get("timestamp_ms") or c_val.get("timestamp") or c_val.get("time") or 0
+            if isinstance(raw_v, (int, float)):
+                return int(raw_v)
+            if isinstance(raw_v, str):
+                try:
+                    return int(float(raw_v))
+                except ValueError:
+                    try:
+                        from datetime import datetime
+                        clean_iso = raw_v.replace("Z", "+00:00")
+                        return int(datetime.fromisoformat(clean_iso).timestamp() * 1000)
+                    except Exception:
+                        return 0
+            return 0
+
+        timestamps = [_parse_ts(c) for c in candles]
 
         # 1. Inicialización de Motores Dinámicos
         ind_engine = DynamicIndicatorEngine(opens, highs, lows, closes, volumes)
@@ -498,17 +505,24 @@ class UniversalDeterministicBacktestEngine:
         candles_is = candles[:split_idx]
         candles_oos = candles[split_idx:]
 
+        start_is_ms = int(candles_is[0].get("timestamp_utc_ms") or candles_is[0].get("timestamp_ms") or candles_is[0].get("timestamp") or 0)
+        end_is_ms = int(candles_is[-1].get("timestamp_utc_ms") or candles_is[-1].get("timestamp_ms") or candles_is[-1].get("timestamp") or 0)
+        start_oos_ms = int(candles_oos[0].get("timestamp_utc_ms") or candles_oos[0].get("timestamp_ms") or candles_oos[0].get("timestamp") or 0)
+        end_oos_ms = int(candles_oos[-1].get("timestamp_utc_ms") or candles_oos[-1].get("timestamp_ms") or candles_oos[-1].get("timestamp") or 0)
+
         is_ds = dataset.model_copy(update={
             "dataset_id": f"{dataset.dataset_id}_IS",
-            "is_in_sample": True,
-            "total_bars": len(candles_is),
+            "bar_count": len(candles_is),
+            "start_time_ms": start_is_ms,
+            "end_time_ms": end_is_ms,
             "sha256_hash": hashlib.sha256(json.dumps(candles_is, sort_keys=True, default=str).encode("utf-8")).hexdigest(),
         })
 
         oos_ds = dataset.model_copy(update={
             "dataset_id": f"{dataset.dataset_id}_OOS",
-            "is_in_sample": False,
-            "total_bars": len(candles_oos),
+            "bar_count": len(candles_oos),
+            "start_time_ms": start_oos_ms,
+            "end_time_ms": end_oos_ms,
             "sha256_hash": hashlib.sha256(json.dumps(candles_oos, sort_keys=True, default=str).encode("utf-8")).hexdigest(),
         })
 

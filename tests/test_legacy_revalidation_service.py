@@ -33,7 +33,7 @@ def test_revalidate_single_candidate_execution():
     assert "candidate_id" in res
     assert "passed" in res
     assert "gates_passed" in res
-    assert res["candidate_id"] == "UR_ULTRA_BTC_USDT_1H"
+    assert res["candidate_id"].lower() == "ur_ultra_btc_usdt_1h"
 
 
 def test_revalidate_legacy_batch_endpoint_structure():

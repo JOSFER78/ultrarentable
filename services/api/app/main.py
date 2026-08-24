@@ -18,6 +18,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
+from services.api.app.api.version_router import version_router
+
 # Routers V1 Legados
 from services.api.app.api.routes import router as legacy_routes
 from services.api.app.api.sqx_router import sqx_router
@@ -135,6 +137,7 @@ app.include_router(research_router, tags=["v1-research"])
 app.include_router(gates_router, prefix="/api/v1", tags=["v1-gates"])
 app.include_router(firebase_sync_router, prefix="/api/v1", tags=["v1-firebase"])
 app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["v1-portfolio"])
+app.include_router(version_router, prefix="/api/v1", tags=["v1-version"])
 
 # ----------------------------------------------------------------------------
 # REGISTRO DE ROUTERS V2 (CLEAN ARCHITECTURE & DUAL-TRACK)
@@ -151,18 +154,35 @@ app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])
 app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-alias"])
 
 
+@app.get("/api/v1/version", tags=["system"])
 @app.get("/api/v1/versions", tags=["system"])
 @app.get("/api/v2/versions", tags=["system"])
 def get_platform_versions() -> Dict[str, Any]:
     """Retorna las versiones activas de los submódulos y pipelines del sistema."""
+    from services.version_control_manager import version_manager
+    info = version_manager.get_full_version_info()
     return {
-        "platform_version": "5.3.0",
+        "current_version": info.get("active_version", "5.3.0"),
+        "current_name": info.get("active_name", "Ultrarentable V5.3.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)"),
+        "platform_version": info.get("active_version", "5.3.0"),
         "api_version": "2.2.0",
-        "meta_engine_version": "5.3.0",
-        "evidence_gate_version": "5.3.0",
-        "strategy_generator_version": "5.3.0",
-        "portfolio_version": "5.3.0",
-        "versions": ["v5.3.0", "v5.2.0", "v5.1.0", "v5.0.0"],
+        "engine_version": info.get("active_version", "5.3.0"),
+        "pipeline_version": info.get("pipeline_version", "5.3.0"),
+        "meta_engine_version": info.get("active_version", "5.3.0"),
+        "evidence_gate_version": info.get("active_version", "5.3.0"),
+        "strategy_generator_version": info.get("active_version", "5.3.0"),
+        "portfolio_version": info.get("active_version", "5.3.0"),
+        "git_commit": info.get("git_commit", "1cd7516e57e2268ae4aa31db0af3c659eec742b8"),
+        "git_commit_short": info.get("git_commit_short", "1cd7516"),
+        "git_branch": info.get("git_branch", "main"),
+        "git_message": info.get("git_message", ""),
+        "git_author": info.get("git_author", ""),
+        "git_date": info.get("git_date", ""),
+        "git_is_dirty": info.get("git_is_dirty", False),
+        "codebase_fingerprint": info.get("codebase_fingerprint", ""),
+        "code_drift_detected": info.get("code_drift_detected", False),
+        "last_bump_utc": info.get("last_bump_utc", ""),
+        "history": info.get("history", []),
         "status": "HEALTHY",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
     }

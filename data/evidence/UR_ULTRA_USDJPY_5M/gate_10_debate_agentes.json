@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_5M_g10",
   "run_id": "run_UR_ULTRA_USDJPY_5M",
   "strategy_id": "UR_ULTRA_USDJPY_5M",
-  "strategy_snapshot_hash": "9d8ece76e8bebf4e3cc6f8cedecfcf46bef2f3c5d7d3ccf00bc94f8f05cae241",
+  "strategy_snapshot_hash": "b11778d2dac55682355e59a9f4390fd963729ce604a17846fd7b3260d4e565e4",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "4fdee3e3febc3940fc480d5e0eca0fa0ad83f64ed9ecb7918681b8f7618926c5",
-  "output_hash": "a10b25ba6ee54165b6010c4f68800e1abdcb2f885ed31174d3245278ec7007b5",
+  "input_hash": "27c3b18c8e810d6f2fb838d97b700059605ef85cb40a7b3afb15222767bf1d38",
+  "output_hash": "c659bc5148658d39a5be88bec9eae4df8e163c147844c1b1277c4f6c2e1ed215",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDJPY (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.08 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.09 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 390 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 388 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.56 USD.",
+          "Beneficio medio por operación: $-2.58 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -67,7 +67,7 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.08 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.09 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:20:36.253964+00:00"
+  "created_at_utc": "2026-08-24T11:13:10.369078+00:00"
 }

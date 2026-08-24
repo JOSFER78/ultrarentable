@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_15M_g08",
   "run_id": "run_UR_ULTRA_AVAX_USDT_15M",
   "strategy_id": "UR_ULTRA_AVAX_USDT_15M",
-  "strategy_snapshot_hash": "4621a858aea64035926a1412fb36a12700e16c420b9cdac5758ac15f5acd444e",
+  "strategy_snapshot_hash": "f06affa6c7c9c4863cafc648b6b17d49eb6970db099a2e321bd8f826c7046459",
   "dataset_id": "ds_binance_avaxusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "788b1e47d4a4fac90fb1a35802d8bae582bb74065b7a02896e33571a59b91f9e",
-  "output_hash": "7c66dee10a7cc7c1a81095385471bcc471c2433479b2a0cfada76136c6276750",
+  "input_hash": "f8b21174a691d93e62fd419e3f961b7a23fcfd36b0d0a70d756e9d3e4d87bd06",
+  "output_hash": "7cf064172e27427614299d9dca0b56a812e59718fd78b5bc216a586c152dc34d",
   "status": "PASSED",
-  "score": 94.0,
-  "verdict": "PASSED: DSR = 94.0% (Sharpe Bruto: 0.11, Trials Penalizados: 51, Skew: 2.49, Kurt: 9.97)",
+  "score": 92.7,
+  "verdict": "PASSED: DSR = 92.7% (Sharpe Bruto: 0.10, Trials Penalizados: 57, Skew: 2.53, Kurt: 10.23)",
   "metrics": {
-    "raw_sharpe_ratio": 0.112,
-    "deflated_sharpe_probability_pct": 93.97,
-    "trials_penalized_count": 51,
+    "raw_sharpe_ratio": 0.104,
+    "deflated_sharpe_probability_pct": 92.67,
+    "trials_penalized_count": 57,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 2.491,
-    "kurtosis": 9.966,
-    "sample_trades_count": 146
+    "skewness": 2.529,
+    "kurtosis": 10.228,
+    "sample_trades_count": 150
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_15M/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T10:25:20.869828+00:00"
+  "created_at_utc": "2026-08-24T11:18:00.112335+00:00"
 }

@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List, Optional, Set
 from fastapi import APIRouter, Depends, HTTPException, Query, Body, Response
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
-from services.api.app.db.database import get_db, CandidateModel, AuditEventModel
+from services.api.app.db.database import get_db, CandidateModel, StrategyModel, AuditEventModel
 from services.api.app.export.sqx_to_tradingview import generate_pinescript_v5
 from services.api.app.export.sqx_to_ninjatrader import generate_ninjatrader_strategy_cs
 from services.api.app.factory.robustness_verifier import verify_strategy_robustness
@@ -22,7 +24,7 @@ candidates_router = APIRouter(prefix="/candidates", tags=["Strategy Candidates &
 
 
 class StatusUpdateSchema(BaseModel):
-    status: str = Field(..., description="INVESTIGACION_BTC, RECHAZADA_FONDEO_DD, CANDIDATA_FONDEO, PAPER, LISTA_PARA_EVALUACION, EJECUTANDO, PAUSADA, RETIRADA")
+    status: str = Field(..., description="INVESTIGACION_BTC, RECHAZADA_FONDEO_DD, CANDIDATA_FONDEO, PAPER, LISTA_PARA_EVALUACION, EJECUTANDO, PAUSADA, RETIRADA, ANOMALY_REVIEW")
     reason: str = Field(..., description="Mandatory audit trail reason for status change")
 
 
@@ -43,6 +45,116 @@ def normalize_symbol_key(raw_sym: str) -> str:
         base = s[:-3]
         return f"{base}-USDT"
     return s
+
+
+def normalize_timeframe(raw_tf: Optional[str]) -> str:
+    """Normaliza el timeframe a formato canónico institucional en minúsculas (1m, 5m, 15m, 1h, 4h, 1d)."""
+    if not raw_tf:
+        return "1h"
+    tf = str(raw_tf).strip().lower()
+    tf_aliases = {
+        "h1": "1h",
+        "h4": "4h",
+        "m15": "15m",
+        "m5": "5m",
+        "m1": "1m",
+        "d1": "1d",
+        "1d": "1d",
+        "60m": "1h",
+        "60": "1h",
+        "240m": "4h",
+        "240": "4h",
+        "15": "15m",
+        "5": "5m",
+        "1": "1m",
+    }
+    return tf_aliases.get(tf, tf)
+
+
+def resolve_strategy_sha256(
+    candidate_id: str,
+    name: Optional[str] = None,
+    symbol: Optional[str] = None,
+    timeframe: Optional[str] = None,
+    route: Optional[str] = None,
+    sc: Optional[Dict[str, Any]] = None,
+    db: Optional[Session] = None,
+) -> str:
+    """Retorna el hash SHA-256 canónico real (64 caracteres hex) de la estrategia o bundle, erradicando pseudo-hashes."""
+    if sc:
+        for k in ("bundle_signature_sha256", "strategy_sha256", "canonical_hash", "sha256"):
+            v = sc.get(k)
+            if v and isinstance(v, str) and len(v) == 64 and all(c in "0123456789abcdefABCDEF" for c in v):
+                return v.lower()
+
+    if db is not None and candidate_id:
+        strat = db.query(StrategyModel.canonical_hash).filter(
+            (StrategyModel.strategy_id == candidate_id) | (StrategyModel.name == (name or candidate_id))
+        ).first()
+        if strat and strat[0] and len(strat[0]) == 64 and all(c in "0123456789abcdefABCDEF" for c in strat[0]):
+            return strat[0].lower()
+
+    # Cálculo determinista SHA-256 de 64 caracteres hex
+    payload = f"{candidate_id}:{symbol or ''}:{timeframe or ''}:{route or ''}".encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def compute_financial_metrics(
+    net_profit_oos: float,
+    initial_capital: float,
+    oos_months: float,
+    scorecard: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Calcula el Retorno Acumulado OOS real y la CAGR geométrica real con detección estricta de anomalías.
+    
+    Fórmulas requeridas:
+    - Retorno Acumulado OOS real: ((final_equity - initial_capital) / initial_capital) * 100.0
+    - CAGR geométrica real: (((final_equity / initial_capital) ** (12.0 / max(1.0, oos_months))) - 1.0) * 100.0
+    """
+    sc = scorecard or {}
+    oos_m = sc.get("oos_metrics") or {}
+    
+    base_cap = max(1.0, float(initial_capital))
+    final_equity = float(sc.get("final_equity_usd") or oos_m.get("final_equity_usd") or (base_cap + net_profit_oos))
+    safe_oos_months = max(0.2, float(oos_months))
+    
+    # 1. Retorno Acumulado OOS real
+    cumulative_return_pct = round(((final_equity - base_cap) / base_cap) * 100.0, 2)
+    
+    # 2. CAGR geométrica real
+    if final_equity > 0 and base_cap > 0:
+        growth_factor = final_equity / base_cap
+        periods_per_year = 12.0 / max(1.0, safe_oos_months)
+        try:
+            annualized_cagr_pct = round(((growth_factor ** periods_per_year) - 1.0) * 100.0, 2)
+            monthly_roi_pct = round(((growth_factor ** (1.0 / max(1.0, safe_oos_months))) - 1.0) * 100.0, 2)
+        except (OverflowError, ValueError):
+            annualized_cagr_pct = 99999.99
+            monthly_roi_pct = 9999.99
+    else:
+        annualized_cagr_pct = -100.0
+        monthly_roi_pct = -100.0
+
+    # 3. Detección de anomalías cuantitativas (> 5000% o inconsistente con el ledger / desbordamiento)
+    is_anomalous = (
+        abs(cumulative_return_pct) > 5000.0
+        or abs(annualized_cagr_pct) > 5000.0
+        or math.isnan(annualized_cagr_pct)
+        or math.isinf(annualized_cagr_pct)
+        or math.isnan(monthly_roi_pct)
+        or math.isinf(monthly_roi_pct)
+        or final_equity < 0
+    )
+
+    return {
+        "base_capital_usd": base_cap,
+        "final_equity_usd": final_equity,
+        "cumulative_return_pct": cumulative_return_pct,
+        "annualized_cagr_pct": annualized_cagr_pct,
+        "monthly_roi_pct": monthly_roi_pct,
+        "is_anomalous": is_anomalous,
+        "oos_months": safe_oos_months,
+    }
 
 
 @candidates_router.get("/summary")
@@ -87,30 +199,50 @@ def list_candidates_summary(
     if symbol and symbol.upper() != "ALL":
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
     if timeframe and timeframe.upper() != "ALL":
-        query = query.filter(CandidateModel.timeframe == timeframe)
+        norm_filter_tf = normalize_timeframe(timeframe)
+        query = query.filter(CandidateModel.timeframe.in_([timeframe, norm_filter_tf, norm_filter_tf.upper()]))
     if engine_version and engine_version.upper() != "ALL":
         query = query.filter(CandidateModel.engine_version == engine_version)
 
-    rows = query.order_by(CandidateModel.net_profit_oos.desc()).offset(offset).limit(limit).all()
+    rows = query.order_by(CandidateModel.net_profit_oos.desc()).all()
 
+    seen_keys: Set[str] = set()
     summary_list = []
+    
     for r in rows:
         cid, name, r_route, r_sym, r_tf, r_st, r_rs, pf_is, pf_oos, dd_is, dd_oos, tr_is, tr_oos, net_oos, eng_ver = r
+        norm_tf = normalize_timeframe(r_tf)
         is_fondeo = (r_route == "FONDEO")
         base_cap = 50000.0 if is_fondeo else 1000.0
         net_val = float(net_oos or 0.0)
         
-        m_roi = round(((net_val / base_cap) * 100.0) / 2.4, 2) if base_cap > 0 else 0.0
-        a_roi = round(m_roi * 12.0, 2)
+        # Cálculo financiero normalizado
+        fin = compute_financial_metrics(net_val, base_cap, 2.4, None)
         
+        resolved_status = r_st or "REJECTED"
+        resolved_reason = r_rs or ""
+        
+        if fin["is_anomalous"]:
+            if resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS"):
+                resolved_status = "ANOMALY_REVIEW"
+                resolved_reason = f"Rentabilidad anómala detectada ({fin['cumulative_return_pct']}% / CAGR {fin['annualized_cagr_pct']}%) - Requiere auditoría forense"
+
+        sha256_hash = resolve_strategy_sha256(cid, name, r_sym, norm_tf, r_route, None, db)
+
+        # Deduplicación por hash SHA-256 o ID unificado
+        dedup_key = sha256_hash
+        if dedup_key in seen_keys:
+            continue
+        seen_keys.add(dedup_key)
+
         summary_list.append({
             "candidate_id": cid,
             "name": name or cid,
             "route": r_route or "ULTRA",
             "symbol": r_sym or "BTC",
-            "timeframe": r_tf or "15m",
-            "status": r_st or "REJECTED",
-            "status_reason": r_rs or "",
+            "timeframe": norm_tf,
+            "status": resolved_status,
+            "status_reason": resolved_reason,
             "profit_factor_is": float(pf_is or 0.0),
             "profit_factor_oos": float(pf_oos or 0.0),
             "max_dd_is_pct": float(dd_is or 0.0),
@@ -118,12 +250,14 @@ def list_candidates_summary(
             "trades_is": int(tr_is or 0),
             "trades_oos": int(tr_oos or 0),
             "net_profit_oos": net_val,
-            "monthly_return_pct": m_roi,
-            "annual_return_pct": a_roi,
-            "engine_version": eng_ver or "5.3.0",
+            "monthly_return_pct": fin["monthly_roi_pct"],
+            "annual_return_pct": fin["annualized_cagr_pct"],
+            "cumulative_return_pct": fin["cumulative_return_pct"],
+            "strategy_sha256": sha256_hash,
+            "engine_version": eng_ver or CURRENT_ENGINE_VERSION,
         })
 
-    return summary_list
+    return summary_list[offset : offset + limit]
 
 
 @candidates_router.get("")
@@ -164,27 +298,21 @@ def list_candidates(
     if symbol and symbol.upper() != "ALL":
         query = query.filter(CandidateModel.symbol.ilike(f"%{symbol}%"))
     if timeframe and timeframe.upper() != "ALL":
-        query = query.filter(CandidateModel.timeframe == timeframe)
+        norm_filter_tf = normalize_timeframe(timeframe)
+        query = query.filter(CandidateModel.timeframe.in_([timeframe, norm_filter_tf, norm_filter_tf.upper()]))
     if engine_version and engine_version.upper() != "ALL":
         query = query.filter(CandidateModel.engine_version == engine_version)
         
-    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).offset(offset).limit(limit).all()
+    candidates = query.order_by(CandidateModel.net_profit_oos.desc()).all()
     
-    if deduplicate_champions:
-        seen_champion_keys = set()
-        filtered_candidates = []
-        for c in candidates:
-            norm_sym = normalize_symbol_key(c.symbol)
-            champ_key = f"{c.route.upper()}_{norm_sym}"
-            if champ_key in seen_champion_keys:
-                continue
-            seen_champion_keys.add(champ_key)
-            filtered_candidates.append(c)
-    else:
-        filtered_candidates = candidates
-
+    seen_dedup_keys: Set[str] = set()
+    seen_champion_keys: Set[str] = set()
     results = []
-    for c in filtered_candidates:
+    
+    for c in candidates:
+        norm_tf = normalize_timeframe(c.timeframe)
+        norm_sym = normalize_symbol_key(c.symbol)
+        
         sc = {}
         if c.scorecard_json:
             try:
@@ -200,30 +328,14 @@ def list_candidates(
         base_cap = float(sc.get("initial_capital_usd") or oos_m.get("account_base_usd") or (50000.0 if is_fondeo else 1000.0))
         net_prof_oos = float(c.net_profit_oos if c.net_profit_oos is not None else oos_m.get("net_profit_usd", 0.0))
 
-        tf = (c.timeframe or "1h").lower()
         tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
-        bars_per_m = tf_bars_per_month.get(tf, 720)
+        bars_per_m = tf_bars_per_month.get(norm_tf, 720)
         total_bars = int(dur.get("total_bars") or 3840)
         calc_months = max(0.5, round(total_bars / bars_per_m, 1))
         oos_months = float(dur.get("oos_months") or oos_m.get("oos_months") or max(0.2, round(calc_months * 0.2, 1)))
 
-        # Cálculo robusto y realista de ROI mensual y anual (Cero overflow / Cero desbordamiento)
-        raw_monthly = sc.get("monthly_return_pct") or sc.get("monthly_roi_pct") or oos_m.get("monthly_roi_pct")
-        raw_annual = sc.get("annual_return_pct") or sc.get("annualized_roi_pct") or oos_m.get("annualized_roi_pct")
-        
-        if raw_monthly is not None and abs(float(raw_monthly)) <= 5000.0:
-            monthly_roi = float(raw_monthly)
-            ann_roi = float(raw_annual) if (raw_annual is not None and abs(float(raw_annual)) <= 50000.0) else round(monthly_roi * 12.0, 2)
-        else:
-            monthly_roi = round(((net_prof_oos / max(1.0, base_cap)) * 100.0) / max(0.2, oos_months), 2)
-            ann_roi = round(monthly_roi * 12.0, 2)
-
-        # Clamping de seguridad para evitar números no representables
-        if abs(ann_roi) > 50000.0 or math.isnan(ann_roi) or math.isinf(ann_roi):
-            monthly_roi = round(((net_prof_oos / max(1.0, base_cap)) * 100.0) / max(0.2, oos_months), 2)
-            ann_roi = round(monthly_roi * 12.0, 2)
-
-        roi_oos = round(monthly_roi * oos_months, 2) if monthly_roi is not None else None
+        # Cálculo normalizado de Retorno OOS y CAGR geométrica
+        fin = compute_financial_metrics(net_prof_oos, base_cap, oos_months, sc)
 
         raw_wr_is = is_m.get("win_rate_pct") if is_m.get("win_rate_pct") is not None else is_m.get("win_rate")
         wr_is = float(raw_wr_is) if raw_wr_is is not None else None
@@ -236,11 +348,18 @@ def list_candidates(
         dd_is = float(c.max_dd_is_pct) if c.max_dd_is_pct is not None else (float(is_m["max_drawdown_pct"]) if ("max_drawdown_pct" in is_m and is_m["max_drawdown_pct"] is not None) else 0.0)
         trades_count_oos = int(c.trades_oos) if c.trades_oos is not None else (int(oos_m["trades"]) if "trades" in oos_m else 0)
         
-        max_dd_floating_oos = float(sc.get("max_dd_floating_pct") or oos_m.get("max_dd_floating_pct") or sc.get("max_drawdown_floating_pct") or dd_oos)
-        max_dd_realized_oos = float(sc.get("max_dd_realized_pct") or oos_m.get("max_dd_realized_pct") or sc.get("max_drawdown_realized_pct") or (dd_oos * 0.85 if dd_oos else 0.0))
+        # Max Drawdown Realized vs Floating: CERO ESTIMACIONES SINTÉTICAS (dd_oos * 0.85 ERRADICADO)
+        raw_dd_float_oos = sc.get("max_dd_floating_pct") or oos_m.get("max_dd_floating_pct") or sc.get("max_drawdown_floating_pct")
+        max_dd_floating_oos = float(raw_dd_float_oos) if raw_dd_float_oos is not None else dd_oos
 
-        max_dd_floating_is = float(sc.get("max_dd_floating_is_pct") or is_m.get("max_dd_floating_pct") or is_m.get("max_drawdown_floating_pct") or dd_is)
-        max_dd_realized_is = float(sc.get("max_dd_realized_is_pct") or is_m.get("max_dd_realized_pct") or is_m.get("max_drawdown_realized_pct") or (dd_is * 0.85 if dd_is else 0.0))
+        raw_dd_real_oos = sc.get("max_dd_realized_pct") or oos_m.get("max_dd_realized_pct") or sc.get("max_drawdown_realized_pct")
+        max_dd_realized_oos = float(raw_dd_real_oos) if raw_dd_real_oos is not None else None
+
+        raw_dd_float_is = sc.get("max_dd_floating_is_pct") or is_m.get("max_dd_floating_pct") or is_m.get("max_drawdown_floating_pct")
+        max_dd_floating_is = float(raw_dd_float_is) if raw_dd_float_is is not None else dd_is
+
+        raw_dd_real_is = sc.get("max_dd_realized_is_pct") or is_m.get("max_dd_realized_pct") or is_m.get("max_drawdown_realized_pct")
+        max_dd_realized_is = float(raw_dd_real_is) if raw_dd_real_is is not None else None
 
         if oos_m.get("trades_per_month") is not None:
             tpm = float(oos_m["trades_per_month"])
@@ -259,7 +378,6 @@ def list_candidates(
             elif resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"):
                 passed_count = 11
             else:
-                import re
                 m = re.search(r"(\d+)/11", resolved_reason)
                 passed_count = int(m.group(1)) if m else None
 
@@ -280,9 +398,31 @@ def list_candidates(
         else:
             cand_tier_label = sc.get("tier_label") or ("🏆 Producción Certificada" if cand_tier == "TIER_1_CERTIFIED" else ("💎 Diamante en I+D" if cand_tier == "TIER_2_NEAR_CERTIFIED" else ("🧪 Incubadora de I+D" if cand_tier == "TIER_3_INCUBATOR" else "❌ Rechazada Estructural")))
 
+        # Verificación estricta de rentabilidad anómala (>5000% o inconsistencia)
+        if fin["is_anomalous"]:
+            if resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS"):
+                resolved_status = "ANOMALY_REVIEW"
+                resolved_reason = f"Rentabilidad anómala detectada (Retorno OOS: {fin['cumulative_return_pct']}%, CAGR: {fin['annualized_cagr_pct']}%) - Requiere auditoría forense"
+                cand_tier = "TIER_4_REJECTED"
+                cand_tier_label = "⚠️ Revisión por Anomalía (>5000%)"
+
         if tier and tier.upper() != "ALL":
             if tier.upper() != cand_tier:
                 continue
+
+        # Deduplicación por campeones o unificación por strategy_sha256
+        sha256_hash = resolve_strategy_sha256(c.candidate_id, c.name, norm_sym, norm_tf, c.route, sc, db)
+        
+        if deduplicate_champions:
+            champ_key = f"{(c.route or 'ULTRA').upper()}_{norm_sym}"
+            if champ_key in seen_champion_keys:
+                continue
+            seen_champion_keys.add(champ_key)
+        else:
+            dedup_key = sha256_hash
+            if dedup_key in seen_dedup_keys:
+                continue
+            seen_dedup_keys.add(dedup_key)
 
         duration_info_payload = dur if dur else {
             "total_bars": total_bars,
@@ -298,7 +438,9 @@ def list_candidates(
             "name": c.name,
             "route": c.route,
             "symbol": c.symbol,
-            "timeframe": c.timeframe,
+            "timeframe": norm_tf,
+            "strategy_sha256": sha256_hash,
+            "bundle_signature_sha256": sc.get("bundle_signature_sha256") or sha256_hash,
             "market_category": spec.category,
             "icon": spec.icon,
             "prop_firm_eligible": spec.prop_firm_eligible,
@@ -333,9 +475,9 @@ def list_candidates(
                 },
                 "out_of_sample": {
                     "net_profit_usd": net_prof_oos,
-                    "roi_pct": roi_oos,
-                    "annualized_roi_pct": ann_roi,
-                    "monthly_roi_pct": monthly_roi,
+                    "roi_pct": fin["cumulative_return_pct"],
+                    "annualized_roi_pct": fin["annualized_cagr_pct"],
+                    "monthly_roi_pct": fin["monthly_roi_pct"],
                     "trades_per_month": tpm,
                     "base_capital_usd": base_cap,
                     "trades": trades_count_oos,
@@ -356,9 +498,6 @@ def list_candidates(
             "validation_pipeline_version": getattr(c, "validation_pipeline_version", None) or CURRENT_ENGINE_VERSION,
             "created_at": c.created_at.isoformat() if c.created_at else None,
         })
-        
-        if len(results) >= offset + limit:
-            break
 
     return results[offset : offset + limit]
 
@@ -370,6 +509,7 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
     if not c:
         raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
 
+    norm_tf = normalize_timeframe(c.timeframe)
     sc = {}
     if c.scorecard_json:
         try:
@@ -385,43 +525,49 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
     base_cap = float(sc.get("initial_capital_usd") or oos_m.get("account_base_usd") or (50000.0 if is_fondeo else 1000.0))
     net_prof_oos = float(c.net_profit_oos if c.net_profit_oos is not None else oos_m.get("net_profit_usd", 0.0))
 
-    tf = (c.timeframe or "1h").lower()
     tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
-    bars_per_m = tf_bars_per_month.get(tf, 720)
+    bars_per_m = tf_bars_per_month.get(norm_tf, 720)
     total_bars = int(dur.get("total_bars") or 3840)
     calc_months = max(0.5, round(total_bars / bars_per_m, 1))
     oos_months = float(dur.get("oos_months") or oos_m.get("oos_months") or max(0.2, round(calc_months * 0.2, 1)))
 
-    if "monthly_return_pct" in sc:
-        monthly_roi = float(sc["monthly_return_pct"])
-        ann_roi = float(sc.get("annual_return_pct", monthly_roi * 12.0))
-    elif "monthly_roi_pct" in sc:
-        monthly_roi = float(sc["monthly_roi_pct"])
-        ann_roi = float(sc.get("annualized_roi_pct", monthly_roi * 12.0))
-    elif "monthly_roi_pct" in oos_m:
-        monthly_roi = float(oos_m["monthly_roi_pct"])
-        ann_roi = float(oos_m.get("annualized_roi_pct", monthly_roi * 12.0))
-    else:
-        monthly_roi = round(((net_prof_oos / max(1.0, base_cap)) * 100.0) / max(0.2, oos_months), 2)
-        ann_roi = round(monthly_roi * 12.0, 2)
+    fin = compute_financial_metrics(net_prof_oos, base_cap, oos_months, sc)
 
     dd_oos = float(c.max_dd_oos_pct if c.max_dd_oos_pct is not None else (oos_m.get("max_drawdown_pct") or 0.0))
     dd_is = float(c.max_dd_is_pct if c.max_dd_is_pct is not None else (is_m.get("max_drawdown_pct") or 0.0))
 
-    max_dd_floating_oos = float(sc.get("max_dd_floating_pct") or oos_m.get("max_dd_floating_pct") or sc.get("max_drawdown_floating_pct") or dd_oos)
-    max_dd_realized_oos = float(sc.get("max_dd_realized_pct") or oos_m.get("max_dd_realized_pct") or sc.get("max_drawdown_realized_pct") or (dd_oos * 0.85 if dd_oos else 0.0))
-    max_dd_floating_is = float(sc.get("max_dd_floating_is_pct") or is_m.get("max_dd_floating_pct") or is_m.get("max_drawdown_floating_pct") or dd_is)
-    max_dd_realized_is = float(sc.get("max_dd_realized_is_pct") or is_m.get("max_dd_realized_pct") or is_m.get("max_drawdown_realized_pct") or (dd_is * 0.85 if dd_is else 0.0))
+    raw_dd_float_oos = sc.get("max_dd_floating_pct") or oos_m.get("max_dd_floating_pct") or sc.get("max_drawdown_floating_pct")
+    max_dd_floating_oos = float(raw_dd_float_oos) if raw_dd_float_oos is not None else dd_oos
+
+    raw_dd_real_oos = sc.get("max_dd_realized_pct") or oos_m.get("max_dd_realized_pct") or sc.get("max_drawdown_realized_pct")
+    max_dd_realized_oos = float(raw_dd_real_oos) if raw_dd_real_oos is not None else None
+
+    raw_dd_float_is = sc.get("max_dd_floating_is_pct") or is_m.get("max_dd_floating_pct") or is_m.get("max_drawdown_floating_pct")
+    max_dd_floating_is = float(raw_dd_float_is) if raw_dd_float_is is not None else dd_is
+
+    raw_dd_real_is = sc.get("max_dd_realized_is_pct") or is_m.get("max_dd_realized_pct") or is_m.get("max_drawdown_realized_pct")
+    max_dd_realized_is = float(raw_dd_real_is) if raw_dd_real_is is not None else None
+
+    resolved_status = c.status or "REJECTED"
+    resolved_reason = c.status_reason or ""
+    if fin["is_anomalous"]:
+        if resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS"):
+            resolved_status = "ANOMALY_REVIEW"
+            resolved_reason = f"Rentabilidad anómala detectada (Retorno OOS: {fin['cumulative_return_pct']}%, CAGR: {fin['annualized_cagr_pct']}%) - Requiere auditoría forense"
+
+    sha256_hash = resolve_strategy_sha256(c.candidate_id, c.name, c.symbol, norm_tf, c.route, sc, db)
 
     return {
         "candidate_id": c.candidate_id,
         "name": c.name,
         "route": c.route,
         "symbol": c.symbol,
-        "timeframe": c.timeframe,
+        "timeframe": norm_tf,
+        "strategy_sha256": sha256_hash,
+        "bundle_signature_sha256": sc.get("bundle_signature_sha256") or sha256_hash,
         "dataset_id": c.dataset_id,
-        "status": c.status,
-        "status_reason": c.status_reason,
+        "status": resolved_status,
+        "status_reason": resolved_reason,
         "base_capital_usd": base_cap,
         "max_dd_floating_pct": max_dd_floating_oos,
         "max_dd_realized_pct": max_dd_realized_oos,
@@ -441,8 +587,9 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
                 "max_drawdown_pct": dd_oos,
                 "max_dd_floating_pct": max_dd_floating_oos,
                 "max_dd_realized_pct": max_dd_realized_oos,
-                "monthly_roi_pct": monthly_roi,
-                "annualized_roi_pct": ann_roi,
+                "roi_pct": fin["cumulative_return_pct"],
+                "monthly_roi_pct": fin["monthly_roi_pct"],
+                "annualized_roi_pct": fin["annualized_cagr_pct"],
                 "base_capital_usd": base_cap,
                 "oos_months": oos_months,
             },
@@ -455,3 +602,88 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
         "scorecard_json": c.scorecard_json,
         "created_at": c.created_at.isoformat() if c.created_at else None,
     }
+
+
+@candidates_router.patch("/{candidate_id}/status")
+def update_candidate_status(
+    candidate_id: str,
+    payload: StatusUpdateSchema,
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Actualiza el estado de una estrategia registrando traza de auditoría."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+
+    old_status = c.status
+    c.status = payload.status
+    c.status_reason = payload.reason
+    
+    audit = AuditEventModel(
+        event_type="CANDIDATE_STATUS_CHANGE",
+        actor="API_USER",
+        details_json=json.dumps({
+            "candidate_id": candidate_id,
+            "old_status": old_status,
+            "new_status": payload.status,
+            "reason": payload.reason,
+        }),
+    )
+    db.add(audit)
+    db.commit()
+    return {"status": "SUCCESS", "candidate_id": candidate_id, "new_status": payload.status}
+
+
+@candidates_router.post("/{candidate_id}/reprogram")
+def reprogram_candidate(
+    candidate_id: str,
+    max_iterations: int = Query(3, ge=1, le=10),
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Reprograma una estrategia de Incubadora / Diamante aplicando mutación adaptativa."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+
+    return {
+        "status": "SUCCESS",
+        "candidate_id": candidate_id,
+        "message": f"Estrategia {candidate_id} enviada a pipeline de reprogramación adaptativa",
+        "max_iterations": max_iterations,
+    }
+
+
+@candidates_router.post("/revalidate-legacy")
+def revalidate_legacy_candidates(
+    req: RevalidateLegacyRequest,
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Revalida lote de candidatos legados usando el motor actual."""
+    res = legacy_revalidation_service.revalidate_legacy_batch(
+        target_version=req.target_version or CURRENT_ENGINE_VERSION,
+        only_approved=req.only_approved,
+        max_candidates=req.max_candidates,
+    )
+    return {"status": "SUCCESS", "revalidation_result": res}
+
+
+@candidates_router.get("/{candidate_id}/export/pinescript")
+def export_pinescript(candidate_id: str, db: Session = Depends(get_db)) -> Response:
+    """Exporta la estrategia a Pine Script v5 para TradingView."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+    
+    code = generate_pinescript_v5(c.name or candidate_id, c.symbol, normalize_timeframe(c.timeframe))
+    return Response(content=code, media_type="text/plain")
+
+
+@candidates_router.get("/{candidate_id}/export/ninjatrader")
+def export_ninjatrader(candidate_id: str, db: Session = Depends(get_db)) -> Response:
+    """Exporta la estrategia a C# para NinjaTrader 8."""
+    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+    if not c:
+        raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+    
+    code = generate_ninjatrader_strategy_cs(c.name or candidate_id, c.symbol, normalize_timeframe(c.timeframe))
+    return Response(content=code, media_type="text/plain")

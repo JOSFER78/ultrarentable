@@ -41,7 +41,7 @@ from contracts.universal_strategy import (
     TimeAndSessionFilter,
     ValueSource,
 )
-from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, InstrumentCostProfile
+from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, MissingCostModelError
 
 
 # Mapeo de nombres de indicadores de texto a IndicatorType canónico
@@ -101,7 +101,9 @@ class CanonicalCompiler:
             return DynamicValueNode.constant(0.0)
 
         name_clean = spec.name.upper().strip()
-        ind_type = INDICATOR_NAME_MAP.get(name_clean, IndicatorType.EMA)
+        if name_clean not in INDICATOR_NAME_MAP:
+            raise ValueError(f"UNSUPPORTED_INDICATOR: {spec.name}")
+        ind_type = INDICATOR_NAME_MAP[name_clean]
 
         if "PRICE" in ind_type.value:
             return DynamicValueNode.series(ind_type, offset=offset)
@@ -117,7 +119,21 @@ class CanonicalCompiler:
     @classmethod
     def compile_condition(cls, cond: CanonicalRuleCond) -> ConditionNode:
         left_node = cls.compile_node(cond.left_indicator, offset=cond.lookback_bars)
-        op = OPERATOR_MAP.get(cond.operator, UnivCompOp.GREATER_THAN)
+        
+        op = None
+        if isinstance(cond.operator, CanonicalCompOp):
+            op = OPERATOR_MAP.get(cond.operator)
+        elif isinstance(cond.operator, str):
+            try:
+                op = OPERATOR_MAP.get(CanonicalCompOp(cond.operator))
+            except ValueError:
+                try:
+                    op = OPERATOR_MAP.get(CanonicalCompOp[cond.operator])
+                except KeyError:
+                    op = None
+
+        if op is None:
+            raise ValueError(f"UNSUPPORTED_OPERATOR: {cond.operator}")
 
         if cond.right_indicator is not None:
             right_node = cls.compile_node(cond.right_indicator, offset=cond.lookback_bars)
@@ -187,21 +203,23 @@ class CanonicalCompiler:
 
     @classmethod
     def compile_instrument(cls, symbol: str, custom_point_val: Optional[float] = None, custom_tick_sz: Optional[float] = None) -> InstrumentSpecification:
-        clean_sym = symbol.upper().replace("-", "").replace("/", "")
+        clean_sym = symbol.upper().replace("-", "").replace("/", "").replace("_", "").strip()
         cost_prof = CANONICAL_COST_REGISTRY.get(clean_sym)
 
-        if cost_prof:
-            point_val = cost_prof.point_value
-            tick_sz = cost_prof.tick_size
-            is_crypto = cost_prof.asset_class == "CRYPTO_PERPETUAL" or "USDT" in clean_sym
-            is_cme = cost_prof.asset_class == "CME_FUTURES" or clean_sym in ("NQ", "ES", "MES", "MNQ", "GC", "CL")
-            is_fx = cost_prof.asset_class == "FOREX_SPOT"
-        else:
-            is_cme = clean_sym in ("NQ", "ES", "MES", "MNQ", "GC", "CL")
-            is_fx = clean_sym in ("EURUSD", "GBPUSD", "USDJPY", "AUDUSD")
-            is_crypto = not (is_cme or is_fx)
-            point_val = custom_point_val or (20.0 if clean_sym in ("NQ", "MNQ") else (50.0 if clean_sym in ("ES", "MES") else 1.0))
-            tick_sz = custom_tick_sz or (0.25 if is_cme else (0.0001 if is_fx else 0.1))
+        if cost_prof is None:
+            raise MissingCostModelError(f"MISSING_COST_PROFILE: {symbol}")
+
+        point_val = cost_prof.point_value
+        tick_sz = cost_prof.tick_size
+        asset_class_str = str(cost_prof.asset_class.value if hasattr(cost_prof.asset_class, "value") else cost_prof.asset_class)
+        is_cme = asset_class_str == "CME_FUTURES" or clean_sym in ("NQ", "ES", "MES", "MNQ", "GC", "CL", "YM", "RTY", "SI")
+        is_fx = asset_class_str == "FOREX_SPOT"
+        is_crypto = asset_class_str == "CRYPTO_PERPETUAL" or "USDT" in clean_sym
+        taker_fee = cost_prof.taker_fee_pct
+        maker_fee = cost_prof.maker_fee_pct
+        spread_ticks = cost_prof.typical_spread_ticks
+        slippage_ticks = cost_prof.slippage_ticks_baseline
+        funding_rate = (cost_prof.funding_rate_8h_pct / 100.0) if cost_prof.funding_rate_8h_pct is not None else 0.0
 
         if is_cme:
             asset_class = UnivAssetClass.CME_FUTURES
@@ -210,6 +228,8 @@ class CanonicalCompiler:
             taker_fee = 0.0
             maker_fee = 0.0
             max_lev = 1.0
+            venue = "CME"
+            quote_curr = "USD"
         elif is_fx:
             asset_class = UnivAssetClass.FOREX_MAJOR
             comm_type = CommissionType.FIXED_PER_CONTRACT
@@ -217,21 +237,32 @@ class CanonicalCompiler:
             taker_fee = 0.0
             maker_fee = 0.0
             max_lev = 30.0
-        else:
+            venue = "OANDA"
+            quote_curr = "USD"
+        elif is_crypto:
             asset_class = UnivAssetClass.CRYPTO_PERPETUAL
             comm_type = CommissionType.PERCENTAGE_OF_NOTIONAL
             comm_val = 0.050
-            taker_fee = 0.050
-            maker_fee = 0.020
+            taker_fee = taker_fee
+            maker_fee = maker_fee
             max_lev = 50.0
+            venue = "BINGX"
+            quote_curr = "USDT"
+        else:
+            asset_class = UnivAssetClass.COMMODITY if clean_sym in ("GC", "SI", "CL") else UnivAssetClass.INDEX_FUTURES
+            comm_type = CommissionType.FIXED_PER_CONTRACT
+            comm_val = 2.50
+            max_lev = 1.0
+            venue = "CME"
+            quote_curr = "USD"
 
         return InstrumentSpecification(
             symbol=symbol,
             raw_symbol=symbol.replace("-", ""),
             asset_class=asset_class,
-            exchange_or_venue="CME" if is_cme else ("OANDA" if is_fx else "BINGX"),
+            exchange_or_venue=venue,
             base_currency=symbol.replace("USDT", "").replace("USD", "").replace("-", ""),
-            quote_currency="USD" if is_cme or is_fx else "USDT",
+            quote_currency=quote_curr,
             tick_size=tick_sz,
             point_value=point_val,
             contract_size=1.0,
@@ -243,11 +274,11 @@ class CanonicalCompiler:
             taker_fee_rate=taker_fee / 100.0,
             maker_fee_rate=maker_fee / 100.0,
             cme_exchange_fee_per_contract=comm_val if is_cme else 0.0,
-            typical_spread_ticks=cost_prof.typical_spread_ticks if cost_prof else 1.0,
-            typical_slippage_ticks=cost_prof.slippage_ticks_baseline if cost_prof else 1.0,
+            typical_spread_ticks=spread_ticks,
+            typical_slippage_ticks=slippage_ticks,
             max_allowed_leverage=max_lev,
             is_perpetual=is_crypto,
-            default_funding_rate=(cost_prof.funding_rate_8h_pct / 100.0) if (cost_prof and cost_prof.funding_rate_8h_pct is not None) else 0.0,
+            default_funding_rate=funding_rate,
         )
 
     @classmethod
@@ -257,6 +288,7 @@ class CanonicalCompiler:
         dataset_id: str = "ds_auto",
         dataset_sha256: str = "sha256_unverified",
         initial_capital_usd: Optional[float] = None,
+        override_symbol: Optional[str] = None,
     ) -> Tuple[StrategySpecification, InstrumentSpecification, ExecutionModel, RiskModel]:
         """Compila un CanonicalStrategy completo en los 4 modelos requeridos por el motor universal."""
         entry_rules = cls.compile_entry_rules(strategy.rules)
@@ -270,11 +302,12 @@ class CanonicalCompiler:
             close_all_positions_at_session_end=strategy.session.force_close_at_end,
         )
 
+        target_sym = override_symbol or strategy.instrument.symbol
         strat_spec = StrategySpecification(
             strategy_id=strategy.strategy_id,
             version=strategy.schema_version,
             family=StrategyFamily.MOMENTUM_BREAKOUT,
-            target_symbol=strategy.instrument.symbol,
+            target_symbol=target_sym,
             base_timeframe=strategy.timeframe,
             entry_rules=entry_rules,
             exit_rules=exit_rules,
@@ -284,7 +317,7 @@ class CanonicalCompiler:
         )
 
         inst_spec = cls.compile_instrument(
-            symbol=strategy.instrument.symbol,
+            symbol=target_sym,
             custom_point_val=strategy.instrument.point_value,
             custom_tick_sz=strategy.instrument.tick_size,
         )

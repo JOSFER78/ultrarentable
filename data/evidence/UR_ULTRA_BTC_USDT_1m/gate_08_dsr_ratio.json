@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_1m_g08",
+  "run_id": "run_UR_ULTRA_BTC_USDT_1m",
+  "strategy_id": "UR_ULTRA_BTC_USDT_1m",
+  "strategy_snapshot_hash": "2f2e8682bd397723fb5c86bd3a8e7eea6e2baa559ee573cf5b1673a714ca8735",
+  "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "ab4e734c5d261e945fed5a249b7f2facb5fcf6db417de63447421893a35fead3",
+  "output_hash": "6d81222593642e9721d692e19fff63832d639db17825b077e17303ecddc58aa3",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 60 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -0.707,
+    "deflated_sharpe_probability_pct": 0.0,
+    "trials_penalized_count": 60,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": -1.932,
+    "kurtosis": 5.448,
+    "sample_trades_count": 10
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1m/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T11:31:59.128011+00:00"
+}

@@ -106,8 +106,21 @@ class ExpertStrategyOptimizer:
         conn = sqlite3.connect(str(self.db_path), timeout=30.0)
         cur = conn.cursor()
         row = cur.execute(
-            "SELECT candidate_id, name, route, symbol, timeframe, status, scorecard_json, engine_version FROM candidates WHERE candidate_id = ?",
-            (candidate_id,)
+            """SELECT candidate_id, name, route, symbol, timeframe, status, scorecard_json, engine_version 
+               FROM candidates 
+               WHERE candidate_id = ?
+                  OR candidate_id = ?
+                  OR candidate_id = ?
+                  OR candidate_id = ?
+                  OR candidate_id = ?
+               LIMIT 1""",
+            (
+                candidate_id,
+                candidate_id.upper(),
+                candidate_id.lower(),
+                candidate_id.replace("_1H", "_1h").replace("_4H", "_4h").replace("_15M", "_15m").replace("_5M", "_5m"),
+                candidate_id.replace("_1h", "_1H").replace("_4h", "_4H").replace("_15m", "_15M").replace("_5m", "_5M"),
+            )
         ).fetchone()
 
         if not row:

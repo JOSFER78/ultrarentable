@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_FONDEO_SI_15m_g02",
+  "run_id": "run_UR_FONDEO_SI_15m",
+  "strategy_id": "UR_FONDEO_SI_15m",
+  "strategy_snapshot_hash": "7a9d6c10e6d51f71b465bcfe15b1223af69c7fa663b5eb955866dd57102a518d",
+  "dataset_id": "ds_trad_si_15m_1780891200000_1787090400000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "882828d978496619492636bf1a4cbcf3d3d8ac0818cac176c90865176885e660",
+  "output_hash": "75b8694413e4bab8a4feebe58f97d357ca85e655a57d6f5c551bc563741c54a0",
+  "status": "FAILED",
+  "score": 1.2,
+  "verdict": "FALLO: PF Neto 1.01 < 1.10",
+  "metrics": {
+    "market_category": "COMMODITIES",
+    "canonical_name": "Plata COMEX Silver Futures",
+    "exchange": "COMEX Globex",
+    "gross_pnl_usd": 1650.0,
+    "total_fees_usd": 70.0,
+    "total_slippage_usd": 1400.0,
+    "net_pnl_usd": 180.0,
+    "net_profit_factor": 1.01,
+    "drag_cost_pct": 89.09
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_SI_15m/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T11:32:14.230005+00:00"
+}

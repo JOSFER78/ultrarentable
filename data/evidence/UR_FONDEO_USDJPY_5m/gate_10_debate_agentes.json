@@ -1,0 +1,83 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_5m_g10",
+  "run_id": "run_UR_FONDEO_USDJPY_5m",
+  "strategy_id": "UR_FONDEO_USDJPY_5m",
+  "strategy_snapshot_hash": "7af532aa9b917cf5d83b930e2a12132bd07ff4f6e360851694fd4091f6a19703",
+  "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "f68a1df34f57068e1f0dd35a5e11f55838bda20649f065a06062a79d6d230cb6",
+  "output_hash": "f0da0c717a6b9492747d9bf2bcaec4f95446f3d9a51e312d11815be75f1fb4d1",
+  "status": "PASSED",
+  "score": 56.8,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (56.8/100 · Guía de Mejora Generada)",
+  "metrics": {
+    "consensus_score": 56.8,
+    "evaluators_count": 5,
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 20.0,
+        "findings": [
+          "Activo y Timeframe: USDJPY (5m) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.16 con beneficio neto de $-133.93.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 95.8,
+        "findings": [
+          "Drawdown Máximo Observado: 0.3% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 240 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-0.56 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 54.0,
+        "objections": [
+          "Margen ajustado: Profit Factor 0.16 cercano al equilibrio (1.15)."
+        ],
+        "recommendations": [
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": true
+      }
+    ],
+    "recommendations": [
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5m/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-24T11:35:05.061473+00:00"
+}

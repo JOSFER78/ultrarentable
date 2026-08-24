@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g08",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "3a5db682af41a2509e53523793ceafa73ae36bf521eacf535402956a4227641a",
+  "strategy_snapshot_hash": "d8a4288931fb697122d754dd0eb6246575b1da866ca868a1522a52a30180027c",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "0b65fb95844581d924689e6063cba6bce054ceb6c9b462d9059f7dcdd67ac87c",
-  "output_hash": "3cc50fe8045224269328a6e135cf97def8a9664e05a95b9bd1149f58d3428ebd",
+  "input_hash": "7783b6e5be2d88a5bc2bba5be41bdbe31998f28e0dae1ea821d7238ac8299c54",
+  "output_hash": "89bfe778e1a93553aa54aae60a6dce52c0a7fcf8158049c75115cf1e35adc2d0",
   "status": "FAILED",
   "score": 0.1,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.1% < 50.0% tras penalizar 48 trials)",
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.1% < 50.0% tras penalizar 54 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.269,
-    "deflated_sharpe_probability_pct": 0.12,
-    "trials_penalized_count": 48,
+    "raw_sharpe_ratio": -0.258,
+    "deflated_sharpe_probability_pct": 0.15,
+    "trials_penalized_count": 54,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 2.215,
-    "kurtosis": 8.993,
-    "sample_trades_count": 224
+    "skewness": 2.149,
+    "kurtosis": 8.431,
+    "sample_trades_count": 222
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T10:20:13.839206+00:00"
+  "created_at_utc": "2026-08-24T11:12:47.688854+00:00"
 }

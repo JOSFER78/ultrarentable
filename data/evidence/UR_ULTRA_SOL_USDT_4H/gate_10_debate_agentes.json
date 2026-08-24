@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_4H_g10",
   "run_id": "run_UR_ULTRA_SOL_USDT_4H",
   "strategy_id": "UR_ULTRA_SOL_USDT_4H",
-  "strategy_snapshot_hash": "2415788eb68c137d87bfa456541a7f2c741ebf4b771c0176c32c871f366d28ee",
+  "strategy_snapshot_hash": "7a3ce1beb5273d8a344ca065c6f72e7a9b24de3f0751e2868eef15f3cf7e52b8",
   "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "491cce906fbba0ad998f2bbda912648bf56401a7dbd54edb216b3af8dba60730",
-  "output_hash": "e72f38746c298332b211ecfc943494b725d8961c85fea4989aa16a9f98006d3f",
+  "input_hash": "5bbf32187a140419fa4cba42ffd70bd14a7ebfb969bf4d15e2a267a7497b068d",
+  "output_hash": "87b1cb776a86a1ed3ac029791a5dfe8d3c3ba714a115cfa819456d7fc34d87b8",
   "status": "PASSED",
   "score": 55.6,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (55.6/100 · Guía de Mejora Generada)",
@@ -26,7 +26,7 @@
         "score": 63.1,
         "findings": [
           "Activo y Timeframe: SOL-USDT (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.18 con beneficio neto de $750172087957.95.",
+          "Profit Factor OOS: 1.18 con beneficio neto de $1245824820596.15.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 95.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 94.8% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 1764 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1816 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $425267623.56 USD.",
+          "Beneficio medio por operación: $686026883.59 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 65.8,
         "objections": [
-          "Alerta de Drawdown: DD (95.5%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (94.8%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:22:52.489469+00:00"
+  "created_at_utc": "2026-08-24T11:15:24.930033+00:00"
 }

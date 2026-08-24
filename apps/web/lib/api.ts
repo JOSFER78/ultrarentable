@@ -1,3 +1,5 @@
+import { BacktestRequest, BacktestResult } from "@/types/backtest";
+
 // Base URL del API. La web Next.js (puerto 3000) proxea /api/* -> 127.0.0.1:8000
 const API_PORT = process.env.NEXT_PUBLIC_API_PORT || "8000";
 const explicitUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -39,6 +41,10 @@ export async function request<T>(endpoint: string, options: RequestInit = {}): P
 }
 
 export const api = {
+  // ── Version & System ──
+  getVersion: () => request<any>("/api/v1/version"),
+  getVersions: () => request<any>("/api/v1/versions"),
+
   // ── Autopilot (proceso de búsqueda en vivo) ──
   getAutopilotStatus: () => request<any>("/api/v1/autopilot/status"),
   getAutopilotDecisions: () => request<any[]>("/api/v1/autopilot/decisions"),
@@ -67,6 +73,11 @@ export const api = {
     request<any>("/api/v1/backtests/fast", {
       method: "POST",
       body: JSON.stringify({ strategyId, datasetId, initialCapital }),
+    }),
+  executeBacktest: (payload: BacktestRequest) =>
+    request<BacktestResult>("/api/v1/backtest", {
+      method: "POST",
+      body: JSON.stringify(payload),
     }),
 
   // ── Campaigns ──

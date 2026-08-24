@@ -1,0 +1,27 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1h_g05",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_1h",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_1h",
+  "strategy_snapshot_hash": "03c92e77d4d0335c74965616a0c454ede51284b8574f0f2e31ae9034d54ec2c3",
+  "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 5,
+  "gate_name": "MONTE_CARLO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "bad7bce82ed132de47f6afa50946051c45b830907879e6e2b085534b0164b9ab",
+  "output_hash": "ce5a9143b8ee517623432ea21b3d316392a5fa3602d91fe5dbabda21ad749fd6",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Riesgo Ruina 99.9% > 1.0% (DD 95% = 100.0%)",
+  "metrics": {
+    "simulations_count": 1000,
+    "ruin_probability_pct": 99.9,
+    "drawdown_median_pct": 99.9,
+    "drawdown_95th_percentile_pct": 100.0,
+    "max_simulated_drawdown_pct": 100.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1h/gate_05_monte_carlo.json",
+  "created_at_utc": "2026-08-24T11:30:05.329979+00:00"
+}

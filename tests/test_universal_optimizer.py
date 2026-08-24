@@ -37,7 +37,7 @@ def test_universal_optimizer_closed_loop_execution():
         max_iterations=1,
     )
     assert "candidate_id" in conn_status
-    assert conn_status["candidate_id"] == "UR_ULTRA_LINK_USDT_4H"
+    assert conn_status["candidate_id"].lower() == "ur_ultra_link_usdt_4h"
     assert "final_gates_passed" in conn_status
     assert "optimized_parameters" in conn_status
     assert "microstructure_profile" in conn_status

@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1h_g07",
+  "run_id": "run_UR_ULTRA_AVAX_USDT_1h",
+  "strategy_id": "UR_ULTRA_AVAX_USDT_1h",
+  "strategy_snapshot_hash": "03c92e77d4d0335c74965616a0c454ede51284b8574f0f2e31ae9034d54ec2c3",
+  "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "c11ac227d549921d8aa422781ae4727abeace50582b18c5f2366cbcf8cbeab27",
+  "output_hash": "77ecf35fd4056241fae348164febb8b0c44a804a621c5fbca84610a7773e8aad",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -403.24%)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 632,
+      "BEAR_TREND": 906,
+      "CHOP_RANGING": 2769,
+      "HIGH_VOLATILITY": 793
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 19,
+      "BEAR_TREND": 40,
+      "CHOP_RANGING": 89,
+      "HIGH_VOLATILITY": 46
+    },
+    "regime_return_pct": {
+      "BULL_TREND": -102.5,
+      "BEAR_TREND": -108.35,
+      "CHOP_RANGING": -86.16,
+      "HIGH_VOLATILITY": -106.23
+    },
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 4,
+    "total_oos_return_pct": -403.24
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1h/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T11:30:05.365121+00:00"
+}

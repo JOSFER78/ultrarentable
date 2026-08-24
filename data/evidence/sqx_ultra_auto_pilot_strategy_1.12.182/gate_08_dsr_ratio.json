@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.182_g08",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.182",
-  "strategy_snapshot_hash": "e8166c9c35d62ce66a86a7f37dd9f886fa365fdac86004e4c3909f602f299cc8",
+  "strategy_snapshot_hash": "a3518c0465099c589d9988b27e56bbdc8b1b9e98408b2d5f77ae01e48fe94502",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "6ed4283bcc3b7b9c042604a0af259ea93fc5445374a0be8deceb76ca084a3fd4",
-  "output_hash": "a4d87d4c29bae00abe50a9feb31bd9fd48dbd3655931b55ff953f20ee645bfa1",
+  "input_hash": "ca485f615bf4d51aacaeca7ce3be8869e30b2ede1ce53da7e226fd89923e38ca",
+  "output_hash": "e6f8e496bf4bcd6a283457b716cb21555c50e103199e3de0d78883b46f2e0cba",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: DSR = 100.0% (Sharpe Bruto: 0.31, Trials Penalizados: 51, Skew: 2.69, Kurt: 11.00)",
+  "verdict": "PASSED: DSR = 100.0% (Sharpe Bruto: 0.30, Trials Penalizados: 54, Skew: 2.59, Kurt: 9.94)",
   "metrics": {
-    "raw_sharpe_ratio": 0.31,
+    "raw_sharpe_ratio": 0.296,
     "deflated_sharpe_probability_pct": 100.0,
-    "trials_penalized_count": 51,
+    "trials_penalized_count": 54,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 2.687,
-    "kurtosis": 11.0,
-    "sample_trades_count": 228
+    "skewness": 2.592,
+    "kurtosis": 9.941,
+    "sample_trades_count": 237
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.182/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T10:36:22.518506+00:00"
+  "created_at_utc": "2026-08-24T11:01:37.100816+00:00"
 }

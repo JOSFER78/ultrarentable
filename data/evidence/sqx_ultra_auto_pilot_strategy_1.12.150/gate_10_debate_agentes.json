@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.150_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.150",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.150",
-  "strategy_snapshot_hash": "e638aff2eabba376e00b3b06169c43fdd7356a9a0a99dce232432d6779f6d75c",
+  "strategy_snapshot_hash": "326e1f0ad0bfff91c070d10481439a9db7fb3c7e84e56f1fb4fc6486613b6492",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c2a42a57e32e4063ce57d0f01455c95c74fb0285b1caeb893cb141ac2967cc31",
-  "output_hash": "211450b21427145822362b04ceeb492ff3aec7722fa0da48dc2b832b2186b390",
+  "input_hash": "ac7e04200dce64544511735c17a4327421bbb3fbfb2543585af5f24fc7495b20",
+  "output_hash": "f40f8389252c6783559668525dc7a33107957e20948ab8fc33e4dc14437972ae",
   "status": "FAILED",
   "score": 35.7,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.7/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 252 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 269 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.97 USD.",
+          "Beneficio medio por operación: $-3.72 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.150/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:29:02.007845+00:00"
+  "created_at_utc": "2026-08-24T11:20:47.128629+00:00"
 }

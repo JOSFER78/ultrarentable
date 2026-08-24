@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_FONDEO_GC_4h_g08",
+  "run_id": "run_UR_FONDEO_GC_4h",
+  "strategy_id": "UR_FONDEO_GC_4h",
+  "strategy_snapshot_hash": "1dff8db5ea9070280893ef3bc366aebeaf0f414fb3eb336f5b8a4a607be21e6d",
+  "dataset_id": "ds_trad_gc_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "631619a0e5dd563df1f31bf4348fdc9eacfdc571dd26501faddbfc533d25baa1",
+  "output_hash": "58f5fbf6a65541888bd9e37403ba277a9701274cf7310d117fabf96b9f71a12a",
+  "status": "PASSED",
+  "score": 77.1,
+  "verdict": "PASSED: DSR = 77.1% (Sharpe Bruto: 0.18, Trials Penalizados: 60, Skew: 2.47, Kurt: 7.83)",
+  "metrics": {
+    "raw_sharpe_ratio": 0.176,
+    "deflated_sharpe_probability_pct": 77.14,
+    "trials_penalized_count": 60,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 2.47,
+    "kurtosis": 7.833,
+    "sample_trades_count": 12
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_GC_4h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T11:33:40.437908+00:00"
+}

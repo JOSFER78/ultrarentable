@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_1H_g10",
   "run_id": "run_UR_ULTRA_USDJPY_1H",
   "strategy_id": "UR_ULTRA_USDJPY_1H",
-  "strategy_snapshot_hash": "8f43e45861f1f5c2e63380b80d7d75983d7b36c8e5b4ce19d4b61629a34e6e6f",
+  "strategy_snapshot_hash": "418c3d0f22f6204209ea3ba21b013e965d56ab6105ebaba04094f41238af57d9",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "cddea68a627ed3e0eff0afc53ff32848212671d4e72eaa9ee6c32c6e773eafe1",
-  "output_hash": "3931a7ecdc8e2dfaa81e270403b81210e51ca84ec377c7d1e4f35afa4a416408",
+  "input_hash": "13b8b4569c3b87f58c6a0b256002ce9114eea7a4a7ed4610b8fa65acdacbba85",
+  "output_hash": "a506b74751b78c222f708fcd569e00fc6ffcd19ffccb6f7798b3b8d208314f0a",
   "status": "FAILED",
-  "score": 31.8,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (31.8/100)",
+  "score": 30.7,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (30.7/100)",
   "metrics": {
-    "consensus_score": 31.8,
+    "consensus_score": 30.7,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 45.6,
+        "score": 41.5,
         "findings": [
           "Activo y Timeframe: USDJPY (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.79 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.70 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 36.4,
+        "score": 35.4,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.79 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.70 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:18:17.423263+00:00"
+  "created_at_utc": "2026-08-24T11:10:53.946110+00:00"
 }

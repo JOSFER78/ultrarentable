@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.141_g03",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.141",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.141",
-  "strategy_snapshot_hash": "20a4a162c44f6695dc2813e98644a8f605682afa5618bead127a30c7e3af5447",
+  "strategy_snapshot_hash": "9a490e272bade7e4080a5181ba60c2eb72d87588e195067968396ef187c4f672",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "a89f0eb21f192bcf31305e3da4db243a858c33505296e30d46607fde604771ee",
-  "output_hash": "09a817cb3bf7dfd9fb86ae881220a186bb0f2930a8ac1834538a8bdb95b53592",
+  "input_hash": "b76b779b498bcdb5a6598dcf18c74db3f845268c189178abb300238dee094c88",
+  "output_hash": "0ec0bded0fb73607c15cd2bb2f061078893834824715372ed918b940985f870a",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (24 IS / 228 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (25 IS / 237 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 24,
-    "trades_oos": 228,
-    "top2_outlier_dependency_pct": 12.0,
+    "trades_is": 25,
+    "trades_oos": 237,
+    "top2_outlier_dependency_pct": 10.7,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.141/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T10:34:30.616053+00:00"
+  "created_at_utc": "2026-08-24T10:59:54.585145+00:00"
 }

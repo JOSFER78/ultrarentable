@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "50a6aea8449c266390d2280261592962bd347fc3acefadb142efdf1bd36c3bd0",
+  "strategy_snapshot_hash": "d7a004aaa11e7f15a1f4117c23a3496425b2d5c87a1d85a9d6f8eb8635d1ceff",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "606e9c708e861b4e3ff2c937a9cb42c387817944698da2168230702dfc44dddb",
-  "output_hash": "ec45fe6f6ef27626c0bbfe14d6fc77a6f2a2699a88df5b63aedb14f4949915ee",
-  "status": "FAILED",
-  "score": 34.2,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.2/100)",
+  "input_hash": "2e23026ac285a92d1aeca4f62ce4f9ff1d7b102ea13efe5d95e3e73da2a133c3",
+  "output_hash": "a2436e572a4a5ad5052f144f09d2ee4e111d285edefc7aa077cc76afe41a7718",
+  "status": "PASSED",
+  "score": 54.4,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (54.4/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 34.2,
+    "consensus_score": 54.4,
     "evaluators_count": 5,
-    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 53.6,
+        "score": 58.6,
         "findings": [
-          "Activo y Timeframe: AVAXUSDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.97 con beneficio neto de $-1000.00.",
+          "Activo y Timeframe: AVAX-USDT (1h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 1.08 con beneficio neto de $215732439138623.19.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2466 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2766 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,33 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $-0.41 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $77994374236.67 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.4,
+        "score": 64.7,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.97 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (99.5%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
-          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
-        "approved": false
+        "approved": true
       }
     ],
     "recommendations": [
-      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:13:09.015178+00:00"
+  "created_at_utc": "2026-08-24T11:32:36.898057+00:00"
 }

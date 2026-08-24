@@ -11,11 +11,12 @@ Demuestra la ausencia de datos falsos conocidos en el código fuente:
 """
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.path.abspath(__file__)).parents[1]
 
 SCAN_DIRS = [
     ROOT / "apps" / "web" / "app",

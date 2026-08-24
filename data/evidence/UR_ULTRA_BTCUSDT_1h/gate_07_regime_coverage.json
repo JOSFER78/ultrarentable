@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTCUSDT_1h_g07",
   "run_id": "run_UR_ULTRA_BTCUSDT_1h",
   "strategy_id": "UR_ULTRA_BTCUSDT_1h",
-  "strategy_snapshot_hash": "2bd12c9d57d3ba73b33ad762069da5c40b2fd87755f4c344e433ddbc599ebbb2",
+  "strategy_snapshot_hash": "28efb944b716519e408cf02bb2e3c18ae605a2571d6a3e753506b2a9e7d41d5f",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "34088f9f26fcce26049e36480780cd2e46c240f1f8763b334eea4bbc2d531513",
-  "output_hash": "5fd901051f3d6f0e5745b890a3f9089ec906dc4e6a8e975323239c4a203ee12d",
+  "input_hash": "a97839dd76e7eef410f0be4c807560862f82f041851fcf357a34590fa0381e84",
+  "output_hash": "383e08c61546ba21bcbb7e6874934a5fefe749b0ef99f4a6762392b69a55de4d",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +7635.24%)",
+  "verdict": "PASSED: Cobertura multirégimen verificada (4/4 regímenes positivos, Retorno OOS: +8637.11%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 322,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
-      "BULL_TREND": 14,
-      "BEAR_TREND": 25,
-      "CHOP_RANGING": 114,
-      "HIGH_VOLATILITY": 83
+      "BULL_TREND": 19,
+      "BEAR_TREND": 32,
+      "CHOP_RANGING": 118,
+      "HIGH_VOLATILITY": 97
     },
     "regime_return_pct": {
-      "BULL_TREND": 108.52,
-      "BEAR_TREND": 695.23,
-      "CHOP_RANGING": 3602.57,
-      "HIGH_VOLATILITY": 3228.92
+      "BULL_TREND": 50.92,
+      "BEAR_TREND": 1473.92,
+      "CHOP_RANGING": 2355.9,
+      "HIGH_VOLATILITY": 4756.37
     },
     "regimes_profitable_count": 4,
     "regimes_active_count": 4,
-    "total_oos_return_pct": 7635.24
+    "total_oos_return_pct": 8637.11
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTCUSDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T10:25:47.455770+00:00"
+  "created_at_utc": "2026-08-24T11:23:40.348111+00:00"
 }

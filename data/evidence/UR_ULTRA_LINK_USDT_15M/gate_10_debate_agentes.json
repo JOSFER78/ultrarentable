@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15M_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_15M",
   "strategy_id": "UR_ULTRA_LINK_USDT_15M",
-  "strategy_snapshot_hash": "63f5faf6cf90a61302e93ea6dc2e6d3bd140b3c85bd08490d4df043fffc6975d",
+  "strategy_snapshot_hash": "b2aa2a4657d099dd998b6622ed44947f58bd27a2c76531db35b431f1dd086f1d",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "28d9716efa5d4d44fb72b1f37fbf267e4029a3201b1e306e12bb8ed834e9b085",
-  "output_hash": "41dfdeb335ca1ada1c4646cd067789aec6580f07a50157711c5ce46ce6531d91",
+  "input_hash": "7381f38d0d737e434349fd2b6ec1e09c6e297bc3366bc80b7773f2d7ce58e8ad",
+  "output_hash": "2484212410520a4b723ab8dca64fa733a6e115cf31d13b05a47e1b63685a54a3",
   "status": "FAILED",
   "score": 34.8,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.8/100)",
@@ -26,7 +26,7 @@
         "score": 55.9,
         "findings": [
           "Activo y Timeframe: LINK-USDT (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.02 con beneficio neto de $-999.99.",
+          "Profit Factor OOS: 1.02 con beneficio neto de $-999.96.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 620 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 617 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.61 USD.",
+          "Beneficio medio por operación: $-1.62 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:24:24.046160+00:00"
+  "created_at_utc": "2026-08-24T11:17:13.413362+00:00"
 }

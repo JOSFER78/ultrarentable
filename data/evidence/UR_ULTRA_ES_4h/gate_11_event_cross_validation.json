@@ -1,0 +1,23 @@
+{
+  "evidence_id": "ev_UR_ULTRA_ES_4h_g11",
+  "run_id": "run_UR_ULTRA_ES_4h",
+  "strategy_id": "UR_ULTRA_ES_4h",
+  "strategy_snapshot_hash": "a65f22b8f126378bf6f33781d1dfbf85b16fbaea995068419a0e69252ee1c525",
+  "dataset_id": "ds_trad_es_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 11,
+  "gate_name": "EVENT_CROSS_VALIDATION",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "fc6a93c4024c1350ff24ee57baa368ef4127724ac041f99fa0fbf93ae5663d0c",
+  "output_hash": "3c884c39e7621cfe05e7da0b4c9bd2464530e3e96b5c97a9d553ac8ace1e85b8",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para validación cruzada orientada a eventos (< 5 trades)",
+  "metrics": {
+    "execution_events_count": 0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_ES_4h/gate_11_event_cross_validation.json",
+  "created_at_utc": "2026-08-24T11:33:57.329485+00:00"
+}

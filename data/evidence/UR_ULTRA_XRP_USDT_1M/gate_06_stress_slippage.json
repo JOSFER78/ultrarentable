@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_1M_g06",
   "run_id": "run_UR_ULTRA_XRP_USDT_1M",
   "strategy_id": "UR_ULTRA_XRP_USDT_1M",
-  "strategy_snapshot_hash": "47f68be6746f6e098bbbceea6f59a6445cd3df22ec3974c4ed551e1400a13b2b",
+  "strategy_snapshot_hash": "3b0fe3a39686495985c8e2c2542c8497a45872ecb35c696d5b763b748fa3992e",
   "dataset_id": "ds_binance_xrpusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "065acc0f2933e3d9806049f767d157e5f012f475c7b83a2cd791c79a7b039a27",
-  "output_hash": "ef4fabc32293e43030bb5b3566c9242c1d28894ed5a2cf2b19d035eb2bc59116",
+  "input_hash": "91abc8619a67080f7806e12be08f428302e8fd7aa810dba0b45594a075abbb11",
+  "output_hash": "7ea2ef97ebe3330e8e04a282e10bc6b14f2f33e5457f09be545210a371d2ce05",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,25 +19,25 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -4.36,
+        "stressed_net_pnl_usd": -4.37,
         "stressed_profit_factor": 0.14,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -4.47,
+        "stressed_net_pnl_usd": -4.48,
         "stressed_profit_factor": 0.13,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -4.61,
+        "stressed_net_pnl_usd": -4.63,
         "stressed_profit_factor": 0.13,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -4.79,
+        "stressed_net_pnl_usd": -4.82,
         "stressed_profit_factor": 0.12,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_1M/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-24T10:20:01.030459+00:00"
+  "created_at_utc": "2026-08-24T11:12:35.340260+00:00"
 }

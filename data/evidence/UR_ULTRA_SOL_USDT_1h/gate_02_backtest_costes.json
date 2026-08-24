@@ -1,0 +1,31 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SOL_USDT_1h_g02",
+  "run_id": "run_UR_ULTRA_SOL_USDT_1h",
+  "strategy_id": "UR_ULTRA_SOL_USDT_1h",
+  "strategy_snapshot_hash": "b718e331eaae9d5b9709d80f057bac75db4d912570c0c8a7fcf20665799face2",
+  "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 2,
+  "gate_name": "BACKTEST_COSTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0ee42aa088440d50b45ac093c9873c540fd982fb30a1bae5d4b4dc5ca3a8c252",
+  "output_hash": "5af272591937880bea608be2ac750d8e4f58d2114e1d529ba2d4f57eda38e8d3",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: PF Neto 0.92 < 1.10",
+  "metrics": {
+    "market_category": "CRYPTO",
+    "canonical_name": "SOL Perpetuo",
+    "exchange": "Perpetual Swap",
+    "gross_pnl_usd": 1139.77,
+    "total_fees_usd": 1543.24,
+    "total_slippage_usd": 1062.0,
+    "net_pnl_usd": -1465.47,
+    "net_profit_factor": 0.92,
+    "drag_cost_pct": 228.58
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1h/gate_02_backtest_costes.json",
+  "created_at_utc": "2026-08-24T11:35:30.128538+00:00"
+}

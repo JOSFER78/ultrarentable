@@ -2,42 +2,42 @@
   "evidence_id": "ev_TEST_CAND_SOL_g07",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "c1bff7794f97e6888dce321cac331dcfb1fcec548a61a025385c9995d96b256e",
-  "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
+  "strategy_snapshot_hash": "f0e40cea33a535da443ff5c9bc5b34a201b13f0062da7cd96de26905cf9f73af",
+  "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "3c103743a126e9bd30328018489fccf5eacee7012fd185f4a010dfa9432bbfa3",
-  "output_hash": "4370f0e7fe6d39d7ad78206d7e18bdfa482c99f32f874e1c808a29922a0e438a",
+  "input_hash": "1e448fc317eac9c9261f926680114cb7074aa0e8df266d7c9cef4439292d5668",
+  "output_hash": "93550b8de50ffe1c13720daba70747622f7faea6c2048b1a401a567a8f29733d",
   "status": "PASSED",
-  "score": 55.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (1/4 regímenes positivos, Retorno OOS: +88.38%)",
+  "score": 70.0,
+  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +225.54%)",
   "metrics": {
     "regimes_candle_distribution": {
-      "BULL_TREND": 7,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 1781,
-      "HIGH_VOLATILITY": 312
+      "BULL_TREND": 641,
+      "BEAR_TREND": 795,
+      "CHOP_RANGING": 2787,
+      "HIGH_VOLATILITY": 877
     },
     "regime_trades_count": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 93,
-      "HIGH_VOLATILITY": 24
+      "BULL_TREND": 46,
+      "BEAR_TREND": 54,
+      "CHOP_RANGING": 140,
+      "HIGH_VOLATILITY": 68
     },
     "regime_return_pct": {
-      "BULL_TREND": 0.0,
-      "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 340.54,
-      "HIGH_VOLATILITY": -252.16
+      "BULL_TREND": -63.52,
+      "BEAR_TREND": 22.94,
+      "CHOP_RANGING": -42.11,
+      "HIGH_VOLATILITY": 308.23
     },
-    "regimes_profitable_count": 1,
-    "regimes_active_count": 2,
-    "total_oos_return_pct": 88.38
+    "regimes_profitable_count": 2,
+    "regimes_active_count": 4,
+    "total_oos_return_pct": 225.54
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T10:33:43.278372+00:00"
+  "created_at_utc": "2026-08-24T11:28:55.980876+00:00"
 }

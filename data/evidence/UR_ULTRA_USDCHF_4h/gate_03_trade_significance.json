@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCHF_4h_g03",
+  "run_id": "run_UR_ULTRA_USDCHF_4h",
+  "strategy_id": "UR_ULTRA_USDCHF_4h",
+  "strategy_snapshot_hash": "ed41017cd3a2fae0d26ce196d67a0b1d16f636bf6c01d030366a768ab8569b3e",
+  "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "ff71a58df2893400978c9c6c5f90cb610ac1f1a59b8cb718344e1636b9e4ec5c",
+  "output_hash": "0e5533605319846ca5f30b6f73dfd7384a90a5e0958527b318411e60908744a1",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: Muestra robusta (173 IS / 64 OOS · Ultra Convex)",
+  "metrics": {
+    "trades_is": 173,
+    "trades_oos": 64,
+    "top2_outlier_dependency_pct": 40.2,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4h/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:31:14.241723+00:00"
+}

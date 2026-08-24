@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.1.182_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.1.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.1.182",
-  "strategy_snapshot_hash": "981d6ebbba195d3c91e61bdea9a378b043944cb122fe38c9616304e26d11490e",
+  "strategy_snapshot_hash": "e038b945b9331c94f83ddcefb657d0f39a537170971f24a76cd5c1dc50846ba2",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "5506c017b17ee018046368df0d45bec09ebd815856d6879c37db0e9a1e043679",
-  "output_hash": "df956ad03ee84a02fa014d9f05b2ed2f150d83ab6a8b4b28dec5ce0e74ad1292",
+  "input_hash": "3b3b7e3d279b850e688f960b477e030fcc382bd821f7d2c84673bbcfa3439eb5",
+  "output_hash": "57d14feee48b67ceed92eed569ae9331725ba06d4659bc2aeb4c1f27aaec218b",
   "status": "FAILED",
   "score": 35.7,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.7/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 251 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 260 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.98 USD.",
+          "Beneficio medio por operación: $-3.85 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.1.182/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:13:51.346790+00:00"
+  "created_at_utc": "2026-08-24T11:06:28.258099+00:00"
 }

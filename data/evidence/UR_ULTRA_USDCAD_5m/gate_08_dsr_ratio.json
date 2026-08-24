@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_USDCAD_5m_g08",
+  "run_id": "run_UR_ULTRA_USDCAD_5m",
+  "strategy_id": "UR_ULTRA_USDCAD_5m",
+  "strategy_snapshot_hash": "e9fddc9947931de272d2fb9a187799ee870bb8cb1afd9fa3f5afc592b522a387",
+  "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "acfa291133590799effadd8ae8ee579f9e9fdf0bc6428b28da9ee4ceef2a7b9f",
+  "output_hash": "0f4af459c67fa562cf5c2bdf9d5ba7751014718671cf3647b46d7dc50736e7ca",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 60 trials)",
+  "metrics": {
+    "raw_sharpe_ratio": -1.44,
+    "deflated_sharpe_probability_pct": 0.01,
+    "trials_penalized_count": 60,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 3.865,
+    "kurtosis": 16.62,
+    "sample_trades_count": 94
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5m/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T11:33:46.344509+00:00"
+}

@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SOL_USDT_4h_g04",
+  "run_id": "run_UR_ULTRA_SOL_USDT_4h",
+  "strategy_id": "UR_ULTRA_SOL_USDT_4h",
+  "strategy_snapshot_hash": "ead39b652d34311a5a0e0e014bbbf28b9b15e775856c26b1658a8ed11c0898c5",
+  "dataset_id": "ds_binance_solusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "f6692bef6ded4a8c506e50046186b582eb65d0f4593ddc6191a49e19ae9a7a85",
+  "output_hash": "d34a0cb91c2ef32ce98ef306be08cb621e5cb3f2a9dc3a80dacfc53d9824651b",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 3.33, Consistencia: 100.0%)",
+  "metrics": {
+    "total_trades_analyzed": 498,
+    "windows_count": 5,
+    "walk_forward_efficiency": 3.33,
+    "oos_consistency_pct": 100.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 69,
+        "oos_trades_count": 30,
+        "pf_is": 4.67,
+        "pf_oos": 5.83,
+        "net_profit_oos_usd": 11.96,
+        "wfe": 1.25
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 69,
+        "oos_trades_count": 30,
+        "pf_is": 5.77,
+        "pf_oos": 2.37,
+        "net_profit_oos_usd": 3.59,
+        "wfe": 0.41
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 69,
+        "oos_trades_count": 30,
+        "pf_is": 3.16,
+        "pf_oos": 42.08,
+        "net_profit_oos_usd": 102.71,
+        "wfe": 13.31
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 69,
+        "oos_trades_count": 30,
+        "pf_is": 15.89,
+        "pf_oos": 2.46,
+        "net_profit_oos_usd": 3.9,
+        "wfe": 0.15
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 69,
+        "oos_trades_count": 30,
+        "pf_is": 1.57,
+        "pf_oos": 2.39,
+        "net_profit_oos_usd": 4.19,
+        "wfe": 1.52
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4h/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T11:32:19.120825+00:00"
+}

@@ -2,33 +2,33 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g09",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "71a6068d7d96228ee69baebb7626ba3d2c869196704af503ccd8a4b823cdc58b",
-  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "strategy_snapshot_hash": "3a254a4cab2ab4206fded5c2a103dc2610b2f894f1d891581a1dbb3f65550c54",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "feaac84b818a42686a5d4000c02d45377db9aa6faa3cb7ecfb5f62779846fde0",
-  "output_hash": "cc368bc773d09c7f508c75dbdada4b50e3189bb76665c067b4b53c87c128f8a6",
-  "status": "PASSED",
-  "score": 80.2,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 12.6 trades/param, Estabilidad Vecindario: 102.5%, Re-backtest PFs: [0.09, 0.17, 0.08, 0.07])",
+  "input_hash": "684fce3ba3b6cab83ea18e25c4ca035f215520f5ebd20d5ef54c61ec5f88dca3",
+  "output_hash": "b8b9c9c4757f75f3dd3f4a4862412584158bf08d09b9e340723c793e0e430ae5",
+  "status": "FAILED",
+  "score": 40.0,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 3.6 o Estabilidad 100.0% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 12.6,
+    "degrees_of_freedom_ratio": 3.6,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 102.5,
+    "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.09,
-      0.17,
-      0.08,
-      0.07
+      0.0,
+      0.0,
+      0.0,
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-24T10:38:25.692792+00:00"
+  "created_at_utc": "2026-08-24T11:29:25.068130+00:00"
 }

@@ -1,0 +1,25 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_4h_g04",
+  "run_id": "run_UR_ULTRA_BTC_USDT_4h",
+  "strategy_id": "UR_ULTRA_BTC_USDT_4h",
+  "strategy_snapshot_hash": "45656973e2a66085ab7f6aff452f3d9aa07ec8e118072c2496895cd373b35052",
+  "dataset_id": "ds_binance_btcusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "15208a033c231ff14872133ad97601e4b61a98a35359b2c3434207b669c889c0",
+  "output_hash": "7f751f683ca93e18bbd07829b09965fbb88ce0b18b3900db4eba2a3be4c09def",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
+  "metrics": {
+    "total_trades": 1,
+    "windows_evaluated": 0,
+    "walk_forward_efficiency": 0.0
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_4h/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T11:34:01.898989+00:00"
+}

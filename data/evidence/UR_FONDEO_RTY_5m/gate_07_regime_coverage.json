@@ -1,0 +1,43 @@
+{
+  "evidence_id": "ev_UR_FONDEO_RTY_5m_g07",
+  "run_id": "run_UR_FONDEO_RTY_5m",
+  "strategy_id": "UR_FONDEO_RTY_5m",
+  "strategy_snapshot_hash": "90e42ccfa329dc35c664dd59b962f38c58995ea9ad959c5abb8d8958040e7419",
+  "dataset_id": "ds_trad_rty_5m_1780891200000_1787091000000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 7,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "2fe96a8bc2de8e7676473ed38c0ab6b2ea55b945654e17dd0bb03238a16d2e20",
+  "output_hash": "805af8bb4120ab571cec273bc25229a13605dc86598cea1e2efd01eb1c35d274",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -5.68%)",
+  "metrics": {
+    "regimes_candle_distribution": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 2206,
+      "HIGH_VOLATILITY": 557
+    },
+    "regime_trades_count": {
+      "BULL_TREND": 0,
+      "BEAR_TREND": 0,
+      "CHOP_RANGING": 33,
+      "HIGH_VOLATILITY": 8
+    },
+    "regime_return_pct": {
+      "BULL_TREND": 0.0,
+      "BEAR_TREND": 0.0,
+      "CHOP_RANGING": -3.51,
+      "HIGH_VOLATILITY": -2.17
+    },
+    "regimes_profitable_count": 0,
+    "regimes_active_count": 2,
+    "total_oos_return_pct": -5.68
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_RTY_5m/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T11:32:07.696770+00:00"
+}

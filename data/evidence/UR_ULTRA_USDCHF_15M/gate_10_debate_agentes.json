@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_15M_g10",
   "run_id": "run_UR_ULTRA_USDCHF_15M",
   "strategy_id": "UR_ULTRA_USDCHF_15M",
-  "strategy_snapshot_hash": "221bb98eec71419d600fd8d49dc145962ca54fdf4619f404ce103d96c4553658",
+  "strategy_snapshot_hash": "693687fc07206cb23a2b41b4689ca0e0e0004f9616614f48af8f0c4f3ea6c66e",
   "dataset_id": "ds_trad_usdchf_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c29bb75d91c415d19040b86e148d79b2e2e50788c20a5e90c7d0bdcfe08f8a18",
-  "output_hash": "f341e7926c39a558f4fd1381e38f0582b726c697bd891334e7d20b5718d8590d",
+  "input_hash": "5c047dd8f9b509552dc2037a0724e274e173d79e70d4f4e67241f9c025232b29",
+  "output_hash": "b43edbfeda99be52e672b6c4108b07fc3e903c484e02d53b6184156558754605",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCHF (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.08 con beneficio neto de $-909.42.",
+          "Profit Factor OOS: 0.07 con beneficio neto de $-909.66.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 211 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 204 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.31 USD.",
+          "Beneficio medio por operación: $-4.46 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -67,7 +67,7 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (91.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.08 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.07 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:17:52.316602+00:00"
+  "created_at_utc": "2026-08-24T11:10:29.005827+00:00"
 }

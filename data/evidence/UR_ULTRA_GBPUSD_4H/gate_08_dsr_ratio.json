@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_GBPUSD_4H_g08",
   "run_id": "run_UR_ULTRA_GBPUSD_4H",
   "strategy_id": "UR_ULTRA_GBPUSD_4H",
-  "strategy_snapshot_hash": "7fdfc1b0c3384f0b0f3a74a4fbe53a5db29c2f0182600cd095ab2ad94cefb610",
+  "strategy_snapshot_hash": "825596b3df1db4e4944d2bf9b3115322f5218cb876108beee32ac90e8851729d",
   "dataset_id": "ds_trad_gbpusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c41f2abdec5892aa67036dc66e9165839cdcb5a447d71f225a3a93a118de00ca",
-  "output_hash": "4293af1980f46f9c53318f743577c671b670110a4ab2ae990b7827f539f84b39",
+  "input_hash": "b432dee6c78fe13c2b2261e892b2d4007428419534798e69f5124657136ca457",
+  "output_hash": "19a3c99cbb85b744e48d3debc1fd778a0bee9f709ca6791a474a9602146f45fe",
   "status": "FAILED",
   "score": 6.2,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (6.2% < 50.0% tras penalizar 57 trials)",
+  "verdict": "FALLO: Deflated Sharpe insuficiente (6.2% < 50.0% tras penalizar 54 trials)",
   "metrics": {
     "raw_sharpe_ratio": -0.276,
     "deflated_sharpe_probability_pct": 6.18,
-    "trials_penalized_count": 57,
+    "trials_penalized_count": 54,
     "expected_max_sharpe_under_selection": 0.0,
     "skewness": 1.999,
     "kurtosis": 5.614,
     "sample_trades_count": 52
   },
   "artifact_path": "data/evidence/UR_ULTRA_GBPUSD_4H/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T10:39:59.084884+00:00"
+  "created_at_utc": "2026-08-24T11:11:52.111538+00:00"
 }

@@ -18,6 +18,7 @@ from services.api.app.ingestion.eth_pipeline import (
     HistoricalIngestionError,
     build_eth_research_datasets,
 )
+from contracts.backtest import BacktestRequest, BacktestResult
 from services.api.app.config import DATA_DIR
 from services.api.app.db.database import (
     BacktestModel,
@@ -1062,6 +1063,17 @@ def run_fast_backtest(data: dict[str, Any], db: Session = Depends(get_db)):
         return result
     except FastEngineException as exc:
         raise HTTPException(status_code=422, detail={"code": exc.code, "message": exc.message})
+
+
+@router.post("/backtest", response_model=BacktestResult)
+def execute_canonical_backtest(payload: BacktestRequest, db: Session = Depends(get_db)) -> BacktestResult:
+    """Ejecuta un Backtest canónico universal tipado vía FastEngineAdapter retornando BacktestResult con ledger_hash."""
+    from services.backtest.fast_engine_adapter import FastEngineAdapter
+    try:
+        adapter = FastEngineAdapter()
+        return adapter.execute_backtest(payload)
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail={"code": "BACKTEST_EXECUTION_ERROR", "message": str(exc)})
 
 
 @router.get("/backtests/{backtest_id}")

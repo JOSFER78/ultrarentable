@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_5M_g10",
   "run_id": "run_UR_ULTRA_BNB_USDT_5M",
   "strategy_id": "UR_ULTRA_BNB_USDT_5M",
-  "strategy_snapshot_hash": "9886941342c739b4213735fd2f7afb42d048d2c2ab06dce42a983f226b50e7cd",
+  "strategy_snapshot_hash": "f84a1bf4c0701c0a08064910c0de00fb52057ce27cdd23f37d529960f57119c5",
   "dataset_id": "ds_binance_bnbusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "c776c8fcad8ec8a46a434cb53d392807229fb0f6b8d3a17d0df90d8122a65902",
-  "output_hash": "3a92932152cc88a926f378b28d69f312b0a94f5a4c9d24124f78095ce7641e39",
+  "input_hash": "8e6e4e3bf2cde090921da2e860905e8faedede12a793d74637b949a9878ed3c6",
+  "output_hash": "e93f37c0016d08d27a4eac66044b843212d280a8e9a0fb7ac9e3fceab2ada5b9",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BNB-USDT (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.18 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.19 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 107 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 105 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-9.35 USD.",
+          "Beneficio medio por operación: $-9.52 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -67,7 +67,7 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.18 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.19 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T10:19:37.120261+00:00"
+  "created_at_utc": "2026-08-24T11:12:11.269214+00:00"
 }

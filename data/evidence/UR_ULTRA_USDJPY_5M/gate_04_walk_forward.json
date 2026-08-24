@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_5M_g04",
   "run_id": "run_UR_ULTRA_USDJPY_5M",
   "strategy_id": "UR_ULTRA_USDJPY_5M",
-  "strategy_snapshot_hash": "9d8ece76e8bebf4e3cc6f8cedecfcf46bef2f3c5d7d3ccf00bc94f8f05cae241",
+  "strategy_snapshot_hash": "b11778d2dac55682355e59a9f4390fd963729ce604a17846fd7b3260d4e565e4",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "0fcea9783c9cc9a1e8aeb48f7516dfc8648c06474211d9f5634b817eadcb434b",
-  "output_hash": "4b223157d5c822fe7f1e8872dbc155869c242edf9d55a1ba2908d3eef7717d7c",
+  "input_hash": "a48bb3ca6b8b63d9ee252df8f8406d36c0d2e72f01653b4c1b6e9c273b8b0c12",
+  "output_hash": "885d1f403083cf047df0aef56ac05471446715bb39cfe2598caceae34e825be5",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Degradación temporal excesiva (WFE 0.00 < 0.40 ó Consistencia 0.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 199,
+    "total_trades_analyzed": 198,
     "windows_count": 5,
     "walk_forward_efficiency": 0.0,
     "oos_consistency_pct": 0.0,
@@ -46,7 +46,7 @@
         "oos_trades_count": 12,
         "pf_is": 0.0,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.29,
+        "net_profit_oos_usd": -0.28,
         "wfe": 0.0
       },
       {
@@ -64,11 +64,11 @@
         "oos_trades_count": 12,
         "pf_is": 0.0,
         "pf_oos": 0.0,
-        "net_profit_oos_usd": -0.28,
+        "net_profit_oos_usd": -0.3,
         "wfe": 0.0
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5M/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T10:20:35.508902+00:00"
+  "created_at_utc": "2026-08-24T11:13:09.485907+00:00"
 }

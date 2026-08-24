@@ -2,42 +2,42 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g07",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "71a6068d7d96228ee69baebb7626ba3d2c869196704af503ccd8a4b823cdc58b",
-  "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
+  "strategy_snapshot_hash": "3a254a4cab2ab4206fded5c2a103dc2610b2f894f1d891581a1dbb3f65550c54",
+  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
   "gate_name": "REGIME_COVERAGE",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "1ae5370fa27353f4a0e4fddc6ad9fed413aa5128455ad2ddc9e0eff9a65d2993",
-  "output_hash": "2e2df03b423c9a7e55064aa57b6c0b3712275e66a2b780123bd13a9fbd2793a1",
+  "input_hash": "af984db999381dc6d4559f73b437fdbc159b5cd16e5a2ec787e04692a9411cdd",
+  "output_hash": "a36d07a5c91ea3980d90e0d5db1fa094acb3267ed31eb44370e13e80501d0a47",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -413.42%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -1388.45%)",
   "metrics": {
     "regimes_candle_distribution": {
-      "BULL_TREND": 0,
-      "BEAR_TREND": 0,
-      "CHOP_RANGING": 1675,
-      "HIGH_VOLATILITY": 425
+      "BULL_TREND": 322,
+      "BEAR_TREND": 469,
+      "CHOP_RANGING": 3428,
+      "HIGH_VOLATILITY": 881
     },
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 35,
-      "HIGH_VOLATILITY": 19
+      "CHOP_RANGING": 0,
+      "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -225.54,
-      "HIGH_VOLATILITY": -187.88
+      "CHOP_RANGING": 0.0,
+      "HIGH_VOLATILITY": -1388.45
     },
     "regimes_profitable_count": 0,
-    "regimes_active_count": 2,
-    "total_oos_return_pct": -413.42
+    "regimes_active_count": 1,
+    "total_oos_return_pct": -1388.45
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T10:38:25.375053+00:00"
+  "created_at_utc": "2026-08-24T11:29:23.796168+00:00"
 }

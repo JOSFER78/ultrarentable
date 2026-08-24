@@ -39,7 +39,7 @@ def test_expert_refinement_loop_on_real_candidate():
         
     conn = sqlite3.connect(str(db_path))
     cur = conn.cursor()
-    row = cur.execute("SELECT candidate_id FROM candidates LIMIT 1").fetchone()
+    row = cur.execute("SELECT candidate_id FROM candidates WHERE symbol IN ('BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'NQ', 'ES') LIMIT 1").fetchone()
     conn.close()
     
     if not row:

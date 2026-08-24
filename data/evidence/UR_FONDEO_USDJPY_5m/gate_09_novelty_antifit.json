@@ -1,0 +1,34 @@
+{
+  "evidence_id": "ev_UR_FONDEO_USDJPY_5m_g09",
+  "run_id": "run_UR_FONDEO_USDJPY_5m",
+  "strategy_id": "UR_FONDEO_USDJPY_5m",
+  "strategy_snapshot_hash": "7af532aa9b917cf5d83b930e2a12132bd07ff4f6e360851694fd4091f6a19703",
+  "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 9,
+  "gate_name": "NOVELTY_ANTIFIT",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0942cd9ee1e7f29f8d64a82a5c6f5ad835b6428e238913f83eaa9eb432f32450",
+  "output_hash": "e95f5f409a9226ed4df267c7338f55d251ca264ea0f15a2f839cf3dedce5a8bb",
+  "status": "FAILED",
+  "score": 20.6,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 30.0 o Estabilidad 51.6% < 60.0%)",
+  "metrics": {
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 30.0,
+    "min_dof_required": 15.0,
+    "parameter_neighborhood_stability_pct": 51.6,
+    "min_stability_required_pct": 60.0,
+    "perturbed_neighborhood_pfs": [
+      0.12,
+      0.14,
+      0.03,
+      0.04
+    ],
+    "rebacktest_performed": true
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_USDJPY_5m/gate_09_novelty_antifit.json",
+  "created_at_utc": "2026-08-24T11:35:05.060900+00:00"
+}

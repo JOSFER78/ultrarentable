@@ -1,0 +1,86 @@
+{
+  "evidence_id": "ev_UR_FONDEO_YM_4h_g10",
+  "run_id": "run_UR_FONDEO_YM_4h",
+  "strategy_id": "UR_FONDEO_YM_4h",
+  "strategy_snapshot_hash": "1b24f7a201776822d6a0931dedde81b3952fca0f04662111936f6b2a7934aa69",
+  "dataset_id": "ds_trad_ym_4h_1711425600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 10,
+  "gate_name": "DEBATE_AGENTES",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0c6aefeb7905451ce0b2c5ff19f73effa1f20cacc30c2933a7d834da6c7efc1f",
+  "output_hash": "b3f29f7388c67870c413672fc513c298fc59341b38de2e813b4cd80ede98e879",
+  "status": "FAILED",
+  "score": 33.4,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (33.4/100)",
+  "metrics": {
+    "consensus_score": 33.4,
+    "evaluators_count": 5,
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 51.0,
+        "findings": [
+          "Activo y Timeframe: YM (4h) evaluado en ruta FONDEO.",
+          "Profit Factor OOS: 0.91 con beneficio neto de $-2075.61.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 25.8% (Límite permitido para FONDEO: 4.5%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 100.0,
+        "findings": [
+          "Muestra fuera de muestra: 71 operaciones evaluadas (Mínimo requerido: 20).",
+          "Grado de confianza: ALTO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-29.23 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 37.7,
+        "objections": [
+          "Alerta de Drawdown: DD (25.8%) cercano o superior al límite tolerable (4.5%).",
+          "Margen ajustado: Profit Factor 0.91 cercano al equilibrio (1.15)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": false
+      }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_YM_4h/gate_10_debate_agentes.json",
+  "created_at_utc": "2026-08-24T11:33:23.349672+00:00"
+}

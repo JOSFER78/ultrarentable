@@ -1,10 +1,21 @@
 {
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_15M_g07",
+  "run_id": "run_UR_FONDEO_AUDUSD_15M",
+  "strategy_id": "UR_FONDEO_AUDUSD_15M",
+  "strategy_snapshot_hash": "e5dc190b8ce53991837e88213193bb98edb53673e04fb1ca0c0f3eec3fb756aa",
+  "dataset_id": "ds_trad_audusd_15m_1779836400000_1787091300000.json",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
-  "name": "REGIME_COVERAGE",
-  "passed": false,
+  "gate_name": "REGIME_COVERAGE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0e3e77741dc4184ae2292b0fb3174c4f88cb006c28fb9a774cba7a765a7a0e80",
+  "output_hash": "834f30cc93cdc9e0632d26acb291499342040ad96839f5233aa1ca77d1e69779",
+  "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en reg\u00edmenes de mercado (0/4 rentables, Retorno Total: -28.99%)",
-  "evidence": {
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -22.96%)",
+  "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
@@ -14,17 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 20,
+      "CHOP_RANGING": 21,
       "HIGH_VOLATILITY": 1
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -28.37,
-      "HIGH_VOLATILITY": -0.62
+      "CHOP_RANGING": -22.31,
+      "HIGH_VOLATILITY": -0.65
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -28.99
-  }
+    "total_oos_return_pct": -22.96
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_15M/gate_07_regime_coverage.json",
+  "created_at_utc": "2026-08-24T11:11:06.507342+00:00"
 }

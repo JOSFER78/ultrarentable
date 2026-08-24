@@ -1,0 +1,74 @@
+{
+  "evidence_id": "ev_UR_FONDEO_AUDUSD_5m_g04",
+  "run_id": "run_UR_FONDEO_AUDUSD_5m",
+  "strategy_id": "UR_FONDEO_AUDUSD_5m",
+  "strategy_snapshot_hash": "5f45b0565b5125a74cce6a0f5d831ccaaafc5a95c2d7b5b23aa1407995735fb4",
+  "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 4,
+  "gate_name": "WALK_FORWARD",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "b39230a6338c52a78906454396cb693f58d21c4d9974664b3748051bff94f315",
+  "output_hash": "694430bf148461e2f80cb3b5b7a1a8e1e3b966ac8411aa5465474ed684847fdc",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.00 < 0.40 ó Consistencia 0.0% < 40%)",
+  "metrics": {
+    "total_trades_analyzed": 258,
+    "windows_count": 5,
+    "walk_forward_efficiency": 0.0,
+    "oos_consistency_pct": 0.0,
+    "min_wfe_required": 0.5,
+    "windows_details": [
+      {
+        "window_index": 1,
+        "is_trades_count": 35,
+        "oos_trades_count": 16,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 2,
+        "is_trades_count": 35,
+        "oos_trades_count": 16,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 3,
+        "is_trades_count": 35,
+        "oos_trades_count": 16,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 4,
+        "is_trades_count": 35,
+        "oos_trades_count": 16,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
+      },
+      {
+        "window_index": 5,
+        "is_trades_count": 35,
+        "oos_trades_count": 16,
+        "pf_is": 0.0,
+        "pf_oos": 0.0,
+        "net_profit_oos_usd": 0.0,
+        "wfe": 0.0
+      }
+    ]
+  },
+  "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5m/gate_04_walk_forward.json",
+  "created_at_utc": "2026-08-24T11:31:37.873847+00:00"
+}

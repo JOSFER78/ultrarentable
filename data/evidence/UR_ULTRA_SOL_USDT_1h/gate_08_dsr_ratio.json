@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ev_UR_ULTRA_SOL_USDT_1h_g08",
+  "run_id": "run_UR_ULTRA_SOL_USDT_1h",
+  "strategy_id": "UR_ULTRA_SOL_USDT_1h",
+  "strategy_snapshot_hash": "b718e331eaae9d5b9709d80f057bac75db4d912570c0c8a7fcf20665799face2",
+  "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 8,
+  "gate_name": "DSR_RATIO",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "7108662a82062b44fd71ef7726c18adacbe522935338621ad897ea497491e41f",
+  "output_hash": "b5b88f9b1c171edcbd9cdce1344e2841181445714940f62f9f0c29d1424ea61a",
+  "status": "PASSED",
+  "score": 52.6,
+  "verdict": "PASSED: DSR = 52.6% (Sharpe Bruto: 0.00, Trials Penalizados: 60, Skew: 2.02, Kurt: 7.81)",
+  "metrics": {
+    "raw_sharpe_ratio": 0.004,
+    "deflated_sharpe_probability_pct": 52.65,
+    "trials_penalized_count": 60,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 2.019,
+    "kurtosis": 7.813,
+    "sample_trades_count": 321
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1h/gate_08_dsr_ratio.json",
+  "created_at_utc": "2026-08-24T11:35:30.331920+00:00"
+}

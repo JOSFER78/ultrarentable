@@ -1,0 +1,28 @@
+{
+  "evidence_id": "ev_UR_ULTRA_BTC_USDT_4h_g03",
+  "run_id": "run_UR_ULTRA_BTC_USDT_4h",
+  "strategy_id": "UR_ULTRA_BTC_USDT_4h",
+  "strategy_snapshot_hash": "45656973e2a66085ab7f6aff452f3d9aa07ec8e118072c2496895cd373b35052",
+  "dataset_id": "ds_binance_btcusdt_4h_1635897600000_1787083200000.json",
+  "dataset_sha256": "universal_real_sha256",
+  "gate_id": 3,
+  "gate_name": "TRADE_SIGNIFICANCE",
+  "engine": "UltrarentableQuantitativeCore",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "3b4e436453919362d925ddbc93371b150ac2014abb9fcd1e8e66eda311cca2ba",
+  "output_hash": "f96c7b7fb2752aba123222f8735719913fdd4e4302e3a3faa3fda7e348f0131d",
+  "status": "FAILED",
+  "score": 10.0,
+  "verdict": "FALLO: Muestra insuficiente (1 IS < 15 ó 1 OOS < 10)",
+  "metrics": {
+    "trades_is": 1,
+    "trades_oos": 1,
+    "top2_outlier_dependency_pct": 100.0,
+    "min_is_required": 15,
+    "min_oos_required": 10,
+    "route_mode": "ULTRA_ASYMMETRIC"
+  },
+  "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_4h/gate_03_trade_significance.json",
+  "created_at_utc": "2026-08-24T11:34:01.898041+00:00"
+}
