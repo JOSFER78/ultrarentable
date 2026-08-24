@@ -1,12 +1,16 @@
-"""contracts/lineage_contracts.py
-Contratos canónicos e inmutables para Linaje de Certificación, Versionado y Policy Impact Analyzer.
-Especificación oficial según Sección 7 y 8 del Informe Maestro v5.3.0.
+"""Canonical immutable contracts for strategy lineage, certification and policy impact.
+
+CanonicalStrategy remains the source of truth for trading rules. These records describe
+version/certification context and must never be used as a second strategy definition.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -15,6 +19,11 @@ class CertificationStatus(str, Enum):
     ULTRA_CERTIFIED = "ULTRA_CERTIFIED"
     FUNDING_CERTIFIED = "FUNDING_CERTIFIED"
     PORTFOLIO_CERTIFIED = "PORTFOLIO_CERTIFIED"
+    CERTIFIED_CURRENT = "CERTIFIED_CURRENT"
+    CERTIFIED_LEGACY = "CERTIFIED_LEGACY"
+    STALE = "STALE"
+    REVALIDATION_REQUIRED = "REVALIDATION_REQUIRED"
+    REVALIDATION_RUNNING = "REVALIDATION_RUNNING"
     REJECTED_ALTO_DRAWDOWN = "REJECTED_ALTO_DRAWDOWN"
     REJECTED_LOW_PF = "REJECTED_LOW_PF"
     REJECTED_OVERFITTING = "REJECTED_OVERFITTING"
@@ -26,7 +35,7 @@ class CertificationStatus(str, Enum):
 
 
 class CertificationRecord(BaseModel):
-    """Certificado inmutable y verificable criptográficamente de una evaluación cuantitativa."""
+    """Immutable certificate for one exact strategy/policy/data context."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     certificate_id: str
@@ -39,16 +48,56 @@ class CertificationRecord(BaseModel):
     codebase_fingerprint: str
     rules_snapshot_id: str
     fee_snapshot_id: str
-    route: str  # "ultra" | "fondeo"
+    route: str
     metrics_snapshot: Dict[str, float]
     scorecard: Dict[str, Any] = Field(default_factory=dict)
     status: CertificationStatus
     certified_at_utc: str
     certificate_hash: str
 
+    dataset_policy_version: Optional[str] = None
+    execution_policy_version: Optional[str] = None
+    risk_policy_version: Optional[str] = None
+    gate_policy_version: Optional[str] = None
+    evidence_bundle_hash: Optional[str] = None
+    ledger_hash: Optional[str] = None
+
+    def context_hash(self) -> str:
+        """Deterministic hash of certification identity and policy context."""
+        payload = {
+            "strategy_id": self.strategy_id,
+            "version": self.version,
+            "strategy_hash": self.strategy_hash,
+            "dataset_id": self.dataset_id,
+            "dataset_checksum_sha256": self.dataset_checksum_sha256,
+            "engine_version": self.engine_version,
+            "codebase_fingerprint": self.codebase_fingerprint,
+            "rules_snapshot_id": self.rules_snapshot_id,
+            "fee_snapshot_id": self.fee_snapshot_id,
+            "route": self.route,
+            "dataset_policy_version": self.dataset_policy_version,
+            "execution_policy_version": self.execution_policy_version,
+            "risk_policy_version": self.risk_policy_version,
+            "gate_policy_version": self.gate_policy_version,
+            "evidence_bundle_hash": self.evidence_bundle_hash,
+            "ledger_hash": self.ledger_hash,
+        }
+        raw = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+    def is_current(self, *, engine_version: str, gate_policy_version: Optional[str] = None) -> bool:
+        """A legacy certificate can never be current when critical policy context differs."""
+        if self.status != CertificationStatus.CERTIFIED_CURRENT:
+            return False
+        if self.engine_version != engine_version:
+            return False
+        if gate_policy_version is not None and self.gate_policy_version != gate_policy_version:
+            return False
+        return True
+
 
 class LineageNode(BaseModel):
-    """Nodo en el grafo acíclico dirigido (DAG) de linaje de una estrategia."""
+    """Node in the immutable DAG of strategy versions."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     strategy_id: str
@@ -67,7 +116,6 @@ class LineageNode(BaseModel):
 
 
 class LineageTreeResponse(BaseModel):
-    """Respuesta completa del árbol de linaje de una estrategia."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     root_strategy_id: str
@@ -80,12 +128,11 @@ class LineageTreeResponse(BaseModel):
 class PolicyTransitionType(str, Enum):
     CONSISTENT_PASS = "CONSISTENT_PASS"
     CONSISTENT_FAIL = "CONSISTENT_FAIL"
-    REVOKED = "REVOKED"                  # Pasaba antes, ahora cae
-    NEWLY_QUALIFIED = "NEWLY_QUALIFIED"  # Caía antes, ahora pasa
+    REVOKED = "REVOKED"
+    NEWLY_QUALIFIED = "NEWLY_QUALIFIED"
 
 
 class StrategyPolicyTransition(BaseModel):
-    """Detalle de transición de una estrategia individual ante el cambio de política."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     strategy_id: str
@@ -101,10 +148,9 @@ class StrategyPolicyTransition(BaseModel):
 
 
 class PolicyImpactRequest(BaseModel):
-    """Petición de simulación de impacto de cambio de política de calidad."""
     model_config = ConfigDict(extra="forbid")
 
-    target_route: str = "fondeo"  # "fondeo" | "ultra" | "all"
+    target_route: str = "fondeo"
     new_max_drawdown_pct: Optional[float] = None
     new_min_profit_factor: Optional[float] = None
     new_min_calmar: Optional[float] = None
@@ -114,7 +160,6 @@ class PolicyImpactRequest(BaseModel):
 
 
 class PolicyImpactResult(BaseModel):
-    """Resultado determinista del análisis de impacto de política."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     analysis_id: str
