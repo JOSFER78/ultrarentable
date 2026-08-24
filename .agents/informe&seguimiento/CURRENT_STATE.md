@@ -1,28 +1,28 @@
 # ULTRARENTABLE — CURRENT STATE
 
-## Current phase
+## Current gate
 PHASE 0 — CONSTITUTION & SOURCE OF TRUTH
 
 ## Status
-IN_PROGRESS — GITHUB FOUNDATION CHECKPOINT COMPLETE; VPS/FIREBASE AUDIT PENDING
+BLOCKED_REMOTE — GITHUB FOUNDATION COMPLETE; VPS/FIREBASE AUDIT PENDING
 
 ## Branch
 `plan/foundation-autonomous-lab`
 
 ## Objective
-Establish one coherent development/architecture contract before modifying quantitative runtime behavior.
+Establish one coherent development/architecture contract before certifying quantitative runtime changes.
 
 ## Confirmed project intent
 - Permanent 24/7 autonomous quantitative research laboratory.
 - SQX is the primary hypothesis factory when available; it is not the final certifier.
 - One canonical strategy identity with immutable versions and lineage.
-- ULTRA and FONDEO share the technical core but use distinct objective/risk/evaluation policies.
-- Research may modify any strategy component allowed by policy, but every material change creates a new version and re-enters independent validation.
+- ULTRA and FONDEO share the technical core but use distinct objective, risk and evaluation policies.
+- Research may modify any strategy component allowed by policy; every material change creates a new version and re-enters independent validation.
 - Promising failures go to Research; structural failures are discarded.
-- Meta-strategies are first-class: compatible strategies across assets/timeframes may be combined under a joint risk/correlation/exposure budget when evidence supports the combination.
-- The system must learn from real successes and failures without learning how to bypass the evaluation.
+- Meta-strategies are first-class: compatible traceable strategy versions across assets/timeframes may be combined under joint correlation, exposure and risk budgets with joint evidence.
+- The system learns from real successes and failures without learning how to bypass evaluation.
 
-## Current doctrine constraints
+## Non-negotiable doctrine
 - ZERO MOCKS.
 - ZERO SYNTHETIC DATA.
 - ZERO INVENTIONS.
@@ -33,7 +33,7 @@ Establish one coherent development/architecture contract before modifying quanti
 - UI never becomes the source of domain truth.
 - AI proposes; deterministic engines and evidence gates decide.
 
-## Phase 0 completed on GitHub
+## GitHub work completed in this foundation branch
 - Master implementation plan.
 - Phase/state/checkpoint workflow.
 - Product principles.
@@ -42,29 +42,33 @@ Establish one coherent development/architecture contract before modifying quanti
 - Persistent learning contract and blind-research contract.
 - Meta-strategy laboratory contract.
 - Evidence checklist.
+- CI workflow for Python contract tests and web build.
+- Hardened dataset contract: missing timestamps/OHLC now fail closed; no synthetic timestamp/volume defaults.
+- Strengthened existing canonical lineage contract with current/legacy/stale/revalidation certification semantics and context hashing.
+- Added provisional contract tests for the new lineage/meta-strategy semantics.
 
-## Phase 0 still pending
-- VPS audit of Firebase/Firestore historical learning data.
-- Reconciliation of existing semantic_ai learning components with the new LearningStore contract.
-- Final code-level authority reconciliation: CanonicalStrategy → compiled runtime specification → engine.
-- Final reconciliation of existing lifecycle enum/status names against the semantic lifecycle contract.
-- Verify all current doctrine/runtime contradictions before Phase 1.
+## Important: what is NOT certified yet
+The contract/code work above is NOT marked PASS because GitHub cannot inspect the user's VPS runtime or external Firebase/Firestore data. No claim of successful execution has been made.
 
-## Important current code findings
-- Existing semantic_ai components include FailureKnowledgeDB, autonomous_discovery_engine, mutation_engine, semantic_engine and SQX feedback loop; do not create a parallel learning stack.
-- FailureKnowledgeDB currently keeps historical records in process memory and therefore cannot alone satisfy durable learning requirements.
-- Autonomous discovery currently contains deterministic parameter/track behavior; this must be treated as legacy implementation to be reconciled against the future Research Lab contract, not as the final autonomous research architecture.
+## Remote blockers that must be resolved on the VPS
+1. Locate and snapshot the historical Firebase/Firestore learning store.
+2. Reconcile it with the existing semantic_ai components:
+   - FailureKnowledgeDB
+   - autonomous_discovery_engine
+   - mutation_engine
+   - semantic_engine
+   - sqx_feedback_loop
+3. Confirm the actual runtime authority chain:
+   CanonicalStrategy → compiler/runtime specification → Universal Engine.
+4. Reconcile existing lifecycle status enums and certification records with the canonical lifecycle contract.
+
+## Verification state
+- Static repository inspection: DONE for this checkpoint.
+- GitHub CI workflow added: NOT YET OBSERVED as a workflow run on this branch; do not claim tests passed until GitHub Actions reports a real result.
+- VPS/Firebase verification: PENDING.
 
 ## Phase gate
-Phase 0 can only become PASS after the VPS/Firebase learning inventory is completed and all remaining authority/lifecycle contradictions are resolved in code + documentation.
-
-## Evidence requirements
-A phase can only become PASS after:
-1. Code/document changes are complete for that phase.
-2. Relevant tests are executed.
-3. Red-team/negative-path checks are executed.
-4. Results are recorded here.
-5. No mock/synthetic/invented data is used.
+PHASE 0 remains BLOCKED until the remote Firebase/runtime audit is completed and the remaining authority/lifecycle contradictions are resolved.
 
 ## Rule
-DO NOT start Phase 1 until Phase 0 is marked PASS here.
+Do not declare any phase PASS without real execution evidence, negative-path tests and a written checkpoint here.
