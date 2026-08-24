@@ -2,31 +2,31 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.12.119_g10",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.12.119",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.12.119",
-  "strategy_snapshot_hash": "c6a88d71eb2fb422c89fc825b33edc5d830134e84cbe65c670e1a169e99c0587",
+  "strategy_snapshot_hash": "570b2152135cec14c630f5194b2e07c5a840db2e40bf9af601e1e2ca0c554dc6",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "caca42ed2bb043b7aab5f5ab914066d450f197e26ceee10dd14eb2f09064cc19",
-  "output_hash": "9dd649bcd80409b6cee97cf8619d2d6adc6b8d7fe1eae602b62650285a2ab2db",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "51bdcfba6e74cefabdce04158b88d7c7d3fdd083055871848a6da06a92549e86",
+  "output_hash": "211450b21427145822362b04ceeb492ff3aec7722fa0da48dc2b832b2186b390",
   "status": "FAILED",
-  "score": 38.2,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (38.2/100)",
+  "score": 35.7,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.7/100)",
   "metrics": {
-    "consensus_score": 38.2,
+    "consensus_score": 35.7,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 59.5,
+        "score": 59.1,
         "findings": [
           "Activo y Timeframe: BTC-USDT (h1) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.10 con beneficio neto de $69.59.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 279 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 252 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 12.5,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.25 USD.",
+          "Beneficio medio por operación: $-3.97 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,14 +64,14 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 43.0,
+        "score": 39.8,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
-        "approved": true
+        "approved": false
       }
     ],
     "recommendations": [
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.12.119/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:41:34.791526+00:00"
+  "created_at_utc": "2026-08-24T10:31:16.263835+00:00"
 }

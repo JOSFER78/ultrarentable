@@ -43,11 +43,15 @@ class ValidationEvaluationRequest(BaseModel):
     oos_balas: Optional[List[BalaExecutionRecord]] = None
 
 
+from contracts.evidence_bundle import EvidenceBundle
+
+
 class TransitionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     strategy_id: str
     to_status: StrategyLifecycleStatus
     reason: str = Field(..., min_length=3)
+    evidence_bundle: Optional[EvidenceBundle] = None
 
 
 @router.post("/evaluate", response_model=EvidenceGateDecision)
@@ -102,7 +106,12 @@ async def register_candidate(strategy: CanonicalStrategy) -> Dict[str, Any]:
 async def transition_candidate_status(req: TransitionRequest) -> StateTransitionRecord:
     """Aplica una transición de estado discreto en la FSM."""
     try:
-        record = registry_instance.transition(req.strategy_id, req.to_status, req.reason)
+        record = registry_instance.transition(
+            strategy_id=req.strategy_id,
+            to_status=req.to_status,
+            reason=req.reason,
+            evidence_bundle=req.evidence_bundle,
+        )
         await event_bus.publish(
             CandidatePromotedEvent(
                 strategy_id=req.strategy_id,

@@ -470,3 +470,67 @@ class UniversalDeterministicBacktestEngine:
             bar_ledger=bar_ledger,
             execution_duration_ms=round(duration_ms, 2),
         )
+
+    def run_isolated_is_oos(
+        self,
+        strategy: StrategySpecification,
+        instrument: InstrumentSpecification,
+        dataset: DatasetSpecification,
+        candles: List[Dict[str, Any]],
+        execution_model: ExecutionModel,
+        risk_model: RiskModel,
+        split_ratio: float = 0.70,
+        initial_capital_override: Optional[float] = None,
+    ) -> Tuple[UniversalBacktestResult, UniversalBacktestResult]:
+        """Ejecuta dos backtests físicamente aislados e independientes: In-Sample (IS) y Out-of-Sample (OOS).
+        
+        Garantía Zero-Leakage:
+        - IS se ejecuta estrictamente sobre las primeras split_idx barras.
+        - La estrategia queda fijada e inmutable sin optimizaciones posteriores.
+        - OOS se ejecuta sobre el bloque de holdout ciego restante sin contaminación.
+        """
+        n_bars = len(candles)
+        split_idx = int(n_bars * split_ratio)
+        
+        if split_idx < 20 or (n_bars - split_idx) < 10:
+            raise ValueError(f"INSUFFICIENT_DATA_FOR_SPLIT: Muestra total ({n_bars} barras) insuficiente para partición {split_ratio*100:.0f}% IS / {(1-split_ratio)*100:.0f}% OOS.")
+
+        candles_is = candles[:split_idx]
+        candles_oos = candles[split_idx:]
+
+        is_ds = dataset.model_copy(update={
+            "dataset_id": f"{dataset.dataset_id}_IS",
+            "is_in_sample": True,
+            "total_bars": len(candles_is),
+            "sha256_hash": hashlib.sha256(json.dumps(candles_is, sort_keys=True, default=str).encode("utf-8")).hexdigest(),
+        })
+
+        oos_ds = dataset.model_copy(update={
+            "dataset_id": f"{dataset.dataset_id}_OOS",
+            "is_in_sample": False,
+            "total_bars": len(candles_oos),
+            "sha256_hash": hashlib.sha256(json.dumps(candles_oos, sort_keys=True, default=str).encode("utf-8")).hexdigest(),
+        })
+
+        result_is = self.run(
+            strategy=strategy,
+            instrument=instrument,
+            dataset=is_ds,
+            candles=candles_is,
+            execution_model=execution_model,
+            risk_model=risk_model,
+            initial_capital_override=initial_capital_override,
+        )
+
+        result_oos = self.run(
+            strategy=strategy,
+            instrument=instrument,
+            dataset=oos_ds,
+            candles=candles_oos,
+            execution_model=execution_model,
+            risk_model=risk_model,
+            initial_capital_override=initial_capital_override,
+        )
+
+        return result_is, result_oos
+

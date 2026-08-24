@@ -1,0 +1,32 @@
+{
+  "bundle_id": "bnd_UR-VAL-001_test",
+  "bundle_signature_sha256": "22e00dbd468d82521e1e71dd13d16936ec79eba995edb14977ffec1c252d1900",
+  "commit_sha": "064f1cc4e872c842b08331d2794eb84e59178ad3",
+  "created_at_utc": "2026-08-24T10:38:56.885141+00:00",
+  "dataset_id": "NQ_H1_TEST",
+  "dataset_is_sha256": "57fc07ffdb564d29015588df4e28a16bf3a6b055a5bfb8ad5131ebb73b908ca4",
+  "dataset_oos_sha256": "adb9535160a89f63c4c54378bd36408eefb32ead9b8f971513e279a297871333",
+  "engine_name": "UniversalDeterministicBacktestEngine",
+  "engine_version": "3.0.0",
+  "execution_config_hash": "35b3664f9ac96acdf61e865972c28df60ccbb4a51eb9999a3ffeb433cbbf73d9",
+  "gates_evaluation": {
+    "approved": true,
+    "gate_01_data_ingest": "PASSED",
+    "gate_02_backtest_costes": "PASSED"
+  },
+  "initial_capital_usd": 50000.0,
+  "is_metrics": {
+    "profit_factor": 1.8
+  },
+  "is_trades_count": 50,
+  "ledger_hash": "27386264852041a1b9ba3c0512e85771c204c2555965a2656fbb65b8eacae57b",
+  "oos_metrics": {
+    "profit_factor": 1.6
+  },
+  "oos_trades_count": 50,
+  "strategy_id": "UR-VAL-001",
+  "strategy_sha256": "ec8a9ba9dd1ede34a4ad76c4560aa49734aeb05e31c52fb04c5da0bfb18936bb",
+  "symbol": "NQ",
+  "target_track": "TRACK_FONDEO",
+  "timeframe": "1h"
+}

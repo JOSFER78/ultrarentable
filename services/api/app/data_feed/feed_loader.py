@@ -19,8 +19,15 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger("feed_loader")
 
-CSV_DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/04 Indicadores Pine/data")
-NORMALIZED_DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
+_REPO_ROOT = Path(os.path.abspath(__file__)).parents[4] if len(Path(os.path.abspath(__file__)).parents) >= 5 else Path(".")
+CSV_DATA_DIR = _REPO_ROOT.parent / "04 Indicadores Pine" / "data"
+if not CSV_DATA_DIR.exists():
+    CSV_DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/04 Indicadores Pine/data")
+NORMALIZED_DATA_DIR = _REPO_ROOT / "data" / "normalized"
+if not NORMALIZED_DATA_DIR.exists():
+    NORMALIZED_DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
+if not NORMALIZED_DATA_DIR.exists():
+    NORMALIZED_DATA_DIR = Path("data/normalized")
 
 # In-memory cache to prevent disk thrashing
 _CANDLE_CACHE: Dict[str, List[Dict[str, Any]]] = {}

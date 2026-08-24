@@ -2,21 +2,21 @@
   "evidence_id": "ev_UR_ULTRA_RTY_15M_g10",
   "run_id": "run_UR_ULTRA_RTY_15M",
   "strategy_id": "UR_ULTRA_RTY_15M",
-  "strategy_snapshot_hash": "50192fc0d465941bb4dcc3850e33718e365eab04cfa927c0e6bc0561dc50f512",
+  "strategy_snapshot_hash": "4ab81e5f3d42c01642b5277d5ff8fea376fe5c0ce2632abf5001c3eff96db7fd",
   "dataset_id": "ds_trad_rty_15m_1780891200000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "ace6085841b09028a82d2258c85641d45edca6346710b9d5d948548e494964c9",
-  "output_hash": "d3b03060b847c3a847f8ee7f9c75cdd9053ed7353309dd8039d6f28cd1387549",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "5ac54d63e14b96d5cf53ac1dc6b51d53afe0fbf9c6baf6093f352b4f23fda57c",
+  "output_hash": "f41c846667447d7109b898376ee5edcb449e1f4d0e4c592a2a8bfd3bd7397e98",
   "status": "FAILED",
-  "score": 13.2,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (13.2/100)",
+  "score": 20.8,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (20.8/100)",
   "metrics": {
-    "consensus_score": 13.2,
+    "consensus_score": 20.8,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: RTY (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.00 con beneficio neto de $-3.83.",
+          "Profit Factor OOS: 0.00 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -44,19 +44,19 @@
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
-        "score": 40.0,
+        "score": 80.0,
         "findings": [
-          "Muestra fuera de muestra: 8 operaciones evaluadas (Mínimo requerido: 10).",
-          "Grado de confianza: LIMITADO."
+          "Muestra fuera de muestra: 16 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: MODERADO."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.48 USD.",
+          "Beneficio medio por operación: $-62.50 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,15 +64,13 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 15.0,
+        "score": 25.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Muestra limitada: 8 trades OOS (Recomendado: >= 10).",
           "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-          "Ampliar ventana de evaluación para capturar más ciclos de mercado.",
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
@@ -80,10 +78,9 @@
     ],
     "recommendations": [
       "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-      "Ampliar ventana de evaluación para capturar más ciclos de mercado.",
       "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_RTY_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:47:41.453890+00:00"
+  "created_at_utc": "2026-08-24T10:20:57.554215+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.1.182_g08",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.1.182",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.1.182",
-  "strategy_snapshot_hash": "74ca84b335ff602cbf53df4e51fcd901f173f30b60be70b008b48f4a3a94500c",
+  "strategy_snapshot_hash": "acee461ea40b6b3fac55fecea8384cebf9b7bc3c3d14f19aff0db4bae77d39c9",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "08c7934bf2c24bd2c9f20dedb1163750d0e1b194e3c2469013941ef8deca667e",
-  "output_hash": "e666f672873e7e5550b76857ee8f04f8a90b9f24d67d53faa39988d3ba8272fb",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
+  "input_hash": "9809cd87993d7bb7c84da5ff7fd1982c2a158001b8adaff5c1a6d4cfb05ac5e3",
+  "output_hash": "72f4711250e42fc693f2a4befe1de824f86f194523b06ab8c14c0040bb42c028",
+  "status": "PASSED",
+  "score": 100.0,
+  "verdict": "PASSED: DSR = 100.0% (Sharpe Bruto: 0.30, Trials Penalizados: 57, Skew: 2.58, Kurt: 10.03)",
   "metrics": {
-    "raw_sharpe_ratio": 0.293,
-    "deflated_sharpe_probability_pct": 0.0,
-    "trials_penalized_count": 3,
-    "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 2.735,
-    "kurtosis": 11.335,
-    "sample_trades_count": 242
+    "raw_sharpe_ratio": 0.304,
+    "deflated_sharpe_probability_pct": 100.0,
+    "trials_penalized_count": 57,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 2.58,
+    "kurtosis": 10.031,
+    "sample_trades_count": 234
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.1.182/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-23T23:11:19.924131+00:00"
+  "created_at_utc": "2026-08-24T10:34:11.749355+00:00"
 }

@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDCAD_1H_g10",
   "run_id": "run_UR_FONDEO_USDCAD_1H",
   "strategy_id": "UR_FONDEO_USDCAD_1H",
-  "strategy_snapshot_hash": "720e4e0902f141af970daf3edb0cd8c2b2a07ca56a2154702e01e20e688bed89",
+  "strategy_snapshot_hash": "56a4a76e8bf222ce3c2c94158c3ce8cb7f59b7538b747f9a8d2d5bf2c72795ac",
   "dataset_id": "ds_trad_usdcad_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "5eaaa4f48aa0679c595c6766613a7cf88509a460af8f354bf27ca027a6bf4a99",
-  "output_hash": "c737e933610d18ce68055624b8c1db061f0ceebd12653ac6b90b27d4994ee1a8",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "b7c2106835eab1c6329319e56373d07f780471532c7aefde1237d5f627e2bee0",
+  "output_hash": "b0c2abe4e503ca01e6bddf577221a068f33a0a18b7fcfbc2d6c47782c5404108",
   "status": "PASSED",
   "score": 69.5,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (69.5/100 · Guía de Mejora Generada)",
@@ -23,10 +23,10 @@
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 52.8,
+        "score": 59.1,
         "findings": [
           "Activo y Timeframe: USDCAD (1h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.95 con beneficio neto de $0.35.",
+          "Profit Factor OOS: 1.09 con beneficio neto de $-0.26.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 181 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 170 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 10.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,9 +64,9 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 65.7,
+        "score": 64.8,
         "objections": [
-          "Margen ajustado: Profit Factor 0.95 cercano al equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 1.09 cercano al equilibrio (1.15)."
         ],
         "recommendations": [
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCAD_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:48:34.315438+00:00"
+  "created_at_utc": "2026-08-24T10:13:40.381030+00:00"
 }

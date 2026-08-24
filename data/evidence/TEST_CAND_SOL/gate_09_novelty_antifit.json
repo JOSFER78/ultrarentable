@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g09",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "6d1f013d967d42e5c1e94224654d8abd1de5f757689930ba6bfffbb33ec859ee",
+  "strategy_snapshot_hash": "c1bff7794f97e6888dce321cac331dcfb1fcec548a61a025385c9995d96b256e",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "8a4db118b5eb5c9a19024f742aec18d596acb0d367492eb9da3d41f6d5e45fd9",
-  "output_hash": "a9f145f326aae5427239e04b8b666c7425fe6b7b3c9f413a3954af783e84cadc",
-  "status": "PASSED",
-  "score": 78.4,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 39.0 trades/param, Estabilidad Vecindario: 64.0%, Re-backtest PFs: [0.23, 0.11, 0.29, 0.83])",
+  "input_hash": "cf4fc6cbd3f7a7d710065cc7b3383555b814fd97f62d3e7565f9527b0504ce81",
+  "output_hash": "9683cd287a09d32198c1700c942e91cc8987a0eabd9a2fe65c74241c2a4fa43d",
+  "status": "FAILED",
+  "score": 11.4,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 70.9 o Estabilidad 28.4% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 39.0,
+    "degrees_of_freedom_ratio": 70.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 64.0,
+    "parameter_neighborhood_stability_pct": 28.4,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.23,
-      0.11,
-      0.29,
-      0.83
+      0.06,
+      0.13,
+      0.34,
+      0.56
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-23T23:10:17.109170+00:00"
+  "created_at_utc": "2026-08-24T10:33:43.910084+00:00"
 }

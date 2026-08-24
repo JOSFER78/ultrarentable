@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ES_4H_g11",
   "run_id": "run_UR_ULTRA_ES_4H",
   "strategy_id": "UR_ULTRA_ES_4H",
-  "strategy_snapshot_hash": "ea2cc5c41f78a3ac3c4f71a0b8e31f9f7902accd2151e557a0fcc31f130ddd8a",
+  "strategy_snapshot_hash": "bcad925489748494e42d94ce9bae016e1e856e92818889bed2b0e4a9ca743232",
   "dataset_id": "ds_trad_es_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,14 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "e12fd1fbedcb37261d283dc53790a50516bd77d011e534267e2f2d83aa2f4c54",
-  "output_hash": "3c884c39e7621cfe05e7da0b4c9bd2464530e3e96b5c97a9d553ac8ace1e85b8",
+  "input_hash": "2eb6272477865fa8565e31871af0e945d62e246da1378f88cf30259543e4e5c0",
+  "output_hash": "a31c50c03816c5c8c963986ff46ed90d208d29e28b06f983a42147e13ac13c0b",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "RECHAZADO: Trades insuficientes para validación cruzada orientada a eventos (< 5 trades)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
   "metrics": {
-    "execution_events_count": 0
+    "initial_capital_usd": 1000.0,
+    "final_equity_usd": -4445.85,
+    "peak_equity_usd": 1000.0,
+    "min_equity_usd": -4445.85,
+    "peak_leverage_used": 6.0,
+    "max_allowed_leverage_ceiling": 100.0,
+    "min_distance_to_liquidation_pct": 0.0,
+    "margin_call_triggered": true,
+    "total_fees_paid_usd": 0.0,
+    "total_funding_cost_usd": 0.0,
+    "execution_events_count": 5
   },
   "artifact_path": "data/evidence/UR_ULTRA_ES_4H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-23T23:30:26.426203+00:00"
+  "created_at_utc": "2026-08-24T10:20:38.425769+00:00"
 }

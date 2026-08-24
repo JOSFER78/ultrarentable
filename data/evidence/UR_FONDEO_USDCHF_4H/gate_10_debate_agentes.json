@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_USDCHF_4H_g10",
   "run_id": "run_UR_FONDEO_USDCHF_4H",
   "strategy_id": "UR_FONDEO_USDCHF_4H",
-  "strategy_snapshot_hash": "7ef324b250e8bf2b864cba2364fc7e38521fb1817114715cc2c4e82f12e29152",
+  "strategy_snapshot_hash": "c487d0693e719de4c12a498bea5913dfedfeb9953d5de88025bceb18e2d51848",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "ccdbfe432dde30639fca6d6b80ded58ec3217d66cee0a2030751cd922c9ef32b",
-  "output_hash": "47bf72c90db229bb3b1cfdd8a4fe954ad98c57c7478c7f57a2521fcb8583c6f4",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "af91d439af875b76f6f1819451bebf82b898b7c7931c27add0f08f0de2de43b6",
+  "output_hash": "5e511c76bbdb30e701e988cef795bc3badaa7a7643c6b42ae98597b6a832ce01",
   "status": "PASSED",
   "score": 58.2,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.2/100 · Guía de Mejora Generada)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCHF (4h) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.22 con beneficio neto de $-0.00.",
+          "Profit Factor OOS: 0.22 con beneficio neto de $-0.47.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 50 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 54 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.00 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDCHF_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:48:40.362674+00:00"
+  "created_at_utc": "2026-08-24T10:16:49.981477+00:00"
 }

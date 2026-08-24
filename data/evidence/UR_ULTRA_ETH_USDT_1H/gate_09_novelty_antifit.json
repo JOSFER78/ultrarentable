@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1H_g09",
   "run_id": "run_UR_ULTRA_ETH_USDT_1H",
   "strategy_id": "UR_ULTRA_ETH_USDT_1H",
-  "strategy_snapshot_hash": "42a20b7dbf2de7c3561804ac13593a2718a6618dea62c5ce751f2b33531b6776",
+  "strategy_snapshot_hash": "8d8ae74574da3b249280c9da869fba8ea2d5fb0f807e180c10ffe0733895083b",
   "dataset_id": "ds_binance_ethusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "607fb331683fd25b067022a4eac05ec15ae0dc5f9933e28a56e3f78dc4446e3c",
-  "output_hash": "48e9a8b2527cc30e2aa286086086eeb4ecb147de8b5175e2e6e6dd7ceee47f4d",
+  "input_hash": "71103c94a0d95002c723d535674bcb6ae82740b7e70ee0528971dc8bbb801f93",
+  "output_hash": "9e8f9345a43fbaf9d87cb46d9b06565c4924d8ea7965e6b6c574cb7c05c548e8",
   "status": "FAILED",
   "score": 39.6,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 85.6 o Estabilidad 99.1% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 86.0 o Estabilidad 99.1% < 50.0%)",
   "metrics": {
     "parameters_count": 11,
-    "degrees_of_freedom_ratio": 85.6,
+    "degrees_of_freedom_ratio": 86.0,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 99.1,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-23T23:44:50.734790+00:00"
+  "created_at_utc": "2026-08-24T10:25:15.068562+00:00"
 }

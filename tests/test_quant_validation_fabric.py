@@ -162,12 +162,107 @@ def test_ultra_evidence_gate_pass():
     assert result.friction_stress_passed is True
 
 
+import hashlib
+from contracts import (
+    CanonicalStrategy,
+    ExecutionTrack,
+    StrategyLifecycleStatus,
+    TargetInstrument,
+    RuleTree,
+    ExitModel,
+    SizingAndRisk,
+    SessionWindow,
+    ProvenanceMetadata,
+    ValidationTrack,
+    BalaState,
+    BalaExecutionRecord,
+    BalaHarvestEvent,
+    FondeoValidationCriteria,
+    UltraValidationCriteria,
+    EvidenceBundle,
+    EvidenceGateDecision,
+)
+from services.validation import (
+    QuantValidationFabric,
+    FondeoEvidenceGate,
+    UltraEvidenceGate,
+    CandidateRegistry,
+    InvalidStateTransitionError,
+)
+from services.api.app.db.database import CandidateModel
+
+
+def create_mock_strategy(track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO, strategy_id: str = "UR-VAL-001") -> CanonicalStrategy:
+    return CanonicalStrategy(
+        strategy_id=strategy_id,
+        name="Validation Target",
+        target_track=track,
+        status=StrategyLifecycleStatus.GENERATED,
+        instrument=TargetInstrument(
+            symbol="NQ",
+            exchange="CME",
+            contract_type="FUTURES",
+            point_value=20.0,
+            tick_size=0.25,
+        ),
+        timeframe="1h",
+        provenance=ProvenanceMetadata(
+            source_engine="strategyquant",
+            created_timestamp_utc=1771437600000,
+            author_or_agent="TEST",
+        ),
+    )
+
+
+def create_mock_evidence_bundle(
+    strategy: CanonicalStrategy,
+    gates_passed: bool = True,
+    corrupt_strategy_sha: bool = False,
+    corrupt_signature: bool = False,
+) -> EvidenceBundle:
+    strat_sha = "0" * 64 if corrupt_strategy_sha else strategy.compute_sha256()
+    is_hash = hashlib.sha256(b"dataset_is_raw").hexdigest()
+    oos_hash = hashlib.sha256(b"dataset_oos_raw").hexdigest()
+    exec_hash = hashlib.sha256(b"exec_config_raw").hexdigest()
+    ledger_hash = hashlib.sha256(b"ledger_merkle_root").hexdigest()
+    gates_eval = {
+        "gate_01_data_ingest": "PASSED" if gates_passed else "FAILED",
+        "gate_02_backtest_costes": "PASSED" if gates_passed else "FAILED",
+        "approved": gates_passed,
+    }
+    bundle = EvidenceBundle(
+        bundle_id=f"bnd_{strategy.strategy_id}_test",
+        strategy_id=strategy.strategy_id,
+        strategy_sha256=strat_sha,
+        dataset_id="NQ_H1_TEST",
+        dataset_is_sha256=is_hash,
+        dataset_oos_sha256=oos_hash,
+        symbol="NQ",
+        timeframe="1h",
+        target_track=strategy.target_track.value,
+        execution_config_hash=exec_hash,
+        engine_name="UniversalDeterministicBacktestEngine",
+        engine_version="3.0.0",
+        commit_sha="064f1cc4e872c842b08331d2794eb84e59178ad3",
+        initial_capital_usd=50000.0,
+        is_trades_count=50,
+        oos_trades_count=50,
+        is_metrics={"profit_factor": 1.8},
+        oos_metrics={"profit_factor": 1.6},
+        ledger_hash=ledger_hash,
+        gates_evaluation=gates_eval,
+    )
+    if corrupt_signature:
+        object.__setattr__(bundle, "bundle_signature_sha256", "f" * 64)
+    return bundle
+
+
 # ============================================================================
-# TESTS: CANDIDATE REGISTRY FSM
+# TESTS: CANDIDATE REGISTRY FSM CON EVIDENCE BUNDLE
 # ============================================================================
 
 def test_candidate_registry_fsm_valid_progression():
-    """Verify legitimate 10-state progression in CandidateRegistry."""
+    """Verify legitimate 10-state progression in CandidateRegistry with verified EvidenceBundle."""
     registry = CandidateRegistry()
     strat = create_mock_strategy()
     registry.register(strat)
@@ -184,13 +279,76 @@ def test_candidate_registry_fsm_valid_progression():
     # Step 3: ROBUSTNESS_PASSED
     registry.transition(strat.strategy_id, StrategyLifecycleStatus.ROBUSTNESS_PASSED, "Monte Carlo pass")
 
-    # Step 4: EVIDENCE_APPROVED
-    registry.transition(strat.strategy_id, StrategyLifecycleStatus.EVIDENCE_APPROVED, "Evidence Gate approved")
+    # Step 4: EVIDENCE_APPROVED (Requiere EvidenceBundle verificado)
+    bundle = create_mock_evidence_bundle(strat, gates_passed=True)
+    rec = registry.transition(strat.strategy_id, StrategyLifecycleStatus.EVIDENCE_APPROVED, "Evidence Gate approved", evidence_bundle=bundle)
+    assert registry.get_status(strat.strategy_id) == StrategyLifecycleStatus.EVIDENCE_APPROVED
+    assert rec.evidence_bundle_signature_sha256 == bundle.bundle_signature_sha256
 
-    # Step 5: CANDIDATE
+    # Step 5: CANDIDATE (Usa el bundle previamente verificado y cacheado)
     registry.transition(strat.strategy_id, StrategyLifecycleStatus.CANDIDATE, "Promoted to Candidate")
+    assert registry.get_status(strat.strategy_id) == StrategyLifecycleStatus.CANDIDATE
 
     assert len(registry.get_history(strat.strategy_id)) == 5
+
+
+def test_candidate_registry_fsm_rejection_without_evidence_bundle():
+    """Verify transition to EVIDENCE_APPROVED fails without EvidenceBundle."""
+    registry = CandidateRegistry()
+    strat = create_mock_strategy(strategy_id="UR-VAL-NO-BUNDLE")
+    registry.register(strat)
+
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.BACKTESTED, "BT pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.OOS_PASSED, "OOS pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.ROBUSTNESS_PASSED, "Robustness pass")
+
+    with pytest.raises(InvalidStateTransitionError, match="EVIDENCIA_FALTANTE"):
+        registry.transition(strat.strategy_id, StrategyLifecycleStatus.EVIDENCE_APPROVED, "Attempt without bundle")
+
+
+def test_candidate_registry_fsm_rejection_on_mismatched_strategy_sha():
+    """Verify transition to EVIDENCE_APPROVED fails if strategy_sha256 does not match canonical AST."""
+    registry = CandidateRegistry()
+    strat = create_mock_strategy(strategy_id="UR-VAL-MISMATCH")
+    registry.register(strat)
+
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.BACKTESTED, "BT pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.OOS_PASSED, "OOS pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.ROBUSTNESS_PASSED, "Robustness pass")
+
+    corrupt_bundle = create_mock_evidence_bundle(strat, corrupt_strategy_sha=True)
+    with pytest.raises(InvalidStateTransitionError, match="DISCREPANCIA_LINEAJE"):
+        registry.transition(strat.strategy_id, StrategyLifecycleStatus.EVIDENCE_APPROVED, "Attempt with corrupt sha", evidence_bundle=corrupt_bundle)
+
+
+def test_candidate_registry_fsm_rejection_on_tampered_signature():
+    """Verify transition fails if bundle cryptographic signature is tampered."""
+    registry = CandidateRegistry()
+    strat = create_mock_strategy(strategy_id="UR-VAL-TAMPERED")
+    registry.register(strat)
+
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.BACKTESTED, "BT pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.OOS_PASSED, "OOS pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.ROBUSTNESS_PASSED, "Robustness pass")
+
+    tampered_bundle = create_mock_evidence_bundle(strat, corrupt_signature=True)
+    with pytest.raises(InvalidStateTransitionError, match="EVIDENCIA_INVALIDA"):
+        registry.transition(strat.strategy_id, StrategyLifecycleStatus.EVIDENCE_APPROVED, "Attempt with tampered sig", evidence_bundle=tampered_bundle)
+
+
+def test_candidate_registry_fsm_rejection_on_failed_gates():
+    """Verify transition fails if EvidenceBundle contains failed gate verdicts."""
+    registry = CandidateRegistry()
+    strat = create_mock_strategy(strategy_id="UR-VAL-FAILED-GATES")
+    registry.register(strat)
+
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.BACKTESTED, "BT pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.OOS_PASSED, "OOS pass")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.ROBUSTNESS_PASSED, "Robustness pass")
+
+    failed_bundle = create_mock_evidence_bundle(strat, gates_passed=False)
+    with pytest.raises(InvalidStateTransitionError, match="EVIDENCIA_INVALIDA"):
+        registry.transition(strat.strategy_id, StrategyLifecycleStatus.EVIDENCE_APPROVED, "Attempt with failed gates", evidence_bundle=failed_bundle)
 
 
 def test_candidate_registry_fsm_invalid_transition_raises():
@@ -205,20 +363,48 @@ def test_candidate_registry_fsm_invalid_transition_raises():
 
 
 # ============================================================================
-# TESTS: UNIFIED QUANT VALIDATION FABRIC
+# TESTS: UNIFIED QUANT VALIDATION FABRIC CON EVIDENCE BUNDLE NATIVO
 # ============================================================================
 
 def test_quant_validation_fabric_dispatch():
-    """Verify Fabric properly routes to Fondeo and Ultra gates."""
+    """Verify Fabric properly routes to Fondeo and Ultra gates and supports native EvidenceBundle."""
     fabric = QuantValidationFabric()
+    strat = create_mock_strategy()
+    bundle = create_mock_evidence_bundle(strat)
 
     fondeo_payload = {
         "is_trades": [100.0, -50.0] * 50,
         "oos_trades": [100.0, -50.0] * 50,
         "daily_pnls": [100.0, 50.0],
         "dsr_score": 2.8,
+        "evidence_bundle": bundle,
     }
-    decision = fabric.validate("UR-F-001", ValidationTrack.TRACK_FONDEO, fondeo_payload)
+    decision = fabric.validate(strat.strategy_id, ValidationTrack.TRACK_FONDEO, fondeo_payload)
     assert decision.track == ValidationTrack.TRACK_FONDEO
     assert decision.approved is True
     assert len(decision.provenance_hash_sha256) == 64
+    assert decision.evidence_bundle is not None
+    assert decision.evidence_bundle_id == bundle.bundle_id
+    assert decision.ledger_hash == bundle.ledger_hash
+
+
+def test_canonical_strategy_native_evidence_bundle_attachment():
+    """Verify CanonicalStrategy natively attaches and validates EvidenceBundle."""
+    strat = create_mock_strategy()
+    bundle = create_mock_evidence_bundle(strat)
+
+    strat_with_bundle = strat.attach_evidence_bundle(bundle)
+    assert strat_with_bundle.evidence_bundle == bundle
+    # AST hash remains identical (status and evidence_bundle are excluded from AST sha256)
+    assert strat_with_bundle.compute_sha256() == strat.compute_sha256()
+
+
+def test_candidate_model_status_requires_physical_evidence():
+    """Verify CandidateModel strictly rejects status='APPROVED' without physical evidence or scorecard."""
+    cand = CandidateModel(
+        candidate_id="UR-UNVERIFIED-CAND",
+        name="Unverified Candidate",
+        status="INVESTIGACION_BTC",
+    )
+    with pytest.raises(ValueError, match="PROHIBICION_ESTRICTA_EVIDENCIA"):
+        cand.status = "APPROVED"

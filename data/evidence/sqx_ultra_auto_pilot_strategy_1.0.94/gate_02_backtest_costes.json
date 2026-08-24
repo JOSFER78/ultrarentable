@@ -2,7 +2,7 @@
   "evidence_id": "ev_sqx_ultra_auto_pilot_strategy_1.0.94_g02",
   "run_id": "run_sqx_ultra_auto_pilot_strategy_1.0.94",
   "strategy_id": "sqx_ultra_auto_pilot_strategy_1.0.94",
-  "strategy_snapshot_hash": "18505db933000cc21718c5b2736d283dcc6f1d25dbc3b07cee30b4578657e6a7",
+  "strategy_snapshot_hash": "62eb9403c510be1d8b375ef141b573c0ba7451c5c640b8b450b44a2d4d0afa68",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "f649ec0f9ae1a97880305017b146632576af149f4a2e27c024c0b41c185e1207",
-  "output_hash": "a5e266b0529f3f68633643856e996e450ea5d0300aa381a0c46b6fbd4351a127",
-  "status": "PASSED",
-  "score": 63.4,
-  "verdict": "PASSED: PF Neto tras costes = 1.63 (CRYPTO)",
+  "input_hash": "9bf93d0ce19dbdf9cc444e00e6d72155e667115bddb1efb9fa67fc7b8f2540a9",
+  "output_hash": "64eeb4c772f5caf4f4fa9212f6584555b90ed8bac9e46f0b005fd80cb45c6658",
+  "status": "FAILED",
+  "score": 6.4,
+  "verdict": "FALLO: PF Neto 1.06 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Bitcoin Perpetuo",
     "exchange": "Binance / BingX / FTMO",
-    "gross_pnl_usd": 4.303836054164825e+26,
-    "total_fees_usd": 1.2032319746402318e+26,
-    "total_slippage_usd": 9.394778082324998e+23,
-    "net_pnl_usd": 3.091209301442269e+26,
-    "net_profit_factor": 1.63,
-    "drag_cost_pct": 28.18
+    "gross_pnl_usd": 31366981622584.45,
+    "total_fees_usd": 22498895402115.7,
+    "total_slippage_usd": 147320489040.69,
+    "net_pnl_usd": 8720765731428.03,
+    "net_profit_factor": 1.06,
+    "drag_cost_pct": 72.2
   },
   "artifact_path": "data/evidence/sqx_ultra_auto_pilot_strategy_1.0.94/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-23T23:20:58.629474+00:00"
+  "created_at_utc": "2026-08-24T10:21:39.654647+00:00"
 }

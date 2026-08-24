@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_15M_g07",
   "run_id": "run_UR_ULTRA_BTC_USDT_15M",
   "strategy_id": "UR_ULTRA_BTC_USDT_15M",
-  "strategy_snapshot_hash": "f75a931d340b3c3cff2fa00ecec85045a00766e4d858ce863fce1556cfbeda70",
+  "strategy_snapshot_hash": "ae618164f61346637cd1c998eebbe30b9f7d437cad02c20fd0afed52bb3d4e23",
   "dataset_id": "ds_binance_btcusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "bb1ceb9e83f54b9c71b5da655385d71059b228b820d6c21a62e9336fd704cc60",
-  "output_hash": "f22b24b096190ce4c428b8f943fc33ade764b69e68283670025c5459a9acf9ee",
+  "input_hash": "4a65e4f0eb62627c7427f4c9b5b39c2ba5e73c811e58c28e54c5de918a8b1e7b",
+  "output_hash": "9e4319fb2b848e487cf66c7eb5261061773e97278af400d2d25ae4a60d41b776",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -400.13%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -407.06%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 36,
-      "HIGH_VOLATILITY": 18
+      "CHOP_RANGING": 30,
+      "HIGH_VOLATILITY": 19
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -186.38,
-      "HIGH_VOLATILITY": -213.75
+      "CHOP_RANGING": -221.3,
+      "HIGH_VOLATILITY": -185.76
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -400.13
+    "total_oos_return_pct": -407.06
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_15M/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T23:12:14.781957+00:00"
+  "created_at_utc": "2026-08-24T10:34:43.531590+00:00"
 }

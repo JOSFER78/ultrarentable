@@ -22,8 +22,8 @@ const ESTRATEGIAS_TABS: EstrategiaTab[] = STRATEGY_PHASES.filter(
   (p: StrategyPhase) => p.id > 0 && p.route
 ).map((p) => ({
   step: p.id,
-  label: p.label,
-  shortLabel: p.shortLabel,
+  label: p.label || p.name || "",
+  shortLabel: p.shortLabel || "",
   href: p.route as string,
   altHrefs: [...(p.legacyRoutes ?? []), p.route as string],
   icon: p.icon,

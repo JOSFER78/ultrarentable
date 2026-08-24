@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_5M_g10",
   "run_id": "run_UR_FONDEO_AUDUSD_5M",
   "strategy_id": "UR_FONDEO_AUDUSD_5M",
-  "strategy_snapshot_hash": "4d6a795fb16f8d84e9c58fb2f2eddf37e8542508cf9e660fa6a400daa40ab4ce",
+  "strategy_snapshot_hash": "883bf78d802745ce26136f516895b00c678f671839f58892f2166f16b832d6ff",
   "dataset_id": "ds_trad_audusd_5m_1779836400000_1787091600000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "461a0ed75ea878b1ef3ae5e44e5e5a7a04c500681713c021c141568c4603e4e2",
-  "output_hash": "1bcd01142c98d2405d44fb8bca47d33e35159a7702e8e02a57cf2fb0f07fcbee",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "39273c4182042d8bcc0da25ceaef83c8185cb5d6682f5e2b34a19e2f87bd2f52",
+  "output_hash": "f48df0af75205220960a219762f4b5bdb3271c5fc360fb919746ae1ad84c4f1f",
   "status": "PASSED",
   "score": 58.2,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.2/100 · Guía de Mejora Generada)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: AUDUSD (5m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.00 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.02 con beneficio neto de $-0.58.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 288 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 256 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $-0.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 55.0,
         "objections": [
-          "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.02 cercano al equilibrio (1.15)."
         ],
         "recommendations": [
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_5M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:48:21.182830+00:00"
+  "created_at_utc": "2026-08-24T10:15:08.174861+00:00"
 }

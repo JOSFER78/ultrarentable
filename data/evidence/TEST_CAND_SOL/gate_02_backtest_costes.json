@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g02",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "6d1f013d967d42e5c1e94224654d8abd1de5f757689930ba6bfffbb33ec859ee",
+  "strategy_snapshot_hash": "c1bff7794f97e6888dce321cac331dcfb1fcec548a61a025385c9995d96b256e",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,22 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "33f581f504fbbc065bc5db7e0cf40c83cfecda6b5472ea4dd2af662588fa86c1",
-  "output_hash": "ab85b38cf0d2e0ebb9f5d6060a6869c4811e6effe8a0e03902bc51173a04e799",
+  "input_hash": "87ad24bed953e2799397ea6bba765c221ab28d66510d2bccab19f2a1160eacaa",
+  "output_hash": "2c8718a9f2ef33742d10eeb423eb62ba689f0238c49554c20b51b7a7d68ec604",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.41 < 1.10",
+  "verdict": "FALLO: PF Neto 0.67 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Solana Perpetuo",
     "exchange": "Binance / BingX / FTMO",
-    "gross_pnl_usd": -277.7,
-    "total_fees_usd": 534.83,
-    "total_slippage_usd": 291.65,
-    "net_pnl_usd": -1104.19,
-    "net_profit_factor": 0.41,
-    "drag_cost_pct": 297.62
+    "gross_pnl_usd": 961.57,
+    "total_fees_usd": 1508.46,
+    "total_slippage_usd": 826.89,
+    "net_pnl_usd": -1373.78,
+    "net_profit_factor": 0.67,
+    "drag_cost_pct": 242.87
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-23T23:10:15.837512+00:00"
+  "created_at_utc": "2026-08-24T10:33:43.178442+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_BTC_DUP_g07",
   "run_id": "run_TEST_CAND_BTC_DUP",
   "strategy_id": "TEST_CAND_BTC_DUP",
-  "strategy_snapshot_hash": "d59cbbed1416278c53d7a4db65a509448c01734277a93840de9da4732a35b1d7",
+  "strategy_snapshot_hash": "71a6068d7d96228ee69baebb7626ba3d2c869196704af503ccd8a4b823cdc58b",
   "dataset_id": "ds_binance_btcusdt_5m_1783939200000_1787088900000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "58623ea12c03a63b353fb066fa8a6c340f52503a00182b15da56b010a0413076",
-  "output_hash": "4ceb213b71f612af41eadb83e9dad23ac78f7432007c76a06282eff7ea3ea3af",
+  "input_hash": "1ae5370fa27353f4a0e4fddc6ad9fed413aa5128455ad2ddc9e0eff9a65d2993",
+  "output_hash": "2e2df03b423c9a7e55064aa57b6c0b3712275e66a2b780123bd13a9fbd2793a1",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -402.45%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -413.42%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 36,
-      "HIGH_VOLATILITY": 16
+      "CHOP_RANGING": 35,
+      "HIGH_VOLATILITY": 19
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -240.98,
-      "HIGH_VOLATILITY": -161.47
+      "CHOP_RANGING": -225.54,
+      "HIGH_VOLATILITY": -187.88
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -402.45
+    "total_oos_return_pct": -413.42
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC_DUP/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-23T23:20:32.037836+00:00"
+  "created_at_utc": "2026-08-24T10:38:25.375053+00:00"
 }

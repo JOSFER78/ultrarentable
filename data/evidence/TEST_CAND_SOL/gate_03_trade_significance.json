@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g03",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "6d1f013d967d42e5c1e94224654d8abd1de5f757689930ba6bfffbb33ec859ee",
+  "strategy_snapshot_hash": "c1bff7794f97e6888dce321cac331dcfb1fcec548a61a025385c9995d96b256e",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "80b05f14ee372067cf5a66dd5ab98a183988b2d1b69a09c6626b1fde1e67a599",
-  "output_hash": "f39a63e9e03c1ba565ed974ab3c7a33ddc952a3570412dcd58be4a51a6821758",
+  "input_hash": "ab074653b7dd7d76a52b637f10fee5fbdecff77a970965f68bc7ee59b6df887a",
+  "output_hash": "5dec5ad82ad8bad7fd1ddd7fbbb0929987cf5896b34841393de7980c541bdb53",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (199 IS / 113 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (450 IS / 117 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 199,
-    "trades_oos": 113,
-    "top2_outlier_dependency_pct": 18.0,
+    "trades_is": 450,
+    "trades_oos": 117,
+    "top2_outlier_dependency_pct": 16.7,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-23T23:10:15.853905+00:00"
+  "created_at_utc": "2026-08-24T10:33:43.178905+00:00"
 }

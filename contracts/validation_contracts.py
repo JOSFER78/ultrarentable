@@ -133,6 +133,9 @@ class UltraValidationResult(BaseModel):
     rejection_reasons: List[str] = Field(default_factory=list)
 
 
+from contracts.evidence_bundle import EvidenceBundle
+
+
 class EvidenceGateDecision(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     decision_id: str
@@ -147,3 +150,5 @@ class EvidenceGateDecision(BaseModel):
     ledger_hash: Optional[str] = None
     gate_records_count: int = 11
     details: FondeoValidationResult | UltraValidationResult
+    evidence_bundle: Optional[EvidenceBundle] = None
+    evidence_bundle_id: Optional[str] = None

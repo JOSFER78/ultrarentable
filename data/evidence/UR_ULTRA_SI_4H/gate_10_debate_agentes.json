@@ -2,23 +2,85 @@
   "evidence_id": "ev_UR_ULTRA_SI_4H_g10",
   "run_id": "run_UR_ULTRA_SI_4H",
   "strategy_id": "UR_ULTRA_SI_4H",
-  "strategy_snapshot_hash": "97f3ab872ef1a7e18012fc4f5c1d6fbac7cbed108b28d0261e97bf9f27eb233e",
+  "strategy_snapshot_hash": "857ec6844ac7445f99c32979432ca34636acd0d68d5f07c3bcc4f8bd9210b0f7",
   "dataset_id": "ds_trad_si_4h_1711425600000_1787083200000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "47b8c81b6aa242b4e686b614a45ccc287882d8eaee2beb30b2a0e0dc9d225c3b",
-  "output_hash": "f16b9f8a7ca92d9d91d0efd8b2e5a99ecc7aa0863027ea79904231b60d0ad000",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "adf537f1f04e6e51d6a94999f9134d4302e20056d45a020fcb624b1847ed479e",
+  "output_hash": "846941317a885c47fcbf5f4bedcf5e7dd47a146f4e9b87ff33b7327ff574108a",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO / BLOCKED: Sin evidencia de trades para auditoría multi-especialista",
+  "score": 19.1,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (19.1/100)",
   "metrics": {
-    "trades_count": 0,
-    "verdict_status": "BLOCKED_NO_TRADES"
+    "consensus_score": 19.1,
+    "evaluators_count": 5,
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "specialists": [
+      {
+        "agent": "Research Specialist",
+        "role": "Semántica de Mercado y Coherencia de Hipótesis",
+        "score": 27.3,
+        "findings": [
+          "Activo y Timeframe: SI (4h) evaluado en ruta ULTRA.",
+          "Profit Factor OOS: 0.94 con beneficio neto de $-1000.00.",
+          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Risk & Tail-Risk Specialist",
+        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "score": 0.0,
+        "findings": [
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Statistical Inference Specialist",
+        "role": "Significancia de Muestra y Outlier Risk",
+        "score": 60.0,
+        "findings": [
+          "Muestra fuera de muestra: 12 operaciones evaluadas (Mínimo requerido: 10).",
+          "Grado de confianza: LIMITADO."
+        ],
+        "approved": true
+      },
+      {
+        "agent": "Execution & Microstructure Specialist",
+        "role": "Impacto de Fricción, Comisiones y Fills",
+        "score": 0.0,
+        "findings": [
+          "Beneficio medio por operación: $-83.33 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
+        ],
+        "approved": false
+      },
+      {
+        "agent": "Adversarial Forensics Specialist",
+        "role": "Contradicciones, Objeciones y Detección de Trampas",
+        "score": 21.8,
+        "objections": [
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.94 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+        ],
+        "approved": false
+      }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+    ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SI_4H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:47:46.438827+00:00"
+  "created_at_utc": "2026-08-24T10:15:33.037528+00:00"
 }

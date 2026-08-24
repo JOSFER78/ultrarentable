@@ -365,6 +365,12 @@ class ProviderRuleSetModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+from sqlalchemy.orm import sessionmaker, declarative_base, validates
+import json
+
+APPROVED_STATUS_VALUES = {"APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS", "CERTIFICADA_TIER_1"}
+
+
 class CandidateModel(Base):
     __tablename__ = "candidates"
     candidate_id = Column(String, primary_key=True, index=True)
@@ -390,6 +396,43 @@ class CandidateModel(Base):
     scorecard_json = Column(Text, nullable=True)
     engine_version = Column(String, default="5.3.0")
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    @validates("status")
+    def validate_status_evidence(self, key: str, value: str) -> str:
+        """Prohíbe transiciones manuales o sin evidencia física en disco / SQLite para estados aprobados."""
+        if value in APPROVED_STATUS_VALUES:
+            cid = self.candidate_id
+            has_disk_evidence = False
+            if cid:
+                possible_paths = [
+                    Path("data/evidence") / cid / "evidence_bundle.json",
+                    Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/evidence") / cid / "evidence_bundle.json",
+                ]
+                for p in possible_paths:
+                    if p.is_file():
+                        has_disk_evidence = True
+                        break
+                if not has_disk_evidence:
+                    for base in [Path("data/evidence") / cid, Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/evidence") / cid]:
+                        if base.is_dir() and len(list(base.glob("gate_*.json"))) >= 10:
+                            has_disk_evidence = True
+                            break
+
+            has_scorecard_evidence = False
+            if self.scorecard_json:
+                try:
+                    sc = json.loads(self.scorecard_json)
+                    if sc.get("gates_passed_count", 0) >= 10 or sc.get("is_certified") or sc.get("tier") == "TIER_1_CERTIFIED":
+                        has_scorecard_evidence = True
+                except Exception:
+                    pass
+
+            if not has_disk_evidence and not has_scorecard_evidence:
+                raise ValueError(
+                    f"PROHIBICION_ESTRICTA_EVIDENCIA: No se permite la transición de '{cid or 'NUEVO'}' a estado aprobado '{value}' "
+                    f"sin EvidenceBundle físico verificado en disco o scorecard certificado en SQLite."
+                )
+        return value
 
 
 class ExecutionSessionModel(Base):

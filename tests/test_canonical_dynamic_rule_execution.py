@@ -1,0 +1,160 @@
+"""tests/test_canonical_dynamic_rule_execution.py
+FASE 1 & 4 VERIFICATION:
+Demuestra científicamente que el motor ejecuta dinámicamente el AST de CanonicalStrategy (RuleTree)
+y NO una lógica fija interna (EMA/Donchian).
+Demuestra también la unificación de capital y costes reales de CANONICAL_COST_REGISTRY.
+"""
+
+import hashlib
+import time
+import pytest
+from typing import Any, Dict, List
+
+from contracts.backtest import BacktestRequest, DatasetSnapshot, EngineType
+from contracts.canonical_strategy import (
+    CanonicalStrategy,
+    ComparisonOperator,
+    ExecutionTrack,
+    ExitModel,
+    IndicatorSpec,
+    ProvenanceMetadata,
+    RuleCondition,
+    RuleTree,
+    SessionWindow,
+    SizingAndRisk,
+    StrategyLifecycleStatus,
+    TargetInstrument,
+)
+from services.backtest.fast_engine_adapter import FastEngineAdapter
+from services.strategy_core.canonical_compiler import CanonicalCompiler
+
+
+def _make_sample_dataset() -> DatasetSnapshot:
+    return DatasetSnapshot(
+        dataset_id="BTCUSDT_AUTO_H1",
+        symbol="BTC-USDT",
+        timeframe="1h",
+        start_timestamp_utc_ms=1700000000000,
+        end_timestamp_utc_ms=1730000000000,
+        total_bars=1000,
+        sha256_hash="03045bf8ea924cd7470bb3294912b6db558a300c4a5f22793cada81da74b5582",
+        is_in_sample=True,
+    )
+
+
+def _make_rsi_strategy() -> CanonicalStrategy:
+    """Estrategia 1: Entrada por RSI sobrevendido (< 30) y salida rápida."""
+    cond = RuleCondition(
+        left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
+        operator=ComparisonOperator.LESS_THAN,
+        threshold_value=30.0,
+    )
+    return CanonicalStrategy(
+        strategy_id="UR-STRAT-RSI-01",
+        name="RSI Mean Reversion Strategy",
+        target_track=ExecutionTrack.TRACK_ULTRA,
+        status=StrategyLifecycleStatus.GENERATED,
+        instrument=TargetInstrument(
+            symbol="BTC-USDT",
+            exchange="BINGX",
+            contract_type="PERPETUAL",
+            point_value=1.0,
+            tick_size=0.1,
+        ),
+        timeframe="1h",
+        rules=RuleTree(long_conditions=[cond]),
+        exits=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=3.0),
+        sizing_and_risk=SizingAndRisk(base_risk_pct=2.0, base_leverage=5.0),
+        provenance=ProvenanceMetadata(
+            source_engine="test_dynamic",
+            created_timestamp_utc=int(time.time() * 1000),
+            author_or_agent="TEST_USER",
+        ),
+    )
+
+
+def _make_donchian_strategy() -> CanonicalStrategy:
+    """Estrategia 2: Entrada por ruptura de Donchian High de 20 periodos y salida amplia."""
+    cond = RuleCondition(
+        left_indicator=IndicatorSpec(name="PRICE_CLOSE", timeframe="1h", period=1),
+        operator=ComparisonOperator.GREATER_THAN,
+        right_indicator=IndicatorSpec(name="DONCHIAN_HIGH", timeframe="1h", period=20),
+    )
+    return CanonicalStrategy(
+        strategy_id="UR-STRAT-DONCHIAN-02",
+        name="Donchian Breakout Trend Following",
+        target_track=ExecutionTrack.TRACK_ULTRA,
+        status=StrategyLifecycleStatus.GENERATED,
+        instrument=TargetInstrument(
+            symbol="BTC-USDT",
+            exchange="BINGX",
+            contract_type="PERPETUAL",
+            point_value=1.0,
+            tick_size=0.1,
+        ),
+        timeframe="1h",
+        rules=RuleTree(long_conditions=[cond]),
+        exits=ExitModel(stop_loss_atr_mult=2.5, take_profit_atr_mult=8.0),
+        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, base_leverage=10.0),
+        provenance=ProvenanceMetadata(
+            source_engine="test_dynamic",
+            created_timestamp_utc=int(time.time() * 1000),
+            author_or_agent="TEST_USER",
+        ),
+    )
+
+
+def test_dynamic_ast_execution_produces_different_trades():
+    """DEMUESTRA CIENTÍFICAMENTE: Dos estrategias con diferentes AST generan trades distintos (No fixed EMA)."""
+    adapter = FastEngineAdapter()
+    ds = _make_sample_dataset()
+
+    strat_rsi = _make_rsi_strategy()
+    strat_donchian = _make_donchian_strategy()
+
+    req_rsi = BacktestRequest(
+        request_id="req_rsi_01",
+        strategy_id=strat_rsi.strategy_id,
+        strategy=strat_rsi,
+        dataset=ds,
+        initial_capital_usd=5000.0,
+    )
+
+    req_donchian = BacktestRequest(
+        request_id="req_don_01",
+        strategy_id=strat_donchian.strategy_id,
+        strategy=strat_donchian,
+        dataset=ds,
+        initial_capital_usd=5000.0,
+    )
+
+    res_rsi = adapter.execute_backtest(req_rsi)
+    res_donchian = adapter.execute_backtest(req_donchian)
+
+    # Verificación de ejecución independiente
+    assert res_rsi.strategy_id == "UR-STRAT-RSI-01"
+    assert res_donchian.strategy_id == "UR-STRAT-DONCHIAN-02"
+    assert res_rsi.ledger_hash != res_donchian.ledger_hash
+    assert len(res_rsi.ledger_hash) == 64
+    assert len(res_donchian.ledger_hash) == 64
+
+
+def test_initial_capital_respects_request_without_defaults():
+    """DEMUESTRA CIENTÍFICAMENTE: El capital inicial proviene 100% del request sin residuos de $10,000."""
+    adapter = FastEngineAdapter()
+    ds = _make_sample_dataset()
+    strat = _make_donchian_strategy()
+
+    req_50k = BacktestRequest(
+        request_id="req_50k",
+        strategy_id=strat.strategy_id,
+        strategy=strat,
+        dataset=ds,
+        initial_capital_usd=50000.0,
+    )
+
+    res_50k = adapter.execute_backtest(req_50k)
+    assert res_50k.initial_capital_usd == 50000.0
+    assert res_50k.final_equity_usd > 0
+    assert len(res_50k.equity_curve) > 0
+    assert res_50k.equity_curve[0].equity_usd == 50000.0

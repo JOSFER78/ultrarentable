@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1M_g10",
   "run_id": "run_UR_ULTRA_BTC_USDT_1M",
   "strategy_id": "UR_ULTRA_BTC_USDT_1M",
-  "strategy_snapshot_hash": "89ff26ae4a2b67f143427da2903b25389c5a173c625405116393ae6b9fae9198",
+  "strategy_snapshot_hash": "7177da275a715aab3a6dfd4d5406942264cd37d731e2791bc110546b76c7c201",
   "dataset_id": "ds_binance_btcusdt_1m_1786459140000_1787089080000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "2310a305dcc0a6b917624cbd7184bc9261bbf22529a16d593a81d91c1d869d38",
-  "output_hash": "e73b1f5bdb0473a93bbcd0c70acf642149c8a2df1c7273313daa8101ddee5fa6",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "be22a319c921c66cdec2df8c414cf73be4cb93a43f49940cac639fe4b4388701",
+  "output_hash": "a5b696459e00daed670546dad8b35739eb19cbc589a2fce8ea3d12ec61af5326",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: BTC-USDT (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.03 con beneficio neto de $-3.19.",
+          "Profit Factor OOS: 0.03 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 78 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 113 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.04 USD.",
+          "Beneficio medio por operación: $-8.85 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:45:30.993064+00:00"
+  "created_at_utc": "2026-08-24T10:17:35.396268+00:00"
 }

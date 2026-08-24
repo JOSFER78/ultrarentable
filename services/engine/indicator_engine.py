@@ -240,28 +240,36 @@ class DynamicIndicatorEngine:
         period = max(2, int(period))
         n = len(series)
         out = np.zeros(n, dtype=np.float64)
-        for i in range(period - 1, n):
-            out[i] = float(np.std(series[i - period + 1:i + 1]))
+        if n < period:
+            return out
+        windows = np.lib.stride_tricks.sliding_window_view(series, period)
+        out[period - 1:] = np.std(windows, axis=-1)
         return out
 
     @staticmethod
     def calc_highest(highs: np.ndarray, period: int) -> np.ndarray:
         period = max(1, int(period))
         n = len(highs)
+        if period == 1:
+            return highs.copy()
         out = np.empty(n, dtype=np.float64)
-        for i in range(n):
-            start = max(0, i - period + 1)
-            out[i] = np.max(highs[start:i + 1])
+        if n < period:
+            return np.maximum.accumulate(highs)
+        out[:period - 1] = [np.max(highs[:i + 1]) for i in range(period - 1)]
+        out[period - 1:] = np.lib.stride_tricks.sliding_window_view(highs, period).max(axis=-1)
         return out
 
     @staticmethod
     def calc_lowest(lows: np.ndarray, period: int) -> np.ndarray:
         period = max(1, int(period))
         n = len(lows)
+        if period == 1:
+            return lows.copy()
         out = np.empty(n, dtype=np.float64)
-        for i in range(n):
-            start = max(0, i - period + 1)
-            out[i] = np.min(lows[start:i + 1])
+        if n < period:
+            return np.minimum.accumulate(lows)
+        out[:period - 1] = [np.min(lows[:i + 1]) for i in range(period - 1)]
+        out[period - 1:] = np.lib.stride_tricks.sliding_window_view(lows, period).min(axis=-1)
         return out
 
     @classmethod
@@ -287,11 +295,13 @@ class DynamicIndicatorEngine:
         tp = (highs + lows + closes) / 3.0
         n = len(tp)
         out = np.zeros(n, dtype=np.float64)
-        for i in range(period - 1, n):
-            tp_window = tp[i - period + 1:i + 1]
-            sma_tp = np.mean(tp_window)
-            mean_dev = np.mean(np.abs(tp_window - sma_tp))
-            out[i] = (tp[i] - sma_tp) / (0.015 * mean_dev) if mean_dev != 0 else 0.0
+        if n < period:
+            return out
+        windows = np.lib.stride_tricks.sliding_window_view(tp, period)
+        sma_tp = windows.mean(axis=-1)
+        mean_dev = np.mean(np.abs(windows - sma_tp[:, None]), axis=-1)
+        dev_denom = np.where(mean_dev != 0, 0.015 * mean_dev, 1e-8)
+        out[period - 1:] = np.where(mean_dev != 0, (tp[period - 1:] - sma_tp) / dev_denom, 0.0)
         return out
 
     @staticmethod
@@ -299,10 +309,12 @@ class DynamicIndicatorEngine:
         period = max(1, int(period))
         n = len(closes)
         out = np.full(n, -50.0, dtype=np.float64)
-        for i in range(period - 1, n):
-            hh = np.max(highs[i - period + 1:i + 1])
-            ll = np.min(lows[i - period + 1:i + 1])
-            out[i] = ((hh - closes[i]) / (hh - ll)) * -100.0 if hh != ll else -50.0
+        if n < period:
+            return out
+        hh = np.lib.stride_tricks.sliding_window_view(highs, period).max(axis=-1)
+        ll = np.lib.stride_tricks.sliding_window_view(lows, period).min(axis=-1)
+        denom = np.where(hh != ll, hh - ll, 1e-8)
+        out[period - 1:] = np.where(hh != ll, ((hh - closes[period - 1:]) / denom) * -100.0, -50.0)
         return out
 
     @classmethod
@@ -318,10 +330,11 @@ class DynamicIndicatorEngine:
     def calc_stochastic(cls, highs: np.ndarray, lows: np.ndarray, closes: np.ndarray, period_k: int = 14, smooth_k: int = 3, smooth_d: int = 3) -> tuple[np.ndarray, np.ndarray]:
         n = len(closes)
         raw_k = np.full(n, 50.0, dtype=np.float64)
-        for i in range(period_k - 1, n):
-            hh = np.max(highs[i - period_k + 1:i + 1])
-            ll = np.min(lows[i - period_k + 1:i + 1])
-            raw_k[i] = ((closes[i] - ll) / (hh - ll)) * 100.0 if hh != ll else 50.0
+        if n >= period_k:
+            hh = np.lib.stride_tricks.sliding_window_view(highs, period_k).max(axis=-1)
+            ll = np.lib.stride_tricks.sliding_window_view(lows, period_k).min(axis=-1)
+            denom = np.where(hh != ll, hh - ll, 1e-8)
+            raw_k[period_k - 1:] = np.where(hh != ll, ((closes[period_k - 1:] - ll) / denom) * 100.0, 50.0)
         k = cls.calc_sma(raw_k, smooth_k)
         d = cls.calc_sma(k, smooth_d)
         return k, d
@@ -331,10 +344,11 @@ class DynamicIndicatorEngine:
         period = max(2, int(period))
         n = len(highs)
         out = np.zeros(n, dtype=np.float64)
+        if n < period:
+            return out
         factor = 1.0 / (4.0 * math.log(2.0))
-        for i in range(period - 1, n):
-            h_w = highs[i - period + 1:i + 1]
-            l_w = lows[i - period + 1:i + 1]
-            log_hl = np.log(np.maximum(1e-8, h_w / np.maximum(1e-8, l_w))) ** 2
-            out[i] = math.sqrt((factor / float(period)) * np.sum(log_hl))
+        log_hl = np.log(np.maximum(1e-8, highs / np.maximum(1e-8, lows))) ** 2
+        windows = np.lib.stride_tricks.sliding_window_view(log_hl, period)
+        sum_hl = windows.sum(axis=-1)
+        out[period - 1:] = np.sqrt((factor / float(period)) * sum_hl)
         return out

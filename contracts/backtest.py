@@ -67,6 +67,7 @@ class BacktestRequest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     request_id: str
     strategy_id: str
+    strategy: Optional[Any] = Field(None, description="Instancia opcional de CanonicalStrategy para ejecución de AST dinámico")
     engine_type: EngineType = EngineType.FAST_APPROXIMATE
     dataset: DatasetSnapshot
     execution_config_hash: Optional[str] = Field(None, description="Hash SHA256 de la configuración canónica de ejecución")
@@ -74,6 +75,7 @@ class BacktestRequest(BaseModel):
     leverage: int = Field(1, ge=1, le=500)
     fee_multiplier: float = Field(1.0, ge=0.0)
     slippage_bps: float = Field(0.0, ge=0.0)
+    split_ratio: float = Field(0.70, ge=0.1, le=1.0)
 
 
 class BacktestResult(BaseModel):

@@ -28,11 +28,18 @@ class DatasetIntegrityError(Exception):
     pass
 
 
+_DEFAULT_DATA_ROOT = Path(os.path.abspath(__file__)).parents[2] / "data" / "normalized"
+if not _DEFAULT_DATA_ROOT.exists():
+    _DEFAULT_DATA_ROOT = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
+if not _DEFAULT_DATA_ROOT.exists():
+    _DEFAULT_DATA_ROOT = Path("data/normalized")
+
+
 class UniversalDataLoader:
     """Cargador y verificador criptográfico de datos históricos en disco."""
 
-    def __init__(self, data_root_dir: str = "/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized") -> None:
-        self.data_root = Path(data_root_dir)
+    def __init__(self, data_root_dir: Optional[str] = None) -> None:
+        self.data_root = Path(data_root_dir) if data_root_dir else _DEFAULT_DATA_ROOT
 
     def find_dataset_file(self, symbol: str, timeframe: str) -> Optional[Path]:
         """Busca el archivo físico correspondiente a un símbolo y timeframe."""

@@ -112,6 +112,9 @@ class ProvenanceMetadata(BaseModel):
     author_or_agent: str = Field("SYSTEM_GENERATOR")
 
 
+from contracts.evidence_bundle import EvidenceBundle
+
+
 class CanonicalStrategy(BaseModel):
     """Contrato Canónico Universal de Estrategia para Ultrarentable V2."""
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -132,6 +135,7 @@ class CanonicalStrategy(BaseModel):
     
     provenance: ProvenanceMetadata
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    evidence_bundle: Optional[EvidenceBundle] = Field(default=None, description="Paquete de evidencia criptográfica verificado")
 
     @field_validator("metadata")
     @classmethod
@@ -144,7 +148,18 @@ class CanonicalStrategy(BaseModel):
         return v
 
     def compute_sha256(self) -> str:
-        """Calcula el hash criptográfico SHA-256 inmutable de la definición canónica."""
-        canonical_dict = self.model_dump(exclude={"metadata": True, "status": True})
+        """Calcula el hash criptográfico SHA-256 inmutable de la definición canónica (excluyendo metadata, status y evidence_bundle)."""
+        canonical_dict = self.model_dump(exclude={"metadata": True, "status": True, "evidence_bundle": True})
         serialized = json.dumps(canonical_dict, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+    def attach_evidence_bundle(self, bundle: EvidenceBundle) -> CanonicalStrategy:
+        """Asocia un EvidenceBundle verificado a la estrategia validando linaje criptográfico."""
+        ast_sha = self.compute_sha256()
+        if bundle.strategy_sha256 != ast_sha:
+            raise ValueError(
+                f"DISCREPANCIA_LINEAJE: EvidenceBundle.strategy_sha256 ({bundle.strategy_sha256}) "
+                f"no coincide con el SHA-256 canónico de la estrategia ({ast_sha})."
+            )
+        bundle.verify_integrity(expected_strategy_sha256=ast_sha)
+        return self.model_copy(update={"evidence_bundle": bundle})

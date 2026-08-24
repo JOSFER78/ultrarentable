@@ -161,10 +161,37 @@ def test_incubation_evaluator_drift_and_promotion():
         for i in range(16)
     ]
 
+    import hashlib
+    from contracts import EvidenceBundle
+
     registry = CandidateRegistry()
-    strat_candidate = strat.model_copy(update={"status": StrategyLifecycleStatus.CANDIDATE})
+    strat_sha = strat.compute_sha256()
+    bundle = EvidenceBundle(
+        bundle_id=f"bnd_{strat.strategy_id}_test",
+        strategy_id=strat.strategy_id,
+        strategy_sha256=strat_sha,
+        dataset_id="MES_H1_CANON",
+        dataset_is_sha256=hashlib.sha256(b"mes_is_data").hexdigest(),
+        dataset_oos_sha256=hashlib.sha256(b"mes_oos_data").hexdigest(),
+        symbol="MES",
+        timeframe="1h",
+        target_track=strat.target_track.value,
+        execution_config_hash=hashlib.sha256(b"mes_exec").hexdigest(),
+        engine_name="UniversalDeterministicBacktestEngine",
+        engine_version="3.0.0",
+        commit_sha="064f1cc4e872c842b08331d2794eb84e59178ad3",
+        initial_capital_usd=10000.0,
+        is_trades_count=80,
+        oos_trades_count=80,
+        is_metrics={"profit_factor": 2.4},
+        oos_metrics={"profit_factor": 2.2},
+        ledger_hash=hashlib.sha256(b"mes_ledger").hexdigest(),
+        gates_evaluation={"gate_01": "PASSED", "approved": True},
+    )
+
+    strat_candidate = strat.model_copy(update={"status": StrategyLifecycleStatus.CANDIDATE, "evidence_bundle": bundle})
     registry.register(strat_candidate)
-    registry.transition(strat.strategy_id, StrategyLifecycleStatus.INCUBATION_PAPER, "Entrada a sandbox")
+    registry.transition(strat.strategy_id, StrategyLifecycleStatus.INCUBATION_PAPER, "Entrada a sandbox", evidence_bundle=bundle)
 
     report_promote = evaluator.evaluate(
         strategy=strat,

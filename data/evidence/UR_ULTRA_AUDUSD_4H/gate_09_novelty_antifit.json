@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4H_g09",
   "run_id": "run_UR_ULTRA_AUDUSD_4H",
   "strategy_id": "UR_ULTRA_AUDUSD_4H",
-  "strategy_snapshot_hash": "e6608e1047fd1e34f9e06a256e0dd164891f333321e67abfcf365e6b4874af5c",
+  "strategy_snapshot_hash": "34e4f19578e94b1f873b0418885fe4fcf92276644d8c1a191faa5bfbf12aa594",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,14 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "5c4f44c1000d57912f8dacc4d1232351d50e5671949ba7cc8c7308b2b9890c7d",
-  "output_hash": "df9a13b09690fe1d29dd6b4f919b041a3394fc457081203ca73c558ed73a22af",
+  "input_hash": "5042d61888302804e21d6fd6669488d176428d4a14dddc340269b319ab009da1",
+  "output_hash": "280c2fb5e2a1404df41eac5939e5db16526d06b69d1da2d446173491b4fba1f6",
   "status": "FAILED",
   "score": 10.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 26.8 o Estabilidad 25.0% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 25.9 o Estabilidad 25.0% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 26.8,
+    "degrees_of_freedom_ratio": 25.9,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 25.0,
     "min_stability_required_pct": 50.0,
@@ -30,5 +30,5 @@
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4H/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-23T23:23:11.881715+00:00"
+  "created_at_utc": "2026-08-24T10:39:54.982006+00:00"
 }

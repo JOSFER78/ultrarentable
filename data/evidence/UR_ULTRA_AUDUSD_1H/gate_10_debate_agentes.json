@@ -2,31 +2,31 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1H_g10",
   "run_id": "run_UR_ULTRA_AUDUSD_1H",
   "strategy_id": "UR_ULTRA_AUDUSD_1H",
-  "strategy_snapshot_hash": "a8cd0bc160fed29c92c5be25715d04574424d2a83a9fd62641ad413ecd17377b",
+  "strategy_snapshot_hash": "3a5db682af41a2509e53523793ceafa73ae36bf521eacf535402956a4227641a",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "b7c69a58a0a5ab28a77b45c78b392174a1691ab828f85c82af9c1ec71c763ba9",
-  "output_hash": "6d2e7642865018f70ab159dcfb2815d3618b0aa570c0d4208398ea52c6ae002a",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "a177ab2d7976dd54cbfcaf115462046ecdf93a8b5d236dcce708b2d3ba4b5cc6",
+  "output_hash": "4ee8f1a2eeb3e0cea42ee7102194a2d73083a8c2333cc3f460510695525ce46f",
   "status": "FAILED",
-  "score": 24.5,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
+  "score": 26.3,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (26.3/100)",
   "metrics": {
-    "consensus_score": 24.5,
+    "consensus_score": 26.3,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 26.2,
         "findings": [
           "Activo y Timeframe: AUDUSD (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.18 con beneficio neto de $-3.92.",
+          "Profit Factor OOS: 0.36 con beneficio neto de $-999.99.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 377 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 669 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.01 USD.",
+          "Beneficio medio por operación: $-1.49 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.0,
+        "score": 31.6,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.18 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.36 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1H/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:47:05.920501+00:00"
+  "created_at_utc": "2026-08-24T10:20:14.715474+00:00"
 }

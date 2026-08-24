@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_NQ_4H_g06",
   "run_id": "run_UR_ULTRA_NQ_4H",
   "strategy_id": "UR_ULTRA_NQ_4H",
-  "strategy_snapshot_hash": "2b66749a073be398f6db40d65f61e73bf6fd167e1c774be46a5dc90addd439af",
+  "strategy_snapshot_hash": "b8d0826177b2c74dc57a82f20aec4ea4e5605c7bdd92514f0bdbb93bd03b1c6a",
   "dataset_id": "ds_trad_nq_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,42 +10,14 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "f48ceeec1a826796c911bc38a35e3bba56571b7a15e3ad3af736fac799bb6d34",
-  "output_hash": "bf77cb550cafd96eab297855ecae84250aedd1f5470631f2e0bf8dbdbe598b67",
+  "input_hash": "36deed67f1fa23053baafa7b718bf2eb71b794467f0da7246d8ddc5adf619779",
+  "output_hash": "0d1282b4e5c953d875d05c1b1fde76dfe9e1864646f9d86e50b9fbae83d64919",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
+  "verdict": "RECHAZADO: Trades insuficientes para prueba de estrés de fricción",
   "metrics": {
-    "scenarios": {
-      "Base": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.2,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      },
-      "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.2,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      },
-      "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.21,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      },
-      "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -1.22,
-        "stressed_profit_factor": 0.0,
-        "survived": false
-      }
-    },
-    "passed_scenarios_count": 0,
-    "min_required_scenarios": 1,
-    "base_friction_usd": 0.35
+    "stressed_scenarios": []
   },
   "artifact_path": "data/evidence/UR_ULTRA_NQ_4H/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-23T23:30:19.664458+00:00"
+  "created_at_utc": "2026-08-24T10:20:55.139673+00:00"
 }

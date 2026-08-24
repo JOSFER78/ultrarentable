@@ -403,6 +403,9 @@ class UltraEvidenceGate:
         return float(np.mean(((arr - mean) / std) ** 3))
 
 
+from contracts.evidence_bundle import EvidenceBundle
+
+
 class QuantValidationFabric:
     """Orquestador Central de Validación Cuantitativa y Evidence Gate."""
 
@@ -414,6 +417,13 @@ class QuantValidationFabric:
         self.fondeo_gate = fondeo_gate or FondeoEvidenceGate()
         self.ultra_gate = ultra_gate or UltraEvidenceGate()
 
+    @staticmethod
+    def verify_evidence_bundle(bundle: EvidenceBundle, expected_strategy_sha256: Optional[str] = None) -> bool:
+        """Verifica formalmente un EvidenceBundle garantizando linaje criptográfico y veredictos aprobados."""
+        if not isinstance(bundle, EvidenceBundle):
+            raise ValueError("El objeto provisto no es una instancia válida de EvidenceBundle.")
+        return bundle.verify_integrity(expected_strategy_sha256=expected_strategy_sha256)
+
     def validate(
         self,
         strategy_id: str,
@@ -423,6 +433,10 @@ class QuantValidationFabric:
         timestamp_ms = int(time.time() * 1000)
         prov_raw = f"{strategy_id}:{track.value}:{timestamp_ms}"
         prov_hash = hashlib.sha256(prov_raw.encode("utf-8")).hexdigest()
+
+        evidence_bundle: Optional[EvidenceBundle] = payload.get("evidence_bundle")
+        if evidence_bundle is not None:
+            self.verify_evidence_bundle(evidence_bundle)
 
         if track == ValidationTrack.TRACK_FONDEO:
             result = self.fondeo_gate.evaluate(
@@ -448,6 +462,12 @@ class QuantValidationFabric:
         else:
             raise ValueError(f"Validation track desconocido: {track}")
 
+        strat_hash = payload.get("strategy_snapshot_hash") or (evidence_bundle.strategy_sha256 if evidence_bundle else None)
+        ds_hash = payload.get("dataset_sha256") or (evidence_bundle.dataset_oos_sha256 if evidence_bundle else None)
+        exec_hash = payload.get("execution_config_hash") or (evidence_bundle.execution_config_hash if evidence_bundle else None)
+        led_hash = payload.get("ledger_hash") or (evidence_bundle.ledger_hash if evidence_bundle else None)
+        bundle_id = evidence_bundle.bundle_id if evidence_bundle else None
+
         return EvidenceGateDecision(
             decision_id=f"gate_dec_{prov_hash[:12]}",
             strategy_id=strategy_id,
@@ -455,10 +475,12 @@ class QuantValidationFabric:
             approved=approved,
             timestamp_ms=timestamp_ms,
             provenance_hash_sha256=prov_hash,
-            strategy_snapshot_hash=payload.get("strategy_snapshot_hash"),
-            dataset_sha256=payload.get("dataset_sha256"),
-            execution_config_hash=payload.get("execution_config_hash"),
-            ledger_hash=payload.get("ledger_hash"),
+            strategy_snapshot_hash=strat_hash,
+            dataset_sha256=ds_hash,
+            execution_config_hash=exec_hash,
+            ledger_hash=led_hash,
             gate_records_count=11,
             details=result,
+            evidence_bundle=evidence_bundle,
+            evidence_bundle_id=bundle_id,
         )

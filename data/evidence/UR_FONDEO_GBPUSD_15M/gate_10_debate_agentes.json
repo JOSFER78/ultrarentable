@@ -2,16 +2,16 @@
   "evidence_id": "ev_UR_FONDEO_GBPUSD_15M_g10",
   "run_id": "run_UR_FONDEO_GBPUSD_15M",
   "strategy_id": "UR_FONDEO_GBPUSD_15M",
-  "strategy_snapshot_hash": "57fc960d1707ab2c22ca1a10fb14949291b8ba72fba1f95cbf04bffd7f18ada4",
+  "strategy_snapshot_hash": "a37bf240a42f908be9efc85b11bfc5bca9751b7b7667a094736ee60ee49c72c4",
   "dataset_id": "ds_trad_gbpusd_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "e4b787b6d56c3a0f54dff07be1f40f6074bf4bc0a92a86ae8bfc7d8658d82710",
-  "output_hash": "fb90ff1d3dab9d6b6205e675401c85dcb016866c1a8996b99c1a21dabe8e3345",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "36328be56d4ed7add46b785e7033aab6f4329b738ae6e7d2788aa9357ab2a3d5",
+  "output_hash": "043c58bbda6aee0d8cb9f9f65ef9493228b38d5202e2ae505f444cde73fc75f2",
   "status": "PASSED",
   "score": 58.2,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.2/100 · Guía de Mejora Generada)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: GBPUSD (15m) evaluado en ruta FONDEO.",
-          "Profit Factor OOS: 0.00 con beneficio neto de $0.00.",
+          "Profit Factor OOS: 0.04 con beneficio neto de $-0.40.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 60 operaciones evaluadas (Mínimo requerido: 20).",
+          "Muestra fuera de muestra: 65 operaciones evaluadas (Mínimo requerido: 20).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $0.00 USD.",
+          "Beneficio medio por operación: $-0.01 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 55.0,
         "objections": [
-          "Margen ajustado: Profit Factor 0.00 cercano al equilibrio (1.15)."
+          "Margen ajustado: Profit Factor 0.04 cercano al equilibrio (1.15)."
         ],
         "recommendations": [
           "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_FONDEO_GBPUSD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:47:25.669110+00:00"
+  "created_at_utc": "2026-08-24T10:19:04.977672+00:00"
 }

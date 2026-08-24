@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1H_g11",
   "run_id": "run_UR_ULTRA_BNB_USDT_1H",
   "strategy_id": "UR_ULTRA_BNB_USDT_1H",
-  "strategy_snapshot_hash": "b4e5e63ba680360f327de7ef1d1ac4e96f480f14a27e171354c81711daeb2be7",
+  "strategy_snapshot_hash": "73aef85482c8b27034495eed7a80614ada6ade0ba07e1f9f93d296adf1a8b9d7",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "9ac0cdfa375fab9ab45cce4af9aac80a5275a77127d0809983c64fb0c52b2d52",
-  "output_hash": "2d3cd831a1ef8784299907df1fa6af358a8c4d4796c9ac6357a55152760205d4",
+  "input_hash": "649a544b71a0956cda74c6ea1b7ecff991bb51b274a21f747fea91bc899da395",
+  "output_hash": "22438021cc57342c92425decf3474f20802ec1bc5bb8dc15c595f7293dd4f2dd",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -347.4,
-    "peak_equity_usd": 155420.67,
-    "min_equity_usd": -347.4,
+    "final_equity_usd": -244.44,
+    "peak_equity_usd": 146091.15,
+    "min_equity_usd": -244.44,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 0.0,
     "margin_call_triggered": true,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 225.93,
-    "execution_events_count": 258
+    "total_funding_cost_usd": 222.17,
+    "execution_events_count": 259
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1H/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-23T23:06:03.888098+00:00"
+  "created_at_utc": "2026-08-24T10:40:13.280860+00:00"
 }

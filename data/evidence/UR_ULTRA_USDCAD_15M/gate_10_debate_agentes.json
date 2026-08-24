@@ -2,41 +2,41 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15M_g10",
   "run_id": "run_UR_ULTRA_USDCAD_15M",
   "strategy_id": "UR_ULTRA_USDCAD_15M",
-  "strategy_snapshot_hash": "09de0f15b57cdae7984f79631b70add43534d23354db767167847a9206d5eb40",
+  "strategy_snapshot_hash": "719ecb35a3d3f74df1ac25030190c1bae875974cc1bc610d286314e6245e9f39",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
-  "dataset_sha256": "revalidated_sha256",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.2.0",
-  "formula_version": "3.2.0",
-  "input_hash": "ecb91da7958046f71ea69b14acfadb9d4d314d99ee6f8a732765293b08c923c2",
-  "output_hash": "a24bde2a1a6f2a88e0238a780504998f8714687abd505caf70e451eb0146bc3f",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "8d3ac007ce06249214bee3f7ca6dfebe5e51ed73802eb55286554a5441a382b9",
+  "output_hash": "d0a683c258c1ab38e2567d85df30b38c78f32858a377dd50a02bf603ab2890bf",
   "status": "PASSED",
-  "score": 97.4,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (97.4/100 · Guía de Mejora Generada)",
+  "score": 47.6,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (47.6/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 97.4,
+    "consensus_score": 47.6,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 100.0,
+        "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCAD (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 2.19 con beneficio neto de $188.22.",
+          "Profit Factor OOS: 0.21 con beneficio neto de $-665.73.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 92.2,
+        "score": 68.5,
         "findings": [
-          "Drawdown Máximo Observado: 16.5% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 66.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 63 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 166 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,30 +54,30 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $2.99 USD.",
-          "Margen de seguridad ante slippage: ACEPTABLE."
+          "Beneficio medio por operación: $-4.01 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 98.1,
+        "score": 47.1,
         "objections": [
-          "Cero objeciones críticas: Hipótesis robusta respaldada por evidencia empírica."
+          "Margen ajustado: Profit Factor 0.21 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
-          "Candidato óptimo listo para integración en Meta-Portafolios."
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": true
       }
     ],
     "recommendations": [
-      "Candidato óptimo listo para integración en Meta-Portafolios."
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15M/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T15:47:48.657087+00:00"
+  "created_at_utc": "2026-08-24T10:15:27.309450+00:00"
 }

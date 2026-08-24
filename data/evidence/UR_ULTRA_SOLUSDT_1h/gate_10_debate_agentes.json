@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_SOLUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_SOLUSDT_1h",
   "strategy_id": "UR_ULTRA_SOLUSDT_1h",
-  "strategy_snapshot_hash": "855acd0a64b617099eab849eabbe9cf323f0375bff4c411b6eed81fb10d85543",
+  "strategy_snapshot_hash": "425d416b273d8d96a363268b29edcbabb3ef963e73622c4bc9f0665b3308f44c",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "3.1.0",
-  "formula_version": "3.1.0",
-  "input_hash": "2786699371623b31d41851f52c1903c4e15845a7b7baf6574d20ad6ec0ddc597",
-  "output_hash": "a84a1680f2ea1da7cb0236236049c8bdc5b3658ef56c6524f054b13f0917bb47",
+  "engine_version": "5.3.0",
+  "formula_version": "5.3.0",
+  "input_hash": "0faaf7db4dc1c6e459f120a731d5c95c04861279a16fc6b87f09a2479fccee17",
+  "output_hash": "3c345a9a8bb8c36acde84e86a3f56af78ea3d2eefa9cdac885cd4a215a3ed9fe",
   "status": "FAILED",
   "score": 35.1,
-  "verdict": "FALLO: Consenso insuficiente (35.1/100) u objeción crítica de riesgo",
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.1/100)",
   "metrics": {
     "consensus_score": 35.1,
     "evaluators_count": 5,
-    "verdict_status": "REJECTED_BY_SPECIALISTS",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 2252 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 2197 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-0.44 USD.",
+          "Beneficio medio por operación: $-0.46 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,13 +66,21 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 39.2,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) consume más del 90% del margen tolerable.",
-          "Alerta de Rentabilidad: Profit factor 1.04 cercano al umbral de equilibrio (1.05)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 1.04 cercano al equilibrio (1.05)."
+        ],
+        "recommendations": [
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
         ],
         "approved": false
       }
+    ],
+    "recommendations": [
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
+      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOLUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-22T14:31:22.117501+00:00"
+  "created_at_utc": "2026-08-24T10:12:46.616819+00:00"
 }

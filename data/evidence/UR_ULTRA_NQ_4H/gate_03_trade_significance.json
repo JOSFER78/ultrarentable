@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_NQ_4H_g03",
   "run_id": "run_UR_ULTRA_NQ_4H",
   "strategy_id": "UR_ULTRA_NQ_4H",
-  "strategy_snapshot_hash": "2b66749a073be398f6db40d65f61e73bf6fd167e1c774be46a5dc90addd439af",
+  "strategy_snapshot_hash": "b8d0826177b2c74dc57a82f20aec4ea4e5605c7bdd92514f0bdbb93bd03b1c6a",
   "dataset_id": "ds_trad_nq_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.3.0",
   "formula_version": "5.3.0",
-  "input_hash": "3ed1c994f9ab84509960562055672e7e8ff6f4cf156bb9f312833280b8d47114",
-  "output_hash": "477930c6a1d6ece54e7a3b9a48ced1a6eacae09e1d0733388ab6880c43a7a60d",
+  "input_hash": "8ba1216da21d4abd73cdc6aeded5de5e876d2766e0f67d288eb9570eb4492fc4",
+  "output_hash": "4589eefcf5b6d20e7dea969aa0e5c8b1dd760c25d633ac9d89643bdf7e9e71ad",
   "status": "FAILED",
-  "score": 25.0,
-  "verdict": "FALLO: Muestra insuficiente (2 IS < 15 ó 5 OOS < 10)",
+  "score": 20.0,
+  "verdict": "FALLO: Muestra insuficiente (9 IS < 15 ó 4 OOS < 10)",
   "metrics": {
-    "trades_is": 2,
-    "trades_oos": 5,
+    "trades_is": 9,
+    "trades_oos": 4,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_NQ_4H/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-23T23:30:19.611038+00:00"
+  "created_at_utc": "2026-08-24T10:20:55.138848+00:00"
 }

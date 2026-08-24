@@ -47,6 +47,8 @@ from contracts.portfolio import (
     PropChallengeConfig,
 )
 
+from contracts.evidence_bundle import EvidenceBundle
+
 __all__ = [
     "CanonicalStrategy",
     "StrategyLifecycleStatus",
@@ -59,6 +61,7 @@ __all__ = [
     "SizingAndRisk",
     "SessionWindow",
     "ProvenanceMetadata",
+    "EvidenceBundle",
     "ValidationTrack",
     "BalaState",
     "BalaExecutionRecord",
