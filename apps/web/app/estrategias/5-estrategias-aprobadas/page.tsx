@@ -1,1 +1,1 @@
-export { default } from "@/app/gates/page";
+export { default } from "@/components/strategy/CertifiedStrategiesTable";
