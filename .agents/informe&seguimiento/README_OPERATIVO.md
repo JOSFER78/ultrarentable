@@ -2,156 +2,206 @@
 
 Este directorio es el **centro de mando completo y único** de Antigravity 2.0 para ULTRARENTABLE.
 
-No debe existir otro sistema paralelo de fases/control que pueda contradecirlo. Toda orden, estado, dispatch, revisión y handoff operativo debe vivir aquí.
+Toda orden, estado, dispatch, revisión, handoff y transición operativa debe vivir aquí. El watcher de Antigravity consulta GitHub `origin/main` aproximadamente cada 3 minutos.
 
-## 1. QUÉ ES CADA ARCHIVO
+## 1. ARCHIVOS IMPORTANTES
 
 | Archivo | Función |
 |---|---|
-| `00_CONTROL_PROTOCOL.md` | Reglas permanentes: watcher, auto-start, subagentes, SSH/VPS, `origin/main`, Zero-Simulation |
-| `00_DISPATCH.md` | **Trigger monotónico actual**. Un `dispatch_id` nuevo = una nueva ejecución autorizada |
-| `01_CONTROL_STATE.md` | Estado vivo: fase, subfase, orden, estado y transición actual |
-| `02_CURRENT_ORDER.md` | **ÚNICA orden ejecutable ahora** |
-| `03_HANDOFF_TEMPLATE.md` | Contrato de entrega de Antigravity |
-| `03_HANDOFF_<order_id>.md` | Entrega real de cada orden finalizada |
-| `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` | Plan completo del laboratorio y sus 16 fases |
-| `04_REVIEW_<order_id>.md` | Revisión externa de ChatGPT y decisión sobre el siguiente trabajo |
-| `05_REVIEW_PROTOCOL.md` | Método de auditoría de `origin/main` |
-| `07_* / 08_* / 09_*` | Órdenes históricas/reservas; nunca son ejecutables si no están en `02_CURRENT_ORDER.md` + `00_DISPATCH.md` |
-| `ULTRARENTABLE_Informe_Maestro...docx` | Doctrina maestra histórica/arquitectónica; contexto, nunca trigger |
+| `00_CONTROL_PROTOCOL.md` | Reglas permanentes del sistema |
+| `00_DISPATCH.md` | **Trigger monotónico actual**; cada `dispatch_id` nuevo = nueva ejecución |
+| `00_SCOPE_EXECUTION_RULE.md` | Regla de alcance: una orden = una fase/subfase |
+| `01_CONTROL_STATE.md` | Estado vivo y autoridad actual |
+| `02_CURRENT_ORDER.md` | **ÚNICA orden que Antigravity puede ejecutar ahora** |
+| `03_HANDOFF_<order_id>.md` | Resultado real entregado por Antigravity |
+| `04_REVIEW_<order_id>.md` | Dictamen de ChatGPT después de revisar `origin/main` |
+| `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` | Plan científico/técnico completo |
+| `05_REVIEW_PROTOCOL.md` | Método de auditoría externa |
+| `07/08/09/10/11_*ORDER*.md` | Histórico/archivo; nunca ejecutable por sí solo |
+| `ULTRARENTABLE_Informe_Maestro...docx` | Doctrina histórica; nunca trigger |
+
+**Nunca interpretar un archivo histórico como autorización.** La autorización real sale de `00_DISPATCH + 01_CONTROL_STATE + 02_CURRENT_ORDER`.
 
 ## 2. EL MODELO ES ADAPTATIVO, NO LINEAL
 
-Las “fases 00, 01, 02…” son **familias de trabajo**, no un camino obligatorio e irreversible.
+Las fases `00, 01, 02...` son familias de trabajo. No existe obligación de pasar directamente de `01 → 02`.
 
 Después de cada entrega, ChatGPT revisa `origin/main` y decide exactamente el siguiente paso. Puede ser:
 
 ```text
-FASE 01.0
-→ FASE 01.1
-→ FASE 01.2
-→ FASE 01.REWORK.1
-→ FASE 01.REDESIGN.1
-→ FASE 02.0
+01.0 → 01.1
+01.0 → 01.REWORK.01
+01.REWORK.01 → 01.REWORK.02
+01.REWORK → 01.REDESIGN.01
+01.x → 02.0
 ```
 
-También puede usar:
+También puede decidir `BLOCK`, `SPLIT`, `MERGE` o `ABANDON`.
 
-`SPLIT | MERGE | BLOCK | REDESIGN | REWORK | ABANDON | NEXT_PHASE`
+**Antigravity NUNCA decide cuál es el siguiente trabajo.** Ejecuta únicamente el `ACTIVE_ORDER_ID` recibido.
 
-**Antigravity no decide cuál es el siguiente paso.** Antigravity ejecuta únicamente el `ACTIVE_ORDER_ID` que haya sido publicado como `ISSUED`.
-
-## 3. CICLO AUTOMÁTICO COMPLETO
+## 3. CICLO AUTOMÁTICO REAL
 
 ```text
-Antigravity watcher (~3 min)
-        ↓
+CRON (~3 min)
+    ↓
+git fetch origin main
+    ↓
 lee 00_DISPATCH + 01_CONTROL_STATE + 02_CURRENT_ORDER
-        ↓
-nuevo dispatch_id + ISSUED + phase autorizada
-        ↓
+    ↓
+¿dispatch_id nuevo + ISSUED + fase autorizada?
+    ↓ SI
 AUTO-START
-        ↓
-Antigravity orquesta subagentes
-        ↓
-trabaja sobre el proyecto real
-        ↓
-SSH/VPS async cuando corresponda
-        ↓
-trabajo paralelo; nunca espera bloqueado
-        ↓
+    ↓
+Antigravity 2.0
+    ↓
+orquesta subagentes
+    ↓
+trabaja SOLO el alcance de la orden
+    ↓
+proyecto real + SSH/VPS
+    ↓
 tests + evidencia + red-team
-        ↓
-commit
-        ↓
-push origin/main
-        ↓
+    ↓
+commit + push origin/main
+    ↓
 verifica SHA remoto
-        ↓
+    ↓
 handoff
-        ↓
+    ↓
 STOP
-        ↓
-ChatGPT lee origin/main
-        ↓
-CORRECCIÓN / REWORK / SUBFASE / REDESIGN / BLOQUEO / SIGUIENTE FASE
-        ↓
-ChatGPT publica nueva ORDER + nuevo dispatch_id
-        ↓
-cron la detecta
-        ↺
+    ↓
+CHATGPT revisa origin/main
+    ↓
+decide REWORK / SUBFASE / REDESIGN / BLOCK / NEXT PHASE
+    ↓
+publica 04_REVIEW + nueva ORDER + NUEVO dispatch_id
+    ↓
+CRON vuelve a detectarlo
+    ↺
 ```
 
-No existe un paso de “preguntar al usuario si empieza”.
+### Qué significa realmente “ha terminado”
 
-## 4. REGLA DE ALCANCE
+Cuando Antigravity crea `03_HANDOFF_<order_id>.md` con `READY_FOR_REVIEW`, **la orden ha terminado**. No debe volver a ejecutarla.
 
-Una ejecución = **una sola orden + una sola fase/subfase**.
+Debe quedar:
 
-Antigravity puede inspeccionar todo el repositorio para entender dependencias, pero sólo puede modificar lo autorizado por la orden activa y las dependencias directas demostradas.
+```text
+ORDEN TERMINADA
+→ TODO EN origin/main
+→ HANDOFF
+→ STOP
+→ CHATGPT REVISA
+```
+
+`READY_FOR_REVIEW` **no significa** “fase aprobada”. Significa solamente “esta orden concreta fue ejecutada y entregada”.
+
+Entonces ChatGPT puede decidir:
+
+```text
+REWORK de la misma fase
+SUBFASE
+REDESIGN
+BLOCK
+NEXT_PHASE
+```
+
+y publica una nueva orden con un `dispatch_id` nuevo.
+
+## 4. WATCHER: QUÉ DEBE DETECTAR
+
+El watcher **no debe esperar un archivo nuevo**. `02_CURRENT_ORDER.md` puede reutilizarse.
+
+Debe detectar el `dispatch_id` monotónico.
+
+Ejemplo:
+
+```text
+DISPATCH P01-004
+→ ejecuta P01-004
+→ handoff
+→ STOP
+→ ChatGPT revisa
+→ DISPATCH P01-005
+→ auto-start P01-005
+```
+
+Un dispatch ya entregado no se repite. Un dispatch nuevo se ejecuta aunque el anterior esté terminado.
+
+Si el watcher conserva un ID anterior pero encuentra un dispatch nuevo `ISSUED`, **debe arrancarlo**.
+
+## 5. UNA ORDEN = UNA FASE/SUBFASE
+
+Antigravity puede inspeccionar todo el repositorio para entender dependencias, pero sólo puede modificar lo autorizado por `02_CURRENT_ORDER.md` y las dependencias directas demostradas.
 
 Todo hallazgo fuera de alcance:
 
 `DISCOVER → RECORD → CLASSIFY → DEFERRED_TO_FUTURE_ORDER`
 
-Nunca “aprovechar” una orden para arreglar todo el repo.
+No convertir una orden pequeña en una reescritura general.
 
-## 5. ANTIGRAVITY = EJECUTOR + ORQUESTADOR DE SUBAGENTES
+## 6. ANTIGRAVITY + SUBAGENTES
 
-En cada orden debe:
+Cada orden debe utilizar subagentes adecuados al alcance.
+
+Patrón obligatorio:
 
 ```text
 RECON
-→ descomponer el alcance
-→ lanzar subagentes relevantes en paralelo
-→ reconciliar hallazgos
+→ descomponer
+→ lanzar subagentes
+→ investigar en paralelo
+→ reconciliar
 → implementar
 → verificación independiente
-→ ejecutar pruebas
-→ revisar evidencia
+→ tests
+→ evidencia
 → commit/push
 → handoff
 → STOP
 ```
 
-Un agente que implementa una propiedad no puede ser su único verificador.
+El agente que implementa una propiedad no puede ser su único verificador.
 
-## 6. PROYECTO REAL VS SUPERFICIE DE REVISIÓN
+## 7. PROYECTO REAL VS SUPERFICIE DE REVISIÓN
 
-Workspace real:
+Workspace:
 
 `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
 
-Superficie oficial de revisión:
+Superficie oficial:
 
 `origin/main`
 
-Por tanto:
+> **Lo que no está en `origin/main` no está entregado para revisión.**
 
-> **LO QUE NO ESTÁ EN `origin/main` NO ESTÁ ENTREGADO.**
+Al terminar una orden debe quedar en GitHub todo lo versionable: código, tests, evidencia, handoff y documentos de control actualizados por la orden.
 
-Al terminar una orden, todo lo versionable debe quedar en `main`, incluido el handoff y los documentos de control actualizados por esa orden.
+Debe constar el SHA exacto de `origin/main`.
 
-## 7. SSH/VPS — NUNCA BLOQUEARSE
+## 8. SSH/VPS: EJECUTAR SIN BLOQUEARSE
 
-Para procesos largos:
+Para trabajos largos:
 
 ```text
 SSH
-→ launch async/detached
+→ lanzar async/detached
 → remote_job_id
 → PID/log/status
 → continuar trabajo independiente
-→ polling acotado
+→ polling corto
 → exit code real
-→ integrar resultado
+→ integrar evidencia
 ```
 
-Nunca mantener una sesión interactiva abierta 10–20 minutos esperando una suite.
+No mantener una sesión interactiva 10–20 minutos esperando una suite.
 
-`timeout`, `job lento`, `sin exit code` o `sin artefactos` = `UNVERIFIED`, nunca `PASS`.
+`timeout`, `sin exit code`, `job sin artefactos` o `resultado antiguo` = `UNVERIFIED`, nunca `PASS`.
 
-## 8. ZERO-SIMULATION / ZERO-FORCING
+## 9. ZERO-SIMULATION / ZERO-FORCING / REAL-ONLY
+
+Siempre activos:
 
 ```text
 ZERO-MOCK
@@ -162,33 +212,41 @@ REAL-ONLY
 EVIDENCE-GATED
 ```
 
-Prohibido inventar datos, hashes, trades, curvas, fills, métricas, resultados, provenance o evidencia de gates.
+Nunca inventar datos, trades, métricas, curvas, fills, hashes, datasets, provenance o resultados de tests.
 
-Los fixtures/mocks sólo pueden existir en tests unitarios aislados y nunca son evidencia cuantitativa.
+Nunca convertir timeout en PASS ni modificar tests sólo para obtener verde.
 
-## 9. ULTRA
+## 10. ULTRA
 
-ULTRA es el laboratorio global de oportunidades. Puede investigar cualquier mercado/instrumento/TF soportado por el registry y por datos/ejecución reales.
+ULTRA busca oportunidades globales dentro del universo real soportado por datos y ejecución verificables.
 
 Objetivo de descubrimiento: `+1000% o más`.
 
-Ese objetivo **nunca autoriza** relajar validación ni fabricar resultados.
+Es una meta de investigación, nunca una licencia para forzar resultados.
 
-## 10. FONDEO = FUTUROS ONLY
+No hardcodear una lista cerrada de cripto, activos o temporalidades. El universo depende del registry y de los datos reales disponibles.
 
-El track de FONDEO excluye Forex/CFD y crypto-perpetuals.
+## 11. FONDEO = FUTUROS ONLY
 
-Debe resolver políticas por:
+El track de FONDEO es exclusivamente futuros. Fuera del track quedan Forex/CFD y crypto-perpetuals.
+
+La política se resuelve por:
 
 `FIRM + PRODUCT + ACCOUNT + DATE + RULE_VERSION`
 
-con universo real permitido, sesiones, límites, trailing/max loss, DLL, target, consistencia y payout rules.
+Evaluación y funded son problemas distintos:
 
-`EVALUATION RISK != FUNDED RISK`.
+```text
+EVALUATION
+→ agresividad permitida dentro de las reglas
 
-## 11. DISCOVERY FACTORY
+FUNDED
+→ preservación de drawdown + payout eligibility + riesgo de ruina
+```
 
-Cuando Discovery entre en la fase autorizada:
+## 12. DISCOVERY FACTORY
+
+Cuando Discovery sea autorizado:
 
 ```text
 GENERATE
@@ -207,89 +265,63 @@ GENERATE
 → REDISCOVER
 ```
 
-Debe conservar Genome, clustering, trial accounting, genealogy, fertility, exploration/exploitation, budgets, Fragility Score y blind OOS/research.
+Debe integrar Genome, clustering, trial accounting, genealogy, fertility, exploration/exploitation, research budgets, Fragility Score y blind research.
 
 `DISCOVERY_SCORE != CERTIFICATION_STATUS`.
 
-## 12. VERSIONES Y CERTIFICACIÓN
+## 13. VERSIONES Y EVIDENCIA
 
-Cambios materiales de estrategia, motor, ejecución, costes, riesgo, datos, policy, gates o portfolio pueden invalidar evidencia.
+Cambios materiales en estrategia, engine, execution, costes, datos, riesgo, gates, policy o portfolio pueden invalidar evidencia.
 
 Una versión hija no hereda certificación automáticamente.
 
-Estados: `CERTIFIED_CURRENT`, `CERTIFIED_LEGACY`, `STALE`, `REVALIDATION_REQUIRED`, `REVALIDATING`, `FAILED_CURRENT_POLICY`.
+La evidencia debe estar ligada al lineage real: strategy version, engine version, dataset/hash, policy/version y commit remoto.
 
-## 13. VALIDACIÓN Y RESEARCH
+## 14. VALIDACIÓN / RESEARCH / METAESTRATEGIAS
 
-Cadena objetivo:
+Cadena principal:
 
 `REAL DATA → CANONICAL STRATEGY → CURRENT ENGINE → DETERMINISTIC LEDGER → METRICS → 11 GATES → EVIDENCE → CERTIFICATION`
 
 Research:
 
-`FAILURE → ROOT CAUSE → RESEARCH PROPOSAL → IMMUTABLE CHILD → INDEPENDENT OOS → ROBUSTNESS → GATES → RESULT → LEARNING`
+`FAILURE → ROOT CAUSE → CHILD → INDEPENDENT OOS → ROBUSTNESS → GATES → RESULT → LEARNING`
 
-El holdout no puede usarse para diseñar la mutación que luego será certificada con el mismo holdout.
-
-## 14. METAESTRATEGIAS
-
-Investigar:
-
-- correlation;
-- tail correlation;
-- drawdown concurrence;
-- exposure overlap;
-- risk contribution;
-- margin;
-- capital efficiency;
-- regime diversification;
-- failure concentration.
-
-ULTRA: convexidad agregada/capital efficiency.
-
-FONDEO: sólo futuros y reglas reales de la firma/producto/cuenta.
+Las metaestrategias investigan correlación, tail correlation, drawdown concurrence, exposición, margin, capital efficiency y concentración de fallos.
 
 ## 15. 24/7
 
-El laboratorio puede operar 24/7 con durable jobs, heartbeats, leases, checkpoints, retry, idempotency, watchdog, recovery y stale-evidence detection.
+El laboratorio puede operar 24/7 con jobs duraderos, heartbeats, leases, checkpoints, retry, idempotency, watchdog, recovery y stale-evidence detection.
 
-Pero runtime autónomo **no** significa cambios arquitectónicos autónomos.
+Runtime autónomo **no** significa que Antigravity pueda decidir cambios de arquitectura o la siguiente fase sin una nueva orden.
 
 ## 16. PLAN MAESTRO
 
-`04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` contiene las 16 familias de fases:
+`04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` contiene las 16 familias de fases.
+
+Cada familia puede dividirse en tantas subfases como la evidencia requiera.
+
+Ejemplo:
 
 ```text
-00 Forensic Baseline / Reality Lock
-01 Data Chain of Custody
-02 Canonical Strategy + Version Governance
-03 Deterministic Universal Execution Engine
-04 Discovery Factory
-05 Independent Validation + 11 Gates
-06 Robustness / WFO / Purged Validation
-07 Research + Reprogramming Lab
-08 Learning Store + Firebase Recovery
-09 Paper / Forward Incubation
-10 FONDEO Futures Evaluation Lab
-11 FONDEO Funded Preservation Lab
-12 ULTRA Bullet / Convexity Lab
-13 Meta-Strategy / Portfolio Discovery
-14 Certification + UI + API + Continuous Revalidation
-15 24/7 Operations / Self-Audit / Disaster Recovery
+PHASE 01
+ ├─ 01.0
+ ├─ 01.REWORK.01
+ ├─ 01.REWORK.02
+ ├─ 01.SUBPHASE.03
+ └─ 02.0  ← sólo cuando ChatGPT lo ordene
 ```
 
-Estas fases **pueden tener tantas subfases como la evidencia requiera**.
-
-## 17. QUIÉN DECIDE
+## 17. QUIÉN HACE QUÉ
 
 ### Antigravity
-Ejecuta la orden actual con subagentes, trabaja en el proyecto real, prueba, commit/push y entrega.
+Ejecuta exclusivamente la orden activa con subagentes, trabaja sobre el proyecto real, prueba, commit/push, entrega handoff y se detiene.
 
 ### Cron
-Detecta el `dispatch_id` nuevo y auto-inicia la orden autorizada.
+Comprueba GitHub aproximadamente cada 3 minutos y auto-inicia cuando detecta un `dispatch_id` nuevo y autorizado.
 
-### ChatGPT / revisión externa
-Lee `origin/main`, audita lo que realmente se hizo y decide la siguiente orden adaptativa.
+### ChatGPT / Revisor externo
+Lee `origin/main` después de cada entrega, audita el resultado real y publica la siguiente orden adaptativa.
 
 ### Usuario
 No necesita aprobar manualmente cada movimiento.
@@ -299,11 +331,35 @@ No necesita aprobar manualmente cada movimiento.
 ```text
 CURRENT_PHASE   = 01
 PHASE_STATUS    = REWORK
-ACTIVE_ORDER    = AG2-P01-003
-ACTIVE_DISPATCH = AG2-DISPATCH-20260825-1440-P01-003
+ACTIVE_ORDER    = AG2-P01-005
+ACTIVE_DISPATCH = AG2-DISPATCH-20260825-1518-P01-005
 PHASE_02        = LOCKED
 ```
 
-## 19. REGLA FINAL
+### Estado de la orden actual
 
-> **Antigravity ejecuta exactamente una orden/fase con subagentes y evidencia real. Todo resultado acaba en `origin/main`. ChatGPT revisa `origin/main` y, según lo que realmente encuentra, puede crear una subfase correctiva, otra rework, un redesign o avanzar a la siguiente fase. Cada nueva decisión genera un NUEVO `dispatch_id`. El cron lo detecta automáticamente. Siempre: ZERO-SIMULATION, ZERO-FORCING, REAL-ONLY.**
+`AG2-P01-005` **sí ha sido ejecutada**.
+
+Existe:
+
+`.agents/informe&seguimiento/03_HANDOFF_AG2-P01-005.md`
+
+con:
+
+`READY_FOR_REVIEW`
+
+Por tanto Antigravity **no debe volver a ejecutar P01-005**. Debe estar en `STOP` mientras espera una nueva decisión externa.
+
+La siguiente acción no sale del propio handoff. Sale de:
+
+```text
+CHATGPT
+→ revisa origin/main
+→ escribe 04_REVIEW_AG2-P01-005.md
+→ decide la siguiente orden
+→ crea NUEVO dispatch_id
+```
+
+## 19. REGLA FINAL PARA ANTIGRAVITY
+
+> **Lee `00_DISPATCH.md`. Si hay un dispatch nuevo `ISSUED` y autorizado, ejecútalo automáticamente con subagentes. Ejecuta sólo esa orden. Trabaja sobre el proyecto real. Usa SSH de forma asíncrona para trabajos largos. Publica TODO lo versionable en `origin/main`. Crea el handoff y detente. Un handoff READY_FOR_REVIEW significa “orden terminada”, no “siguiente fase automática”. Después el Revisor Externo lee `origin/main`, decide la corrección o avance y publica otro dispatch. Siempre: ZERO-SIMULATION, ZERO-FORCING, REAL-ONLY.**
