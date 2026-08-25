@@ -1,266 +1,291 @@
-# ORDER AG2-P02-008 — FINAL PHASE 02 CLOSURE / INDEPENDENT CERTIFICATION
+# ORDER AG2-P02-FINAL-001 — FINAL DEFINITIVE CLOSURE BEFORE PHASE 03
 
 ## STATUS
 `ISSUED`
 
 ## OBJECTIVE
-Cerrar definitivamente Phase 02 — Canonical Strategy + Version Governance + Runtime Semantic Contract.
+Cerrar definitivamente la Fase 02 y dejar el sistema en un estado coherente y arrancable antes de autorizar Phase 03.
 
-Esta es la **última orden de Phase 02**.
+Esta es la ÚLTIMA orden de cierre de Phase 02.
 
-NO añadir nuevas funcionalidades de Discovery, Robustness, Gates, Research, Meta-Strategy, ULTRA o FONDEO.
-NO avanzar a Phase 03 por iniciativa propia.
+NO iniciar Phase 03.
+NO Discovery Factory.
+NO Genome.
+NO Gates.
+NO Robustness.
+NO Research.
+NO Meta-Strategy.
+NO ULTRA implementation.
+NO FONDEO implementation.
 
-La misión es demostrar que todo lo construido en Phase 02 es coherente, reproducible, versionado y conectado al boundary real, y que cualquier limitación no soportada queda expresamente `UNSUPPORTED_FAIL_CLOSED`.
-
-## PRINCIPIO
-P02-008 es una auditoría de cierre, no una carrera por hacer más código.
-
-El implementador puede corregir blockers encontrados dentro del alcance de Phase 02, pero no puede ampliar el alcance ni inventar evidencia.
+El trabajo permitido es únicamente:
+1. corregir blockers reales de Phase 02;
+2. corregir problemas reales de arranque/integración de la aplicación que impidan verificar el sistema;
+3. reconciliar documentación/control contradictorio con el estado real;
+4. demostrar reproducibilidad y arranque local.
 
 ## MANDATORY SUBAGENTS
 
-1. `RECON / PHASE-02-CLOSURE`
-2. `CANONICAL / AST & SERIALIZATION`
-3. `VERSION / LINEAGE / CERTIFICATION`
-4. `RUNTIME / EXECUTION-BOUNDARY`
+1. `CLOSURE / RECON`
+2. `CANONICAL / AST`
+3. `VERSION / LINEAGE`
+4. `RUNTIME / EXECUTION BOUNDARY`
 5. `QUANT / REPRODUCIBILITY`
 6. `DATA / PROVENANCE`
-7. `RED-TEAM / ZERO-MOCK`
-8. `TEST / INDEPENDENT-VERIFIER`
-9. `RELIABILITY / GIT-CONTROL`
-10. `LEAD / RECONCILIATION`
+7. `WEB / LOCALHOST / E2E`
+8. `RED-TEAM / ZERO-MOCK`
+9. `INDEPENDENT TEST / RELIABILITY`
+10. `LEAD / FINAL RECONCILIATION`
 
-El Lead no puede ser el único verificador. Al menos tres subagentes independientes deben revisar los claims críticos.
+El Lead NO puede ser el único verificador. Los agentes `WEB/LOCALHOST`, `RED-TEAM` e `INDEPENDENT TEST` deben revisar de forma independiente al implementador.
 
-## STEP 0 — CONTROL IDENTITY / GIT INTEGRITY
+---
 
-Verificar desde GitHub `origin/main`:
+## STEP 0 — CONTROL IDENTITY
+
+Leer desde GitHub `origin/main`:
 
 - `00_DISPATCH.md`
 - `01_CONTROL_STATE.md`
 - `02_CURRENT_ORDER.md`
-- handoff P02-007
-- review P02-007
+- `03_HANDOFF_AG2-P02-008.md`
+- `04_REVIEW_AG2-P02-007.md`
 
-Comprobar exactamente:
+Comprobar coincidencia exacta de:
 
-`dispatch_id`
-`order_id`
-`target_phase`
-`status`
-`pre_sha`
-`delivered_sha`
+`dispatch_id / order_id / target_phase / status / pre_sha / delivered_sha`
 
-Si existe cualquier incoherencia: `BLOCKED`.
+Si no coincide cualquier elemento: `BLOCKED`.
 
-No aceptar nombres de archivos locales como evidencia.
+---
 
-## STEP 1 — CANONICAL STRATEGY CLOSURE
+## STEP 1 — REVIEW P02-008 AGAINST REAL CODE
 
-Auditar el contrato canónico completo.
+No aceptar el texto del handoff como prueba.
 
-Demostrar:
+Revisar el código real y confirmar o refutar:
 
-- estrategia inmutable;
-- hash determinista;
-- serialización determinista;
-- semántica LONG/SHORT/BOTH explícita;
-- AND/OR;
-- indicadores, parámetros, source_field y shift;
+- CanonicalStrategy immutable;
+- deterministic serialization;
+- deterministic strategy hash;
+- explicit LONG/SHORT/BOTH semantics;
+- explicit AND/OR;
+- indicator source/params/shift;
 - exits;
 - sizing/risk;
-- session policy;
+- sessions;
 - provenance;
-- strategy_version;
-- engine_version;
-- policy_version.
+- engine/policy lineage;
+- fail-closed unsupported cases;
+- real execution boundary;
+- ledger/result binding.
 
-Para cada propiedad clasificar:
+Cada claim debe quedar `PROVEN`, `UNSUPPORTED_FAIL_CLOSED`, `UNPROVEN`, `FAILED` o `BLOCKED`.
 
-`SUPPORTED_AND_EXECUTED`
-`UNSUPPORTED_FAIL_CLOSED`
-`NOT_PROVEN`
+---
 
-No se permite `PROVEN` por mera presencia de un campo.
+## STEP 2 — ZERO-FORCING AUDIT
 
-## STEP 2 — BOTH / BIDIRECTIONAL FINAL PROOF
+Red-team debe buscar activamente:
 
-Verificar que `BOTH` usa ramas declarativas explícitas y no inversión heurística.
+- defaults cuantitativos;
+- fallback a `close`;
+- fallback temporal;
+- fallback de ATR;
+- capital por defecto;
+- costes inventados;
+- fills inventados;
+- hashes sintéticos;
+- timestamps sintéticos;
+- random/seed usados para hacer pasar tests;
+- tests tautológicos;
+- caller-controlled provenance;
+- legacy execution bypassing canonical contracts.
 
-Diseñar dos casos físicos independientes:
+Cualquier hallazgo crítico = `BLOCKED` hasta corregirse.
 
-A) sólo branch LONG dispara -> debe producir LONG.
-B) sólo branch SHORT dispara -> debe producir SHORT.
+---
 
-Añadir un caso:
+## STEP 3 — DETERMINISTIC RE-RUN
 
-C) ambas ramas disparan simultáneamente -> debe respetarse exactamente la política canónica documentada.
+Con una estrategia/dataset/versiones idénticos ejecutar DOS veces de forma independiente.
 
-Añadir un caso:
+Comparar exactamente:
 
-D) ninguna rama dispara -> 0 entradas.
+- execution_hash;
+- ordered trades;
+- timestamps;
+- entry/exit prices;
+- direction;
+- size;
+- exit_reason;
+- pnl;
+- ledger hash cuando aplique.
 
-La evidencia debe proceder del runtime real, no de una simple inspección del objeto compilado.
+Cualquier diferencia = `BLOCKED`.
 
-## STEP 3 — UNSUPPORTED SEMANTICS / FAIL-CLOSED
+Registrar comandos, SHA de código y resultados de ambas ejecuciones.
 
-Verificar especialmente:
+---
 
-- `max_open_positions > 1`;
-- cualquier sizing no soportado;
-- exit type no soportado;
-- indicator no soportado;
-- source field inexistente;
-- engine/policy version ausente;
-- dataset no elegible;
-- strategy hash alterado.
+## STEP 4 — REAL BOUNDARY
 
-Cada caso debe demostrar rechazo real.
+Probar que la ejecución certificable no es un backtester paralelo aislado.
 
-No convertir `UNSUPPORTED` en `SUPPORTED` para aumentar cobertura.
-
-## STEP 4 — VERSION / LINEAGE / INVALIDATION
-
-Demostrar que:
-
-`strategy_id + strategy_version + strategy_hash`
-
-quedan enlazados con:
-
-`engine_version + execution_policy_version + dataset_snapshot + dataset_sha256`.
-
-Demostrar además que una modificación material genera una nueva identidad/evidencia y no hereda silenciosamente certificación previa.
-
-Probar al menos:
-
-- cambio de regla;
-- cambio de engine version;
-- cambio de policy version;
-- cambio de dataset hash.
-
-Cada cambio debe quedar `REVALIDATION_REQUIRED` o equivalente canónico.
-
-## STEP 5 — REAL EXECUTION BOUNDARY
-
-Revalidar la cadena real:
+Demostrar con call-sites reales:
 
 `CanonicalStrategy`
 → `snapshot/serialization`
 → `compile_to_runtime`
-→ `CanonicalRuntimeAdapter`
+→ runtime/adaptor
 → `EventBacktestEngine`
-→ `CrossEngineReconciler` cuando aplique
-→ `ledger / execution result`
-→ `validation/certification consumers`
+→ reconciliation/ledger
+→ validation/certification consumer
 
-No aceptar un backtester paralelo como sustituto.
+Documentar archivos, clases, funciones y líneas reales.
 
-Identificar call-sites reales por archivo y línea.
+---
 
-## STEP 6 — DATA PROVENANCE FINAL
+## STEP 5 — DATA PROVENANCE
 
-Comprobar que el runtime no acepta identidad arbitraria del caller.
-
-Debe resolver mediante la cadena canónica:
+Probar:
 
 instrument + timeframe
-→ registry
-→ snapshot
+→ deterministic registry resolution
+→ physical snapshot
 → physical bars
-→ sha256
+→ physical SHA-256
 → provenance eligibility.
 
-Hash manipulado = FAIL CLOSED.
-Dataset ausente = FAIL CLOSED.
-Dataset no verificable = NO_EVIDENCE/BLOCKED.
+No caller identity override.
 
-## STEP 7 — REPRODUCIBILITY / DETERMINISM
+Dataset ausente / hash inválido / provenance no verificable = FAIL CLOSED / NO_EVIDENCE.
 
-Ejecutar por separado, en la misma revisión, al menos dos veces:
+---
 
-`same strategy snapshot + same dataset snapshot + same engine/policy versions`
+## STEP 6 — LOCALHOST / WEB E2E — OBLIGATORIO
 
-y demostrar igualdad de:
+El proyecto NO se considera operativo si la aplicación web no puede arrancar correctamente en local.
 
-- execution hash;
-- ordered trades;
-- entry/exit timestamps;
-- prices;
-- sizes;
-- exits;
-- pnl;
-- ledger hash si corresponde.
+El subagente `WEB / LOCALHOST / E2E` debe:
 
-Si difieren: `BLOCKED`.
+1. identificar el frontend real;
+2. identificar el backend real;
+3. comprobar `package.json`, scripts y dependencias;
+4. comprobar variables de entorno requeridas;
+5. comprobar si existen referencias rotas, imports rotos, rutas inexistentes o servicios que impiden arrancar;
+6. ejecutar instalación usando el método oficial del repo sin introducir mocks;
+7. ejecutar `npm run typecheck`;
+8. ejecutar `npm run build`;
+9. arrancar el frontend con el comando oficial (`npm run dev` o equivalente documentado);
+10. verificar HTTP real en `http://localhost:3000`;
+11. comprobar al menos una ruta principal real de la aplicación;
+12. comprobar conexión con la API si la página depende de ella;
+13. comprobar backend real y su endpoint de salud/entrada correspondiente;
+14. registrar puertos, PID/process id, comandos, exit codes, logs y resultado;
+15. cerrar procesos de prueba al terminar.
 
-## STEP 8 — RED TEAM FINAL
+Si el frontend no arranca:
+- investigar la causa real;
+- corregirla dentro del alcance;
+- repetir typecheck/build/start;
+- no sustituir la aplicación por una página mock;
+- no levantar un servidor fake para declarar PASS.
 
-Buscar activamente:
+`localhost OK` requiere proceso real + HTTP 200/respuesta esperada + build/typecheck coherentes.
 
-- defaults escondidos;
-- fallbacks;
-- random/seed shortcuts;
-- mocks/synthetic bars;
-- lookahead;
-- caller-controlled provenance;
-- duplicate strategy authority;
-- legacy path bypassing CanonicalStrategy;
-- tests tautológicos;
-- UI/API recreando semántica;
+---
+
+## STEP 7 — DOCUMENTATION / SSOT RECONCILIATION
+
+No puede existir documentación pública que contradiga el estado real del sistema y se presente como SSOT.
+
+Revisar especialmente:
+
+- `README.md`;
+- documentación de versiones;
+- descripción del universo de FONDEO;
+- versión de engine;
+- comandos de arranque;
+- estructura de la web;
+- referencias a fases antiguas de documentación.
+
+Actualizar sólo cuando la corrección refleje el código real.
+
+No borrar historial útil: marcar legacy/stale cuando corresponda.
+
+---
+
+## STEP 8 — TEST / REGRESSION
+
+Ejecutar:
+
+- Phase 01 dataset chain-of-custody regression;
+- Phase 02 canonical/runtime regression;
+- version governance regression;
+- deterministic rerun;
+- web typecheck;
+- web build;
+- localhost smoke/E2E;
+- bounded API health/critical-route checks.
+
+Registrar para cada comando:
+
+`exact command / environment / duration / exit code / target SHA / result`
+
+No aceptar "green" sin comando reproducible.
+
+---
+
+## STEP 9 — FINAL RED TEAM
+
+El red-team debe intentar romper simultáneamente:
+
+- control de versiones;
+- provenance;
+- runtime;
+- deterministic rerun;
+- web startup;
+- API/UI provenance;
 - stale evidence;
-- mismatched version lineage.
+- docs contradictions.
 
-Todo hallazgo debe quedar registrado.
+Si encuentra un blocker, corregirlo y volver a ejecutar la prueba correspondiente.
 
-## STEP 9 — INDEPENDENT TESTER
+---
 
-El equipo independiente debe ejecutar:
-
-1. suite Phase 02;
-2. dataset chain-of-custody regression;
-3. version governance regression;
-4. targeted behavioral tests;
-5. deterministic rerun.
-
-Registrar exactamente:
-
-- comando;
-- entorno;
-- exit code;
-- duración;
-- commit probado;
-- resultado.
-
-## STEP 10 — AGENT LEDGER
+## STEP 10 — FINAL AGENT LEDGER
 
 Crear:
-`.agents/informe&seguimiento/P02-008_AGENT_LEDGER.md`
+`.agents/informe&seguimiento/P02-FINAL-001_AGENT_LEDGER.md`
 
 Cada agente debe registrar:
 
 - agent_id;
 - role;
-- task;
+- exact task;
 - files inspected;
 - files changed;
 - commands;
 - exit codes;
-- unique findings;
 - evidence paths/hashes;
+- findings;
 - conclusion;
 - unresolved items.
 
-No vale una lista nominal de agentes.
+Una lista de agentes sin evidencia NO cuenta.
+
+---
 
 ## STEP 11 — FINAL RECONCILIATION
 
 Crear:
-`.agents/informe&seguimiento/P02-008_RECONCILIATION.md`
+`.agents/informe&seguimiento/P02-FINAL-001_RECONCILIATION.md`
 
-Cada claim debe quedar:
+Cada claim crítico debe quedar:
 
 `PROVEN`
+`UNSUPPORTED_FAIL_CLOSED`
 `UNPROVEN`
 `FAILED`
 `BLOCKED`
@@ -268,69 +293,110 @@ Cada claim debe quedar:
 
 Para cerrar Phase 02:
 
-`CRITICAL_CLAIMS = 100% PROVEN OR EXPLICITLY UNSUPPORTED_FAIL_CLOSED`
+`critical_unproven = 0`
+`critical_failed = 0`
+`critical_blocked = 0`
 
-Cualquier `UNPROVEN` crítico = `BLOCKED`.
+Y además:
+
+`localhost_e2e = PASS`
+`deterministic_rerun = PASS`
+`git_remote_parity = PASS`
+
+---
 
 ## STEP 12 — FINAL HANDOFF
 
 Crear:
-`.agents/informe&seguimiento/03_HANDOFF_AG2-P02-008.md`
+`.agents/informe&seguimiento/03_HANDOFF_AG2-P02-FINAL-001.md`
 
-Debe contener:
+Debe incluir:
 
 - exact dispatch_id;
-- exact order_id;
-- pre-SHA;
-- delivered remote SHA;
-- cambios realizados;
-- claims proven;
-- claims unsupported/fail-closed;
-- claims unproven;
-- comandos y exit codes;
+- order_id;
+- pre/post remote SHA;
+- files changed;
+- all critical claims;
+- unsupported claims;
+- unresolved/deferred items;
+- exact commands and exit codes;
+- localhost proof;
+- deterministic rerun proof;
+- production boundary proof;
 - agent ledger;
 - reconciliation;
-- deferred items;
-- limitaciones reales;
-- decisión propuesta: `READY_FOR_PHASE_03_REVIEW` o `BLOCKED`.
+- limitations.
 
-## ZERO ABSOLUTE
+Disposición permitida:
 
-`ZERO-MOCK`
-`ZERO-SIMULATION`
-`ZERO-FORCING`
-`ZERO-LOOKAHEAD`
-`REAL-ONLY`
-`EVIDENCE-GATED`
+`READY_FOR_PHASE_03_REVIEW`
 
-No se permite fabricar fills, trades, hashes, datasets, métricas, resultados ni estados de certificación.
+ó
+
+`BLOCKED`
+
+No puede autoaprobar Phase 03.
+
+---
 
 ## SSH / LONG JOBS
 
-Los trabajos largos deben ejecutarse detached/asíncronamente.
+Jobs largos deben ejecutarse detached/asynchronously.
 Registrar:
 
 - remote_job_id;
-- comando exacto;
+- exact command;
 - target SHA;
 - log path;
 - status;
 - exit code.
 
-No bloquear el orquestador esperando 10–20 minutos una suite.
+Nunca esperar 10–20 minutos bloqueando el orquestador si el proceso puede dejarse corriendo con seguimiento posterior.
 
-## COMPLETION
+---
 
-Cuando termine esta orden:
+## GIT / DELIVERY
 
-`commit`
-→ `push origin/main`
-→ verificar SHA remoto
-→ handoff
-→ `STOP ABSOLUTO`
+Todo trabajo sobre:
+`/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
 
-NO crear Phase 03.
-NO cambiar `CURRENT_PHASE` hacia adelante.
-NO autoaprobar Phase 02.
+Después:
 
-La decisión de liberar Phase 03 corresponde al revisor externo después de leer `origin/main`.
+`git status`
+→ `git add`
+→ `git commit`
+→ `git pull --rebase origin main`
+→ `git push origin main`
+→ `git fetch origin main`
+→ verificar exact remote SHA
+
+Las evidencias de la orden deben existir en:
+`.agents/informe&seguimiento/`
+
+`origin/main` es la fuente que revisa el auditor externo.
+
+---
+
+## ZERO ABSOLUTE
+
+ZERO-MOCK
+ZERO-SIMULATION
+ZERO-FORCING
+ZERO-LOOKAHEAD
+REAL-ONLY
+EVIDENCE-GATED
+
+No fabricar datos, resultados, hashes, fills, trades, respuestas HTTP, tests ni certificaciones.
+
+## FINAL STOP
+
+Cuando esta orden termine:
+
+PUSH MAIN
+→ VERIFY REMOTE SHA
+→ HANDOFF
+→ STOP ABSOLUTO
+
+No crear Phase 03.
+No avanzar CURRENT_PHASE.
+No inventar la siguiente orden.
