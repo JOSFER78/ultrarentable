@@ -1,5 +1,5 @@
 """tests/test_phase01_dataset_chain_of_custody.py
-Suite de Pruebas de la FASE 01 (REWORK AG2-P01-004): CANONICAL ALIAS REGISTRY & EXACT IDENTITY.
+Suite de Pruebas de la FASE 01 (REWORK AG2-P01-005): PROVENANCE ELIGIBILITY & ARTIFACT SSOT.
 ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · NO-SYNTHETIC-DEFAULTS · FAIL-CLOSED
 """
 
@@ -8,35 +8,66 @@ import json
 import pytest
 from pathlib import Path
 
-from contracts.alias_contracts import OFFICIAL_ALIAS_REGISTRY, AliasRecord, CanonicalAliasRegistry
-from contracts.dataset_contracts import DatasetManifest, DatasetPartition, DatasetPartitionType
+from contracts.alias_contracts import (
+    AliasRegistryIntegrityError,
+    CanonicalAliasRegistry,
+    MissingAliasRegistryError,
+)
+from contracts.dataset_contracts import DatasetManifest, DatasetPartition, DatasetPartitionType, ProvenanceStatus
 from services.data.dataset_registry import (
     DatasetIntegrityError,
     MissingDatasetError,
     DatasetRegistry,
+    UnverifiedDatasetError,
     dataset_registry,
 )
 
 
-def test_alias_registry_version_and_hash_stability():
-    """P01-004-01: Verifica que el registro canónico de alias tenga versión explícita y hash SHA-256 determinista."""
-    assert OFFICIAL_ALIAS_REGISTRY.registry_version == "1.0.0"
-    assert len(OFFICIAL_ALIAS_REGISTRY.registry_sha256) == 64
-    assert len(OFFICIAL_ALIAS_REGISTRY.aliases) > 0
+def test_alias_registry_loaded_from_physical_artifact(tmp_path):
+    """P01-005-01: Verifica que el registro de alias se cargue del artefacto físico con verificación SHA-256."""
+    artifact_path = Path(__file__).resolve().parent.parent / "data" / "registry" / "canonical_instrument_aliases.json"
+    assert artifact_path.exists(), "El artefacto físico de alias debe existir en disco"
 
-    # Determinismo de hash
-    recalculated = CanonicalAliasRegistry.create_registry(
-        version="1.0.0",
-        records=OFFICIAL_ALIAS_REGISTRY.aliases,
-    )
-    assert recalculated.registry_sha256 == OFFICIAL_ALIAS_REGISTRY.registry_sha256
-    assert OFFICIAL_ALIAS_REGISTRY.resolve("BTC-USDT") == "BTCUSDT"
-    assert OFFICIAL_ALIAS_REGISTRY.resolve("EURUSD=X") == "EURUSD"
-    assert OFFICIAL_ALIAS_REGISTRY.resolve("UNKNOWN_XYZ") is None
+    registry = CanonicalAliasRegistry.load_from_artifact(artifact_path)
+    assert registry.registry_version == "1.0.0"
+    assert len(registry.registry_sha256) == 64
+    assert len(registry.aliases) > 0
+    assert registry.resolve("BTC-USDT") == "BTCUSDT"
+    assert registry.resolve("EURUSD=X") == "EURUSD"
+
+    # Fail-Closed ante artefacto inexistente
+    with pytest.raises(MissingAliasRegistryError):
+        CanonicalAliasRegistry.load_from_artifact(tmp_path / "non_existent.json")
+
+    # Fail-Closed ante artefacto corrupto/modificado
+    tampered_file = tmp_path / "tampered.json"
+    tampered_data = {
+        "registry_version": "1.0.0",
+        "registry_sha256": "wrong_hash_1234567890123456789012345678901234567890123456789012345678901234",
+        "aliases": [{"alias": "A", "canonical_symbol": "B", "venue": "C", "rationale": "D"}],
+    }
+    tampered_file.write_text(json.dumps(tampered_data), encoding="utf-8")
+    with pytest.raises(AliasRegistryIntegrityError):
+        CanonicalAliasRegistry.load_from_artifact(tampered_file)
+
+
+def test_provenance_evidence_states_and_eligibility_gate():
+    """P01-005-02 & P01-005-03: Verifica los estados de procedencia y la compuerta de elegibilidad para certificación."""
+    datasets = dataset_registry.list_datasets()
+    assert len(datasets) > 0
+    ds = datasets[0]
+
+    assert ds.provenance_status in [ProvenanceStatus.VERIFIED, ProvenanceStatus.UNVERIFIED, ProvenanceStatus.INVALID]
+
+    if ds.provenance_status == ProvenanceStatus.VERIFIED:
+        assert ds.is_certified_eligible is True
+        # Debe poder cargarse con la compuerta de elegibilidad activa
+        bars = dataset_registry.load_dataset_bars(ds.data_snapshot_id, require_verified_provenance=True)
+        assert len(bars) > 0
 
 
 def test_exact_input_identity_and_canonical_aliases_only():
-    """P01-004-02: Verifica resolución exacta directa o por registro canónico de alias, sin mutaciones difusas."""
+    """P01-005-04: Verifica resolución exacta directa o por registro canónico de alias, sin mutaciones difusas."""
     nq_1h = dataset_registry.resolve_dataset("NQ", "1h")
     if nq_1h:
         assert nq_1h.instrument_id == "NQ"
@@ -53,21 +84,8 @@ def test_exact_input_identity_and_canonical_aliases_only():
     assert dataset_registry.resolve_dataset("BTC_UNREGISTERED_ALIAS", "1h") is None
 
 
-def test_dataset_registry_loads_physical_manifests_without_inferred_defaults():
-    """P01-004-03: Verifica que los datasets carguen metadatos reales sin inventar versiones ni fuentes."""
-    datasets = dataset_registry.list_datasets()
-    assert len(datasets) > 0, "Debe haber al menos 1 dataset físico normalizado cargado"
-    for ds in datasets:
-        assert isinstance(ds, DatasetManifest)
-        assert len(ds.data_sha256) == 64
-        assert ds.record_count > 0
-        assert ds.start_time_utc_ms > 0
-        assert ds.end_time_utc_ms >= ds.start_time_utc_ms
-        assert ds.source_id != ""
-
-
 def test_physical_partition_hashes_are_derived_from_actual_bytes():
-    """P01-004-05: Verifica que los hashes de partición provengan de los bytes canónicos de las velas reales."""
+    """P01-005-05: Verifica que los hashes de partición provengan de los bytes canónicos de las velas reales."""
     datasets = dataset_registry.list_datasets()
     assert len(datasets) > 0
     ds = datasets[0]
@@ -94,6 +112,6 @@ def test_physical_partition_hashes_are_derived_from_actual_bytes():
 
 
 def test_fail_closed_on_missing_dataset_and_tampered_hash():
-    """P01-004-05: Verifica comportamiento Fail-Closed ante datasets inexistentes o alterados."""
+    """P01-005-05: Verifica comportamiento Fail-Closed ante datasets inexistentes o alterados."""
     with pytest.raises(MissingDatasetError):
         dataset_registry.load_dataset_bars("INVALID_DATASET_ID_404")

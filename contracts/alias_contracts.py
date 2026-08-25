@@ -1,14 +1,25 @@
 """contracts/alias_contracts.py
-Contratos Canónicos para el Registro Versionado de Alias de Instrumentos (Fase 01 Rework P01-004).
-ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED
+Contratos Canónicos y Cargador del Registro de Alias como Artefacto SSOT (Fase 01 Rework P01-005).
+ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · FAIL-CLOSED
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class MissingAliasRegistryError(Exception):
+    """Lanzada cuando el archivo físico del registro de alias no existe."""
+    pass
+
+
+class AliasRegistryIntegrityError(Exception):
+    """Lanzada cuando el hash del registro de alias no coincide con su contenido."""
+    pass
 
 
 class AliasRecord(BaseModel):
@@ -22,7 +33,7 @@ class AliasRecord(BaseModel):
 
 
 class CanonicalAliasRegistry(BaseModel):
-    """Registro inmutable versionado con hash SHA-256 de integridad."""
+    """Registro inmutable versionado con hash SHA-256 de integridad cargado desde artefacto físico."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     registry_version: str = Field(default="1.0.0")
@@ -30,40 +41,48 @@ class CanonicalAliasRegistry(BaseModel):
     aliases: List[AliasRecord] = Field(default_factory=list)
 
     @classmethod
-    def create_registry(cls, version: str, records: List[AliasRecord]) -> CanonicalAliasRegistry:
-        """Crea el registro y calcula deterministamente su hash SHA-256."""
-        payload = [r.model_dump() for r in sorted(records, key=lambda x: x.alias)]
-        raw_bytes = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
-        h = hashlib.sha256(raw_bytes).hexdigest()
-        return cls(registry_version=version, registry_sha256=h, aliases=records)
+    def compute_sha256(cls, aliases_data: List[dict]) -> str:
+        """Calcula deterministamente el hash SHA-256 del contenido canónico de los alias."""
+        sorted_payload = sorted(aliases_data, key=lambda x: x.get("alias", ""))
+        raw = json.dumps(sorted_payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
+        return hashlib.sha256(raw).hexdigest()
+
+    @classmethod
+    def load_from_artifact(cls, artifact_path: Optional[Path] = None) -> CanonicalAliasRegistry:
+        """Carga el registro desde el artefacto físico de datos con verificación criptográfica Fail-Closed."""
+        if artifact_path is None:
+            root_dir = Path(__file__).resolve().parent.parent
+            artifact_path = root_dir / "data" / "registry" / "canonical_instrument_aliases.json"
+
+        if not artifact_path.exists():
+            raise MissingAliasRegistryError(f"Artefacto de registro de alias '{artifact_path}' no existe.")
+
+        raw_bytes = artifact_path.read_bytes()
+        try:
+            data = json.loads(raw_bytes.decode("utf-8"))
+        except Exception as e:
+            raise AliasRegistryIntegrityError(f"Artefacto de alias corrupto: {e}")
+
+        version = data.get("registry_version")
+        declared_sha = data.get("registry_sha256")
+        raw_aliases = data.get("aliases", [])
+
+        if not version or not declared_sha:
+            raise AliasRegistryIntegrityError("El artefacto carece de versión o hash SHA-256 de integridad.")
+
+        computed_sha = cls.compute_sha256(raw_aliases)
+        if computed_sha != declared_sha:
+            raise AliasRegistryIntegrityError(
+                f"Violación de integridad en artefacto de alias. Esperado: {declared_sha}, Calculado: {computed_sha}"
+            )
+
+        alias_objs = [AliasRecord(**item) for item in raw_aliases]
+        return cls(registry_version=version, registry_sha256=declared_sha, aliases=alias_objs)
 
     def resolve(self, symbol: str) -> Optional[str]:
-        """Resuelve un símbolo mediante el registro oficial de alias."""
+        """Resuelve un símbolo mediante el registro oficial de alias cargado desde el artefacto SSOT."""
         target = symbol.strip().upper()
         for rec in self.aliases:
             if rec.alias.upper() == target:
                 return rec.canonical_symbol.upper()
         return None
-
-
-# Definición canónica oficial respaldada con evidencia
-OFFICIAL_ALIAS_RECORDS: List[AliasRecord] = [
-    AliasRecord(alias="BTC-USDT", canonical_symbol="BTCUSDT", venue="BINGX", rationale="Separador de guion en API de BingX Swap"),
-    AliasRecord(alias="BTC_USDT", canonical_symbol="BTCUSDT", venue="BINGX", rationale="Separador de barra baja en feeds Spot/Swap"),
-    AliasRecord(alias="ETH-USDT", canonical_symbol="ETHUSDT", venue="BINGX", rationale="Separador de guion en API de BingX Swap"),
-    AliasRecord(alias="ETH_USDT", canonical_symbol="ETHUSDT", venue="BINGX", rationale="Separador de barra baja en feeds Spot/Swap"),
-    AliasRecord(alias="SOL-USDT", canonical_symbol="SOLUSDT", venue="BINGX", rationale="Separador de guion en API de BingX Swap"),
-    AliasRecord(alias="SOL_USDT", canonical_symbol="SOLUSDT", venue="BINGX", rationale="Separador de barra baja en feeds Spot/Swap"),
-    AliasRecord(alias="XRP-USDT", canonical_symbol="XRPUSDT", venue="BINGX", rationale="Separador de guion en API de BingX Swap"),
-    AliasRecord(alias="XRP_USDT", canonical_symbol="XRPUSDT", venue="BINGX", rationale="Separador de barra baja en feeds Spot/Swap"),
-    AliasRecord(alias="DOGE-USDT", canonical_symbol="DOGEUSDT", venue="BINGX", rationale="Separador de guion en API de BingX Swap"),
-    AliasRecord(alias="DOGE_USDT", canonical_symbol="DOGEUSDT", venue="BINGX", rationale="Separador de barra baja en feeds Spot/Swap"),
-    AliasRecord(alias="EURUSD=X", canonical_symbol="EURUSD", venue="YAHOO_FOREX", rationale="Sufijo =X de Yahoo Finance para divisas"),
-    AliasRecord(alias="GBPUSD=X", canonical_symbol="GBPUSD", venue="YAHOO_FOREX", rationale="Sufijo =X de Yahoo Finance para divisas"),
-    AliasRecord(alias="JPY=X", canonical_symbol="USDJPY", venue="YAHOO_FOREX", rationale="Notación invertida Yahoo Finance para USDJPY"),
-]
-
-OFFICIAL_ALIAS_REGISTRY = CanonicalAliasRegistry.create_registry(
-    version="1.0.0",
-    records=OFFICIAL_ALIAS_RECORDS,
-)

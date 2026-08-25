@@ -1,5 +1,5 @@
 """contracts/dataset_contracts.py
-Contratos Canónicos para la Cadena de Custodia e Inmutabilidad de Datasets (Fase 01 Rework P01-003).
+Contratos Canónicos para la Cadena de Custodia e Inmutabilidad de Datasets (Fase 01 Rework P01-005).
 ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · NO-SYNTHETIC-DEFAULTS
 """
 
@@ -11,6 +11,14 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class ProvenanceStatus(str, Enum):
+    """Estados canónicos de evidencia de procedencia (P01-005-02)."""
+    VERIFIED = "VERIFIED"
+    UNVERIFIED = "UNVERIFIED"
+    NO_EVIDENCE = "NO_EVIDENCE"
+    INVALID = "INVALID"
 
 
 class DatasetPartitionType(str, Enum):
@@ -51,6 +59,7 @@ class DatasetManifest(BaseModel):
     timeframe_id: str = Field(..., description="Timeframe canónico e.g. 1m, 5m, 15m, 1h, 4h, 1d")
     schema_version: Optional[str] = Field(default=None, description="Versión del esquema si está documentada")
     normalization_version: Optional[str] = Field(default=None, description="Versión del pipeline de normalización")
+    provenance_status: ProvenanceStatus = Field(default=ProvenanceStatus.UNVERIFIED, description="Estado formal de evidencia de procedencia")
     
     # Cobertura temporal y conteo físico
     coverage_start: str = Field(..., description="ISO 8601 UTC de la primera vela")
@@ -73,6 +82,11 @@ class DatasetManifest(BaseModel):
     # Ruta física relativa
     relative_path: Optional[str] = None
     created_at_utc: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    @property
+    def is_certified_eligible(self) -> bool:
+        """Determina si el dataset posee procedencia verificada apta para certificación formal (P01-005-03)."""
+        return self.provenance_status == ProvenanceStatus.VERIFIED and self.is_valid and len(self.data_sha256) == 64
 
     @classmethod
     def compute_sha256(cls, content: bytes) -> str:

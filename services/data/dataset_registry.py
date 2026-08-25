@@ -1,5 +1,5 @@
 """services/data/dataset_registry.py
-Registro Canónico de Datasets y Cadena de Custodia Criptográfica (Fase 01 Rework P01-004).
+Registro Canónico de Datasets y Cadena de Custodia Criptográfica (Fase 01 Rework P01-005).
 ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · NO-SYNTHETIC-DEFAULTS · FAIL-CLOSED
 SSOT inmutable para la resolución, verificación y particionado físico de series temporales.
 """
@@ -13,8 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from contracts.alias_contracts import OFFICIAL_ALIAS_REGISTRY, CanonicalAliasRegistry
-from contracts.dataset_contracts import DatasetManifest, DatasetPartition, DatasetPartitionType
+from contracts.alias_contracts import CanonicalAliasRegistry
+from contracts.dataset_contracts import DatasetManifest, DatasetPartition, DatasetPartitionType, ProvenanceStatus
 
 logger = logging.getLogger("DatasetRegistry")
 
@@ -31,6 +31,11 @@ class DatasetIntegrityError(Exception):
 
 class DatasetResolutionError(Exception):
     """Lanzada cuando no se puede resolver inequívocamente un símbolo y timeframe."""
+    pass
+
+
+class UnverifiedDatasetError(Exception):
+    """Lanzada cuando una operación certificada rechaza un dataset sin procedencia verificada (P01-005-03)."""
     pass
 
 
@@ -58,10 +63,13 @@ def _extract_ts_ms(candle: Dict[str, Any]) -> int:
 class DatasetRegistry:
     """Registro SSOT de datasets normalizados con verificación criptográfica y metadatos reales."""
 
-    def __init__(self, data_dir: Optional[Path] = None, alias_registry: Optional[CanonicalAliasRegistry] = None):
+    def __init__(self, data_dir: Optional[Path] = None, alias_artifact_path: Optional[Path] = None):
         self.root_dir = Path(__file__).resolve().parent.parent.parent
         self.data_dir = data_dir or (self.root_dir / "data" / "normalized")
-        self.alias_registry = alias_registry or OFFICIAL_ALIAS_REGISTRY
+        alias_path = alias_artifact_path or (self.root_dir / "data" / "registry" / "canonical_instrument_aliases.json")
+        
+        # Cargar artefacto SSOT de alias con verificación Fail-Closed
+        self.alias_registry = CanonicalAliasRegistry.load_from_artifact(alias_path)
         self._manifests: Dict[str, DatasetManifest] = {}
         self._symbol_timeframe_index: Dict[Tuple[str, str], str] = {}
         self._load_manifests()
@@ -111,7 +119,8 @@ class DatasetRegistry:
 
                 # Leer manifiesto físico si existe
                 raw_manifest = {}
-                if manifest_file.exists():
+                has_manifest = manifest_file.exists()
+                if has_manifest:
                     try:
                         with open(manifest_file, "r", encoding="utf-8") as mf:
                             raw_manifest = json.load(mf)
@@ -120,9 +129,14 @@ class DatasetRegistry:
                         continue
 
                 # Identidad de source_id: solo de metadatos explícitos o UNVERIFIED
-                source_id = str(raw_manifest.get("venue") or raw_manifest.get("source") or raw_manifest.get("source_id") or "UNVERIFIED")
+                if raw_manifest.get("venue") or raw_manifest.get("source") or raw_manifest.get("source_id"):
+                    source_id = str(raw_manifest.get("venue") or raw_manifest.get("source") or raw_manifest.get("source_id"))
+                    provenance_status = ProvenanceStatus.VERIFIED if out_of_order_count == 0 else ProvenanceStatus.INVALID
+                else:
+                    source_id = "UNVERIFIED"
+                    provenance_status = ProvenanceStatus.UNVERIFIED
 
-                # Identidad de symbol y timeframe: solo de metadatos explícitos del manifest o del archivo
+                # Identidad de symbol y timeframe: solo de metadatos explícitos
                 if raw_manifest.get("symbol"):
                     raw_sym = str(raw_manifest["symbol"]).upper()
                 elif raw_manifest.get("instrument_id"):
@@ -142,10 +156,17 @@ class DatasetRegistry:
                 clean_sym = raw_sym.strip().upper()
                 clean_tf = raw_tf.strip().lower()
 
-                # Autoconsistencia de manifest contra archivo físico (P01-004-03)
-                if raw_manifest.get("data_sha256") and raw_manifest["data_sha256"] != actual_sha256:
-                    logger.error(f"Discordancia de hash en manifiesto {manifest_file.name}. Rechazado.")
-                    continue
+                # Autoconsistencia estricta de manifest contra archivo físico (P01-005-04)
+                if has_manifest:
+                    declared_sha = raw_manifest.get("data_sha256")
+                    if declared_sha and declared_sha != actual_sha256:
+                        logger.error(f"Discordancia de hash en manifiesto {manifest_file.name}. Rechazado.")
+                        continue
+
+                    # Cross-check de identificadores
+                    if raw_manifest.get("symbol") and raw_manifest["symbol"].upper() != clean_sym:
+                        logger.error(f"Discordancia de símbolo en manifiesto {manifest_file.name}. Rechazado.")
+                        continue
 
                 # Versiones: No hardcodear 1.0.0 si no existen en manifest
                 data_version = raw_manifest.get("data_version")
@@ -207,6 +228,7 @@ class DatasetRegistry:
                     timeframe_id=clean_tf,
                     schema_version=schema_version,
                     normalization_version=normalization_version,
+                    provenance_status=provenance_status,
                     coverage_start=cov_start_iso,
                     coverage_end=cov_end_iso,
                     start_time_utc_ms=start_ms,
@@ -257,11 +279,18 @@ class DatasetRegistry:
         dataset_id: str,
         partition: Optional[DatasetPartitionType] = None,
         verify_sha256: bool = True,
+        require_verified_provenance: bool = False,
     ) -> List[Dict[str, Any]]:
-        """Carga las velas físicas de un dataset con verificación criptográfica SHA-256 Fail-Closed."""
+        """Carga las velas físicas de un dataset con verificación criptográfica SHA-256 y compuerta de elegibilidad (P01-005-03)."""
         manifest = self.get_dataset(dataset_id)
         if not manifest or not manifest.relative_path:
             raise MissingDatasetError(f"Dataset '{dataset_id}' no registrado en el DatasetRegistry.")
+
+        # Compuerta de Elegibilidad de Procedencia (P01-005-03)
+        if require_verified_provenance and not manifest.is_certified_eligible:
+            raise UnverifiedDatasetError(
+                f"Dataset '{dataset_id}' no posee procedencia certificada (Estado: {manifest.provenance_status.value}, Válido: {manifest.is_valid}). Rechazado."
+            )
 
         file_path = self.root_dir / manifest.relative_path
         if not file_path.exists():
