@@ -1,67 +1,69 @@
-# ORDER AG2-P02-001 — PHASE 02 CANONICAL STRATEGY & EXECUTION CONTRACT
+# ORDER AG2-P02-002 — PHASE 02 CANONICAL STRATEGY REWORK
 
 ## Status
 `ISSUED`
 
 ## Trigger
-Auto-start when `00_DISPATCH.md` contains the new matching dispatch and `CURRENT_PHASE=02`, `PHASE_STATUS=ACTIVE`, `ACTIVE_ORDER_ID=AG2-P02-001`.
+Auto-start when `00_DISPATCH.md` contains the new matching dispatch and `CURRENT_PHASE=02`, `PHASE_STATUS=REWORK`, `ACTIVE_ORDER_ID=AG2-P02-002`.
 
 ## STRICT SCOPE
-Execute ONLY this Phase 02 order. Do not start Phase 03, Discovery, Genome, Meta-Strategy, FONDEO or ULTRA work. Out-of-scope findings = `DEFERRED_TO_FUTURE_ORDER` unless they directly block Phase 02.
+Execute ONLY this Phase 02 rework. Do not start Phase 03, Discovery Factory, Genome, Meta-Strategy, FONDEO or ULTRA work. Out-of-scope findings = `DEFERRED_TO_FUTURE_ORDER` unless they directly block this order.
 
-## Mission
-Establish one deterministic, versioned, hashable canonical representation of a strategy and prove that the execution engine consumes that exact representation without semantic drift, hidden defaults, duplicated rules or silent transformations.
+## Required corrections
 
-## Required work
+### P02-002-01 — Complete semantic hash identity
+Define and implement a formal canonical identity specification. Include every field whose material semantic change must invalidate the strategy hash, including relevant provenance/policy/engine identity as explicitly defined by the contract. Add tests proving each material field mutation changes identity and non-semantic metadata does not change it when intentionally excluded.
 
-### P02-001-01 — Canonical Strategy Contract
-Audit/implement the canonical strategy schema covering at minimum strategy_id, strategy_version, strategy_hash, instrument/timeframe references, entry/exit logic, position/risk instructions, execution semantics, required parameters and schema/policy versions. No duplicated authoritative strategy definition.
+### P02-002-02 — Prove real runtime consumption
+Trace the production path from `CanonicalStrategy` through snapshot/compile/adapter into the actual execution runtime. Prove with code-path tests that the runtime executes the canonical object rather than a copied/parallel rule model. No paper contract accepted.
 
-### P02-001-02 — Deterministic Serialization / Hashing
-Identical canonical bytes must yield identical hashes. Any material semantic change must yield a new version/hash. No synthetic hashes.
+### P02-002-03 — Single strategy authority
+Audit `contracts/`, services and execution adapters for duplicate authoritative strategy representations. Choose one SSOT and make all consumers depend on it. Any legacy model must be explicitly adapter-only or fail closed. Document the authority map in the handoff.
 
-### P02-001-03 — Runtime Consumption
-Trace the real path from canonical strategy artifact to compiler/runtime/execution. Prove runtime consumes the canonical object and cannot silently substitute defaults, aliases, parameters or rules.
+### P02-002-04 — Eliminate silent production defaults
+Defaults that can alter quantitative meaning must be explicit or fail closed. In particular, strategy timeframe, instrument identity, engine version and policy version may not silently become production values when omitted. Evidence must show registry/policy resolution or rejection.
 
-### P02-001-04 — Fail-Closed Validation
-Invalid, incomplete, incompatible or ambiguous strategy definitions must be rejected before quantitative execution. No fallback strategy, random parameter, missing-value fabrication or permissive coercion.
+### P02-002-05 — Runtime semantic equivalence tests
+Add tests proving that identical canonical strategies produce identical runtime instruction graphs/execution inputs, and material canonical mutations change the resulting runtime semantics. Reject unsupported/ambiguous definitions before execution.
 
-### P02-001-05 — Lineage / Version Governance
-Every execution must identify exact strategy, engine, execution policy and dataset identity. Material strategy changes cannot inherit certification from the parent.
+### P02-002-06 — Provenance and lineage binding
+Bind `strategy_hash`, `strategy_version`, engine version, execution policy version and dataset identity into the execution snapshot/lineage contract. A changed material dependency must produce a new evidence lineage and cannot inherit current certification.
 
-### P02-001-06 — Determinism Tests
-Demonstrate deterministic results for the same canonical strategy + dataset + execution policy. Test mutation/version/hash invariants and malformed-definition rejection.
+### P02-002-07 — Independent red-team
+A separate red-team subagent must inspect for hidden overrides, duplicated rule trees, hardcoded defaults, coercions, random/seed shortcuts, mock execution, lookahead and UI/API reinvention of strategy truth.
 
-### P02-001-07 — API/UI Provenance
-Verify API/UI reads strategy identity/version/hash/status from canonical evidence. UI must not calculate or invent quantitative truth.
-
-### P02-001-08 — Red-Team
-Search for hardcoded defaults, duplicate models, silent coercions, random/seed shortcuts, mock execution, lookahead, hidden overrides and bypasses of the canonical contract.
+### P02-002-08 — Tests and evidence
+Run focused Phase 02 tests plus bounded regression directly related to these contracts. Record exact commands, exit codes, changed files, remote SHA and evidence paths. Never rewrite tests to force PASS.
 
 ## Mandatory subagents
 1. RECON / ARCHITECTURE
-2. QUANT ENGINE / EXECUTION
-3. CANONICAL CONTRACT / VERSIONING
-4. TEST / DETERMINISM
+2. CANONICAL CONTRACT / VERSIONING
+3. RUNTIME / ENGINE TRACE
+4. QUANT / SEMANTIC EQUIVALENCE
 5. RED-TEAM / ZERO-MOCK
-6. API/UI / PROVENANCE
-7. RELIABILITY / REPRODUCIBILITY
+6. TEST / DETERMINISM
+7. API/UI / PROVENANCE
+8. RELIABILITY / REPRODUCIBILITY
 
-The implementer cannot be the sole verifier.
+Implementer cannot be sole verifier.
 
 ## SSH / VPS
-Use SSH as needed, but never block the orchestration loop 10–20 minutes. Long jobs MUST be detached/asynchronous and tracked with remote_job_id, exact command, target SHA, log path, state and real exit code. Poll asynchronously. PASS requires the real exit code and evidence.
-
-## TESTING
-Run focused Phase 02 tests first, then bounded regression relevant to changed contracts. Do not run the entire repository indiscriminately. Never weaken, skip or rewrite tests to force PASS. No fabricated fixtures masquerading as production evidence.
+Long jobs MUST be detached/asynchronous. Record `remote_job_id`, exact command, target SHA, log path, state and real exit code. Never block the orchestrator 10–20 minutes waiting on an attached SSH command.
 
 ## ZERO-SIMULATION / ZERO-FORCING / REAL-ONLY
-Absolute. This phase is infrastructure validation. Do not create profitable strategies, fake datasets, synthetic performance curves or fabricated certifications to satisfy criteria.
+Absolute. Do not create profitable strategies, synthetic datasets, fabricated fills, mock quantitative evidence or fake certification to demonstrate the architecture.
 
-## GITHUB COMPLETION
-Work on `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`. Before `READY_FOR_REVIEW`: implement only this order; run real focused tests; record exact commands/exit codes; record changed files; commit; push `origin/main`; verify remote SHA; create `.agents/informe&seguimiento/03_HANDOFF_AG2-P02-001.md`; include evidence, limitations and deferred findings; STOP.
+## GitHub completion
+Work on `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`.
+Before `READY_FOR_REVIEW`:
+1. execute only this order;
+2. run real focused tests and bounded regression;
+3. record exact commands and exit codes;
+4. commit;
+5. push `origin/main`;
+6. verify exact remote SHA;
+7. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P02-002.md`;
+8. include authority map, runtime trace, tests, evidence, limitations and deferred findings;
+9. STOP.
 
-`origin/main` is the authoritative branch read by the external reviewer. Local-only completion is NOT completion.
-
-## EXIT
-`READY_FOR_REVIEW` only with complete real evidence. Otherwise `BLOCKED` with exact blocker and evidence. Antigravity must never create or self-approve the next order.
+Do not advance Phase 03.
