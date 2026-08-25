@@ -1,44 +1,43 @@
 # ULTRARENTABLE — ACTIVE DISPATCH
 
-## Purpose
-This file is the monotonic execution trigger for Antigravity 2.0. Every corrective step or phase transition issued by the external reviewer gets a NEW `dispatch_id`.
-
 ## ACTIVE DISPATCH
-
 ```yaml
-dispatch_id: AG2-DISPATCH-20260825-1730-P02-002
-order_id: AG2-P02-002
+dispatch_id: AG2-DISPATCH-20260825-1815-P02-003
+order_id: AG2-P02-003
 order_file: .agents/informe&seguimiento/02_CURRENT_ORDER.md
-order_archive: .agents/informe&seguimiento/08_ORDER_AG2-P02-002.md
+order_archive: .agents/informe&seguimiento/09_ORDER_AG2-P02-003.md
 target_phase: 02
 phase_status: REWORK
 status: ISSUED
-issued_at_utc: 2026-08-25T15:30:00Z
+issued_at_utc: 2026-08-25T16:15:00Z
 execution_surface: origin/main
 scope_mode: STRICT_SINGLE_PHASE
 zero_simulation: true
 zero_forcing: true
 ```
 
-## Watcher rule
-Every ~3 minutes Antigravity MUST:
-1. `git fetch origin main`.
-2. Read `00_DISPATCH.md`, `01_CONTROL_STATE.md`, and `02_CURRENT_ORDER.md` from `origin/main`.
-3. Parse `dispatch_id`, `order_id`, `status`, `target_phase`, and `phase_status`.
-4. Compare `dispatch_id` against its persisted last-processed value.
-5. If NEW, `status=ISSUED`, `target_phase == CURRENT_PHASE`, `ACTIVE_ORDER_ID == order_id`, and no other dispatch is running, AUTO-START immediately.
-6. Mark processed ONLY after durable proof-of-start exists.
-7. If the persisted dispatch equals the active one but has no proof-of-start and no completed handoff, treat it as UNPROCESSED and start it.
-8. If a matching completed handoff exists, do not rerun it; wait for the next NEW dispatch.
-9. Never require the order filename to be new.
-10. Execute only the referenced order and phase/subphase.
+## EXECUTION TRIGGER
+The watcher runs approximately every 3 minutes.
 
-## Delivery
-After completion, push scoped work, tests, evidence and handoff to `origin/main`, verify remote SHA, then STOP. The external reviewer inspects `origin/main` and issues the next NEW dispatch.
+Execute only when ALL are true:
+1. this `dispatch_id` is newer than its persisted last processed dispatch;
+2. `status == ISSUED`;
+3. `order_id == ACTIVE_ORDER_ID`;
+4. `target_phase == CURRENT_PHASE`;
+5. `02_CURRENT_ORDER.md` has the same order_id and `status: ISSUED`;
+6. no other dispatch is running.
 
-## Absolute rules
-`ZERO-SIMULATION = ON`
-`ZERO-FORCING = ON`
-`REAL-ONLY = ON`
+A completed previous handoff is not a reason to suppress a NEW dispatch. A new dispatch is the only reason to start new work.
 
-Timeout, missing job, missing dataset, unverifiable hash, stale evidence, or absent exit code is never PASS.
+If no new dispatch exists: `NO NEW DISPATCH — STANDBY` and stop that watcher iteration.
+
+## DELIVERY
+The active order must be executed only once. After completion Antigravity must push all scoped code/tests/evidence/control updates/handoff to `origin/main`, verify the remote SHA and STOP. The next work can only start after the external reviewer publishes a NEW dispatch_id.
+
+## ABSOLUTE RULES
+ZERO-SIMULATION = ON
+ZERO-FORCING = ON
+REAL-ONLY = ON
+ZERO-LOOKAHEAD = ON
+
+Timeout, missing result, stale evidence, missing dataset, missing exit code or unverified runtime trace is never PASS.
