@@ -6,14 +6,14 @@ This file is the monotonic execution trigger for Antigravity 2.0. Every correcti
 ## ACTIVE DISPATCH
 
 ```yaml
-dispatch_id: AG2-DISPATCH-20260825-1518-P01-005
-order_id: AG2-P01-005
+dispatch_id: AG2-DISPATCH-20260825-1710-P02-001
+order_id: AG2-P02-001
 order_file: .agents/informe&seguimiento/02_CURRENT_ORDER.md
-order_archive: .agents/informe&seguimiento/11_ORDER_AG2-P01-005.md
-target_phase: 01
-phase_status: REWORK
+order_archive: .agents/informe&seguimiento/08_ORDER_AG2-P02-001.md
+target_phase: 02
+phase_status: ACTIVE
 status: ISSUED
-issued_at_utc: 2026-08-25T15:18:00+02:00
+issued_at_utc: 2026-08-25T15:10:00Z
 execution_surface: origin/main
 scope_mode: STRICT_SINGLE_PHASE
 zero_simulation: true
