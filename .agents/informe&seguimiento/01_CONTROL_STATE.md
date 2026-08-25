@@ -5,12 +5,12 @@
 - `CURRENT_PHASE`: 01
 - `PHASE_STATUS`: REWORK
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-P01-003
+- `ACTIVE_ORDER_ID`: AG2-P01-004
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-1440-P01-003`
-- `LAST_ACKNOWLEDGED_ORDER`: AG2-P01-002
-- `LAST_HANDOFF`: `03_HANDOFF_AG2-P01-002.md`
-- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P01-002.md` (`REWORK`)
+- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-1510-P01-004`
+- `LAST_ACKNOWLEDGED_ORDER`: AG2-P01-003
+- `LAST_HANDOFF`: `03_HANDOFF_AG2-P01-003.md`
+- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P01-003.md` (`REWORK`)
 - `NEXT_ORDER`: `PHASE 02 LOCKED`
 
 ## Watcher contract
@@ -53,8 +53,8 @@ At the end of every order Antigravity must push implementation, tests, evidence,
 
 ## Current transition reason
 
-AG2-P01-002 materially repaired physical partition hashing and fail-closed loading, but external audit found remaining provenance inference/defaults in `services/data/dataset_registry.py` that are still incompatible with ZERO-SIMULATION / REAL-ONLY.
+AG2-P01-003 materially improved Phase 01 but external audit found remaining provenance/identity governance gaps: hardcoded runtime alias map, identity mutation before lookup, incomplete manifest/registry self-consistency proof and incomplete exact remote SHA evidence.
 
-Active corrective order: `AG2-P01-003`.
+Active corrective order: `AG2-P01-004`.
 
 Phase 02 remains locked until Phase 01 rework is independently verified and explicitly released by the external reviewer.
