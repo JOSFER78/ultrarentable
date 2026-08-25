@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_4h_g10",
   "run_id": "run_UR_ULTRA_USDJPY_4h",
   "strategy_id": "UR_ULTRA_USDJPY_4h",
-  "strategy_snapshot_hash": "cacd893bff1cec1cf0facc1ccad34321fb372f44785edee9980d77cc36963021",
+  "strategy_snapshot_hash": "69c2a921339cd5c08f13d85bb54ff059ef8b96ced11e9e4f53e78d18f67b7b79",
   "dataset_id": "ds_trad_usdjpy_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "0a20ebb431b5f6a18aa815ceb28d5a0062057afe13e7f900d1b4bfb6adfdd66e",
-  "output_hash": "226f91c73327e0c573d7ecf3ec6213ccb259b6e72b3b4d0ee8f769b17f835360",
+  "input_hash": "5b07f238cdd13ef3f09b65716ec924e6588206d21b068fcd6e300b7213fe9aa2",
+  "output_hash": "68e46a77d1a6152d10ac1b995c998bc15a5f40d73851a910bdad29b9794d93eb",
   "status": "FAILED",
   "score": 28.2,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (28.2/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 240 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 243 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.01 USD.",
+          "Beneficio medio por operación: $-3.96 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T19:20:23.219390+00:00"
+  "created_at_utc": "2026-08-25T10:37:24.923166+00:00"
 }

@@ -2,23 +2,23 @@
   "evidence_id": "ev_TEST_CAND_BTC_g08",
   "run_id": "run_TEST_CAND_BTC",
   "strategy_id": "TEST_CAND_BTC",
-  "strategy_snapshot_hash": "6aa4111b634c39236edadb692f51900405f22207547760c69deb278243d38d8f",
+  "strategy_snapshot_hash": "6c5a43b10e4b9fdfb0fe607875bdcc5f9a1e70de492cc81e356747d066bf1fd7",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "ee7e0726f06ffd0bb62505592906b4ad98b3036747b58387451a4194d5c96874",
-  "output_hash": "15c3299f2001609969a932ec58c70cfa325a93ddcb99c114801d07f226aee6a7",
+  "engine_version": "5.4.0",
+  "formula_version": "5.4.0",
+  "input_hash": "c191865f9fc99df16d0235753c7031f8c57640e573aefa979d71ec207f568f0d",
+  "output_hash": "bf1ad82f959c6525c4ddd7da05d84f3ce2fb817d121636848e0b1a0cdfc702d8",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
   "metrics": {
-    "trials_penalized": 141,
+    "trials_penalized": 138,
     "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/TEST_CAND_BTC/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T19:01:43.333490+00:00"
+  "created_at_utc": "2026-08-25T10:30:52.115629+00:00"
 }

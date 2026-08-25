@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_AUDUSD_1h_g08",
   "run_id": "run_UR_FONDEO_AUDUSD_1h",
   "strategy_id": "UR_FONDEO_AUDUSD_1h",
-  "strategy_snapshot_hash": "0ca8846eb7c710ccdf19ef112e5cacf7d13c428ff8017184c41b7c9fd81288fe",
+  "strategy_snapshot_hash": "c47e99dfd5dcab60b15c1f63088f942b5ffd38fbc3527e59e1f9b967a1ea269c",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "2440316895a7001ef49386f1c4c0c3a3da8b47bcab4c6de9a1747bf24e268abb",
-  "output_hash": "3cdb0102a003f41ad623a2dad7349cdb2b5128706c22a7222cfe3cfb0ce685e7",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
+  "input_hash": "e15b2286062994e858fcd4b57a7beb6b51115ab38b2e71e75381a4ee4f8853eb",
+  "output_hash": "a0e5cca2ddd7c08502e28ecde6fd072a27e5b888f9409123576bb1e3ee116429",
+  "status": "PASSED",
+  "score": 57.9,
+  "verdict": "PASSED: DSR = 57.9% (Sharpe Bruto: 0.03, Trials Penalizados: 141, Skew: 0.65, Kurt: 3.85)",
   "metrics": {
-    "raw_sharpe_ratio": -0.119,
-    "deflated_sharpe_probability_pct": 0.0,
-    "trials_penalized_count": 3,
-    "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 0.562,
-    "kurtosis": 3.056,
-    "sample_trades_count": 67
+    "raw_sharpe_ratio": 0.027,
+    "deflated_sharpe_probability_pct": 57.85,
+    "trials_penalized_count": 141,
+    "expected_max_sharpe_under_selection": 0.0,
+    "skewness": 0.648,
+    "kurtosis": 3.852,
+    "sample_trades_count": 52
   },
   "artifact_path": "data/evidence/UR_FONDEO_AUDUSD_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T19:30:01.615022+00:00"
+  "created_at_utc": "2026-08-25T10:40:18.134096+00:00"
 }

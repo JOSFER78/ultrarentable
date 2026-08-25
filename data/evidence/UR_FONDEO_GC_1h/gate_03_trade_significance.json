@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_GC_1h_g03",
   "run_id": "run_UR_FONDEO_GC_1h",
   "strategy_id": "UR_FONDEO_GC_1h",
-  "strategy_snapshot_hash": "39c1effe4eee7bece5b6b2b042b7c8f5c293566f497e45243ff2364d3513a8bd",
+  "strategy_snapshot_hash": "126a6eb3684ebad3ef08b1edf669e7748949cd0c164d417fb30d8fd5040483d6",
   "dataset_id": "ds_trad_gc_1h_1711425600000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "47b007d6591a61472c6ba2b89cc6e41e5fa063b7f034ab590067a04abb9b47fc",
-  "output_hash": "7bd152f33d5badbb6a815546ab537061393a884e544f3232242efd32f3ed52e1",
+  "input_hash": "43e384662a4251e74a9db7576693aa43c9b814bb8bbe1ca2090a3cfa8a098ec2",
+  "output_hash": "4894cffcfa8d0cb8949a889a8361e846fcf848602c6083ff34d097de332675f4",
   "status": "PASSED",
-  "score": 82.5,
-  "verdict": "PASSED: Muestra robusta (111 IS / 33 OOS · Fondeo)",
+  "score": 77.5,
+  "verdict": "PASSED: Muestra robusta (82 IS / 31 OOS · Fondeo)",
   "metrics": {
-    "trades_is": 111,
-    "trades_oos": 33,
-    "top2_outlier_dependency_pct": 44.9,
+    "trades_is": 82,
+    "trades_oos": 31,
+    "top2_outlier_dependency_pct": 43.1,
     "min_is_required": 30,
     "min_oos_required": 20,
     "route_mode": "FONDEO_CONSISTENCY"
   },
   "artifact_path": "data/evidence/UR_FONDEO_GC_1h/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-24T19:23:50.384297+00:00"
+  "created_at_utc": "2026-08-25T10:38:32.162873+00:00"
 }

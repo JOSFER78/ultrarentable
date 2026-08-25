@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1h_g04",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1h",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1h",
-  "strategy_snapshot_hash": "af3905622e593d7eeb3833bb352d731d4b426548ddd11f3726e07855013ffc4f",
+  "strategy_snapshot_hash": "944b326091ee30eaf2dde25ecc61fee26122ef17105886bb3b3729163cc0412c",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,10 +10,10 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "447bfd6042a9396956f1e9b8ed12c85c555b4b8de326bc75be94a30eb66c3331",
-  "output_hash": "23babfeb1ac7458e9863171a3bfadec71d2522d267e4f9362dd3362138e00cda",
+  "input_hash": "176d0badcad84eb4fb67b050b801a643c70fecbe25659d9a8f78317cd0284990",
+  "output_hash": "cb18d9643f015af28d17b3ac0836cbb51f71926abf5c959029214121fdd5534b",
   "status": "PASSED",
-  "score": 93.2,
+  "score": 93.4,
   "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 0.89, Consistencia: 100.0%)",
   "metrics": {
     "total_trades_analyzed": 286,
@@ -45,30 +45,30 @@
         "is_trades_count": 39,
         "oos_trades_count": 18,
         "pf_is": 6.44,
-        "pf_oos": 2.09,
-        "net_profit_oos_usd": 2.18,
-        "wfe": 0.32
+        "pf_oos": 2.45,
+        "net_profit_oos_usd": 2.91,
+        "wfe": 0.38
       },
       {
         "window_index": 4,
         "is_trades_count": 39,
         "oos_trades_count": 18,
-        "pf_is": 2.79,
-        "pf_oos": 1.39,
-        "net_profit_oos_usd": 0.73,
-        "wfe": 0.5
+        "pf_is": 3.22,
+        "pf_oos": 1.05,
+        "net_profit_oos_usd": 0.11,
+        "wfe": 0.33
       },
       {
         "window_index": 5,
         "is_trades_count": 39,
         "oos_trades_count": 18,
         "pf_is": 0.95,
-        "pf_oos": 1.49,
-        "net_profit_oos_usd": 0.84,
-        "wfe": 1.57
+        "pf_oos": 1.62,
+        "net_profit_oos_usd": 0.98,
+        "wfe": 1.71
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T19:20:03.224151+00:00"
+  "created_at_utc": "2026-08-25T10:37:15.676581+00:00"
 }

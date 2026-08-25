@@ -2,21 +2,21 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_SUI_USDT_4h",
   "strategy_id": "UR_ULTRA_SUI_USDT_4h",
-  "strategy_snapshot_hash": "d1177e2545c6a67c4fb0ea1e97a6f543943045effc2e70eaac856111f1d09b3f",
+  "strategy_snapshot_hash": "a80fdb3c6da3890dbf151eb8c9ec4e02b090047812341baaf2488b6070d7b90e",
   "dataset_id": "ds_binance_suiusdt_4h_1683129600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
   "gate_name": "DEBATE_AGENTES",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "409656e02128fccc4e24734412ac456485668c6606752d0c712c7dd38d607ec3",
-  "output_hash": "faaa6d58b429f259f2575e6f9196c182934e40fa67dea43ea9cc935feed22449",
+  "engine_version": "5.4.0",
+  "formula_version": "5.4.0",
+  "input_hash": "4c69f4d818efc84806a969afa90dc2283bd93dbbbe0bb57cd76fac8b96851bb7",
+  "output_hash": "b25d7aa8fa7c83402d03d050fa87fa46fe3ef2121ab3922df4550faa5e4451b7",
   "status": "PASSED",
-  "score": 93.5,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (93.5/100 · Guía de Mejora Generada)",
+  "score": 93.4,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (93.4/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 93.5,
+    "consensus_score": 93.4,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
@@ -26,7 +26,7 @@
         "score": 100.0,
         "findings": [
           "Activo y Timeframe: SUI (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 2.95 con beneficio neto de $5411.69.",
+          "Profit Factor OOS: 4.79 con beneficio neto de $14662.58.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 80.8,
+        "score": 80.4,
         "findings": [
-          "Drawdown Máximo Observado: 40.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 41.6% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 100 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 84 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $54.12 USD.",
+          "Beneficio medio por operación: $174.55 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -64,7 +64,7 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 95.2,
+        "score": 95.1,
         "objections": [
           "Cero objeciones críticas: Hipótesis robusta respaldada por evidencia empírica."
         ],
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T18:49:42.895506+00:00"
+  "created_at_utc": "2026-08-25T10:35:16.034355+00:00"
 }

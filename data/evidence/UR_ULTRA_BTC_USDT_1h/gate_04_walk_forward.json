@@ -2,24 +2,24 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1h_g04",
   "run_id": "run_UR_ULTRA_BTC_USDT_1h",
   "strategy_id": "UR_ULTRA_BTC_USDT_1h",
-  "strategy_snapshot_hash": "3ade6fbd0d57e0ef9edc54eb8add095f3410d548da870850c09f8eb17204ff1b",
+  "strategy_snapshot_hash": "0c44d84066123289cee5504d627a2b7a8593b288575b9abeaa8549757a4d533f",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
   "gate_id": 4,
   "gate_name": "WALK_FORWARD",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "925414a689bd32f6483d4f5b984529ea324ab665f481bf408fe4f523ba55e052",
-  "output_hash": "9560b919c4e25a1b31f986e126c3166c232575e2242e7c8a734f62a2fde5a37a",
+  "engine_version": "5.4.0",
+  "formula_version": "5.4.0",
+  "input_hash": "20f6ce58dd51fca0b9d055608c92176c8c5a5cc4b702cf66a20dcc4485d5cd1a",
+  "output_hash": "8dd6af114e5d116167781eec0ebad71c75f1703cf8b8cf59a72a81aacc370795",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para Rolling Walk-Forward (< 20 trades)",
   "metrics": {
-    "total_trades": 8,
+    "total_trades": 7,
     "windows_evaluated": 0,
     "walk_forward_efficiency": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-24T19:01:49.271678+00:00"
+  "created_at_utc": "2026-08-25T10:39:08.778680+00:00"
 }

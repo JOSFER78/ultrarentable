@@ -2,23 +2,23 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1h_g08",
   "run_id": "run_UR_ULTRA_BTC_USDT_1h",
   "strategy_id": "UR_ULTRA_BTC_USDT_1h",
-  "strategy_snapshot_hash": "3ade6fbd0d57e0ef9edc54eb8add095f3410d548da870850c09f8eb17204ff1b",
+  "strategy_snapshot_hash": "0c44d84066123289cee5504d627a2b7a8593b288575b9abeaa8549757a4d533f",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
+  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
   "gate_id": 8,
   "gate_name": "DSR_RATIO",
   "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.3.0",
-  "formula_version": "5.3.0",
-  "input_hash": "9202f751a9a0e8aac03a7c88aeae7aa3b35889ff043eef8381a46964274cd360",
-  "output_hash": "15c3299f2001609969a932ec58c70cfa325a93ddcb99c114801d07f226aee6a7",
+  "engine_version": "5.4.0",
+  "formula_version": "5.4.0",
+  "input_hash": "9631923039531a9057b836793303aca101190c8ded9e8415845affd39989d1fa",
+  "output_hash": "fb283776fa0a25469b48eb5cd6acf8c5e08121f4cbe1e52f9ce0474dba42279d",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "RECHAZADO: Trades insuficientes para calcular Deflated Sharpe Ratio (< 10 trades)",
   "metrics": {
-    "trials_penalized": 141,
+    "trials_penalized": 1,
     "dsr_probability": 0.0
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T19:01:49.306652+00:00"
+  "created_at_utc": "2026-08-25T10:39:08.840530+00:00"
 }

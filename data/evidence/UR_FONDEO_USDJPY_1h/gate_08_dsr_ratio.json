@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_USDJPY_1h_g08",
   "run_id": "run_UR_FONDEO_USDJPY_1h",
   "strategy_id": "UR_FONDEO_USDJPY_1h",
-  "strategy_snapshot_hash": "136c94bf082e3398fd29e80f760c229e0535959f879ccdd481a1abd060d6aa52",
+  "strategy_snapshot_hash": "6a8175792a7a04f7a08874eba934479b32601cdbd842ca1d46dd7e8079b59504",
   "dataset_id": "ds_trad_usdjpy_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "30a7f6e44e87d6af53e9bb8011970424ce53c02f71bc843e45760bf78e35b49e",
-  "output_hash": "18bc566dc892aca265ca6b6c397d96f043881efa15a5ecc96de0d32e88fac812",
+  "input_hash": "88ed8d5815c9ac609822009ca8f71ef2c473c74e4ee9a5caddc4f3ce8d9b3537",
+  "output_hash": "45055f194b2de60f6d5bfa7670b892a8f42563fc66e80141cd01786bebd2a806",
   "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
+  "score": 16.9,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (16.9% < 50.0% tras penalizar 141 trials)",
   "metrics": {
     "raw_sharpe_ratio": -0.151,
-    "deflated_sharpe_probability_pct": 0.0,
-    "trials_penalized_count": 3,
-    "expected_max_sharpe_under_selection": 0.853,
+    "deflated_sharpe_probability_pct": 16.91,
+    "trials_penalized_count": 141,
+    "expected_max_sharpe_under_selection": 0.0,
     "skewness": 1.461,
     "kurtosis": 4.005,
     "sample_trades_count": 51
   },
   "artifact_path": "data/evidence/UR_FONDEO_USDJPY_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-24T19:29:38.237287+00:00"
+  "created_at_utc": "2026-08-25T10:40:57.914549+00:00"
 }

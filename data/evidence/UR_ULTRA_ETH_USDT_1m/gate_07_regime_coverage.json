@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_1m_g07",
   "run_id": "run_UR_ULTRA_ETH_USDT_1m",
   "strategy_id": "UR_ULTRA_ETH_USDT_1m",
-  "strategy_snapshot_hash": "d6b7616ed796ba94e850af25c0a4fa8c9de18c4ef9f2996a21f0c7c82a5fc6cb",
+  "strategy_snapshot_hash": "61155167cbe693975dc282b0e17aa64bb79100de04e86dd3e302ff6496695f70",
   "dataset_id": "ds_bingx_ETH_USDT_1m_1771841100000_1785665040000_ee0b2e169d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "f1a796001a93a5b2ad0382cd58644ebb56a09152f496ca2cdca8cf64e7fbe7d3",
-  "output_hash": "4eefa5f5c40127a1fc79fabfdd7834d372f4f8b34d98636c1f095dbd9312131a",
+  "input_hash": "341213222e7783a5044decb018e06e2be12446961f4b996062fcc62587b48977",
+  "output_hash": "f7bc2ce415c745d8f30805545efc2364243d631aad0db4d915ca681de95e80e0",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -370.97%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -598.28%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 159,
-      "HIGH_VOLATILITY": 50
+      "CHOP_RANGING": 129,
+      "HIGH_VOLATILITY": 65
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -158.58,
-      "HIGH_VOLATILITY": -212.39
+      "CHOP_RANGING": -119.6,
+      "HIGH_VOLATILITY": -478.68
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -370.97
+    "total_oos_return_pct": -598.28
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_1m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T19:36:46.223163+00:00"
+  "created_at_utc": "2026-08-25T10:43:56.806337+00:00"
 }

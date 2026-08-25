@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1h_g07",
   "run_id": "run_UR_ULTRA_LINK_USDT_1h",
   "strategy_id": "UR_ULTRA_LINK_USDT_1h",
-  "strategy_snapshot_hash": "ff08aea570fb42b00f9fe62a8440ce88f183a8ae3fa2f488fe25efe474c07d99",
+  "strategy_snapshot_hash": "e79a7ca245869bba18657b3599bfff74bbabf679aa0b38b67aa966ef1f46a4bd",
   "dataset_id": "ds_binance_linkusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "33b76b835dfed80df52f6ab690b652a8fed8b52a940007711984284ffc3eca2c",
-  "output_hash": "ba1d20666f48820097f4b76ccac9d6eb5345a2b819b0abe4d0721f853e9dcb12",
+  "input_hash": "c3fced107a9bf6d42bbcde27ebc65d48b630ac02cf3e0feacb8ddae42b31f75a",
+  "output_hash": "7104c9387cb8b9cf0dcf42b2d75c27bd976cb005a5fae80a316365b13f33e66a",
   "status": "FAILED",
   "score": 15.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -335.15%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (1/4 rentables, Retorno Total: -335.49%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 731,
@@ -24,20 +24,20 @@
     },
     "regime_trades_count": {
       "BULL_TREND": 47,
-      "BEAR_TREND": 55,
+      "BEAR_TREND": 54,
       "CHOP_RANGING": 108,
       "HIGH_VOLATILITY": 50
     },
     "regime_return_pct": {
-      "BULL_TREND": -193.49,
-      "BEAR_TREND": -145.64,
-      "CHOP_RANGING": -65.0,
+      "BULL_TREND": -200.49,
+      "BEAR_TREND": -137.05,
+      "CHOP_RANGING": -66.93,
       "HIGH_VOLATILITY": 68.98
     },
     "regimes_profitable_count": 1,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -335.15
+    "total_oos_return_pct": -335.49
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-24T19:28:34.133084+00:00"
+  "created_at_utc": "2026-08-25T10:40:34.705248+00:00"
 }

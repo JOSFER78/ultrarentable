@@ -36,7 +36,7 @@ const NAVIGATION: NavGroup[] = [
     items: [
       { code: "ULT", icon: "🔥", label: "Ultra Lab (BingX 500x)", href: "/ultra", badge: "BALA" },
       { code: "FND", icon: "🛡️", label: "Track Fondeo (CME Guard)", href: "/fondeo", badge: "DD 4%" },
-      { code: "PF", icon: "🏛️", label: "Catálogo 34 Prop Firms", href: "/prop-firms", badge: "APEX/TOP" },
+      { code: "PF", icon: "🏛️", label: "Catálogo 70 Prop Firms CME", href: "/prop-firms", badge: "70 TIERS" },
     ],
   },
   {

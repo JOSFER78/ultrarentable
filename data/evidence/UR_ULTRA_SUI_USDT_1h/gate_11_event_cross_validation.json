@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_1h_g11",
   "run_id": "run_UR_ULTRA_SUI_USDT_1h",
   "strategy_id": "UR_ULTRA_SUI_USDT_1h",
-  "strategy_snapshot_hash": "76159c6c335dd3fcda986cb654c71dbb1a8b231e1db828dc3834e5d6b087bd6f",
+  "strategy_snapshot_hash": "3d20007e9def329edfcb6e2341c69e59c51dbc7b6f6c2b110b0b95abb7ccea02",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "532ec0cee4448799dbf3ce4f887c4b20c04d086b2e7c2c77cb07a20f1b7db874",
-  "output_hash": "a74d4efbdd08ffd1697903e968af66f06567531c350b4cac3b5cb698b0ca2fad",
+  "input_hash": "b65075c7aa27adb55b162a182cf910798b74d49766f4932af61f4c73eb75a4c8",
+  "output_hash": "94f966ecbf732b858ab48feb01840e2ab53b31d957ec16dfc96c1d945b6bfcf4",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $1574.44, Bóveda Cosechada: $1573.80, Apalancamiento: 6.0x, Dist. Mín. Liq: 62.4%)",
+  "score": 86.9,
+  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $1574.21, Bóveda Cosechada: $1573.80, Apalancamiento: 6.0x, Dist. Mín. Liq: 40.0%)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 0.64,
+    "final_equity_usd": 0.41,
     "peak_equity_usd": 3665.51,
-    "min_equity_usd": 0.64,
+    "min_equity_usd": 0.41,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 62.45,
+    "min_distance_to_liquidation_pct": 39.97,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 35.43,
-    "execution_events_count": 314
+    "total_funding_cost_usd": 35.61,
+    "execution_events_count": 309
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-24T19:24:14.626426+00:00"
+  "created_at_utc": "2026-08-25T10:38:42.462673+00:00"
 }

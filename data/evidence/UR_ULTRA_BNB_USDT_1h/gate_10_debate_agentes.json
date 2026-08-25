@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_BNB_USDT_1h_g10",
   "run_id": "run_UR_ULTRA_BNB_USDT_1h",
   "strategy_id": "UR_ULTRA_BNB_USDT_1h",
-  "strategy_snapshot_hash": "b27a94cce4530d63053f98bef85e495632bebd7365985fc71af75cde9886dc96",
+  "strategy_snapshot_hash": "3d3b1ae26f0b8d3054c520f603346a9f734bbe590d329b5925a8fab3105d32d0",
   "dataset_id": "ds_binance_bnbusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "bbd715a6dbf71d0a12c57d7b29d367559dce64ed954164e64dc2a6d7129a7381",
-  "output_hash": "8ca02d2598542108870727eaee0aab9e9c92f11d39e99cae114213eec60038c0",
+  "input_hash": "9c97cc79b50a864ce487fa2ddedbbb7a946c6ffcfeca552957b50358871bbd00",
+  "output_hash": "f74de0dd33c8b128daa52412a6f4bb7175f39bbe48651a7c41a283de6e93f675",
   "status": "FAILED",
-  "score": 33.7,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (33.7/100)",
+  "score": 33.5,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (33.5/100)",
   "metrics": {
-    "consensus_score": 33.7,
+    "consensus_score": 33.5,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 51.9,
+        "score": 51.4,
         "findings": [
           "Activo y Timeframe: BNB (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.93 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.92 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 313 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 296 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.19 USD.",
+          "Beneficio medio por operación: $-3.38 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.0,
+        "score": 37.9,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.93 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.92 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_BNB_USDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-24T19:23:33.240005+00:00"
+  "created_at_utc": "2026-08-25T10:38:26.813412+00:00"
 }
