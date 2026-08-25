@@ -1,51 +1,67 @@
-# ORDER AG2-P01-005 — PHASE 01 PROVENANCE ELIGIBILITY & ARTIFACT SSOT REWORK
+# ORDER AG2-P02-001 — PHASE 02 CANONICAL STRATEGY & EXECUTION CONTRACT
 
 ## Status
 `ISSUED`
 
 ## Trigger
-Auto-start when `00_DISPATCH.md` contains the new matching dispatch and `CURRENT_PHASE=01`, `PHASE_STATUS=REWORK`, `ACTIVE_ORDER_ID=AG2-P01-005`.
+Auto-start when `00_DISPATCH.md` contains the new matching dispatch and `CURRENT_PHASE=02`, `PHASE_STATUS=ACTIVE`, `ACTIVE_ORDER_ID=AG2-P02-001`.
 
 ## STRICT SCOPE
-Execute ONLY this Phase 01 rework. Do not start Phase 02, Discovery, Genome, Meta-Strategy, FONDEO or ULTRA work. Out-of-scope findings = `DEFERRED_TO_FUTURE_ORDER`.
+Execute ONLY this Phase 02 order. Do not start Phase 03, Discovery, Genome, Meta-Strategy, FONDEO or ULTRA work. Out-of-scope findings = `DEFERRED_TO_FUTURE_ORDER` unless they directly block Phase 02.
 
-## Required corrections
+## Mission
+Establish one deterministic, versioned, hashable canonical representation of a strategy and prove that the execution engine consumes that exact representation without semantic drift, hidden defaults, duplicated rules or silent transformations.
 
-### P01-005-01 — Independent Alias Artifact SSOT
-The canonical alias registry MUST exist as an independent versioned/hashable artifact consumed by runtime. Runtime must not contain a duplicated authoritative copy. Missing or modified artifact must fail closed.
+## Required work
 
-### P01-005-02 — Provenance Evidence States
-Implement explicit states: `VERIFIED`, `UNVERIFIED`, `NO_EVIDENCE`, `INVALID`. Non-VERIFIED states are never quantitative evidence.
+### P02-001-01 — Canonical Strategy Contract
+Audit/implement the canonical strategy schema covering at minimum strategy_id, strategy_version, strategy_hash, instrument/timeframe references, entry/exit logic, position/risk instructions, execution semantics, required parameters and schema/policy versions. No duplicated authoritative strategy definition.
 
-### P01-005-03 — Eligibility Gate
-Consumers that require verified provenance MUST reject `UNVERIFIED`, `NO_EVIDENCE` and `INVALID` datasets. No silent conversion to usable evidence.
+### P02-001-02 — Deterministic Serialization / Hashing
+Identical canonical bytes must yield identical hashes. Any material semantic change must yield a new version/hash. No synthetic hashes.
 
-### P01-005-04 — Full Manifest Identity Cross-check
-When a physical manifest exists, cross-check `source_id + instrument_id + timeframe_id + data_snapshot_id + available version metadata` against canonical registry resolution. Any contradiction fails closed.
+### P02-001-03 — Runtime Consumption
+Trace the real path from canonical strategy artifact to compiler/runtime/execution. Prove runtime consumes the canonical object and cannot silently substitute defaults, aliases, parameters or rules.
 
-### P01-005-05 — Reproducibility Tests
-Prove: alias artifact hash/version reproducibility; runtime consumes the artifact rather than duplicated constants; modified/missing artifact fails closed; non-VERIFIED datasets cannot pass verified-provenance eligibility; manifest/registry identity mismatch fails closed; exact resolution remains deterministic; unchanged bytes yield unchanged hashes.
+### P02-001-04 — Fail-Closed Validation
+Invalid, incomplete, incompatible or ambiguous strategy definitions must be rejected before quantitative execution. No fallback strategy, random parameter, missing-value fabrication or permissive coercion.
+
+### P02-001-05 — Lineage / Version Governance
+Every execution must identify exact strategy, engine, execution policy and dataset identity. Material strategy changes cannot inherit certification from the parent.
+
+### P02-001-06 — Determinism Tests
+Demonstrate deterministic results for the same canonical strategy + dataset + execution policy. Test mutation/version/hash invariants and malformed-definition rejection.
+
+### P02-001-07 — API/UI Provenance
+Verify API/UI reads strategy identity/version/hash/status from canonical evidence. UI must not calculate or invent quantitative truth.
+
+### P02-001-08 — Red-Team
+Search for hardcoded defaults, duplicate models, silent coercions, random/seed shortcuts, mock execution, lookahead, hidden overrides and bypasses of the canonical contract.
 
 ## Mandatory subagents
-1. DATA / PROVENANCE
-2. VERSION / ARTIFACT SSOT
-3. IMPLEMENTATION / REGISTRY
-4. RED-TEAM / ZERO-MOCK
-5. VALIDATION / ELIGIBILITY
-6. TEST / REPRODUCIBILITY
-7. API/UI / PROVENANCE
-8. RELIABILITY / SNAPSHOT-RECOVERY
+1. RECON / ARCHITECTURE
+2. QUANT ENGINE / EXECUTION
+3. CANONICAL CONTRACT / VERSIONING
+4. TEST / DETERMINISM
+5. RED-TEAM / ZERO-MOCK
+6. API/UI / PROVENANCE
+7. RELIABILITY / REPRODUCIBILITY
 
-Implementer cannot be sole verifier.
+The implementer cannot be the sole verifier.
 
 ## SSH / VPS
-Long jobs must be detached/asynchronous. Record `remote_job_id`, exact command, target SHA, log path, state and real exit code. Never block the orchestrator 10–20 minutes.
+Use SSH as needed, but never block the orchestration loop 10–20 minutes. Long jobs MUST be detached/asynchronous and tracked with remote_job_id, exact command, target SHA, log path, state and real exit code. Poll asynchronously. PASS requires the real exit code and evidence.
+
+## TESTING
+Run focused Phase 02 tests first, then bounded regression relevant to changed contracts. Do not run the entire repository indiscriminately. Never weaken, skip or rewrite tests to force PASS. No fabricated fixtures masquerading as production evidence.
 
 ## ZERO-SIMULATION / ZERO-FORCING / REAL-ONLY
-Absolute. No fabricated provenance, hashes, versions, evidence, passes, datasets or test manipulation.
+Absolute. This phase is infrastructure validation. Do not create profitable strategies, fake datasets, synthetic performance curves or fabricated certifications to satisfy criteria.
 
-## GitHub completion
-Work on `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`. Deliver only to `origin/main`.
-Before `READY_FOR_REVIEW`: focused tests + bounded regression, exact commands/exit codes, commit, push `origin/main`, verify remote SHA, create `.agents/informe&seguimiento/03_HANDOFF_AG2-P01-005.md`, include evidence and deferred findings, STOP.
+## GITHUB COMPLETION
+Work on `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`. Before `READY_FOR_REVIEW`: implement only this order; run real focused tests; record exact commands/exit codes; record changed files; commit; push `origin/main`; verify remote SHA; create `.agents/informe&seguimiento/03_HANDOFF_AG2-P02-001.md`; include evidence, limitations and deferred findings; STOP.
 
-Do not advance Phase 02.
+`origin/main` is the authoritative branch read by the external reviewer. Local-only completion is NOT completion.
+
+## EXIT
+`READY_FOR_REVIEW` only with complete real evidence. Otherwise `BLOCKED` with exact blocker and evidence. Antigravity must never create or self-approve the next order.
