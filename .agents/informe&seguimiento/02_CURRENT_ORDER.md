@@ -1,122 +1,128 @@
-# ORDER AG2-P01-002 — PHASE 01 DATA INTEGRITY REWORK
+# ORDER AG2-P01-003 — PHASE 01 PROVENANCE SOURCE-OF-TRUTH REWORK
 
 ## Status
 `ISSUED`
 
+This replaces the previous active order `AG2-P01-002` for the same phase. Antigravity must auto-start this new order on the next watcher cycle.
+
 ## Target
-`PHASE 01 — DATA & DATASET CHAIN OF CUSTODY (REWORK)`
+`PHASE 01 — DATA & DATASET CHAIN OF CUSTODY (FINAL REWORK BEFORE RELEASE)`
 
 ## Trigger
-Watcher must automatically start this order when `00_DISPATCH.md` exposes the new `dispatch_id` `AG2-DISPATCH-20260825-1420-P01-002` and:
-- `CURRENT_PHASE = 01`
-- `PHASE_STATUS = REWORK`
-- `ACTIVE_ORDER_ID = AG2-P01-002`
-- `status = ISSUED`
+The watcher must auto-start this order when:
+- `CURRENT_PHASE = 01`;
+- `PHASE_STATUS = REWORK`;
+- `ACTIVE_ORDER_ID = AG2-P01-003`;
+- this order is `ISSUED`;
+- `00_DISPATCH.md` contains the matching NEW `dispatch_id`.
 
 No manual prompt is required.
 
 ## STRICT SCOPE
-Execute ONLY this Phase 01 rework. Do not start Phase 02 or any later research track.
 
-Allowed:
-- dataset registry and chain-of-custody fixes required below;
-- direct dependencies strictly necessary for these fixes;
-- focused tests and bounded impacted regression;
-- repository inspection needed for data/provenance proof.
+Execute ONLY this Phase 01 rework.
 
-Not allowed:
-- Discovery Factory implementation;
-- Genome/clustering/fertility optimization;
-- Meta-Strategy;
-- FONDEO optimization;
-- ULTRA research;
-- unrelated cleanup or UI redesign.
+Do not start Phase 02, Discovery Factory, Strategy Genome, Meta-Strategy, FONDEO optimization, ULTRA research, or unrelated cleanup.
 
-Out-of-scope findings must be `DEFERRED_TO_FUTURE_ORDER` and left untouched unless a direct blocker is proven.
+Out-of-scope findings must be recorded as `DEFERRED_TO_FUTURE_ORDER` and left untouched unless proven a direct blocker.
 
 ## Why this order exists
-The previous Phase 01 handoff is not certification-grade because `services/data/dataset_registry.py` still contains evidence/provenance fallbacks that violate REAL-ONLY / ZERO-SIMULATION.
+P01-002 materially improved physical hashing and fail-closed loading, but the current implementation still contains provenance inference/defaults that violate REAL-ONLY / ZERO-SIMULATION.
+
+Verified current issues include:
+- source inference from filenames when explicit source metadata is absent;
+- hardcoded `timeframe_id` fallback of `1h`;
+- hardcoded `data_version`, `schema_version`, and `normalization_version` values of `1.0.0`;
+- alias transformations that can change the requested instrument identity instead of requiring an explicit canonical alias registry.
 
 ## Required corrections
 
-### P01-REWORK-01 — Physical partition hashes
-Partition SHA-256 values MUST be calculated from actual canonicalized bytes/content of the partition, never from synthetic strings or metadata labels.
+### P01-003-01 — Provenance must come from authoritative metadata
 
-### P01-REWORK-02 — Remove invented metadata defaults
-Remove operational defaults that manufacture provenance/evidence, including:
-- `source_id` fallback such as `YAHOO_CME` when source is absent;
-- invented timestamps such as `1` or `start + 86400000`;
-- `coverage_pct=100.0` when unknown;
-- silent completion of incomplete manifests.
+`source_id`, `instrument_id`, and `timeframe_id` MUST NOT be guessed from filenames or defaults.
 
-Unknown values must be `UNVERIFIED`, `NO_EVIDENCE`, or explicit failure according to the contract.
+Allowed sources, by authority:
+1. explicit immutable dataset manifest fields;
+2. a canonical registry entry whose provenance is itself versioned/evidenced;
+3. otherwise `UNVERIFIED` / `NO_EVIDENCE` / fail-closed according to contract.
 
-### P01-REWORK-03 — Physical integrity
-Verify from physical bytes:
-- row/bar count;
-- monotonic timestamps;
-- duplicates;
-- out-of-order rows;
-- actual start/end;
-- gaps where deterministically computable;
-- schema;
-- timezone normalization;
-- file SHA-256.
+Filename heuristics are not scientific evidence.
 
-### P01-REWORK-04 — Partition correctness
-Partition boundaries must correspond to actual record boundaries or an explicit deterministic timestamp rule. IS/VAL/Blind-OOS must be provably disjoint and exhaustive for the snapshot.
+### P01-003-02 — No hardcoded version identity
 
-### P01-REWORK-05 — Fail-closed loader
-Missing dataset, SHA mismatch, malformed bytes, inconsistent manifest identity or unverifiable required provenance must fail closed. Never silently substitute another dataset.
+Remove hardcoded `data_version`, `schema_version`, and `normalization_version` values from runtime-generated manifests unless derived from an explicit canonical version registry/manifest actually present and hashable.
 
-### P01-REWORK-06 — Deterministic resolution
-Remove fuzzy symbol matching that can silently select the wrong instrument. Ambiguity must return `NO_EVIDENCE`/explicit error.
+Missing version metadata must remain unknown/unverified, not silently become `1.0.0`.
 
-### P01-REWORK-07 — Reproducible manifests
-Every manifest must identify at minimum:
-`data_snapshot_id, source_id, instrument_id, timeframe_id, schema_version, normalization_version, coverage_start, coverage_end, record_count, data_sha256, partition definitions, partition hashes`.
-No value may be fabricated to make the manifest complete.
+### P01-003-03 — Exact identity resolution
+
+`resolve_dataset(instrument, timeframe)` must use exact canonical identity.
+
+Do not strip/transform the requested instrument in ways that can change identity unless the transformation is an explicit canonical alias in a versioned alias registry with evidence.
+
+Ambiguous aliases must fail closed.
+
+### P01-003-04 — Manifest self-consistency
+
+When an external manifest exists, cross-check its identity against the physical dataset and registry resolution.
+
+A manifest claiming one instrument/timeframe/source while the registry resolves another must be rejected.
+
+### P01-003-05 — Reproducibility tests
+
+Add focused tests proving:
+- missing source metadata does not become a guessed venue;
+- missing timeframe metadata does not become `1h`;
+- missing schema/normalization/data versions do not become `1.0.0`;
+- exact identity resolution cannot silently alias to another instrument;
+- explicit aliases only resolve through a canonical alias registry entry with evidence;
+- manifest identity mismatch fails closed;
+- partition/file hashes remain stable for unchanged physical bytes.
 
 ## Mandatory subagents
-1. DATA / CHAIN-OF-CUSTODY
-2. QUANT / TEMPORAL-INTEGRITY
-3. IMPLEMENTATION / REGISTRY
-4. RED-TEAM / PROVENANCE
-5. VALIDATION / LEAKAGE
-6. TEST / REPRODUCIBILITY
-7. RELIABILITY / SNAPSHOT-RECOVERY
-8. UI/API / DATA-PROVENANCE
 
-An implementation subagent cannot be the sole verifier.
+1. DATA / CHAIN-OF-CUSTODY
+2. PROVENANCE / VERSION-REGISTRY
+3. QUANT / TEMPORAL-INTEGRITY
+4. IMPLEMENTATION / REGISTRY
+5. RED-TEAM / ZERO-MOCK
+6. TEST / REPRODUCIBILITY
+7. API/UI / PROVENANCE
+8. RELIABILITY / SNAPSHOT-RECOVERY
+
+The implementing subagent cannot be the sole verifier.
 
 ## SSH / VPS
-Long-running tests must be detached/asynchronous. Record `remote_job_id`, target commit, exact command, log path and real exit status. Never wait interactively 10–20 minutes.
+
+All long-running commands must be asynchronous/detached. Record `remote_job_id`, exact command, target SHA, log path, status and real exit code. Never wait attached for 10–20 minutes.
 
 ## ZERO-SIMULATION / ZERO-FORCING / REAL-ONLY
-Absolute. No synthetic partitions, fake hashes, invented coverage, placeholder metadata, cached PASS, test manipulation or forced green output.
 
-## Verification
-Required focused tests:
-- physical partition hash reproducibility;
-- manifest/file hash verification;
-- missing/unknown metadata fail-closed;
-- partition disjointness/exhaustiveness;
-- timestamp integrity;
-- ambiguous instrument resolution;
-- missing/corrupt dataset handling;
-- consumer resolution through DatasetRegistry.
+Absolute:
+- no inferred provenance presented as fact;
+- no invented versions;
+- no synthetic hashes;
+- no fabricated dataset identity;
+- no test modification just to obtain green output;
+- no PASS without real evidence.
 
-## GitHub completion
-Work in `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`, but deliver only on `origin/main`.
+## GitHub completion contract
+
+Work on the real project workspace:
+`/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
+
+Deliver only to:
+`origin/main`
+
 Before `READY_FOR_REVIEW`:
-1. implement only scoped changes;
-2. run required tests and record exact commands/exit codes;
-3. commit;
-4. push `origin/main`;
-5. verify remote SHA;
-6. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P01-002.md`;
-7. include remote SHA and all evidence;
-8. list deferred findings;
+1. implement only scoped Phase 01 changes;
+2. run focused tests and bounded regression;
+3. record exact commands and exit codes;
+4. commit;
+5. push `origin/main`;
+6. verify remote SHA;
+7. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P01-003.md`;
+8. include remote SHA, subagents, tests, evidence, deferred findings and proven/unproven items;
 9. STOP.
 
 Do not start Phase 02.
