@@ -1,6 +1,7 @@
 """services/version_control_manager.py
 Gestor Canónico de Versiones, Detección de Code Drift y Huellas Criptográficas SHA-256.
 SSOT para la gobernanza inmutable de versiones de Ultrarentable.
+ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED
 """
 from __future__ import annotations
 
@@ -45,7 +46,7 @@ class VersionControlManager:
         self.state_file = manifest_file or state_file or (self.root_dir / "version_manifest.json")
         self.py_path = py_path
         self.db_path = db_path
-        # Si es un manifest aislado para pruebas (tmp_path), inicializar en 1.02 para compatibilidad con unit tests
+        self._manifest_corrupted = False
         is_isolated_test = manifest_file is not None and "test" in str(manifest_file).lower()
         self._active_version = "1.02" if is_isolated_test else CURRENT_ENGINE_VERSION
         self._active_name = CURRENT_ENGINE_NAME
@@ -69,8 +70,9 @@ class VersionControlManager:
                     self._last_bump_utc = data.get("last_bump_utc", self._last_bump_utc)
                     self._history = data.get("history", self._history)
                     return
-            except Exception:
-                pass
+            except Exception as e:
+                logger.error(f"Fallo cargando manifest de versión {self.state_file}: {e}")
+                self._manifest_corrupted = True
         self._persist_state()
 
     def _persist_state(self) -> None:
@@ -89,16 +91,17 @@ class VersionControlManager:
             }
             with open(self.state_file, "w", encoding="utf-8") as f:
                 json.dump(payload, f, indent=2, ensure_ascii=False)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error(f"Fallo persistiendo manifest de versión {self.state_file}: {e}")
 
     def load_manifest(self) -> Dict[str, Any]:
         if self.state_file and self.state_file.exists():
             try:
                 with open(self.state_file, "r", encoding="utf-8") as f:
                     return json.load(f)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.error(f"Error en load_manifest: {e}")
+                self._manifest_corrupted = True
         return {
             "active_version": self._active_version,
             "active_name": self._active_name,
@@ -107,6 +110,7 @@ class VersionControlManager:
             "codebase_fingerprint": self._active_fingerprint,
             "last_bump_utc": self._last_bump_utc,
             "history": self._history,
+            "manifest_corrupted": self._manifest_corrupted,
         }
 
     def get_active_version(self) -> str:
@@ -115,24 +119,23 @@ class VersionControlManager:
     def increment_version_string(self, version_str: str) -> str:
         parts = version_str.split(".")
         if len(parts) == 2 and parts[1].isdigit():
-            # e.g. "1.02" -> "1.03"
             prefix_len = len(parts[1])
             next_num = int(parts[1]) + 1
             return f"{parts[0]}.{str(next_num).zfill(prefix_len)}"
         elif len(parts) == 3 and parts[2].isdigit():
-            # e.g. "5.4.0" -> "5.4.1"
             return f"{parts[0]}.{parts[1]}.{int(parts[2]) + 1}"
         else:
             return f"{version_str}.1"
 
     def _get_git_info(self) -> Dict[str, Any]:
+        """Extrae la identidad real de Git. Prohibido inventar commits de fallback."""
         try:
-            commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-            branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True).strip()
-            msg = subprocess.check_output(["git", "log", "-1", "--pretty=%B"], text=True).strip()
-            author = subprocess.check_output(["git", "log", "-1", "--pretty=%an"], text=True).strip()
-            date = subprocess.check_output(["git", "log", "-1", "--pretty=%ci"], text=True).strip()
-            status = subprocess.check_output(["git", "status", "--porcelain"], text=True).strip()
+            commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
+            branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
+            msg = subprocess.check_output(["git", "log", "-1", "--pretty=%B"], text=True, stderr=subprocess.DEVNULL).strip()
+            author = subprocess.check_output(["git", "log", "-1", "--pretty=%an"], text=True, stderr=subprocess.DEVNULL).strip()
+            date = subprocess.check_output(["git", "log", "-1", "--pretty=%ci"], text=True, stderr=subprocess.DEVNULL).strip()
+            status = subprocess.check_output(["git", "status", "--porcelain"], text=True, stderr=subprocess.DEVNULL).strip()
             return {
                 "git_commit": commit,
                 "git_commit_short": commit[:7],
@@ -144,13 +147,13 @@ class VersionControlManager:
             }
         except Exception:
             return {
-                "git_commit": "1cd7516e57e2268ae4aa31db0af3c659eec742b8",
-                "git_commit_short": "1cd7516",
-                "git_branch": "main",
-                "git_message": "Reality Lock v5.4.0 Canonical Core",
-                "git_author": "Antigravity Quant Architect",
-                "git_date": datetime.now(timezone.utc).isoformat(),
-                "git_is_dirty": False,
+                "git_commit": "UNVERIFIED_NO_GIT",
+                "git_commit_short": "UNVERIF",
+                "git_branch": "UNVERIFIED",
+                "git_message": "NO_GIT_EVIDENCE",
+                "git_author": "UNVERIFIED",
+                "git_date": "UNVERIFIED",
+                "git_is_dirty": True,
             }
 
     def compute_codebase_fingerprint(self, root_dir: Optional[Path] = None) -> str:
@@ -159,6 +162,8 @@ class VersionControlManager:
     def get_full_version_info(self) -> Dict[str, Any]:
         git_info = self._get_git_info()
         fp = self.compute_codebase_fingerprint()
+        drift_detected = (fp != self._active_fingerprint)
+        status = "HEALTHY" if not drift_detected and not self._manifest_corrupted else "DRIFT_OR_CORRUPTION"
         return {
             "current_version": self._active_version,
             "current_name": self._active_name,
@@ -167,11 +172,11 @@ class VersionControlManager:
             "engine_version": self._active_version,
             "pipeline_version": self._pipeline_version,
             "policy_version": self._policy_version,
-            "api_version": "2.0.0",
-            "status": "HEALTHY",
+            "api_version": "2.2.0",
+            "status": status,
             "codebase_fingerprint": fp,
             "current_runtime_fingerprint": fp,
-            "code_drift_detected": False,
+            "code_drift_detected": drift_detected,
             "last_bump_utc": self._last_bump_utc,
             "history": self._history,
             **git_info,
@@ -194,6 +199,7 @@ class VersionControlManager:
             self._active_name = name
         now_utc = datetime.now(timezone.utc).isoformat()
         self._last_bump_utc = now_utc
+        self._active_fingerprint = self.compute_codebase_fingerprint()
 
         entry = {
             "version": v,
@@ -207,13 +213,15 @@ class VersionControlManager:
         return self.get_full_version_info()
 
     def check_drift(self) -> Dict[str, Any]:
-        info = self.get_full_version_info()
+        current_fp = self.compute_codebase_fingerprint()
+        drift_detected = (current_fp != self._active_fingerprint)
+        recommendation = "Código sincronizado con la huella registrada." if not drift_detected else "Code drift detectado: Se requiere registrar o bump de versión."
         return {
-            "code_drift_detected": False,
+            "code_drift_detected": drift_detected,
             "active_version": self._active_version,
             "active_fingerprint": self._active_fingerprint,
-            "runtime_fingerprint": self._active_fingerprint,
-            "recommendation": "Código sincronizado con la versión activa.",
+            "runtime_fingerprint": current_fp,
+            "recommendation": recommendation,
         }
 
     def stamp_metadata(self, data: Dict[str, Any]) -> Dict[str, Any]:

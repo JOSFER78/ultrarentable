@@ -1,85 +1,69 @@
-"""Ultra Portfolio Engine: Real-Only Multi-Asset Compounding & Synergies.
-
-DOCTRINA ZERO-MOCKS:
-- Agrega exclusivamente operaciones físicas de candidatos certificados persistidos en SQLite/Disco.
-- Cero curvas de equidad sintéticas o multiplicadores hardcodeados.
-- Si no hay evidencia física en disco o SQLite, devuelve estado NO_EVIDENCE.
+"""services/api/app/factory/ultra_portfolio_engine.py
+Motor Canónico de Portafolios Ultra Multi-Activo.
+ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED
+Agrega ledgers y operaciones físicas de candidatos certificados sin multiplicadores sintéticos.
 """
+
 from __future__ import annotations
 
 import json
-import logging
-from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import numpy as np
+from pydantic import BaseModel, Field
 
-from services.api.app.db.database import SessionLocal, CandidateModel, BacktestModel
-
-logger = logging.getLogger("UltraPortfolioEngine")
+from services.api.app.db.database import SessionLocal, CandidateModel
 
 
-@dataclass
-class UltraHyperScalePortfolio:
+class UltraHyperScalePortfolio(BaseModel):
     portfolio_id: str
     name: str
     description: str
-    target_route: str = "ULTRA"
-    base_capital_usd: float = 10000.0
-    target_multiplication: str = "N/A"
-    leverage_system: str = "BingX Dynamic Margin"
-    pyramiding_tiers: int = 1
-    floating_reinvest_pct: float = 0.0
-    components: List[Dict[str, Any]] = field(default_factory=list)
-    combined_win_rate_pct: float = 0.0
-    individual_win_rates: Dict[str, float] = field(default_factory=dict)
-    annualized_roi_pct: float = 0.0
-    monthly_roi_pct: float = 0.0
-    total_roi_oos_pct: float = 0.0
-    net_profit_usd: float = 0.0
-    profit_factor: float = 0.0
-    max_drawdown_pct: float = 0.0
-    individual_max_dd_avg: float = 0.0
-    trades_per_month: float = 0.0
-    total_trades: int = 0
-    duration_info: Dict[str, Any] = field(default_factory=dict)
-    hyper_resources: List[Dict[str, Any]] = field(default_factory=list)
-    leverage_stages: List[Dict[str, Any]] = field(default_factory=list)
-    equity_growth_curve: List[Dict[str, Any]] = field(default_factory=list)
-    synergy_rules: Dict[str, Any] = field(default_factory=dict)
-    real_synergy_events: List[Dict[str, Any]] = field(default_factory=list)
-    status: str = "VERIFIED"
+    target_route: str
+    base_capital_usd: float
+    target_multiplication: str
+    components: List[Dict[str, Any]]
+    combined_win_rate_pct: float
+    individual_win_rates: Dict[str, float]
+    annualized_roi_pct: float
+    monthly_roi_pct: float
+    total_roi_oos_pct: float
+    net_profit_usd: float
+    profit_factor: float
+    max_drawdown_pct: float
+    individual_max_dd_avg: float
+    total_trades: int
+    equity_growth_curve: List[Dict[str, Any]]
+    status: str
+    provenance_hash: Optional[str] = None
 
 
 def _extract_candidate_trades(candidate_id: str) -> List[Dict[str, Any]]:
-    """Extrae las operaciones físicas reales desde el EvidenceBundle o BacktestModel en disco."""
-    evidence_paths = [
-        Path("data/evidence") / candidate_id / "gate_02_cost_backtest.json",
-        Path("data/evidence") / candidate_id / "gate_02_backtest_costes.json",
-        Path("data/evidence") / candidate_id / "evidence_bundle.json",
-    ]
-    for p in evidence_paths:
-        if p.is_file():
-            try:
-                with open(p, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    trades = data.get("metrics", {}).get("trades", []) or data.get("trades", [])
-                    if trades:
-                        return trades
-            except Exception as e:
-                logger.warning(f"No se pudo leer trades de {p}: {e}")
+    """Extrae las operaciones físicas del EvidenceBundle en disco o de la base de datos."""
+    base_dir = Path(__file__).resolve().parent.parent.parent.parent.parent
+    evidence_path = base_dir / "data" / "evidence" / candidate_id / "evidence_bundle.json"
+    if evidence_path.exists():
+        try:
+            with open(evidence_path, "r", encoding="utf-8") as f:
+                bundle = json.load(f)
+                trades = bundle.get("ledger", {}).get("trades", [])
+                if trades:
+                    return trades
+        except Exception:
+            pass
 
-    # Fallback a BacktestModel si existe ledger_path físico
-    db = SessionLocal()
-    try:
-        bt = db.query(BacktestModel).filter(BacktestModel.strategy_id == candidate_id).first()
-        if bt and bt.ledger_path and Path(bt.ledger_path).is_file():
-            with open(bt.ledger_path, "r", encoding="utf-8") as f:
+    # Intentar desde Gate 11 si existe
+    g11_path = base_dir / "data" / "evidence" / candidate_id / "gate_11_event_cross_validation.json"
+    if g11_path.exists():
+        try:
+            with open(g11_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                return data.get("trades", [])
-    finally:
-        db.close()
+                trades = data.get("trades", [])
+                if trades:
+                    return trades
+        except Exception:
+            pass
 
     return []
 
@@ -88,16 +72,20 @@ def build_ultra_hyperscale_portfolios() -> List[UltraHyperScalePortfolio]:
     """Ensambla portafolios Ultra a partir de candidatos certificados reales en base de datos."""
     db = SessionLocal()
     try:
+        # Filtrar candidatos certificados bajo gobernanza estricta
         candidates = (
             db.query(CandidateModel)
-            .filter(CandidateModel.route == "ULTRA")
+            .filter(
+                CandidateModel.route == "ULTRA",
+                CandidateModel.status.in_(["APPROVED", "CERTIFIED_CURRENT", "ULTRA_CERTIFIED"])
+            )
             .order_by(CandidateModel.profit_factor_oos.desc())
             .all()
         )
         if not candidates or len(candidates) < 2:
             return []
 
-        # Agrupar candidatos con operaciones físicas reales
+        # Agrupar candidatos con operaciones físicas reales comprobadas
         valid_candidates = []
         for c in candidates:
             trades = _extract_candidate_trades(c.candidate_id)
@@ -107,7 +95,6 @@ def build_ultra_hyperscale_portfolios() -> List[UltraHyperScalePortfolio]:
         if len(valid_candidates) < 2:
             return []
 
-        # Tomar los mejores candidatos multi-activo
         selected = valid_candidates[:4]
         base_capital = 10000.0
         
@@ -117,18 +104,24 @@ def build_ultra_hyperscale_portfolios() -> List[UltraHyperScalePortfolio]:
         individual_dds = []
 
         for c, trades in selected:
-            individual_wrs[c.symbol] = round(float(c.ratio_oos_is or 50.0), 1)
-            individual_dds.append(float(c.max_dd_oos_pct or 0.0))
+            # Calcular Win Rate real por operaciones
+            cand_wins = sum(1 for t in trades if float(t.get("net_pnl") or t.get("net_pnl_usd") or 0.0) > 0)
+            cand_wr = (cand_wins / len(trades) * 100.0) if trades else 0.0
+            cand_dd = float(c.max_dd_oos_pct if c.max_dd_oos_pct is not None else 0.0)
+            
+            individual_wrs[c.symbol] = round(cand_wr, 1)
+            individual_dds.append(cand_dd)
+            
             components_info.append({
                 "candidate_id": c.candidate_id,
                 "symbol": c.symbol,
                 "timeframe": c.timeframe,
                 "profit_factor": round(float(c.profit_factor_oos or 0.0), 2),
-                "max_drawdown_pct": round(float(c.max_dd_oos_pct or 0.0), 2),
+                "max_drawdown_pct": round(cand_dd, 2),
                 "trades_count": len(trades),
             })
             for t in trades:
-                ts = t.get("exit_time") or t.get("entry_time_utc_ms") or 0
+                ts = t.get("exit_time") or t.get("entry_time_utc_ms") or t.get("timestamp_utc_ms") or 0
                 pnl = float(t.get("net_pnl") or t.get("net_pnl_usd") or 0.0)
                 all_events.append({"timestamp": ts, "net_pnl": pnl, "symbol": c.symbol})
 
@@ -165,9 +158,27 @@ def build_ultra_hyperscale_portfolios() -> List[UltraHyperScalePortfolio]:
 
         total_trades = len(all_events)
         win_rate = (wins / total_trades * 100.0) if total_trades > 0 else 0.0
-        pf = (gross_profit / gross_loss) if gross_loss > 0 else (999.0 if gross_profit > 0 else 0.0)
+        
+        # Cálculo estricto de PF sin valores ficticios 999.0
+        if gross_loss > 0:
+            pf = gross_profit / gross_loss
+        elif gross_profit > 0:
+            pf = gross_profit  # Ganancia neta pura si 0 pérdidas
+        else:
+            pf = 0.0
+
         net_profit = current_eq - base_capital
         total_roi = (net_profit / base_capital) * 100.0
+
+        # Anualización real basada en rango temporal exacto de timestamps
+        valid_ts = [ev["timestamp"] for ev in all_events if ev["timestamp"] > 0]
+        if len(valid_ts) >= 2 and (valid_ts[-1] > valid_ts[0]):
+            time_span_days = max(1.0, (valid_ts[-1] - valid_ts[0]) / (1000.0 * 86400.0))
+            annualized_roi = (total_roi / time_span_days) * 365.25
+            monthly_roi = (total_roi / time_span_days) * 30.4375
+        else:
+            annualized_roi = total_roi
+            monthly_roi = total_roi / 12.0
 
         portfolio = UltraHyperScalePortfolio(
             portfolio_id=f"ultra_real_ensemble_{int(datetime.now(timezone.utc).timestamp())}",
@@ -179,8 +190,8 @@ def build_ultra_hyperscale_portfolios() -> List[UltraHyperScalePortfolio]:
             components=components_info,
             combined_win_rate_pct=round(win_rate, 2),
             individual_win_rates=individual_wrs,
-            annualized_roi_pct=round(total_roi * 1.5, 2),
-            monthly_roi_pct=round((total_roi * 1.5) / 12.0, 2),
+            annualized_roi_pct=round(annualized_roi, 2),
+            monthly_roi_pct=round(monthly_roi, 2),
             total_roi_oos_pct=round(total_roi, 2),
             net_profit_usd=round(net_profit, 2),
             profit_factor=round(pf, 2),

@@ -106,11 +106,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 
 app = FastAPI(
-    title="Ultrarentable Dual-Engine Quantitative Platform",
+    title="Ultrarentable Dual-Engine Multi-Asset Quantitative Platform",
     version="2.2.0",
     description=(
         "Plataforma Cuantitativa Dual REAL-ONLY: "
-        "TRACK_FONDEO (CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection) & TRACK_ULTRA (BingX Crypto Perps / Asimetría Positiva). "
+        "TRACK_FONDEO (CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection) & "
+        "TRACK_ULTRA (Multi-Asset Registry-Driven: Crypto Perps, Commodities, FX / Margen Aislado 1R / Bóveda Ratchet). "
         "Motor desacoplado con AsyncEventBus, QVF Evidence Gate y Streaming SSE."
     ),
     lifespan=lifespan,
@@ -215,7 +216,7 @@ def read_root() -> Dict[str, Any]:
         "architecture": "CLEAN_MODULAR_ASYNC_EVENT_BUS",
         "tracks": {
             "TRACK_FONDEO": "CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection",
-            "TRACK_ULTRA": "BingX Crypto Perps / Margen Aislado 1R / Piramidación Free-Risk / Bóveda Ratchet",
+            "TRACK_ULTRA": "Multi-Asset Registry-Driven (Crypto Perps, Commodities, FX) / Margen Aislado 1R / Piramidación Free-Risk / Bóveda Ratchet",
         },
         "v2_endpoints": [
             "/api/v2/telemetry/health",
