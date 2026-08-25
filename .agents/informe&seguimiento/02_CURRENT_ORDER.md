@@ -1,4 +1,4 @@
-# ORDER AG2-P00-002 — REALITY LOCK P0 REMEDIATION
+# ORDER AG2-P01-001 — DATA & DATASET CHAIN OF CUSTODY
 
 ## Status
 
@@ -6,241 +6,252 @@
 
 ## Target
 
-`PHASE 00 — FORENSIC BASELINE & REALITY LOCK (REWORK)`
+`PHASE 01 — DATA & DATASET CHAIN OF CUSTODY`
 
 ## Trigger
 
-Antigravity 2.0 must automatically start this order on the next watcher cycle because:
+This is the single active order after external review of AG2-P00-002.
+The watcher must auto-start it on the next ~3-minute cycle when it observes:
 
-- `CURRENT_PHASE = 00`;
-- `PHASE_STATUS = REWORK`;
-- `ACTIVE_ORDER_ID = AG2-P00-002`;
-- this order is `ISSUED`;
-- the previous order AG2-P00-001 has been externally reviewed and its remediation order is now active.
+- `CURRENT_PHASE = 01`
+- `PHASE_STATUS = READY`
+- `ACTIVE_ORDER_ID = AG2-P01-001`
+- `status: ISSUED`
 
-No manual user prompt is required.
+No manual prompt is required.
 
-## STRICT SCOPE — READ THIS FIRST
+## STRICT SCOPE — EXECUTE ONLY PHASE 01
 
-**Antigravity MUST execute ONLY this active order and ONLY Phase 00 rework.**
+**Antigravity MUST execute ONLY this active order and ONLY Phase 01.**
 
-The master plan is context, not authorization to implement future phases.
+The master plan is context, not permission to implement future phases.
 
 Allowed:
-- fixes explicitly required below;
-- direct dependency fixes strictly necessary for these P0/P1 items;
-- focused tests and bounded regression tests for the affected areas;
-- repository inspection needed to verify scope and dependencies.
+- dataset registry and chain-of-custody work;
+- direct dependencies strictly required for Phase 01;
+- focused tests and bounded regression tests for the affected data/provenance paths;
+- repository inspection needed to prove dataset consumers and leakage boundaries.
 
 Not allowed:
-- starting Phase 01 or any later phase;
-- building Discovery Factory, Dataset Registry, Meta-Strategy, FONDEO, ULTRA research or unrelated UI work;
-- broad cleanup/refactors;
-- unrelated bug fixing just because it was discovered.
+- Discovery Factory implementation;
+- Strategy Genome/clustering/fertility optimization;
+- strategy optimization/generation campaigns;
+- Meta-Strategy implementation;
+- FONDEO optimization logic;
+- ULTRA +1000% research logic;
+- unrelated UI redesign;
+- broad technical-debt cleanup.
 
-Out-of-scope defects must be recorded in the handoff under `DEFERRED_TO_FUTURE_ORDER` and NOT implemented unless they are proven direct blockers for this order.
+Any out-of-scope finding must be recorded as `DEFERRED_TO_FUTURE_ORDER` and left untouched unless it is proven a direct blocker for Phase 01.
 
 ## Mission
 
-Repair the foundational P0 defects discovered by the forensic baseline before moving to Phase 01.
+Create a scientifically reproducible chain of custody for every dataset consumed by ULTRARENTABLE.
 
-This is not cosmetic work. The objective is to prevent false portfolio results, hidden startup failures and broken certification/version lineage from contaminating later research.
+Every backtest, validation, OOS, WFO, forward or portfolio run must be able to answer:
 
-## Mandatory startup reads
-
-1. `.agents/AGENTS.md`
-2. `.agents/informe&seguimiento/00_CONTROL_PROTOCOL.md`
-3. `.agents/informe&seguimiento/00_SCOPE_EXECUTION_RULE.md`
-4. `.agents/informe&seguimiento/01_CONTROL_STATE.md`
-5. This order
-6. `.agents/informe&seguimiento/04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
-7. `.agents/informe&seguimiento/04_REVIEW_AG2-P00-001.md`
-8. `.agents/informe&seguimiento/03_HANDOFF_AG2-P00-001.md`
-
-## P0-01 — Remove synthetic/precomputed portfolio output
-
-Audit and remove any operational path in `services/api/app/factory/ultra_portfolio_engine.py` or related code that can emit fabricated/static equity curves, fixed metrics or precomputed growth.
-
-Requirements:
-- portfolio results come from real component ledgers/evidence;
-- no hardcoded trading results;
-- no fabricated curve fallback;
-- missing evidence becomes `NO_EVIDENCE` / explicit error;
-- portfolio outputs retain full component/version/provenance lineage;
-- no arbitrary annualization/multiplication factors;
-- no fabricated numeric defaults when source evidence is missing;
-- certification-grade portfolio inclusion requires explicit `CERTIFIED_CURRENT`/valid evidence, not merely candidate existence or trade presence.
-
-## P0-02 — Repair FastAPI lifespan/runtime imports
-
-Resolve broken or ghost `services.optimization.*` imports in `services/api/app/main.py`.
-
-Requirements:
-- prove actual startup path;
-- remove dead references or restore the canonical modules when truly required;
-- no broad catch-and-ignore behavior hiding startup failure;
-- add regression coverage for application initialization.
-
-## P0-03 — Repair canonical version/lineage infrastructure
-
-Resolve missing `services/version_control_manager.py` and `services/engine_version.py` dependencies used by lineage/certification paths.
-
-Requirements:
-- establish one canonical SSOT for strategy/engine/contract version identity;
-- deterministic version resolution;
-- current vs legacy/stale evidence semantics;
-- material changes invalidate affected evidence/revalidation;
-- integrate `trial_id` into certification lineage where required;
-- remove ghost references and import failures;
-- no fake git commit fallback;
-- provenance failure must be `UNVERIFIED`/error, never an invented historical SHA;
-- manifest/state read/write failures must not silently report healthy state;
-- code drift must be calculated from real stored-vs-current fingerprints, never hardcoded `False`.
-
-## P1 integrity fixes required by this order
-
-Also address the following when needed to make the P0 remediation complete and non-bypassable:
-
-- direct candidate status mutation bypass in `candidates_router.py`;
-- candidate-not-found fallback in `gates_router.py`;
-- hardcoded G7-G10 frontend passes in `apps/web/app/gates/page.tsx`;
-- simulated network/AI success fallbacks in frontend operational paths;
-- inherited `APPROVED` candidate with PF below current threshold; mark stale/revalidation-required through canonical state rather than manually editing history;
-- Gate 07 timestamp fallback that invents regime distribution;
-- broken frontend paths/imports exposed by the above fixes;
-- platform metadata that hardcodes a market universe instead of resolving current registry capabilities.
-
-Do not turn this into a cosmetic UI redesign.
+`WHAT DATA? FROM WHERE? WHICH BYTES? WHICH TRANSFORMATION? WHICH TIME RANGE? WHICH PARTITION? WHICH HASH? WHICH POLICY?`
 
 ## Mandatory subagents
 
-1. RECON / ARCHITECTURE
-2. IMPLEMENTATION / P0 REMEDIATION
-3. QUANT / PORTFOLIO SCIENCE
-4. VERSION / LINEAGE
-5. ZERO-MOCK / RED-TEAM
-6. API / CERTIFICATION / REGISTRY
-7. UI / PROVENANCE
-8. TEST / REGRESSION
+1. `DATA / CHAIN-OF-CUSTODY`
+2. `QUANT / TEMPORAL-INTEGRITY`
+3. `EXECUTION / DATA-CONSUMERS`
+4. `VALIDATION / IS-VAL-OOS`
+5. `RED-TEAM / DATA-LEAKAGE`
+6. `PROVENANCE / HASHES`
+7. `RELIABILITY / SNAPSHOT-RECOVERY`
+8. `UI/API / DATA-PROVENANCE`
 
-The implementing agent cannot be the sole verifier.
+At least one verification subagent must be independent of the implementing subagent.
 
-## VPS / SSH execution — NON-BLOCKING MANDATORY
+## Scope
 
-Antigravity has SSH access to the VPS specifically so it can execute the real project tests and commands. Use it, but **do not remain blocked waiting for a long-running command**.
+### 1. Physical dataset inventory
 
-For any command that may take more than a few seconds:
+Inventory only datasets actually present/consumed by the current repository.
+Record:
+- source/provider;
+- endpoint/path;
+- instrument ID;
+- market/category;
+- timeframe;
+- exchange/session/calendar;
+- timezone/UTC normalization;
+- coverage start/end;
+- row/bar count;
+- schema/columns/types;
+- gaps and anomalies;
+- duplicates;
+- temporal order;
+- physical file path;
+- snapshot identity;
+- SHA-256 when computable;
+- normalization/transformation version.
 
-1. Launch it asynchronously/detached via `nohup`, `systemd-run --user`, `tmux`, the durable queue, or another idempotent runner.
-2. Assign a `remote_job_id` and record the exact command, target commit SHA, start time, log path and expected artifacts.
-3. Return immediately to other useful work with the subagents.
-4. Poll at bounded intervals; do not keep SSH attached for 10–20 minutes.
-5. Prefer incremental logs and exit status.
-6. Diagnose slow/stuck jobs instead of simply waiting.
-7. Restart only if idempotent and safe; otherwise `BLOCKED`.
+Do not invent missing metadata. Use `UNVERIFIED` / `NO_EVIDENCE` when it cannot be proven.
 
-A message like `Esperando la finalización de toda la suite` is not acceptable for a long-running job.
+### 2. Dataset Registry
 
-### Remote test truth
+Create/repair the canonical registry so assets and timeframes are registry-driven rather than hardcoded in the general engine.
 
-Until a remote job has a real exit code and expected artifacts/logs:
+Minimum identity:
 
-- `PASS` = **NOT PROVEN**
-- `UNVERIFIED` = `UNVERIFIED`
-- timeout = `UNVERIFIED` or `FAILED`, never `PASS`
+`data_snapshot_id`
+`data_version`
+`source_id`
+`instrument_id`
+`timeframe_id`
+`schema_version`
+`normalization_version`
+`coverage_start`
+`coverage_end`
+`data_sha256`
 
-Never replace a slow/missing result with an estimate, cached result, synthetic output or forced green status.
+### 3. Chain of custody
 
-## ZERO-SIMULATION / ZERO-FORCING — ABSOLUTE
+Implement or verify:
 
-This order must maintain:
+`SOURCE -> RAW SNAPSHOT -> NORMALIZED SNAPSHOT -> VALIDATION INPUT -> RUN`
 
-`ZERO-SIMULATION = ON`
-`ZERO-FORCING = ON`
-`REAL-ONLY = ON`
+No transformation may silently overwrite the upstream snapshot.
 
-Never:
+### 4. Partition integrity
 
-- invent trades, metrics, equity curves or gate evidence;
-- inject synthetic data to make tests pass;
-- change tests only to make them green;
-- weaken gates because too few candidates survive;
-- hide a failed/timeout remote job;
-- claim a test passed before its real exit status exists;
-- reuse output from another commit as proof for this commit;
-- create placeholder evidence presented as real evidence.
+Prove physical/logical isolation for:
+- IS
+- VALIDATION
+- BLIND OOS / HOLDOUT
+- Forward/Paper where present
 
-Fixtures/mocks are allowed only in explicitly isolated unit tests and are never quantitative or certification evidence.
+Research and mutation pipelines must not be able to modify or leak holdout data.
 
-## Verification scope
+### 5. Temporal integrity
 
-Run:
-- focused tests for each P0/P1 fix;
-- impacted-area regression tests;
-- bounded repository zero-mock/provenance scans;
-- broader regression suite only as an asynchronous verification job when required/available.
+Verify:
+- monotonic timestamps;
+- duplicate timestamp behavior;
+- timezone consistency;
+- missing-bar policy;
+- session boundaries;
+- DST handling where relevant;
+- no-lookahead in normalization/preparation;
+- historical reads cannot see future records.
 
-Do NOT spend the order repairing unrelated failures discovered by a broad suite. Record them as `DEFERRED_TO_FUTURE_ORDER` unless they directly block the current order.
+### 6. Consumer audit
 
-Never modify tests merely to obtain green output.
+Trace every real dataset consumer:
+
+`Discovery -> CanonicalStrategy -> Compiler/Runtime -> Engine -> Validation -> WFO/OOS -> Research -> Forward -> Portfolio -> API/UI`
+
+Verify there is no silent alternate dataset, fallback dataset or mutable hidden path.
+
+### 7. REAL-ONLY
+
+No synthetic datasets, random data, generated bars or placeholders may be introduced into operational quantitative paths.
+
+Fixtures are allowed only in explicitly isolated unit tests and cannot become scientific evidence.
+
+### 8. ULTRA universe
+
+ULTRA must remain registry-driven. Do not hardcode a closed list of symbols or timeframes.
+
+Support is limited only by real data availability, reproducible execution model, known market rules and the active registry.
+
+### 9. FONDEO universe
+
+`TRACK_FONDEO = FUTURES ONLY`.
+
+Phase 01 must create the data/policy foundations needed for futures prop-firm research, without implementing the later FONDEO optimization phase.
+
+The future registry must be capable of resolving firm/product/account/date policy without assuming NQ/ES only.
+
+### 10. Historical learning / Firebase
+
+Where learning records reference data, preserve their source lineage. If historical Firebase/Firestore data exists, do not rewrite or recreate it. Only map and document its data provenance in this phase; recovery operations must obey the forensic-first rules.
+
+## Tests and evidence
+
+Use real repository tests/commands and add focused tests only where required.
+
+Required proof includes:
+- dataset manifest generation/load reproducibility;
+- SHA-256 identity stability;
+- timestamp/order checks;
+- duplicate/gap policy;
+- IS/Validation/OOS isolation;
+- leakage scans;
+- consumer identity checks;
+- registry-driven instrument/timeframe resolution;
+- fail-closed behavior for missing/unverifiable data;
+- typecheck/build only for directly affected API/UI/data-provenance paths.
+
+Long-running tests must use the non-blocking SSH/VPS protocol:
+
+`remote_job_id -> detached job -> continue useful work -> bounded poll -> real exit status -> artifacts/logs`
+
+Never wait attached for 10–20 minutes.
+
+## ZERO-SIMULATION / ZERO-FORCING
+
+Absolute rules:
+- no fabricated dataset;
+- no fabricated hash;
+- no fabricated coverage;
+- no fake missing-data success;
+- no replacing real data with a fixture in production paths;
+- no weakening leakage checks;
+- no modifying tests just to get green output;
+- no claiming reproducibility without actual bytes/identity evidence.
 
 ## GitHub completion contract
 
-Antigravity works on the real project workspace:
+Work in the real workspace:
 
 `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
 
-But the authoritative delivery surface is:
+But completion exists only on:
 
 `origin/main`
 
-Before reporting `READY_FOR_REVIEW`, Antigravity MUST:
+Before `READY_FOR_REVIEW`:
 
-1. complete only the scoped implementation;
-2. run required tests and record exact commands/exit codes;
-3. commit all intended scoped changes;
-4. push to `origin/main`;
-5. verify local HEAD equals `origin/main` at the final SHA;
-6. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P00-002.md`;
-7. include the verified remote SHA in the handoff;
-8. include `remote_job_id`, remote command, status, exit code and artifact/log paths for every asynchronous job;
-9. list all deferred out-of-scope defects;
-10. ensure all versionable evidence/manifests/docs for this order are present on `main`.
-
-Local-only work is not delivered.
+1. implement only Phase 01 scope;
+2. run focused and required regression tests;
+3. record exact commands and exit codes;
+4. commit;
+5. push `origin/main`;
+6. verify remote SHA;
+7. publish complete Phase 01 handoff;
+8. list deferred out-of-scope findings.
 
 ## Required handoff
 
-Create and commit:
+Create:
 
-`.agents/informe&seguimiento/03_HANDOFF_AG2-P00-002.md`
+`.agents/informe&seguimiento/03_HANDOFF_AG2-P01-001.md`
 
 It must include:
-
-- order_id;
-- target phase;
-- final local commit;
-- verified `origin/main` commit;
+- order_id and target phase;
+- start/final commit;
+- verified `origin/main` SHA;
 - proof of push;
-- every subagent and finding;
+- all subagents and findings;
 - files changed;
-- exact commands + exit codes;
-- every remote job ID + remote status/exit code;
-- tests and failures;
-- evidence/hashes/IDs;
-- P0/P1 dispositions;
-- `DEFERRED_TO_FUTURE_ORDER` findings;
-- proven/unproven items;
-- residual risks;
-- exit-criteria assessment;
+- tests/commands/exit codes;
+- remote_job_id data for asynchronous jobs;
+- dataset IDs/manifests/hashes;
+- proven/unproven;
+- leakage findings;
+- deferred findings;
+- exit criteria;
 - `READY_FOR_REVIEW` or `BLOCKED`.
 
-## Stop condition
+## STOP
 
-After the complete **scoped** state is pushed and verified on `origin/main`, Antigravity MUST STOP.
+After delivering the complete scoped Phase 01 state to `origin/main`, STOP.
 
-Do not start Phase 01.
-Do not create another order.
+Do not start Phase 02.
+Do not create the next order.
 Do not broaden scope.
-Do not wait for the user.
-The external reviewer will inspect `origin/main` and issue the next order if required.
+The external reviewer will inspect `origin/main` and decide the next order.
