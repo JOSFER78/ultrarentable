@@ -8,7 +8,27 @@ The master DOCX remains the scientific/architectural doctrine. This directory is
 
 Antigravity 2.0 runs a scheduled watcher approximately every 3 minutes. **The watcher is an automatic executor trigger, not a notification system.** When a new valid order/plan is published here, Antigravity must automatically start the authorized process on the next watcher cycle. No chat message, button click, manual prompt, or additional user confirmation is required.
 
-## 2. Two loops — never confuse them
+## 2. TWO DIFFERENT PLACES: WORKSPACE VS GITHUB MAIN
+
+Antigravity may use the real remote workspace over SSH while doing the work:
+
+`/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
+
+That workspace is the **execution workspace**, not the authoritative review surface.
+
+**GitHub `main` is the authoritative shared review surface for this control system.** ChatGPT audits what exists in `origin/main`.
+
+Therefore:
+
+`WORK IN WORKSPACE -> TEST -> COMMIT -> PUSH TO origin/main -> VERIFY origin/main -> HANDOFF`
+
+A change that exists only in the VPS workspace, only in a local branch, or only in an unpushed commit is **NOT DELIVERED** to the external reviewer.
+
+Antigravity must never finish a phase by saying “done locally”. The phase is deliverable only after the complete required state is committed and pushed to `main` and the remote commit SHA is known.
+
+If Antigravity cannot push to `main` because of a genuine infrastructure/permission problem, it must report `BLOCKED` and include the exact local commit SHA, but it may not claim `READY_FOR_REVIEW`.
+
+## 3. TWO LOOPS — NEVER CONFUSE THEM
 
 ### Research runtime loop
 
@@ -20,11 +40,11 @@ The laboratory itself may operate 24/7 autonomously:
 
 Changes to the laboratory are externally gated:
 
-`EXTERNAL REVIEW -> PUBLISH NEW ORDER/PLAN -> CRON DETECTS -> ANTIGRAVITY AUTO-STARTS -> SUBAGENTS -> IMPLEMENT/TEST -> HANDOFF -> STOP -> EXTERNAL REVIEW`
+`EXTERNAL REVIEW -> PUBLISH NEW ORDER/PLAN -> CRON DETECTS -> ANTIGRAVITY AUTO-STARTS -> SUBAGENTS -> IMPLEMENT/TEST -> COMMIT/PUSH MAIN -> HANDOFF -> STOP -> EXTERNAL REVIEW`
 
 Runtime autonomy does **not** permit autonomous architectural changes, certification changes or phase advancement.
 
-## 3. Automatic trigger rule — critical
+## 4. AUTOMATIC TRIGGER RULE — CRITICAL
 
 A new control package is considered **actionable** when all of the following are true:
 
@@ -41,24 +61,28 @@ When these conditions are met:
 
 The watcher must launch the Antigravity orchestration process for that order.
 
-## 4. Cron/watcher protocol — every ~3 minutes
+## 5. CRON/WATCHER PROTOCOL — EVERY ~3 MINUTES
 
 At every watcher cycle Antigravity must:
 
-1. Inspect `.agents/informe&seguimiento/` for control changes.
-2. Read `00_CONTROL_PROTOCOL.md`.
-3. Read `01_CONTROL_STATE.md`.
-4. Read `02_CURRENT_ORDER.md`.
-5. Read `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` when present/changed.
-6. Read the master DOCX when the order requires doctrine context.
-7. Compare `order_id`, `issued_at`, `status` and `target_phase` against the last acknowledged order.
-8. If there is no newer actionable order, do not start engineering work.
-9. If there is a newer actionable order, **AUTO-START** the order immediately.
-10. Before substantive edits, launch the required Antigravity subagents.
-11. Execute only the current order.
-12. Produce the required handoff/evidence report.
-13. Mark the order `READY_FOR_REVIEW` or `BLOCKED` in the handoff.
-14. STOP. Do not create or execute another order.
+1. Fetch/update from `origin/main` so its control view reflects the latest remote state.
+2. Inspect `.agents/informe&seguimiento/` for control changes.
+3. Read `00_CONTROL_PROTOCOL.md`.
+4. Read `01_CONTROL_STATE.md`.
+5. Read `02_CURRENT_ORDER.md`.
+6. Read `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` when present/changed.
+7. Read the master DOCX when the order requires doctrine context.
+8. Compare `order_id`, `issued_at`, `status` and `target_phase` against the last acknowledged order.
+9. If there is no newer actionable order, do not start engineering work.
+10. If there is a newer actionable order, **AUTO-START** the order immediately.
+11. Before substantive edits, launch the required Antigravity subagents.
+12. Execute only the current order.
+13. Run the relevant focused and regression tests.
+14. Commit all in-scope implementation, tests, documentation and required evidence references.
+15. Push the completed state to `origin/main`.
+16. Fetch/verify `origin/main` and record the exact remote commit SHA.
+17. Only then create the final handoff and mark it `READY_FOR_REVIEW` or `BLOCKED`.
+18. STOP. Do not create or execute another order.
 
 The 3-minute cron therefore means:
 
@@ -68,74 +92,65 @@ It does **not** mean:
 
 `NEW ORDER PUBLISHED -> WAIT FOR USER TO TELL ANTIGRAVITY TO START`.
 
-## 5. What happens after external approval
+## 6. WHAT MUST ALWAYS BE UPDATED IN GITHUB MAIN
 
-After ChatGPT audits a completed phase:
+At the completion of every order, all applicable changes must be present on `origin/main`:
 
-### APPROVED
+### A. Code
 
-ChatGPT publishes:
+All production/source/test changes required by the order.
 
-1. the external review decision;
-2. updated `01_CONTROL_STATE.md`;
-3. the next `02_CURRENT_ORDER.md` (new `order_id`);
-4. any new/updated phase plan or instruction document required by the adaptive scope.
+### B. Control state
 
-At that point, **nothing else is required from the user**. The next cron cycle detects the new `order_id` and Antigravity automatically starts the next process.
+Only the externally authorized control changes may modify authority fields. Antigravity must not self-advance the phase.
 
-### REJECTED / REWORK
+### C. Handoff
 
-ChatGPT keeps the same `CURRENT_PHASE`, publishes a new rework `order_id`, and Antigravity automatically starts that rework package on the next cron cycle.
+Create:
 
-### BLOCKED
+`.agents/informe&seguimiento/03_HANDOFF_<order_id>.md`
 
-ChatGPT publishes the unblock condition. Antigravity must not simulate the missing dependency. Once the real dependency is available and a new valid order is published, the cron automatically starts the unblock work.
+This is the delivery report for the completed order.
 
-### REDESIGN
+### D. Evidence references/manifests
 
-ChatGPT replaces the old scope with a new bounded order. The next cron cycle automatically starts the redesigned work.
+Store versionable evidence manifests, hashes, IDs, logs summaries and reproducibility metadata in the repository whenever the artifacts are appropriate to version. For large/external artifacts, store the authoritative URI/path, immutable ID, SHA-256 and retrieval instructions rather than pretending the binary is inside Git.
 
-## 6. Source of authority
+### E. Documentation affected by the implementation
 
-Authority for engineering work:
+If architecture, contracts, phase scope, configuration, API or UI behavior changed, update the corresponding canonical documentation in the same delivery.
 
-1. Current executable repository state.
-2. Real test/log/evidence output from the audited commit.
-3. Latest valid control order in this directory.
-4. Master adaptive implementation plan.
-5. Master DOCX doctrine.
-6. Historical reports.
-7. UI text and agent claims.
+### F. Exact remote identity
 
-The external reviewer controls phase advancement. Antigravity never infers approval from green tests or from historical reports.
+The handoff must contain:
 
-## 7. Mandatory Antigravity role
+- `origin/main` final commit SHA;
+- start commit SHA;
+- list of changed files;
+- commands/tests and exit codes;
+- external artifact IDs/hashes where applicable.
 
-Antigravity is the principal **orchestrator/executor**. It must:
+### G. GitHub is the review boundary
 
-- inspect the real repository;
-- decompose the authorized order;
-- launch and coordinate subagents;
-- integrate findings;
-- implement scoped changes;
-- execute real tests;
-- preserve provenance;
-- report negative findings;
-- produce the handoff;
-- stop.
+**If it is not on `origin/main` or explicitly identified by immutable external ID/hash, ChatGPT must treat it as not delivered.**
+
+## 7. WHAT ANTIGRAVITY MUST NOT DO
+
+Antigravity may work on temporary/local branches during implementation if useful, but before delivery it must integrate the authorized work into `main` and push it.
 
 It may not:
 
 - approve the phase;
-- advance `CURRENT_PHASE`;
+- advance `CURRENT_PHASE` without an external issued decision;
 - create the next order;
 - certify a strategy on its own;
 - alter control authority;
 - hide failed findings;
 - weaken gates because yield is low;
-- fabricate missing evidence.
+- fabricate missing evidence;
+- leave the final result only on a feature branch/local workspace and claim completion.
 
-## 8. Mandatory subagent model
+## 8. MANDATORY SUBAGENT MODEL
 
 For non-trivial orders, Antigravity must use the smallest independent set of relevant subagents. Typical roles:
 
@@ -151,7 +166,7 @@ For non-trivial orders, Antigravity must use the smallest independent set of rel
 
 Read-only investigations may run in parallel. Writes must be coordinated by the main Antigravity agent. An implementation subagent must not be the sole verifier of its own code.
 
-## 9. Mandatory review scope before handoff
+## 9. MANDATORY REVIEW SCOPE BEFORE HANDOFF
 
 Antigravity must review all applicable dimensions:
 
@@ -170,7 +185,7 @@ Antigravity must review all applicable dimensions:
 - P0/P1 defects;
 - documentation/code contradictions.
 
-## 10. Discovery-specific controls
+## 10. DISCOVERY-SPECIFIC CONTROLS
 
 When Discovery is in scope, preserve:
 
@@ -192,7 +207,7 @@ and require, where applicable:
 
 High ROI is not proof of robust edge.
 
-## 11. FONDEO rule
+## 11. FONDEO RULE
 
 `TRACK_FONDEO = FUTURES ONLY`.
 
@@ -210,7 +225,7 @@ The system must distinguish:
 
 A low-cost evaluation may permit a materially different research risk budget than the same strategy once funded. The strategy must still remain inside the actual rules of the evaluation. No hardcoded universal firm rule is allowed.
 
-## 12. Firebase / historical learning
+## 12. FIREBASE / HISTORICAL LEARNING
 
 If historical learning is reported to exist in Firebase/Firestore, recovery is forensic first:
 
@@ -224,13 +239,15 @@ If historical learning is reported to exist in Firebase/Firestore, recovery is f
 8. mark ambiguous records `UNVERIFIED`;
 9. enable new writes only after reconciliation.
 
-## 13. End-of-order handoff
+## 13. END-OF-ORDER HANDOFF
 
 Antigravity must create the required handoff containing:
 
 - order_id;
 - phase;
-- start/final commit;
+- start commit;
+- final commit;
+- `origin/main` verification SHA;
 - subagents and roles;
 - files changed;
 - exact commands and exit codes;
@@ -245,13 +262,13 @@ Antigravity must create the required handoff containing:
 
 Never write `APPROVED` in an Antigravity handoff.
 
-## 14. External review loop
+## 14. EXTERNAL REVIEW LOOP
 
 The external reviewer inspects the repository itself, not only the handoff.
 
 Review:
 
-`CONTROL_STATE -> ORDER -> HANDOFF -> COMMITS -> DIFF -> CODE -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
+`CONTROL_STATE -> ORDER -> HANDOFF -> ORIGIN/MAIN COMMIT -> DIFF -> CODE -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
 
 Only the external reviewer can decide:
 
@@ -259,12 +276,12 @@ Only the external reviewer can decide:
 
 Only an `APPROVED` decision can create an actionable order for the next phase.
 
-## 15. Anti-gaming
+## 15. ANTI-GAMING
 
 Never loosen gates because few strategies survive; hide failed candidates; rerun until favorable without trial accounting; mutate holdout data; reuse parent evidence for children; replace real data with fixtures on operational paths; convert `NO_EVIDENCE` to PASS/zero/estimate; edit tests solely to force green output; or claim certification from a UI score.
 
 A zero-survivor research cycle is valid scientific output.
 
-## 16. Final operational rule
+## 16. FINAL OPERATIONAL RULE
 
-**ChatGPT publishes the order. The 3-minute cron detects it. Antigravity automatically starts. Antigravity launches subagents. Subagents investigate and implement. Antigravity produces evidence and stops. ChatGPT audits. Only after approval does ChatGPT publish the next order.**
+**ChatGPT publishes the order. The 3-minute cron detects it. Antigravity automatically starts. Antigravity launches subagents. Subagents investigate and implement in the real project workspace. Antigravity commits and pushes the complete delivered state to `origin/main`. The handoff records the remote SHA. ChatGPT audits `origin/main`. Only after approval does ChatGPT publish the next order.**
