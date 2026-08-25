@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_ETH_g10",
   "run_id": "run_TEST_CAND_ETH",
   "strategy_id": "TEST_CAND_ETH",
-  "strategy_snapshot_hash": "346e8ef8e0bfe19f3e6500105f6af498b54e57efc84223a811cff291e36bf597",
+  "strategy_snapshot_hash": "4350a1cb3f48fc68d0b30b935d111abf00c0ba2d7a76e902a48011fd7559011c",
   "dataset_id": "ds_bingx_ETH_USDT_1h_1771750800000_1785567600000_b6299ab58d.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "4a3146a42828e5d5e5ce89b0ef817caf6bc0e3fda4bc4a30e6c32c093b1d8dd2",
-  "output_hash": "8c6775a57b8d00e421736b2e6fda3938f1eec651fdf7225c2d5aabd4c38e377f",
+  "input_hash": "c0b260a7eab11ceeab57c4169ee4c16b9eb456100efcca3afc8b4cc2e233d367",
+  "output_hash": "80bfe55e21158f70d3929fd465edac61b2a5bad159412e65063265d36c66a1cd",
   "status": "PASSED",
-  "score": 45.2,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (45.2/100 · Guía de Mejora Generada)",
+  "score": 49.4,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (49.4/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 45.2,
+    "consensus_score": 49.4,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 20.0,
+        "score": 35.2,
         "findings": [
           "Activo y Timeframe: ETH (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.13 con beneficio neto de $-762.40.",
+          "Profit Factor OOS: 0.56 con beneficio neto de $-737.43.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -34,9 +34,9 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 61.5,
+        "score": 61.0,
         "findings": [
-          "Drawdown Máximo Observado: 81.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 83.0% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DENTRO DE TOLERANCIA."
         ],
         "approved": true
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 92 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 132 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-8.29 USD.",
+          "Beneficio medio por operación: $-5.59 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 45.4,
+        "score": 49.0,
         "objections": [
-          "Alerta de Drawdown: DD (81.9%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.13 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (83.0%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.56 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/TEST_CAND_ETH/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T11:43:19.878211+00:00"
+  "created_at_utc": "2026-08-25T11:43:20.358701+00:00"
 }
