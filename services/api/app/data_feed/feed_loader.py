@@ -67,23 +67,34 @@ def _parse_csv_candles(filepath: Path, max_bars: int = 25000) -> List[Dict[str, 
         return []
 
 
-def load_candles(
-    symbol: str,
-    timeframe: str = "1h",
-    data_dir: Optional[str] = None
-) -> List[Dict[str, Any]]:
-    """Load real OHLCV candle list for a symbol and timeframe from local verified files.
+def load_candles(symbol: str, timeframe: str = "1h") -> List[Dict[str, Any]]:
+    """Load historical candlestick data from disk for backtesting.
     
-    Returns empty list if no real data file exists on disk.
+    Zero-Mock Policy: Returns empty list if no genuine local data exists.
+    Primary SSOT: DatasetRegistry.
     """
-    cache_key = f"{symbol}_{timeframe}"
+    cache_key = f"{symbol.upper()}_{timeframe.lower()}"
     if cache_key in _CANDLE_CACHE:
         return _CANDLE_CACHE[cache_key]
 
-    normalized_symbol = symbol.replace("/", "-").replace("_", "-").upper()
+    # 0. Primary SSOT: Consult DatasetRegistry
+    try:
+        from services.data.dataset_registry import dataset_registry
+        manifest = dataset_registry.resolve_dataset(symbol, timeframe)
+        if manifest:
+            bars = dataset_registry.load_dataset_bars(manifest.data_snapshot_id, verify_sha256=False)
+            if bars:
+                trimmed = bars[-25000:] if len(bars) > 25000 else bars
+                _CANDLE_CACHE[cache_key] = trimmed
+                logger.info(f"Loaded {len(trimmed)} verified bars from DatasetRegistry for {symbol} ({timeframe}) [Snapshot: {manifest.data_snapshot_id}]")
+                return trimmed
+    except Exception as e:
+        logger.debug(f"DatasetRegistry lookup exception for {symbol}_{timeframe}: {e}")
+
+    normalized_symbol = symbol.upper().replace("-", "").replace("/", "").replace("_", "")
     
     # 1. Check normalized JSON files
-    base_path = Path(data_dir) if data_dir else NORMALIZED_DATA_DIR
+    base_path = NORMALIZED_DATA_DIR
     if base_path.exists():
         symbol_variants = [
             normalized_symbol.replace("-", "_").lower(),

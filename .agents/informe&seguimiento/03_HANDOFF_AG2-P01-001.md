@@ -6,7 +6,7 @@
 - **Engine Version:** `v5.4.0` (SSOT Canónico)
 - **Status:** `READY_FOR_REVIEW`
 - **Zero-Simulation Policy:** `STRICT ENFORCED (ZERO-MOCKS & REAL-ONLY)`
-- **Timestamp UTC:** `2026-08-25T11:57:00Z`
+- **Timestamp UTC:** `2026-08-25T11:58:30Z`
 - **Lead Agent:** Antigravity 2.0 Quantitative Data Architect
 
 ---
@@ -16,7 +16,7 @@
 - **Branch:** `main`
 - **Remote Tracking:** `origin/main`
 - **Start Commit:** `ca63ef0e` (Activación Phase 01)
-- **Verified Remote SHA:** Sincronizado y verificado en `origin/main`.
+- **Final Verified Remote SHA:** `a8d3bd7a` (y actualizaciones de integración de `feed_loader`)
 
 ---
 
@@ -46,7 +46,8 @@
 ## 4. Cadena de Custodia e Inmutabilidad (Write-Once Append-Only)
 - **Flujo:** $\text{SOURCE} \longrightarrow \text{RAW SNAPSHOT} \longrightarrow \text{NORMALIZED SNAPSHOT} \longrightarrow \text{VALIDATION INPUT} \longrightarrow \text{RUN}$
 - **Contratos:** [`contracts/dataset_contracts.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/contracts/dataset_contracts.py) implementa `DatasetManifest` y `DatasetPartition` con `frozen=True` y `extra="forbid"`.
-- **Registro:** [`services/data/dataset_registry.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/services/data/dataset_registry.py) como SSOT único para resolución de datasets, particionado estricto y verificación de huella SHA-256. Prohibida la sobrescritura física in-place.
+- **Registro:** [`services/data/dataset_registry.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/services/data/dataset_registry.py) como SSOT único para resolución de datasets, particionado estricto y verificación de huella SHA-256.
+- **Acoplamiento Directo:** [`services/api/app/data_feed/feed_loader.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/services/api/app/data_feed/feed_loader.py) consulta `DatasetRegistry` como autoridad primaria de carga.
 
 ---
 
@@ -61,24 +62,27 @@
 ## 6. Equipo Multi-Agente Forense (8 Subagentes de Fase 01)
 
 1. **DATA / CHAIN-OF-CUSTODY:** Inventario exhaustivo y verificación de hashes en `data/normalized/`.
-2. **QUANT / TEMPORAL-INTEGRITY:** Auditoría de monotonía temporal ($ts[i] < ts[i+1]$) y ausencia de lookahead bias.
-3. **EXECUTION / DATA-CONSUMERS:** Trazabilidad de consumidores desde Discovery hasta API/UI.
+2. **QUANT / TEMPORAL-INTEGRITY:** Auditoría de monotonía temporal ($ts[i] < ts[i+1]$) y causalidad temporal (0% Lookahead Bias).
+3. **EXECUTION / DATA-CONSUMERS:** Trazabilidad de consumidores desde Discovery hasta API/UI y desacoplamiento de proxies.
 4. **VALIDATION / IS-VAL-OOS:** Protocolo de particionado 60/20/20 y blind scope en laboratorio de I+D.
-5. **RED-TEAM / DATA-LEAKAGE:** Verificación de aislamiento estricto del Blind Holdout sin fugas de estadísticas.
-6. **PROVENANCE / HASHES:** Esquema canónico de DatasetManifest inmutable con identificadores unívocos.
+5. **RED-TEAM / DATA-LEAKAGE:** Auditoría adversarial detectando desbordamientos en daemons de optimización.
+6. **PROVENANCE / HASHES:** Esquema canónico de `DatasetManifest` inmutable con identificadores unívocos.
 7. **RELIABILITY / SNAPSHOT-RECOVERY:** Auditoría de fail-closed ante datasets ausentes o corruptos y respaldo forense Firebase.
 8. **UI/API / DATA-PROVENANCE:** Exposición de endpoints `/api/v2/datasets` y visualización Merkle en Frontend.
 
 ---
 
-## 7. Archivos Implementados y Actualizados
+## 7. Hallazgos Fuera de Alcance Registrados (`DEFERRED_TO_FUTURE_ORDER`)
 
-1. [`contracts/dataset_contracts.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/contracts/dataset_contracts.py): Contratos inmutables de manifest y partición.
-2. [`services/data/dataset_registry.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/services/data/dataset_registry.py): Motor SSOT de registro, resolución y verificación criptográfica.
-3. [`services/data/__init__.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/services/data/__init__.py): Exportación canónica del registro.
-4. [`services/api/app/api/real_data_router.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/services/api/app/api/real_data_router.py): Endpoints `/datasets`, `/datasets/{id}`, `/datasets/{id}/bars`.
-5. [`tests/test_phase01_dataset_chain_of_custody.py`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/tests/test_phase01_dataset_chain_of_custody.py): Suite de pruebas de Fase 01.
-6. [`.agents/informe&seguimiento/03_HANDOFF_AG2-P01-001.md`](file:///c:/Obsidian/proyectos/Trading/01%20Ultrarentable/.agents/informe&seguimiento/03_HANDOFF_AG2-P01-001.md): Documento oficial de entrega.
+Conforme a la regla estricta de ejecución de alcance (`00_SCOPE_EXECUTION_RULE.md`), los siguientes defectos identificados en motores de optimización y búsqueda han sido **descubiertos, registrados y clasificados para sus respectivas fases futuras sin alterar prematuramente su código**:
+
+| ID Hallazgo | Archivo / Componente | Severidad | Descripción del Defecto | Fase Sugerida |
+|---|---|---|---|---|
+| **LEAK-01** | `services/api/app/factory/continuous_search_daemon.py` (L340-416) | SEV-1 | Grid search paramétrico evalúa y optimiza directamente sobre métricas OOS en lugar de IS. | **Phase 04 (Discovery Factory)** |
+| **LEAK-02** | `services/api/app/factory/deep_strategy_improver.py` (L90-165) | SEV-1 | Inflado aritmético de métricas en memoria (`pf * 1.30`) en vez de re-ejecución física. | **Phase 04 (Discovery Factory)** |
+| **LEAK-03** | `services/api/app/factory/five_day_challenge_engine.py` (L207-221) | SEV-1 | Fallback de curva ganadora sintética (+6.2%) si el backtest no genera curvas. | **Phase 04 (Challenge Engine)** |
+| **LEAK-04** | `services/api/app/factory/robustness_verifier.py` (L98-99) | SEV-2 | Multiplicadores estáticos (`pf_is * 0.90`) para simular estrés de slippage. | **Phase 03 (Validation 11 Gates)** |
+| **LEAK-06** | `services/api/app/factory/ultra_risk_controlled_engine.py` (L126-164) | SEV-3 | Precomputación vectorial de indicadores sobre la serie completa antes del split IS/OOS. | **Phase 04 (Discovery Factory)** |
 
 ---
 
@@ -86,29 +90,24 @@
 
 | Comando | Entorno | Código Salida | Resultado |
 |---|---|---|---|
-| `python3 -m pytest tests/test_phase01_dataset_chain_of_custody.py -v` | Local/VPS | 0 | 5/5 PASSED (100%) |
-| `python3 -m pytest tests/test_portfolio_provenance_and_zero_mock.py tests/test_version_control_manager_ssot.py tests/test_fastapi_v2_integration.py -v` | Local/VPS | 0 | 9/9 PASSED (100%) |
+| `python3 -m pytest tests/test_phase01_dataset_chain_of_custody.py tests/test_portfolio_provenance_and_zero_mock.py -v` | Local/VPS | 0 | 8/8 PASSED (100%) |
+| `python3 -m pytest tests/test_version_control_manager_ssot.py tests/test_fastapi_v2_integration.py -v` | Local/VPS | 0 | 6/6 PASSED (100%) |
 | `python3 -m pytest tests/test_version_governance_v540.py -v` | Local/VPS | 0 | 5/5 PASSED (100%) |
 
 ---
 
-## 9. Disposiciones de Defectos Fuera de Alcance (`DEFERRED_TO_FUTURE_ORDER`)
-- **Pipeline de Ingesta Continua de Nuevos Proveedores (Phase 04):** Conectores WebSocket en vivo adicionales para Cboe/Rithmic; diferidos para la fase de producción de datos en tiempo real.
-- **Optimización de Memoria Parquet para Series de 1 Segundo (Phase 04):** Conversión a formato Arrow zero-copy para ticks de microestructura; fuera del alcance de Phase 01.
-
----
-
-## 10. Evaluación de Criterios de Aceptación (Exit Criteria)
+## 9. Evaluación de Criterios de Aceptación (Exit Criteria)
 - [x] Inventario físico completo de datasets en `data/normalized/` con hashes SHA-256 reales.
 - [x] Implementado el contrato canónico `DatasetManifest` y `DatasetPartition` en `contracts/dataset_contracts.py`.
 - [x] Implementado el gestor canónico `DatasetRegistry` con carga física y fail-closed determinista.
 - [x] Segregación temporal 60/20/20 verificada sin fugas de datos (Zero Lookahead).
 - [x] Endpoints `/api/v2/datasets` operativos en FastAPI exponiendo metadatos reales.
-- [x] Suite `test_phase01_dataset_chain_of_custody.py` aprobada al 100% (5/5 PASSED).
+- [x] Integración de `DatasetRegistry` como autoridad primaria en `feed_loader.py`.
+- [x] Suite de pruebas de Fase 01 aprobada al 100% (8/8 PASSED).
 - [x] Handoff registrado y sincronizado en GitHub `origin/main`.
 
 ---
 
-## 11. Disposición Final
+## 10. Disposición Final
 $$\mathbf{DISPOSITION: READY\_FOR\_REVIEW}$$
 La orden AG2-P01-001 ha finalizado exitosamente el alcance íntegro de la **Fase 01: Data & Dataset Chain of Custody**. Estado entregado y listo para inspección externa en GitHub `origin/main`.
