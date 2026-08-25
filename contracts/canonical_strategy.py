@@ -1,7 +1,7 @@
 """contracts/canonical_strategy.py
-Definición Canónica Inmutable de Estrategia, AST y Representación (Fase 02).
+Definición Canónica Inmutable de Estrategia, AST y Representación (Fase 02 Rework P02-002).
 ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · FAIL-CLOSED
-SSOT inmutable para la representación declarativa de reglas, condiciones, salidas y gestión de riesgo.
+SSOT inmutable para la representación declarativa de reglas, condiciones, salidas, compilación y runtime.
 """
 
 from __future__ import annotations
@@ -107,9 +107,9 @@ class ExitModel(BaseModel):
     """Modelo canónico de salida, SL, TP y gestión de trailing stop."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    sl_type: StopLossType = Field(default=StopLossType.ATR_MULTIPLE)
+    sl_type: StopLossType = Field(..., description="Tipo de Stop Loss")
     sl_value: float = Field(..., gt=0.0, description="Valor del Stop Loss (e.g. 2.0x ATR o 1.5%)")
-    tp_type: TakeProfitType = Field(default=TakeProfitType.RR_MULTIPLE)
+    tp_type: TakeProfitType = Field(..., description="Tipo de Take Profit")
     tp_value: float = Field(..., gt=0.0, description="Valor del Take Profit (e.g. 3.0 R:R)")
     
     trail_after_r: Optional[float] = Field(default=None, gt=0.0, description="Mueve a BE tras alcanzar R múltiplos")
@@ -127,7 +127,7 @@ class SizingAndRisk(BaseModel):
     """Gestión de dimensionamiento de posición y límites de riesgo."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    sizing_type: SizingType = Field(default=SizingType.RISK_PCT_EQUITY)
+    sizing_type: SizingType = Field(..., description="Tipo de dimensionamiento")
     risk_value: float = Field(..., gt=0.0, description="Riesgo base por trade e.g. 1.0% o 1 contrato")
     max_open_positions: int = Field(default=1, ge=1, le=10)
     max_daily_loss_usd: Optional[float] = Field(default=None, gt=0.0)
@@ -158,67 +158,112 @@ class ProvenanceMetadata(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     author: str = Field(default="SYSTEM")
-    engine_version: str = Field(default="5.4.0")
-    policy_version: str = Field(default="5.4.0")
+    engine_version: str = Field(..., description="Versión exacta del motor")
+    policy_version: str = Field(..., description="Versión exacta de la política de ejecución")
     created_at_utc: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     parent_hash: Optional[str] = None
     mutation_type: Optional[str] = None
 
 
+class ExecutableRuntimeInstruction(BaseModel):
+    """Instrucción de ejecución en runtime compilada a partir de la CanonicalStrategy."""
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    strategy_id: str
+    strategy_hash: str
+    symbol: str
+    timeframe: str
+    direction: Literal["LONG", "SHORT", "BOTH"]
+    compiled_conditions: List[Dict[str, Any]]
+    sl_config: Dict[str, Any]
+    tp_config: Dict[str, Any]
+    sizing_config: Dict[str, Any]
+    session_config: Optional[Dict[str, Any]] = None
+
+
 class CanonicalStrategy(BaseModel):
-    """Entidad SSOT Inmutable de Estrategia Cuantitativa (Fase 02)."""
+    """Entidad SSOT Inmutable de Estrategia Cuantitativa (Fase 02 Rework P02-002)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     strategy_id: str = Field(..., description="ID unívoco determinista")
     name: str = Field(..., description="Nombre humano e.g. NQ Trend Breakout")
-    version: str = Field(default="1.0.0", description="Versión semántica de la estrategia")
+    version: str = Field(..., description="Versión semántica explícita de la estrategia e.g. 1.0.0")
     symbol: str = Field(..., description="Símbolo base e.g. NQ, BTCUSDT, EURUSD")
     timeframe: str = Field(..., description="Timeframe e.g. 1m, 5m, 15m, 1h, 4h, 1d")
     route: Literal["ULTRA", "FONDEO", "PORTFOLIO"] = Field(..., description="Ruta de explotación")
-    archetype: str = Field(default="MOMENTUM_BREAKOUT")
+    archetype: str = Field(..., description="Arquetipo cuantitativo")
 
     entry_rules: RuleTree = Field(..., description="Reglas de entrada")
     exit_rules: ExitModel = Field(..., description="Reglas de salida y SL/TP")
     sizing_and_risk: SizingAndRisk = Field(..., description="Gestión de tamaño y riesgo")
     session_window: Optional[SessionWindow] = None
-    provenance: Optional[ProvenanceMetadata] = None
+    provenance: ProvenanceMetadata = Field(..., description="Metadatos de procedencia y versiones de motor")
     
-    strategy_hash: str = Field(..., min_length=64, max_length=64, description="Hash SHA-256 inmutable del AST")
+    strategy_hash: str = Field(..., min_length=64, max_length=64, description="Hash SHA-256 inmutable del AST e identidad semántica completa")
 
     @classmethod
     def compute_strategy_hash(cls, payload: Dict[str, Any]) -> str:
-        """Calcula el hash determinista SHA-256 canónico del AST y parámetros."""
+        """Calcula el hash determinista SHA-256 canónico cubriendo la identidad semántica completa (P02-002-01)."""
         raw_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
         return hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
+
+    def get_semantic_payload(self) -> Dict[str, Any]:
+        """Extrae el payload semántico completo para el cálculo de hash inmutable."""
+        return {
+            "strategy_id": self.strategy_id,
+            "name": self.name,
+            "version": self.version,
+            "symbol": self.symbol.strip().upper(),
+            "timeframe": self.timeframe.strip().lower(),
+            "route": self.route,
+            "archetype": self.archetype,
+            "entry_rules": self.entry_rules.model_dump(),
+            "exit_rules": self.exit_rules.model_dump(),
+            "sizing_and_risk": self.sizing_and_risk.model_dump(),
+            "session_window": self.session_window.model_dump() if self.session_window else None,
+            "provenance": {
+                "engine_version": self.provenance.engine_version,
+                "policy_version": self.provenance.policy_version,
+                "parent_hash": self.provenance.parent_hash,
+                "mutation_type": self.provenance.mutation_type,
+            },
+        }
 
     @classmethod
     def create_and_hash(
         cls,
         strategy_id: str,
         name: str,
+        version: str,
         symbol: str,
         timeframe: str,
         route: Literal["ULTRA", "FONDEO", "PORTFOLIO"],
+        archetype: str,
         entry_rules: RuleTree,
         exit_rules: ExitModel,
         sizing_and_risk: SizingAndRisk,
-        archetype: str = "MOMENTUM_BREAKOUT",
-        version: str = "1.0.0",
+        provenance: ProvenanceMetadata,
         session_window: Optional[SessionWindow] = None,
-        provenance: Optional[ProvenanceMetadata] = None,
     ) -> CanonicalStrategy:
-        """Fabrica una CanonicalStrategy inmutable y calcula su hash determinista."""
+        """Fabrica una CanonicalStrategy inmutable y calcula su hash determinista sobre todos los campos semánticos."""
         payload = {
             "strategy_id": strategy_id,
+            "name": name,
+            "version": version,
             "symbol": symbol.strip().upper(),
             "timeframe": timeframe.strip().lower(),
             "route": route,
             "archetype": archetype,
-            "version": version,
             "entry_rules": entry_rules.model_dump(),
             "exit_rules": exit_rules.model_dump(),
             "sizing_and_risk": sizing_and_risk.model_dump(),
             "session_window": session_window.model_dump() if session_window else None,
+            "provenance": {
+                "engine_version": provenance.engine_version,
+                "policy_version": provenance.policy_version,
+                "parent_hash": provenance.parent_hash,
+                "mutation_type": provenance.mutation_type,
+            },
         }
         computed_hash = cls.compute_strategy_hash(payload)
         return cls(
@@ -238,18 +283,44 @@ class CanonicalStrategy(BaseModel):
         )
 
     def verify_integrity(self) -> bool:
-        """Verifica que el strategy_hash coincida exactamente con el AST actual."""
-        payload = {
-            "strategy_id": self.strategy_id,
-            "symbol": self.symbol.strip().upper(),
-            "timeframe": self.timeframe.strip().lower(),
-            "route": self.route,
-            "archetype": self.archetype,
-            "version": self.version,
-            "entry_rules": self.entry_rules.model_dump(),
-            "exit_rules": self.exit_rules.model_dump(),
-            "sizing_and_risk": self.sizing_and_risk.model_dump(),
-            "session_window": self.session_window.model_dump() if self.session_window else None,
-        }
+        """Verifica que el strategy_hash coincida exactamente con la identidad semántica completa."""
+        payload = self.get_semantic_payload()
         expected = self.compute_strategy_hash(payload)
         return self.strategy_hash == expected
+
+    def compile_to_runtime(self) -> ExecutableRuntimeInstruction:
+        """Compila la CanonicalStrategy en una instrucción ejecutable de runtime sin desvíos semánticos (P02-002-02)."""
+        if not self.verify_integrity():
+            raise StrategyIntegrityError(f"Estrategia {self.strategy_id} tiene hash corrupto o no coincide con su AST.")
+
+        compiled_conds = []
+        for cond in self.entry_rules.conditions:
+            compiled_conds.append({
+                "left": cond.left.model_dump() if isinstance(cond.left, IndicatorSpec) else cond.left,
+                "op": cond.op.value if isinstance(cond.op, ComparisonOp) else str(cond.op),
+                "right": cond.right.model_dump() if isinstance(cond.right, IndicatorSpec) else cond.right,
+            })
+
+        return ExecutableRuntimeInstruction(
+            strategy_id=self.strategy_id,
+            strategy_hash=self.strategy_hash,
+            symbol=self.symbol,
+            timeframe=self.timeframe,
+            direction=self.entry_rules.direction,
+            compiled_conditions=compiled_conds,
+            sl_config={
+                "type": self.exit_rules.sl_type.value,
+                "value": self.exit_rules.sl_value,
+                "trail_after_r": self.exit_rules.trail_after_r,
+            },
+            tp_config={
+                "type": self.exit_rules.tp_type.value,
+                "value": self.exit_rules.tp_value,
+            },
+            sizing_config={
+                "type": self.sizing_and_risk.sizing_type.value,
+                "value": self.sizing_and_risk.risk_value,
+                "max_open_positions": self.sizing_and_risk.max_open_positions,
+            },
+            session_config=self.session_window.model_dump() if self.session_window else None,
+        )

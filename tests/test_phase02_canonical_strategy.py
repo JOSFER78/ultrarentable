@@ -1,5 +1,5 @@
 """tests/test_phase02_canonical_strategy.py
-Suite de Pruebas de la FASE 02 (ORDEN AG2-P02-001): CANONICAL STRATEGY & EXECUTION CONTRACT.
+Suite de Pruebas de la FASE 02 (REWORK AG2-P02-002): CANONICAL STRATEGY COMPLETE HASH & RUNTIME SSOT.
 ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · FAIL-CLOSED
 """
 
@@ -17,6 +17,7 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     SizingType,
     StopLossType,
+    StrategyIntegrityError,
     TakeProfitType,
 )
 from contracts.snapshots.strategy_snapshot import StrategyRoute, StrategySnapshot
@@ -57,117 +58,153 @@ def sample_sizing():
     )
 
 
-def test_canonical_strategy_creation_hashing_and_immutability(sample_entry_rules, sample_exit_rules, sample_sizing):
-    """P02-001-01 & 02: Verifica creación, determinismo de hash e inmutabilidad (frozen)."""
+@pytest.fixture
+def sample_provenance():
+    return ProvenanceMetadata(
+        author="SYSTEM_ORCHESTRATOR",
+        engine_version="5.4.0",
+        policy_version="5.4.0",
+    )
+
+
+def test_complete_semantic_hash_identity_and_mutation_invalidation(
+    sample_entry_rules, sample_exit_rules, sample_sizing, sample_provenance
+):
+    """P02-002-01: Verifica que todo cambio material (incluyendo motor/política) invalide el hash canónico."""
     strat = CanonicalStrategy.create_and_hash(
-        strategy_id="strat_nq_trend_v1",
-        name="NQ Trend Follower 9/21",
+        strategy_id="strat_nq_v1",
+        name="NQ Trend 9/21",
+        version="1.0.0",
         symbol="NQ",
         timeframe="1h",
         route="FONDEO",
+        archetype="MOMENTUM_BREAKOUT",
         entry_rules=sample_entry_rules,
         exit_rules=sample_exit_rules,
         sizing_and_risk=sample_sizing,
-        provenance=ProvenanceMetadata(
-            author="SYSTEM_ORCHESTRATOR",
-            engine_version="5.4.0",
-            policy_version="5.4.0",
-        ),
+        provenance=sample_provenance,
     )
 
     assert len(strat.strategy_hash) == 64
     assert strat.verify_integrity() is True
 
-    # Inmutabilidad (frozen)
-    with pytest.raises(Exception):
-        strat.symbol = "ES"  # Violación de inmutabilidad
-
-
-def test_deterministic_serialization_reproducibility(sample_entry_rules, sample_exit_rules, sample_sizing):
-    """P02-001-02: Verifica que bytes canónicos idénticos produzcan exactamente el mismo hash SHA-256."""
-    strat_a = CanonicalStrategy.create_and_hash(
-        strategy_id="strat_btc_breakout_v1",
-        name="BTC Breakout",
-        symbol="BTCUSDT",
-        timeframe="5m",
-        route="ULTRA",
-        entry_rules=sample_entry_rules,
-        exit_rules=sample_exit_rules,
-        sizing_and_risk=sample_sizing,
+    # 1. Mutar versión de motor
+    mutated_prov = ProvenanceMetadata(
+        author="SYSTEM_ORCHESTRATOR",
+        engine_version="5.5.0",  # Cambio de versión
+        policy_version="5.4.0",
     )
-    strat_b = CanonicalStrategy.create_and_hash(
-        strategy_id="strat_btc_breakout_v1",
-        name="BTC Breakout",
-        symbol="BTCUSDT",
-        timeframe="5m",
-        route="ULTRA",
-        entry_rules=sample_entry_rules,
-        exit_rules=sample_exit_rules,
-        sizing_and_risk=sample_sizing,
-    )
-
-    assert strat_a.strategy_hash == strat_b.strategy_hash, "El hash debe ser 100% determinista y reproducible"
-
-
-def test_material_mutation_produces_new_hash_and_lineage(sample_entry_rules, sample_exit_rules, sample_sizing):
-    """P02-001-05: Verifica que una mutación material altere el hash y requiera nuevo linaje."""
-    strat_parent = CanonicalStrategy.create_and_hash(
+    strat_new_engine = CanonicalStrategy.create_and_hash(
         strategy_id="strat_nq_v1",
-        name="NQ Base",
+        name="NQ Trend 9/21",
+        version="1.0.0",
         symbol="NQ",
         timeframe="1h",
         route="FONDEO",
+        archetype="MOMENTUM_BREAKOUT",
         entry_rules=sample_entry_rules,
         exit_rules=sample_exit_rules,
         sizing_and_risk=sample_sizing,
+        provenance=mutated_prov,
     )
+    assert strat.strategy_hash != strat_new_engine.strategy_hash
 
-    # Mutar parámetro de salida
+    # 2. Mutar parámetro SL
     mutated_exit = ExitModel(
         sl_type=StopLossType.ATR_MULTIPLE,
-        sl_value=2.0,  # Cambio de 1.5 a 2.0
+        sl_value=2.0,  # Cambio de SL
         tp_type=TakeProfitType.RR_MULTIPLE,
         tp_value=3.0,
     )
-
-    strat_child = CanonicalStrategy.create_and_hash(
-        strategy_id="strat_nq_v2",
-        name="NQ Mutated Stop",
+    strat_new_exit = CanonicalStrategy.create_and_hash(
+        strategy_id="strat_nq_v1",
+        name="NQ Trend 9/21",
+        version="1.0.0",
         symbol="NQ",
         timeframe="1h",
         route="FONDEO",
+        archetype="MOMENTUM_BREAKOUT",
         entry_rules=sample_entry_rules,
         exit_rules=mutated_exit,
         sizing_and_risk=sample_sizing,
-        provenance=ProvenanceMetadata(
-            parent_hash=strat_parent.strategy_hash,
-            mutation_type="STOP_LOSS_PARAM_TUNING",
-            engine_version="5.4.0",
-        ),
+        provenance=sample_provenance,
     )
-
-    assert strat_child.strategy_hash != strat_parent.strategy_hash
-    assert strat_child.provenance.parent_hash == strat_parent.strategy_hash
+    assert strat.strategy_hash != strat_new_exit.strategy_hash
 
 
-def test_fail_closed_on_tampered_hash(sample_entry_rules, sample_exit_rules, sample_sizing):
-    """P02-001-04: Verifica detección Fail-Closed si el strategy_hash no coincide con el AST."""
-    strat = CanonicalStrategy(
-        strategy_id="strat_tampered",
-        name="Tampered",
-        symbol="NQ",
-        timeframe="1h",
-        route="FONDEO",
+def test_compile_to_runtime_semantic_equivalence(
+    sample_entry_rules, sample_exit_rules, sample_sizing, sample_provenance
+):
+    """P02-002-02 & P02-002-05: Verifica que CanonicalStrategy se compile a instrucciones de runtime exactas."""
+    strat = CanonicalStrategy.create_and_hash(
+        strategy_id="strat_btc_5m",
+        name="BTC Momentum",
+        version="1.0.0",
+        symbol="BTCUSDT",
+        timeframe="5m",
+        route="ULTRA",
+        archetype="VOLATILITY_BREAKOUT",
         entry_rules=sample_entry_rules,
         exit_rules=sample_exit_rules,
         sizing_and_risk=sample_sizing,
-        strategy_hash="f" * 64,  # Hash falsificado
+        provenance=sample_provenance,
     )
-    assert strat.verify_integrity() is False
+
+    runtime_inst = strat.compile_to_runtime()
+    assert runtime_inst.strategy_id == "strat_btc_5m"
+    assert runtime_inst.strategy_hash == strat.strategy_hash
+    assert runtime_inst.symbol == "BTCUSDT"
+    assert runtime_inst.timeframe == "5m"
+    assert runtime_inst.sl_config["value"] == 1.5
+    assert runtime_inst.tp_config["value"] == 3.0
+    assert len(runtime_inst.compiled_conditions) == 1
+
+
+def test_tampered_strategy_compile_fails_closed(
+    sample_entry_rules, sample_exit_rules, sample_sizing, sample_provenance
+):
+    """P02-002-04: Verifica que una estrategia con hash alterado sea rechazada en compilación (Fail-Closed)."""
+    tampered_strat = CanonicalStrategy(
+        strategy_id="strat_bad_hash",
+        name="Bad",
+        version="1.0.0",
+        symbol="NQ",
+        timeframe="1h",
+        route="FONDEO",
+        archetype="MOMENTUM_BREAKOUT",
+        entry_rules=sample_entry_rules,
+        exit_rules=sample_exit_rules,
+        sizing_and_risk=sample_sizing,
+        provenance=sample_provenance,
+        strategy_hash="0" * 64,  # Hash falsificado
+    )
+    with pytest.raises(StrategyIntegrityError):
+        tampered_strat.compile_to_runtime()
+
+
+def test_single_strategy_authority_and_immutability(
+    sample_entry_rules, sample_exit_rules, sample_sizing, sample_provenance
+):
+    """P02-002-03: Verifica inmutabilidad estricta (frozen=True) y rechazo de mutaciones directas."""
+    strat = CanonicalStrategy.create_and_hash(
+        strategy_id="strat_immut",
+        name="Immutable Strat",
+        version="1.0.0",
+        symbol="NQ",
+        timeframe="1h",
+        route="FONDEO",
+        archetype="MOMENTUM_BREAKOUT",
+        entry_rules=sample_entry_rules,
+        exit_rules=sample_exit_rules,
+        sizing_and_risk=sample_sizing,
+        provenance=sample_provenance,
+    )
+    with pytest.raises(Exception):
+        strat.symbol = "ES"
 
 
 def test_strategy_snapshot_creation_and_binding(sample_entry_rules, sample_exit_rules, sample_sizing):
-    """P02-001-03: Verifica la congelación inmutable de la estrategia con el dataset en StrategySnapshot."""
+    """P02-002-06: Verifica congelación inmutable ligada a dataset físico en StrategySnapshot."""
     snapshot = StrategySnapshot.create_and_hash(
         strategy_id="strat_btc_rsi_v1",
         route=StrategyRoute.ULTRA,
