@@ -1,6 +1,6 @@
 """contracts/dataset_contracts.py
-Contratos Canónicos para la Cadena de Custodia e Inmutabilidad de Datasets (Fase 01 Rework).
-ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED
+Contratos Canónicos para la Cadena de Custodia e Inmutabilidad de Datasets (Fase 01 Rework P01-003).
+ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · NO-SYNTHETIC-DEFAULTS
 """
 
 from __future__ import annotations
@@ -40,17 +40,17 @@ class DatasetPartition(BaseModel):
 
 
 class DatasetManifest(BaseModel):
-    """Manifiesto SSOT de custodia de un dataset físico normalizado."""
+    """Manifiesto SSOT de custodia de un dataset físico normalizado sin defaults inventados."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     # Identidad canónica
     data_snapshot_id: str = Field(..., description="ID inmutable del snapshot")
-    data_version: str = Field(default="1.0.0", description="Versión semántica del dataset")
-    source_id: str = Field(..., description="Proveedor e.g. YAHOO_CME, BINANCE_PERP, BINGX_SWAP, TRAD_FOREX")
-    instrument_id: str = Field(..., description="Símbolo normalizado e.g. NQ, BTCUSDT, EURUSD")
-    timeframe_id: str = Field(..., description="Timeframe e.g. 1m, 5m, 15m, 1h, 4h, 1d")
-    schema_version: str = Field(default="1.0.0")
-    normalization_version: str = Field(default="1.0.0")
+    data_version: Optional[str] = Field(default=None, description="Versión semántica del dataset si está documentada")
+    source_id: str = Field(..., description="Proveedor e.g. YAHOO_CME, BINANCE_PERP, BINGX_SWAP o UNVERIFIED")
+    instrument_id: str = Field(..., description="Símbolo canónico e.g. NQ, BTCUSDT, EURUSD")
+    timeframe_id: str = Field(..., description="Timeframe canónico e.g. 1m, 5m, 15m, 1h, 4h, 1d")
+    schema_version: Optional[str] = Field(default=None, description="Versión del esquema si está documentada")
+    normalization_version: Optional[str] = Field(default=None, description="Versión del pipeline de normalización")
     
     # Cobertura temporal y conteo físico
     coverage_start: str = Field(..., description="ISO 8601 UTC de la primera vela")

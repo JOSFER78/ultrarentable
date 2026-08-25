@@ -1,6 +1,6 @@
 """services/data/dataset_registry.py
-Registro Canónico de Datasets y Cadena de Custodia Criptográfica (Fase 01 Rework).
-ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · FAIL-CLOSED
+Registro Canónico de Datasets y Cadena de Custodia Criptográfica (Fase 01 Rework P01-003).
+ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · NO-SYNTHETIC-DEFAULTS · FAIL-CLOSED
 SSOT inmutable para la resolución, verificación y particionado físico de series temporales.
 """
 
@@ -33,6 +33,24 @@ class DatasetResolutionError(Exception):
     pass
 
 
+# Registro Canónico Versionado de Alias de Instrumentos (SSOT v1.0.0)
+CANONICAL_INSTRUMENT_ALIASES: Dict[str, str] = {
+    "BTC-USDT": "BTCUSDT",
+    "BTC_USDT": "BTCUSDT",
+    "ETH-USDT": "ETHUSDT",
+    "ETH_USDT": "ETHUSDT",
+    "SOL-USDT": "SOLUSDT",
+    "SOL_USDT": "SOLUSDT",
+    "XRP-USDT": "XRPUSDT",
+    "XRP_USDT": "XRPUSDT",
+    "DOGE-USDT": "DOGEUSDT",
+    "DOGE_USDT": "DOGEUSDT",
+    "EURUSD=X": "EURUSD",
+    "GBPUSD=X": "GBPUSD",
+    "JPY=X": "USDJPY",
+}
+
+
 def _extract_ts_ms(candle: Dict[str, Any]) -> int:
     """Extrae el timestamp en milisegundos UTC de forma determinista sin inventar datos."""
     if "timestamp_utc_ms" in candle:
@@ -55,7 +73,7 @@ def _extract_ts_ms(candle: Dict[str, Any]) -> int:
 
 
 class DatasetRegistry:
-    """Registro SSOT de datasets normalizados con verificación criptográfica y particionado físico."""
+    """Registro SSOT de datasets normalizados con verificación criptográfica y metadatos reales."""
 
     def __init__(self, data_dir: Optional[Path] = None):
         self.root_dir = Path(__file__).resolve().parent.parent.parent
@@ -65,7 +83,7 @@ class DatasetRegistry:
         self._load_manifests()
 
     def _load_manifests(self) -> None:
-        """Escanea data/normalized/ y carga los manifiestos derivando métricas de bytes reales."""
+        """Escanea data/normalized/ y carga los manifiestos derivando metadatos exclusivamente de fuentes autorizadas."""
         if not self.data_dir.exists():
             return
 
@@ -89,13 +107,13 @@ class DatasetRegistry:
                 end_ms = _extract_ts_ms(candles[-1])
 
                 if start_ms <= 0 or end_ms <= 0 or end_ms < start_ms:
-                    logger.error(f"Dataset {data_file.name} tiene timestamps inválidos ({start_ms} -> {end_ms}). Omitido.")
+                    logger.error(f"Dataset {data_file.name} tiene timestamps inválidos ({start_ms} -> {end_ms}). Rechazado.")
                     continue
 
                 cov_start_iso = datetime.fromtimestamp(start_ms / 1000.0, tz=timezone.utc).isoformat()
                 cov_end_iso = datetime.fromtimestamp(end_ms / 1000.0, tz=timezone.utc).isoformat()
 
-                # Auditoría de integridad física (duplicados, gaps, orden)
+                # Auditoría física de orden y duplicados
                 duplicate_count = 0
                 out_of_order_count = 0
                 for i in range(len(candles) - 1):
@@ -107,7 +125,7 @@ class DatasetRegistry:
                         elif ts_cur > ts_nxt:
                             out_of_order_count += 1
 
-                # Leer manifest acompañante si existe
+                # Leer manifiesto físico si existe
                 raw_manifest = {}
                 if manifest_file.exists():
                     try:
@@ -116,42 +134,36 @@ class DatasetRegistry:
                     except Exception:
                         pass
 
-                snapshot_id = raw_manifest.get("dataset_id") or data_file.stem
-                
-                # Deducción estricta de source_id sin inventar
-                if raw_manifest.get("venue") or raw_manifest.get("source"):
-                    source_id = str(raw_manifest.get("venue") or raw_manifest.get("source"))
-                elif "bingx" in data_file.name.lower():
-                    source_id = "BINGX_SWAP"
-                elif "trad_" in data_file.name.lower() or "cme" in data_file.name.lower():
-                    source_id = "YAHOO_CME"
-                elif "binance" in data_file.name.lower():
-                    source_id = "BINANCE_PERP"
-                else:
-                    source_id = "UNVERIFIED_SOURCE"
+                # Identidad de source_id: solo de metadatos explícitos o UNVERIFIED
+                source_id = str(raw_manifest.get("venue") or raw_manifest.get("source") or raw_manifest.get("source_id") or "UNVERIFIED")
 
-                # Extracción canónica de símbolo y timeframe
+                # Identidad de symbol y timeframe: solo de metadatos explícitos del manifest o del contrato
                 if raw_manifest.get("symbol"):
                     raw_sym = str(raw_manifest["symbol"]).upper()
+                elif raw_manifest.get("instrument_id"):
+                    raw_sym = str(raw_manifest["instrument_id"]).upper()
                 else:
-                    # Parsear desde nombre de archivo e.g. ds_trad_nq_1h_...
-                    parts = data_file.stem.split("_")
-                    if len(parts) >= 4:
-                        raw_sym = parts[2].upper()
-                    else:
-                        raw_sym = data_file.stem.upper()
+                    # Sin metadatos explícitos de instrumento, se rechaza
+                    logger.warning(f"Dataset {data_file.name} carece de instrument_id explícito. Omitido.")
+                    continue
 
-                if raw_manifest.get("interval") or raw_manifest.get("timeframe"):
-                    raw_tf = str(raw_manifest.get("interval") or raw_manifest.get("timeframe")).lower()
+                if raw_manifest.get("interval"):
+                    raw_tf = str(raw_manifest["interval"]).lower()
+                elif raw_manifest.get("timeframe") or raw_manifest.get("timeframe_id"):
+                    raw_tf = str(raw_manifest.get("timeframe") or raw_manifest.get("timeframe_id")).lower()
                 else:
-                    parts = data_file.stem.split("_")
-                    if len(parts) >= 4:
-                        raw_tf = parts[3].lower()
-                    else:
-                        raw_tf = "1h"
+                    logger.warning(f"Dataset {data_file.name} carece de timeframe_id explícito. Omitido.")
+                    continue
 
                 clean_sym = raw_sym.replace("-", "").replace("_", "").replace("/", "")
                 clean_tf = raw_tf.strip().lower()
+
+                # Versiones: No hardcodear 1.0.0 si no existen en manifest
+                data_version = raw_manifest.get("data_version")
+                schema_version = raw_manifest.get("schema_version")
+                normalization_version = raw_manifest.get("normalization_version")
+
+                snapshot_id = raw_manifest.get("dataset_id") or raw_manifest.get("data_snapshot_id") or data_file.stem
 
                 # Particionado físico estricto con cálculo de hashes sobre bytes de cada slice
                 partitions = {}
@@ -200,12 +212,12 @@ class DatasetRegistry:
 
                 manifest = DatasetManifest(
                     data_snapshot_id=snapshot_id,
-                    data_version="1.0.0",
+                    data_version=data_version,
                     source_id=source_id,
                     instrument_id=clean_sym,
                     timeframe_id=clean_tf,
-                    schema_version="1.0.0",
-                    normalization_version="1.0.0",
+                    schema_version=schema_version,
+                    normalization_version=normalization_version,
                     coverage_start=cov_start_iso,
                     coverage_end=cov_end_iso,
                     start_time_utc_ms=start_ms,
@@ -235,19 +247,22 @@ class DatasetRegistry:
         return self._manifests.get(dataset_id)
 
     def resolve_dataset(self, symbol: str, timeframe: str) -> Optional[DatasetManifest]:
-        """Resolución unívoca y determinista por símbolo y timeframe. Cero coincidencia difusa."""
-        clean_sym = symbol.upper().replace("-", "").replace("_", "").replace("/", "")
+        """Resolución determinista de datasets con soporte de alias canónico estricto."""
+        raw_sym = symbol.strip().upper()
         clean_tf = timeframe.strip().lower()
 
-        # Coincidencia exacta estricta
+        # 1. Búsqueda exacta directa
+        clean_sym = raw_sym.replace("-", "").replace("_", "").replace("/", "")
         if (clean_sym, clean_tf) in self._symbol_timeframe_index:
             return self._manifests[self._symbol_timeframe_index[(clean_sym, clean_tf)]]
 
-        # Aliases canónicos estándar (ej. BTCUSDT -> BTC, EURUSD=X -> EURUSD)
-        alt_sym = clean_sym.replace("USDT", "").replace("USD", "").replace("=X", "")
-        if alt_sym and (alt_sym, clean_tf) in self._symbol_timeframe_index:
-            return self._manifests[self._symbol_timeframe_index[(alt_sym, clean_tf)]]
+        # 2. Búsqueda en Registro de Alias Canónico Oficial
+        if raw_sym in CANONICAL_INSTRUMENT_ALIASES:
+            aliased_sym = CANONICAL_INSTRUMENT_ALIASES[raw_sym]
+            if (aliased_sym, clean_tf) in self._symbol_timeframe_index:
+                return self._manifests[self._symbol_timeframe_index[(aliased_sym, clean_tf)]]
 
+        # Si no hay coincidencia exacta ni alias registrado, devolver None (Fail-Closed)
         return None
 
     def load_dataset_bars(
