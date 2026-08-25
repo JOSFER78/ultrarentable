@@ -20,8 +20,9 @@ Do not redesign the product during this order. Audit first, classify defects, ma
 2. `.agents/informe&seguimiento/00_CONTROL_PROTOCOL.md`
 3. `.agents/informe&seguimiento/01_CONTROL_STATE.md`
 4. This order
-5. The current master doctrine: `.agents/informe&seguimiento/ULTRARENTABLE_Informe_Maestro_Learning_Firebase_Antigravity.docx`
-6. Current repository architecture/doctrine documents relevant to the audited path.
+5. `.agents/informe&seguimiento/04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
+6. The current master doctrine: `.agents/informe&seguimiento/ULTRARENTABLE_Informe_Maestro_Learning_Firebase_Antigravity.docx`
+7. Current repository architecture/doctrine documents relevant to the audited path.
 
 ## Mandatory subagents
 
@@ -99,6 +100,7 @@ Compare current executable behavior with:
 - old phase plans
 - recent certification commits
 - the master DOCX
+- `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
 
 Do not reconcile contradictions silently.
 
@@ -116,6 +118,24 @@ Run the repository's real commands discovered during the audit. At minimum attem
 
 Record exact commands and exit codes.
 
+## GITHUB COMPLETION CONTRACT — MANDATORY
+
+The phase is NOT complete when work exists only in the Antigravity workspace.
+
+Before declaring `READY_FOR_REVIEW`, Antigravity must publish the complete auditable state to GitHub:
+
+1. all intended code changes;
+2. all intended tests;
+3. required documentation/configuration changes;
+4. the phase handoff;
+5. evidence references/manifests/hashes that are intended to be versioned;
+6. control-state changes that are allowed by the external order;
+7. the final commit SHA containing the phase result.
+
+The handoff must state the exact GitHub commit containing the complete phase state.
+
+If an evidence artifact cannot be stored in GitHub, the handoff must identify its external location/ID/hash and mark it explicitly as external/unversioned. Antigravity must never claim the phase is fully reproducible from GitHub when required evidence is missing.
+
 ## Required handoff
 
 Create:
@@ -127,6 +147,7 @@ The handoff must include:
 - order_id
 - phase
 - start/final commit
+- GitHub commit containing the complete phase state
 - subagents used
 - findings per subagent
 - files changed
@@ -144,8 +165,9 @@ The handoff must include:
 
 ## Stop condition
 
-After the handoff is written, **STOP WORK**.
+After the complete state has been published to GitHub and the handoff is present there, **STOP WORK**.
 
 Do not start Phase 01.
 Do not create another order.
 Do not alter `01_CONTROL_STATE.md` authority fields.
+Do not ask the user whether to start; the watcher will trigger the next order after external approval publishes it as `ISSUED`.
