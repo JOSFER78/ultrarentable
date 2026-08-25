@@ -3,13 +3,13 @@
 ## Current authority
 
 - `CURRENT_PHASE`: 00
-- `PHASE_STATUS`: READY
+- `PHASE_STATUS`: REWORK
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-P00-001
+- `ACTIVE_ORDER_ID`: AG2-P00-002
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `LAST_ACKNOWLEDGED_ORDER`: NONE
-- `LAST_HANDOFF`: NONE
-- `LAST_EXTERNAL_REVIEW`: NONE
+- `LAST_ACKNOWLEDGED_ORDER`: AG2-P00-001
+- `LAST_HANDOFF`: `03_HANDOFF_AG2-P00-001.md`
+- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P00-001.md` (`REWORK`)
 - `NEXT_ORDER`: `06_PHASE_01_ORDER_LOCKED.md` (LOCKED)
 
 ## Watcher contract
@@ -56,14 +56,20 @@ They may update only their handoff/evidence files and scoped implementation file
 
 ## Phase transition
 
-Only the external reviewer may move:
+The external reviewer may issue:
 
-`READY -> IN_PROGRESS -> EVIDENCE_READY -> UNDER_REVIEW -> APPROVED`
+`READY -> IN_PROGRESS -> EVIDENCE_READY -> UNDER_REVIEW`
 
-or:
+or adaptive rework:
 
-`UNDER_REVIEW -> REJECTED | BLOCKED | REDESIGN`
+`REWORK -> IN_PROGRESS -> EVIDENCE_READY -> UNDER_REVIEW`
 
-No automatic approval exists.
+After review:
 
-After external `APPROVED`, the reviewer publishes the next order as `ISSUED` and updates the authoritative control fields. The next cron cycle then starts the new order automatically.
+`UNDER_REVIEW -> APPROVED | REWORK | BLOCKED | REDESIGN`
+
+There is no automatic approval. There is also no user waiting gate: the external reviewer issues the next concrete order and the next watcher cycle executes it automatically.
+
+## Current rework reason
+
+AG2-P00-001 established the forensic baseline but exposed foundational P0 defects. AG2-P00-002 is the active corrective order. Phase 01 remains locked until these foundational defects are addressed or explicitly superseded by an evidence-based redesign.
