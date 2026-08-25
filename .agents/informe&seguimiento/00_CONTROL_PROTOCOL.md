@@ -74,7 +74,7 @@ It does **not** mean:
 
 ## 5. Workspace vs GitHub — mandatory distinction
 
-Antigravity works on the real project workspace, for example the active VPS/worktree:
+Antigravity works on the real project workspace:
 
 `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
 
@@ -94,7 +94,77 @@ Therefore:
 
 A change that exists only locally, on a VPS branch, in an unpushed commit, or in a temporary workspace is **not delivered** and cannot be treated as reviewed evidence.
 
-## 6. Mandatory GitHub completion contract
+## 6. SSH / VPS execution — NEVER BLOCK THE ORCHESTRATOR
+
+SSH to the VPS is an execution tool, not a reason for Antigravity to wait idly.
+
+### Mandatory behavior for long-running remote jobs
+
+When a remote command may take more than a few seconds (full pytest, build, backtest, WFO, batch research, data scan, etc.):
+
+1. Launch it **asynchronously/detached** on the VPS using an appropriate durable mechanism such as `nohup`, `systemd-run --user`, `tmux`, the repository's durable queue, or another idempotent job runner.
+2. Assign and record a unique `remote_job_id`, target commit SHA, exact command, start time and expected artifacts.
+3. Return immediately to useful independent work. Antigravity must continue orchestrating subagents, static analysis, code review, evidence inspection, test planning, documentation, UI/API provenance review, or other tasks that do not depend on the remote job's final result.
+4. Poll the remote job only at bounded intervals. **Never keep an interactive SSH command open for 10–20 minutes waiting for output.**
+5. Prefer incremental log/status reads and exit-status checks rather than rerunning the full suite.
+6. If the expected duration is exceeded materially, inspect the process, CPU/memory/log state and classify it as `RUNNING`, `SLOW`, `STUCK`, or `FAILED`.
+7. If a remote process is stuck/dead, capture the real logs and exit state. Restart only when the operation is safely idempotent; otherwise report `BLOCKED`.
+8. Never fabricate completion because a remote job is slow, inaccessible or disconnected.
+
+### Parallelization rule
+
+A remote suite running for 20 minutes must **not consume 20 minutes of orchestration time**. Antigravity must use its subagents to perform all independent work in parallel while the VPS job runs.
+
+### SSH command rule
+
+Use SSH non-interactively. Prefer patterns such as:
+
+```bash
+ssh <host> 'nohup <command> > /path/job.log 2>&1; echo $! > /path/job.pid'
+```
+
+or the project's durable job runner. Then inspect `job.pid`, `job.log` and a durable `job.exit`/status record without keeping the SSH session attached.
+
+### Long-suite rule
+
+A progress message such as:
+
+`"Esperando la finalización de toda la suite"`
+
+is a **protocol violation** for a long-running suite. The orchestrator may perform a short bounded poll, but it must never sit idle awaiting completion.
+
+### Remote result semantics
+
+Until the actual remote process has produced a verifiable exit status and artifacts:
+
+`PASS = NOT PROVEN`
+`UNVERIFIED = UNVERIFIED`
+`FAILED = FAILED`
+
+A slow job is not a pass. A missing job result is not a pass.
+
+## 7. ZERO-SIMULATION / ZERO-FORCING — ABSOLUTE
+
+This applies to all code, tests, data, backtest, validation, research, portfolio, API, UI and operational paths.
+
+Never:
+
+- invent trades, metrics, equity curves, datasets, hashes or gate evidence;
+- substitute synthetic data for missing real data;
+- fabricate a successful result because a VPS job is unavailable or slow;
+- mark a timeout or missing result as PASS;
+- reuse old test output as proof for a new commit without proving identity;
+- weaken gates because candidate yield is low;
+- rerun selectively until a favorable outcome appears without accounting for trials;
+- hide failed candidates or failed jobs;
+- fabricate fallback output in operational scientific paths;
+- edit tests solely to force green output.
+
+Fixtures/mocks are allowed only inside isolated unit tests whose explicit purpose is to test a non-production component. Such fixtures can never become quantitative evidence or certification evidence.
+
+**ZERO-SIMULATION. ZERO-FORCING. ZERO-COMPROMISE.**
+
+## 8. Mandatory GitHub completion contract
 
 At the end of every order Antigravity must ensure that `origin/main` contains the complete intended state of the order, including as applicable:
 
@@ -103,26 +173,18 @@ At the end of every order Antigravity must ensure that `origin/main` contains th
 3. documentation/configuration changes;
 4. control/order updates allowed by the order;
 5. handoff file;
-6. dataset manifests/evidence references/hashes that are appropriate to version;
+6. dataset manifests/evidence references/hashes appropriate to version;
 7. research metadata and lineage;
-8. any generated machine-readable registry required for reproducibility;
+8. machine-readable registries required for reproducibility;
 9. final commit SHA.
 
-Then Antigravity must verify the remote branch, for example by comparing the local HEAD with `origin/main` and recording the remote SHA in the handoff.
+Then verify that the remote branch points to the claimed final SHA and record it in the handoff.
 
 **Local completion is not completion. GitHub `main` completion is completion.**
 
-If an artifact cannot be stored in GitHub because of size, secrecy, or external-system constraints, the handoff must record:
+If an artifact cannot be stored in GitHub, record its immutable external ID/path, SHA-256 when available, why it is external, and which claims depend on it. Never claim full reproducibility from `main` when required evidence is absent.
 
-- external location;
-- immutable ID/path;
-- SHA-256 where available;
-- why it cannot be committed;
-- exactly which claims depend on that external artifact.
-
-Never claim full reproducibility from `main` when required evidence is external and not independently identifiable.
-
-## 7. Continuous external review — no user gate
+## 9. Continuous external review — no user gate
 
 After Antigravity publishes a completed order to `origin/main`, ChatGPT reviews the new state when it becomes available. The review is not waiting for a user approval message.
 
@@ -130,41 +192,16 @@ ChatGPT examines:
 
 `CONTROL_STATE -> ORDER -> HANDOFF -> REMOTE COMMIT -> DIFF -> CODE PATHS -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
 
-ChatGPT then decides the next action based on evidence actually present in `origin/main`:
+ChatGPT then decides the next action:
 
-### APPROVE / MOVE FORWARD
+- `APPROVE / MOVE FORWARD`
+- `CORRECT / REWORK`
+- `BLOCK`
+- `REDESIGN`
 
-ChatGPT records the objective result and publishes the next concrete order.
+The next order is published by ChatGPT and the next cron cycle executes it automatically.
 
-### CORRECT / REWORK
-
-ChatGPT does **not** wait for the user. It publishes a new rework order for the same phase with exact defects, required fixes, tests and evidence.
-
-### BLOCK
-
-ChatGPT publishes the missing real dependency and the exact unblock condition. No simulation/workaround may be used.
-
-### REDESIGN
-
-ChatGPT replaces the scope with a new bounded order based on what the audited repository actually demonstrated.
-
-**The next order is created by ChatGPT as soon as the review decision is made; the next cron cycle then executes it automatically.**
-
-## 8. Authority model
-
-Antigravity may not:
-
-- approve its own work;
-- decide the next phase;
-- create the next order;
-- alter external review decisions;
-- hide failed findings;
-- fabricate missing evidence;
-- weaken gates to increase yield.
-
-ChatGPT is the active external research reviewer and order writer. The user does not need to manually authorize each phase.
-
-## 9. Mandatory subagent model
+## 10. Mandatory subagent model
 
 For non-trivial orders, Antigravity must use the smallest independent set of relevant subagents. Typical roles:
 
@@ -180,7 +217,7 @@ For non-trivial orders, Antigravity must use the smallest independent set of rel
 
 Read-only investigations may run in parallel. Writes must be coordinated by the main Antigravity agent. An implementation subagent must not be the sole verifier of its own code.
 
-## 10. Discovery-specific controls
+## 11. Discovery-specific controls
 
 When Discovery is in scope, preserve:
 
@@ -202,7 +239,7 @@ and require where applicable:
 
 High ROI is not proof of robust edge.
 
-## 11. FONDEO rule
+## 12. FONDEO rule
 
 `TRACK_FONDEO = FUTURES ONLY`.
 
@@ -216,7 +253,7 @@ and include actual permitted futures, max position, trailing/max loss, daily los
 
 `EVALUATION RISK POLICY != FUNDED RISK POLICY`.
 
-## 12. End-of-order handoff
+## 13. End-of-order handoff
 
 Antigravity must create a handoff containing:
 
@@ -224,8 +261,11 @@ Antigravity must create a handoff containing:
 - target phase;
 - start commit;
 - final local commit;
-- **verified `origin/main` commit**;
+- verified `origin/main` commit;
 - proof that the final commit was pushed to `origin/main`;
+- all `remote_job_id` values;
+- exact remote commands;
+- remote exit codes/status and artifact paths;
 - subagents and roles;
 - files changed;
 - exact commands and exit codes;
@@ -240,6 +280,6 @@ Antigravity must create a handoff containing:
 
 Never write `APPROVED` in an Antigravity handoff.
 
-## 13. Final operational rule
+## 14. Final operational rule
 
-**ChatGPT reviews `origin/main`, decides what is actually true, publishes the next corrective/forward order; the 3-minute cron detects it; Antigravity automatically starts; Antigravity launches subagents; subagents investigate and implement on the real project; Antigravity commits and pushes the complete result to `origin/main`; Antigravity writes the handoff and stops; ChatGPT reviews again.**
+**ChatGPT reviews `origin/main`, decides what is actually true, publishes the next corrective/forward order; the 3-minute cron detects it; Antigravity automatically starts; Antigravity launches subagents; subagents investigate and implement on the real project; long VPS jobs run asynchronously over SSH; Antigravity continues useful work instead of waiting; all results are verified; Antigravity commits and pushes the complete result to `origin/main`; Antigravity writes the handoff and stops; ChatGPT reviews again.**
