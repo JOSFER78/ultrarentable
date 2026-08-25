@@ -1,6 +1,6 @@
-"""services/validation/engine/event_backtest_engine.py
+﻿"""services/validation/engine/event_backtest_engine.py
 Motor de Backtesting Determinista Orientado a Eventos (Fase 4).
-Ejecuta la simulación completa barra por barra:
+Ejecuta la simulaci?n completa barra por barra:
 Market Data Event -> Signal -> Order -> Fill -> Friction (Fees & Slippage) -> Position -> Margin -> Equity.
 """
 
@@ -171,7 +171,7 @@ class EventBacktestResult:
 
 
 class EventBacktestEngine:
-    """Motor de ejecución determinista con soporte de margen, apalancamiento y piramidación."""
+    """Motor de ejecuci?n determinista con soporte de margen, apalancamiento y piramidaci?n."""
 
     def __init__(
         self,
@@ -189,7 +189,7 @@ class EventBacktestEngine:
 
     @staticmethod
     def _calc_ema(series: np.ndarray, span: int) -> np.ndarray:
-        """Cálculo matemático exacto de Exponential Moving Average recursiva."""
+        """C?lculo matem?tico exacto de Exponential Moving Average recursiva."""
         span = max(1, int(span))
         alpha = 2.0 / (span + 1.0)
         ema = np.empty_like(series)
@@ -200,7 +200,7 @@ class EventBacktestEngine:
 
     @staticmethod
     def _calc_rsi(closes: np.ndarray, period: int = 14) -> np.ndarray:
-        """Cálculo matemático exacto del Relative Strength Index (Wilder's Smoothing)."""
+        """C?lculo matem?tico exacto del Relative Strength Index (Wilder's Smoothing)."""
         period = max(2, int(period))
         n = len(closes)
         rsi = np.full(n, 50.0, dtype=np.float64)
@@ -240,7 +240,7 @@ class EventBacktestEngine:
         candles: List[Dict[str, Any]],
         initial_capital_usd: Optional[float] = None,
     ) -> EventBacktestResult:
-        """Ejecuta la simulación determinista de la estrategia sobre el dataset de velas."""
+        """Ejecuta la simulaci?n determinista de la estrategia sobre el dataset de velas."""
         t_start = datetime.now(timezone.utc)
 
         if not candles or len(candles) < 35:
@@ -263,7 +263,7 @@ class EventBacktestEngine:
                 total_slippage_usd=0.0,
             )
 
-        # Capital base según ruta
+        # Capital base seg?n ruta
         is_ultra = (strategy.route == StrategyRoute.ULTRA)
         is_fondeo = (strategy.route == StrategyRoute.FONDEO)
         base_capital = initial_capital_usd or (1000.0 if is_ultra else 50000.0)
@@ -275,7 +275,7 @@ class EventBacktestEngine:
         opens = np.array([float(c["open"]) for c in candles], dtype=np.float64)
         timestamps = [int(c.get("timestamp_ms") or c.get("timestamp") or 0) for c in candles]
 
-        # 1. Extracción e Intérprete Dinámico de Indicadores del StrategySnapshot
+        # 1. Extracci?n e Int?rprete Din?mico de Indicadores del StrategySnapshot
         ema_fast_period = 20
         ema_slow_period = 50
         rsi_period = 14
@@ -285,47 +285,67 @@ class EventBacktestEngine:
         breakout_lookback = 15
 
         if hasattr(strategy, "entry_rules") and strategy.entry_rules:
-            # Long conditions
-            for cond in getattr(strategy.entry_rules, "long_conditions", []):
-                l_name = getattr(cond.left_indicator, "name", "").upper()
-                l_period = getattr(cond.left_indicator, "period", None)
+            # Long conditions / general conditions
+            all_long = getattr(strategy.entry_rules, "long_conditions", None) or []
+            if not all_long and getattr(strategy.entry_rules, "direction", "LONG") in ["LONG", "BOTH"]:
+                all_long = getattr(strategy.entry_rules, "conditions", None) or []
+
+            for cond in all_long:
+                left_obj = getattr(cond, "left", getattr(cond, "left_indicator", None))
+                right_obj = getattr(cond, "right", getattr(cond, "right_indicator", None))
+                l_name = (getattr(left_obj, "name", "") if left_obj else "").upper()
+                l_period = getattr(left_obj, "period", None) or (getattr(left_obj, "params", {}).get("period") if hasattr(left_obj, "params") else None)
                 if l_name == "EMA" and l_period:
                     ema_fast_period = int(l_period)
-                    if hasattr(cond, "right_indicator") and cond.right_indicator and cond.right_indicator.name.upper() == "EMA":
-                        ema_slow_period = int(cond.right_indicator.period)
+                    r_name = (getattr(right_obj, "name", "") if right_obj else "").upper()
+                    r_period = getattr(right_obj, "period", None) or (getattr(right_obj, "params", {}).get("period") if hasattr(right_obj, "params") else None)
+                    if r_name == "EMA" and r_period:
+                        ema_slow_period = int(r_period)
                 elif l_name == "RSI" and l_period:
                     rsi_period = int(l_period)
-                    if getattr(cond, "threshold_value", None) is not None:
-                        rsi_threshold_long = float(cond.threshold_value)
+                    thresh = getattr(cond, "threshold_value", None) or (right_obj if isinstance(right_obj, (int, float)) else None)
+                    if thresh is not None:
+                        rsi_threshold_long = float(thresh)
                         use_rsi = True
                 if getattr(cond, "lookback_bars", 0) > 0:
                     breakout_lookback = int(cond.lookback_bars)
 
             # Short conditions
-            for cond in getattr(strategy.entry_rules, "short_conditions", []):
-                l_name = getattr(cond.left_indicator, "name", "").upper()
+            all_short = getattr(strategy.entry_rules, "short_conditions", None) or []
+            if not all_short and getattr(strategy.entry_rules, "direction", "") == "SHORT":
+                all_short = getattr(strategy.entry_rules, "conditions", None) or []
+
+            for cond in all_short:
+                left_obj = getattr(cond, "left", getattr(cond, "left_indicator", None))
+                right_obj = getattr(cond, "right", getattr(cond, "right_indicator", None))
+                l_name = (getattr(left_obj, "name", "") if left_obj else "").upper()
+                l_period = getattr(left_obj, "period", None) or (getattr(left_obj, "params", {}).get("period") if hasattr(left_obj, "params") else None)
                 if l_name == "RSI":
-                    if getattr(cond, "threshold_value", None) is not None:
-                        rsi_threshold_short = float(cond.threshold_value)
+                    thresh = getattr(cond, "threshold_value", None) or (right_obj if isinstance(right_obj, (int, float)) else None)
+                    if thresh is not None:
+                        rsi_threshold_short = float(thresh)
                         use_rsi = True
 
-        # Precalcular ATR para stops y take profits dinámicos
+        # Precalcular ATR para stops y take profits din?micos
         tr = np.maximum(highs[1:] - lows[1:], np.maximum(np.abs(highs[1:] - closes[:-1]), np.abs(lows[1:] - closes[:-1])))
         atr = np.zeros(len(closes))
         atr[1:] = tr
         for i in range(14, len(closes)):
             atr[i] = np.mean(tr[i-14:i])
 
-        # Precalcular series de indicadores exactas según configuración del Snapshot
+        # Precalcular series de indicadores exactas seg?n configuraci?n del Snapshot
         ema_fast_series = self._calc_ema(closes, ema_fast_period)
         ema_slow_series = self._calc_ema(closes, ema_slow_period)
         rsi_series = self._calc_rsi(closes, rsi_period) if use_rsi else None
 
-        # Parámetros de salida y riesgo del Snapshot
-        sl_atr_mult = strategy.exit_rules.stop_loss_atr_mult or 2.0 if hasattr(strategy, "exit_rules") and strategy.exit_rules and strategy.exit_rules.stop_loss_atr_mult else 2.0
-        tp_atr_mult = strategy.exit_rules.take_profit_atr_mult or 6.0 if hasattr(strategy, "exit_rules") and strategy.exit_rules and strategy.exit_rules.take_profit_atr_mult else 6.0
+        # Par?metros de salida y riesgo del Snapshot
+        sl_val = getattr(strategy.exit_rules, "stop_loss_atr_mult", None) or getattr(strategy.exit_rules, "sl_value", 2.0) if hasattr(strategy, "exit_rules") and strategy.exit_rules else 2.0
+        sl_atr_mult = float(sl_val) if sl_val else 2.0
+        tp_val = getattr(strategy.exit_rules, "take_profit_atr_mult", None) or getattr(strategy.exit_rules, "tp_value", 6.0) if hasattr(strategy, "exit_rules") and strategy.exit_rules else 6.0
+        tp_atr_mult = float(tp_val) if tp_val else 6.0
         default_risk = 0.075 if is_ultra else 0.01
-        risk_pct = (strategy.sizing_and_risk.base_risk_pct / 100.0) if hasattr(strategy, "sizing_and_risk") and strategy.sizing_and_risk and strategy.sizing_and_risk.base_risk_pct else default_risk
+        risk_raw = getattr(strategy.sizing_and_risk, "base_risk_pct", None) or getattr(strategy.sizing_and_risk, "risk_value", None) if hasattr(strategy, "sizing_and_risk") and strategy.sizing_and_risk else None
+        risk_pct = (float(risk_raw) / 100.0) if risk_raw is not None else default_risk
         warmup_bars = max(30, ema_slow_period + 5, rsi_period + 5)
 
         # Estado del backtest
@@ -361,9 +381,9 @@ class EventBacktestEngine:
             bar_atr = max(1e-4, atr[i])
             ts = timestamps[i]
 
-            # 1. Chequeo de salidas y liquidación si estamos en posición
+            # 1. Chequeo de salidas y liquidaci?n si estamos en posici?n
             if position_side is not None:
-                # Comprobar distancia a liquidación
+                # Comprobar distancia a liquidaci?n
                 margin_used = (position_qty * bar_close) / max_leverage
                 margin_util_pct = (margin_used / max(1.0, current_equity)) * 100.0
                 peak_margin_utilization = max(peak_margin_utilization, margin_util_pct)
@@ -372,9 +392,9 @@ class EventBacktestEngine:
                 dist_liq_pct = abs(bar_close - liq_price) / bar_close * 100.0
                 min_liq_dist = min(min_liq_dist, dist_liq_pct)
 
-                # Comprobar liquidación real (quiebra al 100%)
+                # Comprobar liquidaci?n real (quiebra al 100%)
                 if (position_side == "LONG" and bar_low <= liq_price) or (position_side == "SHORT" and bar_high >= liq_price):
-                    # Liquidación
+                    # Liquidaci?n
                     exit_price = liq_price
                     gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
                     comm = exit_price * position_qty * self.taker_fee
@@ -484,19 +504,19 @@ class EventBacktestEngine:
                     position_side = None
                     position_qty = 0.0
 
-                # Piramidación sobre beneficio si está habilitada (Ruta Ultra)
+                # Piramidaci?n sobre beneficio si est? habilitada (Ruta Ultra)
                 elif is_ultra and strategy.pyramiding_policy.enabled and pyramid_count < strategy.pyramiding_policy.max_tiers:
                     floating_pnl_r = ((bar_close - position_entry_price) / bar_atr) if position_side == "LONG" else ((position_entry_price - bar_close) / bar_atr)
                     if floating_pnl_r >= (pyramid_count + 1) * 1.5:
                         # Mover stop loss a break-even
                         stop_loss_price = position_entry_price
-                        # Añadir tramo acotado a subcuenta bala
+                        # A?adir tramo acotado a subcuenta bala
                         max_nominal_qty = (base_capital * max_leverage) / max(1e-4, bar_close)
                         added_qty = (base_capital * risk_pct * max_leverage) / (bar_close * max(1.0, float(pyramid_count + 1)))
                         position_qty = min(position_qty + added_qty, max_nominal_qty)
                         pyramid_count += 1
 
-            # 2. Señal de Entrada si estamos planos
+            # 2. Se?al de Entrada si estamos planos
             if position_side is None and current_equity > 0:
                 ema_fast_val = ema_fast_series[i]
                 ema_slow_val = ema_slow_series[i]
@@ -516,7 +536,7 @@ class EventBacktestEngine:
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 + self.slippage)
                     position_equity_before = current_equity
-                    # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
+                    # Sizing agresivo para Ultra (subcuenta bala con reinversi?n de equidad) / Fondeo acotado
                     effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
                     risk_amount_usd = effective_equity * risk_pct
                     position_risk_amount = risk_amount_usd
@@ -540,7 +560,7 @@ class EventBacktestEngine:
                     position_entry_time = ts
                     position_entry_price = bar_close * (1.0 - self.slippage)
                     position_equity_before = current_equity
-                    # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
+                    # Sizing agresivo para Ultra (subcuenta bala con reinversi?n de equidad) / Fondeo acotado
                     effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
                     risk_amount_usd = effective_equity * risk_pct
                     position_risk_amount = risk_amount_usd
@@ -565,7 +585,7 @@ class EventBacktestEngine:
             equity_curve.append(round(current_equity, 2))
             drawdown_curve.append(round(dd_pct, 2))
 
-        # Cierre forzado al final del dataset si queda posición abierta
+        # Cierre forzado al final del dataset si queda posici?n abierta
         if position_side is not None:
             exit_price = closes[-1]
             gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
@@ -600,7 +620,7 @@ class EventBacktestEngine:
                 )
             )
 
-        # Resumen de métricas
+        # Resumen de m?tricas
         total_trades = len(trades)
         winning_trades = sum(1 for t in trades if t.net_pnl_usd > 0)
         losing_trades = sum(1 for t in trades if t.net_pnl_usd <= 0)
@@ -636,3 +656,4 @@ class EventBacktestEngine:
             drawdown_curve=drawdown_curve,
             execution_time_ms=round(exec_time, 2),
         )
+

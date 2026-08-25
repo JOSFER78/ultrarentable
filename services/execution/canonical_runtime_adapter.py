@@ -1,5 +1,5 @@
 ﻿"""services/execution/canonical_runtime_adapter.py
-Adaptador y Motor de Ejecuci?n en Runtime para CanonicalStrategy (Fase 02 Rework AG2-P02-006).
+Adaptador y Motor de Ejecuci?n en Runtime para CanonicalStrategy (Fase 02 Rework AG2-P02-007).
 ZERO-MOCKS ? REAL-ONLY ? DETERMINISTIC ? NO-LOOKAHEAD ? PROVENANCE-LOCKED ? FAIL-CLOSED ? ZERO-OPTIMISM
 Cierra el contrato universal de ejecuci?n: LONG/SHORT/BOTH, SL/TP reales, sizing con microestructura, sesiones y conflicto intrabarra.
 """
@@ -66,7 +66,7 @@ class RuntimeExecutionResult:
 
 
 class CanonicalRuntimeAdapter:
-    """Ejecutor determinista universal de CanonicalStrategy (Fase 02 - AG2-P02-006)."""
+    """Ejecutor determinista universal de CanonicalStrategy (Fase 02 - AG2-P02-007)."""
 
     def __init__(self, engine_version: str, policy_version: str):
         if not engine_version or not policy_version:
@@ -185,33 +185,6 @@ class CanonicalRuntimeAdapter:
 
         raise InvalidStrategyError(f"Operador de comparaci?n '{op}' no soportado.")
 
-    def _invert_operator(self, op: str) -> str:
-        """Inversi?n determinista de operadores de comparaci?n para sem?ntica bidireccional."""
-        op_str = str(op).upper()
-        if op_str in [ComparisonOp.GT.value, ">"]:
-            return ComparisonOp.LT.value
-        elif op_str in [ComparisonOp.LT.value, "<"]:
-            return ComparisonOp.GT.value
-        elif op_str in [ComparisonOp.GTE.value, ">="]:
-            return ComparisonOp.LTE.value
-        elif op_str in [ComparisonOp.LTE.value, "<="]:
-            return ComparisonOp.GTE.value
-        elif op_str in [ComparisonOp.CROSS_ABOVE.value, "CROSS_ABOVE"]:
-            return ComparisonOp.CROSS_BELOW.value
-        elif op_str in [ComparisonOp.CROSS_BELOW.value, "CROSS_BELOW"]:
-            return ComparisonOp.CROSS_ABOVE.value
-        elif op_str in [ComparisonOp.EQ.value, "=="]:
-            return ComparisonOp.EQ.value
-        raise InvalidStrategyError(f"Operador de comparaci?n '{op}' no soportado para inversi?n sem?ntica.")
-
-    def _invert_condition(self, cond: Dict[str, Any]) -> Dict[str, Any]:
-        """Invierte una condici?n para evaluar el sentido opuesto del mercado."""
-        return {
-            "left": cond["left"],
-            "op": self._invert_operator(cond["op"]),
-            "right": cond["right"],
-        }
-
     def _evaluate_conditions_list(
         self,
         conditions: List[Dict[str, Any]],
@@ -233,13 +206,41 @@ class CanonicalRuntimeAdapter:
         raise InvalidStrategyError(f"Operador l?gico '{logical_operator}' no soportado.")
 
     def evaluate_entry_trigger(self, instruction: ExecutableRuntimeInstruction, bars: List[Dict[str, Any]], current_idx: int) -> bool:
-        """Eval?a el disparador de entrada respetando expl?citamente el operador l?gico AND / OR."""
-        return self._evaluate_conditions_list(
-            instruction.compiled_conditions,
-            instruction.logical_operator,
-            bars,
-            current_idx,
-        )
+        """Eval?a el disparador de entrada respetando expl?citamente la direcci?n can?nica y el operador l?gico AND / OR."""
+        direction = instruction.direction.upper()
+        long_conditions = getattr(instruction, "compiled_long_conditions", None)
+        short_conditions = getattr(instruction, "compiled_short_conditions", None)
+
+        if long_conditions is None and short_conditions is None:
+            conds = getattr(instruction, "compiled_conditions", [])
+            if direction == "LONG":
+                long_conditions = conds
+                short_conditions = []
+            elif direction == "SHORT":
+                long_conditions = []
+                short_conditions = conds
+            else:
+                long_conditions = conds
+                short_conditions = []
+        else:
+            long_conditions = long_conditions or []
+            short_conditions = short_conditions or []
+
+        long_sig = False
+        short_sig = False
+
+        if direction in ["LONG", "BOTH"] and long_conditions:
+            long_sig = self._evaluate_conditions_list(long_conditions, instruction.logical_operator, bars, current_idx)
+
+        if direction in ["SHORT", "BOTH"] and short_conditions:
+            short_sig = self._evaluate_conditions_list(short_conditions, instruction.logical_operator, bars, current_idx)
+
+        if long_sig and not short_sig:
+            return True
+        elif short_sig and not long_sig:
+            return True
+        else:
+            return False
 
     def _is_within_session(self, timestamp_ms: int, session_config: Optional[Dict[str, Any]]) -> bool:
         """Comprueba si un timestamp UTC cae dentro de la ventana de sesi?n y d?as permitidos sin defaults."""
@@ -294,13 +295,12 @@ class CanonicalRuntimeAdapter:
         # Integraci?n obligatoria de Microestructura y Costes Can?nicos (P02-006 REQ-3)
         cost_profile = get_instrument_cost_profile(strategy.symbol)
 
-        # Validaci?n Fail-Closed de Capacidad Single-Position (P02-006 REQ-4)
+        # Validaci?n Fail-Closed de Capacidad Single-Position (P02-006 REQ-4 / AG2-P02-007)
         max_open = instruction.sizing_config.get("max_open_positions")
-        if max_open != 1:
-            raise InvalidStrategyError(
-                f"El motor de ejecuci?n actual opera exclusivamente en modo single-position (max_open_positions=1). "
-                f"Recibido: max_open_positions={max_open}."
-            )
+        if max_open is None or max_open <= 0:
+            raise InvalidStrategyError(f"max_open_positions es obligatorio y debe ser >= 1 (recibido: {max_open}).")
+        if max_open > 1:
+            raise InvalidStrategyError("max_open_positions > 1 is currently UNSUPPORTED_FAIL_CLOSED")
 
         reg = registry or dataset_registry
 
@@ -318,27 +318,24 @@ class CanonicalRuntimeAdapter:
         if direction not in ["LONG", "SHORT", "BOTH"]:
             raise InvalidStrategyError(f"Direcci?n operativa '{direction}' no soportada.")
 
-        # Preparaci?n de condiciones para sem?ntica bidireccional verdadera (P02-006 REQ-2)
-        long_conditions: List[Dict[str, Any]] = []
-        short_conditions: List[Dict[str, Any]] = []
+        # Consumo directo de condiciones can?nicas compiladas sin heur?sticas ni inversi?n de operadores en runtime (AG2-P02-007)
+        long_conditions = getattr(instruction, "compiled_long_conditions", None)
+        short_conditions = getattr(instruction, "compiled_short_conditions", None)
 
-        if direction == "BOTH":
-            for cond in instruction.compiled_conditions:
-                op_str = str(cond["op"]).upper()
-                is_bearish = op_str in [
-                    ComparisonOp.LT.value,
-                    "<",
-                    ComparisonOp.LTE.value,
-                    "<=",
-                    ComparisonOp.CROSS_BELOW.value,
-                    "CROSS_BELOW",
-                ]
-                if is_bearish:
-                    long_conditions.append(self._invert_condition(cond))
-                    short_conditions.append(cond)
-                else:
-                    long_conditions.append(cond)
-                    short_conditions.append(self._invert_condition(cond))
+        if long_conditions is None and short_conditions is None:
+            conds = getattr(instruction, "compiled_conditions", [])
+            if direction == "LONG":
+                long_conditions = conds
+                short_conditions = []
+            elif direction == "SHORT":
+                long_conditions = []
+                short_conditions = conds
+            else:
+                long_conditions = conds
+                short_conditions = []
+        else:
+            long_conditions = long_conditions or []
+            short_conditions = short_conditions or []
 
         trades: List[EvaluatedTrade] = []
         in_pos = False
@@ -380,29 +377,27 @@ class CanonicalRuntimeAdapter:
                 if not self._is_within_session(cur_time, session_config):
                     continue
 
+                long_sig = False
+                short_sig = False
+
+                if direction in ["LONG", "BOTH"] and long_conditions:
+                    long_sig = self._evaluate_conditions_list(long_conditions, instruction.logical_operator, bars, i)
+
+                if direction in ["SHORT", "BOTH"] and short_conditions:
+                    short_sig = self._evaluate_conditions_list(short_conditions, instruction.logical_operator, bars, i)
+
                 trigger_entered = False
                 candidate_dir = ""
 
-                if direction == "LONG":
-                    if self.evaluate_entry_trigger(instruction, bars, i):
-                        trigger_entered = True
-                        candidate_dir = "LONG"
-                elif direction == "SHORT":
-                    if self.evaluate_entry_trigger(instruction, bars, i):
-                        trigger_entered = True
-                        candidate_dir = "SHORT"
-                elif direction == "BOTH":
-                    long_sig = self._evaluate_conditions_list(long_conditions, instruction.logical_operator, bars, i)
-                    short_sig = self._evaluate_conditions_list(short_conditions, instruction.logical_operator, bars, i)
-                    if long_sig and not short_sig:
-                        trigger_entered = True
-                        candidate_dir = "LONG"
-                    elif short_sig and not long_sig:
-                        trigger_entered = True
-                        candidate_dir = "SHORT"
-                    elif long_sig and short_sig:
-                        # Conflicto simult?neo en la misma barra: omitir entrada por indeterminaci?n
-                        trigger_entered = False
+                if long_sig and not short_sig:
+                    trigger_entered = True
+                    candidate_dir = "LONG"
+                elif short_sig and not long_sig:
+                    trigger_entered = True
+                    candidate_dir = "SHORT"
+                else:
+                    # Conflicto simult?neo en la misma barra o ninguna condici?n: omitir entrada
+                    trigger_entered = False
 
                 if trigger_entered:
                     in_pos = True
