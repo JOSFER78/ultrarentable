@@ -2,15 +2,15 @@
 
 ## Current authority
 
-- `CURRENT_PHASE`: 00
-- `PHASE_STATUS`: REWORK
+- `CURRENT_PHASE`: 01
+- `PHASE_STATUS`: READY
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-P00-002
+- `ACTIVE_ORDER_ID`: AG2-P01-001
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `LAST_ACKNOWLEDGED_ORDER`: AG2-P00-001
-- `LAST_HANDOFF`: `03_HANDOFF_AG2-P00-001.md`
-- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P00-001.md` (`REWORK`)
-- `NEXT_ORDER`: `06_PHASE_01_ORDER_LOCKED.md` (LOCKED)
+- `LAST_ACKNOWLEDGED_ORDER`: AG2-P00-002
+- `LAST_HANDOFF`: `03_HANDOFF_AG2-P00-002.md`
+- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P00-002.md` (`APPROVED_FOR_NEXT_PHASE`)
+- `NEXT_ORDER`: `PHASE 02 LOCKED`
 
 ## Watcher contract
 
@@ -31,19 +31,21 @@ When the watcher detects a newer valid `ISSUED` order, Antigravity must automati
 
 The watcher is the trigger; `ISSUED` control state is the authorization to execute the currently active phase.
 
+## STRICT PHASE SCOPE
+
+Antigravity MUST execute only the active order and only the active phase.
+
+It may inspect the full repository for context and dependencies, but it may not implement future phases or unrelated cleanup. Out-of-scope findings must be recorded as `DEFERRED_TO_FUTURE_ORDER`.
+
 ## GitHub synchronization rule
 
-The repository on GitHub is the shared control surface.
-
-At the end of every phase/order Antigravity must ensure that the implementation state, tests, handoff, evidence references, control-state changes and final commit SHA are published to GitHub before declaring `READY_FOR_REVIEW`.
+At the end of every order Antigravity must ensure that implementation state, tests, handoff, evidence references, control-state changes and final commit SHA are published to GitHub before declaring `READY_FOR_REVIEW`.
 
 Local-only completion is NOT completion.
 
-If an artifact cannot be committed to GitHub, the handoff must mark it explicitly as external/unversioned and explain why. It must never claim full reproducibility from GitHub if GitHub does not contain or identify the required evidence.
-
 ## Authority restriction
 
-Antigravity and all subagents must NOT modify without an external issued order:
+Antigravity and subagents must NOT modify without an external issued order:
 
 - `CURRENT_PHASE`
 - `PHASE_STATUS`
@@ -51,8 +53,6 @@ Antigravity and all subagents must NOT modify without an external issued order:
 - `ACTIVE_ORDER_ID`
 - `NEXT_ORDER`
 - external review decisions
-
-They may update only their handoff/evidence files and scoped implementation files.
 
 ## Phase transition
 
@@ -66,10 +66,12 @@ or adaptive rework:
 
 After review:
 
-`UNDER_REVIEW -> APPROVED | REWORK | BLOCKED | REDESIGN`
+`UNDER_REVIEW -> APPROVED_FOR_NEXT_PHASE | REWORK | BLOCKED | REDESIGN`
 
-There is no automatic approval. There is also no user waiting gate: the external reviewer issues the next concrete order and the next watcher cycle executes it automatically.
+There is no user waiting gate. The external reviewer issues the next concrete order and the next watcher cycle executes it automatically.
 
-## Current rework reason
+## Current transition reason
 
-AG2-P00-001 established the forensic baseline but exposed foundational P0 defects. AG2-P00-002 is the active corrective order. Phase 01 remains locked until these foundational defects are addressed or explicitly superseded by an evidence-based redesign.
+AG2-P00-002 remediated the foundational P0/P1 defects sufficiently to leave Phase 00. The active work is now Phase 01 Data & Dataset Chain of Custody.
+
+Phase 01 must finish before Phase 02 becomes actionable.
