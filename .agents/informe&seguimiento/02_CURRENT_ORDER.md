@@ -20,6 +20,26 @@ Antigravity 2.0 must automatically start this order on the next watcher cycle be
 
 No manual user prompt is required.
 
+## STRICT SCOPE — READ THIS FIRST
+
+**Antigravity MUST execute ONLY this active order and ONLY Phase 00 rework.**
+
+The master plan is context, not authorization to implement future phases.
+
+Allowed:
+- fixes explicitly required below;
+- direct dependency fixes strictly necessary for these P0/P1 items;
+- focused tests and bounded regression tests for the affected areas;
+- repository inspection needed to verify scope and dependencies.
+
+Not allowed:
+- starting Phase 01 or any later phase;
+- building Discovery Factory, Dataset Registry, Meta-Strategy, FONDEO, ULTRA research or unrelated UI work;
+- broad cleanup/refactors;
+- unrelated bug fixing just because it was discovered.
+
+Out-of-scope defects must be recorded in the handoff under `DEFERRED_TO_FUTURE_ORDER` and NOT implemented unless they are proven direct blockers for this order.
+
 ## Mission
 
 Repair the foundational P0 defects discovered by the forensic baseline before moving to Phase 01.
@@ -30,11 +50,12 @@ This is not cosmetic work. The objective is to prevent false portfolio results, 
 
 1. `.agents/AGENTS.md`
 2. `.agents/informe&seguimiento/00_CONTROL_PROTOCOL.md`
-3. `.agents/informe&seguimiento/01_CONTROL_STATE.md`
-4. This order
-5. `.agents/informe&seguimiento/04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
-6. `.agents/informe&seguimiento/04_REVIEW_AG2-P00-001.md`
-7. `.agents/informe&seguimiento/03_HANDOFF_AG2-P00-001.md`
+3. `.agents/informe&seguimiento/00_SCOPE_EXECUTION_RULE.md`
+4. `.agents/informe&seguimiento/01_CONTROL_STATE.md`
+5. This order
+6. `.agents/informe&seguimiento/04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
+7. `.agents/informe&seguimiento/04_REVIEW_AG2-P00-001.md`
+8. `.agents/informe&seguimiento/03_HANDOFF_AG2-P00-001.md`
 
 ## P0-01 — Remove synthetic/precomputed portfolio output
 
@@ -45,7 +66,10 @@ Requirements:
 - no hardcoded trading results;
 - no fabricated curve fallback;
 - missing evidence becomes `NO_EVIDENCE` / explicit error;
-- portfolio outputs retain full component/version/provenance lineage.
+- portfolio outputs retain full component/version/provenance lineage;
+- no arbitrary annualization/multiplication factors;
+- no fabricated numeric defaults when source evidence is missing;
+- certification-grade portfolio inclusion requires explicit `CERTIFIED_CURRENT`/valid evidence, not merely candidate existence or trade presence.
 
 ## P0-02 — Repair FastAPI lifespan/runtime imports
 
@@ -67,9 +91,13 @@ Requirements:
 - current vs legacy/stale evidence semantics;
 - material changes invalidate affected evidence/revalidation;
 - integrate `trial_id` into certification lineage where required;
-- remove ghost references and import failures.
+- remove ghost references and import failures;
+- no fake git commit fallback;
+- provenance failure must be `UNVERIFIED`/error, never an invented historical SHA;
+- manifest/state read/write failures must not silently report healthy state;
+- code drift must be calculated from real stored-vs-current fingerprints, never hardcoded `False`.
 
-## Required P1 integrity fixes
+## P1 integrity fixes required by this order
 
 Also address the following when needed to make the P0 remediation complete and non-bypassable:
 
@@ -79,7 +107,8 @@ Also address the following when needed to make the P0 remediation complete and n
 - simulated network/AI success fallbacks in frontend operational paths;
 - inherited `APPROVED` candidate with PF below current threshold; mark stale/revalidation-required through canonical state rather than manually editing history;
 - Gate 07 timestamp fallback that invents regime distribution;
-- broken frontend paths/imports exposed by the above fixes.
+- broken frontend paths/imports exposed by the above fixes;
+- platform metadata that hardcodes a market universe instead of resolving current registry capabilities.
 
 Do not turn this into a cosmetic UI redesign.
 
@@ -87,10 +116,10 @@ Do not turn this into a cosmetic UI redesign.
 
 1. RECON / ARCHITECTURE
 2. IMPLEMENTATION / P0 REMEDIATION
-3. QUANT / EXECUTION INTEGRITY
+3. QUANT / PORTFOLIO SCIENCE
 4. VERSION / LINEAGE
 5. ZERO-MOCK / RED-TEAM
-6. API / CERTIFICATION
+6. API / CERTIFICATION / REGISTRY
 7. UI / PROVENANCE
 8. TEST / REGRESSION
 
@@ -100,21 +129,21 @@ The implementing agent cannot be the sole verifier.
 
 Antigravity has SSH access to the VPS specifically so it can execute the real project tests and commands. Use it, but **do not remain blocked waiting for a long-running command**.
 
-For any command that may take more than a few seconds, especially the full regression suite:
+For any command that may take more than a few seconds:
 
 1. Launch it asynchronously/detached via `nohup`, `systemd-run --user`, `tmux`, the durable queue, or another idempotent runner.
 2. Assign a `remote_job_id` and record the exact command, target commit SHA, start time, log path and expected artifacts.
-3. Return immediately to other useful work with the subagents: code review, static analysis, reconciliation, evidence review, additional focused tests, provenance checks, documentation or UI/API inspection.
-4. Poll the remote job at bounded intervals; do not keep the SSH session attached for 10–20 minutes.
-5. Prefer incremental log and exit-status checks.
-6. If the job becomes slow/stuck, diagnose it from process/log state; do not simply wait.
-7. If safe, restart idempotently; otherwise report `BLOCKED` with real evidence.
+3. Return immediately to other useful work with the subagents.
+4. Poll at bounded intervals; do not keep SSH attached for 10–20 minutes.
+5. Prefer incremental logs and exit status.
+6. Diagnose slow/stuck jobs instead of simply waiting.
+7. Restart only if idempotent and safe; otherwise `BLOCKED`.
 
-A message like `Esperando la finalización de toda la suite` is not acceptable for a long-running job. The orchestrator must keep making independent progress.
+A message like `Esperando la finalización de toda la suite` is not acceptable for a long-running job.
 
 ### Remote test truth
 
-Until a remote job has a real exit code and the expected artifacts/logs:
+Until a remote job has a real exit code and expected artifacts/logs:
 
 - `PASS` = **NOT PROVEN**
 - `UNVERIFIED` = `UNVERIFIED`
@@ -128,6 +157,7 @@ This order must maintain:
 
 `ZERO-SIMULATION = ON`
 `ZERO-FORCING = ON`
+`REAL-ONLY = ON`
 
 Never:
 
@@ -142,20 +172,15 @@ Never:
 
 Fixtures/mocks are allowed only in explicitly isolated unit tests and are never quantitative or certification evidence.
 
-## Required verification
+## Verification scope
 
-Run real tests for:
+Run:
+- focused tests for each P0/P1 fix;
+- impacted-area regression tests;
+- bounded repository zero-mock/provenance scans;
+- broader regression suite only as an asynchronous verification job when required/available.
 
-- portfolio provenance and no-fabrication;
-- FastAPI startup/import path;
-- version resolution and lineage;
-- stale evidence/revalidation behavior;
-- candidate status transition authority;
-- missing-candidate fail-closed behavior;
-- gate evidence integrity;
-- frontend gate provenance;
-- zero-mock/hardcoded-results scans;
-- full regression suite.
+Do NOT spend the order repairing unrelated failures discovered by a broad suite. Record them as `DEFERRED_TO_FUTURE_ORDER` unless they directly block the current order.
 
 Never modify tests merely to obtain green output.
 
@@ -171,15 +196,16 @@ But the authoritative delivery surface is:
 
 Before reporting `READY_FOR_REVIEW`, Antigravity MUST:
 
-1. complete scoped implementation;
-2. run tests and record exact commands/exit codes;
-3. commit all intended changes;
+1. complete only the scoped implementation;
+2. run required tests and record exact commands/exit codes;
+3. commit all intended scoped changes;
 4. push to `origin/main`;
 5. verify local HEAD equals `origin/main` at the final SHA;
 6. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P00-002.md`;
 7. include the verified remote SHA in the handoff;
 8. include `remote_job_id`, remote command, status, exit code and artifact/log paths for every asynchronous job;
-9. ensure all versionable evidence/manifests/docs for the order are present on `main`.
+9. list all deferred out-of-scope defects;
+10. ensure all versionable evidence/manifests/docs for this order are present on `main`.
 
 Local-only work is not delivered.
 
@@ -203,6 +229,7 @@ It must include:
 - tests and failures;
 - evidence/hashes/IDs;
 - P0/P1 dispositions;
+- `DEFERRED_TO_FUTURE_ORDER` findings;
 - proven/unproven items;
 - residual risks;
 - exit-criteria assessment;
@@ -210,9 +237,10 @@ It must include:
 
 ## Stop condition
 
-After the complete state is pushed and verified on `origin/main`, Antigravity MUST STOP.
+After the complete **scoped** state is pushed and verified on `origin/main`, Antigravity MUST STOP.
 
 Do not start Phase 01.
 Do not create another order.
+Do not broaden scope.
 Do not wait for the user.
-The next action will be generated by the external reviewer after inspecting `origin/main`.
+The external reviewer will inspect `origin/main` and issue the next order if required.
