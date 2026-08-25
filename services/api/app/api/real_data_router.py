@@ -516,36 +516,7 @@ def get_opportunity_matrix(
     from services.api.app.db.database import OpportunityMatrixModel
     rows = db.query(OpportunityMatrixModel).order_by(OpportunityMatrixModel.rank.asc()).limit(limit).all()
     if not rows:
-        # Si la tabla aún no se ha poblado, construir vista física sobre datasets disponibles
-        return [
-            {
-                "matrix_id": "opp_btc_1h",
-                "symbol": "BTC-USDT",
-                "interval": "1h",
-                "liquidity_score": 9.8,
-                "volatility_score": 8.5,
-                "dataset_status": "APPROVED",
-                "rank": 1,
-            },
-            {
-                "matrix_id": "opp_eth_1h",
-                "symbol": "ETH-USDT",
-                "interval": "1h",
-                "liquidity_score": 9.4,
-                "volatility_score": 9.1,
-                "dataset_status": "APPROVED",
-                "rank": 2,
-            },
-            {
-                "matrix_id": "opp_sol_1h",
-                "symbol": "SOL-USDT",
-                "interval": "1h",
-                "liquidity_score": 8.9,
-                "volatility_score": 9.6,
-                "dataset_status": "APPROVED",
-                "rank": 3,
-            },
-        ]
+        return []
     return [
         {
             "matrix_id": r.matrix_id,
@@ -558,4 +529,60 @@ def get_opportunity_matrix(
         }
         for r in rows
     ]
+
+
+@router.get("/datasets")
+def list_datasets() -> Dict[str, Any]:
+    """Retorna todos los datasets físicos registrados en la cadena de custodia."""
+    from services.data.dataset_registry import dataset_registry
+    manifests = dataset_registry.list_datasets()
+    return {
+        "total_datasets": len(manifests),
+        "datasets": [m.model_dump() for m in manifests],
+    }
+
+
+@router.get("/datasets/{dataset_id}")
+def get_dataset_details(dataset_id: str) -> Dict[str, Any]:
+    """Retorna los metadatos y particiones de un dataset específico."""
+    from services.data.dataset_registry import dataset_registry
+    from fastapi import HTTPException
+    manifest = dataset_registry.get_dataset(dataset_id)
+    if not manifest:
+        raise HTTPException(status_code=404, detail=f"Dataset '{dataset_id}' no encontrado.")
+    return manifest.model_dump()
+
+
+@router.get("/datasets/{dataset_id}/bars")
+def get_dataset_bars(
+    dataset_id: str,
+    partition: Optional[str] = Query(None, description="IN_SAMPLE, VALIDATION, BLIND_OOS"),
+    limit: int = Query(1000, ge=1, le=100000),
+) -> Dict[str, Any]:
+    """Retorna las velas físicas de un dataset con soporte para particionado estricto."""
+    from services.data.dataset_registry import dataset_registry, MissingDatasetError, DatasetIntegrityError
+    from contracts.dataset_contracts import DatasetPartitionType
+    from fastapi import HTTPException
+    
+    part_enum = None
+    if partition:
+        try:
+            part_enum = DatasetPartitionType(partition.upper())
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Partición inválida '{partition}'.")
+
+    try:
+        bars = dataset_registry.load_dataset_bars(dataset_id, partition=part_enum, verify_sha256=False)
+        return {
+            "dataset_id": dataset_id,
+            "partition": partition,
+            "returned_bars": len(bars[:limit]),
+            "total_bars": len(bars),
+            "bars": bars[:limit],
+        }
+    except MissingDatasetError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except DatasetIntegrityError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
 
