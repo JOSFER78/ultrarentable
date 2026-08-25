@@ -1,7 +1,7 @@
 """services/execution/canonical_runtime_adapter.py
-Adaptador y Motor de Ejecución en Runtime para CanonicalStrategy (Fase 02 Rework AG2-P02-004).
-ZERO-MOCKS · REAL-ONLY · DETERMINISTIC · NO-LOOKAHEAD · PROVENANCE-LOCKED · FAIL-CLOSED
-Garantiza la traza física de consumo, cero defaults ocultos, cero fallbacks y binding a DatasetRegistry.
+Adaptador y Motor de Ejecución en Runtime para CanonicalStrategy (Fase 02 Rework AG2-P02-005).
+ZERO-MOCKS · REAL-ONLY · DETERMINISTIC · NO-LOOKAHEAD · PROVENANCE-LOCKED · FAIL-CLOSED · ZERO-OPTIMISM
+Cierra el contrato universal de ejecución: LONG/SHORT/BOTH, SL/TP reales, sizing, sesiones y conflicto intrabarra.
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ import hashlib
 import json
 import math
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from contracts.canonical_strategy import (
@@ -19,6 +20,9 @@ from contracts.canonical_strategy import (
     IndicatorSpec,
     InvalidStrategyError,
     LogicalOp,
+    SessionWindow,
+    SizingAndRisk,
+    SizingType,
     StopLossType,
     StrategyIntegrityError,
     TakeProfitType,
@@ -33,6 +37,7 @@ class EvaluatedTrade:
     entry_time_ms: int
     entry_price: float
     direction: str
+    size_contracts: float
     exit_bar_index: int
     exit_time_ms: int
     exit_price: float
@@ -56,7 +61,7 @@ class RuntimeExecutionResult:
 
 
 class CanonicalRuntimeAdapter:
-    """Ejecutor determinista de CanonicalStrategy con estricta política Fail-Closed (P02-004-01 a P02-004-06)."""
+    """Ejecutor determinista universal de CanonicalStrategy (Fase 02 - AG2-P02-005)."""
 
     def __init__(self, engine_version: str, policy_version: str):
         if not engine_version or not policy_version:
@@ -119,6 +124,8 @@ class CanonicalRuntimeAdapter:
             return ema
 
         if ind_name == "ATR":
+            if eval_idx < period:
+                return float("nan")
             tr_list = []
             for i in range(1, eval_idx + 1):
                 h = float(bars[i]["high"])
@@ -130,7 +137,6 @@ class CanonicalRuntimeAdapter:
                 return float("nan")
             return sum(tr_list[-period:]) / period
 
-        # Cero fallbacks complacientes: cualquier indicador desconocido lanza excepción Fail-Closed
         raise InvalidStrategyError(f"Indicador '{spec.name}' no está implementado en el motor de runtime.")
 
     def _eval_condition(self, cond: Dict[str, Any], bars: List[Dict[str, Any]], current_idx: int) -> bool:
@@ -175,7 +181,7 @@ class CanonicalRuntimeAdapter:
         raise InvalidStrategyError(f"Operador de comparación '{op}' no soportado.")
 
     def evaluate_entry_trigger(self, instruction: ExecutableRuntimeInstruction, bars: List[Dict[str, Any]], current_idx: int) -> bool:
-        """Evalúa el disparador de entrada respetando explícitamente el operador lógico AND / OR (P02-004-05)."""
+        """Evalúa el disparador de entrada respetando explícitamente el operador lógico AND / OR."""
         if not instruction.compiled_conditions:
             return False
 
@@ -188,12 +194,39 @@ class CanonicalRuntimeAdapter:
         
         raise InvalidStrategyError(f"Operador lógico '{instruction.logical_operator}' no soportado.")
 
+    def _is_within_session(self, timestamp_ms: int, session_config: Optional[Dict[str, Any]]) -> bool:
+        """Comprueba si un timestamp UTC cae dentro de la ventana de sesión y días permitidos sin defaults."""
+        if not session_config:
+            return True
+
+        if "allowed_days" not in session_config or not session_config["allowed_days"]:
+            raise InvalidStrategyError("allowed_days es obligatorio en la configuración de sesión.")
+
+        dt = datetime.fromtimestamp(timestamp_ms / 1000.0, tz=timezone.utc)
+        weekday = dt.weekday()  # 0=Monday, 6=Sunday
+        allowed_days = session_config["allowed_days"]
+        if weekday not in allowed_days:
+            return False
+
+        start_h, start_m = map(int, session_config["start_time_utc"].split(":"))
+        end_h, end_m = map(int, session_config["end_time_utc"].split(":"))
+
+        cur_minutes = dt.hour * 60 + dt.minute
+        start_minutes = start_h * 60 + start_m
+        end_minutes = end_h * 60 + end_m
+
+        if start_minutes <= end_minutes:
+            return start_minutes <= cur_minutes <= end_minutes
+        else:
+            return cur_minutes >= start_minutes or cur_minutes <= end_minutes
+
     def execute_backtest(
         self,
         strategy: CanonicalStrategy,
         registry: Optional[DatasetRegistry] = None,
+        account_equity_usd: float = 100000.0,
     ) -> RuntimeExecutionResult:
-        """Ejecuta el backtest conectando la CanonicalStrategy con la cadena de custodia canónica de DatasetRegistry (P02-004-04 & P02-004-06)."""
+        """Ejecuta el backtest conectando la CanonicalStrategy con la cadena de custodia canónica de DatasetRegistry."""
         reg = registry or dataset_registry
         
         # Resolución estricta de dataset desde la cadena de custodia
@@ -207,11 +240,17 @@ class CanonicalRuntimeAdapter:
         bars = reg.load_dataset_bars(manifest.data_snapshot_id, verify_sha256=True, require_verified_provenance=True)
         instruction = self.compile_strategy(strategy)
         
+        direction = instruction.direction.upper()
+        if direction not in ["LONG", "SHORT", "BOTH"]:
+            raise InvalidStrategyError(f"Dirección operativa '{direction}' no soportada.")
+
         trades: List[EvaluatedTrade] = []
         in_pos = False
+        pos_dir = ""
         entry_idx = 0
         entry_price = 0.0
         entry_time_ms = 0
+        size_contracts = 1.0
         sl_distance = 0.0
         tp_distance = 0.0
 
@@ -221,33 +260,55 @@ class CanonicalRuntimeAdapter:
         tp_val = instruction.tp_config["value"]
         trail_after_r = instruction.sl_config.get("trail_after_r")
         time_stop_bars = instruction.sl_config.get("time_stop_bars")
+        session_config = instruction.session_config
+
+        # Sizing y Riesgo
+        sizing_type = instruction.sizing_config["type"]
+        risk_val = instruction.sizing_config["value"]
+        max_open = instruction.sizing_config.get("max_open_positions", 1)
 
         for i in range(len(bars)):
             bar = bars[i]
             cur_close = float(bar["close"])
             cur_high = float(bar["high"])
             cur_low = float(bar["low"])
-            cur_time = int(bar.get("timestamp_utc_ms", bar.get("time", 0)))
+            cur_open = float(bar["open"])
+            
+            # Timestamp estricto sin fallbacks a 0 (FB-02)
+            cur_time = bar.get("timestamp_utc_ms") or bar.get("time")
+            if cur_time is None or int(cur_time) <= 0:
+                raise InvalidStrategyError(f"Marca temporal física ausente o inválida en la barra {i}.")
+            cur_time = int(cur_time)
 
             if not in_pos:
+                # Comprobar filtro de sesión
+                if not self._is_within_session(cur_time, session_config):
+                    continue
+
                 if self.evaluate_entry_trigger(instruction, bars, i):
                     in_pos = True
+                    pos_dir = "LONG" if direction in ["LONG", "BOTH"] else "SHORT"
                     entry_idx = i
                     entry_price = cur_close
                     entry_time_ms = cur_time
 
-                    # Cálculo exacto de distancia de SL según sl_type (P02-004-03)
+                    # Cálculo de distancia de SL (P02-005 STEP 2 & 3)
                     if sl_type == StopLossType.PERCENTAGE.value:
                         sl_distance = entry_price * (sl_val / 100.0)
                     elif sl_type in [StopLossType.FIXED_POINTS.value, "FIXED_POINTS"]:
                         sl_distance = sl_val
                     elif sl_type in [StopLossType.ATR_MULTIPLE.value, "ATR_MULTIPLE"]:
                         atr = self._eval_indicator(IndicatorSpec(name="ATR", params={"period": 14}, source_field="close", shift=0), bars, i)
-                        sl_distance = (atr if not math.isnan(atr) and atr > 0 else (entry_price * 0.01)) * sl_val
+                        if math.isnan(atr) or atr <= 0:
+                            raise InvalidStrategyError("INSUFFICIENT_BARS_FOR_ATR: ATR requiere al menos 14 barras previas para evaluación.")
+                        sl_distance = atr * sl_val
                     else:
-                        raise InvalidStrategyError(f"Tipo de Stop Loss '{sl_type}' no soportado por el motor.")
+                        raise InvalidStrategyError(f"Tipo de Stop Loss '{sl_type}' no soportado.")
 
-                    # Cálculo exacto de distancia de TP según tp_type (P02-004-03)
+                    if sl_distance <= 0:
+                        raise InvalidStrategyError(f"Distancia de Stop Loss calculada debe ser > 0 (recibido: {sl_distance}).")
+
+                    # Cálculo de distancia de TP (P02-005 STEP 2 & 3)
                     if tp_type == TakeProfitType.RR_MULTIPLE.value:
                         tp_distance = sl_distance * tp_val
                     elif tp_type == TakeProfitType.PERCENTAGE.value:
@@ -256,16 +317,32 @@ class CanonicalRuntimeAdapter:
                         tp_distance = tp_val
                     elif tp_type in [TakeProfitType.ATR_MULTIPLE.value, "ATR_MULTIPLE"]:
                         atr = self._eval_indicator(IndicatorSpec(name="ATR", params={"period": 14}, source_field="close", shift=0), bars, i)
-                        tp_distance = (atr if not math.isnan(atr) and atr > 0 else (entry_price * 0.01)) * tp_val
+                        if math.isnan(atr) or atr <= 0:
+                            raise InvalidStrategyError("INSUFFICIENT_BARS_FOR_ATR: ATR requiere al menos 14 barras previas para evaluación.")
+                        tp_distance = atr * tp_val
                     else:
-                        raise InvalidStrategyError(f"Tipo de Take Profit '{tp_type}' no soportado por el motor.")
+                        raise InvalidStrategyError(f"Tipo de Take Profit '{tp_type}' no soportado.")
+
+                    if tp_distance <= 0:
+                        raise InvalidStrategyError(f"Distancia de Take Profit calculada debe ser > 0 (recibido: {tp_distance}).")
+
+                    # Sizing cuantitativo estricto sin fallbacks (FB-01)
+                    if sizing_type == SizingType.FIXED_CONTRACTS.value:
+                        size_contracts = risk_val
+                    elif sizing_type == SizingType.RISK_PCT_EQUITY.value:
+                        risk_usd = account_equity_usd * (risk_val / 100.0)
+                        size_contracts = risk_usd / sl_distance
+                    elif sizing_type == SizingType.FIXED_USD.value:
+                        size_contracts = risk_val / sl_distance
+                    else:
+                        raise InvalidStrategyError(f"Tipo de Sizing '{sizing_type}' no soportado.")
 
             else:
                 bars_held = i - entry_idx
                 
-                # Gestión de Stop Loss, Take Profit y Time Stop
-                if instruction.direction == "LONG":
-                    # Breakeven / Trailing
+                # Evaluación de salidas según dirección (LONG vs SHORT)
+                if pos_dir == "LONG":
+                    # Trailing Stop / Breakeven
                     if trail_after_r is not None and (cur_high - entry_price) >= (sl_distance * trail_after_r):
                         sl_target = entry_price
                     else:
@@ -273,15 +350,20 @@ class CanonicalRuntimeAdapter:
 
                     tp_target = entry_price + tp_distance
 
-                    if cur_low <= sl_target:
+                    # Política de conflicto intrabarra: si ambos niveles son tocados en la misma vela, prioridad a SL (pesimista institucional)
+                    hit_sl = cur_low <= sl_target
+                    hit_tp = cur_high >= tp_target
+
+                    if hit_sl:
                         exit_p = sl_target
-                        pnl_usd = exit_p - entry_price
-                        pnl_r = pnl_usd / sl_distance if sl_distance > 0 else -1.0
+                        pnl_usd = (exit_p - entry_price) * size_contracts
+                        pnl_r = (exit_p - entry_price) / sl_distance
                         trades.append(EvaluatedTrade(
                             entry_bar_index=entry_idx,
                             entry_time_ms=entry_time_ms,
                             entry_price=entry_price,
                             direction="LONG",
+                            size_contracts=size_contracts,
                             exit_bar_index=i,
                             exit_time_ms=cur_time,
                             exit_price=exit_p,
@@ -290,15 +372,16 @@ class CanonicalRuntimeAdapter:
                             pnl_usd=pnl_usd,
                         ))
                         in_pos = False
-                    elif cur_high >= tp_target:
+                    elif hit_tp:
                         exit_p = tp_target
-                        pnl_usd = exit_p - entry_price
-                        pnl_r = pnl_usd / sl_distance if sl_distance > 0 else 1.0
+                        pnl_usd = (exit_p - entry_price) * size_contracts
+                        pnl_r = (exit_p - entry_price) / sl_distance
                         trades.append(EvaluatedTrade(
                             entry_bar_index=entry_idx,
                             entry_time_ms=entry_time_ms,
                             entry_price=entry_price,
                             direction="LONG",
+                            size_contracts=size_contracts,
                             exit_bar_index=i,
                             exit_time_ms=cur_time,
                             exit_price=exit_p,
@@ -309,17 +392,122 @@ class CanonicalRuntimeAdapter:
                         in_pos = False
                     elif time_stop_bars is not None and bars_held >= time_stop_bars:
                         exit_p = cur_close
-                        pnl_usd = exit_p - entry_price
-                        pnl_r = pnl_usd / sl_distance if sl_distance > 0 else 0.0
+                        pnl_usd = (exit_p - entry_price) * size_contracts
+                        pnl_r = (exit_p - entry_price) / sl_distance
                         trades.append(EvaluatedTrade(
                             entry_bar_index=entry_idx,
                             entry_time_ms=entry_time_ms,
                             entry_price=entry_price,
                             direction="LONG",
+                            size_contracts=size_contracts,
                             exit_bar_index=i,
                             exit_time_ms=cur_time,
                             exit_price=exit_p,
                             exit_reason="TIME_STOP",
+                            pnl_r=pnl_r,
+                            pnl_usd=pnl_usd,
+                        ))
+                        in_pos = False
+                    elif session_config and session_config.get("close_at_eod", False) and not self._is_within_session(cur_time, session_config):
+                        exit_p = cur_close
+                        pnl_usd = (exit_p - entry_price) * size_contracts
+                        pnl_r = (exit_p - entry_price) / sl_distance
+                        trades.append(EvaluatedTrade(
+                            entry_bar_index=entry_idx,
+                            entry_time_ms=entry_time_ms,
+                            entry_price=entry_price,
+                            direction="LONG",
+                            size_contracts=size_contracts,
+                            exit_bar_index=i,
+                            exit_time_ms=cur_time,
+                            exit_price=exit_p,
+                            exit_reason="SESSION_EOD",
+                            pnl_r=pnl_r,
+                            pnl_usd=pnl_usd,
+                        ))
+                        in_pos = False
+
+                elif pos_dir == "SHORT":
+                    # Trailing Stop / Breakeven para SHORT
+                    if trail_after_r is not None and (entry_price - cur_low) >= (sl_distance * trail_after_r):
+                        sl_target = entry_price
+                    else:
+                        sl_target = entry_price + sl_distance
+
+                    tp_target = entry_price - tp_distance
+
+                    # Intrabar conflict para SHORT: prioridad a SL si ambos niveles se tocan
+                    hit_sl = cur_high >= sl_target
+                    hit_tp = cur_low <= tp_target
+
+                    if hit_sl:
+                        exit_p = sl_target
+                        pnl_usd = (entry_price - exit_p) * size_contracts
+                        pnl_r = (entry_price - exit_p) / sl_distance
+                        trades.append(EvaluatedTrade(
+                            entry_bar_index=entry_idx,
+                            entry_time_ms=entry_time_ms,
+                            entry_price=entry_price,
+                            direction="SHORT",
+                            size_contracts=size_contracts,
+                            exit_bar_index=i,
+                            exit_time_ms=cur_time,
+                            exit_price=exit_p,
+                            exit_reason="STOP_LOSS",
+                            pnl_r=pnl_r,
+                            pnl_usd=pnl_usd,
+                        ))
+                        in_pos = False
+                    elif hit_tp:
+                        exit_p = tp_target
+                        pnl_usd = (entry_price - exit_p) * size_contracts
+                        pnl_r = (entry_price - exit_p) / sl_distance
+                        trades.append(EvaluatedTrade(
+                            entry_bar_index=entry_idx,
+                            entry_time_ms=entry_time_ms,
+                            entry_price=entry_price,
+                            direction="SHORT",
+                            size_contracts=size_contracts,
+                            exit_bar_index=i,
+                            exit_time_ms=cur_time,
+                            exit_price=exit_p,
+                            exit_reason="TAKE_PROFIT",
+                            pnl_r=pnl_r,
+                            pnl_usd=pnl_usd,
+                        ))
+                        in_pos = False
+                    elif time_stop_bars is not None and bars_held >= time_stop_bars:
+                        exit_p = cur_close
+                        pnl_usd = (entry_price - exit_p) * size_contracts
+                        pnl_r = (entry_price - exit_p) / sl_distance
+                        trades.append(EvaluatedTrade(
+                            entry_bar_index=entry_idx,
+                            entry_time_ms=entry_time_ms,
+                            entry_price=entry_price,
+                            direction="SHORT",
+                            size_contracts=size_contracts,
+                            exit_bar_index=i,
+                            exit_time_ms=cur_time,
+                            exit_price=exit_p,
+                            exit_reason="TIME_STOP",
+                            pnl_r=pnl_r,
+                            pnl_usd=pnl_usd,
+                        ))
+                        in_pos = False
+                    elif session_config and session_config.get("close_at_eod", False) and not self._is_within_session(cur_time, session_config):
+                        exit_p = cur_close
+                        pnl_usd = (entry_price - exit_p) * size_contracts
+                        pnl_r = (entry_price - exit_p) / sl_distance
+                        trades.append(EvaluatedTrade(
+                            entry_bar_index=entry_idx,
+                            entry_time_ms=entry_time_ms,
+                            entry_price=entry_price,
+                            direction="SHORT",
+                            size_contracts=size_contracts,
+                            exit_bar_index=i,
+                            exit_time_ms=cur_time,
+                            exit_price=exit_p,
+                            exit_reason="SESSION_EOD",
                             pnl_r=pnl_r,
                             pnl_usd=pnl_usd,
                         ))
