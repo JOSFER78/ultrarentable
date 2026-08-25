@@ -1,15 +1,15 @@
-﻿# ULTRARENTABLE ? LIVE CONTROL STATE
+# ULTRARENTABLE — LIVE CONTROL STATE
 
 ## Current authority
 - `CURRENT_PHASE`: 02
-- `PHASE_STATUS`: READY_FOR_REVIEW
+- `PHASE_STATUS`: FINAL_CLOSURE
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-P02-007
+- `ACTIVE_ORDER_ID`: AG2-P02-008
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-2100-P02-007`
-- `LAST_ACKNOWLEDGED_ORDER`: AG2-P02-006
+- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-2200-P02-008`
+- `LAST_ACKNOWLEDGED_ORDER`: AG2-P02-007
 - `LAST_HANDOFF`: `03_HANDOFF_AG2-P02-007.md`
-- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P02-006.md` (`REWORK`)
+- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P02-007.md` (`FINAL_PHASE_CLOSE_ORDER`)
 - `NEXT_ORDER`: `PHASE 03 LOCKED`
 
 ## Watcher contract
@@ -21,5 +21,14 @@ The external reviewer chooses `REWORK`, `SUBPHASE`, `REDESIGN`, `BLOCKED`, `NEXT
 Antigravity never chooses the next order.
 
 ## STRICT SCOPE
-Only `AG2-P02-007` was executed. Out-of-scope findings are deferred to future orders.
+Only `AG2-P02-008` may be executed now. It is the final closure order of Phase 02. Out-of-scope findings are deferred unless they directly block closure.
 
+## GitHub synchronization
+The complete scoped result must be committed and pushed to `origin/main`, with exact remote SHA recorded in the handoff, before `READY_FOR_REVIEW` and STOP.
+
+## Current transition
+`AG2-P02-007` was delivered as `READY_FOR_REVIEW` after closing the principal behavioral defects in BOTH semantics, explicit unsupported semantics, and production execution-boundary tracing.
+
+Active final closure order: `AG2-P02-008`.
+
+Phase 03 remains locked until the external reviewer explicitly approves Phase 02.
