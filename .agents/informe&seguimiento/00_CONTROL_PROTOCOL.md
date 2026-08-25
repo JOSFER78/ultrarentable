@@ -6,7 +6,7 @@ This directory is the **live command channel** between the external research rev
 
 The master DOCX remains the scientific/architectural doctrine. This directory is the operational control plane that tells Antigravity **what to execute now**.
 
-Antigravity 2.0 runs a scheduled watcher approximately every 3 minutes. **The watcher is an automatic executor trigger, not a notification system.** When a new valid order/plan is published here, Antigravity must automatically start the authorized process on the next watcher cycle. No chat message, button click, manual prompt, or user confirmation is required.
+Antigravity 2.0 runs a scheduled watcher approximately every 3 minutes. **The watcher is an automatic executor trigger, not a notification system.** When a new valid dispatch/order is published here, Antigravity must automatically start the authorized process on the next watcher cycle. No chat message, button click, manual prompt, or user confirmation is required.
 
 ## 2. Two loops — never confuse them
 
@@ -20,57 +20,71 @@ The laboratory itself may operate 24/7 autonomously:
 
 Changes to the laboratory are externally reviewed and continuously re-ordered:
 
-`MAIN STATE PUBLISHED -> CRON DETECTS -> ANTIGRAVITY AUTO-STARTS -> SUBAGENTS -> IMPLEMENT/TEST -> COMMIT -> PUSH origin/main -> HANDOFF -> STOP -> CHATGPT REVIEWS main -> CHATGPT CORRECTS / REORDERS -> NEW ORDER -> CRON DETECTS`
+`MAIN STATE PUBLISHED -> DISPATCH PUBLISHED -> CRON DETECTS -> ANTIGRAVITY AUTO-STARTS -> SUBAGENTS -> IMPLEMENT/TEST -> COMMIT -> PUSH origin/main -> HANDOFF -> STOP -> CHATGPT REVIEWS main -> CHATGPT CORRECTS / REORDERS -> NEW DISPATCH -> CRON DETECTS`
 
 **There is no manual approval/waiting step for the user.** ChatGPT is the active external reviewer and continuously determines the next action from the state actually visible in `origin/main`.
 
-Runtime autonomy does not permit autonomous architectural changes, certification changes or phase advancement without a new external order.
+Runtime autonomy does not permit autonomous architectural changes, certification changes or phase advancement without a new external dispatch/order.
 
 ## 3. Automatic trigger rule — critical
 
-A new control package is actionable when all of the following are true:
+A control package is actionable only when all of the following are true:
 
-1. `01_CONTROL_STATE.md` names the phase as `READY` or `REWORK` and identifies the active order.
-2. `02_CURRENT_ORDER.md` contains a new `order_id` not previously acknowledged by Antigravity.
-3. `02_CURRENT_ORDER.md` has `status: ISSUED`.
-4. The order's `target_phase` matches `CURRENT_PHASE`.
-5. The order is the only active order.
-6. The order is visible in the current Git branch fetched by the watcher.
+1. `00_DISPATCH.md` exists on `origin/main`.
+2. `dispatch_id` is newer than the last processed/acknowledged `dispatch_id`.
+3. `status: ISSUED`.
+4. `01_CONTROL_STATE.md` identifies the same `ACTIVE_ORDER_ID` and `CURRENT_PHASE` as the dispatch.
+5. `02_CURRENT_ORDER.md` identifies the same `order_id` and has `status: ISSUED`.
+6. The order `target_phase` equals `CURRENT_PHASE`.
+7. The dispatch is the only active execution trigger.
 
 When these conditions are met:
 
 **DO NOT WAIT. DO NOT ASK FOR A HUMAN PROMPT. START AUTOMATICALLY.**
 
-The watcher must launch the Antigravity orchestration process for that order.
+The watcher must launch the Antigravity orchestration process for that dispatch/order.
+
+### Important: reusable filenames are not triggers
+
+`02_CURRENT_ORDER.md` is a reusable file. **A new phase/order does not require a new filename.**
+
+The watcher MUST NOT rely on filesystem filename creation alone.
+
+The authoritative trigger is the monotonic `dispatch_id` in:
+
+`.agents/informe&seguimiento/00_DISPATCH.md`
+
+A changed/new `dispatch_id` means a new executable order.
 
 ## 4. Cron/watcher protocol — every ~3 minutes
 
 At every watcher cycle Antigravity must:
 
-1. Inspect `.agents/informe&seguimiento/` for control changes.
-2. Read `00_CONTROL_PROTOCOL.md`.
+1. `git fetch origin main`.
+2. Read `.agents/informe&seguimiento/00_DISPATCH.md` from `origin/main`.
 3. Read `01_CONTROL_STATE.md`.
 4. Read `02_CURRENT_ORDER.md`.
-5. Read `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` when present/changed.
-6. Read the master DOCX when the order requires doctrine context.
-7. Compare `order_id`, `issued_at`, `status` and `target_phase` against the last acknowledged order.
-8. If there is no newer actionable order, do not start engineering work.
-9. If there is a newer actionable order, **AUTO-START** the order immediately.
-10. Before substantive edits, launch the required Antigravity subagents.
-11. Execute only the current order.
-12. Produce the required handoff/evidence report.
-13. Commit and push the complete result to `origin/main`.
-14. Verify that `origin/main` contains the final commit SHA.
-15. Only after remote verification, mark the handoff `READY_FOR_REVIEW` or `BLOCKED`.
-16. STOP. Do not create or execute another order.
+5. Read `00_CONTROL_PROTOCOL.md`.
+6. Read `00_SCOPE_EXECUTION_RULE.md`.
+7. Read `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` when present/changed.
+8. Compare `dispatch_id`, `order_id`, `target_phase`, `status` and `issued_at_utc` against the persisted last processed dispatch.
+9. If `dispatch_id` is NEW and the handshake is valid, **AUTO-START immediately**.
+10. Persist the dispatch as `ACKNOWLEDGED/IN_PROGRESS` only after the process has actually started.
+11. Before substantive edits, launch the required Antigravity subagents.
+12. Execute only the active dispatch/order and only its target phase.
+13. Produce the required handoff/evidence report.
+14. Commit and push the complete scoped result to `origin/main`.
+15. Verify that `origin/main` contains the final commit SHA.
+16. Only after remote verification, mark the handoff `READY_FOR_REVIEW` or `BLOCKED`.
+17. STOP. Do not create or execute another order.
 
 The 3-minute cron therefore means:
 
-`NEW ORDER PUBLISHED -> DETECTED <= next watcher cycle -> PROCESS STARTED AUTOMATICALLY`
+`NEW DISPATCH -> DETECTED <= next watcher cycle -> PROCESS STARTED AUTOMATICALLY`
 
 It does **not** mean:
 
-`NEW ORDER PUBLISHED -> WAIT FOR USER TO TELL ANTIGRAVITY TO START`.
+`NEW DISPATCH -> WAIT FOR USER TO TELL ANTIGRAVITY TO START`.
 
 ## 5. Workspace vs GitHub — mandatory distinction
 
@@ -190,7 +204,7 @@ After Antigravity publishes a completed order to `origin/main`, ChatGPT reviews 
 
 ChatGPT examines:
 
-`CONTROL_STATE -> ORDER -> HANDOFF -> REMOTE COMMIT -> DIFF -> CODE PATHS -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
+`CONTROL_STATE -> DISPATCH -> ORDER -> HANDOFF -> REMOTE COMMIT -> DIFF -> CODE PATHS -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
 
 ChatGPT then decides the next action:
 
@@ -199,7 +213,7 @@ ChatGPT then decides the next action:
 - `BLOCK`
 - `REDESIGN`
 
-The next order is published by ChatGPT and the next cron cycle executes it automatically.
+The next dispatch/order is published by ChatGPT and the next cron cycle executes it automatically.
 
 ## 10. Mandatory subagent model
 
@@ -257,6 +271,7 @@ and include actual permitted futures, max position, trailing/max loss, daily los
 
 Antigravity must create a handoff containing:
 
+- dispatch_id;
 - order_id;
 - target phase;
 - start commit;
@@ -282,4 +297,4 @@ Never write `APPROVED` in an Antigravity handoff.
 
 ## 14. Final operational rule
 
-**ChatGPT reviews `origin/main`, decides what is actually true, publishes the next corrective/forward order; the 3-minute cron detects it; Antigravity automatically starts; Antigravity launches subagents; subagents investigate and implement on the real project; long VPS jobs run asynchronously over SSH; Antigravity continues useful work instead of waiting; all results are verified; Antigravity commits and pushes the complete result to `origin/main`; Antigravity writes the handoff and stops; ChatGPT reviews again.**
+**ChatGPT reviews `origin/main`, decides what is actually true, publishes the next dispatch/order; the 3-minute cron detects the NEW dispatch id; Antigravity automatically starts; Antigravity launches subagents; subagents investigate and implement on the real project; long VPS jobs run asynchronously over SSH; Antigravity continues useful work instead of waiting; all results are verified; Antigravity commits and pushes the complete scoped result to `origin/main`; Antigravity writes the handoff and stops; ChatGPT reviews again.**
