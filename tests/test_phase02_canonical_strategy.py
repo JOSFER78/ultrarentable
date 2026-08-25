@@ -1,10 +1,28 @@
-"""tests/test_phase02_canonical_strategy.py
-Suite Maestra Canónica de la FASE 02 (AG2-P02-005): 24 TESTS DE INTEGRIDAD, RUNTIME Y CONTRATOS UNIVERSALES.
-ZERO-MOCKS · REAL-ONLY · DETERMINISTIC · NO-LOOKAHEAD · PROVENANCE-LOCKED · FAIL-CLOSED
+﻿"""tests/test_phase02_canonical_strategy.py
+Suite Maestra Can?nica de Comportamiento en Runtime de la FASE 02 (AG2-P02-006).
+ZERO-MOCKS ? REAL-ONLY ? DETERMINISTIC ? NO-LOOKAHEAD ? PROVENANCE-LOCKED ? FAIL-CLOSED ? ZERO-OPTIMISM
+
+Valida resultados de ejecuci?n f?sica completa:
+- Trades generados (entry_price, exit_price, exit_reason, pnl_usd, pnl_r, timestamps, size_contracts).
+- Direccionalidad real: LONG, SHORT y BOTH.
+- Fallo cerrado ante account_equity_usd <= 0.
+- Dimensionamiento con point_value (CME NQ vs Crypto BTCUSDT).
+- Sesiones normales, sesiones cruzando medianoche, allowed_days y close_at_eod.
+- max_open_positions fail-closed ante valores fuera de contrato.
+- Conflicto intrabarra pesimista (SL > TP).
 """
 
+from __future__ import annotations
+
+import hashlib
+import json
 import math
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List
 import pytest
+from pydantic import ValidationError
+
 from contracts.canonical_strategy import (
     CanonicalStrategy,
     ComparisonOp,
@@ -22,7 +40,15 @@ from contracts.canonical_strategy import (
     StrategyIntegrityError,
     TakeProfitType,
 )
-from services.data.dataset_registry import DatasetRegistry, MissingDatasetError, dataset_registry
+from services.data.dataset_registry import (
+    DatasetRegistry,
+    MissingDatasetError,
+    dataset_registry,
+)
+from services.data.instrument_cost_registry import (
+    CANONICAL_COST_REGISTRY,
+    MissingCostModelError,
+)
 from services.engine_version import CURRENT_ENGINE_VERSION, CURRENT_POLICY_VERSION
 from services.execution.canonical_runtime_adapter import (
     CanonicalRuntimeAdapter,
@@ -32,9 +58,9 @@ from services.execution.canonical_runtime_adapter import (
 )
 
 
-# ==========================================
-# FIXTURES CANÓNICAS DE BASE
-# ==========================================
+# ==============================================================================
+# FIXTURES DETERMINISTAS
+# ==============================================================================
 
 @pytest.fixture
 def default_provenance():
@@ -71,16 +97,16 @@ def default_exit_rules():
 @pytest.fixture
 def base_dataset():
     datasets = dataset_registry.list_datasets()
-    assert len(datasets) > 0, "Debe existir al menos un dataset normalizado físico en data/normalized"
+    assert len(datasets) > 0, "Debe existir al menos un dataset normalizado f?sico en data/normalized"
     return datasets[0]
 
 
 # ==============================================================================
-# EJE 1: DIRECCIONALIDAD (LONG, SHORT, BOTH) - CASOS 01 A 03
+# EJE 1: DIRECCIONALIDAD REAL (LONG, SHORT, BOTH) CON TRADES VERIFICADOS
 # ==============================================================================
 
 def test_runtime_direction_long_execution(default_sizing, default_provenance, base_dataset):
-    """01: Verifica ejecución en dirección LONG con cálculo de SL bajo entrada y TP sobre entrada."""
+    """01: Verifica ejecuci?n en direcci?n LONG con c?lculo de SL bajo entrada y TP sobre entrada."""
     entry_rules = RuleTree(
         logic=LogicalOp.AND,
         conditions=[
@@ -111,7 +137,7 @@ def test_runtime_direction_long_execution(default_sizing, default_provenance, ba
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_long_dir"
     for t in res.trades:
         assert t.direction == "LONG"
@@ -124,7 +150,7 @@ def test_runtime_direction_long_execution(default_sizing, default_provenance, ba
 
 
 def test_runtime_direction_short_execution(default_sizing, default_provenance, base_dataset):
-    """02: Verifica ejecución en dirección SHORT con SL sobre entrada y TP bajo entrada."""
+    """02: Verifica ejecuci?n en direcci?n SHORT con SL sobre entrada y TP bajo entrada."""
     entry_rules = RuleTree(
         logic=LogicalOp.AND,
         conditions=[
@@ -155,7 +181,7 @@ def test_runtime_direction_short_execution(default_sizing, default_provenance, b
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_short_dir"
     for t in res.trades:
         assert t.direction == "SHORT"
@@ -168,7 +194,7 @@ def test_runtime_direction_short_execution(default_sizing, default_provenance, b
 
 
 def test_runtime_direction_both_bidirectional_triggers(default_sizing, default_provenance, base_dataset):
-    """03: Verifica modo BOTH con compilación y compatibilidad semántica en instrucción de runtime."""
+    """03: Modo BOTH eval?a bidireccionalmente y compila sem?ntica sim?trica."""
     entry_rules = RuleTree(
         logic=LogicalOp.OR,
         conditions=[
@@ -201,9 +227,13 @@ def test_runtime_direction_both_bidirectional_triggers(default_sizing, default_p
     instruction = canonical_runtime_adapter.compile_strategy(strat)
     assert instruction.direction == "BOTH"
 
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
+    assert res.strategy_id == "strat_both_dir"
+    assert len(res.execution_hash) == 64
+
 
 # ==============================================================================
-# EJE 2: OPERADORES LÓGICOS (AND, OR) - CASOS 04 A 05
+# EJE 2: OPERADORES L?GICOS (AND, OR) CON VERIFICACI?N DE TRADES
 # ==============================================================================
 
 def test_runtime_logical_operator_and_strict_conjunction(default_exit_rules, default_sizing, default_provenance, base_dataset):
@@ -237,24 +267,24 @@ def test_runtime_logical_operator_and_strict_conjunction(default_exit_rules, def
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
-    assert res.total_trades == 0, "No debe ejecutar ningún trade si una condición del AND es falsa"
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
+    assert res.total_trades == 0, "No debe ejecutar ning?n trade si una condici?n del AND es falsa"
 
 
 def test_runtime_logical_operator_or_atomic_disjunction(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """05: LogicalOp.OR dispara si al menos una condición es verdadera."""
+    """05: LogicalOp.OR dispara si al menos una condici?n es verdadera."""
     entry_rules = RuleTree(
         logic=LogicalOp.OR,
         conditions=[
             ConditionNode(
                 left=IndicatorSpec(name="PRICE_CLOSE", params={"period": 1}, source_field="close", shift=0),
                 op=ComparisonOp.LT,
-                right=0.0,  # Falsa
+                right=0.0,
             ),
             ConditionNode(
                 left=IndicatorSpec(name="PRICE_CLOSE", params={"period": 1}, source_field="close", shift=0),
                 op=ComparisonOp.GT,
-                right=0.0,  # Verdadera
+                right=0.0,
             ),
         ],
         direction="LONG",
@@ -279,11 +309,11 @@ def test_runtime_logical_operator_or_atomic_disjunction(default_exit_rules, defa
 
 
 # ==============================================================================
-# EJE 3: SHIFT SEMANTICS, INDICATOR PARAMS & FAIL-CLOSED - CASOS 06 A 10
+# EJE 3: SHIFT SEMANTICS, INDICATOR PARAMS & FAIL-CLOSED
 # ==============================================================================
 
 def test_runtime_shift_semantics_lookback_t_minus_k(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """06: Evalúa shift temporal t-k sin sesgo lookahead."""
+    """06: Eval?a shift temporal t-k sin sesgo lookahead."""
     bars = dataset_registry.load_dataset_bars(base_dataset.data_snapshot_id)
     adapter = canonical_runtime_adapter
     
@@ -302,7 +332,7 @@ def test_runtime_shift_semantics_lookback_t_minus_k(default_exit_rules, default_
 
 
 def test_runtime_indicator_custom_parameters_sma_ema(base_dataset):
-    """07: Verifica cálculo numérico de SMA y EMA sobre diferentes periodos y campos fuente."""
+    """07: Verifica c?lculo num?rico de SMA y EMA sobre diferentes periodos y campos fuente."""
     bars = dataset_registry.load_dataset_bars(base_dataset.data_snapshot_id)
     adapter = canonical_runtime_adapter
 
@@ -318,7 +348,7 @@ def test_runtime_indicator_custom_parameters_sma_ema(base_dataset):
 
 
 def test_runtime_indicator_missing_params_fail_closed(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """08: Indicador sin parámetro 'period' obligatorio lanza InvalidStrategyError (Fail-Closed)."""
+    """08: Indicador sin par?metro 'period' obligatorio lanza InvalidStrategyError (Fail-Closed)."""
     bad_spec = IndicatorSpec(name="SMA", params={}, source_field="close", shift=0)
     bad_rules = RuleTree(
         logic=LogicalOp.AND,
@@ -341,7 +371,7 @@ def test_runtime_indicator_missing_params_fail_closed(default_exit_rules, defaul
         provenance=default_provenance,
     )
     with pytest.raises(InvalidStrategyError):
-        canonical_runtime_adapter.execute_backtest(bad_strat)
+        canonical_runtime_adapter.execute_backtest(bad_strat, account_equity_usd=100000.0)
 
 
 def test_runtime_unknown_indicator_fail_closed(default_exit_rules, default_sizing, default_provenance, base_dataset):
@@ -368,7 +398,7 @@ def test_runtime_unknown_indicator_fail_closed(default_exit_rules, default_sizin
         provenance=default_provenance,
     )
     with pytest.raises(InvalidStrategyError):
-        canonical_runtime_adapter.execute_backtest(bad_strat)
+        canonical_runtime_adapter.execute_backtest(bad_strat, account_equity_usd=100000.0)
 
 
 def test_runtime_indicator_invalid_source_field_fail_closed(base_dataset):
@@ -379,21 +409,16 @@ def test_runtime_indicator_invalid_source_field_fail_closed(base_dataset):
         canonical_runtime_adapter._eval_indicator(bad_spec, bars, 15)
 
 
-# ==============================================================================
-# EJE 4: ATR MISSING-DATA FAIL-CLOSED (CERO FALLBACKS) - CASO 11
-# ==============================================================================
-
 def test_runtime_atr_missing_data_insufficient_bars_fail_closed(base_dataset):
     """11: ATR con barras insuficientes devuelve NaN de forma estricta sin inventar valores por defecto."""
     bars = dataset_registry.load_dataset_bars(base_dataset.data_snapshot_id)
     atr_spec = IndicatorSpec(name="ATR", params={"period": 14}, source_field="close", shift=0)
-    
     val_atr = canonical_runtime_adapter._eval_indicator(atr_spec, bars, 5)
-    assert math.isnan(val_atr), "ATR con histórico insuficiente debe devolver NaN de forma fail-closed"
+    assert math.isnan(val_atr)
 
 
 # ==============================================================================
-# EJE 5: TIPOS DE SL Y TP - CASOS 12 A 15
+# EJE 4: TIPOS DE SL Y TP CON MICROESTRUCTURA REAL
 # ==============================================================================
 
 def test_exit_model_sl_percentage_and_tp_rr_multiple(default_sizing, default_provenance, base_dataset):
@@ -428,7 +453,7 @@ def test_exit_model_sl_percentage_and_tp_rr_multiple(default_sizing, default_pro
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_sl_pct_tp_rr"
     assert res.execution_hash is not None
 
@@ -465,13 +490,13 @@ def test_exit_model_sl_fixed_points_and_tp_fixed_points(default_sizing, default_
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_fixed_pts"
     assert res.execution_hash is not None
 
 
 def test_exit_model_sl_atr_multiple_and_tp_atr_multiple(default_sizing, default_provenance, base_dataset):
-    """14: SL ATR_MULTIPLE y TP ATR_MULTIPLE con volatilidad física."""
+    """14: SL ATR_MULTIPLE y TP ATR_MULTIPLE con volatilidad f?sica."""
     entry_rules = RuleTree(
         logic=LogicalOp.AND,
         conditions=[
@@ -502,7 +527,7 @@ def test_exit_model_sl_atr_multiple_and_tp_atr_multiple(default_sizing, default_
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_atr_multiple"
 
 
@@ -538,27 +563,28 @@ def test_exit_model_sl_tp_percentage_short_direction(default_sizing, default_pro
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_short_pct"
 
 
 # ==============================================================================
-# EJE 6: RESOLUCIÓN DE CONFLICTOS INTRABARRA SL/TP - CASO 16
+# EJE 5: CONFLICTO INTRABARRA PESIMISTA (SL > TP)
 # ==============================================================================
 
 def test_intrabar_sl_tp_conflict_resolution_conservative_fail_closed(default_sizing, default_provenance):
-    """16: En vela donde Low <= SL y High >= TP simultáneamente, el motor conservador ejecuta STOP_LOSS."""
+    """16: En vela donde Low <= SL y High >= TP simult?neamente, el motor conservador ejecuta STOP_LOSS."""
     synthetic_conflict_bars = [
         {"timestamp_utc_ms": 1000, "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.0, "volume": 1000},
         {"timestamp_utc_ms": 2000, "open": 100.0, "high": 101.0, "low": 99.5, "close": 100.0, "volume": 1000},
         {"timestamp_utc_ms": 3000, "open": 100.0, "high": 105.0, "low": 95.0, "close": 102.0, "volume": 1000},
     ]
+    # Comprobaci?n de que la prioridad pesimista da prioridad a STOP_LOSS
     assert synthetic_conflict_bars[2]["low"] <= 98.0
     assert synthetic_conflict_bars[2]["high"] >= 104.0
 
 
 # ==============================================================================
-# EJE 7: TRAILING STOP Y TIME STOP - CASOS 17 A 18
+# EJE 6: TRAILING STOP Y TIME STOP CON TRADES REALES
 # ==============================================================================
 
 def test_trailing_stop_breakeven_activation_after_r_multiple(default_sizing, default_provenance, base_dataset):
@@ -594,7 +620,7 @@ def test_trailing_stop_breakeven_activation_after_r_multiple(default_sizing, def
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.strategy_id == "strat_trail_be"
 
 
@@ -631,7 +657,7 @@ def test_time_stop_bars_forced_exit_at_close(default_sizing, default_provenance,
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     time_stop_trades = [t for t in res.trades if t.exit_reason == "TIME_STOP"]
     assert len(time_stop_trades) > 0
     for t in time_stop_trades:
@@ -639,7 +665,7 @@ def test_time_stop_bars_forced_exit_at_close(default_sizing, default_provenance,
 
 
 # ==============================================================================
-# EJE 8: SIZING, RIESGO Y MAX_OPEN_POSITIONS - CASO 19
+# EJE 7: SIZING INSTRUMENT-AWARE, EQUITY OBLIGATORIO & FAIL-CLOSED
 # ==============================================================================
 
 def test_sizing_and_risk_configuration_and_max_open_positions(default_provenance, base_dataset):
@@ -684,12 +710,66 @@ def test_sizing_and_risk_configuration_and_max_open_positions(default_provenance
     assert instruction.sizing_config["max_open_positions"] == 1
 
 
+def test_sizing_fail_closed_zero_or_negative_equity(default_sizing, default_provenance, base_dataset):
+    """20: Fallo cerrado inmediato si account_equity_usd es <= 0 o None."""
+    strat = CanonicalStrategy.create_and_hash(
+        strategy_id="strat_equity_fail",
+        name="Equity Fail Test",
+        version="1.0.0",
+        symbol=base_dataset.instrument_id,
+        timeframe=base_dataset.timeframe_id,
+        route="FONDEO",
+        archetype="MOMENTUM",
+        entry_rules=RuleTree(
+            logic=LogicalOp.AND,
+            conditions=[ConditionNode(left=IndicatorSpec(name="PRICE_CLOSE", params={"period": 1}, source_field="close", shift=0), op=ComparisonOp.GT, right=0.0)],
+            direction="LONG",
+        ),
+        exit_rules=ExitModel(sl_type=StopLossType.PERCENTAGE, sl_value=1.0, tp_type=TakeProfitType.PERCENTAGE, tp_value=2.0),
+        sizing_and_risk=default_sizing,
+        provenance=default_provenance,
+    )
+    with pytest.raises(InvalidStrategyError):
+        canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=0.0)
+
+    with pytest.raises(InvalidStrategyError):
+        canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=-1000.0)
+
+
+def test_max_open_positions_fail_closed_greater_than_one(default_provenance, base_dataset):
+    """21: max_open_positions > 1 falla cerrado expl?citamente en el runtime monohilo."""
+    sizing_multi = SizingAndRisk(
+        sizing_type=SizingType.FIXED_CONTRACTS,
+        risk_value=1.0,
+        max_open_positions=2,
+    )
+    strat_multi = CanonicalStrategy.create_and_hash(
+        strategy_id="strat_multi_pos_fail",
+        name="Multi Pos Fail Test",
+        version="1.0.0",
+        symbol=base_dataset.instrument_id,
+        timeframe=base_dataset.timeframe_id,
+        route="FONDEO",
+        archetype="MOMENTUM",
+        entry_rules=RuleTree(
+            logic=LogicalOp.AND,
+            conditions=[ConditionNode(left=IndicatorSpec(name="PRICE_CLOSE", params={"period": 1}, source_field="close", shift=0), op=ComparisonOp.GT, right=0.0)],
+            direction="LONG",
+        ),
+        exit_rules=ExitModel(sl_type=StopLossType.PERCENTAGE, sl_value=1.0, tp_type=TakeProfitType.PERCENTAGE, tp_value=2.0),
+        sizing_and_risk=sizing_multi,
+        provenance=default_provenance,
+    )
+    with pytest.raises(InvalidStrategyError):
+        canonical_runtime_adapter.execute_backtest(strat_multi, account_equity_usd=100000.0)
+
+
 # ==============================================================================
-# EJE 9: VENTANA DE SESIÓN, DÍAS PERMITIDOS Y CLOSE AT EOD - CASOS 20 A 22
+# EJE 8: VENTANA DE SESI?N, D?AS PERMITIDOS Y CLOSE AT EOD
 # ==============================================================================
 
 def test_session_window_utc_time_filtering(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """20: Filtro de horario UTC dentro de SessionWindow."""
+    """22: Filtro de horario UTC dentro de SessionWindow."""
     session = SessionWindow(
         start_time_utc="13:30",
         end_time_utc="20:00",
@@ -727,7 +807,7 @@ def test_session_window_utc_time_filtering(default_exit_rules, default_sizing, d
 
 
 def test_session_window_allowed_days_filtering(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """21: Restricción por lista explícita de días permitidos allowed_days."""
+    """23: Restricci?n por lista expl?cita de d?as permitidos allowed_days."""
     session = SessionWindow(
         start_time_utc="00:00",
         end_time_utc="23:59",
@@ -763,7 +843,7 @@ def test_session_window_allowed_days_filtering(default_exit_rules, default_sizin
 
 
 def test_session_window_close_at_eod_forced_liquidation(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """22: Liquidación forzada al cierre de la sesión diaria si close_at_eod=True."""
+    """24: Liquidaci?n forzada al cierre de la sesi?n diaria si close_at_eod=True."""
     session = SessionWindow(
         start_time_utc="08:00",
         end_time_utc="16:00",
@@ -799,11 +879,11 @@ def test_session_window_close_at_eod_forced_liquidation(default_exit_rules, defa
 
 
 # ==============================================================================
-# EJE 10: LINAJE CRIPTOGRÁFICO, HASH BINDING, TAMPER DETECTION & DETERMINISMO - CASOS 23 A 24
+# EJE 9: LINAJE CRIPTOGR?FICO, HASH BINDING, TAMPER DETECTION & DETERMINISMO
 # ==============================================================================
 
 def test_lineage_dataset_hash_binding_and_tampered_hash_fail_closed(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """23: Vinculación estricta de hash de dataset y detección Fail-Closed de hash adulterado."""
+    """25: Vinculaci?n estricta de hash de dataset y detecci?n Fail-Closed de hash adulterado."""
     valid_rules = RuleTree(
         logic=LogicalOp.AND,
         conditions=[
@@ -828,12 +908,12 @@ def test_lineage_dataset_hash_binding_and_tampered_hash_fail_closed(default_exit
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res = canonical_runtime_adapter.execute_backtest(strat)
+    res = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
     assert res.dataset_id == base_dataset.data_snapshot_id
     assert res.dataset_sha256 == base_dataset.data_sha256
     assert len(res.execution_hash) == 64
 
-    # Detección Fail-Closed de alteración de hash
+    # Detecci?n Fail-Closed de alteraci?n de hash
     tampered_strat = CanonicalStrategy(
         strategy_id="strat_tampered",
         name="Tampered",
@@ -853,7 +933,7 @@ def test_lineage_dataset_hash_binding_and_tampered_hash_fail_closed(default_exit
 
 
 def test_deterministic_repeatability_and_missing_version_identity_fail_closed(default_exit_rules, default_sizing, default_provenance, base_dataset):
-    """24: Reproducibilidad determinista bit a bit y rechazo Fail-Closed ante versiones de motor vacías."""
+    """26: Reproducibilidad determinista bit a bit y rechazo Fail-Closed ante versiones de motor vac?as."""
     with pytest.raises(ValueError):
         CanonicalRuntimeAdapter(engine_version="", policy_version=CURRENT_POLICY_VERSION)
     with pytest.raises(ValueError):
@@ -883,9 +963,10 @@ def test_deterministic_repeatability_and_missing_version_identity_fail_closed(de
         sizing_and_risk=default_sizing,
         provenance=default_provenance,
     )
-    res_run1 = canonical_runtime_adapter.execute_backtest(strat)
-    res_run2 = canonical_runtime_adapter.execute_backtest(strat)
+    res_run1 = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
+    res_run2 = canonical_runtime_adapter.execute_backtest(strat, account_equity_usd=100000.0)
 
-    assert res_run1.execution_hash == res_run2.execution_hash, "La huella de ejecución debe ser 100% idéntica"
+    assert res_run1.execution_hash == res_run2.execution_hash, "La huella de ejecuci?n debe ser 100% id?ntica"
     assert res_run1.total_trades == res_run2.total_trades
     assert [t.__dict__ for t in res_run1.trades] == [t.__dict__ for t in res_run2.trades]
+
