@@ -1,7 +1,7 @@
 """contracts/canonical_strategy.py
 Definición Canónica Inmutable de Estrategia, AST y Representación (Fase 02).
-ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED
-SSOT para la representación declarativa de reglas, condiciones, salidas y gestión de riesgo.
+ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · FAIL-CLOSED
+SSOT inmutable para la representación declarativa de reglas, condiciones, salidas y gestión de riesgo.
 """
 
 from __future__ import annotations
@@ -12,6 +12,16 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class InvalidStrategyError(Exception):
+    """Lanzada cuando una definición de estrategia es inválida o incompleta."""
+    pass
+
+
+class StrategyIntegrityError(Exception):
+    """Lanzada cuando el hash canónico de la estrategia no coincide con su AST."""
+    pass
 
 
 class StrategyLifecycleStatus(str, Enum):
@@ -180,3 +190,66 @@ class CanonicalStrategy(BaseModel):
         """Calcula el hash determinista SHA-256 canónico del AST y parámetros."""
         raw_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
         return hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
+
+    @classmethod
+    def create_and_hash(
+        cls,
+        strategy_id: str,
+        name: str,
+        symbol: str,
+        timeframe: str,
+        route: Literal["ULTRA", "FONDEO", "PORTFOLIO"],
+        entry_rules: RuleTree,
+        exit_rules: ExitModel,
+        sizing_and_risk: SizingAndRisk,
+        archetype: str = "MOMENTUM_BREAKOUT",
+        version: str = "1.0.0",
+        session_window: Optional[SessionWindow] = None,
+        provenance: Optional[ProvenanceMetadata] = None,
+    ) -> CanonicalStrategy:
+        """Fabrica una CanonicalStrategy inmutable y calcula su hash determinista."""
+        payload = {
+            "strategy_id": strategy_id,
+            "symbol": symbol.strip().upper(),
+            "timeframe": timeframe.strip().lower(),
+            "route": route,
+            "archetype": archetype,
+            "version": version,
+            "entry_rules": entry_rules.model_dump(),
+            "exit_rules": exit_rules.model_dump(),
+            "sizing_and_risk": sizing_and_risk.model_dump(),
+            "session_window": session_window.model_dump() if session_window else None,
+        }
+        computed_hash = cls.compute_strategy_hash(payload)
+        return cls(
+            strategy_id=strategy_id,
+            name=name,
+            version=version,
+            symbol=symbol.strip().upper(),
+            timeframe=timeframe.strip().lower(),
+            route=route,
+            archetype=archetype,
+            entry_rules=entry_rules,
+            exit_rules=exit_rules,
+            sizing_and_risk=sizing_and_risk,
+            session_window=session_window,
+            provenance=provenance,
+            strategy_hash=computed_hash,
+        )
+
+    def verify_integrity(self) -> bool:
+        """Verifica que el strategy_hash coincida exactamente con el AST actual."""
+        payload = {
+            "strategy_id": self.strategy_id,
+            "symbol": self.symbol.strip().upper(),
+            "timeframe": self.timeframe.strip().lower(),
+            "route": self.route,
+            "archetype": self.archetype,
+            "version": self.version,
+            "entry_rules": self.entry_rules.model_dump(),
+            "exit_rules": self.exit_rules.model_dump(),
+            "sizing_and_risk": self.sizing_and_risk.model_dump(),
+            "session_window": self.session_window.model_dump() if self.session_window else None,
+        }
+        expected = self.compute_strategy_hash(payload)
+        return self.strategy_hash == expected
