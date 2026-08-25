@@ -1,69 +1,72 @@
-# ORDER AG2-P02-002 — PHASE 02 CANONICAL STRATEGY REWORK
+# ORDER AG2-P02-003 — PHASE 02 RUNTIME SEMANTIC EQUIVALENCE REWORK
 
 ## Status
 `ISSUED`
 
 ## Trigger
-Auto-start when `00_DISPATCH.md` contains the new matching dispatch and `CURRENT_PHASE=02`, `PHASE_STATUS=REWORK`, `ACTIVE_ORDER_ID=AG2-P02-002`.
+Auto-start when `00_DISPATCH.md` contains the new matching dispatch and `CURRENT_PHASE=02`, `PHASE_STATUS=REWORK`, `ACTIVE_ORDER_ID=AG2-P02-003`.
 
 ## STRICT SCOPE
-Execute ONLY this Phase 02 rework. Do not start Phase 03, Discovery Factory, Genome, Meta-Strategy, FONDEO or ULTRA work. Out-of-scope findings = `DEFERRED_TO_FUTURE_ORDER` unless they directly block this order.
+Execute ONLY this Phase 02 rework. Do not start Phase 03, Discovery Factory, Genome, Meta-Strategy, FONDEO or ULTRA work. Out-of-scope findings = `DEFERRED_TO_FUTURE_ORDER`.
 
 ## Required corrections
 
-### P02-002-01 — Complete semantic hash identity
-Define and implement a formal canonical identity specification. Include every field whose material semantic change must invalidate the strategy hash, including relevant provenance/policy/engine identity as explicitly defined by the contract. Add tests proving each material field mutation changes identity and non-semantic metadata does not change it when intentionally excluded.
+### P02-003-01 — Remove semantic production defaults
+Audit `CanonicalStrategy` and all nested semantic contracts. Any field capable of changing quantitative meaning must be explicit or resolved from an authoritative registry/policy; otherwise fail closed. Do not replace unknowns with convenient production values.
 
-### P02-002-02 — Prove real runtime consumption
-Trace the production path from `CanonicalStrategy` through snapshot/compile/adapter into the actual execution runtime. Prove with code-path tests that the runtime executes the canonical object rather than a copied/parallel rule model. No paper contract accepted.
+### P02-003-02 — Complete runtime semantic representation
+`compile_to_runtime()` must preserve every semantic element required for execution, including logical composition (`AND/OR`), direction, indicator parameters/source/shift, exits, sizing/risk, session rules and all required identity/provenance fields. No semantic field may disappear during compilation.
 
-### P02-002-03 — Single strategy authority
-Audit `contracts/`, services and execution adapters for duplicate authoritative strategy representations. Choose one SSOT and make all consumers depend on it. Any legacy model must be explicitly adapter-only or fail closed. Document the authority map in the handoff.
+### P02-003-03 — Production code-path trace
+Trace and prove the real production path:
+`CanonicalStrategy -> snapshot/serialization -> compile_to_runtime -> adapter -> actual execution engine -> execution/ledger input`.
+Find the real call sites. If the current engine bypasses the canonical object, refactor only what is necessary within Phase 02 so the canonical strategy is the sole source of executable semantics.
 
-### P02-002-04 — Eliminate silent production defaults
-Defaults that can alter quantitative meaning must be explicit or fail closed. In particular, strategy timeframe, instrument identity, engine version and policy version may not silently become production values when omitted. Evidence must show registry/policy resolution or rejection.
+### P02-003-04 — End-to-end semantic equivalence tests
+Add integration tests that construct one canonical strategy, compile it, send the compiled instruction through the real adapter/engine boundary, and assert that the resulting execution input preserves all canonical semantics. Mutate each material semantic field and prove the runtime representation changes accordingly.
 
-### P02-002-05 — Runtime semantic equivalence tests
-Add tests proving that identical canonical strategies produce identical runtime instruction graphs/execution inputs, and material canonical mutations change the resulting runtime semantics. Reject unsupported/ambiguous definitions before execution.
+### P02-003-05 — Runtime lineage binding
+The real execution snapshot/ledger input must carry at minimum:
+`strategy_id`, `strategy_version`, `strategy_hash`, `engine_version`, `execution_policy_version`, dataset identity/hash and canonical source commit where applicable.
+Missing identity must fail closed.
 
-### P02-002-06 — Provenance and lineage binding
-Bind `strategy_hash`, `strategy_version`, engine version, execution policy version and dataset identity into the execution snapshot/lineage contract. A changed material dependency must produce a new evidence lineage and cannot inherit current certification.
+### P02-003-06 — Single authority / legacy adapters
+Identify duplicate legacy strategy models. If retained, they must be explicitly non-authoritative adapters with one-way conversion from CanonicalStrategy. No legacy model may independently redefine executable rules.
 
-### P02-002-07 — Independent red-team
-A separate red-team subagent must inspect for hidden overrides, duplicated rule trees, hardcoded defaults, coercions, random/seed shortcuts, mock execution, lookahead and UI/API reinvention of strategy truth.
+### P02-003-07 — Independent red-team
+Search for hidden defaults, coercions, duplicated rule trees, alternative execution paths, UI/API recreation of strategy semantics, mock execution, random/seed shortcuts and lookahead.
 
-### P02-002-08 — Tests and evidence
-Run focused Phase 02 tests plus bounded regression directly related to these contracts. Record exact commands, exit codes, changed files, remote SHA and evidence paths. Never rewrite tests to force PASS.
+### P02-003-08 — Evidence
+Record exact commands, exit codes, test artifacts, production call sites, changed files, remote SHA and any unproven assumptions. Never write `PASS` for unproven execution paths.
 
 ## Mandatory subagents
-1. RECON / ARCHITECTURE
-2. CANONICAL CONTRACT / VERSIONING
-3. RUNTIME / ENGINE TRACE
-4. QUANT / SEMANTIC EQUIVALENCE
+1. RECON / EXECUTION-TRACE
+2. CANONICAL CONTRACT
+3. RUNTIME / ENGINE
+4. QUANT / SEMANTIC-EQUIVALENCE
 5. RED-TEAM / ZERO-MOCK
-6. TEST / DETERMINISM
-7. API/UI / PROVENANCE
-8. RELIABILITY / REPRODUCIBILITY
+6. TEST / INTEGRATION
+7. LINEAGE / PROVENANCE
+8. RELIABILITY
 
 Implementer cannot be sole verifier.
 
 ## SSH / VPS
-Long jobs MUST be detached/asynchronous. Record `remote_job_id`, exact command, target SHA, log path, state and real exit code. Never block the orchestrator 10–20 minutes waiting on an attached SSH command.
+Long jobs MUST be detached/asynchronous. Record `remote_job_id`, exact command, target SHA, log path, state and real exit code. Never block 10–20 minutes waiting for a remote suite.
 
 ## ZERO-SIMULATION / ZERO-FORCING / REAL-ONLY
-Absolute. Do not create profitable strategies, synthetic datasets, fabricated fills, mock quantitative evidence or fake certification to demonstrate the architecture.
+Absolute. Do not fabricate strategy results, runtime output, fills, ledger evidence or certification. Unit-test fixtures are not quantitative evidence.
 
 ## GitHub completion
-Work on `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`.
-Before `READY_FOR_REVIEW`:
-1. execute only this order;
-2. run real focused tests and bounded regression;
-3. record exact commands and exit codes;
+Work on `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`. Before `READY_FOR_REVIEW`:
+1. modify only scoped Phase 02 files/dependencies;
+2. run focused tests + bounded regression;
+3. record commands and exit codes;
 4. commit;
 5. push `origin/main`;
 6. verify exact remote SHA;
-7. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P02-002.md`;
-8. include authority map, runtime trace, tests, evidence, limitations and deferred findings;
+7. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P02-003.md`;
+8. document call-path evidence, lineage, tests, deferred findings and proven/unproven items;
 9. STOP.
 
 Do not advance Phase 03.
