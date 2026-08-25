@@ -610,16 +610,86 @@ def update_candidate_status(
     payload: StatusUpdateSchema,
     db: Session = Depends(get_db),
 ) -> Dict[str, Any]:
-    """Actualiza el estado de una estrategia registrando traza de auditoría."""
+    """Actualiza el estado de una estrategia registrando traza de auditoría.
+    
+    Zero-Trust Guard: Prohíbe mutaciones a estados aprobados/certificados a menos
+    que exista un EvidenceBundle firmado y los 11 gates hayan pasado físicamente.
+    """
+    from pathlib import Path
+    import time
     c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
     if not c:
         raise HTTPException(status_code=404, detail="CANDIDATE_NOT_FOUND")
+
+    target_status = payload.status.upper().strip()
+    APPROVED_TARGETS = {"APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS", "CERTIFICADA_TIER_1"}
+    
+    if target_status in APPROVED_TARGETS:
+        has_disk_evidence = False
+        has_signed_bundle = False
+        gates_passed_count = 0
+
+        # 1. Comprobar scorecard en base de datos SQLite
+        if c.scorecard_json:
+            try:
+                sc = json.loads(c.scorecard_json)
+                gates = sc.get("gates", [])
+                if isinstance(gates, list) and len(gates) == 11:
+                    gates_passed_count = sum(1 for g in gates if g.get("passed") is True)
+                elif sc.get("gates_passed_count") is not None:
+                    gates_passed_count = int(sc["gates_passed_count"])
+
+                bundle_sig = sc.get("bundle_signature_sha256") or sc.get("certificate_hash") or sc.get("strategy_sha256")
+                if bundle_sig and isinstance(bundle_sig, str) and len(bundle_sig) == 64:
+                    has_signed_bundle = True
+            except Exception:
+                pass
+
+        # 2. Comprobar archivo EvidenceBundle en disco físico
+        possible_bundle_paths = [
+            Path("data/evidence") / candidate_id / "evidence_bundle.json",
+            Path("data/artifacts") / candidate_id / "evidence_bundle.json",
+            Path.home() / ".local" / "state" / "ultrarentable" / "evidence" / candidate_id / "evidence_bundle.json",
+        ]
+        for p in possible_bundle_paths:
+            if p.is_file():
+                try:
+                    with open(p, "r", encoding="utf-8") as bf:
+                        bdata = json.load(bf)
+                        b_sig = bdata.get("signature_sha256") or bdata.get("bundle_signature_sha256") or bdata.get("bundle_hash")
+                        b_gates = bdata.get("gates", [])
+                        if isinstance(b_gates, list) and len(b_gates) == 11 and all(g.get("passed") is True for g in b_gates):
+                            gates_passed_count = 11
+                        if b_sig and isinstance(b_sig, str) and len(b_sig) == 64:
+                            has_signed_bundle = True
+                        has_disk_evidence = True
+                except Exception:
+                    pass
+
+        # 3. Comprobar directorio de gates individuales (11 archivos gate_*.json)
+        for base_dir in [Path("data/evidence") / candidate_id, Path("data/artifacts") / candidate_id]:
+            if base_dir.is_dir():
+                gate_files = list(base_dir.glob("gate_*.json"))
+                if len(gate_files) == 11:
+                    has_disk_evidence = True
+
+        if gates_passed_count < 11 or not (has_signed_bundle or has_disk_evidence):
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    f"PROHIBICION_MUTACION_ESTRICTA: No se permite la mutación de '{candidate_id}' a estado "
+                    f"aprobado '{payload.status}' sin un EvidenceBundle firmado y los 11 gates cuantitativos "
+                    f"físicamente aprobados (11/11). Gates pasados: {gates_passed_count}/11, "
+                    f"Bundle firmado: {has_signed_bundle}, Evidencia física: {has_disk_evidence}."
+                ),
+            )
 
     old_status = c.status
     c.status = payload.status
     c.status_reason = payload.reason
     
     audit = AuditEventModel(
+        event_id=f"evt_status_{int(time.time())}_{candidate_id}",
         event_type="CANDIDATE_STATUS_CHANGE",
         actor="API_USER",
         details_json=json.dumps({

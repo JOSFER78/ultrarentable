@@ -44,7 +44,6 @@ class UltraDiscoveryEngine:
         rsi_threshold_short: float = 48.0,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot inmutable con la configuración completa para la ruta Ultra."""
-        # Reglas de Entrada: Tendencia EMA y Filtro de Momentum RSI
         entry_rules = RuleTree(
             long_conditions=[
                 RuleCondition(

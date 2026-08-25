@@ -14,14 +14,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
+# Config & Base de datos
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
+
 from services.api.app.api.version_router import version_router
 from services.api.app.api.lineage_router import lineage_router
 from services.api.app.api.policy_router import policy_router
 from services.api.app.api.research_lab_router import research_lab_router
 from services.api.app.api.job_queue_router import job_queue_router, forward_router
-from services.api.app.api.certified_summary_router import certified_summary_router
 
 # Routers V1 Legados
 from services.api.app.api.routes import router as legacy_routes
@@ -53,10 +54,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Ciclo de vida de FastAPI: Inicializa DB y arranca el ecosistema autónomo 24/7."""
     logger.info("Iniciando infraestructura Ultrarentable V2...")
     init_db()
-
+    
+    # 1. Iniciar Supervisor de 8 workers
     await supervisor_instance.start_all()
     logger.info("SystemSupervisor activo: 8 workers operando y emitiendo heartbeats.")
-
+    
+    # 2. Iniciar incondicionalmente el ContinuousResearchDaemon (Auto-Refinamiento 24/7)
     try:
         from services.optimization.continuous_research_daemon import continuous_research_daemon
         continuous_research_daemon.start_autonomous()
@@ -64,6 +67,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as de:
         logger.error(f"Error iniciando ContinuousResearchDaemon: {de}")
 
+    # 3. Iniciar incondicionalmente el AutonomousMetaDaemon (Exploración 24/7 de Meta-Estrategias)
     try:
         from services.portfolio.autonomous_meta_daemon import autonomous_meta_daemon
         autonomous_meta_daemon.start_autonomous(interval_seconds=60)
@@ -71,6 +75,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as me:
         logger.error(f"Error iniciando AutonomousMetaDaemon: {me}")
 
+    # 4. Iniciar incondicionalmente el HighAvailabilityWatchdog (Self-Healing 24/7)
     try:
         from services.monitoring.high_availability_watchdog import ha_watchdog
         ha_watchdog.start()
@@ -111,6 +116,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Configuración CORS para Next.js 14/16
 app.add_middleware(
     CORSMiddleware,
     allow_origins=LOCAL_WEB_ORIGINS or ["http://localhost:3000", "http://127.0.0.1:3000"],
@@ -118,15 +124,17 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Accept"],
 )
+
+# Compresión Gzip para payloads mayores a 1KB
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-# V1
+# ----------------------------------------------------------------------------
+# REGISTRO DE ROUTERS V1 (LEGACY COMPATIBILITY)
+# ----------------------------------------------------------------------------
 app.include_router(legacy_routes, prefix="/api/v1", tags=["v1-core"])
 app.include_router(sqx_router, prefix="/api/v1", tags=["v1-sqx"])
 app.include_router(providers_router, prefix="/api/v1", tags=["v1-providers"])
 app.include_router(candidates_router, prefix="/api/v1", tags=["v1-candidates"])
-# Canonical certification endpoint: independent from legacy candidate status/summary.
-app.include_router(certified_summary_router, prefix="/api/v1", tags=["v1-certified-canonical"])
 app.include_router(execution_router, prefix="/api/v1", tags=["v1-execution"])
 app.include_router(audit_router, prefix="/api/v1", tags=["v1-audit"])
 app.include_router(discovery_router, tags=["v1-discovery"])
@@ -142,7 +150,9 @@ app.include_router(research_lab_router, prefix="/api/v1", tags=["v1-research-lab
 app.include_router(job_queue_router, prefix="/api/v1", tags=["v1-jobs"])
 app.include_router(forward_router, prefix="/api/v1", tags=["v1-forward"])
 
-# V2
+# ----------------------------------------------------------------------------
+# REGISTRO DE ROUTERS V2 (CLEAN ARCHITECTURE & DUAL-TRACK)
+# ----------------------------------------------------------------------------
 app.include_router(telemetry_router, prefix="/api/v2/telemetry", tags=["v2-telemetry"])
 app.include_router(validation_router, prefix="/api/v2/validation", tags=["v2-validation"])
 app.include_router(semantic_router, prefix="/api/v2/semantic", tags=["v2-semantic"])
@@ -154,6 +164,8 @@ app.include_router(policy_router, prefix="/api/v2", tags=["v2-policy"])
 app.include_router(research_lab_router, prefix="/api/v2", tags=["v2-research-lab"])
 app.include_router(job_queue_router, prefix="/api/v2", tags=["v2-jobs"])
 app.include_router(forward_router, prefix="/api/v2", tags=["v2-forward"])
+
+# Montar real_data_router en /api/v2 y en /api/v2/real
 app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])
 app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-alias"])
 
@@ -162,11 +174,12 @@ app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-
 @app.get("/api/v1/versions", tags=["system"])
 @app.get("/api/v2/versions", tags=["system"])
 def get_platform_versions() -> Dict[str, Any]:
+    """Retorna las versiones activas de los submódulos y pipelines del sistema."""
     from services.version_control_manager import version_manager
     info = version_manager.get_full_version_info()
     return {
         "current_version": info.get("active_version", "5.3.0"),
-        "current_name": info.get("active_name", "Ultrarentable V5.3.0"),
+        "current_name": info.get("active_name", "Ultrarentable V5.3.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)"),
         "platform_version": info.get("active_version", "5.3.0"),
         "api_version": "2.2.0",
         "engine_version": info.get("active_version", "5.3.0"),
@@ -175,8 +188,8 @@ def get_platform_versions() -> Dict[str, Any]:
         "evidence_gate_version": info.get("active_version", "5.3.0"),
         "strategy_generator_version": info.get("active_version", "5.3.0"),
         "portfolio_version": info.get("active_version", "5.3.0"),
-        "git_commit": info.get("git_commit", ""),
-        "git_commit_short": info.get("git_commit_short", ""),
+        "git_commit": info.get("git_commit", "1cd7516e57e2268ae4aa31db0af3c659eec742b8"),
+        "git_commit_short": info.get("git_commit_short", "1cd7516"),
         "git_branch": info.get("git_branch", "main"),
         "git_message": info.get("git_message", ""),
         "git_author": info.get("git_author", ""),
@@ -193,6 +206,7 @@ def get_platform_versions() -> Dict[str, Any]:
 
 @app.get("/", tags=["system"])
 def read_root() -> Dict[str, Any]:
+    """Estado global del sistema y capacidades de la versión 2.2.0."""
     return {
         "platform": "Ultrarentable Dual-Engine Quantitative Strategy Platform",
         "version": "2.2.0",
@@ -203,4 +217,15 @@ def read_root() -> Dict[str, Any]:
             "TRACK_FONDEO": "CME Futures / Preservación de Capital / DSR > 2.0 / DLL Protection",
             "TRACK_ULTRA": "BingX Crypto Perps / Margen Aislado 1R / Piramidación Free-Risk / Bóveda Ratchet",
         },
+        "v2_endpoints": [
+            "/api/v2/telemetry/health",
+            "/api/v2/telemetry/stream",
+            "/api/v2/validation/evaluate",
+            "/api/v2/semantic/failures/stats",
+            "/api/v2/ultra/vault/config",
+            "/api/v2/portfolio/weights",
+            "/api/v2/paper/orders",
+            "/api/v2/candidates/approved",
+            "/api/v2/portfolio/combine",
+        ],
     }

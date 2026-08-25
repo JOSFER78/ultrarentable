@@ -10,20 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "6fd99a966595ee6ffa5970f78789c5247adfb4650ec108cd9e524d1ef19d574d",
-  "output_hash": "74177b96b3a01bde64718adef9726aac9bc1529518438033757dc921a9448a75",
+  "input_hash": "62cdeea6af504c2ad0acd3abab87010ced898a3ef0bd4705322583ddc8db5f5f",
+  "output_hash": "1eca73acd0a2e900b897984fe5692e3b4d1f325c02ecbebe382036cef1540728",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.059,
+    "raw_sharpe_ratio": 0.173,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 11.108,
-    "kurtosis": 136.851,
-    "sample_trades_count": 172
+    "skewness": 2.224,
+    "kurtosis": 6.583,
+    "sample_trades_count": 69
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-25T10:39:37.876296+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_08_dsr_ratio.json"
 }

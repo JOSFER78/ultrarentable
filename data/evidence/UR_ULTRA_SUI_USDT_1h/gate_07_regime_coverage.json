@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SUI_USDT_1h_g07",
   "run_id": "run_UR_ULTRA_SUI_USDT_1h",
   "strategy_id": "UR_ULTRA_SUI_USDT_1h",
-  "strategy_snapshot_hash": "3d20007e9def329edfcb6e2341c69e59c51dbc7b6f6c2b110b0b95abb7ccea02",
+  "strategy_snapshot_hash": "a849dc4facef147742467160419526826d070b0a79ee03b5eb0700c51165640a",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "2e2f01c3991ec0ceff18997310887ac3f4831114a644b100f0f1242084769fa6",
-  "output_hash": "fb41ecc2322305cb69ddfefe2e88f3e7b5a74e57b9c2aaf5aa9afb419923e7e7",
+  "input_hash": "0df3960950560d1a801785bc4080aa96446387d3e258781697856fd7ca9a2db0",
+  "output_hash": "a8418ed46b52f62ad2a95b84263db0164a84513522709c0ce9f4a6764e086f37",
   "status": "FAILED",
   "score": 30.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, Retorno Total: -20.93%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (2/4 rentables, Retorno Total: -20.98%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 640,
@@ -23,21 +23,21 @@
       "HIGH_VOLATILITY": 1064
     },
     "regime_trades_count": {
-      "BULL_TREND": 39,
+      "BULL_TREND": 44,
       "BEAR_TREND": 47,
-      "CHOP_RANGING": 119,
-      "HIGH_VOLATILITY": 104
+      "CHOP_RANGING": 120,
+      "HIGH_VOLATILITY": 103
     },
     "regime_return_pct": {
-      "BULL_TREND": 103.77,
-      "BEAR_TREND": -152.17,
-      "CHOP_RANGING": 48.03,
-      "HIGH_VOLATILITY": -20.56
+      "BULL_TREND": -2.9,
+      "BEAR_TREND": -206.63,
+      "CHOP_RANGING": 125.07,
+      "HIGH_VOLATILITY": 63.48
     },
     "regimes_profitable_count": 2,
     "regimes_active_count": 4,
-    "total_oos_return_pct": -20.93
+    "total_oos_return_pct": -20.98
   },
   "artifact_path": "data/evidence/UR_ULTRA_SUI_USDT_1h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-25T10:38:41.259717+00:00"
+  "created_at_utc": "2026-08-25T11:36:55.978963+00:00"
 }

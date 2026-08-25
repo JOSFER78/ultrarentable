@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_GC_5m_g09",
   "run_id": "run_UR_FONDEO_GC_5m",
   "strategy_id": "UR_FONDEO_GC_5m",
-  "strategy_snapshot_hash": "bd758a3048e69de6d5f206587402929eec54af0453f215a59b1e13c9b10bb1e2",
+  "strategy_snapshot_hash": "a1e97a42ec18c2c2dc7fcc9a59bb46a857daea7c6e29989045ee910d4fc8c95b",
   "dataset_id": "ds_trad_gc_5m_1780891200000_1787091000000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "37b11323c2e6becb21dec4a135a07dea505058afb8ee71c341a6e45e8fa3f893",
-  "output_hash": "dcceb0fa1f970501dba8dd391ed05e10b806b438af8482b2f72cddbfc5f86cb8",
+  "input_hash": "dff1208f825bc0745caa5aaa8d365602d337c307791d21131e364599d8fb842c",
+  "output_hash": "aa7c94fedb5d078281071ab4bf7b4f8e311d79e0cd998e095761cd332ce9cb5f",
   "status": "PASSED",
-  "score": 100.0,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 29.0 trades/param, Estabilidad Vecindario: 107.0%, Re-backtest PFs: [1.96, 2.7, 1.76, 1.58])",
+  "score": 99.1,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 36.4 trades/param, Estabilidad Vecindario: 98.6%, Re-backtest PFs: [0.64, 0.69, 0.71, 0.72])",
   "metrics": {
-    "parameters_count": 6,
-    "degrees_of_freedom_ratio": 29.0,
+    "parameters_count": 8,
+    "degrees_of_freedom_ratio": 36.4,
     "min_dof_required": 15.0,
-    "parameter_neighborhood_stability_pct": 107.0,
+    "parameter_neighborhood_stability_pct": 98.6,
     "min_stability_required_pct": 60.0,
     "perturbed_neighborhood_pfs": [
-      1.96,
-      2.7,
-      1.76,
-      1.58
+      0.64,
+      0.69,
+      0.71,
+      0.72
     ],
     "rebacktest_performed": true
   },
-  "artifact_path": "data/evidence/UR_FONDEO_GC_5m/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-25T10:37:02.320471+00:00"
+  "artifact_path": "data/evidence/UR_FONDEO_GC_5m/gate_09_novelty_antifit.json"
 }

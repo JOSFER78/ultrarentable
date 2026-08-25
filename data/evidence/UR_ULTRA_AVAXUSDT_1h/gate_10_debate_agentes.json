@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g10",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "829233897fdb33e2a6b958430c8025babf142cc0f3cb5f21b7ab4ca47328438b",
+  "strategy_snapshot_hash": "60c9507974f627dd365fda67eec9e36291242446f3a69d007a91b9f07e65d1db",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "27200246b8ed7876ee7be14af31103255c676a845e3084347de9946ace41c8f4",
-  "output_hash": "31cc9f012a656a3e84d92eb15c9568d0e3bb6426ca565e6ae2c42ce1c15f86d1",
+  "input_hash": "f92faa98f8e475fcfb31a2728acc6d88e2699da2e2f72cbf2f1a3c8374276c42",
+  "output_hash": "8f9f044de7aae74e0d95003a96de24080a0dd8ff74ddf88a222ff07ff742c2bc",
   "status": "PASSED",
-  "score": 54.4,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (54.4/100 · Guía de Mejora Generada)",
+  "score": 48.0,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (48.0/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 54.4,
+    "consensus_score": 48.0,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 58.6,
+        "score": 65.3,
         "findings": [
           "Activo y Timeframe: AVAX-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.08 con beneficio neto de $886491407941236410023936.00.",
+          "Profit Factor OOS: 1.23 con beneficio neto de $1561.83.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 99.9% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 99.7% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 3253 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1399 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,19 +54,19 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 55.8,
         "findings": [
-          "Beneficio medio por operación: $272515034719101255680.00 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $1.12 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 64.7,
+        "score": 55.3,
         "objections": [
-          "Alerta de Drawdown: DD (99.9%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (99.7%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
@@ -78,6 +78,5 @@
       "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:39:03.134651+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_10_debate_agentes.json"
 }

@@ -45,6 +45,7 @@ class CertificationRecord(BaseModel):
     status: CertificationStatus
     certified_at_utc: str
     certificate_hash: str
+    trial_id: Optional[str] = None
 
 
 class LineageNode(BaseModel):

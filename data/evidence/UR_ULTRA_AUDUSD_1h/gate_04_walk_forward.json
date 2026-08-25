@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_1h_g04",
   "run_id": "run_UR_ULTRA_AUDUSD_1h",
   "strategy_id": "UR_ULTRA_AUDUSD_1h",
-  "strategy_snapshot_hash": "1b0fd04047545f7b2ef00f6045839cec67d64f27d535c78c3c75350b68590bff",
+  "strategy_snapshot_hash": "9a12c3ed343d34312c8ac6d0b9cd7e881312c32bdcdc9c71c52cfb0cd78d1cdf",
   "dataset_id": "ds_trad_audusd_1h_1698796800000_1787090400000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,59 +10,59 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "9cf5cd4ad535d5450ce6039afbe0a57a96a20b0404815d4b2f1338faec05077a",
-  "output_hash": "9fb2a81082597600ea308240538d3a43fa9032f09bf89e0a1dc4a428e6f01606",
+  "input_hash": "b19e77678a7dfb4e6e19733f58e79c20ca7713a316d6bae098243b65970726b8",
+  "output_hash": "93c8b9ef020d5be378c292b56b8c5b7667ed2f64980b659a3a2c36cb330741a4",
   "status": "FAILED",
-  "score": 51.1,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 1.02 < 0.40 ó Consistencia 0.0% < 40%)",
+  "score": 45.5,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.91 < 0.40 ó Consistencia 0.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 396,
+    "total_trades_analyzed": 391,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.02,
+    "walk_forward_efficiency": 0.91,
     "oos_consistency_pct": 0.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
-        "is_trades_count": 55,
+        "is_trades_count": 54,
         "oos_trades_count": 24,
-        "pf_is": 0.43,
+        "pf_is": 0.44,
         "pf_oos": 0.53,
-        "net_profit_oos_usd": -0.64,
-        "wfe": 1.23
+        "net_profit_oos_usd": -0.63,
+        "wfe": 1.21
       },
       {
         "window_index": 2,
-        "is_trades_count": 55,
+        "is_trades_count": 54,
         "oos_trades_count": 24,
         "pf_is": 0.28,
-        "pf_oos": 0.2,
-        "net_profit_oos_usd": -0.99,
-        "wfe": 0.74
+        "pf_oos": 0.33,
+        "net_profit_oos_usd": -0.78,
+        "wfe": 1.18
       },
       {
         "window_index": 3,
-        "is_trades_count": 55,
+        "is_trades_count": 54,
         "oos_trades_count": 24,
-        "pf_is": 0.24,
-        "pf_oos": 0.49,
-        "net_profit_oos_usd": -0.21,
-        "wfe": 2.07
+        "pf_is": 0.32,
+        "pf_oos": 0.42,
+        "net_profit_oos_usd": -0.3,
+        "wfe": 1.3
       },
       {
         "window_index": 4,
-        "is_trades_count": 55,
+        "is_trades_count": 54,
         "oos_trades_count": 24,
         "pf_is": 0.67,
-        "pf_oos": 0.72,
-        "net_profit_oos_usd": -0.03,
-        "wfe": 1.08
+        "pf_oos": 0.58,
+        "net_profit_oos_usd": -0.06,
+        "wfe": 0.87
       },
       {
         "window_index": 5,
-        "is_trades_count": 55,
+        "is_trades_count": 54,
         "oos_trades_count": 24,
-        "pf_is": 0.71,
+        "pf_is": 0.68,
         "pf_oos": 0.0,
         "net_profit_oos_usd": -0.02,
         "wfe": 0.0
@@ -70,5 +70,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_1h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-25T10:46:46.498081+00:00"
+  "created_at_utc": "2026-08-25T11:21:37.176262+00:00"
 }

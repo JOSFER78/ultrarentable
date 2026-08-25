@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "4ce78e23a5b1d914fcfa991c22ed1e7f6271ae1531dc175893e41e12106c773f",
-  "output_hash": "f423fb829dad820172f247fee2e6b83ea8b215357f991d1d14fcae45b3747244",
+  "input_hash": "fa58041ad5f37f42f81b33bb21bd39c6522ad13ac096258ad4bab529da15ca0b",
+  "output_hash": "a7e034e7f2b1031cf11e2287c10b9a63137b9a1e6ec31bd5279ba1abf21da470",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 6.05,
-        "stressed_profit_factor": 1.44,
+        "stressed_net_pnl_usd": 8.58,
+        "stressed_profit_factor": 1.86,
         "survived": true
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 5.69,
-        "stressed_profit_factor": 1.4,
+        "friction_penalty_per_trade_usd": 0.01,
+        "stressed_net_pnl_usd": 8.21,
+        "stressed_profit_factor": 1.79,
         "survived": true
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 5.29,
-        "stressed_profit_factor": 1.36,
+        "stressed_net_pnl_usd": 7.82,
+        "stressed_profit_factor": 1.73,
         "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 4.61,
-        "stressed_profit_factor": 1.31,
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 7.1,
+        "stressed_profit_factor": 1.63,
         "survived": true
       }
     },
@@ -46,6 +46,5 @@
     "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
-  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4h/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-25T10:38:16.134342+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_4h/gate_06_stress_slippage.json"
 }

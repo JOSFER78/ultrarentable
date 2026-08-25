@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "521db24fb971167e8515dfd30e216072d6916c662df9c19116f7c175312d18ac",
-  "output_hash": "e649c800a2ad9a76e787eec651ccfec9df772a3729c53e094a79b8422c4aeecc",
-  "status": "FAILED",
-  "score": 34.3,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.3/100)",
+  "input_hash": "6dfab081139000ebeab5d912c8546b808c155395a6b5d66660bf5d417e3a38d2",
+  "output_hash": "5839d223f70f298087aa854bf81ca21f3dd27567ff83c03383cbb743dffae904",
+  "status": "PASSED",
+  "score": 48.1,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (48.1/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 34.3,
+    "consensus_score": 48.1,
     "evaluators_count": 5,
-    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
+    "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 54.1,
+        "score": 58.2,
         "findings": [
           "Activo y Timeframe: AVAX (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.98 con beneficio neto de $-999.81.",
+          "Profit Factor OOS: 1.07 con beneficio neto de $435.19.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 91.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 697 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 323 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,33 +54,29 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 67.4,
         "findings": [
-          "Beneficio medio por operación: $-1.43 USD.",
+          "Beneficio medio por operación: $1.35 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 38.5,
+        "score": 56.4,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.98 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (91.5%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
-          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-          "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
-        "approved": false
+        "approved": true
       }
     ],
     "recommendations": [
-      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
-      "Refinar filtro de régimen y entrada con EMA/RSI para mejorar selección de trades."
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:39:38.532841+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_4h/gate_10_debate_agentes.json"
 }

@@ -1,33 +1,20 @@
 {
-  "evidence_id": "ev_empty_test_g11",
-  "run_id": "run_empty_test",
-  "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "3fc89397436bcbcd2a777b5ce4fae950328c1c61562cd3e90a698c6c5d2e77e9",
-  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
-  "gate_name": "EVENT_CROSS_VALIDATION",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.4.0",
-  "formula_version": "5.4.0",
-  "input_hash": "07c0597e605c64f69096e81dbc5543a6935d25a95408ecdd1aa814ddb45042da",
-  "output_hash": "762aec8337a05bea87e8a07c701535b92dbf20f9d6e795e8a1a25dae13ff1975",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: True, Dist. Liquidación: 0.0%, Peak Lev: 6.0x)",
-  "metrics": {
+  "name": "EVENT_CROSS_VALIDATION",
+  "passed": true,
+  "score": 100.0,
+  "verdict": "PASSED: Validaci\u00f3n cruzada de eventos completada (Riqueza Total: $18245.91, B\u00f3veda Cosechada: $17726.19, Apalancamiento: 6.0x, Dist. M\u00edn. Liq: 80.5%)",
+  "evidence": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": -91.19,
-    "peak_equity_usd": 101277.2,
-    "min_equity_usd": -91.19,
+    "final_equity_usd": 519.73,
+    "peak_equity_usd": 19525.44,
+    "min_equity_usd": 1.15,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 0.0,
-    "margin_call_triggered": true,
+    "min_distance_to_liquidation_pct": 80.5,
+    "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 203.41,
-    "execution_events_count": 237
-  },
-  "artifact_path": "data/evidence/empty_test/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-25T10:39:28.006752+00:00"
+    "total_funding_cost_usd": 117.7,
+    "execution_events_count": 231
+  }
 }

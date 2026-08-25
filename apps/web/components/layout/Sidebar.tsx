@@ -20,31 +20,27 @@ interface NavGroup {
 
 const NAVIGATION: NavGroup[] = [
   {
-    group: "ESTRATEGIAS (HUB & 6 FASES)",
+    group: "ESTRATEGIAS & GATES",
     items: [
-      { code: "HUB", icon: "🧬", label: "Estrategias (Portada & Hub)", href: "/estrategias", badge: "PORTADA", highlight: true },
-      { code: "1", icon: "⚡", label: "1. Motor 24/7 Autónomo", href: "/estrategias/1-motor-en-vivo", badge: "24/7 AUTO" },
-      { code: "2", icon: "📊", label: "2. Catálogo de Estrategias (230)", href: "/estrategias/2-explorador-excel", badge: "230 CAND" },
-      { code: "3", icon: "🧬", label: "3. Pipeline 10 Gates (FSM)", href: "/estrategias/3-pipeline-11-gates", badge: "10-GATES" },
-      { code: "4", icon: "🔬", label: "4. Panel Investigador Semántico", href: "/estrategias/4-panel-investigador", badge: "LAB I+D" },
-      { code: "5", icon: "🏆", label: "5. Estrategias Aprobadas (10/10)", href: "/estrategias/5-estrategias-aprobadas", badge: "CERTIFICADAS" },
-      { code: "6", icon: "🧩", label: "6. Meta-Estrategia Ensamblada", href: "/estrategias/6-meta-estrategia", badge: "PORTFOLIO" },
+      { code: "HUB", icon: "🧬", label: "Catálogo de Estrategias", href: "/strategies", badge: "PORTADA", highlight: true },
+      { code: "GAT", icon: "💎", label: "Pipeline 10 Gates (Certificadas)", href: "/gates", badge: "10-GATES", highlight: true },
+      { code: "PORT", icon: "🧩", label: "Meta-Estrategias & Portfolio", href: "/portfolio", badge: "PORTFOLIO" },
     ],
   },
   {
-    group: "RUTAS DE TRADING DUAL",
+    group: "RUTAS DE TRADING & FONDEO",
     items: [
-      { code: "ULT", icon: "🔥", label: "Ultra Lab (BingX 500x)", href: "/ultra", badge: "BALA" },
-      { code: "FND", icon: "🛡️", label: "Track Fondeo (CME Guard)", href: "/fondeo", badge: "DD 4%" },
-      { code: "PF", icon: "🏛️", label: "Catálogo 70 Prop Firms CME", href: "/prop-firms", badge: "70 TIERS" },
+      { code: "PF", icon: "🏛️", label: "Catálogo 70 Prop Firms CME", href: "/prop-firms", badge: "70 TIERS", highlight: true },
+      { code: "FND", icon: "🛡️", label: "Reglas & Parámetros Fondeo", href: "/prop-firms", badge: "CME GUARD" },
+      { code: "STU", icon: "📊", label: "Portfolio Studio & Weights", href: "/portfolio", badge: "STUDIO" },
     ],
   },
   {
-    group: "EJECUCIÓN & TELEMETRÍA EN VIVO",
+    group: "VALIDACIÓN & MOTOR FÍSICO",
     items: [
-      { code: "NT8", icon: "⚡", label: "NinjaTrader 8 & Live Exec", href: "/ejecucion", badge: "CME LIVE", highlight: true },
-      { code: "MCP", icon: "📡", label: "Proveedores & Gateways API", href: "/proveedores", badge: "MCP/API", highlight: true },
-      { code: "NTX", icon: "💎", label: "NautilusTrader Core", href: "/gates/gate-10-nautilus-trader", badge: "EVENT" },
+      { code: "ENG", icon: "⚡", label: "FastEngine Backtest Físico", href: "/strategies", badge: "FASTENGINE" },
+      { code: "LED", icon: "🏆", label: "Matriz 11 Gates & Merkle Lock", href: "/gates", badge: "v5.3.0" },
+      { code: "MET", icon: "📈", label: "Portafolios Multiactivo v5.3.0", href: "/portfolio", badge: "100% REAL" },
     ],
   },
 ];
@@ -69,24 +65,9 @@ export default function Sidebar() {
   };
 
   const isActive = (href: string) => {
-    if (!mounted) {
-      if (href === "/") return pathname === "/";
-      if (href.includes("?")) {
-        const [base] = href.split("?");
-        return pathname === base;
-      }
-      return pathname === href || (pathname.startsWith(href) && href !== "/estrategias");
-    }
-    if (href === "/") return pathname === "/";
-    if (href.includes("?")) {
-      const [base, query] = href.split("?");
-      if (pathname !== base) return false;
-      return typeof window !== "undefined" ? window.location.search.includes(query) : false;
-    }
-    if (href === "/estrategias") {
-      return pathname === "/estrategias" && (typeof window === "undefined" || !window.location.search);
-    }
-    return pathname === href || (pathname.startsWith(href) && href !== "/estrategias");
+    if (!pathname) return false;
+    if (href === "/strategies") return pathname === "/strategies" || pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
   };
 
   return (
@@ -122,7 +103,7 @@ export default function Sidebar() {
         }}
       >
         <Link
-          href="/"
+          href="/strategies"
           style={{
             display: "flex",
             alignItems: "center",
@@ -173,7 +154,7 @@ export default function Sidebar() {
                   whiteSpace: "nowrap",
                 }}
               >
-                QUANT LAB V5.4 (24/7 AUTO)
+                QUANT LAB V5.3 (REAL-ONLY)
               </span>
             </div>
           )}
@@ -229,7 +210,7 @@ export default function Sidebar() {
                 const active = isActive(item.href);
                 return (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     title={collapsed ? `${item.label} (${item.badge || ""})` : undefined}
                     style={{
@@ -298,13 +279,9 @@ export default function Sidebar() {
                               fontWeight: 700,
                               padding: "1px 4px",
                               borderRadius: "3px",
-                              background: item.highlight
-                                ? "rgba(99, 225, 180, 0.1)"
-                                : "rgba(255, 255, 255, 0.04)",
-                              color: item.highlight ? "#63e1b4" : "#64748b",
-                              border: "1px solid rgba(255, 255, 255, 0.06)",
+                              background: active ? "rgba(99, 225, 180, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                              color: active ? "#63e1b4" : "#64748b",
                               fontFamily: "var(--font-mono, monospace)",
-                              flexShrink: 0,
                             }}
                           >
                             {item.badge}
@@ -319,82 +296,6 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
-
-      {/* FOOTER & TOGGLE BUTTON */}
-      <div
-        style={{
-          padding: collapsed ? "10px 0" : "10px 12px",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: collapsed ? "center" : "space-between",
-          flexShrink: 0,
-        }}
-      >
-        {!collapsed ? (
-          <>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  backgroundColor: "#34d399",
-                  boxShadow: "0 0 6px #34d399",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "9px",
-                  color: "#64748b",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-mono, monospace)",
-                }}
-              >
-                REAL-ONLY
-              </span>
-            </div>
-
-            <button
-              onClick={toggleCollapse}
-              title="Plegar menú lateral (Modo Compacto)"
-              style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: "5px",
-                color: "#94a3b8",
-                padding: "3px 7px",
-                cursor: "pointer",
-                fontSize: "10px",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
-            >
-              ◀ Plegar
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={toggleCollapse}
-            title="Desplegar menú lateral"
-            style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "6px",
-              color: "#63e1b4",
-              width: "32px",
-              height: "28px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontSize: "11px",
-              fontFamily: "var(--font-mono, monospace)",
-            }}
-          >
-            ▶
-          </button>
-        )}
-      </div>
     </aside>
   );
 }

@@ -17,6 +17,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Literal, Optional
+from pathlib import Path
 from pydantic import BaseModel, Field
 
 from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute
@@ -105,3 +106,25 @@ class CertificationRegistry:
             certification_timestamp_utc=datetime.now(timezone.utc).isoformat(),
             audit_summary=audit_summary,
         )
+
+    def register_certification(
+        self,
+        strategy_id: str,
+        engine_version: str,
+        scorecard: Dict[str, Any],
+        signature_sha256: str,
+        evidence_dir: Optional[Path] = None,
+    ) -> Dict[str, Any]:
+        record = {
+            "strategy_id": strategy_id,
+            "engine_version": engine_version,
+            "certified_at_utc": datetime.now(timezone.utc).isoformat(),
+            "signature_sha256": signature_sha256,
+            "scorecard": scorecard,
+        }
+        if evidence_dir:
+            evidence_dir.mkdir(parents=True, exist_ok=True)
+            bundle_file = evidence_dir / "evidence_bundle.json"
+            with open(bundle_file, "w", encoding="utf-8") as f:
+                json.dump(record, f, indent=2, ensure_ascii=False)
+        return record

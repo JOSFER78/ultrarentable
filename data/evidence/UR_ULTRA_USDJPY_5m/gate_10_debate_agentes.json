@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_5m_g10",
   "run_id": "run_UR_ULTRA_USDJPY_5m",
   "strategy_id": "UR_ULTRA_USDJPY_5m",
-  "strategy_snapshot_hash": "b89ea8549f989cb4ca56495e8e01304df7253f56473c82983d62a184e82d460c",
+  "strategy_snapshot_hash": "e5f419ace12d44df8bc86aebfbcec31b9aa8fce802aae10dff5024a6ce85b532",
   "dataset_id": "ds_trad_usdjpy_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "d9df352e9827d4901cfc689732341627b71b6de9bc0a864f9c5916d46114f3fa",
-  "output_hash": "5bc805a98d4a58ca94f7ed611876d9b2878d811490e5dd8da3333d8710fa4a53",
+  "input_hash": "95ffb1bf78aa63c6157ef68e13f211298e206b6c31726e332704e3d4d4ccc92d",
+  "output_hash": "4dc69f3721431875e25bec6a5142eeca0ca0fdec03546aa0aff907a1b0c8082e",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDJPY (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.08 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 0.09 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -67,7 +67,7 @@
         "score": 30.0,
         "objections": [
           "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.08 cercano al equilibrio (1.05)."
+          "Margen ajustado: Profit Factor 0.09 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_5m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:47:10.021778+00:00"
+  "created_at_utc": "2026-08-25T11:22:03.378001+00:00"
 }

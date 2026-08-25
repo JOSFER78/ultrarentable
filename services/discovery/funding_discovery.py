@@ -85,7 +85,6 @@ class FundingDiscoveryEngine:
             base_leverage=1.0,
         )
 
-        # En Fondeo NO se piramida (minimizar drawdown y varianza)
         pyramiding = PyramidingPolicy(enabled=False, max_tiers=1, tiers=[])
 
         margin_policy = MarginPolicy(

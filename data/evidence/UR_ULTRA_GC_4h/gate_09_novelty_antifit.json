@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_GC_4h_g09",
   "run_id": "run_UR_ULTRA_GC_4h",
   "strategy_id": "UR_ULTRA_GC_4h",
-  "strategy_snapshot_hash": "f60605e9f2a8c713298e59579c6d84af34dd578a9066b2d19ec26001868b0bf8",
+  "strategy_snapshot_hash": "70946706bba3b2926e928eda78f926a44e9fb7eb851db9186a0543992de7c845",
   "dataset_id": "ds_trad_gc_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,25 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "b088b6dd11f967f10dad0617fa65db2978cc2f55f260f1d30b5e7ce58375fa6d",
-  "output_hash": "9548aaf641614b19ae06dcff53054a3ebb7b42d4fce0f331d7bdf7803ea65c5b",
+  "input_hash": "1be3db87fe73a0140e206e897e925564c5352e68532911e1b15d43eaa7efe31c",
+  "output_hash": "78a92b18885b966df469935a54cd20449952467e79041c51a65dd2aea06119c5",
   "status": "FAILED",
-  "score": 36.2,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 3.2 o Estabilidad 90.6% < 50.0%)",
+  "score": 36.3,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 3.1 o Estabilidad 90.8% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 3.2,
+    "degrees_of_freedom_ratio": 3.1,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 90.6,
+    "parameter_neighborhood_stability_pct": 90.8,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
       0.0,
       1.0,
-      0.83,
-      0.0
+      0.79,
+      0.96
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_GC_4h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-25T10:42:44.758566+00:00"
+  "created_at_utc": "2026-08-25T11:17:21.614428+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g09",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "829233897fdb33e2a6b958430c8025babf142cc0f3cb5f21b7ab4ca47328438b",
+  "strategy_snapshot_hash": "60c9507974f627dd365fda67eec9e36291242446f3a69d007a91b9f07e65d1db",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
@@ -10,25 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "bce939b18d82e2977fed3448c2d8a0b78b9cf145f4528fc5bfcb15f75f32f0a7",
-  "output_hash": "ad9c0d6e4365904cd94692e138338e87e866e8e1902c45844b469044b874e5e9",
+  "input_hash": "1b57e5b618c643fcdd29dd58a4d219ba99f5f3a099855ace0a9c6f4874a1a6bc",
+  "output_hash": "c9018449f7a39b32e8e7fbe3aceefc03af975ac07d741cdcff31f30bba17df6c",
   "status": "PASSED",
-  "score": 95.7,
-  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 406.6 trades/param, Estabilidad Vecindario: 92.8%, Re-backtest PFs: [1.08, 1.08, 1.07, 0.78])",
+  "score": 92.6,
+  "verdict": "PASSED: Estabilidad de vecindario re-evaluada empíricamente (DoF: 174.9 trades/param, Estabilidad Vecindario: 87.6%, Re-backtest PFs: [1.06, 1.07, 1.08, 1.1])",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 406.6,
+    "degrees_of_freedom_ratio": 174.9,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 92.8,
+    "parameter_neighborhood_stability_pct": 87.6,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.08,
-      1.08,
+      1.06,
       1.07,
-      0.78
+      1.08,
+      1.1
     ],
     "rebacktest_performed": true
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-25T10:39:03.121731+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_09_novelty_antifit.json"
 }

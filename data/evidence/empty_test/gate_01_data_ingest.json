@@ -1,21 +1,10 @@
 {
-  "evidence_id": "ev_empty_test_g01",
-  "run_id": "run_empty_test",
-  "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "3fc89397436bcbcd2a777b5ce4fae950328c1c61562cd3e90a698c6c5d2e77e9",
-  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 1,
-  "gate_name": "DATA_INGEST",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.4.0",
-  "formula_version": "5.4.0",
-  "input_hash": "10e441cc785a854c89d76b8d50bfccfca5d2f5eb478e4ea6c0334507f79cdd0b",
-  "output_hash": "0ec1ab9aa7d7907b0f87c70b854a204b23f5f3eeefbe2c904fa588319e90721b",
-  "status": "PASSED",
+  "name": "DATA_INGEST",
+  "passed": true,
   "score": 100.0,
   "verdict": "PASSED: Dataset verificado (5100 velas, SHA256: dd62b80a..., 0 corruptas, 0 gaps tolerados)",
-  "metrics": {
+  "evidence": {
     "total_candles": 5100,
     "corrupt_bars": 0,
     "out_of_order_bars": 0,
@@ -25,7 +14,5 @@
     "zero_volume_bars": 0,
     "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
     "integrity_pct": 100.0
-  },
-  "artifact_path": "data/evidence/empty_test/gate_01_data_ingest.json",
-  "created_at_utc": "2026-08-25T10:39:26.269986+00:00"
+  }
 }

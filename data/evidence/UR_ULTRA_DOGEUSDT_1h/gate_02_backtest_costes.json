@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGEUSDT_1h_g02",
   "run_id": "run_UR_ULTRA_DOGEUSDT_1h",
   "strategy_id": "UR_ULTRA_DOGEUSDT_1h",
-  "strategy_snapshot_hash": "6f6418c163a7d5538d5b3f4708c8942116d9de89a8e5ad8b666a63da30aa72fb",
+  "strategy_snapshot_hash": "7dcd50b3b000202c5859e41e11a2b636ae3edd88bbb56f60b69952278c4039ac",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,21 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "f7c1f577d389539fedd5ff7ee49d8efafffe46908acae3478609231f7425d0ca",
-  "output_hash": "dcae52d7d6c617dc7cb42d25a16202e33dcceaea24a2ad77173c2afe7908687e",
+  "input_hash": "657e1c4806e1661741f5a5b88912ab9f685ce0cccef1c0ec274239e01d2a8c0d",
+  "output_hash": "7e0898b96ec511d600524d6a2ca95239b7bf6fcb15cbb9968a52ad337392b976",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.87 < 1.10",
+  "verdict": "FALLO: PF Neto 0.90 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Dogecoin Perpetuo",
     "exchange": "Binance / FTMO Perps",
-    "gross_pnl_usd": 7.169645252643122e25,
-    "total_fees_usd": 8.164955686808133e25,
-    "total_slippage_usd": 6.530609243355279e25,
-    "net_pnl_usd": -7.525919677520288e25,
-    "net_profit_factor": 0.87,
-    "drag_cost_pct": 204.97
+    "gross_pnl_usd": 35970.49,
+    "total_fees_usd": 26976.46,
+    "total_slippage_usd": 17714.34,
+    "net_pnl_usd": -8720.31,
+    "net_profit_factor": 0.9,
+    "drag_cost_pct": 124.24
   },
-  "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-25T10:38:54.429196+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_DOGEUSDT_1h/gate_02_backtest_costes.json"
 }

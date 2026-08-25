@@ -414,7 +414,7 @@ class CandidateModel(Base):
                         break
                 if not has_disk_evidence:
                     for base in [Path("data/evidence") / cid, Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/evidence") / cid]:
-                        if base.is_dir() and len(list(base.glob("gate_*.json"))) >= 10:
+                        if base.is_dir() and len(list(base.glob("gate_*.json"))) == 11:
                             has_disk_evidence = True
                             break
 
@@ -422,7 +422,7 @@ class CandidateModel(Base):
             if self.scorecard_json:
                 try:
                     sc = json.loads(self.scorecard_json)
-                    if sc.get("gates_passed_count", 0) >= 10 or sc.get("is_certified") or sc.get("tier") == "TIER_1_CERTIFIED":
+                    if sc.get("is_certified") or sc.get("gates_passed_count", 0) == 11 or sc.get("bundle_signature_sha256") or sc.get("certificate_hash"):
                         has_scorecard_evidence = True
                 except Exception:
                     pass
@@ -430,7 +430,7 @@ class CandidateModel(Base):
             if not has_disk_evidence and not has_scorecard_evidence:
                 raise ValueError(
                     f"PROHIBICION_ESTRICTA_EVIDENCIA: No se permite la transición de '{cid or 'NUEVO'}' a estado aprobado '{value}' "
-                    f"sin EvidenceBundle físico verificado en disco o scorecard certificado en SQLite."
+                    f"sin EvidenceBundle firmado verificado en disco o scorecard con los 11 gates aprobados en SQLite."
                 )
         return value
 
@@ -783,6 +783,18 @@ def init_db():
                     pass
                 try:
                     conn.execute(text("ALTER TABLE candidates ADD COLUMN engine_version TEXT DEFAULT '5.3.0';"))
+                except Exception:
+                    pass
+
+                # Migración canónica: candidatos históricos con PF OOS <= 1.20 a REVALIDATION_REQUIRED / STALE
+                try:
+                    conn.execute(text("""
+                        UPDATE candidates
+                        SET status = 'REVALIDATION_REQUIRED',
+                            status_reason = 'PF OOS (' || ROUND(profit_factor_oos, 2) || ') inferior al umbral canónico (>= 1.25). Marcado como STALE / REVALIDATION_REQUIRED según Directiva Reality Lock P0.'
+                        WHERE (profit_factor_oos <= 1.20 OR ROUND(profit_factor_oos, 2) = 1.19)
+                          AND status IN ('APPROVED', 'ULTRA_CERTIFIED', 'FUNDING_CERTIFIED', 'CANDIDATA_FONDEO', 'INVESTIGACION_BTC');
+                    """))
                 except Exception:
                     pass
                 

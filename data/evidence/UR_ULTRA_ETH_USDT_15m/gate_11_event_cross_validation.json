@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_15m_g11",
   "run_id": "run_UR_ULTRA_ETH_USDT_15m",
   "strategy_id": "UR_ULTRA_ETH_USDT_15m",
-  "strategy_snapshot_hash": "d395591313f8b96ef099653d8070a28f4ce4faada811443e719a217f209afe4c",
+  "strategy_snapshot_hash": "6a37dfbb95eafcae6a4d71e454953648c10eb4bbea0a91fdec450eb55d99360c",
   "dataset_id": "ds_bingx_ETH_USDT_15m_1771749000000_1785571200000_32bc0d4520.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "c091eda549dbe53395ad1a3bc95121bcffc4e89a10865f13eee86d0874d08dbd",
-  "output_hash": "77f26430a123cafeda3ffb6e9c85b4fe96182d0f831dc0593cfa3141d5b43962",
+  "input_hash": "6537e710050d857af7a8d61d8a4e86acb4b7e6597418020a3b7ebfc37d3eaeb2",
+  "output_hash": "4f4451e70a7ac5451966550324e3aa33600aab148e630f9b6601dbadf5344336",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 95.5%, Peak Lev: 6.0x)",
+  "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 96.5%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 147.99,
+    "final_equity_usd": 176.81,
     "peak_equity_usd": 1337.32,
-    "min_equity_usd": 44.21,
+    "min_equity_usd": 110.38,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 95.55,
+    "min_distance_to_liquidation_pct": 96.45,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 47.05,
-    "execution_events_count": 161
+    "total_funding_cost_usd": 47.68,
+    "execution_events_count": 151
   },
   "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_15m/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-25T10:40:02.878086+00:00"
+  "created_at_utc": "2026-08-25T11:14:18.351496+00:00"
 }

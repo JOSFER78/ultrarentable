@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4h_g08",
   "run_id": "run_UR_ULTRA_ETH_USDT_4h",
   "strategy_id": "UR_ULTRA_ETH_USDT_4h",
-  "strategy_snapshot_hash": "079cc73459d939a21b3d20cc3b90f10b45b0ea47bad7dce6a3f8f226878a0f98",
+  "strategy_snapshot_hash": "8ecb187eff0fa6af6a757e6f03ebb53ce2c1d73a89692c6899732e4e9c259eab",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "5a53e98e0b88468983391619461831ae92d276f7f3aab395cf8621e2c81441c7",
-  "output_hash": "f80428739307ff92f41ae6332ad8b2e8ada138e3acc880cbef05f0c83104d05e",
-  "status": "PASSED",
-  "score": 94.8,
-  "verdict": "PASSED: DSR = 94.8% (Sharpe Bruto: 0.11, Trials Penalizados: 141, Skew: 2.64, Kurt: 11.94)",
+  "input_hash": "d40a21b594a735ac831d63ad8a73c9bad0cb594b44a6e8a00a700cb429be5c25",
+  "output_hash": "0827006a62bd41955a90e423c9bbd00c9c747847e6d0cbc77555691b61d8aaa7",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.113,
-    "deflated_sharpe_probability_pct": 94.76,
-    "trials_penalized_count": 141,
-    "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 2.637,
-    "kurtosis": 11.937,
-    "sample_trades_count": 153
+    "raw_sharpe_ratio": 0.144,
+    "deflated_sharpe_probability_pct": 0.0,
+    "trials_penalized_count": 3,
+    "expected_max_sharpe_under_selection": 0.853,
+    "skewness": 4.324,
+    "kurtosis": 24.366,
+    "sample_trades_count": 102
   },
-  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-25T10:37:06.610050+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4h/gate_08_dsr_ratio.json"
 }

@@ -40,7 +40,6 @@ class Gate11NautilusEvent:
         spec = get_market_spec(symbol)
         ceiling_leverage = max_allowed_leverage if max_allowed_leverage is not None else (spec.max_leverage if is_ultra else 3.0)
 
-        # Simulación de eventos orden a orden con contabilidad de margen y Bóveda Ratchet
         equity = initial_capital
         peak_equity = initial_capital
         min_equity = initial_capital
@@ -58,18 +57,37 @@ class Gate11NautilusEvent:
                 margin_call_triggered = True
                 break
 
-            # Sizing de riesgo institucional/ultra: 15% por trade en Ultra, 1.0% en Fondeo
+            # Determinar distancia real de stop-loss si viene en trades_raw
+            sl_dist = 0.025
+            holding_sessions_8h = 1
+            if trades_raw and i < len(trades_raw):
+                raw_t = trades_raw[i]
+                if "sl_dist_pct" in raw_t and float(raw_t["sl_dist_pct"]) > 0:
+                    sl_dist = max(0.005, float(raw_t["sl_dist_pct"]))
+                elif "stop_loss" in raw_t and "entry_price" in raw_t:
+                    try:
+                        ep = float(raw_t["entry_price"])
+                        sl = float(raw_t["stop_loss"])
+                        if ep > 0:
+                            sl_dist = max(0.005, abs(ep - sl) / ep)
+                    except Exception:
+                        pass
+                
+                # Duración en barras/horas para bloques de financiación de 8h
+                bars_held = float(raw_t.get("bars_held", raw_t.get("duration_bars", 4)))
+                holding_sessions_8h = max(1, int(bars_held // 8))
+
             risk_pct = 0.15 if is_ultra else 0.01
-            sl_dist = 0.025  # Distancia estimada de stop-loss del 2.5%
             target_lev = min(ceiling_leverage, risk_pct / sl_dist)
 
             nominal_position = equity * target_lev
             peak_leverage_used = max(peak_leverage_used, target_lev)
 
-            # Financiación (Funding) para Perpetuos (tasa media 0.01% por sesión de 8h)
-            funding = nominal_position * 0.0001 if spec.category == "CRYPTO" else 0.0
+            # Financiación (Funding) para Perpetuos por sesión de 8h
+            funding_rate_8h = 0.0001  # 0.01% por sesión de 8 horas
+            funding = (nominal_position * funding_rate_8h * holding_sessions_8h) if spec.category == "CRYPTO" else 0.0
             
-            # PnL de la operación ajustado por tamaño y financiación
+            # PnL de la operación ajustado por apalancamiento y deducción de funding
             trade_pnl_usd = (equity * pnl) - funding
             equity += trade_pnl_usd
             total_funding += funding
@@ -92,7 +110,6 @@ class Gate11NautilusEvent:
             peak_equity = max(peak_equity, equity + vault_harvested)
             min_equity = min(min_equity, equity)
 
-        # Reglas de Aprobación
         total_wealth = equity + vault_harvested
         no_margin_call = not margin_call_triggered
         leverage_within_bounds = (peak_leverage_used <= ceiling_leverage * 1.05)

@@ -1,7 +1,11 @@
-"""services/validation/engine/__init__.py
-Módulo del motor determinista orientado a eventos (Fase 4).
-"""
+from .event_backtest_engine import EventBacktestEngine, EventBacktestResult, TradeRecord, OrderEvent
 
-from services.validation.engine.event_backtest_engine import EventBacktestEngine, EventBacktestResult, TradeRecord
+BacktestExecutionResult = EventBacktestResult
 
-__all__ = ["EventBacktestEngine", "EventBacktestResult", "TradeRecord"]
+__all__ = [
+    "EventBacktestEngine",
+    "EventBacktestResult",
+    "BacktestExecutionResult",
+    "TradeRecord",
+    "OrderEvent",
+]

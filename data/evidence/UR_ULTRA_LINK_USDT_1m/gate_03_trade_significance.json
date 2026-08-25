@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_1m_g03",
   "run_id": "run_UR_ULTRA_LINK_USDT_1m",
   "strategy_id": "UR_ULTRA_LINK_USDT_1m",
-  "strategy_snapshot_hash": "f5bec8ed3584ad926c6828414205720a171933ba9a5e4abbb28d2b52dbc73706",
+  "strategy_snapshot_hash": "87fdd4c50aaeed978f29d9eb250137937a083b3f98535514e580862b3f44393d",
   "dataset_id": "ds_binance_linkusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "31eeedd8fbf688a8ffe4c8360fd75a03d499bbf92e0f423cfff6224a3c656610",
-  "output_hash": "e1357473c4540166b7513b1f39f263cb71c0fdadd9991d02d153681c59c81b59",
+  "input_hash": "9a77d3fcb597944e7d8467c52b6df39b6924c16e5532722740f40e930a22b8c3",
+  "output_hash": "916a36d14e9bd15f9d8238db5fa360d52c01640ee3ea9dbbceacdc308b685867",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (123 IS / 56 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (121 IS / 55 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 123,
-    "trades_oos": 56,
+    "trades_is": 121,
+    "trades_oos": 55,
     "top2_outlier_dependency_pct": 50.1,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_1m/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-25T10:42:31.470856+00:00"
+  "created_at_utc": "2026-08-25T11:17:07.989904+00:00"
 }

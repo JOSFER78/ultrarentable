@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_4h_g10",
   "run_id": "run_UR_ULTRA_USDCHF_4h",
   "strategy_id": "UR_ULTRA_USDCHF_4h",
-  "strategy_snapshot_hash": "8960692f04acd7dc49fac028a1529881135f9da5d9b2dd40f067ffda5f9607c4",
+  "strategy_snapshot_hash": "11c08cb3bfc1903f19edde60cba9d560fed0909f11ad40647b43e0faf6e07cbd",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "8872de7a071b1b911c91f3ab1521b0db01e1438e03667510de2d3236050e06e8",
-  "output_hash": "e4a60992e9341f5d466a96dd2433a5cb432ea30df1cf9f748791d39eca0ac935",
+  "input_hash": "1361928bb92923179d1cb7c17eb04068161d2088b5111a82ba289a394e5655ae",
+  "output_hash": "a6759b963fe42677a7c7fd372c56804cf0fdfe488553afaf9b7ff18bdee7136a",
   "status": "FAILED",
-  "score": 25.5,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (25.5/100)",
+  "score": 24.5,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
   "metrics": {
-    "consensus_score": 25.5,
+    "consensus_score": 24.5,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 23.5,
+        "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCHF (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.30 con beneficio neto de $-986.33.",
+          "Profit Factor OOS: 0.21 con beneficio neto de $-983.87.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 98.6% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 98.4% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 219 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 216 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-4.50 USD.",
+          "Beneficio medio por operación: $-4.55 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,10 +64,10 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 30.9,
+        "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (98.6%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.30 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (98.4%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.21 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:46:24.916371+00:00"
+  "created_at_utc": "2026-08-25T11:21:15.821392+00:00"
 }

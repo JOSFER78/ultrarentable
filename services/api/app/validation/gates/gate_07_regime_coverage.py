@@ -12,6 +12,7 @@ Erradicada completamente cualquier asignación proporcional o sintética.
 
 from __future__ import annotations
 
+import bisect
 from typing import Any, Dict, List, Optional
 import numpy as np
 
@@ -55,6 +56,19 @@ class Gate07RegimeCoverage:
         closes = np.array([float(c.get("close", 0.0)) for c in candles], dtype=np.float64)
         highs = np.array([float(c.get("high", c.get("close", 0.0))) for c in candles], dtype=np.float64)
         lows = np.array([float(c.get("low", c.get("close", 0.0))) for c in candles], dtype=np.float64)
+
+        # Extraer timestamps de velas si existen
+        candle_ts = []
+        for c in candles:
+            ts = c.get("timestamp_utc_ms") or c.get("timestamp") or c.get("time") or c.get("date")
+            if ts is not None:
+                try:
+                    if isinstance(ts, (int, float)):
+                        candle_ts.append(float(ts))
+                    else:
+                        candle_ts.append(float(ts))
+                except Exception:
+                    pass
 
         # 1. Cálculo de ATR
         tr = np.maximum(highs[1:] - lows[1:], np.maximum(np.abs(highs[1:] - closes[:-1]), np.abs(lows[1:] - closes[:-1])))
@@ -110,17 +124,41 @@ class Gate07RegimeCoverage:
 
         for i_tr, t in enumerate(trades_raw):
             pnl = float(t.get("return_pct", 0.0) or t.get("r_multiple", 0.0) or t.get("net_pnl_usd", 0.0) or t.get("pnl", 0.0))
+            bar_idx = None
+
             if "entry_bar_idx" in t and t["entry_bar_idx"] is not None:
                 bar_idx = int(t["entry_bar_idx"])
             elif "bar_index" in t and t["bar_index"] is not None:
                 bar_idx = int(t["bar_index"])
-            elif "entry_time_utc_ms" in t and candles:
+            elif "entry_time_utc_ms" in t and len(candle_ts) == len(candles):
                 entry_ms = float(t["entry_time_utc_ms"])
-                first_ts = float(candles[0].get("timestamp_utc_ms", 0))
-                step_ms = float(candles[1].get("timestamp_utc_ms", first_ts + 3600000)) - first_ts if len(candles) > 1 else 3600000
-                bar_idx = int((entry_ms - first_ts) / max(1.0, step_ms))
-            else:
-                bar_idx = int(i_tr * len(bar_regimes) // max(1, len(trades_raw)))
+                # Búsqueda binaria exacta del timestamp de la vela correspondiente
+                pos = bisect.bisect_right(candle_ts, entry_ms) - 1
+                if pos >= 0:
+                    bar_idx = pos
+            elif "entry_time" in t and len(candle_ts) == len(candles):
+                try:
+                    entry_ms = float(t["entry_time"])
+                    pos = bisect.bisect_right(candle_ts, entry_ms) - 1
+                    if pos >= 0:
+                        bar_idx = pos
+                except Exception:
+                    pass
+
+            # Fail-closed: Si no hay forma física de ubicar temporalmente el trade, rechazar
+            if bar_idx is None:
+                return {
+                    "gate_id": self.GATE_ID,
+                    "name": self.NAME,
+                    "passed": False,
+                    "score": 0.0,
+                    "verdict": f"BLOCKED_MISSING_TEMPORAL_EVIDENCE: Trade #{i_tr} carece de timestamp o índice temporal verificable (Prohibido fallback sintético)",
+                    "evidence": {
+                        "unmapped_trade_index": i_tr,
+                        "trade_payload": t,
+                        "reason": "MISSING_PHYSICAL_TIMESTAMP",
+                    },
+                }
 
             valid_idx = min(max(0, bar_idx), len(bar_regimes) - 1)
             regime = bar_regimes[valid_idx]
@@ -138,8 +176,6 @@ class Gate07RegimeCoverage:
         active_regimes = [k for k, v in regime_trades_count.items() if v > 0]
         profitable_regimes = [k for k, v in regime_pnl.items() if v > 0]
         
-        # En Ultra: debe sobrevivir en regímenes adversos y capturar fuerte convexidad en tendencias/volatilidad
-        # En Fondeo: debe ser rentable en al menos 2 regímenes y no quebrar en chop
         min_active_required = 2
         coverage_passed = (len(active_regimes) >= min_active_required)
         net_profit_positive = (total_pnl > 0)

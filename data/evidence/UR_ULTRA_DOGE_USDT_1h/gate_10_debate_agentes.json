@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1h_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1h",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1h",
-  "strategy_snapshot_hash": "944b326091ee30eaf2dde25ecc61fee26122ef17105886bb3b3729163cc0412c",
+  "strategy_snapshot_hash": "01663c05650706aa824470bbb60e32ddf000cbee8ac7a02c621ad91ed96129ea",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "1857bea581ddfdddf54740b996e221939281e5d6967648c63899fd6ef3280c55",
-  "output_hash": "4426293c84f01707541cd380d6c57a13dffb8c0ec83df5aaf981e5e87167bf48",
+  "input_hash": "b019e79ba07bf672f2c3cc789b7be57f23a16a7c55488284da7f843bf5b6113b",
+  "output_hash": "584ea74e636da149f29b813860e4c7b94575de39640bd49c995fd440348ec38b",
   "status": "PASSED",
   "score": 89.3,
   "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (89.3/100 · Guía de Mejora Generada)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 296 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 298 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $20.53 USD.",
+          "Beneficio medio por operación: $20.40 USD.",
           "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
@@ -79,5 +79,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:37:16.918629+00:00"
+  "created_at_utc": "2026-08-25T11:35:28.976061+00:00"
 }

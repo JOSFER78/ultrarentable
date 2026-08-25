@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g06",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "829233897fdb33e2a6b958430c8025babf142cc0f3cb5f21b7ab4ca47328438b",
+  "strategy_snapshot_hash": "60c9507974f627dd365fda67eec9e36291242446f3a69d007a91b9f07e65d1db",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "2797cc8fda2bd76d699394eeab9801629175ad97097fee57230302a1c180aeb0",
-  "output_hash": "1693f87bfaead718ec9884f73bffd4381b4124aadabdf8023bf1fcb24991b904",
+  "input_hash": "2a0a7128c381eb9873a647c364e37ce2cd7b641b26b4636752bca340e85c3c56",
+  "output_hash": "c45eebef0d2470c687f12bf4b8b4219558fcff2f6af3e6064006b5e92534fe1e",
   "status": "PASSED",
   "score": 100.0,
   "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 202.91,
-        "stressed_profit_factor": 3.89,
+        "stressed_net_pnl_usd": 43.45,
+        "stressed_profit_factor": 3.92,
         "survived": true
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 198.67,
-        "stressed_profit_factor": 3.7,
+        "stressed_net_pnl_usd": 41.37,
+        "stressed_profit_factor": 3.46,
         "survived": true
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": 194.25,
-        "stressed_profit_factor": 3.52,
+        "friction_penalty_per_trade_usd": 0.02,
+        "stressed_net_pnl_usd": 39.22,
+        "stressed_profit_factor": 3.08,
         "survived": true
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.03,
-        "stressed_net_pnl_usd": 185.93,
-        "stressed_profit_factor": 3.22,
+        "stressed_net_pnl_usd": 35.13,
+        "stressed_profit_factor": 2.55,
         "survived": true
       }
     },
@@ -46,6 +46,5 @@
     "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-25T10:38:58.356778+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_06_stress_slippage.json"
 }

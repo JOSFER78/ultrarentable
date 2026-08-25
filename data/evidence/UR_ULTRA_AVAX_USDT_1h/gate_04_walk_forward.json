@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1h_g04",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1h",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1h",
-  "strategy_snapshot_hash": "60f972509ab29623948850d8eb22430da997a86e3b503faf2832a76e1a511c90",
+  "strategy_snapshot_hash": "ed1fd1e935a9134e9686ac54d3ad3fbda1fa78180752fe5668f92b1789695df9",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,65 +10,65 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "dc1c7df1ab41ef6c2ddc3755b1044fd46e3f9f9c20a23e9fc1901e04f5dad864",
-  "output_hash": "342f9a439b99c7d83f9359f193d68507a91d13ab1dbcf11df0b4193906782102",
+  "input_hash": "3abc69c084c9ffa7b7766318716a96d179bd039ac903bfe97d471b1bb47570b6",
+  "output_hash": "f37720cf036d303a74ce59f76bc3b0173151317827da39149054dfb589cbdfe3",
   "status": "PASSED",
-  "score": 94.1,
-  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.17, Consistencia: 60.0%)",
+  "score": 95.2,
+  "verdict": "PASSED (ÓPTIMO): Rolling WFO verificado (5 ventanas, WFE media: 1.05, Consistencia: 80.0%)",
   "metrics": {
-    "total_trades_analyzed": 289,
+    "total_trades_analyzed": 287,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.17,
-    "oos_consistency_pct": 60.0,
+    "walk_forward_efficiency": 1.05,
+    "oos_consistency_pct": 80.0,
     "min_wfe_required": 0.5,
     "windows_details": [
       {
         "window_index": 1,
         "is_trades_count": 39,
         "oos_trades_count": 18,
-        "pf_is": 1.48,
-        "pf_oos": 1.88,
-        "net_profit_oos_usd": 0.99,
-        "wfe": 1.27
+        "pf_is": 1.45,
+        "pf_oos": 2.02,
+        "net_profit_oos_usd": 1.07,
+        "wfe": 1.39
       },
       {
         "window_index": 2,
         "is_trades_count": 39,
         "oos_trades_count": 18,
-        "pf_is": 1.04,
-        "pf_oos": 2.12,
-        "net_profit_oos_usd": 2.32,
-        "wfe": 2.05
+        "pf_is": 1.31,
+        "pf_oos": 1.72,
+        "net_profit_oos_usd": 1.59,
+        "wfe": 1.31
       },
       {
         "window_index": 3,
         "is_trades_count": 39,
         "oos_trades_count": 18,
-        "pf_is": 1.6,
-        "pf_oos": 0.65,
-        "net_profit_oos_usd": -0.61,
-        "wfe": 0.41
+        "pf_is": 1.79,
+        "pf_oos": 0.3,
+        "net_profit_oos_usd": -1.32,
+        "wfe": 0.17
       },
       {
         "window_index": 4,
         "is_trades_count": 39,
         "oos_trades_count": 18,
-        "pf_is": 1.5,
-        "pf_oos": 2.54,
-        "net_profit_oos_usd": 2.65,
-        "wfe": 1.69
+        "pf_is": 1.37,
+        "pf_oos": 2.5,
+        "net_profit_oos_usd": 2.81,
+        "wfe": 1.82
       },
       {
         "window_index": 5,
         "is_trades_count": 39,
         "oos_trades_count": 18,
-        "pf_is": 2.02,
-        "pf_oos": 0.88,
-        "net_profit_oos_usd": -0.17,
-        "wfe": 0.44
+        "pf_is": 2.05,
+        "pf_oos": 1.19,
+        "net_profit_oos_usd": 0.29,
+        "wfe": 0.58
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-25T10:40:46.847369+00:00"
+  "created_at_utc": "2026-08-25T11:15:09.170030+00:00"
 }

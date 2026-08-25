@@ -1,9 +1,4 @@
-"""services/discovery/__init__.py
-Capa Central de Descubrimiento Cuantitativo (Discovery Engines).
-"""
+from .ultra_discovery import UltraDiscoveryEngine
+from .funding_discovery import FundingDiscoveryEngine
 
-from services.discovery.ultra_discovery import UltraDiscoveryEngine
-from services.discovery.funding_discovery import FundingDiscoveryEngine
-from services.discovery.portfolio_discovery import PortfolioDiscoveryEngine
-
-__all__ = ["UltraDiscoveryEngine", "FundingDiscoveryEngine", "PortfolioDiscoveryEngine"]
+__all__ = ["UltraDiscoveryEngine", "FundingDiscoveryEngine"]

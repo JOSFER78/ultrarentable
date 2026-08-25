@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDJPY_15m_g11",
   "run_id": "run_UR_ULTRA_USDJPY_15m",
   "strategy_id": "UR_ULTRA_USDJPY_15m",
-  "strategy_snapshot_hash": "7f755b220e01769b432f0ad35a608ce5300408c2528663bb8c96b8fad909a58f",
+  "strategy_snapshot_hash": "544b65abba67aa01513c95dcfe701b21bea82c8e6a595c8202050efa62b57bb3",
   "dataset_id": "ds_trad_usdjpy_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "f7b92ff2b6b7d79b8c375ba7b7f4fd7bac6bad2b92cccf67dd26857e7653aa96",
-  "output_hash": "6b3c573790a0d532f19de29f65f6027a604b28e50c8aa487aed2203783acec57",
+  "input_hash": "18d4034b4274cb27df27cb9ab15e70940d0a2c20bf64e39f5e8834e7fe3fe880",
+  "output_hash": "a0906dfc0905d9feb3687572935669e088e607956723e78b89fdb2c262f0e31a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 87.3%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 256.75,
+    "final_equity_usd": 264.64,
     "peak_equity_usd": 1001.6,
-    "min_equity_usd": 256.75,
+    "min_equity_usd": 264.64,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 87.31,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
     "total_funding_cost_usd": 0.0,
-    "execution_events_count": 55
+    "execution_events_count": 54
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDJPY_15m/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-25T10:45:10.528095+00:00"
+  "created_at_utc": "2026-08-25T11:20:23.503353+00:00"
 }

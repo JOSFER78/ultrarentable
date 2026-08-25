@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAX_USDT_1m_g11",
   "run_id": "run_UR_ULTRA_AVAX_USDT_1m",
   "strategy_id": "UR_ULTRA_AVAX_USDT_1m",
-  "strategy_snapshot_hash": "0ebc2ae6f7387e33ee2901110ea3192d074b4fe5244bafa4ae44a4a2879e813d",
+  "strategy_snapshot_hash": "dcf0bd053aaf551640079066cf3cbb49af9881b858446ed5154751fd388884d7",
   "dataset_id": "ds_binance_avaxusdt_1m_1786461900000_1787091840000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,24 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "4d3ffa0bf4336890743bb048601c55629718c2a016dc361a4be75307b4d1147f",
-  "output_hash": "80cd71f6d43bc3d26305db1f49b950d9d35c09083d812014f1c49d3e6afaf879",
+  "input_hash": "fc94ee982e43dad13fd1598266a02627ba0f8aa69270eb7e9f2631d2a4576dfd",
+  "output_hash": "8fff5716c6f2fc2eb6b6ac5f94a407ec7ecee678914d70cb586300ab6498064d",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Riesgo de margen o liquidación (Margin Call: False, Dist. Liquidación: 96.9%, Peak Lev: 6.0x)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 550.34,
+    "final_equity_usd": 487.99,
     "peak_equity_usd": 1000.0,
-    "min_equity_usd": 550.34,
+    "min_equity_usd": 487.99,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
     "min_distance_to_liquidation_pct": 96.94,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 26.25,
-    "execution_events_count": 57
+    "total_funding_cost_usd": 25.13,
+    "execution_events_count": 59
   },
   "artifact_path": "data/evidence/UR_ULTRA_AVAX_USDT_1m/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-25T10:40:07.402378+00:00"
+  "created_at_utc": "2026-08-25T11:14:23.527676+00:00"
 }

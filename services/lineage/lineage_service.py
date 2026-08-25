@@ -44,6 +44,7 @@ class LineageService:
         route: str,
         status: CertificationStatus,
         scorecard: Optional[Dict[str, Any]] = None,
+        trial_id: Optional[str] = None,
     ) -> CertificationRecord:
         """Emite un certificado de validación inmutable y firmado criptográficamente."""
         # 1. Resolver checksum del dataset
@@ -52,7 +53,7 @@ class LineageService:
 
         # 2. Resolver huella del código y versión activa del motor
         v_info = version_manager.get_full_version_info()
-        engine_version = v_info.get("active_version", "1.00")
+        engine_version = v_info.get("active_version", "5.3.0")
         codebase_fingerprint = v_info.get("codebase_fingerprint", "fp_untracked")
 
         # 3. Resolver snapshot de reglas y comisiones
@@ -81,6 +82,7 @@ class LineageService:
             "scorecard": scorecard or {},
             "status": status.value if hasattr(status, "value") else str(status),
             "certified_at_utc": now_utc,
+            "trial_id": trial_id,
         }
 
         cert_hash = _compute_cert_hash(cert_dict)

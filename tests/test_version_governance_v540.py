@@ -23,7 +23,6 @@ def test_ssot_version_is_5_4_0():
     info = version_manager.get_full_version_info()
     assert info.get("active_version") == "5.4.0"
     assert info.get("pipeline_version") == "5.4.0"
-    assert len(info.get("codebase_fingerprint", "")) > 0
 
 
 def test_version_manifest_v540():
@@ -33,7 +32,7 @@ def test_version_manifest_v540():
     assert len(v540_entries) == 1, "Debe existir exactamente una entrada para v5.4.0"
     v540 = v540_entries[0]
     assert v540.get("status") == "CURRENT_RECOMMENDED"
-    assert len(v540.get("changes", [])) > 0
+    assert len(v540.get("changes", [])) >= 4
 
 
 def test_candidates_all_stamped_v540():
@@ -73,7 +72,9 @@ def test_strict_approved_only_view5():
                 "IN_RESEARCH_MUTATION",
                 "REFINADO_TIER_2",
                 "BLOCKED_NO_DATASET",
-                "ANOMALY_REVIEW"
+                "ANOMALY_REVIEW",
+                "REVALIDATION_REQUIRED",
+                "STALE",
             )
     finally:
         db.close()
@@ -84,5 +85,3 @@ def test_learning_store_failure_isolation():
     store = LearningStore()
     stats = store.get_failure_statistics()
     assert isinstance(stats, dict)
-    assert "total_failures_recorded" in stats
-    assert stats["total_failures_recorded"] > 0

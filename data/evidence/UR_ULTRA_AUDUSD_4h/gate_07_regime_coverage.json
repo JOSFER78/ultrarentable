@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AUDUSD_4h_g07",
   "run_id": "run_UR_ULTRA_AUDUSD_4h",
   "strategy_id": "UR_ULTRA_AUDUSD_4h",
-  "strategy_snapshot_hash": "b89bce36b87a62060c93bccf6014fad1a8aa60e3bbf851d176e52b40a004fe67",
+  "strategy_snapshot_hash": "f29d76ebd8f22fcf3f9cbfdd70fd650bff0a8f5ea192fb1552013adbea3d117b",
   "dataset_id": "ds_trad_audusd_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "5314922f9bdf6de97106ffe1a1a99508861996e3bbd53ba06a02256be5b81ebe",
-  "output_hash": "56215dae49ca73c23672e24a9e5372d7692e2be674b1ade6554ade30c877f500",
+  "input_hash": "6529e5401950a8ac71760e04f80c2cce5008a888e561d40e729e6deb908f55c8",
+  "output_hash": "5cbaba4d42edc1a84cacd5486cab7154ed30240c7a821c39018637aef5899668",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -258.38%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -257.89%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 20,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 1,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 39,
+      "CHOP_RANGING": 40,
       "HIGH_VOLATILITY": 8
     },
     "regime_return_pct": {
       "BULL_TREND": -13.13,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -174.45,
+      "CHOP_RANGING": -173.96,
       "HIGH_VOLATILITY": -70.8
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 3,
-    "total_oos_return_pct": -258.38
+    "total_oos_return_pct": -257.89
   },
   "artifact_path": "data/evidence/UR_ULTRA_AUDUSD_4h/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-25T10:46:07.220113+00:00"
+  "created_at_utc": "2026-08-25T11:21:02.422521+00:00"
 }

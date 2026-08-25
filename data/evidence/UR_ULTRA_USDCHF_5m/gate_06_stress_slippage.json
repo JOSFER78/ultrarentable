@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_5m_g06",
   "run_id": "run_UR_ULTRA_USDCHF_5m",
   "strategy_id": "UR_ULTRA_USDCHF_5m",
-  "strategy_snapshot_hash": "3686693048a4605dcca8fe69c22dc2e9fd1c8354b611bcb18a5eaca6b7124482",
+  "strategy_snapshot_hash": "6afcb865fc9890cd263407c62747ded00b1787be77c00b6a0b8259589ed37542",
   "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "cbf15f6b668689aa9778a9563211424c57c6e3bade27115cd6c04421d6ab0f49",
-  "output_hash": "7d9a7e166dd32a74d2833d73fc0d7276e00e47d5e0f74a52ad3ca35b7a9ac84a",
+  "input_hash": "e0144548ecb5f80ab1a98627442a0dbfc83dec9e7cd4dbcf654fdac51f59fd62",
+  "output_hash": "f06d05b367e74c34442936461835d8b3b1a376ec067eaaafe3952f613b37734f",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -25,7 +25,7 @@
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -5.01,
+        "stressed_net_pnl_usd": -5.0,
         "stressed_profit_factor": 0.03,
         "survived": false
       },
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5m/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-25T10:47:00.163258+00:00"
+  "created_at_utc": "2026-08-25T11:21:52.585702+00:00"
 }

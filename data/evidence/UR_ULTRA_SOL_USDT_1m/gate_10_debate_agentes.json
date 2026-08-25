@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_1m_g10",
   "run_id": "run_UR_ULTRA_SOL_USDT_1m",
   "strategy_id": "UR_ULTRA_SOL_USDT_1m",
-  "strategy_snapshot_hash": "0966138c40106cb160308398dc4d9565b6c7ddc09492a09172c53d9e9afe6c6f",
+  "strategy_snapshot_hash": "a8501b23d6cf089cd6ca24ecd0e07af062d8dce51e41ebf53b9185298a6e7d06",
   "dataset_id": "ds_binance_solusdt_1m_1786459200000_1787089140000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "3184a1caaf0f7344b0dc5e89744efcd042bb4df76bae22eb9a491630b0ac8e1c",
-  "output_hash": "c74a506288e91ac87e88c95359a4fe8f67fc09f358152612b1236f37e622d93a",
+  "input_hash": "9347aedfcd241132eac0c2a4b291d39d071131a7ae2118af931a7457e54ab24b",
+  "output_hash": "507ca636c95fa4fa970926383748cee2a4aad88b4c1eb535e6fe16f8d269a74f",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: SOL (1m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.09 con beneficio neto de $-947.39.",
+          "Profit Factor OOS: 0.09 con beneficio neto de $-949.34.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 94.7% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 94.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 605 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 604 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (94.7%) cercano o superior al límite tolerable (85.0%).",
+          "Alerta de Drawdown: DD (94.9%) cercano o superior al límite tolerable (85.0%).",
           "Margen ajustado: Profit Factor 0.09 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_1m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:42:39.704810+00:00"
+  "created_at_utc": "2026-08-25T11:17:16.297755+00:00"
 }

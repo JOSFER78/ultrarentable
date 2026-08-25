@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g08",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "17401650cc6dac220dbae7d86c33025fe1223c639e257477a40e4d1da8727b11",
+  "strategy_snapshot_hash": "1c8c1571e108fe848101b4522dd67e0c0e393f89799d6c33ad043aa3f9c5aca4",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "90b59eb21d53a617096ff374c8a8246d7d69654e48bbf1e47d6555079dcd48e1",
-  "output_hash": "9613a661ccfd1087de82a0786030768a9d0ffba148fe2f37eccf542d24d2f74d",
+  "input_hash": "eaaaae68b2b70d9f62c1c0ff1a2d1a55b799d19cf93629bbfcf13af99d476603",
+  "output_hash": "2c4bd156542a93b5b2b79fe1a5dd86f5e455b738ce1721e0b3cf9376fddc7720",
   "status": "FAILED",
   "score": 48.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (48.0% < 50.0% tras penalizar 141 trials)",
+  "verdict": "FALLO: Deflated Sharpe insuficiente (48.0% < 50.0% tras penalizar 150 trials)",
   "metrics": {
     "raw_sharpe_ratio": -0.003,
-    "deflated_sharpe_probability_pct": 47.98,
-    "trials_penalized_count": 141,
+    "deflated_sharpe_probability_pct": 48.0,
+    "trials_penalized_count": 150,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 2.079,
-    "kurtosis": 7.11,
-    "sample_trades_count": 309
+    "skewness": 2.212,
+    "kurtosis": 8.232,
+    "sample_trades_count": 314
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-25T10:38:51.932826+00:00"
+  "created_at_utc": "2026-08-25T11:37:05.465358+00:00"
 }

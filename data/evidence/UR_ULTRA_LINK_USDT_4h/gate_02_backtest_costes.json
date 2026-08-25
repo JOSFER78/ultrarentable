@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4h_g02",
   "run_id": "run_UR_ULTRA_LINK_USDT_4h",
   "strategy_id": "UR_ULTRA_LINK_USDT_4h",
-  "strategy_snapshot_hash": "7ed65f21ca1d429abc77553965a58336fda789843bc91b68415c05cac072e1a8",
+  "strategy_snapshot_hash": "6906084a9d52a9eadeee96036e4b82f1119f09c085bc7130d707d8efb2815665",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,21 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "59b27379afb91ec1dc34047782d0c24c0ff7df6c7c3738a526dda45077981ccd",
-  "output_hash": "e0db356c993632e12c2c85c5506385f92a5d808f1fb189dcae1809c04d8f5010",
+  "input_hash": "a32be2fa0b9f2819545db2bc246f5779b5c40db9fa7b02bfd031d528dbdb6131",
+  "output_hash": "bc160d1d3171f832cf250772cb3d4282c0e8adb6ca94fddf67e95f25efcedeaf",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.81 < 1.10",
+  "verdict": "FALLO: PF Neto 0.73 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "LINK Perpetuo",
     "exchange": "Perpetual Swap",
-    "gross_pnl_usd": 962.55,
-    "total_fees_usd": 709.12,
-    "total_slippage_usd": 4245.54,
-    "net_pnl_usd": -3992.11,
-    "net_profit_factor": 0.81,
-    "drag_cost_pct": 514.74
+    "gross_pnl_usd": 1429.61,
+    "total_fees_usd": 687.79,
+    "total_slippage_usd": 4151.63,
+    "net_pnl_usd": -3409.8,
+    "net_profit_factor": 0.73,
+    "drag_cost_pct": 338.51
   },
-  "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-25T10:39:39.669980+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_4h/gate_02_backtest_costes.json"
 }

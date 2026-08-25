@@ -2,7 +2,7 @@
   "evidence_id": "ev_TEST_CAND_SOL_g10",
   "run_id": "run_TEST_CAND_SOL",
   "strategy_id": "TEST_CAND_SOL",
-  "strategy_snapshot_hash": "c2d2c50cd01952f054e0758e314b1201d1bcbbbbadf4edc7a81dca0a4700d687",
+  "strategy_snapshot_hash": "897799dea23925d29bf316d4f3876302146edaa4eddfbaacf6ed3f24b402eeec",
   "dataset_id": "ds_binance_solusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "151b720b2f971e7bf3ae0c448aed1bca1bd0f8fb8eb17bbe1bab0eb189742517",
-  "output_hash": "b54b24b359782860b9bd26b38905350af94158009e030177f1cb7ab3f769eaec",
+  "input_hash": "2e4c11e887e06986e02da9c94a05d0a7656ec84c1737677e4ccfceabec294815",
+  "output_hash": "db4e2b0ab73890a21f59eb16ae02044769e38e6ba92e3a597cb71b30802079c8",
   "status": "FAILED",
   "score": 34.8,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.8/100)",
@@ -26,7 +26,7 @@
         "score": 55.9,
         "findings": [
           "Activo y Timeframe: SOL (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.02 con beneficio neto de $-994.69.",
+          "Profit Factor OOS: 1.02 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 866 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 859 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-1.15 USD.",
+          "Beneficio medio por operación: $-1.16 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/TEST_CAND_SOL/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:37:58.020793+00:00"
+  "created_at_utc": "2026-08-25T11:36:13.736834+00:00"
 }

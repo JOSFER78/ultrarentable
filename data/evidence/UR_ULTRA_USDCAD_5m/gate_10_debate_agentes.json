@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_5m_g10",
   "run_id": "run_UR_ULTRA_USDCAD_5m",
   "strategy_id": "UR_ULTRA_USDCAD_5m",
-  "strategy_snapshot_hash": "8a48abcc28dde7698ac7d8815d201fef48208118bd47aa6fe28329a98e5c9b99",
+  "strategy_snapshot_hash": "2186db914e2dfc8f96728b0fe342de682085d82eae123e444aba605a8b7ef938",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "8730b483684afa2a60c83a0d23806beb9231106964b789e6b0e0f2d2b622793b",
-  "output_hash": "c36bc57afe52e5e7402c8ffafd1f05beda2ee2825fa830369a82d3d7829a5a71",
+  "input_hash": "8e8ed6b53be9ba53c8c2034880a5737aa67881a52b747aad2631349585df72b1",
+  "output_hash": "d9fedc07cf44969fb3c1f0e33f097d9f62679f72a1dd3364dadb8376e62924a2",
   "status": "FAILED",
   "score": 24.5,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (24.5/100)",
@@ -26,7 +26,7 @@
         "score": 20.0,
         "findings": [
           "Activo y Timeframe: USDCAD (5m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.08 con beneficio neto de $-946.30.",
+          "Profit Factor OOS: 0.02 con beneficio neto de $-987.98.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 95.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 98.9% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 322 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 337 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-2.94 USD.",
+          "Beneficio medio por operación: $-2.93 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,8 +66,8 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 30.0,
         "objections": [
-          "Alerta de Drawdown: DD (95.0%) cercano o superior al límite tolerable (85.0%).",
-          "Margen ajustado: Profit Factor 0.08 cercano al equilibrio (1.05)."
+          "Alerta de Drawdown: DD (98.9%) cercano o superior al límite tolerable (85.0%).",
+          "Margen ajustado: Profit Factor 0.02 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.",
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:42:07.628790+00:00"
+  "created_at_utc": "2026-08-25T11:16:44.372188+00:00"
 }

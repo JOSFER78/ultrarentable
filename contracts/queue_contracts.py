@@ -1,7 +1,7 @@
 """contracts/queue_contracts.py
 Contratos canónicos e inmutables para la Cola Duradera 24/7, Watchdog de Recuperación
 y el Medidor Adaptativo de Suficiencia Forward.
-Especificación oficial según Sección 7 y 8 del Informe Maestro v5.3.0.
+Especificación oficial según Sección 7 y 8 del Informe Maestro v5.3.0 / v5.4.0.
 """
 
 from __future__ import annotations
@@ -52,7 +52,7 @@ class WatchdogRecoveryReport(BaseModel):
     recovered_jobs_count: int
     orphaned_jobs_reset: List[str]
     timestamp_utc: str
-    engine_version: str = "5.3.0"
+    engine_version: str = "5.4.0"
     message: str
 
 
@@ -73,8 +73,8 @@ class ForwardSufficiencyRequest(BaseModel):
     forward_trades: int = Field(ge=0)
     forward_net_profit_pct: float
     forward_max_dd_pct: float = Field(ge=0.0)
-    is_expected_return_pct: float = Field(default=10.0)
-    is_max_dd_pct: float = Field(default=4.0)
+    is_expected_return_pct: float
+    is_max_dd_pct: float
 
 
 class ForwardSufficiencyResult(BaseModel):

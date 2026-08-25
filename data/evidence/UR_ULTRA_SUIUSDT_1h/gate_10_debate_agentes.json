@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "211e4bc3c04cc67a6c2ceaae30c4fa8cc4a6fa3534512a921210b3cd9f48851a",
-  "output_hash": "de522b2a328dc801be096ea2eeb3ba7d2b609c499635ba38750cbe4ed3414635",
+  "input_hash": "aacd85b4e9010dd6412d929e24bc2cfb4b02f3208c8874f88fe6c4d804169c81",
+  "output_hash": "3bcb4dd2e1836776ab7a02d9e692e61dfb1ae9f0d67b899dee1fc5e761c403f9",
   "status": "FAILED",
-  "score": 35.3,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.3/100)",
+  "score": 38.2,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (38.2/100)",
   "metrics": {
-    "consensus_score": 35.3,
+    "consensus_score": 38.2,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 57.7,
+        "score": 61.3,
         "findings": [
           "Activo y Timeframe: SUI-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.06 con beneficio neto de $-1000.00.",
+          "Profit Factor OOS: 1.14 con beneficio neto de $93.08.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 96.5% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 3132 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 1262 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,9 +54,9 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-0.32 USD.",
+          "Beneficio medio por operación: $0.07 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -64,20 +64,19 @@
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.4,
+        "score": 42.8,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (96.5%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
-        "approved": false
+        "approved": true
       }
     ],
     "recommendations": [
       "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
-  "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:39:08.467978+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_10_debate_agentes.json"
 }

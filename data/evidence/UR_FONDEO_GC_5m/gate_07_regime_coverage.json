@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_FONDEO_GC_5m_g07",
   "run_id": "run_UR_FONDEO_GC_5m",
   "strategy_id": "UR_FONDEO_GC_5m",
-  "strategy_snapshot_hash": "bd758a3048e69de6d5f206587402929eec54af0453f215a59b1e13c9b10bb1e2",
+  "strategy_snapshot_hash": "a1e97a42ec18c2c2dc7fcc9a59bb46a857daea7c6e29989045ee910d4fc8c95b",
   "dataset_id": "ds_trad_gc_5m_1780891200000_1787091000000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "6736ac529a55c96fba80650d1e679fe7a382ba8efb982a5cc6570f27395cae4c",
-  "output_hash": "45d17df68330924037f51338cf6368b27275108c194c1fa141828d16892db88e",
-  "status": "PASSED",
-  "score": 70.0,
-  "verdict": "PASSED: Cobertura multirégimen verificada (2/4 regímenes positivos, Retorno OOS: +35.87%)",
+  "input_hash": "3cae754eb82bd696e4b6c16bc66e3ac65d0ad1be560a2be73fbff90cf85db7bc",
+  "output_hash": "50fd80291c975c00ddb4871e295a398073e84236dece76bd8aef6ee514230d83",
+  "status": "FAILED",
+  "score": 0.0,
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -3.89%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,18 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 35,
-      "HIGH_VOLATILITY": 11
+      "CHOP_RANGING": 55,
+      "HIGH_VOLATILITY": 9
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": 14.62,
-      "HIGH_VOLATILITY": 21.25
+      "CHOP_RANGING": -3.81,
+      "HIGH_VOLATILITY": -0.08
     },
-    "regimes_profitable_count": 2,
+    "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": 35.87
+    "total_oos_return_pct": -3.89
   },
-  "artifact_path": "data/evidence/UR_FONDEO_GC_5m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-25T10:37:01.773501+00:00"
+  "artifact_path": "data/evidence/UR_FONDEO_GC_5m/gate_07_regime_coverage.json"
 }

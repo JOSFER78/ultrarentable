@@ -1,42 +1,31 @@
 {
-  "evidence_id": "ev_empty_test_g10",
-  "run_id": "run_empty_test",
-  "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "3fc89397436bcbcd2a777b5ce4fae950328c1c61562cd3e90a698c6c5d2e77e9",
-  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
-  "gate_name": "DEBATE_AGENTES",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.4.0",
-  "formula_version": "5.4.0",
-  "input_hash": "699ccd00374d497ba104970bdbb4b9c90eb593a967adf72446c1700f4053802d",
-  "output_hash": "bcc51f38bc184dd2e09513e2a4995bf676654b0b908de868903329d498f99b66",
-  "status": "FAILED",
-  "score": 35.7,
-  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (35.7/100)",
-  "metrics": {
-    "consensus_score": 35.7,
+  "name": "DEBATE_AGENTES",
+  "passed": false,
+  "score": 39.9,
+  "verdict": "EN REVISI\u00d3N: Diagn\u00f3stico Sem\u00e1ntico emitido con advertencias (39.9/100)",
+  "evidence": {
+    "consensus_score": 39.9,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
-        "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 59.1,
+        "role": "Sem\u00e1ntica de Mercado y Coherencia de Hip\u00f3tesis",
+        "score": 67.2,
         "findings": [
           "Activo y Timeframe: BTC-USDT (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.09 con beneficio neto de $-1000.00.",
-          "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
+          "Profit Factor OOS: 1.27 con beneficio neto de $106.18.",
+          "Hip\u00f3tesis: Captura de anomal\u00edas direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
-        "role": "Auditoría de Drawdown, Ruina y Margen",
+        "role": "Auditor\u00eda de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown M\u00e1ximo Observado: 100.0% (L\u00edmite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,38 +35,36 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 261 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 601 operaciones evaluadas (M\u00ednimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
       },
       {
         "agent": "Execution & Microstructure Specialist",
-        "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 0.0,
+        "role": "Impacto de Fricci\u00f3n, Comisiones y Fills",
+        "score": 10.0,
         "findings": [
-          "Beneficio medio por operación: $-3.83 USD.",
+          "Beneficio medio por operaci\u00f3n: $0.18 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
-        "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 39.8,
+        "role": "Contradicciones, Objeciones y Detecci\u00f3n de Trampas",
+        "score": 44.3,
         "objections": [
-          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al l\u00edmite tolerable (85.0%)."
         ],
         "recommendations": [
-          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
+          "Ajustar multiplicador ATR de Stop Loss para ce\u00f1ir el control de riesgo."
         ],
-        "approved": false
+        "approved": true
       }
     ],
     "recommendations": [
-      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
+      "Ajustar multiplicador ATR de Stop Loss para ce\u00f1ir el control de riesgo."
     ]
-  },
-  "artifact_path": "data/evidence/empty_test/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:39:28.005151+00:00"
+  }
 }

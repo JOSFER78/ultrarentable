@@ -269,21 +269,17 @@ def ai_semantic_edit_gate(slug: str, body: SemanticAIPromptSchema) -> Dict[str, 
 @gates_router.get("/nautilus/detailed-backtest/{candidate_id}")
 def get_nautilus_detailed_backtest(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Genera el reporte de backtest REAL de StrategyQuant X y NautilusTrader con datos 100% verificados y logs reales."""
-    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
-    
-    # Fallback si no existe con id exacto
     if not c:
-        c = db.query(CandidateModel).first()
-        if not c:
-            raise HTTPException(status_code=404, detail="NO_CANDIDATE_FOUND_FOR_BACKTEST")
+        raise HTTPException(
+            status_code=404,
+            detail=f"NO_EVIDENCE: Candidato '{candidate_id}' no encontrado en la base de datos de validación.",
+        )
 
     spec = get_market_spec(c.symbol)
     is_ultra = (c.route == "ULTRA")
     
-    # Cargar velas reales para timestamps y precios
-    candles = load_candles(c.symbol, c.timeframe)
-    if not candles:
-        candles = load_candles("BTCUSDT", "1h")
+    # Cargar velas reales para timestamps y precios (sin fallbacks sintéticos)
+    candles = load_candles(c.symbol, c.timeframe) or []
 
     # Extraer métricas reales de SQX
     sc = {}

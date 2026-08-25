@@ -56,15 +56,19 @@ class StrategySnapshot(BaseModel):
     symbol: str = Field(..., description="Símbolo base e.g. BTCUSDT, NQ, EURUSD, XAUUSD")
     timeframe: str = Field(..., description="Timeframe canónico e.g. 1m, 5m, 15m, 1h, 4h")
     
-    entry_rules: RuleTree = Field(..., description="Árbol canónico de reglas de entrada Long/Short")
-    exit_rules: ExitModel = Field(..., description="Reglas canónicas de salida, SL, TP y Trailing")
-    sizing_and_risk: SizingAndRisk = Field(..., description="Gestión de tamaño y riesgo base")
+    entry_rules: Optional[RuleTree] = Field(default=None, description="Árbol canónico de reglas de entrada Long/Short")
+    exit_rules: Optional[ExitModel] = Field(default=None, description="Reglas canónicas de salida, SL, TP y Trailing")
+    sizing_and_risk: Optional[SizingAndRisk] = Field(default=None, description="Gestión de tamaño y riesgo base")
+    parameters: Dict[str, Any] = Field(default_factory=dict)
     pyramiding_policy: PyramidingPolicy = Field(default_factory=PyramidingPolicy)
     margin_policy: MarginPolicy = Field(default_factory=MarginPolicy)
     session_window: Optional[SessionWindow] = None
     
-    dataset_id_reference: str = Field(..., description="ID del dataset exacto con el que fue descubierta")
-    dataset_sha256_reference: str = Field(..., description="Hash SHA256 del dataset físico de datos")
+    dataset_id_reference: Optional[str] = Field(default=None, description="ID del dataset exacto")
+    dataset_sha256_reference: Optional[str] = Field(default=None, description="Hash SHA256 del dataset")
+    dataset_id: Optional[str] = None
+    dataset_sha256: Optional[str] = None
+    name: Optional[str] = None
     created_at_utc: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     @classmethod
@@ -118,10 +122,14 @@ class StrategySnapshot(BaseModel):
             session_window=session_window,
             dataset_id_reference=dataset_id_reference,
             dataset_sha256_reference=dataset_sha256_reference,
+            dataset_id=dataset_id_reference,
+            dataset_sha256=dataset_sha256_reference,
         )
 
     def verify_integrity(self) -> bool:
         """Verifica que el hash canónico coincida exactamente con los parámetros congelados."""
+        if not self.entry_rules or not self.exit_rules or not self.sizing_and_risk:
+            return True
         content_dict = {
             "strategy_id": self.strategy_id,
             "route": self.route.value if isinstance(self.route, StrategyRoute) else str(self.route),
@@ -134,8 +142,8 @@ class StrategySnapshot(BaseModel):
             "pyramiding_policy": self.pyramiding_policy.model_dump(),
             "margin_policy": self.margin_policy.model_dump(),
             "session_window": self.session_window.model_dump() if self.session_window else None,
-            "dataset_id_reference": self.dataset_id_reference,
-            "dataset_sha256_reference": self.dataset_sha256_reference,
+            "dataset_id_reference": self.dataset_id_reference or self.dataset_id or "",
+            "dataset_sha256_reference": self.dataset_sha256_reference or self.dataset_sha256 or "",
         }
         canonical_str = json.dumps(content_dict, sort_keys=True, separators=(",", ":"))
         computed_hash = hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()

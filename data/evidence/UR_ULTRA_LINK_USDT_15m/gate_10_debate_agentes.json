@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_15m_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_15m",
   "strategy_id": "UR_ULTRA_LINK_USDT_15m",
-  "strategy_snapshot_hash": "e77c0fa503c1fefd226e92ee8223aa216da080bf3bb148bb7058b3fbb889086a",
+  "strategy_snapshot_hash": "4c76c0c6a0280bd9db7ef5af5c411c9897628ecef4c6a20b16d1ac47d9d68aaf",
   "dataset_id": "ds_binance_linkusdt_15m_1778989500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "a64d4d697ed8dd53b4e5ec17a6e541930db95bdb574f03bfe79f4e33401aa379",
-  "output_hash": "60776799e685715af698b55df0c2fa9b28835d26e83a5d10b43df52c6554bd20",
+  "input_hash": "d1105ef693493bc26809ebae5c1fb94d124a77d66ecd5a0c2e42242e25ff23ca",
+  "output_hash": "270c8186b46cb4d37e6126f227df324dc6186549668f614e352926492fbe7776",
   "status": "FAILED",
   "score": 28.1,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (28.1/100)",
@@ -26,7 +26,7 @@
         "score": 32.5,
         "findings": [
           "Activo y Timeframe: LINK (15m) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 0.50 con beneficio neto de $-907.62.",
+          "Profit Factor OOS: 0.50 con beneficio neto de $-909.76.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": false
@@ -36,7 +36,7 @@
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 92.7% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 92.8% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 277 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 272 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-3.28 USD.",
+          "Beneficio medio por operación: $-3.34 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -66,7 +66,7 @@
         "role": "Contradicciones, Objeciones y Detección de Trampas",
         "score": 33.1,
         "objections": [
-          "Alerta de Drawdown: DD (92.7%) cercano o superior al límite tolerable (85.0%).",
+          "Alerta de Drawdown: DD (92.8%) cercano o superior al límite tolerable (85.0%).",
           "Margen ajustado: Profit Factor 0.50 cercano al equilibrio (1.05)."
         ],
         "recommendations": [
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_LINK_USDT_15m/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:44:39.969055+00:00"
+  "created_at_utc": "2026-08-25T11:19:54.792918+00:00"
 }

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_4h_g04",
   "run_id": "run_UR_ULTRA_USDCHF_4h",
   "strategy_id": "UR_ULTRA_USDCHF_4h",
-  "strategy_snapshot_hash": "8960692f04acd7dc49fac028a1529881135f9da5d9b2dd40f067ffda5f9607c4",
+  "strategy_snapshot_hash": "11c08cb3bfc1903f19edde60cba9d560fed0909f11ad40647b43e0faf6e07cbd",
   "dataset_id": "ds_trad_usdchf_4h_1698796800000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,15 +10,15 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "0a1948fdd9a01217b1cda504a02dfc21dac90175bf7020c6274e52be2954032e",
-  "output_hash": "36f3a7b199f733b8c9c2da85ab12527a592c178dd11feee5c4e004c55b05ff10",
+  "input_hash": "816a21c0f70787b99782745cc35dec23fc21691bcb261cc2f89ada8d2ed8b1dc",
+  "output_hash": "9b14c8fa778e565a0242c04d1cdca882e1584831ecd21b771defb8fe6d1e67aa",
   "status": "FAILED",
-  "score": 58.2,
-  "verdict": "FALLO: Degradación temporal excesiva (WFE 1.16 < 0.40 ó Consistencia 20.0% < 40%)",
+  "score": 48.2,
+  "verdict": "FALLO: Degradación temporal excesiva (WFE 0.96 < 0.40 ó Consistencia 20.0% < 40%)",
   "metrics": {
     "total_trades_analyzed": 166,
     "windows_count": 5,
-    "walk_forward_efficiency": 1.16,
+    "walk_forward_efficiency": 0.96,
     "oos_consistency_pct": 20.0,
     "min_wfe_required": 0.5,
     "windows_details": [
@@ -54,7 +54,7 @@
         "is_trades_count": 23,
         "oos_trades_count": 10,
         "pf_is": 1.27,
-        "pf_oos": 0.98,
+        "pf_oos": 0.99,
         "net_profit_oos_usd": -0.01,
         "wfe": 0.77
       },
@@ -62,13 +62,13 @@
         "window_index": 5,
         "is_trades_count": 23,
         "oos_trades_count": 10,
-        "pf_is": 0.71,
-        "pf_oos": 0.98,
-        "net_profit_oos_usd": -0.01,
-        "wfe": 1.39
+        "pf_is": 0.93,
+        "pf_oos": 0.36,
+        "net_profit_oos_usd": -0.47,
+        "wfe": 0.38
       }
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_4h/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-25T10:46:24.450488+00:00"
+  "created_at_utc": "2026-08-25T11:21:15.581476+00:00"
 }

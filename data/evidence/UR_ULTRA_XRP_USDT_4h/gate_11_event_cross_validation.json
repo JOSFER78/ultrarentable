@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4h_g11",
   "run_id": "run_UR_ULTRA_XRP_USDT_4h",
   "strategy_id": "UR_ULTRA_XRP_USDT_4h",
-  "strategy_snapshot_hash": "06de6d205122563f1f26b8bd8b80b57297dc4c03ac270e6d526793c19023c492",
+  "strategy_snapshot_hash": "0e437284816a364b5cae6da10054769b71245ef92e9d43da38b5fcb38d1a039e",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 11,
@@ -10,24 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "dcf4757fb5476073f4dc6f34756f19345f80f64e080e1fa7f82f64f94eb34482",
-  "output_hash": "93863a507bd8f922e7643b80124355df9dd1b22869ae25f1bf2c9e9b200aa222",
+  "input_hash": "61e7979f118aaccf5e0fbfe3295d4b4fe03421a15c084c12647e71ee967fcab1",
+  "output_hash": "fcc6071c5918cc04edaf6605ff39ba52975d510a35756e80d6944b57859acafb",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $5065.73, Bóveda Cosechada: $5037.38, Apalancamiento: 6.0x, Dist. Mín. Liq: 95.8%)",
+  "verdict": "PASSED: Validación cruzada de eventos completada (Riqueza Total: $6288.98, Bóveda Cosechada: $5458.23, Apalancamiento: 6.0x, Dist. Mín. Liq: 96.5%)",
   "metrics": {
     "initial_capital_usd": 1000.0,
-    "final_equity_usd": 28.35,
-    "peak_equity_usd": 6906.62,
-    "min_equity_usd": 23.31,
+    "final_equity_usd": 830.75,
+    "peak_equity_usd": 7536.63,
+    "min_equity_usd": 489.73,
     "peak_leverage_used": 6.0,
     "max_allowed_leverage_ceiling": 100.0,
-    "min_distance_to_liquidation_pct": 95.78,
+    "min_distance_to_liquidation_pct": 96.47,
     "margin_call_triggered": false,
     "total_fees_paid_usd": 0.0,
-    "total_funding_cost_usd": 69.99,
-    "execution_events_count": 153
+    "total_funding_cost_usd": 74.18,
+    "execution_events_count": 85
   },
-  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4h/gate_11_event_cross_validation.json",
-  "created_at_utc": "2026-08-25T10:38:26.032469+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4h/gate_11_event_cross_validation.json"
 }

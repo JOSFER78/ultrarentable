@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_SOL_USDT_15m_g07",
   "run_id": "run_UR_ULTRA_SOL_USDT_15m",
   "strategy_id": "UR_ULTRA_SOL_USDT_15m",
-  "strategy_snapshot_hash": "6efeb94bc432d24a6b5443e5471c6c2de3f754e5ad61d56c4e160275c27c69c6",
+  "strategy_snapshot_hash": "c3a48b05a1cbfa2e8172fe336a7f30cd95e059dda0f252c28f1e814c97682044",
   "dataset_id": "ds_binance_solusdt_15m_1777639500000_1787088600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "672ee2560e09c7d63d1d99bde8cd7efbf4685c0a9e2fc33e5645fb4c9a61ff5d",
-  "output_hash": "f66c46a36358f19a27b581d6628778938cbd70bd34cdbbb9896f1f481096ca1d",
+  "input_hash": "7ed58335d460bf5895108d39fb92d954cb66e774ee4e4743bd0bc03555223a6b",
+  "output_hash": "34fd29ec49b6ca28945b4afba9e277730d2abdb5ecc056c9a7b2ba5a1696f1c0",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -115.54%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -123.25%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 7,
@@ -31,13 +31,13 @@
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -20.87,
-      "HIGH_VOLATILITY": -94.67
+      "CHOP_RANGING": -30.63,
+      "HIGH_VOLATILITY": -92.62
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -115.54
+    "total_oos_return_pct": -123.25
   },
   "artifact_path": "data/evidence/UR_ULTRA_SOL_USDT_15m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-25T10:46:16.749514+00:00"
+  "created_at_utc": "2026-08-25T11:21:06.891755+00:00"
 }

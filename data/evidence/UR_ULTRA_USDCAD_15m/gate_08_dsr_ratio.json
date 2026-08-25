@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_15m_g08",
   "run_id": "run_UR_ULTRA_USDCAD_15m",
   "strategy_id": "UR_ULTRA_USDCAD_15m",
-  "strategy_snapshot_hash": "909cff0402d002599046dddf2a6cec405fb81518f6a1596f08ad75facbffbf05",
+  "strategy_snapshot_hash": "f132f913f4911f744dcc16c77cc85090b36a4f7ac2b863b1c439dc1c13e4c5e8",
   "dataset_id": "ds_trad_usdcad_15m_1779836400000_1787091300000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 8,
@@ -10,20 +10,20 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "5a32621ab96300307203de57d875123052c864178530077a124e58f386fd86cc",
-  "output_hash": "0b87b44dd2df357f8aee376c3dffc315f42a8df43427315a8e8971e8fe0bc450",
+  "input_hash": "320c06cb2a5466fe128a3c6aa369168c41de3ff8d769d2db54abd4d873e6a4df",
+  "output_hash": "3d2d69ff3e925d590da0004734bbd54574e00e3803e9ca61ce6e7d88b7148d95",
   "status": "FAILED",
-  "score": 3.0,
-  "verdict": "FALLO: Deflated Sharpe insuficiente (3.0% < 50.0% tras penalizar 141 trials)",
+  "score": 3.4,
+  "verdict": "FALLO: Deflated Sharpe insuficiente (3.4% < 50.0% tras penalizar 147 trials)",
   "metrics": {
-    "raw_sharpe_ratio": -0.595,
-    "deflated_sharpe_probability_pct": 2.96,
-    "trials_penalized_count": 141,
+    "raw_sharpe_ratio": -0.572,
+    "deflated_sharpe_probability_pct": 3.4,
+    "trials_penalized_count": 147,
     "expected_max_sharpe_under_selection": 0.0,
-    "skewness": 1.905,
-    "kurtosis": 4.991,
-    "sample_trades_count": 26
+    "skewness": 1.841,
+    "kurtosis": 4.731,
+    "sample_trades_count": 25
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_15m/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-25T10:42:58.361678+00:00"
+  "created_at_utc": "2026-08-25T11:17:36.600175+00:00"
 }

@@ -11,24 +11,23 @@
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
   "input_hash": "f719190ffcb2d0b803553644ff3cc54153ebd6cd96095881394f7fd3f5ca2eae",
-  "output_hash": "e44bef7865fda0f1f23660401ea9df78728de3bf25cd5233361076a7a12d6b31",
+  "output_hash": "9b941ec895a8a657b6502f4c478e779841bc12fa24c0b148512f45c2b6584f90",
   "status": "FAILED",
-  "score": 49.4,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 4.0 o Estabilidad 123.4% < 50.0%)",
+  "score": 46.5,
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 4.0 o Estabilidad 116.3% < 50.0%)",
   "metrics": {
     "parameters_count": 2,
     "degrees_of_freedom_ratio": 4.0,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 123.4,
+    "parameter_neighborhood_stability_pct": 116.3,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      0.44,
-      0.14,
-      1.32,
-      1.21
+      0.58,
+      0.18,
+      1.49,
+      1.38
     ],
     "rebacktest_performed": true
   },
-  "artifact_path": "data/evidence/strat_rt_hash/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-25T10:39:31.091064+00:00"
+  "artifact_path": "data/evidence/strat_rt_hash/gate_09_novelty_antifit.json"
 }

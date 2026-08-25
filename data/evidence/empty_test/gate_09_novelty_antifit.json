@@ -1,34 +1,21 @@
 {
-  "evidence_id": "ev_empty_test_g09",
-  "run_id": "run_empty_test",
-  "strategy_id": "empty_test",
-  "strategy_snapshot_hash": "3fc89397436bcbcd2a777b5ce4fae950328c1c61562cd3e90a698c6c5d2e77e9",
-  "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.4.0",
-  "formula_version": "5.4.0",
-  "input_hash": "1ad7c9ea4f20af4497737b8643b9b718d9d7492c6d92e64eedf63fb98a6576d2",
-  "output_hash": "c3db4c2a83c3612ccb17927111b75fbda43e0c771a0eefb5081917089a8436fb",
-  "status": "FAILED",
-  "score": 42.9,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 26.1 o Estabilidad 107.3% < 50.0%)",
-  "metrics": {
+  "name": "NOVELTY_ANTIFIT",
+  "passed": false,
+  "score": 33.0,
+  "verdict": "FALLO: Fragilidad ante perturbaci\u00f3n param\u00e9trica (DoF 60.1 o Estabilidad 82.5% < 50.0%)",
+  "evidence": {
     "parameters_count": 10,
-    "degrees_of_freedom_ratio": 26.1,
+    "degrees_of_freedom_ratio": 60.1,
     "min_dof_required": 10.0,
-    "parameter_neighborhood_stability_pct": 107.3,
+    "parameter_neighborhood_stability_pct": 82.5,
     "min_stability_required_pct": 50.0,
     "perturbed_neighborhood_pfs": [
-      1.19,
-      1.1,
-      1.09,
-      1.3
+      1.04,
+      1.06,
+      1.05,
+      1.04
     ],
     "rebacktest_performed": true
-  },
-  "artifact_path": "data/evidence/empty_test/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-25T10:39:28.004079+00:00"
+  }
 }

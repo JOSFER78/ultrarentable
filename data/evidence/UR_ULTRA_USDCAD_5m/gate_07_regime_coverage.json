@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCAD_5m_g07",
   "run_id": "run_UR_ULTRA_USDCAD_5m",
   "strategy_id": "UR_ULTRA_USDCAD_5m",
-  "strategy_snapshot_hash": "8a48abcc28dde7698ac7d8815d201fef48208118bd47aa6fe28329a98e5c9b99",
+  "strategy_snapshot_hash": "2186db914e2dfc8f96728b0fe342de682085d82eae123e444aba605a8b7ef938",
   "dataset_id": "ds_trad_usdcad_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 7,
@@ -10,11 +10,11 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "649b9914494b3afc7f789c363bcb815cfb09052f130f43d18b03f49dcd3f91b6",
-  "output_hash": "b6baae036c19e8c92361957a191ee2e1ef84f1f6b9cb723e2dce420ce4e764a6",
+  "input_hash": "f68070a1dfc07a08cd4e53797505d8363e422de934e8ed77fd05c031087f5f50",
+  "output_hash": "4293925fd3abc5c8cc8494bcfd2a9aa0461dc82e78d990b8841e245e31865815",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -169.33%)",
+  "verdict": "FALLO: Fragilidad en regímenes de mercado (0/4 rentables, Retorno Total: -265.49%)",
   "metrics": {
     "regimes_candle_distribution": {
       "BULL_TREND": 0,
@@ -25,19 +25,19 @@
     "regime_trades_count": {
       "BULL_TREND": 0,
       "BEAR_TREND": 0,
-      "CHOP_RANGING": 63,
+      "CHOP_RANGING": 91,
       "HIGH_VOLATILITY": 3
     },
     "regime_return_pct": {
       "BULL_TREND": 0.0,
       "BEAR_TREND": 0.0,
-      "CHOP_RANGING": -167.64,
+      "CHOP_RANGING": -263.8,
       "HIGH_VOLATILITY": -1.69
     },
     "regimes_profitable_count": 0,
     "regimes_active_count": 2,
-    "total_oos_return_pct": -169.33
+    "total_oos_return_pct": -265.49
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCAD_5m/gate_07_regime_coverage.json",
-  "created_at_utc": "2026-08-25T10:42:06.905213+00:00"
+  "created_at_utc": "2026-08-25T11:16:43.488885+00:00"
 }

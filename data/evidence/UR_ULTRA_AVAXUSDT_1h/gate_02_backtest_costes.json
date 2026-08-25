@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g02",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "829233897fdb33e2a6b958430c8025babf142cc0f3cb5f21b7ab4ca47328438b",
+  "strategy_snapshot_hash": "60c9507974f627dd365fda67eec9e36291242446f3a69d007a91b9f07e65d1db",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,21 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "3c40e46e0f78ed498b9c4fe514dd84f7ad90a2047381d4cdd022e2e1d043faf4",
-  "output_hash": "07a1122cefcdce897a0dbbaec52a188125620ed93307899c7cbc7a4387c9949b",
+  "input_hash": "571101191f880d9b77b749beca346b05dff5e711f054e738012416dcf5ec52df",
+  "output_hash": "f763bc29e26c1dff138bc69046c6970ff2724fd52628580d5dee3b8cafec4610",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.36 < 1.10",
+  "verdict": "FALLO: PF Neto 0.32 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "Avalanche Perpetuo",
     "exchange": "Binance / FTMO Perps",
-    "gross_pnl_usd": 5.749442997270529e26,
-    "total_fees_usd": 4.360510823015903e26,
-    "total_slippage_usd": 3.992031151788192e27,
-    "net_pnl_usd": -3.8531379343627263e27,
-    "net_profit_factor": 0.36,
-    "drag_cost_pct": 770.18
+    "gross_pnl_usd": 34355.13,
+    "total_fees_usd": 24370.68,
+    "total_slippage_usd": 167487.46,
+    "net_pnl_usd": -157503.01,
+    "net_profit_factor": 0.32,
+    "drag_cost_pct": 558.46
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-25T10:38:55.773362+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_02_backtest_costes.json"
 }

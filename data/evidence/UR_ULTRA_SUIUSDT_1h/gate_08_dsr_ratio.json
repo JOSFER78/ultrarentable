@@ -10,20 +10,19 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "43b2916d29682b8e548136e13cdce9405596aaa775a366418fcb2b00e97eec41",
-  "output_hash": "b9a6108563a6a733d5d80d44218739ce1067780f4e39a75da6e6a650efe26979",
+  "input_hash": "311f4470e47a0c6e97a2fa8e89919123e59f02840752ff639b7b9532855fa37d",
+  "output_hash": "4738dbe8300099bee807e88c1a831307c10bee587aa553955eda095facee602a",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Deflated Sharpe insuficiente (0.0% < 50.0% tras penalizar 3 trials)",
   "metrics": {
-    "raw_sharpe_ratio": 0.309,
+    "raw_sharpe_ratio": 0.105,
     "deflated_sharpe_probability_pct": 0.0,
     "trials_penalized_count": 3,
     "expected_max_sharpe_under_selection": 0.853,
-    "skewness": 2.922,
-    "kurtosis": 11.699,
-    "sample_trades_count": 348
+    "skewness": 11.581,
+    "kurtosis": 159.965,
+    "sample_trades_count": 267
   },
-  "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_08_dsr_ratio.json",
-  "created_at_utc": "2026-08-25T10:39:04.599919+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_SUIUSDT_1h/gate_08_dsr_ratio.json"
 }

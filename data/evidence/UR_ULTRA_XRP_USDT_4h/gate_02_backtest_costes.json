@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_4h_g02",
   "run_id": "run_UR_ULTRA_XRP_USDT_4h",
   "strategy_id": "UR_ULTRA_XRP_USDT_4h",
-  "strategy_snapshot_hash": "06de6d205122563f1f26b8bd8b80b57297dc4c03ac270e6d526793c19023c492",
+  "strategy_snapshot_hash": "0e437284816a364b5cae6da10054769b71245ef92e9d43da38b5fcb38d1a039e",
   "dataset_id": "ds_binance_xrpusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,21 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "f83552d681cb44ba051a0172b89172f8d413b2f22c6f029055bd96bbad186110",
-  "output_hash": "9fda465066e84eae857b90be7759ff7fdda7a007fe91d2c15519cbb6bdbceca2",
+  "input_hash": "a9fb385f555d9871c736e9db9737ef5901a49a37b81f2cf409ad1dc42e4f1f09",
+  "output_hash": "7d6ca6ca364b36018e2e258a3991900f63c13f4b688960266b7342e7b0857c4a",
   "status": "FAILED",
   "score": 0.0,
-  "verdict": "FALLO: PF Neto 0.21 < 1.10",
+  "verdict": "FALLO: PF Neto 0.14 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "XRP Perpetuo",
     "exchange": "Perpetual Swap",
-    "gross_pnl_usd": 1032.04,
-    "total_fees_usd": 1415.25,
-    "total_slippage_usd": 53420.82,
-    "net_pnl_usd": -53804.03,
-    "net_profit_factor": 0.21,
-    "drag_cost_pct": 5313.37
+    "gross_pnl_usd": 8231.75,
+    "total_fees_usd": 3436.62,
+    "total_slippage_usd": 146883.44,
+    "net_pnl_usd": -142088.32,
+    "net_profit_factor": 0.14,
+    "drag_cost_pct": 1826.1
   },
-  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-25T10:38:23.729755+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_4h/gate_02_backtest_costes.json"
 }

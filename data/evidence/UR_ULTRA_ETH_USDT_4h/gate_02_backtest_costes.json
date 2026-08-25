@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_ETH_USDT_4h_g02",
   "run_id": "run_UR_ULTRA_ETH_USDT_4h",
   "strategy_id": "UR_ULTRA_ETH_USDT_4h",
-  "strategy_snapshot_hash": "079cc73459d939a21b3d20cc3b90f10b45b0ea47bad7dce6a3f8f226878a0f98",
+  "strategy_snapshot_hash": "8ecb187eff0fa6af6a757e6f03ebb53ce2c1d73a89692c6899732e4e9c259eab",
   "dataset_id": "ds_binance_ethusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 2,
@@ -10,22 +10,21 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "cdfb0204b3a0c67b529fc28858a60fd77fe6094a38f381f3b58b5d1086615883",
-  "output_hash": "c00cd5a607691271f41cf6417f40b84bd69d1fc8a9d07e253f6185fc58a8d279",
+  "input_hash": "836325a1d8ff1416405241926d45a5447598f9d7e319c7372276cd123932032a",
+  "output_hash": "2d85146ba07db4dc257032dc3398ce4cad6a8fc75e8b7d8a9f728c19b6e37d7d",
   "status": "FAILED",
-  "score": 0.7,
-  "verdict": "FALLO: PF Neto 1.01 < 1.10",
+  "score": 8.2,
+  "verdict": "FALLO: PF Neto 1.08 < 1.10",
   "metrics": {
     "market_category": "CRYPTO",
     "canonical_name": "ETH Perpetuo",
     "exchange": "Perpetual Swap",
-    "gross_pnl_usd": 4008.34,
-    "total_fees_usd": 3487.07,
-    "total_slippage_usd": 90.12,
-    "net_pnl_usd": 431.15,
-    "net_profit_factor": 1.01,
-    "drag_cost_pct": 89.24
+    "gross_pnl_usd": 6271.31,
+    "total_fees_usd": 3806.4,
+    "total_slippage_usd": 98.04,
+    "net_pnl_usd": 2366.86,
+    "net_profit_factor": 1.08,
+    "drag_cost_pct": 62.26
   },
-  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4h/gate_02_backtest_costes.json",
-  "created_at_utc": "2026-08-25T10:37:06.499022+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_ETH_USDT_4h/gate_02_backtest_costes.json"
 }

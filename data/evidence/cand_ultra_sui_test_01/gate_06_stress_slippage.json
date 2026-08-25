@@ -2,7 +2,7 @@
   "evidence_id": "ev_cand_ultra_sui_test_01_g06",
   "run_id": "run_cand_ultra_sui_test_01",
   "strategy_id": "cand_ultra_sui_test_01",
-  "strategy_snapshot_hash": "17401650cc6dac220dbae7d86c33025fe1223c639e257477a40e4d1da8727b11",
+  "strategy_snapshot_hash": "1c8c1571e108fe848101b4522dd67e0c0e393f89799d6c33ad043aa3f9c5aca4",
   "dataset_id": "ds_binance_suiusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 6,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "6274eac92c8af16fe626224c4127ce2377d7e06cfca7c091e633b7161d0c880f",
-  "output_hash": "7e0febde5e966d2e64aa4e01e61f4a126d9d76e0569665c33ee0d7d893dd4a40",
+  "input_hash": "0ec3402a394f2dc512052a168d7bda03f765df9e54442457d4197361c63fe4ad",
+  "output_hash": "8496694753cb07df840f09127a188cbc1c47e07126c972f5ca15cd7c6a7f2b67",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,25 +19,25 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.36,
+        "stressed_net_pnl_usd": -0.37,
         "stressed_profit_factor": 0.99,
         "survived": false
       },
       "+1_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -0.88,
+        "stressed_net_pnl_usd": -0.89,
         "stressed_profit_factor": 0.97,
         "survived": false
       },
       "+2_Sigma": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -1.47,
+        "stressed_net_pnl_usd": -1.5,
         "stressed_profit_factor": 0.94,
         "survived": false
       },
       "+3_Sigma": {
         "friction_penalty_per_trade_usd": 0.01,
-        "stressed_net_pnl_usd": -2.42,
+        "stressed_net_pnl_usd": -2.47,
         "stressed_profit_factor": 0.91,
         "survived": false
       }
@@ -47,5 +47,5 @@
     "base_friction_usd": 0.35
   },
   "artifact_path": "data/evidence/cand_ultra_sui_test_01/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-25T10:38:51.898967+00:00"
+  "created_at_utc": "2026-08-25T11:37:05.428961+00:00"
 }

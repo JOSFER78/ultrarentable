@@ -1,90 +1,85 @@
+/**
+ * apps/web/hooks/useEngineVersion.ts
+ * Hook para la inspección física de versión de motor, git commit y drift criptográfico.
+ */
 "use client";
 
-import { useState, useEffect } from "react";
-import { getApiUrl } from "@/lib/api";
+import { useState, useEffect, useCallback } from "react";
 
-export interface VersionHistoryItem {
+export interface EngineVersionInfo {
   version: string;
-  name: string;
-  released_at: string;
-  status: string;
-  status_label: string;
-  description: string;
-  ruleset_hash: string;
-  git_commit?: string;
-  changes: string[];
-  strategy_count?: number;
+  versionName: string;
+  gitCommit: string;
+  gitCommitShort: string;
+  gitBranch: string;
+  gitMessage: string;
+  gitAuthor: string;
+  codeDrift: boolean;
+  codebaseFingerprint: string;
+  lastBumpUtc: string;
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
 }
 
-export interface EngineVersionData {
-  current_version: string;
-  current_name: string;
-  pipeline_version: string;
-  codebase_fingerprint?: string;
-  code_drift_detected?: boolean;
-  git_commit?: string;
-  git_commit_short?: string;
-  git_message?: string;
-  git_author?: string;
-  git_date?: string;
-  git_branch?: string;
-  git_is_dirty?: boolean;
-  history: VersionHistoryItem[];
-  version_distribution?: Record<string, number>;
-}
-
-export function useEngineVersion() {
-  const [data, setData] = useState<EngineVersionData>({
-    current_version: "5.4.0",
-    current_name: "Ultrarentable V5.4.0 (Multi-Phase Lineage Governance, Zero-Leakage Research Lab, 24/7 Durable Job Queue & Strictly Certified Views 5/6)",
-    pipeline_version: "5.4.0",
-    git_commit_short: "HEAD",
-    git_branch: "main",
-    history: [],
-    version_distribution: {},
-  });
+export function useEngineVersion(): EngineVersionInfo {
+  const [version, setVersion] = useState<string>("5.3.0");
+  const [versionName, setVersionName] = useState<string>("Ultrarentable v5.3.0");
+  const [gitCommit, setGitCommit] = useState<string>("");
+  const [gitCommitShort, setGitCommitShort] = useState<string>("");
+  const [gitBranch, setGitBranch] = useState<string>("main");
+  const [gitMessage, setGitMessage] = useState<string>("");
+  const [gitAuthor, setGitAuthor] = useState<string>("");
+  const [codeDrift, setCodeDrift] = useState<boolean>(false);
+  const [codebaseFingerprint, setCodebaseFingerprint] = useState<string>("");
+  const [lastBumpUtc, setLastBumpUtc] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function fetchVersion() {
-      try {
-        const url = typeof window !== "undefined" ? "/api/v1/versions" : getApiUrl("/api/v1/versions");
-        const res = await fetch(url, { cache: "no-store" });
-        if (res.ok) {
-          const json = await res.json();
-          if (mounted && json.current_version) {
-            setData(json);
-          }
-        }
-      } catch {
-        // Keep default fallback v5.4.0
-      } finally {
-        if (mounted) setLoading(false);
+  const fetchVersion = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/v1/versions");
+      if (!res.ok) {
+        throw new Error(`Fallo al consultar versión del motor (HTTP ${res.status})`);
       }
+      const data = await res.json();
+      setVersion(data.current_version || data.active_version || "5.3.0");
+      setVersionName(data.current_name || data.active_name || "Ultrarentable v5.3.0");
+      setGitCommit(data.git_commit || "");
+      setGitCommitShort(data.git_commit_short || (data.git_commit ? data.git_commit.slice(0, 7) : ""));
+      setGitBranch(data.git_branch || "main");
+      setGitMessage(data.git_message || "");
+      setGitAuthor(data.git_author || "");
+      setCodeDrift(Boolean(data.code_drift_detected));
+      setCodebaseFingerprint(data.codebase_fingerprint || "");
+      setLastBumpUtc(data.last_bump_utc || "");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Error al conectar con version router.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
-
-    fetchVersion();
-    const interval = setInterval(fetchVersion, 15000); // Polling every 15s
-    return () => {
-      mounted = false;
-      clearInterval(interval);
-    };
   }, []);
 
+  useEffect(() => {
+    fetchVersion();
+  }, [fetchVersion]);
+
   return {
-    version: data.current_version,
-    versionName: data.current_name,
-    pipelineVersion: data.pipeline_version,
-    gitCommit: data.git_commit,
-    gitCommitShort: data.git_commit_short || (data.git_commit ? data.git_commit.substring(0, 7) : "HEAD"),
-    gitBranch: data.git_branch || "main",
-    gitMessage: data.git_message || "",
-    gitIsDirty: data.git_is_dirty || false,
-    history: data.history,
-    versionDistribution: data.version_distribution || {},
-    codeDrift: data.code_drift_detected,
+    version,
+    versionName,
+    gitCommit,
+    gitCommitShort,
+    gitBranch,
+    gitMessage,
+    gitAuthor,
+    codeDrift,
+    codebaseFingerprint,
+    lastBumpUtc,
     loading,
+    error,
+    refetch: fetchVersion,
   };
 }

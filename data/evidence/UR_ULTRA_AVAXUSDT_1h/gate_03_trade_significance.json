@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_AVAXUSDT_1h_g03",
   "run_id": "run_UR_ULTRA_AVAXUSDT_1h",
   "strategy_id": "UR_ULTRA_AVAXUSDT_1h",
-  "strategy_snapshot_hash": "829233897fdb33e2a6b958430c8025babf142cc0f3cb5f21b7ab4ca47328438b",
+  "strategy_snapshot_hash": "60c9507974f627dd365fda67eec9e36291242446f3a69d007a91b9f07e65d1db",
   "dataset_id": "ds_binance_avaxusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,19 +10,18 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "bfb0be2bea1152c3748ef1407e8a8146ec640f0135b0346439144c00aa4ded25",
-  "output_hash": "c40bc08fb1abeeea612291d42e65f5a541ab27c8f327b2c15e5ca7bfe0df345d",
+  "input_hash": "d9bcfbd5dbeb746025c556aeb53fb60ea6813517fa992c3ac3c7b232c7f99ebd",
+  "output_hash": "be4e9d6689d91d23d5f620005634dc9f8bf7f6fb766d03237e307d1f57f248a5",
   "status": "PASSED",
   "score": 100.0,
-  "verdict": "PASSED: Muestra robusta (2561 IS / 692 OOS · Ultra Convex)",
+  "verdict": "PASSED: Muestra robusta (1128 IS / 271 OOS · Ultra Convex)",
   "metrics": {
-    "trades_is": 2561,
-    "trades_oos": 692,
-    "top2_outlier_dependency_pct": 4.8,
+    "trades_is": 1128,
+    "trades_oos": 271,
+    "top2_outlier_dependency_pct": 47.7,
     "min_is_required": 15,
     "min_oos_required": 10,
     "route_mode": "ULTRA_ASYMMETRIC"
   },
-  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-25T10:38:55.780566+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_AVAXUSDT_1h/gate_03_trade_significance.json"
 }

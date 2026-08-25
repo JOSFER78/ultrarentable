@@ -1,103 +1,35 @@
 /**
  * apps/web/types/telemetry.ts
- * Definición estricta de contratos de telemetría para Ultrarentable V2
+ * Definición canónica de tipos de telemetría y supervisor de workers 24/7.
  */
 
-export type ValidationTrack = 'TRACK_FONDEO' | 'TRACK_ULTRA';
+export type WorkerId =
+  | "worker_1"
+  | "worker_2"
+  | "worker_3"
+  | "worker_4"
+  | "worker_5"
+  | "worker_6"
+  | "worker_7"
+  | "worker_8"
+  | string;
 
-export type StrategyLifecycleStatus = 
-  | 'GENERATED'
-  | 'BACKTESTED'
-  | 'OOS_PASSED'
-  | 'ROBUSTNESS_PASSED'
-  | 'EVIDENCE_APPROVED'
-  | 'CANDIDATE'
-  | 'INCUBATION_PAPER'
-  | 'LIVE_ACTIVE'
-  | 'REJECTED'
-  | 'RETIRED';
-
-export type WorkerId = 
-  | 'DataWorker'
-  | 'SQXWorker'
-  | 'FastBacktestWorker'
-  | 'ValidationWorker'
-  | 'MonteCarloWorker'
-  | 'SemanticAIWorker'
-  | 'PortfolioWorker'
-  | 'PaperTradingWorker';
-
-export type WorkerStatus = 
-  | 'ACTIVE'
-  | 'IDLE'
-  | 'BUSY'
-  | 'DEGRADED'
-  | 'RESTARTING'
-  | 'FAILED'
-  | 'DISCONNECTED';
-
-export type LogLevel = 'INFO' | 'SUCCESS' | 'WARN' | 'ERROR' | 'CRITICAL' | 'AUDIT';
-
-export type CanonicalEventType =
-  | 'DATA_INGESTED'
-  | 'SQX_STRATEGY_FOUND'
-  | 'BACKTEST_COMPLETED'
-  | 'GATE_EVALUATED'
-  | 'MONTE_CARLO_SIMULATED'
-  | 'AI_ANALYSIS_COMPLETED'
-  | 'PORTFOLIO_REBALANCED'
-  | 'PAPER_ORDER_FILLED'
-  | 'WORKER_HEARTBEAT'
-  | 'SELF_HEALING_TRIGGERED'
-  | 'SYSTEM_ALERT'
-  | 'CIRCUIT_BREAKER_TRIPPED';
-
-export interface WorkerTelemetry {
-  workerId: WorkerId;
-  status: WorkerStatus;
-  cpuPercent: number;
-  memoryMb: number;
-  opsPerSec: number;
+export interface WorkerState {
+  id: WorkerId;
+  name: string;
+  status: "ACTIVE" | "IDLE" | "ERROR" | "STOPPED";
+  lastHeartbeat: string | null;
   tasksCompleted: number;
-  tasksFailed: number;
-  queueDepth: number;
-  lastHeartbeatMs: number;
-  currentTaskName: string | null;
-  uptimeSeconds: number;
-  version: string;
+  errorCount: number;
+  details?: Record<string, unknown>;
 }
 
-export interface TelemetryLogEvent {
-  id: string;
-  timestampMs: number;
-  workerId: WorkerId | 'SystemSupervisor';
-  eventType: CanonicalEventType;
-  level: LogLevel;
-  message: string;
-  provenanceHash: string;
-  metadata?: Record<string, string | number | boolean | null>;
-}
-
-export interface SelfHealingAlert {
-  id: string;
-  timestampMs: number;
-  workerId: WorkerId;
-  triggerCause: string;
-  actionTaken: 'RESTART_WORKER' | 'FLUSH_STALLED_QUEUE' | 'THROTTLE_INGESTION' | 'CIRCUIT_BREAKER_OPEN' | 'FAILOVER_FALLBACK';
-  status: 'INVESTIGATING' | 'EXECUTED' | 'RESOLVED' | 'ESCALATED';
-  details: string;
-  resolvedAtMs: number | null;
-}
-
-export interface SystemOverviewMetrics {
-  totalOpsPerSec: number;
-  activeWorkersCount: number;
-  totalMemoryMb: number;
-  globalQueueDepth: number;
-  busLatencyMs: number;
-  systemHealthScore: number;
-  sqxBridgeConnected: boolean;
+export interface SystemMetrics {
   sseConnected: boolean;
-  connectionState: 'CONNECTED' | 'RECONNECTING' | 'DISCONNECTED' | 'STALLED';
-  lastSyncTimestampMs: number;
+  activeWorkersCount: number;
+  totalWorkersCount: number;
+  lastUpdatedUtc: string | null;
+  evaluationsPerSec: number;
+  totalEvaluations: number;
+  engineStatus: "HEALTHY" | "DEGRADED" | "OFFLINE";
 }

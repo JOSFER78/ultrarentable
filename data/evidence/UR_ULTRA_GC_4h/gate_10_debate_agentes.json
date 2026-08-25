@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_GC_4h_g10",
   "run_id": "run_UR_ULTRA_GC_4h",
   "strategy_id": "UR_ULTRA_GC_4h",
-  "strategy_snapshot_hash": "f60605e9f2a8c713298e59579c6d84af34dd578a9066b2d19ec26001868b0bf8",
+  "strategy_snapshot_hash": "70946706bba3b2926e928eda78f926a44e9fb7eb851db9186a0543992de7c845",
   "dataset_id": "ds_trad_gc_4h_1711425600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,8 +10,8 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "68b0b8f5ec48e77c5f5c78e054a70c65f2e299f24261bbf5102ad75c56a23871",
-  "output_hash": "715dab2cfb6757f2d5959f779c3b8c8859004c6402bb8013aacd1c0064035624",
+  "input_hash": "9ab1709d6ef075d54a7ed50dd62eb82731426a9a7d0ff33f0b13da8a4189b8e7",
+  "output_hash": "8475c26287dd80a824dd9e25af8fd69b993e262b5f67da40ca5402b7f091881b",
   "status": "FAILED",
   "score": 34.7,
   "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (34.7/100)",
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 26 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 25 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: MODERADO."
         ],
         "approved": true
@@ -56,7 +56,7 @@
         "role": "Impacto de Fricción, Comisiones y Fills",
         "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $-38.46 USD.",
+          "Beneficio medio por operación: $-40.00 USD.",
           "Margen de seguridad ante slippage: VULNERABLE."
         ],
         "approved": false
@@ -82,5 +82,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_GC_4h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T10:42:44.759045+00:00"
+  "created_at_utc": "2026-08-25T11:17:21.615182+00:00"
 }

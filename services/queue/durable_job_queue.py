@@ -339,3 +339,44 @@ class DurableJobQueue:
 
 
 durable_job_queue = DurableJobQueue()
+
+
+class HAWatchdog:
+    """High Availability Watchdog Daemon 24/7 para supervisión y auto-recuperación de la cola durable."""
+
+    def __init__(self, queue: Optional[DurableJobQueue] = None, interval_seconds: float = 10.0):
+        self.queue = queue or durable_job_queue
+        self.interval_seconds = interval_seconds
+        self._thread: Optional[threading.Thread] = None
+        self._stop_event = threading.Event()
+        self.is_running = False
+
+    def start(self) -> None:
+        if self.is_running:
+            return
+        self.is_running = True
+        self._stop_event.clear()
+        self._thread = threading.Thread(target=self._loop, daemon=True, name="HAWatchdogThread")
+        self._thread.start()
+        logger.info("🟢 HAWatchdog daemon iniciado (intervalo: %ss).", self.interval_seconds)
+
+    def stop(self) -> None:
+        if not self.is_running:
+            return
+        self._stop_event.set()
+        self.is_running = False
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=2.0)
+        logger.info("🛑 HAWatchdog daemon detenido.")
+
+    def _loop(self) -> None:
+        while not self._stop_event.is_set():
+            try:
+                self.queue.recover_orphaned_jobs()
+            except Exception as e:
+                logger.error("Error en ciclo de HAWatchdog: %s", e)
+            self._stop_event.wait(self.interval_seconds)
+
+
+ha_watchdog = HAWatchdog()
+

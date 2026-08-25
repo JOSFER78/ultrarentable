@@ -329,25 +329,20 @@ class FiveDayChallengeEngine:
         passed_list = [w for w in window_results if w["passed"]]
         pass_rate = round(len(passed_list) / max(1, len(window_results)) * 100.0, 1)
         pass_days = [w["days_to_pass"] for w in passed_list]
-        avg_days = round(float(np.mean(pass_days)), 1) if pass_days else 3.2
-        fastest_days = round(float(np.min(pass_days)), 1) if pass_days else 1.5
-        avg_roi = round(float(np.mean([w["final_roi"] for w in window_results])), 2) if window_results else 6.5
-        max_dd = round(float(np.mean([w["max_dd"] for w in window_results])), 2) if window_results else 2.1
-        daily_trades = round(float(np.mean([w["trades_count"] / 5.0 for w in window_results])), 1) if window_results else 3.2
+        avg_days = round(float(np.mean(pass_days)), 1) if pass_days else 0.0
+        fastest_days = round(float(np.min(pass_days)), 1) if pass_days else 0.0
+        avg_roi = round(float(np.mean([w["final_roi"] for w in window_results])), 2) if window_results else 0.0
+        max_dd = round(float(np.max([w["max_dd"] for w in window_results])), 2) if window_results else 0.0
+        daily_trades = round(float(np.mean([w["trades_count"] / 5.0 for w in window_results])), 1) if window_results else 0.0
+        max_daily_loss = round(float(np.max([w.get("max_daily_loss", 0.0) for w in window_results])), 2) if window_results else 0.0
 
         if not best_passed_curve:
             best_passed_curve = [
-                {"day": 0.0, "equity_pct": 0.0, "target_pct": 6.0, "dd_limit_pct": -4.0},
-                {"day": 1.0, "equity_pct": 2.1, "target_pct": 6.0, "dd_limit_pct": -4.0},
-                {"day": 2.0, "equity_pct": 4.3, "target_pct": 6.0, "dd_limit_pct": -4.0},
-                {"day": 2.8, "equity_pct": 6.4, "target_pct": 6.0, "dd_limit_pct": -4.0},
+                {"day": 0.0, "equity_pct": 0.0, "target_pct": profit_target_pct, "dd_limit_pct": -trailing_dd_limit_pct}
             ]
             sample_progress = [
-                {"day": "Día 1", "pnl_pct": 2.1, "cum_pct": 2.1},
-                {"day": "Día 2", "pnl_pct": 2.2, "cum_pct": 4.3},
-                {"day": "Día 3", "pnl_pct": 2.1, "cum_pct": 6.4},
-                {"day": "Día 4", "pnl_pct": 0.0, "cum_pct": 6.4},
-                {"day": "Día 5", "pnl_pct": 0.0, "cum_pct": 6.4},
+                {"day": f"Día {i+1}", "pnl_pct": 0.0, "cum_pct": 0.0}
+                for i in range(5)
             ]
 
         return ChallengeSprintResult(
@@ -356,13 +351,13 @@ class FiveDayChallengeEngine:
             strategy_name=portfolio_name,
             total_5d_windows=len(window_results),
             passed_windows=len(passed_list),
-            pass_rate_pct=max(88.5, pass_rate),
-            avg_days_to_pass=min(3.8, avg_days),
+            pass_rate_pct=pass_rate,
+            avg_days_to_pass=avg_days,
             fastest_pass_days=fastest_days,
             avg_5d_roi_pct=avg_roi,
-            max_5d_drawdown_pct=min(2.8, max_dd),
-            max_daily_loss_pct=1.4,
-            daily_trades_avg=max(2.8, daily_trades),
+            max_5d_drawdown_pct=max_dd,
+            max_daily_loss_pct=max_daily_loss,
+            daily_trades_avg=daily_trades,
             profit_target_pct=profit_target_pct,
             trailing_dd_limit_pct=trailing_dd_limit_pct,
             daily_loss_limit_pct=daily_loss_limit_pct,

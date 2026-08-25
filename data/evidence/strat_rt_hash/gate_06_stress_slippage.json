@@ -11,7 +11,7 @@
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
   "input_hash": "243037222f4a714f01da6b4e7ce79f7c202272a1e44adfa27ee0137abcbde9c3",
-  "output_hash": "bdddd31fbd8e7de31056c5a029c6c0c66b471e8b1a8b24620743e3a7338a9bed",
+  "output_hash": "b317006dfb25c25e77bb7db596f898e065b814c4ef847e0cb066766dc8cb24f8",
   "status": "FAILED",
   "score": 0.0,
   "verdict": "FALLO: Vulnerabilidad a deslizamiento extremo (0/4 escenarios superados)",
@@ -19,26 +19,26 @@
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": -332.46,
-        "stressed_profit_factor": 0.63,
+        "stressed_net_pnl_usd": -204.48,
+        "stressed_profit_factor": 0.78,
         "survived": false
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 1.17,
-        "stressed_net_pnl_usd": -341.78,
-        "stressed_profit_factor": 0.63,
+        "friction_penalty_per_trade_usd": 1.37,
+        "stressed_net_pnl_usd": -215.42,
+        "stressed_profit_factor": 0.78,
         "survived": false
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 2.33,
-        "stressed_net_pnl_usd": -351.1,
-        "stressed_profit_factor": 0.62,
+        "friction_penalty_per_trade_usd": 2.73,
+        "stressed_net_pnl_usd": -226.35,
+        "stressed_profit_factor": 0.77,
         "survived": false
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 4.66,
-        "stressed_net_pnl_usd": -369.74,
-        "stressed_profit_factor": 0.61,
+        "friction_penalty_per_trade_usd": 5.47,
+        "stressed_net_pnl_usd": -248.22,
+        "stressed_profit_factor": 0.75,
         "survived": false
       }
     },
@@ -46,6 +46,5 @@
     "min_required_scenarios": 1,
     "base_friction_usd": 0.35
   },
-  "artifact_path": "data/evidence/strat_rt_hash/gate_06_stress_slippage.json",
-  "created_at_utc": "2026-08-25T10:39:31.050337+00:00"
+  "artifact_path": "data/evidence/strat_rt_hash/gate_06_stress_slippage.json"
 }
