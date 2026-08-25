@@ -1,5 +1,5 @@
 """services/data/dataset_registry.py
-Registro Canónico de Datasets y Cadena de Custodia Criptográfica (Fase 01 Rework P01-003).
+Registro Canónico de Datasets y Cadena de Custodia Criptográfica (Fase 01 Rework P01-004).
 ZERO-MOCKS · REAL-ONLY · PROVENANCE-LOCKED · NO-SYNTHETIC-DEFAULTS · FAIL-CLOSED
 SSOT inmutable para la resolución, verificación y particionado físico de series temporales.
 """
@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from contracts.alias_contracts import OFFICIAL_ALIAS_REGISTRY, CanonicalAliasRegistry
 from contracts.dataset_contracts import DatasetManifest, DatasetPartition, DatasetPartitionType
 
 logger = logging.getLogger("DatasetRegistry")
@@ -31,24 +32,6 @@ class DatasetIntegrityError(Exception):
 class DatasetResolutionError(Exception):
     """Lanzada cuando no se puede resolver inequívocamente un símbolo y timeframe."""
     pass
-
-
-# Registro Canónico Versionado de Alias de Instrumentos (SSOT v1.0.0)
-CANONICAL_INSTRUMENT_ALIASES: Dict[str, str] = {
-    "BTC-USDT": "BTCUSDT",
-    "BTC_USDT": "BTCUSDT",
-    "ETH-USDT": "ETHUSDT",
-    "ETH_USDT": "ETHUSDT",
-    "SOL-USDT": "SOLUSDT",
-    "SOL_USDT": "SOLUSDT",
-    "XRP-USDT": "XRPUSDT",
-    "XRP_USDT": "XRPUSDT",
-    "DOGE-USDT": "DOGEUSDT",
-    "DOGE_USDT": "DOGEUSDT",
-    "EURUSD=X": "EURUSD",
-    "GBPUSD=X": "GBPUSD",
-    "JPY=X": "USDJPY",
-}
 
 
 def _extract_ts_ms(candle: Dict[str, Any]) -> int:
@@ -75,15 +58,16 @@ def _extract_ts_ms(candle: Dict[str, Any]) -> int:
 class DatasetRegistry:
     """Registro SSOT de datasets normalizados con verificación criptográfica y metadatos reales."""
 
-    def __init__(self, data_dir: Optional[Path] = None):
+    def __init__(self, data_dir: Optional[Path] = None, alias_registry: Optional[CanonicalAliasRegistry] = None):
         self.root_dir = Path(__file__).resolve().parent.parent.parent
         self.data_dir = data_dir or (self.root_dir / "data" / "normalized")
+        self.alias_registry = alias_registry or OFFICIAL_ALIAS_REGISTRY
         self._manifests: Dict[str, DatasetManifest] = {}
         self._symbol_timeframe_index: Dict[Tuple[str, str], str] = {}
         self._load_manifests()
 
     def _load_manifests(self) -> None:
-        """Escanea data/normalized/ y carga los manifiestos derivando metadatos exclusivamente de fuentes autorizadas."""
+        """Escanea data/normalized/ y carga los manifiestos aplicando validación estricta de autoconsistencia."""
         if not self.data_dir.exists():
             return
 
@@ -131,19 +115,19 @@ class DatasetRegistry:
                     try:
                         with open(manifest_file, "r", encoding="utf-8") as mf:
                             raw_manifest = json.load(mf)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.error(f"Manifiesto corrupto {manifest_file}: {e}")
+                        continue
 
                 # Identidad de source_id: solo de metadatos explícitos o UNVERIFIED
                 source_id = str(raw_manifest.get("venue") or raw_manifest.get("source") or raw_manifest.get("source_id") or "UNVERIFIED")
 
-                # Identidad de symbol y timeframe: solo de metadatos explícitos del manifest o del contrato
+                # Identidad de symbol y timeframe: solo de metadatos explícitos del manifest o del archivo
                 if raw_manifest.get("symbol"):
                     raw_sym = str(raw_manifest["symbol"]).upper()
                 elif raw_manifest.get("instrument_id"):
                     raw_sym = str(raw_manifest["instrument_id"]).upper()
                 else:
-                    # Sin metadatos explícitos de instrumento, se rechaza
                     logger.warning(f"Dataset {data_file.name} carece de instrument_id explícito. Omitido.")
                     continue
 
@@ -155,8 +139,13 @@ class DatasetRegistry:
                     logger.warning(f"Dataset {data_file.name} carece de timeframe_id explícito. Omitido.")
                     continue
 
-                clean_sym = raw_sym.replace("-", "").replace("_", "").replace("/", "")
+                clean_sym = raw_sym.strip().upper()
                 clean_tf = raw_tf.strip().lower()
+
+                # Autoconsistencia de manifest contra archivo físico (P01-004-03)
+                if raw_manifest.get("data_sha256") and raw_manifest["data_sha256"] != actual_sha256:
+                    logger.error(f"Discordancia de hash en manifiesto {manifest_file.name}. Rechazado.")
+                    continue
 
                 # Versiones: No hardcodear 1.0.0 si no existen en manifest
                 data_version = raw_manifest.get("data_version")
@@ -247,22 +236,20 @@ class DatasetRegistry:
         return self._manifests.get(dataset_id)
 
     def resolve_dataset(self, symbol: str, timeframe: str) -> Optional[DatasetManifest]:
-        """Resolución determinista de datasets con soporte de alias canónico estricto."""
+        """Resolución estricta: coincidencia exacta primero, luego registro canónico de alias. Cero transformaciones no autorizadas."""
         raw_sym = symbol.strip().upper()
         clean_tf = timeframe.strip().lower()
 
-        # 1. Búsqueda exacta directa
-        clean_sym = raw_sym.replace("-", "").replace("_", "").replace("/", "")
-        if (clean_sym, clean_tf) in self._symbol_timeframe_index:
-            return self._manifests[self._symbol_timeframe_index[(clean_sym, clean_tf)]]
+        # 1. Búsqueda exacta directa sin mutar identidad
+        if (raw_sym, clean_tf) in self._symbol_timeframe_index:
+            return self._manifests[self._symbol_timeframe_index[(raw_sym, clean_tf)]]
 
-        # 2. Búsqueda en Registro de Alias Canónico Oficial
-        if raw_sym in CANONICAL_INSTRUMENT_ALIASES:
-            aliased_sym = CANONICAL_INSTRUMENT_ALIASES[raw_sym]
-            if (aliased_sym, clean_tf) in self._symbol_timeframe_index:
-                return self._manifests[self._symbol_timeframe_index[(aliased_sym, clean_tf)]]
+        # 2. Resolución mediante Registro Canónico Oficial de Alias
+        aliased_sym = self.alias_registry.resolve(raw_sym)
+        if aliased_sym and (aliased_sym, clean_tf) in self._symbol_timeframe_index:
+            return self._manifests[self._symbol_timeframe_index[(aliased_sym, clean_tf)]]
 
-        # Si no hay coincidencia exacta ni alias registrado, devolver None (Fail-Closed)
+        # Sin coincidencia ni alias formal -> Fail-Closed
         return None
 
     def load_dataset_bars(
