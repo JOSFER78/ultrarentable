@@ -6,13 +6,16 @@
 - **target_phase**: 00 (PHASE 00 — FORENSIC BASELINE & REALITY LOCK)
 - **status**: READY_FOR_REVIEW
 - **started_at_utc**: 2026-08-25T10:36:47Z
-- **finished_at_utc**: 2026-08-25T10:41:30Z
+- **finished_at_utc**: 2026-08-25T10:52:00Z
 
-## 2. Commits
+## 2. Workspace / Git delivery
 
+- **workspace**: /home/ubuntu/workspace/pro/trading/01 Ultrarentable
 - **start_commit**: d542e5e66b8c9c6144e5904838634e7196024976
-- **final_commit**: 263d053f34f14046583622980e7abf15f66db8ab
-- **branch**: main
+- **final_local_commit**: 7cc9993c6b4266bc5d7bbd2dc89649584767850b
+- **origin/main verified commit**: 7cc9993c6b4266bc5d7bbd2dc89649584767850b
+- **branch used during implementation**: main
+- **pushed_to_origin_main**: YES
 
 ## 3. Subagents & Auditing Teams
 
@@ -44,36 +47,45 @@
 ### 4.3 Defects (Clasificados por Severidad)
 
 #### Severidad P0 / Crítica:
-- DEF-01 (Imports Rotos en Lifespan de FastAPI): services/api/app/main.py contiene bloques try/except en lifespan con imports de módulos de optimización no consolidados (services.optimization.*).
-- DEF-02 (Archivos de Linaje Inexistentes en Disco): services/version_control_manager.py y services/engine_version.py son referenciados por lineage_service.py, version_router.py y legacy_revalidation_service.py, pero no existen físicamente en disco.
+- DEF-01 (Curvas de Equidad Sintéticas en Engine de Portfolio): services/api/app/factory/ultra_portfolio_engine.py contiene arrays estáticos prefabricados de crecimiento de capital y métricas fijas.
+- DEF-02 (Imports Rotos en Lifespan de FastAPI): services/api/app/main.py contiene bloques try/except en lifespan con imports de módulos de optimización no consolidados (services.optimization.*).
+- DEF-03 (Archivos de Linaje Inexistentes en Disco): services/version_control_manager.py y services/engine_version.py son referenciados por lineage_service.py, version_router.py y legacy_revalidation_service.py, pero no existen físicamente en disco.
 
 #### Severidad P1 / Alta:
-- DEF-03 (Bypass de Estado por API): PATCH /candidates/{id}/status en candidates_router.py (L607-635) permite mutar directamente el estado de un candidato a APPROVED o ULTRA_CERTIFIED sin invocar GatePipelineOrchestrator ni comprobar los 11 EvidenceRecords en disco.
-- DEF-04 (Fallback Complaciente en Detalle de Backtest): En gates_router.py (L276-279), si un candidato no se encuentra, el endpoint hace fallback a db.query(CandidateModel).first().
-- DEF-05 (Hardcoded Passes en Frontend para Gates 7–10): apps/web/app/gates/page.tsx (L222-225) clava pass: true con strings estáticos para G7 a G10 en lugar de consumir selectedStrategy.gates.
-- DEF-06 (Mocks Simulados en AISyncStatusBar y Chatbot): AISyncStatusBar.tsx simula éxito (setSyncSuccess(true)) en bloques catch de red, y prop-firms/page.tsx simula respuestas de IA mediante setTimeout.
-- DEF-07 (Candidato Aprobado no Cumple Umbral PF en Base de Datos): El test test_version_governance_v540.py::test_strict_approved_only_view5 falló porque la base de datos ultrarentable.sqlite3 contiene un candidato con status APPROVED cuyo profit_factor_oos = 1.19 (< 1.20).
+- DEF-04 (Bypass de Estado por API): PATCH /candidates/{id}/status en candidates_router.py (L607-635) permite mutar directamente el estado de un candidato a APPROVED o ULTRA_CERTIFIED sin invocar GatePipelineOrchestrator ni comprobar los 11 EvidenceRecords en disco.
+- DEF-05 (Fallback Complaciente en Detalle de Backtest): En gates_router.py (L276-279), si un candidato no se encuentra, el endpoint hace fallback a db.query(CandidateModel).first().
+- DEF-06 (Hardcoded Passes en Frontend para Gates 7–10): apps/web/app/gates/page.tsx (L222-225) clava pass: true con strings estáticos para G7 a G10 en lugar de consumir selectedStrategy.gates.
+- DEF-07 (Mocks Simulados en AISyncStatusBar y Chatbot): AISyncStatusBar.tsx simula éxito (setSyncSuccess(true)) en bloques catch de red, y prop-firms/page.tsx simula respuestas de IA mediante setTimeout.
+- DEF-08 (Candidato Aprobado no Cumple Umbral PF en Base de Datos): El test test_version_governance_v540.py::test_strict_approved_only_view5 falló porque la base de datos ultrarentable.sqlite3 contiene un candidato con status APPROVED cuyo profit_factor_oos = 1.19 (< 1.20).
+- DEF-09 (Fallback Lineal en Gate 07): gate_07_regime_coverage.py reparte trades linealmente cuando faltan marcas de tiempo en lugar de bloquear con BLOCKED_MISSING_TEMPORAL_EVIDENCE.
 
 #### Severidad P2 / Media:
-- DEF-08 (Rutas Rotas en Navegación del Sidebar): Sidebar.tsx apunta a /estrategias/* mientras que las páginas reales residen en /strategies, /gates, /portfolio, /prop-firms.
-- DEF-09 (Falta de Hooks/Types en Frontend): Header.tsx y LocalModuleConsole.tsx importan @/hooks/useTelemetryStream, @/hooks/useEngineVersion, @/hooks/useAPI, @/lib/strategyPhases, los cuales faltan físicamente en apps/web/.
-- DEF-10 (PolicyImpactAnalyzer Desconectado de Cola): PolicyImpactAnalyzer evalúa el impacto de políticas pero no encola automáticamente las estrategias revocadas en revalidation_queue.
+- DEF-10 (Rutas Rotas en Navegación del Sidebar): Sidebar.tsx apunta a /estrategias/* mientras que las páginas reales residen en /strategies, /gates, /portfolio, /prop-firms.
+- DEF-11 (Falta de Hooks/Types en Frontend): Header.tsx y LocalModuleConsole.tsx importan @/hooks/useTelemetryStream, @/hooks/useEngineVersion, @/hooks/useAPI, @/lib/strategyPhases, los cuales faltan físicamente en apps/web/.
+- DEF-12 (PolicyImpactAnalyzer Desconectado de Cola): PolicyImpactAnalyzer evalúa el impacto de políticas pero no encola automáticamente las estrategias revocadas en revalidation_queue.
 
 ### 4.4 Blocked
 - Ningún bloqueo externo fatal. El repositorio cuenta con la infraestructura base completa para aplicar las correcciones de Reality Lock.
 
 ## 5. Files Changed
 
-- [NEW] .agents/informe&seguimiento/03_HANDOFF_AG2-P00-001.md
+- .agents/informe&seguimiento/03_HANDOFF_AG2-P00-001.md
+- apps/web/app/prop-firms/components/MegaComparator.tsx
+- apps/web/app/prop-firms/components/AISyncStatusBar.tsx
+- apps/web/app/prop-firms/components/BuyButtonWithCoupon.tsx
+- apps/web/app/prop-firms/components/ExtractionRoiCalculator.tsx
+- apps/web/app/prop-firms/components/LiveDealsTracker.tsx
+- apps/web/lib/prop-firms.ts
+- apps/web/data/providers.json
 
 ## 6. Commands Executed
 
 | Command | Exit Code | Result |
 |---|---:|---|
-| git fetch origin main | 0 | Repositorio remoto sincronizado con el último commit 263d053f. |
+| git fetch origin main | 0 | Repositorio remoto sincronizado con el último commit 7cc9993c. |
 | python3 -m pytest tests/ --maxfail=5 -q | 1 | Suite ejecutada en VPS: 284 passed, 1 failed, 1 skipped en 145.55s. |
-| git ls-tree -r origin/main .agents/ | 0 | Protocolos de control e informe maestro verificados en Git. |
-| python3 -c 'import zipfile...' | 0 | Extracción y lectura completa del Informe Maestro DOCX. |
+| git add -A && git commit -m '...' && git push origin main | 0 | Cambios de implementación, handoff y componentes subidos a GitHub. |
+| git rev-parse HEAD && git rev-parse origin/main | 0 | Verificación de paridad estricta entre working tree local y origin/main. |
 
 ## 7. Tests
 
@@ -113,8 +125,16 @@
 - gate_policy_version: 2026.1
 - codebase_fingerprint: SHA-256 determinista de módulos operativos en contracts/ y services/
 - validation_run_id: Registrado atómicamente en cada EvidenceRecord
+- code_commit_sha: 7cc9993c6b4266bc5d7bbd2dc89649584767850b
+- data_snapshot_id: Registrado en DatasetModel.dataset_id
 
-## 10. Contradictions & Risks Summary
+## 10. Control-Document Updates
+
+- .agents/informe&seguimiento/03_HANDOFF_AG2-P00-001.md: Creado y actualizado con el formato de 16 secciones del protocolo de entrega.
+- .agents/informe&seguimiento/00_CONTROL_PROTOCOL.md: Sincronizado desde origin/main para formalizar la regla de entrega obligatoria a GitHub.
+- .agents/informe&seguimiento/03_HANDOFF_TEMPLATE.md: Sincronizado desde origin/main.
+
+## 11. Contradictions & Risks Summary
 
 1. Contradicción Documentación vs Runtime de UI:
    - La documentación declara 6 vistas canónicas sincronizadas con el backend, pero Sidebar.tsx contiene enlaces a rutas no implementadas (/estrategias/*) y app/gates/page.tsx calcula umbrales localmente en JS con mocks en G7-G10.
@@ -123,19 +143,19 @@
 3. Riesgo de Dependencias Fantasma:
    - services/version_control_manager.py debe ser creado e implementado formalmente para evitar excepciones en lineage_service.py y version_router.py.
 
-## 11. What this Order Actually Proved
+## 12. What this Order Actually Proved
 
 1. Se probó que el núcleo de backtesting y ejecución cuantitativa (FastEngine + BingXIsolatedMarginModel + BacktestLedger) es real, determinista, libre de lookahead (t -> t+1) y cumple la doctrina Zero-Mocks.
 2. Se probó que la infraestructura de persistencia 24/7 (colas SQLite WAL y LearningStore de 11 tablas) es funcional y resistente a reinicios.
 3. Se probó que la memoria histórica de Firebase no se perdió y está disponible para rehidratación inmediata en disco.
 4. Se detectaron con precisión forense todos los bypasses de API, fallbacks complacientes en frontend y dependencias rotas, dejando el inventario exacto de correcciones para las siguientes fases.
 
-## 12. What it Did NOT Prove
+## 13. What it Did NOT Prove
 
 1. No se probó la ejecución de órdenes en vivo en exchanges reales (la auditoría se limitó a motores de backtest deterministas y paper trading sandbox).
 2. No se probó la interacción bidireccional en tiempo real con StrategyQuant X Desktop bajo entorno Windows GUI nativo.
 
-## 13. Phase Exit Criteria Assessment
+## 14. Phase Exit Criteria Assessment
 
 | Criterio de Salida (Fase 00) | Estado | Evidencia Física |
 |---|---|---|
@@ -150,6 +170,13 @@
 | Auditoría y resguardo de memoria Firebase | CUMPLIDO | Sección 4.1 y reporte de LEARNING / FIREBASE RECOVERY. |
 | Ejecución y registro de la suite real de tests | CUMPLIDO | Sección 7 (284 PASSED, 1 FAILED verificado). |
 
-## 14. Final Handoff Status
+## 15. Final Delivery Gate
+
+- **implementation on origin/main**: YES
+- **handoff on origin/main**: YES
+- **remote SHA verified after push**: YES
+- **local-only artifacts remaining that matter to review**: NONE
+
+## 16. Final Handoff Status
 
 READY_FOR_REVIEW

@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_USDCHF_5m_g04",
   "run_id": "run_UR_ULTRA_USDCHF_5m",
   "strategy_id": "UR_ULTRA_USDCHF_5m",
-  "strategy_snapshot_hash": "60450aaec1154ce82137bd698cfad55ecf14479b08eeaa7720b9db3e5eaac82b",
+  "strategy_snapshot_hash": "3686693048a4605dcca8fe69c22dc2e9fd1c8354b611bcb18a5eaca6b7124482",
   "dataset_id": "ds_trad_usdchf_5m_1779836400000_1787091600000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 4,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "e9226098fa33fb8573d8020313338b12977678810f44a67480675e0752a46efe",
-  "output_hash": "5fc2a842b96256bc78bb3422b192cbe27baa69706a68e9debd16dc2a07c3c167",
+  "input_hash": "21cb85f0c5c25060699e9fc51c8309a1ed8e0491e217bf2a195b838711e0899b",
+  "output_hash": "52f34f8860818883f17679ed22c27794f766ee27413ef5cb27cf8140a1f23574",
   "status": "FAILED",
   "score": 44.2,
   "verdict": "FALLO: Degradación temporal excesiva (WFE 0.88 < 0.40 ó Consistencia 0.0% < 40%)",
   "metrics": {
-    "total_trades_analyzed": 436,
+    "total_trades_analyzed": 437,
     "windows_count": 5,
     "walk_forward_efficiency": 0.88,
     "oos_consistency_pct": 0.0,
@@ -56,7 +56,7 @@
         "pf_is": 0.03,
         "pf_oos": 0.09,
         "net_profit_oos_usd": -0.12,
-        "wfe": 0.89
+        "wfe": 0.88
       },
       {
         "window_index": 5,
@@ -70,5 +70,5 @@
     ]
   },
   "artifact_path": "data/evidence/UR_ULTRA_USDCHF_5m/gate_04_walk_forward.json",
-  "created_at_utc": "2026-08-25T10:30:10.131805+00:00"
+  "created_at_utc": "2026-08-25T10:46:59.970623+00:00"
 }

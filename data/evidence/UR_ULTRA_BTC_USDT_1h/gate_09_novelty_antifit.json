@@ -2,22 +2,22 @@
   "evidence_id": "ev_UR_ULTRA_BTC_USDT_1h_g09",
   "run_id": "run_UR_ULTRA_BTC_USDT_1h",
   "strategy_id": "UR_ULTRA_BTC_USDT_1h",
-  "strategy_snapshot_hash": "0c44d84066123289cee5504d627a2b7a8593b288575b9abeaa8549757a4d533f",
+  "strategy_snapshot_hash": "3ade6fbd0d57e0ef9edc54eb8add095f3410d548da870850c09f8eb17204ff1b",
   "dataset_id": "ds_binance_btcusdt_1h_1695290400000_1787086800000.json",
-  "dataset_sha256": "dd62b80aa3a9ea360f52d94f30b888f673ab79af04a30d798de71bc72df0f57c",
+  "dataset_sha256": "universal_real_sha256",
   "gate_id": 9,
   "gate_name": "NOVELTY_ANTIFIT",
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "03cf40c3a3a39c31017c8e2c7d26b8eb0bfe70d20940744bdf7e448ed99ed2a9",
-  "output_hash": "06397271e21dd60c9fcebac5fe422aa2020f8a58582adc03ed21703444004719",
+  "input_hash": "ce28dcf0636b0e87a57cf6838e5c83dd6bbf1bb50dfc0825a87a94840c0edcf9",
+  "output_hash": "5005fd5e34fb1b78f6e57cc32012a8cb48d371293cba57f87e89952856f211ef",
   "status": "FAILED",
   "score": 40.0,
-  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 1.0 o Estabilidad 100.0% < 50.0%)",
+  "verdict": "FALLO: Fragilidad ante perturbación paramétrica (DoF 1.5 o Estabilidad 100.0% < 50.0%)",
   "metrics": {
     "parameters_count": 8,
-    "degrees_of_freedom_ratio": 1.0,
+    "degrees_of_freedom_ratio": 1.5,
     "min_dof_required": 10.0,
     "parameter_neighborhood_stability_pct": 100.0,
     "min_stability_required_pct": 50.0,
@@ -25,10 +25,10 @@
       0.0,
       0.0,
       0.0,
-      0.67
+      0.0
     ],
     "rebacktest_performed": true
   },
   "artifact_path": "data/evidence/UR_ULTRA_BTC_USDT_1h/gate_09_novelty_antifit.json",
-  "created_at_utc": "2026-08-25T10:39:09.710377+00:00"
+  "created_at_utc": "2026-08-25T10:47:47.086736+00:00"
 }

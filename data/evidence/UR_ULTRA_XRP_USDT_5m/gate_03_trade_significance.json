@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_XRP_USDT_5m_g03",
   "run_id": "run_UR_ULTRA_XRP_USDT_5m",
   "strategy_id": "UR_ULTRA_XRP_USDT_5m",
-  "strategy_snapshot_hash": "57f256e7a48c2b85b0070f56bdf24d4877503d6e818e461fc9e5280f6c654a9a",
+  "strategy_snapshot_hash": "7074c710d46ddff5223f777f63ce015a1f3785a957fac470008840d2703560e2",
   "dataset_id": "ds_binance_xrpusdt_5m_1784389500000_1787089200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 3,
@@ -10,13 +10,13 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "ffda7169085f0ae3af5d45bb1d32bd302712fdfe637567db6312a8ba6ab944e4",
-  "output_hash": "9a0d1e643c7745b6ca2d9c7c30d40ab9ddf980b85a9ff51ea400153ec2308c81",
+  "input_hash": "2d5482c0cf2cd1821c8b3062065c0fb386231bdc746deeb7008f3a22b68a7d2a",
+  "output_hash": "a092af7bac555b5657a1e81cad40bcf6ccbacb0423cca52f020fdf198f896c57",
   "status": "FAILED",
   "score": 10.0,
-  "verdict": "FALLO: Muestra insuficiente (18 IS < 15 ó 0 OOS < 10)",
+  "verdict": "FALLO: Muestra insuficiente (16 IS < 15 ó 0 OOS < 10)",
   "metrics": {
-    "trades_is": 18,
+    "trades_is": 16,
     "trades_oos": 0,
     "top2_outlier_dependency_pct": 100.0,
     "min_is_required": 15,
@@ -24,5 +24,5 @@
     "route_mode": "ULTRA_ASYMMETRIC"
   },
   "artifact_path": "data/evidence/UR_ULTRA_XRP_USDT_5m/gate_03_trade_significance.json",
-  "created_at_utc": "2026-08-25T10:30:31.202447+00:00"
+  "created_at_utc": "2026-08-25T10:47:19.812927+00:00"
 }
