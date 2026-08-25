@@ -96,6 +96,52 @@ Do not turn this into a cosmetic UI redesign.
 
 The implementing agent cannot be the sole verifier.
 
+## VPS / SSH execution — NON-BLOCKING MANDATORY
+
+Antigravity has SSH access to the VPS specifically so it can execute the real project tests and commands. Use it, but **do not remain blocked waiting for a long-running command**.
+
+For any command that may take more than a few seconds, especially the full regression suite:
+
+1. Launch it asynchronously/detached via `nohup`, `systemd-run --user`, `tmux`, the durable queue, or another idempotent runner.
+2. Assign a `remote_job_id` and record the exact command, target commit SHA, start time, log path and expected artifacts.
+3. Return immediately to other useful work with the subagents: code review, static analysis, reconciliation, evidence review, additional focused tests, provenance checks, documentation or UI/API inspection.
+4. Poll the remote job at bounded intervals; do not keep the SSH session attached for 10–20 minutes.
+5. Prefer incremental log and exit-status checks.
+6. If the job becomes slow/stuck, diagnose it from process/log state; do not simply wait.
+7. If safe, restart idempotently; otherwise report `BLOCKED` with real evidence.
+
+A message like `Esperando la finalización de toda la suite` is not acceptable for a long-running job. The orchestrator must keep making independent progress.
+
+### Remote test truth
+
+Until a remote job has a real exit code and the expected artifacts/logs:
+
+- `PASS` = **NOT PROVEN**
+- `UNVERIFIED` = `UNVERIFIED`
+- timeout = `UNVERIFIED` or `FAILED`, never `PASS`
+
+Never replace a slow/missing result with an estimate, cached result, synthetic output or forced green status.
+
+## ZERO-SIMULATION / ZERO-FORCING — ABSOLUTE
+
+This order must maintain:
+
+`ZERO-SIMULATION = ON`
+`ZERO-FORCING = ON`
+
+Never:
+
+- invent trades, metrics, equity curves or gate evidence;
+- inject synthetic data to make tests pass;
+- change tests only to make them green;
+- weaken gates because too few candidates survive;
+- hide a failed/timeout remote job;
+- claim a test passed before its real exit status exists;
+- reuse output from another commit as proof for this commit;
+- create placeholder evidence presented as real evidence.
+
+Fixtures/mocks are allowed only in explicitly isolated unit tests and are never quantitative or certification evidence.
+
 ## Required verification
 
 Run real tests for:
@@ -132,7 +178,8 @@ Before reporting `READY_FOR_REVIEW`, Antigravity MUST:
 5. verify local HEAD equals `origin/main` at the final SHA;
 6. create `.agents/informe&seguimiento/03_HANDOFF_AG2-P00-002.md`;
 7. include the verified remote SHA in the handoff;
-8. ensure all versionable evidence/manifests/docs for the order are present on `main`.
+8. include `remote_job_id`, remote command, status, exit code and artifact/log paths for every asynchronous job;
+9. ensure all versionable evidence/manifests/docs for the order are present on `main`.
 
 Local-only work is not delivered.
 
@@ -152,6 +199,7 @@ It must include:
 - every subagent and finding;
 - files changed;
 - exact commands + exit codes;
+- every remote job ID + remote status/exit code;
 - tests and failures;
 - evidence/hashes/IDs;
 - P0/P1 dispositions;
