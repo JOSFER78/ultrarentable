@@ -3,14 +3,14 @@
 ## Current authority
 
 - `CURRENT_PHASE`: 02
-- `PHASE_STATUS`: ACTIVE
+- `PHASE_STATUS`: REWORK
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-P02-001
+- `ACTIVE_ORDER_ID`: AG2-P02-002
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-1710-P02-001`
-- `LAST_ACKNOWLEDGED_ORDER`: AG2-P01-005
-- `LAST_HANDOFF`: `03_HANDOFF_AG2-P01-005.md`
-- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P01-005.md` (`APPROVED_FOR_NEXT_PHASE`)
+- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-1730-P02-002`
+- `LAST_ACKNOWLEDGED_ORDER`: AG2-P02-001
+- `LAST_HANDOFF`: `03_HANDOFF_AG2-P02-001.md`
+- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P02-001.md` (`REWORK`)
 - `NEXT_ORDER`: `PHASE 03 LOCKED`
 
 ## Watcher contract
@@ -40,8 +40,8 @@ Antigravity MUST execute only the active order and only the active phase/subphas
 At the end of every order Antigravity must push implementation, tests, evidence, handoff and final SHA to `origin/main`. Local-only completion is not completion.
 
 ## Current transition
-Phase 01 order `AG2-P01-005` was delivered as `READY_FOR_REVIEW`. External review `04_REVIEW_AG2-P01-005.md` released Phase 01 and authorized Phase 02. fileciteturn199file0
+Phase 02 order `AG2-P02-001` was delivered as `READY_FOR_REVIEW`. External review found incomplete hash identity, insufficient proof of runtime consumption, possible duplicate strategy authorities and silent production defaults.
 
-Active order: `AG2-P02-001` — Canonical Strategy & Execution Contract.
+Active corrective order: `AG2-P02-002` — Canonical Hash Completeness + Runtime Consumption + Single Strategy SSOT + Fail-Closed Defaults.
 
-Phase 03 remains locked until Phase 02 is independently reviewed and explicitly released.
+Phase 03 remains locked until Phase 02 rework is independently verified and explicitly released.
