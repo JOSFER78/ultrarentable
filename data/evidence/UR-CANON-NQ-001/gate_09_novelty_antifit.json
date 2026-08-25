@@ -1,24 +1,21 @@
 {
-  "evidence_id": "ev_UR-CANON-NQ-001_g09",
-  "run_id": "run_UR-CANON-NQ-001",
-  "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "d824c77c94938fadf423fd3eb1273c8aafae1669f76f2d51fd266a3563c0dd21",
-  "dataset_id": "ds_primary",
-  "dataset_sha256": "sha256_unverified",
   "gate_id": 9,
-  "gate_name": "NOVELTY_ANTIFIT",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.4.0",
-  "formula_version": "5.4.0",
-  "input_hash": "467fea39791ffff043194dc5584a60f92124a8b6fb50b98159ec9d3dab6e3588",
-  "output_hash": "697e8dab77855e71986e1c734378c1dd0f864755240468393659410534293d4d",
-  "status": "FAILED",
-  "score": 0.0,
-  "verdict": "RECHAZADO / BLOCKED: Velas o StrategySnapshot ausentes para re-backtesting físico de vecindario",
-  "metrics": {
-    "degrees_of_freedom": 100.0,
-    "rebacktest_performed": false,
-    "perturbed_pfs": []
-  },
-  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_09_novelty_antifit.json"
+  "name": "NOVELTY_ANTIFIT",
+  "passed": false,
+  "score": 33.0,
+  "verdict": "FALLO: Fragilidad ante perturbaci\u00f3n param\u00e9trica (DoF 60.1 o Estabilidad 82.5% < 50.0%)",
+  "evidence": {
+    "parameters_count": 10,
+    "degrees_of_freedom_ratio": 60.1,
+    "min_dof_required": 10.0,
+    "parameter_neighborhood_stability_pct": 82.5,
+    "min_stability_required_pct": 50.0,
+    "perturbed_neighborhood_pfs": [
+      1.04,
+      1.06,
+      1.05,
+      1.04
+    ],
+    "rebacktest_performed": true
+  }
 }

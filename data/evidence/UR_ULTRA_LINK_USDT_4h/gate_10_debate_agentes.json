@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_LINK_USDT_4h_g10",
   "run_id": "run_UR_ULTRA_LINK_USDT_4h",
   "strategy_id": "UR_ULTRA_LINK_USDT_4h",
-  "strategy_snapshot_hash": "6906084a9d52a9eadeee96036e4b82f1119f09c085bc7130d707d8efb2815665",
+  "strategy_snapshot_hash": "7ed65f21ca1d429abc77553965a58336fda789843bc91b68415c05cac072e1a8",
   "dataset_id": "ds_binance_linkusdt_4h_1635897600000_1787083200000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,33 +10,33 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "8a51c532600ac8cc01784fb56269cbebcc20f04da0ea56404d471436b2e6eb0d",
-  "output_hash": "4476c7a7c60b07c55626117cacca1034e25617bcdbd523777487695364d766bb",
+  "input_hash": "59fc2e5245d984d48f5b6a666ec5997d120a6a68ad188dd73c92befaacf4364b",
+  "output_hash": "cdb586b82589ea195f364b8828dc53737cc991b7eb3c0bb5ec356e35e390656a",
   "status": "PASSED",
-  "score": 51.3,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (51.3/100 · Guía de Mejora Generada)",
+  "score": 58.1,
+  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (58.1/100 · Guía de Mejora Generada)",
   "metrics": {
-    "consensus_score": 51.3,
+    "consensus_score": 58.1,
     "evaluators_count": 5,
     "verdict_status": "SEMANTIC_AUDIT_PASSED",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 60.0,
+        "score": 71.7,
         "findings": [
           "Activo y Timeframe: LINK (4h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.11 con beneficio neto de $564.52.",
+          "Profit Factor OOS: 1.37 con beneficio neto de $3003.66.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
-        "approved": false
+        "approved": true
       },
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
         "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 96.2% (Límite permitido para ULTRA: 85.0%).",
+          "Drawdown Máximo Observado: 88.2% (Límite permitido para ULTRA: 85.0%).",
           "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
         "approved": false
@@ -46,7 +46,7 @@
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 345 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 419 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,19 +54,19 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 81.8,
+        "score": 100.0,
         "findings": [
-          "Beneficio medio por operación: $1.64 USD.",
-          "Margen de seguridad ante slippage: VULNERABLE."
+          "Beneficio medio por operación: $7.17 USD.",
+          "Margen de seguridad ante slippage: ROBUSTO."
         ],
         "approved": true
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 60.4,
+        "score": 67.9,
         "objections": [
-          "Alerta de Drawdown: DD (96.2%) cercano o superior al límite tolerable (85.0%)."
+          "Alerta de Drawdown: DD (88.2%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
           "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."

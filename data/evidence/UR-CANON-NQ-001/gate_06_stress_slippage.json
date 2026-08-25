@@ -1,50 +1,38 @@
 {
-  "evidence_id": "ev_UR-CANON-NQ-001_g06",
-  "run_id": "run_UR-CANON-NQ-001",
-  "strategy_id": "UR-CANON-NQ-001",
-  "strategy_snapshot_hash": "d824c77c94938fadf423fd3eb1273c8aafae1669f76f2d51fd266a3563c0dd21",
-  "dataset_id": "ds_primary",
-  "dataset_sha256": "sha256_unverified",
   "gate_id": 6,
-  "gate_name": "STRESS_SLIPPAGE",
-  "engine": "UltrarentableQuantitativeCore",
-  "engine_version": "5.4.0",
-  "formula_version": "5.4.0",
-  "input_hash": "66a9ff893b290d21334387409a7002ee61d4200ec91584d16a8f83ee7789b7ed",
-  "output_hash": "91e37f15fac2cfbca00ba25abfa4e51072f8fc8955fba3e3b5f919599853f214",
-  "status": "PASSED",
+  "name": "STRESS_SLIPPAGE",
+  "passed": true,
   "score": 100.0,
-  "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricción verificada (4/4 escenarios aprobados)",
-  "metrics": {
+  "verdict": "PASSED (ALTA ROBUSTEZ): Resistencia a fricci\u00f3n verificada (4/4 escenarios aprobados)",
+  "evidence": {
     "scenarios": {
       "Base": {
         "friction_penalty_per_trade_usd": 0.0,
-        "stressed_net_pnl_usd": 3899.99,
-        "stressed_profit_factor": 4.55,
+        "stressed_net_pnl_usd": 510.97,
+        "stressed_profit_factor": 33.78,
         "survived": true
       },
       "+1_Sigma": {
-        "friction_penalty_per_trade_usd": 0.55,
-        "stressed_net_pnl_usd": 3872.54,
-        "stressed_profit_factor": 4.49,
+        "friction_penalty_per_trade_usd": 0.15,
+        "stressed_net_pnl_usd": 476.68,
+        "stressed_profit_factor": 10.79,
         "survived": true
       },
       "+2_Sigma": {
-        "friction_penalty_per_trade_usd": 1.1,
-        "stressed_net_pnl_usd": 3845.08,
-        "stressed_profit_factor": 4.43,
+        "friction_penalty_per_trade_usd": 0.3,
+        "stressed_net_pnl_usd": 442.33,
+        "stressed_profit_factor": 6.4,
         "survived": true
       },
       "+3_Sigma": {
-        "friction_penalty_per_trade_usd": 2.2,
-        "stressed_net_pnl_usd": 3790.18,
-        "stressed_profit_factor": 4.31,
+        "friction_penalty_per_trade_usd": 0.59,
+        "stressed_net_pnl_usd": 373.8,
+        "stressed_profit_factor": 3.53,
         "survived": true
       }
     },
     "passed_scenarios_count": 4,
-    "min_required_scenarios": 2,
-    "base_friction_usd": 3.0
-  },
-  "artifact_path": "data/evidence/UR-CANON-NQ-001/gate_06_stress_slippage.json"
+    "min_required_scenarios": 1,
+    "base_friction_usd": 0.35
+  }
 }

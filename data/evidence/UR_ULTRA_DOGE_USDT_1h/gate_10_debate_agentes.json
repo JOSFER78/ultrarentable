@@ -2,7 +2,7 @@
   "evidence_id": "ev_UR_ULTRA_DOGE_USDT_1h_g10",
   "run_id": "run_UR_ULTRA_DOGE_USDT_1h",
   "strategy_id": "UR_ULTRA_DOGE_USDT_1h",
-  "strategy_snapshot_hash": "01663c05650706aa824470bbb60e32ddf000cbee8ac7a02c621ad91ed96129ea",
+  "strategy_snapshot_hash": "b70015c98b24f7a8f6b099d81ce869801fd02284b746713349ea53a2d7dac2e1",
   "dataset_id": "ds_binance_dogeusdt_1h_1695290400000_1787086800000.json",
   "dataset_sha256": "universal_real_sha256",
   "gate_id": 10,
@@ -10,23 +10,23 @@
   "engine": "UltrarentableQuantitativeCore",
   "engine_version": "5.4.0",
   "formula_version": "5.4.0",
-  "input_hash": "b019e79ba07bf672f2c3cc789b7be57f23a16a7c55488284da7f843bf5b6113b",
-  "output_hash": "584ea74e636da149f29b813860e4c7b94575de39640bd49c995fd440348ec38b",
-  "status": "PASSED",
-  "score": 89.3,
-  "verdict": "PASSED: Diagnóstico y Consenso Semántico Completado (89.3/100 · Guía de Mejora Generada)",
+  "input_hash": "e9371f9d5f6efbf51f184ca26d3514541188845b3df7c2a53422fee262effaec",
+  "output_hash": "58ad308ada5af0c0764b42c93db3fe5e602efcdf66eb2a7f913061afc07b20c4",
+  "status": "FAILED",
+  "score": 36.1,
+  "verdict": "EN REVISIÓN: Diagnóstico Semántico emitido con advertencias (36.1/100)",
   "metrics": {
-    "consensus_score": 89.3,
+    "consensus_score": 36.1,
     "evaluators_count": 5,
-    "verdict_status": "SEMANTIC_AUDIT_PASSED",
+    "verdict_status": "SEMANTIC_NEEDS_REFINEMENT",
     "specialists": [
       {
         "agent": "Research Specialist",
         "role": "Semántica de Mercado y Coherencia de Hipótesis",
-        "score": 95.5,
+        "score": 60.4,
         "findings": [
           "Activo y Timeframe: DOGE (1h) evaluado en ruta ULTRA.",
-          "Profit Factor OOS: 1.90 con beneficio neto de $6078.33.",
+          "Profit Factor OOS: 1.12 con beneficio neto de $-1000.00.",
           "Hipótesis: Captura de anomalías direccionales por ruptura de volatilidad y trailing ATR."
         ],
         "approved": true
@@ -34,19 +34,19 @@
       {
         "agent": "Risk & Tail-Risk Specialist",
         "role": "Auditoría de Drawdown, Ruina y Margen",
-        "score": 72.2,
+        "score": 0.0,
         "findings": [
-          "Drawdown Máximo Observado: 59.0% (Límite permitido para ULTRA: 85.0%).",
-          "Estado de Riesgo: DENTRO DE TOLERANCIA."
+          "Drawdown Máximo Observado: 100.0% (Límite permitido para ULTRA: 85.0%).",
+          "Estado de Riesgo: DRAWDOWN EXCEDIDO."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Statistical Inference Specialist",
         "role": "Significancia de Muestra y Outlier Risk",
         "score": 100.0,
         "findings": [
-          "Muestra fuera de muestra: 298 operaciones evaluadas (Mínimo requerido: 10).",
+          "Muestra fuera de muestra: 296 operaciones evaluadas (Mínimo requerido: 10).",
           "Grado de confianza: ALTO."
         ],
         "approved": true
@@ -54,30 +54,29 @@
       {
         "agent": "Execution & Microstructure Specialist",
         "role": "Impacto de Fricción, Comisiones y Fills",
-        "score": 100.0,
+        "score": 0.0,
         "findings": [
-          "Beneficio medio por operación: $20.40 USD.",
-          "Margen de seguridad ante slippage: ROBUSTO."
+          "Beneficio medio por operación: $-3.38 USD.",
+          "Margen de seguridad ante slippage: VULNERABLE."
         ],
-        "approved": true
+        "approved": false
       },
       {
         "agent": "Adversarial Forensics Specialist",
         "role": "Contradicciones, Objeciones y Detección de Trampas",
-        "score": 91.9,
+        "score": 40.1,
         "objections": [
-          "Cero objeciones críticas: Hipótesis robusta respaldada por evidencia empírica."
+          "Alerta de Drawdown: DD (100.0%) cercano o superior al límite tolerable (85.0%)."
         ],
         "recommendations": [
-          "Candidato óptimo listo para integración en Meta-Portafolios."
+          "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
         ],
         "approved": true
       }
     ],
     "recommendations": [
-      "Candidato óptimo listo para integración en Meta-Portafolios."
+      "Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo."
     ]
   },
-  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1h/gate_10_debate_agentes.json",
-  "created_at_utc": "2026-08-25T11:35:28.976061+00:00"
+  "artifact_path": "data/evidence/UR_ULTRA_DOGE_USDT_1h/gate_10_debate_agentes.json"
 }

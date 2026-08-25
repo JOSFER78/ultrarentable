@@ -690,13 +690,17 @@ def update_candidate_status(
     
     audit = AuditEventModel(
         event_id=f"evt_status_{int(time.time())}_{candidate_id}",
-        event_type="CANDIDATE_STATUS_CHANGE",
-        actor="API_USER",
-        details_json=json.dumps({
+        category="RULE_CHANGE",
+        route=c.route or "SYSTEM",
+        title=f"Cambio de estado: {candidate_id} -> {payload.status}",
+        description=f"Status mutation: {old_status} -> {payload.status}. Reason: {payload.reason}",
+        severity="INFO",
+        metadata_json=json.dumps({
             "candidate_id": candidate_id,
             "old_status": old_status,
             "new_status": payload.status,
             "reason": payload.reason,
+            "actor": "API_USER",
         }),
     )
     db.add(audit)
