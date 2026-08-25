@@ -1,211 +1,220 @@
-# ANTIGRAVITY 2.0 — WATCHER READ FIRST / ORDEN DE EJECUCIÓN
+# ANTIGRAVITY 2.0 — WATCHER: LEER ESTO PRIMERO
 
-## REGLA MÁS IMPORTANTE
+## MODELO ÚNICO Y SIMPLE
 
-**EL CRON NO DECIDE QUÉ TRABAJO HACER.**
+ULTRARENTABLE tiene **UN SOLO PLAN MAESTRO**:
 
-El cron solo detecta si **CHATGPT / REVISOR EXTERNO** ha publicado un NUEVO `dispatch_id` ejecutable.
+`.agents/informe&seguimiento/04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
 
-La cadena de autoridad es:
+Ese documento contiene TODAS las fases y el objetivo global del proyecto.
+
+**El plan maestro NO es una cola de trabajo.**
+**El plan maestro NO se ejecuta automáticamente.**
+**El plan maestro NO te dice qué fase debes ejecutar ahora.**
+
+La fase que debes ejecutar ahora la publica el Revisor Externo (ChatGPT) mediante una nueva orden y un nuevo `dispatch_id`.
+
+## TU TRABAJO COMO ANTIGRAVITY
+
+Tu comportamiento es siempre:
 
 ```text
-CHATGPT REVISA origin/main
-        ↓
-CHATGPT DECIDE la siguiente acción
-        ↓
-CHATGPT publica NUEVO dispatch_id + order_id
-        ↓
-CRON detecta el NUEVO dispatch_id
-        ↓
-ANTIGRAVITY ejecuta EXACTAMENTE esa orden
-        ↓
-HANDOFF + PUSH origin/main
-        ↓
+LEER ORDEN ACTIVA
+↓
+EJECUTAR SOLO ESA ORDEN
+↓
+SUBAGENTES
+↓
+IMPLEMENTAR / PROBAR / VERIFICAR
+↓
+PUSH origin/main
+↓
+HANDOFF
+↓
 STOP
-        ↓
-CHATGPT vuelve a revisar
+↓
+ESPERAR NUEVA ORDEN DEL REVISOR EXTERNO
 ```
 
-## 1. LOS 3 ÚNICOS ARCHIVOS QUE DECIDEN SI HAY TRABAJO
+**NO debes decidir el siguiente trabajo.**
 
-En `origin/main` leer siempre, en este orden:
+## LOS 3 ARCHIVOS QUE DETERMINAN SI TIENES TRABAJO
+
+Lee desde `origin/main` únicamente:
 
 1. `.agents/informe&seguimiento/00_DISPATCH.md`
 2. `.agents/informe&seguimiento/01_CONTROL_STATE.md`
 3. `.agents/informe&seguimiento/02_CURRENT_ORDER.md`
 
-Estos tres archivos forman un **handshake indivisible**.
+Los tres deben apuntar al MISMO `order_id` y a la MISMA fase.
 
-### El resto NO es un trigger
+### Qué significa cada uno
 
-Los siguientes archivos son SOLO información/histórico:
+`00_DISPATCH.md` = **disparador**. Un `dispatch_id` NUEVO significa una nueva orden del Revisor Externo.
 
-- `04_REVIEW_*.md`
-- `03_HANDOFF_*.md`
-- `ORDER_README_FOR_ANTIGRAVITY.md`
-- `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md`
-- `07_*`, `08_*`, `09_*`, `10_*`, `11_*` históricos
-- DOCX
+`01_CONTROL_STATE.md` = **estado vivo**. Indica `CURRENT_PHASE` y `ACTIVE_ORDER_ID`.
 
-**Nunca iniciar una orden porque exista un REVIEW, HANDOFF, archivo histórico o cambio de plan.**
+`02_CURRENT_ORDER.md` = **orden exacta que debes ejecutar ahora**.
 
-## 2. CONDICIONES EXACTAS DE AUTO-START
+## EL PLAN MAESTRO
 
-Auto-start SOLO si TODAS se cumplen:
+Debes conocer el plan maestro para entender dónde encaja la orden actual, pero **NO debes avanzar por el plan por tu cuenta**.
+
+Ejemplo:
 
 ```text
-dispatch_id != last_processed_dispatch_id
-status == ISSUED
-order_id == ACTIVE_ORDER_ID
-target_phase == CURRENT_PHASE
-02_CURRENT_ORDER.order_id == dispatch.order_id
-02_CURRENT_ORDER.status == ISSUED
-no_other_dispatch_running == true
+PLAN MAESTRO
+  PHASE 00
+  PHASE 01
+  PHASE 02
+  PHASE 03
+  ...
+  PHASE 15
 ```
 
-Entonces:
+Si ChatGPT publica:
 
 ```text
-AUTO-START AHORA
+CURRENT_PHASE = 02
+ACTIVE_ORDER_ID = AG2-P02-003
+DISPATCH = D103
+STATUS = ISSUED
 ```
 
-No pedir confirmación al usuario.
+ejecutas **P02-003**.
 
-## 3. SI NO HAY NUEVO DISPATCH
-
-Si:
+Cuando terminas P02-003:
 
 ```text
-dispatch_id == last_processed_dispatch_id
-```
-
-y la orden ya tiene:
-
-```text
-03_HANDOFF_<same_order_id>.md
-status = READY_FOR_REVIEW
-```
-
-entonces el resultado correcto es:
-
-```text
-STANDBY / STOP
-```
-
-**NO buscar otra orden en archivos históricos.**
-
-**NO saltar de fase.**
-
-**NO inventar una siguiente tarea.**
-
-**NO ejecutar una orden antigua.**
-
-Esperar a que el Revisor Externo publique un NUEVO `dispatch_id`.
-
-## 4. CUANDO CHATGPT PUBLICA UNA NUEVA ORDEN
-
-Puede ser cualquier transición adaptativa:
-
-```text
-01.0 → 01.1
-01.1 → 01.REWORK.01
-01.REWORK.01 → 01.REWORK.02
-01.x → 02.0
-02.0 → 02.REWORK.01
-02.x → 03.0
-```
-
-Antigravity **NO interpreta el nombre** para decidir qué hacer.
-
-Solo ejecuta el `order_id` que aparece simultáneamente en:
-
-```text
-00_DISPATCH.md
-01_CONTROL_STATE.md
-02_CURRENT_ORDER.md
-```
-
-## 5. UNA ORDEN = UNA ÚNICA UNIDAD DE TRABAJO
-
-Una orden puede representar:
-
-- una fase;
-- una subfase;
-- un rework;
-- un redesign;
-- una resolución de bloqueo.
-
-Antigravity puede inspeccionar el repo completo, pero solo modifica lo autorizado por la orden.
-
-Cualquier otro problema:
-
-```text
-DEFERRED_TO_FUTURE_ORDER
-```
-
-## 6. CUANDO ANTIGRAVITY TERMINA
-
-La orden termina cuando:
-
-```text
-trabajo realizado
-+ tests reales
-+ evidencia real
-+ commit
-+ push origin/main
-+ SHA remoto verificado
-+ HANDOFF publicado
-```
-
-Entonces:
-
-```text
+HANDOFF READY_FOR_REVIEW
+PUSH origin/main
 STOP
 ```
 
-Antigravity NO debe:
+**NO empiezas P02-004.**
+**NO empiezas Phase 03.**
+**NO lees el plan y decides continuar.**
 
-- crear la siguiente fase;
-- crear otro dispatch;
-- interpretar `READY_FOR_REVIEW` como aprobación;
-- continuar arreglando el repo por iniciativa propia.
+Esperas a que ChatGPT publique el siguiente trabajo.
 
-## 7. QUIÉN DECIDE EL SIGUIENTE PASO
+## CUÁNDO AUTO-ARRANCAR
 
-**CHATGPT / REVISOR EXTERNO.**
-
-Después de que Antigravity entregue:
+Auto-start SOLO cuando:
 
 ```text
-ChatGPT lee origin/main
-→ revisa código/diff/tests/evidencia
-→ decide:
-   REWORK
-   SUBPHASE
-   REDESIGN
-   BLOCK
-   NEXT_PHASE
-→ publica nueva orden + NUEVO dispatch_id
+dispatch_id es NUEVO
+AND status == ISSUED
+AND order_id == ACTIVE_ORDER_ID
+AND target_phase == CURRENT_PHASE
+AND 02_CURRENT_ORDER.order_id == dispatch.order_id
+AND 02_CURRENT_ORDER.status == ISSUED
 ```
 
-## 8. SSH / VPS
+Si todo coincide:
 
-SSH es para ejecutar el trabajo real. No mantener al orquestador bloqueado durante 10–20 minutos esperando una suite.
+```text
+AUTO-START
+```
 
-Jobs largos:
+No preguntes al usuario.
+
+## CUÁNDO ESTÁS EN ESPERA
+
+Si el `dispatch_id` actual ya fue ejecutado y existe su handoff:
+
+```text
+STANDBY
+```
+
+Eso es correcto.
+
+No busques otra tarea en:
+
+```text
+03_HANDOFF_*.md
+04_REVIEW_*.md
+ordenes antiguas
+plan maestro
+DOCX
+README
+```
+
+Esos documentos NO generan trabajo.
+
+## QUIÉN ASIGNA EL SIGUIENTE TRABAJO
+
+**Solo ChatGPT / Revisor Externo.**
+
+El ciclo es:
+
+```text
+ANTIGRAVITY TERMINA
+↓
+PUSH MAIN + HANDOFF
+↓
+CHATGPT REVISA MAIN
+↓
+CHATGPT DECIDE EL SIGUIENTE TRABAJO
+↓
+CHATGPT PUBLICA NUEVO dispatch_id + nueva orden
+↓
+CRON LO DETECTA
+↓
+ANTIGRAVITY EJECUTA
+```
+
+El siguiente trabajo puede ser:
+
+```text
+misma fase / corrección
+subfase
+redesign
+siguiente fase
+```
+
+Pero **solo cuando ChatGPT lo publique**.
+
+## UNA ORDEN = UN SOLO ALCANCE
+
+Puedes inspeccionar todo el repositorio para entender dependencias, pero solo modificas lo autorizado por la orden activa.
+
+Todo lo demás:
+
+`DEFERRED_TO_FUTURE_ORDER`
+
+## GITHUB ES LA ENTREGA
+
+Workspace real:
+
+`/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
+
+Pero la superficie que revisa ChatGPT es:
+
+`origin/main`
+
+Por tanto:
+
+> **Si no está en `origin/main`, no está entregado.**
+
+Al finalizar debes dejar en `main` el código, tests, evidencia, handoff y cambios de control versionables que correspondan a la orden.
+
+## SSH / VPS
+
+Los trabajos largos deben ejecutarse de forma asíncrona:
 
 ```text
 SSH
-→ detached/async
+→ detached job
 → remote_job_id
-→ logs/status/exit code
-→ seguir trabajando con subagentes
-→ polling acotado
+→ logs/status
+→ continuar con subagentes
+→ polling
+→ exit code real
 ```
 
-Timeout o ausencia de evidencia = `UNVERIFIED`, nunca `PASS`.
+Nunca quedarte esperando 10–20 minutos una suite remota.
 
-## 9. ZERO ABSOLUTE
+## ZERO ABSOLUTE
 
 ```text
 ZERO-MOCK
@@ -216,53 +225,62 @@ REAL-ONLY
 EVIDENCE-GATED
 ```
 
-Nunca inventar una orden, una estrategia, un dataset, una métrica o un resultado para “hacer avanzar” el sistema.
+Nunca inventar datos, estrategias, trades, curvas, hashes, métricas, resultados o evidencia para completar una fase.
 
-## 10. EJEMPLO ACTUAL
+## EJEMPLO
 
-Si GitHub dice:
+### ChatGPT publica
 
 ```text
-00_DISPATCH:
-  dispatch_id = D100
-  order_id = AG2-P02-002
-  status = ISSUED
+00_DISPATCH
+  dispatch_id: D200
+  order_id: AG2-P03-001
+  status: ISSUED
 
-01_CONTROL_STATE:
-  CURRENT_PHASE = 02
-  ACTIVE_ORDER_ID = AG2-P02-002
+01_CONTROL_STATE
+  CURRENT_PHASE: 03
+  ACTIVE_ORDER_ID: AG2-P03-001
 
-02_CURRENT_ORDER:
-  order_id = AG2-P02-002
-  status = ISSUED
+02_CURRENT_ORDER
+  order_id: AG2-P03-001
+  status: ISSUED
 ```
 
-Antigravity ejecuta `AG2-P02-002`.
+### Antigravity
 
-Si después existe:
+Ejecuta `AG2-P03-001` y SOLO esa orden.
+
+### Cuando termina
 
 ```text
-03_HANDOFF_AG2-P02-002.md
+push origin/main
+create HANDOFF
 READY_FOR_REVIEW
-```
-
-y no existe un dispatch posterior:
-
-```text
-NO EXECUTAR NADA MÁS
 STOP
 ```
 
-Cuando ChatGPT publique:
+### Después
+
+ChatGPT puede publicar:
 
 ```text
-D101
-AG2-P02-003
-ISSUED
+D201 + AG2-P03-002
 ```
 
-el siguiente cron debe arrancar `AG2-P02-003` automáticamente.
+o:
+
+```text
+D201 + AG2-P04-001
+```
+
+o:
+
+```text
+D201 + AG2-P03-001-REWORK
+```
+
+Antigravity no elige cuál.
 
 ## REGLA FINAL
 
-> **NO BUSQUES TRABAJO EN LOS ARCHIVOS. BUSCA SOLO UN NUEVO `dispatch_id` EJECUTABLE EN `00_DISPATCH.md` Y VALÍDALO CONTRA `01_CONTROL_STATE.md` + `02_CURRENT_ORDER.md`. Si no existe, estás en STOP. Si existe y el handshake coincide, AUTO-START.**
+> **Existe un único Plan Maestro. Existe una única Orden Activa. Ejecuta solo la Orden Activa que ChatGPT haya publicado. Cuando la termines, sube todo a `origin/main` y STOP. No avances por el Plan Maestro. Espera al NUEVO `dispatch_id` que publicará ChatGPT.**
