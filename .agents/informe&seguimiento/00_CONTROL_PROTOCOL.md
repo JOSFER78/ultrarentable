@@ -2,13 +2,13 @@
 
 ## 1. Purpose
 
-This directory is the operational command channel between the external research reviewer and Antigravity 2.0.
+This directory is the **live command channel** between the external research reviewer and Antigravity 2.0.
 
-The existing `ULTRARENTABLE_Informe_Maestro_Learning_Firebase_Antigravity.docx` remains the **scientific/architectural master doctrine**. This directory is the **live execution and handoff layer**.
+The master DOCX remains the scientific/architectural doctrine. This directory is the operational control plane that tells Antigravity **what to execute now**.
 
-Antigravity has a scheduled watcher that checks this directory approximately every 3 minutes. The watcher must treat new or changed control documents as commands to inspect, acknowledge, execute, report and stop.
+Antigravity 2.0 runs a scheduled watcher approximately every 3 minutes. **The watcher is an automatic executor trigger, not a notification system.** When a new valid order/plan is published here, Antigravity must automatically start the authorized process on the next watcher cycle. No chat message, button click, manual prompt, or additional user confirmation is required.
 
-## 2. Two loops — do not confuse them
+## 2. Two loops — never confuse them
 
 ### Research runtime loop
 
@@ -20,137 +20,163 @@ The laboratory itself may operate 24/7 autonomously:
 
 Changes to the laboratory are externally gated:
 
-`ORDER -> ANTIGRAVITY + SUBAGENTS -> EVIDENCE -> STOP -> EXTERNAL REVIEW -> NEXT ORDER`
+`EXTERNAL REVIEW -> PUBLISH NEW ORDER/PLAN -> CRON DETECTS -> ANTIGRAVITY AUTO-STARTS -> SUBAGENTS -> IMPLEMENT/TEST -> HANDOFF -> STOP -> EXTERNAL REVIEW`
 
-The 24/7 runtime autonomy does **not** permit autonomous architectural changes, certification changes or phase advancement.
+Runtime autonomy does **not** permit autonomous architectural changes, certification changes or phase advancement.
 
-## 3. Source of authority
+## 3. Automatic trigger rule — critical
 
-Authority order for engineering work:
+A new control package is considered **actionable** when all of the following are true:
 
-1. Current repository code and executable behavior.
-2. Real tests/logs/evidence from the audited commit.
-3. This directory's latest valid control order.
-4. The master DOCX doctrine.
-5. Historical reports.
-6. UI text and agent claims.
+1. `01_CONTROL_STATE.md` names the phase as `READY` or `REWORK` and identifies the active order.
+2. `02_CURRENT_ORDER.md` has a new `order_id` not previously acknowledged by Antigravity.
+3. `02_CURRENT_ORDER.md` has `status: ISSUED`.
+4. The order's `target_phase` matches `CURRENT_PHASE`.
+5. The order is the only active order.
+6. The order is visible in the current Git branch fetched by the watcher.
 
-The external reviewer controls phase advancement.
+When these conditions are met:
 
-Antigravity must never infer that a phase is approved because tests are green or because a previous report claimed success.
+**DO NOT WAIT. DO NOT ASK FOR A HUMAN PROMPT. START AUTOMATICALLY.**
+
+The watcher must launch the Antigravity orchestration process for that order.
 
 ## 4. Cron/watcher protocol — every ~3 minutes
 
 At every watcher cycle Antigravity must:
 
-1. Inspect `.agents/informe&seguimiento/` for newly created or modified `.md` control files.
-2. Read `00_CONTROL_PROTOCOL.md` first.
-3. Read the current control-state/order file.
-4. Compare the command `order_id` and `issued_at` with the last acknowledged order.
-5. If there is no newer actionable order, do nothing except record a lightweight heartbeat if the system already supports it.
-6. If a newer order exists, acknowledge it before substantive work.
-7. Execute only that order.
-8. Use Antigravity subagents for substantive work.
-9. Produce the required evidence/handoff report.
-10. Mark the order `READY_FOR_REVIEW` or `BLOCKED`.
-11. STOP. Do not invent or execute the next order.
+1. Inspect `.agents/informe&seguimiento/` for control changes.
+2. Read `00_CONTROL_PROTOCOL.md`.
+3. Read `01_CONTROL_STATE.md`.
+4. Read `02_CURRENT_ORDER.md`.
+5. Read `04_MASTER_ADAPTIVE_IMPLEMENTATION_PLAN.md` when present/changed.
+6. Read the master DOCX when the order requires doctrine context.
+7. Compare `order_id`, `issued_at`, `status` and `target_phase` against the last acknowledged order.
+8. If there is no newer actionable order, do not start engineering work.
+9. If there is a newer actionable order, **AUTO-START** the order immediately.
+10. Before substantive edits, launch the required Antigravity subagents.
+11. Execute only the current order.
+12. Produce the required handoff/evidence report.
+13. Mark the order `READY_FOR_REVIEW` or `BLOCKED` in the handoff.
+14. STOP. Do not create or execute another order.
 
-Do not pollute the repo with a new order every three minutes. The watcher is a detector, not a task generator.
+The 3-minute cron therefore means:
 
-## 5. Order lifecycle
+`NEW ORDER PUBLISHED -> DETECTED <= next watcher cycle -> PROCESS STARTED AUTOMATICALLY`
 
-Every external order uses this lifecycle:
+It does **not** mean:
 
-`ISSUED -> ACKNOWLEDGED -> IN_PROGRESS -> EVIDENCE_READY -> UNDER_REVIEW`
+`NEW ORDER PUBLISHED -> WAIT FOR USER TO TELL ANTIGRAVITY TO START`.
 
-External reviewer may then decide:
+## 5. What happens after external approval
 
-`APPROVED | REJECTED | BLOCKED | REDESIGN`
+After ChatGPT audits a completed phase:
 
-Only an external reviewer can create the next actionable order.
+### APPROVED
 
-## 6. Required control files
+ChatGPT publishes:
 
-- `00_CONTROL_PROTOCOL.md` — immutable operating protocol.
-- `01_CONTROL_STATE.md` — current machine-readable phase/state.
-- `02_CURRENT_ORDER.md` — only actionable order.
-- `03_HANDOFF_<order_id>.md` — Antigravity's completed handoff.
-- `04_REVIEW_<order_id>.md` — external review decision.
-- `archive/` — completed historical orders/reviews; never used as active instructions.
+1. the external review decision;
+2. updated `01_CONTROL_STATE.md`;
+3. the next `02_CURRENT_ORDER.md` (new `order_id`);
+4. any new/updated phase plan or instruction document required by the adaptive scope.
 
-There must be exactly **one active order** at a time.
+At that point, **nothing else is required from the user**. The next cron cycle detects the new `order_id` and Antigravity automatically starts the next process.
 
-## 7. Antigravity 2.0 role
+### REJECTED / REWORK
 
-Antigravity is the principal implementation/orchestration agent.
+ChatGPT keeps the same `CURRENT_PHASE`, publishes a new rework `order_id`, and Antigravity automatically starts that rework package on the next cron cycle.
 
-It must:
+### BLOCKED
+
+ChatGPT publishes the unblock condition. Antigravity must not simulate the missing dependency. Once the real dependency is available and a new valid order is published, the cron automatically starts the unblock work.
+
+### REDESIGN
+
+ChatGPT replaces the old scope with a new bounded order. The next cron cycle automatically starts the redesigned work.
+
+## 6. Source of authority
+
+Authority for engineering work:
+
+1. Current executable repository state.
+2. Real test/log/evidence output from the audited commit.
+3. Latest valid control order in this directory.
+4. Master adaptive implementation plan.
+5. Master DOCX doctrine.
+6. Historical reports.
+7. UI text and agent claims.
+
+The external reviewer controls phase advancement. Antigravity never infers approval from green tests or from historical reports.
+
+## 7. Mandatory Antigravity role
+
+Antigravity is the principal **orchestrator/executor**. It must:
 
 - inspect the real repository;
-- decompose the authorized phase into bounded subtasks;
-- delegate substantive work to subagents;
-- integrate results;
+- decompose the authorized order;
+- launch and coordinate subagents;
+- integrate findings;
+- implement scoped changes;
 - execute real tests;
 - preserve provenance;
 - report negative findings;
-- stop when the order is satisfied or blocked.
+- produce the handoff;
+- stop.
 
-It must not:
+It may not:
 
-- approve its own work;
-- advance the phase;
-- certify strategies;
+- approve the phase;
+- advance `CURRENT_PHASE`;
+- create the next order;
+- certify a strategy on its own;
 - alter control authority;
-- hide failed subagent findings;
-- fabricate missing evidence;
-- weaken gates to increase yield.
+- hide failed findings;
+- weaken gates because yield is low;
+- fabricate missing evidence.
 
 ## 8. Mandatory subagent model
 
-For every non-trivial order, Antigravity should use the minimum independent set of relevant subagents. Typical roles:
+For non-trivial orders, Antigravity must use the smallest independent set of relevant subagents. Typical roles:
 
-1. **RECON / ARCHITECTURE** — current code paths, contracts, dependencies.
-2. **IMPLEMENTATION** — scoped code changes.
-3. **TEST / VERIFICATION** — focused and regression tests.
-4. **DATA / EVIDENCE** — dataset identity, hashes, ledgers, evidence.
-5. **RED-TEAM / ADVERSARIAL** — bypasses, fallbacks, leakage, stale evidence.
-6. **UI / PROVENANCE** — API/UI lineage when relevant.
-7. **DISCOVERY RESEARCH** — Genome, diversity, campaigns, fertility, trials when relevant.
-8. **LEARNING / FIREBASE** — historical learning recovery/persistence when relevant.
-9. **RELIABILITY** — jobs, heartbeat, resume, idempotency and failure recovery when relevant.
+1. RECON / ARCHITECTURE
+2. IMPLEMENTATION
+3. TEST / VERIFICATION
+4. DATA / EVIDENCE
+5. RED-TEAM / ADVERSARIAL
+6. UI / PROVENANCE
+7. DISCOVERY RESEARCH
+8. LEARNING / FIREBASE
+9. RELIABILITY
 
-Read-only investigations may run in parallel. Writes must be coordinated by the main Antigravity agent.
+Read-only investigations may run in parallel. Writes must be coordinated by the main Antigravity agent. An implementation subagent must not be the sole verifier of its own code.
 
-No implementing subagent may be the sole verifier of its own work.
+## 9. Mandatory review scope before handoff
 
-## 9. Mandatory phase review scope
+Antigravity must review all applicable dimensions:
 
-Before handoff, Antigravity must review all applicable dimensions:
-
-- functionality and actual runtime path;
-- canonical architecture / SSOT;
-- real data and versioned snapshots;
+- actual runtime path;
+- canonical SSOT/contracts;
+- real datasets and snapshots;
 - no-lookahead and deterministic execution;
-- costs, spread, slippage, margin and execution assumptions;
+- costs/spread/slippage/margin/execution assumptions;
 - trial accounting and multiple-testing exposure;
-- IS / Validation / blind OOS isolation;
+- IS/Validation/blind OOS separation;
 - evidence and hashes;
-- version invalidation / revalidation;
-- zero-mock / zero-simulation / zero-fallback behavior;
+- version invalidation/revalidation;
+- zero-mock/zero-simulation/zero-fallback behavior;
 - API/UI provenance;
 - regression behavior;
-- P0/P1 risks;
-- contradictions between docs and code.
-
-A green test suite is evidence, not automatic phase approval.
+- P0/P1 defects;
+- documentation/code contradictions.
 
 ## 10. Discovery-specific controls
 
-When an order touches strategy discovery, it must preserve:
+When Discovery is in scope, preserve:
 
 `DISCOVERY_SCORE != CERTIFICATION_STATUS`
 
-and the factory must be capable of:
+and require, where applicable:
 
 - Strategy Genome / behavioral fingerprint;
 - behavioral clustering and deduplication;
@@ -162,115 +188,83 @@ and the factory must be capable of:
 - cascaded cheap-to-expensive screening;
 - Fragility Score;
 - blind research / blind OOS protection;
-- learning from failures without learning to game the gates.
+- learning from failures without learning to game gates.
 
 High ROI is not proof of robust edge.
 
-## 11. Firebase / historical learning rule
+## 11. FONDEO rule
 
-If historical learning is reported to exist in Firebase/Firestore, the first recovery order is forensic only:
+`TRACK_FONDEO = FUTURES ONLY`.
 
-1. Do not write or delete.
-2. Locate project/config/credentials references on the real VPS.
-3. Enumerate collections/subcollections and dates.
-4. Export a recovery snapshot.
-5. Reconstruct historical schema.
-6. Reconcile it with the canonical LearningStore.
-7. Preserve IDs, timestamps, hashes and provenance.
-8. Mark ambiguous records `UNVERIFIED`.
-9. Enable new writes only after reconciliation.
+No Forex spot/CFD and no crypto-perpetual strategies may enter the FONDEO research/certification track.
 
-The existing master report explicitly requires recovery before recreation; this protocol makes that requirement operational. citeturn34file0
+Fondeo policies must be stored by:
 
-## 12. End-of-order handoff
+`firm + product + account + effective_date + rule_version`
 
-Antigravity must create a handoff containing:
+and include the actual permitted futures universe, max position, trailing/max loss, daily loss, sessions, overnight rules, consistency requirements and any other applicable contractual constraints.
+
+The system must distinguish:
+
+`EVALUATION RISK POLICY != FUNDED RISK POLICY`.
+
+A low-cost evaluation may permit a materially different research risk budget than the same strategy once funded. The strategy must still remain inside the actual rules of the evaluation. No hardcoded universal firm rule is allowed.
+
+## 12. Firebase / historical learning
+
+If historical learning is reported to exist in Firebase/Firestore, recovery is forensic first:
+
+1. do not write/delete;
+2. locate real project/config/credentials references;
+3. enumerate collections/subcollections/dates;
+4. export recovery snapshot;
+5. reconstruct schema;
+6. reconcile with canonical LearningStore;
+7. preserve IDs/timestamps/hashes/provenance;
+8. mark ambiguous records `UNVERIFIED`;
+9. enable new writes only after reconciliation.
+
+## 13. End-of-order handoff
+
+Antigravity must create the required handoff containing:
 
 - order_id;
 - phase;
-- start commit;
-- final commit;
-- subagents used and roles;
+- start/final commit;
+- subagents and roles;
 - files changed;
-- commands executed with exit codes;
-- tests passed/failed/skipped;
-- real datasets/evidence used;
+- exact commands and exit codes;
+- tests;
+- real datasets/evidence;
 - hashes/IDs;
-- defects and contradictions;
-- what was proven;
-- what was not proven;
-- blockers/dependencies;
-- exact exit-criteria assessment;
+- defects/contradictions;
+- proven vs unproven;
+- blockers;
+- exit-criteria assessment;
 - `READY_FOR_REVIEW` or `BLOCKED`.
 
 Never write `APPROVED` in an Antigravity handoff.
 
-## 13. External review cycle
+## 14. External review loop
 
-When a handoff exists, the external reviewer inspects the repository itself, not just the handoff.
+The external reviewer inspects the repository itself, not only the handoff.
 
-Review sequence:
+Review:
 
-`CONTROL_STATE -> ORDER -> HANDOFF -> COMMITS -> DIFF -> CODE PATHS -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
+`CONTROL_STATE -> ORDER -> HANDOFF -> COMMITS -> DIFF -> CODE -> TESTS -> DATA -> EVIDENCE -> VERSIONING -> UI/API -> CONTRADICTIONS -> EXIT CRITERIA`
 
-### APPROVED
+Only the external reviewer can decide:
 
-External reviewer:
+`APPROVED | REJECTED | BLOCKED | REDESIGN`.
 
-- records why the phase is proven;
-- records residual risks;
-- adapts the next scope if needed;
-- updates control state;
-- creates the next order.
+Only an `APPROVED` decision can create an actionable order for the next phase.
 
-### REJECTED
+## 15. Anti-gaming
 
-External reviewer:
+Never loosen gates because few strategies survive; hide failed candidates; rerun until favorable without trial accounting; mutate holdout data; reuse parent evidence for children; replace real data with fixtures on operational paths; convert `NO_EVIDENCE` to PASS/zero/estimate; edit tests solely to force green output; or claim certification from a UI score.
 
-- keeps the same phase active;
-- specifies exact defects;
-- defines corrective work and new evidence;
-- issues a rework order.
+A zero-survivor research cycle is valid scientific output.
 
-### BLOCKED
+## 16. Final operational rule
 
-External reviewer:
-
-- names the missing real dependency;
-- defines the unblock condition;
-- forbids simulated workarounds;
-- leaves the phase blocked.
-
-### REDESIGN
-
-External reviewer:
-
-- invalidates the old scope;
-- records the evidence-driven reason;
-- creates a new bounded order.
-
-## 14. Version and evidence invalidation
-
-Any material change to strategy rules, canonical contracts, compiler/AST, execution engine, costs, risk model, dataset policy, gate policy or portfolio logic may invalidate affected evidence.
-
-Historical evidence may be compared, but must not silently become evidence for the new implementation.
-
-## 15. Anti-gaming rules
-
-Never:
-
-- loosen gates because few candidates survive;
-- rerun until a favorable result appears without trial accounting;
-- hide rejected candidates;
-- mutate holdout data to improve a score;
-- reuse parent evidence for mutated children;
-- convert `NO_EVIDENCE` to PASS/zero/estimate;
-- replace real data with fixtures on an operational path;
-- edit tests solely to force green output;
-- claim certification from a UI score.
-
-A zero-survivor research cycle is a valid result.
-
-## 16. Final rule
-
-**The cron detects. The order instructs. Antigravity orchestrates. Subagents investigate and implement. The repository provides evidence. The external reviewer decides. Only then does the next order exist.**
+**ChatGPT publishes the order. The 3-minute cron detects it. Antigravity automatically starts. Antigravity launches subagents. Subagents investigate and implement. Antigravity produces evidence and stops. ChatGPT audits. Only after approval does ChatGPT publish the next order.**
