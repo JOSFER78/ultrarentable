@@ -5,11 +5,11 @@
 - `CURRENT_PHASE`: 01
 - `PHASE_STATUS`: REWORK
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-P01-002
+- `ACTIVE_ORDER_ID`: AG2-P01-003
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `LAST_ACKNOWLEDGED_ORDER`: AG2-P01-001
-- `LAST_HANDOFF`: `03_HANDOFF_AG2-P01-001.md`
-- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P01-001.md` (`REWORK`)
+- `LAST_ACKNOWLEDGED_ORDER`: AG2-P01-002
+- `LAST_HANDOFF`: `03_HANDOFF_AG2-P01-002.md`
+- `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P01-002.md` (`REWORK`)
 - `NEXT_ORDER`: `PHASE 02 LOCKED`
 
 ## Watcher contract
@@ -17,17 +17,17 @@
 Antigravity's watcher checks `.agents/informe&seguimiento/` approximately every 3 minutes.
 
 An actionable dispatch requires:
-- a NEW `dispatch_id` compared with the persisted watcher value, or an existing dispatch with no durable proof that it was ever started;
+- a NEW `dispatch_id` compared with the persisted watcher value;
 - `status: ISSUED`;
 - `target_phase` equals `CURRENT_PHASE`;
 - `ACTIVE_ORDER_ID` matches the dispatched `order_id`;
 - the order is the single active order.
 
+A dispatch may be marked processed only after durable proof-of-start exists. If a new dispatch exists, the watcher MUST NOT remain in standby merely because a previous dispatch was completed.
+
 ## Automatic execution rule
 
 When those conditions are met, Antigravity must automatically start the order on that watcher cycle. No manual user prompt is required.
-
-A dispatch may be marked processed only after durable proof-of-start exists. A stale local acknowledgement without proof-of-start must not suppress execution.
 
 ## STRICT PHASE SCOPE
 
@@ -39,8 +39,8 @@ At the end of every order Antigravity must push implementation, tests, evidence,
 
 ## Current transition reason
 
-AG2-P01-001 completed a first implementation of Dataset Chain of Custody, but external audit found fabricated partition hashes and provenance fallbacks in `services/data/dataset_registry.py`. The phase therefore remains in REWORK.
+AG2-P01-002 materially repaired physical partition hashing and fail-closed loading, but external audit found remaining provenance inference/defaults in `services/data/dataset_registry.py` that are still incompatible with ZERO-SIMULATION / REAL-ONLY.
 
-Active corrective order: `AG2-P01-002`.
+Active corrective order: `AG2-P01-003`.
 
 Phase 02 remains locked until Phase 01 rework is independently verified and explicitly released by the external reviewer.
