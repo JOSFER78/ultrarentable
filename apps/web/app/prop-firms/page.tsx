@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
@@ -619,7 +619,7 @@ export default function PropFirmsPage() {
                       <div style={{ fontSize: "10.5px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>Ficha Oficial</div>
                       <h2 style={{ fontSize: "20px", fontWeight: 900, color: "#ffffff", margin: "2px 0" }}>{first.firm_name}</h2>
                       <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>
-                        Plataformas: {first.platforms_supported.join(", ")} · Conexión: {first.data_feed}
+                        Plataformas: {first.platforms_supported.join(", ")} · Conexión: {first.data_gateway}
                       </div>
                     </div>
                     <div style={{ width: "220px" }}>

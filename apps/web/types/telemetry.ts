@@ -1,7 +1,9 @@
-/**
+﻿/**
  * apps/web/types/telemetry.ts
  * Definición canónica de tipos de telemetría y supervisor de workers 24/7.
  */
+
+export type ValidationTrack = "TRACK_FONDEO" | "TRACK_ULTRA";
 
 export type WorkerId =
   | "worker_1"
@@ -21,6 +23,7 @@ export interface WorkerState {
   lastHeartbeat: string | null;
   tasksCompleted: number;
   errorCount: number;
+  opsPerSec?: number;
   details?: Record<string, unknown>;
 }
 
@@ -32,4 +35,13 @@ export interface SystemMetrics {
   evaluationsPerSec: number;
   totalEvaluations: number;
   engineStatus: "HEALTHY" | "DEGRADED" | "OFFLINE";
+  connectionState?: string;
+  sqxBridgeConnected?: boolean;
+}
+
+export interface TelemetryLogEntry {
+  timestamp: string;
+  level: "INFO" | "WARN" | "ERROR" | "DEBUG";
+  message: string;
+  source?: string;
 }

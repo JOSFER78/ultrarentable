@@ -1,4 +1,4 @@
-/**
+﻿/**
  * apps/web/hooks/useTelemetryStream.ts
  * Hook de streaming reactivo SSE para la telemetría en tiempo real de los 8 workers y métricas de supervisor.
  */
@@ -10,6 +10,7 @@ import { WorkerId, WorkerState, SystemMetrics } from "@/types/telemetry";
 export interface UseTelemetryStreamResult {
   workers: Record<WorkerId, WorkerState>;
   systemMetrics: SystemMetrics;
+  logs: string[];
   reconnect: () => void;
 }
 
@@ -21,11 +22,14 @@ const DEFAULT_METRICS: SystemMetrics = {
   evaluationsPerSec: 0,
   totalEvaluations: 0,
   engineStatus: "HEALTHY",
+  connectionState: "DISCONNECTED",
+  sqxBridgeConnected: false,
 };
 
 export function useTelemetryStream(): UseTelemetryStreamResult {
   const [workers, setWorkers] = useState<Record<WorkerId, WorkerState>>({});
   const [systemMetrics, setSystemMetrics] = useState<SystemMetrics>(DEFAULT_METRICS);
+  const [logs, setLogs] = useState<string[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   const connect = useCallback(() => {
@@ -40,7 +44,7 @@ export function useTelemetryStream(): UseTelemetryStreamResult {
       eventSourceRef.current = es;
 
       es.onopen = () => {
-        setSystemMetrics((prev) => ({ ...prev, sseConnected: true }));
+        setSystemMetrics((prev) => ({ ...prev, sseConnected: true, connectionState: "CONNECTED" }));
       };
 
       es.onmessage = (event) => {
@@ -54,7 +58,11 @@ export function useTelemetryStream(): UseTelemetryStreamResult {
               ...prev,
               ...payload.metrics,
               sseConnected: true,
+              connectionState: "CONNECTED",
             }));
+          }
+          if (payload.logs) {
+            setLogs(payload.logs);
           }
         } catch {
           // ignore parse errors on heartbeat lines
@@ -62,11 +70,11 @@ export function useTelemetryStream(): UseTelemetryStreamResult {
       };
 
       es.onerror = () => {
-        setSystemMetrics((prev) => ({ ...prev, sseConnected: false }));
+        setSystemMetrics((prev) => ({ ...prev, sseConnected: false, connectionState: "ERROR" }));
         es.close();
       };
     } catch {
-      setSystemMetrics((prev) => ({ ...prev, sseConnected: false }));
+      setSystemMetrics((prev) => ({ ...prev, sseConnected: false, connectionState: "ERROR" }));
     }
   }, []);
 
@@ -82,6 +90,7 @@ export function useTelemetryStream(): UseTelemetryStreamResult {
   return {
     workers,
     systemMetrics,
+    logs,
     reconnect: connect,
   };
 }

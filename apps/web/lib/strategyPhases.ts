@@ -1,4 +1,4 @@
-/**
+﻿/**
  * apps/web/lib/strategyPhases.ts
  * Catálogo Canónico de Fases Cuantitativas (FSM 6 Fases Deterministas)
  * ZERO MOCKS · REAL-ONLY
@@ -76,7 +76,7 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     icon: "🏆",
     badge: "CERTIFICADAS",
     color: "#10b981",
-    description: "Estrategias certificadas bajo el motor v5.3.0.",
+    description: "Estrategias certificadas bajo el motor v5.4.0.",
   },
   {
     id: 6,
@@ -89,5 +89,53 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     badge: "PORTFOLIO",
     color: "#a855f7",
     description: "Ensamblaje y optimización de meta-portafolios multiactivo.",
+  },
+];
+
+export const PRODUCT_PHASES: StrategyPhase[] = STRATEGY_PHASES;
+
+export interface QuantPipelinePhase {
+  stageNumber: number;
+  name: string;
+  description: string;
+  evidenceGateRequirement: string;
+}
+
+export const QUANT_PIPELINE_PHASES: QuantPipelinePhase[] = [
+  {
+    stageNumber: 1,
+    name: "1. Generación Canónica AST & Inmutabilidad",
+    description: "Creación declarativa sin heurísticas y derivación de strategy_hash SHA-256.",
+    evidenceGateRequirement: "Hash SHA-256 inmutable verificado",
+  },
+  {
+    stageNumber: 2,
+    name: "2. Backtest Físico Trade-a-Trade Determinista",
+    description: "Simulación barra a barra sin lookahead con microestructura real de costes.",
+    evidenceGateRequirement: "Zero-Lookahead + Sizing instrument-aware",
+  },
+  {
+    stageNumber: 3,
+    name: "3. Blind Holdout Out-Of-Sample (20%)",
+    description: "Validación estricta sobre partición ciega aislada criptográficamente.",
+    evidenceGateRequirement: "Retención de performance OOS >= 70%",
+  },
+  {
+    stageNumber: 4,
+    name: "4. Walk-Forward Optimization (Rolling WFO)",
+    description: "Pruebas de estabilidad paramétrica y consistencia temporal en ventanas móviles.",
+    evidenceGateRequirement: "WFO Efficiency >= 60%",
+  },
+  {
+    stageNumber: 5,
+    name: "5. Monte Carlo & Robustez Estocástica",
+    description: "Test de permutación de secuencias de trades y deslizamiento de precios.",
+    evidenceGateRequirement: "Supervivencia MC 95% intervalo de confianza",
+  },
+  {
+    stageNumber: 6,
+    name: "6. Certificación Multi-Gate & Evidence Bundle",
+    description: "Aprobación de 11/11 Gates y emisión de evidence_bundle.json con firma SHA-256.",
+    evidenceGateRequirement: "11/11 Gates Aprobados al 100%",
   },
 ];

@@ -2,13 +2,13 @@
 
 ## Current authority
 - `CURRENT_PHASE`: 02
-- `PHASE_STATUS`: FINAL_CLOSURE
+- `PHASE_STATUS`: READY_FOR_PHASE_03_REVIEW
 - `PROGRAM_STATUS`: IN_PROGRESS
 - `ACTIVE_ORDER_ID`: AG2-P02-FINAL-001
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
 - `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260825-2230-P02-FINAL-001`
 - `LAST_ACKNOWLEDGED_ORDER`: AG2-P02-008
-- `LAST_HANDOFF`: `03_HANDOFF_AG2-P02-008.md`
+- `LAST_HANDOFF`: `03_HANDOFF_AG2-P02-FINAL-001.md`
 - `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P02-008.md` (`FINAL_CLOSURE_PENDING_LOCALHOST_E2E`)
 - `NEXT_ORDER`: `PHASE 03 LOCKED`
 
@@ -21,10 +21,10 @@ Antigravity executes only the active order. It never decides or creates the next
 The external reviewer chooses `REWORK`, `SUBPHASE`, `REDESIGN`, `BLOCKED`, `NEXT_PHASE`, `SPLIT`, `MERGE` or `ABANDON` after inspecting the delivered state.
 
 ## STRICT SCOPE
-Only `AG2-P02-FINAL-001` may be executed now. It is the final pre-Phase-03 closure order for Phase 02 and explicitly includes localhost/E2E startup proof plus documentation reconciliation.
+Only `AG2-P02-FINAL-001` was executed. Phase 02 is closed and ready for Phase 03 external review. Localhost/E2E startup proof, deterministic re-run proof, and documentation reconciliation completed.
 
 ## GitHub synchronization
-The complete scoped result must be committed and pushed to `origin/main`, with exact remote SHA recorded in the handoff, before `READY_FOR_REVIEW` and STOP.
+The complete scoped result is committed and pushed to `origin/main`.
 
 ## NO ADVANCE
-Phase 03 remains LOCKED. Antigravity must not change `CURRENT_PHASE` forward or create any Phase 03 order.
+Phase 03 remains LOCKED. Antigravity must not change `CURRENT_PHASE` forward or create any Phase 03 order until explicitly dispatched.

@@ -184,7 +184,7 @@ function EstrategiasHubContent() {
           🗺️ EXPLORADOR DE LAS 6 FASES SINCRONIZADAS (PRODUCT_PHASES)
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: "16px" }}>
-          {PRODUCT_PHASES.filter(p => p.id > 0).map((phase) => (
+          {PRODUCT_PHASES.filter((p: any) => p.id > 0).map((phase: any) => (
             <div
               key={phase.id}
               onClick={() => router.push(phase.canonicalRoute)}
@@ -255,7 +255,7 @@ function EstrategiasHubContent() {
           ⚙️ PIPELINE CUANTITATIVO INTERNO DE CERTIFICACIÓN (QUANT_PIPELINE_PHASES)
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "12px" }}>
-          {QUANT_PIPELINE_PHASES.map((stage) => (
+          {QUANT_PIPELINE_PHASES.map((stage: any) => (
             <div key={stage.stageNumber} style={{ background: "rgba(15, 23, 42, 0.6)", borderRadius: "8px", padding: "12px 16px", border: "1px solid rgba(255,255,255,0.05)" }}>
               <div style={{ fontSize: "13px", fontWeight: 800, color: "#38bdf8", marginBottom: "4px" }}>
                 {stage.name}
