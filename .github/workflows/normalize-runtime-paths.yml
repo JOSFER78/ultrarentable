@@ -1,0 +1,58 @@
+name: Normalize Runtime Paths
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    if: !contains(github.event.head_commit.message, '[normalize-runtime-paths]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Normalize hard-coded runtime paths
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('services/validation/legacy_revalidation_service.py')
+          text = path.read_text(encoding='utf-8')
+
+          import_line = 'from services.core.runtime_paths import DB_PATH, DATA_DIR\n'
+          if import_line not in text:
+              anchor = 'from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY\n'
+              if anchor not in text:
+                  raise SystemExit('Import anchor not found; refusing unsafe rewrite')
+              text = text.replace(anchor, anchor + import_line, 1)
+
+          replacements = {
+              'DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")': 'DB_PATH = DB_PATH',
+              'DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")': 'DATA_DIR = DATA_DIR',
+          }
+          # Remove the obsolete local constants entirely. The imported names are the SSOT.
+          for old in replacements:
+              text = text.replace(old + '\n', '', 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Assert no absolute runtime paths remain in target
+        run: |
+          if grep -nE '/home/ubuntu(/|"|\\)' services/validation/legacy_revalidation_service.py; then
+            echo 'Hard-coded /home/ubuntu path remains'
+            exit 1
+          fi
+      - name: Commit normalized service
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add services/validation/legacy_revalidation_service.py
+          if git diff --cached --quiet; then
+            echo 'No changes required'
+            exit 0
+          fi
+          git commit -m 'chore(paths): remove hard-coded legacy runtime paths [normalize-runtime-paths]'
+          git push
