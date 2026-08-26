@@ -4,6 +4,7 @@ Demuestra científicamente que el EvidenceBundle sella criptográficamente todas
 generando una firma SHA-256 determinista que detecta cualquier alteración (tampering).
 """
 
+from datetime import datetime, timezone
 import json
 import os
 import time

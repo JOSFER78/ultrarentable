@@ -13,12 +13,16 @@ from contracts.canonical_strategy import (
     ExecutionTrack,
     ExitModel,
     IndicatorSpec,
+    LogicalOp,
     ProvenanceMetadata,
     RuleCondition,
     RuleTree,
     SessionWindow,
     SizingAndRisk,
+    SizingType,
+    StopLossType,
     StrategyLifecycleStatus,
+    TakeProfitType,
     TargetInstrument,
 )
 

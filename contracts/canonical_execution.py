@@ -1,4 +1,4 @@
-﻿"""contracts/canonical_execution.py
+"""contracts/canonical_execution.py
 Contratos Can?nicos de Ejecuci?n, Microestructura y Ledger (Fase 02 / Fase 03).
 ZERO-MOCKS ? REAL-ONLY ? DETERMINISTIC ? NO-LOOKAHEAD ? PROVENANCE-LOCKED ? FAIL-CLOSED
 """
@@ -112,7 +112,7 @@ class CanonicalExecutionLedger(BaseModel):
     losing_trades_count: int
     total_commission_paid_usd: float
     total_slippage_paid_usd: float
-    total_funding_paid_usd: float
+    total_funding_paid_usd: float = Field(default=0.0)
     trades: List[ExecutionTruth]
     ledger_hash: Optional[str] = None
 
@@ -120,6 +120,9 @@ class CanonicalExecutionLedger(BaseModel):
         payload = self.model_dump(exclude={"ledger_hash"})
         raw_json = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
         return hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
+
+    def calculate_ledger_hash(self) -> str:
+        return self.compute_ledger_hash()
 
     def model_post_init(self, __context: Any) -> None:
         if self.ledger_hash is None:

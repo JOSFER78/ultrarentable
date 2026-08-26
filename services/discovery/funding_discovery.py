@@ -53,6 +53,7 @@ class FundingDiscoveryEngine:
         rsi_period: int = 14,
         rsi_threshold_long: float = 50.0,
         rsi_threshold_short: float = 50.0,
+        **kwargs: Any,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot inmutable con la configuración estricta para Fondeo."""
         entry_rules = RuleTree(

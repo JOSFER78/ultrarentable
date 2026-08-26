@@ -187,29 +187,46 @@ class SystemSupervisor:
     def get_telemetry_snapshot(self) -> Dict[str, Any]:
         now_ts = time.time()
         now_utc = datetime.now(timezone.utc).isoformat()
-        worker_list = []
+        worker_dict = {}
         all_healthy = True
         for wid, w in self.workers.items():
             age = round(now_ts - w["last_heartbeat_ts"], 1)
             is_h = w["is_healthy"] and (age <= 30.0)
             if not is_h:
                 all_healthy = False
-            worker_list.append({
+            w_info = {
                 "worker_id": wid,
                 "name": w["name"],
                 "status": w["status"] if is_h else "DEGRADED",
+                "state": w["status"] if is_h else "DEGRADED",
                 "last_heartbeat_utc": w["last_heartbeat_utc"],
                 "heartbeat_age_seconds": age,
                 "restart_count": w["restart_count"],
                 "jobs_processed": w["jobs_processed"],
                 "last_error": w["last_error"],
                 "is_healthy": is_h,
-            })
+            }
+            worker_dict[wid] = w_info
+
+        type_mapping = {
+            "worker_01_sqx_gen": "SQXWorker",
+            "worker_02_norm": "DataWorker",
+            "worker_03_engine": "FastBacktestWorker",
+            "worker_04_gates": "ValidationWorker",
+            "worker_05_research": "SemanticAIWorker",
+            "worker_06_reval": "MonteCarloWorker",
+            "worker_07_incubation": "PaperTradingWorker",
+            "worker_08_portfolio": "PortfolioWorker",
+        }
+        for wid, tname in type_mapping.items():
+            if wid in worker_dict:
+                worker_dict[tname] = worker_dict[wid]
+
         return {
             "overall_status": "HEALTHY" if all_healthy else "DEGRADED",
             "supervisor_active": self._running,
-            "total_workers": len(worker_list),
-            "healthy_workers": sum(1 for w in worker_list if w["is_healthy"]),
+            "total_workers": len(self.workers),
+            "healthy_workers": sum(1 for wid, w in self.workers.items() if w.get("is_healthy", True)),
             "timestamp_utc": now_utc,
             "watchdog": {
                 "is_running": ha_watchdog.is_running,
@@ -217,7 +234,7 @@ class SystemSupervisor:
                 "failover_active": ha_watchdog.failover_active,
                 "recent_recoveries_count": len(ha_watchdog.recovery_history),
             },
-            "workers": worker_list,
+            "workers": worker_dict,
         }
 
 

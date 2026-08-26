@@ -21,7 +21,7 @@ from contracts.canonical_strategy import (
     ComparisonOp,
     LogicalOp,
 )
-from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, PyramidingPolicy, MarginPolicy
+from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, PyramidingPolicy, MarginPolicy, PyramidingTier
 
 
 class UltraSearchSpace(BaseModel):
@@ -53,6 +53,10 @@ class UltraDiscoveryEngine:
         rsi_period: int = 14,
         rsi_threshold_long: float = 52.0,
         rsi_threshold_short: float = 48.0,
+        sl_atr_mult: Optional[float] = None,
+        tp_atr_mult: Optional[float] = None,
+        pyramiding_tiers_count: Optional[int] = None,
+        **kwargs: Any,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot inmutable con la configuración completa para la ruta Ultra."""
         entry_rules = RuleTree(
@@ -84,22 +88,43 @@ class UltraDiscoveryEngine:
             ],
         )
 
+        final_sl_type = StopLossType.ATR_MULTIPLE if sl_atr_mult is not None else StopLossType.FIXED_POINTS
+        final_sl_val = sl_atr_mult if sl_atr_mult is not None else sl_value
+
+        final_tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
+        final_tp_val = tp_atr_mult if tp_atr_mult is not None else tp_value
+
         exit_rules = ExitModel(
-            sl_type=StopLossType.FIXED_POINTS,
-            sl_value=sl_value,
-            tp_type=TakeProfitType.FIXED_POINTS,
-            tp_value=tp_value,
-            time_stop_bars=48,
+            sl_type=final_sl_type,
+            sl_value=final_sl_val,
+            tp_type=final_tp_type,
+            tp_value=final_tp_val,
+            time_stop_bars=kwargs.get("time_stop_bars", 48),
         )
 
         sizing = SizingAndRisk(
             sizing_type=SizingType.RISK_PCT_EQUITY,
             risk_value=risk_pct,
             max_open_positions=1,
-            max_daily_loss_usd=250.0,
+            max_daily_loss_usd=kwargs.get("max_daily_loss_usd", 250.0),
         )
 
-        pyramiding = PyramidingPolicy(enabled=False)
+        has_pyramiding = pyramiding_tiers_count is not None and pyramiding_tiers_count > 0
+        tiers_list = []
+        if has_pyramiding:
+            for i in range(1, (pyramiding_tiers_count or 0) + 1):
+                tiers_list.append(
+                    PyramidingTier(
+                        trigger_pnl_atr_mult=float(i * 1.5),
+                        added_size_mult=0.5,
+                        trail_stop_to_breakeven=True,
+                    )
+                )
+        pyramiding = PyramidingPolicy(
+            enabled=has_pyramiding,
+            max_tiers=pyramiding_tiers_count if has_pyramiding else 3,
+            tiers=tiers_list,
+        )
 
         margin_policy = MarginPolicy(
             margin_mode="ISOLATED",
@@ -112,7 +137,7 @@ class UltraDiscoveryEngine:
         return StrategySnapshot.create_and_hash(
             strategy_id=strategy_id,
             route=StrategyRoute.ULTRA,
-            archetype="MOMENTUM_BREAKOUT",
+            archetype=kwargs.get("archetype", "MOMENTUM_BREAKOUT"),
             symbol=symbol,
             timeframe=timeframe,
             entry_rules=entry_rules,

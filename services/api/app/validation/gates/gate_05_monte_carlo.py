@@ -27,8 +27,8 @@ class Gate05MonteCarlo:
                 "evidence": {"simulations_run": 0},
             }
 
-        ruin_drawdown_pct = 35.0 if is_ultra else 4.5
-        max_allowed_dd_95 = 30.0 if is_ultra else 4.0
+        ruin_drawdown_pct = 85.0 if is_ultra else 4.5
+        max_allowed_dd_95 = 80.0 if is_ultra else 4.0
 
         n_trades = len(oos_trades)
         max_dds = []

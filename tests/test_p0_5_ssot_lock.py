@@ -128,7 +128,7 @@ def test_functional_parameter_mutation_changes_hash():
     session=base_strat.session,
     entry_rules=base_strat.rules,
     exit_rules=base_strat.exits,
-    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=15.0, max_open_positions=1),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=25.0, max_open_positions=1),
     provenance=base_strat.provenance
 )
     assert mod_strat_3.strategy_hash != base_hash

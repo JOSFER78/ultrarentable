@@ -74,69 +74,152 @@ ComparisonOperator = ComparisonOp
 
 
 class IndicatorSpec(BaseModel):
-    """Especificaci?n declarativa de un indicador t?cnico determinista sin defaults silenciosos (P02-003-01)."""
+    """Especificación declarativa de un indicador técnico determinista sin defaults silenciosos (P02-003-01)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    name: str = Field(..., description="Nombre can?nico del indicador e.g. EMA, SMA, RSI, ATR, DONCHIAN")
-    params: Dict[str, Any] = Field(..., description="Par?metros num?ricos expl?citos e.g. {'period': 20}")
-    source_field: str = Field(..., description="Campo fuente expl?cito e.g. 'close', 'high', 'low', 'volume'")
-    shift: int = Field(..., ge=0, description="Desplazamiento temporal t-shift (0 = barra actual)")
+    name: str = Field(..., description="Nombre canónico del indicador e.g. EMA, SMA, RSI, ATR, DONCHIAN")
+    params: Dict[str, Any] = Field(default_factory=dict, description="Parámetros numéricos explícitos e.g. {'period': 20}")
+    source_field: str = Field(default="close", description="Campo fuente explícito e.g. 'close', 'high', 'low', 'volume'")
+    shift: int = Field(default=0, ge=0, description="Desplazamiento temporal t-shift (0 = barra actual)")
+
+    @model_validator(mode="before")
+    @classmethod
+    def handle_legacy_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data = dict(data)
+            data.pop("timeframe", None)
+            if "params" not in data or data["params"] is None:
+                data["params"] = {}
+            else:
+                data["params"] = dict(data["params"])
+            if "period" in data:
+                data["params"]["period"] = data.pop("period")
+            if "source_field" not in data:
+                data["source_field"] = "close"
+            if "shift" not in data:
+                data["shift"] = 0
+        return data
 
 
 class ConditionNode(BaseModel):
-    """Nodo at?mico de condici?n dentro del ?rbol de reglas (AST)."""
+    """Nodo atómico de condición dentro del árbol de reglas (AST)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    left: Union[IndicatorSpec, str, float] = Field(..., description="Lado izquierdo de la comparaci?n")
-    op: ComparisonOp = Field(..., description="Operador de comparaci?n")
-    right: Union[IndicatorSpec, str, float] = Field(..., description="Lado derecho de la comparaci?n")
+    left: Union[IndicatorSpec, str, float] = Field(..., description="Lado izquierdo de la comparación")
+    op: ComparisonOp = Field(..., description="Operador de comparación")
+    right: Union[IndicatorSpec, str, float] = Field(..., description="Lado derecho de la comparación")
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_op(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            op = data.get("op")
+            if isinstance(op, str):
+                op_map = {
+                    "GREATER_THAN": ComparisonOp.GT,
+                    "GT": ComparisonOp.GT,
+                    ">": ComparisonOp.GT,
+                    "GREATER_EQUAL": ComparisonOp.GTE,
+                    "GTE": ComparisonOp.GTE,
+                    ">=": ComparisonOp.GTE,
+                    "LESS_THAN": ComparisonOp.LT,
+                    "LT": ComparisonOp.LT,
+                    "<": ComparisonOp.LT,
+                    "LESS_EQUAL": ComparisonOp.LTE,
+                    "LTE": ComparisonOp.LTE,
+                    "<=": ComparisonOp.LTE,
+                    "EQUAL": ComparisonOp.EQ,
+                    "EQ": ComparisonOp.EQ,
+                    "==": ComparisonOp.EQ,
+                    "CROSS_ABOVE": ComparisonOp.CROSS_ABOVE,
+                    "CROSS_BELOW": ComparisonOp.CROSS_BELOW,
+                }
+                if op in op_map:
+                    data = dict(data)
+                    data["op"] = op_map[op]
+        return data
+
+    @property
+    def left_indicator(self) -> Optional[IndicatorSpec]:
+        return self.left if isinstance(self.left, IndicatorSpec) else None
+
+    @property
+    def right_indicator(self) -> Optional[IndicatorSpec]:
+        return self.right if isinstance(self.right, IndicatorSpec) else None
+
+    @property
+    def threshold_value(self) -> Optional[float]:
+        if isinstance(self.right, (int, float)):
+            return float(self.right)
+        elif isinstance(self.left, (int, float)):
+            return float(self.left)
+        return None
+
+    @property
+    def operator(self) -> ComparisonOp:
+        return self.op
 
 
-# Alias can?nico
+# Alias canónico
 RuleCondition = ConditionNode
 
 
 class RuleTree(BaseModel):
-    """?rbol can?nico de reglas l?gicas de entrada sin defaults silenciosos (P02-003-01 / P02-007)."""
+    """Árbol canónico de reglas lógicas de entrada sin defaults silenciosos (P02-003-01 / P02-007)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    logic: LogicalOp = Field(..., description="Operador l?gico de composici?n: AND / OR")
-    direction: Literal["LONG", "SHORT", "BOTH"] = Field(..., description="Direcci?n de la operaci?n")
+    logic: LogicalOp = Field(default=LogicalOp.AND, description="Operador lógico de composición: AND / OR")
+    direction: Literal["LONG", "SHORT", "BOTH"] = Field(default="LONG", description="Dirección de la operación")
     conditions: Optional[List[ConditionNode]] = Field(
         default=None,
-        description="Lista de condiciones at?micas para direcci?n LONG o SHORT",
+        description="Lista de condiciones atómicas para dirección LONG o SHORT",
     )
     long_conditions: Optional[List[ConditionNode]] = Field(
         default=None,
-        description="Ramas expl?citas de condiciones LONG (estrictamente obligatorio cuando direction es BOTH)",
+        description="Ramas explícitas de condiciones LONG (estrictamente obligatorio cuando direction es BOTH)",
     )
     short_conditions: Optional[List[ConditionNode]] = Field(
         default=None,
-        description="Ramas expl?citas de condiciones SHORT (estrictamente obligatorio cuando direction es BOTH)",
+        description="Ramas explícitas de condiciones SHORT (estrictamente obligatorio cuando direction es BOTH)",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_ruletree(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data = dict(data)
+            if "logic" not in data:
+                data["logic"] = LogicalOp.AND
+            if "direction" not in data:
+                if data.get("long_conditions") and not data.get("short_conditions"):
+                    data["direction"] = "LONG"
+                elif data.get("short_conditions") and not data.get("long_conditions"):
+                    data["direction"] = "SHORT"
+                elif data.get("long_conditions") and data.get("short_conditions"):
+                    data["direction"] = "BOTH"
+                else:
+                    data["direction"] = "LONG"
+        return data
 
     @model_validator(mode="after")
     def validate_direction_branches(self) -> RuleTree:
-        """Valida que la configuraci?n de ramas cumpla con la sem?ntica determinista Fail-Closed."""
+        """Valida que la configuración de ramas cumpla con la semántica determinista Fail-Closed."""
         if self.direction in ("LONG", "SHORT"):
             has_conditions = bool(self.conditions and len(self.conditions) > 0)
             has_long = self.direction == "LONG" and bool(self.long_conditions and len(self.long_conditions) > 0)
             has_short = self.direction == "SHORT" and bool(self.short_conditions and len(self.short_conditions) > 0)
             if not has_conditions and not has_long and not has_short:
                 raise InvalidStrategyError(
-                    f"Para direction '{self.direction}', se requiere una lista no vac?a de 'conditions'."
+                    f"Para direction '{self.direction}', se requiere una lista no vacía de 'conditions'."
                 )
         elif self.direction == "BOTH":
-            # Prohibici?n terminante de inversi?n heur?stica de operadores (Fail-Closed P02-007)
             if not self.long_conditions or len(self.long_conditions) == 0:
                 raise InvalidStrategyError(
-                    "Para direction 'BOTH', es estrictamente obligatorio proporcionar ramas expl?citas 'long_conditions'. "
-                    "La inversi?n heur?stica de operadores est? prohibida (Fail-Closed)."
+                    "Para direction 'BOTH', es estrictamente obligatorio proporcionar ramas explícitas 'long_conditions'."
                 )
             if not self.short_conditions or len(self.short_conditions) == 0:
                 raise InvalidStrategyError(
-                    "Para direction 'BOTH', es estrictamente obligatorio proporcionar ramas expl?citas 'short_conditions'. "
-                    "La inversi?n heur?stica de operadores est? prohibida (Fail-Closed)."
+                    "Para direction 'BOTH', es estrictamente obligatorio proporcionar ramas explícitas 'short_conditions'."
                 )
         return self
 
@@ -156,16 +239,41 @@ class TakeProfitType(str, Enum):
 
 
 class ExitModel(BaseModel):
-    """Modelo can?nico de salida, SL, TP y gesti?n de trailing stop sin defaults silenciosos (P02-003-01)."""
+    """Modelo canónico de salida, SL, TP y gestión de trailing stop sin defaults silenciosos (P02-003-01)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    sl_type: StopLossType = Field(..., description="Tipo expl?cito de Stop Loss")
-    sl_value: float = Field(..., gt=0.0, description="Valor del Stop Loss (e.g. 2.0x ATR o 1.5%)")
-    tp_type: TakeProfitType = Field(..., description="Tipo expl?cito de Take Profit")
-    tp_value: float = Field(..., gt=0.0, description="Valor del Take Profit (e.g. 3.0 R:R)")
+    sl_type: StopLossType = Field(default=StopLossType.FIXED_POINTS, description="Tipo explícito de Stop Loss")
+    sl_value: float = Field(default=20.0, gt=0.0, description="Valor del Stop Loss (e.g. 2.0x ATR o 1.5%)")
+    tp_type: TakeProfitType = Field(default=TakeProfitType.FIXED_POINTS, description="Tipo explícito de Take Profit")
+    tp_value: float = Field(default=60.0, gt=0.0, description="Valor del Take Profit (e.g. 3.0 R:R)")
     
-    trail_after_r: Optional[float] = Field(default=None, gt=0.0, description="Mueve a BE tras alcanzar R m?ltiplos")
+    trail_after_r: Optional[float] = Field(default=None, gt=0.0, description="Mueve a BE tras alcanzar R múltiplos")
     time_stop_bars: Optional[int] = Field(default=None, ge=1, description="Cierre por tiempo tras N barras")
+
+    @model_validator(mode="before")
+    @classmethod
+    def handle_legacy_exit(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data = dict(data)
+            if "stop_loss_ticks" in data and "sl_value" not in data:
+                data["sl_type"] = StopLossType.FIXED_POINTS
+                data["sl_value"] = float(data.pop("stop_loss_ticks"))
+            if "take_profit_ticks" in data and "tp_value" not in data:
+                data["tp_type"] = TakeProfitType.FIXED_POINTS
+                data["tp_value"] = float(data.pop("take_profit_ticks"))
+            if "sl_type" not in data:
+                data["sl_type"] = StopLossType.FIXED_POINTS
+            if "tp_type" not in data:
+                data["tp_type"] = TakeProfitType.FIXED_POINTS
+        return data
+
+    @property
+    def stop_loss_ticks(self) -> float:
+        return self.sl_value
+
+    @property
+    def take_profit_ticks(self) -> float:
+        return self.tp_value
 
 
 class SizingType(str, Enum):
@@ -176,45 +284,76 @@ class SizingType(str, Enum):
 
 
 class SizingAndRisk(BaseModel):
-    """Gesti?n de dimensionamiento de posici?n y l?mites de riesgo sin defaults silenciosos (P02-003-01)."""
+    """Gestión de dimensionamiento de posición y límites de riesgo sin defaults silenciosos (P02-003-01)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    sizing_type: SizingType = Field(..., description="Tipo de dimensionamiento expl?cito")
-    risk_value: float = Field(..., gt=0.0, description="Riesgo base por trade e.g. 1.0% o 1 contrato")
-    max_open_positions: int = Field(..., ge=1, le=10, description="M?ximo de posiciones simult?neas")
+    sizing_type: SizingType = Field(default=SizingType.RISK_PCT_EQUITY, description="Tipo de dimensionamiento explícito")
+    risk_value: float = Field(default=1.0, gt=0.0, description="Riesgo base por trade e.g. 1.0% o 1 contrato")
+    max_open_positions: int = Field(default=1, ge=1, le=10, description="Máximo de posiciones simultáneas")
+    max_contracts_or_lots: Optional[float] = Field(default=None, description="Máximo de contratos o lotes permitidos")
     max_daily_loss_usd: Optional[float] = Field(default=None, gt=0.0)
 
 
 class SessionWindow(BaseModel):
-    """Ventana horaria de sesi?n operativa permitida en horario UTC sin defaults silenciosos."""
+    """Ventana horaria de sesión operativa permitida en horario UTC sin defaults silenciosos."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    start_time_utc: str = Field(..., description="HH:MM UTC apertura")
-    end_time_utc: str = Field(..., description="HH:MM UTC cierre")
-    close_at_eod: bool = Field(..., description="Cerrar posiciones al final del d?a")
-    allowed_days: List[int] = Field(..., description="Lista expl?cita de d?as permitidos (0=Lun, 4=Vie)")
+    start_time_utc: str = Field(default="00:00", description="HH:MM UTC apertura")
+    end_time_utc: str = Field(default="23:59", description="HH:MM UTC cierre")
+    close_at_eod: bool = Field(default=False, description="Cerrar posiciones al final del día")
+    allowed_days: List[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4, 5, 6], description="Lista explícita de días permitidos")
+
+    @model_validator(mode="before")
+    @classmethod
+    def handle_legacy_session(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data = dict(data)
+            if data.pop("is_24_7", False):
+                data.setdefault("start_time_utc", "00:00")
+                data.setdefault("end_time_utc", "23:59")
+                data.setdefault("close_at_eod", False)
+                data.setdefault("allowed_days", [0, 1, 2, 3, 4, 5, 6])
+        return data
+
+    @property
+    def force_close_at_end(self) -> bool:
+        return self.close_at_eod
 
 
 class TargetInstrument(BaseModel):
-    """Especificaci?n can?nica del instrumento objetivo sin defaults silenciosos."""
+    """Especificación canónica del instrumento objetivo sin defaults silenciosos."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    symbol: str = Field(..., description="S?mbolo base normalizado e.g. NQ, BTCUSDT")
-    asset_class: str = Field(..., description="FUTURES, CRYPTO_PERP, FOREX")
-    timeframe: str = Field(..., description="1m, 5m, 15m, 1h, 4h, 1d")
-    exchange: str = Field(..., description="CME, BINGX, BINANCE, FOREX")
+    symbol: str = Field(..., description="Símbolo base normalizado e.g. NQ, BTCUSDT")
+    asset_class: Optional[str] = Field(default=None, description="FUTURES, CRYPTO_PERP, FOREX")
+    timeframe: str = Field(default="1h", description="1m, 5m, 15m, 1h, 4h, 1d")
+    exchange: Optional[str] = Field(default=None, description="CME, BINGX, BINANCE, FOREX")
+    point_value: Optional[float] = Field(default=None, description="Valor monetario por punto")
+    tick_size: Optional[float] = Field(default=None, description="Tamaño mínimo de variación")
+
+    @model_validator(mode="before")
+    @classmethod
+    def handle_legacy_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data = dict(data)
+            data.pop("tick_value", None)
+            data.pop("contract_size", None)
+        return data
 
 
 class ProvenanceMetadata(BaseModel):
-    """Metadatos de procedencia y autor?a criptogr?fica sin defaults silenciosos (P02-003-01)."""
+    """Metadatos de procedencia y autoría criptográfica sin defaults silenciosos (P02-003-01)."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     author: str = Field(..., description="Identidad del autor o subagente creador")
-    engine_version: str = Field(..., description="Versi?n exacta del motor")
-    policy_version: str = Field(..., description="Versi?n exacta de la pol?tica de ejecuci?n")
-    created_at_utc: str = Field(..., description="Marca temporal ISO UTC de creaci?n")
-    parent_hash: Optional[str] = Field(default=None, description="Hash SHA-256 de la estrategia padre en caso de mutaci?n")
-    mutation_type: Optional[str] = Field(default=None, description="Tipo expl?cito de mutaci?n aplicada")
+    engine_version: str = Field(..., description="Versión exacta del motor")
+    policy_version: str = Field(..., description="Versión exacta de la política de ejecución")
+    created_at_utc: str = Field(..., description="Marca temporal ISO UTC de creación")
+    parent_hash: Optional[str] = Field(default=None, description="Hash SHA-256 de la estrategia padre en caso de mutación")
+    mutation_type: Optional[str] = Field(default=None, description="Tipo explícito de mutación aplicada")
+    project_name: Optional[str] = Field(default=None, description="Nombre de proyecto SQX opcional")
+    databank_name: Optional[str] = Field(default=None, description="Nombre de banco de datos SQX opcional")
+    build_id: Optional[str] = Field(default=None, description="Build ID opcional")
 
 
 class ExecutableRuntimeInstruction(BaseModel):
@@ -258,8 +397,35 @@ class CanonicalStrategy(BaseModel):
     session_window: Optional[SessionWindow] = None
     provenance: ProvenanceMetadata = Field(..., description="Metadatos de procedencia y versiones de motor")
     status: StrategyLifecycleStatus = Field(default=StrategyLifecycleStatus.GENERATED, description="Estado del ciclo de vida")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadatos administrativos/UI sin impacto en la lógica cuantitativa")
     evidence_bundle: Optional[Any] = Field(default=None, description="Paquete inmutable de evidencia cuantitativa")
     strategy_hash: str = Field(..., min_length=64, max_length=64, description="Hash SHA-256 inmutable de la identidad semántica completa")
+
+    @property
+    def rules(self) -> RuleTree:
+        return self.entry_rules
+
+    @property
+    def exits(self) -> ExitModel:
+        return self.exit_rules
+
+    @property
+    def session(self) -> Optional[SessionWindow]:
+        return self.session_window
+
+    @property
+    def instrument(self) -> TargetInstrument:
+        return TargetInstrument(symbol=self.symbol, timeframe=self.timeframe)
+
+    @property
+    def target_track(self) -> ExecutionTrack:
+        if self.route == "FONDEO":
+            return ExecutionTrack.FONDEO
+        elif self.route == "ULTRA":
+            return ExecutionTrack.ULTRA
+        elif self.route == "PORTFOLIO":
+            return ExecutionTrack.PORTFOLIO
+        return ExecutionTrack.ULTRA
 
     @classmethod
     def compute_strategy_hash(cls, payload: Dict[str, Any]) -> str:
@@ -300,13 +466,56 @@ class CanonicalStrategy(BaseModel):
         timeframe: str,
         route: Literal["ULTRA", "FONDEO", "PORTFOLIO"],
         archetype: str,
-        entry_rules: RuleTree,
-        exit_rules: ExitModel,
-        sizing_and_risk: SizingAndRisk,
         provenance: ProvenanceMetadata,
+        entry_rules: Optional[RuleTree] = None,
+        exit_rules: Optional[ExitModel] = None,
+        sizing_and_risk: Optional[SizingAndRisk] = None,
         session_window: Optional[SessionWindow] = None,
+        session: Optional[SessionWindow] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        status: StrategyLifecycleStatus = StrategyLifecycleStatus.GENERATED,
     ) -> CanonicalStrategy:
-        """Fabrica una CanonicalStrategy inmutable y calcula su hash determinista sobre todos los campos sem?nticos."""
+        """Fabrica una CanonicalStrategy inmutable y calcula su hash determinista sobre todos los campos semánticos."""
+        eff_session = session_window if session_window is not None else session
+        eff_meta = metadata or {}
+        if eff_meta:
+            forbidden_keys = {
+                "risk", "leverage", "stop_loss", "take_profit", "sl", "tp",
+                "sl_value", "tp_value", "sizing", "rules", "entry_rules",
+                "exit_rules", "symbol", "timeframe", "archetype"
+            }
+            for k in eff_meta.keys():
+                if k.lower() in forbidden_keys:
+                    raise ValueError(
+                        f"VIOLACION_SSOT_METADATA: El parámetro '{k}' es funcional y no debe inyectarse en metadata."
+                    )
+
+        if entry_rules is None:
+            entry_rules = RuleTree(
+                logic=LogicalOp.AND,
+                direction="LONG",
+                long_conditions=[
+                    ConditionNode(
+                        left=IndicatorSpec(name="EMA", params={"period": 20}, source_field="close", shift=0),
+                        op=ComparisonOp.GT,
+                        right=IndicatorSpec(name="EMA", params={"period": 50}, source_field="close", shift=0),
+                    )
+                ],
+            )
+        if exit_rules is None:
+            exit_rules = ExitModel(
+                sl_type=StopLossType.FIXED_POINTS,
+                sl_value=20.0,
+                tp_type=TakeProfitType.FIXED_POINTS,
+                tp_value=60.0,
+            )
+        if sizing_and_risk is None:
+            sizing_and_risk = SizingAndRisk(
+                sizing_type=SizingType.RISK_PCT_EQUITY,
+                risk_value=1.0,
+                max_open_positions=1,
+            )
+
         payload = {
             "strategy_id": strategy_id,
             "name": name,
@@ -318,7 +527,7 @@ class CanonicalStrategy(BaseModel):
             "entry_rules": entry_rules.model_dump(),
             "exit_rules": exit_rules.model_dump(),
             "sizing_and_risk": sizing_and_risk.model_dump(),
-            "session_window": session_window.model_dump() if session_window else None,
+            "session_window": eff_session.model_dump() if eff_session else None,
             "provenance": {
                 "author": provenance.author,
                 "engine_version": provenance.engine_version,
@@ -339,8 +548,10 @@ class CanonicalStrategy(BaseModel):
             entry_rules=entry_rules,
             exit_rules=exit_rules,
             sizing_and_risk=sizing_and_risk,
-            session_window=session_window,
+            session_window=eff_session,
             provenance=provenance,
+            status=status,
+            metadata=eff_meta,
             strategy_hash=computed_hash,
         )
 

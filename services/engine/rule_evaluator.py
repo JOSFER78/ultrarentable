@@ -16,6 +16,7 @@ from contracts.universal_strategy import (
     ConditionNode,
     DynamicEntryRules,
     DynamicValueNode,
+    IndicatorType,
     LogicalOperator,
     RuleGroup,
     ValueSource,

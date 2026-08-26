@@ -45,7 +45,7 @@ def create_sample_strategy() -> CanonicalStrategy:
     strategy_id="UR-CANON-001",
     route="FONDEO",
     version="1.0.0",
-    symbol="BTC-USDT",
+    symbol="NQ",
     archetype="TREND_FOLLOWING",
     name="NQ Momentum Breakout H1",
     timeframe="1h",
