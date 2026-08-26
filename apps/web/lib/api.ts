@@ -92,7 +92,7 @@ export interface CertifiedStrategy {
   family: string;
   route?: string;
   wfo_pass_pct?: number;
-  status: "APPROVED_CURRENT_ENGINE" | "APPROVED_LEGACY" | "REVALIDATION_REQUIRED" | "ANOMALY_REVIEW" | string;
+  status: string;
   engine_version: string;
   strategy_hash: string;
   dataset_hash: string;
@@ -103,7 +103,7 @@ export interface CertifiedStrategy {
   total_trades: number;
   win_rate_pct: number;
   profit_factor: number;
-  sharpe_ratio: number;
+  sharpe_ratio: number | null;
   max_drawdown_pct: number;
   oos_profit_factor: number;
   oos_start_timestamp_ms: number | null;
@@ -208,71 +208,50 @@ export interface StrategyLabRecord {
   timeframe: string | null;
   dataset_id: string | null;
   dataset_hash: string | null;
+  source_artifact_sha256?: string | null;
+  source_payload?: unknown;
   raw_stats: Record<string, unknown>;
   created_at: string | null;
 }
 
-export interface StrategyLabListResponse {
-  status: string;
-  count: number;
-  strategies: StrategyLabRecord[];
-}
+export interface StrategyLabListResponse { status: string; count: number; strategies: StrategyLabRecord[]; }
+export interface StrategyLabSQXStatus { status: string; source: string; result?: unknown; error?: string; }
+export interface StrategyLabExtractionResult { status: string; project: string; databank: string; found: number; named?: number; inserted: number; unchanged: number; quarantined: number; next_step: string; }
 
-export interface StrategyLabSQXStatus {
-  status: string;
-  source: string;
-  result?: unknown;
-  error?: string;
-}
-
-export interface StrategyLabExtractionResult {
-  status: string;
-  project: string;
-  databank: string;
-  found: number;
-  inserted: number;
-  unchanged: number;
-  quarantined: number;
-  next_step: string;
-}
+export interface ApprovedDataset { datasetId: string; symbol: string; interval: string; recordCount: number; status: string; venue?: string; startTime?: number; endTime?: number; gapCount?: number; }
+export interface LegacyStrategy { strategyId: string; name: string; [key: string]: unknown; }
+export interface LegacyBacktestResult { backtestId: string; strategyId: string; datasetId: string; engineType: string; initialCapital: number; leverage: number; finalEquity: number; netReturnPct: number; maxDrawdownPct: number; winRate: number; tradesCount: number; profitFactor: number; checksum: string; status: string; createdAt: string; }
+export interface Campaign { campaignId: string; name: string; symbol: string; interval: string; populationSize: number; generationsCount: number; currentGeneration: number; seed: number; status: string; mode?: string; targetMultiplier?: number; createdAt: string; }
+export interface CampaignCreateResponse extends Campaign { message?: string; }
+export interface LeaderboardItem { rank: number; backtestId: string; strategyId: string; engine: string; returnPct: number; maxDrawdownPct: number; winRate: number; tradesCount: number; profitFactor: number; checksum: string; date: string; }
+export interface SQXProject { name: string; }
+export interface SQXStatus { status: string; base_url?: string; session_id?: string; server_info?: { name: string; version: string }; error?: string; }
+export interface SQXDatabank { name: string; [key: string]: unknown; }
+export interface PrepareEthResponse { datasets: Array<unknown>; sourcePages: number; [key: string]: unknown; }
 
 const BASE_URL = typeof window !== "undefined" ? "" : "http://127.0.0.1:8000";
 
 async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${BASE_URL}${endpoint}`;
-  const response = await fetch(url, {
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(options.headers || {}),
-    },
+    headers: { "Content-Type": "application/json", Accept: "application/json", ...(options.headers || {}) },
   });
-
   if (!response.ok) {
     let errorDetail = response.statusText;
     try {
       const errJson = await response.json();
       errorDetail = errJson.detail || errJson.message || JSON.stringify(errJson);
     } catch {
-      // Keep the original HTTP failure.
+      // Preserve HTTP status when response is not JSON.
     }
     throw new Error(`API Request Error (${response.status} ${endpoint}): ${errorDetail}`);
   }
-
   return response.json() as Promise<T>;
 }
 
 export async function executeBacktest(params: BacktestParams): Promise<BacktestResult> {
-  if (!params.dataset_id?.trim()) {
-    throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id");
-  }
-
-  const payload: Record<string, unknown> = {
-    strategy_id: params.strategy_id,
-    dataset_id: params.dataset_id,
-  };
-
+  if (!params.dataset_id?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id");
+  const payload: Record<string, unknown> = { strategy_id: params.strategy_id, dataset_id: params.dataset_id };
   if (params.initial_capital !== undefined) payload.initial_capital = params.initial_capital;
   if (params.slippage_ticks !== undefined) payload.slippage_ticks = params.slippage_ticks;
   if (params.commission_per_order !== undefined) payload.commission_per_order = params.commission_per_order;
@@ -280,21 +259,11 @@ export async function executeBacktest(params: BacktestParams): Promise<BacktestR
   if (params.end_timestamp_utc_ms !== undefined) payload.end_timestamp_utc_ms = params.end_timestamp_utc_ms;
   if (params.ast !== undefined) payload.ast = params.ast;
   if (params.parameters !== undefined) payload.parameters = params.parameters;
-
-  return fetchJson<BacktestResult>("/api/v1/backtest", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  return fetchJson<BacktestResult>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) });
 }
 
-export async function getCertifiedStrategies(): Promise<CertifiedStrategy[]> {
-  return fetchJson<CertifiedStrategy[]>("/api/v2/certified/strategies");
-}
-
-export async function getCertifiedMetaStrategies(): Promise<CertifiedMetaStrategy[]> {
-  return fetchJson<CertifiedMetaStrategy[]>("/api/v2/certified/meta-strategies");
-}
-
+export async function getCertifiedStrategies(): Promise<CertifiedStrategy[]> { return fetchJson<CertifiedStrategy[]>("/api/v2/certified/strategies"); }
+export async function getCertifiedMetaStrategies(): Promise<CertifiedMetaStrategy[]> { return fetchJson<CertifiedMetaStrategy[]>("/api/v2/certified/meta-strategies"); }
 export async function getCandidates(params?: { limit?: number; include_rejected?: boolean }): Promise<CandidateStrategy[]> {
   const query = new URLSearchParams();
   if (params?.limit) query.set("limit", params.limit.toString());
@@ -302,245 +271,59 @@ export async function getCandidates(params?: { limit?: number; include_rejected?
   const qs = query.toString();
   return fetchJson<CandidateStrategy[]>(`/api/v1/candidates${qs ? `?${qs}` : ""}`);
 }
-
-export async function getStrategyLabOverview(): Promise<StrategyLabOverview> {
-  return fetchJson<StrategyLabOverview>("/api/v2/strategy-lab/overview");
-}
-
-export async function getStrategyLabStrategies(limit = 100): Promise<StrategyLabListResponse> {
-  return fetchJson<StrategyLabListResponse>(`/api/v2/strategy-lab/strategies?limit=${encodeURIComponent(limit)}`);
-}
-
-export async function getStrategyLabSQXStatus(): Promise<StrategyLabSQXStatus> {
-  return fetchJson<StrategyLabSQXStatus>("/api/v2/strategy-lab/sqx/status");
-}
-
+export async function getStrategyLabOverview(): Promise<StrategyLabOverview> { return fetchJson<StrategyLabOverview>("/api/v2/strategy-lab/overview"); }
+export async function getStrategyLabStrategies(limit = 100): Promise<StrategyLabListResponse> { return fetchJson<StrategyLabListResponse>(`/api/v2/strategy-lab/strategies?limit=${encodeURIComponent(limit)}`); }
+export async function getStrategyLabSQXStatus(): Promise<StrategyLabSQXStatus> { return fetchJson<StrategyLabSQXStatus>("/api/v2/strategy-lab/sqx/status"); }
 export async function extractStrategyLabProject(projectName: string): Promise<StrategyLabExtractionResult> {
   if (!projectName.trim()) throw new Error("PROJECT_NAME_REQUIRED");
-  return fetchJson<StrategyLabExtractionResult>(`/api/v2/strategy-lab/extract/${encodeURIComponent(projectName)}`, {
-    method: "POST",
-  });
+  return fetchJson<StrategyLabExtractionResult>(`/api/v2/strategy-lab/extract/${encodeURIComponent(projectName)}`, { method: "POST" });
 }
+export async function getDiscoveryStatus(): Promise<DiscoveryStatus> { return fetchJson<DiscoveryStatus>("/api/v1/discovery/status"); }
 
-export async function getDiscoveryStatus(): Promise<DiscoveryStatus> {
-  return fetchJson<DiscoveryStatus>("/api/v1/discovery/status");
-}
+export interface CertificationRecord { strategy_id: string; version: string; strategy_hash: string; dataset_id: string; dataset_checksum_sha256: string; engine_version: string; codebase_fingerprint: string; metrics_snapshot: Record<string, number>; route: string; status: string; scorecard: Record<string, unknown>; certified_at_utc: string; certificate_hash: string; }
+export interface LineageTreeResponse { root_strategy_id: string; total_nodes: number; max_generation: number; nodes: Record<string, { strategy_id: string; version: string; parents: string[]; children: string[]; generation: number; mutation_history: string[]; is_certified: boolean; certificate_hash: string | null; }>; }
+export interface PolicyImpactRequest { target_route?: string; cohort_ids?: string[]; new_max_drawdown_pct?: number; new_min_profit_factor?: number; new_min_calmar?: number; new_min_trades?: number; new_min_net_return_pct?: number; }
+export interface PolicyImpactResult { analysis_id: string; target_route: string; analyzed_at_utc: string; total_cohort_size: number; baseline_policy: Record<string, number>; new_policy: Record<string, number>; baseline_passed_count: number; new_policy_passed_count: number; pass_rate_baseline_pct: number; pass_rate_new_pct: number; pass_rate_delta_pct: number; transition_summary: { CONSISTENT_PASS: number; CONSISTENT_FAIL: number; REVOKED: number; NEWLY_QUALIFIED: number; }; revoked_count: number; newly_qualified_count: number; recommendation: string; }
+export interface ResearchDebateResponse { debate_id: string; strategy_id: string; blind_scope: string; hypotheses: Array<{ role: string; finding: string; suggested_action: string; confidence: number; target_node: string; evidence_citations: string[]; }>; disagreement_level: number; consensus_hypothesis: string; recommended_mutations: string[]; created_at_utc: string; }
+export interface ResearchSynthesisResponse { proposal_id: string; experiment_id: string; mutation_id: string; strategy_id: string; parent_hash: string; mutated_hash: string; consensus_summary: string; mutated_dsl: Record<string, unknown>; validation_status: string; created_at_utc: string; }
+export interface DurableJob { job_id: string; job_type: string; payload: Record<string, unknown>; priority: number; status: string; attempts: number; max_attempts: number; error_message: string | null; created_at_utc: string; updated_at_utc: string; completed_at_utc: string | null; }
+export interface ForwardSufficiencyRequest { strategy_id: string; route: string; forward_days: number; forward_trades: number; forward_net_profit_pct: number; forward_max_dd_pct: number; is_expected_return_pct?: number; is_max_dd_pct?: number; }
+export interface ForwardSufficiencyResult { strategy_id: string; route: string; verdict: "INSUFFICIENT_DATA" | "FORWARD_ACCUMULATING" | "FORWARD_CERTIFIED" | "FORWARD_DEGRADED_ABORT"; forward_days_completed: number; required_forward_days: number; forward_trades_completed: number; required_forward_trades: number; drawdown_consumption_pct: number; forward_to_is_return_ratio: number; is_certified_ready: boolean; diagnostics: string[]; evaluated_at_utc: string; }
 
-export interface CertificationRecord {
-  strategy_id: string;
-  version: string;
-  strategy_hash: string;
-  dataset_id: string;
-  dataset_checksum_sha256: string;
-  engine_version: string;
-  codebase_fingerprint: string;
-  metrics_snapshot: Record<string, number>;
-  route: string;
-  status: string;
-  scorecard: Record<string, unknown>;
-  certified_at_utc: string;
-  certificate_hash: string;
-}
-
-export interface LineageTreeResponse {
-  root_strategy_id: string;
-  total_nodes: number;
-  max_generation: number;
-  nodes: Record<string, {
-    strategy_id: string;
-    version: string;
-    parents: string[];
-    children: string[];
-    generation: number;
-    mutation_history: string[];
-    is_certified: boolean;
-    certificate_hash: string | null;
-  }>;
-}
-
-export interface PolicyImpactRequest {
-  target_route?: string;
-  cohort_ids?: string[];
-  new_max_drawdown_pct?: number;
-  new_min_profit_factor?: number;
-  new_min_calmar?: number;
-  new_min_trades?: number;
-  new_min_net_return_pct?: number;
-}
-
-export interface PolicyImpactResult {
-  analysis_id: string;
-  target_route: string;
-  analyzed_at_utc: string;
-  total_cohort_size: number;
-  baseline_policy: Record<string, number>;
-  new_policy: Record<string, number>;
-  baseline_passed_count: number;
-  new_policy_passed_count: number;
-  pass_rate_baseline_pct: number;
-  pass_rate_new_pct: number;
-  pass_rate_delta_pct: number;
-  transition_summary: {
-    CONSISTENT_PASS: number;
-    CONSISTENT_FAIL: number;
-    REVOKED: number;
-    NEWLY_QUALIFIED: number;
-  };
-  revoked_count: number;
-  newly_qualified_count: number;
-  recommendation: string;
-}
-
-export interface ResearchDebateResponse {
-  debate_id: string;
-  strategy_id: string;
-  blind_scope: string;
-  hypotheses: Array<{
-    role: string;
-    finding: string;
-    suggested_action: string;
-    confidence: number;
-    target_node: string;
-    evidence_citations: string[];
-  }>;
-  disagreement_level: number;
-  consensus_hypothesis: string;
-  recommended_mutations: string[];
-  created_at_utc: string;
-}
-
-export interface ResearchSynthesisResponse {
-  proposal_id: string;
-  experiment_id: string;
-  mutation_id: string;
-  strategy_id: string;
-  parent_hash: string;
-  mutated_hash: string;
-  consensus_summary: string;
-  mutated_dsl: Record<string, unknown>;
-  validation_status: string;
-  created_at_utc: string;
-}
-
-export interface DurableJob {
-  job_id: string;
-  job_type: string;
-  payload: Record<string, unknown>;
-  priority: number;
-  status: string;
-  attempts: number;
-  max_attempts: number;
-  error_message: string | null;
-  created_at_utc: string;
-  updated_at_utc: string;
-  completed_at_utc: string | null;
-}
-
-export interface ForwardSufficiencyRequest {
-  strategy_id: string;
-  route: string;
-  forward_days: number;
-  forward_trades: number;
-  forward_net_profit_pct: number;
-  forward_max_dd_pct: number;
-  is_expected_return_pct?: number;
-  is_max_dd_pct?: number;
-}
-
-export interface ForwardSufficiencyResult {
-  strategy_id: string;
-  route: string;
-  verdict: "INSUFFICIENT_DATA" | "FORWARD_ACCUMULATING" | "FORWARD_CERTIFIED" | "FORWARD_DEGRADED_ABORT";
-  forward_days_completed: number;
-  required_forward_days: number;
-  forward_trades_completed: number;
-  required_forward_trades: number;
-  drawdown_consumption_pct: number;
-  forward_to_is_return_ratio: number;
-  is_certified_ready: boolean;
-  diagnostics: string[];
-  evaluated_at_utc: string;
-}
-
-export async function getLineageTree(strategyId: string): Promise<LineageTreeResponse> {
-  return fetchJson<LineageTreeResponse>(`/api/v1/lineage/${strategyId}`);
-}
-
-export async function verifyCertificate(certificate: CertificationRecord): Promise<{ is_valid: boolean; tampering_detected: boolean }> {
-  return fetchJson<{ is_valid: boolean; tampering_detected: boolean }>("/api/v1/lineage/verify-certificate", {
-    method: "POST",
-    body: JSON.stringify(certificate),
-  });
-}
-
-export async function runPolicyImpactAnalysis(request: PolicyImpactRequest): Promise<PolicyImpactResult> {
-  return fetchJson<PolicyImpactResult>("/api/v1/policy/impact-analysis", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-}
-
-export async function triggerResearchDebate(strategyId: string): Promise<ResearchDebateResponse> {
-  return fetchJson<ResearchDebateResponse>(`/api/v1/research-lab/debate/${strategyId}`, {
-    method: "POST",
-  });
-}
-
-export async function synthesizeStrategyMutation(strategyId: string, debateId: string): Promise<ResearchSynthesisResponse> {
-  return fetchJson<ResearchSynthesisResponse>("/api/v1/research-lab/synthesize", {
-    method: "POST",
-    body: JSON.stringify({ strategy_id: strategyId, debate_id: debateId }),
-  });
-}
-
-export async function enqueueDurableJob(jobType: string, payload: Record<string, unknown>, priority = 5): Promise<DurableJob> {
-  return fetchJson<DurableJob>("/api/v1/jobs/enqueue", {
-    method: "POST",
-    body: JSON.stringify({ job_type: jobType, payload, priority }),
-  });
-}
-
-export async function getDurableJobs(status?: string): Promise<DurableJob[]> {
-  const qs = status ? `?status=${status}` : "";
-  return fetchJson<DurableJob[]>(`/api/v1/jobs${qs}`);
-}
-
-export async function evaluateForwardSufficiency(request: ForwardSufficiencyRequest): Promise<ForwardSufficiencyResult> {
-  return fetchJson<ForwardSufficiencyResult>("/api/v1/forward/evaluate", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
-}
-
-export function getApiUrl(path = ""): string {
-  if (!path) return BASE_URL;
-  return `${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
-}
+export async function getLineageTree(strategyId: string): Promise<LineageTreeResponse> { return fetchJson<LineageTreeResponse>(`/api/v1/lineage/${strategyId}`); }
+export async function verifyCertificate(certificate: CertificationRecord): Promise<{ is_valid: boolean; tampering_detected: boolean }> { return fetchJson("/api/v1/lineage/verify-certificate", { method: "POST", body: JSON.stringify(certificate) }); }
+export async function runPolicyImpactAnalysis(request: PolicyImpactRequest): Promise<PolicyImpactResult> { return fetchJson<PolicyImpactResult>("/api/v1/policy/impact-analysis", { method: "POST", body: JSON.stringify(request) }); }
+export async function triggerResearchDebate(strategyId: string): Promise<ResearchDebateResponse> { return fetchJson<ResearchDebateResponse>(`/api/v1/research-lab/debate/${strategyId}`, { method: "POST" }); }
+export async function synthesizeStrategyMutation(strategyId: string, debateId: string): Promise<ResearchSynthesisResponse> { return fetchJson<ResearchSynthesisResponse>("/api/v1/research-lab/synthesize", { method: "POST", body: JSON.stringify({ strategy_id: strategyId, debate_id: debateId }) }); }
+export async function enqueueDurableJob(jobType: string, payload: Record<string, unknown>, priority = 5): Promise<DurableJob> { return fetchJson<DurableJob>("/api/v1/jobs/enqueue", { method: "POST", body: JSON.stringify({ job_type: jobType, payload, priority }) }); }
+export async function getDurableJobs(status?: string): Promise<DurableJob[]> { return fetchJson<DurableJob[]>(`/api/v1/jobs${status ? `?status=${encodeURIComponent(status)}` : ""}`); }
+export async function evaluateForwardSufficiency(request: ForwardSufficiencyRequest): Promise<ForwardSufficiencyResult> { return fetchJson<ForwardSufficiencyResult>("/api/v1/forward/evaluate", { method: "POST", body: JSON.stringify(request) }); }
+export function getApiUrl(path = ""): string { return `${BASE_URL}${path ? (path.startsWith("/") ? path : `/${path}`) : ""}`; }
 
 export const api = {
   get: <T = unknown>(endpoint: string) => fetchJson<T>(endpoint),
-  post: <T = unknown>(endpoint: string, data?: unknown) => fetchJson<T>(endpoint, { method: "POST", body: data ? JSON.stringify(data) : undefined }),
-  put: <T = unknown>(endpoint: string, data?: unknown) => fetchJson<T>(endpoint, { method: "PUT", body: data ? JSON.stringify(data) : undefined }),
+  post: <T = unknown>(endpoint: string, data?: unknown) => fetchJson<T>(endpoint, { method: "POST", body: data === undefined ? undefined : JSON.stringify(data) }),
+  put: <T = unknown>(endpoint: string, data?: unknown) => fetchJson<T>(endpoint, { method: "PUT", body: data === undefined ? undefined : JSON.stringify(data) }),
   delete: <T = unknown>(endpoint: string) => fetchJson<T>(endpoint, { method: "DELETE" }),
-  getDatasets: () => fetchJson<unknown[]>("/api/v1/datasets"),
-  prepareEthResearch: (days: number) => fetchJson<unknown>("/api/v1/datasets/prepare-eth", { method: "POST", body: JSON.stringify({ days }) }),
-  getSQXStatus: () => fetchJson<unknown>("/api/v1/sqx/status"),
-  getSQXProjects: () => fetchJson<unknown>("/api/v1/sqx/projects"),
-  getSQXDatabanks: (projectName?: string) => fetchJson<unknown>(`/api/v1/sqx/databanks${projectName ? `?project=${projectName}` : ""}`),
-  getStrategies: () => fetchJson<unknown[]>("/api/v1/strategies"),
-  getBacktests: () => fetchJson<unknown[]>("/api/v1/backtests"),
-  getBacktestTrades: (backtestId: string) => fetchJson<unknown[]>(`/api/v1/backtest/${backtestId}/trades`),
-  runFastBacktest: (strategyId: string, datasetId: string, capital?: number) => {
+  getDatasets: (): Promise<ApprovedDataset[]> => fetchJson<ApprovedDataset[]>("/api/v1/datasets"),
+  prepareEthResearch: (days: number): Promise<PrepareEthResponse> => fetchJson<PrepareEthResponse>("/api/v1/datasets/prepare-eth", { method: "POST", body: JSON.stringify({ days }) }),
+  getSQXStatus: (): Promise<SQXStatus> => fetchJson<SQXStatus>("/api/v1/sqx/status"),
+  getSQXProjects: (): Promise<{ projects: SQXProject[] }> => fetchJson<{ projects: SQXProject[] }>("/api/v1/sqx/projects"),
+  getSQXDatabanks: (projectName?: string): Promise<{ databanks: SQXDatabank[] }> => fetchJson<{ databanks: SQXDatabank[] }>(`/api/v1/sqx/databanks${projectName ? `?project=${encodeURIComponent(projectName)}` : ""}`),
+  getStrategies: (): Promise<LegacyStrategy[]> => fetchJson<LegacyStrategy[]>("/api/v1/strategies"),
+  getBacktests: (): Promise<LegacyBacktestResult[]> => fetchJson<LegacyBacktestResult[]>("/api/v1/backtests"),
+  getBacktestTrades: (backtestId: string): Promise<unknown[]> => fetchJson<unknown[]>(`/api/v1/backtest/${encodeURIComponent(backtestId)}/trades`),
+  runFastBacktest: (strategyId: string, datasetId: string, capital?: number): Promise<unknown> => {
     if (!datasetId?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED");
     const payload: Record<string, unknown> = { strategy_id: strategyId, dataset_id: datasetId };
     if (capital !== undefined) payload.initial_capital = capital;
     return fetchJson<unknown>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) });
   },
-  getLeaderboard: () => fetchJson<unknown[]>("/api/v1/leaderboard"),
-  getCampaigns: () => fetchJson<unknown[]>("/api/v1/campaigns"),
-  createAutonomousCampaign: (payload: unknown) => fetchJson<unknown>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
-  startCampaign: (campaignId: string) => fetchJson<unknown>(`/api/v1/campaigns/${campaignId}/start`, { method: "POST" }),
-  getExecutionSessions: () => fetchJson<unknown[]>("/api/v1/execution/sessions"),
+  getLeaderboard: (): Promise<LeaderboardItem[]> => fetchJson<LeaderboardItem[]>("/api/v1/leaderboard"),
+  getCampaigns: (): Promise<Campaign[]> => fetchJson<Campaign[]>("/api/v1/campaigns"),
+  createAutonomousCampaign: (payload: unknown): Promise<CampaignCreateResponse> => fetchJson<CampaignCreateResponse>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
+  startCampaign: (campaignId: string): Promise<unknown> => fetchJson<unknown>(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/start`, { method: "POST" }),
+  getExecutionSessions: (): Promise<unknown[]> => fetchJson<unknown[]>("/api/v1/execution/sessions"),
   getCandidates,
   getCertifiedStrategies,
   getCertifiedMetaStrategies,
