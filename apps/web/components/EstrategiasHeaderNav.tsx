@@ -93,6 +93,38 @@ export default function EstrategiasHeaderNav() {
         </span>
       </Link>
 
+      {/* TRADING DESK BUTTON */}
+      <Link
+        href="/trading-desk"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "6px 12px",
+          background: pathname === "/trading-desk" ? "rgba(16, 185, 129, 0.25)" : "rgba(16, 185, 129, 0.12)",
+          border: pathname === "/trading-desk" ? "1px solid rgba(16, 185, 129, 0.8)" : "1px solid rgba(16, 185, 129, 0.35)",
+          borderRadius: "8px",
+          marginRight: "4px",
+          textDecoration: "none",
+          flexShrink: 0,
+          boxShadow: pathname === "/trading-desk" ? "0 0 14px rgba(16, 185, 129, 0.4)" : "none",
+        }}
+      >
+        <span style={{ fontSize: "13px" }}>⚡</span>
+        <span
+          style={{
+            fontSize: "10px",
+            fontWeight: 900,
+            letterSpacing: "0.5px",
+            color: "#10b981",
+            fontFamily: "var(--font-mono, monospace)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          TRADING DESK EN VIVO
+        </span>
+      </Link>
+
       {/* 6 TABS */}
       {ESTRATEGIAS_TABS.map((tab) => {
         const active = isTabActive(tab);

@@ -511,6 +511,25 @@ class AuditEventModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class GatewayProviderModel(Base):
+    __tablename__ = "gateway_providers"
+    provider_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    category = Column(String, default="PROP_FIRM_BRIDGE")
+    auth_token = Column(String, nullable=True)
+    endpoint_url = Column(String, nullable=True)
+    api_key = Column(String, nullable=True)
+    api_secret = Column(String, nullable=True)
+    is_enabled = Column(Boolean, default=True)
+    status = Column(String, default="IDLE_WAITING")
+    latency_ms = Column(Float, default=0.0)
+    telemetry_packets_count = Column(Integer, default=0)
+    config_json = Column(Text, nullable=True)
+    last_ping_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+
 from sqlalchemy import text
 
 

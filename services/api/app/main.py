@@ -37,6 +37,7 @@ from services.api.app.api.research_router import router as research_router
 from services.api.app.api.gates_router import gates_router
 from services.api.app.api.firebase_sync_router import firebase_sync_router
 from services.api.app.api.certified_summary_router import certified_summary_router
+from services.api.app.api.gateways_router import gateways_router
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
 from services.validation.validation_router import router as validation_router
 from services.semantic_ai.semantic_router import router as semantic_router
@@ -44,6 +45,7 @@ from services.exploitation_engines.ultra_router import router as ultra_router
 from services.portfolio.portfolio_router import router as portfolio_router
 from services.paper.paper_router import router as paper_router
 from services.engine_version import compute_codebase_fingerprint, CURRENT_ENGINE_VERSION
+
 logger = logging.getLogger("UltrarentableAPI")
 
 def _autonomous_runtime_enabled() -> bool:
@@ -112,6 +114,7 @@ app = FastAPI(
 )
 app.add_middleware(CORSMiddleware, allow_origins=LOCAL_WEB_ORIGINS or ["http://localhost:3000", "http://127.0.0.1:3000"], allow_credentials=False, allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], allow_headers=["Content-Type", "Authorization", "Accept"])
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 # V1
 app.include_router(legacy_routes, prefix="/api/v1", tags=["v1-core"])
 app.include_router(sqx_router, prefix="/api/v1", tags=["v1-sqx"])
@@ -133,6 +136,8 @@ app.include_router(telemetry_router, prefix="/api/v1/telemetry", tags=["v1-telem
 app.include_router(job_queue_router, prefix="/api/v1/jobs", tags=["v1-jobs"])
 app.include_router(forward_router, prefix="/api/v1/forward", tags=["v1-forward"])
 app.include_router(certified_summary_router, prefix="/api/v1", tags=["v1-certified"])
+app.include_router(gateways_router, prefix="/api/v1", tags=["v1-gateways"])
+
 # V2
 app.include_router(strategy_lab_router, prefix="/api/v2", tags=["v2-strategy-lab"])
 app.include_router(strategy_binding_router, prefix="/api/v2", tags=["v2-strategy-binding"])

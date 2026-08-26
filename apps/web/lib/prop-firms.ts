@@ -522,16 +522,16 @@ export const ALL_PROP_FIRM_ACCOUNTS: PropFirmAccount[] = [
     id: "mffu-rapid-25k",
     firm_name: "MyFundedFutures",
     firm_slug: "mffu",
-    program_name: "Rapid Plan ($0 Activation Fee)",
+    program_name: "Rapid Plan (One-Time Payment)",
     market_type: "FUTURES_CME",
     account_size_usd: 25000,
-    affiliate_url: "https://myfundedfutures.com",
-    exam_price_regular_usd: 109,
-    active_coupon_code: "300K",
+    affiliate_url: "https://myfundedfutures.com/challenge?id=69&coupon=CLUB",
+    exam_price_regular_usd: 145,
+    active_coupon_code: "CLUB",
     discount_percentage: 50,
-    exam_price_promo_usd: 54.50,
+    exam_price_promo_usd: 72.50,
     activation_fee_usd: 0,
-    total_pass_cost_usd: 54.50,
+    total_pass_cost_usd: 72.50,
     reset_fee_usd: 77,
     monthly_renewal_usd: 54.50,
     data_fee_funded_monthly_usd: 0,
@@ -574,16 +574,16 @@ export const ALL_PROP_FIRM_ACCOUNTS: PropFirmAccount[] = [
     id: "mffu-rapid-50k",
     firm_name: "MyFundedFutures",
     firm_slug: "mffu",
-    program_name: "Rapid Plan ($0 Activation Fee)",
+    program_name: "Rapid Plan (One-Time Payment)",
     market_type: "FUTURES_CME",
     account_size_usd: 50000,
-    affiliate_url: "https://myfundedfutures.com",
-    exam_price_regular_usd: 157,
-    active_coupon_code: "300K",
+    affiliate_url: "https://myfundedfutures.com/challenge?id=70&coupon=CLUB",
+    exam_price_regular_usd: 209,
+    active_coupon_code: "CLUB",
     discount_percentage: 50,
-    exam_price_promo_usd: 78.50,
+    exam_price_promo_usd: 104.50,
     activation_fee_usd: 0,
-    total_pass_cost_usd: 78.50,
+    total_pass_cost_usd: 104.50,
     reset_fee_usd: 87,
     monthly_renewal_usd: 78.50,
     data_fee_funded_monthly_usd: 0,
@@ -4208,8 +4208,100 @@ export function evaluateDrawdownRisk(account: PropFirmAccount): {
   if (account.drawdown_type === "STATIC") {
     return { level: "SAFE", label: "Estático Puro (Bajo Riesgo)", riskClass: "text-emerald-400" };
   }
-  if (account.drawdown_type === "EOD_TRAILING") {
+  if (account.drawdown_type === "EOD_TRAILING" || account.drawdown_type === "LOCKED_INITIAL") {
     return { level: "MODERATE", label: "EOD Trailing (Riesgo Moderado)", riskClass: "text-cyan-400" };
   }
   return { level: "HIGH_RISK", label: "Intraday Peak (Alto Riesgo)", riskClass: "text-rose-400" };
 }
+
+/**
+ * 🤖 ALGORITMO DE IDONEIDAD PARA TRADING ALGORÍTMICO / BOTS
+ * Calcula una puntuación de 0 a 100 basada en el tipo de drawdown, permiso de bots, DLL y activación.
+ */
+export function calculateBotSuitabilityScore(account: PropFirmAccount): number {
+  let score = 50;
+
+  // 1. Tipo de Drawdown
+  if (account.drawdown_type === "STATIC") {
+    score += 30; // Máxima tolerancia para bots que acumulan flotante
+  } else if (account.drawdown_type === "EOD_TRAILING" || account.drawdown_type === "LOCKED_INITIAL") {
+    score += 25; // Excelente para bots intradía (no penaliza pullbacks en sesión)
+  } else {
+    score -= 20; // Intraday Peak castiga severamente pullbacks y estocástica
+  }
+
+  // 2. Política de Bots
+  if (account.bot_policy === "ALLOWED_100") {
+    score += 20; // Automatización 100% nativa
+  } else if (account.bot_policy === "ALLOWED_LOCAL_ONLY") {
+    score += 5; // Requiere ejecución local
+  } else if (account.bot_policy === "RESTRICTED") {
+    score -= 10;
+  } else if (account.bot_policy === "PROHIBITED") {
+    score -= 60; // Prohibición total (ej. Apex en PA)
+  }
+
+  // 3. Cuota de Activación
+  if (account.activation_fee_usd === 0) {
+    score += 15;
+  } else if (account.activation_fee_usd > 120) {
+    score -= 10;
+  }
+
+  // 4. Daily Loss Limit (DLL)
+  if (account.daily_loss_limit_type === "NONE") {
+    score += 10;
+  } else if (account.daily_loss_limit_type === "SOFT_BREACH") {
+    score += 5;
+  } else if (account.daily_loss_limit_type === "HARD_BREACH") {
+    score -= 25; // Quema la cuenta por un spike
+  }
+
+  // 5. Consistencia & Noticias
+  if (account.consistency_rule_pct >= 50) {
+    score += 5;
+  } else if (account.consistency_rule_pct <= 30) {
+    score -= 5;
+  }
+
+  if (account.news_trading_restricted) {
+    score -= 15;
+  }
+
+  return Math.min(100, Math.max(0, score));
+}
+
+export function getBotSuitabilityTier(score: number): {
+  tier: "TIER_1" | "TIER_2" | "TIER_3";
+  label: string;
+  badgeText: string;
+  badgeClass: string;
+  dotColor: string;
+} {
+  if (score >= 85) {
+    return {
+      tier: "TIER_1",
+      label: "Tier 1: Óptimo & Nativo Bots",
+      badgeText: "NATIVO BOTS 🤖",
+      badgeClass: "bg-emerald-950 text-emerald-300 border-emerald-500/40",
+      dotColor: "#10b981",
+    };
+  }
+  if (score >= 65) {
+    return {
+      tier: "TIER_2",
+      label: "Tier 2: Apto con Adaptaciones",
+      badgeText: "APTO SEMI-AUTO ⚙️",
+      badgeClass: "bg-amber-950 text-amber-300 border-amber-500/40",
+      dotColor: "#f59e0b",
+    };
+  }
+  return {
+    tier: "TIER_3",
+    label: "Tier 3: No Recomendado / Prohibido",
+    badgeText: "HOSTIL A BOTS ❌",
+    badgeClass: "bg-rose-950 text-rose-300 border-rose-500/40",
+    dotColor: "#f43f5e",
+  };
+}
+
