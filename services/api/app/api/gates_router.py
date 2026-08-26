@@ -1,490 +1,180 @@
-"""services/api/app/api/gates_router.py
-FastAPI Router para la gestión integral de las 11 Fases / Gates Cuantitativos:
-1. Slugs independientes para cada una de las 11 Fases (/gates/gate-1-..., /gates/gate-2-..., etc.).
-2. Editor Semántico Agéntico de IA para modificar la configuración de los motores en interfaz y sincronizar en Firebase Firestore / SQLite.
-3. Simulador & Auditor de Backtest Detallado NautilusTrader (Gate 11) con registro evento-a-evento.
-"""
+"""Canonical quantitative-gates API surface.
 
+This module is intentionally evidence-first. It may expose gate definitions and
+persist explicit configuration, but it must never fabricate performance,
+trade ledgers, equity curves, telemetry, or cloud-sync claims.
+"""
 from __future__ import annotations
 
-import os
+import copy
+import hashlib
 import json
-import logging
-import sqlite3
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, Body
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from services.api.app.db.database import get_db, CandidateModel
-from services.api.app.validation.market_specs import get_market_spec
-from services.api.app.data_feed.feed_loader import load_candles
-
-logger = logging.getLogger("gates_router")
-gates_router = APIRouter(prefix="/gates", tags=["11 Quantitative Gates & Semantic AI Engine"])
-
-DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
-
-# Definición canónica de los 11 Gates Cuantitativos con sus Slugs Oficiales
 from contracts.gate_directory import GATES_DIRECTORY
+from services.api.app.db.database import BacktestModel, get_db
+from services.api.app.config import STATE_DB_PATH
 
-# Cache en memoria para parámetros modificados dinámicamente
-_GATE_PARAMS_OVERRIDE: Dict[str, Dict[str, Any]] = {}
+
+gates_router = APIRouter(prefix="/gates", tags=["11 Quantitative Gates"])
 
 
-def _init_gate_tables():
-    """Inicializa la tabla de persistencia de configuración de gates en SQLite."""
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS gate_configurations (
-                slug TEXT PRIMARY KEY,
-                gate_number INTEGER,
-                name TEXT,
-                parameters_json TEXT,
-                updated_at TEXT,
-                updated_by TEXT
-            )
-        """)
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        logger.error(f"Error initializing gate_configurations table: {e}")
+def _find_gate(slug: str) -> Dict[str, Any]:
+    gate = next((item for item in GATES_DIRECTORY if item["slug"] == slug or str(item["id"]) == slug or f"gate-{item['id']}" == slug), None)
+    if gate is None:
+        raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
+    return gate
 
-_init_gate_tables()
+
+def _config_table(db: Session) -> None:
+    db.execute(text("""
+        CREATE TABLE IF NOT EXISTS gate_configurations (
+            slug TEXT PRIMARY KEY,
+            gate_number INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            parameters_json TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            updated_by TEXT NOT NULL
+        )
+    """))
+    db.commit()
+
+
+def _configured_params(gate: Dict[str, Any], db: Session) -> Dict[str, Any]:
+    params = copy.deepcopy(gate["default_params"])
+    _config_table(db)
+    row = db.execute(text("SELECT parameters_json FROM gate_configurations WHERE slug = :slug"), {"slug": gate["slug"]}).mappings().first()
+    if row:
+        stored = json.loads(row["parameters_json"])
+        for key, value in stored.items():
+            if key in params:
+                params[key] = value
+    return params
 
 
 @gates_router.get("")
-def list_all_gates() -> List[Dict[str, Any]]:
-    """Devuelve la lista completa de las 11 Fases / Gates Cuantitativos con sus slugs y estado."""
-    result = []
-    for g in GATES_DIRECTORY:
-        slug = g["slug"]
-        merged_params = dict(g["default_params"])
-        if slug in _GATE_PARAMS_OVERRIDE:
-            for k, v in _GATE_PARAMS_OVERRIDE[slug].items():
-                if k in merged_params:
-                    merged_params[k]["value"] = v
-
-        result.append({
-            **g,
-            "params": merged_params,
-            "firebase_sync_status": "SYNCHRONIZED_CLOUD (pecemi)",
-            "local_persistence": "SQLITE_WAL"
-        })
-    return result
+def list_all_gates(db: Session = Depends(get_db)) -> List[Dict[str, Any]]:
+    return [
+        {
+            **gate,
+            "params": _configured_params(gate, db),
+            "evidence_status": "NO_EVIDENCE",
+            "performance_status": "NOT_AVAILABLE",
+            "execution_status": "NOT_AVAILABLE",
+            "cloud_sync_status": "NOT_CONFIGURED",
+        }
+        for gate in GATES_DIRECTORY
+    ]
 
 
 @gates_router.get("/{slug}")
-def get_gate_by_slug(slug: str) -> Dict[str, Any]:
-    """Devuelve la configuración y telemetría detallada de un Gate específico por su slug."""
-    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or str(g.get("id")) == slug or f"gate-{g.get('id')}" == slug), None)
-    if not gate:
-        raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
-
-    merged_params = dict(gate["default_params"])
-    if gate["slug"] in _GATE_PARAMS_OVERRIDE:
-        for k, v in _GATE_PARAMS_OVERRIDE[gate["slug"]].items():
-            if k in merged_params:
-                merged_params[k]["value"] = v
-
+def get_gate_by_slug(slug: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    gate = _find_gate(slug)
     return {
         **gate,
-        "params": merged_params,
-        "firebase_sync_status": "SYNCHRONIZED_CLOUD (pecemi)",
-        "firebase_path": f"/ultrarentable/gates/{gate['slug']}",
-        "local_persistence": "SQLITE_WAL",
-        "updated_at": datetime.now(timezone.utc).isoformat()
+        "params": _configured_params(gate, db),
+        "evidence_status": "NO_EVIDENCE",
+        "performance_status": "NOT_AVAILABLE",
+        "execution_status": "NOT_AVAILABLE",
+        "cloud_sync_status": "NOT_CONFIGURED",
+        "retrieved_at": datetime.now(timezone.utc).isoformat(),
     }
 
 
 class GateConfigUpdateSchema(BaseModel):
-    params: Dict[str, Any]
+    params: Dict[str, Any] = Field(default_factory=dict)
     source: Optional[str] = "MANUAL_UI"
 
 
 @gates_router.put("/{slug}/config")
-def update_gate_config(slug: str, body: GateConfigUpdateSchema) -> Dict[str, Any]:
-    """Actualiza los parámetros de un Gate con persistencia local en SQLite y Firebase."""
-    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or str(g.get("id")) == slug or f"gate-{g.get('id')}" == slug), None)
-    if not gate:
-        raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
-
-    # Guardar en memoria
-    if gate["slug"] not in _GATE_PARAMS_OVERRIDE:
-        _GATE_PARAMS_OVERRIDE[gate["slug"]] = {}
-    _GATE_PARAMS_OVERRIDE[gate["slug"]].update(body.params)
-
-    # Persistir en SQLite
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT OR REPLACE INTO gate_configurations (slug, gate_number, name, parameters_json, updated_at, updated_by)
-            VALUES (?, ?, ?, ?, datetime('now'), ?)
-        """, (gate["slug"], gate["gate_number"], gate["name"], json.dumps(body.params), body.source))
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        logger.error(f"Error persisting gate config to SQLite: {e}")
-
+def update_gate_config(slug: str, body: GateConfigUpdateSchema, db: Session = Depends(get_db)) -> Dict[str, Any]:
+    gate = _find_gate(slug)
+    allowed = set(gate["default_params"])
+    unknown = sorted(set(body.params) - allowed)
+    if unknown:
+        raise HTTPException(status_code=422, detail={"code": "UNKNOWN_GATE_PARAMETERS", "parameters": unknown})
+    _config_table(db)
+    payload = json.dumps(body.params, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    config_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    now = datetime.now(timezone.utc).isoformat()
+    db.execute(text("""
+        INSERT INTO gate_configurations(slug, gate_number, name, parameters_json, updated_at, updated_by)
+        VALUES (:slug, :gate_number, :name, :parameters_json, :updated_at, :updated_by)
+        ON CONFLICT(slug) DO UPDATE SET
+            parameters_json=excluded.parameters_json,
+            updated_at=excluded.updated_at,
+            updated_by=excluded.updated_by,
+            gate_number=excluded.gate_number,
+            name=excluded.name
+    """), {
+        "slug": gate["slug"], "gate_number": gate["id"], "name": gate["name"],
+        "parameters_json": payload, "updated_at": now, "updated_by": body.source or "MANUAL_UI"
+    })
+    db.commit()
     return {
         "status": "SUCCESS",
         "slug": gate["slug"],
-        "gate_number": gate["gate_number"],
-        "name": gate["name"],
         "updated_params": body.params,
-        "firebase_sync": {
-            "status": "CLOUD_SYNCED",
-            "project": "pecemi",
-            "path": f"/ultrarentable/gates/{gate['slug']}",
-            "synced_at": datetime.now(timezone.utc).isoformat()
-        },
-        "message": f"Configuración de {gate['name']} actualizada exitosamente en motor y Firebase."
+        "config_hash": config_hash,
+        "persisted": True,
+        "cloud_sync_status": "NOT_CONFIGURED",
     }
 
 
 class SemanticAIPromptSchema(BaseModel):
-    prompt: str = Field(..., description="Instrucción en lenguaje natural para modificar la configuración")
+    prompt: str = Field(..., min_length=1)
     candidate_id: Optional[str] = None
 
 
 @gates_router.post("/{slug}/ai-semantic-edit")
 def ai_semantic_edit_gate(slug: str, body: SemanticAIPromptSchema) -> Dict[str, Any]:
-    """Interpreta semánticamente una orden en lenguaje natural y muta los parámetros del motor en tiempo real."""
-    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or str(g.get("id")) == slug or f"gate-{g.get('id')}" == slug), None)
-    if not gate:
-        raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
-
-    prompt_lower = body.prompt.lower()
-    applied_changes: Dict[str, Any] = {}
-    explanation = ""
-
-    # Análisis semántico agéntico de la intención
-    if gate["slug"] == "gate-1-data-ingest":
-        if "estricto" in prompt_lower or "más datos" in prompt_lower or "aumentar" in prompt_lower:
-            applied_changes = {"min_bars_required": 5000, "max_gap_tolerance_pct": 0.05, "enforce_sha256_checksum": True}
-            explanation = "Aumentado el requisito a 5,000 barras mínimas y reducido la tolerancia de gaps al 0.05% con huella SHA-256 forzada."
-        elif "rápido" in prompt_lower or "menos datos" in prompt_lower or "permisivo" in prompt_lower:
-            applied_changes = {"min_bars_required": 2000, "max_gap_tolerance_pct": 0.20}
-            explanation = "Ajustado para modo de escaneo rápido con umbral de 2,000 barras."
-        else:
-            applied_changes = {"min_bars_required": 4000, "max_gap_tolerance_pct": 0.08}
-            explanation = f"Calibrado de ingestión de datos según la directiva: '{body.prompt}'."
-
-    elif gate["slug"] == "gate-2-cost-backtest":
-        if "cme" in prompt_lower or "futuros" in prompt_lower:
-            applied_changes = {"cme_fixed_fee_per_contract": 3.00, "min_profit_factor_after_costs": 1.25}
-            explanation = "Elevada la comisión fija de CME a $3.00/contrato para cubrir spreads institucionales y fijado PF mínimo en 1.25."
-        elif "cripto" in prompt_lower or "bingx" in prompt_lower:
-            applied_changes = {"crypto_taker_fee_pct": 0.06, "min_profit_factor_after_costs": 1.20}
-            explanation = "Ajustada la tasa taker cripto a 0.06% para absorber spreads volátiles en BingX."
-        else:
-            applied_changes = {"crypto_taker_fee_pct": 0.05, "cme_fixed_fee_per_contract": 2.75, "min_profit_factor_after_costs": 1.20}
-            explanation = f"Fricción institucional recalculada para: '{body.prompt}'."
-
-    elif gate["slug"] == "gate-4-walk-forward":
-        if "estricto" in prompt_lower or "aumentar" in prompt_lower or "70" in prompt_lower:
-            applied_changes = {"min_wfe_ratio": 0.70, "num_wf_windows": 6, "max_degradation_pct": 30.0}
-            explanation = "Incrementado el ratio de eficiencia Walk-Forward a 0.70 (70%) con 6 ventanas secuenciales."
-        else:
-            applied_changes = {"min_wfe_ratio": 0.60, "num_wf_windows": 5}
-            explanation = f"Ajuste de persistencia OOS/IS aplicado según: '{body.prompt}'."
-
-    elif gate["slug"] == "gate-5-monte-carlo":
-        if "2000" in prompt_lower or "más simulaciones" in prompt_lower:
-            applied_changes = {"simulations_count": 2000, "confidence_level_pct": 99.0, "max_allowed_ruin_probability": 0.0}
-            explanation = "Ampliadas las simulaciones a 2,000 iteraciones con nivel de confianza del 99.0% y 0% tolerancia a ruina."
-        else:
-            applied_changes = {"simulations_count": 1500, "confidence_level_pct": 97.5}
-            explanation = f"Matriz estocástica Monte Carlo reforzada según: '{body.prompt}'."
-
-    elif gate["slug"] == "gate-6-stress-slippage":
-        if "3x" in prompt_lower or "triple" in prompt_lower or "extremo" in prompt_lower:
-            applied_changes = {"stress_slippage_multiplier": 3.0, "stress_fee_multiplier": 2.0, "simulated_latency_ms": 300}
-            explanation = "Activado modo de estrés extremo con 3.0x de slippage, comisiones dobles y 300 ms de latencia."
-        else:
-            applied_changes = {"stress_slippage_multiplier": 2.5, "stress_fee_multiplier": 1.75}
-            explanation = f"Parámetros de degradación de fricción actualizados: '{body.prompt}'."
-
-    elif gate["slug"] == "gate-8-dsr-ratio":
-        if "estricto" in prompt_lower or "lópez de prado" in prompt_lower or "0.01" in prompt_lower:
-            applied_changes = {"min_dsr_score": 2.0, "max_p_value": 0.01, "estimated_trials_penalization": 1000}
-            explanation = "DSR elevado a 2.00 con p-value máximo de 0.01 y penalización severa para 1,000 ensayos."
-        else:
-            applied_changes = {"min_dsr_score": 1.65, "max_p_value": 0.03}
-            explanation = f"Ajustado el Deflated Sharpe Ratio según la instrucción: '{body.prompt}'."
-
-    elif gate["slug"] == "gate-11-nautilus-trader":
-        if "colchón" in prompt_lower or "liquidación" in prompt_lower or "fondeo" in prompt_lower:
-            applied_changes = {"min_liquidation_cushion_pct": 25.0, "max_effective_leverage": 20.0, "cross_margin_model": "STRICT_ISOLATED"}
-            explanation = "Aumentado el colchón de liquidación a 25.0% y limitado el apalancamiento efectivo a 20x en modo margen aislado."
-        elif "ultra" in prompt_lower or "500x" in prompt_lower or "piramidal" in prompt_lower:
-            applied_changes = {"min_liquidation_cushion_pct": 10.0, "max_effective_leverage": 100.0, "cross_margin_model": "CROSS_ISOLATED_HYBRID"}
-            explanation = "Configurado NautilusTrader para Ruta ULTRA: apalancamiento adaptativo hasta 100x y colateral híbrido."
-        else:
-            applied_changes = {"min_liquidation_cushion_pct": 20.0, "fill_model": "TICK_BY_TICK_QUEUE"}
-            explanation = f"Motor NautilusTrader reconfigurado: '{body.prompt}'."
-
-    else:
-        applied_changes = {"updated_via_ai": True, "ai_prompt_timestamp": datetime.now(timezone.utc).isoformat()}
-        explanation = f"Directiva procesada por el Agente Semántico para {gate['name']}: '{body.prompt}'."
-
-    # Persistir cambios
-    if gate["slug"] not in _GATE_PARAMS_OVERRIDE:
-        _GATE_PARAMS_OVERRIDE[gate["slug"]] = {}
-    _GATE_PARAMS_OVERRIDE[gate["slug"]].update(applied_changes)
-
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT OR REPLACE INTO gate_configurations (slug, gate_number, name, parameters_json, updated_at, updated_by)
-            VALUES (?, ?, ?, ?, datetime('now'), ?)
-        """, (gate["slug"], gate["gate_number"], gate["name"], json.dumps(_GATE_PARAMS_OVERRIDE[gate["slug"]]), "SEMANTIC_AI_AGENT"))
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        logger.error(f"Error persisting AI semantic gate config: {e}")
-
-    return {
-        "status": "MUTATION_APPLIED",
-        "agent": "Semantic Engine Architect IA",
-        "gate_slug": gate["slug"],
-        "gate_name": gate["name"],
-        "user_intent": body.prompt,
-        "explanation": explanation,
-        "applied_changes": applied_changes,
-        "firebase_cloud_sync": {
-            "status": "SYNCHRONIZED",
-            "project": "pecemi",
-            "collection": f"gates/{gate['slug']}",
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        }
-    }
+    _find_gate(slug)
+    raise HTTPException(
+        status_code=409,
+        detail={
+            "code": "AI_GATE_EDIT_REQUIRES_VERIFIED_POLICY",
+            "message": "Natural-language gate mutation is disabled until it is backed by a versioned policy/evidence change. No inferred quantitative values are applied.",
+        },
+    )
 
 
 @gates_router.get("/nautilus/detailed-backtest/{candidate_id}")
 def get_nautilus_detailed_backtest(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
-    """Genera el reporte de backtest REAL de StrategyQuant X y NautilusTrader con datos 100% verificados y logs reales."""
-    c = db.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
-    if not c:
-        raise HTTPException(
-            status_code=404,
-            detail=f"NO_EVIDENCE: Candidato '{candidate_id}' no encontrado en la base de datos de validación.",
-        )
+    rows = (
+        db.query(BacktestModel)
+        .filter(BacktestModel.strategy_id == candidate_id, BacktestModel.status == "COMPLETED")
+        .order_by(BacktestModel.created_at.desc())
+        .all()
+    )
+    verified = next((row for row in rows if row.checksum and row.ledger_path and row.artifacts_path and Path(row.ledger_path).exists() and Path(row.artifacts_path).exists()), None)
+    if verified is None:
+        raise HTTPException(status_code=404, detail={"code": "NO_EVIDENCE", "candidate_id": candidate_id})
 
-    spec = get_market_spec(c.symbol)
-    is_ultra = (c.route == "ULTRA")
-    
-    # Cargar velas reales para timestamps y precios (sin fallbacks sintéticos)
-    candles = load_candles(c.symbol, c.timeframe) or []
-
-    # Extraer métricas reales de SQX
-    sc = {}
-    if c.scorecard_json:
-        try:
-            sc = json.loads(c.scorecard_json)
-        except Exception:
-            sc = {}
-
-    net_is = float(c.net_profit_is or 0.0)
-    net_oos = float(c.net_profit_oos or 0.0)
-    total_net_profit = round(net_is + net_oos, 2)
-    
-    trades_is_count = int(c.trades_is or 0)
-    trades_oos_count = int(c.trades_oos or 0)
-    total_trades_count = max(1, trades_is_count + trades_oos_count)
-    
-    pf_is = float(c.profit_factor_is or 1.0)
-    pf_oos = float(c.profit_factor_oos or 1.0)
-    effective_pf = round(pf_oos if trades_oos_count > 0 else pf_is, 2)
-    
-    max_dd_pct = float(c.max_dd_oos_pct if c.max_dd_oos_pct is not None else (c.max_dd_is_pct or 0.0))
-    sharpe = float(sc.get("sharpe_oos") or sc.get("sharpe_is") or (1.85 if effective_pf > 1.2 else 0.8))
-
-    base_capital = 1000.0 if is_ultra else 50000.0
-    ending_equity = round(base_capital + total_net_profit, 2)
-    total_roi_pct = round(((ending_equity - base_capital) / base_capital) * 100.0, 2)
-    max_dd_usd = round(base_capital * (max_dd_pct / 100.0), 2)
-
-    # 1. Extraer Curva de Equidad REAL de StrategyQuant X si está presente en scorecard
-    sparkline_values = []
-    mini_chart_str = str(sc.get("Mini equity chart (IS)", "") or sc.get("Mini equity chart (OOS)", ""))
-    if "values" in mini_chart_str:
-        try:
-            json_part = mini_chart_str[mini_chart_str.find("{"):mini_chart_str.rfind("}")+1]
-            spark_data = json.loads(json_part)
-            sparkline_values = spark_data.get("values", [])
-        except Exception:
-            pass
-
-    equity_curve = []
-    if sparkline_values and len(sparkline_values) > 1:
-        min_v = min(sparkline_values)
-        max_v = max(sparkline_values)
-        val_range = max(1.0, max_v - min_v)
-        
-        peak = base_capital
-        for idx, val in enumerate(sparkline_values):
-            prog = (val - min_v) / val_range
-            eq_point = round(base_capital + (total_net_profit * prog), 2)
-            if eq_point > peak:
-                peak = eq_point
-            dd_pt = round(((peak - eq_point) / peak) * 100.0, 2) if peak > 0 else 0.0
-            
-            c_idx = min(len(candles) - 1, int(idx * (len(candles) / len(sparkline_values)))) if candles else 0
-            date_str = str(candles[c_idx].get("time", f"2024-06-01")) if candles else f"Paso {idx}"
-            
-            equity_curve.append({
-                "index": idx,
-                "date": date_str,
-                "equity": eq_point,
-                "drawdown_pct": dd_pt,
-                "pnl": round(eq_point - base_capital, 2),
-                "is_win": eq_point >= base_capital
-            })
-    else:
-        # Generación determinista paso a paso basada en el número real de operaciones y profit neto
-        num_points = min(60, total_trades_count)
-        step_pnl = total_net_profit / max(1, num_points)
-        cur_eq = base_capital
-        peak = base_capital
-        
-        for idx in range(num_points + 1):
-            if idx == 0:
-                cur_eq = base_capital
-            else:
-                cur_eq += step_pnl
-            
-            if cur_eq > peak:
-                peak = cur_eq
-            dd_pt = round(((peak - cur_eq) / peak) * 100.0, 2) if peak > 0 else 0.0
-            
-            c_idx = min(len(candles) - 1, int(idx * (len(candles) / max(1, num_points)))) if candles else 0
-            date_str = str(candles[c_idx].get("time", f"2024-06-01")) if candles else f"Paso {idx}"
-            
-            equity_curve.append({
-                "index": idx,
-                "date": date_str,
-                "equity": round(cur_eq, 2),
-                "drawdown_pct": dd_pt,
-                "pnl": round(cur_eq - base_capital, 2),
-                "is_win": cur_eq >= base_capital
-            })
-
-    # 2. Blotter de Operaciones REALES correspondientes a las estadísticas de la estrategia
-    trade_blotter = []
-    blotter_count = min(50, total_trades_count)
-    
-    avg_trade_pnl = round(total_net_profit / max(1, blotter_count), 2)
-    fee_per_trade = round(spec.fee_fixed_usd if spec.fee_fixed_usd > 0 else (abs(avg_trade_pnl) * spec.fee_rate), 2)
-    slip_per_trade = round(spec.slippage_ticks * spec.tick_size * spec.point_value, 2)
-    
-    for i in range(blotter_count):
-        c_idx = min(len(candles) - 1, i * max(1, len(candles) // max(1, blotter_count))) if candles else 0
-        c_bar = candles[c_idx] if candles else {"open": 100.0, "time": "2024-06-01"}
-        entry_px = float(c_bar.get("open", 100.0))
-        
-        # PnL coherente con la rentabilidad real de SQX
-        is_win_trade = (avg_trade_pnl >= 0 and i % 3 != 0) or (avg_trade_pnl < 0 and i % 4 == 0)
-        trade_pnl = round(avg_trade_pnl * (1.4 if is_win_trade else -0.8), 2)
-        
-        exit_px = round(entry_px * (1.0 + (trade_pnl / max(100.0, base_capital))), 4)
-        
-        trade_blotter.append({
-            "trade_id": f"SQX_TR_{i+1:03d}",
-            "timestamp": str(c_bar.get("time", f"2024-06-15 12:00")),
-            "symbol": c.symbol,
-            "side": "LONG" if (i % 2 == 0) else "SHORT",
-            "order_type": "LIMIT_ORDER" if (i % 3 != 0) else "MARKET_ORDER",
-            "contracts_or_qty": 1.0,
-            "entry_price": entry_px,
-            "exit_price": exit_px,
-            "fee_usd": fee_per_trade,
-            "slippage_usd": slip_per_trade,
-            "net_pnl_usd": trade_pnl,
-            "effective_leverage": 20.0 if is_ultra else 2.0,
-            "liquidation_distance_pct": round(max(5.0, 35.0 - max_dd_pct), 1),
-            "latency_ms": 0.85,
-            "duration_bars": max(2, (i % 12) + 2)
-        })
-
-    # 3. Leer LOGS REALES del servidor SQX en disco (/home/ubuntu/StrategyQuantX/user/log/) y de FastAPI (/tmp/fastapi_ultra.log)
-    real_logs = []
-    
-    # Intentar leer log real de SQX
-    sqx_log_dir = "/home/ubuntu/StrategyQuantX/user/log"
-    if os.path.exists(sqx_log_dir):
-        log_files = sorted([os.path.join(sqx_log_dir, f) for f in os.listdir(sqx_log_dir) if f.endswith(".log")], reverse=True)
-        if log_files:
-            try:
-                with open(log_files[0], "r", encoding="utf-8", errors="ignore") as lf:
-                    lines = [l.strip() for l in lf.readlines() if l.strip()]
-                    real_logs.extend(lines[-6:])
-            except Exception:
-                pass
-
-    # Intentar leer log real de backend
-    if os.path.exists("/tmp/fastapi_ultra.log"):
-        try:
-            with open("/tmp/fastapi_ultra.log", "r", encoding="utf-8", errors="ignore") as bf:
-                lines = [l.strip() for l in bf.readlines() if l.strip() and "SQXSyncWorker" in l]
-                real_logs.extend(lines[-6:])
-        except Exception:
-            pass
-
-    if not real_logs:
-        real_logs = [
-            f"[SQX Real Engine] Sincronizada estrategia {c.name} desde databank SQX",
-            f"[SQLite WAL] Registradas métricas reales: IS PF {pf_is:.2f} / OOS PF {pf_oos:.2f}",
-            f"[11 Gates Engine] Auditoría determinista ejecutada sobre dataset {c.dataset_id}",
-            f"[System Status] Zero-Trust Verified · Cero simulaciones sintéticas"
-        ]
-
+    ledger = json.loads(Path(verified.ledger_path).read_text(encoding="utf-8"))
     return {
-        "engine": "StrategyQuant X v144.2953 & NautilusTrader Core",
-        "strategy_id": c.candidate_id,
-        "name": c.name,
-        "symbol": c.symbol,
-        "timeframe": c.timeframe,
-        "route": c.route,
-        "is_real_data": True,
-        "market_spec": {
-            "category": spec.category,
-            "exchange": spec.exchange,
-            "point_value": spec.point_value,
-            "tick_size": spec.tick_size,
-            "fee_structure": f"{spec.fee_rate * 100}% Taker + ${spec.fee_fixed_usd} Fijo",
-            "slippage_ticks": spec.slippage_ticks,
-            "max_allowed_leverage": spec.max_leverage,
-        },
+        "status": "VERIFIED_ARTIFACT",
+        "candidate_id": candidate_id,
+        "backtest_id": verified.backtest_id,
+        "engine_type": verified.engine_type,
+        "checksum": verified.checksum,
+        "source_ledger": verified.ledger_path,
+        "source_artifacts": verified.artifacts_path,
         "performance_summary": {
-            "initial_capital_usd": base_capital,
-            "ending_equity_usd": ending_equity,
-            "net_profit_usd": total_net_profit,
-            "total_roi_pct": total_roi_pct,
-            "profit_factor": effective_pf,
-            "win_rate_pct": round(float(sc.get("Win/Loss ratio (IS)", 1.2)) * 38.0, 1),
-            "total_trades": total_trades_count,
-            "trades_is": trades_is_count,
-            "trades_oos": trades_oos_count,
-            "max_drawdown_pct": max_dd_pct,
-            "max_drawdown_usd": max_dd_usd,
-            "sharpe_ratio": round(sharpe, 2),
-            "sortino_ratio": round(sharpe * 1.3, 2),
-            "calmar_ratio": round(abs(total_roi_pct / max(0.1, max_dd_pct)), 2),
-            "deflated_sharpe_ratio": round(float(c.ratio_oos_is or 0.85) * sharpe, 2),
-            "total_exchange_fees_usd": round(fee_per_trade * blotter_count, 2),
-            "total_slippage_cost_usd": round(slip_per_trade * blotter_count, 2),
-            "min_liquidation_distance_pct": round(max(5.0, 35.0 - max_dd_pct), 1),
-            "margin_call_events": 0 if max_dd_pct < 80.0 else 1,
-            "cross_margin_health": "OPTIMAL_SOLVENT" if max_dd_pct < 50.0 else "HIGH_RISK_MARGIN",
-            "avg_trade_latency_ms": 0.85
+            "final_equity": verified.final_equity,
+            "net_return_pct": verified.net_return_pct,
+            "max_drawdown_pct": verified.max_drawdown_pct,
+            "win_rate": verified.win_rate,
+            "trades_count": verified.trades_count,
+            "profit_factor": verified.profit_factor,
         },
-        "equity_curve": equity_curve,
-        "trade_blotter": trade_blotter,
-        "event_log": real_logs
+        "equity_curve": ledger.get("equityCurve", []),
+        "trade_blotter": ledger.get("trades", []),
+        "event_log": ledger.get("eventLog", []),
     }
