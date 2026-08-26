@@ -30,5 +30,8 @@ jobs:
       - name: Compile Python sources
         run: python -m compileall -q services contracts tests
 
+      - name: Phase 2 discovery integrity guard
+        run: python scripts/stabilization/phase2_research_guard.py
+
       - name: Run tests
         run: pytest -q
