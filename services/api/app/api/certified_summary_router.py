@@ -1,15 +1,15 @@
 """Canonical certified-strategy summary.
 
 REAL-ONLY / ZERO-INFERENCE:
-- CandidateModel.status is NOT certification evidence.
-- Missing metrics are returned as null; consumers must render N/D.
-- 11/11 requires explicit evidence for every gate and every gate passed.
-- No default duration, capital, drawdown, win rate, WFE or ROI is invented here.
+- CandidateModel.status is never certification evidence by itself.
+- Every certified row requires explicit 11/11 gate evidence.
+- Cryptographic identifiers must come from stored evidence; they are never generated here.
+- Missing quantitative evidence remains missing.
+- There are no candidate->certified fallbacks.
 """
 from __future__ import annotations
 
 import json
-from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -33,10 +33,13 @@ def _scorecard(candidate: CandidateModel) -> Dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
-def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool]:
+def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool, Dict[str, Any]]:
     explicit: Dict[int, bool] = {}
+    gate_payload: Dict[str, Any] = {}
+
     gates = sc.get("gates")
     if isinstance(gates, list):
+        gate_payload = {str(index + 1): gate for index, gate in enumerate(gates) if isinstance(gate, dict)}
         for gate in gates:
             if not isinstance(gate, dict):
                 continue
@@ -66,32 +69,14 @@ def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool]:
 
     explicit_count = len(explicit)
     passed_count = sum(1 for value in explicit.values() if value)
-    return explicit_count, passed_count, explicit_count == 11 and passed_count == 11
-
-
-def _real_oos_months(sc: Dict[str, Any]) -> Optional[float]:
-    duration = sc.get("duration_info")
-    if not isinstance(duration, dict):
-        return None
-    raw = duration.get("oos_months")
-    if isinstance(raw, (int, float)) and raw > 0:
-        return float(raw)
-    start = duration.get("oos_start")
-    end = duration.get("oos_end")
-    if start and end:
-        try:
-            s = datetime.fromisoformat(str(start).replace("Z", "+00:00"))
-            e = datetime.fromisoformat(str(end).replace("Z", "+00:00"))
-            days = (e - s).total_seconds() / 86400.0
-            if days > 0:
-                return days / 30.436875
-        except (ValueError, TypeError):
-            return None
-    return None
+    return explicit_count, passed_count, explicit_count == 11 and passed_count == 11, gate_payload
 
 
 def _metric(sc: Dict[str, Any], *keys: str) -> Optional[float]:
-    containers = [sc, sc.get("oos_metrics") if isinstance(sc.get("oos_metrics"), dict) else {}]
+    containers = [sc]
+    oos = sc.get("oos_metrics")
+    if isinstance(oos, dict):
+        containers.append(oos)
     for container in containers:
         for key in keys:
             value = container.get(key)
@@ -100,34 +85,23 @@ def _metric(sc: Dict[str, Any], *keys: str) -> Optional[float]:
     return None
 
 
+def _required_string(value: Any) -> Optional[str]:
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
 def _certified_row(candidate: CandidateModel) -> Dict[str, Any]:
     sc = _scorecard(candidate)
-    explicit_count, passed_count, all11 = _explicit_gate_state(sc)
-    oos = sc.get("oos_metrics") if isinstance(sc.get("oos_metrics"), dict) else {}
-    duration = _real_oos_months(sc)
+    explicit_count, passed_count, all11, gate_payload = _explicit_gate_state(sc)
 
-    initial_capital = sc.get("initial_capital_usd")
-    final_equity = sc.get("final_equity_usd")
-    net_profit = candidate.net_profit_oos
-    cumulative_roi = None
-    annualized_roi = None
-    monthly_roi = None
-    if isinstance(initial_capital, (int, float)) and initial_capital > 0:
-        if isinstance(final_equity, (int, float)):
-            cumulative_roi = ((float(final_equity) / float(initial_capital)) - 1.0) * 100.0
-        elif isinstance(net_profit, (int, float)):
-            cumulative_roi = (float(net_profit) / float(initial_capital)) * 100.0
-        if cumulative_roi is not None and duration and cumulative_roi > -100.0:
-            growth = 1.0 + cumulative_roi / 100.0
-            annualized_roi = (growth ** (12.0 / duration) - 1.0) * 100.0
-            monthly_roi = (growth ** (1.0 / duration) - 1.0) * 100.0
+    dataset_id = _required_string(candidate.dataset_id or sc.get("dataset_id"))
+    strategy_hash = _required_string(sc.get("strategy_sha256") or sc.get("canonical_hash"))
+    ledger_hash = _required_string(sc.get("ledger_hash"))
+    evidence_hash = _required_string(sc.get("bundle_signature_sha256") or sc.get("evidence_bundle_hash"))
+    certified_at = _required_string(sc.get("certified_at_utc"))
+    current_status = _required_string(candidate.status)
 
-    def optional_number(*names: str) -> Optional[float]:
-        value = _metric(sc, *names)
-        if value is not None:
-            return value
-        value = _metric(oos, *names)
-        return value
+    if not all11:
+        raise ValueError("INTERNAL_ONLY: _certified_row called without explicit 11/11 evidence")
 
     return {
         "candidate_id": candidate.candidate_id,
@@ -136,29 +110,33 @@ def _certified_row(candidate: CandidateModel) -> Dict[str, Any]:
         "symbol": candidate.symbol,
         "timeframe": candidate.timeframe,
         "engine_version": candidate.engine_version,
-        "status_source": candidate.status,
-        "certification_status": "CERTIFIED_CURRENT" if all11 else "NO_EVIDENCE",
+        "status_source": current_status,
+        "certification_status": "CERTIFIED_CURRENT" if current_status == "APPROVED_CURRENT_ENGINE" else "NO_EVIDENCE",
         "explicit_gates": explicit_count,
         "passed_gates": passed_count,
         "gates_verified_11": all11,
-        "strategy_sha256": sc.get("strategy_sha256") or sc.get("canonical_hash"),
-        "bundle_signature_sha256": sc.get("bundle_signature_sha256"),
-        "dataset_id": candidate.dataset_id or sc.get("dataset_id"),
+        "strategy_sha256": strategy_hash,
+        "bundle_signature_sha256": evidence_hash,
+        "dataset_id": dataset_id,
         "metrics": {
-            "trades_oos": candidate.trades_oos if candidate.trades_oos is not None else optional_number("trades", "trades_oos"),
-            "win_rate_pct": optional_number("win_rate_pct", "win_rate"),
+            "trades_oos": candidate.trades_oos,
+            "win_rate_pct": _metric(sc, "win_rate_pct", "win_rate", "oos_win_rate_pct"),
             "profit_factor_is": candidate.profit_factor_is,
             "profit_factor_oos": candidate.profit_factor_oos,
-            "roi_cumulative_pct": cumulative_roi,
-            "roi_annualized_pct": annualized_roi,
-            "roi_monthly_pct": monthly_roi,
-            "max_dd_oos_pct": candidate.max_dd_oos_pct if candidate.max_dd_oos_pct is not None else optional_number("max_drawdown_pct", "max_dd_oos_pct"),
-            "max_dd_realized_pct": optional_number("max_dd_realized_pct", "max_drawdown_realized_pct"),
-            "wfe_pct": optional_number("wfe_pct", "wfo_pass_pct", "wfe_retention_pct"),
-            "monte_carlo_score": optional_number("monte_carlo_score", "mc_robustness_score"),
-            "ratio_oos_is": optional_number("ratio_oos_is"),
-            "oos_months": duration,
+            "roi_cumulative_pct": _metric(sc, "roi_cumulative_pct", "net_return_pct", "return_pct"),
+            "roi_annualized_pct": _metric(sc, "roi_annualized_pct", "annual_return_pct", "annual_return"),
+            "roi_monthly_pct": _metric(sc, "roi_monthly_pct", "monthly_return_pct", "monthly_return"),
+            "max_dd_oos_pct": candidate.max_dd_oos_pct,
+            "max_dd_realized_pct": _metric(sc, "max_dd_realized_pct", "max_drawdown_realized_pct"),
+            "wfe_pct": _metric(sc, "wfe_pct", "wfo_pass_pct", "wfe_retention_pct"),
+            "monte_carlo_score": _metric(sc, "monte_carlo_score", "mc_robustness_score"),
+            "ratio_oos_is": _metric(sc, "ratio_oos_is"),
+            "oos_months": _metric(sc, "oos_months"),
         },
+        "ledger_hash": ledger_hash,
+        "ledger_verified": sc.get("ledger_verified") is True,
+        "certified_at_utc": certified_at,
+        "gates": gate_payload,
     }
 
 
@@ -172,10 +150,21 @@ def certified_summary(
     query = db.query(CandidateModel)
     if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
+
     rows = query.order_by(CandidateModel.net_profit_oos.desc()).limit(limit).all()
-    result = [_certified_row(candidate) for candidate in rows]
-    if verified_only:
-        result = [row for row in result if row["gates_verified_11"]]
+    result: List[Dict[str, Any]] = []
+    for candidate in rows:
+        sc = _scorecard(candidate)
+        _, _, all11, _ = _explicit_gate_state(sc)
+        if verified_only and not all11:
+            continue
+        try:
+            row = _certified_row(candidate)
+        except ValueError:
+            continue
+        if verified_only and row["certification_status"] != "CERTIFIED_CURRENT":
+            continue
+        result.append(row)
     return result
 
 
@@ -186,48 +175,58 @@ def get_certified_strategies_endpoint(
 ) -> List[Dict[str, Any]]:
     query = db.query(CandidateModel).order_by(CandidateModel.net_profit_oos.desc()).limit(limit)
     rows = query.all()
-    out = []
-    for c in rows:
-        sc = _scorecard(c)
-        explicit_count, passed_count, all11 = _explicit_gate_state(sc)
-        trades_oos = c.trades_oos or int(_metric(sc, "trades", "trades_oos", "total_trades") or 0)
-        
-        if c.status in {"APPROVED_CURRENT_ENGINE", "CERTIFIED_PASS", "ULTRA_CERTIFIED"} or all11 or trades_oos >= 10:
-            win_rate = _metric(sc, "win_rate_pct", "win_rate", "oos_win_rate_pct") or 55.0
-            profit_factor = c.profit_factor_oos or _metric(sc, "profit_factor_oos", "profit_factor") or 1.5
-            sharpe = _metric(sc, "sharpe_ratio", "sharpe", "oos_sharpe") or 1.5
-            max_dd = c.max_dd_oos_pct or _metric(sc, "max_drawdown_pct", "max_dd_oos_pct") or 10.0
-            
-            out.append({
-                "strategy_id": str(c.candidate_id),
-                "name": c.name or f"Alpha-{c.symbol}-{c.timeframe}",
-                "symbol": c.symbol or "BTC",
-                "timeframe": c.timeframe or "1h",
-                "family": c.route or "TRACK_ULTRA",
-                "status": "APPROVED_CURRENT_ENGINE",
-                "engine_version": c.engine_version or "5.4.0",
-                "strategy_hash": sc.get("strategy_sha256") or "c4f828a1c9e8",
-                "dataset_hash": sc.get("dataset_hash") or "d7a9b1c3e5f2",
-                "ledger_hash": sc.get("ledger_hash") or "e1a2b3c4d5f6",
-                "evidence_bundle_hash": sc.get("bundle_signature_sha256") or "f9e8d7c6b5a4",
-                "all_gates_pass": True,
-                "ledger_verified": True,
-                "total_trades": trades_oos,
-                "win_rate_pct": win_rate,
-                "profit_factor": profit_factor,
-                "sharpe_ratio": sharpe,
-                "max_drawdown_pct": max_dd,
-                "oos_profit_factor": profit_factor,
-                "oos_start_timestamp_ms": None,
-                "oos_end_timestamp_ms": None,
-                "oos_months": 12,
-                "monthly_return": 3.5,
-                "annual_return": 42.0,
-                "cagr": 0.42,
-                "certified_at_utc": datetime.utcnow().isoformat(),
-                "gates": sc.get("gates") or {},
-                "equity_curve": [],
-            })
+    out: List[Dict[str, Any]] = []
+
+    for candidate in rows:
+        sc = _scorecard(candidate)
+        _, _, all11, gates = _explicit_gate_state(sc)
+        if not all11:
+            continue
+        if candidate.status != "APPROVED_CURRENT_ENGINE":
+            continue
+
+        strategy_hash = _required_string(sc.get("strategy_sha256") or sc.get("canonical_hash"))
+        dataset_hash = _required_string(sc.get("dataset_hash") or sc.get("data_sha256"))
+        ledger_hash = _required_string(sc.get("ledger_hash"))
+        evidence_bundle_hash = _required_string(sc.get("bundle_signature_sha256") or sc.get("evidence_bundle_hash"))
+        certified_at = _required_string(sc.get("certified_at_utc"))
+        ledger_verified = sc.get("ledger_verified") is True
+
+        required = [strategy_hash, dataset_hash, ledger_hash, evidence_bundle_hash, certified_at]
+        if any(value is None for value in required) or not ledger_verified:
+            continue
+
+        out.append({
+            "strategy_id": str(candidate.candidate_id),
+            "name": candidate.name,
+            "symbol": candidate.symbol,
+            "timeframe": candidate.timeframe,
+            "family": candidate.route,
+            "status": "APPROVED_CURRENT_ENGINE",
+            "engine_version": candidate.engine_version,
+            "strategy_hash": strategy_hash,
+            "dataset_hash": dataset_hash,
+            "ledger_hash": ledger_hash,
+            "evidence_bundle_hash": evidence_bundle_hash,
+            "all_gates_pass": True,
+            "ledger_verified": True,
+            "total_trades": candidate.trades_oos,
+            "win_rate_pct": _metric(sc, "win_rate_pct", "win_rate", "oos_win_rate_pct"),
+            "profit_factor": candidate.profit_factor_oos,
+            "sharpe_ratio": _metric(sc, "sharpe_ratio", "oos_sharpe"),
+            "max_drawdown_pct": candidate.max_dd_oos_pct,
+            "oos_profit_factor": candidate.profit_factor_oos,
+            "oos_start_timestamp_ms": sc.get("oos_start_timestamp_ms"),
+            "oos_end_timestamp_ms": sc.get("oos_end_timestamp_ms"),
+            "oos_months": _metric(sc, "oos_months"),
+            "monthly_return": _metric(sc, "monthly_return_pct", "monthly_return"),
+            "annual_return": _metric(sc, "annual_return_pct", "annual_return"),
+            "cagr": _metric(sc, "cagr"),
+            "certified_at_utc": certified_at,
+            "gates": gates,
+            "equity_curve": sc.get("equity_curve") if isinstance(sc.get("equity_curve"), list) else [],
+        })
+
     return out
 
 
@@ -235,40 +234,7 @@ def get_certified_strategies_endpoint(
 def get_certified_meta_strategies_endpoint(
     db: Session = Depends(get_db),
 ) -> List[Dict[str, Any]]:
-    return [
-        {
-            "meta_strategy_id": "META-PORT-BTC-ETH-NQ-01",
-            "name": "CME & Crypto Risk-Parity Alpha Ensamble",
-            "status": "APPROVED_CURRENT_ENGINE",
-            "components_count": 3,
-            "combined_sharpe": 2.45,
-            "combined_max_drawdown_pct": 6.8,
-            "combined_cagr": 0.542,
-            "components": [
-                {
-                    "strategy_id": "ALPHA-BTC-1H-MOM",
-                    "name": "BTC Trend Momentum 1h",
-                    "weight_pct": 35.0,
-                    "status": "APPROVED_CURRENT_ENGINE",
-                    "sharpe": 1.95,
-                    "max_dd_pct": 7.8,
-                },
-                {
-                    "strategy_id": "ALPHA-ETH-4H-MR",
-                    "name": "ETH Mean Reversion 4h",
-                    "weight_pct": 25.0,
-                    "status": "APPROVED_CURRENT_ENGINE",
-                    "sharpe": 1.72,
-                    "max_dd_pct": 8.5,
-                },
-                {
-                    "strategy_id": "ALPHA-MNQ-15M-ORB",
-                    "name": "Micro E-mini Nasdaq ORB 15m",
-                    "weight_pct": 40.0,
-                    "status": "APPROVED_CURRENT_ENGINE",
-                    "sharpe": 2.65,
-                    "max_dd_pct": 5.2,
-                },
-            ],
-        }
-    ]
+    # No synthetic portfolio is ever returned. A meta-strategy becomes visible only
+    # when a canonical portfolio certificate exists in a real portfolio evidence store.
+    # Until that store is queried here, the honest response is an empty set.
+    return []
