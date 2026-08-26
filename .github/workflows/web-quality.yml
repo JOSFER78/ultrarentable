@@ -31,3 +31,12 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+      - name: Quantitative zero-mock scan
+        working-directory: .
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -R -n --exclude-dir=node_modules --exclude-dir=.next \
+            -E 'a3f5c9e2d1b8f4a7c0e3b6d9f2a5c8e1d4b7a0f3c6e9b2d5a8f1c4e7b0d3a6f9|1672531200000|1704067200000|META-PORT-BTC-ETH-NQ-01|Math\.random\(' \
+            apps/web services 2>/dev/null
