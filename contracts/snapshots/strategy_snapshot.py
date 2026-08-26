@@ -13,7 +13,16 @@ from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
-from contracts.canonical_strategy import RuleTree, ExitModel, SizingAndRisk, SessionWindow
+from contracts.canonical_strategy import (
+    RuleTree,
+    ExitModel,
+    SizingAndRisk,
+    SessionWindow,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType,
+)
 
 
 class StrategyRoute(str, Enum):
@@ -47,7 +56,6 @@ class MarginPolicy(BaseModel):
 
 class StrategySnapshot(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
-    
     strategy_id: str = Field(..., description="ID unívoco canónico de la estrategia")
     version: str = Field(default="2.0.0", description="Versión del contrato de snapshot")
     canonical_hash: str = Field(..., description="Hash SHA256 calculado sobre el contenido canónico")
@@ -55,7 +63,6 @@ class StrategySnapshot(BaseModel):
     archetype: str = Field(default="MOMENTUM_BREAKOUT", description="Arquetipo cuantitativo")
     symbol: str = Field(..., description="Símbolo base e.g. BTCUSDT, NQ, EURUSD, XAUUSD")
     timeframe: str = Field(..., description="Timeframe canónico e.g. 1m, 5m, 15m, 1h, 4h")
-    
     entry_rules: Optional[RuleTree] = Field(default=None, description="Árbol canónico de reglas de entrada Long/Short")
     exit_rules: Optional[ExitModel] = Field(default=None, description="Reglas canónicas de salida, SL, TP y Trailing")
     sizing_and_risk: Optional[SizingAndRisk] = Field(default=None, description="Gestión de tamaño y riesgo base")
@@ -63,7 +70,6 @@ class StrategySnapshot(BaseModel):
     pyramiding_policy: PyramidingPolicy = Field(default_factory=PyramidingPolicy)
     margin_policy: MarginPolicy = Field(default_factory=MarginPolicy)
     session_window: Optional[SessionWindow] = None
-    
     dataset_id_reference: Optional[str] = Field(default=None, description="ID del dataset exacto")
     dataset_sha256_reference: Optional[str] = Field(default=None, description="Hash SHA256 del dataset")
     dataset_id: Optional[str] = None
@@ -87,7 +93,7 @@ class StrategySnapshot(BaseModel):
         pyramiding_policy: Optional[PyramidingPolicy] = None,
         margin_policy: Optional[MarginPolicy] = None,
         session_window: Optional[SessionWindow] = None,
-    ) -> StrategySnapshot:
+    ) -> "StrategySnapshot":
         """Construye el snapshot y calcula el hash canónico SHA256 determinista."""
         content_dict = {
             "strategy_id": strategy_id,
@@ -106,7 +112,6 @@ class StrategySnapshot(BaseModel):
         }
         canonical_str = json.dumps(content_dict, sort_keys=True, separators=(",", ":"))
         canonical_hash = hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()
-
         return cls(
             strategy_id=strategy_id,
             canonical_hash=canonical_hash,
