@@ -36,6 +36,10 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     SessionWindow,
     ProvenanceMetadata,
+    SizingType,
+    LogicalOp,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.canonical_execution import (
     CanonicalExecutionLedger,
@@ -62,41 +66,25 @@ from services.validation.quant_validation_fabric import QuantValidationFabric
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _create_sample_strategy() -> CanonicalStrategy:
-    return CanonicalStrategy(
-        strategy_id="UR-FORENSIC-001",
-        name="NQ Momentum Breakout H1 Forensic",
-        target_track=ValidationTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="NQ",
-            exchange="CME",
-            contract_type="FUTURES",
-            point_value=20.0,
-            tick_size=0.25,
-        ),
-        timeframe="1h",
-        session=SessionWindow(
-            timezone="America/New_York",
-            start_time="09:30",
-            end_time="16:00",
-            force_close_at_end=True,
-        ),
-        rules=RuleTree(
-            long_conditions=[
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe="1h", period=20),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe="1h", period=50),
-                )
-            ]
-        ),
-        exits=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, max_contracts_or_lots=4.0),
-        provenance=ProvenanceMetadata(
-            source_engine="universal_optimizer",
-            created_timestamp_utc=1770000000000,
-            author_or_agent="FORENSIC_AUDITOR",
-        ),
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-FORENSIC-001",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="NQ Momentum Breakout H1 Forensic",
+    timeframe="1h",
+    session_window=SessionWindow(start_time_utc="09:30", end_time_utc="16:00", close_at_eod=True, allowed_days=[0,1,2,3,4]),
+    entry_rules=RuleTree(
+        logic=LogicalOp.AND,
+        direction="LONG",
+        long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="EMA", params={'period': 20}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", params={'period': 50}, source_field="close", shift=0))
+        ]
+    ),
+        exit_rules=ExitModel(sl_type=StopLossType.FIXED_POINTS, sl_value=20.0, tp_type=TakeProfitType.FIXED_POINTS, tp_value=60.0),
+        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+        provenance=ProvenanceMetadata(author="FORENSIC_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
     )
 
 
@@ -155,7 +143,7 @@ def test_data_lineage_chain_integrity():
 
     # 2. Strategy
     strat = _create_sample_strategy()
-    strat_hash = strat.compute_sha256()
+    strat_hash = strat.strategy_hash
     assert len(strat_hash) == 64
 
     # 3. Execution & Ledger
@@ -179,6 +167,7 @@ def test_data_lineage_chain_integrity():
         losing_trades_count=10,
         total_commission_paid_usd=75.0,
         total_slippage_paid_usd=37.5,
+        total_funding_paid_usd=0.0,
         trades=trades,
     )
     assert len(ledger.ledger_hash) == 64
@@ -237,6 +226,7 @@ def test_ledger_hash_avalanche_effect():
         losing_trades_count=0,
         total_commission_paid_usd=25.0,
         total_slippage_paid_usd=12.5,
+        total_funding_paid_usd=0.0,
         trades=trades_a,
     )
 
@@ -259,6 +249,7 @@ def test_ledger_hash_avalanche_effect():
         losing_trades_count=0,
         total_commission_paid_usd=25.01,
         total_slippage_paid_usd=12.5,
+        total_funding_paid_usd=0.0,
         trades=trades_b,
     )
 
@@ -287,11 +278,30 @@ def test_dataset_hash_tampering_blocks():
 def test_strategy_hash_tampering_blocks():
     """Alterar un parámetro funcional de la estrategia altera su SHA-256."""
     strat_a = _create_sample_strategy()
-    hash_a = strat_a.compute_sha256()
+    hash_a = strat_a.strategy_hash
 
-    # Mutar stop loss ticks de 20 a 21
-    strat_b = strat_a.model_copy(update={"exits": ExitModel(stop_loss_ticks=21, take_profit_ticks=60)})
-    hash_b = strat_b.compute_sha256()
+    # Mutar stop loss ticks de 20 a 21 recalculando hash
+    strat_b = CanonicalStrategy.create_and_hash(
+        strategy_id="UR-FORENSIC-001",
+        route="FONDEO",
+        version="1.0.0",
+        symbol="BTC-USDT",
+        archetype="TREND_FOLLOWING",
+        name="NQ Momentum Breakout H1 Forensic",
+        timeframe="1h",
+        session_window=SessionWindow(start_time_utc="09:30", end_time_utc="16:00", close_at_eod=True, allowed_days=[0, 1, 2, 3, 4]),
+        entry_rules=RuleTree(
+            logic=LogicalOp.AND,
+            direction="LONG",
+            long_conditions=[
+                RuleCondition(left=IndicatorSpec(name="EMA", params={'period': 20}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", params={'period': 50}, source_field="close", shift=0))
+            ]
+        ),
+        exit_rules=ExitModel(sl_type=StopLossType.FIXED_POINTS, sl_value=21.0, tp_type=TakeProfitType.FIXED_POINTS, tp_value=60.0),
+        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+        provenance=ProvenanceMetadata(author="FORENSIC_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
+    )
+    hash_b = strat_b.strategy_hash
 
     assert hash_a != hash_b
 
@@ -494,6 +504,7 @@ def test_determinism_bit_for_bit():
             losing_trades_count=10,
             total_commission_paid_usd=50.0,
             total_slippage_paid_usd=25.0,
+            total_funding_paid_usd=0.0,
             trades=trades,
         )
 

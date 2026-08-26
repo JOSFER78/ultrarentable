@@ -35,10 +35,10 @@ def test_strategy_spec_creation_full():
         timeframe="1h",
         entries=EntriesSpec(
             long=[
-                RuleConditionSpec(indicator="RSI", timeframe="1h", period=14, comparison="GREATER_THAN", threshold_value=55.0)
+                RuleConditionSpec(indicator="RSI", timeframe="1h", period=14, comparison="GREATER_THAN", right=55.0)
             ],
             short=[
-                RuleConditionSpec(indicator="RSI", timeframe="1h", period=14, comparison="LESS_THAN", threshold_value=45.0)
+                RuleConditionSpec(indicator="RSI", timeframe="1h", period=14, comparison="LESS_THAN", right=45.0)
             ]
         ),
         exits=ExitsSpec(

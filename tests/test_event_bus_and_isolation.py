@@ -39,25 +39,16 @@ async def test_event_bus_publish_subscribe():
 
     bus.subscribe(StrategyGeneratedEvent, on_strategy_generated)
 
-    strategy = CanonicalStrategy(
-        strategy_id="UR-TEST-001",
-        name="Test Strategy",
-        target_track=ExecutionTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="NQ",
-            exchange="CME",
-            contract_type="FUTURES",
-            point_value=20.0,
-            tick_size=0.25,
-        ),
-        timeframe="1h",
-        provenance=ProvenanceMetadata(
-            source_engine="manual",
-            created_timestamp_utc=int(datetime.now(timezone.utc).timestamp() * 1000),
-            author_or_agent="TEST_SUITE",
-        ),
-    )
+    strategy = CanonicalStrategy.create_and_hash(
+    strategy_id="UR-TEST-001",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Test Strategy",
+    timeframe="1h",
+    provenance=ProvenanceMetadata(author="TEST_SUITE", engine_version="3.0.0", policy_version="3.0.0", created_at_utc=datetime.now(timezone.utc).isoformat())
+)
 
     event = StrategyGeneratedEvent(event_id="evt_001", strategy=strategy)
     await bus.publish(event)

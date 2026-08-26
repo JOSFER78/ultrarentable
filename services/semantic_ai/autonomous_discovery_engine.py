@@ -169,21 +169,21 @@ class AutonomousDiscoveryAgentLoop:
             # Construir Snapshot Canónico Inmutable
             long_conds = [
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
+                    left_indicator=IndicatorSpec(name="EMA", params={"period": ema_fast}, source_field="close", shift=0),
+                    operator=ComparisonOperator.GT,
+                    right_indicator=IndicatorSpec(name="EMA", params={"period": ema_slow}, source_field="close", shift=0),
                 ),
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
-                    operator=ComparisonOperator.GREATER_THAN if hurst > 0.48 else ComparisonOperator.LESS_THAN,
+                    left_indicator=IndicatorSpec(name="RSI", params={"period": rsi_period}, source_field="close", shift=0),
+                    operator=ComparisonOperator.GT if hurst > 0.48 else ComparisonOperator.LT,
                     threshold_value=50.0 if hurst > 0.48 else 35.0,
                 ),
             ]
             if archetype in ("MOMENTUM_BREAKOUT", "VOLATILITY_EXPANSION"):
                 long_conds.append(
                     RuleCondition(
-                        left_indicator=IndicatorSpec(name="DONCHIAN_HIGH", timeframe=timeframe, period=lookback),
-                        operator=ComparisonOperator.GREATER_THAN,
+                        left_indicator=IndicatorSpec(name="DONCHIAN_HIGH", params={"period": lookback}, source_field="close", shift=0),
+                        operator=ComparisonOperator.GT,
                         threshold_value=0.0,
                     )
                 )

@@ -14,7 +14,7 @@ def test_strategy_spec_creation():
         symbol="NQ",
         main_timeframe="1h",
         entry_long_rules=[
-            RuleCondition(indicator="RSI", timeframe="1h", period=14, comparison="GREATER_THAN", threshold_value=50.0)
+            RuleCondition(indicator="RSI", timeframe="1h", period=14, comparison="GREATER_THAN", right=50.0)
         ],
         stop_loss_ticks=20,
         take_profit_ticks=60,

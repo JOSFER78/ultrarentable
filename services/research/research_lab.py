@@ -69,7 +69,7 @@ class QuantitativeResearchLab:
         candidate = self.db.query(CandidateModel).filter(CandidateModel.candidate_id == strategy_id).first()
         strategy = self.db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
 
-        family = (strategy.family if strategy else None) or (candidate.family if candidate else "momentum") or "momentum"
+        family = (strategy.family if strategy else None) or (getattr(candidate, "archetype", None) or getattr(candidate, "family", None) if candidate else None) or "momentum"
         symbol = (candidate.symbol if candidate else None) or (strategy.symbol if strategy else "BTC-USDT") or "BTC-USDT"
         timeframe = (candidate.timeframe if candidate else None) or (strategy.timeframe if strategy else "1h") or "1h"
         route = (candidate.route if candidate else "FONDEO") or "FONDEO"

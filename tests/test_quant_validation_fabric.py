@@ -3,6 +3,7 @@
 import pytest
 import numpy as np
 
+from contracts.canonical_strategy import ComparisonOperator, LogicalOp
 from contracts import (
     CanonicalStrategy,
     ExecutionTrack,
@@ -19,6 +20,11 @@ from contracts import (
     BalaHarvestEvent,
     FondeoValidationCriteria,
     UltraValidationCriteria,
+    RuleCondition,
+    IndicatorSpec,
+    StopLossType,
+    TakeProfitType,
+    SizingType,
 )
 from services.validation import (
     QuantValidationFabric,
@@ -30,25 +36,25 @@ from services.validation import (
 
 
 def create_mock_strategy(track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO) -> CanonicalStrategy:
-    return CanonicalStrategy(
-        strategy_id="UR-VAL-001",
-        name="Validation Target",
-        target_track=track,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="NQ",
-            exchange="CME",
-            contract_type="FUTURES",
-            point_value=20.0,
-            tick_size=0.25,
-        ),
-        timeframe="1h",
-        provenance=ProvenanceMetadata(
-            source_engine="strategyquant",
-            created_timestamp_utc=1771437600000,
-            author_or_agent="TEST",
-        ),
-    )
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-VAL-001",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Validation Target",
+    timeframe="1h",
+    entry_rules=RuleTree(
+        logic=LogicalOp.AND,
+        direction="LONG",
+        long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="RSI", params={"period": 14}, source_field="close", shift=0), op=ComparisonOperator.LT, right=30.0),
+        ],
+    ),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0, tp_type=TakeProfitType.RR_MULTIPLE, tp_value=3.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-18T18:00:00+00:00")
+)
 
 
 # ============================================================================
@@ -193,25 +199,25 @@ from services.api.app.db.database import CandidateModel
 
 
 def create_mock_strategy(track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO, strategy_id: str = "UR-VAL-001") -> CanonicalStrategy:
-    return CanonicalStrategy(
-        strategy_id=strategy_id,
-        name="Validation Target",
-        target_track=track,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="NQ",
-            exchange="CME",
-            contract_type="FUTURES",
-            point_value=20.0,
-            tick_size=0.25,
-        ),
-        timeframe="1h",
-        provenance=ProvenanceMetadata(
-            source_engine="strategyquant",
-            created_timestamp_utc=1771437600000,
-            author_or_agent="TEST",
-        ),
-    )
+    return CanonicalStrategy.create_and_hash(
+    strategy_id=strategy_id,
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Validation Target",
+    timeframe="1h",
+    entry_rules=RuleTree(
+        logic=LogicalOp.AND,
+        direction="LONG",
+        long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="RSI", params={"period": 14}, source_field="close", shift=0), op=ComparisonOperator.LT, right=30.0),
+        ],
+    ),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0, tp_type=TakeProfitType.RR_MULTIPLE, tp_value=3.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-18T18:00:00+00:00")
+)
 
 
 def create_mock_evidence_bundle(
@@ -220,7 +226,7 @@ def create_mock_evidence_bundle(
     corrupt_strategy_sha: bool = False,
     corrupt_signature: bool = False,
 ) -> EvidenceBundle:
-    strat_sha = "0" * 64 if corrupt_strategy_sha else strategy.compute_sha256()
+    strat_sha = "0" * 64 if corrupt_strategy_sha else strategy.strategy_hash
     is_hash = hashlib.sha256(b"dataset_is_raw").hexdigest()
     oos_hash = hashlib.sha256(b"dataset_oos_raw").hexdigest()
     exec_hash = hashlib.sha256(b"exec_config_raw").hexdigest()
@@ -239,7 +245,7 @@ def create_mock_evidence_bundle(
         dataset_oos_sha256=oos_hash,
         symbol="NQ",
         timeframe="1h",
-        target_track=strategy.target_track.value,
+        target_track="FONDEO",
         execution_config_hash=exec_hash,
         engine_name="UniversalDeterministicBacktestEngine",
         engine_version="3.0.0",
@@ -396,7 +402,7 @@ def test_canonical_strategy_native_evidence_bundle_attachment():
     strat_with_bundle = strat.attach_evidence_bundle(bundle)
     assert strat_with_bundle.evidence_bundle == bundle
     # AST hash remains identical (status and evidence_bundle are excluded from AST sha256)
-    assert strat_with_bundle.compute_sha256() == strat.compute_sha256()
+    assert strat_with_bundle.strategy_hash == strat.strategy_hash
 
 
 def test_candidate_model_status_requires_physical_evidence():

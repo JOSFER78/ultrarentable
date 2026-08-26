@@ -26,7 +26,7 @@ def test_mutation_engine_zero_random():
     
     assert cand1.instrument.symbol == "BTC-USDT"
     assert cand1.timeframe == "1h"
-    assert cand1.rules.long_conditions[0].threshold_value == cand2.rules.long_conditions[0].threshold_value
+    assert cand1.entry_rules.long_conditions[0].threshold_value == cand2.entry_rules.long_conditions[0].threshold_value
     assert cand1.exits.stop_loss_ticks == cand2.exits.stop_loss_ticks
 
 

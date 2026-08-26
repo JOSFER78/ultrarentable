@@ -39,7 +39,7 @@ def test_failure_knowledge_db_recording_and_blacklisting(isolated_db):
     engine = SemanticQuantEngine(failure_db=db)
 
     strat = engine.generate_candidate(symbol="NQ", track=ExecutionTrack.TRACK_FONDEO)
-    assert db.is_rule_tree_blacklisted(strat.rules) is False
+    assert db.is_rule_tree_blacklisted(strat.entry_rules) is False
 
     # Record rejection
     record = db.record_failure(
@@ -51,7 +51,7 @@ def test_failure_knowledge_db_recording_and_blacklisting(isolated_db):
     )
 
     assert record.category == FailureCategory.OUTLIER_DEPENDENCY
-    assert db.is_rule_tree_blacklisted(strat.rules) is True
+    assert db.is_rule_tree_blacklisted(strat.entry_rules) is True
 
     stats = db.get_failure_statistics()
     assert stats["total_failures_recorded"] == 1
@@ -100,8 +100,8 @@ def test_improver_agent_mutation_avoids_blacklist(isolated_db):
 
     mutant = improver.mutate(base)
     assert mutant.strategy_id != base.strategy_id
-    assert mutant.metadata.get("parent_strategy_id") == base.strategy_id
-    assert db.is_rule_tree_blacklisted(mutant.rules) is False
+    assert mutant.provenance.parent_hash == base.strategy_hash
+    assert db.is_rule_tree_blacklisted(mutant.entry_rules) is False
 
 
 def test_closed_loop_ai_proposes_gate_approves(isolated_db):
@@ -130,7 +130,7 @@ def test_closed_loop_ai_proposes_gate_approves(isolated_db):
     # Step 4: AI mutates candidate
     improved_strat = engine.improve_candidate(strat)
     assert improved_strat is not None
-    assert db.is_rule_tree_blacklisted(improved_strat.rules) is False
+    assert db.is_rule_tree_blacklisted(improved_strat.entry_rules) is False
 
     # Step 5: Gate evaluates healthy run for improved candidate
     good_is_trades = [150.0 if i % 3 != 0 else -20.0 for i in range(120)]

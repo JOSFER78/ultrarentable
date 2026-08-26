@@ -18,6 +18,10 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     StrategyLifecycleStatus,
     TargetInstrument,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.dataset_specification import DatasetQualityReport, DatasetSpecification
 from services.api.app.data_feed.feed_loader import load_candles
@@ -26,33 +30,20 @@ from services.strategy_core.canonical_compiler import CanonicalCompiler
 
 
 def _make_breakout_strategy() -> CanonicalStrategy:
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="PRICE_CLOSE", timeframe="1h", period=1),
-        operator=ComparisonOperator.GREATER_THAN,
-        right_indicator=IndicatorSpec(name="EMA", timeframe="1h", period=20),
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-IS-OOS-01",
-        name="IS/OOS Isolation Validation Strategy",
-        target_track=ExecutionTrack.TRACK_ULTRA,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="BTC-USDT",
-            exchange="BINGX",
-            contract_type="PERPETUAL",
-            point_value=1.0,
-            tick_size=0.1,
-        ),
-        timeframe="1h",
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=2.0, take_profit_atr_mult=5.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=1.5, base_leverage=5.0),
-        provenance=ProvenanceMetadata(
-            source_engine="test_is_oos",
-            created_timestamp_utc=int(time.time() * 1000),
-            author_or_agent="TEST_USER",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="PRICE_CLOSE", params={'period': 1}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", params={'period': 20}, source_field="close", shift=0))
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-IS-OOS-01",
+    route="ULTRA",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="IS/OOS Isolation Validation Strategy",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=5.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.5, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc=datetime.now(timezone.utc).isoformat())
+)
 
 
 def test_is_oos_physical_isolation_and_zero_leakage():

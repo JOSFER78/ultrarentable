@@ -47,46 +47,47 @@ class SemanticMutationEngine:
         point_val = 20.0 if symbol in ("NQ", "MNQ") else (50.0 if symbol in ("ES", "MES") else 1.0)
         tick_sz = 0.25 if is_cme else 0.01
 
-        return CanonicalStrategy(
+        from datetime import datetime, timezone as _tz
+        return CanonicalStrategy.create_and_hash(
             strategy_id=strat_id,
             name=f"{symbol} {timeframe} {archetype_name}",
-            target_track=track,
-            status=StrategyLifecycleStatus.GENERATED,
-            instrument=TargetInstrument(
-                symbol=symbol,
-                exchange=exchange,
-                contract_type=contract_type,
-                point_value=point_val,
-                tick_size=tick_sz,
-            ),
+            version="1.0.0",
+            symbol=symbol,
             timeframe=timeframe,
-            session=SessionWindow(
-                timezone="America/New_York" if is_cme else "UTC",
-                start_time="09:30" if is_cme else "00:00",
-                end_time="16:00" if is_cme else "23:59",
-                force_close_at_end=is_cme,
+            route="FONDEO" if track == ExecutionTrack.TRACK_FONDEO else "ULTRA",
+            archetype=archetype_name or "MOMENTUM",
+            session_window=SessionWindow(
+                start_time_utc="09:30" if is_cme else "00:00",
+                end_time_utc="16:00" if is_cme else "23:59",
+                close_at_eod=is_cme,
+                allowed_days=[0, 1, 2, 3, 4],
             ),
-            rules=RuleTree(
+            entry_rules=RuleTree(
+                logic=LogicalOp.AND,
+                direction="LONG",
                 long_conditions=[
                     RuleCondition(
-                        left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
-                        operator=ComparisonOperator.GREATER_THAN,
-                        threshold_value=rsi_thresh,
+                        left=IndicatorSpec(name="RSI", params={"period": rsi_period}, source_field="close", shift=0),
+                        op=ComparisonOperator.GT,
+                        right=rsi_thresh,
                     )
                 ]
             ),
-            exits=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
+            exit_rules=ExitModel(
+                sl_type=StopLossType.FIXED_POINTS,
+                sl_value=20.0,
+                tp_type=TakeProfitType.RR_MULTIPLE,
+                tp_value=3.0,
+            ),
             sizing_and_risk=SizingAndRisk(
-                base_risk_pct=1.0 if track == ExecutionTrack.TRACK_FONDEO else 5.0,
-                max_contracts_or_lots=4.0,
-                base_leverage=1.0 if track == ExecutionTrack.TRACK_FONDEO else 20.0,
+                sizing_type=SizingType.RISK_PCT_EQUITY,
+                risk_value=1.0 if track == ExecutionTrack.TRACK_FONDEO else 5.0,
+                max_open_positions=1,
             ),
             provenance=ProvenanceMetadata(
-                source_engine="semantic_ai",
-                project_name="Ultrarentable_Factory",
-                databank_name="Candidates",
-                build_id=f"ai_{strat_id}",
-                created_timestamp_utc=int(time.time() * 1000),
-                author_or_agent="SEMANTIC_AI_SEARCH",
+                author="SEMANTIC_AI_SEARCH",
+                engine_version="1.02",
+                policy_version="1.02",
+                created_at_utc=datetime.now(_tz.utc).isoformat(),
             ),
         )

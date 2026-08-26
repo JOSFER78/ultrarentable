@@ -20,6 +20,8 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     StrategyLifecycleStatus,
     TargetInstrument,
+    LogicalOp,
+    StopLossType
 )
 from contracts.backtest import BacktestRequest, DatasetSnapshot
 from services.strategy_core.canonical_compiler import CanonicalCompiler
@@ -29,23 +31,20 @@ from services.data.instrument_cost_registry import MissingCostModelError
 
 def test_unsupported_indicator_raises_fail_closed():
     """Fail-Closed: Indicadores no soportados lanzan ValueError."""
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="NON_EXISTENT_MAGIC_INDICATOR", timeframe="1h"),
-        operator=ComparisonOperator.GREATER_THAN,
-        threshold_value=50.0,
-    )
-    strat = CanonicalStrategy(
-        strategy_id="FAIL_IND_01",
-        name="Fail Indicator Strategy",
-        target_track=ExecutionTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(symbol="BTC-USDT", exchange="BINGX"),
-        timeframe="1h",
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=2.0),
-        sizing_and_risk=SizingAndRisk(),
-        provenance=ProvenanceMetadata(source_engine="test", created_timestamp_utc=0, author_or_agent="test"),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="NON_EXISTENT_MAGIC_INDICATOR", timeframe="1h"), op=ComparisonOperator.GT, right=50.0)
+    strat = CanonicalStrategy.create_and_hash(
+    strategy_id="FAIL_IND_01",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Fail Indicator Strategy",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0),
+    sizing_and_risk=SizingAndRisk(),
+    provenance=ProvenanceMetadata(author="test", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="1970-01-01T00:00:00+00:00")
+)
 
     with pytest.raises(ValueError, match="UNSUPPORTED_INDICATOR"):
         CanonicalCompiler.compile(strat, "ds_01", "hash_01", 50000.0)

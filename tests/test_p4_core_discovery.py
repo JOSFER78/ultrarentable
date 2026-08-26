@@ -12,6 +12,7 @@ import hashlib
 import tempfile
 from pathlib import Path
 import pytest
+from contracts.canonical_strategy import LogicalOp
 
 from contracts.canonical_strategy import CanonicalStrategy, ExecutionTrack
 from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute
@@ -28,10 +29,10 @@ def test_semantic_quant_engine_generates_valid_canonical_strategy():
     assert isinstance(strat, CanonicalStrategy)
     assert strat.instrument.symbol == "BTCUSDT"
     assert strat.target_track == ExecutionTrack.TRACK_ULTRA
-    assert len(strat.rules.long_conditions) > 0
+    assert len(strat.entry_rules.long_conditions) > 0
 
-    h1 = strat.compute_sha256()
-    h2 = strat.compute_sha256()
+    h1 = strat.strategy_hash
+    h2 = strat.strategy_hash
     assert h1 == h2
     assert len(h1) == 64
 

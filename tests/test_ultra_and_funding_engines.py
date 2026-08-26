@@ -3,7 +3,7 @@ Verificación de los motores de explotación especializados Ultra y Fondeo (Fase
 """
 
 import pytest
-from contracts.canonical_strategy import CanonicalStrategy, SizingAndRisk, RuleTree, ExitModel
+from contracts.canonical_strategy import CanonicalStrategy, SizingAndRisk, RuleTree, ExitModel, LogicalOp, SizingType, StopLossType
 from contracts.portfolio import BulletTradeDirection
 from services.exploitation_engines.ultra_engine import UltraExploitationEngine
 from services.exploitation_engines.prop_firm_engine import PROP_FIRM_CATALOG, PropFirmRules
@@ -12,17 +12,19 @@ from services.exploitation_engines.prop_firm_engine import PROP_FIRM_CATALOG, Pr
 def test_ultra_exploitation_engine_creates_and_pyramids_bullet():
     engine = UltraExploitationEngine()
     from contracts.canonical_strategy import TargetInstrument, ProvenanceMetadata, ExecutionTrack
-    dummy_strat = CanonicalStrategy(
-        strategy_id="strat_test_ultra",
-        name="Ultra Test",
-        target_track=ExecutionTrack.TRACK_ULTRA,
-        instrument=TargetInstrument(symbol="BTC-USDT", exchange="BINGX", contract_type="PERPETUAL", point_value=1.0, tick_size=0.1),
-        timeframe="1h",
-        rules=RuleTree(),
-        exits=ExitModel(stop_loss_atr_mult=2.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=3.0, base_leverage=50.0, pyramiding_max_layers=3),
-        provenance=ProvenanceMetadata(source_engine="internal_genetic", created_timestamp_utc=1700000000),
-    )
+    dummy_strat = CanonicalStrategy.create_and_hash(
+    strategy_id="strat_test_ultra",
+    route="ULTRA",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Ultra Test",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", ),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=3.0, max_open_positions=1, pyramiding_max_layers=3),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="1970-01-20T16:13:20+00:00")
+)
 
     bullet = engine.create_bullet(
         strategy=dummy_strat,

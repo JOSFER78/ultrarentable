@@ -11,6 +11,7 @@ Demuestra científicamente la erradicación de los 5 puntos rojos de la auditor�
 import hashlib
 import time
 import pytest
+from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 from contracts.backtest import BacktestRequest, DatasetSnapshot, EngineType
@@ -27,6 +28,10 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     StrategyLifecycleStatus,
     TargetInstrument,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from services.backtest.fast_engine_adapter import FastEngineAdapter
 from services.data.instrument_cost_registry import (
@@ -52,64 +57,38 @@ def _make_sample_dataset() -> DatasetSnapshot:
 
 def _make_rsi_strategy() -> CanonicalStrategy:
     """Estrategia 1: Entrada por RSI sobrevendido (< 30) y salida rápida."""
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
-        operator=ComparisonOperator.LESS_THAN,
-        threshold_value=30.0,
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-RSI-01",
-        name="RSI Mean Reversion Strategy",
-        target_track=ExecutionTrack.TRACK_ULTRA,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="BTC-USDT",
-            exchange="BINGX",
-            contract_type="PERPETUAL",
-            point_value=1.0,
-            tick_size=0.1,
-        ),
-        timeframe="1h",
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=3.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=2.0, base_leverage=5.0),
-        provenance=ProvenanceMetadata(
-            source_engine="test_dynamic",
-            created_timestamp_utc=int(time.time() * 1000),
-            author_or_agent="TEST_USER",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op=ComparisonOperator.LT, right=30.0)
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-RSI-01",
+    route="ULTRA",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="RSI Mean Reversion Strategy",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=1.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=3.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=2.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc=datetime.now(timezone.utc).isoformat())
+)
 
 
 def _make_donchian_strategy() -> CanonicalStrategy:
     """Estrategia 2: Entrada por ruptura de Donchian High de 20 periodos y salida amplia."""
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="PRICE_CLOSE", timeframe="1h", period=1),
-        operator=ComparisonOperator.GREATER_THAN,
-        right_indicator=IndicatorSpec(name="DONCHIAN_HIGH", timeframe="1h", period=20),
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-DONCHIAN-02",
-        name="Donchian Breakout Trend Following",
-        target_track=ExecutionTrack.TRACK_ULTRA,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="BTC-USDT",
-            exchange="BINGX",
-            contract_type="PERPETUAL",
-            point_value=1.0,
-            tick_size=0.1,
-        ),
-        timeframe="1h",
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=2.5, take_profit_atr_mult=8.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, base_leverage=10.0),
-        provenance=ProvenanceMetadata(
-            source_engine="test_dynamic",
-            created_timestamp_utc=int(time.time() * 1000),
-            author_or_agent="TEST_USER",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="PRICE_CLOSE", params={'period': 1}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="DONCHIAN_HIGH", params={'period': 20}, source_field="close", shift=0))
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-DONCHIAN-02",
+    route="ULTRA",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Donchian Breakout Trend Following",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=8.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc=datetime.now(timezone.utc).isoformat())
+)
 
 
 # 1. Punto 1 de Auditoría: Capital inicial sin constantes

@@ -32,6 +32,10 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     TargetInstrument,
     CanonicalStrategy,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.snapshots.strategy_snapshot import StrategyRoute, StrategySnapshot
 from services.data.holdout_gateway import BlindHoldoutAccessViolation, HoldoutGateway
@@ -217,23 +221,19 @@ def test_holdout_firewall_unauthorized_access_denied():
 def test_strategy_snapshot_functional_integrity():
     """TEST OBLIGATORIO: Modificar cualquier regla o parámetro funcional debe cambiar el canonical_hash."""
     rules_1 = RuleTree(
-        long_conditions=[
-            RuleCondition(
-                left_indicator=IndicatorSpec(name="EMA", period=10),
-                operator=ComparisonOperator.GREATER_THAN,
-                right_indicator=IndicatorSpec(name="EMA", period=30),
-            )
+    logic=LogicalOp.AND,
+    direction="LONG",
+    long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="EMA", params={'period': 10}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", params={'period': 30}, source_field="close", shift=0))
         ]
-    )
+)
     rules_2 = RuleTree(
-        long_conditions=[
-            RuleCondition(
-                left_indicator=IndicatorSpec(name="EMA", period=12),  # Periodo modificado de 10 a 12
-                operator=ComparisonOperator.GREATER_THAN,
-                right_indicator=IndicatorSpec(name="EMA", period=30),
-            )
+    logic=LogicalOp.AND,
+    direction="LONG",
+    long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="EMA", params={'period': 12}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", params={'period': 30}, source_field="close", shift=0))
         ]
-    )
+)
 
     snap_1 = StrategySnapshot.create_and_hash(
         strategy_id="UR_STRAT_01",
@@ -241,8 +241,17 @@ def test_strategy_snapshot_functional_integrity():
         symbol="BTCUSDT",
         timeframe="1h",
         entry_rules=rules_1,
-        exit_rules=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=5.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=15.0),
+        exit_rules=ExitModel(
+    sl_type=StopLossType.ATR_MULTIPLE,
+    sl_value=1.5,
+    tp_type=TakeProfitType.ATR_MULTIPLE,
+    tp_value=5.0
+),
+        sizing_and_risk=SizingAndRisk(
+    sizing_type=SizingType.RISK_PCT_EQUITY,
+    risk_value=15.0,
+    max_open_positions=1
+),
         dataset_id_reference="ds_btc_1h",
         dataset_sha256_reference="sha256_mock",
     )
@@ -253,8 +262,17 @@ def test_strategy_snapshot_functional_integrity():
         symbol="BTCUSDT",
         timeframe="1h",
         entry_rules=rules_2,
-        exit_rules=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=5.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=15.0),
+        exit_rules=ExitModel(
+    sl_type=StopLossType.ATR_MULTIPLE,
+    sl_value=1.5,
+    tp_type=TakeProfitType.ATR_MULTIPLE,
+    tp_value=5.0
+),
+        sizing_and_risk=SizingAndRisk(
+    sizing_type=SizingType.RISK_PCT_EQUITY,
+    risk_value=15.0,
+    max_open_positions=1
+),
         dataset_id_reference="ds_btc_1h",
         dataset_sha256_reference="sha256_mock",
     )

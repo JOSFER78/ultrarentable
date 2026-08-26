@@ -63,22 +63,30 @@ def _create_standard_trades(n: int = 40, win_ratio: float = 0.65):
 
 def test_tier_2_diamond_in_the_rough_classification(tmp_path):
     """Verifica que una estrategia con 10 Gates aprobados obtenga TIER_2_NEAR_CERTIFIED y recetas de mejora."""
-    from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute
+    from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, LogicalOp, SizingType, StopLossType, TakeProfitType
     from contracts.canonical_strategy import RuleTree, RuleCondition, IndicatorSpec, ComparisonOperator, ExitModel, SizingAndRisk
 
     orch = GatePipelineOrchestrator(evidence_base_dir=str(tmp_path))
 
     entry_rules = RuleTree(
-        long_conditions=[
-            RuleCondition(
-                left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
-                operator=ComparisonOperator.GREATER_THAN,
-                threshold_value=50.0,
-            )
+    logic=LogicalOp.AND,
+    direction="LONG",
+    long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op=ComparisonOperator.GT, right=50.0)
         ]
-    )
-    exit_rules = ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=3.0)
-    sizing = SizingAndRisk(base_risk_pct=1.0, max_contracts_or_lots=2.0, base_leverage=1.0)
+)
+    exit_rules = ExitModel(
+    sl_type=StopLossType.ATR_MULTIPLE,
+    sl_value=1.5,
+    tp_type=TakeProfitType.ATR_MULTIPLE,
+    tp_value=3.0
+)
+    sizing = SizingAndRisk(
+    sizing_type=SizingType.RISK_PCT_EQUITY,
+    risk_value=1.0,
+    max_open_positions=1,
+    max_contracts_or_lots=2.0
+)
 
     strat = StrategySnapshot.create_and_hash(
         strategy_id="UR_DIAMOND_01",

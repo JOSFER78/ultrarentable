@@ -139,9 +139,9 @@ export default function CandidatesExcelExplorer() {
         let realGatesPassed = c.gates_passed_count ?? 0;
 
         if (isFondeo) {
-          if (ddOos > 4.5 || ddOos >= 90.0) {
+          if (ddOos > 4.5) {
             realStatus = "REJECTED_ALTO_DRAWDOWN";
-            realReason = `Violación de Drawdown: ${ddOos.toFixed(1)}% excede el límite de 4.0% de Fondeo CME`;
+            realReason = `Violación de Drawdown: ${ddOos.toFixed(1)}% excede el límite de 4.5% de Fondeo CME`;
             realGatesPassed = Math.min(realGatesPassed, 6);
           } else if (pfOos < 1.15) {
             realStatus = "REJECTED_BAJO_PF";
@@ -153,10 +153,11 @@ export default function CandidatesExcelExplorer() {
             realStatus = "FUNDING_CERTIFIED";
           }
         } else {
-          // ULTRA CRIPTO
-          if (ddOos > 35.0 || ddOos >= 90.0) {
+          // ULTRA: doctrina SYSTEM_DOCTRINE — tolerancia de DD flotante hasta 80%, realizado hasta 75%
+          // (los filtros conservadores del 4.5% matan la convexidad antes de que la piramidación madure)
+          if (ddOos > 75.0) {
             realStatus = "REJECTED_ALTO_DRAWDOWN";
-            realReason = `Violación de Drawdown: ${ddOos.toFixed(1)}% excede el límite de 30.0% en Ultra`;
+            realReason = `Violación de Drawdown: ${ddOos.toFixed(1)}% excede el límite de 75.0% en Ultra`;
             realGatesPassed = Math.min(realGatesPassed, 6);
           } else if (pfOos < 1.10) {
             realStatus = "REJECTED_BAJO_PF";
@@ -229,7 +230,7 @@ export default function CandidatesExcelExplorer() {
       if (activeTab === "ULTRA_CRYPTO" && item.route !== "ULTRA") return false;
       if (activeTab === "APPROVED_ONLY") {
         const isAppr = ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(item.status);
-        const ddOk = item.route === "FONDEO" ? (item.max_dd_oos_pct || 0) <= 4.5 : (item.max_dd_oos_pct || 0) <= 30.0;
+        const ddOk = item.route === "FONDEO" ? (item.max_dd_oos_pct || 0) <= 4.5 : (item.max_dd_oos_pct || 0) <= 75.0;
         if (!isAppr || !ddOk) return false;
       }
 
@@ -371,7 +372,7 @@ export default function CandidatesExcelExplorer() {
                   Explorador Cuantitativo Excel & Bóveda de Estrategias
                 </h1>
                 <p className="text-slate-400 text-xs mt-0.5 font-medium">
-                  Hoja de cálculo interactiva multi-columna conectada a SQLite WAL. Semáforos estrictos de Fondeo CME ($50K / Max DD &le; 4.0%) y Ultra Cripto ($1,000 / Max DD &le; 30.0%).
+                  Hoja de cálculo interactiva multi-columna conectada a SQLite WAL. Semáforos de Fondeo CME ($50K / Max DD &le; 4.5%) y Ultra Cripto ($1,000 / Max DD &le; 75.0%, doctrina convexidad).
                 </p>
               </div>
             </div>
@@ -420,7 +421,7 @@ export default function CandidatesExcelExplorer() {
               <span className="text-sm">🏛️</span>
               <div className="text-left">
                 <span className="block font-black leading-tight">Cuentas Fondeo CME ($50K)</span>
-                <span className="text-[10px] text-sky-400/80 font-normal">Regla Estricta: Max DD &le; 4.0%</span>
+                <span className="text-[10px] text-sky-400/80 font-normal">Regla Estricta: Max DD &le; 4.5%</span>
               </div>
             </button>
 
@@ -435,7 +436,7 @@ export default function CandidatesExcelExplorer() {
               <span className="text-sm">⚡</span>
               <div className="text-left">
                 <span className="block font-black leading-tight">Cuentas Ultra Cripto ($1,000)</span>
-                <span className="text-[10px] text-amber-400/80 font-normal">1R Aislado / Max DD &le; 30.0%</span>
+                <span className="text-[10px] text-amber-400/80 font-normal">1R Aislado / Max DD &le; 75.0% (Doctrina Convexidad)</span>
               </div>
             </button>
 
@@ -508,7 +509,7 @@ export default function CandidatesExcelExplorer() {
           </div>
           <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
             <span className="text-[10px] uppercase text-slate-400 font-bold block">Max DD OOS Promedio</span>
-            <span className={`text-lg font-black ${kpis.avgDd <= 4.0 ? "text-emerald-400" : kpis.avgDd <= 30.0 ? "text-amber-400" : "text-rose-400"}`}>
+            <span className={`text-lg font-black ${kpis.avgDd <= 4.5 ? "text-emerald-400" : kpis.avgDd <= 75.0 ? "text-amber-400" : "text-rose-400"}`}>
               {kpis.avgDd.toFixed(1)}%
             </span>
           </div>
@@ -633,7 +634,7 @@ export default function CandidatesExcelExplorer() {
 
                     // Semáforo estricto de Drawdown
                     const isGoodDd = isFondeo ? ddOos <= 4.0 : ddOos <= 25.0;
-                    const isMedDd = isFondeo ? ddOos <= 4.5 : ddOos <= 35.0;
+                    const isMedDd = isFondeo ? ddOos <= 4.5 : ddOos <= 75.0;
 
                     const ddBadgeColor = isGoodDd
                       ? "text-emerald-400 bg-emerald-950/60 border-emerald-800/80"

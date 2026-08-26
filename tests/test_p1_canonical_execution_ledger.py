@@ -48,6 +48,10 @@ from contracts.canonical_strategy import (
     RuleTree,
     SessionWindow,
     SizingAndRisk,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 
 
@@ -58,16 +62,27 @@ def _create_test_snapshot():
         symbol="BTCUSDT",
         timeframe="1h",
         entry_rules=RuleTree(
+            logic=LogicalOp.AND,
+            direction="LONG",
             long_conditions=[
                 RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", period=10),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", period=30),
+                    left=IndicatorSpec(name="EMA", params={"period": 10}, source_field="close", shift=0),
+                    op=ComparisonOperator.GT,
+                    right=IndicatorSpec(name="EMA", params={"period": 30}, source_field="close", shift=0)
                 )
             ]
         ),
-        exit_rules=ExitModel(stop_loss_atr_mult=2.0, take_profit_atr_mult=4.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=15.0, base_leverage=10.0),
+        exit_rules=ExitModel(
+    sl_type=StopLossType.ATR_MULTIPLE,
+    sl_value=2.0,
+    tp_type=TakeProfitType.ATR_MULTIPLE,
+    tp_value=4.0
+),
+        sizing_and_risk=SizingAndRisk(
+    sizing_type=SizingType.RISK_PCT_EQUITY,
+    risk_value=15.0,
+    max_open_positions=1
+),
         dataset_id_reference="ds_btc_test_p1",
         dataset_sha256_reference="d5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6",
     )

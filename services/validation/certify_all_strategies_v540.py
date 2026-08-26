@@ -54,12 +54,14 @@ def certify_all_strategies():
             dd_val = float(c.max_dd_oos_pct) if c.max_dd_oos_pct is not None else 100.0
 
             is_margin_call = (old_status == "RECHAZADA_MARGIN_CALL") or (dd_val > 95.0)
+            is_ultra_dd_breach = (route != "FONDEO") and (dd_val > 75.0)
             is_fondeo_dd_breach = (route == "FONDEO") and (dd_val > 4.5)
 
             # Criterio estricto de certificación
             qualifies_approved = (
                 not is_margin_call and
                 not is_fondeo_dd_breach and
+                not is_ultra_dd_breach and
                 pf_val >= 1.20 and
                 np_val > 0 and
                 old_status in ("APPROVED", "REFINADO_TIER_2")

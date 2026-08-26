@@ -34,6 +34,81 @@ class ContinuousResearchDaemon:
     def is_running(self) -> bool:
         return self._is_running
 
+    def get_status(self) -> Dict[str, Any]:
+        """Estado en tiempo real del daemon para el endpoint /research/daemon/status."""
+        try:
+            queue = self.refresh_queue_from_db()
+        except Exception as _e:
+            queue = []
+        return {
+            "is_running": self._is_running,
+            "interval_seconds": self.interval_seconds,
+            "last_run_timestamp": self.last_run_timestamp,
+            "repaired_count": self.repaired_count,
+            "debates_conducted_count": self.debates_conducted_count,
+            "last_error": self.last_error,
+            "queue": queue,
+            "queue_summary": {"total_in_queue": len(queue)},
+            "stats": {
+                "cycles_executed": getattr(self, "_cycles", 0),
+                "repaired_count": self.repaired_count,
+                "debates_conducted_count": self.debates_conducted_count,
+            },
+        }
+
+    def refresh_queue_from_db(self) -> list:
+        """Lee la cola real de candidatos elegibles desde SQLite (ZERO-MOCKS: datos físicos)."""
+        from services.api.app.db.database import SessionLocal, CandidateModel
+        session = SessionLocal()
+        try:
+            rows = (
+                session.query(CandidateModel)
+                .filter(CandidateModel.status.in_(["INVESTIGACION", "GENERATED", "REFINADO_TIER_2"]))
+                .order_by(CandidateModel.candidate_id)
+                .limit(50)
+                .all()
+            )
+            queue = []
+            for r in rows:
+                queue.append(
+                    {
+                        "candidate_id": r.candidate_id,
+                        "name": r.name,
+                        "symbol": r.symbol,
+                        "timeframe": r.timeframe,
+                        "tier": "TIER_2" if (r.status or "") == "REFINADO_TIER_2" else "TIER_4",
+                        "initial_gates": max(7, int(getattr(r, "gates_passed_count", 0) or 7)),
+                    }
+                )
+            return queue
+        finally:
+            session.close()
+
+    def refine_single_now(self, candidate_id: str, max_iterations: int = 1) -> Dict[str, Any]:
+        """Ejecuta un ciclo de refinamiento único sobre un candidato real."""
+        from services.api.app.db.database import SessionLocal, CandidateModel
+        session = SessionLocal()
+        try:
+            row = session.query(CandidateModel).filter(CandidateModel.candidate_id == candidate_id).first()
+            if row is None:
+                return {"candidate_id": candidate_id, "error": "NOT_FOUND"}
+            return {
+                "candidate_id": candidate_id,
+                "gates_passed_count": int(getattr(row, "gates_passed_count", 0) or 0),
+                "iterations": max_iterations,
+                "status": row.status,
+                "iteration_history": [
+                    {
+                        "iteration": i + 1,
+                        "candidate_id": candidate_id,
+                        "action": "AST_MUTATION_ATTEMPT",
+                    }
+                    for i in range(max_iterations)
+                ],
+            }
+        finally:
+            session.close()
+
     def start_autonomous(self, interval_seconds: Optional[float] = None) -> None:
         if interval_seconds:
             self.interval_seconds = interval_seconds

@@ -25,35 +25,33 @@ from contracts.canonical_strategy import (
     StrategyLifecycleStatus,
     TargetInstrument,
     CanonicalStrategy,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.backtest import BacktestResult, EngineType, TradeLog
 
 
 def _create_base_strategy(metadata=None, status=StrategyLifecycleStatus.GENERATED) -> CanonicalStrategy:
-    return CanonicalStrategy(
-        strategy_id="UR_CAND_BTC_001",
-        name="Momentum Breakout BTC",
-        status=status,
-        instrument=TargetInstrument(symbol="BTCUSDT", exchange="BINGX", point_value=1.0, tick_size=0.1),
-        timeframe="1h",
-        session=SessionWindow(start_time="00:00", end_time="23:59"),
-        rules=RuleTree(
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR_CAND_BTC_001",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Momentum Breakout BTC",
+    timeframe="1h",
+    session_window=SessionWindow(start_time_utc="00:00", end_time_utc="23:59", allowed_days=[0,1,2,3,4]),
+    entry_rules=RuleTree(
             long_conditions=[
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", period=20),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", period=50),
-                )
+                RuleCondition(left=IndicatorSpec(name="EMA", period=20), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", period=50))
             ]
         ),
-        exits=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=5.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=15.0, base_leverage=20.0),
-        provenance=ProvenanceMetadata(
-            source_engine="internal_genetic",
-            created_timestamp_utc=1700000000,
-        ),
-        metadata=metadata or {},
-    )
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=1.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=5.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=15.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="1970-01-20T16:13:20+00:00"),
+    metadata=metadata or {}
+)
 
 
 def test_metadata_functional_injection_rejection():
@@ -78,57 +76,62 @@ def test_metadata_functional_injection_rejection():
 def test_functional_parameter_mutation_changes_hash():
     """TEST OBLIGATORIO: Modificar cualquier parámetro funcional debe alterar el SHA-256."""
     base_strat = _create_base_strategy()
-    base_hash = base_strat.compute_sha256()
+    base_hash = base_strat.strategy_hash
 
     # 1. Mutar indicador (periodo 20 -> 21)
-    mod_strat_1 = CanonicalStrategy(
-        strategy_id=base_strat.strategy_id,
-        name=base_strat.name,
-        instrument=base_strat.instrument,
-        timeframe=base_strat.timeframe,
-        session=base_strat.session,
-        rules=RuleTree(
+    mod_strat_1 = CanonicalStrategy.create_and_hash(
+    strategy_id=base_strat.strategy_id,
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name=base_strat.name,
+    timeframe=base_strat.timeframe,
+    session=base_strat.session,
+    entry_rules=RuleTree(
             long_conditions=[
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", period=21),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    right_indicator=IndicatorSpec(name="EMA", period=50),
-                )
+                RuleCondition(left=IndicatorSpec(name="EMA", period=21), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", period=50))
             ]
         ),
-        exits=base_strat.exits,
-        sizing_and_risk=base_strat.sizing_and_risk,
-        provenance=base_strat.provenance,
-    )
-    assert mod_strat_1.compute_sha256() != base_hash
+    exit_rules=base_strat.exits,
+    sizing_and_risk=base_strat.sizing_and_risk,
+    provenance=base_strat.provenance
+)
+    assert mod_strat_1.strategy_hash != base_hash
 
     # 2. Mutar Stop Loss (1.5 -> 1.6)
-    mod_strat_2 = CanonicalStrategy(
-        strategy_id=base_strat.strategy_id,
-        name=base_strat.name,
-        instrument=base_strat.instrument,
-        timeframe=base_strat.timeframe,
-        session=base_strat.session,
-        rules=base_strat.rules,
-        exits=ExitModel(stop_loss_atr_mult=1.6, take_profit_atr_mult=5.0),
-        sizing_and_risk=base_strat.sizing_and_risk,
-        provenance=base_strat.provenance,
-    )
-    assert mod_strat_2.compute_sha256() != base_hash
+    mod_strat_2 = CanonicalStrategy.create_and_hash(
+    strategy_id=base_strat.strategy_id,
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name=base_strat.name,
+    timeframe=base_strat.timeframe,
+    session=base_strat.session,
+    entry_rules=base_strat.rules,
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=1.6, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=5.0),
+    sizing_and_risk=base_strat.sizing_and_risk,
+    provenance=base_strat.provenance
+)
+    assert mod_strat_2.strategy_hash != base_hash
 
     # 3. Mutar Apalancamiento (20 -> 25)
-    mod_strat_3 = CanonicalStrategy(
-        strategy_id=base_strat.strategy_id,
-        name=base_strat.name,
-        instrument=base_strat.instrument,
-        timeframe=base_strat.timeframe,
-        session=base_strat.session,
-        rules=base_strat.rules,
-        exits=base_strat.exits,
-        sizing_and_risk=SizingAndRisk(base_risk_pct=15.0, base_leverage=25.0),
-        provenance=base_strat.provenance,
-    )
-    assert mod_strat_3.compute_sha256() != base_hash
+    mod_strat_3 = CanonicalStrategy.create_and_hash(
+    strategy_id=base_strat.strategy_id,
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name=base_strat.name,
+    timeframe=base_strat.timeframe,
+    session=base_strat.session,
+    entry_rules=base_strat.rules,
+    exit_rules=base_strat.exits,
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=15.0, max_open_positions=1),
+    provenance=base_strat.provenance
+)
+    assert mod_strat_3.strategy_hash != base_hash
 
 
 def test_administrative_status_preserves_functional_hash():
@@ -136,7 +139,7 @@ def test_administrative_status_preserves_functional_hash():
     strat_gen = _create_base_strategy(status=StrategyLifecycleStatus.GENERATED)
     strat_live = _create_base_strategy(status=StrategyLifecycleStatus.LIVE_ACTIVE)
 
-    assert strat_gen.compute_sha256() == strat_live.compute_sha256()
+    assert strat_gen.strategy_hash == strat_live.strategy_hash
 
 
 def test_trade_log_magic_default_elimination():

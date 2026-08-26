@@ -101,7 +101,7 @@ def test_universal_engine_executes_trend_following(real_btc_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.EMA, 10),
-                        operator=ComparisonOperator.CROSSES_ABOVE,
+                        operator=ComparisonOperator.CROSS_ABOVE,
                         right=DynamicValueNode.indicator(IndicatorType.EMA, 30),
                     )
                 ],
@@ -111,7 +111,7 @@ def test_universal_engine_executes_trend_following(real_btc_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.EMA, 10),
-                        operator=ComparisonOperator.CROSSES_BELOW,
+                        operator=ComparisonOperator.CROSS_BELOW,
                         right=DynamicValueNode.indicator(IndicatorType.EMA, 30),
                     )
                 ],
@@ -155,7 +155,7 @@ def test_universal_engine_executes_donchian_breakout(real_btc_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.series(IndicatorType.PRICE_CLOSE),
-                        operator=ComparisonOperator.GREATER_EQUAL,
+                        operator=ComparisonOperator.GTE,
                         right=DynamicValueNode.indicator(IndicatorType.DONCHIAN_HIGH, 20, offset=1),
                     )
                 ],
@@ -165,7 +165,7 @@ def test_universal_engine_executes_donchian_breakout(real_btc_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.series(IndicatorType.PRICE_CLOSE),
-                        operator=ComparisonOperator.LESS_EQUAL,
+                        operator=ComparisonOperator.LTE,
                         right=DynamicValueNode.indicator(IndicatorType.DONCHIAN_LOW, 20, offset=1),
                     )
                 ],
@@ -215,7 +215,7 @@ def test_universal_engine_executes_cme_futures(real_nq_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.RSI, 14),
-                        operator=ComparisonOperator.GREATER_THAN,
+                        operator=ComparisonOperator.GT,
                         right=DynamicValueNode.constant(55.0),
                     )
                 ],
@@ -225,7 +225,7 @@ def test_universal_engine_executes_cme_futures(real_nq_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.RSI, 14),
-                        operator=ComparisonOperator.LESS_THAN,
+                        operator=ComparisonOperator.LT,
                         right=DynamicValueNode.constant(45.0),
                     )
                 ],
@@ -270,7 +270,7 @@ def test_universal_engine_executes_forex(real_eurusd_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.SMA, 20),
-                        operator=ComparisonOperator.GREATER_THAN,
+                        operator=ComparisonOperator.GT,
                         right=DynamicValueNode.indicator(IndicatorType.SMA, 50),
                     )
                 ],
@@ -280,7 +280,7 @@ def test_universal_engine_executes_forex(real_eurusd_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.SMA, 20),
-                        operator=ComparisonOperator.LESS_THAN,
+                        operator=ComparisonOperator.LT,
                         right=DynamicValueNode.indicator(IndicatorType.SMA, 50),
                     )
                 ],
@@ -322,7 +322,7 @@ def test_bit_for_bit_reproducibility(real_btc_dataset):
                 conditions=[
                     ConditionNode(
                         left=DynamicValueNode.indicator(IndicatorType.RSI, 14),
-                        operator=ComparisonOperator.GREATER_THAN,
+                        operator=ComparisonOperator.GT,
                         right=DynamicValueNode.constant(60.0),
                     )
                 ],
@@ -360,7 +360,7 @@ def test_parameter_change_produces_different_provenance_hash(real_btc_dataset):
         base_timeframe="1h",
         entry_rules=DynamicEntryRules(
             long_rules=RuleGroup(
-                conditions=[ConditionNode(left=DynamicValueNode.indicator(IndicatorType.RSI, 14), operator=ComparisonOperator.GREATER_THAN, right=DynamicValueNode.constant(50.0))]
+                conditions=[ConditionNode(left=DynamicValueNode.indicator(IndicatorType.RSI, 14), operator=ComparisonOperator.GT, right=DynamicValueNode.constant(50.0))]
             )
         ),
         exit_rules=DynamicExitRules(stop_loss_value=2.0),
@@ -375,7 +375,7 @@ def test_parameter_change_produces_different_provenance_hash(real_btc_dataset):
         base_timeframe="1h",
         entry_rules=DynamicEntryRules(
             long_rules=RuleGroup(
-                conditions=[ConditionNode(left=DynamicValueNode.indicator(IndicatorType.RSI, 14), operator=ComparisonOperator.GREATER_THAN, right=DynamicValueNode.constant(60.0))]
+                conditions=[ConditionNode(left=DynamicValueNode.indicator(IndicatorType.RSI, 14), operator=ComparisonOperator.GT, right=DynamicValueNode.constant(60.0))]
             )
         ),
         exit_rules=DynamicExitRules(stop_loss_value=2.0),
@@ -406,7 +406,7 @@ def test_forensic_metrics_not_computable_handling(real_btc_dataset):
         base_timeframe="1h",
         entry_rules=DynamicEntryRules(
             long_rules=RuleGroup(
-                conditions=[ConditionNode(left=DynamicValueNode.indicator(IndicatorType.RSI, 14), operator=ComparisonOperator.GREATER_THAN, right=DynamicValueNode.constant(999.0))]
+                conditions=[ConditionNode(left=DynamicValueNode.indicator(IndicatorType.RSI, 14), operator=ComparisonOperator.GT, right=DynamicValueNode.constant(999.0))]
             )
         ),
         exit_rules=DynamicExitRules(),

@@ -1,6 +1,7 @@
 """Unit tests for Pydantic V2 Canonical Contracts (Fase 1)."""
 
 import pytest
+from contracts.canonical_strategy import SizingType
 from pydantic import ValidationError
 
 from contracts import (
@@ -40,45 +41,20 @@ from contracts import (
 
 
 def create_sample_strategy() -> CanonicalStrategy:
-    return CanonicalStrategy(
-        strategy_id="UR-CANON-001",
-        name="NQ Momentum Breakout H1",
-        target_track=ExecutionTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="NQ",
-            exchange="CME",
-            contract_type="FUTURES",
-            point_value=20.0,
-            tick_size=0.25,
-        ),
-        timeframe="1h",
-        session=SessionWindow(
-            timezone="America/New_York",
-            start_time="09:30",
-            end_time="16:00",
-            force_close_at_end=True,
-        ),
-        rules=RuleTree(
-            long_conditions=[
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
-                    operator="GREATER_THAN",
-                    threshold_value=50.0,
-                )
-            ]
-        ),
-        exits=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, max_contracts_or_lots=4.0),
-        provenance=ProvenanceMetadata(
-            source_engine="strategyquant",
-            project_name="Ultra_Auto_Pilot",
-            databank_name="Results",
-            build_id="build_001",
-            created_timestamp_utc=1771437600000,
-            author_or_agent="SQX_MCP_BRIDGE",
-        ),
-    )
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-CANON-001",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="NQ Momentum Breakout H1",
+    timeframe="1h",
+    session_window=SessionWindow(start_time_utc="09:30", end_time_utc="16:00", close_at_eod=True, allowed_days=[0,1,2,3,4]),
+    entry_rules=RuleTree( long_conditions=[ RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op="GREATER_THAN", right=50.0) ] ),
+    exit_rules=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1, max_contracts_or_lots=4.0),
+    provenance=ProvenanceMetadata(author="SQX_MCP_BRIDGE", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-18T18:00:00+00:00", project_name="Ultra_Auto_Pilot", databank_name="Results", build_id="build_001")
+)
 
 
 def test_canonical_strategy_creation_and_immutability():
@@ -89,8 +65,8 @@ def test_canonical_strategy_creation_and_immutability():
     assert strategy.session.force_close_at_end is True
 
     # Check hash is deterministic
-    h1 = strategy.compute_sha256()
-    h2 = strategy.compute_sha256()
+    h1 = strategy.strategy_hash
+    h2 = strategy.strategy_hash
     assert h1 == h2
     assert len(h1) == 64
 
@@ -106,7 +82,7 @@ def test_canonical_strategy_json_roundtrip():
     recovered = CanonicalStrategy.model_validate_json(json_str)
 
     assert recovered.strategy_id == strategy.strategy_id
-    assert recovered.compute_sha256() == strategy.compute_sha256()
+    assert recovered.strategy_hash == strategy.strategy_hash
 
 
 def test_fondeo_validation_contracts():

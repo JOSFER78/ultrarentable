@@ -256,7 +256,7 @@ export default function GatesPage() {
     const dd = strategy.max_drawdown_pct ?? 0;
     const pf = strategy.profit_factor ?? strategy.oos_profit_factor ?? 0;
     const trades = strategy.total_trades ?? 0;
-    const maxAllowedDd = isFondeo ? 4.5 : 30.0;
+    const maxAllowedDd = isFondeo ? 4.5 : 75.0;
 
     let pass = false;
     let score = 0;
@@ -526,7 +526,7 @@ export default function GatesPage() {
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[9px]">Max DD</span>
-                          <span className={`font-bold ${dd <= 4.5 ? "text-emerald-400" : dd <= 30.0 ? "text-amber-400" : "text-rose-400"}`}>
+                          <span className={`font-bold ${dd <= 4.5 ? "text-emerald-400" : dd <= 75.0 ? "text-amber-400" : "text-rose-400"}`}>
                             {dd ? `${dd.toFixed(1)}%` : "0.0%"}
                           </span>
                         </div>
@@ -596,7 +596,7 @@ export default function GatesPage() {
                       <span className="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
                         MAX DRAWDOWN <QuantTooltip text="Máxima caída acumulada en la cuenta." />
                       </span>
-                      <span className={`text-base font-black ${(selectedStrategy.max_drawdown_pct ?? 0) <= 4.5 ? "text-emerald-400" : (selectedStrategy.max_drawdown_pct ?? 0) <= 30.0 ? "text-amber-400" : "text-rose-400"}`}>
+                      <span className={`text-base font-black ${(selectedStrategy.max_drawdown_pct ?? 0) <= 4.5 ? "text-emerald-400" : (selectedStrategy.max_drawdown_pct ?? 0) <= 75.0 ? "text-amber-400" : "text-rose-400"}`}>
                         {selectedStrategy.max_drawdown_pct ? `${selectedStrategy.max_drawdown_pct.toFixed(1)}%` : "0.0%"}
                       </span>
                     </div>

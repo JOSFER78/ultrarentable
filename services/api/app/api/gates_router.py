@@ -80,7 +80,7 @@ def list_all_gates() -> List[Dict[str, Any]]:
 @gates_router.get("/{slug}")
 def get_gate_by_slug(slug: str) -> Dict[str, Any]:
     """Devuelve la configuración y telemetría detallada de un Gate específico por su slug."""
-    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or f"gate-{g['gate_number']}" == slug), None)
+    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or str(g.get("id")) == slug or f"gate-{g.get('id')}" == slug), None)
     if not gate:
         raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
 
@@ -108,7 +108,7 @@ class GateConfigUpdateSchema(BaseModel):
 @gates_router.put("/{slug}/config")
 def update_gate_config(slug: str, body: GateConfigUpdateSchema) -> Dict[str, Any]:
     """Actualiza los parámetros de un Gate con persistencia local en SQLite y Firebase."""
-    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or f"gate-{g['gate_number']}" == slug), None)
+    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or str(g.get("id")) == slug or f"gate-{g.get('id')}" == slug), None)
     if not gate:
         raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
 
@@ -154,7 +154,7 @@ class SemanticAIPromptSchema(BaseModel):
 @gates_router.post("/{slug}/ai-semantic-edit")
 def ai_semantic_edit_gate(slug: str, body: SemanticAIPromptSchema) -> Dict[str, Any]:
     """Interpreta semánticamente una orden en lenguaje natural y muta los parámetros del motor en tiempo real."""
-    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or f"gate-{g['gate_number']}" == slug), None)
+    gate = next((g for g in GATES_DIRECTORY if g["slug"] == slug or str(g.get("id")) == slug or f"gate-{g.get('id')}" == slug), None)
     if not gate:
         raise HTTPException(status_code=404, detail=f"GATE_NOT_FOUND: {slug}")
 

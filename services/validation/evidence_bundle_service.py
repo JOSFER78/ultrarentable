@@ -78,7 +78,7 @@ class EvidenceBundleService:
         bundle = EvidenceBundle(
             bundle_id=bundle_id,
             strategy_id=strategy.strategy_id,
-            strategy_sha256=strategy.compute_sha256(),
+            strategy_sha256=strategy.strategy_hash,
             dataset_id=result_is.dataset_id.replace("_IS", ""),
             dataset_is_sha256=result_is.dataset_sha256,
             dataset_oos_sha256=result_oos.dataset_sha256,

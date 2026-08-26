@@ -11,8 +11,8 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 import numpy as np
 
+from contracts.canonical_strategy import ComparisonOperator
 from contracts.universal_strategy import (
-    ComparisonOperator,
     ConditionNode,
     DynamicEntryRules,
     DynamicValueNode,
@@ -68,24 +68,27 @@ class DynamicRuleEvaluator:
         curr_left = left_series[bar_idx]
         curr_right = right_series[bar_idx]
 
-        op = cond.operator
-        if op == ComparisonOperator.GREATER_THAN:
+        op_val = cond.operator.value if hasattr(cond.operator, "value") else str(cond.operator)
+        op_name = {"GREATER_THAN": "GT", "GREATER_EQUAL": "GTE", "LESS_THAN": "LT",
+                   "LESS_EQUAL": "LTE", "EQUALS": "EQ", "CROSSES_ABOVE": "CROSS_ABOVE",
+                   "CROSSES_BELOW": "CROSS_BELOW"}.get(op_val, op_val)
+        if op_name == "GT":
             return bool(curr_left > curr_right)
-        elif op == ComparisonOperator.GREATER_EQUAL:
+        elif op_name == "GTE":
             return bool(curr_left >= curr_right)
-        elif op == ComparisonOperator.LESS_THAN:
+        elif op_name == "LT":
             return bool(curr_left < curr_right)
-        elif op == ComparisonOperator.LESS_EQUAL:
+        elif op_name == "LTE":
             return bool(curr_left <= curr_right)
-        elif op == ComparisonOperator.EQUALS:
+        elif op_name == "EQ":
             return bool(abs(curr_left - curr_right) < 1e-6)
-        elif op == ComparisonOperator.CROSSES_ABOVE:
+        elif op_name == "CROSS_ABOVE":
             if bar_idx == 0:
                 return False
             prev_left = left_series[bar_idx - 1]
             prev_right = right_series[bar_idx - 1]
             return bool(prev_left <= prev_right and curr_left > curr_right)
-        elif op == ComparisonOperator.CROSSES_BELOW:
+        elif op_name == "CROSS_BELOW":
             if bar_idx == 0:
                 return False
             prev_left = left_series[bar_idx - 1]

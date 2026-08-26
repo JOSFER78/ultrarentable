@@ -305,20 +305,17 @@ def test_universal_engine_blocks_non_monotonic_timestamps():
 
 def test_canonical_strategy_clean_crypto_instrument():
     """Verifica que crear una CanonicalStrategy para BTC no herede parámetros CME por defecto."""
-    strat = CanonicalStrategy(
-        strategy_id="UR-BTC-001",
-        name="Crypto Trend",
-        target_track=ExecutionTrack.TRACK_ULTRA,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(symbol="BTC-USDT"),
-        timeframe="1h",
-        session=SessionWindow(is_24_7=True),
-        provenance=ProvenanceMetadata(
-            source_engine="internal_genetic",
-            created_timestamp_utc=1700000000,
-            author_or_agent="SYSTEM_GENERATOR",
-        ),
-    )
+    strat = CanonicalStrategy.create_and_hash(
+    strategy_id="UR-BTC-001",
+    route="ULTRA",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Crypto Trend",
+    timeframe="1h",
+    session_window=SessionWindow(is_24_7=True, allowed_days=[0,1,2,3,4]),
+    provenance=ProvenanceMetadata(author="SYSTEM_GENERATOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="1970-01-20T16:13:20+00:00")
+)
     
     assert strat.instrument.symbol == "BTC-USDT"
     assert strat.instrument.exchange is None

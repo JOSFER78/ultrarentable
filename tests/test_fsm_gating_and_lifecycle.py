@@ -18,6 +18,10 @@ from contracts.canonical_strategy import (
     StrategyLifecycleStatus,
     TargetInstrument,
     ComparisonOperator,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.evidence_bundle import EvidenceBundle
 from services.validation.evidence_bundle_service import EvidenceBundleService
@@ -31,7 +35,7 @@ class FSMTransitionGuard:
         if target_status in (StrategyLifecycleStatus.EVIDENCE_APPROVED, StrategyLifecycleStatus.CANDIDATE, StrategyLifecycleStatus.INCUBATION_PAPER, StrategyLifecycleStatus.LIVE_ACTIVE):
             if bundle is None:
                 raise ValueError(f"FSM_TRANSITION_BLOCKED: La transición a {target_status.value} exige un EvidenceBundle sellado.")
-            if bundle.strategy_sha256 != strategy.compute_sha256():
+            if bundle.strategy_sha256 != strategy.strategy_hash:
                 raise ValueError("FSM_INTEGRITY_TAMPERING: El hash de la estrategia no coincide con el bundle de evidencia.")
             if not bundle.dataset_is_sha256 or not bundle.dataset_oos_sha256 or not bundle.ledger_hash:
                 raise ValueError("FSM_INSUFFICIENT_EVIDENCE: El bundle carece de linaje criptográfico completo.")
@@ -39,33 +43,20 @@ class FSMTransitionGuard:
 
 
 def _make_strategy() -> CanonicalStrategy:
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
-        operator=ComparisonOperator.LESS_THAN,
-        threshold_value=30.0,
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-FSM-01",
-        name="FSM Transition Guard Strategy",
-        target_track=ExecutionTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="BTC-USDT",
-            exchange="BINGX",
-            contract_type="PERPETUAL",
-            point_value=1.0,
-            tick_size=0.1,
-        ),
-        timeframe="1h",
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=3.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, base_leverage=5.0),
-        provenance=ProvenanceMetadata(
-            source_engine="test_fsm",
-            created_timestamp_utc=1700000000000,
-            author_or_agent="TEST_USER",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op=ComparisonOperator.LT, right=30.0)
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-FSM-01",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="FSM Transition Guard Strategy",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=1.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=3.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2023-11-14T22:13:20+00:00")
+)
 
 
 def test_fsm_blocks_transition_without_evidence_bundle():
@@ -112,7 +103,7 @@ def test_fsm_allows_transition_with_verified_evidence_bundle():
     valid_bundle = EvidenceBundle(
         bundle_id="bnd_valid_01",
         strategy_id="UR-STRAT-FSM-01",
-        strategy_sha256=strat.compute_sha256(),
+        strategy_sha256=strat.strategy_hash,
         dataset_id="ds_01",
         dataset_is_sha256="is_hash_64_chars_0000000000000000000000000000000000000000000000000000",
         dataset_oos_sha256="oos_hash_64_chars_00000000000000000000000000000000000000000000000000",

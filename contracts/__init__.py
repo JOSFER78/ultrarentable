@@ -49,7 +49,22 @@ from contracts.portfolio import (
 
 from contracts.evidence_bundle import EvidenceBundle
 
+
+from contracts.canonical_strategy import (
+    StopLossType,
+    TakeProfitType,
+    SizingType,
+    LogicalOp,
+    ComparisonOp
+)
+
 __all__ = [
+    "StopLossType",
+    "TakeProfitType",
+    "SizingType",
+    "LogicalOp",
+    "ComparisonOp",
+
     "CanonicalStrategy",
     "StrategyLifecycleStatus",
     "ExecutionTrack",

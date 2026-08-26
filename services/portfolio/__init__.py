@@ -6,3 +6,6 @@ from services.portfolio.meta_ensemble_service import MetaEnsembleService
 from services.portfolio.portfolio_router import router
 
 __all__ = ["autonomous_meta_daemon", "AutonomousMetaDaemon", "MetaEnsembleService", "router"]
+from services.portfolio.portfolio_engine import PortfolioEngine
+
+__all__.append("PortfolioEngine")

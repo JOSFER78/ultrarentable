@@ -6,7 +6,7 @@ import os
 import pytest
 from pydantic import ValidationError
 
-from contracts.canonical_strategy import RuleTree, ExitModel, SizingAndRisk, IndicatorSpec, RuleCondition, ComparisonOperator
+from contracts.canonical_strategy import RuleTree, ExitModel, SizingAndRisk, IndicatorSpec, RuleCondition, ComparisonOperator, LogicalOp, SizingType, StopLossType, TakeProfitType
 from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, PyramidingPolicy, MarginPolicy
 from contracts.snapshots.dataset_snapshot import DatasetSnapshot
 
@@ -14,16 +14,23 @@ from contracts.snapshots.dataset_snapshot import DatasetSnapshot
 def test_strategy_snapshot_creation_and_immutability():
     """Verifica que StrategySnapshot compute su hash y sea 100% inmutable."""
     entry_rules = RuleTree(
-        long_conditions=[
-            RuleCondition(
-                left_indicator=IndicatorSpec(name="RSI", timeframe="1h", period=14),
-                operator=ComparisonOperator.GREATER_THAN,
-                threshold_value=50.0
-            )
+    logic=LogicalOp.AND,
+    direction="LONG",
+    long_conditions=[
+            RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op=ComparisonOperator.GT, right=50.0)
         ]
+)
+    exit_rules = ExitModel(
+    sl_type=StopLossType.ATR_MULTIPLE,
+    sl_value=2.0,
+    tp_type=TakeProfitType.ATR_MULTIPLE,
+    tp_value=6.0
+)
+    sizing = SizingAndRisk(
+        sizing_type=SizingType.RISK_PCT_EQUITY,
+        risk_value=2.0,
+        max_open_positions=1
     )
-    exit_rules = ExitModel(stop_loss_atr_mult=2.0, take_profit_atr_mult=6.0)
-    sizing = SizingAndRisk(base_risk_pct=2.0, max_contracts_or_lots=10.0, base_leverage=20.0)
 
     snap = StrategySnapshot.create_and_hash(
         strategy_id="strat_test_btc_01",

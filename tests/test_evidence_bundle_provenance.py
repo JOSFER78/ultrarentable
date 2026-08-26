@@ -21,6 +21,10 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     StrategyLifecycleStatus,
     TargetInstrument,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.dataset_specification import DatasetQualityReport, DatasetSpecification
 from services.api.app.data_feed.feed_loader import load_candles
@@ -30,33 +34,20 @@ from services.validation.evidence_bundle_service import EvidenceBundleService
 
 
 def _make_strategy() -> CanonicalStrategy:
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="EMA", timeframe="1h", period=10),
-        operator=ComparisonOperator.GREATER_THAN,
-        right_indicator=IndicatorSpec(name="EMA", timeframe="1h", period=30),
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-BUNDLE-01",
-        name="Evidence Bundle Verification Strategy",
-        target_track=ExecutionTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol="NQ",
-            exchange="CME",
-            contract_type="FUTURES",
-            point_value=20.0,
-            tick_size=0.25,
-        ),
-        timeframe="1h",
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=2.0, take_profit_atr_mult=4.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=0.5, base_leverage=1.0),
-        provenance=ProvenanceMetadata(
-            source_engine="test_bundle",
-            created_timestamp_utc=int(time.time() * 1000),
-            author_or_agent="TEST_USER",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="EMA", params={'period': 10}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="EMA", params={'period': 30}, source_field="close", shift=0))
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-BUNDLE-01",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Evidence Bundle Verification Strategy",
+    timeframe="1h",
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=4.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.5, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc=datetime.now(timezone.utc).isoformat())
+)
 
 
 def test_evidence_bundle_cryptographic_sealing():
@@ -104,7 +95,7 @@ def test_evidence_bundle_cryptographic_sealing():
 
     # Verificación de integridad del bundle
     assert bundle.strategy_id == "UR-STRAT-BUNDLE-01"
-    assert bundle.strategy_sha256 == strat.compute_sha256()
+    assert bundle.strategy_sha256 == strat.strategy_hash
     assert bundle.dataset_is_sha256 == res_is.dataset_sha256
     assert bundle.dataset_oos_sha256 == res_oos.dataset_sha256
     assert bundle.initial_capital_usd == 50000.0

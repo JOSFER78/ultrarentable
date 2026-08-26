@@ -37,11 +37,11 @@ def test_improver_agent_generates_new_version_with_new_hash():
     improver = ImproverAgent(failure_db=failure_db)
 
     base_strat = engine.generate_candidate(symbol="NQ", track=ExecutionTrack.TRACK_FONDEO)
-    base_hash = base_strat.compute_sha256()
+    base_hash = base_strat.strategy_hash
 
     mutated_strat = improver.mutate(base_strat)
     assert isinstance(mutated_strat, CanonicalStrategy)
-    mutated_hash = mutated_strat.compute_sha256()
+    mutated_hash = mutated_strat.strategy_hash
 
     assert base_hash != mutated_hash
 

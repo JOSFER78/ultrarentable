@@ -80,6 +80,15 @@ class ComparisonOperator(str, Enum):
     CROSSES_ABOVE = "CROSSES_ABOVE"     # Crosses above (prev <= and curr >)
     CROSSES_BELOW = "CROSSES_BELOW"     # Crosses below (prev >= and curr <)
 
+    # Aliases
+    GT = "GREATER_THAN"
+    GTE = "GREATER_EQUAL"
+    LT = "LESS_THAN"
+    LTE = "LESS_EQUAL"
+    EQ = "EQUALS"
+    CROSS_ABOVE = "CROSSES_ABOVE"
+    CROSS_BELOW = "CROSSES_BELOW"
+
 
 class LogicalOperator(str, Enum):
     ALL = "ALL"  # AND

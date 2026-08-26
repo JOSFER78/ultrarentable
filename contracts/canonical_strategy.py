@@ -1,4 +1,4 @@
-﻿"""contracts/canonical_strategy.py
+"""contracts/canonical_strategy.py
 Definici?n Can?nica Inmutable de Estrategia, AST, Compilaci?n y Runtime SSOT (Fase 02 Rework AG2-P02-007).
 ZERO-MOCKS ? REAL-ONLY ? PROVENANCE-LOCKED ? NO-SYNTHETIC-DEFAULTS ? FAIL-CLOSED
 SSOT inmutable para la representaci?n declarativa de reglas, condiciones, salidas, compilaci?n y runtime.
@@ -257,8 +257,9 @@ class CanonicalStrategy(BaseModel):
     sizing_and_risk: SizingAndRisk = Field(..., description="Gesti?n de tama?o y riesgo")
     session_window: Optional[SessionWindow] = None
     provenance: ProvenanceMetadata = Field(..., description="Metadatos de procedencia y versiones de motor")
-    
-    strategy_hash: str = Field(..., min_length=64, max_length=64, description="Hash SHA-256 inmutable de la identidad sem?ntica completa")
+    status: StrategyLifecycleStatus = Field(default=StrategyLifecycleStatus.GENERATED, description="Estado del ciclo de vida")
+    evidence_bundle: Optional[Any] = Field(default=None, description="Paquete inmutable de evidencia cuantitativa")
+    strategy_hash: str = Field(..., min_length=64, max_length=64, description="Hash SHA-256 inmutable de la identidad semántica completa")
 
     @classmethod
     def compute_strategy_hash(cls, payload: Dict[str, Any]) -> str:
@@ -342,6 +343,16 @@ class CanonicalStrategy(BaseModel):
             provenance=provenance,
             strategy_hash=computed_hash,
         )
+
+    def compute_sha256(self) -> str:
+        """Retorna el hash determinista SHA-256 de la estrategia."""
+        return self.strategy_hash
+
+    def attach_evidence_bundle(self, bundle: Any) -> CanonicalStrategy:
+        """Adjunta un EvidenceBundle verificando su integridad criptográfica."""
+        if bundle is not None:
+            bundle.verify_integrity(expected_strategy_sha256=self.strategy_hash)
+        return self.model_copy(update={"evidence_bundle": bundle})
 
     def verify_integrity(self) -> bool:
         """Verifica que el strategy_hash coincida exactamente con la identidad sem?ntica completa."""

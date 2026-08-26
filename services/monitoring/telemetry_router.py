@@ -15,6 +15,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from services.monitoring.high_availability_watchdog import ha_watchdog
+from services.monitoring.supervisor import ForbiddenSelfHealingActionError
 from services.queue.durable_job_queue import durable_job_queue
 
 logger = logging.getLogger("TelemetrySupervisor")
@@ -157,6 +158,32 @@ class SystemSupervisor:
             self._worker_tasks[worker_id] = asyncio.create_task(self._worker_run_loop(worker_id))
             logger.info("🔄 Worker %s reiniciado con éxito (Total reinicios: %d).", worker_id, w["restart_count"])
 
+    async def run_self_healing_check(self) -> list:
+        """Detecta workers en ERROR y los reinicia (Self-Healing con límites doctrinales)."""
+        healed = []
+        for wid, w in self.workers.items():
+            if w.get("status") == "ERROR" or not w.get("is_healthy", True):
+                await self._restart_worker(wid)
+                healed.append(wid)
+        return healed
+
+    def get_system_health(self) -> Dict[str, Any]:
+        """Salud agregada del sistema (compat API tests)."""
+        workers = list(self.workers.values())
+        healthy = sum(1 for w in workers if w.get("is_healthy"))
+        return {
+            "supervisor_active": getattr(self, "_running", True),
+            "total_workers": len(workers),
+            "healthy_workers": healthy,
+            "all_healthy": healthy == len(workers) and len(workers) > 0,
+            "overall_healthy": healthy == len(workers) and len(workers) > 0,
+            "workers": {w["worker_id"]: w for w in workers},
+        }
+
+    def execute_governance_action(self, action: str) -> None:
+        """Acciones de gobernanza — FAIL-CLOSED: ninguna acción puede relajar compuertas."""
+        raise ForbiddenSelfHealingActionError(f"GOVERNANCE_ACTION_FORBIDDEN: {action} viola la doctrina Zero-Trust")
+
     def get_telemetry_snapshot(self) -> Dict[str, Any]:
         now_ts = time.time()
         now_utc = datetime.now(timezone.utc).isoformat()
@@ -207,7 +234,8 @@ def get_telemetry_health() -> Dict[str, Any]:
 def list_workers() -> List[WorkerStatus]:
     """Lista el estado detallado y las métricas de los 8 workers autónomos."""
     snapshot = supervisor_instance.get_telemetry_snapshot()
-    return [WorkerStatus(**w) for w in snapshot["workers"]]
+    workers = snapshot["workers"].values() if isinstance(snapshot["workers"], dict) else snapshot["workers"]
+    return [WorkerStatus(**w) for w in workers]
 
 
 @router.post("/workers/{worker_id}/restart")
@@ -226,6 +254,17 @@ async def restart_all_endpoint() -> Dict[str, Any]:
     await supervisor_instance.start_all()
     return {"message": "Todos los workers han sido reiniciados.", "status": "SUCCESS"}
 
+
+
+@router.get("/history")
+def get_event_history() -> List[Dict[str, Any]]:
+    """Historial real de eventos del event_bus (ZERO-MOCKS)."""
+    try:
+        from services.core.event_bus import event_bus
+        events = getattr(event_bus, "event_history", None) or getattr(event_bus, "_history", None) or []
+        return list(events)[-100:]
+    except Exception:
+        return []
 
 @router.get("/stream")
 async def stream_telemetry() -> StreamingResponse:

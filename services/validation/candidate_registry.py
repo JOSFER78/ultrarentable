@@ -252,11 +252,12 @@ class CandidateRegistry:
         if strat_id in self._strategies:
             raise ValueError(f"Estrategia {strat_id} ya se encuentra registrada.")
         self._strategies[strat_id] = strategy
-        self._status_map[strat_id] = strategy.status
+        self._status_map[strat_id] = getattr(strategy, "status", StrategyLifecycleStatus.GENERATED)
         self._history[strat_id] = []
-        if strategy.evidence_bundle is not None:
-            strategy.evidence_bundle.verify_integrity(expected_strategy_sha256=strategy.compute_sha256())
-            self._evidence_bundles[strat_id] = strategy.evidence_bundle
+        evidence = getattr(strategy, "evidence_bundle", None)
+        if evidence is not None:
+            evidence.verify_integrity(expected_strategy_sha256=strategy.strategy_hash)
+            self._evidence_bundles[strat_id] = evidence
 
     def get_status(self, strategy_id: str) -> StrategyLifecycleStatus:
         if strategy_id not in self._status_map:

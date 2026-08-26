@@ -17,6 +17,10 @@ from contracts.canonical_strategy import (
     ExecutionTrack,
     ExitModel,
     IndicatorSpec,
+    LogicalOp,
+    StopLossType,
+    SizingType,
+    TakeProfitType,
     ProvenanceMetadata,
     RuleCondition,
     RuleTree,
@@ -46,24 +50,24 @@ class InterpreterAgent:
         long_rules_desc = [
             f"{c.left_indicator.name}({c.left_indicator.period}) {c.operator.value} "
             f"{c.right_indicator.name if c.right_indicator else c.threshold_value}"
-            for c in strategy.rules.long_conditions
+            for c in strategy.entry_rules.long_conditions
         ]
         short_rules_desc = [
             f"{c.left_indicator.name}({c.left_indicator.period}) {c.operator.value} "
             f"{c.right_indicator.name if c.right_indicator else c.threshold_value}"
-            for c in strategy.rules.short_conditions
+            for c in strategy.entry_rules.short_conditions
         ]
 
         style = "MOMENTUM_TREND" if any("EMA" in d or "RSI" in d for d in long_rules_desc) else "VOLATILITY_BREAKOUT"
         return {
             "strategy_id": strategy.strategy_id,
-            "track": strategy.target_track.value,
-            "instrument": strategy.instrument.symbol,
+            "track": strategy.route.value,
+            "instrument": strategy.symbol,
             "style": style,
             "long_rules": long_rules_desc,
             "short_rules": short_rules_desc,
-            "sl_ticks": strategy.exits.stop_loss_ticks,
-            "tp_ticks": strategy.exits.take_profit_ticks,
+            "sl_value": strategy.exit_rules.sl_value,
+            "tp_value": strategy.exit_rules.tp_value,
         }
 
 
@@ -77,19 +81,20 @@ class CriticAgent:
         warnings: List[str] = []
 
         # 1. Comprobar lista negra en FailureKnowledgeDB
-        if self.failure_db.is_rule_tree_blacklisted(strategy.rules):
+        if self.failure_db.is_rule_tree_blacklisted(strategy.entry_rules):
             warnings.append("Patrón de reglas idéntico a una combinación fallida en FailureKnowledgeDB")
 
         # 2. Chequeo de Stop Loss obligatorio
-        if not strategy.exits.stop_loss_ticks and not strategy.exits.stop_loss_atr_mult:
+        if not strategy.exit_rules.sl_value:
             warnings.append("Falta Stop Loss explícito (Riesgo ilimitado)")
 
         # 3. Chequeo de Sesión para Track Fondeo
-        if strategy.target_track == ExecutionTrack.TRACK_FONDEO and not strategy.session.force_close_at_end:
+        _sw = getattr(strategy, "session_window", None)
+        if strategy.route == "FONDEO" and (_sw is None or not _sw.close_at_eod):
             warnings.append("Track Fondeo requiere forzar cierre de posiciones al fin de sesión")
 
         # 4. Chequeo de piramidación en Track Fondeo (prohibida)
-        if strategy.target_track == ExecutionTrack.TRACK_FONDEO and strategy.sizing_and_risk.pyramiding_max_layers > 0:
+        if strategy.route == "FONDEO" and getattr(strategy.sizing_and_risk, "max_open_positions", 1) > 1:
             warnings.append("Piramidación no permitida en Track Fondeo por reglas de prop firms")
 
         passed = len([w for w in warnings if "Riesgo ilimitado" in w or "FailureKnowledgeDB" in w or "Falta Stop Loss" in w]) == 0
@@ -108,37 +113,48 @@ class ImproverAgent:
         max_attempts: int = 10,
     ) -> CanonicalStrategy:
         """Genera una mutación determinista válida que NO colisione con patrones fallidos conocidos."""
-        current_rules = base_strategy.rules
-        mutated_rules = current_rules
+        current_rules = base_strategy.entry_rules
 
         # Tabla determinista de pasos cuantitativos (Zero-Mocks / Cero Random)
         step_offsets = [2, -2, 4, -1, 3, -3, 5, -4, 1, 6]
         thresh_offsets = [-2.0, 2.0, -4.0, 4.0, -1.0, 1.0, -3.0, 3.0, -5.0, 5.0]
 
+        mutated_rules = current_rules
+        step = step_offsets[0]
         for attempt in range(max_attempts):
             step = step_offsets[attempt % len(step_offsets)]
             th_step = thresh_offsets[attempt % len(thresh_offsets)]
 
             new_longs = []
-            for cond in current_rules.long_conditions:
-                new_period = max(5, cond.left_indicator.period + step)
-                new_threshold = round(cond.threshold_value + th_step, 1) if cond.threshold_value else None
+            for cond in (current_rules.long_conditions or []):
+                old_period = cond.left.params.get("period", 14)
+                if not isinstance(old_period, int):
+                    old_period = 14
+                new_period = max(5, old_period + step)
+                right_val = cond.right
+                if isinstance(right_val, (int, float)):
+                    new_threshold = round(float(right_val) + th_step, 1)
+                    new_right = new_threshold
+                else:
+                    new_right = right_val
                 new_longs.append(
                     RuleCondition(
-                        left_indicator=IndicatorSpec(
-                            name=cond.left_indicator.name,
-                            timeframe=cond.left_indicator.timeframe,
-                            period=new_period,
+                        left=IndicatorSpec(
+                            name=cond.left.name,
+                            params={**cond.left.params, "period": new_period},
+                            source_field=cond.left.source_field,
+                            shift=cond.left.shift,
                         ),
-                        operator=cond.operator,
-                        threshold_value=new_threshold,
+                        op=cond.op,
+                        right=new_right,
                     )
                 )
 
             candidate_tree = RuleTree(
+                logic=current_rules.logic,
+                direction=current_rules.direction,
                 long_conditions=new_longs,
                 short_conditions=current_rules.short_conditions,
-                logical_operator=current_rules.logical_operator,
             )
 
             # Verificar que la mutación no esté en la lista negra
@@ -146,36 +162,40 @@ class ImproverAgent:
                 mutated_rules = candidate_tree
                 break
 
-        # Adaptar salidas de forma determinista
-        new_sl = base_strategy.exits.stop_loss_ticks
-        new_tp = base_strategy.exits.take_profit_ticks
-        if new_sl:
-            new_sl = max(10, new_sl + step_offsets[0])
-        if new_tp:
-            new_tp = max(20, new_tp + (step_offsets[0] * 2))
+        # Adaptar salidas de forma determinista (canonical ExitModel)
+        exits = base_strategy.exit_rules
+        new_sl_value = max(10.0, exits.sl_value + abs(step_offsets[0]))
+        new_tp_value = max(2.0, exits.tp_value + abs(step_offsets[0]) * 0.5)
 
-        now_ms = int(time.time() * 1000)
+        from datetime import datetime as _dt, timezone as _tz
         u_suffix = uuid.uuid4().hex[:6].upper()
-        new_id = f"UR-SEM-{base_strategy.instrument.symbol}-{u_suffix}"
+        new_id = f"UR-SEM-{base_strategy.symbol}-{u_suffix}"
 
-        return CanonicalStrategy(
-            schema_version="3.0.0",
+        return CanonicalStrategy.create_and_hash(
             strategy_id=new_id,
             name=f"Mutant {base_strategy.name} {u_suffix}",
-            target_track=base_strategy.target_track,
-            status=StrategyLifecycleStatus.GENERATED,
-            instrument=base_strategy.instrument,
+            version="1.1.0",
+            symbol=base_strategy.symbol,
             timeframe=base_strategy.timeframe,
-            session=base_strategy.session,
-            rules=mutated_rules,
-            exits=ExitModel(stop_loss_ticks=new_sl, take_profit_ticks=new_tp),
+            route=base_strategy.route,
+            archetype=getattr(base_strategy, "archetype", "MOMENTUM") or "MOMENTUM",
+            session_window=base_strategy.session_window,
+            entry_rules=mutated_rules,
+            exit_rules=ExitModel(
+                sl_type=exits.sl_type,
+                sl_value=new_sl_value,
+                tp_type=exits.tp_type,
+                tp_value=new_tp_value,
+            ),
             sizing_and_risk=base_strategy.sizing_and_risk,
             provenance=ProvenanceMetadata(
-                source_engine="semantic_ai",
-                created_timestamp_utc=now_ms,
-                author_or_agent="SEMANTIC_IMPROVER_AGENT",
+                author="SEMANTIC_IMPROVER_AGENT",
+                engine_version="1.02",
+                policy_version="1.02",
+                created_at_utc=_dt.now(_tz.utc).isoformat(),
+                parent_hash=base_strategy.strategy_hash,
+                mutation_type="PARAMETER_STEP_MUTATION",
             ),
-            metadata={"parent_strategy_id": base_strategy.strategy_id},
         )
 
 
@@ -289,43 +309,47 @@ class SemanticQuantEngine:
         tick_sz = 0.25 if symbol in ("NQ", "ES", "MES", "MNQ") else 0.1
 
         long_cond = RuleCondition(
-            left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=14),
-            operator=ComparisonOperator.GREATER_THAN,
-            threshold_value=52.0,
+            left=IndicatorSpec(name="RSI", params={"period": 14}, source_field="close", shift=0),
+            op=ComparisonOperator.GT,
+            right=52.0,
         )
 
-        return CanonicalStrategy(
-            schema_version="3.0.0",
+        from datetime import datetime as _dt, timezone as _tz
+        return CanonicalStrategy.create_and_hash(
             strategy_id=strat_id,
-            name=f"Semantic {symbol} {timeframe.upper()} {track.value}",
-            target_track=track,
-            status=StrategyLifecycleStatus.GENERATED,
-            instrument=TargetInstrument(
-                symbol=symbol,
-                exchange=exchange,
-                contract_type=contract_type,
-                point_value=point_val,
-                tick_size=tick_sz,
-            ),
+            name=f"Semantic {symbol} {timeframe.upper()} {'FONDEO' if track == ExecutionTrack.TRACK_FONDEO else 'ULTRA'}",
+            version="1.0.0",
+            symbol=symbol,
             timeframe=timeframe,
-            session=SessionWindow(
-                timezone="America/New_York",
-                start_time="09:30",
-                end_time="16:00",
-                force_close_at_end=(track == ExecutionTrack.TRACK_FONDEO),
+            route="FONDEO" if track == ExecutionTrack.TRACK_FONDEO else "ULTRA",
+            archetype="MOMENTUM",
+            session_window=SessionWindow(
+                start_time_utc="09:30" if exchange == "CME" else "00:00",
+                end_time_utc="16:00" if exchange == "CME" else "23:59",
+                close_at_eod=exchange == "CME",
+                allowed_days=[0, 1, 2, 3, 4],
             ),
-            rules=RuleTree(long_conditions=[long_cond]),
-            exits=ExitModel(stop_loss_ticks=25, take_profit_ticks=75),
+            entry_rules=RuleTree(
+                logic=LogicalOp.AND,
+                direction="LONG",
+                long_conditions=[long_cond],
+            ),
+            exit_rules=ExitModel(
+                sl_type=StopLossType.ATR_MULTIPLE,
+                sl_value=2.0,
+                tp_type=TakeProfitType.RR_MULTIPLE,
+                tp_value=3.0,
+            ),
             sizing_and_risk=SizingAndRisk(
-                base_risk_pct=1.0 if track == ExecutionTrack.TRACK_FONDEO else 5.0,
-                max_contracts_or_lots=4.0 if track == ExecutionTrack.TRACK_FONDEO else 10.0,
-                base_leverage=1.0 if track == ExecutionTrack.TRACK_FONDEO else 20.0,
-                pyramiding_max_layers=0 if track == ExecutionTrack.TRACK_FONDEO else 3,
+                sizing_type=SizingType.RISK_PCT_EQUITY,
+                risk_value=1.0 if track == ExecutionTrack.TRACK_FONDEO else 5.0,
+                max_open_positions=1,
             ),
             provenance=ProvenanceMetadata(
-                source_engine="semantic_ai",
-                created_timestamp_utc=now_ms,
-                author_or_agent="SEMANTIC_GENERATOR_AGENT",
+                author="SEMANTIC_AI",
+                engine_version="1.02",
+                policy_version="1.02",
+                created_at_utc=_dt.now(_tz.utc).isoformat(),
             ),
         )
 

@@ -35,6 +35,10 @@ from contracts.canonical_strategy import (
     SizingAndRisk,
     StrategyLifecycleStatus,
     TargetInstrument,
+    LogicalOp,
+    SizingType,
+    StopLossType,
+    TakeProfitType
 )
 from contracts.evidence_bundle import EvidenceBundle
 from services.api.app.data_feed.feed_loader import load_candles
@@ -72,76 +76,40 @@ def _get_real_dataset_snapshot(symbol: str = "BTC-USDT", timeframe: str = "1h") 
 
 def _build_rsi_reversion_strategy(symbol: str = "BTC-USDT", timeframe: str = "1h") -> CanonicalStrategy:
     """Estrategia Canónica 1: Reversión a la media basada en RSI sobrevendido (< 30)."""
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=14),
-        operator=ComparisonOperator.LESS_THAN,
-        threshold_value=30.0,
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-RSI-REVERSION",
-        name="RSI Mean Reversion Ultra Strategy",
-        target_track=ExecutionTrack.TRACK_ULTRA,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol=symbol,
-            exchange="BINGX",
-            contract_type="PERPETUAL",
-            point_value=1.0,
-            tick_size=0.1,
-        ),
-        timeframe=timeframe,
-        session=SessionWindow(
-            timezone="UTC",
-            start_time="00:00",
-            end_time="23:59",
-            force_close_at_end=False,
-        ),
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=1.5, take_profit_atr_mult=3.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=2.0, base_leverage=5.0),
-        provenance=ProvenanceMetadata(
-            source_engine="forensic_suite",
-            created_timestamp_utc=1770000000000,
-            author_or_agent="FORENSIC_AST_AUDITOR",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op=ComparisonOperator.LT, right=30.0)
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-RSI-REVERSION",
+    route="ULTRA",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="RSI Mean Reversion Ultra Strategy",
+    timeframe=timeframe,
+    session_window=SessionWindow(start_time_utc="00:00", end_time_utc="23:59", close_at_eod=False, allowed_days=[0,1,2,3,4]),
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=1.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=3.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=2.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="FORENSIC_AST_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
+)
 
 
 def _build_donchian_breakout_strategy(symbol: str = "BTC-USDT", timeframe: str = "1h") -> CanonicalStrategy:
     """Estrategia Canónica 2: Ruptura tendencial por canal Donchian High de 20 periodos."""
-    cond = RuleCondition(
-        left_indicator=IndicatorSpec(name="PRICE_CLOSE", timeframe=timeframe, period=1),
-        operator=ComparisonOperator.GREATER_THAN,
-        right_indicator=IndicatorSpec(name="DONCHIAN_HIGH", timeframe=timeframe, period=20),
-    )
-    return CanonicalStrategy(
-        strategy_id="UR-STRAT-DONCHIAN-BREAKOUT",
-        name="Donchian 20 Breakout Trend Following",
-        target_track=ExecutionTrack.TRACK_FONDEO,
-        status=StrategyLifecycleStatus.GENERATED,
-        instrument=TargetInstrument(
-            symbol=symbol,
-            exchange="BINGX",
-            contract_type="PERPETUAL",
-            point_value=1.0,
-            tick_size=0.1,
-        ),
-        timeframe=timeframe,
-        session=SessionWindow(
-            timezone="UTC",
-            start_time="00:00",
-            end_time="23:59",
-            force_close_at_end=False,
-        ),
-        rules=RuleTree(long_conditions=[cond]),
-        exits=ExitModel(stop_loss_atr_mult=3.0, take_profit_atr_mult=8.0),
-        sizing_and_risk=SizingAndRisk(base_risk_pct=1.0, base_leverage=1.0),
-        provenance=ProvenanceMetadata(
-            source_engine="forensic_suite",
-            created_timestamp_utc=1770000000000,
-            author_or_agent="FORENSIC_AST_AUDITOR",
-        ),
-    )
+    cond = RuleCondition(left=IndicatorSpec(name="PRICE_CLOSE", params={'period': 1}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="DONCHIAN_HIGH", params={'period': 20}, source_field="close", shift=0))
+    return CanonicalStrategy.create_and_hash(
+    strategy_id="UR-STRAT-DONCHIAN-BREAKOUT",
+    route="FONDEO",
+    version="1.0.0",
+    symbol="BTC-USDT",
+    archetype="TREND_FOLLOWING",
+    name="Donchian 20 Breakout Trend Following",
+    timeframe=timeframe,
+    session_window=SessionWindow(start_time_utc="00:00", end_time_utc="23:59", close_at_eod=False, allowed_days=[0,1,2,3,4]),
+    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
+    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=3.0, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=8.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    provenance=ProvenanceMetadata(author="FORENSIC_AST_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
+)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -161,8 +129,8 @@ def test_ast_evaluation_distinguishes_rsi_vs_donchian():
     strat_donchian = _build_donchian_breakout_strategy("BTC-USDT", "1h")
 
     # Hashes de definición AST completamente distintos
-    hash_rsi = strat_rsi.compute_sha256()
-    hash_donchian = strat_donchian.compute_sha256()
+    hash_rsi = strat_rsi.strategy_hash
+    hash_donchian = strat_donchian.strategy_hash
     assert hash_rsi != hash_donchian
     assert len(hash_rsi) == 64
     assert len(hash_donchian) == 64

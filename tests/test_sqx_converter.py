@@ -52,7 +52,7 @@ def test_sqx_candidate_conversion_canonical():
         strategy_name="Strategy 1.4.140",
         sqx_stats=sqx_stats,
         symbol="NQ",
-        target_track=ExecutionTrack.TRACK_FONDEO,
+        route="FONDEO",
     )
 
     assert isinstance(canon, CanonicalStrategy)
@@ -63,7 +63,7 @@ def test_sqx_candidate_conversion_canonical():
     assert canon.session.force_close_at_end is True
     # Verify absolute USD drawdown is normalized to percentage
     assert canon.metadata["max_drawdown_pct"] <= 100.0
-    assert len(canon.compute_sha256()) == 64
+    assert len(canon.strategy_hash) == 64
 
 
 def test_drawdown_normalization():

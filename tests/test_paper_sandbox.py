@@ -165,7 +165,7 @@ def test_incubation_evaluator_drift_and_promotion():
     from contracts import EvidenceBundle
 
     registry = CandidateRegistry()
-    strat_sha = strat.compute_sha256()
+    strat_sha = strat.strategy_hash
     bundle = EvidenceBundle(
         bundle_id=f"bnd_{strat.strategy_id}_test",
         strategy_id=strat.strategy_id,
@@ -175,7 +175,7 @@ def test_incubation_evaluator_drift_and_promotion():
         dataset_oos_sha256=hashlib.sha256(b"mes_oos_data").hexdigest(),
         symbol="MES",
         timeframe="1h",
-        target_track=strat.target_track.value,
+        route="FONDEO".target_track.value,
         execution_config_hash=hashlib.sha256(b"mes_exec").hexdigest(),
         engine_name="UniversalDeterministicBacktestEngine",
         engine_version="3.0.0",

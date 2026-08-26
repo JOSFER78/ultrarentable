@@ -46,6 +46,12 @@ class MetaEnsembleService:
             return [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
 
     @classmethod
+
+    def assemble_meta_strategy(self, *args, **kwargs):
+        """Alias canónico de assemble_meta_portfolio (retrocompatibilidad de API)."""
+        return self.assemble_meta_portfolio(*args, **kwargs)
+
+    @classmethod
     def assemble_meta_portfolio(
         cls,
         candidate_ids: List[str],
@@ -55,6 +61,27 @@ class MetaEnsembleService:
         db_session=None,
     ) -> Optional[Dict[str, Any]]:
         """Construye y evalúa un meta-portafolio a partir de estrategias candidatas reales."""
+
+        # Regla Multi-Activo: bloquea ensambles con el mismo símbolo (doctrina descorrelación)
+        seen_symbols = set()
+        from services.api.app.db.database import CandidateModel
+        _own_session = db_session is None
+        if _own_session:
+            from services.api.app.db.database import SessionLocal as _SL
+            db_session = _SL()
+        try:
+            for cid in candidate_ids:
+                row = db_session.query(CandidateModel).filter(CandidateModel.candidate_id == cid).first()
+                if row is not None and getattr(row, "symbol", None):
+                    sym = row.symbol
+                else:
+                    continue
+                if sym in seen_symbols:
+                    raise ValueError(f"Violación de Regla Multi-Activo: símbolo duplicado {sym} en {cid}")
+                seen_symbols.add(sym)
+        finally:
+            if _own_session and db_session is not None:
+                db_session.close()
         if not candidate_ids or len(candidate_ids) < 2:
             logger.warning("Se requieren al menos 2 estrategias candidatas para ensamblar un portafolio.")
             return None

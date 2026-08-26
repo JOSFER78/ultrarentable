@@ -208,7 +208,7 @@ class FastEngineAdapter(BacktestEnginePort):
                     entry_timestamp_utc_ms=tr.entry_time_ms,
                     exit_timestamp_utc_ms=tr.exit_time_ms,
                     market_data_hash=request.dataset.sha256_hash,
-                    strategy_snapshot_hash=strategy_obj.compute_sha256(),
+                    strategy_snapshot_hash=strategy_obj.strategy_hash,
                     execution_config_hash=request.execution_config_hash or exec_model.compute_hash(),
                     decision_price=tr.entry_price,
                     requested_qty=tr.quantity,
@@ -235,7 +235,7 @@ class FastEngineAdapter(BacktestEnginePort):
         # 4. Construir CanonicalExecutionLedger sellado criptográficamente
         ledger = CanonicalExecutionLedger(
             strategy_id=request.strategy_id,
-            strategy_snapshot_hash=strategy_obj.compute_sha256(),
+            strategy_snapshot_hash=strategy_obj.strategy_hash,
             dataset_sha256=request.dataset.sha256_hash,
             execution_config_hash=request.execution_config_hash or exec_model.compute_hash(),
             engine_name="UniversalDeterministicBacktestEngine",
@@ -412,7 +412,7 @@ class FastEngineAdapter(BacktestEnginePort):
         res_is = self._execute_on_candles(req_is, candles_is)
         res_oos = self._execute_on_candles(req_oos, candles_oos)
 
-        strat_sha256 = strategy_obj.compute_sha256()
+        strat_sha256 = strategy_obj.strategy_hash
         combined_ledger_hash = hashlib.sha256(f"{res_is.ledger_hash}:{res_oos.ledger_hash}".encode("utf-8")).hexdigest()
 
         bundle = EvidenceBundle(
@@ -424,7 +424,7 @@ class FastEngineAdapter(BacktestEnginePort):
             dataset_oos_sha256=oos_sha256,
             symbol=symbol,
             timeframe=timeframe,
-            target_track="FONDEO" if strategy_obj.target_track == ExecutionTrack.TRACK_FONDEO else "ULTRA",
+            target_track=getattr(strategy_obj, "route", "FONDEO"),
             execution_config_hash=res_is.provenance_hash_sha256 or "can_exec_cfg_v3",
             engine_name="UniversalDeterministicBacktestEngine",
             engine_version="3.0.0",

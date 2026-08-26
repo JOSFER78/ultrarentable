@@ -13,6 +13,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from contracts.canonical_strategy import (
     CanonicalStrategy,
+    StopLossType,
+    TakeProfitType,
     ComparisonOperator as CanonicalCompOp,
     ExecutionTrack,
     IndicatorSpec as CanonicalIndSpec,
@@ -80,13 +82,13 @@ INDICATOR_NAME_MAP: Dict[str, IndicatorType] = {
 }
 
 OPERATOR_MAP: Dict[CanonicalCompOp, UnivCompOp] = {
-    CanonicalCompOp.GREATER_THAN: UnivCompOp.GREATER_THAN,
-    CanonicalCompOp.LESS_THAN: UnivCompOp.LESS_THAN,
-    CanonicalCompOp.GREATER_EQUAL: UnivCompOp.GREATER_EQUAL,
-    CanonicalCompOp.LESS_EQUAL: UnivCompOp.LESS_EQUAL,
-    CanonicalCompOp.CROSSES_ABOVE: UnivCompOp.CROSSES_ABOVE,
-    CanonicalCompOp.CROSSES_BELOW: UnivCompOp.CROSSES_BELOW,
-    CanonicalCompOp.EQUALS: UnivCompOp.EQUALS,
+    CanonicalCompOp.GT: UnivCompOp.GREATER_THAN,
+    CanonicalCompOp.LT: UnivCompOp.LESS_THAN,
+    CanonicalCompOp.GTE: UnivCompOp.GREATER_EQUAL,
+    CanonicalCompOp.LTE: UnivCompOp.LESS_EQUAL,
+    CanonicalCompOp.CROSS_ABOVE: UnivCompOp.CROSSES_ABOVE,
+    CanonicalCompOp.CROSS_BELOW: UnivCompOp.CROSSES_BELOW,
+    CanonicalCompOp.EQ: UnivCompOp.EQUALS,
 }
 
 
@@ -108,48 +110,38 @@ class CanonicalCompiler:
         if "PRICE" in ind_type.value:
             return DynamicValueNode.series(ind_type, offset=offset)
 
+        period = int(spec.params.get('period', 14))
         return DynamicValueNode.indicator(
             indicator=ind_type,
-            period=spec.period,
-            params=spec.parameters,
-            timeframe=spec.timeframe,
+            period=period,
+            params=spec.params,
+            timeframe=None,
             offset=offset,
         )
 
     @classmethod
     def compile_condition(cls, cond: CanonicalRuleCond) -> ConditionNode:
-        left_node = cls.compile_node(cond.left_indicator, offset=cond.lookback_bars)
-        
-        op = None
-        if isinstance(cond.operator, CanonicalCompOp):
-            op = OPERATOR_MAP.get(cond.operator)
-        elif isinstance(cond.operator, str):
-            try:
-                op = OPERATOR_MAP.get(CanonicalCompOp(cond.operator))
-            except ValueError:
-                try:
-                    op = OPERATOR_MAP.get(CanonicalCompOp[cond.operator])
-                except KeyError:
-                    op = None
+        left_node = cls.compile_node(cond.left, offset=0)
 
+        op = OPERATOR_MAP.get(cond.op) if isinstance(cond.op, CanonicalCompOp) else None
         if op is None:
-            raise ValueError(f"UNSUPPORTED_OPERATOR: {cond.operator}")
+            raise ValueError(f"UNSUPPORTED_OPERATOR: {cond.op}")
 
-        if cond.right_indicator is not None:
-            right_node = cls.compile_node(cond.right_indicator, offset=cond.lookback_bars)
-        elif cond.threshold_value is not None:
-            right_node = DynamicValueNode.constant(cond.threshold_value)
+        if isinstance(cond.right, CanonicalIndSpec):
+            right_node = cls.compile_node(cond.right, offset=0)
+        elif isinstance(cond.right, str):
+            right_node = DynamicValueNode(source=DynamicValueNode.resolve_series_name(cond.right), offset=0) if hasattr(DynamicValueNode, 'resolve_series_name') else DynamicValueNode.constant(0.0)
         else:
-            right_node = DynamicValueNode.constant(0.0)
+            right_node = DynamicValueNode.constant(float(cond.right))
 
         return ConditionNode(left=left_node, operator=op, right=right_node)
 
     @classmethod
     def compile_entry_rules(cls, rule_tree: CanonicalRuleTree) -> DynamicEntryRules:
-        long_conds = [cls.compile_condition(c) for c in rule_tree.long_conditions]
-        short_conds = [cls.compile_condition(c) for c in rule_tree.short_conditions]
+        long_conds = [cls.compile_condition(c) for c in (rule_tree.long_conditions or [])]
+        short_conds = [cls.compile_condition(c) for c in (rule_tree.short_conditions or [])]
 
-        log_op = LogicalOperator.ALL if rule_tree.logical_operator.upper() == "AND" else LogicalOperator.ANY
+        log_op = LogicalOperator.ALL if (rule_tree.logic or LogicalOp.AND).upper() == "AND" else LogicalOperator.ANY
 
         return DynamicEntryRules(
             long_rules=RuleGroup(logical_operator=log_op, conditions=long_conds),
@@ -160,32 +152,32 @@ class CanonicalCompiler:
 
     @classmethod
     def compile_exit_rules(cls, strat: CanonicalStrategy) -> DynamicExitRules:
-        exits = strat.exits
-        
-        # Stop loss
-        if exits.stop_loss_atr_mult is not None and exits.stop_loss_atr_mult > 0:
+        exits = strat.exit_rules
+
+        # Stop loss (canonical ExitModel: sl_type/sl_value)
+        if exits.sl_type == StopLossType.ATR_MULTIPLE:
             sl_type = "ATR_MULTIPLE"
-            sl_val = exits.stop_loss_atr_mult
-        elif exits.stop_loss_ticks is not None and exits.stop_loss_ticks > 0:
+            sl_val = exits.sl_value
+        elif exits.sl_type == StopLossType.PERCENTAGE:
+            sl_type = "PERCENTAGE"
+            sl_val = exits.sl_value
+        else:
             sl_type = "FIXED_TICKS"
-            sl_val = float(exits.stop_loss_ticks)
-        else:
-            sl_type = "ATR_MULTIPLE"
-            sl_val = 2.0
+            sl_val = float(exits.sl_value)
 
-        # Take profit
-        if exits.take_profit_atr_mult is not None and exits.take_profit_atr_mult > 0:
-            tp_type = "ATR_MULTIPLE"
-            tp_val = exits.take_profit_atr_mult
-        elif exits.take_profit_ticks is not None and exits.take_profit_ticks > 0:
-            tp_type = "FIXED_TICKS"
-            tp_val = float(exits.take_profit_ticks)
+        # Take profit (canonical ExitModel: tp_type/tp_value)
+        if exits.tp_type == TakeProfitType.RR_MULTIPLE:
+            tp_type = "RR_MULTIPLE"
+            tp_val = exits.tp_value
+        elif exits.tp_type == StopLossType.PERCENTAGE or exits.tp_type == TakeProfitType.PERCENTAGE:
+            tp_type = "PERCENTAGE"
+            tp_val = exits.tp_value
         else:
             tp_type = "ATR_MULTIPLE"
-            tp_val = 6.0
+            tp_val = exits.tp_value
 
-        be_enabled = (exits.break_even_atr_mult is not None and exits.break_even_atr_mult > 0)
-        trailing_enabled = (exits.trailing_stop_atr_mult is not None and exits.trailing_stop_atr_mult > 0)
+        be_enabled = exits.trail_after_r is not None
+        trailing_enabled = exits.trail_after_r is not None
 
         return DynamicExitRules(
             stop_loss_type=sl_type,
@@ -195,10 +187,10 @@ class CanonicalCompiler:
             take_profit_value=tp_val,
             take_profit_atr_period=14,
             break_even_enabled=be_enabled,
-            break_even_trigger_r=exits.break_even_atr_mult or 1.5,
+            break_even_trigger_r=exits.trail_after_r or 1.5,
             trailing_stop_enabled=trailing_enabled,
-            trailing_step_atr_mult=exits.trailing_stop_atr_mult or 1.5,
-            max_bars_in_trade=exits.max_bars_in_trade,
+            trailing_step_atr_mult=exits.trail_after_r or 1.5,
+            max_bars_in_trade=exits.time_stop_bars,
         )
 
     @classmethod
@@ -291,21 +283,30 @@ class CanonicalCompiler:
         override_symbol: Optional[str] = None,
     ) -> Tuple[StrategySpecification, InstrumentSpecification, ExecutionModel, RiskModel]:
         """Compila un CanonicalStrategy completo en los 4 modelos requeridos por el motor universal."""
-        entry_rules = cls.compile_entry_rules(strategy.rules)
+        entry_rules = cls.compile_entry_rules(strategy.entry_rules)
         exit_rules = cls.compile_exit_rules(strategy)
 
-        time_filter = TimeAndSessionFilter(
-            enabled=not strategy.session.is_24_7,
-            timezone=strategy.session.timezone or "UTC",
-            session_start=strategy.session.start_time or "00:00",
-            session_end=strategy.session.end_time or "23:59",
-            close_all_positions_at_session_end=strategy.session.force_close_at_end,
-        )
+        if strategy.session_window is not None:
+            time_filter = TimeAndSessionFilter(
+                enabled=True,
+                timezone="UTC",
+                session_start=strategy.session_window.start_time_utc,
+                session_end=strategy.session_window.end_time_utc,
+                close_all_positions_at_session_end=strategy.session_window.close_at_eod,
+            )
+        else:
+            time_filter = TimeAndSessionFilter(
+                enabled=False,
+                timezone="UTC",
+                session_start="00:00",
+                session_end="23:59",
+                close_all_positions_at_session_end=False,
+            )
 
-        target_sym = override_symbol or strategy.instrument.symbol
+        target_sym = override_symbol or strategy.symbol
         strat_spec = StrategySpecification(
             strategy_id=strategy.strategy_id,
-            version=strategy.schema_version,
+            version=strategy.version,
             family=StrategyFamily.MOMENTUM_BREAKOUT,
             target_symbol=target_sym,
             base_timeframe=strategy.timeframe,
@@ -318,8 +319,8 @@ class CanonicalCompiler:
 
         inst_spec = cls.compile_instrument(
             symbol=target_sym,
-            custom_point_val=strategy.instrument.point_value,
-            custom_tick_sz=strategy.instrument.tick_size,
+            custom_point_val=None,
+            custom_tick_sz=None,
         )
 
         exec_model = ExecutionModel(
@@ -330,16 +331,16 @@ class CanonicalCompiler:
             funding_rate_8h=inst_spec.default_funding_rate,
         )
 
-        is_fondeo = (strategy.target_track == ExecutionTrack.TRACK_FONDEO)
+        is_fondeo = (getattr(strategy, 'route', 'FONDEO') == "FONDEO")
         base_cap = initial_capital_usd or (50000.0 if is_fondeo else 1000.0)
 
-        pyr_layers = strategy.sizing_and_risk.pyramiding_max_layers
+        pyr_layers = getattr(strategy.sizing_and_risk, 'pyramiding_max_layers', None) or 1
         risk_model = RiskModel(
             model_id=f"RISK_{strategy.strategy_id}",
             doctrine=RiskDoctrine.FONDEO if is_fondeo else RiskDoctrine.ULTRA,
             base_capital_usd=base_cap,
-            base_risk_pct=strategy.sizing_and_risk.base_risk_pct,
-            max_leverage=strategy.sizing_and_risk.base_leverage,
+            base_risk_pct=strategy.sizing_and_risk.risk_value,
+            max_leverage=10.0,
             pyramiding_enabled=pyr_layers > 0,
             pyramiding_max_tiers=max(1, pyr_layers),
             max_drawdown_limit_pct=4.0 if is_fondeo else 85.0,

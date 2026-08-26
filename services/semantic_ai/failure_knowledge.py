@@ -58,14 +58,14 @@ class FailureKnowledgeDB:
         now_utc = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now_ms / 1000.0))
 
         indicators = []
-        if hasattr(strategy, "rules") and strategy.rules:
-            for cond in getattr(strategy.rules, "long_conditions", []) + getattr(strategy.rules, "short_conditions", []):
-                if hasattr(cond, "left_indicator") and cond.left_indicator:
-                    indicators.append(cond.left_indicator.name)
-                if hasattr(cond, "right_indicator") and cond.right_indicator:
-                    indicators.append(cond.right_indicator.name)
+        rules = getattr(strategy, "entry_rules", None)
+        if rules:
+            for cond in (getattr(rules, "long_conditions", None) or []) + (getattr(rules, "short_conditions", None) or []):
+                _ln = getattr(cond, "left", None)
+                if _ln is not None and hasattr(_ln, "name"):
+                    indicators.append(_ln.name)
 
-        sig_hash = self._compute_rule_signature(strategy.rules) if hasattr(strategy, "rules") and strategy.rules else hashlib.sha256(strategy.strategy_id.encode()).hexdigest()
+        sig_hash = self._compute_rule_signature(rules) if rules else hashlib.sha256(strategy.strategy_id.encode()).hexdigest()
         fail_id = f"fail_{sig_hash[:12]}_{now_ms}"
 
         strat_hash = getattr(strategy, "strategy_hash", f"hash_{strategy.strategy_id}")
@@ -130,17 +130,21 @@ class FailureKnowledgeDB:
         if not rules:
             return hashlib.sha256(b"empty_rules").hexdigest()
         tokens = []
-        for cond in getattr(rules, "long_conditions", []):
-            r_ind = cond.right_indicator.name if getattr(cond, "right_indicator", None) else str(getattr(cond, "threshold_value", ""))
-            l_name = cond.left_indicator.name if hasattr(cond.left_indicator, "name") else str(cond.left_indicator)
-            l_per = getattr(cond.left_indicator, "period", 0)
-            op = cond.operator.value if hasattr(cond.operator, "value") else str(cond.operator)
+        for cond in (getattr(rules, "long_conditions", None) or []):
+            r_node = getattr(cond, "right", None)
+            r_ind = r_node.name if hasattr(r_node, "name") else str(r_node if r_node is not None else "")
+            l_node = getattr(cond, "left", None)
+            l_name = l_node.name if hasattr(l_node, "name") else str(l_node)
+            l_per = (getattr(l_node, "params", {}) or {}).get("period", 0)
+            op = cond.op.value if hasattr(getattr(cond, "op", None), "value") else str(getattr(cond, "op", getattr(cond, "operator", "")))
             tokens.append(f"L:{l_name}_{l_per}:{op}:{r_ind}")
-        for cond in getattr(rules, "short_conditions", []):
-            r_ind = cond.right_indicator.name if getattr(cond, "right_indicator", None) else str(getattr(cond, "threshold_value", ""))
-            l_name = cond.left_indicator.name if hasattr(cond.left_indicator, "name") else str(cond.left_indicator)
-            l_per = getattr(cond.left_indicator, "period", 0)
-            op = cond.operator.value if hasattr(cond.operator, "value") else str(cond.operator)
+        for cond in (getattr(rules, "short_conditions", None) or []):
+            r_node = getattr(cond, "right", None)
+            r_ind = r_node.name if hasattr(r_node, "name") else str(r_node if r_node is not None else "")
+            l_node = getattr(cond, "left", None)
+            l_name = l_node.name if hasattr(l_node, "name") else str(l_node)
+            l_per = (getattr(l_node, "params", {}) or {}).get("period", 0)
+            op = cond.op.value if hasattr(getattr(cond, "op", None), "value") else str(getattr(cond, "op", getattr(cond, "operator", "")))
             tokens.append(f"S:{l_name}_{l_per}:{op}:{r_ind}")
         raw = "|".join(sorted(tokens))
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()
