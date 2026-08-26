@@ -19,7 +19,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from services.api.app.config import LOCAL_WEB_ORIGINS
-from services.api.app.db.database import init_db
+from services.api.app.db.database import init_db, SessionLocal
+from services.api.app.db.truth_guard import purge_legacy_demo_records
 
 from services.api.app.api.version_router import version_router
 from services.api.app.api.lineage_router import lineage_router
@@ -63,6 +64,11 @@ def _autonomous_runtime_enabled() -> bool:
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Iniciando infraestructura Ultrarentable V2...")
     init_db()
+
+    with SessionLocal() as db:
+        purge_result = purge_legacy_demo_records(db)
+        if any(purge_result.values()):
+            logger.warning("Eliminados registros bootstrap sintéticos legacy: %s", purge_result)
 
     autonomous_enabled = _autonomous_runtime_enabled()
     app.state.autonomous_runtime_enabled = autonomous_enabled
