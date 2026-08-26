@@ -77,3 +77,8 @@ jobs:
 
       - name: Run backend clean-start contract
         run: bash scripts/stabilization/r0_backend_clean_start.sh
+
+      - name: Final R0 certification
+        env:
+          R0_CI_GREEN: "1"
+        run: .venv/bin/python scripts/stabilization/r0_final_certification.py
