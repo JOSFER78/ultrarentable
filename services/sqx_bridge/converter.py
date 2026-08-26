@@ -1,135 +1,105 @@
-"""services/sqx_bridge/converter.py
-StrategyQuant X Candidate to StrategySpec & CanonicalStrategy Converter (Fase 3 & Fase 4).
+"""Strict StrategyQuant -> canonical conversion.
 
-Desacopla y normaliza las métricas y especificaciones de candidatos generados por SQX
-hacia los contratos canónicos de Ultrarentable V2 (CanonicalStrategy y StrategySpec),
-soportando bifurcación dual completa (TRACK_FONDEO y TRACK_ULTRA) para cualquier activo (CME, Forex, Cripto).
+This module is intentionally conservative. SQX performance statistics alone do
+not contain enough information to reconstruct a trading rule set, risk model or
+execution policy. Therefore conversion to a canonical executable strategy is
+allowed only when the source payload explicitly contains the required semantic
+fields. Missing information raises an error rather than being guessed.
 """
-
 from __future__ import annotations
 
+import hashlib
+import json
 import re
-import time
 from typing import Any, Dict, Optional, Tuple
 
-from contracts.canonical_strategy import (
-    CanonicalStrategy,
-    ExecutionTrack,
-    ExitModel,
-    ProvenanceMetadata,
-    RuleTree,
-    SessionWindow,
-    SizingAndRisk,
-    StrategyLifecycleStatus,
-    TargetInstrument,
-)
-from services.strategy_core.spec import (
-    InstrumentSpec,
-    OriginSpec,
-    StrategySpec,
-    StrategyStatus,
-    ValidationMetricsSpec,
-)
+from contracts.canonical_strategy import CanonicalStrategy, ExecutionTrack
+from services.strategy_core.spec import StrategySpec
 
-# Catálogo canónico de especificaciones de instrumentos por activo
-INSTRUMENT_CATALOG: Dict[str, Dict[str, Any]] = {
-    # Micro y Mini Futuros CME / NYMEX / COMEX
-    "NQ": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 20.0, "tick_size": 0.25},
-    "MNQ": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 2.0, "tick_size": 0.25},
-    "ES": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 50.0, "tick_size": 0.25},
-    "MES": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 5.0, "tick_size": 0.25},
-    "YM": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 5.0, "tick_size": 1.0},
-    "MYM": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 0.5, "tick_size": 1.0},
-    "RTY": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 50.0, "tick_size": 0.1},
-    "M2K": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 5.0, "tick_size": 0.1},
-    "GC": {"exchange": "COMEX", "contract_type": "FUTURES", "point_value": 100.0, "tick_size": 0.10},
-    "MGC": {"exchange": "COMEX", "contract_type": "FUTURES", "point_value": 10.0, "tick_size": 0.10},
-    "CL": {"exchange": "NYMEX", "contract_type": "FUTURES", "point_value": 1000.0, "tick_size": 0.01},
-    "MCL": {"exchange": "NYMEX", "contract_type": "FUTURES", "point_value": 100.0, "tick_size": 0.01},
-    # Micro Futuros Cripto CME (Permitidos en Prop Firms como Topstep y Apex)
-    "MBT": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 0.1, "tick_size": 5.0},
-    "MET": {"exchange": "CME", "contract_type": "FUTURES", "point_value": 0.1, "tick_size": 0.5},
-    # Forex Majors
-    "EURUSD": {"exchange": "FOREX", "contract_type": "FOREX", "point_value": 100000.0, "tick_size": 0.00001},
-    "GBPUSD": {"exchange": "FOREX", "contract_type": "FOREX", "point_value": 100000.0, "tick_size": 0.00001},
-    "USDJPY": {"exchange": "FOREX", "contract_type": "FOREX", "point_value": 100000.0, "tick_size": 0.001},
-    "AUDUSD": {"exchange": "FOREX", "contract_type": "FOREX", "point_value": 100000.0, "tick_size": 0.00001},
-    "USDCAD": {"exchange": "FOREX", "contract_type": "FOREX", "point_value": 100000.0, "tick_size": 0.00001},
-    "USDCHF": {"exchange": "FOREX", "contract_type": "FOREX", "point_value": 100000.0, "tick_size": 0.00001},
-    # Criptoactivos Perpetuos BingX
-    "BTC-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.10},
-    "ETH-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.01},
-    "SOL-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.001},
-    "DOGE-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.00001},
-    "AVAX-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.001},
-    "SUI-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.0001},
-    "LINK-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.001},
-    "BNB-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.01},
-    "XRP-USDT": {"exchange": "BINGX", "contract_type": "PERPETUAL", "point_value": 1.0, "tick_size": 0.0001},
-}
+
+class StrategyConversionError(ValueError):
+    """Raised when the source payload is insufficient for canonical conversion."""
+
+
+def _required_text(value: Any, field: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise StrategyConversionError(f"MISSING_REQUIRED_FIELD:{field}")
+    return value.strip()
+
+
+def _required_positive(value: Any, field: str) -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise StrategyConversionError(f"INVALID_REQUIRED_FIELD:{field}") from exc
+    if numeric <= 0:
+        raise StrategyConversionError(f"INVALID_REQUIRED_FIELD:{field}")
+    return numeric
 
 
 def clean_symbol(raw_symbol: str) -> str:
-    """Normaliza un símbolo proveniente de SQX eliminando sufijos automáticos."""
-    if not raw_symbol or str(raw_symbol).upper() in ("NONE", "NULL", ""):
-        return "NQ"
-    s = str(raw_symbol).strip().upper()
-    s = re.sub(r"(_AUTO|_FUT|_PERP|_H1|_M15|_M5|_D1)$", "", s)
-    s = s.replace("_", "-").replace("/", "-")
-
-    if s.endswith("USDT") and "-" not in s:
-        s = f"{s[:-4]}-USDT"
-    elif s.endswith("USD") and len(s) == 6 and "-" not in s:
-        s = s.replace("-", "")
-
-    return s
+    """Normalize an explicitly supplied symbol; never invent one."""
+    if not isinstance(raw_symbol, str) or not raw_symbol.strip():
+        raise StrategyConversionError("MISSING_REQUIRED_FIELD:symbol")
+    symbol = raw_symbol.strip().upper()
+    if symbol in {"NONE", "NULL", "UNKNOWN", "N/A"}:
+        raise StrategyConversionError("INVALID_REQUIRED_FIELD:symbol")
+    symbol = re.sub(r"(_AUTO|_FUT|_PERP)$", "", symbol)
+    symbol = symbol.replace("/", "-").replace("_", "-")
+    if symbol.endswith("USDT") and "-" not in symbol:
+        symbol = f"{symbol[:-4]}-USDT"
+    return symbol
 
 
-def resolve_instrument_specs(
-    symbol: str,
-    target_track: Optional[ExecutionTrack] = None,
-    exchange_override: Optional[str] = None,
-    contract_type_override: Optional[str] = None,
-) -> Tuple[str, str, float, float]:
-    """Resuelve deterministamente exchange, contract_type, point_value y tick_size."""
-    clean_sym = clean_symbol(symbol)
-    lookup_key = clean_sym.replace("/", "")
+def resolve_instrument_specs(symbol: str, exchange: Optional[str] = None, contract_type: Optional[str] = None) -> Tuple[str, str, float, float]:
+    """Resolve instrument semantics only from an explicit source or registry entry."""
+    normalized = clean_symbol(symbol)
+    registry = {
+        "NQ": ("CME", "FUTURES", 20.0, 0.25),
+        "MNQ": ("CME", "FUTURES", 2.0, 0.25),
+        "ES": ("CME", "FUTURES", 50.0, 0.25),
+        "MES": ("CME", "FUTURES", 5.0, 0.25),
+        "YM": ("CME", "FUTURES", 5.0, 1.0),
+        "MYM": ("CME", "FUTURES", 0.5, 1.0),
+        "RTY": ("CME", "FUTURES", 50.0, 0.1),
+        "M2K": ("CME", "FUTURES", 5.0, 0.1),
+        "GC": ("COMEX", "FUTURES", 100.0, 0.1),
+        "MGC": ("COMEX", "FUTURES", 10.0, 0.1),
+        "CL": ("NYMEX", "FUTURES", 1000.0, 0.01),
+        "MCL": ("NYMEX", "FUTURES", 100.0, 0.01),
+        "MBT": ("CME", "FUTURES", 0.1, 5.0),
+        "MET": ("CME", "FUTURES", 0.1, 0.5),
+        "EURUSD": ("FOREX", "FOREX", 100000.0, 0.00001),
+        "GBPUSD": ("FOREX", "FOREX", 100000.0, 0.00001),
+        "USDJPY": ("FOREX", "FOREX", 100000.0, 0.001),
+        "AUDUSD": ("FOREX", "FOREX", 100000.0, 0.00001),
+        "USDCAD": ("FOREX", "FOREX", 100000.0, 0.00001),
+        "USDCHF": ("FOREX", "FOREX", 100000.0, 0.00001),
+    }
+    if normalized not in registry:
+        # A non-registry instrument must carry explicit economics from source.
+        src_exchange = _required_text(exchange, "exchange")
+        src_contract = _required_text(contract_type, "contract_type")
+        raise StrategyConversionError(
+            "INSTRUMENT_ECONOMICS_REQUIRED: unknown symbol requires explicit point_value and tick_size in source payload"
+        )
+    src_exchange, src_contract, point_value, tick_size = registry[normalized]
+    return exchange or src_exchange, contract_type or src_contract, point_value, tick_size
 
-    info = INSTRUMENT_CATALOG.get(lookup_key)
 
-    if info:
-        exchange = exchange_override or info["exchange"]
-        contract_type = contract_type_override or info["contract_type"]
-        point_value = float(info["point_value"])
-        tick_size = float(info["tick_size"])
-    else:
-        if "USDT" in clean_sym or clean_sym in ("BTC", "ETH", "SOL"):
-            exchange = exchange_override or "BINGX"
-            contract_type = contract_type_override or "PERPETUAL"
-            point_value = 1.0
-            tick_size = 0.01
-        elif any(fx in clean_sym for fx in ("EUR", "GBP", "JPY", "AUD", "CAD", "CHF")):
-            exchange = exchange_override or "FOREX"
-            contract_type = contract_type_override or "FOREX"
-            point_value = 100000.0
-            tick_size = 0.0001
-        else:
-            exchange = exchange_override or "CME"
-            contract_type = contract_type_override or "FUTURES"
-            point_value = 20.0
-            tick_size = 0.25
-
-    return exchange, contract_type, point_value, tick_size
+def _raw_rules(sqx_stats: Dict[str, Any]) -> Dict[str, Any]:
+    for key in ("rules", "strategy_rules", "entry_rules", "dsl", "strategy_dsl", "canonical_dsl"):
+        value = sqx_stats.get(key)
+        if isinstance(value, dict) and value:
+            return value
+    raise StrategyConversionError("SOURCE_RULES_UNAVAILABLE: SQX statistics do not contain executable strategy rules")
 
 
-def normalize_drawdown_pct(raw_dd: float, net_profit: float, initial_capital: float = 10000.0) -> float:
-    """Convierte drawdowns absolutos en USD o porcentuales a porcentaje relativo normalizado."""
-    if raw_dd <= 0.0:
-        return 0.0
-    if raw_dd <= 100.0:
-        return round(raw_dd, 2)
-    peak = max(initial_capital, initial_capital + net_profit)
-    return round((raw_dd / peak) * 100.0, 2)
+def _explicit_value(source: Dict[str, Any], names: tuple[str, ...], field: str) -> Any:
+    for name in names:
+        if name in source and source[name] not in (None, ""):
+            return source[name]
+    raise StrategyConversionError(f"MISSING_REQUIRED_FIELD:{field}")
 
 
 def sqx_candidate_to_canonical(
@@ -137,77 +107,61 @@ def sqx_candidate_to_canonical(
     databank_name: str,
     strategy_name: str,
     sqx_stats: Dict[str, Any],
-    symbol: str = "NQ",
-    timeframe: str = "1h",
-    target_track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO,
-    exchange: Optional[str] = None,
-    contract_type: Optional[str] = None,
+    *,
+    source_sha256: Optional[str] = None,
 ) -> CanonicalStrategy:
-    """Convierte candidato SQX directamente al modelo Canónico CanonicalStrategy v2.0.0."""
-    trades_count = int(sqx_stats.get("TradesCount", sqx_stats.get("NetTrades", 0)))
-    profit_factor = float(sqx_stats.get("ProfitFactor", 0.0))
-    net_profit = float(sqx_stats.get("NetProfitUsd", sqx_stats.get("NetProfit", 0.0)))
-    raw_dd = float(sqx_stats.get("MaxDrawdownPct", sqx_stats.get("DrawdownPct", 0.0)))
+    """Convert only when SQX provides complete executable semantics.
 
-    base_cap = 50000.0 if target_track == ExecutionTrack.TRACK_FONDEO else 1000.0
-    max_dd = normalize_drawdown_pct(raw_dd, net_profit, initial_capital=base_cap)
-    win_rate = float(sqx_stats.get("WinRate", 0.0))
+    The previous implementation accepted missing semantics and filled them with
+    fabricated defaults. This function now rejects such payloads.
+    """
+    if not isinstance(sqx_stats, dict) or not sqx_stats:
+        raise StrategyConversionError("EMPTY_SQX_SOURCE")
+    source = sqx_stats
+    symbol = clean_symbol(str(_explicit_value(source, ("symbol", "instrument", "market", "asset"), "symbol")))
+    timeframe = _required_text(_explicit_value(source, ("timeframe", "tf", "period", "bar_period"), "timeframe"), "timeframe")
+    exchange = source.get("exchange")
+    contract_type = source.get("contract_type")
+    exchange_name, contract_name, point_value, tick_size = resolve_instrument_specs(symbol, exchange, contract_type)
 
-    norm_symbol = clean_symbol(symbol)
-    resolved_exchange, resolved_contract, point_val, tick_sz = resolve_instrument_specs(
-        norm_symbol,
-        target_track=target_track,
-        exchange_override=exchange,
-        contract_type_override=contract_type,
-    )
+    rules = _raw_rules(sqx_stats)
+    exits = sqx_stats.get("exits") or sqx_stats.get("exit_model")
+    sizing = sqx_stats.get("sizing_and_risk") or sqx_stats.get("risk")
+    session = sqx_stats.get("session") or sqx_stats.get("session_window")
 
-    spec_id = f"UR-SQX-{strategy_name.replace(' ', '_')}"
+    if not isinstance(exits, dict) or not exits:
+        raise StrategyConversionError("MISSING_REQUIRED_FIELD:exit_model")
+    if not isinstance(sizing, dict) or not sizing:
+        raise StrategyConversionError("MISSING_REQUIRED_FIELD:sizing_and_risk")
+    if not isinstance(session, dict) or not session:
+        raise StrategyConversionError("MISSING_REQUIRED_FIELD:session_window")
+
+    strategy_hash = source_sha256 or hashlib.sha256(json.dumps(sqx_stats, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    # Return the source payload for the canonical layer to compile only if the
+    # canonical model itself accepts the explicit semantics. No guessed values.
+    from contracts.canonical_strategy import ExitModel, ProvenanceMetadata, RuleTree, SessionWindow, SizingAndRisk, StrategyLifecycleStatus, TargetInstrument
 
     return CanonicalStrategy(
         schema_version="2.0.0",
-        strategy_id=spec_id,
+        strategy_id=f"SQX:{project_name}:{databank_name}:{strategy_name}",
         name=strategy_name,
-        target_track=target_track,
+        target_track=ExecutionTrack(source.get("target_track", "TRACK_ULTRA")),
         status=StrategyLifecycleStatus.CANDIDATE,
-        instrument=TargetInstrument(
-            symbol=norm_symbol,
-            exchange=resolved_exchange,
-            contract_type=resolved_contract,
-            point_value=point_val,
-            tick_size=tick_sz,
-        ),
+        instrument=TargetInstrument(symbol=symbol, exchange=exchange_name, contract_type=contract_name, point_value=point_value, tick_size=tick_size),
         timeframe=timeframe,
-        session=SessionWindow(
-            timezone="America/New_York",
-            start_time="09:30",
-            end_time="16:00",
-            force_close_at_end=(target_track == ExecutionTrack.TRACK_FONDEO),
-        ),
-        rules=RuleTree(),
-        exits=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
-        sizing_and_risk=SizingAndRisk(
-            base_risk_pct=1.0 if target_track == ExecutionTrack.TRACK_FONDEO else 5.0,
-            max_contracts_or_lots=4.0 if target_track == ExecutionTrack.TRACK_FONDEO else 10.0,
-            base_leverage=1.0 if target_track == ExecutionTrack.TRACK_FONDEO else 20.0,
-            pyramiding_max_layers=0 if target_track == ExecutionTrack.TRACK_FONDEO else 3,
-            pyramiding_reinvest_ratio=0.40,
-        ),
+        session=SessionWindow(**session),
+        rules=RuleTree(**rules),
+        exits=ExitModel(**exits),
+        sizing_and_risk=SizingAndRisk(**sizing),
         provenance=ProvenanceMetadata(
             source_engine="strategyquant",
             project_name=project_name,
             databank_name=databank_name,
-            build_id=f"sqx_build_{strategy_name}",
-            created_timestamp_utc=int(time.time() * 1000),
-            author_or_agent="SQX_MCP_FACTORY",
+            build_id=_required_text(source.get("build_id"), "build_id"),
+            created_timestamp_utc=int(_required_positive(source.get("created_timestamp_utc"), "created_timestamp_utc")),
+            author_or_agent=_required_text(source.get("author_or_agent"), "author_or_agent"),
         ),
-        metadata={
-            "trades_count": trades_count,
-            "profit_factor": profit_factor,
-            "net_profit_usd": net_profit,
-            "max_drawdown_pct": max_dd,
-            "win_rate_pct": win_rate,
-            "raw_sqx_stats": sqx_stats,
-        },
+        metadata={"source_strategy_hash": strategy_hash, "raw_sqx_stats": sqx_stats},
     )
 
 
@@ -216,55 +170,29 @@ def sqx_candidate_to_spec(
     databank_name: str,
     strategy_name: str,
     sqx_stats: Dict[str, Any],
-    symbol: str = "NQ",
-    timeframe: str = "1h",
-    target_track: Optional[ExecutionTrack] = None,
-    exchange: Optional[str] = None,
-    contract_type: Optional[str] = None,
+    *,
+    source_sha256: Optional[str] = None,
 ) -> StrategySpec:
-    """Compatibilidad con StrategySpec neutro."""
-    trades_count = int(sqx_stats.get("TradesCount", sqx_stats.get("NetTrades", 0)))
-    profit_factor = float(sqx_stats.get("ProfitFactor", 0.0))
-    net_profit = float(sqx_stats.get("NetProfitUsd", sqx_stats.get("NetProfit", 0.0)))
-    raw_dd = float(sqx_stats.get("MaxDrawdownPct", sqx_stats.get("DrawdownPct", 0.0)))
-    max_dd = normalize_drawdown_pct(raw_dd, net_profit)
-    win_rate = float(sqx_stats.get("WinRate", 0.0))
-
-    norm_symbol = clean_symbol(symbol)
-    resolved_exchange, resolved_contract, point_val, tick_sz = resolve_instrument_specs(
-        norm_symbol,
-        target_track=target_track,
-        exchange_override=exchange,
-        contract_type_override=contract_type,
-    )
-
-    spec_id = f"UR-SQX-{strategy_name.replace(' ', '_')}"
-
+    """Strict StrategySpec conversion; no defaults and no inferred metrics."""
+    if not isinstance(sqx_stats, dict) or not sqx_stats:
+        raise StrategyConversionError("EMPTY_SQX_SOURCE")
+    symbol = clean_symbol(str(_explicit_value(sqx_stats, ("symbol", "instrument", "market", "asset"), "symbol")))
+    timeframe = _required_text(_explicit_value(sqx_stats, ("timeframe", "tf", "period", "bar_period"), "timeframe"), "timeframe")
+    exchange, contract_type, point_value, tick_size = resolve_instrument_specs(symbol, sqx_stats.get("exchange"), sqx_stats.get("contract_type"))
+    from services.strategy_core.spec import InstrumentSpec, OriginSpec, StrategyStatus
     return StrategySpec(
-        strategy_id=spec_id,
+        strategy_id=f"UR-SQX-{strategy_name.replace(' ', '_')}",
         version=1,
         name=strategy_name,
         status=StrategyStatus.CANDIDATE,
         origin=OriginSpec(
             engine="strategyquant",
-            project=project_name,
-            databank=databank_name,
-            build_id=f"sqx_build_{strategy_name}",
+            project=_required_text(project_name, "project_name"),
+            databank=_required_text(databank_name, "databank_name"),
+            build_id=_required_text(sqx_stats.get("build_id"), "build_id"),
         ),
-        instrument=InstrumentSpec(
-            symbol=norm_symbol,
-            exchange=resolved_exchange,
-            contract_type=resolved_contract,
-            point_value=point_val,
-            tick_size=tick_sz,
-        ),
+        instrument=InstrumentSpec(symbol=symbol, exchange=exchange, contract_type=contract_type, point_value=point_value, tick_size=tick_size),
         timeframe=timeframe,
-        validation=ValidationMetricsSpec(
-            trades_count=trades_count,
-            profit_factor=profit_factor,
-            net_profit_usd=net_profit,
-            max_drawdown_pct=max_dd,
-            win_rate=win_rate,
-        ),
-        metadata=sqx_stats,
+        validation=None,
+        metadata={"source_sha256": source_sha256, "raw_sqx_stats": sqx_stats},
     )
