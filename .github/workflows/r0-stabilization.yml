@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: r0-stabilization-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   r0-foundation:
     name: R0 foundation guards
