@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE = ROOT / "services/discovery/discovery_validation_pipeline.py"
 REGISTRY = ROOT / "services/discovery/strategy_search_registry.py"
+DATASET_REPOSITORY = ROOT / "data/dataset_repository.py"
 CONFIG = ROOT / "services/api/app/config.py"
 
 
@@ -30,6 +31,22 @@ def assert_no_machine_local_paths(source: str, label: str) -> None:
         fail(f"{label} contains machine-local path(s): {hits}")
 
 
+def assert_no_synthetic_dataset_fallbacks(source: str) -> None:
+    forbidden_markers = (
+        "Fallback a barra canónica",
+        "Fallback a generador estructurado de prueba determinista",
+        "timestamp_utc_ms=1771718400000",
+        "for i in range(100)",
+    )
+    hits = [marker for marker in forbidden_markers if marker in source]
+    if hits:
+        fail(f"dataset repository contains synthetic fallback(s): {hits}")
+
+    for marker in ("_sha256_file", "self._sha256_file(target_file)", "raise FileNotFoundError"):
+        if marker not in source:
+            fail(f"real-data custody invariant missing from dataset repository: {marker}")
+
+
 def assert_partition_isolation(source: str) -> None:
     required = (
         "idx_is = int(total_bars * 0.60)",
@@ -51,13 +68,10 @@ def assert_partition_isolation(source: str) -> None:
     if final_oos_pos < 0:
         fail("final blind OOS backtest not found")
 
-    selection_start = source.find("# 6. Evaluación Ciega en Validation")
-    if selection_start < 0:
-        fail("validation selection block not found")
-    selection_end = source.find("# 7. Generar Snapshot", selection_start)
-    if selection_end < 0:
-        fail("strategy freeze boundary not found")
-
+    selection_start = source.find("best_params = None")
+    selection_end = source.find("if route == StrategyRoute.ULTRA:", selection_start)
+    if selection_start < 0 or selection_end < 0:
+        fail("champion selection/freeze boundary not found")
     selection_block = source[selection_start:selection_end]
     if "candles_blind_oos" in selection_block:
         fail("blind OOS is referenced inside the champion-selection block")
@@ -74,6 +88,14 @@ def assert_no_forced_fallback_selection(source: str) -> None:
     if hits:
         fail(f"forced strategy fallback/default detected: {hits}")
 
+    for marker in (
+        "BLOCKED_NO_TRIAL_SPACE",
+        "BLOCKED_NO_REAL_TRIALS",
+        "BLOCKED_NO_VALIDATED_CHAMPION",
+    ):
+        if marker not in source:
+            fail(f"fail-closed selection outcome missing: {marker}")
+
 
 def assert_trial_accounting(source: str, registry: str) -> None:
     for marker in (
@@ -83,6 +105,7 @@ def assert_trial_accounting(source: str, registry: str) -> None:
         "run_id=run_id",
         "trial_id=trial_strat_id",
         "self.search_registry.record_trial(trial_rec)",
+        '"trials_tested": trials_count_this_run',
     ):
         if marker not in source:
             fail(f"trial accounting invariant missing: {marker}")
@@ -97,11 +120,13 @@ def assert_trial_accounting(source: str, registry: str) -> None:
             fail(f"registry custody field missing: {marker}")
 
 
-def assert_config_authority(pipeline: str, registry: str, config: str) -> None:
+def assert_config_authority(pipeline: str, registry: str, dataset_repository: str, config: str) -> None:
     if "from services.api.app.config import" not in pipeline:
         fail("discovery pipeline does not import central config authority")
     if "from services.api.app.config import STATE_DB_PATH" not in registry:
         fail("search registry does not use central STATE_DB_PATH authority")
+    if "from services.api.app.config import DATA_DIR as BASE_DATA_DIR" not in dataset_repository:
+        fail("dataset repository does not use central DATA_DIR authority")
     for marker in ("DATA_DIR = resolve_local_path", "STATE_DB_PATH = resolve_local_path"):
         if marker not in config:
             fail(f"central config invariant missing: {marker}")
@@ -117,19 +142,21 @@ def assert_syntax(path: Path) -> None:
 def main() -> int:
     pipeline = read(PIPELINE)
     registry = read(REGISTRY)
+    dataset_repository = read(DATASET_REPOSITORY)
     config = read(CONFIG)
 
-    assert_syntax(PIPELINE)
-    assert_syntax(REGISTRY)
-    assert_syntax(CONFIG)
+    for path in (PIPELINE, REGISTRY, DATASET_REPOSITORY, CONFIG):
+        assert_syntax(path)
     assert_no_machine_local_paths(pipeline, "discovery pipeline")
     assert_no_machine_local_paths(registry, "search registry")
+    assert_no_machine_local_paths(dataset_repository, "dataset repository")
+    assert_no_synthetic_dataset_fallbacks(dataset_repository)
     assert_partition_isolation(pipeline)
     assert_no_forced_fallback_selection(pipeline)
     assert_trial_accounting(pipeline, registry)
-    assert_config_authority(pipeline, registry, config)
+    assert_config_authority(pipeline, registry, dataset_repository, config)
 
-    print("PHASE2_RESEARCH_GUARD: PASS — discovery boundaries, trial custody and config authority are statically enforced")
+    print("PHASE2_RESEARCH_GUARD: PASS — real-data custody, 60/20/20 isolation, trial accounting and fail-closed selection are enforced")
     return 0
 
 
