@@ -46,5 +46,8 @@ jobs:
       - name: Verify execution safety policy
         run: .venv/bin/python scripts/stabilization/r0_execution_safety.py
 
+      - name: Verify web API client surface
+        run: .venv/bin/python scripts/stabilization/r0_web_api_client.py
+
       - name: Run focused stabilization tests
-        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py -q
+        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py tests/stabilization/test_r0_web_api_client.py -q
