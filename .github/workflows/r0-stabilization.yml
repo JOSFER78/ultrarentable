@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  r0-dependency-authority:
-    name: R0.1 dependency authority
+  r0-foundation:
+    name: R0 foundation guards
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,11 +31,14 @@ jobs:
       - name: Verify dependency authority
         run: python scripts/stabilization/r0_dependency_authority.py
 
+      - name: Verify FastAPI route inventory
+        run: python scripts/stabilization/r0_route_inventory.py
+
       - name: Clean npm install
         run: npm ci --ignore-scripts
 
       - name: Frozen Python install
         run: uv sync --frozen --extra dev
 
-      - name: Run focused stabilization test
-        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py -q
+      - name: Run focused stabilization tests
+        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py -q
