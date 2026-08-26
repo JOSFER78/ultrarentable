@@ -398,13 +398,25 @@ def list_candidates(
         else:
             cand_tier_label = sc.get("tier_label") or ("🏆 Producción Certificada" if cand_tier == "TIER_1_CERTIFIED" else ("💎 Diamante en I+D" if cand_tier == "TIER_2_NEAR_CERTIFIED" else ("🧪 Incubadora de I+D" if cand_tier == "TIER_3_INCUBATOR" else "❌ Rechazada Estructural")))
 
+        # Verificación estricta de Drawdown institucional (Zero-Mocks & Real-Only Governance)
+        is_fondeo_route = (c.route or "").upper() == "FONDEO"
+        max_allowed_dd = 4.5 if is_fondeo_route else 30.0
+        if dd_oos > max_allowed_dd or (max_dd_floating_oos is not None and max_dd_floating_oos > (max_allowed_dd * 1.5)) or dd_oos >= 99.0:
+            if resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS", "CERTIFICADA_TIER_1"):
+                resolved_status = "REJECTED_ALTO_DRAWDOWN"
+                resolved_reason = f"Rechazo de Riesgo: Drawdown OOS ({dd_oos:.1f}%) supera el límite institucional de {max_allowed_dd}% ({c.route})"
+                cand_tier = "TIER_4_REJECTED"
+                cand_tier_label = f"❌ Rechazo Drawdown ({dd_oos:.1f}%)"
+                passed_count = min(passed_count or 0, 7)
+
         # Verificación estricta de rentabilidad anómala (>5000% o inconsistencia)
         if fin["is_anomalous"]:
-            if resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS"):
+            if resolved_status in ("APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS", "CERTIFICADA_TIER_1"):
                 resolved_status = "ANOMALY_REVIEW"
                 resolved_reason = f"Rentabilidad anómala detectada (Retorno OOS: {fin['cumulative_return_pct']}%, CAGR: {fin['annualized_cagr_pct']}%) - Requiere auditoría forense"
                 cand_tier = "TIER_4_REJECTED"
                 cand_tier_label = "⚠️ Revisión por Anomalía (>5000%)"
+                passed_count = min(passed_count or 0, 7)
 
         if tier and tier.upper() != "ALL":
             if tier.upper() != cand_tier:

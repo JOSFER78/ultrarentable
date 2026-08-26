@@ -130,12 +130,22 @@ class Gate07RegimeCoverage:
                 bar_idx = int(t["entry_bar_idx"])
             elif "bar_index" in t and t["bar_index"] is not None:
                 bar_idx = int(t["bar_index"])
+            elif "entry_bar" in t and t["entry_bar"] is not None:
+                bar_idx = int(t["entry_bar"])
             elif "entry_time_utc_ms" in t and len(candle_ts) == len(candles):
                 entry_ms = float(t["entry_time_utc_ms"])
                 # Búsqueda binaria exacta del timestamp de la vela correspondiente
                 pos = bisect.bisect_right(candle_ts, entry_ms) - 1
                 if pos >= 0:
                     bar_idx = pos
+            elif "entry_time_ms" in t and len(candle_ts) == len(candles):
+                try:
+                    entry_ms = float(t["entry_time_ms"])
+                    pos = bisect.bisect_right(candle_ts, entry_ms) - 1
+                    if pos >= 0:
+                        bar_idx = pos
+                except Exception:
+                    pass
             elif "entry_time" in t and len(candle_ts) == len(candles):
                 try:
                     entry_ms = float(t["entry_time"])

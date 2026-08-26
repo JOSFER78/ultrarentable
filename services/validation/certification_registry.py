@@ -65,8 +65,8 @@ class CertificationRegistry:
         is_ultra = (strategy.route == StrategyRoute.ULTRA)
         is_fondeo = (strategy.route == StrategyRoute.FONDEO)
         
-        max_allowed_dd = 85.0 if is_ultra else 4.5
-        min_allowed_pf = 1.05 if is_ultra else 1.15
+        max_allowed_dd = 30.0 if is_ultra else 4.0
+        min_allowed_pf = 1.10 if is_ultra else 1.15
         min_trades = 10 if is_ultra else 20
 
         is_certified = False

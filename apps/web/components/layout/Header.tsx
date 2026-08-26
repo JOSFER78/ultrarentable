@@ -1,162 +1,239 @@
-/**
- * apps/web/components/layout/Header.tsx
- * Barra de estado superior compacta (Bloomberg / Trading Terminal Style)
- * 100% DATOS REALES DIRECTAMENTE DESDE FASTAPI & SQLITE WAL (CERO MOCKS)
- */
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useTelemetryStream } from "@/hooks/useTelemetryStream";
-import { useEngineVersion } from "@/hooks/useEngineVersion";
-import { WorkerId } from "@/types/telemetry";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  Activity,
+  Clock,
+  ChevronDown,
+  Layers,
+  Sparkles,
+  Zap,
+  Building2,
+  ShieldCheck,
+  Award,
+  BarChart2,
+} from "lucide-react";
 
 export default function Header() {
-  const { workers, systemMetrics, reconnect } = useTelemetryStream();
-  const { version, versionName, gitCommitShort, gitBranch, gitMessage, codeDrift } = useEngineVersion();
-  const [timeDisplay, setTimeDisplay] = useState<string>("");
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [timeUtc, setTimeUtc] = useState<string>("");
+  const [timeLocal, setTimeLocal] = useState<string>("");
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [viewMenuOpen, setViewMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const updateTime = () => {
-      const d = new Date();
-      const localStr = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      const utcStr = d.toISOString().substring(11, 19) + " UTC";
-      setTimeDisplay(`${localStr} (${utcStr})`);
+    setMounted(true);
+    const updateClocks = () => {
+      const now = new Date();
+      setTimeUtc(
+        now.toLocaleTimeString("en-GB", {
+          timeZone: "UTC",
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }) + " UTC"
+      );
+      setTimeLocal(
+        now.toLocaleTimeString("es-ES", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }) + " LOC"
+      );
     };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
+
+    updateClocks();
+    const interval = setInterval(updateClocks, 1000);
+    return () => clearInterval(interval);
   }, []);
+
+  const getCurrentStepLabel = () => {
+    if (!pathname) return "Centro de Mando";
+    if (pathname.includes("/strategies") || pathname.includes("1-motor-en-vivo")) return "01 · Motor 24/7";
+    if (pathname.includes("/candidatos") || pathname.includes("2-explorador-excel")) return "02 · Catálogo SQLite";
+    if (pathname.includes("/gates") || pathname.includes("3-pipeline-11-gates")) return "03 · Pipeline 11 Gates";
+    if (pathname.includes("/portfolio") || pathname.includes("6-meta-estrategia")) return "04 · Portafolios";
+    if (pathname.includes("/prop-firms")) return "05 · Fondeo CME 70 Tiers";
+    if (pathname.includes("5-estrategias-aprobadas")) return "Bóveda Aprobadas";
+    if (pathname.includes("4-panel-investigador")) return "Panel I+D";
+    return "Ultrarentable Quant Lab";
+  };
+
+  const navShortcuts = [
+    { label: "1. Motor & Backtest", href: "/strategies", icon: Zap, color: "#38bdf8" },
+    { label: "2. Catálogo de Candidatos", href: "/candidatos", icon: Layers, color: "#818cf8" },
+    { label: "3. Pipeline 11 Gates", href: "/gates", icon: ShieldCheck, color: "#10b981" },
+    { label: "4. Portafolio Studio", href: "/portfolio", icon: BarChart2, color: "#c084fc" },
+    { label: "5. Catálogo 70 Prop Firms", href: "/prop-firms", icon: Building2, color: "#f59e0b" },
+    { label: "Bóveda Certificadas (11/11)", href: "/estrategias/5-estrategias-aprobadas", icon: Award, color: "#10b981" },
+  ];
 
   return (
     <header
       suppressHydrationWarning
       style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "0 16px",
-        height: "44px",
-        background: "rgba(10, 14, 22, 0.95)",
-        backdropFilter: "blur(18px)",
+        height: "50px",
+        background: "rgba(8, 12, 20, 0.94)",
+        backdropFilter: "blur(16px)",
         borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 16px",
         position: "sticky",
         top: 0,
         zIndex: 100,
         boxSizing: "border-box",
       }}
     >
-      {/* 1. LEFT: LIVE STATUS INDICATORS */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span
-            style={{
-              width: "6px",
-              height: "6px",
-              borderRadius: "50%",
-              backgroundColor: codeDrift ? "#fbbf24" : "#34d399",
-              boxShadow: codeDrift ? "0 0 6px #fbbf24" : "0 0 6px #34d399",
-            }}
-          />
-          <span style={{ color: "#ffffff", fontWeight: 700 }}>ULTRARENTABLE</span>
-          <span
-            style={{
-              fontSize: "9px",
-              fontWeight: 800,
-              padding: "1px 5px",
-              borderRadius: "4px",
-              background: "rgba(52, 211, 153, 0.15)",
-              color: "#34d399",
-              border: "1px solid rgba(52, 211, 153, 0.4)",
-              cursor: "pointer",
-            }}
-            title={versionName || `Motor Cuantitativo v${version} (Zero-Simulation Forensic)`}
-          >
-            v{version}
-          </span>
-          <span
-            style={{
-              fontSize: "9px",
-              fontWeight: 700,
-              padding: "1px 5px",
-              borderRadius: "4px",
-              background: "rgba(56, 189, 248, 0.12)",
-              color: "#38bdf8",
-              border: "1px solid rgba(56, 189, 248, 0.3)",
-              cursor: "pointer",
-            }}
-            title={`Git Commit: ${gitCommitShort} (${gitBranch}) — ${gitMessage || "Control de versiones activo"}`}
-          >
-            git:{gitCommitShort || "HEAD"}
-          </span>
-        </div>
-
-        <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
-
-        <div>
-          <span style={{ color: "#64748b" }}>EJECUCIÓN: </span>
-          <strong style={{ color: Object.values(workers).some(w => w.status === "ACTIVE") ? "#34d399" : (systemMetrics.sseConnected ? "#94a3b8" : "#f43f5e") }}>
-            {Object.keys(workers).length > 0
-              ? `${Object.values(workers).filter(w => w.status === "ACTIVE").length}/${Object.keys(workers).length} Workers Activos`
-              : (systemMetrics.sseConnected ? "0 Workers (Standby)" : "CONTROL PLANE OFFLINE")}
-          </strong>
-        </div>
-
-        <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
-
-        <div>
-          <span style={{ color: "#64748b" }}>SQX BRIDGE: </span>
-          <strong style={{ color: systemMetrics.sqxBridgeConnected ? "#34d399" : "#64748b" }}>
-            {systemMetrics.sqxBridgeConnected ? "CONECTADO" : "STANDBY (8081)"}
-          </strong>
-        </div>
-
-        <span style={{ color: "rgba(255,255,255,0.1)" }}>|</span>
-
-        <div>
-          <span style={{ color: "#64748b" }}>TELEMETRÍA 24/7: </span>
-          <strong style={{ color: systemMetrics.sseConnected ? "#34d399" : "#f43f5e" }}>
-            {systemMetrics.sseConnected ? "ACTIVO" : "RECONECTANDO"}
-          </strong>
-        </div>
-      </div>
-
-      {/* 2. RIGHT: SSE BADGE & DUAL TIME CLOCK */}
-      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-        {/* SSE STATUS CHIP */}
-        <div
-          onClick={reconnect}
-          title="Streaming Server-Sent Events (SSE) :8000. Haz clic para forzar reconexión."
+      {/* 1. SECCIÓN IZQUIERDA: SELECTOR RÁPIDO DE VISTA */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", position: "relative" }}>
+        <button
+          onClick={() => setViewMenuOpen(!viewMenuOpen)}
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "5px",
-            fontSize: "10px",
-            fontFamily: "var(--font-mono, monospace)",
-            padding: "2px 8px",
-            borderRadius: "4px",
-            background: systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.1)" : "rgba(251, 191, 36, 0.1)",
-            color: systemMetrics.sseConnected ? "#34d399" : "#fbbf24",
-            border: `1px solid ${systemMetrics.sseConnected ? "rgba(52, 211, 153, 0.3)" : "rgba(251, 191, 36, 0.3)"}`,
+            gap: "7px",
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            padding: "5px 10px",
+            borderRadius: "7px",
             cursor: "pointer",
+            color: "#f8fafc",
+            fontSize: "12px",
+            fontWeight: 700,
+            fontFamily: "var(--font-mono, monospace)",
+            transition: "all 0.15s ease",
           }}
         >
           <span
             style={{
-              width: "5px",
-              height: "5px",
+              width: "7px",
+              height: "7px",
               borderRadius: "50%",
-              backgroundColor: systemMetrics.sseConnected ? "#34d399" : "#fbbf24",
-              boxShadow: `0 0 5px ${systemMetrics.sseConnected ? "#34d399" : "#fbbf24"}`,
+              backgroundColor: "#10b981",
+              boxShadow: "0 0 8px #10b981",
             }}
           />
-          <span>SSE {systemMetrics.connectionState}</span>
+          <span>{getCurrentStepLabel()}</span>
+          <ChevronDown style={{ width: "13px", height: "13px", color: "#94a3b8" }} />
+        </button>
+
+        {viewMenuOpen && (
+          <div
+            style={{
+              position: "absolute",
+              top: "38px",
+              left: 0,
+              width: "240px",
+              background: "rgba(10, 15, 26, 0.98)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              borderRadius: "10px",
+              boxShadow: "0 12px 32px rgba(0, 0, 0, 0.6)",
+              padding: "6px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "2px",
+              zIndex: 300,
+            }}
+            onMouseLeave={() => setViewMenuOpen(false)}
+          >
+            <div
+              style={{
+                fontSize: "9px",
+                fontWeight: 800,
+                color: "#64748b",
+                letterSpacing: "0.8px",
+                padding: "4px 8px",
+                textTransform: "uppercase",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
+              ACCESO DIRECTO EMBUDO
+            </div>
+            {navShortcuts.map((item) => (
+              <button
+                key={item.href}
+                onClick={() => {
+                  router.push(item.href);
+                  setViewMenuOpen(false);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "7px 9px",
+                  borderRadius: "6px",
+                  background: pathname === item.href ? "rgba(255, 255, 255, 0.08)" : "transparent",
+                  border: "none",
+                  color: "#cbd5e1",
+                  fontSize: "11.5px",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  transition: "background 0.1s ease",
+                }}
+              >
+                <item.icon style={{ width: "14px", height: "14px", color: item.color }} />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 2. SECCIÓN DERECHA: RELOJ INSTITUCIONAL DUAL Y ESTADO SSE */}
+      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        {/* RELOJ DUAL LOCAL / UTC */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "rgba(0, 0, 0, 0.4)",
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+            padding: "4px 10px",
+            borderRadius: "6px",
+            fontSize: "11px",
+            fontFamily: "var(--font-mono, monospace)",
+            color: "#94a3b8",
+          }}
+        >
+          <Clock style={{ width: "12px", height: "12px", color: "#64748b" }} />
+          <span style={{ color: "#e2e8f0", fontWeight: 700 }}>{mounted ? timeUtc : "--:--:-- UTC"}</span>
+          <span style={{ color: "#475569" }}>|</span>
+          <span>{mounted ? timeLocal : "--:--:-- LOC"}</span>
         </div>
 
-        {/* DUAL CLOCK: LOCAL + UTC */}
-        <span style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)", fontWeight: 700 }}>
-          ⏱️ {timeDisplay || "LIVE"}
-        </span>
+        {/* ESTADO BACKEND & DOCTRINA */}
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <button
+            onClick={() => router.push("/sistema")}
+            title="Ver Telemetría 24/7 y SystemSupervisor"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              padding: "3px 8px",
+              borderRadius: "5px",
+              background: "rgba(16, 185, 129, 0.08)",
+              border: "1px solid rgba(16, 185, 129, 0.2)",
+              fontSize: "10px",
+              fontFamily: "var(--font-mono, monospace)",
+              color: "#10b981",
+              fontWeight: 700,
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <Activity style={{ width: "11px", height: "11px" }} />
+            <span>FASTAPI :8000 LIVE</span>
+          </button>
+        </div>
       </div>
     </header>
   );

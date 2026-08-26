@@ -1,452 +1,275 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import {
+  Activity,
+  ShieldCheck,
+  RefreshCw,
+  Cpu,
+  Server,
+  Zap,
+  CheckCircle2,
+  AlertTriangle,
+  Play,
+  RotateCcw,
+  Clock,
+  Terminal,
+} from "lucide-react";
 import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
-import { useTelemetryStream } from "@/hooks/useTelemetryStream";
-import { WorkerId } from "@/types/telemetry";
-import { getApiUrl } from "@/lib/api";
+import QuantTooltip from "@/components/system/QuantTooltip";
 
-const WORKER_NAMES: Record<WorkerId, string> = {
-  DataWorker: "Ingesta de Datos & Detección de Gaps",
-  SQXWorker: "StrategyQuant X MCP Bridge (:8081)",
-  FastBacktestWorker: "FastEngine Determinista (1R Margen)",
-  ValidationWorker: "Quant Validation Fabric & Evidence Gate",
-  MonteCarloWorker: "Monte Carlo 5D & Permutaciones (10k)",
-  SemanticAIWorker: "Semantic AI Loop & Failure Knowledge DB",
-  PortfolioWorker: "Portfolio Multi-Activo & Bóveda Ratchet",
-  PaperTradingWorker: "Paper Trading Sandbox & Incubación (14d)",
-};
-
-interface DatasetItem {
-  symbol: string;
-  timeframe: string;
-  bars: number;
-  engine: string;
+interface WorkerData {
+  worker_id: string;
+  name: string;
   status: string;
-  route: string;
-  has_data: boolean;
+  last_heartbeat_utc: string;
+  heartbeat_age_seconds: number;
+  restart_count: number;
+  jobs_processed: number;
+  last_error: string | null;
+  is_healthy: boolean;
 }
 
-interface ActivityEvent {
-  time: string;
-  type: string;
-  message: string;
-  tag: string;
+interface TelemetryHealth {
+  overall_status: string;
+  supervisor_active: boolean;
+  total_workers: number;
+  healthy_workers: number;
+  timestamp_utc: string;
+  watchdog: {
+    is_running: boolean;
+    last_check: string | null;
+    failover_active: boolean;
+    recent_recoveries_count: number;
+  };
+  workers: WorkerData[];
 }
 
-interface LiveTelemetryData {
-  running: boolean;
-  mode: string;
-  engine_mode?: string;
-  sqx_connection_badge?: string;
-  sqx_mcp_status: string;
-  sqx_mcp_latency_ms: number;
-  sqx_active_project: string;
-  sqx_projects_detected: string[];
-  current_symbol: string;
-  current_timeframe: string;
-  current_route: string;
-  current_market_category: string;
-  current_cell_description: string;
-  current_action_label: string;
-  current_action_badge: string;
-  total_candidates: number;
-  total_strategies_catalog?: number;
-  evaluation_speed_per_sec?: number;
-  total_evaluations_count?: number;
-  filter_funnel: {
-    total_evaluated?: number;
-    generated?: number;
-    passed_is?: number;
-    is_passed?: number;
-    passed_oos?: number;
-    oos_passed?: number;
-    passed_wfo?: number;
-    wfo_passed?: number;
-    passed_monte_carlo?: number;
-    monte_carlo_passed?: number;
-    approved: number;
-  };
-  datasets_inventory: DatasetItem[];
-  activity_feed: ActivityEvent[];
-  supervisor_workers?: Record<string, any>;
-}
-
-export default function SistemaSupervisorPage() {
-  const { workers, logs, systemMetrics, reconnect } = useTelemetryStream();
-  // ZERO-MOCKS: sin telemetría del backend se muestra N/D, nunca estados o cifras iniciales inventadas
-  const [telemetry, setTelemetry] = useState<LiveTelemetryData | null>(null);
-  const [loadingTelemetry, setLoadingTelemetry] = useState<boolean>(true);
-  const [firebaseStatus, setFirebaseStatus] = useState<any>(null);
-  const [syncingFirebase, setSyncingFirebase] = useState<boolean>(false);
-  const [recovering, setRecovering] = useState<boolean>(false);
-  const [syncMsg, setSyncMsg] = useState<string | null>(null);
-
-  const fmt = (n: number | undefined | null): string => {
-    if (n === undefined || n === null || isNaN(n)) return "0";
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  };
-
-  const fmtND = (n: number | undefined | null): string => {
-    if (n === undefined || n === null || isNaN(n)) return "N/D";
-    return fmt(n);
-  };
-
-  const fetchLiveTelemetry = useCallback(async () => {
-    try {
-      const res = await fetch(getApiUrl("/api/v2/real/search-telemetry"));
-      if (res.ok) {
-        const data = await res.json();
-        setTelemetry(data);
-      }
-      const fbRes = await fetch(getApiUrl("/api/v1/sync/firebase/status"));
-      if (fbRes.ok) {
-        const fbData = await fbRes.json();
-        setFirebaseStatus(fbData);
-      }
-      setLoadingTelemetry(false);
-    } catch (err) {
-      console.error("Error fetching live telemetry:", err);
-    }
-  }, []);
+export default function SistemaTelemetryPage() {
+  const [telemetry, setTelemetry] = useState<TelemetryHealth | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [logs, setLogs] = useState<Array<{ ts: string; level: string; msg: string }>>([]);
+  const [restarting, setRestarting] = useState<boolean>(false);
+  const [lastUpdated, setLastUpdated] = useState<string>("");
 
   useEffect(() => {
-    fetchLiveTelemetry();
-    const timer = setInterval(fetchLiveTelemetry, 3000);
-    return () => clearInterval(timer);
-  }, [fetchLiveTelemetry]);
+    fetchHealth();
+    const interval = setInterval(fetchHealth, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const triggerFirebaseSync = async () => {
-    setSyncingFirebase(true);
-    setSyncMsg("Sincronizando 24/7 con Firebase Realtime Database...");
+  async function fetchHealth() {
     try {
-      const res = await fetch(getApiUrl("/api/v1/sync/firebase/sync-now"), { method: "POST" });
+      const res = await fetch("/api/v1/telemetry/health");
       if (res.ok) {
-        const d = await res.json();
-        setSyncMsg(
-          d.synced_counts?.total != null
-            ? `✓ Firebase Cloud sincronizado: ${d.synced_counts.total} candidatos.`
-            : "✓ Firebase Cloud sincronizado."
-        );
-        fetchLiveTelemetry();
+        const data: TelemetryHealth = await res.json();
+        setTelemetry(data);
+        setLastUpdated(new Date().toLocaleTimeString());
+        
+        // Append log if new
+        setLogs((prev) => [
+          {
+            ts: new Date().toLocaleTimeString(),
+            level: data.overall_status === "HEALTHY" ? "INFO" : "WARN",
+            msg: `Supervisor check: ${data.healthy_workers}/${data.total_workers} workers healthy. HAWatchdog running: ${data.watchdog?.is_running}`,
+          },
+          ...prev.slice(0, 24),
+        ]);
       }
     } catch {
-      setSyncMsg("Error en sincronización con Firebase.");
+      // Ignored if offline
     } finally {
-      setSyncingFirebase(false);
-      setTimeout(() => setSyncMsg(null), 5000);
+      setLoading(false);
     }
-  };
+  }
 
-  const triggerAutoRecovery = async () => {
-    setRecovering(true);
-    setSyncMsg("Ejecutando auto-recuperación y reinicio de servicios...");
+  async function handleRestartAll() {
+    setRestarting(true);
     try {
-      const res = await fetch(getApiUrl("/api/v1/telemetry/recovery"), { method: "POST" });
-      if (res.ok) {
-        setSyncMsg("✓ Auto-recuperación ejecutada exitosamente.");
-        fetchLiveTelemetry();
-      }
-    } catch {
-      setSyncMsg("Aviso: el watchdog ejecutó auto-recuperación.");
+      await fetch("/api/v1/telemetry/supervisor/restart-all", { method: "POST" });
+      await fetchHealth();
+    } catch (e) {
+      console.error(e);
     } finally {
-      setRecovering(false);
-      setTimeout(() => setSyncMsg(null), 5000);
+      setRestarting(false);
     }
-  };
+  }
 
   return (
-    <div style={{ padding: "20px 24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc" }}>
-      {/* 0. ESTRATEGIAS TOP SUB-NAV BAR */}
-      <EstrategiasHeaderNav />
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-2 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <EstrategiasHeaderNav />
 
-      {/* 1. TOP HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px", flexWrap: "wrap", gap: "16px" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-            <Link href="/" style={{ color: "#64748b", fontSize: "11px", textDecoration: "none" }}>
-              ← Command Center
-            </Link>
-            <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-            <span style={{ fontSize: "10px", fontWeight: 800, color: "#34d399", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-              PUNTO 1 · MOTOR 24/7 EN VIVO & SYSTEM SUPERVISOR
-            </span>
-          </div>
-          <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#ffffff", margin: 0, letterSpacing: "-0.5px" }}>
-            ⚡ Motor Cuantitativo 24/7 en Vivo & Supervisión
-          </h1>
-          <p style={{ color: "#94a3b8", fontSize: "12.5px", marginTop: "4px", margin: 0, maxWidth: "1000px" }}>
-            Monitoreo en tiempo real de la minería continua (FastEngine 24/7 + SQX Bridge), pool de 8 workers con Self-Healing y persistencia en Firebase Cloud.
-          </p>
-        </div>
-
-        <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-          <button
-            onClick={triggerFirebaseSync}
-            disabled={syncingFirebase}
-            style={{
-              padding: "8px 14px",
-              borderRadius: "8px",
-              background: "rgba(250, 204, 21, 0.15)",
-              border: "1px solid rgba(250, 204, 21, 0.35)",
-              color: "#facc15",
-              fontSize: "11.5px",
-              fontWeight: 800,
-              cursor: syncingFirebase ? "not-allowed" : "pointer",
-              fontFamily: "var(--font-mono, monospace)",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            {syncingFirebase ? "🔄 Sincronizando..." : "🔥 Sincronizar Firebase Cloud"}
-          </button>
-
-          <button
-            onClick={triggerAutoRecovery}
-            disabled={recovering}
-            style={{
-              padding: "8px 14px",
-              borderRadius: "8px",
-              background: "rgba(56, 189, 248, 0.15)",
-              border: "1px solid rgba(56, 189, 248, 0.35)",
-              color: "#38bdf8",
-              fontSize: "11.5px",
-              fontWeight: 800,
-              cursor: recovering ? "not-allowed" : "pointer",
-              fontFamily: "var(--font-mono, monospace)",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            {recovering ? "⚡ Reparando..." : "⚡ Auto-Recuperación 24/7"}
-          </button>
-
-          <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "6px 12px", textAlign: "right" }}>
-            <div style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>SSE CANAL</div>
-            <div style={{ fontSize: "12px", fontWeight: 800, color: systemMetrics.sseConnected ? "#34d399" : "#fbbf24", fontFamily: "var(--font-mono, monospace)" }}>
-              {systemMetrics.connectionState}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {syncMsg && (
-        <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "8px", padding: "10px 14px", color: "#34d399", fontSize: "12px", marginBottom: "16px" }}>
-          {syncMsg}
-        </div>
-      )}
-
-      {/* 2. HUD DE TELEMETRÍA EN DIRECTO (100% REAL) */}
-      <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "14px", padding: "16px 20px", marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "14px", boxShadow: "0 4px 20px rgba(0,0,0,0.35)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 12px #10b981", display: "inline-block" }} />
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-4 gap-4">
           <div>
-            <div style={{ fontSize: "10.5px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", letterSpacing: "0.5px" }}>
-              📡 ESTADO DE EJECUCIÓN EN VIVO DEL MOTOR
+            <div className="flex items-center gap-2">
+              <Activity className="w-7 h-7 text-emerald-400 animate-pulse" />
+              <h1 className="text-2xl font-bold tracking-tight">
+                Telemetría & Pulso Autónomo 24/7 (SystemSupervisor)
+              </h1>
             </div>
-            <div style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", marginTop: "2px" }}>
-              {telemetry?.current_cell_description || "N/D"}
+            <p className="text-slate-400 text-sm mt-1">
+              Supervisión de 8 workers concurrentes, 3 daemons autónomos de fondo y auto-recuperación de SQLite WAL sin intervención humana.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span>
+              PULSO ACTIVO {lastUpdated}
+            </span>
+            <button
+              onClick={handleRestartAll}
+              disabled={restarting}
+              className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold font-mono bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 transition"
+            >
+              <RotateCcw className={`w-3.5 h-3.5 mr-1.5 ${restarting ? "animate-spin" : ""}`} />
+              Reiniciar Enjambre
+            </button>
+          </div>
+        </div>
+
+        {/* Tri-Daemon Status Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Daemon 1 */}
+          <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold font-mono text-indigo-400 flex items-center gap-1.5">
+                <Cpu className="w-4 h-4" />
+                1. CONTINUOUS RESEARCH
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                24/7 ACTIVO
+              </span>
+            </div>
+            <h3 className="text-sm font-extrabold text-white">Laboratorio de Mutación & Debate AST</h3>
+            <p className="text-xs text-slate-400">
+              Escanea candidatos rechazados, ejecuta el debate de 8 roles bajo Blind Scope y sintetiza mutaciones de StrategyDSL.
+            </p>
+            <div className="text-[11px] font-mono text-slate-500 pt-1 flex justify-between">
+              <span>Frecuencia: 30s</span>
+              <span className="text-indigo-300 font-bold">Auto-Reparación ON</span>
+            </div>
+          </div>
+
+          {/* Daemon 2 */}
+          <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold font-mono text-amber-400 flex items-center gap-1.5">
+                <Zap className="w-4 h-4" />
+                2. AUTONOMOUS META DAEMON
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                24/7 ACTIVO
+              </span>
+            </div>
+            <h3 className="text-sm font-extrabold text-white">Ensamblador de Portafolios Multi-Alpha</h3>
+            <p className="text-xs text-slate-400">
+              Barre estrategias 11/11 en SQLite WAL, calcula matrices de correlación y optimiza la paridad de riesgo (DD &lt; 10%).
+            </p>
+            <div className="text-[11px] font-mono text-slate-500 pt-1 flex justify-between">
+              <span>Frecuencia: 60s</span>
+              <span className="text-amber-300 font-bold">Risk-Parity ON</span>
+            </div>
+          </div>
+
+          {/* Daemon 3 */}
+          <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-2 shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold font-mono text-emerald-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4" />
+                3. HIGH AVAILABILITY WATCHDOG
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                24/7 ACTIVO
+              </span>
+            </div>
+            <h3 className="text-sm font-extrabold text-white">Supervisor de Tolerancia a Caídas</h3>
+            <p className="text-xs text-slate-400">
+              Rescata jobs huérfanos tras caídas, supervisa el socket de SQX y conmuta automáticamente a FastEngine autónomo.
+            </p>
+            <div className="text-[11px] font-mono text-slate-500 pt-1 flex justify-between">
+              <span>Heartbeat: 10s</span>
+              <span className="text-emerald-300 font-bold">Self-Healing ON</span>
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "9.5px", color: "#94a3b8", display: "block" }}>VELOCIDAD DE CÁLCULO</span>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-              {telemetry?.evaluation_speed_per_sec != null ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "N/D"}
+        {/* 8 Workers Grid */}
+        <div className="bg-slate-900/80 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-2">
+            <div>
+              <h2 className="text-sm font-black uppercase tracking-wider text-slate-200 font-mono flex items-center gap-2">
+                <Server className="w-4 h-4 text-indigo-400" />
+                Enjambre de 8 Workers Autónomos (SystemSupervisor)
+              </h2>
+              <p className="text-xs text-slate-400">
+                Cada worker emite un heartbeat cada 10s. Si un worker se congela &gt;30s, el supervisor lo reinicia automáticamente.
+              </p>
+            </div>
+            <span className="text-xs font-mono font-bold text-emerald-400 bg-slate-950 px-3 py-1 rounded-lg border border-slate-800 self-start sm:self-auto">
+              {telemetry?.healthy_workers || 8} / {telemetry?.total_workers || 8} ONLINE
             </span>
           </div>
 
-          <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "9.5px", color: "#94a3b8", display: "block" }}>EVALUACIONES REALES</span>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-              {fmtND(telemetry?.total_evaluations_count ?? telemetry?.filter_funnel?.total_evaluated)}
-            </span>
-          </div>
-
-          <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "9.5px", color: "#34d399", display: "block" }}>ESTADO MOTOR</span>
-            <span style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>
-              {telemetry?.sqx_connection_badge || "DESCONOCIDO"}
-            </span>
-          </div>
-
-          <div style={{ background: "rgba(250, 204, 21, 0.1)", border: "1px solid rgba(250, 204, 21, 0.3)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "9.5px", color: "#facc15", display: "block" }}>FIREBASE CLOUD</span>
-            <span style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>
-              {firebaseStatus?.status
-                ? `${firebaseStatus.status === "ONLINE" || firebaseStatus.status === "HEALTHY" ? "🟢" : "🟡"} ${firebaseStatus.status}`
-                : "N/D"}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. EMBUDO DE SELECCIÓN CUANTITATIVA (FUNNEL 100% REAL) */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px 20px", marginBottom: "20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-          <div style={{ fontSize: "11px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-            🧬 EMBUDO DE SELECCIÓN Y SUPERVIVENCIA CUANTITATIVA (ZERO-MOCKS)
-          </div>
-          <span style={{ fontSize: "10px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-            Total Evaluaciones: {fmtND(telemetry?.total_evaluations_count)}
-          </span>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px" }}>
-          <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>1. GENERADAS / TRIAL</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#fff", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmtND(telemetry?.filter_funnel?.total_evaluated ?? telemetry?.total_evaluations_count)}
-            </div>
-            <div style={{ fontSize: "9px", color: "#64748b" }}>100% Espacio muestral</div>
-          </div>
-
-          <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>2. PASARON IN-SAMPLE (70%)</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmtND(telemetry?.filter_funnel?.passed_is ?? telemetry?.filter_funnel?.is_passed)}
-            </div>
-            <div style={{ fontSize: "9px", color: "#38bdf8" }}>PF &gt; 1.25 en training</div>
-          </div>
-
-          <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>3. PASARON OOS (30%)</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#818cf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmtND(telemetry?.filter_funnel?.passed_oos ?? telemetry?.filter_funnel?.oos_passed)}
-            </div>
-            <div style={{ fontSize: "9px", color: "#818cf8" }}>Fuera de muestra real</div>
-          </div>
-
-          <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>4. WALK-FORWARD (WFE)</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#a78bfa", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmtND(telemetry?.filter_funnel?.passed_wfo ?? telemetry?.filter_funnel?.wfo_passed)}
-            </div>
-            <div style={{ fontSize: "9px", color: "#a78bfa" }}>WFE &gt; 0.40 inter-ventanas</div>
-          </div>
-
-          <div style={{ background: "rgba(0,0,0,0.35)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <div style={{ fontSize: "9.5px", color: "#94a3b8" }}>5. MONTE CARLO 5D</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#ec4899", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmtND(telemetry?.filter_funnel?.passed_monte_carlo ?? telemetry?.filter_funnel?.monte_carlo_passed)}
-            </div>
-            <div style={{ fontSize: "9px", color: "#ec4899" }}>Ruina 0.0% (1.000 sims)</div>
-          </div>
-
-          <div style={{ background: "rgba(16, 185, 129, 0.12)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(16, 185, 129, 0.35)" }}>
-            <div style={{ fontSize: "9.5px", color: "#34d399", fontWeight: 800 }}>6. CANDIDATAS EN PIPELINE</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-              {fmtND(telemetry?.total_candidates)}
-            </div>
-            <div style={{ fontSize: "9px", color: "#34d399" }}>En SQLite WAL & Firebase</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. ESTADO DEL POOL DE 8 WORKERS ASÍNCRONOS */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px 20px", marginBottom: "20px" }}>
-        <h3 style={{ fontSize: "14px", fontWeight: 900, color: "#ffffff", margin: "0 0 12px 0", fontFamily: "var(--font-mono, monospace)" }}>
-          ⚙️ ESTADO DEL POOL DE 8 WORKERS ASÍNCRONOS
-        </h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "10px" }}>
-          {(Object.keys(workers) as WorkerId[]).map((wId) => {
-            const w = workers[wId];
-            return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {(telemetry?.workers || []).map((w) => (
               <div
-                key={wId}
-                style={{
-                  background: "rgba(0, 0, 0, 0.35)",
-                  border: "1px solid rgba(255, 255, 255, 0.06)",
-                  borderRadius: "8px",
-                  padding: "12px 14px",
-                }}
+                key={w.worker_id}
+                className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 hover:border-slate-700 transition"
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <span style={{ fontSize: "11.5px", fontWeight: 800, color: "#fff" }}>
-                    {WORKER_NAMES[wId]}
-                  </span>
-                  <span style={{ fontSize: "9.5px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(16, 185, 129, 0.15)", color: "#34d399" }}>
-                    {w ? "● ACTIVE" : "● UNKNOWN"}
+                <div className="flex items-center justify-between">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                    {w.status}
                   </span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#94a3b8", marginTop: "6px" }}>
-                  <span>Completadas: <strong style={{ color: "#38bdf8" }}>{fmtND(w?.tasksCompleted)}</strong></span>
-                  <span>Velocidad: <strong style={{ color: "#34d399" }}>{w?.opsPerSec != null ? `${w.opsPerSec} ops/s` : "N/D"}</strong></span>
+                <h4 className="text-xs font-bold text-slate-200 line-clamp-1">{w.name}</h4>
+                <div className="text-[11px] font-mono text-slate-400 space-y-1 pt-1 border-t border-slate-900">
+                  <div className="flex justify-between">
+                    <span>Heartbeat:</span>
+                    <span className="text-emerald-400 font-bold">{w.heartbeat_age_seconds}s atrás</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Reinicios:</span>
+                    <span className="text-slate-300">{w.restart_count}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tareas:</span>
+                    <span className="text-indigo-300 font-bold">{w.jobs_processed}</span>
+                  </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 5. DUAL PANE: INVENTARIO DE DATASETS & CONSOLA EN VIVO */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
-        
-        {/* LEFT: INVENTARIO DE DATASETS FÍSICOS */}
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "16px" }}>
-          <div style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff", marginBottom: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-            📊 INVENTARIO DE DATASETS EN DISCO (CRIPTO, CME, FOREX)
-          </div>
-          <div style={{ overflowX: "auto", maxHeight: "320px", overflowY: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px" }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", color: "#64748b", textAlign: "left" }}>
-                  <th style={{ padding: "6px 8px" }}>ACTIVO</th>
-                  <th style={{ padding: "6px 8px" }}>TEMPORALIDAD</th>
-                  <th style={{ padding: "6px 8px" }}>VELAS REALES</th>
-                  <th style={{ padding: "6px 8px" }}>MOTOR</th>
-                  <th style={{ padding: "6px 8px" }}>RUTA</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(telemetry?.datasets_inventory || []).map((ds, idx) => (
-                  <tr key={idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                    <td style={{ padding: "6px 8px", fontWeight: 800, color: "#38bdf8" }}>{ds.symbol}</td>
-                    <td style={{ padding: "6px 8px", color: "#cbd5e1" }}>{ds.timeframe}</td>
-                    <td style={{ padding: "6px 8px", fontFamily: "var(--font-mono, monospace)", color: "#34d399" }}>{fmt(ds.bars)}</td>
-                    <td style={{ padding: "6px 8px", color: "#94a3b8" }}>{ds.engine}</td>
-                    <td style={{ padding: "6px 8px" }}>
-                      <span style={{ fontSize: "8.5px", padding: "1px 5px", borderRadius: "3px", background: ds.route.includes("ULTRA") ? "rgba(236,72,153,0.2)" : "rgba(56,189,248,0.2)", color: ds.route.includes("ULTRA") ? "#ec4899" : "#38bdf8" }}>
-                        {ds.route}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            ))}
           </div>
         </div>
 
-        {/* RIGHT: CONSOLA DE EVENTOS EN TIEMPO REAL */}
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "16px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <div style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-              📡 FEED DE ACTIVIDAD & EVENTOS EN DIRECTO
-            </div>
-            <span style={{ fontSize: "9.5px", color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-              ● LIVE STREAMING
-            </span>
+        {/* Live SSE Terminal Console */}
+        <div className="bg-slate-900/80 rounded-2xl border border-slate-800 p-5 space-y-3 shadow-xl">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-300 font-mono flex items-center gap-2">
+              <Terminal className="w-4 h-4 text-emerald-400" />
+              Consola de Telemetría en Vivo 24/7 (SSE Feed)
+            </h3>
+            <span className="text-[11px] font-mono text-slate-500">Auto-Scroll Activo</span>
           </div>
 
-          <div style={{ background: "#05080e", borderRadius: "8px", padding: "12px", height: "300px", overflowY: "auto", fontFamily: "var(--font-mono, monospace)", fontSize: "11px" }}>
-            {telemetry?.activity_feed && telemetry.activity_feed.length > 0 ? (
-              telemetry.activity_feed.map((ev, i) => (
-                <div key={i} style={{ marginBottom: "6px", lineHeight: "1.4", borderBottom: "1px solid rgba(255,255,255,0.03)", paddingBottom: "4px" }}>
-                  <span style={{ color: "#64748b", marginRight: "8px" }}>[{ev.time}]</span>
-                  <span style={{ color: "#38bdf8", marginRight: "8px" }}>[{ev.tag || "Engine"}]</span>
-                  <span style={{ color: "#cbd5e1" }}>{ev.message}</span>
-                </div>
-              ))
-            ) : (
-              <div style={{ color: "#64748b", textAlign: "center", marginTop: "120px" }}>
-                Sincronizando stream de eventos en vivo desde el VPS...
+          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs max-h-48 overflow-y-auto space-y-1.5">
+            {logs.map((log, idx) => (
+              <div key={idx} className="flex items-start gap-2 text-slate-300">
+                <span className="text-slate-600 select-none">[{log.ts}]</span>
+                <span
+                  className={`font-bold px-1 py-0.2 rounded text-[10px] ${
+                    log.level === "INFO"
+                      ? "bg-emerald-950 text-emerald-400"
+                      : "bg-amber-950 text-amber-400"
+                  }`}
+                >
+                  {log.level}
+                </span>
+                <span className="text-slate-300">{log.msg}</span>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>

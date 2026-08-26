@@ -1,6 +1,7 @@
 """services/discovery/funding_discovery.py
 Motor de Búsqueda y Descubrimiento Cuantitativo para la Ruta FONDEO (Fase 3).
-Optimización de candidatos para superar pruebas de prop firms en <= 5 días sujeto a Trailing DD <= 4.5% y DLL.
+Optimización de candidatos para superar pruebas de prop firms en <= 5 días sujeto a Trailing DD <= 4.0% y DLL <= 2.0%.
+ZERO-MOCKS · REAL-ONLY · MERKLE PROVENANCE
 """
 
 from __future__ import annotations
@@ -8,14 +9,26 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
-from contracts.canonical_strategy import RuleTree, ExitModel, SizingAndRisk, IndicatorSpec, RuleCondition, ComparisonOperator, SessionWindow
+from contracts.canonical_strategy import (
+    RuleTree,
+    ExitModel,
+    StopLossType,
+    TakeProfitType,
+    SizingAndRisk,
+    SizingType,
+    IndicatorSpec,
+    ConditionNode,
+    ComparisonOp,
+    LogicalOp,
+    SessionWindow,
+)
 from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, PyramidingPolicy, MarginPolicy
 
 
 class FundingSearchSpace(BaseModel):
     symbols: List[str] = Field(default_factory=lambda: ["NQ", "ES", "YM", "RTY", "CL", "GC", "EURUSD", "GBPUSD"])
     timeframes: List[str] = Field(default_factory=lambda: ["5m", "15m", "1h"])
-    max_drawdown_ceiling_pct: float = Field(default=4.5, le=5.0)
+    max_drawdown_ceiling_pct: float = Field(default=4.0, le=4.5)
     target_pass_days: int = Field(default=5, ge=1, le=20)
 
 
@@ -32,11 +45,9 @@ class FundingDiscoveryEngine:
         timeframe: str,
         dataset_id: str,
         dataset_sha256: str,
-        risk_per_trade_pct: float = 0.20,
-        target_profit_ticks: int = 40,
-        stop_loss_ticks: int = 20,
-        sl_atr_mult: float = 1.8,
-        tp_atr_mult: float = 5.5,
+        risk_per_trade_pct: float = 0.25,
+        target_profit_ticks: float = 45.0,
+        stop_loss_ticks: float = 15.0,
         ema_fast: int = 9,
         ema_slow: int = 21,
         rsi_period: int = 14,
@@ -45,61 +56,64 @@ class FundingDiscoveryEngine:
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot inmutable con la configuración estricta para Fondeo."""
         entry_rules = RuleTree(
+            logic=LogicalOp.AND,
+            direction="BOTH",
             long_conditions=[
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
-                    operator=ComparisonOperator.CROSSES_ABOVE,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
+                ConditionNode(
+                    left=IndicatorSpec(name="EMA", params={"period": ema_fast}, source_field="close", shift=0),
+                    op=ComparisonOp.CROSS_ABOVE,
+                    right=IndicatorSpec(name="EMA", params={"period": ema_slow}, source_field="close", shift=0),
                 ),
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
-                    operator=ComparisonOperator.GREATER_THAN,
-                    threshold_value=rsi_threshold_long,
+                ConditionNode(
+                    left=IndicatorSpec(name="RSI", params={"period": rsi_period}, source_field="close", shift=0),
+                    op=ComparisonOp.GT,
+                    right=rsi_threshold_long,
                 ),
             ],
             short_conditions=[
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_fast),
-                    operator=ComparisonOperator.CROSSES_BELOW,
-                    right_indicator=IndicatorSpec(name="EMA", timeframe=timeframe, period=ema_slow),
+                ConditionNode(
+                    left=IndicatorSpec(name="EMA", params={"period": ema_fast}, source_field="close", shift=0),
+                    op=ComparisonOp.CROSS_BELOW,
+                    right=IndicatorSpec(name="EMA", params={"period": ema_slow}, source_field="close", shift=0),
                 ),
-                RuleCondition(
-                    left_indicator=IndicatorSpec(name="RSI", timeframe=timeframe, period=rsi_period),
-                    operator=ComparisonOperator.LESS_THAN,
-                    threshold_value=rsi_threshold_short,
+                ConditionNode(
+                    left=IndicatorSpec(name="RSI", params={"period": rsi_period}, source_field="close", shift=0),
+                    op=ComparisonOp.LT,
+                    right=rsi_threshold_short,
                 ),
             ],
-            logical_operator="AND",
         )
 
         exit_rules = ExitModel(
-            stop_loss_ticks=stop_loss_ticks,
-            take_profit_ticks=target_profit_ticks,
-            break_even_atr_mult=1.0,
-            max_bars_in_trade=24,
+            sl_type=StopLossType.FIXED_POINTS,
+            sl_value=stop_loss_ticks,
+            tp_type=TakeProfitType.FIXED_POINTS,
+            tp_value=target_profit_ticks,
+            time_stop_bars=36,
         )
 
         sizing = SizingAndRisk(
-            base_risk_pct=risk_per_trade_pct,
-            max_contracts_or_lots=5.0,
-            base_leverage=1.0,
+            sizing_type=SizingType.RISK_PCT_EQUITY,
+            risk_value=risk_per_trade_pct,
+            max_open_positions=1,
+            max_daily_loss_usd=1000.0,
         )
 
-        pyramiding = PyramidingPolicy(enabled=False, max_tiers=1, tiers=[])
+        pyramiding = PyramidingPolicy(enabled=False)
 
         margin_policy = MarginPolicy(
-            margin_mode="CROSS_MARGIN",
-            max_leverage_ceiling=3.0,
+            margin_mode="ISOLATED",
+            max_leverage_ceiling=1.0,
             liquidation_buffer_min_pct=50.0,
             reinvestment_rate_pct=0.0,
             vault_harvest_rate_pct=0.0,
         )
 
         session_window = SessionWindow(
-            timezone="America/New_York",
-            start_time="09:30",
-            end_time="16:00",
-            force_close_at_end=True,
+            start_time_utc="13:30",
+            end_time_utc="20:00",
+            close_at_eod=True,
+            allowed_days=[0, 1, 2, 3, 4],
         )
 
         return StrategySnapshot.create_and_hash(
@@ -111,9 +125,9 @@ class FundingDiscoveryEngine:
             entry_rules=entry_rules,
             exit_rules=exit_rules,
             sizing_and_risk=sizing,
+            dataset_id_reference=dataset_id,
+            dataset_sha256_reference=dataset_sha256,
             pyramiding_policy=pyramiding,
             margin_policy=margin_policy,
             session_window=session_window,
-            dataset_id_reference=dataset_id,
-            dataset_sha256_reference=dataset_sha256,
         )

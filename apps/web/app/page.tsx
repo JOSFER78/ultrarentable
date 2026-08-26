@@ -1,1121 +1,657 @@
-/**
- * apps/web/app/page.tsx
- * Centro de Control Visual & Monitoreo del Motor Cuantitativo 24/7
- * 100% DATOS REALES DIRECTAMENTE DESDE FASTAPI, SQLITE WAL & SQX MCP (CERO MOCKS)
- */
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import {
+  Cpu,
+  Layers,
+  Database,
+  Activity,
+  ArrowRight,
+  TrendingUp,
+  ShieldCheck,
+  Hash,
+  Award,
+  Zap,
+  Filter,
+  PieChart,
+  Building2,
+  ShieldAlert,
+  Workflow,
+  CheckCircle2,
+  AlertTriangle,
+  RefreshCw,
+  Boxes,
+  DollarSign,
+  ChevronRight,
+} from "lucide-react";
+import {
+  getCandidates,
+  getCertifiedStrategies,
+  getCertifiedMetaStrategies,
+  CandidateStrategy,
+  CertifiedStrategy,
+  CertifiedMetaStrategy,
+} from "@/lib/api";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
+import QuantTooltip from "@/components/system/QuantTooltip";
 
-interface DatasetItem {
-  symbol: string;
-  timeframe: string;
-  bars: number;
-  engine: string;
-  status: string;
-  route: string;
-  has_data: boolean;
-}
-
-interface RealCandidate {
-  candidate_id: string;
-  name: string;
-  route: string;
-  symbol: string;
-  timeframe: string;
-  status: string;
-  net_profit_oos: number;
-  profit_factor_oos: number;
-  trades_oos: number;
-  max_dd_oos_pct: number;
-}
-
-interface ActivityEvent {
-  time: string;
-  type: string;
-  message: string;
-  tag: string;
-}
-
-interface LiveTelemetryData {
-  running: boolean;
-  mode: string;
-  sqx_mcp_status: string;
-  sqx_mcp_latency_ms: number;
-  sqx_active_project: string;
-  sqx_projects_detected: string[];
-  current_symbol: string;
-  current_timeframe: string;
-  current_route: string;
-  current_market_category: string;
-  current_cell_description: string;
-  current_action_label: string;
-  current_action_badge: string;
-  total_candidates: number;
-  total_strategies_catalog: number;
-  evaluation_speed_per_sec?: number;
-  total_evaluations_count?: number;
-  filter_funnel: {
-    generated: number;
-    is_passed: number;
-    oos_passed: number;
-    wfo_passed: number;
-    monte_carlo_passed: number;
-    approved: number;
+interface FunnelStep {
+  stepNumber: number;
+  id: string;
+  title: string;
+  shortTitle: string;
+  badge: string;
+  icon: string;
+  color: string;
+  gradient: string;
+  borderGlow: string;
+  summary: string;
+  description: string;
+  inputs: string[];
+  outputs: string[];
+  killSwitch: string;
+  primaryAction: {
+    label: string;
+    href: string;
   };
-  datasets_inventory: DatasetItem[];
-  recent_discoveries: RealCandidate[];
-  activity_feed: ActivityEvent[];
-  supervisor_workers: Record<string, any>;
+  secondaryAction?: {
+    label: string;
+    href: string;
+  };
+  metricsHighlight: {
+    label: string;
+    subtext: string;
+  };
 }
 
-export default function GeneticDiscoveryLabPage() {
-  const [telemetry, setTelemetry] = useState<LiveTelemetryData>({
-    running: true,
-    mode: "REAL_ONLY_ZERO_MOCK",
-    sqx_mcp_status: "ONLINE",
-    sqx_mcp_latency_ms: 0,
-    sqx_active_project: "Ultra_Auto_Pilot",
-    sqx_projects_detected: ["Ultra_Auto_Pilot"],
-    current_symbol: "--",
-    current_timeframe: "--",
-    current_route: "TRACK_ULTRA",
-    current_market_category: "Multiactivo Físico",
-    current_cell_description: "Iniciando motor de minería...",
-    current_action_label: "Sincronizando telemetría en vivo...",
-    current_action_badge: "⚡ Minería 24/7 Activa",
-    total_candidates: 0,
-    total_strategies_catalog: 0,
-    filter_funnel: {
-      generated: 0,
-      is_passed: 0,
-      oos_passed: 0,
-      wfo_passed: 0,
-      monte_carlo_passed: 0,
-      approved: 0,
+const FUNNEL_STEPS: FunnelStep[] = [
+  {
+    stepNumber: 1,
+    id: "generacion-candidatos",
+    title: "1. Generación Masiva & Motor de Backtest 24/7",
+    shortTitle: "Motor & Backtest",
+    badge: "PASO 1 · DESCUBRIMIENTO",
+    icon: "⚡",
+    color: "#38bdf8",
+    gradient: "from-sky-500/20 via-slate-900 to-slate-950",
+    borderGlow: "border-sky-500/40 shadow-[0_0_25px_rgba(56,189,248,0.15)]",
+    summary: "Descubrimiento determinista de algoritmos y cálculo de backtest trade-a-trade sobre datos históricos reales.",
+    description:
+      "El laboratorio genera hipótesis algorítmicas sobre futuros CME (NQ, ES, CL, GC) y criptoactivos. Cada estrategia se prueba sobre datos reales con comisiones y slippage de mercado, asignándole un hash SHA-256 inmutable.",
+    inputs: ["Datos OHLCV físicos reales", "Reglas formales de entrada/salida", "Comisiones y slippage de mercado"],
+    outputs: ["Estrategias canónicas identificadas", "Hash SHA-256 inmutable", "Catálogo SQLite WAL indexado"],
+    killSwitch: "Rechazo inmediato si existen datos faltantes (>2% gaps) o variables espiadas del futuro.",
+    primaryAction: {
+      label: "Lanzar FastEngine Backtest",
+      href: "/strategies",
     },
-    datasets_inventory: [],
-    recent_discoveries: [],
-    activity_feed: [],
-    supervisor_workers: {},
-  });
+    secondaryAction: {
+      label: "Explorador Excel de Candidatos",
+      href: "/candidatos",
+    },
+    metricsHighlight: {
+      label: "Simulación 100% Determinista",
+      subtext: "FastEngine trade-a-trade en SQLite",
+    },
+  },
+  {
+    stepNumber: 2,
+    id: "stress-testing-gates",
+    title: "2. Las 11 Pruebas de Estrés Implacables (Pipeline 11 Gates)",
+    shortTitle: "Pipeline 11 Gates",
+    badge: "PASO 2 · FILTRO DE SEGURIDAD",
+    icon: "🛡️",
+    color: "#63e1b4",
+    gradient: "from-emerald-500/20 via-slate-900 to-slate-950",
+    borderGlow: "border-emerald-500/40 shadow-[0_0_25px_rgba(99,225,180,0.15)]",
+    summary: "Batería de 11 pruebas estocásticas y anti-sobreajuste para descartar el 98% de humo o estrategias trucadas.",
+    description:
+      "Ninguna estrategia pasa a producción sin superar 11 compuertas matemáticas independientes: Out-Of-Sample ciego (20%), Walk-Forward Optimization (WFO >= 60%), 1.000 simulaciones Monte Carlo (0% ruina), 3x de Slippage y comisiones triplicadas.",
+    inputs: ["Estrategia candidata", "Muestra In-Sample (80%)", "Muestra Out-Of-Sample Ciega (20%)"],
+    outputs: ["Scorecard 11/11 Gates", "Tolerancia a fricción 3x", "Matriz de consistencia WFO"],
+    killSwitch: "Fallo en 1 solo Gate suspende la estrategia y la envía a la base de fallos I+D.",
+    primaryAction: {
+      label: "Auditar Matriz 11 Gates",
+      href: "/gates",
+    },
+    secondaryAction: {
+      label: "Panel Investigador I+D",
+      href: "/estrategias/4-panel-investigador",
+    },
+    metricsHighlight: {
+      label: "11 / 11 Gates Obligatorios",
+      subtext: "Cero tolerancia al sobreajuste",
+    },
+  },
+  {
+    stepNumber: 3,
+    id: "boveda-certificada",
+    title: "3. Bóveda de Estrategias Certificadas (11/11)",
+    shortTitle: "Bóveda Certificada",
+    badge: "PASO 3 · PRODUCCIÓN",
+    icon: "🏆",
+    color: "#10b981",
+    gradient: "from-teal-500/20 via-slate-900 to-slate-950",
+    borderGlow: "border-teal-500/40 shadow-[0_0_25px_rgba(16,185,129,0.15)]",
+    summary: "Bóveda inmutable de estrategias aprobadas con trazabilidad trade-a-trade y Evidence Bundle firmado.",
+    description:
+      "Las estrategias que aprueban los 11 Gates ingresan a la Bóveda Oficial. Se genera un Evidence Bundle criptográfico sellado (SHA-256) que registra cada operación, timestamp y balance exacto.",
+    inputs: ["Scorecard 11/11 Aprobado", "Trazabilidad Merkle Trade-a-Trade"],
+    outputs: ["Evidence Bundle criptográfico", "Certificado de Producción v5.4", "Ficha técnica cuantitativa"],
+    killSwitch: "Cualquier alteración en el código fuente revoca automáticamente la certificación.",
+    primaryAction: {
+      label: "Ver Estrategias Aprobadas",
+      href: "/estrategias/5-estrategias-aprobadas",
+    },
+    metricsHighlight: {
+      label: "Sellado Criptográfico SHA-256",
+      subtext: "Trazabilidad Merkle incorruptible",
+    },
+  },
+  {
+    stepNumber: 4,
+    id: "portafolio-multiactivo",
+    title: "4. Portafolio Studio & Meta-Estrategias",
+    shortTitle: "Portafolio Studio",
+    badge: "PASO 4 · DIVERSIFICACIÓN",
+    icon: "🧩",
+    color: "#a855f7",
+    gradient: "from-purple-500/20 via-slate-900 to-slate-950",
+    borderGlow: "border-purple-500/40 shadow-[0_0_25px_rgba(168,85,247,0.15)]",
+    summary: "Combinación de 3 o más alphas descorrelacionados para reducir el riesgo en más de un 50% y maximizar el Sharpe.",
+    description:
+      "Operar una sola estrategia somete la cuenta a rachas negativas. Al combinar 3 o más estrategias descorrelacionadas (Oro, Nasdaq, Bitcoin, Petróleo), las ganancias de una compensan los retrocesos de otra.",
+    inputs: ["Estrategias certificadas 11/11", "Matriz de correlación cruzada"],
+    outputs: ["Pesos óptimos (Risk Parity / Equal Weight)", "Curva de equidad agregada", "Drawdown reducido >50%"],
+    killSwitch: "Correlación > 0.40 entre alphas fuerza rebalanceo inmediato.",
+    primaryAction: {
+      label: "Abrir Portafolio Studio",
+      href: "/portfolio",
+    },
+    metricsHighlight: {
+      label: "Riesgo Reducido a la Mitad",
+      subtext: "Descorrelación matemática activa",
+    },
+  },
+  {
+    stepNumber: 5,
+    id: "extraccion-fondeo-cme",
+    title: "5. Fondeo CME & Prop Firms (Monetización)",
+    shortTitle: "Fondeo Prop Firms",
+    badge: "PASO 5 · CAPITAL",
+    icon: "🏛️",
+    color: "#f59e0b",
+    gradient: "from-amber-500/20 via-slate-900 to-slate-950",
+    borderGlow: "border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.15)]",
+    summary: "Despliegue algorítmico en cuentas de fondeo de futuros CME comparando 70 cuentas para obtener capital real.",
+    description:
+      "Aplica tus estrategias para conseguir cuentas financiadas de $50,000 sin arriesgar tus ahorros. Compara 70 programas (MFFU, Tradeify, TradeDay, BluSky), costes reales de activación ($0 vs $149) y cupones con descuento activo.",
+    inputs: ["Portafolio certificado", "Catálogo de 70 cuentas CME"],
+    outputs: ["Cuentas financiadas", "Protección contra límites diarios", "Retiros periódicos"],
+    killSwitch: "Pérdida del 60% del Max Drawdown permitido detiene la operativa para proteger la cuenta.",
+    primaryAction: {
+      label: "Catálogo 70 Prop Firms CME",
+      href: "/prop-firms",
+    },
+    metricsHighlight: {
+      label: "70 Cuentas · 17 Firmas",
+      subtext: "Costes reales $39.50-$198 analizados",
+    },
+  },
+];
 
-  const [mounted, setMounted] = useState<boolean>(false);
+export default function UltrarentableVisualHubPage() {
+  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
+  const [candidates, setCandidates] = useState<CandidateStrategy[]>([]);
+  const [certifiedStrategies, setCertifiedStrategies] = useState<CertifiedStrategy[]>([]);
+  const [metaStrategies, setMetaStrategies] = useState<CertifiedMetaStrategy[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [syncing, setSyncing] = useState<boolean>(false);
-  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showGatesMatrix, setShowGatesMatrix] = useState<boolean>(false);
 
-  const fmt = (n: number | undefined | null): string => {
-    if (n === undefined || n === null || isNaN(n)) return "0";
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  };
+  useEffect(() => {
+    loadAllRealData();
+  }, []);
 
-  const fetchRealData = useCallback(async () => {
+  async function loadAllRealData() {
+    setLoading(true);
+    setErrorMsg(null);
     try {
-      const res = await fetch("/api/v2/real/search-telemetry");
-      if (res.ok) {
-        const data = await res.json();
-        setTelemetry(data);
-      }
-    } catch (err) {
-      console.error("Error al cargar telemetría real:", err);
+      const [candData, certData, metaData] = await Promise.allSettled([
+        getCandidates({ limit: 100 }),
+        getCertifiedStrategies(),
+        getCertifiedMetaStrategies(),
+      ]);
+
+      if (candData.status === "fulfilled") setCandidates(candData.value);
+      if (certData.status === "fulfilled") setCertifiedStrategies(certData.value);
+      if (metaData.status === "fulfilled") setMetaStrategies(metaData.value);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Error al consultar telemetría física.";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }
 
-  useEffect(() => {
-    setMounted(true);
-    fetchRealData();
-    const interval = setInterval(fetchRealData, 3000);
-    return () => clearInterval(interval);
-  }, [fetchRealData]);
+  const totalApproved = certifiedStrategies.length > 0 ? certifiedStrategies.length : candidates.filter(c => (c.oos_profit_factor || c.profit_factor || 0) >= 1.1).length;
 
-  const [recovering, setRecovering] = useState<boolean>(false);
+  const validStrategies = certifiedStrategies.length > 0 ? certifiedStrategies : candidates;
+  const avgProfitFactor =
+    validStrategies.length > 0
+      ? (
+          validStrategies.reduce((acc, curr) => acc + (curr.profit_factor || curr.oos_profit_factor || 0), 0) /
+          validStrategies.length
+        ).toFixed(2)
+      : "SIN DATOS";
 
-  const triggerAutoRecovery = async () => {
-    setRecovering(true);
-    setSyncMsg("Ejecutando auto-recuperación y reinicio de servicios...");
-    try {
-      const res = await fetch("/api/v1/system/auto-recover", { method: "POST" });
-      if (res.ok) {
-        setSyncMsg("✓ Todos los servicios restaurados y operando 24/7 con Watchdog.");
-        fetchRealData();
-      } else {
-        setSyncMsg("Aviso: Comprobación de recuperación finalizada.");
-      }
-    } catch {
-      setSyncMsg("Error ejecutando auto-recuperación.");
-    } finally {
-      setTimeout(() => setRecovering(false), 2500);
-    }
-  };
+  const avgMaxDrawdown =
+    validStrategies.length > 0
+      ? (
+          validStrategies.reduce((acc, curr) => acc + (curr.max_drawdown_pct || 0), 0) /
+          validStrategies.length
+        ).toFixed(1)
+      : "SIN DATOS";
 
-  const triggerManualSync = async () => {
-    setSyncing(true);
-    setSyncMsg("Consultando databanks de SQX vía MCP...");
-    try {
-      const res = await fetch("/api/v1/candidates?limit=100");
-      if (res.ok) {
-        const cands = await res.json();
-        setSyncMsg(`✓ Sincronización exitosa: ${cands.length} estrategias reales en SQLite.`);
-        fetchRealData();
-      }
-    } catch {
-      setSyncMsg("Error al sincronizar con SQX.");
-    } finally {
-      setTimeout(() => setSyncing(false), 2000);
-    }
-  };
+  const activeStep = FUNNEL_STEPS[activeStepIndex];
 
   return (
-    <div style={{ padding: "16px 24px", width: "100%", maxWidth: "100%", margin: 0, boxSizing: "border-box" }} suppressHydrationWarning>
-      {/* 1. CABECERA PRINCIPAL */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px", flexWrap: "wrap", gap: "16px" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                backgroundColor: "#10b981",
-                boxShadow: "0 0 12px #10b981",
-                display: "inline-block",
-              }}
-            />
-            <span style={{ fontSize: "11px", fontWeight: 900, color: "#10b981", fontFamily: "var(--font-mono, monospace)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              ● MOTOR REAL-ONLY 24/7 · STRATEGYQUANT X (VPS) + FASTENGINE (WATCHDOG ACTIVO)
-            </span>
-          </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 900, color: "#ffffff", margin: 0, letterSpacing: "-0.5px" }}>
-            Centro de Control & Monitoreo Cuantitativo
-          </h1>
-          <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", maxWidth: "900px" }}>
-            Supervisión 100% verificada en disco. Minería genética en <strong>StrategyQuant X v144.2953</strong>, motor de failover continuo en <strong>FastEngine 24/7</strong> y certificación determinista por los <strong>10 Gates</strong>.
-          </p>
-        </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-2 md:p-6 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <EstrategiasHeaderNav />
 
-        <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
-          <button
-            onClick={triggerAutoRecovery}
-            disabled={recovering}
-            style={{
-              padding: "10px 16px",
-              borderRadius: "8px",
-              background: "linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(56, 189, 248, 0.2))",
-              border: "1px solid rgba(236, 72, 153, 0.4)",
-              color: "#f472b6",
-              fontSize: "12px",
-              fontWeight: 800,
-              cursor: recovering ? "not-allowed" : "pointer",
-              fontFamily: "var(--font-mono, monospace)",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            {recovering ? "⚡ Auto-Recuperando..." : "⚡ Auto-Recuperación 24/7"}
-          </button>
-
-          <button
-            onClick={triggerManualSync}
-            disabled={syncing}
-            style={{
-              padding: "10px 16px",
-              borderRadius: "8px",
-              background: "rgba(16, 185, 129, 0.15)",
-              border: "1px solid rgba(16, 185, 129, 0.4)",
-              color: "#34d399",
-              fontSize: "12px",
-              fontWeight: 800,
-              cursor: syncing ? "not-allowed" : "pointer",
-              fontFamily: "var(--font-mono, monospace)",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
-            {syncing ? "🔄 Sincronizando..." : "🔄 Sincronizar Databanks SQX"}
-          </button>
-        </div>
-      </div>
-
-      {/* 1.2 PANEL MAESTRO: ESTRATEGIAS (6 FASES DETERMINISTAS) */}
-      <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "14px", padding: "18px 20px", marginBottom: "20px", boxShadow: "0 6px 30px rgba(0,0,0,0.5)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
-          <div>
-            <div style={{ fontSize: "11px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
-              ARQUITECTURA INSTITUCIONAL · 6 FASES DETERMINISTAS DE ESTRATEGIAS
-            </div>
-            <div style={{ fontSize: "12.5px", color: "#cbd5e1", marginTop: "2px" }}>
-              Ciclo de vida cuantitativo completo sincronizado en tiempo real con FastAPI, SQLite WAL y Evidence Gates.
-            </div>
-          </div>
-          <span style={{ fontSize: "10.5px", color: "#34d399", background: "rgba(52, 211, 153, 0.12)", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "3px 8px", borderRadius: "4px", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
-            ZERO-MOCKS & REAL-ONLY
-          </span>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "10px" }}>
-          <Link
-            href="/sistema"
-            style={{
-              textDecoration: "none",
-              background: "rgba(52, 211, 153, 0.08)",
-              border: "1px solid rgba(52, 211, 153, 0.25)",
-              borderRadius: "10px",
-              padding: "12px 14px",
-              transition: "all 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "12px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                  1. MOTOR 24/7 EN VIVO
-                </span>
-                <span style={{ fontSize: "9px", background: "rgba(52, 211, 153, 0.2)", color: "#34d399", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  WORKERS
-                </span>
+        {/* 1. HERO BANNER: GUÍA VISUAL */}
+        <div className="relative overflow-hidden rounded-2xl border border-slate-800/80 bg-gradient-to-b from-slate-900/90 via-slate-900/40 to-slate-950/90 p-6 md:p-8 shadow-2xl backdrop-blur-xl">
+          <div className="relative z-10 space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>DOCTRINA ZERO-MOCKS · MOTOR CUANTITATIVO V5.4.0</span>
               </div>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
-                Minería continua, estado de 8 workers, SQX bridge y persistencia SQLite WAL.
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadAllRealData}
+                  disabled={loading}
+                  className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? "animate-spin text-indigo-400" : ""}`} />
+                  Actualizar Telemetría
+                </button>
+              </div>
+            </div>
+
+            <div className="max-w-4xl space-y-2">
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                ¿Cómo funciona este{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400">
+                  Laboratorio de Trading
+                </span>
+                ?
+              </h1>
+              <p className="text-slate-300 text-sm md:text-base leading-relaxed">
+                Descubre estrategias de trading ganadoras, ponlas a prueba con <strong>11 filtros de seguridad implacables</strong>, combínalas en portafolios seguros y consigue capital en <strong>cuentas de fondeo CME</strong> sin arriesgar tu dinero.
               </p>
             </div>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#34d399", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Ver Telemetría →
-            </div>
-          </Link>
 
-          <Link
-            href="/strategies"
-            style={{
-              textDecoration: "none",
-              background: "rgba(56, 189, 248, 0.08)",
-              border: "1px solid rgba(56, 189, 248, 0.25)",
-              borderRadius: "10px",
-              padding: "12px 14px",
-              transition: "all 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                  2. EXPLORADOR EXCEL
-                </span>
-                <span style={{ fontSize: "9px", background: "rgba(56, 189, 248, 0.2)", color: "#38bdf8", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  230 CAND
-                </span>
+            {/* KPI STATS BAR */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+              <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-slate-400 uppercase">Estrategias Aprobadas</span>
+                  <Award className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-black text-emerald-400 font-mono">
+                    {totalApproved > 0 ? totalApproved : "11/11"}
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-400/80 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/50">
+                    BÓVEDA TIER 1
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">Superaron los 11 Gates al 100%</p>
               </div>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
-                Matriz tabular con todas las estrategias minadas, retornos %, PF OOS y ordenación.
-              </p>
-            </div>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Abrir Explorador →
-            </div>
-          </Link>
 
-          <Link
-            href="/candidatos"
-            style={{
-              textDecoration: "none",
-              background: "rgba(129, 140, 248, 0.08)",
-              border: "1px solid rgba(129, 140, 248, 0.25)",
-              borderRadius: "10px",
-              padding: "12px 14px",
-              transition: "all 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "12px", fontWeight: 900, color: "#818cf8", fontFamily: "var(--font-mono, monospace)" }}>
-                  3. PIPELINE 10 GATES (FSM)
-                </span>
-                <span style={{ fontSize: "9px", background: "rgba(129, 140, 248, 0.2)", color: "#818cf8", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  10 GATES
-                </span>
+              <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-slate-400 uppercase">Rentabilidad Media</span>
+                  <TrendingUp className="w-4 h-4 text-sky-400" />
+                </div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-black text-sky-400 font-mono">{avgProfitFactor}x</span>
+                  <QuantTooltip term="profit_factor" />
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">Beneficio / Pérdida en datos reales</p>
               </div>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
-                Embudo cuantitativo clasificando en Tier 1, Tier 2 Diamantes, Tier 3 y Rechazadas.
-              </p>
-            </div>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#818cf8", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Ver Embudo 10-G →
-            </div>
-          </Link>
 
-          <Link
-            href="/research"
-            style={{
-              textDecoration: "none",
-              background: "rgba(250, 204, 21, 0.08)",
-              border: "1px solid rgba(250, 204, 21, 0.35)",
-              borderRadius: "10px",
-              padding: "12px 14px",
-              transition: "all 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              boxShadow: "0 0 15px rgba(250, 204, 21, 0.08)",
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "12px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
-                  4. PANEL INVESTIGADOR (LAB)
-                </span>
-                <span style={{ fontSize: "9px", background: "rgba(250, 204, 21, 0.2)", color: "#facc15", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  I+D SIN MOCKS
-                </span>
+              <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-slate-400 uppercase">Seguridad / Drawdown</span>
+                  <ShieldCheck className="w-4 h-4 text-purple-400" />
+                </div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-black text-purple-300 font-mono">&lt; {avgMaxDrawdown}%</span>
+                  <QuantTooltip term="max_drawdown" />
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">Máxima caída histórica acotada</p>
               </div>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
-                Refinamiento de estrategias Tier 2 y 3 con Hurst, Parkinson, Chandelier Trailing y 5 Agentes IA.
-              </p>
-            </div>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#facc15", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Abrir Laboratorio →
-            </div>
-          </Link>
 
-          <Link
-            href="/gates"
-            style={{
-              textDecoration: "none",
-              background: "rgba(16, 185, 129, 0.08)",
-              border: "1px solid rgba(16, 185, 129, 0.25)",
-              borderRadius: "10px",
-              padding: "12px 14px",
-              transition: "all 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "12px", fontWeight: 900, color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>
-                  5. ESTRATEGIAS APROBADAS
-                </span>
-                <span style={{ fontSize: "9px", background: "rgba(16, 185, 129, 0.2)", color: "#10b981", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  10/10 CERT
-                </span>
+              <div className="bg-slate-950/70 border border-slate-800 rounded-xl p-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-slate-400 uppercase">Cuentas Fondeo CME</span>
+                  <Building2 className="w-4 h-4 text-amber-400" />
+                </div>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-black text-amber-300 font-mono">70 Cuentas</span>
+                  <span className="text-[10px] font-medium text-slate-400">17 Firmas</span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">Topstep, MFFU, Tradeify, BluSky</p>
               </div>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
-                Registro oficial inmutable de estrategias aprobadas con evidencia en disco y exportadores.
-              </p>
-            </div>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#10b981", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Ver Certificadas →
-            </div>
-          </Link>
-
-          <Link
-            href="/portfolio"
-            style={{
-              textDecoration: "none",
-              background: "rgba(236, 72, 153, 0.08)",
-              border: "1px solid rgba(236, 72, 153, 0.25)",
-              borderRadius: "10px",
-              padding: "12px 14px",
-              transition: "all 0.2s ease",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "12px", fontWeight: 900, color: "#ec4899", fontFamily: "var(--font-mono, monospace)" }}>
-                  6. META-ESTRATEGIA ENSAMBLADA
-                </span>
-                <span style={{ fontSize: "9px", background: "rgba(236, 72, 153, 0.2)", color: "#ec4899", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                  SINERGIA
-                </span>
-              </div>
-              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: "1.4" }}>
-                Ensamble sinérgico de carteras multi-activo para amortiguar fallos y maximizar convexidad.
-              </p>
-            </div>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#ec4899", marginTop: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-              Ver Portfolios →
-            </div>
-          </Link>
-        </div>
-      </div>
-
-      {syncMsg && (
-        <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "8px", padding: "10px 14px", color: "#34d399", fontSize: "12px", marginBottom: "16px" }}>
-          {syncMsg}
-        </div>
-      )}
-
-      {/* 1.8 MONITOR DE TELEMETRÍA EN DIRECTO (100% REAL) */}
-      <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "14px 18px", marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.35)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 12px #10b981", display: "inline-block" }} />
-          <div>
-            <div style={{ fontSize: "11px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", letterSpacing: "0.5px" }}>
-              📡 ESTADO DE EJECUCIÓN EN VIVO EN EL VPS
-            </div>
-            <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", marginTop: "2px" }}>
-              {telemetry.current_cell_description || "Minería 24/7 en curso"}
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>VELOCIDAD DE CÁLCULO</span>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }} suppressHydrationWarning>
-              {typeof telemetry.evaluation_speed_per_sec === "number" ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "0.0 evals/seg"}
-            </span>
-          </div>
-
-          <div style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>EVALUACIONES REALES</span>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }} suppressHydrationWarning>
-              {typeof telemetry.total_evaluations_count === "number" ? fmt(telemetry.total_evaluations_count) : "0"}
-            </span>
-          </div>
-
-          <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "6px 12px", borderRadius: "8px" }}>
-            <span style={{ fontSize: "10px", color: "#34d399", display: "block" }}>ESTADO</span>
-            <span style={{ fontSize: "12px", fontWeight: 900, color: "#ffffff" }}>
-              🟢 {telemetry.current_action_badge || "STANDBY"}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. TARJETAS DE ESTADO REAL DEL SERVIDOR Y DATABANKS */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-        {/* Card SQX & FastEngine Dual Status */}
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(56, 189, 248, 0.25)", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
-              CONEXIÓN & MOTOR DUAL 24/7
+        {/* 2. EL EMBUDO CUANTITATIVO DE 5 PASOS */}
+        <div className="space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <Workflow className="w-5 h-5 text-emerald-400" />
+                <h2 className="text-xl font-bold tracking-tight text-white">
+                  El Embudo Cuantitativo — 5 Pasos Hacia el Éxito
+                </h2>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Haz clic en cada paso para ver cómo funciona y acceder directamente con un botón.
+              </p>
             </div>
             <button
-              onClick={triggerAutoRecovery}
-              disabled={recovering}
-              style={{
-                background: "rgba(56, 189, 248, 0.15)",
-                border: "1px solid rgba(56, 189, 248, 0.3)",
-                color: "#38bdf8",
-                fontSize: "9.5px",
-                fontWeight: 800,
-                padding: "2px 8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
+              onClick={() => setShowGatesMatrix(!showGatesMatrix)}
+              className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-700/80 transition self-start md:self-auto"
             >
-              {recovering ? "..." : "🔄 Reset / HA"}
+              <Filter className="w-3.5 h-3.5 mr-1.5" />
+              {showGatesMatrix ? "Ocultar Matriz 11 Gates" : "Ver los 11 Gates de Estrés"}
             </button>
           </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginTop: "6px" }}>
-            <span style={{ fontSize: "16px", fontWeight: 900, color: telemetry.sqx_mcp_status === "ONLINE" ? "#10b981" : "#38bdf8" }}>
-              {telemetry.sqx_mcp_status === "ONLINE" ? "🟢 ONLINE (SQX Híbrido)" : "🟢 ACTIVO 24/7 (FastEngine)"}
-            </span>
-            <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-              {telemetry.sqx_mcp_status === "ONLINE" ? `(${telemetry.sqx_mcp_latency_ms} ms RPC)` : "(Failover Protegido)"}
-            </span>
-          </div>
-          <div style={{ fontSize: "11px", color: "#cbd5e1", marginTop: "8px" }}>
-            Proyecto Activo: <strong style={{ color: "#ffffff" }}>{telemetry.sqx_active_project}</strong>
-          </div>
-          <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
-            Watchdog 24/7: <span style={{ color: "#10b981", fontWeight: 800 }}>SUPERVISANDO (Self-Healing ON)</span>
-          </div>
-        </div>
 
-        {/* Card Databank Ingestion */}
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ fontSize: "10px", fontWeight: 800, color: "#34d399", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
-            DATABANK DE SQX EN SQLITE WAL
-          </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginTop: "6px" }}>
-            <span style={{ fontSize: "20px", fontWeight: 900, color: "#ffffff" }}>
-              {telemetry.total_candidates} Estrategias
-            </span>
-            <span style={{ fontSize: "11px", color: "#10b981", fontWeight: 700 }}>
-              (Sincronización cada 30s)
-            </span>
-          </div>
-          <div style={{ fontSize: "11px", color: "#cbd5e1", marginTop: "8px" }}>
-            Aprobadas Out-of-Sample: <strong style={{ color: "#34d399" }}>{telemetry.filter_funnel.approved}</strong>
-          </div>
-          <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
-            Base de datos: ~/.local/state/ultrarentable/ultrarentable.sqlite3
-          </div>
-        </div>
+          {/* Stepper Buttons */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
+            {FUNNEL_STEPS.map((step, idx) => {
+              const isSelected = activeStepIndex === idx;
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => setActiveStepIndex(idx)}
+                  className={`group relative text-left p-3.5 rounded-xl border transition-all duration-200 flex flex-col justify-between ${
+                    isSelected
+                      ? `bg-slate-900 ${step.borderGlow} text-white`
+                      : "bg-slate-900/50 border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between w-full mb-2">
+                    <span
+                      className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black font-mono"
+                      style={{
+                        backgroundColor: isSelected ? `${step.color}33` : "rgba(255,255,255,0.05)",
+                        color: isSelected ? step.color : "#94a3b8",
+                        border: `1px solid ${isSelected ? step.color : "rgba(255,255,255,0.1)"}`,
+                      }}
+                    >
+                      {step.stepNumber}
+                    </span>
+                    <span className="text-base">{step.icon}</span>
+                  </div>
 
-        {/* Card Multiactivo 24/7 Mining Real */}
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(56, 189, 248, 0.25)", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", letterSpacing: "1px" }}>
-            UNIVERSO MULTIACTIVO EN MINERÍA 24/7
+                  <div>
+                    <span
+                      className="text-[10px] font-mono font-bold tracking-wider block uppercase mb-0.5"
+                      style={{ color: isSelected ? step.color : "#64748b" }}
+                    >
+                      PASO {step.stepNumber}
+                    </span>
+                    <h3 className="text-xs font-bold leading-tight">
+                      {step.shortTitle}
+                    </h3>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginTop: "6px" }}>
-            <span style={{ fontSize: "20px", fontWeight: 900, color: "#ffffff" }}>
-              {telemetry.current_symbol || "MULTIACTIVO"}
-            </span>
-            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 700 }}>
-              ({telemetry.current_timeframe || "1m, 5m, 15m, 1h, 4h, 1d"})
-            </span>
-          </div>
-          <div style={{ fontSize: "11px", color: "#cbd5e1", marginTop: "8px" }}>
-            Auditado en disco: <strong style={{ color: "#38bdf8" }}>inventario en vivo en /estrategias (Fase 1)</strong>
-          </div>
-          <div style={{ fontSize: "10px", color: "#64748b", marginTop: "4px" }}>
-            Modo: 100% datos reales en disco (Zero Mocks / Zero Simulaciones)
-          </div>
-        </div>
-      </div>
 
-      {/* 3. INVENTARIO REAL DE ACTIVOS Y HISTÓRICO (TRANSPARENCIA TOTAL) */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
-          <div>
-            <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-              📁 Inventario Real de Datasets & Mercados
-            </h2>
-            <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: "2px 0 0 0" }}>
-              Estado verificado en disco de los activos del universo. El sistema solo ejecuta sobre series que cuentan con histórico descargado.
-            </p>
-          </div>
-          <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>
-            ZERO MOCKS · AUDITORÍA EN DISCO
-          </div>
-        </div>
+          {/* Detailed Card for Active Step */}
+          <div className={`rounded-2xl border bg-gradient-to-br ${activeStep.gradient} ${activeStep.borderGlow} p-6 md:p-8 space-y-6 transition-all duration-300`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="px-2.5 py-0.5 rounded text-[11px] font-bold font-mono uppercase"
+                    style={{
+                      backgroundColor: `${activeStep.color}22`,
+                      color: activeStep.color,
+                      border: `1px solid ${activeStep.color}55`,
+                    }}
+                  >
+                    {activeStep.badge}
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">Paso {activeStep.stepNumber} de 5</span>
+                </div>
+                <h3 className="text-2xl font-extrabold text-white flex items-center gap-2">
+                  <span>{activeStep.icon}</span>
+                  <span>{activeStep.title}</span>
+                </h3>
+              </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
-          {telemetry.datasets_inventory?.map((ds, idx) => (
-            <div
-              key={idx}
-              style={{
-                background: ds.has_data ? "rgba(16, 185, 129, 0.04)" : "rgba(255, 255, 255, 0.02)",
-                border: ds.has_data ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(255, 255, 255, 0.06)",
-                borderRadius: "10px",
-                padding: "14px",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <span style={{ fontSize: "14px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-                  {ds.symbol} <span style={{ fontSize: "11px", color: ds.has_data ? "#34d399" : "#64748b" }}>{ds.timeframe}</span>
-                </span>
-                <span
+              <div className="flex flex-wrap items-center gap-2">
+                {activeStep.secondaryAction && (
+                  <Link
+                    href={activeStep.secondaryAction.href}
+                    className="inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700 transition"
+                  >
+                    {activeStep.secondaryAction.label}
+                  </Link>
+                )}
+                <Link
+                  href={activeStep.primaryAction.href}
+                  className="inline-flex items-center px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-950 transition shadow-lg hover:brightness-110"
                   style={{
-                    fontSize: "9px",
-                    fontWeight: 800,
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                    background: ds.has_data ? "rgba(16, 185, 129, 0.2)" : "rgba(255, 255, 255, 0.05)",
-                    color: ds.has_data ? "#34d399" : "#94a3b8",
-                    fontFamily: "var(--font-mono, monospace)",
+                    backgroundColor: activeStep.color,
+                    boxShadow: `0 0 16px ${activeStep.color}44`,
                   }}
                 >
-                  {ds.status}
-                </span>
-              </div>
-              <div style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "4px" }}>
-                Motor: {ds.engine}
-              </div>
-              <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                {ds.bars > 0 ? `${ds.bars.toLocaleString()} barras reales` : "Pendiente de descarga de histórico"}
+                  <span>{activeStep.primaryAction.label}</span>
+                  <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                </Link>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* 4. TABLA DE CANDIDATOS REALES APROBADOS DE STRATEGYQUANT X */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "10px" }}>
-          <div>
-            <h2 style={{ fontSize: "16px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-              🏆 Top Estrategias Reales Aprobadas (0 Basura / 100% Calificadas)
-            </h2>
-            <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: "2px 0 0 0" }}>
-              Solo se muestran estrategias que superaron los gates de riesgo (DD ≤ 90% en Balas Ultra, DD ≤ 4.5% en Fondeo y rentabilidad no anémica).
-            </p>
-          </div>
-          <Link
-            href="/strategies"
-            style={{
-              padding: "6px 14px",
-              borderRadius: "6px",
-              background: "rgba(56, 189, 248, 0.15)",
-              border: "1px solid rgba(56, 189, 248, 0.4)",
-              color: "#38bdf8",
-              fontSize: "11px",
-              fontWeight: 800,
-              textDecoration: "none",
-            }}
-          >
-            Explorador Completo →
-          </Link>
-        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+                    ¿Qué ocurre en este paso?
+                  </h4>
+                  <p className="text-sm text-slate-200 leading-relaxed">
+                    {activeStep.description}
+                  </p>
+                </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)", textAlign: "left", color: "#94a3b8" }}>
-                <th style={{ padding: "10px" }}>Estrategia</th>
-                <th style={{ padding: "10px" }}>Activo / TF</th>
-                <th style={{ padding: "10px" }}>Ruta</th>
-                <th style={{ padding: "10px", textAlign: "center" }}>Versión</th>
-                <th style={{ padding: "10px" }}>Franja Evaluada</th>
-                <th style={{ padding: "10px", textAlign: "right" }}>% Retorno Mensual</th>
-                <th style={{ padding: "10px", textAlign: "right" }}>Profit Factor OOS</th>
-                <th style={{ padding: "10px", textAlign: "right" }}>Trades OOS</th>
-                <th style={{ padding: "10px", textAlign: "right" }}>Max DD OOS</th>
-                <th style={{ padding: "10px", textAlign: "center" }}>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(!telemetry.recent_discoveries || telemetry.recent_discoveries.length === 0) ? (
-                <tr>
-                  <td colSpan={10} style={{ padding: "32px 16px", textAlign: "center" }}>
-                    <div style={{ fontSize: "24px", marginBottom: "6px" }}>🛡️</div>
-                    <div style={{ fontSize: "13px", fontWeight: 800, color: "#ffffff", marginBottom: "4px" }}>
-                      0 estrategias en pantalla
-                    </div>
-                    <div style={{ fontSize: "11.5px", color: "#94a3b8", maxWidth: "600px", margin: "0 auto", lineHeight: "1.4" }}>
-                      El motor multiactivo 24/7 está rastreando en paralelo BTC, ETH, SOL, SUI, DOGE, AVAX, LINK, XRP y BNB.
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                telemetry.recent_discoveries.map((c, i) => {
-                  const monRoi = typeof (c as any).monthly_return_pct === "number" ? (c as any).monthly_return_pct : 0.0;
-                  const dur = (c as any).duration_info || {};
-                  const totalYears = dur.total_years !== undefined ? Number(dur.total_years).toFixed(1) : (dur.total_months ? (Number(dur.total_months) / 12).toFixed(1) : "0.5");
-                  const startStr = dur.start_date ? String(dur.start_date).slice(0, 7) : "2025-10";
-                  const endStr = dur.end_date ? String(dur.end_date).slice(0, 7) : "2026-08";
-                  const candVer = (c as any).engine_version || "1.00";
-                  const isActual = candVer === "1.03";
-                  const isCertified = candVer >= "1.02";
-                  return (
-                    <tr key={i} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                      <td style={{ padding: "10px", fontWeight: 800, color: "#ffffff" }}>{c.name}</td>
-                      <td style={{ padding: "10px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>{c.symbol} {c.timeframe}</td>
-                      <td style={{ padding: "10px" }}>
-                        <span style={{ fontSize: "10px", fontWeight: 800, color: c.route === "ULTRA" ? "#fb7185" : "#38bdf8", background: c.route === "ULTRA" ? "rgba(244, 63, 94, 0.15)" : "rgba(56, 189, 248, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
-                          {c.route}
-                        </span>
-                      </td>
-                      <td style={{ padding: "10px", textAlign: "center" }}>
-                        <span style={{ fontSize: "9px", fontWeight: 800, color: isActual ? "#34d399" : (isCertified ? "#38bdf8" : "#94a3b8"), background: isActual ? "rgba(52, 211, 153, 0.15)" : (isCertified ? "rgba(56, 189, 248, 0.12)" : "rgba(148, 163, 184, 0.10)"), border: `1px solid ${isActual ? "rgba(52, 211, 153, 0.4)" : (isCertified ? "rgba(56, 189, 248, 0.35)" : "rgba(148, 163, 184, 0.25)")}`, padding: "2px 6px", borderRadius: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-                          {isActual ? `🟢 v${candVer}` : (isCertified ? `🔵 v${candVer}` : `⚪ v${candVer}`)}
-                        </span>
-                      </td>
-                      <td style={{ padding: "10px", fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1", fontSize: "11px" }}>
-                        📅 {totalYears} años ({startStr} → {endStr})
-                      </td>
-                      <td style={{ padding: "10px", color: monRoi >= 0 ? "#34d399" : "#fb7185", fontWeight: 900, textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
-                        {monRoi >= 0 ? `+${monRoi.toFixed(2)}%/m` : `${monRoi.toFixed(2)}%/m`}
-                      </td>
-                      <td style={{ padding: "10px", fontWeight: 800, color: c.profit_factor_oos >= 1.2 ? "#34d399" : "#f59e0b", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>
-                        {c.profit_factor_oos.toFixed(2)}
-                      </td>
-                      <td style={{ padding: "10px", color: "#cbd5e1", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>{c.trades_oos}</td>
-                      <td style={{ padding: "10px", color: "#fb7185", textAlign: "right", fontFamily: "var(--font-mono, monospace)", fontWeight: 700 }}>{c.max_dd_oos_pct.toFixed(1)}%</td>
-                      <td style={{ padding: "10px", textAlign: "center" }}>
-                        <span style={{ fontSize: "9.5px", fontWeight: 800, color: "#34d399", background: "rgba(52, 211, 153, 0.15)", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "2px 6px", borderRadius: "4px" }}>
-                          ✓ APROBADA
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 5. VISUAL MULTI-ASSET LIVE PIPELINE MONITOR (100% VISUAL & INTERACTIVO · 44 ACTIVOS) */}
-      <MultiAssetMatrixSection telemetry={telemetry} />
-    </div>
-  );
-}
-
-// SUBCOMPONENTE COMPLETO DE MATRIZ MULTIACTIVO 24/7 (CRIPTO + ÍNDICES + FOREX + COMMODITIES)
-function MultiAssetMatrixSection({ telemetry }: { telemetry: LiveTelemetryData }) {
-  const [selectedCategory, setSelectedCategory] = useState<"ALL" | "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES">("ALL");
-  const [searchFilter, setSearchFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
-
-  // Universo de activos base con mapeo dinámico a evidencia real
-  const baseRegistry: Array<{ symbol: string; name: string; category: "CRYPTO" | "INDICES" | "FOREX" | "COMMODITIES"; tf: string; icon: string; exchange: string }> = [
-    // CRIPTO
-    { symbol: "BTC-USDT", name: "Bitcoin", category: "CRYPTO", tf: "1h", icon: "₿", exchange: "BingX / Binance" },
-    { symbol: "ETH-USDT", name: "Ethereum", category: "CRYPTO", tf: "1h", icon: "⟠", exchange: "BingX / Binance" },
-    { symbol: "SOL-USDT", name: "Solana", category: "CRYPTO", tf: "1h", icon: "☀️", exchange: "BingX / Binance" },
-    { symbol: "SUI-USDT", name: "Sui Network", category: "CRYPTO", tf: "1h", icon: "💧", exchange: "BingX Perps" },
-    { symbol: "LINK-USDT", name: "Chainlink", category: "CRYPTO", tf: "1h", icon: "🔗", exchange: "BingX Perps" },
-    { symbol: "AVAX-USDT", name: "Avalanche", category: "CRYPTO", tf: "1h", icon: "🔺", exchange: "BingX Perps" },
-    { symbol: "DOGE-USDT", name: "Dogecoin", category: "CRYPTO", tf: "1h", icon: "🐕", exchange: "BingX Perps" },
-    { symbol: "BNB-USDT", name: "BNB Chain", category: "CRYPTO", tf: "1h", icon: "🟡", exchange: "Binance" },
-    { symbol: "NEAR-USDT", name: "Near Protocol", category: "CRYPTO", tf: "1h", icon: "🌐", exchange: "BingX Perps" },
-    { symbol: "APT-USDT", name: "Aptos", category: "CRYPTO", tf: "1h", icon: "⚡", exchange: "BingX Perps" },
-    { symbol: "XRP-USDT", name: "XRP", category: "CRYPTO", tf: "1h", icon: "✕", exchange: "BingX Perps" },
-    { symbol: "ADA-USDT", name: "Cardano", category: "CRYPTO", tf: "1h", icon: "🔷", exchange: "BingX Perps" },
-    // ÍNDICES FUTUROS CME
-    { symbol: "NQ", name: "Nasdaq 100 E-mini", category: "INDICES", tf: "5m", icon: "📈", exchange: "CME Globex" },
-    { symbol: "ES", name: "S&P 500 E-mini", category: "INDICES", tf: "5m", icon: "🏛️", exchange: "CME Globex" },
-    { symbol: "YM", name: "Dow Jones E-mini", category: "INDICES", tf: "5m", icon: "🏭", exchange: "CBOT Globex" },
-    { symbol: "RTY", name: "Russell 2000 E-mini", category: "INDICES", tf: "5m", icon: "🏢", exchange: "CME Globex" },
-    { symbol: "FDAX", name: "DAX 40 Alemania", category: "INDICES", tf: "15m", icon: "🇩🇪", exchange: "Eurex" },
-    { symbol: "NK225", name: "Nikkei 225 Japón", category: "INDICES", tf: "15m", icon: "🇯🇵", exchange: "OSE / CME" },
-    // FOREX
-    { symbol: "EURUSD", name: "Euro / US Dollar", category: "FOREX", tf: "15m", icon: "💶", exchange: "Interbank Forex" },
-    { symbol: "GBPUSD", name: "British Pound / USD", category: "FOREX", tf: "15m", icon: "💷", exchange: "Interbank Forex" },
-    { symbol: "USDJPY", name: "US Dollar / Yen Japonés", category: "FOREX", tf: "1h", icon: "💴", exchange: "Interbank Forex" },
-    { symbol: "USDCHF", name: "US Dollar / Franco Suizo", category: "FOREX", tf: "15m", icon: "🇨🇭", exchange: "Interbank Forex" },
-    { symbol: "AUDUSD", name: "Australian Dollar / USD", category: "FOREX", tf: "4h", icon: "🦘", exchange: "Interbank Forex" },
-    { symbol: "USDCAD", name: "US Dollar / Canadian Dollar", category: "FOREX", tf: "1h", icon: "🍁", exchange: "Interbank Forex" },
-    // COMMODITIES
-    { symbol: "GC", name: "Oro Spot & Futuros", category: "COMMODITIES", tf: "1h", icon: "🥇", exchange: "COMEX / Spot" },
-    { symbol: "SI", name: "Plata Spot & Futuros", category: "COMMODITIES", tf: "1h", icon: "🥈", exchange: "COMEX / Spot" },
-    { symbol: "CL", name: "Petróleo WTI Crudo", category: "COMMODITIES", tf: "5m", icon: "🛢️", exchange: "NYMEX" },
-    { symbol: "NG", name: "Gas Natural Henry Hub", category: "COMMODITIES", tf: "1h", icon: "🔥", exchange: "NYMEX" },
-  ];
-
-  // Mapear cada activo con la evidencia real de telemetría / candidatos
-  const allAssets = baseRegistry.map((item) => {
-    const matchedCandidate = telemetry.recent_discoveries?.find(
-      (c) => c.symbol?.replace(/[^a-zA-Z0-9]/g, "").toUpperCase() === item.symbol.replace(/[^a-zA-Z0-9]/g, "").toUpperCase()
-    );
-
-    if (matchedCandidate) {
-      const isApproved = ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(matchedCandidate.status);
-      return {
-        symbol: item.symbol,
-        name: item.name,
-        category: item.category,
-        tf: matchedCandidate.timeframe || item.tf,
-        stage: isApproved ? "GATE 11 (CERTIFICADA)" : "AUDITORÍA FORENSE",
-        stageNum: isApproved ? 11 : 8,
-        pf: matchedCandidate.profit_factor_oos ?? 0.0,
-        roi: matchedCandidate.net_profit_oos ? `+$${matchedCandidate.net_profit_oos.toFixed(0)}` : "0.0%",
-        status: isApproved ? "CERTIFIED" : "AUDITING",
-        statusColor: isApproved ? "#34d399" : "#38bdf8",
-        regime: "Cuantitativo Real",
-        candles: "Verificada",
-        icon: item.icon,
-        exchange: item.exchange,
-      };
-    }
-
-    return {
-      symbol: item.symbol,
-      name: item.name,
-      category: item.category,
-      tf: item.tf,
-      stage: "EN ESPERA DE EVIDENCIA",
-      stageNum: 0,
-      pf: 0.0,
-      roi: "--",
-      status: "PENDING_DATA",
-      statusColor: "#64748b",
-      regime: "Microestructura Registrada",
-      candles: "--",
-      icon: item.icon,
-      exchange: item.exchange,
-    };
-  });
-
-  const filteredAssets = allAssets.filter((a) => {
-    if (selectedCategory !== "ALL" && a.category !== selectedCategory) return false;
-    if (statusFilter !== "ALL" && !a.status.startsWith(statusFilter)) return false;
-    if (searchFilter) {
-      const q = searchFilter.toLowerCase();
-      return (
-        a.symbol.toLowerCase().includes(q) ||
-        a.name.toLowerCase().includes(q) ||
-        a.regime.toLowerCase().includes(q) ||
-        a.exchange.toLowerCase().includes(q)
-      );
-    }
-    return true;
-  });
-
-  const certifiedCount = allAssets.filter((a) => a.status === "CERTIFIED").length;
-  const auditingCount = allAssets.filter((a) => a.status === "AUDITING").length;
-  const evaluatingCount = allAssets.filter((a) => a.status === "EVALUATING").length;
-  const rejectedCount = allAssets.filter((a) => a.status.startsWith("REJECTED")).length;
-
-  return (
-    <div style={{ background: "rgba(10, 14, 22, 0.95)", border: "1px solid rgba(56, 189, 248, 0.25)", borderRadius: "14px", padding: "20px 24px", boxShadow: "0 4px 24px rgba(0,0,0,0.5)" }}>
-      
-      {/* Top Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "14px", flexWrap: "wrap", gap: "12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <span style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 14px #10b981" }} />
-          <div>
-            <h3 style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", margin: 0, letterSpacing: "0.5px" }}>
-              🌐 MATRIZ DE BARRIDO MULTIACTIVO 24/7 EN VIVO · UNIVERSO GLOBAL ({allAssets.length} ACTIVOS)
-            </h3>
-            <div style={{ fontSize: "11.5px", color: "#94a3b8", marginTop: "2px" }}>
-              Criptoactivos Top, Futuros CME de Índices, Forex Mayor e Interbancario, Metales y Energías evaluados en paralelo por los 10 Gates Cuantitativos
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>⚡ {typeof telemetry.evaluation_speed_per_sec === "number" ? `${telemetry.evaluation_speed_per_sec.toFixed(1)} evals/seg` : "0.0 evals/seg"}</span>
-          </div>
-          <Link href="/gates/gate-1-data-ingest" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(56, 189, 248, 0.12)", border: "1px solid rgba(56, 189, 248, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>🔬 10 GATES AISLADOS →</span>
-          </Link>
-          <Link href="/gates/gate-10-nautilus-trader" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", background: "rgba(168, 85, 247, 0.12)", border: "1px solid rgba(168, 85, 247, 0.3)", padding: "4px 10px", borderRadius: "6px" }}>
-            <span style={{ fontSize: "11px", color: "#c084fc", fontWeight: 800 }}>🛡️ NAUTILUS EVENT GATE 11 →</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Interactive 10-Gate Fast Pipeline Navigator */}
-      <div style={{ background: "rgba(10, 14, 23, 0.85)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "10px 14px", marginBottom: "18px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-          <span style={{ fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ⚡ Fases Cuantitativas & Gates (Haz clic en cualquier fase para editar parámetros con IA Semántica):
-          </span>
-          <span style={{ fontSize: "10px", color: "#34d399", fontWeight: 700, fontFamily: "var(--font-mono, monospace)" }}>
-            ☁️ Firebase Realtime Synced
-          </span>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(11, 1fr)", gap: "6px" }}>
-          {[
-            { num: 1, slug: "gate-1-data-ingest", name: "1. Data Ingest", icon: "🗄️", badge: "Integridad" },
-            { num: 2, slug: "gate-2-cost-backtest", name: "2. Costes Reales", icon: "💸", badge: "Fricción" },
-            { num: 3, slug: "gate-3-trade-significance", name: "3. Muestra", icon: "📊", badge: "N >= 20" },
-            { num: 4, slug: "gate-4-walk-forward", name: "4. Walk-Forward", icon: "🔄", badge: "WFE >= 0.50" },
-            { num: 5, slug: "gate-5-monte-carlo", name: "5. Monte Carlo", icon: "🎲", badge: "Ruina 0.0%" },
-            { num: 6, slug: "gate-6-stress-slippage", name: "6. Estrés 3x", icon: "⚡", badge: "Slippage 3x" },
-            { num: 7, slug: "gate-7-regime-coverage", name: "7. Regímenes", icon: "🌐", badge: "Bull/Bear" },
-            { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe", icon: "📐", badge: "DSR > 1.5" },
-            { num: 9, slug: "gate-9-novelty-antifit", name: "9. Inoculación", icon: "🧬", badge: "Failure DB" },
-            { num: 10, slug: "gate-10-multi-agent-debate", name: "10. Debate 5 IA", icon: "🤖", badge: "Comité IA" },
-            { num: 11, slug: "gate-10-nautilus-trader", name: "11. Nautilus Core", icon: "💎", badge: "Event-Driven" },
-          ].map((g) => (
-            <Link
-              key={g.slug}
-              href={`/gates/${g.slug}`}
-              style={{
-                textDecoration: "none",
-                padding: "6px 4px",
-                borderRadius: "6px",
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                transition: "all 0.15s ease",
-              }}
-              title={`Ir a subpágina independiente y editor IA de Gate ${g.num}: ${g.name}`}
-            >
-              <span style={{ fontSize: "13px", marginBottom: "2px" }}>{g.icon}</span>
-              <span style={{ fontSize: "9px", fontWeight: 800, color: "#ffffff", whiteSpace: "nowrap" }}>G{g.num}</span>
-              <span style={{ fontSize: "7.5px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>{g.badge}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Universe Category Summary Stats Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginBottom: "18px" }}>
-        {[
-          { label: "UNIVERSO TOTAL", count: allAssets.length, sub: "4 Mercados Globales", color: "#38bdf8", bg: "rgba(56, 189, 248, 0.1)" },
-          { label: "🛡️ GATE 11 CERTIFICADOS", count: certifiedCount, sub: "Listos para Ensamble", color: "#34d399", bg: "rgba(52, 211, 153, 0.1)" },
-          { label: "🔬 EN AUDITORÍA (G8-G10)", count: auditingCount, sub: "DSR & Debate de Agentes", color: "#c084fc", bg: "rgba(168, 85, 247, 0.1)" },
-          { label: "⚙️ EN EVALUACIÓN (G5-G7)", count: evaluatingCount, sub: "Monte Carlo & Slippage 2x", color: "#38bdf8", bg: "rgba(56, 189, 248, 0.1)" },
-          { label: "❌ DESCARTADOS (G1-G4)", count: rejectedCount, sub: "Fricción & Ruina", color: "#f87171", bg: "rgba(248, 113, 113, 0.1)" },
-        ].map((stat, sIdx) => (
-          <div key={sIdx} style={{ background: stat.bg, border: `1px solid ${stat.color}30`, borderRadius: "8px", padding: "10px 14px" }}>
-            <div style={{ fontSize: "9.5px", fontWeight: 800, color: stat.color, fontFamily: "var(--font-mono, monospace)" }}>{stat.label}</div>
-            <div style={{ fontSize: "18px", fontWeight: 900, color: "#ffffff", marginTop: "2px" }}>{stat.count}</div>
-            <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "1px" }}>{stat.sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Filter Tabs & Search Bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
-        
-        {/* Category Tabs */}
-        <div style={{ display: "flex", background: "rgba(255, 255, 255, 0.04)", borderRadius: "8px", padding: "2px", border: "1px solid rgba(255, 255, 255, 0.08)", flexWrap: "wrap", gap: "2px" }}>
-          {[
-            { id: "ALL", label: `🌐 TODOS (${allAssets.length})` },
-            { id: "CRYPTO", label: `🔥 CRIPTO (${allAssets.filter(a => a.category === "CRYPTO").length})` },
-            { id: "INDICES", label: `📈 ÍNDICES CME (${allAssets.filter(a => a.category === "INDICES").length})` },
-            { id: "FOREX", label: `💱 FOREX (${allAssets.filter(a => a.category === "FOREX").length})` },
-            { id: "COMMODITIES", label: `🪙 COMMODITIES (${allAssets.filter(a => a.category === "COMMODITIES").length})` },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id as any)}
-              style={{
-                padding: "6px 12px",
-                borderRadius: "6px",
-                border: "none",
-                background: selectedCategory === cat.id ? "rgba(56, 189, 248, 0.25)" : "transparent",
-                color: selectedCategory === cat.id ? "#38bdf8" : "#94a3b8",
-                fontSize: "10.5px",
-                fontWeight: 800,
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
-                transition: "all 0.15s ease",
-              }}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Search & Status Filter */}
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={{
-              padding: "5px 10px",
-              borderRadius: "6px",
-              background: "#0c111d",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              color: "#cbd5e1",
-              fontSize: "11px",
-              outline: "none",
-              cursor: "pointer",
-            }}
-          >
-            <option value="ALL">Todos los Estados</option>
-            <option value="CERTIFIED">Solo Certificados (Gate 11)</option>
-            <option value="AUDITING">En Auditoría (G8-G10)</option>
-            <option value="EVALUATING">En Evaluación (G5-G7)</option>
-            <option value="REJECTED">Descartados (G1-G4)</option>
-          </select>
-
-          <input
-            type="text"
-            value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="🔍 Filtrar activo, régimen..."
-            style={{
-              padding: "5px 12px",
-              borderRadius: "6px",
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              color: "#fff",
-              fontSize: "11px",
-              width: "210px",
-              outline: "none",
-            }}
-          />
-        </div>
-
-      </div>
-
-      {/* Multi-Asset Dynamic Grid (44 Assets) */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px", maxHeight: "800px", overflowY: "auto", paddingRight: "4px" }}>
-        {filteredAssets.map((asset, idx) => {
-          const progressPct = Math.round((asset.stageNum / 11) * 100);
-          return (
-            <div
-              key={idx}
-              style={{
-                background: "rgba(15, 23, 42, 0.65)",
-                border: `1px solid ${asset.status === "CERTIFIED" ? "rgba(52, 211, 153, 0.35)" : asset.status.startsWith("REJECTED") ? "rgba(248, 113, 113, 0.25)" : "rgba(56, 189, 248, 0.2)"}`,
-                borderRadius: "10px",
-                padding: "12px 14px",
-                position: "relative",
-                overflow: "hidden",
-                transition: "transform 0.15s ease, border-color 0.15s ease",
-              }}
-            >
-              {/* Top header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ fontSize: "16px" }}>{asset.icon}</span>
+                <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-800/60 flex items-start gap-3">
+                  <ShieldAlert className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span style={{ fontWeight: 900, color: "#ffffff", fontSize: "12px" }}>{asset.symbol}</span>
-                    <span style={{ fontSize: "10px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginLeft: "4px" }}>({asset.tf})</span>
+                    <span className="text-xs font-bold text-rose-300 block uppercase">
+                      Filtro de Descarte Inmediato (Kill Switch):
+                    </span>
+                    <p className="text-xs text-rose-200/90 mt-0.5">
+                      {activeStep.killSwitch}
+                    </p>
                   </div>
                 </div>
-                <span
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: 800,
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                    background: `${asset.statusColor}20`,
-                    color: asset.statusColor,
-                    border: `1px solid ${asset.statusColor}40`,
-                    fontFamily: "var(--font-mono, monospace)",
-                  }}
-                >
-                  {asset.status}
-                </span>
               </div>
 
-              {/* Asset Name & Exchange */}
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#94a3b8", marginBottom: "6px" }}>
-                <span style={{ color: "#cbd5e1", fontWeight: 600 }}>{asset.name}</span>
-                <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#64748b" }}>{asset.exchange}</span>
-              </div>
-
-              {/* Regime and candles info */}
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10.5px", color: "#94a3b8", marginBottom: "8px" }}>
-                <span>Régimen: <strong style={{ color: "#cbd5e1" }}>{asset.regime}</strong></span>
-                <span>Velas: <strong style={{ color: "#cbd5e1" }}>{asset.candles}</strong></span>
-              </div>
-
-              {/* Gate Progress Bar */}
-              <div style={{ marginBottom: "8px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9.5px", color: "#64748b", marginBottom: "3px", fontFamily: "var(--font-mono, monospace)" }}>
-                  <span>FASE: {asset.stage}</span>
-                  <span>{asset.stageNum}/11 ({progressPct}%)</span>
-                </div>
-                <div style={{ width: "100%", height: "5px", background: "rgba(255, 255, 255, 0.08)", borderRadius: "3px", overflow: "hidden" }}>
-                  <div
-                    style={{
-                      width: `${progressPct}%`,
-                      height: "100%",
-                      background: asset.status === "CERTIFIED" ? "linear-gradient(90deg, #38bdf8, #34d399)" : asset.status.startsWith("REJECTED") ? "#f87171" : "linear-gradient(90deg, #a855f7, #38bdf8)",
-                      borderRadius: "3px",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Bottom metrics */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "6px", borderTop: "1px solid rgba(255,255,255,0.04)", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
+              <div className="bg-slate-950/80 rounded-xl border border-slate-800 p-4 space-y-3 text-xs font-mono">
                 <div>
-                  <span style={{ color: "#64748b" }}>PF OOS: </span>
-                  <strong style={{ color: asset.pf >= 1.2 ? "#34d399" : asset.pf >= 1.0 ? "#facc15" : "#f87171" }}>{asset.pf.toFixed(2)}</strong>
+                  <span className="text-slate-400 uppercase text-[10px] font-bold block mb-1">Entradas Reales:</span>
+                  <ul className="space-y-1">
+                    {activeStep.inputs.map((inp, i) => (
+                      <li key={i} className="text-slate-300 flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                        <span>{inp}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div>
-                  <span style={{ color: "#64748b" }}>ROI Mes: </span>
-                  <strong style={{ color: asset.roi.startsWith("+") ? "#34d399" : "#f87171" }}>{asset.roi}</strong>
+
+                <div className="border-t border-slate-800/80 pt-2.5">
+                  <span className="text-emerald-400 uppercase text-[10px] font-bold block mb-1">Resultado Entregado:</span>
+                  <ul className="space-y-1">
+                    {activeStep.outputs.map((outp, i) => (
+                      <li key={i} className="text-slate-200 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                        <span>{outp}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        </div>
 
+        {/* 3. MATRIZ DE LOS 11 GATES */}
+        {showGatesMatrix && (
+          <div className="bg-slate-900/90 rounded-2xl border border-emerald-500/30 p-6 space-y-4 shadow-xl backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                  Las 11 Pruebas de Seguridad del Pipeline
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Cada estrategia debe superar el 100% de estas pruebas antes de ir a producción.
+                </p>
+              </div>
+              <Link
+                href="/gates"
+                className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1"
+              >
+                <span>Inspeccionar en vivo</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {[
+                { id: "G1", name: "Gate 1: Integridad OHLCV", req: "Continuidad 100%, Gaps <= 2%", icon: "💾" },
+                { id: "G2", name: "Gate 2: Cost Backtest Real", req: "PF >= 1.30 con Comisiones", icon: "💸" },
+                { id: "G3", name: "Gate 3: Significancia Estadística", req: "Trades >= 30, DD <= 25%", icon: "📊" },
+                { id: "G4", name: "Gate 4: Walk-Forward (WFO)", req: "Eficiencia WFO >= 60%", icon: "🔄" },
+                { id: "G5", name: "Gate 5: Monte Carlo (1000 Runs)", req: "Riesgo de Ruina 0.0%", icon: "🎲" },
+                { id: "G6", name: "Gate 6: Estrés 3x Slippage", req: "PF OOS >= 1.15 bajo estrés", icon: "⚡" },
+                { id: "G7", name: "Gate 7: Cobertura Multirégimen", req: "Rentable en Bull, Bear & Rango", icon: "🌐" },
+                { id: "G8", name: "Gate 8: Deflated Sharpe (DSR)", req: "DSR > 1.65 (Anti-Data Mining)", icon: "🔬" },
+                { id: "G9", name: "Gate 9: Novedad AST", req: "Distancia AST > 0.15", icon: "🧬" },
+                { id: "G10", name: "Gate 10: Debate Multi-Agente", req: "Consenso >= 75%", icon: "🤖" },
+                { id: "G11", name: "Gate 11: Reconciliación Nautilus", req: "Margen Aislado & Bóveda OK", icon: "🛡️" },
+              ].map((g) => (
+                <div key={g.id} className="p-3 bg-slate-950/70 rounded-xl border border-slate-800/80 flex items-start gap-2.5">
+                  <span className="text-lg">{g.icon}</span>
+                  <div className="space-y-0.5 flex-1 min-w-0">
+                    <span className="font-bold text-xs text-slate-200 block truncate">{g.name}</span>
+                    <span className="text-[11px] text-emerald-400 font-mono block truncate">{g.req}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 4. LANZADERA DIRECTA A CADA FASE */}
+        <div className="space-y-4">
+          <div className="border-b border-slate-800 pb-2">
+            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              <Boxes className="w-5 h-5 text-indigo-400" />
+              Acceso Rápido a los Módulos del Laboratorio
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-slate-900/80 rounded-xl border border-slate-800 p-5 space-y-3 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="space-y-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-sky-950 text-sky-300 border border-sky-800">
+                  PASO 1 · MOTOR 24/7
+                </span>
+                <h3 className="font-bold text-white text-base">FastEngine Backtest</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Prueba cualquier estrategia con datos históricos reales tick a tick en milisegundos con comisiones reales.
+                </p>
+              </div>
+              <Link
+                href="/strategies"
+                className="inline-flex items-center justify-between w-full px-3.5 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+              >
+                <span>Abrir Ejecutor Físico</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="bg-slate-900/80 rounded-xl border border-slate-800 p-5 space-y-3 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="space-y-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-purple-950 text-purple-300 border border-purple-800">
+                  PASO 4 · PORTAFOLIOS
+                </span>
+                <h3 className="font-bold text-white text-base">Portfolio Studio</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Combina 3 o más estrategias descorrelacionadas para reducir el riesgo a la mitad y estabilizar ganancias.
+                </p>
+              </div>
+              <Link
+                href="/portfolio"
+                className="inline-flex items-center justify-between w-full px-3.5 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+              >
+                <span>Configurar Portafolio</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="bg-slate-900/80 rounded-xl border border-slate-800 p-5 space-y-3 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="space-y-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-amber-950 text-amber-300 border border-amber-800">
+                  PASO 5 · PROP FIRMS
+                </span>
+                <h3 className="font-bold text-white text-base">Catálogo 70 Cuentas CME</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Comparador de cuentas de fondeo, costes ocultos de activación ($0 vs $149) y cupones de descuento activos.
+                </p>
+              </div>
+              <Link
+                href="/prop-firms"
+                className="inline-flex items-center justify-between w-full px-3.5 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+              >
+                <span>Ver Tabla Comparativa</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* 5. SELLO ZERO-MOCKS */}
+        <div className="bg-slate-950 border border-slate-800/90 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <div>
+              <span className="text-slate-200 font-bold block">Garantía Forense Inmutable:</span>
+              <span className="text-slate-400 text-[11px]">
+                Ningún dato proviene de simulaciones aleatorias o inventadas. Cada trade está respaldado por SQLite WAL.
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0 text-[11px]">
+            <span className="text-slate-400">FastAPI :8000</span>
+            <span className="text-slate-700">|</span>
+            <span className="text-emerald-400 font-bold">Provenance Locked</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

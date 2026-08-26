@@ -60,9 +60,9 @@ class Gate10AgentDebate:
         }
 
         # 2. Risk Agent (Tail Risk y Protección de Capital en Subcuenta)
-        max_dd_limit = 85.0 if is_ultra else 4.5
+        max_dd_limit = 30.0 if is_ultra else 4.0
         risk_penalty = (max_dd / max_dd_limit) * 100.0 if max_dd_limit > 0 else 100.0
-        risk_factor = 0.4 if is_ultra else 0.7
+        risk_factor = 0.5 if is_ultra else 0.8
         risk_score = max(0.0, min(100.0, 100.0 - (risk_penalty * risk_factor))) if max_dd <= max_dd_limit else 0.0
         risk_agent = {
             "agent": "Risk & Tail-Risk Specialist",
@@ -70,7 +70,7 @@ class Gate10AgentDebate:
             "score": round(risk_score, 1),
             "findings": [
                 f"Drawdown Máximo Observado: {max_dd:.1f}% (Límite permitido para {route}: {max_dd_limit}%).",
-                f"Estado de Riesgo: {'DENTRO DE TOLERANCIA' if max_dd <= max_dd_limit else 'DRAWDOWN EXCEDIDO'}.",
+                f"Estado de Riesgo: {'DENTRO DE TOLERANCIA' if max_dd <= max_dd_limit else 'RECHAZO VETO: DRAWDOWN EXCEDIDO'}.",
             ],
             "approved": risk_score >= 50.0,
         }
@@ -108,7 +108,7 @@ class Gate10AgentDebate:
         adversarial_score = round(float((research_score + risk_score + stat_score + exec_score) / 4.0), 1)
         objections = []
         recommendations = []
-        dd_alert_threshold = 0.90 if is_ultra else 0.70
+        dd_alert_threshold = 0.80 if is_ultra else 0.70
         if max_dd > max_dd_limit * dd_alert_threshold:
             objections.append(f"Alerta de Drawdown: DD ({max_dd:.1f}%) cercano o superior al límite tolerable ({max_dd_limit}%).")
             recommendations.append("Ajustar multiplicador ATR de Stop Loss para ceñir el control de riesgo.")
@@ -132,11 +132,16 @@ class Gate10AgentDebate:
             "approved": adversarial_score >= 40.0,
         }
 
-        # Consenso Ponderado y Diagnóstico Semántico Constructivo
+        # Consenso Ponderado con HARD VETO de Riesgo
+        # Si el Risk Specialist reprueba (score == 0 por DD excedido), Gate 10 queda reprobado automáticamente.
         consensus_score = round(float((research_score * 0.25) + (risk_score * 0.30) + (stat_score * 0.15) + (exec_score * 0.15) + (adversarial_score * 0.15)), 1)
         
-        # El Gate 10 es una auditoría de mejora semántica: se aprueba si el comité emite diagnóstico completo y existe viabilidad matemática (PF >= 1.0 o Score >= 40)
-        passed = (consensus_score >= 40.0) and (pf_oos >= 1.0 or net_pnl >= 0 or trades_count >= 5)
+        passed = (
+            (consensus_score >= 40.0)
+            and (pf_oos >= 1.05)
+            and (risk_score > 0.0)
+            and (max_dd <= max_dd_limit)
+        )
 
         verdict_msg = (
             f"PASSED: Diagnóstico y Consenso Semántico Completado ({consensus_score}/100 · Guía de Mejora Generada)"

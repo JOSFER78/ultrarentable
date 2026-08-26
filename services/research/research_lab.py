@@ -28,7 +28,6 @@ from contracts.research_contracts import (
     ResearchSynthesisResponse,
     RoleHypothesis,
 )
-from services.api.app.db.database import CandidateModel, StrategyModel
 from services.api.app.dsl.engine import (
     ComparisonNode,
     Execution,
@@ -52,11 +51,18 @@ from services.api.app.dsl.engine import (
 from services.semantic_ai.learning_store import learning_store
 
 
+from services.api.app.db.database import CandidateModel, StrategyModel, SessionLocal
+
+
 class QuantitativeResearchLab:
     """Orquestador Central del Laboratorio Cuantitativo de Investigación."""
 
-    def __init__(self, db: Session):
-        self.db = db
+    def __init__(self, db: Optional[Session] = None):
+        self._db = db
+
+    @property
+    def db(self) -> Session:
+        return self._db if self._db is not None else SessionLocal()
 
     def _build_blind_scope_context(self, strategy_id: str) -> BlindScopeContext:
         """Construye el contexto restringido (Blind Scope) sin acceso a OOS ni datos futuros."""
@@ -417,3 +423,6 @@ class QuantitativeResearchLab:
             validation_status=val_status,
             created_at_utc=now_utc,
         )
+
+
+quantitative_research_lab = QuantitativeResearchLab()

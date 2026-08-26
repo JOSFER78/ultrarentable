@@ -1,7 +1,8 @@
-"""services.portfolio package
-Exportación del PortfolioEngine y utilidades de asignación de capital.
+"""services/portfolio/__init__.py
+Módulo Autónomo de Meta-Estrategias, Ensamblado de Portafolios y Paridad de Riesgo 24/7.
 """
+from services.portfolio.autonomous_meta_daemon import autonomous_meta_daemon, AutonomousMetaDaemon
+from services.portfolio.meta_ensemble_service import MetaEnsembleService
+from services.portfolio.portfolio_router import router
 
-from services.portfolio.portfolio_engine import PortfolioEngine
-
-__all__ = ["PortfolioEngine"]
+__all__ = ["autonomous_meta_daemon", "AutonomousMetaDaemon", "MetaEnsembleService", "router"]

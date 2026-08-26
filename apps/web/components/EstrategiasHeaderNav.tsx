@@ -62,17 +62,19 @@ export default function EstrategiasHeaderNav() {
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
       }}
     >
-      {/* BADGE CATEGORÍA */}
-      <div
+      {/* BADGE CATEGORÍA LINK TO HUB */}
+      <Link
+        href="/estrategias"
         style={{
           display: "flex",
           alignItems: "center",
           gap: "6px",
           padding: "6px 12px",
-          background: "rgba(56, 189, 248, 0.08)",
-          border: "1px solid rgba(56, 189, 248, 0.2)",
+          background: pathname === "/estrategias" ? "rgba(56, 189, 248, 0.2)" : "rgba(56, 189, 248, 0.08)",
+          border: pathname === "/estrategias" ? "1px solid rgba(56, 189, 248, 0.6)" : "1px solid rgba(56, 189, 248, 0.2)",
           borderRadius: "8px",
           marginRight: "4px",
+          textDecoration: "none",
           flexShrink: 0,
         }}
       >
@@ -87,9 +89,9 @@ export default function EstrategiasHeaderNav() {
             whiteSpace: "nowrap",
           }}
         >
-          ESTRATEGIAS · 6 FASES DETERMINISTAS
+          ESTRATEGIAS · HUB 6 FASES
         </span>
-      </div>
+      </Link>
 
       {/* 6 TABS */}
       {ESTRATEGIAS_TABS.map((tab) => {

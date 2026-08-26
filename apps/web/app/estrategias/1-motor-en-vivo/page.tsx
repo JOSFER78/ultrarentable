@@ -1,1 +1,7 @@
-export { default } from "@/app/sistema/page";
+"use client";
+
+import MotorBacktestView from "@/components/MotorBacktestView";
+
+export default function StrategiesPage() {
+  return <MotorBacktestView />;
+}

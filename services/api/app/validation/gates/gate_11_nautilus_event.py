@@ -88,7 +88,10 @@ class Gate11NautilusEvent:
             funding = (nominal_position * funding_rate_8h * holding_sessions_8h) if spec.category == "CRYPTO" else 0.0
             
             # PnL de la operación ajustado por apalancamiento y deducción de funding
-            trade_pnl_usd = (equity * pnl) - funding
+            if abs(pnl) >= 1.0 or (trades_raw and "net_pnl_usd" in trades_raw[0]):
+                trade_pnl_usd = pnl - funding
+            else:
+                trade_pnl_usd = (equity * pnl) - funding
             equity += trade_pnl_usd
             total_funding += funding
 

@@ -37,6 +37,7 @@ from services.api.app.api.real_data_router import router as real_data_router
 from services.api.app.api.research_router import router as research_router
 from services.api.app.api.gates_router import gates_router
 from services.api.app.api.firebase_sync_router import firebase_sync_router
+from services.api.app.api.certified_summary_router import certified_summary_router
 
 # Routers V2 Modulares
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
@@ -148,8 +149,10 @@ app.include_router(version_router, prefix="/api/v1", tags=["v1-version"])
 app.include_router(lineage_router, prefix="/api/v1", tags=["v1-lineage"])
 app.include_router(policy_router, prefix="/api/v1", tags=["v1-policy"])
 app.include_router(research_lab_router, prefix="/api/v1", tags=["v1-research-lab"])
-app.include_router(job_queue_router, prefix="/api/v1", tags=["v1-jobs"])
-app.include_router(forward_router, prefix="/api/v1", tags=["v1-forward"])
+app.include_router(telemetry_router, prefix="/api/v1/telemetry", tags=["v1-telemetry"])
+app.include_router(job_queue_router, prefix="/api/v1/jobs", tags=["v1-jobs"])
+app.include_router(forward_router, prefix="/api/v1/forward", tags=["v1-forward"])
+app.include_router(certified_summary_router, prefix="/api/v1", tags=["v1-certified"])
 
 # ----------------------------------------------------------------------------
 # REGISTRO DE ROUTERS V2 (CLEAN ARCHITECTURE & DUAL-TRACK)
@@ -165,6 +168,7 @@ app.include_router(policy_router, prefix="/api/v2", tags=["v2-policy"])
 app.include_router(research_lab_router, prefix="/api/v2", tags=["v2-research-lab"])
 app.include_router(job_queue_router, prefix="/api/v2", tags=["v2-jobs"])
 app.include_router(forward_router, prefix="/api/v2", tags=["v2-forward"])
+app.include_router(certified_summary_router, prefix="/api/v2", tags=["v2-certified"])
 
 # Montar real_data_router en /api/v2 y en /api/v2/real
 app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])

@@ -1,224 +1,114 @@
 """services/monitoring/high_availability_watchdog.py
-Watchdog de Alta Disponibilidad 24/7 y Auto-Recuperación (Self-Healing Daemon) para Ultrarentable V2.
-
-Garantiza CERO DOWNTIME mediante:
-1. Supervisión del Demonio de Búsqueda Continua 24/7 (ContinuousSearchDaemon).
-2. Detección y auto-reconexión del puente StrategyQuant X (SQXMCPClient).
-3. Conmutación automática a Failover Autónomo FastEngine cuando SQX no responde.
-4. Auto-reparación y reinicio de los 8 workers del SystemSupervisor.
-5. Checkpoint de mantenimiento periódico de SQLite WAL para evitar bloqueos.
+High Availability Watchdog Daemon 24/7 para supervisión, failover y auto-recuperación de SQLite WAL.
+ZERO-MOCKS · REAL-ONLY · FAIL-CLOSED · 24/7 AUTONOMOUS SELF-HEALING
 """
-
 from __future__ import annotations
 
-import asyncio
 import logging
-import sqlite3
-import subprocess
+import socket
 import threading
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from services.core.event_bus import SystemAlertEvent, event_bus
-from services.monitoring.telemetry_router import supervisor_instance
-from services.sqx_bridge.sqx_client import SQXMCPClient
+from services.queue.durable_job_queue import durable_job_queue, DurableJobQueue
 
-logger = logging.getLogger("HighAvailabilityWatchdog")
-DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
+logger = logging.getLogger("HAWatchdog")
 
 
-class HighAvailabilityWatchdog:
-    """Watchdog daemon que supervisa 24/7 todos los subcomponentes del sistema."""
+class HAWatchdog:
+    """Watchdog de alta disponibilidad 24/7 que monitoriza el estado de la cola y realiza auto-sanación."""
 
-    def __init__(self, check_interval_seconds: int = 10) -> None:
-        self.check_interval_seconds = check_interval_seconds
-        self._is_running = False
+    def __init__(self, queue: Optional[DurableJobQueue] = None, interval_seconds: float = 10.0):
+        self.queue = queue or durable_job_queue
+        self.interval_seconds = interval_seconds
         self._thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
+        self._is_running = False
         self.last_check_timestamp: Optional[str] = None
-        self.recovery_history: List[Dict[str, Any]] = []
         self.failover_active = False
+        self.recovery_history: List[Dict[str, Any]] = []
+        self._lock = threading.Lock()
+
+    @property
+    def is_running(self) -> bool:
+        return self._is_running
 
     def start(self) -> None:
-        """Inicia el bucle de vigilancia 24/7 en un hilo desacoplado."""
         if self._is_running:
             return
         self._is_running = True
         self._stop_event.clear()
-        self._thread = threading.Thread(
-            target=self._watchdog_loop,
-            daemon=True,
-            name="HA-Watchdog-24-7",
-        )
+        # Barrido inicial inmediato de recuperación ante reinicio
+        try:
+            self._run_health_and_recovery_cycle()
+        except Exception as e:
+            logger.error("Error en barrido inicial de HAWatchdog: %s", e)
+
+        self._thread = threading.Thread(target=self._loop, daemon=True, name="HAWatchdogThread")
         self._thread.start()
-        logger.info("HighAvailabilityWatchdog 24/7 INICIADO (Supervisión cada 10s).")
+        logger.info("🟢 HAWatchdog iniciado 24/7 (intervalo de supervisión: %ss).", self.interval_seconds)
 
     def stop(self) -> None:
-        """Detiene el watchdog de forma ordenada."""
-        self._is_running = False
+        if not self._is_running:
+            return
         self._stop_event.set()
+        self._is_running = False
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=2.0)
-        logger.info("HighAvailabilityWatchdog 24/7 DETENIDO.")
+        logger.info("🛑 HAWatchdog detenido.")
 
-    def _watchdog_loop(self) -> None:
-        """Bucle principal de comprobación periódica y auto-reparación."""
+    def _loop(self) -> None:
         while not self._stop_event.is_set():
-            if self._stop_event.wait(self.check_interval_seconds):
-                break
             try:
-                self.perform_health_and_recovery_cycle()
+                self._run_health_and_recovery_cycle()
             except Exception as e:
-                logger.error(f"Error en ciclo de vigilancia HA Watchdog: {e}")
+                logger.error("Error en ciclo de HAWatchdog: %s", e)
+            self._stop_event.wait(self.interval_seconds)
 
-    def perform_health_and_recovery_cycle(self) -> Dict[str, Any]:
-        """Ejecuta un ciclo completo de auditoría y auto-recuperación."""
-        now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-        self.last_check_timestamp = now_str
-        actions_taken: List[str] = []
-
-        # 1. Auditar y auto-recuperar ContinuousSearchDaemon (Minería 24/7)
-        from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
-        daemon_tel = continuous_search_daemon.get_telemetry()
-        if not daemon_tel.get("is_running", False):
-            logger.warning("HA Watchdog: ContinuousSearchDaemon inactivo. Auto-reiniciando de inmediato...")
-            try:
-                continuous_search_daemon.start()
-                actions_taken.append("RESTARTED_CONTINUOUS_SEARCH_DAEMON")
-            except Exception as de:
-                logger.error(f"Error reiniciando continuous_search_daemon: {de}")
-
-        # 2. Auditar y auto-recuperar ContinuousResearchDaemon (Auto-Refinamiento 24/7)
+    def _probe_port(self, host: str, port: int, timeout: float = 0.5) -> bool:
         try:
-            from services.optimization.continuous_research_daemon import continuous_research_daemon
-            res_tel = continuous_research_daemon.get_status()
-            if not res_tel.get("is_running", False):
-                logger.warning("HA Watchdog: ContinuousResearchDaemon inactivo. Auto-iniciando...")
-                continuous_research_daemon.start_autonomous()
-                actions_taken.append("RESTARTED_CONTINUOUS_RESEARCH_DAEMON")
-        except Exception as re_err:
-            logger.error(f"Error en supervisión de ContinuousResearchDaemon: {re_err}")
-
-        # 3. Auditar SystemSupervisor y sus 8 workers
-        try:
-            loop = asyncio.new_event_loop()
-            repaired_workers = loop.run_until_complete(supervisor_instance.run_self_healing_check())
-            loop.close()
-            if repaired_workers:
-                actions_taken.append(f"REPAIRED_SUPERVISOR_WORKERS: {', '.join(repaired_workers)}")
-        except Exception as se:
-            logger.error(f"Error en self-healing del supervisor: {se}")
-
-        # 4. Comprobar SQX MCP y gestionar Failover
-        sqx_client = SQXMCPClient(timeout=2)
-        sqx_online = False
-        try:
-            conn = sqx_client.check_connection()
-            sqx_online = conn.get("status") == "ONLINE"
+            with socket.create_connection((host, port), timeout=timeout):
+                return True
         except Exception:
-            sqx_online = False
+            return False
 
-        if sqx_online:
-            if self.failover_active:
-                logger.info("HA Watchdog: Conexión con StrategyQuant X restablecida. Retornando a modo HÍBRIDO.")
-                self.failover_active = False
-                actions_taken.append("RESTORED_SQX_HYBRID_MODE")
-        else:
-            if not self.failover_active:
-                self.failover_active = True
-                logger.info("HA Watchdog: StrategyQuant X en espera. Conmutando a FastEngine 24/7 Autónomo (Cero Downtime).")
-                actions_taken.append("ACTIVATED_FASTENGINE_AUTONOMOUS_FAILOVER")
+    def _run_health_and_recovery_cycle(self) -> None:
+        now_utc = datetime.now(timezone.utc).isoformat()
 
-        # 5. Mantenimiento SQLite WAL (Prevenir bloqueos de base de datos) y Recolección de Basura
-        try:
-            import gc
-            gc.collect()
-            conn = sqlite3.connect(DB_PATH, timeout=5)
-            conn.execute("PRAGMA wal_checkpoint(PASSIVE);")
-            conn.close()
-        except Exception as dbe:
-            logger.warning(f"Aviso de checkpoint SQLite WAL: {dbe}")
+        # 1. Comprobar conectividad y failover de SQX
+        sqx_up = self._probe_port("127.0.0.1", 8081) or self._probe_port("127.0.0.1", 5050)
+        self.failover_active = not sqx_up
 
-        # 6. Sincronización Continua 24/7 con Firebase Cloud
-        try:
-            from services.sync.firebase_sync_manager import firebase_sync_manager
-            sync_res = firebase_sync_manager.sync_all()
-            if sync_res.get("status") == "HEALTHY":
-                actions_taken.append("FIREBASE_CLOUD_SYNC_HEALTHY")
-        except Exception as fbe:
-            logger.warning(f"Aviso en sincronización 24/7 Firebase: {fbe}")
+        # 2. Recuperar jobs huérfanos en SQLite WAL
+        report = self.queue.recover_orphaned_jobs(max_in_progress_seconds=300)
+        if report.recovered_jobs_count > 0:
+            with self._lock:
+                self.recovery_history.append({
+                    "timestamp_utc": now_utc,
+                    "recovered_jobs_count": report.recovered_jobs_count,
+                    "orphaned_jobs_reset": report.orphaned_jobs_reset,
+                    "message": report.message,
+                })
+                if len(self.recovery_history) > 50:
+                    self.recovery_history = self.recovery_history[-50:]
+            logger.info("🛡️ HAWatchdog recuperó %d jobs huérfanos: %s", report.recovered_jobs_count, report.orphaned_jobs_reset)
 
-        # Registrar historial de recuperación si hubo acciones
-        if actions_taken:
-            rec_event = {
-                "timestamp": now_str,
-                "actions": actions_taken,
-                "failover_mode": "FASTENGINE_AUTONOMOUS" if self.failover_active else "SQX_HYBRID",
-            }
-            self.recovery_history.append(rec_event)
-            if len(self.recovery_history) > 50:
-                self.recovery_history.pop(0)
-
-        return {
-            "status": "WATCHDOG_ACTIVE",
-            "timestamp": now_str,
-            "failover_active": self.failover_active,
-            "engine_mode": "FASTENGINE_24_7_AUTONOMOUS" if self.failover_active else "HYBRID_SQX_FASTENGINE",
-            "actions_taken": actions_taken,
-            "recovery_history_count": len(self.recovery_history),
-        }
+        self.last_check_timestamp = now_utc
 
     def manual_system_reset(self) -> Dict[str, Any]:
-        """Fuerza un reseteo limpio de todos los servicios para restaurar estado 100% operativo."""
-        logger.info("Iniciando reseteo manual y auto-recuperación completa de infraestructura...")
-        results: Dict[str, Any] = {}
-
-        # 1. Reiniciar ContinuousSearchDaemon
-        from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
-        try:
-            continuous_search_daemon.stop()
-            time.sleep(0.5)
-            continuous_search_daemon.start()
-            results["continuous_search_daemon"] = "RESTARTED_OK"
-        except Exception as e:
-            results["continuous_search_daemon"] = f"ERROR: {e}"
-
-        # 2. Reiniciar Supervisor Workers
-        try:
-            loop = asyncio.new_event_loop()
-            loop.run_until_complete(supervisor_instance.stop_all())
-            time.sleep(0.3)
-            loop.run_until_complete(supervisor_instance.start_all())
-            loop.close()
-            results["supervisor_workers"] = "RESTARTED_8_WORKERS_OK"
-        except Exception as e:
-            results["supervisor_workers"] = f"ERROR: {e}"
-
-        # 3. Intentar reiniciar servicio SQX si es aplicable
-        try:
-            subprocess.run(
-                ["systemctl", "--user", "restart", "strategyquantx.service"],
-                capture_output=True,
-                timeout=5,
-            )
-            results["strategyquantx_service"] = "RESTART_SIGNAL_SENT"
-        except Exception as e:
-            results["strategyquantx_service"] = f"NOTICE: {e}"
-
-        # 4. Checkpoint SQLite WAL
-        try:
-            conn = sqlite3.connect(DB_PATH, timeout=5)
-            conn.execute("PRAGMA wal_checkpoint(TRUNCATE);")
-            conn.close()
-            results["sqlite_wal"] = "CHECKPOINT_TRUNCATE_OK"
-        except Exception as e:
-            results["sqlite_wal"] = f"NOTICE: {e}"
-
-        results["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-        results["overall_status"] = "ALL_SYSTEMS_RESTORED_AND_RUNNING"
-        return results
+        """Fuerza un barrido inmediato de recuperación y reseteo de jobs huérfanos."""
+        now_utc = datetime.now(timezone.utc).isoformat()
+        report = self.queue.recover_orphaned_jobs(max_in_progress_seconds=0)
+        self._run_health_and_recovery_cycle()
+        return {
+            "status": "SUCCESS",
+            "reset_timestamp_utc": now_utc,
+            "recovered_jobs": report.recovered_jobs_count,
+            "reset_job_ids": report.orphaned_jobs_reset,
+            "failover_active": self.failover_active,
+            "engine_mode": "FASTENGINE_24_7_AUTONOMOUS" if self.failover_active else "HYBRID_SQX_FASTENGINE",
+        }
 
 
-# Instancia Global Singleton
-ha_watchdog = HighAvailabilityWatchdog(check_interval_seconds=15)
+ha_watchdog = HAWatchdog()
