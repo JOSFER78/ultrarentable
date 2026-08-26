@@ -40,5 +40,8 @@ jobs:
       - name: Verify FastAPI route inventory
         run: .venv/bin/python scripts/stabilization/r0_route_inventory.py
 
+      - name: Verify certification evidence policy
+        run: .venv/bin/python scripts/stabilization/r0_certification_evidence.py
+
       - name: Run focused stabilization tests
-        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py -q
+        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py -q
