@@ -7,9 +7,7 @@ cryptographically identifiable provenance and a complete 11/11 gate state.
 
 from __future__ import annotations
 
-import hashlib
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -79,8 +77,6 @@ def validate_scorecard(scorecard: dict[str, Any], signature_sha256: str) -> list
 
 
 def main() -> int:
-    # The repository scan is intentionally source-level: it verifies the policy
-    # contract without executing certification or fabricating a candidate.
     from services.validation.certification_registry import CertificationRegistry
 
     source = Path(CertificationRegistry.register_certification.__code__.co_filename).resolve()
