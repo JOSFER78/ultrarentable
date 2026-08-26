@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from services.api.app.config import LOCAL_WEB_ORIGINS
-from services.api.app.db.database import init_db, SessionLocal
+from services.api.app.db.database import init_db, SessionLocal, OpportunityMatrixModel
 from services.api.app.db.truth_guard import purge_legacy_demo_records
 from services.api.app.api.version_router import version_router
 from services.api.app.api.lineage_router import lineage_router
@@ -43,6 +43,7 @@ from services.semantic_ai.semantic_router import router as semantic_router
 from services.exploitation_engines.ultra_router import router as ultra_router
 from services.portfolio.portfolio_router import router as portfolio_router
 from services.paper.paper_router import router as paper_router
+from services.engine_version import compute_codebase_fingerprint, CURRENT_ENGINE_VERSION
 logger = logging.getLogger("UltrarentableAPI")
 
 def _autonomous_runtime_enabled() -> bool:
@@ -158,7 +159,7 @@ def root() -> Dict[str, Any]:
         "status": "RUNNING",
         "mode": "REAL_ONLY",
         "version": app.version,
-        "engine_version": "5.4.0",
+        "engine_version": CURRENT_ENGINE_VERSION,
         "tracks": ["TRACK_FONDEO", "TRACK_ULTRA", "TRACK_PORTFOLIO"],
         "autonomous_runtime_enabled": autonomous,
         "runtime_mode": "AUTONOMOUS_24X7" if autonomous else "LOCAL_API_ONLY",
@@ -174,11 +175,35 @@ def versions() -> Dict[str, Any]:
         "api_version": app.version,
         "current_version": app.version,
         "active_version": app.version,
-        "engine_version": "5.4.0",
-        "canonical_engine_version": "5.4.0",
-        "codebase_fingerprint": "",
+        "engine_version": CURRENT_ENGINE_VERSION,
+        "canonical_engine_version": CURRENT_ENGINE_VERSION,
+        "codebase_fingerprint": compute_codebase_fingerprint(),
         "git_commit": os.getenv("GIT_COMMIT", "UNKNOWN"),
         "autonomous_runtime_enabled": autonomous,
         "runtime_mode": "AUTONOMOUS_24X7" if autonomous else "LOCAL_API_ONLY",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
     }
+
+@app.get("/api/v2/opportunity-matrix", tags=["v2-opportunity"])
+def opportunity_matrix() -> Dict[str, Any]:
+    """Devuelve exclusivamente oportunidades persistidas en la matriz real; nunca genera filas sintéticas."""
+    with SessionLocal() as db:
+        rows = db.query(OpportunityMatrixModel).order_by(OpportunityMatrixModel.rank.asc()).all()
+        return {
+            "status": "OK",
+            "source": "sqlite.opportunity_matrix",
+            "count": len(rows),
+            "items": [
+                {
+                    "matrix_id": r.matrix_id,
+                    "symbol": r.symbol,
+                    "interval": r.interval,
+                    "liquidity_score": r.liquidity_score,
+                    "volatility_score": r.volatility_score,
+                    "dataset_status": r.dataset_status,
+                    "rank": r.rank,
+                    "created_at": r.created_at.isoformat() if r.created_at else None,
+                }
+                for r in rows
+            ],
+        }
