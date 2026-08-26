@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 
 from services.api.app.config import STATE_DB_PATH
 from services.engine_version import CURRENT_ENGINE_VERSION
+from services.discovery.strategy_search_registry import StrategySearchRegistry
 from services.optimization.continuous_research_daemon import continuous_research_daemon
 from services.api.app.core.fast_cache import in_memory_cached
 
@@ -117,6 +118,33 @@ def get_failed_and_incubator_candidates(
         }
     finally:
         conn.close()
+
+
+@router.get("/trials")
+@in_memory_cached(key_prefix="research_trials", ttl=2.0)
+def get_research_trials(
+    limit: int = Query(200, ge=1, le=2000),
+    run_id: Optional[str] = None,
+    symbol: Optional[str] = None,
+    timeframe: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Return actual registered research trials and their genealogy."""
+    registry = StrategySearchRegistry()
+    if run_id:
+        trials = registry.get_trials_for_run(run_id)
+    else:
+        trials = registry.get_all_trials(limit=limit)
+    if symbol:
+        trials = [t for t in trials if str(t.get("symbol", "")).upper() == symbol.upper()]
+    if timeframe:
+        trials = [t for t in trials if str(t.get("timeframe", "")).lower() == timeframe.lower()]
+    return {
+        "status": "OK",
+        "mode": "REAL_ONLY",
+        "engine_version": CURRENT_ENGINE_VERSION,
+        "count": len(trials[:limit]),
+        "trials": trials[:limit],
+    }
 
 
 @router.post("/improve/{candidate_id}")
