@@ -1,5 +1,6 @@
 """Unit tests for PaperSandboxEngine and IncubationEvaluator (Fase 7)."""
 
+import hashlib
 import pytest
 
 from contracts import (
@@ -9,6 +10,7 @@ from contracts import (
     ExecutionTrack,
     StrategyLifecycleStatus,
     TradeLog,
+    EvidenceBundle,
 )
 from services.paper import (
     IncubationEvaluator,
@@ -21,12 +23,11 @@ from services.validation import CandidateRegistry
 
 
 def test_paper_sandbox_execution_and_fill_simulation():
-    """Verify PaperSandbox opens positions with slippage and executes Stop Loss."""
+    """Verify PaperSandbox opens positions with canonical costs and executes Stop Loss."""
     sandbox = PaperSandboxEngine(default_latency_ms=50, slippage_ticks=1.0)
     semantic_ai = SemanticQuantEngine()
     strat = semantic_ai.generate_candidate(symbol="NQ", track=ExecutionTrack.TRACK_FONDEO)
 
-    # 1. Abrir posición LONG a $20,000 con SL de 20 ticks (5 puntos en NQ = $19,995) y TP de 40 ticks
     pos = sandbox.open_position(
         strategy=strat,
         side=PositionSide.LONG,
@@ -37,15 +38,13 @@ def test_paper_sandbox_execution_and_fill_simulation():
         take_profit_ticks=40,
     )
 
-    # Con slippage de 1 tick (0.25): Fill price = 20000.25
     assert pos.side == PositionSide.LONG
     assert pos.entry_price_avg == 20000.25
     assert pos.stop_loss_price == 20000.25 - 5.0
 
-    # 2. Actualizar precio a la baja hasta disparar Stop Loss
     updated_pos, trade_log = sandbox.update_market_price(
         strategy=strat,
-        current_price=19994.0,  # Below SL (19995.25)
+        current_price=19994.0,
         timestamp_ms=5000,
     )
 
@@ -57,7 +56,6 @@ def test_paper_sandbox_execution_and_fill_simulation():
 
 
 def test_incubation_evaluator_drift_and_promotion():
-    """Verify IncubationEvaluator handles ongoing, abort, and promotion scenarios."""
     evaluator = IncubationEvaluator(min_observation_days=14.0, min_trades=10)
     semantic_ai = SemanticQuantEngine()
     strat = semantic_ai.generate_candidate(symbol="MES", track=ExecutionTrack.TRACK_FONDEO)
@@ -80,7 +78,6 @@ def test_incubation_evaluator_drift_and_promotion():
 
     start_time_ms = 1770000000000
 
-    # 1. Escenario: 5 días observados (Continúa incubando)
     trades_5_days = [
         TradeLog(
             trade_id=f"t_{i}",
@@ -110,7 +107,6 @@ def test_incubation_evaluator_drift_and_promotion():
     )
     assert report_5d.verdict == IncubationVerdict.CONTINUE_INCUBATING
 
-    # 2. Escenario: Degradación severa (Max DD excede límite)
     bad_trades = [
         TradeLog(
             trade_id=f"bad_t_{i}",
@@ -140,7 +136,6 @@ def test_incubation_evaluator_drift_and_promotion():
     )
     assert report_abort.verdict == IncubationVerdict.ABORT_AND_REJECT
 
-    # 3. Escenario: 14 días completados con métricas sólidas -> Promoción a LIVE
     healthy_trades_14d = [
         TradeLog(
             trade_id=f"good_t_{i}",
@@ -161,9 +156,6 @@ def test_incubation_evaluator_drift_and_promotion():
         for i in range(16)
     ]
 
-    import hashlib
-    from contracts import EvidenceBundle
-
     registry = CandidateRegistry()
     strat_sha = strat.strategy_hash
     bundle = EvidenceBundle(
@@ -175,10 +167,10 @@ def test_incubation_evaluator_drift_and_promotion():
         dataset_oos_sha256=hashlib.sha256(b"mes_oos_data").hexdigest(),
         symbol="MES",
         timeframe="1h",
-        route="FONDEO".target_track.value,
+        route=ExecutionTrack.TRACK_FONDEO.value,
         execution_config_hash=hashlib.sha256(b"mes_exec").hexdigest(),
         engine_name="UniversalDeterministicBacktestEngine",
-        engine_version="3.0.0",
+        engine_version="5.4.0",
         commit_sha="064f1cc4e872c842b08331d2794eb84e59178ad3",
         initial_capital_usd=10000.0,
         is_trades_count=80,
