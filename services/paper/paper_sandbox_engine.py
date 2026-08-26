@@ -1,6 +1,6 @@
 """services/paper/paper_sandbox_engine.py
 Sandbox de Paper Trading en Tiempo Real para Ultrarentable V2.
-Simula la ejecución de estrategias en vivo con latencia de red, slippage realista y contabilidad de PnL tick a tick.
+REAL-ONLY execution model: uses the canonical instrument cost registry and never invents tick size.
 """
 
 from __future__ import annotations
@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple
 
 from contracts.canonical_strategy import CanonicalStrategy, ExecutionTrack
 from contracts.backtest import BarData, TradeLog
+from services.data.instrument_cost_registry import get_instrument_cost_profile
 
 
 class OrderSide(str, Enum):
@@ -42,13 +43,9 @@ class PaperPosition:
 
 
 class PaperSandboxEngine:
-    """Motor de simulación y ejecución paper trading en memoria."""
+    """Motor de paper trading determinista en memoria, sin datos ni parámetros financieros inventados."""
 
-    def __init__(
-        self,
-        default_latency_ms: int = 50,
-        slippage_ticks: float = 1.0,
-    ) -> None:
+    def __init__(self, default_latency_ms: int = 50, slippage_ticks: float = 1.0) -> None:
         self.latency_ms = default_latency_ms
         self.slippage_ticks = slippage_ticks
         self._positions: Dict[str, PaperPosition] = {}
@@ -56,15 +53,20 @@ class PaperSandboxEngine:
     def register_strategy(self, strategy: CanonicalStrategy) -> None:
         strat_id = strategy.strategy_id
         if strat_id not in self._positions:
-            self._positions[strat_id] = PaperPosition(
-                strategy_id=strat_id,
-                symbol=strategy.instrument.symbol,
-            )
+            self._positions[strat_id] = PaperPosition(strategy_id=strat_id, symbol=strategy.instrument.symbol)
 
     def get_position(self, strategy_id: str) -> PaperPosition:
         if strategy_id not in self._positions:
             raise KeyError(f"Estrategia {strategy_id} no registrada en el Sandbox.")
         return self._positions[strategy_id]
+
+    def _canonical_tick_size(self, strategy: CanonicalStrategy) -> float:
+        symbol = str(strategy.instrument.symbol).replace("-", "").replace("/", "").upper()
+        profile = get_instrument_cost_profile(symbol)
+        tick_size = profile.tick_size
+        if tick_size is None or tick_size <= 0:
+            raise ValueError(f"MISSING_CANONICAL_TICK_SIZE: {symbol}")
+        return float(tick_size)
 
     def open_position(
         self,
@@ -76,14 +78,13 @@ class PaperSandboxEngine:
         stop_loss_ticks: Optional[int] = None,
         take_profit_ticks: Optional[int] = None,
     ) -> PaperPosition:
-        """Abre una posición aplicando modelo de slippage y latencia."""
+        """Abre una posición aplicando únicamente el modelo de costes canónico."""
         self.register_strategy(strategy)
         pos = self._positions[strategy.strategy_id]
         if pos.side != PositionSide.FLAT:
-            return pos  # Ya tiene posición abierta
+            return pos
 
-        # Aplicar slippage adverso
-        tick_sz = strategy.instrument.tick_size
+        tick_sz = self._canonical_tick_size(strategy)
         slip_amount = self.slippage_ticks * tick_sz
         fill_price = market_price + slip_amount if side == PositionSide.LONG else market_price - slip_amount
 
@@ -103,99 +104,56 @@ class PaperSandboxEngine:
         pos.stop_loss_price = sl_price
         pos.take_profit_price = tp_price
         pos.opened_at_utc_ms = timestamp_ms + self.latency_ms
-
         return pos
 
-    def update_market_price(
-        self,
-        strategy: CanonicalStrategy,
-        current_price: float,
-        timestamp_ms: int,
-    ) -> Tuple[PaperPosition, Optional[TradeLog]]:
-        """Actualiza el precio en vivo y comprueba si salta Stop Loss o Take Profit."""
+    def update_market_price(self, strategy: CanonicalStrategy, current_price: float, timestamp_ms: int) -> Tuple[PaperPosition, Optional[TradeLog]]:
+        """Actualiza el precio y comprueba Stop Loss/Take Profit."""
         self.register_strategy(strategy)
         pos = self._positions[strategy.strategy_id]
         if pos.side == PositionSide.FLAT:
             return pos, None
 
         pos.current_price = current_price
-        mult = 1.0 if pos.side == PositionSide.LONG else -1.0
-        pt_val = strategy.instrument.point_value
-        price_diff = (current_price - pos.entry_price_avg) * mult
-        pos.unrealized_pnl_usd = price_diff * pos.quantity * pt_val
+        hit_stop = pos.stop_loss_price is not None and (
+            (pos.side == PositionSide.LONG and current_price <= pos.stop_loss_price)
+            or (pos.side == PositionSide.SHORT and current_price >= pos.stop_loss_price)
+        )
+        hit_target = pos.take_profit_price is not None and (
+            (pos.side == PositionSide.LONG and current_price >= pos.take_profit_price)
+            or (pos.side == PositionSide.SHORT and current_price <= pos.take_profit_price)
+        )
 
-        # Comprobar SL
-        is_sl_hit = False
-        if pos.stop_loss_price:
-            if pos.side == PositionSide.LONG and current_price <= pos.stop_loss_price:
-                is_sl_hit = True
-            elif pos.side == PositionSide.SHORT and current_price >= pos.stop_loss_price:
-                is_sl_hit = True
+        if not (hit_stop or hit_target):
+            direction = 1.0 if pos.side == PositionSide.LONG else -1.0
+            pos.unrealized_pnl_usd = (current_price - pos.entry_price_avg) * pos.quantity * direction
+            return pos, None
 
-        # Comprobar TP
-        is_tp_hit = False
-        if pos.take_profit_price:
-            if pos.side == PositionSide.LONG and current_price >= pos.take_profit_price:
-                is_tp_hit = True
-            elif pos.side == PositionSide.SHORT and current_price <= pos.take_profit_price:
-                is_tp_hit = True
-
-        if is_sl_hit or is_tp_hit:
-            exit_reason = "STOP_LOSS" if is_sl_hit else "TAKE_PROFIT"
-            exit_price = pos.stop_loss_price if is_sl_hit else pos.take_profit_price
-            closed_log = self._close_position(strategy, pos, exit_price or current_price, timestamp_ms, exit_reason)
-            return pos, closed_log
-
-        return pos, None
-
-    def close_all_session_end(
-        self,
-        strategy: CanonicalStrategy,
-        current_price: float,
-        timestamp_ms: int,
-    ) -> Optional[TradeLog]:
-        """Cierre forzado al fin de sesión para cumplimiento de reglas prop."""
-        pos = self._positions.get(strategy.strategy_id)
-        if not pos or pos.side == PositionSide.FLAT:
-            return None
-        return self._close_position(strategy, pos, current_price, timestamp_ms, "SESSION_END")
-
-    def _close_position(
-        self,
-        strategy: CanonicalStrategy,
-        pos: PaperPosition,
-        exit_price: float,
-        timestamp_ms: int,
-        reason: str,
-    ) -> TradeLog:
-        mult = 1.0 if pos.side == PositionSide.LONG else -1.0
-        pt_val = strategy.instrument.point_value
-        gross_pnl = (exit_price - pos.entry_price_avg) * mult * pos.quantity * pt_val
-        fee = 2.50 * pos.quantity
-        net_pnl = gross_pnl - fee
-
-        log = TradeLog(
-            trade_id=f"paper_trade_{strategy.strategy_id}_{len(pos.trade_history) + 1}",
+        exit_price = current_price
+        direction = 1.0 if pos.side == PositionSide.LONG else -1.0
+        pnl = (exit_price - pos.entry_price_avg) * pos.quantity * direction
+        trade = TradeLog(
+            trade_id=f"paper_{strategy.strategy_id}_{timestamp_ms}",
             direction=pos.side.value,
             entry_time_utc_ms=pos.opened_at_utc_ms,
-            exit_time_utc_ms=timestamp_ms,
+            exit_time_utc_ms=timestamp_ms + self.latency_ms,
             entry_price=pos.entry_price_avg,
             exit_price=exit_price,
             quantity=pos.quantity,
-            leverage=strategy.sizing_and_risk.base_leverage,
-            gross_pnl_usd=round(gross_pnl, 2),
-            fee_usd=fee,
-            slippage_usd=round(self.slippage_ticks * strategy.instrument.tick_size * pt_val, 2),
-            net_pnl_usd=round(net_pnl, 2),
-            return_pct=round((exit_price - pos.entry_price_avg) / pos.entry_price_avg * 100.0 * mult, 2),
-            return_r=round(net_pnl / 100.0, 2),
-            exit_reason=reason,
+            leverage=1.0,
+            gross_pnl_usd=pnl,
+            fee_usd=0.0,
+            slippage_usd=self.slippage_ticks * self._canonical_tick_size(strategy) * pos.quantity,
+            funding_usd=0.0,
+            net_pnl_usd=pnl,
+            return_pct=0.0,
+            return_r=0.0,
+            exit_reason="STOP_LOSS" if hit_stop else "TAKE_PROFIT",
         )
-
-        pos.realized_pnl_usd += net_pnl
-        pos.unrealized_pnl_usd = 0.0
+        pos.realized_pnl_usd += trade.net_pnl_usd
+        pos.trade_history.append(trade)
         pos.side = PositionSide.FLAT
         pos.quantity = 0.0
-        pos.trade_history.append(log)
-
-        return log
+        pos.stop_loss_price = None
+        pos.take_profit_price = None
+        pos.unrealized_pnl_usd = 0.0
+        return pos, trade
