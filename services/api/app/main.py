@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from services.api.app.config import LOCAL_WEB_ORIGINS
-from services.api.app.db.database import init_db, SessionLocal, OpportunityMatrixModel
+from services.api.app.db.database import init_db, SessionLocal, OpportunityMatrixModel, Base
 from services.api.app.db.truth_guard import purge_legacy_demo_records
 from services.api.app.api.version_router import version_router
 from services.api.app.api.lineage_router import lineage_router
@@ -48,13 +48,35 @@ from services.engine_version import compute_codebase_fingerprint, CURRENT_ENGINE
 
 logger = logging.getLogger("UltrarentableAPI")
 
+
 def _autonomous_runtime_enabled() -> bool:
     raw = os.getenv("ULTRARENTABLE_AUTONOMOUS_RUNTIME", "false").strip().lower()
     return raw in {"1", "true", "yes", "on"}
 
+
+def _dedupe_metadata_indexes() -> None:
+    """Remove duplicate named SQLAlchemy indexes before SQLite create_all().
+
+    Multiple legacy model/import paths can attach equivalent Index objects to a
+    single Table. SQLite then fails on the second CREATE INDEX even though the
+    schema is otherwise valid. Keep the first definition by name, deterministically.
+    """
+    for table in Base.metadata.tables.values():
+        seen: set[str] = set()
+        for index in list(table.indexes):
+            name = getattr(index, "name", None)
+            if not name:
+                continue
+            if name in seen:
+                table.indexes.discard(index)
+            else:
+                seen.add(name)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Iniciando infraestructura Ultrarentable V2...")
+    _dedupe_metadata_indexes()
     init_db()
     with SessionLocal() as db:
         purge_result = purge_legacy_demo_records(db)
