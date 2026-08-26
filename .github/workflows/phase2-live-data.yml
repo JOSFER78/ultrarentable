@@ -57,3 +57,13 @@ jobs:
         run: |
           find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*.json' -print | sort
           find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*_manifest.json' -print | sort
+
+      - name: Persist acquired dataset artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-bingx-history-${{ github.run_id }}
+          retention-days: 14
+          path: |
+            data/normalized/ds_bingx_*.json
+            data/normalized/ds_bingx_*_manifest.json
+            data/raw/rest/phase2-history/**
