@@ -54,11 +54,17 @@ class UltraDiscoveryEngine:
         sl_atr_mult: Optional[float] = None,
         tp_atr_mult: Optional[float] = None,
         pyramiding_tiers_count: Optional[int] = None,
-        archetype: str = "MOMENTUM_BREAKOUT",
+        archetype: Optional[str] = None,
         **kwargs: Any,
     ) -> StrategySnapshot:
-        """Genera un Snapshot canónico. El archetype y sus parámetros deben cambiar realmente la semántica."""
-        archetype = str(archetype or "MOMENTUM_BREAKOUT").upper()
+        """Genera un Snapshot canónico. Cuando el caller no fija archetype, se deriva de los parámetros para que
+        el mismo set seleccionado en IS/Validation/OOS conserve exactamente la misma semántica."""
+        if archetype:
+            archetype = str(archetype).upper()
+        else:
+            variants = ("MOMENTUM_BREAKOUT", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION")
+            variant_index = (int(ema_fast) * 31 + int(ema_slow) * 7 + int(rsi_period) * 13) % len(variants)
+            archetype = variants[variant_index]
 
         ema_fast_spec = IndicatorSpec(name="EMA", params={"period": ema_fast}, source_field="close", shift=0)
         ema_slow_spec = IndicatorSpec(name="EMA", params={"period": ema_slow}, source_field="close", shift=0)
