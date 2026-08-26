@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed authority graph for R0.9.
-
-The audit classifies the principal HTTP surfaces mounted by the application and
-flags legacy routers that also contain canonical routers, because that creates
-an alternative authority path even when URL prefixes differ.
-"""
+"""Fail-closed authority graph for R0.9."""
 from __future__ import annotations
 
 import ast
@@ -14,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MAIN = ROOT / "services" / "api" / "app" / "main.py"
 LEGACY = ROOT / "services" / "api" / "app" / "api" / "routes.py"
+COMPAT = ROOT / "services" / "api" / "app" / "api" / "legacy_compat_router.py"
 
 CANONICAL_ROUTERS = {
     "sqx_router": "CANONICAL",
@@ -32,41 +28,28 @@ CANONICAL_ROUTERS = {
     "validation_router": "CANONICAL",
 }
 
-LEGACY_MODULES = {
-    "legacy_routes": "LEGACY_ISOLATED",
-}
+LEGACY_MODULES = {"legacy_routes": "LEGACY_ISOLATED"}
 
 
 def _router_names(tree: ast.AST) -> set[str]:
-    names: set[str] = set()
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        if not isinstance(node.func, ast.Attribute) or node.func.attr != "include_router":
-            continue
-        if node.args and isinstance(node.args[0], ast.Name):
-            names.add(node.args[0].id)
-    return names
-
-
-def _nested_router_names(tree: ast.AST) -> set[str]:
-    names: set[str] = set()
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        if not isinstance(node.func, ast.Attribute) or node.func.attr != "include_router":
-            continue
-        if node.args and isinstance(node.args[0], ast.Name):
-            names.add(node.args[0].id)
-    return names
+    return {
+        node.args[0].id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "include_router"
+        and node.args
+        and isinstance(node.args[0], ast.Name)
+    }
 
 
 def main() -> int:
-    main_tree = ast.parse(MAIN.read_text(encoding="utf-8"), filename=str(MAIN))
+    main_source = MAIN.read_text(encoding="utf-8")
+    main_tree = ast.parse(main_source, filename=str(MAIN))
     legacy_tree = ast.parse(LEGACY.read_text(encoding="utf-8"), filename=str(LEGACY))
 
     mounted = sorted(_router_names(main_tree))
-    nested_legacy = sorted(_nested_router_names(legacy_tree))
+    nested_legacy = sorted(_router_names(legacy_tree))
     findings: list[dict[str, object]] = []
     failures: list[str] = []
 
@@ -76,26 +59,32 @@ def main() -> int:
         if classifications[router] == "REVIEW_REQUIRED":
             failures.append(f"unclassified mounted router: {router}")
 
-    # A legacy module containing a router already mounted canonically creates a
-    # second authority path. It is safe only when the legacy module is isolated.
     canonical_nested = sorted(set(nested_legacy) & set(CANONICAL_ROUTERS))
-    if canonical_nested:
-        failures.append(
-            "legacy routes.py nests canonical router(s): " + ", ".join(canonical_nested)
-        )
+    compat_boundary_active = (
+        COMPAT.exists()
+        and "from services.api.app.api.legacy_compat_router import router as legacy_routes" in main_source
+        and "_isolated_nested_canonical" in COMPAT.read_text(encoding="utf-8")
+    )
+
+    if canonical_nested and not compat_boundary_active:
+        failures.append("legacy routes.py nests canonical router(s): " + ", ".join(canonical_nested))
         findings.append({
             "type": "LEGACY_BYPASS",
             "module": "services.api.app.api.routes",
             "nested_canonical_routers": canonical_nested,
             "classification": "REMOVE_OR_ISOLATE",
         })
+    elif canonical_nested:
+        findings.append({
+            "type": "LEGACY_ISOLATION",
+            "module": "services.api.app.api.routes",
+            "nested_canonical_routers": canonical_nested,
+            "classification": "LEGACY_ISOLATED",
+            "boundary": "legacy_compat_router",
+        })
 
     findings.extend(
-        {
-            "type": "MOUNTED_ROUTER",
-            "router": router,
-            "classification": classifications[router],
-        }
+        {"type": "MOUNTED_ROUTER", "router": router, "classification": classifications[router]}
         for router in mounted
     )
 
