@@ -11,13 +11,11 @@ SCAN_ROOTS = [ROOT / "apps" / "web", ROOT / "services"]
 EXCLUDED_PARTS = {"node_modules", ".next", "__pycache__", ".venv", "dist", "build"}
 
 FORBIDDEN = {
-    "known_synthetic_sha": re.compile(r"a3f5c9e2d1b8f4a7c0e3b6d9f2a5c8e1d4b7a0f3c6e9b2d5a8f1c4e7b0d3a6f9", re.I),
+    "known_synthetic_sha": re.compile(r"a3f5c9e2d1b8f4a7c0e3b6d9f2a5c8e1d4b7a0f3c6e9b2d5a8f1c4e7b0d3a6f9", re.IGNORECASE),
     "known_synthetic_timestamp": re.compile(r"\b(?:1672531200000|1704067200000)\b"),
     "known_synthetic_meta_strategy": re.compile(r"META-PORT-BTC-ETH-NQ-01"),
     "random_generator": re.compile(r"\bMath\.random\s*\("),
 }
-
-# These patterns specifically catch the historic Gate 11 fabrication path.
 GATE_TRUTH_PATTERNS = {
     "synthetic_gate_step_pnl": re.compile(r"\bstep_pnl\b"),
     "synthetic_gate_trade_id": re.compile(r"SQX_TR_"),
@@ -25,9 +23,7 @@ GATE_TRUTH_PATTERNS = {
     "false_cloud_sync_claim": re.compile(r"SYNCHRONIZED_CLOUD|CLOUD_SYNCED|\"status\"\s*:\s*\"SYNCHRONIZED\""),
     "hardcoded_production_sqlite_path": re.compile(r"/home/ubuntu/\.local/state/ultrarentable/ultrarentable\.sqlite3"),
 }
-
 TEXT_SUFFIXES = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".py", ".json", ".yaml", ".yml"}
-
 
 def iter_files() -> list[Path]:
     files: list[Path] = []
@@ -35,13 +31,10 @@ def iter_files() -> list[Path]:
         if not scan_root.exists():
             continue
         for path in scan_root.rglob("*"):
-            if not path.is_file() or path.suffix not in TEXT_SUFFIXES:
-                continue
-            if any(part in EXCLUDED_PARTS for part in path.parts):
+            if not path.is_file() or path.suffix not in TEXT_SUFFIXES or any(part in EXCLUDED_PARTS for part in path.parts):
                 continue
             files.append(path)
     return files
-
 
 def main() -> int:
     hits: list[dict[str, object]] = []
@@ -55,18 +48,10 @@ def main() -> int:
             patterns.update(GATE_TRUTH_PATTERNS)
         for name, pattern in patterns.items():
             for match in pattern.finditer(text):
-                line = text.count("\n", 0, match.start()) + 1
-                hits.append({"rule": name, "file": str(path.relative_to(ROOT)), "line": line})
-
-    result = {
-        "check": "R0.8_FORBIDDEN_LITERAL_SCAN",
-        "status": "PASS" if not hits else "BLOCKED",
-        "hit_count": len(hits),
-        "hits": hits,
-    }
+                hits.append({"rule": name, "file": str(path.relative_to(ROOT)), "line": text.count("\n", 0, match.start()) + 1})
+    result = {"check": "R0.8_FORBIDDEN_LITERAL_SCAN", "status": "PASS" if not hits else "BLOCKED", "hit_count": len(hits), "hits": hits}
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if not hits else 1
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
