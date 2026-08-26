@@ -9,11 +9,11 @@ interface Dataset {
   venue: string;
   symbol: string;
   interval: string;
-  startTime: number;
-  endTime: number;
+  startTime?: number;
+  endTime?: number;
   recordCount: number;
-  gapCount: number;
-  status: "APPROVED" | "QUARANTINED" | "VALIDATING" | "REJECTED";
+  gapCount?: number;
+  status: "APPROVED" | "QUARANTINED" | "VALIDATING" | "REJECTED" | string;
 }
 
 const RESEARCH_DAYS = 160;
@@ -56,6 +56,7 @@ export default function DataPipelinePage() {
   };
 
   const ethDatasets = datasets.filter((dataset) => dataset.symbol === "ETH-USDT");
+  const formatDate = (timestamp?: number) => (timestamp === undefined ? "—" : new Date(timestamp).toLocaleDateString("es-ES"));
 
   return (
     <div className="stagger">
@@ -123,9 +124,9 @@ export default function DataPipelinePage() {
                   <tr key={dataset.datasetId}>
                     <td style={{ fontWeight: 700 }}>{dataset.interval}</td>
                     <td>{dataset.recordCount.toLocaleString("es-ES")}</td>
-                    <td>{new Date(dataset.startTime).toLocaleDateString("es-ES")}</td>
-                    <td>{new Date(dataset.endTime).toLocaleDateString("es-ES")}</td>
-                    <td>{dataset.gapCount}</td>
+                    <td>{formatDate(dataset.startTime)}</td>
+                    <td>{formatDate(dataset.endTime)}</td>
+                    <td>{dataset.gapCount ?? "—"}</td>
                     <td>
                       <span
                         className={`badge ${
