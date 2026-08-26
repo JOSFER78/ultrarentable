@@ -10,9 +10,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -56,12 +55,19 @@ def _explicit_market_identity(raw: Dict[str, Any]) -> tuple[str | None, str | No
             symbol = text
         if timeframe is None and label in {"timeframe", "tf", "period", "bar period"}:
             timeframe = text
-    if symbol:
-        compact = symbol.upper().replace("/", "-").replace("_AUTO", "").replace("_FUT", "").replace("_PERP", "")
-        if compact.endswith("USDT") and "-" not in compact:
-            compact = f"{compact[:-4]}-USDT"
-        symbol = compact
     return symbol, timeframe
+
+
+def _strategy_name(item: Any) -> str | None:
+    """Normalize real SQX list entries without guessing their identity."""
+    if isinstance(item, str) and item.strip():
+        return item.strip()
+    if isinstance(item, dict):
+        for key in ("name", "strategy", "strategy_name", "id"):
+            value = item.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+    return None
 
 
 def _source_record(strategy: StrategyModel) -> Dict[str, Any]:
@@ -163,14 +169,20 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
         raise HTTPException(status_code=422, detail="PROJECT_NAME_REQUIRED")
     client = SQXMCPClient()
     try:
-        strategy_names = client.list_strategies(project_name, DATABANK) or []
+        strategy_items = client.list_strategies(project_name, DATABANK) or []
     except SQXMCPError as exc:
         raise HTTPException(status_code=502, detail=f"SQX_UNAVAILABLE: {exc}") from exc
 
     db = SessionLocal()
     inserted = unchanged = quarantined = 0
+    usable_names = []
     try:
-        for name in strategy_names:
+        for item in strategy_items:
+            name = _strategy_name(item)
+            if not name:
+                quarantined += 1
+                continue
+            usable_names.append(name)
             try:
                 raw = client.get_strategy_stats(project_name, DATABANK, name)
             except Exception:
@@ -180,8 +192,6 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
                 quarantined += 1
                 continue
 
-            # Parse real source statistics for display/research; values are never used
-            # as certification evidence at this stage.
             try:
                 metrics = extract_stats(raw) or {}
             except Exception:
@@ -242,11 +252,12 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
             "status": "SUCCESS",
             "project": project_name,
             "databank": DATABANK,
-            "found": len(strategy_names),
+            "found": len(strategy_items),
+            "named": len(usable_names),
             "inserted": inserted,
             "unchanged": unchanged,
             "quarantined": quarantined,
-            "next_step": "REQUIRES_REAL_DATASET_AND_CANONICAL_BACKTEST",
+            "next_step": "REQUIRES_EXPLICIT_RULE_SOURCE_AND_REAL_DATASET_AND_CANONICAL_BACKTEST",
         }
     finally:
         db.close()
@@ -272,6 +283,7 @@ def organic_improvement_plan(strategy_id: str) -> Dict[str, Any]:
                 "raw_metric_fields": sorted(raw_stats.keys()),
             },
             "organic_next_steps": [
+                "Obtain the complete source rules from SQX/export/plugin; statistics alone are insufficient.",
                 "Bind an approved real dataset matching the extracted symbol/timeframe.",
                 "Run the canonical deterministic backtest without parameter changes.",
                 "Measure failure modes and regime dependence.",
