@@ -7,7 +7,6 @@ from __future__ import annotations
 import logging
 import socket
 import threading
-import time
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -39,15 +38,13 @@ class HAWatchdog:
             return
         self._is_running = True
         self._stop_event.clear()
-        # Barrido inicial inmediato de recuperación ante reinicio
         try:
             self._run_health_and_recovery_cycle()
         except Exception as e:
             logger.error("Error en barrido inicial de HAWatchdog: %s", e)
-
         self._thread = threading.Thread(target=self._loop, daemon=True, name="HAWatchdogThread")
         self._thread.start()
-        logger.info("🟢 HAWatchdog iniciado 24/7 (intervalo de supervisión: %ss).", self.interval_seconds)
+        logger.info("HAWatchdog iniciado 24/7 (intervalo %ss).", self.interval_seconds)
 
     def stop(self) -> None:
         if not self._is_running:
@@ -56,7 +53,7 @@ class HAWatchdog:
         self._is_running = False
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=2.0)
-        logger.info("🛑 HAWatchdog detenido.")
+        logger.info("HAWatchdog detenido.")
 
     def _loop(self) -> None:
         while not self._stop_event.is_set():
@@ -73,14 +70,10 @@ class HAWatchdog:
         except Exception:
             return False
 
-    def _run_health_and_recovery_cycle(self) -> None:
+    def _run_health_and_recovery_cycle(self) -> Dict[str, Any]:
         now_utc = datetime.now(timezone.utc).isoformat()
-
-        # 1. Comprobar conectividad y failover de SQX
         sqx_up = self._probe_port("127.0.0.1", 8081) or self._probe_port("127.0.0.1", 5050)
         self.failover_active = not sqx_up
-
-        # 2. Recuperar jobs huérfanos en SQLite WAL
         report = self.queue.recover_orphaned_jobs(max_in_progress_seconds=300)
         if report.recovered_jobs_count > 0:
             with self._lock:
@@ -92,21 +85,33 @@ class HAWatchdog:
                 })
                 if len(self.recovery_history) > 50:
                     self.recovery_history = self.recovery_history[-50:]
-            logger.info("🛡️ HAWatchdog recuperó %d jobs huérfanos: %s", report.recovered_jobs_count, report.orphaned_jobs_reset)
-
         self.last_check_timestamp = now_utc
+        overall_status = "FAILOVER_ACTIVE" if self.failover_active else "ALL_SYSTEMS_HEALTHY"
+        return {
+            "overall_status": overall_status,
+            "timestamp_utc": now_utc,
+            "sqx_reachable": sqx_up,
+            "failover_active": self.failover_active,
+            "recovered_jobs": report.recovered_jobs_count,
+            "reset_job_ids": report.orphaned_jobs_reset,
+        }
+
+    # Public compatibility API used by operations/tests; delegates to the real cycle.
+    def perform_health_and_recovery_cycle(self) -> Dict[str, Any]:
+        return self._run_health_and_recovery_cycle()
 
     def manual_system_reset(self) -> Dict[str, Any]:
         """Fuerza un barrido inmediato de recuperación y reseteo de jobs huérfanos."""
         now_utc = datetime.now(timezone.utc).isoformat()
         report = self.queue.recover_orphaned_jobs(max_in_progress_seconds=0)
-        self._run_health_and_recovery_cycle()
+        cycle = self._run_health_and_recovery_cycle()
         return {
             "status": "SUCCESS",
+            "overall_status": "ALL_SYSTEMS_RESTORED_AND_RUNNING" if not cycle["failover_active"] else "FAILOVER_ACTIVE",
             "reset_timestamp_utc": now_utc,
             "recovered_jobs": report.recovered_jobs_count,
             "reset_job_ids": report.orphaned_jobs_reset,
-            "failover_active": self.failover_active,
+            "failover_active": cycle["failover_active"],
             "engine_mode": "FASTENGINE_24_7_AUTONOMOUS" if self.failover_active else "HYBRID_SQX_FASTENGINE",
         }
 
