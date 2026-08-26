@@ -7,6 +7,7 @@ export interface BacktestParams {
   strategy_id: string;
   symbol: string;
   timeframe: string;
+  dataset_id?: string;
   initial_capital?: number;
   slippage_ticks?: number;
   commission_per_order?: number;
@@ -199,7 +200,7 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
       const errJson = await response.json();
       errorDetail = errJson.detail || errJson.message || JSON.stringify(errJson);
     } catch {
-      // Ignored if body is not JSON
+      // Ignore non-JSON error bodies.
     }
     throw new Error(`API Request Error (${response.status} ${endpoint}): ${errorDetail}`);
   }
@@ -208,38 +209,35 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
 }
 
 /**
- * Execute real backtest on FastEngine / Canonical Backtest Service.
- * ZERO MOCKS - Real physical tick/bar execution.
+ * Execute a REAL backtest only when the caller supplies an existing dataset_id.
+ *
+ * ZERO-MOCK / FAIL-CLOSED:
+ * - no generated dataset ids;
+ * - no generated dataset hashes;
+ * - no invented historical timestamps;
+ * - no invented bar counts;
+ * - no implicit capital;
+ * - no synthetic request ids used as quantitative evidence.
+ *
+ * The backend is the authority for dataset provenance and execution semantics.
  */
 export async function executeBacktest(params: BacktestParams): Promise<BacktestResult> {
-  const reqId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-  const symbol = params.symbol || "BTC-USDT";
-  const timeframe = params.timeframe || "1h";
-  const initialCapital = params.initial_capital || 100000;
-  const slippageBps = (params.slippage_ticks || 0) * 1.5;
+  if (!params.dataset_id?.trim()) {
+    throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id");
+  }
 
-  const dataset = {
-    dataset_id: `ds_${symbol.toLowerCase().replace(/[^a-z0-9]/g, "_")}_${timeframe}`,
-    symbol: symbol,
-    timeframe: timeframe,
-    start_timestamp_utc_ms: params.start_timestamp_utc_ms || 1672531200000,
-    end_timestamp_utc_ms: params.end_timestamp_utc_ms || 1704067200000,
-    total_bars: 8760,
-    sha256_hash: "a3f5c9e2d1b8f4a7c0e3b6d9f2a5c8e1d4b7a0f3c6e9b2d5a8f1c4e7b0d3a6f9",
-    is_in_sample: true,
-  };
-
-  const payload = {
-    request_id: reqId,
+  const payload: Record<string, unknown> = {
     strategy_id: params.strategy_id,
-    engine_type: "FAST_APPROXIMATE",
-    dataset: dataset,
-    initial_capital_usd: initialCapital,
-    leverage: 1,
-    fee_multiplier: 1.0,
-    slippage_bps: slippageBps,
-    split_ratio: 0.7,
+    dataset_id: params.dataset_id,
   };
+
+  if (params.initial_capital !== undefined) payload.initial_capital = params.initial_capital;
+  if (params.slippage_ticks !== undefined) payload.slippage_ticks = params.slippage_ticks;
+  if (params.commission_per_order !== undefined) payload.commission_per_order = params.commission_per_order;
+  if (params.start_timestamp_utc_ms !== undefined) payload.start_timestamp_utc_ms = params.start_timestamp_utc_ms;
+  if (params.end_timestamp_utc_ms !== undefined) payload.end_timestamp_utc_ms = params.end_timestamp_utc_ms;
+  if (params.ast !== undefined) payload.ast = params.ast;
+  if (params.parameters !== undefined) payload.parameters = params.parameters;
 
   return fetchJson<BacktestResult>("/api/v1/backtest", {
     method: "POST",
@@ -247,25 +245,14 @@ export async function executeBacktest(params: BacktestParams): Promise<BacktestR
   });
 }
 
-/**
- * Retrieve strictly certified strategies for Page 5 (Estrategias Aprobadas).
- * Enforces engine_version == "5.3.0", all_gates_pass == true, ledger_verified == true.
- */
 export async function getCertifiedStrategies(): Promise<CertifiedStrategy[]> {
   return fetchJson<CertifiedStrategy[]>("/api/v2/certified/strategies");
 }
 
-/**
- * Retrieve certified meta-strategies for Page 6 (Portfolio Studio).
- * Enforces 100% of components are APPROVED_CURRENT_ENGINE with independent ledger.
- */
 export async function getCertifiedMetaStrategies(): Promise<CertifiedMetaStrategy[]> {
   return fetchJson<CertifiedMetaStrategy[]>("/api/v2/certified/meta-strategies");
 }
 
-/**
- * Retrieve candidate strategies for Page 2 / Hub.
- */
 export async function getCandidates(params?: { limit?: number; include_rejected?: boolean }): Promise<CandidateStrategy[]> {
   const query = new URLSearchParams();
   if (params?.limit) query.set("limit", params.limit.toString());
@@ -274,16 +261,9 @@ export async function getCandidates(params?: { limit?: number; include_rejected?
   return fetchJson<CandidateStrategy[]>(`/api/v1/candidates${qs ? `?${qs}` : ""}`);
 }
 
-/**
- * Retrieve live discovery status.
- */
 export async function getDiscoveryStatus(): Promise<DiscoveryStatus> {
   return fetchJson<DiscoveryStatus>("/api/v1/discovery/status");
 }
-
-// ----------------------------------------------------------------------------
-// FASE 3, 4, 5 — LINEAGE, POLICY, RESEARCH LAB & 24/7 DURABLE QUEUE CLIENTS
-// ----------------------------------------------------------------------------
 
 export interface CertificationRecord {
   strategy_id: string;
@@ -421,16 +401,10 @@ export interface ForwardSufficiencyResult {
   evaluated_at_utc: string;
 }
 
-/**
- * Retrieve cryptographic lineage tree for a strategy.
- */
 export async function getLineageTree(strategyId: string): Promise<LineageTreeResponse> {
   return fetchJson<LineageTreeResponse>(`/api/v1/lineage/${strategyId}`);
 }
 
-/**
- * Verify cryptographic certificate authenticity.
- */
 export async function verifyCertificate(certificate: CertificationRecord): Promise<{ is_valid: boolean; tampering_detected: boolean }> {
   return fetchJson<{ is_valid: boolean; tampering_detected: boolean }>("/api/v1/lineage/verify-certificate", {
     method: "POST",
@@ -438,9 +412,6 @@ export async function verifyCertificate(certificate: CertificationRecord): Promi
   });
 }
 
-/**
- * Run Zero-Mock quantitative policy impact simulation across certified cohorts.
- */
 export async function runPolicyImpactAnalysis(request: PolicyImpactRequest): Promise<PolicyImpactResult> {
   return fetchJson<PolicyImpactResult>("/api/v1/policy/impact-analysis", {
     method: "POST",
@@ -448,18 +419,12 @@ export async function runPolicyImpactAnalysis(request: PolicyImpactRequest): Pro
   });
 }
 
-/**
- * Trigger multi-agent quantitative debate across 8 specialized roles with Blind Scope.
- */
 export async function triggerResearchDebate(strategyId: string): Promise<ResearchDebateResponse> {
   return fetchJson<ResearchDebateResponse>(`/api/v1/research-lab/debate/${strategyId}`, {
     method: "POST",
   });
 }
 
-/**
- * Synthesize AST mutation from debate consensus into valid StrategyDSL.
- */
 export async function synthesizeStrategyMutation(strategyId: string, debateId: string): Promise<ResearchSynthesisResponse> {
   return fetchJson<ResearchSynthesisResponse>("/api/v1/research-lab/synthesize", {
     method: "POST",
@@ -467,9 +432,6 @@ export async function synthesizeStrategyMutation(strategyId: string, debateId: s
   });
 }
 
-/**
- * Enqueue durable background job in 24/7 SQLite WAL queue.
- */
 export async function enqueueDurableJob(jobType: string, payload: Record<string, unknown>, priority = 5): Promise<DurableJob> {
   return fetchJson<DurableJob>("/api/v1/jobs/enqueue", {
     method: "POST",
@@ -477,17 +439,11 @@ export async function enqueueDurableJob(jobType: string, payload: Record<string,
   });
 }
 
-/**
- * List 24/7 durable queue jobs.
- */
 export async function getDurableJobs(status?: string): Promise<DurableJob[]> {
   const qs = status ? `?status=${status}` : "";
   return fetchJson<DurableJob[]>(`/api/v1/jobs${qs}`);
 }
 
-/**
- * Evaluate Adaptive Forward Sufficiency in real-time.
- */
 export async function evaluateForwardSufficiency(request: ForwardSufficiencyRequest): Promise<ForwardSufficiencyResult> {
   return fetchJson<ForwardSufficiencyResult>("/api/v1/forward/evaluate", {
     method: "POST",
@@ -505,33 +461,25 @@ export const api = {
   post: <T = any>(endpoint: string, data?: any) => fetchJson<T>(endpoint, { method: "POST", body: data ? JSON.stringify(data) : undefined }),
   put: <T = any>(endpoint: string, data?: any) => fetchJson<T>(endpoint, { method: "PUT", body: data ? JSON.stringify(data) : undefined }),
   delete: <T = any>(endpoint: string) => fetchJson<T>(endpoint, { method: "DELETE" }),
-  
-  // Data & Ingestion
   getDatasets: () => fetchJson<any[]>("/api/v1/datasets"),
   prepareEthResearch: (days: number) => fetchJson<any>("/api/v1/datasets/prepare-eth", { method: "POST", body: JSON.stringify({ days }) }),
-  
-  // StrategyQuant X Bridge
   getSQXStatus: () => fetchJson<any>("/api/v1/sqx/status"),
   getSQXProjects: () => fetchJson<any>("/api/v1/sqx/projects"),
   getSQXDatabanks: (projectName?: string) => fetchJson<any>(`/api/v1/sqx/databanks${projectName ? `?project=${projectName}` : ""}`),
-  
-  // Strategies & Backtest
   getStrategies: () => fetchJson<any[]>("/api/v1/strategies"),
   getBacktests: () => fetchJson<any[]>("/api/v1/backtests"),
   getBacktestTrades: (backtestId: string) => fetchJson<any[]>(`/api/v1/backtest/${backtestId}/trades`),
-  runFastBacktest: (strategyId: string, datasetId: string, capital = 10000) =>
-    fetchJson<any>("/api/v1/backtest", { method: "POST", body: JSON.stringify({ strategy_id: strategyId, dataset_id: datasetId, initial_capital: capital }) }),
+  runFastBacktest: (strategyId: string, datasetId: string, capital?: number) => {
+    if (!datasetId?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED");
+    const payload: Record<string, unknown> = { strategy_id: strategyId, dataset_id: datasetId };
+    if (capital !== undefined) payload.initial_capital = capital;
+    return fetchJson<any>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) });
+  },
   getLeaderboard: () => fetchJson<any[]>("/api/v1/leaderboard"),
-  
-  // Campaigns
   getCampaigns: () => fetchJson<any[]>("/api/v1/campaigns"),
   createAutonomousCampaign: (payload: any) => fetchJson<any>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
   startCampaign: (campaignId: string) => fetchJson<any>(`/api/v1/campaigns/${campaignId}/start`, { method: "POST" }),
-  
-  // Execution Sessions
   getExecutionSessions: () => fetchJson<any[]>("/api/v1/execution/sessions"),
-  
-  // Governance, Lineage & Certification
   getCandidates,
   getCertifiedStrategies,
   getCertifiedMetaStrategies,
@@ -546,5 +494,4 @@ export const api = {
   evaluateForwardSufficiency,
   executeBacktest,
 };
-
 
