@@ -1,8 +1,7 @@
 """Bounded real-only strategy research loop.
 
-This module coordinates generation, semantic mutation and deterministic backtesting.
-It deliberately stops before blind OOS certification: the existing validation fabric
-remains the only authority for certification.
+Coordinates generation, IS evaluation, semantic mutation and validation-set
+ranking. Blind OOS remains untouched and belongs exclusively to final validation.
 """
 
 from __future__ import annotations
@@ -26,14 +25,19 @@ class ResearchCandidate:
     generation: int
     archetype: str
     parameters: Dict[str, Any]
-    total_trades: int
-    profit_factor: float
-    max_drawdown_pct: float
-    net_profit_usd: float
+    total_trades_is: int
+    profit_factor_is: float
+    max_drawdown_is_pct: float
+    net_profit_is_usd: float
+    total_trades_validation: int
+    profit_factor_validation: float
+    max_drawdown_validation_pct: float
+    net_profit_validation_usd: float
+    research_score: float
 
 
 class StrategyResearchLoop:
-    """Generate and evolve real hypotheses without declaring them profitable prematurely."""
+    """Generate/evolve real hypotheses and rank them using IS + held-out Validation."""
 
     def __init__(self, registry: StrategySearchRegistry, engine_version: str = "5.4.0") -> None:
         self.registry = registry
@@ -43,13 +47,32 @@ class StrategyResearchLoop:
         self.evolution = StrategyEvolutionEngine()
 
     @staticmethod
-    def _score(result: Any) -> float:
-        """Research ranking only; never used as a certification decision."""
-        if result.total_trades <= 0 or result.profit_factor <= 0:
+    def _score(is_result: Any, validation_result: Any) -> float:
+        """Research ranking only. Never used for certification."""
+        if is_result.total_trades <= 0 or validation_result.total_trades <= 0:
             return -1e9
-        dd_factor = max(0.05, 1.0 - result.max_drawdown_pct / 100.0)
-        sample_factor = min(1.0, result.total_trades / 30.0)
-        return float(result.profit_factor * dd_factor * (1.0 + sample_factor))
+        is_quality = max(0.01, is_result.profit_factor) * max(0.05, 1.0 - is_result.max_drawdown_pct / 100.0)
+        val_quality = max(0.01, validation_result.profit_factor) * max(0.05, 1.0 - validation_result.max_drawdown_pct / 100.0)
+        sample_factor = min(1.0, min(is_result.total_trades, validation_result.total_trades) / 30.0)
+        return float((0.45 * is_quality + 0.55 * val_quality) * (1.0 + sample_factor))
+
+    def _build_strategy(self, strategy_id: str, symbol: str, timeframe: str, dataset_id: str, dataset_sha256: str, params: Dict[str, Any]) -> Any:
+        return self.discovery.generate_candidate_blueprint(
+            strategy_id=strategy_id,
+            symbol=symbol,
+            timeframe=timeframe,
+            dataset_id=dataset_id,
+            dataset_sha256=dataset_sha256,
+            ema_fast=int(params["ema_fast"]),
+            ema_slow=int(params["ema_slow"]),
+            rsi_period=int(params["rsi_period"]),
+            rsi_threshold_long=float(params["rsi_threshold_long"]),
+            rsi_threshold_short=float(params["rsi_threshold_short"]),
+            sl_atr_mult=float(params["sl_atr_mult"]),
+            tp_atr_mult=float(params["tp_atr_mult"]),
+            pyramiding_tiers_count=int(params.get("pyramiding_tiers_count", 0)),
+            archetype=str(params.get("archetype", "MOMENTUM_BREAKOUT")),
+        )
 
     def run(
         self,
@@ -76,16 +99,12 @@ class StrategyResearchLoop:
         candles_val = candles[split_is:split_val]
 
         run_id = f"research_{path.stem}_{dataset_sha256[:12]}"
-        candidates: List[ResearchCandidate] = []
-        frontier: List[Tuple[float, str, Dict[str, Any], str, Optional[str], int]] = []
+        frontier: List[Tuple[str, Dict[str, Any], str, Optional[str], int]] = []
+        history: List[ResearchCandidate] = []
 
-        seed_archetypes = [
-            "MOMENTUM_BREAKOUT",
-            "TREND_FOLLOWING",
-            "RSI_MOMENTUM",
-            "MEAN_REVERSION",
-        ]
+        seed_archetypes = ["MOMENTUM_BREAKOUT", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION"]
         for idx in range(max(1, int(seeds))):
+            archetype = seed_archetypes[idx % len(seed_archetypes)]
             params = {
                 "ema_fast": [8, 12, 20][idx % 3],
                 "ema_slow": [30, 50, 80][idx % 3],
@@ -94,35 +113,20 @@ class StrategyResearchLoop:
                 "rsi_threshold_short": [48.0, 45.0, 40.0][idx % 3],
                 "sl_atr_mult": [1.5, 2.0, 3.0][idx % 3],
                 "tp_atr_mult": [4.0, 6.0, 8.0][idx % 3],
-                "archetype": seed_archetypes[idx % len(seed_archetypes)],
+                "archetype": archetype,
                 "pyramiding_tiers_count": 0,
             }
-            frontier.append((0.0, f"seed_{idx:04d}", params, params["archetype"], None, 1))
-
-        history: List[ResearchCandidate] = []
+            frontier.append((f"seed_{idx:04d}", params, archetype, None, 1))
 
         for generation in range(1, max(1, int(generations)) + 1):
-            evaluated: List[Tuple[float, str, Dict[str, Any], str, Optional[str], int, Any]] = []
-            for _, parent_id, params, archetype, parent_strategy_id, _ in frontier:
+            evaluated: List[Tuple[float, str, Dict[str, Any], str, Optional[str], Any, Any]] = []
+            for _, params, archetype, parent_strategy_id, _ in frontier:
                 strategy_id = f"{run_id}_g{generation}_{len(evaluated):04d}"
-                strategy = self.discovery.generate_candidate_blueprint(
-                    strategy_id=strategy_id,
-                    symbol=symbol,
-                    timeframe=timeframe,
-                    dataset_id=path.name,
-                    dataset_sha256=dataset_sha256,
-                    ema_fast=int(params["ema_fast"]),
-                    ema_slow=int(params["ema_slow"]),
-                    rsi_period=int(params["rsi_period"]),
-                    rsi_threshold_long=float(params["rsi_threshold_long"]),
-                    rsi_threshold_short=float(params["rsi_threshold_short"]),
-                    sl_atr_mult=float(params["sl_atr_mult"]),
-                    tp_atr_mult=float(params["tp_atr_mult"]),
-                    pyramiding_tiers_count=int(params.get("pyramiding_tiers_count", 0)),
-                    archetype=archetype,
-                )
-                result = self.backtest.run_backtest(strategy, candles_is, initial_capital_usd=initial_capital_usd)
-                score = self._score(result)
+                strategy = self._build_strategy(strategy_id, symbol, timeframe, path.name, dataset_sha256, params)
+                is_result = self.backtest.run_backtest(strategy, candles_is, initial_capital_usd=initial_capital_usd)
+                validation_result = self.backtest.run_backtest(strategy, candles_val, initial_capital_usd=initial_capital_usd)
+                score = self._score(is_result, validation_result)
+
                 self.registry.record_trial(SearchTrialRecord(
                     trial_id=strategy_id,
                     run_id=run_id,
@@ -137,22 +141,27 @@ class StrategyResearchLoop:
                     dataset_id=path.name,
                     dataset_sha256=dataset_sha256,
                     discovery_engine="StrategyResearchLoop",
-                    in_sample_pf=result.profit_factor,
-                    in_sample_dd_pct=result.max_drawdown_pct,
+                    in_sample_pf=is_result.profit_factor,
+                    in_sample_dd_pct=is_result.max_drawdown_pct,
                 ))
-                candidate = ResearchCandidate(
+
+                history.append(ResearchCandidate(
                     strategy_id=strategy_id,
                     parent_strategy_id=parent_strategy_id,
                     generation=generation,
                     archetype=archetype,
                     parameters=params,
-                    total_trades=result.total_trades,
-                    profit_factor=result.profit_factor,
-                    max_drawdown_pct=result.max_drawdown_pct,
-                    net_profit_usd=result.net_profit_usd,
-                )
-                history.append(candidate)
-                evaluated.append((score, strategy_id, params, archetype, strategy_id, generation, result))
+                    total_trades_is=is_result.total_trades,
+                    profit_factor_is=is_result.profit_factor,
+                    max_drawdown_is_pct=is_result.max_drawdown_pct,
+                    net_profit_is_usd=is_result.net_profit_usd,
+                    total_trades_validation=validation_result.total_trades,
+                    profit_factor_validation=validation_result.profit_factor,
+                    max_drawdown_validation_pct=validation_result.max_drawdown_pct,
+                    net_profit_validation_usd=validation_result.net_profit_usd,
+                    research_score=score,
+                ))
+                evaluated.append((score, strategy_id, params, archetype, strategy_id, is_result, validation_result))
 
             evaluated.sort(key=lambda item: item[0], reverse=True)
             survivors = evaluated[: max(1, min(8, len(evaluated)))]
@@ -160,23 +169,16 @@ class StrategyResearchLoop:
                 break
 
             frontier = []
-            for score, strategy_id, params, archetype, _, gen, _ in survivors:
-                proposals = self.evolution.propose(
+            for score, strategy_id, params, archetype, _, _, _ in survivors:
+                for proposal in self.evolution.propose(
                     parent_strategy_id=strategy_id,
                     parameters=params,
                     archetype=archetype,
                     limit=max(1, int(children_per_seed)),
-                )
-                for proposal in proposals:
-                    frontier.append((score, proposal.mutation_id, proposal.parameters, proposal.parameters.get("archetype", archetype), strategy_id, gen + 1))
+                ):
+                    frontier.append((proposal.mutation_id, proposal.parameters, proposal.parameters.get("archetype", archetype), strategy_id, generation + 1))
 
-        # Validation set is intentionally used only for diagnostics/ranking of survivors;
-        # Blind OOS is not touched here and must remain owned by the validation pipeline.
-        final_preview = sorted(
-            history,
-            key=lambda c: (c.profit_factor, c.total_trades, -c.max_drawdown_pct),
-            reverse=True,
-        )[:20]
+        final_preview = sorted(history, key=lambda c: c.research_score, reverse=True)[:20]
         return {
             "run_id": run_id,
             "dataset_id": path.name,
