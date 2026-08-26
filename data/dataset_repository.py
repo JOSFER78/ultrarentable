@@ -1,41 +1,117 @@
-"""services/data/dataset_repository.py
-Repositorio desacoplado de datasets y snapshots de velas reales sin acoplamiento a base de datos.
-Lectura y validación determinista de archivos en data/normalized con verificación criptográfica SHA-256.
+"""Canonical repository for real, normalized market datasets.
+
+The repository never fabricates bars. A missing, malformed or unverifiable dataset
+is a hard failure so downstream research cannot accidentally consume synthetic data.
 """
 
 from __future__ import annotations
 
-import glob
 import hashlib
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from contracts.backtest import BarData, DatasetSnapshot
+from services.api.app.config import DATA_DIR as BASE_DATA_DIR
 
 
 class DatasetRepository:
     """Acceso y gestión de datasets canónicos verificados en disco."""
 
     def __init__(self, data_root: Optional[Path] = None) -> None:
-        self.data_root = data_root or Path(__file__).resolve().parent.parent.parent / "data"
+        self.data_root = data_root or BASE_DATA_DIR
         self.normalized_dir = self.data_root / "normalized"
 
+    @staticmethod
+    def _sha256_file(path: Path) -> str:
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            while chunk := handle.read(1024 * 1024):
+                digest.update(chunk)
+        return digest.hexdigest()
+
     def list_available_datasets(self) -> List[Dict[str, Any]]:
-        """Lista todos los datasets normalizados disponibles con sus metadatos de manifest."""
+        """Lista manifests legibles; un manifest corrupto no se convierte en datos válidos."""
         manifests: List[Dict[str, Any]] = []
         if not self.normalized_dir.exists():
             return manifests
 
-        manifest_files = list(self.normalized_dir.glob("*_manifest.json"))
-        for mf in sorted(manifest_files):
-            try:
-                with open(mf, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    manifests.append(data)
-            except Exception:
-                continue
+        for manifest_file in sorted(self.normalized_dir.glob("*_manifest.json")):
+            with manifest_file.open("r", encoding="utf-8") as handle:
+                data = json.load(handle)
+            if isinstance(data, dict):
+                manifests.append(data)
         return manifests
+
+    def _find_dataset_file(self, symbol: str, timeframe: str) -> Path:
+        formatted_sym = symbol.replace("-", "_").replace("/", "_")
+        pattern = f"ds_*_{formatted_sym}_{timeframe}_*.json"
+        matching_files = sorted(
+            path
+            for path in self.normalized_dir.glob(pattern)
+            if not path.name.endswith("_manifest.json") and path.is_file()
+        )
+        if not matching_files:
+            raise FileNotFoundError(
+                f"No canonical normalized dataset for {symbol}/{timeframe} under {self.normalized_dir}"
+            )
+        return max(matching_files, key=lambda path: path.stat().st_size)
+
+    @staticmethod
+    def _parse_bar(item: Any, index: int) -> BarData:
+        if isinstance(item, dict):
+            required = ("timestamp", "time", "open", "high", "low", "close", "volume")
+            timestamp_value = item.get("timestamp", item.get("time"))
+            if timestamp_value is None:
+                raise ValueError(f"bar {index}: missing timestamp/time")
+            values = {
+                "timestamp_utc_ms": int(timestamp_value),
+                "open": float(item["open"]),
+                "high": float(item["high"]),
+                "low": float(item["low"]),
+                "close": float(item["close"]),
+                "volume": float(item["volume"]),
+            }
+            return BarData(**values)
+
+        if isinstance(item, list) and len(item) >= 6:
+            return BarData(
+                timestamp_utc_ms=int(item[0]),
+                open=float(item[1]),
+                high=float(item[2]),
+                low=float(item[3]),
+                close=float(item[4]),
+                volume=float(item[5]),
+            )
+
+        raise ValueError(f"bar {index}: unsupported normalized format")
+
+    def load_bars(self, symbol: str = "ETH-USDT", timeframe: str = "1h") -> List[BarData]:
+        """Carga velas físicas normalizadas y exige orden temporal y precios válidos."""
+        target_file = self._find_dataset_file(symbol, timeframe)
+        try:
+            with target_file.open("r", encoding="utf-8") as handle:
+                raw_data = json.load(handle)
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ValueError(f"Cannot read canonical dataset {target_file}: {exc}") from exc
+
+        if not isinstance(raw_data, list) or not raw_data:
+            raise ValueError(f"Canonical dataset is empty or not a list: {target_file}")
+
+        bars = [self._parse_bar(item, index) for index, item in enumerate(raw_data)]
+        bars.sort(key=lambda bar: bar.timestamp_utc_ms)
+
+        for index, bar in enumerate(bars):
+            if bar.timestamp_utc_ms <= 0:
+                raise ValueError(f"bar {index}: invalid timestamp")
+            if min(bar.open, bar.high, bar.low, bar.close) <= 0:
+                raise ValueError(f"bar {index}: non-positive price")
+            if bar.high < max(bar.open, bar.close) or bar.low > min(bar.open, bar.close):
+                raise ValueError(f"bar {index}: invalid OHLC envelope")
+            if index and bar.timestamp_utc_ms <= bars[index - 1].timestamp_utc_ms:
+                raise ValueError(f"bars are not strictly increasing at index {index}")
+
+        return bars
 
     def get_snapshot(
         self,
@@ -44,38 +120,19 @@ class DatasetRepository:
         is_in_sample: bool = False,
         split_ratio: float = 0.70,
     ) -> DatasetSnapshot:
-        """Carga y genera un DatasetSnapshot inmutable con hash SHA-256 verificado.
-        
-        Si existen archivos en data/normalized, utiliza los datos reales y su manifest.
-        Si split_ratio está configurado, fragmenta limpiamente en IS (primer 70%) u OOS (último 30%).
-        """
+        """Devuelve un snapshot respaldado por el hash SHA-256 físico del dataset."""
+        if not 0.0 < split_ratio < 1.0:
+            raise ValueError("split_ratio must be between 0 and 1")
+
         bars = self.load_bars(symbol, timeframe)
-        if not bars:
-            # Fallback a barra canónica si el directorio está vacío
-            bars = [
-                BarData(
-                    timestamp_utc_ms=1771718400000,
-                    open=2500.0,
-                    high=2550.0,
-                    low=2480.0,
-                    close=2520.0,
-                    volume=100.0,
-                )
-            ]
-
-        # Aplicar partición IS / OOS
+        target_file = self._find_dataset_file(symbol, timeframe)
         split_idx = int(len(bars) * split_ratio)
-        if is_in_sample:
-            selected_bars = bars[:split_idx] if split_idx > 0 else bars
-        else:
-            selected_bars = bars[split_idx:] if split_idx < len(bars) else bars
+        if split_idx <= 0 or split_idx >= len(bars):
+            raise ValueError("Dataset is too small for the requested split")
 
+        selected_bars = bars[:split_idx] if is_in_sample else bars[split_idx:]
         start_ts = selected_bars[0].timestamp_utc_ms
         end_ts = selected_bars[-1].timestamp_utc_ms
-
-        # Hash determinista de la serie seleccionada
-        payload = f"{symbol}:{timeframe}:{len(selected_bars)}:{start_ts}:{end_ts}:{is_in_sample}"
-        sha_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
         return DatasetSnapshot(
             dataset_id=f"ds_{symbol.lower().replace('-', '_')}_{timeframe}_{'is' if is_in_sample else 'oos'}",
@@ -84,66 +141,6 @@ class DatasetRepository:
             start_timestamp_utc_ms=start_ts,
             end_timestamp_utc_ms=end_ts,
             total_bars=len(selected_bars),
-            sha256_hash=sha_hash,
+            sha256_hash=self._sha256_file(target_file),
             is_in_sample=is_in_sample,
         )
-
-    def load_bars(self, symbol: str = "ETH-USDT", timeframe: str = "1h") -> List[BarData]:
-        """Carga la lista de velas BarData tipadas desde los archivos JSON normalizados."""
-        formatted_sym = symbol.replace("-", "_").replace("/", "_")
-        pattern = f"ds_*_{formatted_sym}_{timeframe}_*.json"
-
-        matching_files = [
-            p for p in self.normalized_dir.glob(pattern)
-            if not p.name.endswith("_manifest.json")
-        ]
-
-        if matching_files:
-            # Tomar el archivo más reciente o completo
-            target_file = sorted(matching_files, key=lambda p: p.stat().st_size, reverse=True)[0]
-            try:
-                with open(target_file, "r", encoding="utf-8") as f:
-                    raw_data = json.load(f)
-                    bars: List[BarData] = []
-                    # El formato de raw_data puede ser lista de diccionarios o lista de arrays [ts, o, h, l, c, v]
-                    for item in raw_data:
-                        if isinstance(item, dict):
-                            bars.append(
-                                BarData(
-                                    timestamp_utc_ms=int(item.get("timestamp", item.get("time", 0))),
-                                    open=float(item.get("open", 0.0)),
-                                    high=float(item.get("high", 0.0)),
-                                    low=float(item.get("low", 0.0)),
-                                    close=float(item.get("close", 0.0)),
-                                    volume=float(item.get("volume", 0.0)),
-                                )
-                            )
-                        elif isinstance(item, list) and len(item) >= 6:
-                            bars.append(
-                                BarData(
-                                    timestamp_utc_ms=int(item[0]),
-                                    open=float(item[1]),
-                                    high=float(item[2]),
-                                    low=float(item[3]),
-                                    close=float(item[4]),
-                                    volume=float(item[5]),
-                                )
-                            )
-                    if bars:
-                        bars.sort(key=lambda b: b.timestamp_utc_ms)
-                        return bars
-            except Exception:
-                pass
-
-        # Fallback a generador estructurado de prueba determinista
-        return [
-            BarData(
-                timestamp_utc_ms=1771718400000 + (i * 3600000),
-                open=2500.0 + (i * 0.5),
-                high=2510.0 + (i * 0.5),
-                low=2495.0 + (i * 0.5),
-                close=2505.0 + (i * 0.5),
-                volume=50.0 + (i % 10),
-            )
-            for i in range(100)
-        ]
