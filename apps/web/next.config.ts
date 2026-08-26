@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const backendUrl = process.env.ULTRARENTABLE_API_URL || "http://127.0.0.1:8000";
+
 const nextConfig: NextConfig = {
   basePath: process.env.BASE_PATH || "",
   poweredByHeader: false,
@@ -8,11 +10,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://127.0.0.1:8000/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
       },
       {
         source: "/pro/ultrarentable/api/:path*",
-        destination: "http://127.0.0.1:8000/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
       },
       {
         source: "/pro/ultrarentable",
