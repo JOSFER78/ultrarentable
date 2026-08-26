@@ -153,13 +153,15 @@ app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-
 @app.get("/", tags=["system"])
 def root() -> Dict[str, Any]:
     """Stable liveness contract for operators, tests and frontend bootstrap."""
+    autonomous = bool(getattr(app.state, "autonomous_runtime_enabled", False))
     return {
         "status": "RUNNING",
         "mode": "REAL_ONLY",
         "version": app.version,
         "engine_version": "5.4.0",
-        "autonomous_runtime_enabled": bool(getattr(app.state, "autonomous_runtime_enabled", False)),
-        "runtime_mode": "AUTONOMOUS_24X7" if getattr(app.state, "autonomous_runtime_enabled", False) else "LOCAL_API_ONLY",
+        "tracks": ["TRACK_FONDEO", "TRACK_ULTRA", "TRACK_PORTFOLIO"],
+        "autonomous_runtime_enabled": autonomous,
+        "runtime_mode": "AUTONOMOUS_24X7" if autonomous else "LOCAL_API_ONLY",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -167,4 +169,16 @@ def root() -> Dict[str, Any]:
 @app.get("/api/v1/versions", tags=["system"])
 @app.get("/api/v2/versions", tags=["system"])
 def versions() -> Dict[str, Any]:
-    return {"api_version": app.version, "engine_version": "5.4.0", "autonomous_runtime_enabled": bool(getattr(app.state, "autonomous_runtime_enabled", False)), "runtime_mode": "AUTONOMOUS_24X7" if getattr(app.state, "autonomous_runtime_enabled", False) else "LOCAL_API_ONLY", "timestamp_utc": datetime.now(timezone.utc).isoformat()}
+    autonomous = bool(getattr(app.state, "autonomous_runtime_enabled", False))
+    return {
+        "api_version": app.version,
+        "current_version": app.version,
+        "active_version": app.version,
+        "engine_version": "5.4.0",
+        "canonical_engine_version": "5.4.0",
+        "codebase_fingerprint": "",
+        "git_commit": os.getenv("GIT_COMMIT", "UNKNOWN"),
+        "autonomous_runtime_enabled": autonomous,
+        "runtime_mode": "AUTONOMOUS_24X7" if autonomous else "LOCAL_API_ONLY",
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+    }
