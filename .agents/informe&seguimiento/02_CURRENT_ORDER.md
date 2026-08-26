@@ -4,8 +4,18 @@
 
 ChatGPT is the direct repository maintainer and executes the stabilization/recovery work in `main`.
 
-## CURRENT BLOCK
-`R0.9 — Canonical Domain Boundary Review`
+## THREE MACROPHASES
+1. `MACROPHASE 1 — TRUSTWORTHY FOUNDATION / RECOVERY`
+2. `MACROPHASE 2 — REAL QUANT RESEARCH / DISCOVERY / VALIDATION`
+3. `MACROPHASE 3 — PORTFOLIO / ULTRA / FONDEO PRODUCTION SYSTEM`
+
+Full definition: `16_THREE_MACROPHASE_MASTER_PLAN.md`
+
+## CURRENT MACROPHASE
+`MACROPHASE 1 — IN PROGRESS`
+
+### Current internal target
+`R0.9 — Canonical Domain Boundary Review` → `R0.10 — Final R0 Certification`
 
 ### Applied
 - R0.1 dependency authority guard + regression test.
@@ -18,17 +28,31 @@ ChatGPT is the direct repository maintainer and executes the stabilization/recov
 - R0.7 backend clean-start contract + regression test.
 - R0.8 compile/lint/web build/forbidden-literal CI enforcement.
 - R0.9 canonical domain-boundary audit + regression test.
+- Explicit `legacy_compat_router.py` boundary isolating the legacy nested SQX registration.
 
-### Current finding
-R0.9 is **BLOCKED** because `services/api/app/api/routes.py` nests `sqx_router`, while `services/api/app/main.py` also mounts `sqx_router` as a canonical surface. This creates a second authority path and must be isolated or removed before R0 can close.
+### Current status
+R0.9 has an explicit isolation boundary. The effective route inventory must now be executed to prove that no duplicate HTTP operation remains.
 
 ### Evidence status
-GitHub Actions is still not returning workflow runs for recent pushes through the connected GitHub interface. Therefore R0 remains **NOT CERTIFIED GREEN** regardless of source-level results.
+GitHub Actions has not yet returned workflow runs for recent stabilization pushes through the connected GitHub interface. Therefore `R0_STABLE` is **NOT CERTIFIED** until real CI evidence exists.
 
-## NEXT
-Remove/isolate the nested legacy SQX registration without replacing or truncating the remainder of `routes.py`, then rerun R0.9 and proceed to R0.10 final certification.
+## NEXT EXECUTION BLOCK
+Run the complete R0 verification chain against the current `main` state:
+- dependency authority
+- route inventory
+- certification evidence
+- execution safety
+- web API surface
+- forbidden-literal scan
+- domain boundary
+- compile/lint
+- web typecheck/build
+- focused tests
+- backend clean start
+- real web/backend E2E
+- final R0 certification
 
-Do not advance to Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO before R0 stabilization is certified.
+Only after that evidence is green does `MACROPHASE 2` begin.
 
 ## ABSOLUTE
 `ZERO-MOCK · ZERO-SIMULATION · ZERO-FORCING · ZERO-LOOKAHEAD · REAL-ONLY · EVIDENCE-GATED`
