@@ -25,8 +25,7 @@ class VersionBumpRequest(BaseModel):
 def get_engine_versions_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Return active engine version, changelog history and strategy counts per version."""
     info = version_manager.get_full_version_info()
-    
-    # Count strategies in database grouped by engine_version
+
     version_counts: Dict[str, int] = {}
     try:
         from sqlalchemy import func
@@ -36,15 +35,17 @@ def get_engine_versions_summary(db: Session = Depends(get_db)) -> Dict[str, Any]
     except Exception:
         version_counts = {info["active_version"]: 0, "1.00": 0}
 
-    # Enrich history with live strategy counts
     enriched_history = []
     for item in info.get("history", []):
         h = dict(item)
         h["strategy_count"] = version_counts.get(item["version"], 0)
         enriched_history.append(h)
 
+    current_version = info["active_version"]
     return {
-        "current_version": info["active_version"],
+        "current_version": current_version,
+        # Compatibility alias: all version endpoints expose the canonical engine version.
+        "engine_version": current_version,
         "current_name": info["active_name"],
         "pipeline_version": info["pipeline_version"],
         "codebase_fingerprint": info["codebase_fingerprint"],
