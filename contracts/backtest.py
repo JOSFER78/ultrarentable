@@ -4,9 +4,10 @@ Contratos tipados para solicitudes, resultados y logs del Backtest Fabric.
 
 from __future__ import annotations
 
+import re
 from enum import Enum
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class EngineType(str, Enum):
@@ -27,14 +28,22 @@ class BarData(BaseModel):
 
 class DatasetSnapshot(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
-    dataset_id: str
-    symbol: str
-    timeframe: str
-    start_timestamp_utc_ms: int
-    end_timestamp_utc_ms: int
+    dataset_id: str = Field(..., min_length=1)
+    symbol: str = Field(..., min_length=1)
+    timeframe: str = Field(..., min_length=1)
+    start_timestamp_utc_ms: int = Field(..., ge=0)
+    end_timestamp_utc_ms: int = Field(..., ge=0)
     total_bars: int = Field(..., ge=1)
-    sha256_hash: str
+    sha256_hash: str = Field(..., min_length=64, max_length=64)
     is_in_sample: bool = True
+
+    @model_validator(mode="after")
+    def validate_provenance(self) -> "DatasetSnapshot":
+        if self.start_timestamp_utc_ms > self.end_timestamp_utc_ms:
+            raise ValueError("DatasetSnapshot start_timestamp_utc_ms must be <= end_timestamp_utc_ms")
+        if not re.fullmatch(r"[0-9a-fA-F]{64}", self.sha256_hash):
+            raise ValueError("DatasetSnapshot sha256_hash must be exactly 64 hexadecimal characters")
+        return self
 
 
 class TradeLog(BaseModel):
