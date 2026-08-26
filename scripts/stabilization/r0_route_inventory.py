@@ -1,93 +1,67 @@
 #!/usr/bin/env python3
-"""Static FastAPI router-registration inventory for R0.2.
+"""Fail-closed FastAPI route inventory for R0.2.
 
-The check intentionally audits source registration rather than depending on a
-running server. Repeated router registrations must be explicit and remain
-limited to the documented V1/V2 or alias surfaces.
+Audits the effective imported FastAPI application after dependency installation,
+then reports duplicate (HTTP method, path) operations. This catches conflicts
+that a source-only ``include_router`` audit can miss.
 """
 
 from __future__ import annotations
 
-import ast
 import json
+import os
+import sys
+from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MAIN = ROOT / "services" / "api" / "app" / "main.py"
-
-# Reuse across API generations is intentional when the same domain contract is
-# exposed under a versioned prefix. The alias is explicit and separately tagged.
-ALLOWED_REPEAT_REGISTRATIONS = {
-    "portfolio_router": {"/api/v1/portfolio", "/api/v2/portfolio"},
-    "lineage_router": {"/api/v1", "/api/v2"},
-    "policy_router": {"/api/v1", "/api/v2"},
-    "research_lab_router": {"/api/v1", "/api/v2"},
-    "telemetry_router": {"/api/v1/telemetry", "/api/v2/telemetry"},
-    "job_queue_router": {"/api/v1/jobs", "/api/v2"},
-    "forward_router": {"/api/v1/forward", "/api/v2"},
-    "certified_summary_router": {"/api/v1", "/api/v2"},
-    "real_data_router": {"/api/v2", "/api/v2/real"},
-}
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.environ.setdefault("ULTRARENTABLE_AUTONOMOUS_RUNTIME", "false")
 
 
-def literal_prefix(node: ast.Call) -> str:
-    for keyword in node.keywords:
-        if keyword.arg == "prefix" and isinstance(keyword.value, ast.Constant) and isinstance(keyword.value.value, str):
-            return keyword.value.value
-    return ""
-
-
-def router_symbol(node: ast.Call) -> str | None:
-    if not node.args:
-        return None
-    target = node.args[0]
-    if isinstance(target, ast.Name):
-        return target.id
-    if isinstance(target, ast.Attribute):
-        return target.attr
-    return None
+def route_methods(route: object) -> list[str]:
+    methods = getattr(route, "methods", None) or []
+    return sorted(str(method).upper() for method in methods if str(method).upper() != "HEAD")
 
 
 def main() -> int:
-    source = MAIN.read_text(encoding="utf-8")
-    tree = ast.parse(source, filename=str(MAIN))
+    from services.api.app.main import app
 
-    registrations: list[dict[str, object]] = []
-    by_router: dict[str, list[str]] = {}
+    operations: list[dict[str, object]] = []
+    grouped: dict[tuple[str, str], list[dict[str, object]]] = defaultdict(list)
 
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
+    for route in app.routes:
+        path = getattr(route, "path", None)
+        if not isinstance(path, str) or not path.startswith("/api/"):
             continue
-        if not isinstance(node.func, ast.Attribute) or node.func.attr != "include_router":
-            continue
-        symbol = router_symbol(node)
-        if not symbol:
-            continue
-        prefix = literal_prefix(node)
-        registrations.append({"router": symbol, "prefix": prefix, "line": node.lineno})
-        by_router.setdefault(symbol, []).append(prefix)
+        for method in route_methods(route):
+            item = {
+                "method": method,
+                "path": path,
+                "name": getattr(route, "name", None),
+                "module": getattr(getattr(route, "endpoint", None), "__module__", None),
+            }
+            operations.append(item)
+            grouped[(method, path)].append(item)
 
-    failures: list[str] = []
-    for symbol, prefixes in sorted(by_router.items()):
-        if len(prefixes) <= 1:
-            continue
-        expected = ALLOWED_REPEAT_REGISTRATIONS.get(symbol)
-        actual = set(prefixes)
-        if expected != actual:
-            failures.append(
-                f"router {symbol!r} has repeated registrations {sorted(actual)!r}; expected explicit allowlist {sorted(expected) if expected else None!r}"
-            )
+    duplicates = [
+        {"method": method, "path": path, "registrations": entries}
+        for (method, path), entries in sorted(grouped.items())
+        if len(entries) > 1
+    ]
 
     result = {
         "check": "R0.2_ROUTE_INVENTORY",
-        "status": "PASS" if not failures else "BLOCKED",
-        "source": str(MAIN.relative_to(ROOT)),
-        "registration_count": len(registrations),
-        "registrations": registrations,
-        "failures": failures,
+        "status": "PASS" if not duplicates else "BLOCKED",
+        "source": "services.api.app.main.app",
+        "operation_count": len(operations),
+        "duplicate_operation_count": len(duplicates),
+        "duplicate_operations": duplicates,
+        "operations": sorted(operations, key=lambda item: (str(item["path"]), str(item["method"]))),
     }
     print(json.dumps(result, indent=2, ensure_ascii=False))
-    return 0 if not failures else 1
+    return 0 if not duplicates else 1
 
 
 if __name__ == "__main__":
