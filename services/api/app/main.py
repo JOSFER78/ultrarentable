@@ -18,7 +18,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-# Config & Base de datos
 from services.api.app.config import LOCAL_WEB_ORIGINS
 from services.api.app.db.database import init_db
 
@@ -27,6 +26,7 @@ from services.api.app.api.lineage_router import lineage_router
 from services.api.app.api.policy_router import policy_router
 from services.api.app.api.research_lab_router import research_lab_router
 from services.api.app.api.job_queue_router import job_queue_router, forward_router
+from services.api.app.api.strategy_lab_router import router as strategy_lab_router
 
 # Routers V1 Legados
 from services.api.app.api.routes import router as legacy_routes
@@ -61,7 +61,6 @@ def _autonomous_runtime_enabled() -> bool:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Initialise core API safely; launch the 24/7 worker fleet only when explicitly enabled."""
     logger.info("Iniciando infraestructura Ultrarentable V2...")
     init_db()
 
@@ -69,7 +68,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.autonomous_runtime_enabled = autonomous_enabled
 
     if autonomous_enabled:
-        # Production / 24x7 mode only.
         await supervisor_instance.start_all()
         logger.info("SystemSupervisor activo: 8 workers operando y emitiendo heartbeats.")
 
@@ -163,6 +161,7 @@ app.include_router(forward_router, prefix="/api/v1/forward", tags=["v1-forward"]
 app.include_router(certified_summary_router, prefix="/api/v1", tags=["v1-certified"])
 
 # REGISTRO DE ROUTERS V2
+app.include_router(strategy_lab_router, prefix="/api/v2", tags=["v2-strategy-lab"])
 app.include_router(telemetry_router, prefix="/api/v2/telemetry", tags=["v2-telemetry"])
 app.include_router(validation_router, prefix="/api/v2/validation", tags=["v2-validation"])
 app.include_router(semantic_router, prefix="/api/v2/semantic", tags=["v2-semantic"])
