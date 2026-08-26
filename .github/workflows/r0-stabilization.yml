@@ -1,0 +1,26 @@
+name: R0 Stabilization Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  r0-dependency-authority:
+    name: R0.1 dependency authority
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify dependency authority
+        run: python scripts/stabilization/r0_dependency_authority.py
+
+      - name: Run focused stabilization test
+        run: python -m pytest tests/stabilization/test_r0_dependency_authority.py -q
