@@ -155,12 +155,14 @@ app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-
 def root() -> Dict[str, Any]:
     """Stable liveness contract for operators, tests and frontend bootstrap."""
     autonomous = bool(getattr(app.state, "autonomous_runtime_enabled", False))
+    v2_endpoints = sorted({r.path for r in app.routes if getattr(r, "path", "").startswith("/api/v2")})
     return {
         "status": "RUNNING",
         "mode": "REAL_ONLY",
         "version": app.version,
         "engine_version": CURRENT_ENGINE_VERSION,
         "tracks": ["TRACK_FONDEO", "TRACK_ULTRA", "TRACK_PORTFOLIO"],
+        "v2_endpoints": v2_endpoints,
         "autonomous_runtime_enabled": autonomous,
         "runtime_mode": "AUTONOMOUS_24X7" if autonomous else "LOCAL_API_ONLY",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
