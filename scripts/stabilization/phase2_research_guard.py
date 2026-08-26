@@ -21,11 +21,7 @@ def read(path: Path) -> str:
 
 
 def assert_no_machine_local_paths(source: str, label: str) -> None:
-    forbidden = (
-        "/home/ubuntu/",
-        "/workspace/pro/trading/",
-        "C:\\\\Users\\\\",
-    )
+    forbidden = ("/home/ubuntu/", "/workspace/pro/trading/", "C:\\\\Users\\\\")
     hits = [token for token in forbidden if token in source]
     if hits:
         fail(f"{label} contains machine-local path(s): {hits}")
@@ -41,7 +37,6 @@ def assert_no_synthetic_dataset_fallbacks(source: str) -> None:
     hits = [marker for marker in forbidden_markers if marker in source]
     if hits:
         fail(f"dataset repository contains synthetic fallback(s): {hits}")
-
     for marker in ("_sha256_file", "self._sha256_file(target_file)", "raise FileNotFoundError"):
         if marker not in source:
             fail(f"real-data custody invariant missing from dataset repository: {marker}")
@@ -59,9 +54,9 @@ def assert_partition_isolation(source: str) -> None:
         if marker not in source:
             fail(f"missing chronological partition invariant: {marker}")
 
-    discovery_pos = source.find("# 4. Discovery Combinatorio")
     blind_pos = source.find("candles_blind_oos = candles[idx_val:]")
-    if discovery_pos < 0 or blind_pos < 0 or blind_pos > discovery_pos:
+    discovery_pos = source.find("param_space = self.search_registry.generate_combinatorial_parameter_space")
+    if blind_pos < 0 or discovery_pos < 0 or blind_pos > discovery_pos:
         fail("blind OOS partition is not established before discovery")
 
     final_oos_pos = source.find("oos_bt = self.backtest_engine.run_backtest")
@@ -72,8 +67,7 @@ def assert_partition_isolation(source: str) -> None:
     selection_end = source.find("if route == StrategyRoute.ULTRA:", selection_start)
     if selection_start < 0 or selection_end < 0:
         fail("champion selection/freeze boundary not found")
-    selection_block = source[selection_start:selection_end]
-    if "candles_blind_oos" in selection_block:
+    if "candles_blind_oos" in source[selection_start:selection_end]:
         fail("blind OOS is referenced inside the champion-selection block")
 
 
@@ -87,7 +81,6 @@ def assert_no_forced_fallback_selection(source: str) -> None:
     hits = [snippet for snippet in forbidden_snippets if snippet in source]
     if hits:
         fail(f"forced strategy fallback/default detected: {hits}")
-
     for marker in (
         "BLOCKED_NO_TRIAL_SPACE",
         "BLOCKED_NO_REAL_TRIALS",
@@ -109,7 +102,6 @@ def assert_trial_accounting(source: str, registry: str) -> None:
     ):
         if marker not in source:
             fail(f"trial accounting invariant missing: {marker}")
-
     for marker in (
         "dataset_sha256: str",
         "run_id: str",
@@ -144,7 +136,6 @@ def main() -> int:
     registry = read(REGISTRY)
     dataset_repository = read(DATASET_REPOSITORY)
     config = read(CONFIG)
-
     for path in (PIPELINE, REGISTRY, DATASET_REPOSITORY, CONFIG):
         assert_syntax(path)
     assert_no_machine_local_paths(pipeline, "discovery pipeline")
@@ -155,7 +146,6 @@ def main() -> int:
     assert_no_forced_fallback_selection(pipeline)
     assert_trial_accounting(pipeline, registry)
     assert_config_authority(pipeline, registry, dataset_repository, config)
-
     print("PHASE2_RESEARCH_GUARD: PASS — real-data custody, 60/20/20 isolation, trial accounting and fail-closed selection are enforced")
     return 0
 
