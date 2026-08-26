@@ -181,6 +181,61 @@ export interface DiscoveryStatus {
   current_engine_version: string;
 }
 
+export interface StrategyLabOverview {
+  status: string;
+  as_of_utc: string;
+  pipeline: {
+    extracted: number;
+    structurally_verified: number;
+    backtest_verified: number;
+    certified_current: number;
+    approved_datasets: number;
+  };
+  evidence_policy: string;
+}
+
+export interface StrategyLabRecord {
+  strategy_id: string;
+  name: string;
+  strategy_version: string;
+  strategy_hash: string;
+  validation_status: string;
+  source_engine: string | null;
+  source_project: string | null;
+  source_databank: string | null;
+  source_strategy_name: string | null;
+  symbol: string | null;
+  timeframe: string | null;
+  dataset_id: string | null;
+  dataset_hash: string | null;
+  raw_stats: Record<string, unknown>;
+  created_at: string | null;
+}
+
+export interface StrategyLabListResponse {
+  status: string;
+  count: number;
+  strategies: StrategyLabRecord[];
+}
+
+export interface StrategyLabSQXStatus {
+  status: string;
+  source: string;
+  result?: unknown;
+  error?: string;
+}
+
+export interface StrategyLabExtractionResult {
+  status: string;
+  project: string;
+  databank: string;
+  found: number;
+  inserted: number;
+  unchanged: number;
+  quarantined: number;
+  next_step: string;
+}
+
 const BASE_URL = typeof window !== "undefined" ? "" : "http://127.0.0.1:8000";
 
 async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -200,7 +255,7 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
       const errJson = await response.json();
       errorDetail = errJson.detail || errJson.message || JSON.stringify(errJson);
     } catch {
-      // Ignore non-JSON error bodies.
+      // Keep the original HTTP failure.
     }
     throw new Error(`API Request Error (${response.status} ${endpoint}): ${errorDetail}`);
   }
@@ -208,19 +263,6 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
   return response.json() as Promise<T>;
 }
 
-/**
- * Execute a REAL backtest only when the caller supplies an existing dataset_id.
- *
- * ZERO-MOCK / FAIL-CLOSED:
- * - no generated dataset ids;
- * - no generated dataset hashes;
- * - no invented historical timestamps;
- * - no invented bar counts;
- * - no implicit capital;
- * - no synthetic request ids used as quantitative evidence.
- *
- * The backend is the authority for dataset provenance and execution semantics.
- */
 export async function executeBacktest(params: BacktestParams): Promise<BacktestResult> {
   if (!params.dataset_id?.trim()) {
     throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id");
@@ -259,6 +301,25 @@ export async function getCandidates(params?: { limit?: number; include_rejected?
   if (params?.include_rejected !== undefined) query.set("include_rejected", params.include_rejected.toString());
   const qs = query.toString();
   return fetchJson<CandidateStrategy[]>(`/api/v1/candidates${qs ? `?${qs}` : ""}`);
+}
+
+export async function getStrategyLabOverview(): Promise<StrategyLabOverview> {
+  return fetchJson<StrategyLabOverview>("/api/v2/strategy-lab/overview");
+}
+
+export async function getStrategyLabStrategies(limit = 100): Promise<StrategyLabListResponse> {
+  return fetchJson<StrategyLabListResponse>(`/api/v2/strategy-lab/strategies?limit=${encodeURIComponent(limit)}`);
+}
+
+export async function getStrategyLabSQXStatus(): Promise<StrategyLabSQXStatus> {
+  return fetchJson<StrategyLabSQXStatus>("/api/v2/strategy-lab/sqx/status");
+}
+
+export async function extractStrategyLabProject(projectName: string): Promise<StrategyLabExtractionResult> {
+  if (!projectName.trim()) throw new Error("PROJECT_NAME_REQUIRED");
+  return fetchJson<StrategyLabExtractionResult>(`/api/v2/strategy-lab/extract/${encodeURIComponent(projectName)}`, {
+    method: "POST",
+  });
 }
 
 export async function getDiscoveryStatus(): Promise<DiscoveryStatus> {
@@ -457,33 +518,37 @@ export function getApiUrl(path = ""): string {
 }
 
 export const api = {
-  get: <T = any>(endpoint: string) => fetchJson<T>(endpoint),
-  post: <T = any>(endpoint: string, data?: any) => fetchJson<T>(endpoint, { method: "POST", body: data ? JSON.stringify(data) : undefined }),
-  put: <T = any>(endpoint: string, data?: any) => fetchJson<T>(endpoint, { method: "PUT", body: data ? JSON.stringify(data) : undefined }),
-  delete: <T = any>(endpoint: string) => fetchJson<T>(endpoint, { method: "DELETE" }),
-  getDatasets: () => fetchJson<any[]>("/api/v1/datasets"),
-  prepareEthResearch: (days: number) => fetchJson<any>("/api/v1/datasets/prepare-eth", { method: "POST", body: JSON.stringify({ days }) }),
-  getSQXStatus: () => fetchJson<any>("/api/v1/sqx/status"),
-  getSQXProjects: () => fetchJson<any>("/api/v1/sqx/projects"),
-  getSQXDatabanks: (projectName?: string) => fetchJson<any>(`/api/v1/sqx/databanks${projectName ? `?project=${projectName}` : ""}`),
-  getStrategies: () => fetchJson<any[]>("/api/v1/strategies"),
-  getBacktests: () => fetchJson<any[]>("/api/v1/backtests"),
-  getBacktestTrades: (backtestId: string) => fetchJson<any[]>(`/api/v1/backtest/${backtestId}/trades`),
+  get: <T = unknown>(endpoint: string) => fetchJson<T>(endpoint),
+  post: <T = unknown>(endpoint: string, data?: unknown) => fetchJson<T>(endpoint, { method: "POST", body: data ? JSON.stringify(data) : undefined }),
+  put: <T = unknown>(endpoint: string, data?: unknown) => fetchJson<T>(endpoint, { method: "PUT", body: data ? JSON.stringify(data) : undefined }),
+  delete: <T = unknown>(endpoint: string) => fetchJson<T>(endpoint, { method: "DELETE" }),
+  getDatasets: () => fetchJson<unknown[]>("/api/v1/datasets"),
+  prepareEthResearch: (days: number) => fetchJson<unknown>("/api/v1/datasets/prepare-eth", { method: "POST", body: JSON.stringify({ days }) }),
+  getSQXStatus: () => fetchJson<unknown>("/api/v1/sqx/status"),
+  getSQXProjects: () => fetchJson<unknown>("/api/v1/sqx/projects"),
+  getSQXDatabanks: (projectName?: string) => fetchJson<unknown>(`/api/v1/sqx/databanks${projectName ? `?project=${projectName}` : ""}`),
+  getStrategies: () => fetchJson<unknown[]>("/api/v1/strategies"),
+  getBacktests: () => fetchJson<unknown[]>("/api/v1/backtests"),
+  getBacktestTrades: (backtestId: string) => fetchJson<unknown[]>(`/api/v1/backtest/${backtestId}/trades`),
   runFastBacktest: (strategyId: string, datasetId: string, capital?: number) => {
     if (!datasetId?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED");
     const payload: Record<string, unknown> = { strategy_id: strategyId, dataset_id: datasetId };
     if (capital !== undefined) payload.initial_capital = capital;
-    return fetchJson<any>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) });
+    return fetchJson<unknown>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) });
   },
-  getLeaderboard: () => fetchJson<any[]>("/api/v1/leaderboard"),
-  getCampaigns: () => fetchJson<any[]>("/api/v1/campaigns"),
-  createAutonomousCampaign: (payload: any) => fetchJson<any>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
-  startCampaign: (campaignId: string) => fetchJson<any>(`/api/v1/campaigns/${campaignId}/start`, { method: "POST" }),
-  getExecutionSessions: () => fetchJson<any[]>("/api/v1/execution/sessions"),
+  getLeaderboard: () => fetchJson<unknown[]>("/api/v1/leaderboard"),
+  getCampaigns: () => fetchJson<unknown[]>("/api/v1/campaigns"),
+  createAutonomousCampaign: (payload: unknown) => fetchJson<unknown>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
+  startCampaign: (campaignId: string) => fetchJson<unknown>(`/api/v1/campaigns/${campaignId}/start`, { method: "POST" }),
+  getExecutionSessions: () => fetchJson<unknown[]>("/api/v1/execution/sessions"),
   getCandidates,
   getCertifiedStrategies,
   getCertifiedMetaStrategies,
   getDiscoveryStatus,
+  getStrategyLabOverview,
+  getStrategyLabStrategies,
+  getStrategyLabSQXStatus,
+  extractStrategyLabProject,
   getLineageTree,
   verifyCertificate,
   runPolicyImpactAnalysis,
@@ -494,4 +559,3 @@ export const api = {
   evaluateForwardSufficiency,
   executeBacktest,
 };
-
