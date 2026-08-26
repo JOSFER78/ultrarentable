@@ -5,7 +5,7 @@
 ChatGPT is the direct repository maintainer and executes the stabilization/recovery work in `main`.
 
 ## CURRENT BLOCK
-`R0 — Stabilization / Recovery`
+`R0.9 — Canonical Domain Boundary Review`
 
 ### Applied
 - R0.1 dependency authority guard + regression test.
@@ -15,14 +15,18 @@ ChatGPT is the direct repository maintainer and executes the stabilization/recov
 - R0.4 execution-session safety guard + regression tests.
 - R0.5 web API client surface guard + regression test.
 - R0.6 real web/backend E2E contract script + regression test.
-- R0 gate executes all stabilization guards after clean dependency installation and then runs real backend/web E2E.
+- R0.7 backend clean-start contract + regression test.
+- R0.8 compile/lint/web build/forbidden-literal CI enforcement.
+- R0.9 canonical domain-boundary audit + regression test.
+
+### Current finding
+R0.9 is **BLOCKED** because `services/api/app/api/routes.py` nests `sqx_router`, while `services/api/app/main.py` also mounts `sqx_router` as a canonical surface. This creates a second authority path and must be isolated or removed before R0 can close.
 
 ### Evidence status
-Source-level guards and the reproducible E2E procedure are implemented. GitHub Actions is still not returning workflow runs for recent pushes through the connected GitHub interface, therefore R0 remains **NOT CERTIFIED GREEN**. No certification claim may be made from source inspection alone.
+GitHub Actions is still not returning workflow runs for recent pushes through the connected GitHub interface. Therefore R0 remains **NOT CERTIFIED GREEN** regardless of source-level results.
 
 ## NEXT
-`R0.7 — Backend Clean Start`
-Verify independent FastAPI startup, DB initialization, health/version response, deterministic local mode and autonomous runtime OFF by default.
+Remove/isolate the nested legacy SQX registration without replacing or truncating the remainder of `routes.py`, then rerun R0.9 and proceed to R0.10 final certification.
 
 Do not advance to Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO before R0 stabilization is certified.
 
