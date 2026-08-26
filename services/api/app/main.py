@@ -24,7 +24,7 @@ from services.api.app.api.research_lab_router import research_lab_router
 from services.api.app.api.job_queue_router import job_queue_router, forward_router
 from services.api.app.api.strategy_lab_router import router as strategy_lab_router
 from services.api.app.api.strategy_binding_router import router as strategy_binding_router
-from services.api.app.api.routes import router as legacy_routes
+from services.api.app.api.legacy_compat_router import router as legacy_routes
 from services.api.app.api.discovery_router import router as discovery_router
 from services.api.app.api.sqx_router import sqx_router
 from services.api.app.api.providers_router import providers_router
