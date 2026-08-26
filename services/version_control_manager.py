@@ -47,8 +47,7 @@ class VersionControlManager:
         self.py_path = py_path
         self.db_path = db_path
         self._manifest_corrupted = False
-        is_isolated_test = manifest_file is not None and "test" in str(manifest_file).lower()
-        self._active_version = "1.02" if is_isolated_test else CURRENT_ENGINE_VERSION
+        self._active_version = CURRENT_ENGINE_VERSION
         self._active_name = CURRENT_ENGINE_NAME
         self._pipeline_version = CURRENT_PIPELINE_VERSION
         self._policy_version = CURRENT_POLICY_VERSION
@@ -122,13 +121,12 @@ class VersionControlManager:
             prefix_len = len(parts[1])
             next_num = int(parts[1]) + 1
             return f"{parts[0]}.{str(next_num).zfill(prefix_len)}"
-        elif len(parts) == 3 and parts[2].isdigit():
+        if len(parts) == 3 and parts[2].isdigit():
             return f"{parts[0]}.{parts[1]}.{int(parts[2]) + 1}"
-        else:
-            return f"{version_str}.1"
+        return f"{version_str}.1"
 
     def _get_git_info(self) -> Dict[str, Any]:
-        """Extrae la identidad real de Git. Prohibido inventar commits de fallback."""
+        """Extrae la identidad real de Git. No inventa commits de fallback."""
         try:
             commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
             branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
@@ -143,7 +141,7 @@ class VersionControlManager:
                 "git_message": msg,
                 "git_author": author,
                 "git_date": date,
-                "git_is_dirty": len(status) > 0,
+                "git_is_dirty": bool(status),
             }
         except Exception:
             return {
@@ -162,7 +160,7 @@ class VersionControlManager:
     def get_full_version_info(self) -> Dict[str, Any]:
         git_info = self._get_git_info()
         fp = self.compute_codebase_fingerprint()
-        drift_detected = (fp != self._active_fingerprint)
+        drift_detected = fp != self._active_fingerprint
         status = "HEALTHY" if not drift_detected and not self._manifest_corrupted else "DRIFT_OR_CORRUPTION"
         return {
             "current_version": self._active_version,
@@ -189,18 +187,13 @@ class VersionControlManager:
         changes: Optional[List[str]] = None,
         new_version: Optional[str] = None,
     ) -> Dict[str, Any]:
-        if new_version:
-            v = new_version
-        else:
-            v = self.increment_version_string(self._active_version)
-
+        v = new_version or self.increment_version_string(self._active_version)
         self._active_version = v
         if name:
             self._active_name = name
         now_utc = datetime.now(timezone.utc).isoformat()
         self._last_bump_utc = now_utc
         self._active_fingerprint = self.compute_codebase_fingerprint()
-
         entry = {
             "version": v,
             "name": name or self._active_name,
@@ -214,7 +207,7 @@ class VersionControlManager:
 
     def check_drift(self) -> Dict[str, Any]:
         current_fp = self.compute_codebase_fingerprint()
-        drift_detected = (current_fp != self._active_fingerprint)
+        drift_detected = current_fp != self._active_fingerprint
         recommendation = "Código sincronizado con la huella registrada." if not drift_detected else "Code drift detectado: Se requiere registrar o bump de versión."
         return {
             "code_drift_detected": drift_detected,
@@ -230,7 +223,7 @@ class VersionControlManager:
     def resolve_strategy_version(
         self,
         strategy_id: str,
-        version: str = "1.00",
+        version: str = CURRENT_ENGINE_VERSION,
         parent_hash: Optional[str] = None,
         rules_or_ast: Optional[Any] = None,
         mutation_reason: str = "Initial Generation",
@@ -246,7 +239,6 @@ class VersionControlManager:
         }
         strat_hash = hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode("utf-8")).hexdigest()
         now_utc = datetime.now(timezone.utc).isoformat()
-
         return StrategyVersionRecord(
             strategy_id=strategy_id,
             version=version,
@@ -261,14 +253,11 @@ class VersionControlManager:
             metadata_json=metadata or {},
         )
 
-    def evaluate_strategy_governance_status(
-        self,
-        record: StrategyVersionRecord,
-    ) -> StrategyVersionStatus:
+    def evaluate_strategy_governance_status(self, record: StrategyVersionRecord) -> StrategyVersionStatus:
         if is_version_stale(record.engine_version, record.policy_version, self._active_version, self._policy_version):
             if record.status in (StrategyVersionStatus.CERTIFIED_CURRENT, StrategyVersionStatus.CERTIFIED_LEGACY):
                 return StrategyVersionStatus.STALE
-            elif record.status == StrategyVersionStatus.STALE:
+            if record.status == StrategyVersionStatus.STALE:
                 return StrategyVersionStatus.REVALIDATION_REQUIRED
         return record.status
 
