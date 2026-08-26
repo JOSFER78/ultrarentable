@@ -4,8 +4,8 @@ import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 
 export const metadata = {
-  title: "UltraRentable â€” Quant Lab v5.4.0",
-  description: "Deterministic Quantitative Strategy Discovery & Execution Engine (Zero-Mocks Â· Real-Only)",
+  title: "UltraRentable — Quant Lab v5.4.0",
+  description: "Deterministic Quantitative Strategy Discovery & Execution Engine (Zero-Mocks · Real-Only)",
 };
 
 export default function RootLayout({
