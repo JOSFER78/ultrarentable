@@ -1,384 +1,168 @@
-# ORDER AG2-P02-FINAL-001 — FINAL DEFINITIVE CLOSURE BEFORE PHASE 03
+# ORDER AG2-RECOVERY-001 — FINAL SYSTEM RECOVERY + WEB LOCALHOST VERIFICATION
 
 ## STATUS
 `ISSUED`
 
 ## OBJECTIVE
-Cerrar definitivamente la Fase 02 y dejar el sistema en un estado coherente y arrancable antes de autorizar Phase 03.
+Verificar en el proyecto real que las reparaciones directas publicadas por el revisor han dejado la aplicación web portable y arrancable, y cerrar cualquier blocker real restante antes de autorizar Phase 03.
 
-Esta es la ÚLTIMA orden de cierre de Phase 02.
+## SOURCE OF TRUTH
+Todas las órdenes se leen desde GitHub `JOSFER78/ultrarentable` / `main`.
 
-NO iniciar Phase 03.
-NO Discovery Factory.
+## STRICT SCOPE
+SOLO recuperación/verificación del sistema actual.
+NO Phase 03.
+NO Discovery.
 NO Genome.
 NO Gates.
 NO Robustness.
 NO Research.
 NO Meta-Strategy.
-NO ULTRA implementation.
-NO FONDEO implementation.
+NO ULTRA research.
+NO FONDEO research.
 
-El trabajo permitido es únicamente:
-1. corregir blockers reales de Phase 02;
-2. corregir problemas reales de arranque/integración de la aplicación que impidan verificar el sistema;
-3. reconciliar documentación/control contradictorio con el estado real;
-4. demostrar reproducibilidad y arranque local.
+## KNOWN DIRECT REPAIRS ALREADY APPLIED BY REVIEWER
+- Removed machine-local Windows paths from `apps/web/tsconfig.json`.
+- Removed duplicate `next.config.mjs`.
+- Made `apps/web/next.config.ts` the single portable Next.js config with local API proxy.
+- Added portable Tailwind v4 PostCSS configuration.
+- Restored portable `next-env.d.ts`.
+- Aligned `apps/web/package.json` with the workspace dependency model.
+- Replaced the dashboard home page so it renders only evidence returned by the canonical API and never promotes candidates to certification or invents metrics.
+- Normalized UTF-8 metadata in `apps/web/app/layout.tsx`.
+
+These changes are NOT evidence of runtime success until independently verified.
 
 ## MANDATORY SUBAGENTS
-
-1. `CLOSURE / RECON`
-2. `CANONICAL / AST`
-3. `VERSION / LINEAGE`
-4. `RUNTIME / EXECUTION BOUNDARY`
-5. `QUANT / REPRODUCIBILITY`
-6. `DATA / PROVENANCE`
-7. `WEB / LOCALHOST / E2E`
-8. `RED-TEAM / ZERO-MOCK`
-9. `INDEPENDENT TEST / RELIABILITY`
+1. `RECON / REPOSITORY STARTUP`
+2. `WEB / NEXT BUILD`
+3. `WEB / LOCALHOST E2E`
+4. `API / BACKEND CONNECTIVITY`
+5. `DEPENDENCY / WORKSPACE LOCK`
+6. `ZERO-MOCK / UI PROVENANCE`
+7. `RED-TEAM / STARTUP`
+8. `INDEPENDENT TEST / RELIABILITY`
+9. `GIT / REMOTE PARITY`
 10. `LEAD / FINAL RECONCILIATION`
 
-El Lead NO puede ser el único verificador. Los agentes `WEB/LOCALHOST`, `RED-TEAM` e `INDEPENDENT TEST` deben revisar de forma independiente al implementador.
-
----
+The lead cannot be the sole verifier.
 
 ## STEP 0 — CONTROL IDENTITY
-
-Leer desde GitHub `origin/main`:
-
+Read from GitHub main:
 - `00_DISPATCH.md`
 - `01_CONTROL_STATE.md`
 - `02_CURRENT_ORDER.md`
-- `03_HANDOFF_AG2-P02-008.md`
-- `04_REVIEW_AG2-P02-007.md`
+- this order archive
 
-Comprobar coincidencia exacta de:
+The exact dispatch/order/phase/status must match. Any mismatch = BLOCKED.
 
-`dispatch_id / order_id / target_phase / status / pre_sha / delivered_sha`
+## STEP 1 — CLEAN INSTALL / WORKSPACE
+From the real repository:
+- verify root workspace configuration;
+- use the repository's package manager/lockfile;
+- no copying of a local `node_modules` from another machine;
+- no manual dependency injection outside the manifest;
+- record exact Node/npm versions.
 
-Si no coincide cualquier elemento: `BLOCKED`.
+## STEP 2 — WEB TYPECHECK + BUILD
+Run from the repository using the workspace scripts:
+- `npm install` / workspace-equivalent according to the committed lockfile;
+- `npm --workspace apps/web run typecheck`;
+- `npm --workspace apps/web run build`.
 
----
+Record exact commands, exit codes, duration and target commit SHA.
 
-## STEP 1 — REVIEW P02-008 AGAINST REAL CODE
+Any error must be fixed at source, then rerun.
 
-No aceptar el texto del handoff como prueba.
+## STEP 3 — LOCALHOST E2E
+Start the REAL frontend with:
+- `npm --workspace apps/web run dev`
 
-Revisar el código real y confirmar o refutar:
+Verify:
+- process actually remains alive;
+- HTTP response from `http://localhost:3000`;
+- one principal application route returns successfully;
+- browser/client can reach `/api/...` through the real Next rewrite;
+- backend on the configured port is reachable;
+- no fake API/data fallback is used to declare success.
 
-- CanonicalStrategy immutable;
-- deterministic serialization;
-- deterministic strategy hash;
-- explicit LONG/SHORT/BOTH semantics;
-- explicit AND/OR;
-- indicator source/params/shift;
-- exits;
-- sizing/risk;
-- sessions;
-- provenance;
-- engine/policy lineage;
-- fail-closed unsupported cases;
-- real execution boundary;
-- ledger/result binding.
+If frontend fails:
+- inspect stack trace;
+- fix root cause;
+- restart;
+- repeat typecheck/build/start;
+- never replace the application with a mock server/page.
 
-Cada claim debe quedar `PROVEN`, `UNSUPPORTED_FAIL_CLOSED`, `UNPROVEN`, `FAILED` o `BLOCKED`.
+Record PID, port, exact URL, response status, startup log and exit state.
 
----
+## STEP 4 — BACKEND CONNECTIVITY
+Verify the real FastAPI service used by the web app is importable and starts.
+Verify its health/root endpoint if available.
+Confirm the Next proxy points to the actual backend port.
 
-## STEP 2 — ZERO-FORCING AUDIT
+A disconnected backend must show a truthful error/NO_EVIDENCE state, not synthetic metrics.
 
-Red-team debe buscar activamente:
+## STEP 5 — UI PROVENANCE
+Audit the main dashboard and the paths it imports.
+Confirm:
+- no candidate is rendered as certification;
+- no fabricated dataset/hash/capital/timestamp is created in the UI;
+- missing API data renders `NO_EVIDENCE` or an honest error;
+- certification is based on the canonical API state only.
 
-- defaults cuantitativos;
-- fallback a `close`;
-- fallback temporal;
-- fallback de ATR;
-- capital por defecto;
-- costes inventados;
-- fills inventados;
-- hashes sintéticos;
-- timestamps sintéticos;
-- random/seed usados para hacer pasar tests;
-- tests tautológicos;
-- caller-controlled provenance;
-- legacy execution bypassing canonical contracts.
+## STEP 6 — ZERO-MOCK SCAN
+Search the web/runtime path for:
+- `Math.random`
+- synthetic bars
+- hardcoded dataset hashes
+- fabricated timestamps
+- fabricated PF/ROI/DD
+- fake API success
+- default quantitative capital
+- fallback candidate->certified logic
 
-Cualquier hallazgo crítico = `BLOCKED` hasta corregirse.
+Any quantitative fake/fallback that can affect displayed or executable results = BLOCKED until removed or isolated as an explicitly non-production test fixture.
 
----
-
-## STEP 3 — DETERMINISTIC RE-RUN
-
-Con una estrategia/dataset/versiones idénticos ejecutar DOS veces de forma independiente.
-
-Comparar exactamente:
-
-- execution_hash;
-- ordered trades;
-- timestamps;
-- entry/exit prices;
-- direction;
-- size;
-- exit_reason;
-- pnl;
-- ledger hash cuando aplique.
-
-Cualquier diferencia = `BLOCKED`.
-
-Registrar comandos, SHA de código y resultados de ambas ejecuciones.
-
----
-
-## STEP 4 — REAL BOUNDARY
-
-Probar que la ejecución certificable no es un backtester paralelo aislado.
-
-Demostrar con call-sites reales:
-
-`CanonicalStrategy`
-→ `snapshot/serialization`
-→ `compile_to_runtime`
-→ runtime/adaptor
-→ `EventBacktestEngine`
-→ reconciliation/ledger
-→ validation/certification consumer
-
-Documentar archivos, clases, funciones y líneas reales.
-
----
-
-## STEP 5 — DATA PROVENANCE
-
-Probar:
-
-instrument + timeframe
-→ deterministic registry resolution
-→ physical snapshot
-→ physical bars
-→ physical SHA-256
-→ provenance eligibility.
-
-No caller identity override.
-
-Dataset ausente / hash inválido / provenance no verificable = FAIL CLOSED / NO_EVIDENCE.
-
----
-
-## STEP 6 — LOCALHOST / WEB E2E — OBLIGATORIO
-
-El proyecto NO se considera operativo si la aplicación web no puede arrancar correctamente en local.
-
-El subagente `WEB / LOCALHOST / E2E` debe:
-
-1. identificar el frontend real;
-2. identificar el backend real;
-3. comprobar `package.json`, scripts y dependencias;
-4. comprobar variables de entorno requeridas;
-5. comprobar si existen referencias rotas, imports rotos, rutas inexistentes o servicios que impiden arrancar;
-6. ejecutar instalación usando el método oficial del repo sin introducir mocks;
-7. ejecutar `npm run typecheck`;
-8. ejecutar `npm run build`;
-9. arrancar el frontend con el comando oficial (`npm run dev` o equivalente documentado);
-10. verificar HTTP real en `http://localhost:3000`;
-11. comprobar al menos una ruta principal real de la aplicación;
-12. comprobar conexión con la API si la página depende de ella;
-13. comprobar backend real y su endpoint de salud/entrada correspondiente;
-14. registrar puertos, PID/process id, comandos, exit codes, logs y resultado;
-15. cerrar procesos de prueba al terminar.
-
-Si el frontend no arranca:
-- investigar la causa real;
-- corregirla dentro del alcance;
-- repetir typecheck/build/start;
-- no sustituir la aplicación por una página mock;
-- no levantar un servidor fake para declarar PASS.
-
-`localhost OK` requiere proceso real + HTTP 200/respuesta esperada + build/typecheck coherentes.
-
----
-
-## STEP 7 — DOCUMENTATION / SSOT RECONCILIATION
-
-No puede existir documentación pública que contradiga el estado real del sistema y se presente como SSOT.
-
-Revisar especialmente:
-
-- `README.md`;
-- documentación de versiones;
-- descripción del universo de FONDEO;
-- versión de engine;
-- comandos de arranque;
-- estructura de la web;
-- referencias a fases antiguas de documentación.
-
-Actualizar sólo cuando la corrección refleje el código real.
-
-No borrar historial útil: marcar legacy/stale cuando corresponda.
-
----
-
-## STEP 8 — TEST / REGRESSION
-
-Ejecutar:
-
-- Phase 01 dataset chain-of-custody regression;
-- Phase 02 canonical/runtime regression;
-- version governance regression;
-- deterministic rerun;
+## STEP 7 — REGRESSION
+Run:
+- affected Phase 01 tests;
+- Phase 02 runtime/version tests;
 - web typecheck;
 - web build;
-- localhost smoke/E2E;
-- bounded API health/critical-route checks.
+- localhost smoke;
+- backend health check.
 
-Registrar para cada comando:
+No green claim without exact command + exit code.
 
-`exact command / environment / duration / exit code / target SHA / result`
-
-No aceptar "green" sin comando reproducible.
-
----
-
-## STEP 9 — FINAL RED TEAM
-
-El red-team debe intentar romper simultáneamente:
-
-- control de versiones;
-- provenance;
-- runtime;
-- deterministic rerun;
-- web startup;
-- API/UI provenance;
-- stale evidence;
-- docs contradictions.
-
-Si encuentra un blocker, corregirlo y volver a ejecutar la prueba correspondiente.
-
----
-
-## STEP 10 — FINAL AGENT LEDGER
-
-Crear:
-`.agents/informe&seguimiento/P02-FINAL-001_AGENT_LEDGER.md`
-
-Cada agente debe registrar:
-
-- agent_id;
-- role;
-- exact task;
-- files inspected;
-- files changed;
-- commands;
-- exit codes;
-- evidence paths/hashes;
-- findings;
-- conclusion;
-- unresolved items.
-
-Una lista de agentes sin evidencia NO cuenta.
-
----
-
-## STEP 11 — FINAL RECONCILIATION
-
-Crear:
-`.agents/informe&seguimiento/P02-FINAL-001_RECONCILIATION.md`
-
-Cada claim crítico debe quedar:
-
-`PROVEN`
-`UNSUPPORTED_FAIL_CLOSED`
-`UNPROVEN`
-`FAILED`
-`BLOCKED`
-`DEFERRED`
-
-Para cerrar Phase 02:
-
-`critical_unproven = 0`
-`critical_failed = 0`
-`critical_blocked = 0`
-
-Y además:
-
-`localhost_e2e = PASS`
-`deterministic_rerun = PASS`
-`git_remote_parity = PASS`
-
----
-
-## STEP 12 — FINAL HANDOFF
-
-Crear:
-`.agents/informe&seguimiento/03_HANDOFF_AG2-P02-FINAL-001.md`
-
-Debe incluir:
-
-- exact dispatch_id;
-- order_id;
-- pre/post remote SHA;
-- files changed;
-- all critical claims;
-- unsupported claims;
-- unresolved/deferred items;
-- exact commands and exit codes;
-- localhost proof;
-- deterministic rerun proof;
-- production boundary proof;
-- agent ledger;
-- reconciliation;
-- limitations.
-
-Disposición permitida:
-
-`READY_FOR_PHASE_03_REVIEW`
-
-ó
-
-`BLOCKED`
-
-No puede autoaprobar Phase 03.
-
----
-
-## SSH / LONG JOBS
-
-Jobs largos deben ejecutarse detached/asynchronously.
-Registrar:
-
-- remote_job_id;
-- exact command;
-- target SHA;
-- log path;
-- status;
-- exit code.
-
-Nunca esperar 10–20 minutos bloqueando el orquestador si el proceso puede dejarse corriendo con seguimiento posterior.
-
----
-
-## GIT / DELIVERY
-
-Todo trabajo sobre:
+## STEP 8 — GIT DELIVERY
+All corrections must be made in:
 `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
 
-Después:
-
+Then:
 `git status`
 → `git add`
 → `git commit`
 → `git pull --rebase origin main`
 → `git push origin main`
 → `git fetch origin main`
-→ verificar exact remote SHA
+→ verify exact remote SHA.
 
-Las evidencias de la orden deben existir en:
-`.agents/informe&seguimiento/`
+## STEP 9 — EVIDENCE
+Create:
+- `.agents/informe&seguimiento/RECOVERY-001_AGENT_LEDGER.md`
+- `.agents/informe&seguimiento/RECOVERY-001_RECONCILIATION.md`
+- `.agents/informe&seguimiento/03_HANDOFF_AG2-RECOVERY-001.md`
 
-`origin/main` es la fuente que revisa el auditor externo.
+Every subagent must record its own command evidence and exit code.
 
----
+## FINAL STATE
+Allowed outcomes only:
+- `READY_FOR_PHASE_03_REVIEW`
+- `BLOCKED`
 
-## ZERO ABSOLUTE
+Antigravity must NOT create Phase 03 or change `CURRENT_PHASE`.
 
+## ABSOLUTE
 ZERO-MOCK
 ZERO-SIMULATION
 ZERO-FORCING
@@ -386,17 +170,7 @@ ZERO-LOOKAHEAD
 REAL-ONLY
 EVIDENCE-GATED
 
-No fabricar datos, resultados, hashes, fills, trades, respuestas HTTP, tests ni certificaciones.
+No fabricated data, no synthetic success, no fake HTTP, no fake tests.
 
-## FINAL STOP
-
-Cuando esta orden termine:
-
-PUSH MAIN
-→ VERIFY REMOTE SHA
-→ HANDOFF
-→ STOP ABSOLUTO
-
-No crear Phase 03.
-No avanzar CURRENT_PHASE.
-No inventar la siguiente orden.
+## STOP
+After delivery: push main, verify remote SHA, create handoff, STOP.
