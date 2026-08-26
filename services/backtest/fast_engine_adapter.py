@@ -46,7 +46,7 @@ from contracts.canonical_strategy import (
 from contracts.evidence_bundle import EvidenceBundle
 from services.api.app.data_feed.feed_loader import load_candles
 from services.backtest.engine_port import BacktestEnginePort
-from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, InstrumentCostProfile
+from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, InstrumentCostProfile, get_instrument_cost_profile
 from services.engine.universal_backtest_engine import UniversalDeterministicBacktestEngine
 from services.strategy_core.canonical_compiler import CanonicalCompiler
 
@@ -71,7 +71,7 @@ class FastEngineAdapter(BacktestEnginePort):
 
     def _lookup_strategy(self, strategy_id: str) -> Optional[CanonicalStrategy]:
         """Busca una estrategia canónica persistida en base de datos o catálogo.
-        
+
         Retorna None si no existe para que se aplique la doctrina fail-closed.
         """
         try:
@@ -107,6 +107,10 @@ class FastEngineAdapter(BacktestEnginePort):
         symbol = request.dataset.symbol
         timeframe = request.dataset.timeframe
 
+        # Validate the canonical cost model before touching market-data loading.
+        # Unknown instruments must fail closed with MissingCostModelError, never as a misleading NO_DATA.
+        get_instrument_cost_profile(symbol)
+
         candles = load_candles(symbol, timeframe)
         if not candles:
             raise ValueError(
@@ -120,7 +124,6 @@ class FastEngineAdapter(BacktestEnginePort):
         symbol = request.dataset.symbol
         timeframe = request.dataset.timeframe
 
-        # 1. Obtener o compilar CanonicalStrategy
         strategy_obj = request.strategy
         if strategy_obj is None or not isinstance(strategy_obj, CanonicalStrategy):
             strategy_obj = self._lookup_strategy(request.strategy_id)
@@ -155,7 +158,6 @@ class FastEngineAdapter(BacktestEnginePort):
             quality_report=DatasetQualityReport(total_bars=len(candles)),
         )
 
-        # 2. Ejecutar sobre el motor determinista universal
         univ_res = self.engine.run(
             strategy=strat_spec,
             instrument=inst_spec,
@@ -166,10 +168,9 @@ class FastEngineAdapter(BacktestEnginePort):
             initial_capital_override=request.initial_capital_usd,
         )
 
-        # 3. Transformar TradeRecords de UniversalBacktestResult a ExecutionTruth y TradeLog
         trades_logs: List[TradeLog] = []
         exec_truths: List[ExecutionTruth] = []
-        
+
         for tr in univ_res.trades:
             exit_reason_str = tr.exit_reason or "TAKE_PROFIT"
             can_exit_reason = CanExitReason.TAKE_PROFIT
@@ -232,7 +233,6 @@ class FastEngineAdapter(BacktestEnginePort):
                 )
             )
 
-        # 4. Construir CanonicalExecutionLedger sellado criptográficamente
         ledger = CanonicalExecutionLedger(
             strategy_id=request.strategy_id,
             strategy_snapshot_hash=strategy_obj.strategy_hash,
@@ -256,7 +256,6 @@ class FastEngineAdapter(BacktestEnginePort):
             trades=exec_truths,
         )
 
-        # 5. Transformar curva de equity
         if univ_res.bar_ledger:
             equity_curve: List[EquityPoint] = [
                 EquityPoint(timestamp_utc_ms=ep.timestamp_ms, equity_usd=ep.equity_usd, drawdown_pct=ep.drawdown_pct)
@@ -273,35 +272,20 @@ class FastEngineAdapter(BacktestEnginePort):
                 EquityPoint(timestamp_utc_ms=first_ts, equity_usd=request.initial_capital_usd, drawdown_pct=0.0)
             ]
 
-        # 6. Cálculo estadístico riguroso de Sharpe & Sortino Ratio sobre la serie de retornos porcentuales
         trade_returns = [t.return_pct for t in univ_res.trades]
         n_trades = len(trade_returns)
         if n_trades >= 2:
             span_ms = (end_ts - start_ts) if (end_ts > start_ts and start_ts > 0) else 0
-            if span_ms > 0:
-                span_years = max(1.0 / 365.25, (span_ms / (1000.0 * 86400.0)) / 365.25)
-            else:
-                span_years = 1.0
+            span_years = max(1.0 / 365.25, (span_ms / (1000.0 * 86400.0)) / 365.25) if span_ms > 0 else 1.0
             trades_per_year = n_trades / span_years
-
             mean_ret = sum(trade_returns) / n_trades
             variance = sum((r - mean_ret) ** 2 for r in trade_returns) / n_trades
             std_ret = math.sqrt(variance)
-            if std_ret > 1e-8:
-                sharpe_val = (mean_ret / std_ret) * math.sqrt(trades_per_year)
-                sharpe_ratio = round(sharpe_val, 2)
-            else:
-                sharpe_ratio = 0.0
-
+            sharpe_ratio = round((mean_ret / std_ret) * math.sqrt(trades_per_year), 2) if std_ret > 1e-8 else 0.0
             neg = [r for r in trade_returns if r < 0]
             if neg:
-                downside_variance = sum(x * x for x in neg) / len(neg)
-                downside_std = math.sqrt(downside_variance)
-                if downside_std > 1e-8:
-                    sortino_val = (mean_ret / downside_std) * math.sqrt(trades_per_year)
-                    sortino_ratio = round(sortino_val, 2)
-                else:
-                    sortino_ratio = 0.0
+                downside_std = math.sqrt(sum(x * x for x in neg) / len(neg))
+                sortino_ratio = round((mean_ret / downside_std) * math.sqrt(trades_per_year), 2) if downside_std > 1e-8 else 0.0
             else:
                 sortino_ratio = 0.0
         else:
@@ -345,6 +329,7 @@ class FastEngineAdapter(BacktestEnginePort):
         symbol = request.dataset.symbol
         timeframe = request.dataset.timeframe
 
+        get_instrument_cost_profile(symbol)
         candles = load_candles(symbol, timeframe)
         if not candles:
             raise ValueError(
@@ -363,92 +348,47 @@ class FastEngineAdapter(BacktestEnginePort):
         split_idx = int(n_bars * split_ratio)
         if split_idx < 20 or (n_bars - split_idx) < 10:
             raise ValueError(
-                f"INSUFFICIENT_DATA_FOR_SPLIT: Muestra total ({n_bars} barras) insuficiente para partición {split_ratio*100:.0f}% IS / {(1-split_ratio)*100:.0f}% OOS."
+                f"INSUFFICIENT_DATA_FOR_SPLIT: Muestra total ({n_bars} barras), split={split_ratio} inválido"
             )
 
-        candles_is = candles[:split_idx]
-        candles_oos = candles[split_idx:]
+        is_candles = candles[:split_idx]
+        oos_candles = candles[split_idx:]
+        base_request = request.model_copy(update={"strategy": strategy_obj})
+        is_request = base_request.model_copy(update={"request_id": f"{request.request_id}:IS"})
+        oos_request = base_request.model_copy(update={"request_id": f"{request.request_id}:OOS"})
+        is_result = self._execute_on_candles(is_request, is_candles)
+        oos_result = self._execute_on_candles(oos_request, oos_candles)
 
-        is_sha256 = hashlib.sha256(json.dumps(candles_is, sort_keys=True, default=str).encode("utf-8")).hexdigest()
-        oos_sha256 = hashlib.sha256(json.dumps(candles_oos, sort_keys=True, default=str).encode("utf-8")).hexdigest()
-
-        start_is_ms = _candle_ms(candles_is[0])
-        end_is_ms = _candle_ms(candles_is[-1])
-        start_oos_ms = _candle_ms(candles_oos[0])
-        end_oos_ms = _candle_ms(candles_oos[-1])
-
-        # 1. Backtest In-Sample
-        req_is = request.model_copy(update={
-            "request_id": f"{request.request_id}_IS",
-            "strategy": strategy_obj,
-            "dataset": DatasetSnapshot(
-                dataset_id=f"{request.dataset.dataset_id}_IS",
-                symbol=symbol,
-                timeframe=timeframe,
-                start_timestamp_utc_ms=start_is_ms,
-                end_timestamp_utc_ms=end_is_ms,
-                total_bars=len(candles_is),
-                sha256_hash=is_sha256,
-                is_in_sample=True,
-            ),
-        })
-
-        # 2. Backtest Out-of-Sample
-        req_oos = request.model_copy(update={
-            "request_id": f"{request.request_id}_OOS",
-            "strategy": strategy_obj,
-            "dataset": DatasetSnapshot(
-                dataset_id=f"{request.dataset.dataset_id}_OOS",
-                symbol=symbol,
-                timeframe=timeframe,
-                start_timestamp_utc_ms=start_oos_ms,
-                end_timestamp_utc_ms=end_oos_ms,
-                total_bars=len(candles_oos),
-                sha256_hash=oos_sha256,
-                is_in_sample=False,
-            ),
-        })
-
-        res_is = self._execute_on_candles(req_is, candles_is)
-        res_oos = self._execute_on_candles(req_oos, candles_oos)
-
-        strat_sha256 = strategy_obj.strategy_hash
-        combined_ledger_hash = hashlib.sha256(f"{res_is.ledger_hash}:{res_oos.ledger_hash}".encode("utf-8")).hexdigest()
-
-        bundle = EvidenceBundle(
-            bundle_id=f"bnd_{request.strategy_id}_{int(time.time()*1000)}",
+        evidence = EvidenceBundle(
+            bundle_id=f"EB-{request.request_id}",
             strategy_id=request.strategy_id,
-            strategy_sha256=strat_sha256,
+            strategy_sha256=strategy_obj.strategy_hash,
             dataset_id=request.dataset.dataset_id,
-            dataset_is_sha256=is_sha256,
-            dataset_oos_sha256=oos_sha256,
+            dataset_is_sha256=hashlib.sha256(json.dumps(is_candles, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+            dataset_oos_sha256=hashlib.sha256(json.dumps(oos_candles, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
             symbol=symbol,
             timeframe=timeframe,
-            target_track=getattr(strategy_obj, "route", "FONDEO"),
-            execution_config_hash=res_is.provenance_hash_sha256 or "can_exec_cfg_v3",
+            route=str(getattr(strategy_obj, "route", request.strategy.route)),
+            execution_config_hash=request.execution_config_hash or hashlib.sha256(
+                json.dumps({"fee_multiplier": request.fee_multiplier, "slippage_bps": request.slippage_bps}, sort_keys=True).encode()
+            ).hexdigest(),
             engine_name="UniversalDeterministicBacktestEngine",
-            engine_version="3.0.0",
+            engine_version="5.4.0",
             commit_sha=commit_sha,
             initial_capital_usd=request.initial_capital_usd,
-            is_trades_count=res_is.total_trades,
-            oos_trades_count=res_oos.total_trades,
+            is_trades_count=is_result.total_trades,
+            oos_trades_count=oos_result.total_trades,
             is_metrics={
-                "net_profit_usd": res_is.net_profit_usd,
-                "win_rate_pct": res_is.win_rate_pct,
-                "profit_factor": res_is.profit_factor,
-                "max_drawdown_pct": res_is.max_drawdown_pct,
-                "sharpe_ratio": res_is.sharpe_ratio,
+                "profit_factor": is_result.profit_factor,
+                "net_return_pct": is_result.net_return_pct,
+                "max_drawdown_pct": is_result.max_drawdown_pct,
             },
             oos_metrics={
-                "net_profit_usd": res_oos.net_profit_usd,
-                "win_rate_pct": res_oos.win_rate_pct,
-                "profit_factor": res_oos.profit_factor,
-                "max_drawdown_pct": res_oos.max_drawdown_pct,
-                "sharpe_ratio": res_oos.sharpe_ratio,
+                "profit_factor": oos_result.profit_factor,
+                "net_return_pct": oos_result.net_return_pct,
+                "max_drawdown_pct": oos_result.max_drawdown_pct,
             },
-            ledger_hash=combined_ledger_hash,
+            ledger_hash=hashlib.sha256((is_result.ledger_hash + oos_result.ledger_hash).encode()).hexdigest(),
             gates_evaluation={},
         )
-
-        return res_is, res_oos, bundle
-
+        return is_result, oos_result, evidence
