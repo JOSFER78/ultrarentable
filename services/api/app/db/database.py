@@ -26,16 +26,12 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON;")
     cursor.execute("PRAGMA mmap_size=268435456;")
     cursor.execute("PRAGMA cache_size=-64000;")
+    cursor.execute("PRAGMA temp_store=MEMORY;")
     cursor.execute("PRAGMA busy_timeout=15000;")
     cursor.close()
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
-# NOTE: Existing model declarations are preserved exactly; only the redundant
-# index=True on GatewayProviderModel.provider_id is removed below because the
-# column is already the table primary key and duplicate metadata/index creation
-# was blocking clean SQLite startup.
 
 class InstrumentModel(Base):
     __tablename__ = "instruments"
@@ -143,11 +139,11 @@ class BacktestModel(Base):
     status = Column(String) # COMPLETED, FAILED, DISPUTED
     created_at = Column(DateTime, default=datetime.utcnow)
     # --- Out-of-sample (OOS) generalization metrics (added 2026-08-09) ---
-    pf_os = Column(Float, nullable=True)
-    net_return_os_pct = Column(Float, nullable=True)
-    max_drawdown_os_pct = Column(Float, nullable=True)
-    trades_os = Column(Integer, nullable=True)
-    ret_dd_ratio = Column(Float, nullable=True)
+    pf_os = Column(Float, nullable=True)                 # Profit factor (OOS) — the real anti-overfit gate
+    net_return_os_pct = Column(Float, nullable=True)     # Net return (OOS) as %
+    max_drawdown_os_pct = Column(Float, nullable=True)   # Max drawdown (OOS) as % of equity
+    trades_os = Column(Integer, nullable=True)           # Trades count (OOS)
+    ret_dd_ratio = Column(Float, nullable=True)          # SQX Ret/DD Ratio (IS): NetProfit / MaxDrawdownUSD
 
 class CampaignModel(Base):
     __tablename__ = "campaigns"
@@ -159,9 +155,9 @@ class CampaignModel(Base):
     generations_count = Column(Integer, default=20)
     current_generation = Column(Integer, default=0)
     seed = Column(Integer, default=42)
-    status = Column(String)
+    status = Column(String) # IDLE, CREATED, GENERATING, FAST_EVALUATING, TUNING, PAUSED, COMPLETED, FAILED
     checkpoints_path = Column(String, nullable=True)
-    mode = Column(String, default="EXPLORE")
+    mode = Column(String, default="EXPLORE") # EXPLORE, IMPROVE, REGIME_SEARCH
     target_multiplier = Column(Float, default=11.0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -235,7 +231,7 @@ class SearchConfigModel(Base):
     __tablename__ = "search_configs"
     config_id = Column(String, primary_key=True, index=True)
     name = Column(String, default="default")
-    mode = Column(String, default="ultra")
+    mode = Column(String, default="ultra")  # ultra | fondeo
     project = Column(String, default="Ultra_Auto_Pilot")
     databank = Column(String, default="Results")
     symbol = Column(String, nullable=True)
@@ -246,6 +242,8 @@ class SearchConfigModel(Base):
     consistency_target = Column(Float, nullable=True)
     techniques_json = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
 
 class SearchLogModel(Base):
     __tablename__ = "search_logs"
@@ -259,7 +257,7 @@ class SearchLogModel(Base):
 class AutopilotRunModel(Base):
     __tablename__ = "autopilot_runs"
     run_id = Column(String, primary_key=True, index=True)
-    status = Column(String, default="INITIALIZING")
+    status = Column(String, default="INITIALIZING")  # INITIALIZING, SCANNING, RUNNING, PAUSED, COMPLETED, STOPPED
     mode = Column(String, default="AUTOPILOT_ULTRA")
     current_symbol = Column(String, nullable=True)
     current_interval = Column(String, nullable=True)
@@ -275,7 +273,7 @@ class AutopilotDecisionModel(Base):
     __tablename__ = "autopilot_decisions"
     decision_id = Column(String, primary_key=True, index=True)
     run_id = Column(String, index=True)
-    module = Column(String)
+    module = Column(String)  # UniverseScanner, OpportunityRanker, LeverageAutopilot, CandidateRepairer
     decision = Column(String)
     reason = Column(Text)
     alternatives_json = Column(Text, nullable=True)
@@ -300,7 +298,7 @@ class LeverageTrialModel(Base):
     symbol = Column(String)
     leverage = Column(Integer)
     tier = Column(Integer, default=1)
-    status = Column(String)
+    status = Column(String)  # PASSED, LIQUIDATED, FAILED
     final_equity = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -318,7 +316,7 @@ class CanonicalValidationModel(Base):
     strategy_id = Column(String, index=True)
     fast_backtest_id = Column(String)
     canonical_engine = Column(String, default="NAUTILUS_TRADER")
-    status = Column(String)
+    status = Column(String)  # PENDING, PASSED, DISPUTED
     fast_return_pct = Column(Float)
     canonical_return_pct = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -328,25 +326,25 @@ class ProviderRuleSetModel(Base):
     provider_id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
     provider_name = Column(String, nullable=False, index=True)
-    market_type = Column(String, default="FUTURES")
+    market_type = Column(String, default="FUTURES")  # FUTURES, CFD, CRYPTO
     platform = Column(String, default="Tradovate / NinjaTrader")
     allowed_instruments = Column(String, default="MES, MNQ, ES, NQ")
     account_size = Column(Float, default=50000.0)
-    program_type = Column(String, default="Standard")
-    account_tier = Column(String, default="50K")
+    program_type = Column(String, default="Standard")  # Rapid, Starter, Growth, 1-Step, 2-Step, Direct
+    account_tier = Column(String, default="50K")  # 10K, 25K, 50K, 100K, 150K, 250K, 300K
     target_usd = Column(Float, default=3000.0)
     target_pct = Column(Float, default=6.0)
     daily_loss_limit_usd = Column(Float, nullable=True)
     daily_loss_limit_pct = Column(Float, nullable=True)
-    dll_calc_model = Column(String, default="EOD Balance")
+    dll_calc_model = Column(String, default="EOD Balance")  # EOD Balance, Intraday High, None, Equity Trailing
     max_trailing_dd_usd = Column(Float, default=2000.0)
     max_trailing_dd_pct = Column(Float, default=4.0)
-    trailing_dd_type = Column(String, default="EOD Trailing")
+    trailing_dd_type = Column(String, default="EOD Trailing")  # EOD Trailing, Intraday Peak Trailing, Static, Balance Based
     consistency_rule_pct = Column(Float, default=50.0)
     min_trading_days = Column(Integer, default=2)
     overnight_allowed = Column(Boolean, default=False)
     news_trading_allowed = Column(Boolean, default=True)
-    ea_bots_allowed = Column(String, default="PERMITTED")
+    ea_bots_allowed = Column(String, default="PERMITTED")  # PERMITTED, PERMITTED_WITH_CONDITIONS, PROHIBITED
     monthly_cost_usd = Column(Float, nullable=True)
     regular_price_usd = Column(Float, nullable=True)
     promo_price_usd = Column(Float, nullable=True)
@@ -355,23 +353,167 @@ class ProviderRuleSetModel(Base):
     activation_fee_usd = Column(Float, default=0.0)
     payout_split_pct = Column(Float, default=90.0)
     payout_frequency = Column(String, default="Quincenal")
+    payout_buffer_usd = Column(Float, default=0.0)
+    funded_trailing_lock = Column(String, default="LOCKS_AT_INITIAL_BALANCE")  # LOCKS_AT_INITIAL_BALANCE, STATIC, PEAK_CONTINUOUS
+    contracts_limit = Column(String, nullable=True)
+    trust_score = Column(Integer, default=85)
+    stage_type = Column(String, default="EVALUATION")  # EVALUATION, DIRECT_FUNDED
+    source_url = Column(String, nullable=True)
+    verified_at = Column(String, nullable=True)
+    verification_status = Column(String, default="VERIFIED")  # VERIFIED, UNVERIFIED
+    notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-class GateEventModel(Base):
-    __tablename__ = "gate_events"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
-    category = Column(String, default="SYSTEM")
-    route = Column(String, default="SYSTEM")
+
+from sqlalchemy.orm import sessionmaker, declarative_base, validates
+import json
+
+APPROVED_STATUS_VALUES = {"APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS", "CERTIFICADA_TIER_1"}
+
+
+class CandidateModel(Base):
+    __tablename__ = "candidates"
+    candidate_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    route = Column(String, default="FONDEO")  # ULTRA, FONDEO
+    symbol = Column(String, default="BTC-USDT")
+    timeframe = Column(String, default="1h")
+    dataset_id = Column(String, nullable=True)
+    status = Column(String, default="INVESTIGACION_BTC")
+    # Statuses: INVESTIGACION_BTC, RECHAZADA_FONDEO_DD, CANDIDATA_FONDEO, PAPER, LISTA_PARA_EVALUACION, EJECUTANDO, PAUSADA, RETIRADA
+    status_reason = Column(Text, nullable=True)
+    net_profit_is = Column(Float, default=0.0)
+    trades_is = Column(Integer, default=0)
+    profit_factor_is = Column(Float, default=0.0)
+    max_dd_is_pct = Column(Float, default=0.0)
+    net_profit_oos = Column(Float, default=0.0)
+    trades_oos = Column(Integer, default=0)
+    profit_factor_oos = Column(Float, default=0.0)
+    max_dd_oos_pct = Column(Float, default=0.0)
+    ratio_oos_is = Column(Float, default=0.0)
+    wfo_pass_pct = Column(Float, nullable=True)
+    monte_carlo_score = Column(Float, nullable=True)
+    scorecard_json = Column(Text, nullable=True)
+    engine_version = Column(String, default="5.3.0")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    @validates("status")
+    def validate_status_evidence(self, key: str, value: str) -> str:
+        """Prohíbe transiciones manuales o sin evidencia física en disco / SQLite para estados aprobados."""
+        if value in APPROVED_STATUS_VALUES:
+            cid = self.candidate_id
+            has_disk_evidence = False
+            if cid:
+                possible_paths = [
+                    Path("data/evidence") / cid / "evidence_bundle.json",
+                    Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/evidence") / cid / "evidence_bundle.json",
+                ]
+                for p in possible_paths:
+                    if p.is_file():
+                        has_disk_evidence = True
+                        break
+                if not has_disk_evidence:
+                    for base in [Path("data/evidence") / cid, Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/evidence") / cid]:
+                        if base.is_dir() and len(list(base.glob("gate_*.json"))) == 11:
+                            has_disk_evidence = True
+                            break
+
+            has_scorecard_evidence = False
+            if self.scorecard_json:
+                try:
+                    sc = json.loads(self.scorecard_json)
+                    if sc.get("is_certified") or sc.get("gates_passed_count", 0) == 11 or sc.get("bundle_signature_sha256") or sc.get("certificate_hash"):
+                        has_scorecard_evidence = True
+                except Exception:
+                    pass
+
+            if not has_disk_evidence and not has_scorecard_evidence:
+                raise ValueError(
+                    f"PROHIBICION_ESTRICTA_EVIDENCIA: No se permite la transición de '{cid or 'NUEVO'}' a estado aprobado '{value}' "
+                    f"sin EvidenceBundle firmado verificado en disco o scorecard con los 11 gates aprobados en SQLite."
+                )
+        return value
+
+
+class ExecutionSessionModel(Base):
+    __tablename__ = "execution_sessions"
+    session_id = Column(String, primary_key=True, index=True)
+    route = Column(String, default="ULTRA")  # ULTRA, FONDEO
+    environment = Column(String, default="PAPER_BINGX")  # PAPER_BINGX, LIVE_BINGX, PAPER_PROP_FIRM, EVAL_PROP_FIRM
+    candidate_id = Column(String, nullable=True)
+    provider_id = Column(String, nullable=True)
+    symbol = Column(String, default="BTC-USDT")
+    status = Column(String, default="INITIALIZING")  # INITIALIZING, RUNNING, PAUSED, STOPPED, KILL_SWITCH_TRIGGERED
+    current_pnl_usd = Column(Float, default=0.0)
+    daily_pnl_usd = Column(Float, default=0.0)
+    current_drawdown_pct = Column(Float, default=0.0)
+    peak_equity_usd = Column(Float, default=50000.0)
+    heartbeat_last_at = Column(DateTime, default=datetime.utcnow)
+    last_signal = Column(Text, nullable=True)
+    last_order = Column(Text, nullable=True)
+    open_positions_json = Column(Text, nullable=True)
+    kill_switch_active = Column(Boolean, default=False)
+    kill_switch_reason = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class NinjaTraderAccountModel(Base):
+    __tablename__ = "ninjatrader_accounts"
+    account_id = Column(String, primary_key=True, index=True)
+    account_name = Column(String, nullable=False)
+    account_type = Column(String, default="SIM101")
+    broker = Column(String, default="NinjaTrader Continuum")
+    base_capital_usd = Column(Float, default=50000.0)
+    current_equity_usd = Column(Float, default=50000.0)
+    daily_pnl_usd = Column(Float, default=0.0)
+    realized_pnl_usd = Column(Float, default=0.0)
+    unrealized_pnl_usd = Column(Float, default=0.0)
+    peak_equity_usd = Column(Float, default=50000.0)
+    max_trailing_dd_limit_usd = Column(Float, default=2000.0)
+    daily_loss_limit_usd = Column(Float, default=1000.0)
+    profit_target_usd = Column(Float, default=3000.0)
+    status = Column(String, default="ACTIVE")
+    auto_liquidate_on_dll = Column(Boolean, default=True)
+    flatten_on_nightly_close = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+
+class PortfolioModel(Base):
+    __tablename__ = "portfolios"
+    portfolio_id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    target_route = Column(String, default="ULTRA")  # ULTRA, FONDEO
+    base_capital_usd = Column(Float, default=10000.0)
+    current_equity_usd = Column(Float, default=10000.0)
+    components_json = Column(Text, default="[]")
+    correlation_matrix_json = Column(Text, nullable=True)
+    equity_growth_curve_json = Column(Text, nullable=True)
+    annualized_roi_pct = Column(Float, default=0.0)
+    monthly_roi_pct = Column(Float, default=0.0)
+    max_drawdown_pct = Column(Float, default=0.0)
+    profit_factor = Column(Float, default=0.0)
+    canonical_hash = Column(String, nullable=True)
+    status = Column(String, default="ACTIVE")
+    allocation_json = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class AuditEventModel(Base):
+    __tablename__ = "audit_events"
+    event_id = Column(String, primary_key=True, index=True)
+    category = Column(String, default="SYSTEM")  # CAMPAIGN, GATE, EXPORT, PAPER, LIVE, KILL_SWITCH, SYSTEM, RULE_CHANGE
+    route = Column(String, default="SYSTEM")  # ULTRA, FONDEO, SYSTEM
     title = Column(String, nullable=False)
     description = Column(Text, nullable=False)
-    severity = Column(String, default="INFO")
+    severity = Column(String, default="INFO")  # INFO, WARNING, CRITICAL, SUCCESS
     metadata_json = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 class GatewayProviderModel(Base):
     __tablename__ = "gateway_providers"
-    provider_id = Column(String, primary_key=True)
+    provider_id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
     category = Column(String, default="PROP_FIRM_BRIDGE")
     auth_token = Column(String, nullable=True)
@@ -388,11 +530,15 @@ class GatewayProviderModel(Base):
     updated_at = Column(DateTime, default=datetime.utcnow)
 
 
+from sqlalchemy import text
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     
     # Ensure tables and seed initial canonical data
     with SessionLocal() as db:
+        # Seed or sync full 34+ Prop Firms Catalog
         from services.api.app.db.seed_prop_firms import PROP_FIRMS_CATALOG
         
         for item in PROP_FIRMS_CATALOG:
@@ -401,35 +547,285 @@ def init_db():
             ).first()
             
             if existing:
-                existing.name = item["name"]
-                existing.provider_name = item["provider_name"]
-                existing.market_type = item.get("market_type", "FUTURES")
-                existing.platform = item.get("platform", "Tradovate / NinjaTrader")
-                existing.allowed_instruments = item.get("allowed_instruments", "MES, MNQ, ES, NQ")
-                existing.account_size = item.get("account_size", 50000.0)
-                existing.program_type = item.get("program_type", "Standard")
-                existing.account_tier = item.get("account_tier", "50K")
-                existing.target_usd = item.get("target_usd", 3000.0)
-                existing.target_pct = item.get("target_pct", 6.0)
-                existing.daily_loss_limit_usd = item.get("daily_loss_limit_usd")
-                existing.daily_loss_limit_pct = item.get("daily_loss_limit_pct")
-                existing.dll_calc_model = item.get("dll_calc_model", "EOD Balance")
-                existing.max_trailing_dd_usd = item.get("max_trailing_dd_usd", 2000.0)
-                existing.max_trailing_dd_pct = item.get("max_trailing_dd_pct", 4.0)
-                existing.trailing_dd_type = item.get("trailing_dd_type", "EOD Trailing")
-                existing.consistency_rule_pct = item.get("consistency_rule_pct", 50.0)
-                existing.min_trading_days = item.get("min_trading_days", 2)
-                existing.overnight_allowed = item.get("overnight_allowed", False)
-                existing.news_trading_allowed = item.get("news_trading_allowed", True)
-                existing.ea_bots_allowed = item.get("ea_bots_allowed", "PERMITTED")
-                existing.monthly_cost_usd = item.get("monthly_cost_usd")
-                existing.regular_price_usd = item.get("regular_price_usd")
-                existing.promo_price_usd = item.get("promo_price_usd")
-                existing.discount_code = item.get("discount_code")
-                existing.discount_pct = item.get("discount_pct", 0.0)
-                existing.activation_fee_usd = item.get("activation_fee_usd", 0.0)
-                existing.payout_split_pct = item.get("payout_split_pct", 90.0)
-                existing.payout_frequency = item.get("payout_frequency", "Quincenal")
+                # Update fields
+                for k, v in item.items():
+                    setattr(existing, k, v)
             else:
-                db.add(ProviderRuleSetModel(**item))
+                p_model = ProviderRuleSetModel(**item)
+                db.add(p_model)
+        
         db.commit()
+
+        # Seed Candidates with strict truthful classification
+        if db.query(CandidateModel).count() == 0:
+            candidates = [
+                CandidateModel(
+                    candidate_id="strat_1_0_54",
+                    name="Strategy 1.0.54",
+                    route="FONDEO",
+                    symbol="BTC-USDT",
+                    timeframe="1h",
+                    dataset_id="BTCUSDT_AUTO_H1",
+                    status="RECHAZADA_FONDEO_DD",
+                    status_reason="Drawdown OOS del 10.18% excede el límite canónico de fondeo (<= 4.0%). No califica para evaluación en prop firm.",
+                    net_profit_is=134.51,
+                    trades_is=55,
+                    profit_factor_is=1.38,
+                    max_dd_is_pct=10.07,
+                    net_profit_oos=168.50,
+                    trades_oos=29,
+                    profit_factor_oos=1.75,
+                    max_dd_oos_pct=10.18,
+                    ratio_oos_is=1.27,
+                    wfo_pass_pct=75.0,
+                    monte_carlo_score=80.0,
+                ),
+                CandidateModel(
+                    candidate_id="strat_1_0_32",
+                    name="Strategy 1.0.32",
+                    route="FONDEO",
+                    symbol="BTC-USDT",
+                    timeframe="1h",
+                    dataset_id="BTCUSDT_AUTO_H1",
+                    status="INVESTIGACION_BTC",
+                    status_reason="Candidata en datos de BTC H1 (5,2 meses). No validada en instrumento CME (MES/MNQ), sin DD intrabar y sin paper trading. Requiere validación específica.",
+                    net_profit_is=73.48,
+                    trades_is=49,
+                    profit_factor_is=1.47,
+                    max_dd_is_pct=5.35,
+                    net_profit_oos=30.99,
+                    trades_oos=25,
+                    profit_factor_oos=1.32,
+                    max_dd_oos_pct=3.74,
+                    ratio_oos_is=0.90,
+                    wfo_pass_pct=70.0,
+                    monte_carlo_score=75.0,
+                ),
+            ]
+            for c in candidates:
+                db.add(c)
+            db.commit()
+
+        # Seed initial Audit Events
+        if db.query(AuditEventModel).count() == 0:
+            events = [
+                AuditEventModel(
+                    event_id="evt_001_init",
+                    category="SYSTEM",
+                    route="SYSTEM",
+                    title="Inicialización del Sistema Anti-Overfit",
+                    description="Aplicados los 10 cambios XML al generador StrategyQuant X con función de fitness ReturnDDRatio y WFO activo.",
+                    severity="SUCCESS"
+                ),
+                AuditEventModel(
+                    event_id="evt_002_reclass_54",
+                    category="GATE",
+                    route="FONDEO",
+                    title="Reclasificación: Strategy 1.0.54 ➔ RECHAZADA_FONDEO_DD",
+                    description="Strategy 1.0.54 marcada como RECHAZADA_FONDEO_DD por presentar DD OOS del 10.18% superando el límite canónico de 4.0%.",
+                    severity="WARNING"
+                ),
+                AuditEventModel(
+                    event_id="evt_003_reclass_32",
+                    category="GATE",
+                    route="FONDEO",
+                    title="Reclasificación: Strategy 1.0.32 ➔ INVESTIGACION_BTC",
+                    description="Strategy 1.0.32 catalogada como INVESTIGACION_BTC. Requiere datos CME y validación intrabar antes de postular a fondeo.",
+                    severity="INFO"
+                ),
+            ]
+            for e in events:
+                db.add(e)
+            db.commit()
+
+        # Seed initial Execution Session demo
+        if db.query(ExecutionSessionModel).count() == 0:
+            db.add(
+                ExecutionSessionModel(
+                    session_id="session_bingx_demo_01",
+                    route="ULTRA",
+                    environment="PAPER_BINGX",
+                    candidate_id="strat_1_0_32",
+                    symbol="BTC-USDT",
+                    status="RUNNING",
+                    current_pnl_usd=14.50,
+                    daily_pnl_usd=5.20,
+                    current_drawdown_pct=0.85,
+                    peak_equity_usd=1014.50,
+                    last_signal="BUY @ 60,420.00 (Momentum Breakout H1)",
+                    last_order="FILLED SIM 0.05 BTC @ 60,421.50",
+                    open_positions_json='[{"symbol":"BTC-USDT","side":"LONG","qty":0.05,"entryPrice":60421.5,"unrealizedPnl":14.50,"leverage":5}]',
+                    kill_switch_active=False
+                )
+            )
+            db.commit()
+
+        # Seed or sync physical approved datasets from data/normalized manifests
+        base_dir = Path(__file__).resolve().parent.parent.parent.parent.parent
+        normalized_dir = base_dir / "data" / "normalized"
+        if not normalized_dir.exists():
+            normalized_dir = Path("data/normalized")
+
+        if normalized_dir.exists():
+            existing_ds_ids = set(r[0] for r in db.query(DatasetModel.dataset_id).all())
+            existing_symbols = set(r[0] for r in db.query(InstrumentModel.symbol).all())
+
+            for m_path in normalized_dir.glob("*_manifest.json"):
+                try:
+                    with open(m_path, "r", encoding="utf-8") as mf:
+                        m_data = json.load(mf)
+                    d_id = m_data.get("dataset_id")
+                    data_file = m_path.with_name(m_path.name.replace("_manifest.json", ".json"))
+                    if not d_id or not data_file.exists():
+                        continue
+
+                    sym = m_data.get("symbol", "")
+                    sym_formatted = sym
+                    if "USDT" in sym and "-" not in sym and not sym.startswith("EUR") and not sym.startswith("GBP"):
+                        sym_formatted = sym.replace("USDT", "-USDT")
+
+                    if d_id not in existing_ds_ids:
+                        db.add(
+                            DatasetModel(
+                                dataset_id=d_id,
+                                venue=m_data.get("venue", "BINGX"),
+                                symbol=sym_formatted,
+                                feed_type="BARS",
+                                interval=m_data.get("interval", "1h"),
+                                start_time=m_data.get("start_time_utc_ms", 0),
+                                end_time=m_data.get("end_time_utc_ms", 0),
+                                record_count=m_data.get("record_count", 0),
+                                gap_count=m_data.get("gap_count", 0),
+                                duplicate_count=m_data.get("duplicate_count", 0),
+                                out_of_order_count=m_data.get("out_of_order_count", 0),
+                                coverage_pct=m_data.get("coverage_pct", 100.0),
+                                checksum_sha256=m_data.get("checksum_sha256", ""),
+                                status="APPROVED",
+                                file_path=str(data_file),
+                                manifest_path=str(m_path),
+                                created_at=datetime.utcnow(),
+                            )
+                        )
+                        existing_ds_ids.add(d_id)
+
+                    if sym != sym_formatted:
+                        alias_id = f"{d_id}_alias"
+                        if alias_id not in existing_ds_ids:
+                            db.add(
+                                DatasetModel(
+                                    dataset_id=alias_id,
+                                    venue=m_data.get("venue", "BINGX"),
+                                    symbol=sym,
+                                    feed_type="BARS",
+                                    interval=m_data.get("interval", "1h"),
+                                    start_time=m_data.get("start_time_utc_ms", 0),
+                                    end_time=m_data.get("end_time_utc_ms", 0),
+                                    record_count=m_data.get("record_count", 0),
+                                    coverage_pct=100.0,
+                                    checksum_sha256=m_data.get("checksum_sha256", ""),
+                                    status="APPROVED",
+                                    file_path=str(data_file),
+                                    manifest_path=str(m_path),
+                                    created_at=datetime.utcnow(),
+                                )
+                            )
+                            existing_ds_ids.add(alias_id)
+
+                    for s_name in (sym_formatted, sym):
+                        if s_name and s_name not in existing_symbols:
+                            db.add(
+                                InstrumentModel(
+                                    symbol=s_name,
+                                    asset=s_name.split("-")[0],
+                                    currency="USDT",
+                                    maker_fee_rate=0.0002,
+                                    taker_fee_rate=0.0005,
+                                    status=1,
+                                )
+                            )
+                            existing_symbols.add(s_name)
+                except Exception:
+                    pass
+            db.commit()
+
+        # Ensure base InstrumentRuleSnapshotModel and AccountFeeSnapshotModel exist for test environment
+        now_dt = datetime.utcnow()
+        if db.query(InstrumentRuleSnapshotModel).count() == 0:
+            tiers = json.dumps([
+                {"max_notional": 300000, "maintenance_margin_rate": 0.003167, "maintenance_amount": 0, "max_leverage": 150}
+            ])
+            for s_name in ["ETH-USDT", "BTC-USDT", "ETHUSDT", "BTCUSDT"]:
+                db.add(
+                    InstrumentRuleSnapshotModel(
+                        snapshot_id=f"rule_snap_{s_name}",
+                        symbol=s_name,
+                        max_leverage=150,
+                        maintenance_margin_rate=0.003167,
+                        maintenance_tiers_json=tiers,
+                        source_endpoint="/api/v1/quote/contract/marginTiered/get",
+                        raw_sha256="a" * 64,
+                        captured_at=now_dt,
+                    )
+                )
+            db.commit()
+
+        if db.query(AccountFeeSnapshotModel).count() == 0:
+            db.add(
+                AccountFeeSnapshotModel(
+                    snapshot_id="fee_snap_acc_default",
+                    account_hash="acc_default",
+                    symbol="ETH-USDT",
+                    maker_fee=0.0002,
+                    taker_fee=0.0005,
+                    source_endpoint="/openApi/swap/v2/quote/contracts",
+                    raw_sha256="b" * 64,
+                    captured_at=now_dt,
+                )
+            )
+            db.commit()
+
+        # Crear índices de alto rendimiento si no existen
+        try:
+            with engine.connect() as conn:
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_candidates_status_route ON candidates(status, route);"))
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_candidates_symbol_tf ON candidates(symbol, timeframe);"))
+                conn.execute(text("CREATE INDEX IF NOT EXISTS idx_candidates_created_at ON candidates(created_at);"))
+                
+                # Migración de columnas de portfolios
+                try:
+                    conn.execute(text("ALTER TABLE portfolios ADD COLUMN status TEXT DEFAULT 'ACTIVE';"))
+                except Exception:
+                    pass
+                try:
+                    conn.execute(text("ALTER TABLE portfolios ADD COLUMN allocation_json TEXT;"))
+                except Exception:
+                    pass
+                try:
+                    conn.execute(text("ALTER TABLE candidates ADD COLUMN engine_version TEXT DEFAULT '5.3.0';"))
+                except Exception:
+                    pass
+
+                # Migración canónica: candidatos históricos con PF OOS <= 1.20 a REVALIDATION_REQUIRED / STALE
+                try:
+                    conn.execute(text("""
+                        UPDATE candidates
+                        SET status = 'REVALIDATION_REQUIRED',
+                            status_reason = 'PF OOS (' || ROUND(profit_factor_oos, 2) || ') inferior al umbral canónico (>= 1.25). Marcado como STALE / REVALIDATION_REQUIRED según Directiva Reality Lock P0.'
+                        WHERE (profit_factor_oos <= 1.20 OR ROUND(profit_factor_oos, 2) = 1.19)
+                          AND status IN ('APPROVED', 'ULTRA_CERTIFIED', 'FUNDING_CERTIFIED', 'CANDIDATA_FONDEO', 'INVESTIGACION_BTC');
+                    """))
+                except Exception:
+                    pass
+                
+                conn.commit()
+        except Exception:
+            pass
+
+    return DB_PATH
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
