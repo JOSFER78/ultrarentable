@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed scan for known synthetic quantitative literals and generators."""
+"""Fail-closed scan for synthetic quantitative data and false provenance claims."""
 from __future__ import annotations
 
 import json
@@ -15,6 +15,15 @@ FORBIDDEN = {
     "known_synthetic_timestamp": re.compile(r"\b(?:1672531200000|1704067200000)\b"),
     "known_synthetic_meta_strategy": re.compile(r"META-PORT-BTC-ETH-NQ-01"),
     "random_generator": re.compile(r"\bMath\.random\s*\("),
+}
+
+# These patterns specifically catch the historic Gate 11 fabrication path.
+GATE_TRUTH_PATTERNS = {
+    "synthetic_gate_step_pnl": re.compile(r"\bstep_pnl\b"),
+    "synthetic_gate_trade_id": re.compile(r"SQX_TR_"),
+    "synthetic_gate_default_date": re.compile(r"2024-06-01|2024-06-15"),
+    "false_cloud_sync_claim": re.compile(r"SYNCHRONIZED_CLOUD|CLOUD_SYNCED|\"status\"\s*:\s*\"SYNCHRONIZED\""),
+    "hardcoded_production_sqlite_path": re.compile(r"/home/ubuntu/\.local/state/ultrarentable/ultrarentable\.sqlite3"),
 }
 
 TEXT_SUFFIXES = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".py", ".json", ".yaml", ".yml"}
@@ -41,7 +50,10 @@ def main() -> int:
             text = path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        for name, pattern in FORBIDDEN.items():
+        patterns = dict(FORBIDDEN)
+        if path.name == "gates_router.py":
+            patterns.update(GATE_TRUTH_PATTERNS)
+        for name, pattern in patterns.items():
             for match in pattern.finditer(text):
                 line = text.count("\n", 0, match.start()) + 1
                 hits.append({"rule": name, "file": str(path.relative_to(ROOT)), "line": line})
