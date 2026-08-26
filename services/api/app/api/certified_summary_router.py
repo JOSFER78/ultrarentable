@@ -34,13 +34,16 @@ def _scorecard(candidate: CandidateModel) -> Dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
-def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool, Dict[str, Any]]:
+def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool]:
+    """Return only the stable gate-state tuple used by API/tests.
+
+    Gate payload rendering is deliberately separate so callers cannot accidentally
+    treat arbitrary payload details as certification evidence.
+    """
     explicit: Dict[int, bool] = {}
-    gate_payload: Dict[str, Any] = {}
 
     gates = sc.get("gates")
     if isinstance(gates, list):
-        gate_payload = {str(index + 1): gate for index, gate in enumerate(gates) if isinstance(gate, dict)}
         for gate in gates:
             if not isinstance(gate, dict):
                 continue
@@ -70,7 +73,21 @@ def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool, Dict[str, 
 
     explicit_count = len(explicit)
     passed_count = sum(1 for value in explicit.values() if value)
-    return explicit_count, passed_count, explicit_count == 11 and passed_count == 11, gate_payload
+    return explicit_count, passed_count, explicit_count == 11 and passed_count == 11
+
+
+def _gate_payload(sc: Dict[str, Any]) -> Dict[str, Any]:
+    gates = sc.get("gates")
+    if isinstance(gates, list):
+        return {
+            str(index + 1): gate
+            for index, gate in enumerate(gates)
+            if isinstance(gate, dict)
+        }
+    ge = sc.get("gates_evaluation")
+    if isinstance(ge, dict):
+        return {str(key): value for key, value in ge.items() if str(key).startswith("gate_")}
+    return {}
 
 
 def _real_oos_months(sc: Dict[str, Any]) -> Optional[float]:
@@ -88,7 +105,6 @@ def _real_oos_months(sc: Dict[str, Any]) -> Optional[float]:
 
     def parse_datetime(value: Any) -> Optional[datetime]:
         if isinstance(value, (int, float)):
-            # Millisecond timestamps are accepted only when clearly in ms range.
             if value < 1_000_000_000_000:
                 return None
             return datetime.fromtimestamp(value / 1000.0, tz=timezone.utc)
@@ -128,7 +144,7 @@ def _required_string(value: Any) -> Optional[str]:
 
 def _certified_row(candidate: CandidateModel) -> Dict[str, Any]:
     sc = _scorecard(candidate)
-    explicit_count, passed_count, all11, gate_payload = _explicit_gate_state(sc)
+    explicit_count, passed_count, all11 = _explicit_gate_state(sc)
 
     dataset_id = _required_string(candidate.dataset_id or sc.get("dataset_id"))
     strategy_hash = _required_string(sc.get("strategy_sha256") or sc.get("canonical_hash"))
@@ -173,7 +189,7 @@ def _certified_row(candidate: CandidateModel) -> Dict[str, Any]:
         "ledger_hash": ledger_hash,
         "ledger_verified": sc.get("ledger_verified") is True,
         "certified_at_utc": certified_at,
-        "gates": gate_payload,
+        "gates": _gate_payload(sc),
     }
 
 
@@ -187,7 +203,7 @@ def certified_summary(route: Optional[str] = Query(None, description="ULTRA, FON
     result: List[Dict[str, Any]] = []
     for candidate in rows:
         sc = _scorecard(candidate)
-        _, _, all11, _ = _explicit_gate_state(sc)
+        _, _, all11 = _explicit_gate_state(sc)
         if verified_only and not all11:
             continue
         try:
@@ -202,13 +218,12 @@ def certified_summary(route: Optional[str] = Query(None, description="ULTRA, FON
 
 @certified_summary_router.get("/strategies")
 def get_certified_strategies_endpoint(db: Session = Depends(get_db), limit: int = Query(500, ge=1, le=5000)) -> List[Dict[str, Any]]:
-    query = db.query(CandidateModel).order_by(CandidateModel.net_profit_oos.desc()).limit(limit)
-    rows = query.all()
+    rows = db.query(CandidateModel).order_by(CandidateModel.net_profit_oos.desc()).limit(limit).all()
     out: List[Dict[str, Any]] = []
 
     for candidate in rows:
         sc = _scorecard(candidate)
-        _, _, all11, gates = _explicit_gate_state(sc)
+        _, _, all11 = _explicit_gate_state(sc)
         if not all11 or candidate.status != "APPROVED_CURRENT_ENGINE":
             continue
 
@@ -249,7 +264,7 @@ def get_certified_strategies_endpoint(db: Session = Depends(get_db), limit: int 
             "annual_return": _metric(sc, "annual_return_pct", "annual_return"),
             "cagr": _metric(sc, "cagr"),
             "certified_at_utc": certified_at,
-            "gates": gates,
+            "gates": _gate_payload(sc),
             "equity_curve": sc.get("equity_curve") if isinstance(sc.get("equity_curve"), list) else [],
         })
 
