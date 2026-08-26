@@ -23,6 +23,12 @@ def fail(message: str, failures: list[str]) -> None:
     failures.append(message)
 
 
+def normalize_constraint(value: object) -> object:
+    if not isinstance(value, str):
+        return value
+    return value.replace(", ", ",").strip()
+
+
 def check_npm(failures: list[str]) -> None:
     package_path = ROOT / "package.json"
     lock_path = ROOT / "package-lock.json"
@@ -104,8 +110,8 @@ def check_python(failures: list[str]) -> None:
     if root_lock is None:
         fail("uv.lock has no package entry matching pyproject project.name", failures)
     else:
-        expected = project.get("requires-python")
-        actual = uv_lock.get("requires-python")
+        expected = normalize_constraint(project.get("requires-python"))
+        actual = normalize_constraint(uv_lock.get("requires-python"))
         if expected != actual:
             fail(f"Python requires-python differs: pyproject={expected!r}, uv.lock={actual!r}", failures)
 
