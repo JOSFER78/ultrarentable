@@ -1,25 +1,24 @@
 """Evidence-first strategy laboratory API.
 
-The strategy lab deliberately separates four states:
+Pipeline:
+EXTRACTED_UNVERIFIED -> STRUCTURALLY_VERIFIED -> BACKTEST_VERIFIED -> CERTIFIED_CURRENT
 
-EXTRACTED -> STRUCTURALLY_VERIFIED -> BACKTEST_VERIFIED -> CERTIFIED_CURRENT
-
-No stage may promote a record by guessing missing data. In particular, SQX
-extraction never creates a synthetic BacktestModel, dataset id, capital value,
-hash, timestamp, or certification result.
+Extraction is source capture only. Missing facts stay missing; this module never
+creates backtests, profitability, capital, datasets or certification evidence.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
 from services.api.app.db.database import SessionLocal, StrategyModel, BacktestModel, DatasetModel
 from services.sqx_bridge.sqx_client import SQXMCPClient, SQXMCPError
-from services.sqx_bridge.ingest_sqx_results import DATABANK, extract_stats, extract_timeframe_from_stats, clean_symbol
+from services.sqx_bridge.ingest_sqx_results import DATABANK, extract_stats
 
 router = APIRouter(prefix="/strategy-lab", tags=["Strategy Lab"])
 
@@ -40,6 +39,29 @@ def _canonical_payload(project: str, databank: str, name: str, raw_stats: Dict[s
         "raw_stats": raw_stats,
     }
     return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _explicit_market_identity(raw: Dict[str, Any]) -> tuple[str | None, str | None]:
+    """Read symbol/timeframe only when SQX labels them explicitly."""
+    columns = raw.get("columns") or []
+    values = raw.get("values") or []
+    symbol: str | None = None
+    timeframe: str | None = None
+    for column, value in zip(columns, values):
+        label = str(column).strip().lower()
+        text = str(value).strip() if value is not None else ""
+        if not text:
+            continue
+        if symbol is None and label in {"symbol", "instrument", "market", "asset"}:
+            symbol = text
+        if timeframe is None and label in {"timeframe", "tf", "period", "bar period"}:
+            timeframe = text
+    if symbol:
+        compact = symbol.upper().replace("/", "-").replace("_AUTO", "").replace("_FUT", "").replace("_PERP", "")
+        if compact.endswith("USDT") and "-" not in compact:
+            compact = f"{compact[:-4]}-USDT"
+        symbol = compact
+    return symbol, timeframe
 
 
 def _source_record(strategy: StrategyModel) -> Dict[str, Any]:
@@ -68,11 +90,10 @@ def _source_record(strategy: StrategyModel) -> Dict[str, Any]:
 
 @router.get("/overview")
 def strategy_lab_overview() -> Dict[str, Any]:
-    """Return real counts for the strategy pipeline. Missing data stays zero/NO_EVIDENCE."""
     db = SessionLocal()
     try:
         extracted = db.query(StrategyModel).filter(StrategyModel.family == "sqx_extracted").count()
-        structural = db.query(StrategyModel).filter(StrategyModel.validation_status == "STRUCTURALLY_VALID").count()
+        structural = db.query(StrategyModel).filter(StrategyModel.validation_status == "STRUCTURALLY_VERIFIED").count()
         backtest_verified = (
             db.query(BacktestModel)
             .join(StrategyModel, StrategyModel.strategy_id == BacktestModel.strategy_id)
@@ -99,7 +120,6 @@ def strategy_lab_overview() -> Dict[str, Any]:
 
 @router.get("/strategies")
 def strategy_lab_strategies(limit: int = Query(100, ge=1, le=1000)) -> Dict[str, Any]:
-    """List extracted strategies with provenance; never fabricate financial metrics."""
     db = SessionLocal()
     try:
         rows = (
@@ -109,11 +129,7 @@ def strategy_lab_strategies(limit: int = Query(100, ge=1, le=1000)) -> Dict[str,
             .limit(limit)
             .all()
         )
-        return {
-            "status": "SUCCESS",
-            "count": len(rows),
-            "strategies": [_source_record(row) for row in rows],
-        }
+        return {"status": "SUCCESS", "count": len(rows), "strategies": [_source_record(row) for row in rows]}
     finally:
         db.close()
 
@@ -134,30 +150,25 @@ def strategy_lab_strategy(strategy_id: str) -> Dict[str, Any]:
 def strategy_lab_sqx_status(url: str = Query("http://localhost:8081/mcp")) -> Dict[str, Any]:
     try:
         client = SQXMCPClient(base_url=url)
-        result = client.check_connection()
-        return {"status": "SUCCESS", "source": "StrategyQuantX", "result": result}
+        return {"status": "SUCCESS", "source": "StrategyQuantX", "result": client.check_connection()}
     except Exception as exc:
         return {"status": "UNAVAILABLE", "source": "StrategyQuantX", "error": str(exc)}
 
 
 @router.post("/extract/{project_name}")
 def extract_from_sqx(project_name: str) -> Dict[str, Any]:
-    """Extract real SQX strategies into the canonical source catalog.
-
-    This endpoint NEVER writes a backtest result. It records only the raw source
-    strategy and its exact raw statistics. Verification requires a separate real
-    dataset and the canonical backtest engine.
-    """
+    """Capture real SQX source records without creating quantitative results."""
+    project_name = project_name.strip()
+    if not project_name:
+        raise HTTPException(status_code=422, detail="PROJECT_NAME_REQUIRED")
     client = SQXMCPClient()
     try:
-        strategy_names = client.list_strategies(project_name, DATABANK)
+        strategy_names = client.list_strategies(project_name, DATABANK) or []
     except SQXMCPError as exc:
         raise HTTPException(status_code=502, detail=f"SQX_UNAVAILABLE: {exc}") from exc
 
     db = SessionLocal()
-    inserted = 0
-    unchanged = 0
-    quarantined = 0
+    inserted = unchanged = quarantined = 0
     try:
         for name in strategy_names:
             try:
@@ -169,46 +180,42 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
                 quarantined += 1
                 continue
 
+            # Parse real source statistics for display/research; values are never used
+            # as certification evidence at this stage.
             try:
                 metrics = extract_stats(raw) or {}
             except Exception:
                 metrics = {}
-
-            values = raw.get("values") or []
-            raw_symbol = clean_symbol(str(values[3])) if len(values) > 3 and values[3] else None
-            try:
-                timeframe = extract_timeframe_from_stats(raw)
-            except Exception:
-                timeframe = None
+            symbol, timeframe = _explicit_market_identity(raw)
 
             strategy_id = f"sqx:{project_name}:{DATABANK}:{name}"
             payload = _canonical_payload(project_name, DATABANK, name, raw)
             strategy_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            encoded = json.dumps(
+                {
+                    "schema": "ultrarentable.strategy-source.v1",
+                    "source": {
+                        "engine": "StrategyQuantX",
+                        "project": project_name,
+                        "databank": DATABANK,
+                        "strategy_name": name,
+                        "extracted_at_utc": _utc_now(),
+                    },
+                    "market": {
+                        "symbol": symbol,
+                        "timeframe": timeframe,
+                        "dataset_id": None,
+                        "dataset_hash": None,
+                    },
+                    "raw_stats": metrics,
+                }, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+            )
 
             existing = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
-            record = {
-                "schema": "ultrarentable.strategy-source.v1",
-                "source": {
-                    "engine": "StrategyQuantX",
-                    "project": project_name,
-                    "databank": DATABANK,
-                    "strategy_name": name,
-                    "extracted_at_utc": _utc_now(),
-                },
-                "market": {
-                    "symbol": raw_symbol,
-                    "timeframe": timeframe,
-                    "dataset_id": None,
-                    "dataset_hash": None,
-                },
-                "raw_stats": metrics,
-            }
-            encoded = json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-
+            if existing and existing.canonical_hash == strategy_hash and existing.dsl_json == encoded:
+                unchanged += 1
+                continue
             if existing:
-                if existing.canonical_hash == strategy_hash and existing.dsl_json == encoded:
-                    unchanged += 1
-                    continue
                 existing.canonical_hash = strategy_hash
                 existing.dsl_json = encoded
                 existing.validation_status = "EXTRACTED_UNVERIFIED"
@@ -230,7 +237,6 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
                     )
                 )
                 inserted += 1
-
         db.commit()
         return {
             "status": "SUCCESS",
@@ -248,11 +254,6 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
 
 @router.post("/improvement/plan/{strategy_id}")
 def organic_improvement_plan(strategy_id: str) -> Dict[str, Any]:
-    """Return an evidence-based improvement plan without changing the strategy.
-
-    Mutation is forbidden here. A later research stage may propose a mutation only
-    after a completed canonical backtest and an explicit parent/child lineage.
-    """
     db = SessionLocal()
     try:
         row = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
