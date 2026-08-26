@@ -50,7 +50,10 @@ jobs:
         run: .venv/bin/python scripts/stabilization/r0_web_api_client.py
 
       - name: Run focused stabilization tests
-        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py tests/stabilization/test_r0_web_api_client.py tests/stabilization/test_r0_web_e2e.py -q
+        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py tests/stabilization/test_r0_web_api_client.py tests/stabilization/test_r0_web_e2e.py tests/stabilization/test_r0_backend_clean_start.py -q
 
       - name: Run real web/backend E2E contract
         run: bash scripts/stabilization/r0_web_e2e.sh
+
+      - name: Run backend clean-start contract
+        run: bash scripts/stabilization/r0_backend_clean_start.sh
