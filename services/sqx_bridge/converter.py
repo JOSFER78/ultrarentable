@@ -1,17 +1,42 @@
 """StrategyQuant conversion boundary — intentionally fail-closed.
 
 SQX performance statistics are not a strategy definition. The old converter used
-to synthesize a CanonicalStrategy by guessing symbol, timeframe, exits, risk and
-session values. That path is retired. The Strategy Lab must first obtain the
-actual source rules and explicit execution metadata before canonical conversion.
+to synthesize executable semantics from incomplete statistics. That path is retired.
+Only pure numeric helpers remain here; canonical conversion requires a complete real
+source payload and is handled by the Strategy Lab strict importer.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Optional, Tuple
 
 
 class StrategyConversionError(ValueError):
     pass
+
+
+def normalize_drawdown_pct(
+    drawdown_value: float,
+    profit_or_peak_delta: float,
+    *,
+    initial_capital: float | None = None,
+) -> float:
+    """Normalize an explicit drawdown value; never infer missing capital."""
+    try:
+        dd = float(drawdown_value)
+        reference = float(profit_or_peak_delta)
+    except (TypeError, ValueError) as exc:
+        raise StrategyConversionError("INVALID_DRAWDOWN_INPUT") from exc
+    if dd < 0:
+        raise StrategyConversionError("INVALID_NEGATIVE_DRAWDOWN")
+    if initial_capital is None:
+        return dd
+    cap = float(initial_capital)
+    if cap <= 0 or reference < 0:
+        raise StrategyConversionError("INVALID_DRAWDOWN_REFERENCE")
+    peak = cap + reference
+    if peak <= 0:
+        raise StrategyConversionError("INVALID_PEAK_EQUITY")
+    return (dd / peak) * 100.0
 
 
 def _disabled(*_: Any, **__: Any) -> Any:
@@ -30,13 +55,7 @@ def clean_symbol(raw_symbol: str) -> str:
     return symbol.replace("/", "-").replace("_", "-")
 
 
-def resolve_instrument_specs(
-    symbol: str,
-    exchange: Optional[str] = None,
-    contract_type: Optional[str] = None,
-) -> Tuple[str, str, float, float]:
-    """Return registry economics only for an explicitly supplied known symbol."""
-    normalized = clean_symbol(symbol)
+def resolve_instrument_specs(symbol: str, exchange: Optional[str] = None, contract_type: Optional[str] = None) -> Tuple[str, str, float, float]:
     registry = {
         "NQ": ("CME", "FUTURES", 20.0, 0.25),
         "MNQ": ("CME", "FUTURES", 2.0, 0.25),
@@ -59,6 +78,7 @@ def resolve_instrument_specs(
         "USDCAD": ("FOREX", "FOREX", 100000.0, 0.00001),
         "USDCHF": ("FOREX", "FOREX", 100000.0, 0.00001),
     }
+    normalized = clean_symbol(symbol)
     if normalized not in registry:
         raise StrategyConversionError("UNKNOWN_INSTRUMENT: explicit registry economics required")
     reg_exchange, reg_contract, point_value, tick_size = registry[normalized]
