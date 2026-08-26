@@ -1,0 +1,59 @@
+name: Phase 2 Live Data Acquisition
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Historical days per symbol"
+        required: false
+        default: "365"
+      interval:
+        description: "BingX kline interval"
+        required: false
+        default: "1h"
+      symbols:
+        description: "Comma-separated BingX perpetual symbols"
+        required: false
+        default: "BTC-USDT,ETH-USDT,SOL-USDT"
+
+concurrency:
+  group: phase2-live-data
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  acquire:
+    name: Acquire real BingX history
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Clean install
+        run: npm ci
+
+      - name: Live BingX smoke test
+        env:
+          RUN_LIVE_BINGX_TESTS: "1"
+        run: npm run test:ingestion
+
+      - name: Acquire phase-2 history
+        env:
+          PHASE2_HISTORY_DAYS: ${{ inputs.days }}
+          PHASE2_INTERVAL: ${{ inputs.interval }}
+          PHASE2_SYMBOLS: ${{ inputs.symbols }}
+        run: npx tsx scripts/sync_phase2_history.ts
+
+      - name: Report data artifacts
+        run: |
+          find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*.json' -print | sort
+          find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*_manifest.json' -print | sort
