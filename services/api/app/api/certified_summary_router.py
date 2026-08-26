@@ -10,6 +10,7 @@ REAL-ONLY / ZERO-INFERENCE:
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -72,6 +73,42 @@ def _explicit_gate_state(sc: Dict[str, Any]) -> tuple[int, int, bool, Dict[str, 
     return explicit_count, passed_count, explicit_count == 11 and passed_count == 11, gate_payload
 
 
+def _real_oos_months(sc: Dict[str, Any]) -> Optional[float]:
+    """Derive OOS duration only from explicit real dates; never invent a default."""
+    duration = sc.get("duration_info")
+    if not isinstance(duration, dict):
+        duration = {}
+
+    explicit_months = duration.get("oos_months", sc.get("oos_months"))
+    if isinstance(explicit_months, (int, float)) and explicit_months > 0:
+        return float(explicit_months)
+
+    start_raw = duration.get("oos_start") or sc.get("oos_start_timestamp_ms") or sc.get("oos_start_timestamp")
+    end_raw = duration.get("oos_end") or sc.get("oos_end_timestamp_ms") or sc.get("oos_end_timestamp")
+
+    def parse_datetime(value: Any) -> Optional[datetime]:
+        if isinstance(value, (int, float)):
+            # Millisecond timestamps are accepted only when clearly in ms range.
+            if value < 1_000_000_000_000:
+                return None
+            return datetime.fromtimestamp(value / 1000.0, tz=timezone.utc)
+        if isinstance(value, str) and value.strip():
+            try:
+                parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError:
+                return None
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.astimezone(timezone.utc)
+        return None
+
+    start = parse_datetime(start_raw)
+    end = parse_datetime(end_raw)
+    if start is None or end is None or end <= start:
+        return None
+    return (end - start).total_seconds() / (30.436875 * 24 * 3600)
+
+
 def _metric(sc: Dict[str, Any], *keys: str) -> Optional[float]:
     containers = [sc]
     oos = sc.get("oos_metrics")
@@ -131,7 +168,7 @@ def _certified_row(candidate: CandidateModel) -> Dict[str, Any]:
             "wfe_pct": _metric(sc, "wfe_pct", "wfo_pass_pct", "wfe_retention_pct"),
             "monte_carlo_score": _metric(sc, "monte_carlo_score", "mc_robustness_score"),
             "ratio_oos_is": _metric(sc, "ratio_oos_is"),
-            "oos_months": _metric(sc, "oos_months"),
+            "oos_months": _real_oos_months(sc),
         },
         "ledger_hash": ledger_hash,
         "ledger_verified": sc.get("ledger_verified") is True,
@@ -141,12 +178,7 @@ def _certified_row(candidate: CandidateModel) -> Dict[str, Any]:
 
 
 @certified_summary_router.get("/summary")
-def certified_summary(
-    route: Optional[str] = Query(None, description="ULTRA, FONDEO"),
-    verified_only: bool = Query(True, description="Return only explicit 11/11 evidence"),
-    limit: int = Query(500, ge=1, le=5000),
-    db: Session = Depends(get_db),
-) -> List[Dict[str, Any]]:
+def certified_summary(route: Optional[str] = Query(None, description="ULTRA, FONDEO"), verified_only: bool = Query(True, description="Return only explicit 11/11 evidence"), limit: int = Query(500, ge=1, le=5000), db: Session = Depends(get_db)) -> List[Dict[str, Any]]:
     query = db.query(CandidateModel)
     if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
@@ -169,10 +201,7 @@ def certified_summary(
 
 
 @certified_summary_router.get("/strategies")
-def get_certified_strategies_endpoint(
-    db: Session = Depends(get_db),
-    limit: int = Query(500, ge=1, le=5000),
-) -> List[Dict[str, Any]]:
+def get_certified_strategies_endpoint(db: Session = Depends(get_db), limit: int = Query(500, ge=1, le=5000)) -> List[Dict[str, Any]]:
     query = db.query(CandidateModel).order_by(CandidateModel.net_profit_oos.desc()).limit(limit)
     rows = query.all()
     out: List[Dict[str, Any]] = []
@@ -180,9 +209,7 @@ def get_certified_strategies_endpoint(
     for candidate in rows:
         sc = _scorecard(candidate)
         _, _, all11, gates = _explicit_gate_state(sc)
-        if not all11:
-            continue
-        if candidate.status != "APPROVED_CURRENT_ENGINE":
+        if not all11 or candidate.status != "APPROVED_CURRENT_ENGINE":
             continue
 
         strategy_hash = _required_string(sc.get("strategy_sha256") or sc.get("canonical_hash"))
@@ -192,8 +219,7 @@ def get_certified_strategies_endpoint(
         certified_at = _required_string(sc.get("certified_at_utc"))
         ledger_verified = sc.get("ledger_verified") is True
 
-        required = [strategy_hash, dataset_hash, ledger_hash, evidence_bundle_hash, certified_at]
-        if any(value is None for value in required) or not ledger_verified:
+        if any(value is None for value in [strategy_hash, dataset_hash, ledger_hash, evidence_bundle_hash, certified_at]) or not ledger_verified:
             continue
 
         out.append({
@@ -218,7 +244,7 @@ def get_certified_strategies_endpoint(
             "oos_profit_factor": candidate.profit_factor_oos,
             "oos_start_timestamp_ms": sc.get("oos_start_timestamp_ms"),
             "oos_end_timestamp_ms": sc.get("oos_end_timestamp_ms"),
-            "oos_months": _metric(sc, "oos_months"),
+            "oos_months": _real_oos_months(sc),
             "monthly_return": _metric(sc, "monthly_return_pct", "monthly_return"),
             "annual_return": _metric(sc, "annual_return_pct", "annual_return"),
             "cagr": _metric(sc, "cagr"),
@@ -231,10 +257,5 @@ def get_certified_strategies_endpoint(
 
 
 @certified_summary_router.get("/meta-strategies")
-def get_certified_meta_strategies_endpoint(
-    db: Session = Depends(get_db),
-) -> List[Dict[str, Any]]:
-    # No synthetic portfolio is ever returned. A meta-strategy becomes visible only
-    # when a canonical portfolio certificate exists in a real portfolio evidence store.
-    # Until that store is queried here, the honest response is an empty set.
+def get_certified_meta_strategies_endpoint(db: Session = Depends(get_db)) -> List[Dict[str, Any]]:
     return []
