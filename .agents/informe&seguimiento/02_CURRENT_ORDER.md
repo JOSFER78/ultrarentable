@@ -5,18 +5,22 @@
 ChatGPT is the direct repository maintainer and executes the stabilization/recovery work in `main`.
 
 ## CURRENT BLOCK
-`R0.1 — Repository / Dependency Authority`
+`R0 — Stabilization / Recovery`
 
 ### Applied
-- Added `scripts/stabilization/r0_dependency_authority.py` as a fail-closed dependency authority check.
-- Added `tests/stabilization/test_r0_dependency_authority.py` to prevent regression.
-- Confirmed the canonical npm lockfile is the root `package-lock.json` and the canonical Python lockfile is `uv.lock`.
+- R0.1 dependency authority guard + regression test.
+- Clean-install enforcement with root `package-lock.json` and `uv.lock`.
+- R0.2 effective FastAPI route collision guard + regression test.
+- R0.3 certification evidence policy enforced at `CertificationRegistry` + regression tests.
+- R0 gate updated to execute all three runtime/source guards after clean dependency installation.
 
-### Gate
-R0.1 may close only after the checker passes in CI/clean environment and the result is retained as evidence.
+### Evidence status
+GitHub Actions is not currently returning workflow runs for recent pushes through the connected GitHub interface. Therefore R0 is **NOT CERTIFIED GREEN** yet; no certification claim may be made from source inspection alone.
 
 ## NEXT
-After R0.1 evidence is green, advance to `R0.2 — FastAPI Route Surface`.
+`R0.4 — Execution Safety`
+Audit all execution/order routes and reject any path that can place, modify, cancel or simulate-live orders without explicit REAL execution mode, canonical strategy binding, risk limits and audit lineage.
+
 Do not advance to Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO before R0 stabilization is certified.
 
 ## ABSOLUTE
