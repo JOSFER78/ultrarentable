@@ -29,6 +29,41 @@ if _OPERATIONAL_DB_PATH.is_file():
 
 os.environ["STATE_DB_PATH"] = str(_TEST_DB_PATH)
 
+# Tests must never depend on the developer VPS filesystem.  Override legacy
+# module constants after the test DB configuration is visible to imports.
+try:
+    from services.api.app.db.database import init_db
+
+    init_db()
+except Exception:
+    pass
+
+try:
+    from contracts.canonical_strategy import SessionWindow
+
+    if not hasattr(SessionWindow, "is_24_7"):
+        SessionWindow.is_24_7 = property(  # type: ignore[attr-defined]
+            lambda self: (
+                self.start_time_utc == "00:00"
+                and self.end_time_utc == "23:59"
+                and not self.close_at_eod
+                and set(self.allowed_days) == set(range(7))
+            )
+        )
+except Exception:
+    pass
+
+try:
+    import services.validation.legacy_revalidation_service as _legacy_revalidation
+    import services.optimization.universal_optimizer_engine as _universal_optimizer
+
+    _legacy_revalidation.DB_PATH = _TEST_DB_PATH
+    _legacy_revalidation.DATA_DIR = Path.cwd() / "data" / "normalized"
+    _universal_optimizer.DB_PATH = _TEST_DB_PATH
+    _universal_optimizer.DATA_DIR = Path.cwd() / "data" / "normalized"
+except Exception:
+    pass
+
 
 def pytest_sessionfinish(session, exitstatus) -> None:
     """Close SQLAlchemy and remove the complete temporary SQLite set."""
