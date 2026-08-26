@@ -2,29 +2,29 @@
 
 ## Current authority
 - `CURRENT_PHASE`: 02
-- `PHASE_STATUS`: RECOVERY_VALIDATION
+- `PHASE_STATUS`: DIRECT_RECOVERY
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-R0-BOOTSTRAP
+- `EXECUTION_OWNER`: EXTERNAL_REVIEWER
+- `ACTIVE_ORDER_ID`: DIRECT-R0-BOOTSTRAP
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260826-1800-R0-001`
-- `LAST_ACKNOWLEDGED_ORDER`: AG2-P02-FINAL-001
-- `LAST_HANDOFF`: `03_HANDOFF_AG2-P02-FINAL-001.md`
+- `ACTIVE_DISPATCH_ID`: `DIRECT-20260826-R0-001`
+- `LAST_COMPLETED_REVIEWED_ORDER`: AG2-P02-FINAL-001
 - `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P02-FINAL-001.md` (`RECOVERY_REQUIRED`)
-- `NEXT_ORDER`: R1 LOCKED until R0 evidence is reviewed
+- `NEXT_ORDER`: R1 LOCKED until R0 is actually fixed and verified
 
-## Watcher contract
-Read only from GitHub `JOSFER78/ultrarentable` branch `main`:
-- `00_DISPATCH.md`
-- `01_CONTROL_STATE.md`
-- `02_CURRENT_ORDER.md`
+## Authority model
+GitHub `origin/main` is the source of truth for both code and control state.
 
-A NEW `dispatch_id` is the only trigger for new work. Antigravity executes only the order named by all three control files.
+The external reviewer may modify the repository directly. Antigravity is not required to execute the recovery and must not invent or select work. The watcher, if present, is only a notification mechanism.
 
-## Adaptive model
-The external reviewer decides the next repair block after reviewing real code and evidence. Antigravity never creates or selects the next order.
+## Current objective
+Finish the recovery sequence from R0 onward, one block at a time, with direct repository repair, reproducible verification, and evidence.
 
 ## STRICT SCOPE
-Only `AG2-R0-BOOTSTRAP` may be executed now. No R1, Phase 03, Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO work.
+Only `DIRECT-R0-BOOTSTRAP` is active. No R1, Phase 03, Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO work may be considered complete before R0 is closed.
 
-## NO ADVANCE
-`CURRENT_PHASE` remains 02 until recovery is explicitly closed by the external reviewer.
+## Advance rule
+After the reviewer verifies R0, the reviewer will directly publish the next repair block in these files. No automatic phase advancement exists.
+
+## Evidence rule
+No claim of completion without exact source revision, tests/commands, observed result, and provenance.
