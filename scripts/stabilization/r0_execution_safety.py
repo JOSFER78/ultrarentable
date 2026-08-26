@@ -10,11 +10,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 TARGET = ROOT / "services" / "api" / "app" / "api" / "execution_router.py"
 
-FORBIDDEN_ASSIGNMENTS = {
-    "KILL_SWITCH": 'session.open_positions_json = "[]"',
-    "FLATTEN": 'session.open_positions_json = "[]"',
-}
-
 
 def function_name(node: ast.AST) -> str:
     return getattr(node, "name", "")
@@ -32,28 +27,40 @@ def is_empty_positions_assignment(node: ast.AST) -> bool:
     )
 
 
+def has_call(fn: ast.AST, name: str) -> bool:
+    return any(
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == name
+        for node in ast.walk(fn)
+    )
+
+
 def main() -> int:
     source = TARGET.read_text(encoding="utf-8")
     tree = ast.parse(source, filename=str(TARGET))
     failures: list[str] = []
 
     functions = [node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
-    for fn in functions:
-        if function_name(fn) in {"trigger_kill_switch", "flatten_session_positions"}:
-            if any(is_empty_positions_assignment(node) for node in ast.walk(fn)):
-                failures.append(f"{function_name(fn)} may not clear local positions before provider reconciliation")
+    by_name = {function_name(fn): fn for fn in functions}
 
-    for fn in functions:
-        if function_name(fn) == "create_session":
-            calls = [node for node in ast.walk(fn) if isinstance(node, ast.Call)]
-            query_text = source[fn.lineno * 0 :]
-            if "_candidate_has_execution_evidence" not in query_text:
-                failures.append("create_session must enforce candidate execution evidence")
-            if "PROVIDER_DISABLED" not in source:
-                failures.append("create_session must reject disabled providers")
+    for name in ("trigger_kill_switch", "flatten_session_positions"):
+        fn = by_name.get(name)
+        if fn and any(is_empty_positions_assignment(node) for node in ast.walk(fn)):
+            failures.append(f"{name} may not clear local positions before provider reconciliation")
 
-    if "execution_confirmed": False not in source.replace(" ", ""):
-        failures.append("execution responses must default to unconfirmed until provider evidence exists")
+    create = by_name.get("create_session")
+    if create is None:
+        failures.append("create_session function missing")
+    elif not has_call(create, "_candidate_has_execution_evidence"):
+        failures.append("create_session must enforce candidate execution evidence")
+
+    if "PROVIDER_DISABLED" not in source:
+        failures.append("create_session must reject disabled providers")
+    if "provider.is_enabled is not True" not in source:
+        failures.append("provider enablement must be checked explicitly")
+    if source.count('"execution_confirmed": False') < 2:
+        failures.append("execution API must not claim external confirmation from local session status")
 
     result = {
         "check": "R0.4_EXECUTION_SAFETY",
