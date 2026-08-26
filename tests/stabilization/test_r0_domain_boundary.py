@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CHECK = ROOT / "scripts/stabilization/r0_domain_boundary.py"
 
 
-def test_r0_domain_boundary_audit_is_explicit() -> None:
+def test_r0_domain_boundary_is_passed_by_explicit_legacy_isolation() -> None:
     completed = subprocess.run(
         [sys.executable, str(CHECK)],
         cwd=ROOT,
@@ -19,7 +19,8 @@ def test_r0_domain_boundary_audit_is_explicit() -> None:
     )
     report = json.loads(completed.stdout)
     assert report["check"] == "R0.9_CANONICAL_DOMAIN_BOUNDARY"
-    # Current repository intentionally remains blocked here until routes.py is
-    # isolated from its nested SQX canonical router.
-    assert "legacy routes.py nests canonical router(s): sqx_router" in report["failures"]
-    assert report["status"] == "BLOCKED"
+    assert report["status"] == "PASS"
+    assert report["failures"] == []
+    findings = [f for f in report["findings"] if f["type"] == "LEGACY_ISOLATION"]
+    assert findings
+    assert findings[0]["classification"] == "LEGACY_ISOLATED"
