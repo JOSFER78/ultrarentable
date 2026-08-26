@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from services.api.app.config import STATE_DB_PATH
+
 
 @dataclass(frozen=True)
 class SearchTrialRecord:
@@ -36,16 +38,13 @@ class StrategySearchRegistry:
     """Registro inmutable de trials explorados para cálculo de DSR y trazabilidad."""
 
     def __init__(self, db_path: Optional[str] = None):
-        if db_path is None:
-            state_dir = Path.home() / ".local" / "state" / "ultrarentable"
-            state_dir.mkdir(parents=True, exist_ok=True)
-            self.db_path = str(state_dir / "ultrarentable.sqlite3")
-        else:
-            self.db_path = db_path
+        self.db_path = db_path or str(STATE_DB_PATH)
         self._init_db()
 
     def _init_db(self) -> None:
-        with sqlite3.connect(self.db_path, timeout=30.0) as conn:
+        db = Path(self.db_path).expanduser()
+        db.parent.mkdir(parents=True, exist_ok=True)
+        with sqlite3.connect(db, timeout=30.0) as conn:
             conn.execute("PRAGMA journal_mode = WAL;")
             conn.execute("PRAGMA busy_timeout = 30000;")
             conn.execute("""
