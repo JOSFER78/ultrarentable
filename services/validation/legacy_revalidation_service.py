@@ -31,12 +31,11 @@ from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
 from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY
+from services.core.runtime_paths import DB_PATH, DATA_DIR
 
 logger = logging.getLogger("LegacyRevalidationService")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
-DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
 
 
 class LegacyRevalidationService:
