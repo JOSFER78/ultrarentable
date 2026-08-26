@@ -12,14 +12,16 @@ ChatGPT is the direct repository maintainer and executes the stabilization/recov
 - Clean-install enforcement with root `package-lock.json` and `uv.lock`.
 - R0.2 effective FastAPI route collision guard + regression test.
 - R0.3 certification evidence policy enforced at `CertificationRegistry` + regression tests.
-- R0 gate updated to execute all three runtime/source guards after clean dependency installation.
+- R0.4 execution-session safety guard + regression tests.
+- R0.5 web API client surface guard + regression test.
+- R0 gate executes all stabilization guards after clean dependency installation.
 
 ### Evidence status
-GitHub Actions is not currently returning workflow runs for recent pushes through the connected GitHub interface. Therefore R0 is **NOT CERTIFIED GREEN** yet; no certification claim may be made from source inspection alone.
+Source-level guards are implemented. GitHub Actions is still not returning workflow runs for the recent pushes through the connected GitHub interface, therefore R0 remains **NOT CERTIFIED GREEN**. No certification claim may be made from source inspection alone.
 
 ## NEXT
-`R0.4 — Execution Safety`
-Audit all execution/order routes and reject any path that can place, modify, cancel or simulate-live orders without explicit REAL execution mode, canonical strategy binding, risk limits and audit lineage.
+`R0.6 — Web Build / E2E Contract`
+Verify clean web install, typecheck, production build, dev server, localhost:3000 and canonical `/api/*` proxy/rewrite behaviour without synthetic API data.
 
 Do not advance to Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO before R0 stabilization is certified.
 
