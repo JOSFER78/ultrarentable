@@ -4,27 +4,27 @@
 - `CURRENT_PHASE`: 02
 - `PHASE_STATUS`: RECOVERY_VALIDATION
 - `PROGRAM_STATUS`: IN_PROGRESS
-- `ACTIVE_ORDER_ID`: AG2-RECOVERY-001
+- `ACTIVE_ORDER_ID`: AG2-R0-BOOTSTRAP
 - `ACTIVE_ORDER_FILE`: `02_CURRENT_ORDER.md`
-- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260826-1745-RECOVERY-001`
+- `ACTIVE_DISPATCH_ID`: `AG2-DISPATCH-20260826-1800-R0-001`
 - `LAST_ACKNOWLEDGED_ORDER`: AG2-P02-FINAL-001
 - `LAST_HANDOFF`: `03_HANDOFF_AG2-P02-FINAL-001.md`
 - `LAST_EXTERNAL_REVIEW`: `04_REVIEW_AG2-P02-FINAL-001.md` (`RECOVERY_REQUIRED`)
-- `NEXT_ORDER`: `PHASE 03 LOCKED`
+- `NEXT_ORDER`: R1 LOCKED until R0 evidence is reviewed
 
 ## Watcher contract
-Read the three control files from GitHub `origin/main` every watcher cycle. Auto-start only when the dispatch is NEW, `status: ISSUED`, target phase equals current phase, active order matches, and `02_CURRENT_ORDER.md` is the same `ISSUED` order.
+Read only from GitHub `JOSFER78/ultrarentable` branch `main`:
+- `00_DISPATCH.md`
+- `01_CONTROL_STATE.md`
+- `02_CURRENT_ORDER.md`
 
-Antigravity executes only the active order. It never decides or creates the next order.
+A NEW `dispatch_id` is the only trigger for new work. Antigravity executes only the order named by all three control files.
 
-## Adaptive phase model
-The external reviewer chooses `REWORK`, `SUBPHASE`, `REDESIGN`, `BLOCKED`, `NEXT_PHASE`, `SPLIT`, `MERGE` or `ABANDON` after inspecting the delivered state.
+## Adaptive model
+The external reviewer decides the next repair block after reviewing real code and evidence. Antigravity never creates or selects the next order.
 
 ## STRICT SCOPE
-Only `AG2-RECOVERY-001` may be executed now. Out-of-scope findings are deferred unless they directly block this recovery.
-
-## GitHub synchronization
-The complete scoped result must be committed and pushed to `origin/main`, with exact remote SHA recorded in the handoff, before `READY_FOR_REVIEW` and STOP.
+Only `AG2-R0-BOOTSTRAP` may be executed now. No R1, Phase 03, Discovery, Gates, Research, Meta-Strategy, ULTRA or FONDEO work.
 
 ## NO ADVANCE
-Phase 03 remains LOCKED. Antigravity must not change `CURRENT_PHASE` forward or create any Phase 03 order until explicitly dispatched.
+`CURRENT_PHASE` remains 02 until recovery is explicitly closed by the external reviewer.
