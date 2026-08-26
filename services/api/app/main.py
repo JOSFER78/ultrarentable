@@ -61,7 +61,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.autonomous_runtime_enabled = autonomous_enabled
     if autonomous_enabled:
         await supervisor_instance.start_all()
-        logger.info("SystemSupervisor activo: 8 workers operando y emitiendo heartbeats.")
+        logger.info("SystemSupervisor activo: worker fleet operando y emitiendo heartbeats.")
         try:
             from services.optimization.continuous_research_daemon import continuous_research_daemon
             continuous_research_daemon.start_autonomous()
@@ -150,8 +150,21 @@ app.include_router(certified_summary_router, prefix="/api/v2", tags=["v2-certifi
 app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])
 app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-alias"])
 
+@app.get("/", tags=["system"])
+def root() -> Dict[str, Any]:
+    """Stable liveness contract for operators, tests and frontend bootstrap."""
+    return {
+        "status": "RUNNING",
+        "mode": "REAL_ONLY",
+        "version": app.version,
+        "engine_version": "5.4.0",
+        "autonomous_runtime_enabled": bool(getattr(app.state, "autonomous_runtime_enabled", False)),
+        "runtime_mode": "AUTONOMOUS_24X7" if getattr(app.state, "autonomous_runtime_enabled", False) else "LOCAL_API_ONLY",
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+    }
+
 @app.get("/api/v1/version", tags=["system"])
 @app.get("/api/v1/versions", tags=["system"])
 @app.get("/api/v2/versions", tags=["system"])
 def versions() -> Dict[str, Any]:
-    return {"api_version": app.version, "autonomous_runtime_enabled": bool(getattr(app.state, "autonomous_runtime_enabled", False)), "runtime_mode": "AUTONOMOUS_24X7" if getattr(app.state, "autonomous_runtime_enabled", False) else "LOCAL_API_ONLY", "timestamp_utc": datetime.now(timezone.utc).isoformat()}
+    return {"api_version": app.version, "engine_version": "5.4.0", "autonomous_runtime_enabled": bool(getattr(app.state, "autonomous_runtime_enabled", False)), "runtime_mode": "AUTONOMOUS_24X7" if getattr(app.state, "autonomous_runtime_enabled", False) else "LOCAL_API_ONLY", "timestamp_utc": datetime.now(timezone.utc).isoformat()}
