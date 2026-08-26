@@ -21,8 +21,10 @@ from services.queue.durable_job_queue import durable_job_queue
 from services.validation.forward_sufficiency import AdaptiveForwardSufficiency
 
 
-job_queue_router = APIRouter(prefix="/jobs", tags=["Durable Job Queue & Watchdog (24/7)"])
-forward_router = APIRouter(prefix="/forward", tags=["Adaptive Forward Sufficiency"])
+# Prefixes are owned by the application mounting layer in main.py.
+# Keeping these routers prefix-free prevents /jobs/jobs and /forward/forward drift.
+job_queue_router = APIRouter(tags=["Durable Job Queue & Watchdog (24/7)"])
+forward_router = APIRouter(tags=["Adaptive Forward Sufficiency"])
 
 
 class EnqueueJobRequest(BaseModel):
