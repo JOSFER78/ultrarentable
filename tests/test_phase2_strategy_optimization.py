@@ -2,10 +2,11 @@
 
 from datetime import datetime, timezone
 
+from services.discovery.discovery_validation_pipeline import validate_real_dataset
 from services.discovery.funding_discovery import FundingDiscoveryEngine
 from services.discovery.research_objective import robust_research_score
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
-from services.discovery.discovery_validation_pipeline import validate_real_dataset
+from services.strategy_core.canonical_compiler import CanonicalCompiler
 
 
 def _dataset_ref() -> tuple[str, str]:
@@ -55,6 +56,16 @@ def test_ultra_structural_filters_change_canonical_strategy():
     assert len(filtered.entry_rules.long_conditions or []) > len(base.entry_rules.long_conditions or [])
     assert filtered.exit_rules.trail_after_r == 1.5
     assert filtered.session_window is not None
+
+    breakout_conditions = [
+        condition
+        for condition in (filtered.entry_rules.long_conditions or [])
+        if getattr(condition.left, "name", "") == "PRICE_CLOSE"
+    ]
+    assert breakout_conditions
+    assert breakout_conditions[0].right.shift == 1
+    compiled = CanonicalCompiler.compile_condition(breakout_conditions[0])
+    assert getattr(compiled.right, "offset", None) == 1
 
 
 def test_fondeo_parameters_change_canonical_strategy():
