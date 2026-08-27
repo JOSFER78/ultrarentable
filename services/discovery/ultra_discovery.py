@@ -121,10 +121,9 @@ class UltraDiscoveryEngine:
 
         if breakout_confirmation:
             lookback = max(2, int(breakout_lookback))
-            # The canonical engine already supports Donchian price structure; this
-            # condition is intentionally represented explicitly rather than hidden in runtime code.
-            high_break = IndicatorSpec(name="DONCHIAN_HIGH", params={"period": lookback}, source_field="high", shift=0)
-            low_break = IndicatorSpec(name="DONCHIAN_LOW", params={"period": lookback}, source_field="low", shift=0)
+            # Shift=1 means the Donchian reference excludes the current decision bar.
+            high_break = IndicatorSpec(name="DONCHIAN_HIGH", params={"period": lookback}, source_field="high", shift=1)
+            low_break = IndicatorSpec(name="DONCHIAN_LOW", params={"period": lookback}, source_field="low", shift=1)
             close_spec = IndicatorSpec(name="PRICE_CLOSE", params={}, source_field="close", shift=0)
             long_conditions.append(ConditionNode(left=close_spec, op=ComparisonOp.GT, right=high_break))
             short_conditions.append(ConditionNode(left=close_spec, op=ComparisonOp.LT, right=low_break))
