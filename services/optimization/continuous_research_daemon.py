@@ -2,8 +2,8 @@
 
 The daemon selects real persisted candidates, resolves their physical dataset
 through DatasetRegistry, and delegates generation/backtesting/evolution to the
-canonical StrategyResearchLoop. It does not fabricate gates, metrics, or
-certification states.
+canonical route-specific research loop. It does not fabricate gates, metrics,
+or certification states.
 """
 
 from __future__ import annotations
@@ -15,6 +15,7 @@ from typing import Any, Dict, Optional
 
 from services.api.app.db.database import CandidateModel, SessionLocal
 from services.data.dataset_registry import dataset_registry
+from services.discovery.funding_research_loop import FundingResearchLoop
 from services.discovery.strategy_research_loop import StrategyResearchLoop
 from services.discovery.strategy_search_registry import StrategySearchRegistry
 from services.engine_version import CURRENT_ENGINE_VERSION
@@ -87,12 +88,14 @@ class ContinuousResearchDaemon:
             )
             queue: list[Dict[str, Any]] = []
             for row in rows:
+                route = str(getattr(row, "route", "ULTRA") or "ULTRA").upper()
                 queue.append(
                     {
                         "candidate_id": row.candidate_id,
                         "name": row.name,
                         "symbol": row.symbol,
                         "timeframe": row.timeframe,
+                        "route": route,
                         "status": row.status,
                         "gates_passed_count": int(getattr(row, "gates_passed_count", 0) or 0),
                         "engine_version": row.engine_version,
@@ -118,6 +121,7 @@ class ContinuousResearchDaemon:
 
             symbol = str(candidate.symbol or "").strip()
             timeframe = str(candidate.timeframe or "").strip()
+            route = str(getattr(candidate, "route", "ULTRA") or "ULTRA").upper()
             if not symbol or not timeframe:
                 return {"status": "ERROR_NO_DATASET", "candidate_id": candidate_id, "reason": "missing_symbol_or_timeframe"}
 
@@ -128,6 +132,7 @@ class ContinuousResearchDaemon:
                     "candidate_id": candidate_id,
                     "symbol": symbol,
                     "timeframe": timeframe,
+                    "route": route,
                 }
 
             dataset_path = str(dataset_registry.root_dir / manifest.relative_path)
@@ -135,7 +140,13 @@ class ContinuousResearchDaemon:
             session.close()
 
         registry = StrategySearchRegistry()
-        loop = StrategyResearchLoop(registry=registry, engine_version=CURRENT_ENGINE_VERSION)
+        if route == "FONDEO":
+            loop = FundingResearchLoop(registry=registry, engine_version=CURRENT_ENGINE_VERSION)
+            initial_capital = 50000.0
+        else:
+            loop = StrategyResearchLoop(registry=registry, engine_version=CURRENT_ENGINE_VERSION)
+            initial_capital = 1000.0
+
         result = loop.run(
             dataset_path=dataset_path,
             symbol=symbol,
@@ -143,12 +154,13 @@ class ContinuousResearchDaemon:
             generations=max(1, min(int(max_iterations), 5)),
             seeds=max(8, min(24, 8 * max(1, int(generation_round)))),
             children_per_seed=4,
-            initial_capital_usd=1000.0 if "ULTRA" in str(getattr(candidate, "route", "")).upper() else 50000.0,
+            initial_capital_usd=initial_capital,
         )
         self.repaired_count += int(result.get("history_count", 0) > 0)
         return {
             "status": "RESEARCH_COMPLETE_NOT_CERTIFIED",
             "candidate_id": candidate_id,
+            "route": route,
             "engine_version": CURRENT_ENGINE_VERSION,
             "research": result,
         }
