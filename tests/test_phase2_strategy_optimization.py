@@ -34,6 +34,29 @@ def test_ultra_parameters_change_canonical_strategy():
     assert base.entry_rules.model_dump_json() != changed.entry_rules.model_dump_json()
 
 
+def test_ultra_structural_filters_change_canonical_strategy():
+    engine = UltraDiscoveryEngine()
+    dataset_id, dataset_hash = _dataset_ref()
+    base = engine.generate_candidate_blueprint(
+        "u3", "BTC-USDT", "1h", dataset_id, dataset_hash,
+        archetype="MOMENTUM_BREAKOUT", sl_atr_mult=2.0, tp_atr_mult=6.0,
+    )
+    filtered = engine.generate_candidate_blueprint(
+        "u4", "BTC-USDT", "1h", dataset_id, dataset_hash,
+        archetype="MOMENTUM_BREAKOUT", sl_atr_mult=2.0, tp_atr_mult=6.0,
+        volatility_filter="ATR_REGIME",
+        volume_confirmation="RELATIVE_VOLUME",
+        breakout_confirmation=True,
+        breakout_lookback=20,
+        exit_family="TRAILING_PROFIT",
+        session_profile="LIQUIDITY_CORE",
+    )
+    assert base.canonical_hash != filtered.canonical_hash
+    assert len(filtered.entry_rules.long_conditions or []) > len(base.entry_rules.long_conditions or [])
+    assert filtered.exit_rules.trail_after_r == 1.5
+    assert filtered.session_window is not None
+
+
 def test_fondeo_parameters_change_canonical_strategy():
     engine = FundingDiscoveryEngine()
     dataset_id, dataset_hash = _dataset_ref()
