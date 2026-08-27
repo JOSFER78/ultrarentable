@@ -17,13 +17,17 @@ on:
         required: false
         default: "AUTO"
       max_trials_ultra:
-        description: "Deterministic ULTRA trial budget per dataset"
+        description: "Deterministic local validator trial budget per dataset"
         required: false
         default: "128"
       max_trials_fondeo:
-        description: "Deterministic FONDEO trial budget per dataset"
+        description: "Deterministic local validator trial budget per dataset"
         required: false
         default: "96"
+      sqx_trials_per_campaign:
+        description: "Recommended SQX search intensity per generated campaign"
+        required: false
+        default: "100000"
 
 concurrency:
   group: phase2-live-research
@@ -47,6 +51,7 @@ jobs:
       PHASE2_TOP_VALIDATION: "20"
       DATA_DIR: "data/phase2-live"
       PHASE2_DATA_DIR: "data/phase2-live/normalized"
+      SQX_TRIALS_PER_CAMPAIGN: ${{ inputs.sqx_trials_per_campaign || '100000' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,13 +111,20 @@ jobs:
       - name: Canonical phase-2 research
         run: python scripts/phase2_research_adapter.py
 
-      - name: Verify trial planner integration
+      - name: Emit adaptive SQX research agenda
         run: |
-          python - <<'PY'
-          from scripts.phase2_trial_planner import PLANNER_VERSION
-          assert PLANNER_VERSION == 'phase2-stratified-v1'
-          print('PHASE2_TRIAL_PLANNER: PASS')
+          DATASET_SHA256=$(python - <<'PY'
+          from pathlib import Path
+          import json
+          files = sorted(Path('data/phase2-live/normalized').glob('ds_bingx_*.json'))
+          assert files, 'NO_DATASET_FOR_DIRECTOR'
+          manifest = json.loads(files[0].with_name(files[0].stem + '_manifest.json').read_text())
+          print(manifest['physicalFileSha256'])
           PY
+          )
+          python scripts/phase2_research_director_report.py \
+            --dataset-sha256 "$DATASET_SHA256" \
+            --trials-per-campaign "$SQX_TRIALS_PER_CAMPAIGN"
 
       - name: Upload complete phase-2 evidence
         uses: actions/upload-artifact@v4
@@ -127,4 +139,4 @@ jobs:
             data/phase2-live/phase2-evidence/**
             data/phase2-live/evidence/**
             data/phase2-evidence/**
-            data/evidence/**
+            data/sqx-ingest/**
