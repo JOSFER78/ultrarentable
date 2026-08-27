@@ -1,3 +1,3 @@
-PHASE2_AUTORUN=2
-Fixed backward-windowed BingX pagination after the first live acquisition attempt returned only the latest API page.
-This marker triggers one retry. Subsequent reruns are manual via workflow_dispatch.
+PHASE2_AUTORUN=3
+Isolate live Phase-2 data under data/phase2-live so legacy datasets cannot contaminate custody checks.
+This is the final automatic retry; subsequent Phase-2 executions are manual.

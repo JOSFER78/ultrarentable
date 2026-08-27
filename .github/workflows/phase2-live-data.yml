@@ -47,6 +47,8 @@ jobs:
       PHASE2_MAX_TRIALS_FONDEO: ${{ inputs.max_trials_fondeo || '96' }}
       PHASE2_MAX_DATASETS: "3"
       PHASE2_TOP_VALIDATION: "20"
+      DATA_DIR: "data/phase2-live"
+      PHASE2_DATA_DIR: "data/phase2-live/normalized"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -80,11 +82,11 @@ jobs:
 
       - name: Verify acquired data custody
         run: |
-          test -n "$(find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*.json' ! -name '*_manifest.json' -print -quit)"
+          test -n "$(find data/phase2-live/normalized -maxdepth 1 -type f -name 'ds_bingx_*.json' ! -name '*_manifest.json' -print -quit)"
           python - <<'PY'
           from pathlib import Path
           import hashlib, json
-          for path in sorted(Path('data/normalized').glob('ds_bingx_*.json')):
+          for path in sorted(Path('data/phase2-live/normalized').glob('ds_bingx_*.json')):
               if path.name.endswith('_manifest.json'):
                   continue
               manifest_path = path.with_name(path.stem + '_manifest.json')
@@ -107,8 +109,10 @@ jobs:
           retention-days: 30
           if-no-files-found: error
           path: |
-            data/normalized/ds_bingx_*.json
-            data/normalized/ds_bingx_*_manifest.json
-            data/raw/rest/phase2-history/**
+            data/phase2-live/normalized/ds_bingx_*.json
+            data/phase2-live/normalized/ds_bingx_*_manifest.json
+            data/phase2-live/raw/rest/phase2-history/**
+            data/phase2-live/phase2-evidence/**
+            data/phase2-live/evidence/**
             data/phase2-evidence/**
             data/evidence/**
