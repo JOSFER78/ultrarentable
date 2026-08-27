@@ -123,7 +123,6 @@ class StrategyEvolutionEngine:
         selected: List[EvolutionProposal] = []
         selected_ids: set[str] = set()
 
-        # Prefer high-information structural hypotheses when the budget is tiny.
         group_priority = (
             "STRUCTURAL_REGIME",
             "EXIT_RISK",
@@ -169,6 +168,10 @@ class StrategyEvolutionEngine:
         result: List[EvolutionProposal] = []
 
         def add(mutation_type: str, changes: Dict[str, Any], rationale: str, effect: str) -> None:
+            # A mutation that produces no effective parameter change is a wasted
+            # trial and must not consume the bounded research budget.
+            if not any(base.get(key) != value for key, value in changes.items()):
+                return
             next_params = {**base, **changes}
             mutation_id = f"{parent_strategy_id}:{mutation_type}:{len(result)+1:02d}"
             result.append(
