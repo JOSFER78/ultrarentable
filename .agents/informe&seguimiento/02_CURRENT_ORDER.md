@@ -38,28 +38,28 @@ The three champions were rejected by the existing evidence gates. This is an int
 
 Common failure pattern: costs/microstructure, stress slippage, regime coverage and deflated-sharpe/multiple-testing protection are preventing false-positive promotion. The result is not evidence of a profitable strategy.
 
+### P2-B — RESEARCH EXPANSION / HYPOTHESIS IMPROVEMENT — IN PROGRESS
+- Strategy evolution has been expanded from simple parameter nudges to structural mutations: signal-family swaps, volatility/volume/breakout confirmation, exit-family changes, session changes, complexity reduction/increase, and stop/target adaptations.
+- All emitted structural mutations are constrained to families currently executable by the canonical Ultra strategy builder; they are not UI-only labels.
+- StrategyResearchLoop now evaluates evolved hypotheses through `FastEngineAdapter -> CanonicalCompiler -> UniversalDeterministicBacktestEngine`, keeping the optimization path on the canonical execution stack.
+- Candidate ranking now incorporates contiguous-sample stability and cross-sample PF stability rather than raw IS profit alone.
+- Canonical indicator shifts are preserved during compilation. Breakout reference levels use `shift=1`, preventing the current decision bar from entering its own Donchian reference.
+- Regression tests cover semantic mutation effects, structural filters, score behavior, future-data rejection and temporal-shift preservation.
+
+### CURRENT RESEARCH RULE
+No candidate is considered an improvement because its IS metrics rise. A useful improvement must survive validation with controlled complexity, realistic costs and stress/robustness evidence before any blind OOS decision.
+
+### NEXT EXECUTION BLOCK
+1. Run the expanded structural-evolution campaign on real persisted datasets.
+2. Compare mutation families by validation stability and failure mode, not only top score.
+3. Expand the real-data universe where a canonical venue/data source provides complete history.
+4. Re-run final blind OOS only for frozen champions after family-level selection.
+5. Promote only complete evidence-backed candidates.
+
 ### MACROPHASE 2 EXIT STATUS
 `NOT EXIT-CERTIFIED`
 
-Reason: the laboratory has now demonstrated a real-data, reproducible, evidence-gated discovery/validation run, but it has not yet produced an evidence-backed promoted strategy and therefore does not satisfy the full Macrophase-2 exit condition.
-
-### NEXT EXECUTION BLOCK
-`P2-B — RESEARCH EXPANSION / HYPOTHESIS IMPROVEMENT`
-
-1. Expand the real-data universe beyond the first three crypto assets, including the FONDEO instrument set where real complete history is available.
-2. Add genuinely distinct hypothesis families and regime-aware structures rather than simply widening the same EMA/RSI grid.
-3. Make transaction-cost/microstructure assumptions instrument-specific and reject any family whose edge disappears under stress.
-4. Preserve trial accounting and blind-OOS quarantine across every new campaign.
-5. Compare whole experiment families, not only their best candidate.
-6. Promote only candidates that survive the complete evidence chain.
-
 No Phase-3 production, portfolio or live execution work begins until this exit condition is met.
-
-## EMAIL / CI CONTROL
-- Phase-2 live acquisition/research is **manual-only** via `workflow_dispatch`.
-- The temporary push trigger used to bootstrap the first real-data run has been removed.
-- CI is read-only with respect to repository contents and does not self-commit repairs.
-- Concurrency is retained as a second protection, not as a substitute for correct triggering.
 
 ## ABSOLUTE
 `ZERO-MOCK · ZERO-SIMULATION · ZERO-FORCING · ZERO-LOOKAHEAD · REAL-ONLY · EVIDENCE-GATED`
