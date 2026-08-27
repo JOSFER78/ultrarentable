@@ -1,7 +1,9 @@
-from pathlib import Path
+"""Regression tests for the real Phase-2 universe contract."""
+
+import pathlib
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = pathlib.Path(__file__).resolve().parents[2]
 RESOLVER = ROOT / "scripts" / "resolve_phase2_universe.ts"
 
 
