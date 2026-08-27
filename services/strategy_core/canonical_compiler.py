@@ -6,7 +6,6 @@ DOCTRINA ZERO-MOCKS & CANONICAL BRIDGING:
 - Cero reglas hardcodeadas: mapea 100% de las condiciones, indicadores, operadores, salidas y dimensionamiento del AST RuleTree.
 - Enlaza el perfil de costes oficial desde CANONICAL_COST_REGISTRY.
 """
-
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
@@ -46,6 +45,7 @@ from contracts.universal_strategy import (
 from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, MissingCostModelError
 
 
+# Mapeo de nombres de indicadores de texto a IndicatorType canónico
 INDICATOR_NAME_MAP: Dict[str, IndicatorType] = {
     "EMA": IndicatorType.EMA,
     "SMA": IndicatorType.SMA,
@@ -110,6 +110,7 @@ class CanonicalCompiler:
         if name_clean not in INDICATOR_NAME_MAP:
             raise ValueError(f"UNSUPPORTED_INDICATOR: {spec.name}")
         ind_type = INDICATOR_NAME_MAP[name_clean]
+        # The canonical AST owns temporal alignment. Never discard a positive shift.
         effective_offset = max(int(offset), int(spec.shift))
 
         if "PRICE" in ind_type.value:
@@ -136,7 +137,8 @@ class CanonicalCompiler:
         elif isinstance(cond.right, str):
             right_node = (
                 DynamicValueNode(
-                    source=DynamicValueNode.resolve_series_name(cond.right), offset=0
+                    source=DynamicValueNode.resolve_series_name(cond.right),
+                    offset=0,
                 )
                 if hasattr(DynamicValueNode, "resolve_series_name")
                 else DynamicValueNode.constant(0.0)
@@ -150,8 +152,8 @@ class CanonicalCompiler:
     def compile_entry_rules(cls, rule_tree: CanonicalRuleTree) -> DynamicEntryRules:
         long_conds = [cls.compile_condition(c) for c in (rule_tree.long_conditions or [])]
         short_conds = [cls.compile_condition(c) for c in (rule_tree.short_conditions or [])]
-        log_value = rule_tree.logic.value if hasattr(rule_tree.logic, "value") else str(rule_tree.logic)
-        log_op = LogicalOperator.ALL if log_value.upper() == "AND" else LogicalOperator.ANY
+        logic_raw = rule_tree.logic.value if hasattr(rule_tree.logic, "value") else str(rule_tree.logic)
+        log_op = LogicalOperator.ALL if logic_raw.upper() == "AND" else LogicalOperator.ANY
         return DynamicEntryRules(
             long_rules=RuleGroup(logical_operator=log_op, conditions=long_conds),
             short_rules=RuleGroup(logical_operator=log_op, conditions=short_conds),
@@ -208,7 +210,6 @@ class CanonicalCompiler:
         cost_prof = CANONICAL_COST_REGISTRY.get(clean_sym)
         if cost_prof is None:
             raise MissingCostModelError(f"MISSING_COST_PROFILE: {symbol}")
-
         point_val = custom_point_val if custom_point_val is not None else cost_prof.point_value
         tick_sz = custom_tick_sz if custom_tick_sz is not None else cost_prof.tick_size
         asset_class_str = str(cost_prof.asset_class.value if hasattr(cost_prof.asset_class, "value") else cost_prof.asset_class)
@@ -264,12 +265,85 @@ class CanonicalCompiler:
             tick_size=tick_sz,
             point_value=point_val,
             contract_size=1.0,
+            min_quantity=1.0 if is_cme else (0.01 if is_fx else 0.001),
+            quantity_step=1.0 if is_cme else (0.01 if is_fx else 0.001),
+            price_precision=2 if is_cme else (5 if is_fx else 2),
+            quantity_precision=0 if is_cme else (2 if is_fx else 4),
             commission_type=comm_type,
-            commission_value=comm_val,
-            taker_fee_pct=taker_fee,
-            maker_fee_pct=maker_fee,
+            taker_fee_rate=taker_fee / 100.0,
+            maker_fee_rate=maker_fee / 100.0,
+            cme_exchange_fee_per_contract=comm_val if is_cme else 0.0,
             typical_spread_ticks=spread_ticks,
-            slippage_ticks_baseline=slippage_ticks,
-            funding_rate_8h=funding_rate,
-            max_leverage=max_lev,
+            typical_slippage_ticks=slippage_ticks,
+            max_allowed_leverage=max_lev,
+            is_perpetual=is_crypto,
+            default_funding_rate=funding_rate,
         )
+
+    @classmethod
+    def compile(
+        cls,
+        strategy: CanonicalStrategy,
+        dataset_id: str = "ds_auto",
+        dataset_sha256: str = "sha256_unverified",
+        initial_capital_usd: Optional[float] = None,
+        override_symbol: Optional[str] = None,
+    ) -> Tuple[StrategySpecification, InstrumentSpecification, ExecutionModel, RiskModel]:
+        """Compila un CanonicalStrategy completo en los 4 modelos requeridos por el motor universal."""
+        entry_rules = cls.compile_entry_rules(strategy.entry_rules)
+        exit_rules = cls.compile_exit_rules(strategy)
+
+        if strategy.session_window is not None:
+            time_filter = TimeAndSessionFilter(
+                enabled=True,
+                timezone="UTC",
+                session_start=strategy.session_window.start_time_utc,
+                session_end=strategy.session_window.end_time_utc,
+                close_all_positions_at_session_end=strategy.session_window.close_at_eod,
+            )
+        else:
+            time_filter = TimeAndSessionFilter(
+                enabled=False,
+                timezone="UTC",
+                session_start="00:00",
+                session_end="23:59",
+                close_all_positions_at_session_end=False,
+            )
+
+        target_sym = override_symbol or strategy.symbol
+        strat_spec = StrategySpecification(
+            strategy_id=strategy.strategy_id,
+            version=strategy.version,
+            family=StrategyFamily.MOMENTUM_BREAKOUT,
+            target_symbol=target_sym,
+            base_timeframe=strategy.timeframe,
+            entry_rules=entry_rules,
+            exit_rules=exit_rules,
+            time_filter=time_filter,
+            dataset_reference_id=dataset_id,
+            dataset_sha256=dataset_sha256,
+        )
+
+        inst_spec = cls.compile_instrument(symbol=target_sym, custom_point_val=None, custom_tick_sz=None)
+        exec_model = ExecutionModel(
+            slippage_mode=SlippageMode.FIXED_BPS,
+            base_slippage_bps=inst_spec.typical_slippage_ticks * 2.0,
+            taker_fee_pct=inst_spec.taker_fee_rate * 100.0,
+            maker_fee_pct=inst_spec.maker_fee_rate * 100.0,
+            funding_rate_8h=inst_spec.default_funding_rate,
+        )
+
+        is_fondeo = getattr(strategy, "route", "FONDEO") == "FONDEO"
+        base_cap = initial_capital_usd or (50000.0 if is_fondeo else 1000.0)
+        pyr_layers = getattr(strategy.sizing_and_risk, "pyramiding_max_layers", None) or 1
+        risk_model = RiskModel(
+            model_id=f"RISK_{strategy.strategy_id}",
+            doctrine=RiskDoctrine.FONDEO if is_fondeo else RiskDoctrine.ULTRA,
+            base_capital_usd=base_cap,
+            base_risk_pct=strategy.sizing_and_risk.risk_value,
+            max_leverage=10.0,
+            pyramiding_enabled=pyr_layers > 0,
+            pyramiding_max_tiers=max(1, pyr_layers),
+            max_drawdown_limit_pct=4.0 if is_fondeo else 85.0,
+        )
+        return strat_spec, inst_spec, exec_model, risk_model
