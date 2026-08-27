@@ -18,6 +18,7 @@ from contracts.canonical_strategy import (
     ConditionNode,
     ComparisonOp,
     LogicalOp,
+    SessionWindow,
 )
 from contracts.snapshots.strategy_snapshot import (
     StrategySnapshot,
@@ -61,9 +62,15 @@ class UltraDiscoveryEngine:
         tp_atr_mult: Optional[float] = None,
         pyramiding_tiers_count: Optional[int] = None,
         archetype: Optional[str] = None,
+        volatility_filter: Optional[str] = None,
+        volume_confirmation: Optional[str] = None,
+        breakout_confirmation: bool = False,
+        breakout_lookback: int = 20,
+        exit_family: Optional[str] = None,
+        session_profile: Optional[str] = None,
         **kwargs: Any,
     ) -> StrategySnapshot:
-        """Genera un Snapshot canónico con todos los parámetros del trial aplicados."""
+        """Genera un Snapshot canónico; las mutaciones admitidas cambian reglas ejecutables reales."""
         archetype = str(archetype).upper() if archetype else "MOMENTUM_BREAKOUT"
         ema_fast_spec = IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0)
         ema_slow_spec = IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0)
@@ -100,23 +107,71 @@ class UltraDiscoveryEngine:
                 ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
             ]
 
+        if volatility_filter == "ATR_REGIME":
+            atr_fast = IndicatorSpec(name="ATR", params={"period": 14}, source_field="close", shift=0)
+            atr_slow = IndicatorSpec(name="ATR", params={"period": 50}, source_field="close", shift=0)
+            long_conditions.append(ConditionNode(left=atr_fast, op=ComparisonOp.GT, right=atr_slow))
+            short_conditions.append(ConditionNode(left=atr_fast, op=ComparisonOp.GT, right=atr_slow))
+
+        if volume_confirmation == "RELATIVE_VOLUME":
+            volume_now = IndicatorSpec(name="VOLUME", params={}, source_field="volume", shift=0)
+            volume_avg = IndicatorSpec(name="SMA", params={"period": 20}, source_field="volume", shift=0)
+            long_conditions.append(ConditionNode(left=volume_now, op=ComparisonOp.GT, right=volume_avg))
+            short_conditions.append(ConditionNode(left=volume_now, op=ComparisonOp.GT, right=volume_avg))
+
+        if breakout_confirmation:
+            lookback = max(2, int(breakout_lookback))
+            # The canonical engine already supports Donchian price structure; this
+            # condition is intentionally represented explicitly rather than hidden in runtime code.
+            high_break = IndicatorSpec(name="DONCHIAN_HIGH", params={"period": lookback}, source_field="high", shift=0)
+            low_break = IndicatorSpec(name="DONCHIAN_LOW", params={"period": lookback}, source_field="low", shift=0)
+            close_spec = IndicatorSpec(name="PRICE_CLOSE", params={}, source_field="close", shift=0)
+            long_conditions.append(ConditionNode(left=close_spec, op=ComparisonOp.GT, right=high_break))
+            short_conditions.append(ConditionNode(left=close_spec, op=ComparisonOp.LT, right=low_break))
+
         entry_rules = RuleTree(
             logic=LogicalOp.AND,
             direction="BOTH",
             long_conditions=long_conditions,
             short_conditions=short_conditions,
         )
-        final_sl_type = StopLossType.ATR_MULTIPLE if sl_atr_mult is not None else StopLossType.FIXED_POINTS
-        final_sl_val = float(sl_atr_mult) if sl_atr_mult is not None else float(sl_value)
-        final_tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
-        final_tp_val = float(tp_atr_mult) if tp_atr_mult is not None else float(tp_value)
+
+        if exit_family == "RR_DYNAMIC":
+            final_sl_type = StopLossType.ATR_MULTIPLE
+            final_sl_val = float(sl_atr_mult if sl_atr_mult is not None else 2.0)
+            final_tp_type = TakeProfitType.RR_MULTIPLE
+            final_tp_val = float(kwargs.get("rr_multiple", 2.5))
+            trail_after_r = None
+        elif exit_family == "TIME_DECAY":
+            final_sl_type = StopLossType.ATR_MULTIPLE
+            final_sl_val = float(sl_atr_mult if sl_atr_mult is not None else 2.0)
+            final_tp_type = TakeProfitType.ATR_MULTIPLE
+            final_tp_val = float(tp_atr_mult if tp_atr_mult is not None else 6.0)
+            trail_after_r = None
+        elif exit_family == "TRAILING_PROFIT":
+            final_sl_type = StopLossType.ATR_MULTIPLE
+            final_sl_val = float(sl_atr_mult if sl_atr_mult is not None else 2.0)
+            final_tp_type = TakeProfitType.ATR_MULTIPLE
+            final_tp_val = float(tp_atr_mult if tp_atr_mult is not None else 6.0)
+            trail_after_r = float(kwargs.get("trail_after_r", 1.5))
+        else:
+            final_sl_type = StopLossType.ATR_MULTIPLE if sl_atr_mult is not None else StopLossType.FIXED_POINTS
+            final_sl_val = float(sl_atr_mult) if sl_atr_mult is not None else float(sl_value)
+            final_tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
+            final_tp_val = float(tp_atr_mult) if tp_atr_mult is not None else float(tp_value)
+            trail_after_r = None
+
+        time_stop = int(kwargs.get("time_stop_bars", 48))
+        if exit_family == "TIME_DECAY":
+            time_stop = min(time_stop, 24)
 
         exit_rules = ExitModel(
             sl_type=final_sl_type,
             sl_value=final_sl_val,
             tp_type=final_tp_type,
             tp_value=final_tp_val,
-            time_stop_bars=int(kwargs.get("time_stop_bars", 48)),
+            trail_after_r=trail_after_r,
+            time_stop_bars=time_stop,
         )
         sizing = SizingAndRisk(
             sizing_type=SizingType.RISK_PCT_EQUITY,
@@ -138,6 +193,14 @@ class UltraDiscoveryEngine:
             max_tiers=tier_count if tier_count > 0 else 3,
             tiers=tiers_list,
         )
+        session_window = None
+        if session_profile == "LIQUIDITY_CORE":
+            session_window = SessionWindow(
+                start_time_utc="13:30",
+                end_time_utc="20:00",
+                close_at_eod=True,
+                allowed_days=[0, 1, 2, 3, 4],
+            )
         margin_policy = MarginPolicy(
             margin_mode="ISOLATED",
             max_leverage_ceiling=float(leverage),
@@ -158,4 +221,5 @@ class UltraDiscoveryEngine:
             dataset_sha256_reference=dataset_sha256,
             pyramiding_policy=pyramiding,
             margin_policy=margin_policy,
+            session_window=session_window,
         )
