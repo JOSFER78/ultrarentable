@@ -19,7 +19,13 @@ from contracts.canonical_strategy import (
     ComparisonOp,
     LogicalOp,
 )
-from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, PyramidingPolicy, MarginPolicy, PyramidingTier
+from contracts.snapshots.strategy_snapshot import (
+    StrategySnapshot,
+    StrategyRoute,
+    PyramidingPolicy,
+    MarginPolicy,
+    PyramidingTier,
+)
 
 
 class UltraSearchSpace(BaseModel):
@@ -57,52 +63,41 @@ class UltraDiscoveryEngine:
         archetype: Optional[str] = None,
         **kwargs: Any,
     ) -> StrategySnapshot:
-        """Genera un Snapshot canónico. Cuando el caller no fija archetype, se deriva de los parámetros para que
-        el mismo set seleccionado en IS/Validation/OOS conserve exactamente la misma semántica."""
-        if archetype:
-            archetype = str(archetype).upper()
-        else:
-            variants = ("MOMENTUM_BREAKOUT", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION")
-            variant_index = (int(ema_fast) * 31 + int(ema_slow) * 7 + int(rsi_period) * 13) % len(variants)
-            archetype = variants[variant_index]
-
-        ema_fast_spec = IndicatorSpec(name="EMA", params={"period": ema_fast}, source_field="close", shift=0)
-        ema_slow_spec = IndicatorSpec(name="EMA", params={"period": ema_slow}, source_field="close", shift=0)
-        rsi_spec = IndicatorSpec(name="RSI", params={"period": rsi_period}, source_field="close", shift=0)
+        """Genera un Snapshot canónico con todos los parámetros del trial aplicados."""
+        archetype = str(archetype).upper() if archetype else "MOMENTUM_BREAKOUT"
+        ema_fast_spec = IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0)
+        ema_slow_spec = IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0)
+        rsi_spec = IndicatorSpec(name="RSI", params={"period": int(rsi_period)}, source_field="close", shift=0)
 
         if archetype in {"MEAN_REVERSION", "RSI_REVERSION"}:
             long_conditions = [
-                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=rsi_threshold_short),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.GT, right=ema_slow_spec),
             ]
             short_conditions = [
-                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=rsi_threshold_long),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=float(rsi_threshold_long)),
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
             ]
         elif archetype in {"TREND_FOLLOWING", "EMA_CROSS"}:
-            long_conditions = [
-                ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec),
-            ]
-            short_conditions = [
-                ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_BELOW, right=ema_slow_spec),
-            ]
+            long_conditions = [ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec)]
+            short_conditions = [ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_BELOW, right=ema_slow_spec)]
         elif archetype in {"RSI_MOMENTUM", "MOMENTUM_RSI"}:
             long_conditions = [
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.GT, right=ema_slow_spec),
-                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=rsi_threshold_long),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=float(rsi_threshold_long)),
             ]
             short_conditions = [
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
-                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=rsi_threshold_short),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
             ]
         else:
             long_conditions = [
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec),
-                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=rsi_threshold_long),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=float(rsi_threshold_long)),
             ]
             short_conditions = [
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_BELOW, right=ema_slow_spec),
-                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=rsi_threshold_short),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
             ]
 
         entry_rules = RuleTree(
@@ -111,50 +106,45 @@ class UltraDiscoveryEngine:
             long_conditions=long_conditions,
             short_conditions=short_conditions,
         )
-
         final_sl_type = StopLossType.ATR_MULTIPLE if sl_atr_mult is not None else StopLossType.FIXED_POINTS
-        final_sl_val = sl_atr_mult if sl_atr_mult is not None else sl_value
+        final_sl_val = float(sl_atr_mult) if sl_atr_mult is not None else float(sl_value)
         final_tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
-        final_tp_val = tp_atr_mult if tp_atr_mult is not None else tp_value
+        final_tp_val = float(tp_atr_mult) if tp_atr_mult is not None else float(tp_value)
 
         exit_rules = ExitModel(
             sl_type=final_sl_type,
             sl_value=final_sl_val,
             tp_type=final_tp_type,
             tp_value=final_tp_val,
-            time_stop_bars=kwargs.get("time_stop_bars", 48),
+            time_stop_bars=int(kwargs.get("time_stop_bars", 48)),
         )
-
         sizing = SizingAndRisk(
             sizing_type=SizingType.RISK_PCT_EQUITY,
-            risk_value=risk_pct,
+            risk_value=float(risk_pct),
             max_open_positions=1,
-            max_daily_loss_usd=kwargs.get("max_daily_loss_usd", 250.0),
+            max_daily_loss_usd=float(kwargs.get("max_daily_loss_usd", 250.0)),
         )
-
-        has_pyramiding = pyramiding_tiers_count is not None and pyramiding_tiers_count > 0
+        tier_count = int(pyramiding_tiers_count or 0)
         tiers_list = [
             PyramidingTier(
                 trigger_pnl_atr_mult=float(i * 1.5),
                 added_size_mult=0.5,
                 trail_stop_to_breakeven=True,
             )
-            for i in range(1, (pyramiding_tiers_count or 0) + 1)
-        ] if has_pyramiding else []
+            for i in range(1, tier_count + 1)
+        ]
         pyramiding = PyramidingPolicy(
-            enabled=has_pyramiding,
-            max_tiers=pyramiding_tiers_count if has_pyramiding else 3,
+            enabled=tier_count > 0,
+            max_tiers=tier_count if tier_count > 0 else 3,
             tiers=tiers_list,
         )
-
         margin_policy = MarginPolicy(
             margin_mode="ISOLATED",
-            max_leverage_ceiling=leverage,
+            max_leverage_ceiling=float(leverage),
             liquidation_buffer_min_pct=30.0,
             reinvestment_rate_pct=0.0,
             vault_harvest_rate_pct=0.0,
         )
-
         return StrategySnapshot.create_and_hash(
             strategy_id=strategy_id,
             route=StrategyRoute.ULTRA,
