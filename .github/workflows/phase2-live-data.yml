@@ -1,5 +1,7 @@
 name: Phase 2 Live Data + Research
 
+# Intentionally MANUAL ONLY after the initial bootstrap campaign.
+# This workflow must never start from ordinary repository pushes.
 on:
   workflow_dispatch:
     inputs:
@@ -23,9 +25,6 @@ on:
         description: "Deterministic FONDEO trial budget per dataset"
         required: false
         default: "96"
-  push:
-    paths:
-      - ".phase2/GO_NOW"
 
 concurrency:
   group: phase2-live-research

@@ -15,40 +15,51 @@ Full definition: `16_THREE_MACROPHASE_MASTER_PLAN.md`
 `MACROPHASE 2 — IN PROGRESS`
 
 ### R0 ENTRY EVIDENCE
-The latest stabilization run on commit `ad806be59b6315e216619af71adb5a0be86123a1` returned `SUCCESS` through the final R0 certification step. All R0 guards, compile/lint, web typecheck/build, focused stabilization tests, real web/backend E2E and backend clean-start completed successfully.
+`R0_STABLE = CERTIFIED` — the stabilization chain passed guards, compile/lint, web typecheck/build, focused tests, real web/backend E2E, backend clean-start and final R0 certification before Phase 2 entry.
 
-`R0_STABLE = CERTIFIED`
+### PHASE 2 ITERATION 001 — EXECUTED
+- Real BingX 1h historical acquisition completed for BTC-USDT, ETH-USDT and SOL-USDT.
+- Each dataset contains 8,760 hourly candles covering 365 requested days, acquired through 9 paginated API windows.
+- Physical normalized-file SHA-256 is recorded in each immutable manifest and custody verification passed.
+- Chronological research partition is `60% IS / 20% validation / 20% blind OOS`.
+- Discovery search space is 2,916 combinations; the deterministic live campaign budget was 128 trials per dataset, with the top 20 IS candidates evaluated on validation.
+- Every trial is recorded with run/trial/dataset/hash metadata.
+- Canonical backtest, validation, robustness and evidence generation completed for all 3 datasets.
+- Final Phase-2 workflow run: `33065778156`; evidence artifact: `phase2-real-research-33065778156` (45 files, 1.287 MB).
 
-### PHASE 2 WORK ALREADY APPLIED
-- Discovery uses central runtime/data configuration; machine-local paths removed from the quantitative pipeline.
-- Dataset repository now fails closed when canonical normalized data is missing or malformed; synthetic bar fallbacks were removed.
-- Physical normalized dataset bytes are SHA-256 hashed and propagated into dataset identity/provenance.
-- Discovery is explicitly partitioned chronologically `60% IS / 20% validation / 20% blind OOS`.
-- Blind OOS is not available during champion selection; it is consumed only after the strategy is frozen.
-- Search trials are persisted with trial/run/dataset/hash metadata.
-- Discovery search dimensions have been made explicit; the campaign has a deterministic reproducible trial budget.
-- Phase-2 integrity guard is enforced in CI and currently passes.
-- Live BingX historical acquisition is isolated in `.github/workflows/phase2-live-data.yml` as `workflow_dispatch` only, preventing live-data jobs from creating notification storms on every repository push.
-- Paginated real-data history loader added at `scripts/sync_phase2_history.ts`.
+### ITERATION 001 RESULT
+`0 APPROVED / 3 REJECTED`
 
-### CURRENT PHASE 2 TARGET
-`P2-A — REAL DATA UNIVERSE / DATASET CUSTODY`
+The three champions were rejected by the existing evidence gates. This is an intentional fail-closed outcome; no thresholds were weakened and no candidate was promoted merely because IS looked profitable.
 
-The research engine must receive real historical datasets with sufficient coverage before any profitability claim or candidate promotion is considered valid.
+- BTC-USDT 1h: IS PF 1.17, 187 trades, DD 17.06%; blind OOS PF 0.88, 62 trades, net -$97.74, ROI -9.774%; 5/11 gates passed.
+- ETH-USDT 1h: IS PF 1.26, 141 trades, DD 14.76%; blind OOS PF 0.68, 46 trades, net -$143.59, ROI -14.359%; 5/11 gates passed.
+- SOL-USDT 1h: IS PF 1.38, 122 trades, DD 20.45%; blind OOS PF 0.75, 41 trades, net -$88.77, ROI -8.877%; 5/11 gates passed.
+
+Common failure pattern: costs/microstructure, stress slippage, regime coverage and deflated-sharpe/multiple-testing protection are preventing false-positive promotion. The result is not evidence of a profitable strategy.
+
+### MACROPHASE 2 EXIT STATUS
+`NOT EXIT-CERTIFIED`
+
+Reason: the laboratory has now demonstrated a real-data, reproducible, evidence-gated discovery/validation run, but it has not yet produced an evidence-backed promoted strategy and therefore does not satisfy the full Macrophase-2 exit condition.
 
 ### NEXT EXECUTION BLOCK
-1. Acquire real BingX historical datasets using the manual Phase-2 data workflow.
-2. Verify dataset manifests, physical SHA-256, closed-candle invariant, continuity and minimum coverage.
-3. Run the canonical discovery pipeline against those datasets.
-4. Compare trial families using stored trial accounting, not only the winner.
-5. Re-run selected candidates through canonical backtest + validation + robustness gates.
-6. Promote only candidates with complete evidence; otherwise leave them `BLOCKED`/`REJECTED`.
+`P2-B — RESEARCH EXPANSION / HYPOTHESIS IMPROVEMENT`
+
+1. Expand the real-data universe beyond the first three crypto assets, including the FONDEO instrument set where real complete history is available.
+2. Add genuinely distinct hypothesis families and regime-aware structures rather than simply widening the same EMA/RSI grid.
+3. Make transaction-cost/microstructure assumptions instrument-specific and reject any family whose edge disappears under stress.
+4. Preserve trial accounting and blind-OOS quarantine across every new campaign.
+5. Compare whole experiment families, not only their best candidate.
+6. Promote only candidates that survive the complete evidence chain.
+
+No Phase-3 production, portfolio or live execution work begins until this exit condition is met.
 
 ## EMAIL / CI CONTROL
-- Push-triggered CI workflows have `concurrency.cancel-in-progress=true`.
-- CI workflows are `permissions: contents: read` and no longer self-commit repairs.
-- Live data acquisition is manual-only, not push-triggered.
-- No workflow in the Phase-2 path is allowed to mutate `main` automatically.
+- Phase-2 live acquisition/research is **manual-only** via `workflow_dispatch`.
+- The temporary push trigger used to bootstrap the first real-data run has been removed.
+- CI is read-only with respect to repository contents and does not self-commit repairs.
+- Concurrency is retained as a second protection, not as a substitute for correct triggering.
 
 ## ABSOLUTE
 `ZERO-MOCK · ZERO-SIMULATION · ZERO-FORCING · ZERO-LOOKAHEAD · REAL-ONLY · EVIDENCE-GATED`
