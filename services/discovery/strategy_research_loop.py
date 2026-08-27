@@ -86,6 +86,42 @@ class StrategyResearchLoop:
             return -1e9
         return float(0.40 * is_score + 0.60 * validation_score)
 
+    @staticmethod
+    def _select_survivors(
+        evaluated: List[Tuple[float, str, Dict[str, Any], str, Optional[str], Any, Any]],
+        limit: int = 8,
+    ) -> List[Tuple[float, str, Dict[str, Any], str, Optional[str], Any, Any]]:
+        """Keep a score frontier without allowing one family to monopolize evolution.
+
+        The discovery system must compare hypotheses as families, not only select
+        the globally highest score. One deterministic champion per executable
+        archetype is retained first, then remaining slots are filled by score.
+        """
+        if not evaluated:
+            return []
+        limit = max(1, min(int(limit), len(evaluated)))
+        ordered = sorted(evaluated, key=lambda item: item[0], reverse=True)
+
+        survivors: List[Tuple[float, str, Dict[str, Any], str, Optional[str], Any, Any]] = []
+        seen_families: set[str] = set()
+        for item in ordered:
+            family = str(item[3] or item[2].get("archetype", "UNKNOWN")).upper()
+            if family in seen_families:
+                continue
+            survivors.append(item)
+            seen_families.add(family)
+            if len(survivors) >= limit:
+                return survivors
+
+        selected_ids = {item[1] for item in survivors}
+        for item in ordered:
+            if item[1] in selected_ids:
+                continue
+            survivors.append(item)
+            if len(survivors) >= limit:
+                break
+        return survivors
+
     def _build_strategy(
         self,
         strategy_id: str,
@@ -95,7 +131,6 @@ class StrategyResearchLoop:
         dataset_sha256: str,
         params: Dict[str, Any],
         parent_strategy_id: Optional[str] = None,
-        mutation_type: Optional[str] = None,
     ) -> StrategySnapshot:
         return self.discovery.generate_candidate_blueprint(
             strategy_id=strategy_id,
@@ -164,6 +199,7 @@ class StrategyResearchLoop:
         dataset_id: str,
         dataset_sha256: str,
         initial_capital_usd: float,
+        is_in_sample: bool,
         parent_strategy_id: Optional[str] = None,
         mutation_type: Optional[str] = None,
     ) -> Any:
@@ -181,10 +217,10 @@ class StrategyResearchLoop:
             end_timestamp_utc_ms=int(candles[-1].get("time") or candles[-1].get("timestamp") or 0),
             total_bars=len(candles),
             sha256_hash=dataset_sha256,
-            is_in_sample=True,
+            is_in_sample=is_in_sample,
         )
         request = BacktestRequest(
-            request_id=f"req_{strategy.strategy_id}_{dataset_id}",
+            request_id=f"req_{strategy.strategy_id}_{dataset_id}_{'IS' if is_in_sample else 'VAL'}",
             strategy_id=canonical.strategy_id,
             strategy=canonical,
             dataset=dataset,
@@ -255,6 +291,7 @@ class StrategyResearchLoop:
                     path.name,
                     dataset_sha256,
                     initial_capital_usd,
+                    is_in_sample=True,
                     parent_strategy_id=parent_strategy_id,
                 )
                 validation_result = self._run_canonical_backtest(
@@ -263,6 +300,7 @@ class StrategyResearchLoop:
                     path.name,
                     dataset_sha256,
                     initial_capital_usd,
+                    is_in_sample=False,
                     parent_strategy_id=parent_strategy_id,
                 )
                 score = self._score(is_result, validation_result)
@@ -317,8 +355,7 @@ class StrategyResearchLoop:
                     )
                 )
 
-            evaluated.sort(key=lambda item: item[0], reverse=True)
-            survivors = evaluated[: max(1, min(8, len(evaluated)))]
+            survivors = self._select_survivors(evaluated, limit=8)
             if generation >= max(1, int(generations)):
                 break
 
@@ -343,6 +380,25 @@ class StrategyResearchLoop:
                     )
 
         final_preview = sorted(history, key=lambda c: c.research_score, reverse=True)[:20]
+        family_counts: Dict[str, int] = {}
+        for candidate in self._select_survivors(
+            [
+                (
+                    c.research_score,
+                    c.strategy_id,
+                    c.parameters,
+                    c.archetype,
+                    c.parent_strategy_id,
+                    None,
+                    None,
+                )
+                for c in history
+            ],
+            limit=8,
+        ):
+            family = str(candidate[3]).upper()
+            family_counts[family] = family_counts.get(family, 0) + 1
+
         return {
             "run_id": run_id,
             "dataset_id": path.name,
@@ -350,6 +406,7 @@ class StrategyResearchLoop:
             "generations": max(1, int(generations)),
             "history_count": len(history),
             "survivors_preview": [c.__dict__ for c in final_preview],
+            "survivor_family_counts": family_counts,
             "status": "RESEARCH_COMPLETE_NOT_CERTIFIED",
             "blind_oos_touched": False,
             "execution_engine": "FastEngineAdapter -> CanonicalCompiler -> UniversalDeterministicBacktestEngine",
