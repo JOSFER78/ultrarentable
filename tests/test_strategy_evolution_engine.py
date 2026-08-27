@@ -54,3 +54,24 @@ def test_small_evolution_budget_preserves_semantic_diversity() -> None:
         "REDUCE_COMPLEXITY",
         "INCREASE_COMPLEXITY",
     })
+
+
+def test_noop_mutations_do_not_consume_research_budget() -> None:
+    engine = StrategyEvolutionEngine()
+    proposals = engine.propose(
+        "parent-noop",
+        {
+            **_params(),
+            "volatility_filter": None,
+            "complexity": 1,
+            "ema_fast": 2,
+            "rsi_threshold_long": 50.0,
+            "rsi_threshold_short": 50.0,
+        },
+        limit=16,
+    )
+    mutation_types = {p.mutation_type for p in proposals}
+
+    assert "REMOVE_VOLATILITY_FILTER" not in mutation_types
+    assert "RELAX_CONFIRMATION" not in mutation_types
+    assert "SHIFT_FAST_REACTION" not in mutation_types
