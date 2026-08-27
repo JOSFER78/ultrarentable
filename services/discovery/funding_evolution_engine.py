@@ -47,6 +47,12 @@ class FundingEvolutionEngine:
         ),
     }
 
+    SESSION_WINDOWS = {
+        "US_CORE": ("13:30", "20:00"),
+        "EU_US_OVERLAP": ("12:00", "16:00"),
+        "LONDON_CORE": ("07:00", "16:00"),
+    }
+
     def _rank(self, parent_strategy_id: str, proposal: FundingEvolutionProposal) -> str:
         payload = json.dumps(proposal.parameters, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(
@@ -86,6 +92,8 @@ class FundingEvolutionEngine:
         risk = float(base.get("risk_per_trade_pct", 0.25))
         session = str(base.get("session_profile", "US_CORE"))
         time_stop = int(base.get("time_stop_bars", 36))
+        current_start = str(base.get("session_start_utc", "13:30"))
+        current_end = str(base.get("session_end_utc", "20:00"))
 
         add("RELAX_CONFIRMATION", {
             "rsi_threshold_long": max(50.0, rsi_long - 2.0),
@@ -110,15 +118,20 @@ class FundingEvolutionEngine:
             "Test whether the profit target is too ambitious.", "Improve hit rate if conditional expectancy survives costs.")
         add("CHANGE_RISK_PER_TRADE", {
             "risk_per_trade_pct": min(0.50, max(0.10, 0.20 if risk >= 0.25 else 0.30)),
-        }, "Separate entry quality from capital-at-risk sensitivity.", "Test lower/higher bounded risk without changing signal logic.")
+        }, "Separate entry quality from capital-at-risk sensitivity.", "Test bounded lower/higher risk without changing signal logic.")
 
         session_cycle = {
             "US_CORE": "EU_US_OVERLAP",
             "EU_US_OVERLAP": "LONDON_CORE",
             "LONDON_CORE": "US_CORE",
         }
-        add("CHANGE_SESSION", {"session_profile": session_cycle.get(session, "US_CORE")},
-            "Test whether the edge is session-dependent.", "Change the explicit UTC operating window.")
+        next_session = session_cycle.get(session, "US_CORE")
+        next_start, next_end = self.SESSION_WINDOWS[next_session]
+        add("CHANGE_SESSION", {
+            "session_profile": next_session,
+            "session_start_utc": next_start,
+            "session_end_utc": next_end,
+        }, "Test whether the edge is session-dependent.", "Change the executable UTC operating window, not only a label.")
 
         time_cycle = {24: 36, 36: 48, 48: 24}
         add("CHANGE_TIME_STOP", {"time_stop_bars": time_cycle.get(time_stop, 36)},
@@ -129,15 +142,13 @@ class FundingEvolutionEngine:
         if limit >= len(proposals):
             return proposals
 
-        groups = self.GROUPS
-        priority = ("ENTRY", "RISK_EXIT", "SESSION")
         selected: List[FundingEvolutionProposal] = []
         selected_ids = set()
         by_type = {p.mutation_type: p for p in proposals}
-        for group_name in priority:
+        for group_name in ("ENTRY", "RISK_EXIT", "SESSION"):
             if len(selected) >= limit:
                 break
-            candidates = [by_type[name] for name in groups[group_name] if name in by_type]
+            candidates = [by_type[name] for name in self.GROUPS[group_name] if name in by_type]
             if not candidates:
                 continue
             chosen = min(candidates, key=lambda p: self._rank(parent_strategy_id, p))
