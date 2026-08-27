@@ -3,11 +3,33 @@ name: R0 Stabilization Gate
 on:
   push:
     branches: [main]
+    paths:
+      - "services/**"
+      - "contracts/**"
+      - "scripts/**"
+      - "tests/**"
+      - "apps/web/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
+    paths:
+      - "services/**"
+      - "contracts/**"
+      - "scripts/**"
+      - "tests/**"
+      - "apps/web/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/**"
 
 concurrency:
-  group: r0-stabilization-${{ github.workflow }}-${{ github.ref }}
+  group: r0-stabilization-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -20,71 +42,51 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
-
       - name: Install uv
         run: python -m pip install --upgrade uv
-
       - name: Clean npm install
         run: npm ci --ignore-scripts
-
       - name: Frozen Python install
         run: uv sync --frozen --extra dev
-
       - name: Verify dependency authority
         run: .venv/bin/python scripts/stabilization/r0_dependency_authority.py
-
       - name: Verify FastAPI route inventory
         run: .venv/bin/python scripts/stabilization/r0_route_inventory.py
-
       - name: Verify certification evidence policy
         run: .venv/bin/python scripts/stabilization/r0_certification_evidence.py
-
       - name: Verify execution safety policy
         run: .venv/bin/python scripts/stabilization/r0_execution_safety.py
-
       - name: Verify web API client surface
         run: .venv/bin/python scripts/stabilization/r0_web_api_client.py
-
       - name: Verify forbidden literal scan
         run: .venv/bin/python scripts/stabilization/r0_forbidden_literal_scan.py
-
       - name: Verify canonical domain boundary
         run: .venv/bin/python scripts/stabilization/r0_domain_boundary.py
-
       - name: Python compile gate
         run: .venv/bin/python -m compileall -q services scripts tests/stabilization
-
       - name: Stabilization lint gate
         run: .venv/bin/ruff check scripts/stabilization tests/stabilization --ignore EXE001
-
       - name: Web typecheck
         working-directory: apps/web
         run: npm run typecheck
-
       - name: Web production build
         working-directory: apps/web
         run: npm run build
-
       - name: Run focused stabilization tests
         run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py tests/stabilization/test_r0_web_api_client.py tests/stabilization/test_r0_forbidden_literal_scan.py tests/stabilization/test_r0_domain_boundary.py tests/stabilization/test_legacy_compat_router.py tests/stabilization/test_r0_web_e2e.py tests/stabilization/test_r0_backend_clean_start.py tests/stabilization/test_r0_final_certification.py -q
-
       - name: Run real web/backend E2E contract
         run: bash scripts/stabilization/r0_web_e2e.sh
-
       - name: Run backend clean-start contract
         run: bash scripts/stabilization/r0_backend_clean_start.sh
-
       - name: Final R0 certification
         env:
           R0_CI_GREEN: "1"
