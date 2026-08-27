@@ -1,7 +1,6 @@
 name: Phase 2 Live Data + Research
 
-# Intentionally MANUAL ONLY after the initial bootstrap campaign.
-# This workflow must never start from ordinary repository pushes.
+# MANUAL ONLY: live data acquisition/research never runs on ordinary pushes.
 on:
   workflow_dispatch:
     inputs:
@@ -14,9 +13,9 @@ on:
         required: false
         default: "1h"
       symbols:
-        description: "Comma-separated BingX perpetual symbols"
+        description: "Comma-separated symbols, or AUTO to resolve the real BingX universe"
         required: false
-        default: "BTC-USDT,ETH-USDT,SOL-USDT"
+        default: "AUTO"
       max_trials_ultra:
         description: "Deterministic ULTRA trial budget per dataset"
         required: false
@@ -41,10 +40,10 @@ jobs:
     env:
       PHASE2_HISTORY_DAYS: ${{ inputs.days || '365' }}
       PHASE2_INTERVAL: ${{ inputs.interval || '1h' }}
-      PHASE2_SYMBOLS: ${{ inputs.symbols || 'BTC-USDT,ETH-USDT,SOL-USDT' }}
+      PHASE2_SYMBOLS: ${{ inputs.symbols || 'AUTO' }}
       PHASE2_MAX_TRIALS_ULTRA: ${{ inputs.max_trials_ultra || '128' }}
       PHASE2_MAX_TRIALS_FONDEO: ${{ inputs.max_trials_fondeo || '96' }}
-      PHASE2_MAX_DATASETS: "3"
+      PHASE2_MAX_DATASETS: "12"
       PHASE2_TOP_VALIDATION: "20"
       DATA_DIR: "data/phase2-live"
       PHASE2_DATA_DIR: "data/phase2-live/normalized"
@@ -76,7 +75,13 @@ jobs:
           RUN_LIVE_BINGX_TESTS: "1"
         run: npm run test:ingestion
 
+      - name: Resolve real BingX research universe
+        id: universe
+        run: npx tsx scripts/resolve_phase2_universe.ts
+
       - name: Acquire real historical data
+        env:
+          PHASE2_SYMBOLS: ${{ steps.universe.outputs.symbols }}
         run: npx tsx scripts/sync_phase2_history.ts
 
       - name: Verify acquired data custody
@@ -85,9 +90,9 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import hashlib, json
-          for path in sorted(Path('data/phase2-live/normalized').glob('ds_bingx_*.json')):
-              if path.name.endswith('_manifest.json'):
-                  continue
+          files = sorted(Path('data/phase2-live/normalized').glob('ds_bingx_*.json'))
+          assert files, 'NO_NORMALIZED_DATASETS'
+          for path in files:
               manifest_path = path.with_name(path.stem + '_manifest.json')
               manifest = json.loads(manifest_path.read_text())
               digest = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -95,11 +100,19 @@ jobs:
               assert manifest['closedRecordsOnly'] is True
               assert manifest['completeHistory'] is True
               assert int(manifest['recordCount']) == len(json.loads(path.read_text()))
-          print('PHASE2_DATA_CUSTODY: PASS')
+          print(f'PHASE2_DATA_CUSTODY: PASS ({len(files)} datasets)')
           PY
 
       - name: Canonical phase-2 research
         run: python scripts/phase2_research_adapter.py
+
+      - name: Verify trial planner integration
+        run: |
+          python - <<'PY'
+          from scripts.phase2_trial_planner import PLANNER_VERSION
+          assert PLANNER_VERSION == 'phase2-stratified-v1'
+          print('PHASE2_TRIAL_PLANNER: PASS')
+          PY
 
       - name: Upload complete phase-2 evidence
         uses: actions/upload-artifact@v4
