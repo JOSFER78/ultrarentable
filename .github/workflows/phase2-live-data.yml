@@ -1,4 +1,4 @@
-name: Phase 2 Live Data Acquisition
+name: Phase 2 Live Data + Research
 
 on:
   workflow_dispatch:
@@ -15,19 +15,38 @@ on:
         description: "Comma-separated BingX perpetual symbols"
         required: false
         default: "BTC-USDT,ETH-USDT,SOL-USDT"
+      max_trials_ultra:
+        description: "Deterministic ULTRA trial budget per dataset"
+        required: false
+        default: "128"
+      max_trials_fondeo:
+        description: "Deterministic FONDEO trial budget per dataset"
+        required: false
+        default: "96"
+  push:
+    paths:
+      - ".phase2/GO_NOW"
 
 concurrency:
-  group: phase2-live-data
+  group: phase2-live-research
   cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
-  acquire:
-    name: Acquire real BingX history
+  acquire-and-research:
+    name: Real data -> discovery -> validation -> blind OOS evidence
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
+    env:
+      PHASE2_HISTORY_DAYS: ${{ inputs.days || '365' }}
+      PHASE2_INTERVAL: ${{ inputs.interval || '1h' }}
+      PHASE2_SYMBOLS: ${{ inputs.symbols || 'BTC-USDT,ETH-USDT,SOL-USDT' }}
+      PHASE2_MAX_TRIALS_ULTRA: ${{ inputs.max_trials_ultra || '128' }}
+      PHASE2_MAX_TRIALS_FONDEO: ${{ inputs.max_trials_fondeo || '96' }}
+      PHASE2_MAX_DATASETS: "3"
+      PHASE2_TOP_VALIDATION: "20"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,32 +57,58 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Clean install
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Clean Node install
         run: npm ci
+
+      - name: Frozen Python install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
 
       - name: Live BingX smoke test
         env:
           RUN_LIVE_BINGX_TESTS: "1"
         run: npm run test:ingestion
 
-      - name: Acquire phase-2 history
-        env:
-          PHASE2_HISTORY_DAYS: ${{ inputs.days }}
-          PHASE2_INTERVAL: ${{ inputs.interval }}
-          PHASE2_SYMBOLS: ${{ inputs.symbols }}
+      - name: Acquire real historical data
         run: npx tsx scripts/sync_phase2_history.ts
 
-      - name: Report data artifacts
+      - name: Verify acquired data custody
         run: |
-          find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*.json' -print | sort
-          find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*_manifest.json' -print | sort
+          test -n "$(find data/normalized -maxdepth 1 -type f -name 'ds_bingx_*.json' ! -name '*_manifest.json' -print -quit)"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          for path in sorted(Path('data/normalized').glob('ds_bingx_*.json')):
+              if path.name.endswith('_manifest.json'):
+                  continue
+              manifest_path = path.with_name(path.stem + '_manifest.json')
+              manifest = json.loads(manifest_path.read_text())
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              assert digest == manifest['physicalFileSha256'], path.name
+              assert manifest['closedRecordsOnly'] is True
+              assert manifest['completeHistory'] is True
+              assert int(manifest['recordCount']) == len(json.loads(path.read_text()))
+          print('PHASE2_DATA_CUSTODY: PASS')
+          PY
 
-      - name: Persist acquired dataset artifacts
+      - name: Canonical phase-2 research
+        run: python scripts/phase2_research_adapter.py
+
+      - name: Upload complete phase-2 evidence
         uses: actions/upload-artifact@v4
         with:
-          name: phase2-bingx-history-${{ github.run_id }}
-          retention-days: 14
+          name: phase2-real-research-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: error
           path: |
             data/normalized/ds_bingx_*.json
             data/normalized/ds_bingx_*_manifest.json
             data/raw/rest/phase2-history/**
+            data/phase2-evidence/**
+            data/evidence/**
