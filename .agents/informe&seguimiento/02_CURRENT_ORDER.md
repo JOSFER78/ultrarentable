@@ -41,23 +41,26 @@ Common failure pattern: costs/microstructure, stress slippage, regime coverage a
 ### P2-B — RESEARCH EXPANSION / HYPOTHESIS IMPROVEMENT — IN PROGRESS
 - Strategy evolution has been expanded from simple parameter nudges to structural mutations: signal-family swaps, volatility/volume/breakout confirmation, exit-family changes, session changes, complexity reduction/increase, and stop/target adaptations.
 - All emitted structural mutations are constrained to families currently executable by the canonical Ultra strategy builder; they are not UI-only labels.
-- **Bounded evolution is now diversity-preserving:** when the daemon asks for only 4 children, selection takes deterministic representatives across structural/regime, exit/risk, session/complexity and entry-dynamics groups instead of consuming the first four mutations.
-- StrategyResearchLoop evaluates evolved hypotheses through `FastEngineAdapter -> CanonicalCompiler -> UniversalDeterministicBacktestEngine`, keeping the optimization path on the canonical execution stack.
-- Candidate frontier selection is now **family-stratified**: one best candidate per executable archetype is retained before filling remaining survivor slots by score. This prevents one family from monopolizing the next generation.
+- **Bounded evolution is diversity-preserving:** when the daemon asks for only 4 children, selection takes deterministic representatives across structural/regime, exit/risk, session/complexity and entry-dynamics groups instead of consuming the first four mutations.
+- **No-op mutations are discarded before budgeting:** a mutation that leaves all executable inputs unchanged cannot consume an evolution slot.
+- StrategyResearchLoop evaluates ULTRA hypotheses through `FastEngineAdapter -> CanonicalCompiler -> UniversalDeterministicBacktestEngine`, keeping the optimization path on the canonical execution stack.
+- **FONDEO now has its own canonical research path**: `FundingResearchLoop + FundingEvolutionEngine`, using fixed-point stop/target, bounded risk-per-trade, explicit time-stop/session mutations and the same canonical adapter/backtest chain. This prevents FONDEO candidates from accidentally being optimized as ULTRA strategies.
+- Candidate frontier selection is family-stratified for ULTRA: one best candidate per executable archetype is retained before filling remaining survivor slots by score. This prevents one family from monopolizing the next generation.
 - Validation backtests are explicitly marked `is_in_sample=False` in dataset metadata; validation remains held-out and blind OOS is untouched.
 - Candidate ranking incorporates contiguous-sample stability and cross-sample PF stability rather than raw IS profit alone.
 - Canonical indicator shifts are preserved during compilation. Breakout reference levels use `shift=1`, preventing the current decision bar from entering its own Donchian reference.
-- Regression tests cover semantic mutation effects, **small-budget mutation diversity**, family-stratified survivor selection, structural filters, score behavior, future-data rejection and temporal-shift preservation.
+- Regression tests cover semantic mutation effects, small-budget mutation diversity, semantic no-op suppression, family-stratified survivor selection, FONDEO executable session mutations, structural filters, score behavior, future-data rejection and temporal-shift preservation.
 
 ### CURRENT RESEARCH RULE
 No candidate is considered an improvement because its IS metrics rise. A useful improvement must survive validation with controlled complexity, realistic costs and stress/robustness evidence before any blind OOS decision.
 
 ### NEXT EXECUTION BLOCK
-1. Run the expanded structural-evolution campaign on real persisted datasets.
-2. Compare mutation families by validation stability and failure mode, not only top score.
-3. Expand the real-data universe where a canonical venue/data source provides complete history, including FONDEO instruments only when the required physical history and cost model exist.
-4. Re-run final blind OOS only for frozen family-level champions after research selection is complete.
-5. Promote only complete evidence-backed candidates.
+1. Run the expanded structural-evolution campaign on real persisted ULTRA datasets.
+2. Run the route-specific FONDEO evolutionary campaign only where a complete physical dataset and canonical cost model exist.
+3. Compare mutation families by validation stability and failure mode, not only top score.
+4. Expand the real-data universe where a canonical venue/data source provides complete history.
+5. Re-run final blind OOS only for frozen family-level champions after research selection is complete.
+6. Promote only complete evidence-backed candidates.
 
 ### MACROPHASE 2 EXIT STATUS
 `NOT EXIT-CERTIFIED`
