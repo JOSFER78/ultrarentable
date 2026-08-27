@@ -1,3 +1,2 @@
-PHASE2_AUTORUN=3
-Isolate live Phase-2 data under data/phase2-live so legacy datasets cannot contaminate custody checks.
-This is the final automatic retry; subsequent Phase-2 executions are manual.
+PHASE2_AUTORUN=4
+Fix adapter import path; this is the final automatic retry trigger. Subsequent Phase-2 runs are manual via workflow_dispatch.

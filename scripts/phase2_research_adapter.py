@@ -1,8 +1,14 @@
 """Compatibility adapter for the canonical Phase-2 runner and BingX array-form candles."""
 from __future__ import annotations
 
-from scripts import phase2_research_run as runner
+import sys
+from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts import phase2_research_run as runner  # noqa: E402
 
 _original_loader = runner.load_custodied_dataset
 
