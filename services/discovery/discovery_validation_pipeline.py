@@ -28,6 +28,7 @@ from contracts.snapshots.strategy_snapshot import StrategyRoute
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
 from services.discovery.funding_discovery import FundingDiscoveryEngine
 from services.discovery.strategy_search_registry import StrategySearchRegistry, SearchTrialRecord
+from services.discovery.research_objective import robust_research_score
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
@@ -48,6 +49,40 @@ def compute_file_sha256(filepath: str) -> str:
         while chunk := f.read(65536):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _candle_timestamp_ms(candle: Any) -> Optional[int]:
+    if not isinstance(candle, dict):
+        return None
+    raw = candle.get("time", candle.get("timestamp", candle.get("timestamp_utc_ms")))
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        return None
+    # Reject accidental second-based timestamps by normalising only when unambiguous.
+    if 0 < value < 10_000_000_000:
+        value *= 1000
+    return value if value > 0 else None
+
+
+def validate_real_dataset(candles: Any, file_path: str) -> tuple[bool, str]:
+    """Fail-closed physical dataset checks used before discovery."""
+    if not isinstance(candles, list) or len(candles) < 200:
+        return False, "insufficient_records"
+    timestamps = [_candle_timestamp_ms(c) for c in candles]
+    if any(ts is None for ts in timestamps):
+        return False, "invalid_or_missing_timestamps"
+    numeric_ts = [int(ts) for ts in timestamps if ts is not None]
+    if numeric_ts != sorted(numeric_ts):
+        return False, "timestamps_not_monotonic"
+    if len(set(numeric_ts)) != len(numeric_ts):
+        return False, "duplicate_timestamps"
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    if numeric_ts[-1] > now_ms:
+        return False, f"future_data_end={numeric_ts[-1]}>now={now_ms}"
+    if numeric_ts[0] >= numeric_ts[-1]:
+        return False, "invalid_time_range"
+    return True, "ok"
 
 
 class DiscoveryValidationPipeline:
@@ -78,7 +113,6 @@ class DiscoveryValidationPipeline:
     ):
         """Bucle continuo de descubrimiento y validación sobre todos los datasets físicos."""
         logger.info("Iniciando Pipeline Continuo de Discovery & Validación Real-Only...")
-
         cycle_num = 0
         while True:
             cycle_num += 1
@@ -90,13 +124,10 @@ class DiscoveryValidationPipeline:
                 if not f.endswith("_manifest.json")
             )
             logger.info(f"=== Ciclo #{cycle_num} — {len(dataset_files)} datasets detectados ===")
-
             if max_datasets:
                 dataset_files = dataset_files[:max_datasets]
-
             processed_count = 0
             certified_count = 0
-
             for file_path in dataset_files:
                 try:
                     res = self.process_dataset(file_path, cycle_num=cycle_num)
@@ -106,7 +137,6 @@ class DiscoveryValidationPipeline:
                             certified_count += 1
                 except Exception as e:
                     logger.error(f"Error procesando dataset {file_path}: {e}", exc_info=True)
-
             logger.info(
                 f"Ciclo #{cycle_num} completado: {processed_count} datasets procesados, "
                 f"{certified_count} candidatos aprobados/certificados."
@@ -125,10 +155,8 @@ class DiscoveryValidationPipeline:
 
         symbol_raw = parts[2].upper()
         timeframe = parts[3].lower()
-
         if "USDT" in symbol_raw and "-" not in symbol_raw:
-            base = symbol_raw.replace("USDT", "")
-            symbol = f"{base}-USDT"
+            symbol = f"{symbol_raw.replace('USDT', '')}-USDT"
         else:
             symbol = symbol_raw
 
@@ -143,13 +171,19 @@ class DiscoveryValidationPipeline:
         initial_cap = 1000.0 if route == StrategyRoute.ULTRA else 50000.0
 
         real_file_sha256 = compute_file_sha256(file_path)
-
         with open(file_path, "r", encoding="utf-8") as f:
             candles = json.load(f)
 
-        if not candles or len(candles) < 200:
-            logger.warning("Dataset bloqueado por cobertura insuficiente: %s", fname)
-            return None
+        valid, reason = validate_real_dataset(candles, file_path)
+        if not valid:
+            logger.warning("Dataset bloqueado por integridad temporal/estructural: %s (%s)", fname, reason)
+            return {
+                "strategy_id": f"UR_{route.value.upper()}_{symbol.upper().replace('-', '_')}_{timeframe.upper()}",
+                "route": route.value,
+                "status": "BLOCKED_INVALID_REAL_DATA",
+                "reason": reason,
+                "is_certified": False,
+            }
 
         total_bars = len(candles)
         idx_is = int(total_bars * 0.60)
@@ -160,21 +194,18 @@ class DiscoveryValidationPipeline:
 
         strat_id = f"UR_{route.value.upper()}_{symbol.upper().replace('-', '_')}_{timeframe.upper()}"
         run_id = f"run_{strat_id}_{cycle_num}"
-
         param_space = self.search_registry.generate_combinatorial_parameter_space(
             symbol=symbol,
             timeframe=timeframe,
             route=route.value,
+            max_trials=256,
+            campaign_seed=f"{CURRENT_ENGINE_VERSION}|{fname}|{route.value}",
         )
         if not param_space:
             logger.error("Discovery bloqueado: espacio de búsqueda vacío para %s", strat_id)
-            return {
-                "strategy_id": strat_id,
-                "route": route.value,
-                "status": "BLOCKED_NO_TRIAL_SPACE",
-                "is_certified": False,
-            }
+            return {"strategy_id": strat_id, "route": route.value, "status": "BLOCKED_NO_TRIAL_SPACE", "is_certified": False}
 
+        dd_ceiling = 4.5 if route == StrategyRoute.FONDEO else 25.0
         is_trial_results: List[Any] = []
         trials_count_this_run = 0
 
@@ -191,6 +222,10 @@ class DiscoveryValidationPipeline:
                     tp_atr_mult=float(p_set["tp_atr_mult"]),
                     ema_fast=int(p_set["ema_fast"]),
                     ema_slow=int(p_set["ema_slow"]),
+                    rsi_period=int(p_set["rsi_period"]),
+                    rsi_threshold_long=float(p_set["rsi_threshold_long"]),
+                    rsi_threshold_short=float(p_set["rsi_threshold_short"]),
+                    archetype=str(p_set["archetype"]),
                     pyramiding_tiers_count=int(p_set.get("pyramiding_tiers_count", 3)),
                 )
             else:
@@ -202,12 +237,15 @@ class DiscoveryValidationPipeline:
                     dataset_sha256=real_file_sha256,
                     ema_fast=int(p_set["ema_fast"]),
                     ema_slow=int(p_set["ema_slow"]),
+                    rsi_period=int(p_set["rsi_period"]),
+                    rsi_threshold_long=float(p_set["rsi_threshold_long"]),
+                    rsi_threshold_short=float(p_set["rsi_threshold_short"]),
+                    stop_loss_ticks=float(p_set["stop_loss_ticks"]),
+                    target_profit_ticks=float(p_set["target_profit_ticks"]),
+                    archetype=str(p_set["archetype"]),
                 )
 
-            is_res = self.backtest_engine.run_backtest(
-                trial_strat, candles_is, initial_capital_usd=initial_cap
-            )
-
+            is_res = self.backtest_engine.run_backtest(trial_strat, candles_is, initial_capital_usd=initial_cap)
             trial_rec = SearchTrialRecord(
                 trial_id=trial_strat_id,
                 run_id=run_id,
@@ -227,28 +265,25 @@ class DiscoveryValidationPipeline:
             )
             self.search_registry.record_trial(trial_rec)
             trials_count_this_run += 1
+            score = robust_research_score(
+                profit_factor=is_res.profit_factor,
+                max_drawdown_pct=is_res.max_drawdown_pct,
+                trades=is_res.total_trades,
+                initial_capital_usd=initial_cap,
+                net_profit_usd=is_res.net_profit_usd,
+                drawdown_ceiling_pct=dd_ceiling,
+            )
+            is_trial_results.append((score, p_set, trial_strat, is_res))
 
-            dd_penalty = max(0.01, 1.0 - (is_res.max_drawdown_pct / 100.0))
-            trades_bonus = math.log(1.0 + max(0, is_res.total_trades))
-            wr_factor = max(0.2, is_res.win_rate_pct / 50.0)
-            is_multiobj_score = is_res.profit_factor * dd_penalty * trades_bonus * wr_factor
-            is_trial_results.append((is_multiobj_score, p_set, trial_strat, is_res))
+        if not is_trial_results:
+            return {"strategy_id": strat_id, "route": route.value, "status": "BLOCKED_NO_REAL_TRIALS", "is_certified": False}
 
-        if trials_count_this_run <= 0 or not is_trial_results:
-            logger.error("Discovery bloqueado: no se han producido trials reales para %s", strat_id)
-            return {
-                "strategy_id": strat_id,
-                "route": route.value,
-                "status": "BLOCKED_NO_REAL_TRIALS",
-                "is_certified": False,
-            }
-
-        is_trial_results.sort(key=lambda x: x[0], reverse=True)
+        is_trial_results.sort(key=lambda x: (x[0], x[3].profit_factor, -x[3].max_drawdown_pct), reverse=True)
         top_is_candidates = is_trial_results[: min(20, len(is_trial_results))]
 
         best_params = None
         best_val_score = float("-inf")
-        for _, p_set, _, _ in top_is_candidates:
+        for _, p_set, _, is_res in top_is_candidates:
             v_strat_id = f"{strat_id}_val"
             if route == StrategyRoute.ULTRA:
                 v_strat = self.ultra_discovery.generate_candidate_blueprint(
@@ -261,7 +296,11 @@ class DiscoveryValidationPipeline:
                     tp_atr_mult=float(p_set["tp_atr_mult"]),
                     ema_fast=int(p_set["ema_fast"]),
                     ema_slow=int(p_set["ema_slow"]),
-                    pyramiding_tiers_count=int(p_set.get("pyramiding_tiers_count", 2)),
+                    rsi_period=int(p_set["rsi_period"]),
+                    rsi_threshold_long=float(p_set["rsi_threshold_long"]),
+                    rsi_threshold_short=float(p_set["rsi_threshold_short"]),
+                    archetype=str(p_set["archetype"]),
+                    pyramiding_tiers_count=int(p_set.get("pyramiding_tiers_count", 3)),
                 )
             else:
                 v_strat = self.funding_discovery.generate_candidate_blueprint(
@@ -272,22 +311,28 @@ class DiscoveryValidationPipeline:
                     dataset_sha256=real_file_sha256,
                     ema_fast=int(p_set["ema_fast"]),
                     ema_slow=int(p_set["ema_slow"]),
+                    rsi_period=int(p_set["rsi_period"]),
+                    rsi_threshold_long=float(p_set["rsi_threshold_long"]),
+                    rsi_threshold_short=float(p_set["rsi_threshold_short"]),
+                    stop_loss_ticks=float(p_set["stop_loss_ticks"]),
+                    target_profit_ticks=float(p_set["target_profit_ticks"]),
+                    archetype=str(p_set["archetype"]),
                 )
-
-            val_res = self.backtest_engine.run_backtest(
-                v_strat, candles_val, initial_capital_usd=initial_cap
+            val_res = self.backtest_engine.run_backtest(v_strat, candles_val, initial_capital_usd=initial_cap)
+            val_score = robust_research_score(
+                profit_factor=val_res.profit_factor,
+                max_drawdown_pct=val_res.max_drawdown_pct,
+                trades=val_res.total_trades,
+                initial_capital_usd=initial_cap,
+                net_profit_usd=val_res.net_profit_usd,
+                drawdown_ceiling_pct=dd_ceiling,
+                reference_profit_factor=is_res.profit_factor,
             )
-            val_quality = (
-                val_res.profit_factor * 100.0
-                + (val_res.net_profit_usd / max(1.0, initial_cap)) * 100.0
-                - (val_res.max_drawdown_pct * 0.5)
-            )
-            if val_quality > best_val_score:
-                best_val_score = val_quality
+            if val_score > best_val_score:
+                best_val_score = val_score
                 best_params = p_set
 
         if best_params is None:
-            logger.error("Selection blocked: validation produced no champion for %s", strat_id)
             return {
                 "strategy_id": strat_id,
                 "route": route.value,
@@ -307,7 +352,11 @@ class DiscoveryValidationPipeline:
                 tp_atr_mult=float(best_params["tp_atr_mult"]),
                 ema_fast=int(best_params["ema_fast"]),
                 ema_slow=int(best_params["ema_slow"]),
-                pyramiding_tiers_count=int(best_params.get("pyramiding_tiers_count", 2)),
+                rsi_period=int(best_params["rsi_period"]),
+                rsi_threshold_long=float(best_params["rsi_threshold_long"]),
+                rsi_threshold_short=float(best_params["rsi_threshold_short"]),
+                archetype=str(best_params["archetype"]),
+                pyramiding_tiers_count=int(best_params.get("pyramiding_tiers_count", 3)),
             )
         else:
             strategy = self.funding_discovery.generate_candidate_blueprint(
@@ -318,18 +367,19 @@ class DiscoveryValidationPipeline:
                 dataset_sha256=real_file_sha256,
                 ema_fast=int(best_params["ema_fast"]),
                 ema_slow=int(best_params["ema_slow"]),
+                rsi_period=int(best_params["rsi_period"]),
+                rsi_threshold_long=float(best_params["rsi_threshold_long"]),
+                rsi_threshold_short=float(best_params["rsi_threshold_short"]),
+                stop_loss_ticks=float(best_params["stop_loss_ticks"]),
+                target_profit_ticks=float(best_params["target_profit_ticks"]),
+                archetype=str(best_params["archetype"]),
             )
 
+        # Champion is now frozen. Blind OOS is touched only from this point onward.
         candles_pre_oos = candles_is + candles_val
-        pre_oos_bt = self.backtest_engine.run_backtest(
-            strategy, candles_pre_oos, initial_capital_usd=initial_cap
-        )
-        is_bt = self.backtest_engine.run_backtest(
-            strategy, candles_is, initial_capital_usd=initial_cap
-        )
-        oos_bt = self.backtest_engine.run_backtest(
-            strategy, candles_blind_oos, initial_capital_usd=initial_cap
-        )
+        pre_oos_bt = self.backtest_engine.run_backtest(strategy, candles_pre_oos, initial_capital_usd=initial_cap)
+        is_bt = self.backtest_engine.run_backtest(strategy, candles_is, initial_capital_usd=initial_cap)
+        oos_bt = self.backtest_engine.run_backtest(strategy, candles_blind_oos, initial_capital_usd=initial_cap)
 
         pre_oos_trades = [t.return_pct / 100.0 for t in pre_oos_bt.trades]
         is_trades = [t.return_pct / 100.0 for t in is_bt.trades]
@@ -370,7 +420,7 @@ class DiscoveryValidationPipeline:
             "trades_count": len(oos_trades),
             "trials_tested": trials_count_this_run,
             "parameters": best_params,
-            "rules": ["EMA_FAST > EMA_SLOW", "RSI > 50", "VOLATILITY_EXPANSION"],
+            "rules": [f"archetype={strategy.archetype}", f"entry={strategy.entry_rules.model_dump_json()}"],
             "indicators_count": 3,
         }
 
@@ -383,7 +433,6 @@ class DiscoveryValidationPipeline:
             trades_raw=trades_raw,
             strategy_snapshot=strategy,
         )
-
         verdict = self.cert_registry.certify_candidate(
             strategy=strategy,
             backtest_result=oos_bt,
@@ -396,23 +445,9 @@ class DiscoveryValidationPipeline:
         cur = conn.cursor()
         net_is = sum(is_trades) if is_trades else 0.0
         net_oos = sum(oos_trades) if oos_trades else 0.0
-        pf_is = (
-            sum(x for x in is_trades if x > 0)
-            / max(0.01, abs(sum(x for x in is_trades if x < 0)))
-            if is_trades
-            else 0.0
-        )
-        pf_oos = (
-            sum(x for x in oos_trades if x > 0)
-            / max(0.01, abs(sum(x for x in oos_trades if x < 0)))
-            if oos_trades
-            else 0.0
-        )
-
-        tf_bars_per_month = {
-            "1m": 43200, "5m": 8640, "15m": 2880,
-            "1h": 720, "4h": 180, "1d": 30,
-        }
+        pf_is = sum(x for x in is_trades if x > 0) / max(0.01, abs(sum(x for x in is_trades if x < 0))) if is_trades else 0.0
+        pf_oos = sum(x for x in oos_trades if x > 0) / max(0.01, abs(sum(x for x in oos_trades if x < 0))) if oos_trades else 0.0
+        tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
         bars_per_m = tf_bars_per_month.get(timeframe.lower(), 720)
         total_months = max(0.5, total_bars / bars_per_m)
         oos_months = max(0.2, len(candles_blind_oos) / bars_per_m)
@@ -426,6 +461,7 @@ class DiscoveryValidationPipeline:
             "route": route.value,
             "trials_tested": trials_count_this_run,
             "parameters_selected": best_params,
+            "selection_score_validation": best_val_score,
             "initial_capital_usd": initial_cap,
             "gates_passed_count": gates_eval.get("gates_passed_count", 0),
             "overall_score": gates_eval.get("overall_score", 0.0),
@@ -436,6 +472,7 @@ class DiscoveryValidationPipeline:
             "duration_info": {
                 "total_bars": total_bars,
                 "is_bars": len(candles_is),
+                "validation_bars": len(candles_val),
                 "blind_oos_bars": len(candles_blind_oos),
                 "total_months": round(total_months, 2),
                 "oos_months": round(oos_months, 2),
@@ -447,7 +484,6 @@ class DiscoveryValidationPipeline:
         g5_data = gates_map.get(5, {})
         real_wfo_score = float(g4_data.get("score", 0.0))
         real_mc_score = float(g5_data.get("score", 0.0))
-
         cur.execute(
             """
             INSERT INTO candidates (
@@ -511,7 +547,6 @@ class DiscoveryValidationPipeline:
             f"OOS DD: {oos_bt.max_drawdown_pct:.1f}%, "
             f"Gates: {gates_eval.get('gates_passed_count')}/11)"
         )
-
         return {
             "strategy_id": strategy.strategy_id,
             "route": route.value,
@@ -523,6 +558,7 @@ class DiscoveryValidationPipeline:
             "profit_factor_oos": round(pf_oos, 2),
             "gates_passed_count": gates_eval.get("gates_passed_count", 0),
             "trials_tested": trials_count_this_run,
+            "validation_selection_score": round(best_val_score, 4),
         }
 
 
