@@ -144,7 +144,9 @@ class StrategySearchRegistry:
             return [dict(row) for row in cur.fetchall()]
 
     @staticmethod
-    def _deterministic_budget(space: List[Dict[str, Any]], max_trials: Optional[int], campaign_seed: str) -> List[Dict[str, Any]]:
+    def _deterministic_budget(
+        space: List[Dict[str, Any]], max_trials: Optional[int], campaign_seed: str
+    ) -> List[Dict[str, Any]]:
         if max_trials is None or max_trials <= 0 or len(space) <= max_trials:
             return space
         ranked = sorted(
@@ -163,7 +165,7 @@ class StrategySearchRegistry:
         max_trials: int = 256,
         campaign_seed: str = "PHASE2_V1",
     ) -> List[Dict[str, Any]]:
-        """Construye un espacio real donde cada campo usado por el search tiene efecto en el snapshot."""
+        """Construye un espacio donde cada dimensión usada por discovery tiene efecto real."""
         route_upper = route.upper()
         space: List[Dict[str, Any]] = []
 
@@ -174,6 +176,7 @@ class StrategySearchRegistry:
             threshold_pairs = [(50.0, 50.0), (52.0, 48.0), (55.0, 45.0)]
             stop_ticks = [10.0, 15.0, 20.0]
             target_ticks = [20.0, 30.0, 45.0, 60.0]
+            time_stop_bars = [12, 24, 36, 48]
             for f in fast_emas:
                 for s in slow_emas:
                     if f >= s:
@@ -184,21 +187,23 @@ class StrategySearchRegistry:
                                 for target in target_ticks:
                                     if target <= stop:
                                         continue
-                                    space.append(
-                                        {
-                                            "ema_fast": f,
-                                            "ema_slow": s,
-                                            "rsi_period": rp,
-                                            "rsi_threshold_long": r_long,
-                                            "rsi_threshold_short": r_short,
-                                            "stop_loss_ticks": stop,
-                                            "target_profit_ticks": target,
-                                            "archetype": "INSTITUTIONAL_SESSION_MOMENTUM",
-                                            "route": route_upper,
-                                            "symbol": symbol,
-                                            "timeframe": timeframe,
-                                        }
-                                    )
+                                    for time_stop in time_stop_bars:
+                                        space.append(
+                                            {
+                                                "ema_fast": f,
+                                                "ema_slow": s,
+                                                "rsi_period": rp,
+                                                "rsi_threshold_long": r_long,
+                                                "rsi_threshold_short": r_short,
+                                                "stop_loss_ticks": stop,
+                                                "target_profit_ticks": target,
+                                                "time_stop_bars": time_stop,
+                                                "archetype": "INSTITUTIONAL_SESSION_MOMENTUM",
+                                                "route": route_upper,
+                                                "symbol": symbol,
+                                                "timeframe": timeframe,
+                                            }
+                                        )
         else:
             fast_emas = [8, 12, 20]
             slow_emas = [30, 50, 80]
@@ -206,6 +211,8 @@ class StrategySearchRegistry:
             atr_multipliers_tp = [4.0, 6.0, 8.0]
             rsi_periods = [10, 14, 21]
             threshold_pairs = [(52.0, 48.0), (55.0, 45.0), (60.0, 40.0)]
+            time_stop_bars = [24, 48, 72, 120]
+            pyramiding_counts = [0, 1, 2, 3]
             archetypes = ["MOMENTUM_BREAKOUT", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION"]
             for archetype in archetypes:
                 for f in fast_emas:
@@ -216,21 +223,24 @@ class StrategySearchRegistry:
                             for tp in atr_multipliers_tp:
                                 for rp in rsi_periods:
                                     for r_long, r_short in threshold_pairs:
-                                        space.append(
-                                            {
-                                                "ema_fast": f,
-                                                "ema_slow": s,
-                                                "sl_atr_mult": sl,
-                                                "tp_atr_mult": tp,
-                                                "rsi_period": rp,
-                                                "rsi_threshold_long": r_long,
-                                                "rsi_threshold_short": r_short,
-                                                "archetype": archetype,
-                                                "pyramiding_tiers_count": 3,
-                                                "route": route_upper,
-                                                "symbol": symbol,
-                                                "timeframe": timeframe,
-                                            }
-                                        )
+                                        for time_stop in time_stop_bars:
+                                            for tiers in pyramiding_counts:
+                                                space.append(
+                                                    {
+                                                        "ema_fast": f,
+                                                        "ema_slow": s,
+                                                        "sl_atr_mult": sl,
+                                                        "tp_atr_mult": tp,
+                                                        "rsi_period": rp,
+                                                        "rsi_threshold_long": r_long,
+                                                        "rsi_threshold_short": r_short,
+                                                        "time_stop_bars": time_stop,
+                                                        "pyramiding_tiers_count": tiers,
+                                                        "route": route_upper,
+                                                        "archetype": archetype,
+                                                        "symbol": symbol,
+                                                        "timeframe": timeframe,
+                                                    }
+                                                )
 
         return self._deterministic_budget(space, max_trials, campaign_seed)
