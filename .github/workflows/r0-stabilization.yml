@@ -1,19 +1,7 @@
 name: R0 Stabilization Gate
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "services/**"
-      - "contracts/**"
-      - "scripts/**"
-      - "tests/**"
-      - "apps/web/**"
-      - "package.json"
-      - "package-lock.json"
-      - "pyproject.toml"
-      - "uv.lock"
-      - ".github/workflows/**"
+  workflow_dispatch:
   pull_request:
     branches: [main]
     paths:
@@ -72,9 +60,9 @@ jobs:
       - name: Verify canonical domain boundary
         run: .venv/bin/python scripts/stabilization/r0_domain_boundary.py
       - name: Python compile gate
-        run: .venv/bin/python -m compileall -q services scripts tests/stabilization
+        run: .venv/bin/python -m compileall -q services scripts tests/stabilization tests/discovery
       - name: Stabilization lint gate
-        run: .venv/bin/ruff check scripts/stabilization tests/stabilization --ignore EXE001
+        run: .venv/bin/ruff check scripts/stabilization tests/stabilization tests/discovery services/discovery --ignore EXE001
       - name: Web typecheck
         working-directory: apps/web
         run: npm run typecheck
@@ -82,7 +70,7 @@ jobs:
         working-directory: apps/web
         run: npm run build
       - name: Run focused stabilization tests
-        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py tests/stabilization/test_r0_web_api_client.py tests/stabilization/test_r0_forbidden_literal_scan.py tests/stabilization/test_r0_domain_boundary.py tests/stabilization/test_legacy_compat_router.py tests/stabilization/test_r0_web_e2e.py tests/stabilization/test_r0_backend_clean_start.py tests/stabilization/test_r0_final_certification.py -q
+        run: .venv/bin/python -m pytest tests/stabilization/test_r0_dependency_authority.py tests/stabilization/test_r0_route_inventory.py tests/stabilization/test_r0_certification_evidence.py tests/stabilization/test_r0_execution_safety.py tests/stabilization/test_r0_web_api_client.py tests/stabilization/test_r0_forbidden_literal_scan.py tests/stabilization/test_r0_domain_boundary.py tests/stabilization/test_legacy_compat_router.py tests/stabilization/test_r0_web_e2e.py tests/stabilization/test_r0_backend_clean_start.py tests/stabilization/test_r0_final_certification.py tests/discovery -q
       - name: Run real web/backend E2E contract
         run: bash scripts/stabilization/r0_web_e2e.sh
       - name: Run backend clean-start contract
