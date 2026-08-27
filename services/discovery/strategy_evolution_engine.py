@@ -7,6 +7,8 @@ be evaluated again by the canonical backtest and validation pipeline.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence
 
@@ -48,9 +50,6 @@ class StrategyEvolutionEngine:
         "INCREASE_COMPLEXITY",
     )
 
-    # These are the semantic families currently represented explicitly by
-    # UltraDiscoveryEngine. Broader research families can be added only after
-    # a real compiler/runtime implementation exists for them.
     SIGNAL_FAMILIES: Sequence[str] = (
         "MOMENTUM_BREAKOUT",
         "TREND_FOLLOWING",
@@ -64,6 +63,100 @@ class StrategyEvolutionEngine:
         "TRAILING_PROFIT",
     )
 
+    MUTATION_GROUPS: Sequence[tuple[str, Sequence[str]]] = (
+        (
+            "ENTRY_DYNAMICS",
+            ("RELAX_CONFIRMATION", "TIGHTEN_CONFIRMATION", "SHIFT_FAST_REACTION", "SHIFT_SLOW_ANCHOR"),
+        ),
+        (
+            "STRUCTURAL_REGIME",
+            (
+                "SWAP_SIGNAL_FAMILY",
+                "ADD_VOLATILITY_FILTER",
+                "REMOVE_VOLATILITY_FILTER",
+                "ADD_VOLUME_CONFIRMATION",
+                "ADD_BREAKOUT_CONFIRMATION",
+            ),
+        ),
+        (
+            "EXIT_RISK",
+            ("CHANGE_EXIT_FAMILY", "WIDEN_STOP", "TIGHTEN_STOP", "WIDEN_TARGET", "TIGHTEN_TARGET"),
+        ),
+        (
+            "SESSION_COMPLEXITY",
+            ("CHANGE_SESSION", "REDUCE_COMPLEXITY", "INCREASE_COMPLEXITY"),
+        ),
+    )
+
+    @staticmethod
+    def _deterministic_rank(parent_strategy_id: str, proposal: EvolutionProposal) -> str:
+        payload = json.dumps(
+            proposal.parameters,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        return hashlib.sha256(
+            f"{parent_strategy_id}|{proposal.mutation_type}|{payload}".encode("utf-8")
+        ).hexdigest()
+
+    def _select_diverse_proposals(
+        self,
+        proposals: List[EvolutionProposal],
+        parent_strategy_id: str,
+        limit: int,
+    ) -> List[EvolutionProposal]:
+        """Select a small child budget without collapsing onto the first mutations.
+
+        The continuous daemon normally asks for only four children. A naïve
+        ``proposals[:4]`` would therefore test only confirmation/EMA nudges and
+        silently starve structural, regime and exit hypotheses. For limits >= the
+        number of semantic groups we guarantee one deterministic representative
+        from each group, then fill remaining slots by a hash-ranked exploration.
+        """
+        limit = max(0, int(limit))
+        if limit == 0 or not proposals:
+            return []
+        if limit >= len(proposals):
+            return proposals
+
+        by_type = {proposal.mutation_type: proposal for proposal in proposals}
+        selected: List[EvolutionProposal] = []
+        selected_ids: set[str] = set()
+
+        # Prefer high-information structural hypotheses when the budget is tiny.
+        group_priority = (
+            "STRUCTURAL_REGIME",
+            "EXIT_RISK",
+            "SESSION_COMPLEXITY",
+            "ENTRY_DYNAMICS",
+        )
+        ranked_groups = {
+            name: tuple(mutations)
+            for name, mutations in self.MUTATION_GROUPS
+        }
+
+        for group_name in group_priority:
+            if len(selected) >= limit:
+                break
+            candidates = [
+                by_type[m]
+                for m in ranked_groups[group_name]
+                if m in by_type
+            ]
+            if not candidates:
+                continue
+            chosen = min(candidates, key=lambda p: self._deterministic_rank(parent_strategy_id, p))
+            if chosen.mutation_id not in selected_ids:
+                selected.append(chosen)
+                selected_ids.add(chosen.mutation_id)
+
+        if len(selected) < limit:
+            remaining = [p for p in proposals if p.mutation_id not in selected_ids]
+            remaining.sort(key=lambda p: self._deterministic_rank(parent_strategy_id, p))
+            selected.extend(remaining[: limit - len(selected)])
+
+        return selected
+
     def propose(
         self,
         parent_strategy_id: str,
@@ -76,8 +169,6 @@ class StrategyEvolutionEngine:
         result: List[EvolutionProposal] = []
 
         def add(mutation_type: str, changes: Dict[str, Any], rationale: str, effect: str) -> None:
-            if len(result) >= limit:
-                return
             next_params = {**base, **changes}
             mutation_id = f"{parent_strategy_id}:{mutation_type}:{len(result)+1:02d}"
             result.append(
@@ -227,4 +318,4 @@ class StrategyEvolutionEngine:
             "Add one executable volatility-regime condition.",
         )
 
-        return result[: max(0, int(limit))]
+        return self._select_diverse_proposals(result, parent_strategy_id, limit)
