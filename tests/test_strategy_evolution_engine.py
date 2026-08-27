@@ -1,7 +1,7 @@
 from services.discovery.strategy_evolution_engine import StrategyEvolutionEngine
 
 
-def test_strategy_evolution_is_deterministic_and_semantic() -> None:
+def test_strategy_evolution_is_deterministic_and_structural() -> None:
     engine = StrategyEvolutionEngine()
     params = {
         "ema_fast": 12,
@@ -14,12 +14,14 @@ def test_strategy_evolution_is_deterministic_and_semantic() -> None:
         "archetype": "MOMENTUM_BREAKOUT",
     }
 
-    first = engine.propose("parent-1", params, archetype="MOMENTUM_BREAKOUT", limit=9)
-    second = engine.propose("parent-1", params, archetype="MOMENTUM_BREAKOUT", limit=9)
+    first = engine.propose("parent-1", params, archetype="MOMENTUM_BREAKOUT", limit=16)
+    second = engine.propose("parent-1", params, archetype="MOMENTUM_BREAKOUT", limit=16)
 
     assert first == second
-    assert len(first) == 9
-    assert any(p.mutation_type == "CHANGE_ARCHETYPE" for p in first)
+    assert len(first) == 16
+    assert any(p.mutation_type == "SWAP_SIGNAL_FAMILY" for p in first)
+    assert any(p.mutation_type == "CHANGE_EXIT_FAMILY" for p in first)
+    assert any(p.mutation_type == "ADD_VOLATILITY_FILTER" for p in first)
     assert any(p.parameters["sl_atr_mult"] != params["sl_atr_mult"] for p in first)
     assert all(p.parent_strategy_id == "parent-1" for p in first)
     assert all(p.expected_effect for p in first)
