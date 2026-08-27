@@ -5,15 +5,24 @@ import { BingXRestClient } from "../packages/bingx-client/src/rest";
 
 const INTERVAL_MS: Record<string, number> = {
   "1m": 60_000,
+  "3m": 180_000,
   "5m": 300_000,
   "15m": 900_000,
+  "30m": 1_800_000,
   "1h": 3_600_000,
+  "2h": 7_200_000,
   "4h": 14_400_000,
+  "6h": 21_600_000,
+  "8h": 28_800_000,
+  "12h": 43_200_000,
   "1d": 86_400_000,
+  "3d": 259_200_000,
+  "1w": 604_800_000,
 };
 
 const DAYS = Math.max(30, Number(process.env.PHASE2_HISTORY_DAYS || 365));
 const INTERVAL = process.env.PHASE2_INTERVAL || "1h";
+const PAGE_LIMIT = Math.min(1000, Math.max(100, Number(process.env.PHASE2_PAGE_LIMIT || 1000)));
 const SYMBOLS = (process.env.PHASE2_SYMBOLS || "BTC-USDT,ETH-USDT,SOL-USDT")
   .split(",")
   .map((value) => value.trim().toUpperCase())
@@ -34,54 +43,75 @@ function assertPositiveFinite(value: number, label: string): void {
   if (!Number.isFinite(value) || value <= 0) throw new Error(`INVALID_${label}`);
 }
 
+function mapCandle(raw: any): [number, number, number, number, number, number] | null {
+  if (Array.isArray(raw)) {
+    const [time, open, high, low, close, volume] = raw;
+    return [Number(time), Number(open), Number(high), Number(low), Number(close), Number(volume)];
+  }
+  return [
+    Number(raw?.time ?? raw?.openTime),
+    Number(raw?.open),
+    Number(raw?.high),
+    Number(raw?.low),
+    Number(raw?.close),
+    Number(raw?.volume),
+  ];
+}
+
 async function syncSymbol(client: BingXRestClient, symbol: string): Promise<void> {
   const stepMs = INTERVAL_MS[INTERVAL];
   if (!stepMs) throw new Error(`UNSUPPORTED_INTERVAL: ${INTERVAL}`);
 
-  const endTime = Date.now() - stepMs;
-  const requestedStart = endTime - DAYS * 86_400_000;
-  let cursor = requestedStart;
+  const now = Date.now();
+  const requestedEnd = Math.floor(now / stepMs) * stepMs;
+  const requestedStart = requestedEnd - DAYS * 86_400_000;
+  let pageEndExclusive = requestedEnd;
   const candles = new Map<number, number[]>();
   const rawPages: unknown[] = [];
   let pages = 0;
 
-  while (cursor <= endTime) {
-    const page = await client.getKlines(symbol, INTERVAL, 1000, cursor, endTime);
+  while (pageEndExclusive > requestedStart) {
+    const windowStart = Math.max(requestedStart, pageEndExclusive - stepMs * PAGE_LIMIT);
+    const page = await client.getKlines(symbol, INTERVAL, PAGE_LIMIT, windowStart, pageEndExclusive);
     pages += 1;
-    rawPages.push({ capturedAt: new Date().toISOString(), requestStartTime: cursor, requestEndTime: endTime, payload: page });
+    rawPages.push({
+      capturedAt: new Date().toISOString(),
+      requestStartTime: windowStart,
+      requestEndTimeExclusive: pageEndExclusive,
+      limit: PAGE_LIMIT,
+      payload: page,
+    });
     if (!Array.isArray(page) || page.length === 0) break;
 
-    let maxTimestamp = cursor - stepMs;
-    for (const candle of page) {
-      const timestamp = Number(candle?.time);
-      const open = Number(candle?.open);
-      const high = Number(candle?.high);
-      const low = Number(candle?.low);
-      const close = Number(candle?.close);
-      const volume = Number(candle?.volume);
+    let oldest = Number.POSITIVE_INFINITY;
+    for (const raw of page) {
+      const candle = mapCandle(raw);
+      if (!candle) continue;
+      const [timestamp, open, high, low, close, volume] = candle;
       if (!Number.isFinite(timestamp)) continue;
-      if (timestamp + stepMs > endTime) continue;
+      if (timestamp < requestedStart || timestamp >= requestedEnd || timestamp + stepMs > requestedEnd) continue;
       assertPositiveFinite(open, "OPEN");
       assertPositiveFinite(high, "HIGH");
       assertPositiveFinite(low, "LOW");
       assertPositiveFinite(close, "CLOSE");
+      if (!Number.isFinite(volume) || volume < 0) throw new Error(`INVALID_VOLUME: ${symbol} ${timestamp}`);
       if (high < Math.max(open, close) || low > Math.min(open, close)) {
         throw new Error(`INVALID_OHLC: ${symbol} ${timestamp}`);
       }
       candles.set(timestamp, [timestamp, open, high, low, close, volume]);
-      maxTimestamp = Math.max(maxTimestamp, timestamp);
+      oldest = Math.min(oldest, timestamp);
     }
 
-    if (maxTimestamp < cursor) break;
-    const nextCursor = maxTimestamp + stepMs;
-    if (nextCursor <= cursor) throw new Error(`PAGINATION_STALLED: ${symbol} ${cursor}`);
-    cursor = nextCursor;
-    if (page.length < 1000) break;
-    if (pages > 500) throw new Error(`PAGINATION_LIMIT_EXCEEDED: ${symbol}`);
+    if (!Number.isFinite(oldest)) break;
+    if (oldest >= pageEndExclusive) throw new Error(`PAGINATION_STALLED: ${symbol} ${pageEndExclusive}`);
+    pageEndExclusive = oldest;
+    if (page.length < PAGE_LIMIT && pageEndExclusive <= requestedStart) break;
+    if (pages > 100) throw new Error(`PAGINATION_LIMIT_EXCEEDED: ${symbol}`);
   }
 
   const normalized = [...candles.values()].sort((a, b) => a[0] - b[0]);
-  const minimumBars = Math.max(200, Math.floor(DAYS * 24 * 0.95));
+  const expectedBars = Math.floor((requestedEnd - requestedStart) / stepMs);
+  const minimumBars = Math.max(200, Math.floor(expectedBars * 0.95));
   if (normalized.length < minimumBars) {
     throw new Error(`INSUFFICIENT_HISTORY: ${symbol} got=${normalized.length} required>=${minimumBars}`);
   }
@@ -114,7 +144,7 @@ async function syncSymbol(client: BingXRestClient, symbol: string): Promise<void
     startTime: first,
     endTime: last,
     requestedStartTime: requestedStart,
-    requestedEndTime: endTime,
+    requestedEndTime: requestedEnd,
     recordCount: normalized.length,
     pageCount: pages,
     gapCount: 0,
@@ -126,7 +156,14 @@ async function syncSymbol(client: BingXRestClient, symbol: string): Promise<void
     rawPath: path.relative(DATA_ROOT, rawPath),
     normalizedPath: path.relative(DATA_ROOT, normalizedPath),
     createdAt: new Date().toISOString(),
-    request: { endpoint: "/openApi/swap/v3/quote/klines", symbol, interval: INTERVAL, requestedDays: DAYS, pageLimit: 1000 },
+    request: {
+      endpoint: "/openApi/swap/v3/quote/klines",
+      symbol,
+      interval: INTERVAL,
+      requestedDays: DAYS,
+      pageLimit: PAGE_LIMIT,
+      pagination: "backward_windowed",
+    },
   };
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf8");
   console.log(JSON.stringify({ symbol, interval: INTERVAL, daysRequested: DAYS, bars: normalized.length, pages, datasetId, physicalFileSha256 }, null, 2));
