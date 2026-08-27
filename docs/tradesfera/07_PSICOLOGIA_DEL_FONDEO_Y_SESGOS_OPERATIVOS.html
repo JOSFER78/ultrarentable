@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧠 Psicología del Fondeo & Sesgos Operativos — Ultrarentable V2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-0: #07090e;
+      --bg-1: #0e1420;
+      --bg-card: rgba(18, 26, 42, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(0, 240, 255, 0.4);
+      --accent: #00f0ff;
+      --accent-bright: #67e8f9;
+      --success: #00e676;
+      --warning: #ffb300;
+      --danger: #ff3366;
+      --purple: #c084fc;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-0);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      padding: 30px 20px;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1300px; margin: 0 auto; }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    .header-box {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(192, 132, 252, 0.08) 100%);
+      border: 1px solid var(--border-active);
+      border-radius: 20px;
+      padding: 36px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .badge-cme { background: rgba(0, 240, 255, 0.15); color: var(--accent); border: 1px solid var(--accent); }
+    .badge-success { background: rgba(0, 230, 118, 0.15); color: var(--success); border: 1px solid var(--success); }
+    .badge-purple { background: rgba(192, 132, 252, 0.15); color: var(--purple); border: 1px solid var(--purple); }
+    .badge-danger { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .mentor-card {
+      background: rgba(14, 20, 32, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      transition: all 0.2s ease;
+    }
+    .mentor-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .quote-box {
+      border-left: 4px solid var(--accent);
+      padding: 12px 18px;
+      margin: 16px 0;
+      background: rgba(0, 240, 255, 0.05);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+    }
+
+    .danger-box {
+      border-left: 4px solid var(--danger);
+      padding: 14px 18px;
+      margin: 16px 0;
+      background: rgba(255, 51, 102, 0.08);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .warning-box {
+      border-left: 4px solid var(--warning);
+      padding: 14px 18px;
+      margin: 16px 0;
+      background: rgba(255, 179, 0, 0.08);
+      border-radius: 0 8px 8px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+    }
+    tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #000;
+      font-weight: 900;
+      font-size: 13px;
+      margin-right: 10px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .checklist-item input {
+      margin-top: 5px;
+      margin-right: 12px;
+      accent-color: var(--accent);
+      width: 18px;
+      height: 18px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="header-box">
+      <div>
+        <span class="badge badge-cme">🧠 PSICOTRADING INSTITUCIONAL</span>
+        <span class="badge badge-purple">FUTUROS CME</span>
+        <span class="badge badge-success">DOCTRINA MAESTRA</span>
+      </div>
+      <h1 style="font-size: 34px; font-weight: 900; margin: 12px 0 8px 0; color: #fff;">
+        Tratado de Psicología del Fondeo & Sesgos Operativos
+      </h1>
+      <p style="color: var(--text-secondary); font-size: 16px; max-width: 900px;">
+        Síntesis técnica unificada de neurobiología del trader, erradicación de sesgos letales, control de drawdown y protocolos de reseteo mental basados en <strong>@Elpsicologodeltrading</strong>, <strong>Gerard García (@GerardGarciafx)</strong> y <strong>Vicente Pons (Tradesfera)</strong>.
+      </p>
+    </div>
+
+    <!-- TRIÁNGULO DE MENTORES -->
+    <div class="grid-3">
+      <div class="mentor-card">
+        <span class="badge badge-purple">NEUROCIENCIA & SESGOS</span>
+        <h3 style="color: var(--accent); margin: 8px 0;">Víctor Corrales</h3>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">@Elpsicologodeltrading</p>
+        <p style="font-size: 14px; color: var(--text-secondary);">
+          Especialista en desensibilización monetaria, pensamiento probabilístico (distribución de Bernoulli), anulación del secuestro amigdalino y termostato financiero.
+        </p>
+      </div>
+
+      <div class="mentor-card">
+        <span class="badge badge-cme">HARD SCALPING & DISCIPLINA</span>
+        <h3 style="color: var(--accent); margin: 8px 0;">Gerard García</h3>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">@GerardGarciafx</p>
+        <p style="font-size: 14px; color: var(--text-secondary);">
+          Operativa bajo fuego en NQ/ES, gestión del shock del paso a cuenta fondeada (PA/Live), circuit breakers personales y la doctrina del <em>Silent Trader</em> (perfil bajo).
+        </p>
+      </div>
+
+      <div class="mentor-card">
+        <span class="badge badge-success">INGENIERÍA & TRANSPARENCIA</span>
+        <h3 style="color: var(--accent); margin: 8px 0;">Vicente Pons</h3>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">Tradesfera</p>
+        <p style="font-size: 14px; color: var(--text-secondary);">
+          Matemática real de las Prop Firms, desmontaje de la ilusión del capital nominal ($50K vs $2.5K), erradicación de la falacia del coste hundido y Libro Mayor sin censura.
+        </p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 1: DINERO VIRTUAL VS REAL -->
+    <div class="glass-card">
+      <h2 style="color: var(--accent); margin-bottom: 16px;">1. La Presión del Dinero Virtual vs Real: La Ilusión del Saldo Nominal</h2>
+      
+      <div class="danger-box">
+        <strong>⚠️ La Falacia de los $50,000 Nominales (Tradesfera):</strong>
+        <p style="margin-top: 6px; font-size: 14px;">
+          Una cuenta de $50K con $2,500 de drawdown no es una cuenta de cincuenta mil dólares; es una cuenta de <strong>$2,500 de capital de supervivencia</strong>. Arriesgar $500 creyendo que es el "1%" en realidad representa el <strong>20% del margen total de quiebra</strong>.
+        </p>
+      </div>
+
+      <div class="quote-box">
+        "En la evaluación operas sin miedo porque te costó 35$. Cuando llegas a la cuenta fondeada (PA), pagas la activación y te paralizas porque crees que ya tienes algo que perder. El miedo a perder la cuenta es exactamente lo que te hace perderla en 48 horas." — <em>Gerard García</em>
+      </div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 10px; font-size: 16px;">Protocolo de Desensibilización Monetaria (Víctor Corrales)</h3>
+      <ul>
+        <li style="margin-left: 20px; margin-bottom: 6px; font-size: 14px;"><strong>Ocultar el PnL flotante:</strong> Configurar el terminal en Puntos / Ticks / R, jamás en dólares ($ USD).</li>
+        <li style="margin-left: 20px; margin-bottom: 6px; font-size: 14px;"><strong>Estrategia del Colchón (Buffer):</strong> No solicitar retiros inmediatos; construir al menos 2x el drawdown inicial con micro-contratos (MNQ/MES) antes de operar tamaño completo.</li>
+      </ul>
+    </div>
+
+    <!-- SECCIÓN 2: REVENGE TRADING & COSTE HUNDIDO -->
+    <div class="glass-card">
+      <h2 style="color: var(--danger); margin-bottom: 16px;">2. Erradicación del Revenge Trading & La Falacia del Coste Hundido</h2>
+      
+      <div class="grid-3">
+        <div>
+          <h3 style="color: var(--danger); font-size: 17px; margin-bottom: 10px;">La Trampa del Revenge Trading</h3>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+            El sentimiento de que <em>"el mercado me ha robado"</em> desata una respuesta de ira amigdalina. El trader mete doble lotaje para recuperar, perdiendo la cuenta y comprando compulsivamente otra evaluación en caliente.
+          </p>
+          <div class="checklist-item">
+            <strong>Antídoto:</strong> Cuarentena obligatoria de 24 horas. Prohibido comprar cuentas tras un blowup.
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: var(--warning); font-size: 17px; margin-bottom: 10px;">La Trampa de los Resets Frecuentes</h3>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+            Las ofertas del 80%-90% crean una falsa sensación de bajo coste. El trader gasta $2,000 en 40 resets sucesivos sin haber arreglado su fuga emocional.
+          </p>
+          <div class="checklist-item">
+            <strong>Antídoto:</strong> Tratamiento de examen como coste corporativo auditado en Libro Mayor.
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color: var(--purple); font-size: 17px; margin-bottom: 10px;">Falacia del Coste Hundido</h3>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+            Intentar "salvar" una cuenta a la que le quedan $200 de margen metiendo 2 contratos grandes de NQ. Con un movimiento de 5 ticks en contra, queda fulminada.
+          </p>
+          <div class="checklist-item">
+            <strong>Antídoto:</strong> Eutanasia operativa o reducción inmediata a 1 micro (MNQ).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: PERFIL BAJO -->
+    <div class="glass-card">
+      <h2 style="color: var(--accent); margin-bottom: 16px;">3. La Doctrina del "Silent Trader": Perfil Bajo & Cero Ego</h2>
+      <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 16px;">
+        Publicar ganancias en Instagram o decirle a familiares cuánto vas a ganar hoy añade una <strong>carga de expectativa tóxica</strong> que arruina la frialdad operativa. El trading profesional es un oficio solitario, gris, industrial y silencioso.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Conducta Tóxica (Showman)</th>
+            <th>Conducta Profesional (Silent Trader)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Subir capturas de PnL no retirado a redes sociales.</td>
+            <td>Silencio absoluto. El beneficio solo existe cuando está en el banco.</td>
+          </tr>
+          <tr>
+            <td>Decirle a familiares: "Hoy pago la cena con lo que gane en NQ".</td>
+            <td>Cero expectativas externas. El trading no se mezcla con la vida personal.</td>
+          </tr>
+          <tr>
+            <td>Euforia desmedida en días verdes; depresión en días rojos.</td>
+            <td>Línea emocional plana (Ataraxia estoica) todos los días.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECCIÓN 4: PROTOCOLOS PRE Y POST MERCADO -->
+    <div class="glass-card">
+      <h2 style="color: var(--success); margin-bottom: 16px;">4. Protocolos de Reseteo Mental: Checklists Pre & Post Mercado</h2>
+      
+      <h3 style="color: var(--accent-bright); font-size: 16px; margin-bottom: 12px;">🛫 Checklist Pre-Mercado (45 min antes)</h3>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>1. Fisiología & Respiración:</strong> Sueño > 7h, hidratación, 5 min de respiración Box (4-4-4-4). Estrés < 4/10.</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>2. Filtro Macroeconómico:</strong> ForexFactory revisado. Plano 5 min antes/después de noticias rojas (CPI, FOMC).</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>3. Mapeo de Escenarios IF-THEN:</strong> Niveles clave 1H/15M trazados; cero improvisación en la apertura.</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>4. Aceptación de Pérdida Diaria:</strong> <em>"Hoy acepto perder un máximo de -$350 USD sin que afecte mi paz mental".</em></span>
+      </div>
+
+      <h3 style="color: var(--accent-bright); font-size: 16px; margin-top: 24px; margin-bottom: 12px;">🛬 Checklist Post-Mercado (Inmediatamente al terminar)</h3>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>1. Kill Switch Físico:</strong> Cerrar la plataforma. Prohibido mirar gráficos "para ver qué habría pasado".</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>2. Libro Mayor & Journaling:</strong> Registrar cumplimiento de reglas (%), nivel de calma (1-10) y capturas técnicas.</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" checked />
+        <span><strong>3. Desconexión Total:</strong> Actividad física, paseo o desconexión absoluta de pantallas.</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>🏛️ <strong>01 Ultrarentable V2</strong> — Sistema Canónico de Trading Cuantitativo & Psicotrading de Fondeo</p>
+      <p class="mono" style="margin-top: 4px;">docs/tradesfera/07_PSICOLOGIA_DEL_FONDEO_Y_SESGOS_OPERATIVOS.md</p>
+    </div>
+
+  </div>
+</body>
+</html>
