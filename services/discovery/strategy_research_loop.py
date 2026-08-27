@@ -10,7 +10,6 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -22,6 +21,7 @@ from contracts.canonical_strategy import (
 )
 from contracts.snapshots.strategy_snapshot import StrategySnapshot
 from services.backtest.fast_engine_adapter import FastEngineAdapter
+from services.discovery.research_objective import robust_research_score
 from services.discovery.strategy_evolution_engine import StrategyEvolutionEngine
 from services.discovery.strategy_search_registry import SearchTrialRecord, StrategySearchRegistry
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
@@ -54,20 +54,37 @@ class StrategyResearchLoop:
         self.engine_version = engine_version
         self.discovery = UltraDiscoveryEngine()
         self.fast_backtest = FastEngineAdapter()
-        # Kept as a compatibility reference for callers that import this loop;
-        # quantitative candidate evaluation is performed by the canonical adapter above.
+        # Compatibility reference only; quantitative candidate evaluation uses the canonical adapter.
         self.legacy_backtest = EventBacktestEngine()
         self.evolution = StrategyEvolutionEngine()
 
     @staticmethod
     def _score(is_result: Any, validation_result: Any) -> float:
-        """Research ranking only. Never used for certification."""
-        if is_result.total_trades <= 0 or validation_result.total_trades <= 0:
+        """Research ranking only; rewards profitability plus contiguous-sample stability."""
+        is_returns = [float(t.return_pct) for t in getattr(is_result, "trades", [])]
+        validation_returns = [float(t.return_pct) for t in getattr(validation_result, "trades", [])]
+        is_score = robust_research_score(
+            profit_factor=is_result.profit_factor,
+            max_drawdown_pct=is_result.max_drawdown_pct,
+            trades=is_result.total_trades,
+            initial_capital_usd=getattr(is_result, "initial_capital_usd", 1000.0),
+            net_profit_usd=is_result.net_profit_usd,
+            drawdown_ceiling_pct=25.0,
+            returns_pct=is_returns,
+        )
+        validation_score = robust_research_score(
+            profit_factor=validation_result.profit_factor,
+            max_drawdown_pct=validation_result.max_drawdown_pct,
+            trades=validation_result.total_trades,
+            initial_capital_usd=getattr(validation_result, "initial_capital_usd", 1000.0),
+            net_profit_usd=validation_result.net_profit_usd,
+            drawdown_ceiling_pct=25.0,
+            reference_profit_factor=is_result.profit_factor,
+            returns_pct=validation_returns,
+        )
+        if is_score == float("-inf") or validation_score == float("-inf"):
             return -1e9
-        is_quality = max(0.01, is_result.profit_factor) * max(0.05, 1.0 - is_result.max_drawdown_pct / 100.0)
-        val_quality = max(0.01, validation_result.profit_factor) * max(0.05, 1.0 - validation_result.max_drawdown_pct / 100.0)
-        sample_factor = min(1.0, min(is_result.total_trades, validation_result.total_trades) / 30.0)
-        return float((0.45 * is_quality + 0.55 * val_quality) * (1.0 + sample_factor))
+        return float(0.40 * is_score + 0.60 * validation_score)
 
     def _build_strategy(
         self,
@@ -120,7 +137,6 @@ class StrategyResearchLoop:
             author="StrategyResearchLoop",
             engine_version=engine_version,
             policy_version=engine_version,
-            # Stable metadata so identical research inputs produce identical semantic hashes.
             created_at_utc="1970-01-01T00:00:00+00:00",
             parent_hash=parent_strategy_id,
             mutation_type=mutation_type,
