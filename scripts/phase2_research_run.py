@@ -225,81 +225,59 @@ def process_dataset(path: Path, cycle: int = 1) -> Dict[str, Any]:
     if best_params is None:
         return {"run_id": run_id, "status": "BLOCKED_NO_VALIDATED_CHAMPION", "dataset": path.name}
 
+    # Freeze only after IS exploration + validation selection.
+    # Blind OOS is intentionally NOT consumed by the research runner.
     frozen = strategy_from_params(route, manifest, f"{run_id}_champion", best_params, ultra, funding)
-    pre_oos = engine.run_backtest(frozen, candles_is + candles_val, initial_capital_usd=initial_capital)
     is_bt = engine.run_backtest(frozen, candles_is, initial_capital_usd=initial_capital)
-    oos_bt = engine.run_backtest(frozen, candles_blind_oos, initial_capital_usd=initial_capital)
-    is_trades = [float(t.return_pct) / 100.0 for t in is_bt.trades]
-    pre_oos_trades = [float(t.return_pct) / 100.0 for t in pre_oos.trades]
-    oos_trades = [float(t.return_pct) / 100.0 for t in oos_bt.trades]
-    trades_raw = [
-        {
-            "entry_price": t.entry_price, "exit_price": t.exit_price, "qty": t.qty, "side": t.side,
-            "net_pnl_usd": t.net_pnl_usd, "return_pct": t.return_pct, "r_multiple": t.r_multiple,
-            "equity_before_usd": t.equity_before_usd, "equity_after_usd": t.equity_after_usd,
-            "entry_bar_idx": t.entry_bar, "exit_bar_idx": t.exit_bar,
-            "entry_time_ms": t.entry_time_ms, "exit_time_ms": t.exit_time_ms,
-        } for t in oos_bt.trades
-    ]
-    candidate_info = {
+    validation_bt = engine.run_backtest(frozen, candles_val, initial_capital_usd=initial_capital)
+    strategy_hash = getattr(frozen, "canonical_hash", "")
+    if not strategy_hash:
+        raise RuntimeError("MISSING_CANONICAL_STRATEGY_HASH")
+
+    freeze = {
+        "schema": "phase2-frozen-champion-v1",
+        "run_id": run_id,
         "candidate_id": frozen.strategy_id,
-        "name": frozen.strategy_id,
         "route": route,
         "symbol": symbol,
         "timeframe": timeframe,
         "dataset_id": str(manifest["datasetId"]),
         "dataset_sha256": dataset_hash,
         "dataset_filepath": str(path),
-        "strategy_snapshot_hash": getattr(frozen, "canonical_hash", ""),
-        "roi_pct": round(((oos_bt.final_equity_usd - initial_capital) / initial_capital) * 100.0, 4),
-        "profit_factor_oos": float(oos_bt.profit_factor),
-        "max_drawdown_pct": float(oos_bt.max_drawdown_pct),
-        "net_profit_oos_usd": float(oos_bt.net_profit_usd),
-        "net_profit_usd": float(oos_bt.net_profit_usd),
-        "trades_count": len(oos_trades),
-        "trials_tested": len(params_space),
+        "strategy_snapshot_hash": strategy_hash,
         "parameters": best_params,
-        "rules": ["canonical_strategy_snapshot"],
-        "indicators_count": 3,
-        "run_id": run_id,
-        "blind_oos_start_index": idx_val,
-    }
-    orchestrator = GatePipelineOrchestrator(evidence_base_dir=str(EVIDENCE_DIR))
-    gates = orchestrator.run_all_gates(
-        candidate_info=candidate_info,
-        candles=candles,
-        is_trades=is_trades,
-        oos_trades=oos_trades,
-        pre_oos_trades=pre_oos_trades,
-        trades_raw=trades_raw,
-        strategy_snapshot=frozen,
-    )
-
-    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
-    report = {
-        "run_id": run_id,
-        "dataset_id": manifest["datasetId"],
-        "dataset_sha256": dataset_hash,
-        "physical_file_sha256": sha256_bytes(path),
-        "symbol": symbol,
-        "interval": timeframe,
-        "route": route,
-        "partition": {"is_pct": 60, "validation_pct": 20, "blind_oos_pct": 20, "blind_oos_start_index": idx_val},
         "trial_budget": len(params_space),
         "candidate_search_space": len(full_space),
         "top_validation": min(TOP_VALIDATION, len(trials)),
-        "champion_parameters": best_params,
-        "champion_strategy_hash": getattr(frozen, "canonical_hash", ""),
-        "is": {"trades": len(is_bt.trades), "pf": is_bt.profit_factor, "dd_pct": is_bt.max_drawdown_pct, "net_profit_usd": is_bt.net_profit_usd},
-        "validation_selection_score": best_val,
-        "blind_oos": {"trades": len(oos_bt.trades), "pf": oos_bt.profit_factor, "dd_pct": oos_bt.max_drawdown_pct, "net_profit_usd": oos_bt.net_profit_usd, "roi_pct": candidate_info["roi_pct"]},
-        "gates": gates,
-        "status": "APPROVED" if gates.get("overall_certified") else gates.get("status_lifecycle", "REJECTED"),
+        "partition": {
+            "is_pct": 60,
+            "validation_pct": 20,
+            "blind_oos_pct": 20,
+            "blind_oos_start_index": idx_val,
+        },
+        "is": {
+            "trades": len(is_bt.trades),
+            "pf": float(is_bt.profit_factor),
+            "dd_pct": float(is_bt.max_drawdown_pct),
+            "net_profit_usd": float(is_bt.net_profit_usd),
+        },
+        "validation": {
+            "trades": len(validation_bt.trades),
+            "pf": float(validation_bt.profit_factor),
+            "dd_pct": float(validation_bt.max_drawdown_pct),
+            "net_profit_usd": float(validation_bt.net_profit_usd),
+            "selection_score": best_val,
+        },
+        "blind_oos": {
+            "status": "NOT_CONSUMED",
+            "access_policy": "SEPARATE_FROZEN_RUN_ONLY",
+        },
+        "status": "FROZEN_VALIDATION_CHAMPION",
     }
-    out = EVIDENCE_DIR / f"{run_id}.json"
-    out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-    return report
-
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    out = EVIDENCE_DIR / f"{run_id}_frozen.json"
+    out.write_text(json.dumps(freeze, indent=2, ensure_ascii=False), encoding="utf-8")
+    return freeze
 
 def main() -> int:
     datasets = sorted(
