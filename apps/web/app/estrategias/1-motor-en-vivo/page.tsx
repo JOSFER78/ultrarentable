@@ -1,7 +1,12 @@
 "use client";
 
-import MotorBacktestView from "@/components/MotorBacktestView";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function StrategiesPage() {
-  return <MotorBacktestView />;
+export default function RedirectToEstrategias() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/estrategias");
+  }, [router]);
+  return null;
 }

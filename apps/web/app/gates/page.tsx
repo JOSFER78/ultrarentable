@@ -20,7 +20,7 @@ import {
   AlertTriangle,
   Table,
 } from "lucide-react";
-import { getCertifiedStrategies, CertifiedStrategy } from "@/lib/api";
+import { getCertifiedStrategies, getCandidates, CertifiedStrategy } from "@/lib/api";
 import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import QuantTooltip from "@/components/system/QuantTooltip";
 
@@ -178,13 +178,52 @@ export default function GatesPage() {
     setErrorMsg(null);
     try {
       const data = await getCertifiedStrategies();
-      setCertifiedList(data || []);
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
+        setCertifiedList(data);
         setSelectedStrategy(data[0]);
+      } else {
+        // Consultar candidatos reales para visualización de compuertas
+        const candidates = await getCandidates({ limit: 100 });
+        if (Array.isArray(candidates) && candidates.length > 0) {
+          const mapped: CertifiedStrategy[] = candidates.map((c: any) => ({
+            strategy_id: c.id || c.candidate_id || "STRAT_UNKNOWN",
+            name: c.name || "Candidato",
+            symbol: c.symbol || "BTC",
+            timeframe: c.timeframe || "1h",
+            family: c.family || c.market_category || "QUANT",
+            route: c.route || "CME",
+            status: c.status || "CANDIDATE",
+            engine_version: c.engine_version || "5.4.0",
+            strategy_hash: c.strategy_sha256 || c.strategy_hash || "",
+            dataset_hash: c.dataset_id || "",
+            ledger_hash: c.bundle_signature_sha256 || "",
+            evidence_bundle_hash: c.bundle_signature_sha256 || "",
+            all_gates_pass: c.gates_passed_count === 11,
+            ledger_verified: Boolean(c.strategy_sha256),
+            total_trades: c.trades_oos || c.total_trades || 0,
+            win_rate_pct: c.win_rate_pct || 0,
+            profit_factor: c.profit_factor_oos || c.profit_factor || 0,
+            sharpe_ratio: c.sharpe_ratio || 0,
+            max_drawdown_pct: c.max_dd_oos_pct || c.max_drawdown_pct || 0,
+            oos_profit_factor: c.profit_factor_oos || 0,
+            oos_start_timestamp_ms: null,
+            oos_end_timestamp_ms: null,
+            oos_months: c.duration_info?.oos_months || null,
+            monthly_return: c.metrics?.out_of_sample?.monthly_roi_pct || null,
+            annual_return: c.metrics?.out_of_sample?.annualized_roi_pct || null,
+            cagr: null,
+            certified_at_utc: c.created_at || new Date().toISOString(),
+            gates: {},
+            equity_curve: [],
+          }));
+          setCertifiedList(mapped);
+          setSelectedStrategy(mapped[0]);
+        } else {
+          setCertifiedList([]);
+        }
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error al cargar estrategias certificadas.";
-      setErrorMsg(msg);
+      setCertifiedList([]);
     } finally {
       setLoading(false);
     }

@@ -1,28 +1,42 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Activity,
-  Clock,
-  ChevronDown,
-  Layers,
-  Sparkles,
-  Zap,
-  Building2,
-  ShieldCheck,
-  Award,
-  BarChart2,
-} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronRight } from "lucide-react";
+
+interface BreadcrumbMap {
+  [key: string]: { section: string; title: string };
+}
+
+const ROUTE_METADATA: BreadcrumbMap = {
+  "/": { section: "Inicio", title: "Centro de Mando Cuantitativo" },
+  "/estrategias": { section: "Laboratorio Core", title: "Strategy Lab & Descubrimiento" },
+  "/strategies": { section: "Laboratorio Core", title: "Strategy Lab" },
+  "/candidatos": { section: "Laboratorio Core", title: "Explorador de Candidatos SQLite WAL" },
+  "/gates": { section: "Laboratorio Core", title: "Pipeline de 11 Evidence Gates" },
+  "/portfolio": { section: "Laboratorio Core", title: "Portafolio Studio & Paridad de Riesgo" },
+  "/bifurcacion": { section: "Rutas de Operación", title: "Bifurcación Dual Master" },
+  "/bifurcacion/ultrarentable": { section: "Rutas de Operación", title: "Track ULTRA (BingX Perps)" },
+  "/bifurcacion/fondeo": { section: "Rutas de Operación", title: "Track FONDEO (CME Futures)" },
+  "/ultra": { section: "Rutas de Operación", title: "Track ULTRA (BingX Perps)" },
+  "/fondeo": { section: "Rutas de Operación", title: "Track FONDEO (CME Futures)" },
+  "/tradesfera": { section: "Ecosistema", title: "Portal Tradesfera V2 (18 Módulos)" },
+  "/prop-firms": { section: "Ecosistema", title: "Catálogo 70 Prop Firms CME" },
+  "/trading-desk": { section: "Ecosistema", title: "Trading Desk CME en Vivo" },
+  "/trading-desk/posiciones": { section: "Trading Desk", title: "Posiciones & Brackets" },
+  "/trading-desk/estrategias": { section: "Trading Desk", title: "Estrategias Activas" },
+  "/trading-desk/riesgo": { section: "Trading Desk", title: "Sentinel de Riesgo" },
+  "/trading-desk/auditoria": { section: "Trading Desk", title: "Auditoría Forense WAL" },
+  "/trading-desk/configuracion": { section: "Trading Desk", title: "Conexión Gateway" },
+  "/sistema": { section: "Infraestructura", title: "Telemetría & Pulso 24/7" },
+};
 
 export default function Header() {
-  const pathname = usePathname();
-  const router = useRouter();
-
+  const pathname = usePathname() || "/";
   const [timeUtc, setTimeUtc] = useState<string>("");
   const [timeLocal, setTimeLocal] = useState<string>("");
   const [mounted, setMounted] = useState<boolean>(false);
-  const [viewMenuOpen, setViewMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
@@ -52,188 +66,84 @@ export default function Header() {
     return () => clearInterval(interval);
   }, []);
 
-  const getCurrentStepLabel = () => {
-    if (!pathname) return "Centro de Mando";
-    if (pathname.includes("/strategies") || pathname.includes("1-motor-en-vivo")) return "01 · Motor 24/7";
-    if (pathname.includes("/candidatos") || pathname.includes("2-explorador-excel")) return "02 · Catálogo SQLite";
-    if (pathname.includes("/gates") || pathname.includes("3-pipeline-11-gates")) return "03 · Pipeline 11 Gates";
-    if (pathname.includes("/portfolio") || pathname.includes("6-meta-estrategia")) return "04 · Portafolios";
-    if (pathname.includes("/prop-firms")) return "05 · Fondeo CME 70 Tiers";
-    if (pathname.includes("5-estrategias-aprobadas")) return "Bóveda Aprobadas";
-    if (pathname.includes("4-panel-investigador")) return "Panel I+D";
-    return "Ultrarentable Quant Lab";
+  const meta = ROUTE_METADATA[pathname] || {
+    section: "Plataforma",
+    title: pathname.replace(/^\//, "").replace(/-/g, " ").toUpperCase() || "General",
   };
-
-  const navShortcuts = [
-    { label: "1. Motor & Backtest", href: "/strategies", icon: Zap, color: "#38bdf8" },
-    { label: "2. Catálogo de Candidatos", href: "/candidatos", icon: Layers, color: "#818cf8" },
-    { label: "3. Pipeline 11 Gates", href: "/gates", icon: ShieldCheck, color: "#10b981" },
-    { label: "4. Portafolio Studio", href: "/portfolio", icon: BarChart2, color: "#c084fc" },
-    { label: "5. Catálogo 70 Prop Firms", href: "/prop-firms", icon: Building2, color: "#f59e0b" },
-    { label: "Bóveda Certificadas (11/11)", href: "/estrategias/5-estrategias-aprobadas", icon: Award, color: "#10b981" },
-  ];
 
   return (
     <header
       suppressHydrationWarning
       style={{
-        height: "50px",
-        background: "rgba(8, 12, 20, 0.94)",
-        backdropFilter: "blur(16px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        height: "44px",
+        background: "#080c14",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.07)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 16px",
+        padding: "0 18px",
         position: "sticky",
         top: 0,
         zIndex: 100,
         boxSizing: "border-box",
       }}
     >
-      {/* 1. SECCIÓN IZQUIERDA: SELECTOR RÁPIDO DE VISTA */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", position: "relative" }}>
-        <button
-          onClick={() => setViewMenuOpen(!viewMenuOpen)}
+      {/* 1. BREADCRUMBS JERÁRQUICOS DISCRETOS */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", fontFamily: "var(--font-mono, monospace)" }}>
+        <Link
+          href="/"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "7px",
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            padding: "5px 10px",
-            borderRadius: "7px",
-            cursor: "pointer",
-            color: "#f8fafc",
-            fontSize: "12px",
-            fontWeight: 700,
-            fontFamily: "var(--font-mono, monospace)",
-            transition: "all 0.15s ease",
+            color: "#64748b",
+            textDecoration: "none",
+            fontWeight: 600,
+            transition: "color 0.15s",
           }}
         >
-          <span
-            style={{
-              width: "7px",
-              height: "7px",
-              borderRadius: "50%",
-              backgroundColor: "#10b981",
-              boxShadow: "0 0 8px #10b981",
-            }}
-          />
-          <span>{getCurrentStepLabel()}</span>
-          <ChevronDown style={{ width: "13px", height: "13px", color: "#94a3b8" }} />
-        </button>
-
-        {viewMenuOpen && (
-          <div
-            style={{
-              position: "absolute",
-              top: "38px",
-              left: 0,
-              width: "240px",
-              background: "rgba(10, 15, 26, 0.98)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "10px",
-              boxShadow: "0 12px 32px rgba(0, 0, 0, 0.6)",
-              padding: "6px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "2px",
-              zIndex: 300,
-            }}
-            onMouseLeave={() => setViewMenuOpen(false)}
-          >
-            <div
-              style={{
-                fontSize: "9px",
-                fontWeight: 800,
-                color: "#64748b",
-                letterSpacing: "0.8px",
-                padding: "4px 8px",
-                textTransform: "uppercase",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
-            >
-              ACCESO DIRECTO EMBUDO
-            </div>
-            {navShortcuts.map((item) => (
-              <button
-                key={item.href}
-                onClick={() => {
-                  router.push(item.href);
-                  setViewMenuOpen(false);
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "7px 9px",
-                  borderRadius: "6px",
-                  background: pathname === item.href ? "rgba(255, 255, 255, 0.08)" : "transparent",
-                  border: "none",
-                  color: "#cbd5e1",
-                  fontSize: "11.5px",
-                  textAlign: "left",
-                  cursor: "pointer",
-                  transition: "background 0.1s ease",
-                }}
-              >
-                <item.icon style={{ width: "14px", height: "14px", color: item.color }} />
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
+          ULTRARENTABLE
+        </Link>
+        <ChevronRight style={{ width: "12px", height: "12px", color: "#334155" }} />
+        <span style={{ color: "#94a3b8", fontWeight: 500 }}>{meta.section}</span>
+        <ChevronRight style={{ width: "12px", height: "12px", color: "#334155" }} />
+        <span style={{ color: "#f8fafc", fontWeight: 600, letterSpacing: "0.2px" }}>{meta.title}</span>
       </div>
 
-      {/* 2. SECCIÓN DERECHA: RELOJ INSTITUCIONAL DUAL Y ESTADO SSE */}
-      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-        {/* RELOJ DUAL LOCAL / UTC */}
+      {/* 2. ESTADO DEL MOTOR & RELOJES (SIN ELEMENTOS REDUNDANTES) */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "8px",
-            background: "rgba(0, 0, 0, 0.4)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-            padding: "4px 10px",
-            borderRadius: "6px",
-            fontSize: "11px",
+            gap: "6px",
+            background: "rgba(16, 185, 129, 0.08)",
+            border: "1px solid rgba(16, 185, 129, 0.2)",
+            padding: "2px 8px",
+            borderRadius: "4px",
+            fontSize: "10.5px",
             fontFamily: "var(--font-mono, monospace)",
-            color: "#94a3b8",
+            color: "#34d399",
+            fontWeight: 600,
           }}
         >
-          <Clock style={{ width: "12px", height: "12px", color: "#64748b" }} />
-          <span style={{ color: "#e2e8f0", fontWeight: 700 }}>{mounted ? timeUtc : "--:--:-- UTC"}</span>
-          <span style={{ color: "#475569" }}>|</span>
-          <span>{mounted ? timeLocal : "--:--:-- LOC"}</span>
+          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 6px #10b981" }} />
+          <span>v5.4.0 REAL-ONLY</span>
         </div>
 
-        {/* ESTADO BACKEND & DOCTRINA */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <button
-            onClick={() => router.push("/sistema")}
-            title="Ver Telemetría 24/7 y SystemSupervisor"
+        {mounted && (
+          <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "5px",
-              padding: "3px 8px",
-              borderRadius: "5px",
-              background: "rgba(16, 185, 129, 0.08)",
-              border: "1px solid rgba(16, 185, 129, 0.2)",
-              fontSize: "10px",
+              gap: "8px",
+              fontSize: "11px",
               fontFamily: "var(--font-mono, monospace)",
-              color: "#10b981",
-              fontWeight: 700,
-              cursor: "pointer",
-              transition: "all 0.15s ease",
+              color: "#64748b",
             }}
           >
-            <Activity style={{ width: "11px", height: "11px" }} />
-            <span>FASTAPI :8000 LIVE</span>
-          </button>
-        </div>
+            <span>{timeUtc}</span>
+            <span style={{ color: "#334155" }}>|</span>
+            <span>{timeLocal}</span>
+          </div>
+        )}
       </div>
     </header>
   );
