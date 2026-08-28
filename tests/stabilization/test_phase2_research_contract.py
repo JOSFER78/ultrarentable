@@ -14,10 +14,11 @@ def test_phase2_runner_is_finite_real_only_and_manifest_driven() -> None:
         "candles_is = candles[:idx_is]",
         "candles_val = candles[idx_is:idx_val]",
         "candles_blind_oos = candles[idx_val:]",
+        "\"status\": \"FROZEN_VALIDATION_CHAMPION\"",
+        "\"status\": \"NOT_CONSUMED\"",
         "SearchTrialRecord",
         "PHASE2_MAX_TRIALS_ULTRA",
         "PHASE2_MAX_TRIALS_FONDEO",
-        "strategy_snapshot=frozen",
     )
     for marker in required:
         assert marker in source, marker
@@ -31,3 +32,13 @@ def test_phase2_workflow_is_not_on_every_push() -> None:
     assert "paths:" in source
     assert ".phase2/GO_NOW" in source
     assert "cancel-in-progress: false" in source
+
+
+def test_blind_oos_is_separate_from_research_runner() -> None:
+    blind = ROOT / "scripts/phase2_blind_oos.py"
+    source = blind.read_text(encoding="utf-8")
+    assert "phase2-frozen-champion-v1" in source
+    assert "CHAMPION_NOT_FROZEN" in source
+    assert "BLIND_OOS_ALREADY_CONSUMED" in source
+    assert "STRATEGY_HASH_MISMATCH" in source
+    assert "DATASET_HASH_MATCH_COUNT" in source
