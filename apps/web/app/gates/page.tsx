@@ -245,77 +245,27 @@ export default function GatesPage() {
 
       return {
         pass,
-        score: typeof gateData.score === "number" ? gateData.score : pass ? 100 : 0,
+        score: typeof gateData.score === "number" ? gateData.score : undefined,
         val,
         threshold: gateData.threshold_value ? String(gateData.threshold_value) : meta.threshold,
       };
     }
 
-    // Evaluación directa sobre métricas cuantitativas reales de la estrategia
-    const isFondeo = (strategy.route || "").toUpperCase() === "FONDEO" || !(strategy.family || "").toUpperCase().includes("ULTRA");
-    const dd = strategy.max_drawdown_pct ?? 0;
-    const pf = strategy.profit_factor ?? strategy.oos_profit_factor ?? 0;
-    const trades = strategy.total_trades ?? 0;
-    const maxAllowedDd = isFondeo ? 4.5 : 75.0;
-
-    let pass = false;
-    let score = 0;
-    let val = "SIN EVIDENCIA FÍSICA";
-
-    if (meta.num === 1) {
-      pass = trades >= 10;
-      score = pass ? 100 : 30;
-      val = trades >= 10 ? `${trades} trades físicos registrados` : "Muestra incompleta";
-    } else if (meta.num === 2) {
-      pass = pf >= (isFondeo ? 1.15 : 1.10);
-      score = pass ? 100 : Math.round(Math.max(0, (pf / 1.15) * 100));
-      val = `PF Neto ${pf.toFixed(2)}`;
-    } else if (meta.num === 3) {
-      pass = dd <= maxAllowedDd && dd < 90.0 && trades >= (isFondeo ? 20 : 10);
-      score = pass ? 100 : 0;
-      val = pass ? `Max DD ${dd.toFixed(1)}% (${trades} trades)` : `RECHAZO: Max DD ${dd.toFixed(1)}% excede ${maxAllowedDd}%`;
-    } else if (meta.num === 4) {
-      const wfo = strategy.wfo_pass_pct ?? (pf > 1.2 ? 70 : 35);
-      pass = wfo >= 50.0;
-      score = pass ? 100 : 40;
-      val = `WFO Eficiencia ${wfo.toFixed(1)}%`;
-    } else if (meta.num === 5) {
-      pass = dd <= maxAllowedDd && dd < 90.0;
-      score = pass ? 100 : 0;
-      val = pass ? `Ruina 0.0% (DD ${dd.toFixed(1)}%)` : `RECHAZO: Riesgo de ruina por DD ${dd.toFixed(1)}%`;
-    } else if (meta.num === 6) {
-      pass = (strategy.oos_profit_factor || pf) >= 1.05;
-      score = pass ? 100 : 40;
-      val = `PF Estrés ${(strategy.oos_profit_factor || pf).toFixed(2)}`;
-    } else if (meta.num === 7) {
-      pass = trades >= 15 && pf >= 1.05;
-      score = pass ? 100 : 45;
-      val = pass ? "Regímenes Bull/Bear activos" : "Cobertura insuficiente";
-    } else if (meta.num === 8) {
-      const sharpe = strategy.sharpe_ratio ?? 0;
-      pass = sharpe >= 1.0;
-      score = pass ? 100 : 40;
-      val = `Sharpe Ratio ${sharpe.toFixed(2)}`;
-    } else if (meta.num === 9) {
-      pass = pf >= 1.05;
-      score = pass ? 100 : 50;
-      val = "Estructura AST validada";
-    } else if (meta.num === 10) {
-      pass = dd <= maxAllowedDd && pf >= 1.05 && dd < 90.0;
-      score = pass ? 100 : 0;
-      val = pass ? "Consenso Comité OK" : `VETO RIESGO: DD ${dd.toFixed(1)}%`;
-    } else if (meta.num === 11) {
-      pass = dd <= maxAllowedDd && dd < 90.0;
-      score = pass ? 100 : 0;
-      val = pass ? "NautilusCore OK (Sin Margin Call)" : `RECHAZO MARGIN CALL: DD ${dd.toFixed(1)}%`;
-    }
-
+    // Sin entrada de gate real en el payload del backend: ausencia de evidencia explícita.
+    // Prohibido derivar pass/fail de métricas crudas (ZERO-FORCING / EVIDENCE-GATED).
     return {
-      pass,
-      score,
-      val,
+      pass: false,
+      score: undefined,
+      val: "SIN EVIDENCIA FÍSICA (NO_EVIDENCE)",
       threshold: meta.threshold,
     };
+  };
+
+  const hasAnyGateData = (strategy: CertifiedStrategy) => {
+    const rawGates = strategy.gates;
+    if (Array.isArray(rawGates)) return rawGates.length > 0;
+    if (rawGates && typeof rawGates === "object") return Object.keys(rawGates).length > 0;
+    return false;
   };
 
   // Contar compuertas superadas reales
@@ -453,10 +403,11 @@ export default function GatesPage() {
                 {filteredStrategies.map((st) => {
                   const isSelected = selectedStrategy?.strategy_id === st.strategy_id;
                   const isUltra = (st.family || "").toUpperCase().includes("ULTRA") || (st.name || "").toLowerCase().includes("ultra") || (st.route || "").toUpperCase() === "ULTRA";
-                  const shortHash = (st.strategy_hash || st.strategy_id || "").slice(0, 8);
+                  const shortHash = st.strategy_hash && st.strategy_hash.trim() !== "" ? `${st.strategy_hash.slice(0, 8)}...` : null;
+                  const hasGateData = hasAnyGateData(st);
                   const passedCount = getStrategyGateSummary(st);
-                  const isFullyCertified = passedCount === 11;
-                  const dd = st.max_drawdown_pct ?? 0;
+                  const isFullyCertified = hasGateData && passedCount === 11;
+                  const dd = st.max_drawdown_pct ?? undefined;
 
                   return (
                     <div
@@ -474,13 +425,15 @@ export default function GatesPage() {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-black font-mono border uppercase tracking-wider flex items-center gap-1 ${
-                              isFullyCertified
+                              !hasGateData
+                                ? "bg-slate-500/10 border-slate-500/40 text-slate-300"
+                                : isFullyCertified
                                 ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-300"
                                 : "bg-rose-500/10 border-rose-500/40 text-rose-300"
                             }`}
                           >
                             <Award className="w-3 h-3 text-emerald-400" />
-                            {isFullyCertified ? "TIER 1 (11/11)" : `TIER 4 (${passedCount}/11)`}
+                            {!hasGateData ? "GATES: NO EVIDENCE" : isFullyCertified ? "TIER 1 (11/11)" : `TIER 4 (${passedCount}/11)`}
                           </span>
                           <span
                             className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border ${
@@ -503,10 +456,10 @@ export default function GatesPage() {
                         </h3>
                         <div className="flex items-center gap-1.5 mt-0.5 text-[10px] font-mono text-slate-400">
                           <Hash className="w-3 h-3 text-emerald-400 flex-shrink-0" />
-                          <span>{shortHash}...</span>
-                          <span className={`font-bold ml-auto flex items-center gap-0.5 ${isFullyCertified ? "text-emerald-400" : "text-amber-400"}`}>
+                          <span>{shortHash || "NO EVIDENCE"}</span>
+                          <span className={`font-bold ml-auto flex items-center gap-0.5 ${!hasGateData ? "text-slate-500" : isFullyCertified ? "text-emerald-400" : "text-amber-400"}`}>
                             {isFullyCertified ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                            {passedCount}/11 Gates Superados
+                            {hasGateData ? `${passedCount}/11 Gates Superados` : "Gates: NO EVIDENCE"}
                           </span>
                         </div>
                       </div>
@@ -515,19 +468,19 @@ export default function GatesPage() {
                         <div>
                           <span className="text-slate-400 block text-[9px]">PF OOS</span>
                           <span className="font-bold text-emerald-400">
-                            {st.oos_profit_factor ? st.oos_profit_factor.toFixed(2) : st.profit_factor ? st.profit_factor.toFixed(2) : "N/A"}
+                            {st.oos_profit_factor ? st.oos_profit_factor.toFixed(2) : st.profit_factor ? st.profit_factor.toFixed(2) : "NO EVIDENCE"}
                           </span>
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[9px]">Sharpe</span>
                           <span className="font-bold text-indigo-300">
-                            {st.sharpe_ratio ? st.sharpe_ratio.toFixed(2) : "N/A"}
+                            {st.sharpe_ratio ? st.sharpe_ratio.toFixed(2) : "NO EVIDENCE"}
                           </span>
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[9px]">Max DD</span>
-                          <span className={`font-bold ${dd <= 4.5 ? "text-emerald-400" : dd <= 75.0 ? "text-amber-400" : "text-rose-400"}`}>
-                            {dd ? `${dd.toFixed(1)}%` : "0.0%"}
+                          <span className="font-bold text-slate-300">
+                            {dd === undefined ? "NO EVIDENCE" : `${dd.toFixed(1)}%`}
                           </span>
                         </div>
                       </div>
@@ -547,7 +500,7 @@ export default function GatesPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        {getStrategyGateSummary(selectedStrategy) === 11 ? (
+                        {hasAnyGateData(selectedStrategy) && getStrategyGateSummary(selectedStrategy) === 11 ? (
                           <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                         ) : (
                           <AlertTriangle className="w-5 h-5 text-amber-400" />
@@ -555,19 +508,21 @@ export default function GatesPage() {
                         <h2 className="text-lg font-black text-white tracking-tight">{selectedStrategy.name || selectedStrategy.strategy_id}</h2>
                       </div>
                       <p className="text-xs text-slate-400 font-mono mt-0.5">
-                        {selectedStrategy.symbol} · {selectedStrategy.timeframe} · Familia: {selectedStrategy.family || "QUANT"}
+                        {selectedStrategy.symbol} · {selectedStrategy.timeframe} · Familia: {selectedStrategy.family || "NO EVIDENCE"} · Estado backend: {selectedStrategy.status || "NO EVIDENCE"}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-black font-mono border flex items-center gap-1.5 ${
-                          getStrategyGateSummary(selectedStrategy) === 11
+                          hasAnyGateData(selectedStrategy) && getStrategyGateSummary(selectedStrategy) === 11
                             ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                             : "bg-amber-500/20 text-amber-300 border-amber-500/40"
                         }`}
                       >
-                        {getStrategyGateSummary(selectedStrategy)}/11 APROBADOS
+                        {hasAnyGateData(selectedStrategy)
+                          ? `${getStrategyGateSummary(selectedStrategy)}/11 APROBADOS`
+                          : "GATES: NO EVIDENCE"}
                       </span>
                     </div>
                   </div>
@@ -579,7 +534,7 @@ export default function GatesPage() {
                         PF OOS FÍSICO <QuantTooltip text="Profit Factor en datos fuera de muestra." />
                       </span>
                       <span className="text-base font-black text-emerald-400">
-                        {selectedStrategy.oos_profit_factor ? selectedStrategy.oos_profit_factor.toFixed(2) : selectedStrategy.profit_factor ? selectedStrategy.profit_factor.toFixed(2) : "N/A"}
+                        {selectedStrategy.oos_profit_factor ? selectedStrategy.oos_profit_factor.toFixed(2) : selectedStrategy.profit_factor ? selectedStrategy.profit_factor.toFixed(2) : "NO EVIDENCE"}
                       </span>
                     </div>
 
@@ -588,7 +543,7 @@ export default function GatesPage() {
                         SHARPE RATIO <QuantTooltip text="Ratio de rendimiento ajustado por riesgo." />
                       </span>
                       <span className="text-base font-black text-indigo-300">
-                        {selectedStrategy.sharpe_ratio ? selectedStrategy.sharpe_ratio.toFixed(2) : "N/A"}
+                        {selectedStrategy.sharpe_ratio ? selectedStrategy.sharpe_ratio.toFixed(2) : "NO EVIDENCE"}
                       </span>
                     </div>
 
@@ -596,8 +551,10 @@ export default function GatesPage() {
                       <span className="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
                         MAX DRAWDOWN <QuantTooltip text="Máxima caída acumulada en la cuenta." />
                       </span>
-                      <span className={`text-base font-black ${(selectedStrategy.max_drawdown_pct ?? 0) <= 4.5 ? "text-emerald-400" : (selectedStrategy.max_drawdown_pct ?? 0) <= 75.0 ? "text-amber-400" : "text-rose-400"}`}>
-                        {selectedStrategy.max_drawdown_pct ? `${selectedStrategy.max_drawdown_pct.toFixed(1)}%` : "0.0%"}
+                      <span className="text-base font-black text-slate-300">
+                        {selectedStrategy.max_drawdown_pct === undefined || selectedStrategy.max_drawdown_pct === null
+                          ? "NO EVIDENCE"
+                          : `${selectedStrategy.max_drawdown_pct.toFixed(1)}%`}
                       </span>
                     </div>
 
@@ -606,7 +563,7 @@ export default function GatesPage() {
                         TRADES OOS <QuantTooltip text="Total de operaciones físicas fuera de muestra." />
                       </span>
                       <span className="text-base font-black text-sky-400">
-                        {selectedStrategy.total_trades || 0}
+                        {selectedStrategy.total_trades === undefined || selectedStrategy.total_trades === null ? "NO EVIDENCE" : selectedStrategy.total_trades}
                       </span>
                     </div>
                   </div>
@@ -620,7 +577,11 @@ export default function GatesPage() {
                       Auditoría Forense de las 11 Compuertas
                     </h3>
                     <span className="text-[10px] font-mono text-slate-400">
-                      ESTADO: {getStrategyGateSummary(selectedStrategy) === 11 ? "CERTIFICADA 100%" : "EN EVALUACIÓN"}
+                      ESTADO: {!hasAnyGateData(selectedStrategy)
+                        ? "NO EVIDENCE"
+                        : getStrategyGateSummary(selectedStrategy) === 11
+                        ? "CERTIFICADA 100%"
+                        : "EN EVALUACIÓN"}
                     </span>
                   </div>
 
@@ -632,7 +593,9 @@ export default function GatesPage() {
                         <div
                           key={gate.id}
                           className={`p-3.5 rounded-xl border transition-all ${
-                            res.pass
+                            res.score === undefined
+                              ? "bg-slate-950/60 border-slate-800/60"
+                              : res.pass
                               ? "bg-slate-950/80 border-slate-800/80 hover:border-slate-700"
                               : "bg-rose-950/20 border-rose-900/40"
                           }`}
@@ -669,13 +632,24 @@ export default function GatesPage() {
                             <div className="flex items-center gap-1.5 flex-shrink-0">
                               <span
                                 className={`px-2 py-0.5 rounded text-[10px] font-black font-mono border flex items-center gap-1 ${
-                                  res.pass
+                                  res.score === undefined
+                                    ? "bg-slate-800 border-slate-700 text-slate-400"
+                                    : res.pass
                                     ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-300"
                                     : "bg-rose-500/10 border-rose-500/40 text-rose-300"
                                 }`}
                               >
-                                {res.pass ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                                {res.score}/100
+                                {res.score === undefined ? (
+                                  <>
+                                    <AlertTriangle className="w-3 h-3" />
+                                    NO EVIDENCE
+                                  </>
+                                ) : (
+                                  <>
+                                    {res.pass ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                                    {res.score}/100
+                                  </>
+                                )}
                               </span>
                             </div>
                           </div>
@@ -700,23 +674,29 @@ export default function GatesPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
                     {[
-                      { label: "Strategy SHA-256", val: selectedStrategy.strategy_hash || selectedStrategy.strategy_id, key: "strat" },
-                      { label: "Ledger Root Hash", val: selectedStrategy.ledger_hash || "LEDGER_WAL_IN_SYNC", key: "ledg" },
-                      { label: "Dataset Checksum", val: selectedStrategy.dataset_hash || "DATASET_SHA256_VERIFIED", key: "data" },
-                      { label: "Evidence Bundle", val: selectedStrategy.evidence_bundle_hash || "BUNDLE_SIGNATURE_OK", key: "evid" },
+                      { label: "Strategy SHA-256", val: selectedStrategy.strategy_hash || undefined, key: "strat" },
+                      { label: "Ledger Root Hash", val: selectedStrategy.ledger_hash || undefined, key: "ledg" },
+                      { label: "Dataset Checksum", val: selectedStrategy.dataset_hash || undefined, key: "data" },
+                      { label: "Evidence Bundle", val: selectedStrategy.evidence_bundle_hash || undefined, key: "evid" },
                     ].map((h) => (
                       <div key={h.key} className="p-2 rounded-lg bg-slate-900/80 border border-slate-800/80 flex items-center justify-between gap-2">
                         <div className="min-w-0">
                           <span className="text-slate-400 block text-[9px] uppercase">{h.label}</span>
-                          <span className="text-slate-200 truncate block font-semibold">{h.val.slice(0, 20)}...</span>
+                          {h.val ? (
+                            <span className="text-slate-200 truncate block font-semibold">{h.val.slice(0, 20)}...</span>
+                          ) : (
+                            <span className="text-slate-500 font-semibold">NO EVIDENCE</span>
+                          )}
                         </div>
-                        <button
-                          onClick={() => copyToClipboard(h.val, h.key)}
-                          title="Copiar Hash SHA-256 completo"
-                          className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex-shrink-0"
-                        >
-                          {copiedHash === h.key ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                        </button>
+                        {h.val && (
+                          <button
+                            onClick={() => copyToClipboard(h.val as string, h.key)}
+                            title="Copiar Hash SHA-256 completo"
+                            className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex-shrink-0"
+                          >
+                            {copiedHash === h.key ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>

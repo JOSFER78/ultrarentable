@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Play,
+  Lock,
   CheckCircle2,
   AlertTriangle,
   RefreshCw,
@@ -16,7 +16,6 @@ import {
   DollarSign,
 } from "lucide-react";
 import {
-  executeBacktest,
   getCandidates,
   CandidateStrategy,
   BacktestResult,
@@ -45,7 +44,7 @@ export default function MotorBacktestView() {
   const [candidates, setCandidates] = useState<CandidateStrategy[]>([]);
   const [selectedStrategy, setSelectedStrategy] = useState<CandidateStrategy | null>(null);
   const [loadingCandidates, setLoadingCandidates] = useState<boolean>(true);
-  const [runningBacktest, setRunningBacktest] = useState<boolean>(false);
+  const [runningBacktest] = useState<boolean>(false);
   const [backtestResult, setBacktestResult] = useState<BacktestResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -81,8 +80,8 @@ export default function MotorBacktestView() {
 
   function selectStrategy(strat: CandidateStrategy) {
     setSelectedStrategy(strat);
-    setSymbol(strat.symbol || "BTC");
-    setTimeframe(strat.timeframe || "1h");
+    setSymbol(strat.symbol || "");
+    setTimeframe(strat.timeframe || "");
     setBacktestResult(null);
   }
 
@@ -101,31 +100,6 @@ export default function MotorBacktestView() {
       return matchesSearch && matchesSymbolFilter;
     });
   }, [candidates, searchQuery, selectedSymbolFilter]);
-
-  async function handleRunBacktest() {
-    if (!selectedStrategy) return;
-
-    setRunningBacktest(true);
-    setErrorMsg(null);
-    setBacktestResult(null);
-
-    try {
-      const result = await executeBacktest({
-        strategy_id: selectedStrategy.id,
-        symbol,
-        timeframe,
-        initial_capital: initialCapital,
-        slippage_ticks: slippageTicks,
-      });
-
-      setBacktestResult(result);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Fallo en la ejecución física del backtest.";
-      setErrorMsg(msg);
-    } finally {
-      setRunningBacktest(false);
-    }
-  }
 
   function getTrafficStatus(result: BacktestResult) {
     const pf = result.profit_factor || 0;
@@ -330,14 +304,34 @@ export default function MotorBacktestView() {
                 </div>
               </div>
 
+              {/* ESTADO BLOCKED (ORDEN-006): el envío está deshabilitado hasta que exista
+                  integración backend real con dataset canónico custodiado. */}
+              <div className="rounded-lg border border-amber-700/70 bg-amber-950/30 p-3 space-y-2">
+                <div className="flex items-center gap-2 text-amber-300 font-bold text-xs">
+                  <AlertTriangle className="w-4 h-4" />
+                  BLOCKED — REAL_ONLY_DATASET_REQUIRED
+                </div>
+                <p className="text-[11px] text-amber-200/80 leading-relaxed">
+                  Esta pantalla no envía el <span className="font-mono">dataset_id</span> canónico y el contrato del
+                  backend (<span className="font-mono">BacktestRequest</span> con validación estricta) exige{" "}
+                  <span className="font-mono">request_id</span> + <span className="font-mono">DatasetSnapshot</span>{" "}
+                  con SHA-256 del dataset custodiado. Sin ambos, toda ejecución fallaría por diseño (REAL-ONLY).
+                </p>
+                <p className="text-[11px] text-amber-200/80 leading-relaxed font-semibold">
+                  Condición de desbloqueo: orden de integración backend que resuelva el dataset físico custodiado
+                  por símbolo/timeframe y construya el contrato canónico completo. Hasta entonces, ninguna
+                  ejecución se lanza desde esta UI (no se fabrican resultados alternativos).
+                </p>
+              </div>
+
               <button
                 type="button"
-                onClick={handleRunBacktest}
-                disabled={!selectedStrategy || runningBacktest}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-cyan-700 hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2.5 font-semibold"
+                disabled
+                title="BLOCKED: REAL_ONLY_DATASET_REQUIRED — requiere orden de integración backend con dataset canónico"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-slate-800 border border-slate-700 cursor-not-allowed px-4 py-2.5 font-semibold text-slate-400"
               >
-                <Play className="w-4 h-4" />
-                {runningBacktest ? "Ejecutando motor…" : "Ejecutar backtest real"}
+                <Lock className="w-4 h-4" />
+                Backtest BLOQUEADO — REAL_ONLY_DATASET_REQUIRED
               </button>
             </div>
           </div>
@@ -350,7 +344,7 @@ export default function MotorBacktestView() {
                 <div className="py-20 text-center">
                   <DollarSign className="w-10 h-10 mx-auto text-slate-700" />
                   <div className="mt-3 font-semibold">Sin resultado de backtest</div>
-                  <div className="mt-1 text-sm text-slate-500">Ejecuta el motor para obtener métricas y evidencia reales.</div>
+                  <div className="mt-1 text-sm text-slate-500">El motor está bloqueado hasta la integración backend con dataset canónico; aquí no se fabrican resultados.</div>
                 </div>
               ) : (
                 <>

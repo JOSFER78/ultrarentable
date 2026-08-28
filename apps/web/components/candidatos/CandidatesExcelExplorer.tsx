@@ -36,9 +36,9 @@ import { getCandidates, CandidateStrategy } from "@/lib/api";
 export interface CandidateRow {
   candidate_id: string;
   name: string;
-  symbol: string;
-  timeframe: string;
-  route: "FONDEO" | "ULTRA" | string;
+  symbol?: string;
+  timeframe?: string;
+  route?: string;
   family?: string;
   archetype?: string;
   status: string;
@@ -128,80 +128,49 @@ export default function CandidatesExcelExplorer() {
     try {
       const data = await getCandidates({ limit: 500, include_rejected: true });
       const mapped: CandidateRow[] = (data || []).map((c: any) => {
-        const isFondeo = (c.route || "").toUpperCase() === "FONDEO" || (c.name || "").includes("FONDEO");
-        const ddOos = c.max_dd_oos_pct ?? c.max_drawdown_pct ?? 0;
-        const pfOos = c.profit_factor_oos ?? c.profit_factor ?? 0;
-        const tradesOos = c.trades_oos ?? c.total_trades ?? 0;
-
-        // Determinar status real y honesto según límites físicos de Drawdown
-        let realStatus = c.status || "INVESTIGACION";
-        let realReason = c.status_reason || "";
-        let realGatesPassed = c.gates_passed_count ?? 0;
-
-        if (isFondeo) {
-          if (ddOos > 4.5) {
-            realStatus = "REJECTED_ALTO_DRAWDOWN";
-            realReason = `Violación de Drawdown: ${ddOos.toFixed(1)}% excede el límite de 4.5% de Fondeo CME`;
-            realGatesPassed = Math.min(realGatesPassed, 6);
-          } else if (pfOos < 1.15) {
-            realStatus = "REJECTED_BAJO_PF";
-            realReason = `Profit Factor (${pfOos.toFixed(2)}) inferior al umbral de 1.15`;
-          } else if (tradesOos < 20) {
-            realStatus = "INVESTIGACION";
-            realReason = `Muestra insuficiente (${tradesOos} trades < 20)`;
-          } else if (realGatesPassed >= 11) {
-            realStatus = "FUNDING_CERTIFIED";
-          }
-        } else {
-          // ULTRA: doctrina SYSTEM_DOCTRINE — tolerancia de DD flotante hasta 80%, realizado hasta 75%
-          // (los filtros conservadores del 4.5% matan la convexidad antes de que la piramidación madure)
-          if (ddOos > 75.0) {
-            realStatus = "REJECTED_ALTO_DRAWDOWN";
-            realReason = `Violación de Drawdown: ${ddOos.toFixed(1)}% excede el límite de 75.0% en Ultra`;
-            realGatesPassed = Math.min(realGatesPassed, 6);
-          } else if (pfOos < 1.10) {
-            realStatus = "REJECTED_BAJO_PF";
-            realReason = `Profit Factor (${pfOos.toFixed(2)}) inferior al umbral de 1.10`;
-          } else if (realGatesPassed >= 11) {
-            realStatus = "ULTRA_CERTIFIED";
-          }
-        }
+        const isM = c.metrics?.in_sample || {};
+        const oosM = c.metrics?.out_of_sample || {};
+        const antiOverfit = c.metrics?.anti_overfit || {};
+        const routeRaw = typeof c.route === "string" ? c.route.toUpperCase() : undefined;
+        const pfOos = c.profit_factor_oos ?? c.profit_factor ?? undefined;
+        const tradesOos = c.trades_oos ?? c.total_trades ?? undefined;
 
         return {
           candidate_id: c.candidate_id,
           name: c.name || c.candidate_id,
-          symbol: c.symbol || "BTC-USDT",
-          timeframe: c.timeframe || "1h",
-          route: isFondeo ? "FONDEO" : "ULTRA",
-          family: c.family || c.archetype || "Trend",
-          archetype: c.archetype || c.family || "Trend",
-          status: realStatus,
-          status_reason: realReason,
-          tier: realStatus.includes("CERTIFIED") || realStatus === "APPROVED" ? "TIER_1_CERTIFIED" : "TIER_4_REJECTED",
-          tier_label: realStatus.includes("CERTIFIED") ? "🏆 Certificada (11/11)" : "❌ Rechazada",
-          gates_passed_count: realGatesPassed,
-          profit_factor_is: c.profit_factor_is ?? (pfOos ? pfOos * 1.15 : 0),
+          symbol: c.symbol || undefined,
+          timeframe: c.timeframe || undefined,
+          route: routeRaw,
+          family: c.family ?? c.archetype ?? undefined,
+          archetype: c.archetype ?? c.family ?? undefined,
+          status: c.status || "NO_EVIDENCE",
+          status_reason: c.status_reason || undefined,
+          tier: c.tier || undefined,
+          tier_label: c.tier_label || undefined,
+          gates_passed_count: c.gates_passed_count ?? undefined,
+          profit_factor_is: isM.profit_factor ?? c.profit_factor_is ?? undefined,
           profit_factor_oos: pfOos,
           profit_factor: pfOos,
-          max_dd_is_pct: c.max_dd_is_pct ?? (ddOos ? ddOos * 0.8 : 0),
-          max_dd_oos_pct: ddOos,
-          max_dd_floating_pct: c.max_dd_floating_pct ?? ddOos,
-          max_dd_realized_pct: c.max_dd_realized_pct ?? (ddOos ? ddOos * 0.9 : 0),
-          max_drawdown_pct: ddOos,
-          net_profit_is: c.net_profit_is ?? 0,
-          net_profit_oos: c.net_profit_oos ?? 0,
-          win_rate_pct: c.win_rate_pct ?? (c.metrics?.win_rate_pct || 52.5),
-          trades_is: c.trades_is ?? (tradesOos ? Math.round(tradesOos * 1.5) : 0),
+          max_dd_is_pct: isM.max_drawdown_pct ?? c.max_dd_is_pct ?? undefined,
+          max_dd_oos_pct: c.max_dd_oos_pct ?? undefined,
+          max_dd_floating_pct: c.max_dd_floating_pct ?? undefined,
+          max_dd_realized_pct: c.max_dd_realized_pct ?? undefined,
+          max_drawdown_pct: c.max_dd_oos_pct ?? undefined,
+          net_profit_is: isM.net_profit_usd ?? c.net_profit_is ?? undefined,
+          net_profit_oos: c.net_profit_oos ?? undefined,
+          win_rate_pct: c.win_rate_pct ?? undefined,
+          trades_is: isM.trades ?? c.trades_is ?? undefined,
           trades_oos: tradesOos,
           total_trades: tradesOos,
-          cumulative_return_pct: c.cumulative_return_pct ?? (pfOos > 1 ? (pfOos - 1) * 25 : -10),
-          annual_return_pct: c.annual_return_pct ?? (pfOos > 1 ? (pfOos - 1) * 45 : -15),
-          sharpe_ratio: c.sharpe_ratio ?? (pfOos > 1.2 ? 1.65 : 0.85),
-          dsr_ratio: c.dsr_ratio ?? (pfOos > 1.2 ? 1.72 : 0.95),
-          wfo_pass_pct: c.wfo_pass_pct ?? (pfOos > 1.2 ? 75.0 : 40.0),
-          monte_carlo_score: c.monte_carlo_score ?? (ddOos < 10 ? 95.0 : 20.0),
-          strategy_sha256: c.strategy_sha256 || c.canonical_hash || "hash_" + c.candidate_id.slice(0, 16),
-          engine_version: c.engine_version || "v5.4.0",
+          cumulative_return_pct: oosM.roi_pct ?? c.cumulative_return_pct ?? undefined,
+          annual_return_pct: oosM.annualized_roi_pct ?? c.annual_return_pct ?? undefined,
+          monthly_return_pct: oosM.monthly_roi_pct ?? c.monthly_return_pct ?? undefined,
+          sharpe_ratio: c.sharpe_ratio ?? undefined,
+          dsr_ratio: c.dsr_ratio ?? undefined,
+          wfo_pass_pct: antiOverfit.wfo_pass_pct ?? c.wfo_pass_pct ?? undefined,
+          monte_carlo_score: antiOverfit.monte_carlo_score ?? c.monte_carlo_score ?? undefined,
+          strategy_sha256: c.strategy_sha256 || c.canonical_hash || undefined,
+          engine_version: c.engine_version || undefined,
         };
       });
 
@@ -230,21 +199,20 @@ export default function CandidatesExcelExplorer() {
       if (activeTab === "ULTRA_CRYPTO" && item.route !== "ULTRA") return false;
       if (activeTab === "APPROVED_ONLY") {
         const isAppr = ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(item.status);
-        const ddOk = item.route === "FONDEO" ? (item.max_dd_oos_pct || 0) <= 4.5 : (item.max_dd_oos_pct || 0) <= 75.0;
-        if (!isAppr || !ddOk) return false;
+        if (!isAppr) return false;
       }
 
       // 2. Búsqueda texto
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchSymbol = item.symbol.toLowerCase().includes(q);
+        const matchSymbol = (item.symbol || "").toLowerCase().includes(q);
         const matchName = item.name.toLowerCase().includes(q);
         const matchId = item.candidate_id.toLowerCase().includes(q);
         if (!matchSymbol && !matchName && !matchId) return false;
       }
 
       // 3. Timeframe
-      if (timeframeFilter !== "ALL" && item.timeframe.toLowerCase() !== timeframeFilter.toLowerCase()) {
+      if (timeframeFilter !== "ALL" && (item.timeframe || "").toLowerCase() !== timeframeFilter.toLowerCase()) {
         return false;
       }
 
@@ -284,15 +252,20 @@ export default function CandidatesExcelExplorer() {
     }
   };
 
-  // KPIs
+  // KPIs (agregación solo sobre valores reales devueltos por el backend)
   const kpis = useMemo(() => {
     const total = sortedData.length;
     const approvedCount = sortedData.filter((c) => ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(c.status)).length;
-    const avgPf = total > 0 ? sortedData.reduce((acc, c) => acc + (c.profit_factor_oos || 0), 0) / total : 0;
-    const totalNetPnl = sortedData.reduce((acc, c) => acc + (c.net_profit_oos || 0), 0);
-    const avgDd = total > 0 ? sortedData.reduce((acc, c) => acc + (c.max_dd_oos_pct || 0), 0) / total : 0;
-
-    return { total, approvedCount, avgPf, totalNetPnl, avgDd };
+    const pfValues = sortedData.map((c) => c.profit_factor_oos).filter((v): v is number => typeof v === "number");
+    const pnlValues = sortedData.map((c) => c.net_profit_oos).filter((v): v is number => typeof v === "number");
+    const ddValues = sortedData.map((c) => c.max_dd_oos_pct).filter((v): v is number => typeof v === "number");
+    return {
+      total,
+      approvedCount,
+      avgPf: pfValues.length > 0 ? pfValues.reduce((acc, v) => acc + v, 0) / pfValues.length : null,
+      totalNetPnl: pnlValues.length > 0 ? pnlValues.reduce((acc, v) => acc + v, 0) : null,
+      avgDd: ddValues.length > 0 ? ddValues.reduce((acc, v) => acc + v, 0) / ddValues.length : null,
+    };
   }, [sortedData]);
 
   // Exportar a CSV
@@ -323,23 +296,23 @@ export default function CandidatesExcelExplorer() {
 
     const rows = sortedData.map((r) => [
       `"${r.candidate_id}"`,
-      `"${r.symbol}"`,
-      `"${r.timeframe}"`,
-      `"${r.route}"`,
+      `"${r.symbol || "NO EVIDENCE"}"`,
+      `"${r.timeframe || "NO EVIDENCE"}"`,
+      `"${r.route || "NO EVIDENCE"}"`,
       `"${r.status}"`,
       `"${(r.status_reason || "").replace(/"/g, '""')}"`,
-      r.gates_passed_count ?? 0,
-      r.profit_factor_oos?.toFixed(2) ?? "0.00",
-      r.max_dd_oos_pct?.toFixed(2) ?? "0.00",
-      r.net_profit_oos?.toFixed(2) ?? "0.00",
-      r.trades_oos ?? 0,
-      r.win_rate_pct?.toFixed(1) ?? "0.0",
-      r.sharpe_ratio?.toFixed(2) ?? "0.00",
-      r.dsr_ratio?.toFixed(2) ?? "0.00",
-      r.profit_factor_is?.toFixed(2) ?? "0.00",
-      r.trades_is ?? 0,
-      r.wfo_pass_pct?.toFixed(1) ?? "0.0",
-      r.monte_carlo_score?.toFixed(1) ?? "0.0",
+      r.gates_passed_count ?? "NO EVIDENCE",
+      r.profit_factor_oos?.toFixed(2) ?? "NO EVIDENCE",
+      r.max_dd_oos_pct?.toFixed(2) ?? "NO EVIDENCE",
+      r.net_profit_oos?.toFixed(2) ?? "NO EVIDENCE",
+      r.trades_oos ?? "NO EVIDENCE",
+      r.win_rate_pct?.toFixed(1) ?? "NO EVIDENCE",
+      r.sharpe_ratio?.toFixed(2) ?? "NO EVIDENCE",
+      r.dsr_ratio?.toFixed(2) ?? "NO EVIDENCE",
+      r.profit_factor_is?.toFixed(2) ?? "NO EVIDENCE",
+      r.trades_is ?? "NO EVIDENCE",
+      r.wfo_pass_pct?.toFixed(1) ?? "NO EVIDENCE",
+      r.monte_carlo_score?.toFixed(1) ?? "NO EVIDENCE",
       `"${r.strategy_sha256 || ""}"`,
     ]);
 
@@ -465,7 +438,7 @@ export default function CandidatesExcelExplorer() {
             >
               <span className="text-sm">📊</span>
               <div className="text-left">
-                <span className="block font-black leading-tight">Catálogo Completo (258)</span>
+                <span className="block font-black leading-tight">Catálogo Completo ({candidates.length})</span>
                 <span className="text-[10px] text-purple-400/80 font-normal">Inventario Maestro SQLite WAL</span>
               </div>
             </button>
@@ -499,18 +472,20 @@ export default function CandidatesExcelExplorer() {
           </div>
           <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
             <span className="text-[10px] uppercase text-slate-400 font-bold block">Profit Factor OOS Medio</span>
-            <span className="text-lg font-black text-sky-400">{kpis.avgPf.toFixed(2)}</span>
+            <span className="text-lg font-black text-sky-400">{kpis.avgPf === null ? "NO EVIDENCE" : kpis.avgPf.toFixed(2)}</span>
           </div>
           <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
             <span className="text-[10px] uppercase text-slate-400 font-bold block">PnL Neto Total OOS</span>
-            <span className={`text-lg font-black ${kpis.totalNetPnl >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-              ${kpis.totalNetPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <span className={`text-lg font-black ${kpis.totalNetPnl === null ? "text-slate-500" : kpis.totalNetPnl >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+              {kpis.totalNetPnl === null
+                ? "NO EVIDENCE"
+                : `$${kpis.totalNetPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             </span>
           </div>
           <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
             <span className="text-[10px] uppercase text-slate-400 font-bold block">Max DD OOS Promedio</span>
-            <span className={`text-lg font-black ${kpis.avgDd <= 4.5 ? "text-emerald-400" : kpis.avgDd <= 75.0 ? "text-amber-400" : "text-rose-400"}`}>
-              {kpis.avgDd.toFixed(1)}%
+            <span className={`text-lg font-black ${kpis.avgDd === null ? "text-slate-500" : kpis.avgDd <= 4.5 ? "text-emerald-400" : "text-amber-400"}`}>
+              {kpis.avgDd === null ? "NO EVIDENCE" : `${kpis.avgDd.toFixed(1)}%`}
             </span>
           </div>
         </div>
@@ -628,59 +603,58 @@ export default function CandidatesExcelExplorer() {
                   </tr>
                 ) : (
                   sortedData.map((row, idx) => {
-                    const pfOos = row.profit_factor_oos ?? row.profit_factor ?? 0;
-                    const ddOos = row.max_dd_oos_pct ?? row.max_drawdown_pct ?? 0;
+                    const pfOos = row.profit_factor_oos ?? row.profit_factor;
+                    const ddOos = row.max_dd_oos_pct ?? row.max_drawdown_pct;
                     const isFondeo = row.route === "FONDEO";
 
-                    // Semáforo estricto de Drawdown
-                    const isGoodDd = isFondeo ? ddOos <= 4.0 : ddOos <= 25.0;
-                    const isMedDd = isFondeo ? ddOos <= 4.5 : ddOos <= 75.0;
-
-                    const ddBadgeColor = isGoodDd
-                      ? "text-emerald-400 bg-emerald-950/60 border-emerald-800/80"
-                      : isMedDd
-                      ? "text-amber-400 bg-amber-950/60 border-amber-800/80"
-                      : "text-rose-400 bg-rose-950/80 border-rose-800 font-bold";
-
                     const isCertified = row.status.includes("CERTIFIED") || row.status === "APPROVED";
+                    const isRejected = row.status.startsWith("REJECTED") || row.status === "ANOMALY_REVIEW";
 
                     return (
                       <tr key={row.candidate_id || idx} className="hover:bg-slate-800/40 transition">
                         <td className={`${pad} text-center text-slate-600`}>{idx + 1}</td>
                         <td className={`${pad} font-bold text-slate-100`}>
                           <span className="flex items-center gap-1">
-                            <span>{row.symbol}</span>
+                            <span>{row.symbol || "NO EVIDENCE"}</span>
                           </span>
                         </td>
-                        <td className={`${pad} text-slate-400 text-center font-bold`}>{row.timeframe}</td>
+                        <td className={`${pad} text-slate-400 text-center font-bold`}>{row.timeframe || "NO EVIDENCE"}</td>
                         <td className={`${pad} text-slate-300 font-sans font-medium`}>
                           <div className="truncate max-w-[200px]" title={row.name}>
                             {row.name}
                           </div>
                         </td>
                         <td className={`${pad} text-center`}>
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
-                              isFondeo
-                                ? "bg-sky-950 text-sky-300 border-sky-800"
-                                : "bg-amber-950 text-amber-300 border-amber-800"
-                            }`}
-                          >
-                            {isFondeo ? "CME FONDEO" : "ULTRA CRIPTO"}
-                          </span>
+                          {row.route ? (
+                            <span
+                              className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
+                                isFondeo
+                                  ? "bg-sky-950 text-sky-300 border-sky-800"
+                                  : "bg-amber-950 text-amber-300 border-amber-800"
+                              }`}
+                            >
+                              {row.route}
+                            </span>
+                          ) : (
+                            <span className="text-slate-600 text-[10px]">NO EVIDENCE</span>
+                          )}
                         </td>
                         <td className={`${pad} text-center font-bold`}>
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] border ${
-                              row.gates_passed_count === 11
-                                ? "bg-emerald-950 text-emerald-300 border-emerald-700"
-                                : row.gates_passed_count && row.gates_passed_count >= 9
-                                ? "bg-indigo-950 text-indigo-300 border-indigo-700"
-                                : "bg-rose-950 text-rose-300 border-rose-800"
-                            }`}
-                          >
-                            {row.gates_passed_count ?? 0}/11
-                          </span>
+                          {row.gates_passed_count === undefined ? (
+                            <span className="text-slate-600 text-[10px]">NO EVIDENCE</span>
+                          ) : (
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] border ${
+                                row.gates_passed_count === 11
+                                  ? "bg-emerald-950 text-emerald-300 border-emerald-700"
+                                  : row.gates_passed_count >= 9
+                                  ? "bg-indigo-950 text-indigo-300 border-indigo-700"
+                                  : "bg-rose-950 text-rose-300 border-rose-800"
+                              }`}
+                            >
+                              {row.gates_passed_count}/11
+                            </span>
+                          )}
                         </td>
                         <td className={`${pad} text-center`}>
                           <div className="flex flex-col items-center">
@@ -688,12 +662,12 @@ export default function CandidatesExcelExplorer() {
                               className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                                 isCertified
                                   ? "bg-emerald-950 text-emerald-300 border-emerald-700"
-                                  : row.status.includes("DRAWDOWN")
+                                  : isRejected
                                   ? "bg-rose-950 text-rose-300 border-rose-700"
                                   : "bg-slate-800 text-slate-300 border-slate-700"
                               }`}
                             >
-                              {isCertified ? "🏆 CERTIFICADA" : row.status.includes("DRAWDOWN") ? "❌ DD EXCEDIDO" : "🧪 INVESTIGACIÓN"}
+                              {row.status}
                             </span>
                             {row.status_reason && (
                               <span className="text-[9px] text-slate-500 truncate max-w-[130px]" title={row.status_reason}>
@@ -702,30 +676,32 @@ export default function CandidatesExcelExplorer() {
                             )}
                           </div>
                         </td>
-                        <td className={`${pad} text-right font-bold ${pfOos >= 1.3 ? "text-emerald-400" : pfOos >= 1.1 ? "text-sky-300" : "text-amber-400"}`}>
-                          {pfOos ? pfOos.toFixed(2) : "0.00"}
+                        <td className={`${pad} text-right font-bold ${pfOos === undefined ? "text-slate-500" : pfOos >= 1.3 ? "text-emerald-400" : pfOos >= 1.1 ? "text-sky-300" : "text-amber-400"}`}>
+                          {pfOos === undefined ? "NO EVIDENCE" : pfOos.toFixed(2)}
                         </td>
                         <td className={`${pad} text-right font-mono`}>
-                          <span className={`px-1.5 py-0.5 rounded border text-[11px] ${ddBadgeColor}`}>
-                            {ddOos ? `${ddOos.toFixed(1)}%` : "0.0%"}
+                          <span className="px-1.5 py-0.5 rounded border border-slate-800 text-[11px] text-slate-300">
+                            {ddOos === undefined ? "NO EVIDENCE" : `${ddOos.toFixed(1)}%`}
                           </span>
                         </td>
-                        <td className={`${pad} text-right font-bold ${row.net_profit_oos && row.net_profit_oos >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                          {row.net_profit_oos !== undefined ? `$${row.net_profit_oos.toFixed(2)}` : "$0.00"}
+                        <td className={`${pad} text-right font-bold ${row.net_profit_oos === undefined ? "text-slate-500" : row.net_profit_oos >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                          {row.net_profit_oos === undefined ? "NO EVIDENCE" : `$${row.net_profit_oos.toFixed(2)}`}
                         </td>
                         <td className={`${pad} text-right text-slate-300`}>
-                          {row.win_rate_pct ? `${row.win_rate_pct.toFixed(1)}%` : "0.0%"}
+                          {row.win_rate_pct === undefined ? <span className="text-slate-500">NO EVIDENCE</span> : `${row.win_rate_pct.toFixed(1)}%`}
                         </td>
-                        <td className={`${pad} text-right text-slate-300`}>{row.trades_oos || 0}</td>
+                        <td className={`${pad} text-right text-slate-300`}>{row.trades_oos === undefined ? <span className="text-slate-500">NO EVIDENCE</span> : row.trades_oos}</td>
                         <td className={`${pad} text-right text-indigo-300`}>
-                          {row.sharpe_ratio ? row.sharpe_ratio.toFixed(2) : "0.00"}
+                          {row.sharpe_ratio === undefined ? <span className="text-slate-500">NO EVIDENCE</span> : row.sharpe_ratio.toFixed(2)}
                         </td>
                         <td className={`${pad} text-right text-slate-400`}>
-                          {row.profit_factor_is ? row.profit_factor_is.toFixed(2) : "0.00"}
+                          {row.profit_factor_is === undefined ? <span className="text-slate-500">NO EVIDENCE</span> : row.profit_factor_is.toFixed(2)}
                         </td>
-                        <td className={`${pad} text-right text-slate-400`}>{row.trades_is || 0}</td>
+                        <td className={`${pad} text-right text-slate-400`}>
+                          {row.trades_is === undefined ? <span className="text-slate-500">NO EVIDENCE</span> : row.trades_is}
+                        </td>
                         <td className={`${pad} text-right text-purple-300`}>
-                          {row.wfo_pass_pct ? `${row.wfo_pass_pct.toFixed(1)}%` : "0.0%"}
+                          {row.wfo_pass_pct === undefined ? <span className="text-slate-500">NO EVIDENCE</span> : `${row.wfo_pass_pct.toFixed(1)}%`}
                         </td>
                         <td className={`${pad} text-center`}>
                           {row.strategy_sha256 ? (

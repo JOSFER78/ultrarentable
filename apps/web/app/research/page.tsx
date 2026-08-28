@@ -11,20 +11,22 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 // ============================================================================
-// CATÁLOGO DE LAS 11 CLASES DE FALLO CUANTITATIVO
+// CATÁLOGO DE LAS 11 CLASES DE FALLO CUANTITATIVO (taxonomía documentada)
+// Los conteos por clase salen de la consulta real failed-candidates; si el backend
+// no entrega esa agregación, se muestra NO_EVIDENCE (nunca un número inventado).
 // ============================================================================
 const FAILURE_CATEGORIES = [
-  { id: "LOOKAHEAD_BIAS", name: "Sesgo de Anticipación (Lookahead)", count: 42, desc: "Uso de precios futuros o Close[0] no cerrado." },
-  { id: "OVERFITTING_CURVE_FITTING", name: "Sobreajuste Paramétrico (Overfitting)", count: 85, desc: "Pérdida de rendimiento en Out-of-Sample." },
-  { id: "OUTLIER_DEPENDENCY", name: "Dependencia de Outliers", count: 28, desc: "Los 2 mejores trades concentran > 20% del PnL." },
-  { id: "ASYMMETRIC_SLIPPAGE_EROSION", name: "Erosión por Slippage / Fricción", count: 19, desc: "Colapso ante comisiones taker y spreads dinámicos." },
-  { id: "REGIME_FRAGILITY", name: "Fragilidad de Régimen Macro", count: 34, desc: "Ruptura al cambiar de tendencia a rango o alta volatilidad." },
-  { id: "MARTINGALE_UNBOUNDED_RISK", name: "Riesgo No Acotado / Promediación", count: 12, desc: "Aumento de tamaño sin Stop Loss estricto." },
-  { id: "OVERNIGHT_GAP_EXPOSURE", name: "Riesgo de Gap Nocturno (CME)", count: 22, desc: "Posiciones abiertas en cierre de mercado (infracción Prop)." },
-  { id: "DRAWDOWN_TRAILING_VIOLATION", name: "Violación de Trailing DD / DLL", count: 51, desc: "Infracción del límite de pérdida diaria intra-trade." },
-  { id: "LOW_SAMPLE_SIGNIFICANCE", name: "Muestra Insuficiente (DSR Bajo)", count: 64, desc: "Menos de 30-100 trades estadísticamente válidos." },
-  { id: "EXECUTION_LATENCY_SENSITIVITY", name: "Sensibilidad a Latencia HFT", count: 15, desc: "Estrategias dependientes de fills perfectos sin slippage." },
-  { id: "NEGATIVE_CONVEXITY_FAT_TAIL", name: "Convexidad Negativa", count: 37, desc: "Relación riesgo/beneficio invertida (SL >> TP)." },
+  { id: "LOOKAHEAD_BIAS", name: "Sesgo de Anticipación (Lookahead)", desc: "Uso de precios futuros o Close[0] no cerrado." },
+  { id: "OVERFITTING_CURVE_FITTING", name: "Sobreajuste Paramétrico (Overfitting)", desc: "Pérdida de rendimiento en Out-of-Sample." },
+  { id: "OUTLIER_DEPENDENCY", name: "Dependencia de Outliers", desc: "Los 2 mejores trades concentran > 20% del PnL." },
+  { id: "ASYMMETRIC_SLIPPAGE_EROSION", name: "Erosión por Slippage / Fricción", desc: "Colapso ante comisiones taker y spreads dinámicos." },
+  { id: "REGIME_FRAGILITY", name: "Fragilidad de Régimen Macro", desc: "Ruptura al cambiar de tendencia a rango o alta volatilidad." },
+  { id: "MARTINGALE_UNBOUNDED_RISK", name: "Riesgo No Acotado / Promediación", desc: "Aumento de tamaño sin Stop Loss estricto." },
+  { id: "OVERNIGHT_GAP_EXPOSURE", name: "Riesgo de Gap Nocturno (CME)", desc: "Posiciones abiertas en cierre de mercado (infracción Prop)." },
+  { id: "DRAWDOWN_TRAILING_VIOLATION", name: "Violación de Trailing DD / DLL", desc: "Infracción del límite de pérdida diaria intra-trade." },
+  { id: "LOW_SAMPLE_SIGNIFICANCE", name: "Muestra Insuficiente (DSR Bajo)", desc: "Menos de 30-100 trades estadísticamente válidos." },
+  { id: "EXECUTION_LATENCY_SENSITIVITY", name: "Sensibilidad a Latencia HFT", desc: "Estrategias dependientes de fills perfectos sin slippage." },
+  { id: "NEGATIVE_CONVEXITY_FAT_TAIL", name: "Convexidad Negativa", desc: "Relación riesgo/beneficio invertida (SL >> TP)." },
 ];
 
 export interface FailedCandidateItem {
@@ -60,6 +62,9 @@ function ResearchSemanticContent() {
   // Estado del Daemon 24/7
   const [daemonStatus, setDaemonStatus] = useState<any>(null);
 
+  // Trials reales del registro de investigación (estado de campañas)
+  const [trialsData, setTrialsData] = useState<any>(null);
+
   // Lista de Estrategias en Incubadora / Fallidas
   const [failedCandidates, setFailedCandidates] = useState<FailedCandidateItem[]>([]);
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(targetCandId || null);
@@ -76,7 +81,6 @@ function ResearchSemanticContent() {
   const [technique, setTechnique] = useState<string>("HYBRID_DEEP_REPAIR");
   const [improving, setImproving] = useState<boolean>(false);
   const [improvementResult, setImprovementResult] = useState<any>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>(FAILURE_CATEGORIES[0].id);
 
   // Referencias para evitar re-creación de intervalos y parpadeos
   const selectedIdRef = useRef<string | null>(selectedCandidateId);
@@ -94,6 +98,22 @@ function ResearchSemanticContent() {
       }
     } catch (e) {
       console.error("Error al obtener estado del bucle:", e);
+    }
+  }, []);
+
+  // 1b. Trials reales registrados (campañas/fases de investigación)
+  const fetchTrials = useCallback(async () => {
+    try {
+      const res = await fetch("/api/v1/research/trials?limit=200", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        setTrialsData(data);
+      } else {
+        setTrialsData({ unavailable: true });
+      }
+    } catch (e) {
+      setTrialsData({ unavailable: true });
+      console.error("Error al obtener trials de investigación:", e);
     }
   }, []);
 
@@ -137,7 +157,8 @@ function ResearchSemanticContent() {
   useEffect(() => {
     fetchDaemonStatus();
     fetchFailed();
-  }, [fetchDaemonStatus, fetchFailed]);
+    fetchTrials();
+  }, [fetchDaemonStatus, fetchFailed, fetchTrials]);
 
   // Candidato Activo Seleccionado (Derivado por Memoización)
   const selectedCandidate = useMemo(() => {
@@ -198,7 +219,9 @@ function ResearchSemanticContent() {
 
       if (res.ok) {
         const data = await res.json();
-        setImprovementResult(data.upgraded_candidate);
+        // El backend devuelve {success, candidate_id, engine_version, mode,
+        // certification_owned_by, research_result}; NO existe "upgraded_candidate".
+        setImprovementResult(data);
         fetchFailed(true);
         fetchDaemonStatus();
       } else {
@@ -222,10 +245,12 @@ function ResearchSemanticContent() {
     }
   };
 
-  const curProc = daemonStatus?.current_processing;
+  // Claves reales del estado del daemon (continuous_research_daemon.get_status):
+  // is_running, interval_seconds, last_run_timestamp, queue, queue_summary.total_in_queue,
+  // stats{cycles_executed, repaired_count, debates_conducted_count}, last_error,
+  // engine_version, mode. (NO existen current_processing/live_logs/recent_history.)
   const qSummary = daemonStatus?.queue_summary;
-  const liveLogs = daemonStatus?.live_logs || [];
-  const recentHist = daemonStatus?.recent_history || [];
+  const daemonQueue: any[] = Array.isArray(daemonStatus?.queue) ? daemonStatus.queue : [];
 
   return (
     <div style={{ padding: "16px 24px", maxWidth: "1720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "16px", color: "#f8fafc" }}>
@@ -300,7 +325,7 @@ function ResearchSemanticContent() {
               cursor: "pointer",
             }}
           >
-            ⚡ Bucle 24/7 en Vivo ({qSummary?.pending_count || 0})
+            ⚡ Bucle 24/7 en Vivo ({qSummary?.total_in_queue ?? "NO EVIDENCE"})
           </button>
           <button
             onClick={() => setActiveTab("FAILURES")}
@@ -539,11 +564,11 @@ function ResearchSemanticContent() {
                     filteredCandidates.map((cand, idx) => {
                       const isSelected = selectedCandidate?.candidate_id === cand.candidate_id;
                       const isFondeo = String(cand.route || "").toUpperCase().includes("FONDEO");
-                      const pf = cand.profit_factor_oos || 0;
-                      const dd = cand.max_dd_oos_pct || 0;
-                      const annual = cand.annual_return_pct || 0;
-                      const trades = cand.trades_oos || 0;
-                      const diagReason = cand.failure_diagnosis?.primary_failure_reason || "Infracción de Quality Gates";
+                      const pf = cand.profit_factor_oos;
+                      const dd = cand.max_dd_oos_pct;
+                      const annual = cand.annual_return_pct;
+                      const trades = cand.trades_oos;
+                      const diagReason = cand.failure_diagnosis?.primary_failure_reason || "NO EVIDENCE";
 
                       return (
                         <tr
@@ -590,9 +615,9 @@ function ResearchSemanticContent() {
                                 border: `1px solid ${isFondeo ? "rgba(56, 189, 248, 0.3)" : "rgba(99, 225, 180, 0.3)"}`,
                               }}
                             >
-                              {cand.symbol || "--"}
+                              {cand.symbol || "NO EVIDENCE"}
                             </span>
-                            <span style={{ fontSize: "10.5px", color: "#94a3b8", marginLeft: "6px" }}>({cand.timeframe || "--"})</span>
+                            <span style={{ fontSize: "10.5px", color: "#94a3b8", marginLeft: "6px" }}>({cand.timeframe || "NO EVIDENCE"})</span>
                           </td>
 
                           {/* Ruta */}
@@ -636,10 +661,10 @@ function ResearchSemanticContent() {
                               borderRight: "1px solid #1e293b",
                               textAlign: "right",
                               fontWeight: 800,
-                              color: pf >= 1.3 ? "#63e1b4" : pf >= 1.15 ? "#facc15" : "#f87171",
+                              color: pf === undefined ? "#64748b" : pf >= 1.3 ? "#63e1b4" : pf >= 1.15 ? "#facc15" : "#f87171",
                             }}
                           >
-                            {pf.toFixed(2)}
+                            {pf === undefined ? "NO EVIDENCE" : pf.toFixed(2)}
                           </td>
 
                           {/* Max DD */}
@@ -649,10 +674,10 @@ function ResearchSemanticContent() {
                               borderRight: "1px solid #1e293b",
                               textAlign: "right",
                               fontWeight: 800,
-                              color: (isFondeo && dd <= 4.5) || (!isFondeo && dd <= 60) ? "#63e1b4" : "#f87171",
+                              color: dd === undefined ? "#64748b" : (isFondeo && dd <= 4.5) || (!isFondeo && dd <= 60) ? "#63e1b4" : "#f87171",
                             }}
                           >
-                            {dd.toFixed(1)}%
+                            {dd === undefined ? "NO EVIDENCE" : `${dd.toFixed(1)}%`}
                           </td>
 
                           {/* ROI */}
@@ -662,15 +687,15 @@ function ResearchSemanticContent() {
                               borderRight: "1px solid #1e293b",
                               textAlign: "right",
                               fontWeight: 700,
-                              color: annual >= 0 ? "#38bdf8" : "#f87171",
+                              color: annual === undefined ? "#64748b" : annual >= 0 ? "#38bdf8" : "#f87171",
                             }}
                           >
-                            {annual >= 0 ? `+${annual.toFixed(1)}%` : `${annual.toFixed(1)}%`}
+                            {annual === undefined ? "NO EVIDENCE" : annual >= 0 ? `+${annual.toFixed(1)}%` : `${annual.toFixed(1)}%`}
                           </td>
 
                           {/* Trades */}
                           <td style={{ padding: "8px 12px", borderRight: "1px solid #1e293b", textAlign: "right", color: "#cbd5e1" }}>
-                            {trades}
+                            {trades === undefined ? "NO EVIDENCE" : trades}
                           </td>
 
                           {/* Diagnóstico */}
@@ -757,22 +782,22 @@ function ResearchSemanticContent() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
                   <div style={{ background: "#0c1524", borderRadius: "6px", padding: "10px", border: "1px solid #1e293b" }}>
                     <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 700 }}>PROFIT FACTOR OOS</div>
-                    <div style={{ fontSize: "15px", fontWeight: 900, color: (selectedCandidate.profit_factor_oos || 0) >= 1.3 ? "#63e1b4" : "#f87171", marginTop: "2px" }}>
-                      {(selectedCandidate.profit_factor_oos || 0).toFixed(2)}
+                    <div style={{ fontSize: "15px", fontWeight: 900, color: selectedCandidate.profit_factor_oos === undefined ? "#64748b" : selectedCandidate.profit_factor_oos >= 1.3 ? "#63e1b4" : "#f87171", marginTop: "2px" }}>
+                      {selectedCandidate.profit_factor_oos === undefined ? "NO EVIDENCE" : selectedCandidate.profit_factor_oos.toFixed(2)}
                     </div>
                   </div>
 
                   <div style={{ background: "#0c1524", borderRadius: "6px", padding: "10px", border: "1px solid #1e293b" }}>
                     <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 700 }}>MAX DRAWDOWN OOS</div>
                     <div style={{ fontSize: "15px", fontWeight: 900, color: "#f87171", marginTop: "2px" }}>
-                      {(selectedCandidate.max_dd_oos_pct || 0).toFixed(1)}%
+                      {selectedCandidate.max_dd_oos_pct === undefined ? "NO EVIDENCE" : `${selectedCandidate.max_dd_oos_pct.toFixed(1)}%`}
                     </div>
                   </div>
 
                   <div style={{ background: "#0c1524", borderRadius: "6px", padding: "10px", border: "1px solid #1e293b" }}>
                     <div style={{ fontSize: "9px", color: "#94a3b8", fontWeight: 700 }}>MUESTRA DE TRADES</div>
                     <div style={{ fontSize: "15px", fontWeight: 900, color: "#38bdf8", marginTop: "2px" }}>
-                      {selectedCandidate.trades_oos || 0} trades
+                      {selectedCandidate.trades_oos === undefined ? "NO EVIDENCE" : `${selectedCandidate.trades_oos} trades`}
                     </div>
                   </div>
                 </div>
@@ -783,7 +808,7 @@ function ResearchSemanticContent() {
                     🚨 ANOMALÍAS DETECTADAS EN QUALITY GATES:
                   </div>
                   <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "#cbd5e1", lineHeight: "1.4" }}>
-                    {(selectedCandidate.failure_diagnosis?.diagnostics || ["Infracción de umbrales cuantitativos"]).map((d: string, i: number) => (
+                    {(selectedCandidate.failure_diagnosis?.diagnostics || ["NO EVIDENCE"]).map((d: string, i: number) => (
                       <li key={i}>{d}</li>
                     ))}
                   </ul>
@@ -879,14 +904,14 @@ function ResearchSemanticContent() {
                   {improving ? "⚡ Ejecutando Optimización en Bucle Cerrado..." : "⚡ Ejecutar Auto-Mejora en Bucle & Certificar"}
                 </button>
 
-                {/* RESULTADO DE LA AUTO-MEJORA */}
+                {/* RESULTADO REAL DEL BUCLE CERRADO (claves devueltas por research_router) */}
                 {improvementResult && (
                   <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.4)", borderRadius: "8px", padding: "12px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "14px" }}>✅</span>
-                        <h3 style={{ fontSize: "12px", fontWeight: 900, color: "#10b981", margin: 0 }}>
-                          ¡ESTRATEGIA RESCATADA & REINYECTADA!
+                        <span style={{ fontSize: "14px" }}>{improvementResult.success ? "✅" : "⚠️"}</span>
+                        <h3 style={{ fontSize: "12px", fontWeight: 900, color: improvementResult.success ? "#10b981" : "#f59e0b", margin: 0 }}>
+                          {improvementResult.success ? "EJECUCIÓN DE BUCLE CERRADO COMPLETADA" : "BUCLE CERRADO SIN ÉXITO (VER ESTADO REAL)"}
                         </h3>
                       </div>
                       <Link
@@ -901,29 +926,32 @@ function ResearchSemanticContent() {
                           textDecoration: "none",
                         }}
                       >
-                        Ver en Gates (Fase 5) →
+                        Ver en Gates →
                       </Link>
                     </div>
 
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "6px", fontSize: "10.5px" }}>
                       <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>PROFIT FACTOR</div>
-                        <div style={{ fontSize: "13px", fontWeight: 900, color: "#10b981", marginTop: "2px" }}>
-                          {(selectedCandidate.profit_factor_oos || 0).toFixed(2)} → {(improvementResult.profit_factor_oos || 1.55).toFixed(2)}
-                        </div>
-                      </div>
-                      <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>MAX DRAWDOWN</div>
-                        <div style={{ fontSize: "13px", fontWeight: 900, color: "#10b981", marginTop: "2px" }}>
-                          {(selectedCandidate.max_dd_oos_pct || 0).toFixed(1)}% → {(improvementResult.max_dd_oos_pct || 42.5).toFixed(1)}%
-                        </div>
-                      </div>
-                      <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
-                        <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ESTADO FINAL</div>
+                        <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ESTADO REAL (research_result)</div>
                         <div style={{ fontSize: "11px", fontWeight: 900, color: "#10b981", marginTop: "3px" }}>
-                          ✓ {improvementResult.status || "CERTIFIED_PASS"}
+                          {improvementResult.research_result?.status || "NO EVIDENCE"}
                         </div>
                       </div>
+                      <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                        <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ENGINE VERSION</div>
+                        <div style={{ fontSize: "11px", fontWeight: 900, color: "#38bdf8", marginTop: "3px" }}>
+                          {improvementResult.engine_version || "NO EVIDENCE"}
+                        </div>
+                      </div>
+                      <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                        <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>CERTIFICACIÓN PROPIEDAD DE</div>
+                        <div style={{ fontSize: "11px", fontWeight: 900, color: "#a855f7", marginTop: "3px" }}>
+                          {improvementResult.certification_owned_by || "NO EVIDENCE"}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "9.5px", color: "#64748b", marginTop: "6px" }}>
+                      Las métricas antes/después solo se muestran cuando el pipeline de certificación las emite con evidencia; aquí no se derivan en cliente.
                     </div>
                   </div>
                 )}
@@ -972,6 +1000,100 @@ function ResearchSemanticContent() {
               {daemonStatus?.is_running ? "⏹ Pausar Demonio" : "▶ Reanudar Demonio 24/7"}
             </button>
           </div>
+
+          {/* ESTADO REAL DEL DAEMON (claves de continuous_research_daemon.get_status) */}
+          <div style={{ background: "#080e18", border: "1px solid #1e293b", borderRadius: "10px", padding: "16px 20px" }}>
+            <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 700, marginBottom: "10px" }}>ESTADO REAL DEL DAEMON</div>
+            {daemonStatus ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", fontSize: "10.5px", fontFamily: "var(--font-mono, monospace)" }}>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>IS_RUNNING</div>
+                  <div style={{ fontWeight: 900, color: daemonStatus.is_running ? "#10b981" : "#f87171" }}>{String(daemonStatus.is_running)}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>COLA PENDIENTE</div>
+                  <div style={{ fontWeight: 900, color: "#38bdf8" }}>{qSummary?.total_in_queue ?? "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>CICLOS EJECUTADOS</div>
+                  <div style={{ fontWeight: 900, color: "#e2e8f0" }}>{daemonStatus.stats?.cycles_executed ?? "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>REPARADAS</div>
+                  <div style={{ fontWeight: 900, color: "#e2e8f0" }}>{daemonStatus.stats?.repaired_count ?? daemonStatus.repaired_count ?? "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>DEBATES</div>
+                  <div style={{ fontWeight: 900, color: "#e2e8f0" }}>{daemonStatus.stats?.debates_conducted_count ?? daemonStatus.debates_conducted_count ?? "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ÚLTIMA EJECUCIÓN (UTC)</div>
+                  <div style={{ fontWeight: 900, color: "#e2e8f0" }}>{daemonStatus.last_run_timestamp || "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ENGINE / MODO</div>
+                  <div style={{ fontWeight: 900, color: "#a855f7" }}>
+                    {daemonStatus.engine_version || "NO EVIDENCE"} · {daemonStatus.mode || "NO EVIDENCE"}
+                  </div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ÚLTIMO ERROR</div>
+                  <div style={{ fontWeight: 900, color: daemonStatus.last_error ? "#f87171" : "#10b981" }}>{daemonStatus.last_error || "NINGUNO"}</div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: "11px", color: "#64748b" }}>NO EVIDENCE — el endpoint del daemon no ha respondido todavía.</div>
+            )}
+
+            {/* COLA REAL DESDE SQLite (daemon.queue) */}
+            <div style={{ marginTop: "12px" }}>
+              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 700, marginBottom: "6px" }}>COLA REAL ({daemonQueue.length})</div>
+              {daemonQueue.length === 0 ? (
+                <div style={{ fontSize: "10.5px", color: "#64748b" }}>Cola vacía según el daemon (dato real, no estimación).</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+                  {daemonQueue.slice(0, 10).map((item: any, idx: number) => (
+                    <div key={idx} style={{ background: "#030712", padding: "5px 8px", borderRadius: "4px", color: "#c084fc" }}>
+                      {JSON.stringify(item)}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* TRIALS REALES REGISTRADOS (Registry de investigación) */}
+          <div style={{ background: "#080e18", border: "1px solid #1e293b", borderRadius: "10px", padding: "16px 20px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+              <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 700 }}>TRIALS DE INVESTIGACIÓN REGISTRADOS (GET /api/v1/research/trials)</div>
+              <button
+                onClick={fetchTrials}
+                style={{ padding: "4px 10px", borderRadius: "5px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#94a3b8", fontSize: "10px", fontWeight: 800, cursor: "pointer" }}
+              >
+                Refrescar trials
+              </button>
+            </div>
+            {trialsData?.unavailable ? (
+              <div style={{ fontSize: "11px", color: "#64748b" }}>NO EVIDENCE — el endpoint de trials no está disponible.</div>
+            ) : trialsData ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "8px", fontSize: "10.5px", fontFamily: "var(--font-mono, monospace)" }}>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>TRIALS EN REGISTRO</div>
+                  <div style={{ fontWeight: 900, color: "#10b981" }}>{trialsData.count ?? "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>ENGINE VERSION</div>
+                  <div style={{ fontWeight: 900, color: "#a855f7" }}>{trialsData.engine_version || "NO EVIDENCE"}</div>
+                </div>
+                <div style={{ background: "#030712", padding: "6px 8px", borderRadius: "4px" }}>
+                  <div style={{ fontSize: "8.5px", color: "#94a3b8" }}>MODO</div>
+                  <div style={{ fontWeight: 900, color: "#38bdf8" }}>{trialsData.mode || "NO EVIDENCE"}</div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: "11px", color: "#64748b" }}>Cargando trials reales…</div>
+            )}
+          </div>
         </div>
       )}
 
@@ -979,7 +1101,12 @@ function ResearchSemanticContent() {
       {/* 4. PESTAÑA: MEMORIA DE FALLOS (11 CLASES)                                 */}
       {/* ========================================================================= */}
       {activeTab === "FAILURES" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
+            Candidatos fallidos cargados de la consulta real: <span style={{ color: "#ec4899", fontWeight: 800 }}>{routeCounts.all}</span>
+            {" · "}Los conteos por clase se muestran solo con evidencia del backend (hoy: NO EVIDENCE).
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
           {FAILURE_CATEGORIES.map((cat) => (
             <div
               key={cat.id}
@@ -993,7 +1120,7 @@ function ResearchSemanticContent() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
                 <span style={{ fontWeight: 800, fontSize: "12px", color: "#f8fafc" }}>{cat.name}</span>
                 <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "4px", background: "rgba(236, 72, 153, 0.15)", color: "#ec4899", fontWeight: 800 }}>
-                  {cat.count} casos
+                  NO EVIDENCE
                 </span>
               </div>
               <div style={{ fontSize: "10.5px", color: "#94a3b8", lineHeight: "1.4" }}>
@@ -1001,6 +1128,7 @@ function ResearchSemanticContent() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       )}
 
@@ -1008,27 +1136,14 @@ function ResearchSemanticContent() {
       {/* 5. PESTAÑA: 3 AGENTES IA                                                  */}
       {/* ========================================================================= */}
       {activeTab === "AGENTS" && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "14px" }}>
-          <div style={{ background: "#080e18", border: "1px solid #1e293b", borderRadius: "10px", padding: "16px" }}>
-            <div style={{ fontSize: "20px", marginBottom: "6px" }}>🔍</div>
-            <div style={{ fontWeight: 800, fontSize: "13px", color: "#ffffff" }}>Agente 1: Diagnóstico Forense</div>
-            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-              Identifica si la causa de descarte es lookahead bias, sobreajuste en out-of-sample o violación de drawdown trailing.
-            </div>
-          </div>
-          <div style={{ background: "#080e18", border: "1px solid #1e293b", borderRadius: "10px", padding: "16px" }}>
-            <div style={{ fontSize: "20px", marginBottom: "6px" }}>🧬</div>
-            <div style={{ fontWeight: 800, fontSize: "13px", color: "#ffffff" }}>Agente 2: Cirujano AST & Optuna</div>
-            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-              Aplica mutación paramétrica bayesiana (Optuna TPE) o inyecta filtros de régimen de volatilidad ATR en el árbol AST.
-            </div>
-          </div>
-          <div style={{ background: "#080e18", border: "1px solid #1e293b", borderRadius: "10px", padding: "16px" }}>
-            <div style={{ fontSize: "20px", marginBottom: "6px" }}>🛡️</div>
-            <div style={{ fontWeight: 800, fontSize: "13px", color: "#ffffff" }}>Agente 3: Auditor de Re-Certificación</div>
-            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-              Re-evalúa la estrategia mutada contra los 11 Quality Gates y la reinyecta a la máquina de estados FSM si aprueba.
-            </div>
+        <div style={{ background: "#080e18", border: "1px solid #1e293b", borderRadius: "10px", padding: "20px" }}>
+          <div style={{ fontWeight: 800, fontSize: "13px", color: "#ffffff", marginBottom: "8px" }}>Agentes IA: NO EVIDENCE</div>
+          <div style={{ fontSize: "11.5px", color: "#94a3b8", lineHeight: "1.5" }}>
+            Este módulo no expone hoy un endpoint de agentes IA en el backend. El flujo real disponible es:
+            diagnóstico del candidato fallido (failed-candidates), ejecución de bucle cerrado
+            (POST /api/v1/research/improve/&#123;id&#125;) y supervisión del daemon 24/7. Cualquier
+            descripción de agentes se publicará aquí únicamente cuando exista un endpoint real que la respalde
+            (doctrina EVIDENCE-GATED: sin dato, NO_EVIDENCE).
           </div>
         </div>
       )}

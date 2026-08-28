@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import SistemaSupervisorPage from "../../sistema/page";
-import StrategiesExplorerPage from "../../strategies/page";
+import StrategiesExplorerPage from "../2-explorador-excel/page";
 import CandidatosFSMPage from "../../candidatos/page";
 import ResearchLabPage from "../../research/page";
 import ApprovedStrategiesAndGatesHubPage from "../../gates/page";
