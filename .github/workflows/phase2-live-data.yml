@@ -1,4 +1,4 @@
-name: Phase 2 Live Data + Research
+name: Phase 2 Live Data + Research Freeze
 
 # MANUAL ONLY: live data acquisition/research never runs on ordinary pushes.
 on:
@@ -38,7 +38,7 @@ permissions:
 
 jobs:
   acquire-and-research:
-    name: Real data -> discovery -> validation -> blind OOS evidence
+    name: Real data -> discovery -> validation -> frozen champion
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -108,7 +108,7 @@ jobs:
           print(f'PHASE2_DATA_CUSTODY: PASS ({len(files)} datasets)')
           PY
 
-      - name: Canonical phase-2 research
+      - name: Canonical phase-2 research (IS + Validation only)
         run: python scripts/phase2_research_adapter.py
 
       - name: Emit adaptive SQX research agenda
@@ -126,7 +126,7 @@ jobs:
             --dataset-sha256 "$DATASET_SHA256" \
             --trials-per-campaign "$SQX_TRIALS_PER_CAMPAIGN"
 
-      - name: Upload complete phase-2 evidence
+      - name: Upload phase-2 research evidence (blind OOS untouched)
         uses: actions/upload-artifact@v4
         with:
           name: phase2-real-research-${{ github.run_id }}
@@ -137,6 +137,7 @@ jobs:
             data/phase2-live/normalized/ds_bingx_*_manifest.json
             data/phase2-live/raw/rest/phase2-history/**
             data/phase2-live/phase2-evidence/**
+            data/phase2-live/phase2-evidence/*_frozen.json
             data/phase2-live/evidence/**
             data/phase2-evidence/**
             data/sqx-ingest/**
