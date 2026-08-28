@@ -2,7 +2,9 @@ from scripts.phase2_trial_planner import PLANNER_VERSION, budget_space
 
 
 def _family_key(item):
-    return f"{item.get('archetype', item.get('family', 'UNKNOWN')).upper()}|{str(item.get('exit_family') or 'DEFAULT').upper()}"
+    signal = item.get("archetype", item.get("family", "UNKNOWN"))
+    exit_family = item.get("exit_family") or "DEFAULT"
+    return f"{signal.upper()}|{str(exit_family).upper()}"
 
 
 def test_budget_is_deterministic_and_bounded():
