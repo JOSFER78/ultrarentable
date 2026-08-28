@@ -17,7 +17,6 @@ if str(ROOT) not in sys.path:
 from scripts import phase2_research_run as runner  # noqa: E402
 from scripts import phase2_trial_planner as trial_planner  # noqa: E402
 from scripts.phase2_validation import evaluate_validation  # noqa: E402
-from services.validation.engine.event_backtest_engine import EventBacktestEngine  # noqa: E402
 
 _original_loader = runner.load_custodied_dataset
 _OriginalEngine = runner.EventBacktestEngine
@@ -33,39 +32,44 @@ class _RobustValidationProxy:
 
 
 class _RobustSelectionEngine(_OriginalEngine):
-    """Use contiguous-block Validation only during discovery selection.
-
-    The first validation pass is robust; the later frozen-candidate validation
-    call remains the canonical single-window result for evidence/reporting.
-    """
+    """Use contiguous-block Validation only during discovery selection."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._validation_seen: dict[int, int] = {}
+        self._reference_is_len: int | None = None
+        self._robust_validation_calls = 0
 
     def run_backtest(self, strategy, candles, initial_capital_usd=1000.0):
-        key = id(candles)
-        count = self._validation_seen.get(key, 0)
-        result = super().run_backtest(strategy, candles, initial_capital_usd=initial_capital_usd)
+        result = super().run_backtest(
+            strategy,
+            candles,
+            initial_capital_usd=initial_capital_usd,
+        )
+        current_len = len(candles)
+        if self._reference_is_len is None:
+            self._reference_is_len = current_len
+            return result
 
-        # The research runner's Validation slice is reused for all selection calls.
-        # After selection, the frozen validation call should stay canonical.
-        if count < runner.TOP_VALIDATION and key != id(getattr(self, "_is_candles", object())):
-            self._validation_seen[key] = count + 1
-            robust = evaluate_validation(
-                _OriginalEngine(),
-                strategy,
-                candles,
-                initial_capital_usd,
-            )
-            return _RobustValidationProxy(
-                profit_factor=robust.score,
-                total_trades=int(round(robust.median_trades)),
-                max_drawdown_pct=robust.worst_drawdown_pct,
-                net_profit_usd=0.0,
-                win_rate_pct=robust.profitable_block_fraction * 100.0,
-            )
-        return result
+        # Phase-2 research is 60/20/20. Validation is therefore ~1/3 of IS.
+        is_reference = self._reference_is_len
+        is_validation_window = current_len > 0 and abs((is_reference / current_len) - 3.0) < 0.05
+        if not is_validation_window or self._robust_validation_calls >= runner.TOP_VALIDATION:
+            return result
+
+        self._robust_validation_calls += 1
+        robust = evaluate_validation(
+            _OriginalEngine(),
+            strategy,
+            candles,
+            initial_capital_usd,
+        )
+        return _RobustValidationProxy(
+            profit_factor=robust.score,
+            total_trades=int(round(robust.median_trades)),
+            max_drawdown_pct=robust.worst_drawdown_pct,
+            net_profit_usd=0.0,
+            win_rate_pct=robust.profitable_block_fraction * 100.0,
+        )
 
 
 def load_custodied_dataset(path):
