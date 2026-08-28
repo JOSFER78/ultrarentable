@@ -1,16 +1,16 @@
 """Deterministic, family-stratified trial selection for Phase 2.
 
-The planner is deliberately deterministic: the dataset hash determines the
-starting offset, while round-robin quotas guarantee representation across
-strategy families. It never uses wall-clock time or random number generation.
+The planner removes canonical duplicate hypotheses before budgeting, then keeps
+family representation through deterministic round-robin selection.
 """
 from __future__ import annotations
 
 import hashlib
+import json
 from collections import defaultdict
 from typing import Any, Dict, List, Sequence, Tuple
 
-PLANNER_VERSION = "phase2-stratified-v1"
+PLANNER_VERSION = "phase2-stratified-v2"
 
 
 def _family_key(params: Dict[str, Any]) -> str:
@@ -22,28 +22,46 @@ def _family_key(params: Dict[str, Any]) -> str:
     return f"risk:{risk}|target:{target}|stop:{stop}"
 
 
-def _stable_key(dataset_hash: str, family: str, index: int) -> bytes:
-    return hashlib.sha256(f"{dataset_hash}|{PLANNER_VERSION}|{family}|{index}".encode()).digest()
+def _canonical_key(params: Dict[str, Any]) -> str:
+    return json.dumps(params, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
+def _stable_key(dataset_hash: str, family: str, index: int, canonical_key: str) -> bytes:
+    material = f"{dataset_hash}|{PLANNER_VERSION}|{family}|{index}|{canonical_key}"
+    return hashlib.sha256(material.encode("utf-8")).digest()
 
 
 def budget_space(space: Sequence[Dict[str, Any]], limit: int, dataset_hash: str) -> List[Dict[str, Any]]:
-    """Select <= limit trials while preserving deterministic family coverage."""
+    """Select <= limit distinct trials while preserving deterministic family coverage."""
     if limit <= 0:
         return []
-    if len(space) <= limit:
-        return list(space)
+
+    unique: List[Dict[str, Any]] = []
+    seen: set[str] = set()
+    for params in space:
+        key = _canonical_key(params)
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(params)
+
+    if len(unique) <= limit:
+        return list(unique)
 
     groups: Dict[str, List[Tuple[int, Dict[str, Any]]]] = defaultdict(list)
-    for index, params in enumerate(space):
+    for index, params in enumerate(unique):
         groups[_family_key(params)].append((index, params))
 
-    # Deterministically reshuffle positions inside each family using a hash
-    # derived only from immutable dataset identity.
     families: Dict[str, List[Tuple[int, Dict[str, Any]]]] = {}
     for family, items in groups.items():
         families[family] = sorted(
             items,
-            key=lambda item: _stable_key(dataset_hash, family, item[0]),
+            key=lambda item: _stable_key(
+                dataset_hash,
+                family,
+                item[0],
+                _canonical_key(item[1]),
+            ),
         )
 
     family_names = sorted(families)
@@ -66,5 +84,4 @@ def budget_space(space: Sequence[Dict[str, Any]], limit: int, dataset_hash: str)
                 break
         if not progressed:
             break
-
     return selected
