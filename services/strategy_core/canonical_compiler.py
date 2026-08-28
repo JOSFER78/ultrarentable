@@ -174,12 +174,15 @@ class CanonicalCompiler:
             sl_type = "FIXED_TICKS"
             sl_val = float(exits.sl_value)
 
-        if exits.tp_type == TakeProfitType.RR_MULTIPLE:
-            tp_type = "RR_MULTIPLE"
+        if exits.tp_type in (TakeProfitType.RR_MULTIPLE, "RR_MULTIPLE", "RISK_REWARD_MULTIPLE"):
+            tp_type = "RISK_REWARD_MULTIPLE"
             tp_val = exits.tp_value
-        elif exits.tp_type == TakeProfitType.PERCENTAGE:
+        elif exits.tp_type in (TakeProfitType.PERCENTAGE, "PERCENTAGE"):
             tp_type = "PERCENTAGE"
             tp_val = exits.tp_value
+        elif exits.tp_type in (TakeProfitType.FIXED_POINTS, "FIXED_POINTS", "FIXED_TICKS"):
+            tp_type = "FIXED_TICKS"
+            tp_val = float(exits.tp_value)
         else:
             tp_type = "ATR_MULTIPLE"
             tp_val = exits.tp_value
