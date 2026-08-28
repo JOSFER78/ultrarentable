@@ -1,7 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import MotorBacktestView from "@/components/MotorBacktestView";
-
-export default function StrategiesPage() {
-  return <MotorBacktestView />;
+export default function LegacyStrategiesRoute() {
+  redirect("/estrategias");
 }
