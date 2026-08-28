@@ -1,0 +1,50 @@
+name: Phase 2 Blind OOS Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      freeze:
+        description: "Path to an immutable *_frozen.json artifact from a completed research campaign"
+        required: true
+        type: string
+      dataset_dir:
+        description: "Custodied normalized dataset directory"
+        required: false
+        default: "data/phase2-live/normalized"
+
+concurrency:
+  group: phase2-blind-oos
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  blind-oos:
+    name: Frozen champion -> Blind OOS -> evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Frozen Python install
+        run: |
+          python -m pip install --upgrade uv
+          uv sync --frozen --extra dev
+      - name: Verify freeze artifact exists
+        run: test -f "${{ inputs.freeze }}"
+      - name: Execute isolated Blind OOS
+        run: |
+          .venv/bin/python scripts/phase2_blind_oos.py             --freeze "${{ inputs.freeze }}"             --data-dir "${{ inputs.dataset_dir }}"
+      - name: Upload Blind OOS evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-blind-oos-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            data/phase2-evidence/*_blind_oos.json
