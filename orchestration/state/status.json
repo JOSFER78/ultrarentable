@@ -1,6 +1,30 @@
 {
   "phase_number": 1,
-  "status": "needs_user_input",
-  "last_updated": "2026-08-29T17:24:52Z",
-  "history": []
+  "status": "in_progress",
+  "last_updated": "2026-08-29T18:34:00Z",
+  "history": [
+    {
+      "phase": 0,
+      "veredicto": "asignada",
+      "razon": "limpieza con cuarentena aprobada por usuario; F1 ventana de parada sigue needs_user_input"
+    },
+    {
+      "phase": 0,
+      "status": "done",
+      "timestamp": "2026-08-29T18:17:20Z",
+      "detalles": "Migración y cuarentena completadas con manifiesto SHA256 íntegro (26/26 elementos, 0 borrados)."
+    },
+    {
+      "phase": 0,
+      "veredicto": "avanza",
+      "timestamp": "2026-08-29T18:25:04Z",
+      "razon": "Auditoría: 26/26 SHA256 PASS, 0 borrados git (61 renames), intocables intactos. Promovido T1 (Web DATABANK) como nueva fase 1 del backlog."
+    },
+    {
+      "phase": 1,
+      "status": "in_progress",
+      "timestamp": "2026-08-29T18:34:00Z",
+      "detalles": "Ejecutando Fase 1 (T1 backlog): Web — DATABANK de extracción configurable."
+    }
+  ]
 }

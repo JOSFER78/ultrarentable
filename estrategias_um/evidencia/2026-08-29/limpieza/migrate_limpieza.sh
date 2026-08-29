@@ -40,11 +40,11 @@ N_OK=0; N_SKIP=0
 # Crea carpetas destino (en EXEC=1; en dry-run solo se listan)
 create_dirs() {
   local dirs=(
-    "docs/handoffs" "docs/audits" "docs/informes"
+    "docs/handoffs" "docs/audits"
     "configs" "scripts/auditorias" "scripts/herramientas"
-    "data/db" "data/backups" "evidencia"
-    "orchestracion" "cuarentena/logs" "cuarentena/scratch"
-    "cuarentena/phase2" "cuarentena/build_artifacts"
+    "data/db" "evidencia"
+    "orchestracion" "cuarentena/logs"
+    "cuarentena/build_artifacts"
     "services/strategy_core" "tests/phase_phase"
   )
   for d in "${dirs[@]}"; do

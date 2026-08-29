@@ -3,6 +3,29 @@
 > Este archivo define CÓMO trabaja Antigravity dentro del repo. El orquestador (Hermes)
 > escribe las tareas; Antigravity las ejecuta en orden y deja informes. Nada más.
 
+## 🚦 SEÑALES (protocolo de arranque/cierre — OBLIGATORIO, sin excepciones)
+
+La comunicación usa DOS ficheros-señal en `orchestration/state/`:
+
+1. **`GO`** — lo crea el ORQUESTADOR cuando la tarea en `current_phase.md` está COMPLETA y VALIDADA.
+   - Contenido: `phase=<N>` + `task_sha256=<hash de current_phase.md>`.
+   - **NO EMPIECES NUNCA sin este fichero.** Si no existe, solo espera y re-comprueba cada 30s.
+   - Antes de empezar: calcula el sha256 de `current_phase.md`. Si NO coincide con el del GO →
+     la tarea sigue escribiéndose: NO empieces, espera. Si coincide → **borra el GO** (evita doble arranque)
+     y empieza.
+   - Si ya empezaste a trabajar ANTES de ver el GO: compara lo hecho con la tarea del GO; si tu
+     trabajo corresponde a esa misma tarea, puedes continuar y terminar con DONE. Si no, descarta
+     lo hecho a medias y espera.
+2. **`DONE`** — lo creas TÚ cuando has TERMINADO DE VERDAD (informe escrito + status done).
+   - Contenido: `phase=<N>` + `report_sha256=<hash de results/fase_<NN>.log>`.
+   - El orquestador solo audita cuando ve DONE; al terminar su revisión lo borra y publica la
+     siguiente tarea con su GO.
+
+Resumen del apretón de manos: `GO (orquestador) → trabajo (Antigravity) → DONE (Antigravity) →
+auditoría y siguiente GO (orquestador)`. Sin GO no hay trabajo; sin DONE no hay auditoría.
+
+---
+
 ## El ciclo (máquina de estados, lee SIEMPRE orchestration/state/status.json)
 
 1. Lee `orchestration/state/status.json`.
