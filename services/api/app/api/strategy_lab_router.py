@@ -17,8 +17,9 @@ from typing import Any, Dict
 from fastapi import APIRouter, HTTPException, Query
 
 from services.api.app.db.database import SessionLocal, StrategyModel, BacktestModel, DatasetModel
+import os
 from services.sqx_bridge.sqx_client import SQXMCPClient, SQXMCPError
-from services.sqx_bridge.ingest_sqx_results import DATABANK, extract_stats
+from services.sqx_bridge.ingest_sqx_results import extract_stats
 
 router = APIRouter(prefix="/strategy-lab", tags=["Strategy Lab"])
 
@@ -156,7 +157,10 @@ def strategy_lab_sqx_status(url: str | None = Query(None)) -> Dict[str, Any]:
 
 
 @router.post("/extract/{project_name}")
-def extract_from_sqx(project_name: str) -> Dict[str, Any]:
+def extract_from_sqx(
+    project_name: str,
+    databank: str | None = Query(None, description="Databank name to extract from (supports spaces)")
+) -> Dict[str, Any]:
     """Real extraction from the live sqcli HTTP API (:5050).
 
     Flow: verify project -> list databanks (action=list) -> read the configured
@@ -166,14 +170,20 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
     project_name = project_name.strip()
     if not project_name:
         raise HTTPException(status_code=422, detail="PROJECT_NAME_REQUIRED")
+    
+    target_databank = (databank or os.environ.get("SQX_EXTRACT_DATABANK", "Last generation")).strip()
+    if not target_databank:
+        target_databank = "Last generation"
+
     client = SQXMCPClient()
     try:
         if not client.project_exists(project_name):
             raise SQXMCPError(f"Project '{project_name}' does not exist in SQX")
         databanks = client.list_databanks(project_name)
-        if not any(db.get("name") == DATABANK for db in databanks):
-            raise SQXMCPError(f"Databank '{DATABANK}' not found in project '{project_name}'")
-        strategy_items = client.list_strategies(project_name, DATABANK) or []
+        if not any(db.get("name") == target_databank for db in databanks):
+            available = [db.get("name") for db in databanks]
+            raise SQXMCPError(f"Databank '{target_databank}' not found in project '{project_name}'. Disponibles: {available}")
+        strategy_items = client.list_strategies(project_name, target_databank) or []
     except SQXMCPError as exc:
         raise HTTPException(status_code=502, detail=f"SQX_UNAVAILABLE: {exc}") from exc
 
@@ -191,7 +201,7 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
             raw = item if isinstance(item, dict) and item.get("Strategy Name") else None
             if raw is None:
                 try:
-                    raw = client.get_strategy_stats(project_name, DATABANK, name)
+                    raw = client.get_strategy_stats(project_name, target_databank, name)
                 except Exception:
                     quarantined += 1
                     continue
@@ -203,10 +213,10 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
             except Exception:
                 metrics = {}
             symbol, timeframe = _explicit_market_identity(raw)
-            strategy_id = f"sqx:{project_name}:{DATABANK}:{name}"
-            payload = _canonical_payload(project_name, DATABANK, name, raw)
+            strategy_id = f"sqx:{project_name}:{target_databank}:{name}"
+            payload = _canonical_payload(project_name, target_databank, name, raw)
             strategy_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-            encoded = json.dumps({"schema": "ultrarentable.strategy-source.v1", "source": {"engine": "StrategyQuantX", "project": project_name, "databank": DATABANK, "strategy_name": name, "extracted_at_utc": _utc_now()}, "market": {"symbol": symbol, "timeframe": timeframe, "dataset_id": None, "dataset_hash": None}, "source_payload": None, "source_artifact_sha256": None, "raw_stats": metrics}, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            encoded = json.dumps({"schema": "ultrarentable.strategy-source.v1", "source": {"engine": "StrategyQuantX", "project": project_name, "databank": target_databank, "strategy_name": name, "extracted_at_utc": _utc_now()}, "market": {"symbol": symbol, "timeframe": timeframe, "dataset_id": None, "dataset_hash": None}, "source_payload": None, "source_artifact_sha256": None, "raw_stats": metrics}, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
             existing = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
             if existing and existing.canonical_hash == strategy_hash and existing.dsl_json == encoded:
                 unchanged += 1
@@ -221,16 +231,23 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
                 db.add(StrategyModel(strategy_id=strategy_id, name=name, version="SOURCE-1", family="sqx_extracted", author="StrategyQuantX", canonical_hash=strategy_hash, generation=0, dsl_json=encoded, validation_status="EXTRACTED_UNVERIFIED", created_at=datetime.utcnow()))
                 inserted += 1
         db.commit()
-        return {"status": "SUCCESS", "project": project_name, "databank": DATABANK, "found": len(strategy_items), "named": len(named), "inserted": inserted, "unchanged": unchanged, "quarantined": quarantined, "next_step": "REQUIRES_EXPLICIT_RULE_SOURCE_AND_REAL_DATASET_AND_CANONICAL_BACKTEST"}
+        return {"status": "SUCCESS", "project": project_name, "databank": target_databank, "found": len(strategy_items), "named": len(named), "inserted": inserted, "unchanged": unchanged, "quarantined": quarantined, "next_step": "REQUIRES_EXPLICIT_RULE_SOURCE_AND_REAL_DATASET_AND_CANONICAL_BACKTEST"}
     finally:
         db.close()
 
 
 @router.get("/source/{project_name}/{strategy_name}")
-def get_strategy_source(project_name: str, strategy_name: str) -> Dict[str, Any]:
+def get_strategy_source(
+    project_name: str,
+    strategy_name: str,
+    databank: str | None = Query(None, description="Databank name (supports spaces)")
+) -> Dict[str, Any]:
     """Fetch executable strategy source only when SQX explicitly exposes it."""
+    target_databank = (databank or os.environ.get("SQX_EXTRACT_DATABANK", "Last generation")).strip()
+    if not target_databank:
+        target_databank = "Last generation"
     client = SQXMCPClient()
-    source = client.get_strategy_source(project_name, DATABANK, strategy_name)
+    source = client.get_strategy_source(project_name, target_databank, strategy_name)
     if source.get("status") != "SUCCESS":
         return source
     encoded = source.get("source") if isinstance(source.get("source"), str) else json.dumps(source.get("source"), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
