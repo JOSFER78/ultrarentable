@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Zap,
   Database,
@@ -16,11 +16,14 @@ import {
   Radio,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 
-interface NavGroup {
-  title: string;
-  items: NavItem[];
+interface SubNavItem {
+  label: string;
+  href: string;
+  code: string;
+  badge?: string;
 }
 
 interface NavItem {
@@ -32,21 +35,42 @@ interface NavItem {
   icon: React.ComponentType<{ style?: React.CSSProperties; className?: string }>;
   badge?: string;
   accent?: string;
+  subItems?: SubNavItem[];
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
 }
 
 const NAVIGATION_GROUPS: NavGroup[] = [
   {
-    title: "LABORATORIO CORE",
+    title: "INVESTIGACIÓN & LAB",
     items: [
       {
         code: "STRAT",
         label: "Strategy Lab",
-        subtitle: "Descubrimiento & AST Canónico",
+        subtitle: "Descubrimiento & AST",
         href: "/estrategias",
-        altHrefs: ["/estrategias", "/strategies"],
+        altHrefs: [
+          "/estrategias",
+          "/estrategias/1-motor-en-vivo",
+          "/estrategias/4-panel-investigador",
+          "/estrategias/5-estrategias-aprobadas",
+          "/strategies",
+        ],
         icon: Zap,
         badge: "LAB",
         accent: "#38bdf8",
+        subItems: [
+          { label: "Catálogo de Estrategias", href: "/estrategias", code: "CAT" },
+          { label: "Motor FastEngine 24/7", href: "/estrategias/1-motor-en-vivo", code: "ENG", badge: "24/7" },
+          { label: "Candidatos SQLite WAL", href: "/candidatos", code: "WAL", badge: "SQLITE" },
+          { label: "Pipeline 11 Evidence Gates", href: "/gates", code: "GAT", badge: "11/11" },
+          { label: "Panel Investigador & OOS", href: "/estrategias/4-panel-investigador", code: "INV" },
+          { label: "Bóveda Certificadas", href: "/estrategias/5-estrategias-aprobadas", code: "APP", badge: "TIER 1" },
+          { label: "Portafolio Studio & Meta", href: "/portfolio", code: "PRT", badge: "RISK" },
+        ],
       },
       {
         code: "CAND",
@@ -78,16 +102,21 @@ const NAVIGATION_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: "RUTAS DE OPERACIÓN",
+    title: "EJECUCIÓN & RUTAS",
     items: [
       {
         code: "BIF",
         label: "Bifurcación Master",
-        subtitle: "Selector Dual de Arquitectura",
+        subtitle: "Selector Dual de Rutas",
         href: "/bifurcacion",
         icon: GitFork,
         badge: "DUAL",
         accent: "#f59e0b",
+        subItems: [
+          { label: "Selector Bifurcación", href: "/bifurcacion", code: "BIF" },
+          { label: "Track ULTRA (BingX)", href: "/ultra", code: "ULT", badge: "BINGX" },
+          { label: "Track FONDEO (CME)", href: "/fondeo", code: "FND", badge: "CME" },
+        ],
       },
       {
         code: "ULTRA",
@@ -109,20 +138,35 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         badge: "CME",
         accent: "#10b981",
       },
+      {
+        code: "DESK",
+        label: "Trading Desk CME",
+        subtitle: "Mesa en Vivo & Brackets",
+        href: "/trading-desk",
+        altHrefs: [
+          "/trading-desk/posiciones",
+          "/trading-desk/estrategias",
+          "/trading-desk/riesgo",
+          "/trading-desk/auditoria",
+          "/trading-desk/configuracion",
+        ],
+        icon: Activity,
+        badge: "LIVE",
+        accent: "#10b981",
+        subItems: [
+          { label: "Terminal & DOM", href: "/trading-desk", code: "DOM", badge: "LIVE" },
+          { label: "Posiciones & Brackets", href: "/trading-desk/posiciones", code: "POS" },
+          { label: "Estrategias Activas", href: "/trading-desk/estrategias", code: "STR" },
+          { label: "Sentinel de Riesgo", href: "/trading-desk/riesgo", code: "RSK" },
+          { label: "Auditoría Forense", href: "/trading-desk/auditoria", code: "WAL" },
+          { label: "Conexión Gateway", href: "/trading-desk/configuracion", code: "CFG" },
+        ],
+      },
     ],
   },
   {
-    title: "ECOSISTEMA & EJECUCIÓN",
+    title: "MONETIZACIÓN & ECOSISTEMA",
     items: [
-      {
-        code: "TSFERA",
-        label: "Portal Tradesfera",
-        subtitle: "18 Módulos & Psicotrading",
-        href: "/tradesfera",
-        icon: BookOpen,
-        badge: "DOSSIER",
-        accent: "#fbbf24",
-      },
       {
         code: "PROPS",
         label: "70 Prop Firms CME",
@@ -131,16 +175,29 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         icon: Building2,
         badge: "70 TIERS",
         accent: "#38bdf8",
+        subItems: [
+          { label: "Comparador Head-to-Head", href: "/prop-firms", code: "CMP" },
+          { label: "Buscador Inteligente 3-Clics", href: "/prop-firms?view=finder", code: "FND" },
+          { label: "Semáforo & Matriz 70 Tiers", href: "/prop-firms?view=table", code: "TBL" },
+          { label: "Calculadora ROI & Munición", href: "/prop-firms?view=roi", code: "ROI" },
+          { label: "Ofertas & Descuentos", href: "/prop-firms?view=deals", code: "DLS" },
+        ],
       },
       {
-        code: "DESK",
-        label: "Trading Desk CME",
-        subtitle: "Mesa en Vivo & Brackets",
-        href: "/trading-desk",
-        altHrefs: ["/trading-desk/posiciones", "/trading-desk/estrategias", "/trading-desk/riesgo", "/trading-desk/auditoria", "/trading-desk/configuracion"],
-        icon: Activity,
-        badge: "LIVE",
-        accent: "#10b981",
+        code: "TSFERA",
+        label: "Portal Tradesfera",
+        subtitle: "18 Módulos & Psicotrading",
+        href: "/tradesfera",
+        icon: BookOpen,
+        badge: "18 MÓD",
+        accent: "#fbbf24",
+        subItems: [
+          { label: "Dossier Tradesfera", href: "/tradesfera", code: "ALL" },
+          { label: "M01 Ecosistema & Modelo", href: "/tradesfera#m01", code: "M01" },
+          { label: "M02 Bankroll & Munición", href: "/tradesfera#m02", code: "M02" },
+          { label: "M03 Parámetros CME", href: "/tradesfera#m03", code: "M03" },
+          { label: "M08 Psicotrading Pro", href: "/tradesfera#m08", code: "M08" },
+        ],
       },
     ],
   },
@@ -155,6 +212,12 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         icon: Radio,
         badge: "SUPERVISOR",
         accent: "#64748b",
+        subItems: [
+          { label: "Estado General Motor", href: "/sistema", code: "SYS" },
+          { label: "Workers & Procesos", href: "/sistema#workers", code: "WRK" },
+          { label: "Watchdog Auto-Recover", href: "/sistema#watchdog", code: "WCH" },
+          { label: "Logs de Auditoría", href: "/sistema#logs", code: "LOG" },
+        ],
       },
     ],
   },
@@ -162,21 +225,46 @@ const NAVIGATION_GROUPS: NavGroup[] = [
 
 export default function Sidebar() {
   const pathname = usePathname() || "/";
+  const searchParams = useSearchParams();
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const [mounted, setMounted] = useState<boolean>(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    STRAT: false,
+    BIF: false,
+    TSFERA: false,
+    PROPS: false,
+    DESK: true,
+    SIST: false,
+  });
 
   useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem("ur_sidebar_collapsed");
     if (saved !== null) {
       setCollapsed(saved === "true");
     }
   }, []);
 
+  // Auto-expand section if currently on one of its routes
+  useEffect(() => {
+    NAVIGATION_GROUPS.forEach((group) => {
+      group.items.forEach((item) => {
+        if (item.subItems && (pathname === item.href || (item.altHrefs && item.altHrefs.some((a) => pathname === a || pathname.startsWith(a + "/"))))) {
+          setOpenSections((prev) => ({ ...prev, [item.code]: true }));
+        }
+      });
+    });
+  }, [pathname]);
+
   const toggleCollapse = () => {
     const next = !collapsed;
     setCollapsed(next);
     localStorage.setItem("ur_sidebar_collapsed", String(next));
+  };
+
+  const toggleSection = (code: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [code]: !prev[code],
+    }));
   };
 
   const isItemActive = (item: NavItem): boolean => {
@@ -190,13 +278,23 @@ export default function Sidebar() {
     return false;
   };
 
+  const isSubActive = (sub: SubNavItem): boolean => {
+    const [subPath, subQuery] = sub.href.split("?");
+    if (subQuery) {
+      const currentParam = searchParams.get("view");
+      const targetParam = new URLSearchParams(subQuery).get("view");
+      return pathname === subPath && currentParam === targetParam;
+    }
+    return pathname === sub.href;
+  };
+
   return (
     <aside
       suppressHydrationWarning
       style={{
-        width: collapsed ? "64px" : "240px",
-        minWidth: collapsed ? "64px" : "240px",
-        maxWidth: collapsed ? "64px" : "240px",
+        width: collapsed ? "64px" : "250px",
+        minWidth: collapsed ? "64px" : "250px",
+        maxWidth: collapsed ? "64px" : "250px",
         height: "100vh",
         background: "#070a10",
         borderRight: "1px solid rgba(255, 255, 255, 0.07)",
@@ -211,26 +309,31 @@ export default function Sidebar() {
         overflow: "hidden",
       }}
     >
-      {/* 1. CABECERA SIDEBAR: LOGO + TOGGLE */}
+      {/* 1. CABECERA SIDEBAR: LOGO CON ENLACE DIRECTO A PORTADA */}
       <div
         style={{
-          height: "44px",
+          height: "46px",
           display: "flex",
           alignItems: "center",
           justifyContent: collapsed ? "center" : "space-between",
-          padding: collapsed ? "0" : "0 14px",
+          padding: collapsed ? "0" : "0 12px",
           borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
         }}
       >
         {!collapsed ? (
           <Link
             href="/"
+            title="Ir a Portada Principal (Centro de Mando)"
             style={{
               display: "flex",
               alignItems: "center",
               gap: "8px",
               textDecoration: "none",
+              padding: "4px 6px",
+              borderRadius: "6px",
+              transition: "background 0.15s ease",
             }}
+            className="hover:bg-white/5"
           >
             <div
               style={{
@@ -245,6 +348,7 @@ export default function Sidebar() {
                 fontSize: "11px",
                 color: "#ffffff",
                 fontFamily: "var(--font-mono, monospace)",
+                boxShadow: "0 0 10px rgba(14, 165, 233, 0.3)",
               }}
             >
               UR
@@ -261,7 +365,7 @@ export default function Sidebar() {
         ) : (
           <Link
             href="/"
-            title="Ultrarentable Quant Lab"
+            title="Ir a Portada Principal"
             style={{
               width: "24px",
               height: "24px",
@@ -301,7 +405,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* 2. LISTA DE NAVEGACIÓN AGRUPADA */}
+      {/* 2. LISTA DE NAVEGACIÓN AGRUPADA CON SUBPÁGINAS PLEGABLES */}
       <div
         style={{
           flex: 1,
@@ -310,7 +414,7 @@ export default function Sidebar() {
           padding: "10px 8px",
           display: "flex",
           flexDirection: "column",
-          gap: "14px",
+          gap: "12px",
         }}
       >
         {NAVIGATION_GROUPS.map((group, groupIdx) => (
@@ -334,68 +438,145 @@ export default function Sidebar() {
               {group.items.map((item) => {
                 const active = isItemActive(item);
                 const Icon = item.icon;
+                const hasSub = !collapsed && item.subItems && item.subItems.length > 0;
+                const isSectionOpen = openSections[item.code] || active;
+
                 return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    title={collapsed ? `${item.label} — ${item.subtitle}` : undefined}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "9px",
-                      padding: collapsed ? "7px 0" : "6px 9px",
-                      justifyContent: collapsed ? "center" : "flex-start",
-                      borderRadius: "5px",
-                      textDecoration: "none",
-                      background: active ? "rgba(255, 255, 255, 0.07)" : "transparent",
-                      border: active ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid transparent",
-                      color: active ? "#f8fafc" : "#94a3b8",
-                      transition: "all 0.1s ease",
-                    }}
-                  >
-                    <Icon
+                  <div key={item.href} style={{ display: "flex", flexDirection: "column" }}>
+                    <div
                       style={{
-                        width: "15px",
-                        height: "15px",
-                        color: active ? (item.accent || "#38bdf8") : "#64748b",
-                        flexShrink: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        borderRadius: "5px",
+                        background: active && !hasSub ? "rgba(255, 255, 255, 0.07)" : "transparent",
+                        border: active && !hasSub ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid transparent",
+                        transition: "all 0.1s ease",
                       }}
-                    />
-
-                    {!collapsed && (
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontSize: "11.5px",
-                            fontWeight: active ? 600 : 500,
-                            color: active ? "#f8fafc" : "#cbd5e1",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {item.label}
-                        </div>
-                      </div>
-                    )}
-
-                    {!collapsed && item.badge && (
-                      <span
+                    >
+                      <Link
+                        href={item.href}
+                        title={collapsed ? `${item.label} — ${item.subtitle}` : undefined}
                         style={{
-                          fontSize: "8.5px",
-                          fontFamily: "var(--font-mono, monospace)",
-                          fontWeight: 600,
-                          padding: "1px 4px",
-                          borderRadius: "3px",
-                          background: active ? "rgba(56, 189, 248, 0.15)" : "rgba(255, 255, 255, 0.04)",
-                          color: active ? "#38bdf8" : "#64748b",
-                          border: active ? "1px solid rgba(56, 189, 248, 0.25)" : "1px solid rgba(255, 255, 255, 0.05)",
+                          flex: 1,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "9px",
+                          padding: collapsed ? "7px 0" : "6px 9px",
+                          justifyContent: collapsed ? "center" : "flex-start",
+                          textDecoration: "none",
+                          color: active ? "#f8fafc" : "#94a3b8",
                         }}
                       >
-                        {item.badge}
-                      </span>
+                        <Icon
+                          style={{
+                            width: "15px",
+                            height: "15px",
+                            color: active ? (item.accent || "#38bdf8") : "#64748b",
+                            flexShrink: 0,
+                          }}
+                        />
+
+                        {!collapsed && (
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                fontSize: "11.5px",
+                                fontWeight: active ? 600 : 500,
+                                color: active ? "#f8fafc" : "#cbd5e1",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {item.label}
+                            </div>
+                          </div>
+                        )}
+                      </Link>
+
+                      {hasSub && (
+                        <button
+                          onClick={() => toggleSection(item.code)}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            padding: "6px 8px",
+                            color: "#64748b",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <ChevronDown
+                            style={{
+                              width: "12px",
+                              height: "12px",
+                              transform: isSectionOpen ? "rotate(0deg)" : "rotate(-90deg)",
+                              transition: "transform 0.15s ease",
+                            }}
+                          />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* SUB-PÁGINAS PLEGABLES EN EL PANEL IZQUIERDO */}
+                    {hasSub && isSectionOpen && (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "1px",
+                          paddingLeft: "10px",
+                          marginTop: "2px",
+                          marginBottom: "4px",
+                          borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+                          marginLeft: "16px",
+                        }}
+                      >
+                        {item.subItems!.map((sub) => {
+                          const subActive = isSubActive(sub);
+                          return (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                fontSize: "11px",
+                                textDecoration: "none",
+                                background: subActive ? "rgba(56, 189, 248, 0.12)" : "transparent",
+                                color: subActive ? "#38bdf8" : "#94a3b8",
+                                fontWeight: subActive ? 600 : 400,
+                                transition: "all 0.1s ease",
+                              }}
+                            >
+                              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                {sub.label}
+                              </span>
+                              {sub.badge && (
+                                <span
+                                  style={{
+                                    fontSize: "8.5px",
+                                    padding: "1px 4px",
+                                    borderRadius: "3px",
+                                    background: subActive ? "rgba(56, 189, 248, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                                    color: subActive ? "#38bdf8" : "#64748b",
+                                    fontFamily: "var(--font-mono, monospace)",
+                                    fontWeight: 700,
+                                  }}
+                                >
+                                  {sub.badge}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     )}
-                  </Link>
+                  </div>
                 );
               })}
             </div>
@@ -403,30 +584,51 @@ export default function Sidebar() {
         ))}
       </div>
 
-      {/* 3. PIE DE PÁGINA SOBRIO: SÓLO DOCTRINA REAL-ONLY */}
+      {/* 3. PIE MINIMALISTA: DOCTRINA ZERO-MOCKS */}
       <div
         style={{
-          padding: collapsed ? "8px 0" : "8px 12px",
+          padding: collapsed ? "10px 0" : "10px 14px",
           borderTop: "1px solid rgba(255, 255, 255, 0.06)",
-          background: "rgba(0, 0, 0, 0.2)",
           display: "flex",
-          alignItems: "center",
-          justifyContent: collapsed ? "center" : "space-between",
+          flexDirection: "column",
+          alignItems: collapsed ? "center" : "flex-start",
+          gap: "2px",
+          background: "#05070c",
         }}
       >
         {!collapsed ? (
-          <div>
-            <div style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+          <>
+            <div
+              style={{
+                fontSize: "8.5px",
+                fontWeight: 700,
+                color: "#475569",
+                letterSpacing: "0.5px",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
               DOCTRINA
             </div>
-            <div style={{ fontSize: "10px", color: "#10b981", fontWeight: 600, fontFamily: "var(--font-mono, monospace)" }}>
+            <div
+              style={{
+                fontSize: "9.5px",
+                fontWeight: 700,
+                color: "#10b981",
+                fontFamily: "var(--font-mono, monospace)",
+              }}
+            >
               ZERO-MOCKS · REAL-ONLY
             </div>
-          </div>
+          </>
         ) : (
           <div
-            title="Zero-Mocks Real-Only"
-            style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", boxShadow: "0 0 5px #10b981" }}
+            title="ZERO-MOCKS · REAL-ONLY"
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "50%",
+              background: "#10b981",
+            }}
           />
         )}
       </div>

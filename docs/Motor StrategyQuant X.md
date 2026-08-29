@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: sub-nota antigua que describe SQX como MCP 8080/8081; el motor real es sqcli HTTP :5050 — ver docs/00_MASTER_IDEAS_Y_PLAN.md §2.1. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 ---
 tipo: sub-nota
 categoria: trading

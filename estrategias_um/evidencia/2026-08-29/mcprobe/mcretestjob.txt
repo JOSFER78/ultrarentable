@@ -1,0 +1,510 @@
+public class com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob extends com.strategyquant.gridlib.client.GridJob<com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCJobResult> {
+  public static final org.slf4j.Logger Log;
+
+  private com.strategyquant.tradinglib.project.ILastEventListener lastEventListener;
+
+  private long index;
+
+  private java.lang.String strategyName;
+
+  private com.strategyquant.tradinglib.project.StopPauseEngine parentStopPauseEngine;
+
+  private com.strategyquant.lib.SettingsMap resultSettings;
+
+  private com.strategyquant.lib.SettingsMap mcSettings;
+
+  private int mainBacktestPrecision;
+
+  private double globalATR;
+
+  private com.strategyquant.tradinglib.results.SymbolsMap symbolsMap;
+
+  private boolean useFullSample;
+
+  private int backtestPrecision;
+
+  public com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob(long, java.lang.String, java.lang.String, java.util.Map<java.lang.String, java.io.Serializable>, com.strategyquant.tradinglib.project.StopPauseEngine, com.strategyquant.tradinglib.project.ILastEventListener, int, double, com.strategyquant.tradinglib.results.SymbolsMap);
+    Code:
+       0: aload_0
+       1: aload         4
+       3: iconst_1
+       4: aload         5
+       6: invokespecial #9                  // Method com/strategyquant/gridlib/client/GridJob."<init>":(Ljava/lang/String;ILjava/util/Map;)V
+       9: aload_0
+      10: aload         7
+      12: putfield      #13                 // Field lastEventListener:Lcom/strategyquant/tradinglib/project/ILastEventListener;
+      15: aload_0
+      16: lload_1
+      17: putfield      #17                 // Field index:J
+      20: aload_0
+      21: aload_3
+      22: putfield      #21                 // Field strategyName:Ljava/lang/String;
+      25: aload_0
+      26: aload         6
+      28: putfield      #25                 // Field parentStopPauseEngine:Lcom/strategyquant/tradinglib/project/StopPauseEngine;
+      31: aload_0
+      32: aload         5
+      34: ldc           #29                 // String resultSettings
+      36: invokeinterface #31,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      41: checkcast     #37                 // class com/strategyquant/lib/SettingsMap
+      44: putfield      #39                 // Field resultSettings:Lcom/strategyquant/lib/SettingsMap;
+      47: aload_0
+      48: aload         5
+      50: ldc           #42                 // String mcSettings
+      52: invokeinterface #31,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      57: checkcast     #37                 // class com/strategyquant/lib/SettingsMap
+      60: putfield      #44                 // Field mcSettings:Lcom/strategyquant/lib/SettingsMap;
+      63: aload_0
+      64: iload         8
+      66: putfield      #46                 // Field mainBacktestPrecision:I
+      69: aload_0
+      70: aload         5
+      72: ldc           #50                 // String useFullSample
+      74: invokeinterface #31,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      79: checkcast     #52                 // class java/io/Serializable
+      82: checkcast     #54                 // class java/lang/Boolean
+      85: invokevirtual #56                 // Method java/lang/Boolean.booleanValue:()Z
+      88: putfield      #60                 // Field useFullSample:Z
+      91: aload_0
+      92: aload         5
+      94: ldc           #63                 // String backtestPrecision
+      96: invokeinterface #31,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     101: checkcast     #52                 // class java/io/Serializable
+     104: checkcast     #65                 // class java/lang/Integer
+     107: invokevirtual #67                 // Method java/lang/Integer.intValue:()I
+     110: putfield      #71                 // Field backtestPrecision:I
+     113: aload_0
+     114: dload         9
+     116: putfield      #1                  // Field globalATR:D
+     119: aload_0
+     120: aload         11
+     122: putfield      #73                 // Field symbolsMap:Lcom/strategyquant/tradinglib/results/SymbolsMap;
+     125: return
+
+  public com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCJobResult call() throws java.lang.Exception;
+    Code:
+       0: new           #77                 // class com/strategyquant/tradinglib/backtestrunner/DurationStats
+       3: dup
+       4: invokespecial #79                 // Method com/strategyquant/tradinglib/backtestrunner/DurationStats."<init>":()V
+       7: astore_1
+       8: invokestatic  #82                 // Method java/lang/System.currentTimeMillis:()J
+      11: lstore_2
+      12: aload_0
+      13: getfield      #13                 // Field lastEventListener:Lcom/strategyquant/tradinglib/project/ILastEventListener;
+      16: ifnull        58
+      19: ldc           #88                 // String Running MC simulation %d for %s
+      21: iconst_2
+      22: anewarray     #90                 // class java/lang/Object
+      25: dup
+      26: iconst_0
+      27: aload_0
+      28: getfield      #17                 // Field index:J
+      31: invokestatic  #92                 // Method java/lang/Long.valueOf:(J)Ljava/lang/Long;
+      34: aastore
+      35: dup
+      36: iconst_1
+      37: aload_0
+      38: getfield      #21                 // Field strategyName:Ljava/lang/String;
+      41: aastore
+      42: invokestatic  #98                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      45: astore        4
+      47: aload_0
+      48: getfield      #13                 // Field lastEventListener:Lcom/strategyquant/tradinglib/project/ILastEventListener;
+      51: aload         4
+      53: invokeinterface #104,  2          // InterfaceMethod com/strategyquant/tradinglib/project/ILastEventListener.setLastEvent:(Ljava/lang/String;)V
+      58: aload_0
+      59: getfield      #44                 // Field mcSettings:Lcom/strategyquant/lib/SettingsMap;
+      62: ldc           #112                // String MonteCarloManipulation
+      64: invokevirtual #114                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+      67: checkcast     #117                // class java/util/ArrayList
+      70: astore        4
+      72: new           #117                // class java/util/ArrayList
+      75: dup
+      76: invokespecial #119                // Method java/util/ArrayList."<init>":()V
+      79: astore        5
+      81: aload         4
+      83: invokevirtual #120                // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      86: astore        6
+      88: aload         6
+      90: invokeinterface #124,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      95: ifeq          124
+      98: aload         6
+     100: invokeinterface #129,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     105: checkcast     #133                // class com/strategyquant/tradinglib/MonteCarloRetest
+     108: astore        7
+     110: aload         5
+     112: aload         7
+     114: invokevirtual #135                // Method com/strategyquant/tradinglib/MonteCarloRetest.getClone:()Lcom/strategyquant/tradinglib/MonteCarloRetest;
+     117: invokevirtual #139                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     120: pop
+     121: goto          88
+     124: aload_0
+     125: aload_0
+     126: getfield      #39                 // Field resultSettings:Lcom/strategyquant/lib/SettingsMap;
+     129: invokevirtual #143                // Method cloneSettings:(Lcom/strategyquant/lib/SettingsMap;)Lcom/strategyquant/lib/SettingsMap;
+     132: astore        6
+     134: aload         6
+     136: ldc           #147                // String BacktestChart
+     138: invokevirtual #114                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     141: checkcast     #149                // class com/strategyquant/tradinglib/ChartSetup
+     144: astore        7
+     146: aload_0
+     147: getfield      #71                 // Field backtestPrecision:I
+     150: iconst_m1
+     151: if_icmpne     166
+     154: aload         7
+     156: aload_0
+     157: getfield      #46                 // Field mainBacktestPrecision:I
+     160: invokevirtual #151                // Method com/strategyquant/tradinglib/ChartSetup.setTestPrecision:(I)V
+     163: goto          175
+     166: aload         7
+     168: aload_0
+     169: getfield      #71                 // Field backtestPrecision:I
+     172: invokevirtual #151                // Method com/strategyquant/tradinglib/ChartSetup.setTestPrecision:(I)V
+     175: aconst_null
+     176: astore        8
+     178: aload         7
+     180: invokevirtual #155                // Method com/strategyquant/tradinglib/ChartSetup.getBacktestEngine:()I
+     183: ldc           #160                // int 1316847364
+     185: if_icmpeq     198
+     188: aload         7
+     190: invokevirtual #155                // Method com/strategyquant/tradinglib/ChartSetup.getBacktestEngine:()I
+     193: ldc           #161                // int -1816889229
+     195: if_icmpne     210
+     198: new           #162                // class com/strategyquant/tradinglib/engine/stockpicker/StockpickerBacktestEngine
+     201: dup
+     202: invokespecial #164                // Method com/strategyquant/tradinglib/engine/stockpicker/StockpickerBacktestEngine."<init>":()V
+     205: astore        8
+     207: goto          269
+     210: aload         7
+     212: invokestatic  #165                // Method com/strategyquant/tradinglib/simulator/impl/TraderSimulators.getSimulator:(Lcom/strategyquant/tradinglib/ChartSetup;)Lcom/strategyquant/tradinglib/simulator/ITradingSimulator;
+     215: astore        9
+     217: new           #171                // class com/strategyquant/tradinglib/engine/BacktestEngine
+     220: dup
+     221: aload         9
+     223: invokespecial #173                // Method com/strategyquant/tradinglib/engine/BacktestEngine."<init>":(Lcom/strategyquant/tradinglib/simulator/ITradingSimulator;)V
+     226: astore        8
+     228: aload_0
+     229: aload         7
+     231: aload         5
+     233: invokespecial #176                // Method isRandomizeHistoryUsed:(Lcom/strategyquant/tradinglib/ChartSetup;Ljava/util/ArrayList;)Z
+     236: ifne          243
+     239: iconst_1
+     240: goto          244
+     243: iconst_0
+     244: istore        10
+     246: aload         9
+     248: invokeinterface #180,  1          // InterfaceMethod com/strategyquant/tradinglib/simulator/ITradingSimulator.getEngineId:()I
+     253: invokestatic  #185                // Method com/strategyquant/tradinglib/simulator/Engines.isTradestationEngine:(I)Z
+     256: ifeq          262
+     259: iconst_1
+     260: istore        10
+     262: aload         8
+     264: iload         10
+     266: invokevirtual #189                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.setUsePreparedData:(Z)V
+     269: aload         8
+     271: iconst_1
+     272: invokevirtual #195                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.setSingleThreaded:(Z)V
+     275: aload         8
+     277: aload_0
+     278: getfield      #25                 // Field parentStopPauseEngine:Lcom/strategyquant/tradinglib/project/StopPauseEngine;
+     281: invokevirtual #198                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.setStopPauseEngine:(Lcom/strategyquant/tradinglib/project/StopPauseEngine;)V
+     284: invokestatic  #82                 // Method java/lang/System.currentTimeMillis:()J
+     287: ldc2_w        #202                // long 109l
+     290: aload_0
+     291: getfield      #17                 // Field index:J
+     294: lmul
+     295: ladd
+     296: lstore        9
+     298: new           #204                // class com/strategyquant/lib/random/MersenneTwisterRng
+     301: dup
+     302: lload         9
+     304: invokespecial #206                // Method com/strategyquant/lib/random/MersenneTwisterRng."<init>":(J)V
+     307: astore        11
+     309: aload         8
+     311: new           #209                // class com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob$1
+     314: dup
+     315: aload_0
+     316: invokespecial #211                // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob$1."<init>":(Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;)V
+     319: invokevirtual #214                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.registerProgressListener:(Lcom/strategyquant/tradinglib/backtestrunner/IBacktestProgressListener;)V
+     322: aload         5
+     324: invokevirtual #120                // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+     327: astore        12
+     329: aload         12
+     331: invokeinterface #124,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     336: ifeq          421
+     339: aload         12
+     341: invokeinterface #129,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     346: checkcast     #133                // class com/strategyquant/tradinglib/MonteCarloRetest
+     349: astore        13
+     351: aload_0
+     352: getfield      #25                 // Field parentStopPauseEngine:Lcom/strategyquant/tradinglib/project/StopPauseEngine;
+     355: invokevirtual #218                // Method com/strategyquant/tradinglib/project/StopPauseEngine.isStopped:()Z
+     358: ifeq          364
+     361: goto          421
+     364: aload         13
+     366: invokevirtual #223                // Method com/strategyquant/tradinglib/MonteCarloRetest.getType:()I
+     369: iconst_1
+     370: if_icmpne     385
+     373: aload         13
+     375: aload         11
+     377: aload         6
+     379: invokevirtual #228                // Method com/strategyquant/tradinglib/MonteCarloRetest.modifySettings:(Lcom/strategyquant/lib/IRandomGenerator;Lcom/strategyquant/lib/SettingsMap;)V
+     382: goto          418
+     385: aload         13
+     387: invokevirtual #223                // Method com/strategyquant/tradinglib/MonteCarloRetest.getType:()I
+     390: iconst_2
+     391: if_icmpne     418
+     394: aload         13
+     396: aload         6
+     398: invokevirtual #232                // Method com/strategyquant/tradinglib/MonteCarloRetest.initSettings:(Lcom/strategyquant/lib/SettingsMap;)V
+     401: aload         8
+     403: new           #236                // class com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob$2
+     406: dup
+     407: aload_0
+     408: aload         13
+     410: aload         11
+     412: invokespecial #238                // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob$2."<init>":(Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;Lcom/strategyquant/tradinglib/MonteCarloRetest;Lcom/strategyquant/lib/IRandomGenerator;)V
+     415: invokevirtual #241                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.setDataModifierCallback:(Lcom/strategyquant/tradinglib/robustnesstests/DataModifierCallback;)V
+     418: goto          329
+     421: aload         8
+     423: aload         6
+     425: invokevirtual #245                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.addSetup:(Lcom/strategyquant/lib/SettingsMap;)V
+     428: aload         8
+     430: invokevirtual #248                // Method com/strategyquant/tradinglib/engine/AbstractBacktestEngine.runBacktest:()Lcom/strategyquant/tradinglib/engine/BacktestEngine;
+     433: invokevirtual #252                // Method com/strategyquant/tradinglib/engine/BacktestEngine.getResults:()Lcom/strategyquant/tradinglib/ResultsGroup;
+     436: astore        12
+     438: aload         12
+     440: invokevirtual #256                // Method com/strategyquant/tradinglib/ResultsGroup.orders:()Lcom/strategyquant/tradinglib/OrdersList;
+     443: astore        13
+     445: aload_0
+     446: getfield      #60                 // Field useFullSample:Z
+     449: ifne          462
+     452: aload_0
+     453: aload         13
+     455: aload         6
+     457: invokespecial #262                // Method filterInSampleOnly:(Lcom/strategyquant/tradinglib/OrdersList;Lcom/strategyquant/lib/SettingsMap;)Lcom/strategyquant/tradinglib/OrdersList;
+     460: astore        13
+     462: aload         13
+     464: aload         6
+     466: aload_0
+     467: getfield      #73                 // Field symbolsMap:Lcom/strategyquant/tradinglib/results/SymbolsMap;
+     470: aconst_null
+     471: invokestatic  #266                // Method com/strategyquant/tradinglib/crosscheck/MCResultsComputer.computeResults:(Lcom/strategyquant/tradinglib/OrdersList;Lcom/strategyquant/lib/SettingsMap;Lcom/strategyquant/tradinglib/results/SymbolsMap;Lcom/strategyquant/tradinglib/Result;)Lcom/strategyquant/tradinglib/robustnesstests/RobustnessResults;
+     474: astore        14
+     476: aload_1
+     477: getstatic     #272                // Field com/strategyquant/tradinglib/backtestrunner/DurationStats.MainTest:Ljava/lang/String;
+     480: invokestatic  #82                 // Method java/lang/System.currentTimeMillis:()J
+     483: lload_2
+     484: lsub
+     485: invokevirtual #275                // Method com/strategyquant/tradinglib/backtestrunner/DurationStats.addDuration:(Ljava/lang/String;J)V
+     488: new           #279                // class com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult
+     491: dup
+     492: aload         14
+     494: aload_1
+     495: invokespecial #281                // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult."<init>":(Lcom/strategyquant/tradinglib/robustnesstests/RobustnessResults;Lcom/strategyquant/tradinglib/backtestrunner/DurationStats;)V
+     498: areturn
+     499: astore        4
+     501: aload         4
+     503: instanceof    #286                // class com/strategyquant/tradinglib/BadStrategyException
+     506: ifeq          611
+     509: aload         4
+     511: checkcast     #286                // class com/strategyquant/tradinglib/BadStrategyException
+     514: astore        5
+     516: aload         4
+     518: invokevirtual #288                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     521: ldc_w         #292                // String Automatic filter
+     524: invokevirtual #294                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     527: ifne          611
+     530: aload         4
+     532: invokevirtual #288                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     535: ldc_w         #292                // String Automatic filter
+     538: iconst_0
+     539: anewarray     #90                 // class java/lang/Object
+     542: invokestatic  #98                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     545: invokevirtual #294                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     548: ifne          611
+     551: getstatic     #300                // Field Log:Lorg/slf4j/Logger;
+     554: ldc_w         #304                // String Exception in Cross check - %s :
+     557: iconst_2
+     558: anewarray     #90                 // class java/lang/Object
+     561: dup
+     562: iconst_0
+     563: aload_0
+     564: invokevirtual #306                // Method getJobId:()Ljava/lang/String;
+     567: aastore
+     568: dup
+     569: iconst_1
+     570: aload         5
+     572: invokevirtual #309                // Method com/strategyquant/tradinglib/BadStrategyException.getReason:()I
+     575: invokestatic  #312                // Method com/strategyquant/tradinglib/BadStrategyException.getReasonAsString:(I)Ljava/lang/String;
+     578: aastore
+     579: invokestatic  #316                // Method java/lang/String.format:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     582: aload         4
+     584: invokeinterface #319,  3          // InterfaceMethod org/slf4j/Logger.error:(Ljava/lang/String;Ljava/lang/Throwable;)V
+     589: new           #279                // class com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult
+     592: dup
+     593: ldc_w         #292                // String Automatic filter
+     596: iconst_0
+     597: anewarray     #90                 // class java/lang/Object
+     600: invokestatic  #98                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     603: sipush        10004
+     606: aload_1
+     607: invokespecial #325                // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult."<init>":(Ljava/lang/String;ILcom/strategyquant/tradinglib/backtestrunner/DurationStats;)V
+     610: areturn
+     611: new           #279                // class com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult
+     614: dup
+     615: ldc_w         #328                // String Exception in backtest: %s
+     618: iconst_1
+     619: anewarray     #90                 // class java/lang/Object
+     622: dup
+     623: iconst_0
+     624: aload         4
+     626: invokevirtual #288                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     629: aastore
+     630: invokestatic  #98                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     633: sipush        10004
+     636: aload_1
+     637: invokespecial #325                // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult."<init>":(Ljava/lang/String;ILcom/strategyquant/tradinglib/backtestrunner/DurationStats;)V
+     640: areturn
+    Exception table:
+       from    to  target type
+          12   498   499   Class java/lang/Exception
+
+  private boolean isRandomizeHistoryUsed(com.strategyquant.tradinglib.ChartSetup, java.util.ArrayList<com.strategyquant.tradinglib.MonteCarloRetest>);
+    Code:
+       0: aload_1
+       1: invokevirtual #330                // Method com/strategyquant/tradinglib/ChartSetup.getMainChart:()Lcom/strategyquant/datalib/ChartDef;
+       4: invokevirtual #334                // Method com/strategyquant/datalib/ChartDef.getSymbolInfo:()Lcom/strategyquant/datalib/InstrumentInfo;
+       7: getfield      #340                // Field com/strategyquant/datalib/InstrumentInfo.dataType:I
+      10: iconst_2
+      11: if_icmpeq     53
+      14: aload_2
+      15: invokevirtual #120                // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      18: astore_3
+      19: aload_3
+      20: invokeinterface #124,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      25: ifeq          53
+      28: aload_3
+      29: invokeinterface #129,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      34: checkcast     #133                // class com/strategyquant/tradinglib/MonteCarloRetest
+      37: astore        4
+      39: aload         4
+      41: invokevirtual #223                // Method com/strategyquant/tradinglib/MonteCarloRetest.getType:()I
+      44: iconst_2
+      45: if_icmpne     50
+      48: iconst_1
+      49: ireturn
+      50: goto          19
+      53: iconst_0
+      54: ireturn
+
+  private com.strategyquant.tradinglib.OrdersList filterInSampleOnly(com.strategyquant.tradinglib.OrdersList, com.strategyquant.lib.SettingsMap);
+    Code:
+       0: aload_1
+       1: ldc_w         #347                // String *
+       4: iconst_0
+       5: bipush        10
+       7: invokevirtual #353                // Method com/strategyquant/tradinglib/OrdersList.filterWithClone:(Ljava/lang/String;BB)Lcom/strategyquant/tradinglib/OrdersList;
+      10: astore_3
+      11: aload_1
+      12: invokevirtual #359                // Method com/strategyquant/tradinglib/OrdersList.clear:()V
+      15: aload_3
+      16: areturn
+
+  protected com.strategyquant.lib.SettingsMap cloneSettings(com.strategyquant.lib.SettingsMap) throws java.lang.CloneNotSupportedException;
+    Code:
+       0: new           #37                 // class com/strategyquant/lib/SettingsMap
+       3: dup
+       4: invokespecial #362                // Method com/strategyquant/lib/SettingsMap."<init>":()V
+       7: astore_2
+       8: aload_1
+       9: invokevirtual #363                // Method com/strategyquant/lib/SettingsMap.getAllKeys:()[Ljava/lang/String;
+      12: astore_3
+      13: iconst_0
+      14: istore        4
+      16: iload         4
+      18: aload_3
+      19: arraylength
+      20: if_icmpge     57
+      23: aload_0
+      24: aload_3
+      25: iload         4
+      27: aaload
+      28: aload_1
+      29: aload_3
+      30: iload         4
+      32: aaload
+      33: invokevirtual #114                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+      36: invokespecial #367                // Method cloneValue:(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+      39: astore        5
+      41: aload_2
+      42: aload_3
+      43: iload         4
+      45: aaload
+      46: aload         5
+      48: invokevirtual #371                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      51: iinc          4, 1
+      54: goto          16
+      57: aload_2
+      58: ldc_w         #375                // String StrategyCheckDate
+      61: ldc2_w        #377                // long -1l
+      64: invokestatic  #92                 // Method java/lang/Long.valueOf:(J)Ljava/lang/Long;
+      67: invokevirtual #371                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      70: aload_2
+      71: areturn
+
+  private java.lang.Object cloneValue(java.lang.String, java.lang.Object) throws java.lang.CloneNotSupportedException;
+    Code:
+       0: aload_1
+       1: ldc_w         #379                // String TradingOptions
+       4: invokevirtual #381                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+       7: ifeq          18
+      10: aload_2
+      11: checkcast     #384                // class com/strategyquant/tradinglib/options/TradingOptions
+      14: invokevirtual #386                // Method com/strategyquant/tradinglib/options/TradingOptions.getClone:()Lcom/strategyquant/tradinglib/options/TradingOptions;
+      17: areturn
+      18: aload_1
+      19: ldc_w         #389                // String StoreChartData
+      22: invokevirtual #381                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      25: ifeq          33
+      28: iconst_0
+      29: invokestatic  #391                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+      32: areturn
+      33: aload_2
+      34: instanceof    #394                // class com/strategyquant/tradinglib/StrategyBase
+      37: ifeq          48
+      40: aload_2
+      41: checkcast     #394                // class com/strategyquant/tradinglib/StrategyBase
+      44: invokevirtual #396                // Method com/strategyquant/tradinglib/StrategyBase.clone:()Lcom/strategyquant/tradinglib/StrategyBase;
+      47: areturn
+      48: aload_1
+      49: ldc           #147                // String BacktestChart
+      51: invokevirtual #381                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      54: ifeq          65
+      57: aload_2
+      58: checkcast     #149                // class com/strategyquant/tradinglib/ChartSetup
+      61: invokevirtual #400                // Method com/strategyquant/tradinglib/ChartSetup.getClone:()Lcom/strategyquant/tradinglib/ChartSetup;
+      64: areturn
+      65: aload_2
+      66: areturn
+
+  public java.lang.Object call() throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: invokevirtual #403                // Method call:()Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCJobResult;
+       4: areturn
+
+  static double access$000(com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob);
+    Code:
+       0: aload_0
+       1: getfield      #1                  // Field globalATR:D
+       4: dreturn
+
+  static {};
+    Code:
+       0: ldc_w         #407                // String MCRetestJob
+       3: invokestatic  #409                // Method org/slf4j/LoggerFactory.getLogger:(Ljava/lang/String;)Lorg/slf4j/Logger;
+       6: putstatic     #300                // Field Log:Lorg/slf4j/Logger;
+       9: return
+}

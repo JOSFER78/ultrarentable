@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Building2,
   ShieldCheck,
@@ -24,13 +25,22 @@ import { LiveDealsTracker } from "./components/LiveDealsTracker";
 import { AISyncStatusBar } from "./components/AISyncStatusBar";
 import FloatingComparisonDrawer from "./components/FloatingComparisonDrawer";
 import PickMyTradeBridgeModal from "./components/PickMyTradeBridgeModal";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 
 export type PropFirmTab = "COMPARATOR" | "FINDER" | "TABLE" | "ROI_CALC" | "LIVE_DEALS";
 
-export default function PropFirmsMasterPage() {
+function PropFirmsContent() {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<PropFirmTab>("COMPARATOR");
   const [isPmtModalOpen, setIsPmtModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const viewParam = searchParams.get("view");
+    if (viewParam === "finder") setActiveTab("FINDER");
+    else if (viewParam === "table") setActiveTab("TABLE");
+    else if (viewParam === "roi") setActiveTab("ROI_CALC");
+    else if (viewParam === "deals") setActiveTab("LIVE_DEALS");
+    else if (viewParam === "comparator") setActiveTab("COMPARATOR");
+  }, [searchParams]);
 
   // Shared state for selected comparison accounts across components (2 to 4 accounts)
   const [selectedComparisonIds, setSelectedComparisonIds] = useState<string[]>([
@@ -85,8 +95,6 @@ export default function PropFirmsMasterPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-2 md:p-6 pb-24">
       <div className="max-w-7xl mx-auto space-y-6">
-        <EstrategiasHeaderNav />
-
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-4 gap-4">
           <div>
@@ -266,5 +274,13 @@ export default function PropFirmsMasterPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function PropFirmsMasterPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-400 font-mono text-sm">Cargando 70 Prop Firms...</div>}>
+      <PropFirmsContent />
+    </Suspense>
   );
 }

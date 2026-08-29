@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: doctrina V2 'canónica 2026' sustituida como SSOT; los principios vigentes viven en docs/ULTRARENTABLE_PRINCIPLES.md y .agents/AGENTS.md. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # 🏛️ DOCTRINA MAESTRA DEL SISTEMA: ULTRARENTABLE V2 (CANÓNICO 2026)
 ### *Especificación Cuantitativa, Matemática, Arquitectura y Directiva Universal Zero-Simulaciones*
 

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 
 interface CandidateItem {
   candidate_id: string;
@@ -65,40 +64,22 @@ export default function NautilusTraderStudioPage() {
         const data = await res.json();
         setSimulationResult(data);
       } else {
-        // Fallback a ejecución de reconciliación
-        const cand = candidates.find((c) => c.candidate_id === selectedCandidateId);
+        const errText = await res.text().catch(() => "");
         setSimulationResult({
-          status: "SUCCESS",
-          engine: "NautilusTrader v1.190.0 (Rust/Cython Core)",
+          status: "ERROR",
+          engine: "NautilusTrader Core v1.190.0 (Rust/Cython)",
           venue: venue,
           candidate_id: selectedCandidateId,
-          symbol: cand?.symbol || "BTC-USDT",
-          timeframe: cand?.timeframe || "15m",
-          bars_processed: 2500,
-          events_generated: 7500,
-          reconciliation: {
-            fast_engine_pnl: cand?.metrics?.out_of_sample?.net_profit_usd || 1250.0,
-            nautilus_pnl: (cand?.metrics?.out_of_sample?.net_profit_usd || 1250.0) * 0.985,
-            discrepancy_pct: 1.5,
-            is_reconciled: true,
-            max_drawdown_pct: cand?.metrics?.out_of_sample?.max_drawdown_pct || 22.5,
-            trades_executed: cand?.metrics?.out_of_sample?.trades || 35,
-            fill_slippage_avg_usd: 1.25,
-          },
-          logs: [
-            `[00:00:00.001] NautilusTrader Core initialized with venue: ${venue}`,
-            `[00:00:00.005] Instrument loaded: ${cand?.symbol || "BTC-USDT"} with tick_size and taker fee model`,
-            `[00:00:00.012] OrderBook matching engine started (Latency: ${latencyMs}ms, Model: ${fillModel})`,
-            `[00:00:00.045] Processing 2,500 physical bars from data/normalized/`,
-            `[00:00:00.180] 35 Order Fills processed through simulated execution venue`,
-            `[00:00:00.220] Reconciliation Gate 11: DISCREPANCY 1.50% <= 5.00% -> PASSED`,
-          ],
+          message: `Servicio NautilusTrader no disponible (HTTP ${res.status}): ${errText || "SIN DATOS / NO EVIDENCE"}`,
         });
       }
-    } catch {
+    } catch (err: any) {
       setSimulationResult({
         status: "ERROR",
-        message: "Error ejecutando simulación NautilusTrader.",
+        engine: "NautilusTrader Core (Rust/Cython)",
+        venue: venue,
+        candidate_id: selectedCandidateId,
+        message: `Error de conexión con NautilusTrader: ${err?.message || "DESCONECTADO"}`,
       });
     } finally {
       setSimulating(false);
@@ -109,9 +90,6 @@ export default function NautilusTraderStudioPage() {
 
   return (
     <div style={{ padding: "20px 24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc", fontFamily: "var(--font-sans, system-ui)" }}>
-      {/* SUB-NAV BAR DE 6 PUNTOS */}
-      <EstrategiasHeaderNav />
-
       {/* HEADER */}
       <div style={{ marginBottom: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
@@ -141,6 +119,7 @@ export default function NautilusTraderStudioPage() {
           <select
             value={selectedCandidateId}
             onChange={(e) => setSelectedCandidateId(e.target.value)}
+            disabled={candidates.length === 0}
             style={{
               width: "100%",
               padding: "10px 12px",
@@ -153,11 +132,15 @@ export default function NautilusTraderStudioPage() {
               marginBottom: "12px",
             }}
           >
-            {candidates.map((c) => (
-              <option key={c.candidate_id} value={c.candidate_id}>
-                {c.symbol} ({c.timeframe}) · {c.name || c.candidate_id} [{c.route}]
-              </option>
-            ))}
+            {candidates.length === 0 ? (
+              <option value="">(SIN DATOS) 0 Estrategias Candidatas</option>
+            ) : (
+              candidates.map((c) => (
+                <option key={c.candidate_id} value={c.candidate_id}>
+                  {c.symbol} ({c.timeframe}) · {c.name || c.candidate_id} [{c.route}]
+                </option>
+              ))
+            )}
           </select>
 
           {selectedCand && (
@@ -258,65 +241,84 @@ export default function NautilusTraderStudioPage() {
 
       {/* RESULTADO DE LA SIMULACIÓN Y RECONCILIACIÓN */}
       {simulationResult && (
-        <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-            <div>
-              <h2 style={{ fontSize: "16px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
-                📊 Informe de Reconciliación FastEngine vs NautilusTrader
+        simulationResult.status === "ERROR" ? (
+          <div style={{ background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+              <h2 style={{ fontSize: "16px", fontWeight: 900, margin: 0, color: "#f87171" }}>
+                ⚠️ Error de Reconciliación NautilusTrader
               </h2>
-              <div style={{ fontSize: "11px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-                {simulationResult.engine} · Venue: {simulationResult.venue}
-              </div>
+              <span style={{ background: "rgba(239, 68, 68, 0.2)", color: "#f87171", border: "1px solid rgba(239, 68, 68, 0.4)", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 900 }}>
+                DESCONECTADO / ERROR
+              </span>
             </div>
-            <span style={{
-              background: simulationResult.reconciliation?.is_reconciled ? "rgba(16, 185, 129, 0.2)" : "rgba(239, 68, 68, 0.2)",
-              color: simulationResult.reconciliation?.is_reconciled ? "#10b981" : "#f87171",
-              border: `1px solid ${simulationResult.reconciliation?.is_reconciled ? "rgba(16, 185, 129, 0.4)" : "rgba(239, 68, 68, 0.4)"}`,
-              padding: "4px 10px",
-              borderRadius: "6px",
-              fontSize: "11px",
-              fontWeight: 900,
-            }}>
-              {simulationResult.reconciliation?.is_reconciled ? "GATE 11 APROBADO (RECONCILIADO ✓)" : "GATE 11 RECHAZADO"}
-            </span>
+            <div style={{ fontSize: "12.5px", color: "#cbd5e1", fontFamily: "var(--font-mono, monospace)", marginBottom: "8px" }}>
+              {simulationResult.message}
+            </div>
+            <div style={{ fontSize: "11px", color: "#64748b" }}>
+              Motor: {simulationResult.engine} · Venue: {simulationResult.venue} · Estado: NO EVIDENCE
+            </div>
           </div>
+        ) : (
+          <div style={{ background: "rgba(16, 23, 34, 0.95)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <div>
+                <h2 style={{ fontSize: "16px", fontWeight: 900, margin: 0, color: "#ffffff" }}>
+                  📊 Informe de Reconciliación FastEngine vs NautilusTrader
+                </h2>
+                <div style={{ fontSize: "11px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
+                  {simulationResult.engine} · Venue: {simulationResult.venue}
+                </div>
+              </div>
+              <span style={{
+                background: simulationResult.reconciliation?.is_reconciled ? "rgba(16, 185, 129, 0.2)" : "rgba(239, 68, 68, 0.2)",
+                color: simulationResult.reconciliation?.is_reconciled ? "#10b981" : "#f87171",
+                border: `1px solid ${simulationResult.reconciliation?.is_reconciled ? "rgba(16, 185, 129, 0.4)" : "rgba(239, 68, 68, 0.4)"}`,
+                padding: "4px 10px",
+                borderRadius: "6px",
+                fontSize: "11px",
+                fontWeight: 900,
+              }}>
+                {simulationResult.reconciliation?.is_reconciled ? "GATE 11 APROBADO (RECONCILIADO ✓)" : "GATE 11 RECHAZADO"}
+              </span>
+            </div>
 
-          {/* CHIPS DE MÉTRICAS */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px", marginBottom: "18px" }}>
-            <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8" }}>PnL FastEngine:</div>
-              <div style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-                ${(simulationResult.reconciliation?.fast_engine_pnl || 0).toFixed(2)}
+            {/* CHIPS DE MÉTRICAS */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px", marginBottom: "18px" }}>
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ fontSize: "10px", color: "#94a3b8" }}>PnL FastEngine:</div>
+                <div style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
+                  ${(simulationResult.reconciliation?.fast_engine_pnl || 0).toFixed(2)}
+                </div>
+              </div>
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ fontSize: "10px", color: "#94a3b8" }}>PnL NautilusTrader:</div>
+                <div style={{ fontSize: "16px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
+                  ${(simulationResult.reconciliation?.nautilus_pnl || 0).toFixed(2)}
+                </div>
+              </div>
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ fontSize: "10px", color: "#94a3b8" }}>Discrepancia de PnL:</div>
+                <div style={{ fontSize: "16px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
+                  {(simulationResult.reconciliation?.discrepancy_pct || 0).toFixed(2)}% (≤ 5.0%)
+                </div>
+              </div>
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ fontSize: "10px", color: "#94a3b8" }}>Trades Ejecutados:</div>
+                <div style={{ fontSize: "16px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
+                  {simulationResult.reconciliation?.trades_executed || 0}
+                </div>
               </div>
             </div>
-            <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8" }}>PnL NautilusTrader:</div>
-              <div style={{ fontSize: "16px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                ${(simulationResult.reconciliation?.nautilus_pnl || 0).toFixed(2)}
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8" }}>Discrepancia de PnL:</div>
-              <div style={{ fontSize: "16px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                {(simulationResult.reconciliation?.discrepancy_pct || 0).toFixed(2)}% (≤ 5.0%)
-              </div>
-            </div>
-            <div style={{ background: "rgba(0,0,0,0.4)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ fontSize: "10px", color: "#94a3b8" }}>Trades Ejecutados:</div>
-              <div style={{ fontSize: "16px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
-                {simulationResult.reconciliation?.trades_executed || 0}
-              </div>
-            </div>
-          </div>
 
-          {/* LOGS DE EJECUCIÓN EVENT-DRIVEN */}
-          <div style={{ background: "#05070a", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.08)", padding: "12px", fontFamily: "var(--font-mono, monospace)", fontSize: "11px", color: "#cbd5e1" }}>
-            <div style={{ color: "#64748b", marginBottom: "6px", fontSize: "10px", fontWeight: 800 }}>REGISTRO DE EVENTOS NAUTILUSTRADER:</div>
-            {simulationResult.logs?.map((l: string, i: number) => (
-              <div key={i} style={{ marginBottom: "3px" }}>{l}</div>
-            ))}
+            {/* LOGS DE EJECUCIÓN EVENT-DRIVEN */}
+            <div style={{ background: "#05070a", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.08)", padding: "12px", fontFamily: "var(--font-mono, monospace)", fontSize: "11px", color: "#cbd5e1" }}>
+              <div style={{ color: "#64748b", marginBottom: "6px", fontSize: "10px", fontWeight: 800 }}>REGISTRO DE EVENTOS NAUTILUSTRADER:</div>
+              {simulationResult.logs?.map((l: string, i: number) => (
+                <div key={i} style={{ marginBottom: "3px" }}>{l}</div>
+              ))}
+            </div>
           </div>
-        </div>
+        )
       )}
     </div>
   );

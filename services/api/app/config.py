@@ -29,8 +29,9 @@ def resolve_local_path(env_name: str, default: str) -> Path:
 
 DATA_DIR = resolve_local_path("DATA_DIR", "data")
 # Runtime state must be portable across local machines, CI and production.
-# External absolute paths remain supported through STATE_DB_PATH when explicitly configured.
-STATE_DB_PATH = resolve_local_path("STATE_DB_PATH", "data/state/ultrarentable.sqlite3")
+_canonical_user_db = Path.home() / ".local/state/ultrarentable/ultrarentable.sqlite3"
+_default_state_db = str(_canonical_user_db) if _canonical_user_db.exists() else "data/state/ultrarentable.sqlite3"
+STATE_DB_PATH = resolve_local_path("STATE_DB_PATH", _default_state_db)
 ARTIFACTS_DIR = resolve_local_path("ARTIFACTS_DIR", "data/artifacts")
 LOCAL_WEB_ORIGINS = [
     value.strip()

@@ -21,7 +21,6 @@ import {
   Table,
 } from "lucide-react";
 import { getCertifiedStrategies, getCandidates, CertifiedStrategy } from "@/lib/api";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import QuantTooltip from "@/components/system/QuantTooltip";
 
 interface GateCanonicalMeta {
@@ -320,8 +319,6 @@ export default function GatesPage() {
   return (
     <div className="min-h-screen bg-[#030712] text-slate-100 p-2 md:p-6 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
-        <EstrategiasHeaderNav />
-
         {/* HERO STORYTELLING BANNER */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-emerald-950/40 border border-slate-800 p-5 md:p-6 shadow-2xl">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">

@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: baseline de congelación forense del 2026-08-19; histórico (gobernanza vigente: docs/VERSION_GOVERNANCE_AND_CONTROL.md). **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # AUDIT BASELINE 2026-08-19: CONGELACIÓN FORENSE
 
 **Fecha:** 19 de Agosto de 2026  

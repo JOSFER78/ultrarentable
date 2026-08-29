@@ -1,0 +1,32 @@
+### BacktestEngine.computeResults (disparo del BadStrategyException(ReasonNoTrades=1))
+sed: can't read backtestengine.txt: No such file or directory
+### BadStrategyException.getReasonAsString(1)
+sed: can't read badstrategy.txt: No such file or directory
+### MCRetestJob.setUsePreparedData/setSingleThreaded (contexto call())
+sed: can't read mcretestjob.txt: No such file or directory
+### BacktestSettings.getSettingsMap: StrategyCheckDate=from+0.4*(to-from), DismissBadStrategies propagado
+sed: can't read btsettings.txt: No such file or directory
+### project.cfx AutomaticDismissal
+    <AutomaticDismissal>
+      <Problem code="1" dismiss="true" />
+      <Problem code="4" dismiss="false" />
+      <Problem code="1024" dismiss="false" />
+      <Problem code="16" dismiss="false" />
+      <Problem code="32" dismiss="false" />
+      <Problem code="64" dismiss="false" />
+      <Problem code="256" dismiss="false" />
+      <Problem code="2" dismiss="false" />
+      <Problem code="512" dismiss="false" />
+      <Problem code="8" dismiss="false" />
+    </AutomaticDismissal>
+### 1. Disparo del BadStrategyException(ReasonNoTrades=1) en BacktestEngine.computeResults(SQTradingLib.jar): check(dismissBadStrategies,1) && OrdersList.size()==0 -> throw BadStrategyException(1)
+sed: can't read backtestengine.txt: No such file or directory
+
+### 2. BadStrategyException.getReasonAsString(1) -> traducción del literal 'Automatic filter' + TxtShortReasonNoTrades = 'Filtro automático: sin transacciones' (Spanish.csv L1889: no trades;sin transacciones)
+sed: can't read badstrategy.txt: No such file or directory
+
+### 3. MCRetestJob.call(): setUsePreparedData / setSingleThreaded
+sed: can't read mcretestjob.txt: No such file or directory
+
+### 4. BacktestSettings.getSettingsMap(): StrategyCheckDate=historyFrom+0.4*(to-from); DismissBadStrategies se propaga al SettingsMap de la sim
+sed: can't read btsettings.txt: No such file or directory

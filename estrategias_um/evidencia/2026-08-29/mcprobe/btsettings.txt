@@ -1,0 +1,1091 @@
+public class com.strategyquant.tradinglib.backtestrunner.BacktestSettings implements com.strategyquant.lib.utils.ISQCloneable {
+  public double initialCapital;
+
+  public com.strategyquant.tradinglib.MoneyManagementMethod moneyManagementMethod;
+
+  public boolean moneyManagementMethodUseFromStrategy;
+
+  public com.strategyquant.tradinglib.RiskManagementMethod riskManagementMethod;
+
+  public com.strategyquant.tradinglib.fitnessfunction.IFitnessFunction fitnessFunction;
+
+  public java.util.ArrayList<com.strategyquant.tradinglib.conditions.Condition> rankingConditions;
+
+  public java.util.ArrayList<com.strategyquant.tradinglib.conditions.Condition> initialGenerationConditions;
+
+  public com.strategyquant.tradinglib.options.TradingOptions tradingOptions;
+
+  public com.strategyquant.tradinglib.engine.ChartSetups chartSetups;
+
+  public com.strategyquant.tradinglib.strategy.OutOfSample outOfSample;
+
+  public boolean useCrossChecks;
+
+  public java.util.ArrayList<com.strategyquant.tradinglib.crosscheck.ICrossCheck> crossChecks;
+
+  public boolean evaluateAllCrossChecks;
+
+  public boolean forceRunCrossChecks;
+
+  public double slippage;
+
+  public double minDistance;
+
+  public com.strategyquant.tradinglib.CommissionsMethod commission;
+
+  public com.strategyquant.tradinglib.SwapMethod swap;
+
+  public java.lang.String strategyName;
+
+  public org.jdom2.Element elStrategy;
+
+  public org.jdom2.Element lastSettings;
+
+  public int dismissBadStrategies;
+
+  public com.strategyquant.tradinglib.StrategyBase strategyObject;
+
+  public java.lang.String mainResultKey;
+
+  public boolean deleteFailedStrategies;
+
+  public boolean isRetester;
+
+  public boolean singleThreadedOptimizations;
+
+  public java.util.List<com.strategyquant.tradinglib.ResultsGroup> mergedStrategies;
+
+  public long dateGenerated;
+
+  public boolean warningsBadStrategies;
+
+  public com.strategyquant.tradinglib.ATM atm;
+
+  public com.strategyquant.tradinglib.correlation.FitPortfolio fitPortfolio;
+
+  public boolean isAlgoWizard;
+
+  public boolean removeEndOfTestOrders;
+
+  public java.lang.String userID;
+
+  public java.lang.String groupSymbols;
+
+  public java.lang.String brokerSymbols;
+
+  public com.strategyquant.tradinglib.backtestrunner.BacktestSettings();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #7                  // Field evaluateAllCrossChecks:Z
+       9: aload_0
+      10: iconst_0
+      11: putfield      #13                 // Field forceRunCrossChecks:Z
+      14: aload_0
+      15: iconst_0
+      16: putfield      #16                 // Field dismissBadStrategies:I
+      19: aload_0
+      20: iconst_0
+      21: putfield      #20                 // Field deleteFailedStrategies:Z
+      24: aload_0
+      25: iconst_0
+      26: putfield      #23                 // Field isRetester:Z
+      29: aload_0
+      30: iconst_1
+      31: putfield      #26                 // Field singleThreadedOptimizations:Z
+      34: aload_0
+      35: aconst_null
+      36: putfield      #29                 // Field mergedStrategies:Ljava/util/List;
+      39: aload_0
+      40: iconst_0
+      41: putfield      #33                 // Field warningsBadStrategies:Z
+      44: aload_0
+      45: iconst_0
+      46: putfield      #36                 // Field isAlgoWizard:Z
+      49: aload_0
+      50: iconst_0
+      51: putfield      #39                 // Field removeEndOfTestOrders:Z
+      54: aload_0
+      55: aconst_null
+      56: putfield      #42                 // Field userID:Ljava/lang/String;
+      59: aload_0
+      60: aconst_null
+      61: putfield      #46                 // Field groupSymbols:Ljava/lang/String;
+      64: aload_0
+      65: aconst_null
+      66: putfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+      69: return
+
+  public com.strategyquant.tradinglib.backtestrunner.BacktestSettings(java.util.Map<java.lang.String, java.io.Serializable>) throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #7                  // Field evaluateAllCrossChecks:Z
+       9: aload_0
+      10: iconst_0
+      11: putfield      #13                 // Field forceRunCrossChecks:Z
+      14: aload_0
+      15: iconst_0
+      16: putfield      #16                 // Field dismissBadStrategies:I
+      19: aload_0
+      20: iconst_0
+      21: putfield      #20                 // Field deleteFailedStrategies:Z
+      24: aload_0
+      25: iconst_0
+      26: putfield      #23                 // Field isRetester:Z
+      29: aload_0
+      30: iconst_1
+      31: putfield      #26                 // Field singleThreadedOptimizations:Z
+      34: aload_0
+      35: aconst_null
+      36: putfield      #29                 // Field mergedStrategies:Ljava/util/List;
+      39: aload_0
+      40: iconst_0
+      41: putfield      #33                 // Field warningsBadStrategies:Z
+      44: aload_0
+      45: iconst_0
+      46: putfield      #36                 // Field isAlgoWizard:Z
+      49: aload_0
+      50: iconst_0
+      51: putfield      #39                 // Field removeEndOfTestOrders:Z
+      54: aload_0
+      55: aconst_null
+      56: putfield      #42                 // Field userID:Ljava/lang/String;
+      59: aload_0
+      60: aconst_null
+      61: putfield      #46                 // Field groupSymbols:Ljava/lang/String;
+      64: aload_0
+      65: aconst_null
+      66: putfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+      69: aload_0
+      70: aload_1
+      71: ldc           #54                 // String StrategyName
+      73: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      78: checkcast     #62                 // class java/lang/String
+      81: putfield      #64                 // Field strategyName:Ljava/lang/String;
+      84: aload_0
+      85: aload_1
+      86: ldc           #67                 // String MainResultKey
+      88: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      93: checkcast     #62                 // class java/lang/String
+      96: putfield      #69                 // Field mainResultKey:Ljava/lang/String;
+      99: aload_0
+     100: aload_1
+     101: ldc           #72                 // String StrategyXml
+     103: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     108: checkcast     #74                 // class org/jdom2/Element
+     111: putfield      #76                 // Field elStrategy:Lorg/jdom2/Element;
+     114: aload_0
+     115: aload_1
+     116: ldc           #80                 // String StrategyLastSettings
+     118: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     123: checkcast     #74                 // class org/jdom2/Element
+     126: putfield      #82                 // Field lastSettings:Lorg/jdom2/Element;
+     129: aload_0
+     130: aload_1
+     131: ldc           #85                 // String MoneyManagement.Method
+     133: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     138: checkcast     #87                 // class com/strategyquant/tradinglib/MoneyManagementMethod
+     141: putfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     144: aload_0
+     145: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     148: ifnull        162
+     151: aload_0
+     152: aload_0
+     153: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     156: invokevirtual #93                 // Method com/strategyquant/tradinglib/MoneyManagementMethod.getClone:()Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     159: putfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     162: aload_0
+     163: aload_1
+     164: ldc           #97                 // String MoneyManagement.UseFromStrategy
+     166: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     171: iconst_0
+     172: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     175: putfield      #105                // Field moneyManagementMethodUseFromStrategy:Z
+     178: aload_0
+     179: aload_1
+     180: ldc           #108                // String RiskManagement
+     182: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     187: checkcast     #110                // class com/strategyquant/tradinglib/RiskManagementMethod
+     190: putfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     193: aload_0
+     194: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     197: ifnull        211
+     200: aload_0
+     201: aload_0
+     202: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     205: invokevirtual #116                // Method com/strategyquant/tradinglib/RiskManagementMethod.getClone:()Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     208: putfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     211: aload_0
+     212: aload_1
+     213: ldc           #119                // String FitnessFunction
+     215: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     220: checkcast     #121                // class com/strategyquant/tradinglib/fitnessfunction/IFitnessFunction
+     223: putfield      #123                // Field fitnessFunction:Lcom/strategyquant/tradinglib/fitnessfunction/IFitnessFunction;
+     226: aload_0
+     227: aload_1
+     228: ldc           #127                // String TradingOptions
+     230: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     235: checkcast     #129                // class com/strategyquant/tradinglib/options/TradingOptions
+     238: putfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+     241: aload_0
+     242: aload_1
+     243: ldc           #135                // String ATM
+     245: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     250: checkcast     #137                // class com/strategyquant/tradinglib/ATM
+     253: putfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     256: aload_0
+     257: aload_1
+     258: ldc           #143                // String MoneyManagement.InitialCapital
+     260: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     265: checkcast     #145                // class java/io/Serializable
+     268: checkcast     #147                // class java/lang/Double
+     271: invokevirtual #149                // Method java/lang/Double.doubleValue:()D
+     274: putfield      #153                // Field initialCapital:D
+     277: aload_0
+     278: aload_1
+     279: ldc           #157                // String OutOfSample
+     281: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     286: checkcast     #159                // class com/strategyquant/tradinglib/strategy/OutOfSample
+     289: putfield      #161                // Field outOfSample:Lcom/strategyquant/tradinglib/strategy/OutOfSample;
+     292: aload_0
+     293: aload_1
+     294: ldc           #165                // String ChartSetups
+     296: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     301: checkcast     #167                // class com/strategyquant/tradinglib/engine/ChartSetups
+     304: putfield      #169                // Field chartSetups:Lcom/strategyquant/tradinglib/engine/ChartSetups;
+     307: aload_0
+     308: aload_1
+     309: ldc           #173                // String UseRobustnessTests
+     311: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     316: iconst_0
+     317: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     320: putfield      #175                // Field useCrossChecks:Z
+     323: aload_0
+     324: aload_1
+     325: ldc           #178                // String CrossChecks
+     327: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     332: checkcast     #180                // class java/util/ArrayList
+     335: putfield      #182                // Field crossChecks:Ljava/util/ArrayList;
+     338: aload_0
+     339: aload_1
+     340: ldc           #186                // String Slippage
+     342: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     347: dconst_0
+     348: invokestatic  #188                // Method com/strategyquant/lib/SettingsMap.getDouble:(Ljava/lang/Object;D)D
+     351: putfield      #192                // Field slippage:D
+     354: aload_0
+     355: aload_1
+     356: ldc           #195                // String MinDistance
+     358: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     363: dconst_0
+     364: invokestatic  #188                // Method com/strategyquant/lib/SettingsMap.getDouble:(Ljava/lang/Object;D)D
+     367: putfield      #197                // Field minDistance:D
+     370: aload_0
+     371: aload_1
+     372: ldc           #200                // String Commission
+     374: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     379: checkcast     #202                // class com/strategyquant/tradinglib/CommissionsMethod
+     382: putfield      #204                // Field commission:Lcom/strategyquant/tradinglib/CommissionsMethod;
+     385: aload_0
+     386: aload_1
+     387: ldc           #208                // String Swap
+     389: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     394: checkcast     #210                // class com/strategyquant/tradinglib/SwapMethod
+     397: putfield      #212                // Field swap:Lcom/strategyquant/tradinglib/SwapMethod;
+     400: aload_0
+     401: aload_1
+     402: ldc           #216                // String Conditions
+     404: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     409: checkcast     #180                // class java/util/ArrayList
+     412: putfield      #218                // Field rankingConditions:Ljava/util/ArrayList;
+     415: aload_0
+     416: aload_1
+     417: ldc           #221                // String DismissBadStrategies
+     419: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     424: iconst_0
+     425: invokestatic  #223                // Method com/strategyquant/lib/SettingsMap.getInt:(Ljava/lang/Object;I)I
+     428: putfield      #16                 // Field dismissBadStrategies:I
+     431: aload_0
+     432: aload_1
+     433: ldc           #227                // String StrategyDismissWarnings
+     435: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     440: iconst_0
+     441: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     444: putfield      #33                 // Field warningsBadStrategies:Z
+     447: aload_0
+     448: aload_1
+     449: ldc           #229                // String StrategyObject
+     451: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     456: checkcast     #231                // class com/strategyquant/tradinglib/StrategyBase
+     459: putfield      #233                // Field strategyObject:Lcom/strategyquant/tradinglib/StrategyBase;
+     462: aload_0
+     463: aload_1
+     464: ldc           #237                // String CrossChecks.EvaluateAll
+     466: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     471: iconst_0
+     472: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     475: putfield      #7                  // Field evaluateAllCrossChecks:Z
+     478: aload_0
+     479: aload_1
+     480: ldc           #239                // String DeleteFailedStrategies
+     482: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     487: iconst_0
+     488: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     491: putfield      #20                 // Field deleteFailedStrategies:Z
+     494: aload_0
+     495: aload_1
+     496: ldc           #241                // String ForceRunCrossChecks
+     498: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     503: iconst_0
+     504: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     507: putfield      #13                 // Field forceRunCrossChecks:Z
+     510: aload_0
+     511: aload_1
+     512: ldc           #243                // String IsRetester
+     514: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     519: iconst_0
+     520: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     523: putfield      #23                 // Field isRetester:Z
+     526: aload_0
+     527: aload_1
+     528: ldc           #245                // String SingleThreadedOptimizations
+     530: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     535: iconst_1
+     536: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     539: putfield      #26                 // Field singleThreadedOptimizations:Z
+     542: aload_0
+     543: aload_1
+     544: ldc           #247                // String PortfolioMergedStrategies
+     546: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     551: checkcast     #249                // class java/util/List
+     554: putfield      #29                 // Field mergedStrategies:Ljava/util/List;
+     557: aload_0
+     558: aload_1
+     559: ldc           #251                // String DateGenerated
+     561: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     566: ldc2_w        #253                // long -1l
+     569: invokestatic  #255                // Method com/strategyquant/lib/SettingsMap.getLong:(Ljava/lang/Object;J)J
+     572: putfield      #259                // Field dateGenerated:J
+     575: aload_0
+     576: aload_1
+     577: ldc_w         #263                // String FitPortfolio
+     580: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     585: checkcast     #265                // class com/strategyquant/tradinglib/correlation/FitPortfolio
+     588: putfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     591: aload_0
+     592: aload_1
+     593: ldc_w         #271                // String IsAlgoWizard
+     596: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     601: iconst_0
+     602: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     605: putfield      #36                 // Field isAlgoWizard:Z
+     608: aload_0
+     609: aload_1
+     610: ldc_w         #273                // String UserID
+     613: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     618: checkcast     #62                 // class java/lang/String
+     621: putfield      #42                 // Field userID:Ljava/lang/String;
+     624: aload_0
+     625: aload_1
+     626: ldc_w         #275                // String BrokerSymbols
+     629: invokeinterface #56,  2           // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+     634: checkcast     #62                 // class java/lang/String
+     637: putfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+     640: return
+
+  public com.strategyquant.tradinglib.backtestrunner.BacktestSettings(com.strategyquant.lib.SettingsMap) throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: iconst_0
+       6: putfield      #7                  // Field evaluateAllCrossChecks:Z
+       9: aload_0
+      10: iconst_0
+      11: putfield      #13                 // Field forceRunCrossChecks:Z
+      14: aload_0
+      15: iconst_0
+      16: putfield      #16                 // Field dismissBadStrategies:I
+      19: aload_0
+      20: iconst_0
+      21: putfield      #20                 // Field deleteFailedStrategies:Z
+      24: aload_0
+      25: iconst_0
+      26: putfield      #23                 // Field isRetester:Z
+      29: aload_0
+      30: iconst_1
+      31: putfield      #26                 // Field singleThreadedOptimizations:Z
+      34: aload_0
+      35: aconst_null
+      36: putfield      #29                 // Field mergedStrategies:Ljava/util/List;
+      39: aload_0
+      40: iconst_0
+      41: putfield      #33                 // Field warningsBadStrategies:Z
+      44: aload_0
+      45: iconst_0
+      46: putfield      #36                 // Field isAlgoWizard:Z
+      49: aload_0
+      50: iconst_0
+      51: putfield      #39                 // Field removeEndOfTestOrders:Z
+      54: aload_0
+      55: aconst_null
+      56: putfield      #42                 // Field userID:Ljava/lang/String;
+      59: aload_0
+      60: aconst_null
+      61: putfield      #46                 // Field groupSymbols:Ljava/lang/String;
+      64: aload_0
+      65: aconst_null
+      66: putfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+      69: aload_0
+      70: aload_1
+      71: ldc           #54                 // String StrategyName
+      73: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+      76: checkcast     #62                 // class java/lang/String
+      79: putfield      #64                 // Field strategyName:Ljava/lang/String;
+      82: aload_0
+      83: aload_1
+      84: ldc           #67                 // String MainResultKey
+      86: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+      89: checkcast     #62                 // class java/lang/String
+      92: putfield      #69                 // Field mainResultKey:Ljava/lang/String;
+      95: aload_0
+      96: aload_1
+      97: ldc           #72                 // String StrategyXml
+      99: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     102: checkcast     #74                 // class org/jdom2/Element
+     105: putfield      #76                 // Field elStrategy:Lorg/jdom2/Element;
+     108: aload_0
+     109: aload_1
+     110: ldc           #80                 // String StrategyLastSettings
+     112: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     115: checkcast     #74                 // class org/jdom2/Element
+     118: putfield      #82                 // Field lastSettings:Lorg/jdom2/Element;
+     121: aload_0
+     122: aload_1
+     123: ldc           #229                // String StrategyObject
+     125: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     128: checkcast     #231                // class com/strategyquant/tradinglib/StrategyBase
+     131: putfield      #233                // Field strategyObject:Lcom/strategyquant/tradinglib/StrategyBase;
+     134: aload_0
+     135: aload_1
+     136: ldc           #85                 // String MoneyManagement.Method
+     138: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     141: checkcast     #87                 // class com/strategyquant/tradinglib/MoneyManagementMethod
+     144: putfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     147: aload_0
+     148: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     151: ifnull        165
+     154: aload_0
+     155: aload_0
+     156: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     159: invokevirtual #93                 // Method com/strategyquant/tradinglib/MoneyManagementMethod.getClone:()Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     162: putfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+     165: aload_0
+     166: aload_1
+     167: ldc           #97                 // String MoneyManagement.UseFromStrategy
+     169: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     172: iconst_0
+     173: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     176: putfield      #105                // Field moneyManagementMethodUseFromStrategy:Z
+     179: aload_0
+     180: aload_1
+     181: ldc           #108                // String RiskManagement
+     183: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     186: checkcast     #110                // class com/strategyquant/tradinglib/RiskManagementMethod
+     189: putfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     192: aload_0
+     193: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     196: ifnull        210
+     199: aload_0
+     200: aload_0
+     201: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     204: invokevirtual #116                // Method com/strategyquant/tradinglib/RiskManagementMethod.getClone:()Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     207: putfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+     210: aload_0
+     211: aload_1
+     212: ldc           #119                // String FitnessFunction
+     214: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     217: checkcast     #121                // class com/strategyquant/tradinglib/fitnessfunction/IFitnessFunction
+     220: putfield      #123                // Field fitnessFunction:Lcom/strategyquant/tradinglib/fitnessfunction/IFitnessFunction;
+     223: aload_0
+     224: aload_1
+     225: ldc           #127                // String TradingOptions
+     227: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     230: checkcast     #129                // class com/strategyquant/tradinglib/options/TradingOptions
+     233: putfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+     236: aload_0
+     237: aload_1
+     238: ldc           #135                // String ATM
+     240: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     243: checkcast     #137                // class com/strategyquant/tradinglib/ATM
+     246: putfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     249: aload_0
+     250: aload_1
+     251: ldc           #143                // String MoneyManagement.InitialCapital
+     253: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     256: checkcast     #147                // class java/lang/Double
+     259: invokevirtual #149                // Method java/lang/Double.doubleValue:()D
+     262: putfield      #153                // Field initialCapital:D
+     265: aload_0
+     266: aload_1
+     267: ldc           #157                // String OutOfSample
+     269: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     272: checkcast     #159                // class com/strategyquant/tradinglib/strategy/OutOfSample
+     275: putfield      #161                // Field outOfSample:Lcom/strategyquant/tradinglib/strategy/OutOfSample;
+     278: aload_1
+     279: ldc           #165                // String ChartSetups
+     281: invokevirtual #280                // Method com/strategyquant/lib/SettingsMap.containsKey:(Ljava/lang/String;)Z
+     284: ifeq          303
+     287: aload_0
+     288: aload_1
+     289: ldc           #165                // String ChartSetups
+     291: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     294: checkcast     #167                // class com/strategyquant/tradinglib/engine/ChartSetups
+     297: putfield      #169                // Field chartSetups:Lcom/strategyquant/tradinglib/engine/ChartSetups;
+     300: goto          321
+     303: new           #284                // class java/lang/Exception
+     306: dup
+     307: ldc_w         #286                // String Settings don\'t have ChartSetups defined
+     310: iconst_0
+     311: anewarray     #2                  // class java/lang/Object
+     314: invokestatic  #288                // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     317: invokespecial #294                // Method java/lang/Exception."<init>":(Ljava/lang/String;)V
+     320: athrow
+     321: aload_0
+     322: aload_1
+     323: ldc           #173                // String UseRobustnessTests
+     325: iconst_0
+     326: invokestatic  #297                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     329: invokevirtual #303                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+     332: checkcast     #298                // class java/lang/Boolean
+     335: invokevirtual #306                // Method java/lang/Boolean.booleanValue:()Z
+     338: putfield      #175                // Field useCrossChecks:Z
+     341: aload_0
+     342: aload_1
+     343: ldc           #178                // String CrossChecks
+     345: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     348: checkcast     #180                // class java/util/ArrayList
+     351: putfield      #182                // Field crossChecks:Ljava/util/ArrayList;
+     354: aload_0
+     355: aload_1
+     356: ldc           #186                // String Slippage
+     358: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     361: checkcast     #147                // class java/lang/Double
+     364: invokevirtual #149                // Method java/lang/Double.doubleValue:()D
+     367: putfield      #192                // Field slippage:D
+     370: aload_0
+     371: aload_1
+     372: ldc           #195                // String MinDistance
+     374: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     377: checkcast     #147                // class java/lang/Double
+     380: invokevirtual #149                // Method java/lang/Double.doubleValue:()D
+     383: putfield      #197                // Field minDistance:D
+     386: aload_0
+     387: aload_1
+     388: ldc           #200                // String Commission
+     390: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     393: checkcast     #202                // class com/strategyquant/tradinglib/CommissionsMethod
+     396: putfield      #204                // Field commission:Lcom/strategyquant/tradinglib/CommissionsMethod;
+     399: aload_0
+     400: aload_1
+     401: ldc           #208                // String Swap
+     403: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     406: checkcast     #210                // class com/strategyquant/tradinglib/SwapMethod
+     409: putfield      #212                // Field swap:Lcom/strategyquant/tradinglib/SwapMethod;
+     412: aload_0
+     413: aload_1
+     414: ldc           #216                // String Conditions
+     416: aconst_null
+     417: invokevirtual #303                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+     420: checkcast     #180                // class java/util/ArrayList
+     423: putfield      #218                // Field rankingConditions:Ljava/util/ArrayList;
+     426: aload_0
+     427: aload_1
+     428: ldc           #221                // String DismissBadStrategies
+     430: iconst_0
+     431: invokestatic  #310                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     434: invokevirtual #303                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+     437: checkcast     #311                // class java/lang/Integer
+     440: invokevirtual #315                // Method java/lang/Integer.intValue:()I
+     443: putfield      #16                 // Field dismissBadStrategies:I
+     446: aload_0
+     447: aload_1
+     448: ldc           #227                // String StrategyDismissWarnings
+     450: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     453: iconst_0
+     454: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     457: putfield      #33                 // Field warningsBadStrategies:Z
+     460: aload_0
+     461: aload_1
+     462: ldc           #237                // String CrossChecks.EvaluateAll
+     464: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     467: iconst_0
+     468: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     471: putfield      #7                  // Field evaluateAllCrossChecks:Z
+     474: aload_0
+     475: aload_1
+     476: ldc           #239                // String DeleteFailedStrategies
+     478: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     481: iconst_0
+     482: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     485: putfield      #20                 // Field deleteFailedStrategies:Z
+     488: aload_0
+     489: aload_1
+     490: ldc           #241                // String ForceRunCrossChecks
+     492: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     495: iconst_0
+     496: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     499: putfield      #13                 // Field forceRunCrossChecks:Z
+     502: aload_0
+     503: aload_1
+     504: ldc           #243                // String IsRetester
+     506: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     509: iconst_0
+     510: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     513: putfield      #23                 // Field isRetester:Z
+     516: aload_0
+     517: aload_1
+     518: ldc           #245                // String SingleThreadedOptimizations
+     520: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     523: iconst_1
+     524: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     527: putfield      #26                 // Field singleThreadedOptimizations:Z
+     530: aload_0
+     531: aload_1
+     532: ldc           #247                // String PortfolioMergedStrategies
+     534: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     537: checkcast     #249                // class java/util/List
+     540: putfield      #29                 // Field mergedStrategies:Ljava/util/List;
+     543: aload_0
+     544: aload_1
+     545: ldc           #251                // String DateGenerated
+     547: ldc2_w        #253                // long -1l
+     550: invokevirtual #319                // Method com/strategyquant/lib/SettingsMap.getLong:(Ljava/lang/String;J)J
+     553: putfield      #259                // Field dateGenerated:J
+     556: aload_0
+     557: aload_1
+     558: ldc_w         #263                // String FitPortfolio
+     561: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     564: checkcast     #265                // class com/strategyquant/tradinglib/correlation/FitPortfolio
+     567: putfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     570: aload_0
+     571: aload_1
+     572: ldc_w         #271                // String IsAlgoWizard
+     575: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     578: iconst_0
+     579: invokestatic  #99                 // Method com/strategyquant/lib/SettingsMap.getBool:(Ljava/lang/Object;Z)Z
+     582: putfield      #36                 // Field isAlgoWizard:Z
+     585: aload_0
+     586: aload_1
+     587: ldc_w         #273                // String UserID
+     590: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     593: checkcast     #62                 // class java/lang/String
+     596: putfield      #42                 // Field userID:Ljava/lang/String;
+     599: aload_0
+     600: aload_1
+     601: ldc_w         #275                // String BrokerSymbols
+     604: invokevirtual #277                // Method com/strategyquant/lib/SettingsMap.get:(Ljava/lang/String;)Ljava/lang/Object;
+     607: checkcast     #62                 // class java/lang/String
+     610: putfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+     613: return
+
+  public com.strategyquant.tradinglib.backtestrunner.BacktestSettings getClone() throws java.lang.Exception;
+    Code:
+       0: new           #8                  // class com/strategyquant/tradinglib/backtestrunner/BacktestSettings
+       3: dup
+       4: invokespecial #322                // Method "<init>":()V
+       7: astore_1
+       8: aload_1
+       9: aload_0
+      10: getfield      #153                // Field initialCapital:D
+      13: putfield      #153                // Field initialCapital:D
+      16: aload_1
+      17: aload_0
+      18: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+      21: ifnull        34
+      24: aload_0
+      25: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+      28: invokevirtual #93                 // Method com/strategyquant/tradinglib/MoneyManagementMethod.getClone:()Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+      31: goto          35
+      34: aconst_null
+      35: putfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+      38: aload_1
+      39: aload_0
+      40: getfield      #105                // Field moneyManagementMethodUseFromStrategy:Z
+      43: putfield      #105                // Field moneyManagementMethodUseFromStrategy:Z
+      46: aload_1
+      47: aload_0
+      48: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+      51: ifnull        64
+      54: aload_0
+      55: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+      58: invokevirtual #116                // Method com/strategyquant/tradinglib/RiskManagementMethod.getClone:()Lcom/strategyquant/tradinglib/RiskManagementMethod;
+      61: goto          65
+      64: aconst_null
+      65: putfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+      68: aload_1
+      69: aload_0
+      70: getfield      #123                // Field fitnessFunction:Lcom/strategyquant/tradinglib/fitnessfunction/IFitnessFunction;
+      73: putfield      #123                // Field fitnessFunction:Lcom/strategyquant/tradinglib/fitnessfunction/IFitnessFunction;
+      76: aload_1
+      77: aload_0
+      78: getfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+      81: ifnull        94
+      84: aload_0
+      85: getfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+      88: invokevirtual #323                // Method com/strategyquant/tradinglib/options/TradingOptions.getClone:()Lcom/strategyquant/tradinglib/options/TradingOptions;
+      91: goto          95
+      94: aconst_null
+      95: putfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+      98: aload_1
+      99: aload_0
+     100: getfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     103: ifnull        116
+     106: aload_0
+     107: getfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     110: invokevirtual #326                // Method com/strategyquant/tradinglib/ATM.getClone:()Lcom/strategyquant/tradinglib/ATM;
+     113: goto          117
+     116: aconst_null
+     117: putfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     120: aload_1
+     121: aload_0
+     122: aload_0
+     123: getfield      #218                // Field rankingConditions:Ljava/util/ArrayList;
+     126: invokespecial #329                // Method cloneConditions:(Ljava/util/ArrayList;)Ljava/util/ArrayList;
+     129: putfield      #218                // Field rankingConditions:Ljava/util/ArrayList;
+     132: aload_1
+     133: aload_0
+     134: aload_0
+     135: getfield      #333                // Field initialGenerationConditions:Ljava/util/ArrayList;
+     138: invokespecial #329                // Method cloneConditions:(Ljava/util/ArrayList;)Ljava/util/ArrayList;
+     141: putfield      #333                // Field initialGenerationConditions:Ljava/util/ArrayList;
+     144: aload_1
+     145: aload_0
+     146: getfield      #16                 // Field dismissBadStrategies:I
+     149: putfield      #16                 // Field dismissBadStrategies:I
+     152: aload_1
+     153: aload_0
+     154: getfield      #33                 // Field warningsBadStrategies:Z
+     157: putfield      #33                 // Field warningsBadStrategies:Z
+     160: aload_1
+     161: aload_0
+     162: getfield      #161                // Field outOfSample:Lcom/strategyquant/tradinglib/strategy/OutOfSample;
+     165: putfield      #161                // Field outOfSample:Lcom/strategyquant/tradinglib/strategy/OutOfSample;
+     168: aload_1
+     169: aload_0
+     170: getfield      #169                // Field chartSetups:Lcom/strategyquant/tradinglib/engine/ChartSetups;
+     173: putfield      #169                // Field chartSetups:Lcom/strategyquant/tradinglib/engine/ChartSetups;
+     176: aload_1
+     177: aload_0
+     178: getfield      #175                // Field useCrossChecks:Z
+     181: putfield      #175                // Field useCrossChecks:Z
+     184: aload_0
+     185: getfield      #175                // Field useCrossChecks:Z
+     188: ifeq          202
+     191: aload_1
+     192: aload_0
+     193: getfield      #182                // Field crossChecks:Ljava/util/ArrayList;
+     196: invokestatic  #336                // Method com/strategyquant/tradinglib/project/ProjectConfigHelper.cloneCrossChecks:(Ljava/util/ArrayList;)Ljava/util/ArrayList;
+     199: putfield      #182                // Field crossChecks:Ljava/util/ArrayList;
+     202: aload_1
+     203: aload_0
+     204: getfield      #192                // Field slippage:D
+     207: putfield      #192                // Field slippage:D
+     210: aload_1
+     211: aload_0
+     212: getfield      #197                // Field minDistance:D
+     215: putfield      #197                // Field minDistance:D
+     218: aload_1
+     219: aload_0
+     220: getfield      #204                // Field commission:Lcom/strategyquant/tradinglib/CommissionsMethod;
+     223: putfield      #204                // Field commission:Lcom/strategyquant/tradinglib/CommissionsMethod;
+     226: aload_1
+     227: aload_0
+     228: getfield      #212                // Field swap:Lcom/strategyquant/tradinglib/SwapMethod;
+     231: putfield      #212                // Field swap:Lcom/strategyquant/tradinglib/SwapMethod;
+     234: aload_1
+     235: aload_0
+     236: getfield      #76                 // Field elStrategy:Lorg/jdom2/Element;
+     239: putfield      #76                 // Field elStrategy:Lorg/jdom2/Element;
+     242: aload_1
+     243: aload_0
+     244: getfield      #82                 // Field lastSettings:Lorg/jdom2/Element;
+     247: ifnull        260
+     250: aload_0
+     251: getfield      #82                 // Field lastSettings:Lorg/jdom2/Element;
+     254: invokevirtual #341                // Method org/jdom2/Element.clone:()Lorg/jdom2/Element;
+     257: goto          261
+     260: aconst_null
+     261: putfield      #82                 // Field lastSettings:Lorg/jdom2/Element;
+     264: aload_1
+     265: aload_0
+     266: getfield      #64                 // Field strategyName:Ljava/lang/String;
+     269: putfield      #64                 // Field strategyName:Ljava/lang/String;
+     272: aload_1
+     273: aload_0
+     274: getfield      #69                 // Field mainResultKey:Ljava/lang/String;
+     277: putfield      #69                 // Field mainResultKey:Ljava/lang/String;
+     280: aload_1
+     281: aload_0
+     282: getfield      #23                 // Field isRetester:Z
+     285: putfield      #23                 // Field isRetester:Z
+     288: aload_1
+     289: aload_0
+     290: getfield      #26                 // Field singleThreadedOptimizations:Z
+     293: putfield      #26                 // Field singleThreadedOptimizations:Z
+     296: aload_1
+     297: aload_0
+     298: getfield      #29                 // Field mergedStrategies:Ljava/util/List;
+     301: putfield      #29                 // Field mergedStrategies:Ljava/util/List;
+     304: aload_1
+     305: aload_0
+     306: getfield      #259                // Field dateGenerated:J
+     309: putfield      #259                // Field dateGenerated:J
+     312: aload_1
+     313: aload_0
+     314: getfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     317: ifnull        330
+     320: aload_0
+     321: getfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     324: invokevirtual #345                // Method com/strategyquant/tradinglib/correlation/FitPortfolio.getClone:()Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     327: goto          331
+     330: aconst_null
+     331: putfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     334: aload_1
+     335: aload_0
+     336: getfield      #36                 // Field isAlgoWizard:Z
+     339: putfield      #36                 // Field isAlgoWizard:Z
+     342: aload_1
+     343: aload_0
+     344: getfield      #39                 // Field removeEndOfTestOrders:Z
+     347: putfield      #39                 // Field removeEndOfTestOrders:Z
+     350: aload_1
+     351: aload_0
+     352: getfield      #42                 // Field userID:Ljava/lang/String;
+     355: putfield      #42                 // Field userID:Ljava/lang/String;
+     358: aload_1
+     359: aload_0
+     360: getfield      #46                 // Field groupSymbols:Ljava/lang/String;
+     363: putfield      #46                 // Field groupSymbols:Ljava/lang/String;
+     366: aload_1
+     367: aload_0
+     368: getfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+     371: putfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+     374: aload_1
+     375: areturn
+
+  private java.util.ArrayList<com.strategyquant.tradinglib.conditions.Condition> cloneConditions(java.util.ArrayList<com.strategyquant.tradinglib.conditions.Condition>) throws java.lang.Exception;
+    Code:
+       0: aload_1
+       1: ifnonnull     6
+       4: aconst_null
+       5: areturn
+       6: new           #180                // class java/util/ArrayList
+       9: dup
+      10: invokespecial #348                // Method java/util/ArrayList."<init>":()V
+      13: astore_2
+      14: aload_1
+      15: invokevirtual #349                // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      18: astore_3
+      19: aload_3
+      20: invokeinterface #353,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      25: ifeq          52
+      28: aload_3
+      29: invokeinterface #358,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      34: checkcast     #362                // class com/strategyquant/tradinglib/conditions/Condition
+      37: astore        4
+      39: aload_2
+      40: aload         4
+      42: invokevirtual #364                // Method com/strategyquant/tradinglib/conditions/Condition.getClone:()Lcom/strategyquant/tradinglib/conditions/Condition;
+      45: invokevirtual #367                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      48: pop
+      49: goto          19
+      52: aload_2
+      53: areturn
+
+  public com.strategyquant.lib.SettingsMap getSettingsMap(com.strategyquant.tradinglib.ChartSetup) throws java.lang.Exception;
+    Code:
+       0: new           #100                // class com/strategyquant/lib/SettingsMap
+       3: dup
+       4: invokespecial #371                // Method com/strategyquant/lib/SettingsMap."<init>":()V
+       7: astore_2
+       8: aload_2
+       9: ldc_w         #372                // String BacktestChart
+      12: aload_1
+      13: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      16: aload_2
+      17: ldc           #143                // String MoneyManagement.InitialCapital
+      19: aload_0
+      20: getfield      #153                // Field initialCapital:D
+      23: invokestatic  #378                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+      26: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      29: aload_2
+      30: ldc           #157                // String OutOfSample
+      32: aload_0
+      33: getfield      #161                // Field outOfSample:Lcom/strategyquant/tradinglib/strategy/OutOfSample;
+      36: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      39: aload_2
+      40: ldc           #85                 // String MoneyManagement.Method
+      42: aload_0
+      43: getfield      #89                 // Field moneyManagementMethod:Lcom/strategyquant/tradinglib/MoneyManagementMethod;
+      46: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      49: aload_2
+      50: ldc           #97                 // String MoneyManagement.UseFromStrategy
+      52: aload_0
+      53: getfield      #105                // Field moneyManagementMethodUseFromStrategy:Z
+      56: invokestatic  #297                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+      59: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      62: aload_2
+      63: ldc           #108                // String RiskManagement
+      65: aload_0
+      66: getfield      #112                // Field riskManagementMethod:Lcom/strategyquant/tradinglib/RiskManagementMethod;
+      69: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      72: aload_0
+      73: getfield      #233                // Field strategyObject:Lcom/strategyquant/tradinglib/StrategyBase;
+      76: ifnonnull     102
+      79: aload_2
+      80: ldc           #229                // String StrategyObject
+      82: aload_0
+      83: getfield      #76                 // Field elStrategy:Lorg/jdom2/Element;
+      86: invokevirtual #341                // Method org/jdom2/Element.clone:()Lorg/jdom2/Element;
+      89: aload_0
+      90: getfield      #64                 // Field strategyName:Ljava/lang/String;
+      93: invokestatic  #381                // Method com/strategyquant/tradinglib/StrategyBase.createXmlStrategy:(Lorg/jdom2/Element;Ljava/lang/String;)Lcom/strategyquant/tradinglib/StrategyBase;
+      96: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+      99: goto          112
+     102: aload_2
+     103: ldc           #229                // String StrategyObject
+     105: aload_0
+     106: getfield      #233                // Field strategyObject:Lcom/strategyquant/tradinglib/StrategyBase;
+     109: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     112: aload_2
+     113: ldc           #186                // String Slippage
+     115: aload_0
+     116: getfield      #192                // Field slippage:D
+     119: invokestatic  #378                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+     122: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     125: aload_2
+     126: ldc           #195                // String MinDistance
+     128: aload_0
+     129: getfield      #197                // Field minDistance:D
+     132: invokestatic  #378                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+     135: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     138: aload_2
+     139: ldc           #200                // String Commission
+     141: aload_0
+     142: getfield      #204                // Field commission:Lcom/strategyquant/tradinglib/CommissionsMethod;
+     145: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     148: aload_2
+     149: ldc           #208                // String Swap
+     151: aload_0
+     152: getfield      #212                // Field swap:Lcom/strategyquant/tradinglib/SwapMethod;
+     155: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     158: aload_2
+     159: ldc           #54                 // String StrategyName
+     161: aload_0
+     162: getfield      #64                 // Field strategyName:Ljava/lang/String;
+     165: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     168: aload_2
+     169: ldc           #67                 // String MainResultKey
+     171: aload_0
+     172: getfield      #69                 // Field mainResultKey:Ljava/lang/String;
+     175: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     178: aload_1
+     179: invokevirtual #385                // Method com/strategyquant/tradinglib/ChartSetup.getMainChart:()Lcom/strategyquant/datalib/ChartDef;
+     182: invokevirtual #391                // Method com/strategyquant/datalib/ChartDef.getHistoryFrom:()J
+     185: aload_1
+     186: invokevirtual #385                // Method com/strategyquant/tradinglib/ChartSetup.getMainChart:()Lcom/strategyquant/datalib/ChartDef;
+     189: invokevirtual #397                // Method com/strategyquant/datalib/ChartDef.getHistoryTo:()J
+     192: aload_1
+     193: invokevirtual #385                // Method com/strategyquant/tradinglib/ChartSetup.getMainChart:()Lcom/strategyquant/datalib/ChartDef;
+     196: invokevirtual #391                // Method com/strategyquant/datalib/ChartDef.getHistoryFrom:()J
+     199: lsub
+     200: l2d
+     201: ldc2_w        #400                // double 0.4d
+     204: dmul
+     205: d2l
+     206: ladd
+     207: lstore_3
+     208: aload_2
+     209: ldc_w         #402                // String StrategyCheckDate
+     212: lload_3
+     213: invokestatic  #404                // Method java/lang/Long.valueOf:(J)Ljava/lang/Long;
+     216: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     219: aload_2
+     220: ldc           #221                // String DismissBadStrategies
+     222: aload_0
+     223: getfield      #16                 // Field dismissBadStrategies:I
+     226: invokestatic  #310                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     229: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     232: aload_2
+     233: ldc           #227                // String StrategyDismissWarnings
+     235: aload_0
+     236: getfield      #33                 // Field warningsBadStrategies:Z
+     239: invokestatic  #297                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     242: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     245: aload_2
+     246: ldc           #243                // String IsRetester
+     248: aload_0
+     249: getfield      #23                 // Field isRetester:Z
+     252: invokestatic  #297                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     255: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     258: aload_2
+     259: ldc_w         #271                // String IsAlgoWizard
+     262: aload_0
+     263: getfield      #36                 // Field isAlgoWizard:Z
+     266: invokestatic  #297                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     269: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     272: aload_2
+     273: ldc_w         #273                // String UserID
+     276: aload_0
+     277: getfield      #42                 // Field userID:Ljava/lang/String;
+     280: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     283: aload_2
+     284: ldc           #245                // String SingleThreadedOptimizations
+     286: aload_0
+     287: getfield      #26                 // Field singleThreadedOptimizations:Z
+     290: invokestatic  #297                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     293: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     296: aload_0
+     297: getfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+     300: ifnull        313
+     303: aload_2
+     304: ldc           #127                // String TradingOptions
+     306: aload_0
+     307: getfield      #131                // Field tradingOptions:Lcom/strategyquant/tradinglib/options/TradingOptions;
+     310: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     313: aload_0
+     314: getfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     317: ifnull        330
+     320: aload_2
+     321: ldc           #135                // String ATM
+     323: aload_0
+     324: getfield      #139                // Field atm:Lcom/strategyquant/tradinglib/ATM;
+     327: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     330: aload_0
+     331: getfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     334: ifnull        348
+     337: aload_2
+     338: ldc_w         #263                // String FitPortfolio
+     341: aload_0
+     342: getfield      #267                // Field fitPortfolio:Lcom/strategyquant/tradinglib/correlation/FitPortfolio;
+     345: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     348: aload_2
+     349: ldc_w         #275                // String BrokerSymbols
+     352: aload_0
+     353: getfield      #49                 // Field brokerSymbols:Ljava/lang/String;
+     356: invokevirtual #374                // Method com/strategyquant/lib/SettingsMap.set:(Ljava/lang/String;Ljava/lang/Object;)V
+     359: aload_2
+     360: areturn
+
+  public java.lang.Object getClone() throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: invokevirtual #409                // Method getClone:()Lcom/strategyquant/tradinglib/backtestrunner/BacktestSettings;
+       4: areturn
+}

@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: auditoría SQX del 2026-08-09 (era MCP); el motor actual es sqcli :5050 — ver docs/00_MASTER_IDEAS_Y_PLAN.md §2.1. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # Auditoría Técnica — Búsqueda de estrategias en StrategyQuant X (SQX)
 > Proyecto: Ultrarentable · `/home/ubuntu/workspace/pro/trading/01 Ultrarentable`
 > Fecha: 2026-08-09 · Rol: Analista Cuantitativo / Especialista SQX

@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: describe el sistema tras Fase 1 del refactor; la arquitectura real actual vive en docs/00_MASTER_IDEAS_Y_PLAN.md §2-3 y docs/ARCHITECTURE_CURRENT.md. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # ULTRARENTABLE — ARQUITECTURA
 
 Estado real del sistema tras la FASE 1 del master refactor (rama

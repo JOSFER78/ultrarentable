@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: generación automática 2026-08-22 con catálogo v5.4.0 (230 certificadas) superado por la auditoría forense ('NO STRATEGY IS CERTIFIED BY ASSUMPTION') — ver docs/00_MASTER_IDEAS_Y_PLAN.md §5.7. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # ESTADO DE LA VERDAD (STATE OF TRUTH) — ULTRARENTABLE
 > **AUTORIDAD ÚNICA DE DOCUMENTACIÓN BASADA EN EVIDENCIA FÍSICA**
 > **Última Generación Automática:** `2026-08-22 19:23:12 UTC`

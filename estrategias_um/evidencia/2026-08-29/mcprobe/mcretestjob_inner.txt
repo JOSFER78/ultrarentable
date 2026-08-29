@@ -1,0 +1,79 @@
+class com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob$1 implements com.strategyquant.tradinglib.backtestrunner.IBacktestProgressListener {
+  final com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob this$0;
+
+  com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob$1(com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #1                  // Field this$0:Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;
+       5: aload_0
+       6: invokespecial #7                  // Method java/lang/Object."<init>":()V
+       9: return
+
+  public void setProgress(int);
+    Code:
+       0: return
+
+  public void increaseProgressStep();
+    Code:
+       0: return
+}
+class com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob$2 implements com.strategyquant.tradinglib.robustnesstests.DataModifierCallback {
+  final com.strategyquant.tradinglib.MonteCarloRetest val$method;
+
+  final com.strategyquant.lib.IRandomGenerator val$rng;
+
+  final com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob this$0;
+
+  com.strategyquant.plugin.CrossCheck.impl.MonteCarloRetest.MCRetestJob$2();
+    Code:
+       0: aload_0
+       1: aload_2
+       2: putfield      #1                  // Field val$method:Lcom/strategyquant/tradinglib/MonteCarloRetest;
+       5: aload_0
+       6: aload_3
+       7: putfield      #7                  // Field val$rng:Lcom/strategyquant/lib/IRandomGenerator;
+      10: aload_0
+      11: aload_1
+      12: putfield      #11                 // Field this$0:Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;
+      15: aload_0
+      16: invokespecial #15                 // Method java/lang/Object."<init>":()V
+      19: return
+
+  public void modifyData(com.strategyquant.datalib.TickEvent);
+    Code:
+       0: aload_0
+       1: getfield      #1                  // Field val$method:Lcom/strategyquant/tradinglib/MonteCarloRetest;
+       4: aload_0
+       5: getfield      #7                  // Field val$rng:Lcom/strategyquant/lib/IRandomGenerator;
+       8: aload_1
+       9: aload_0
+      10: getfield      #11                 // Field this$0:Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;
+      13: invokestatic  #21                 // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob.access$000:(Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;)D
+      16: invokevirtual #27                 // Method com/strategyquant/tradinglib/MonteCarloRetest.modifyData:(Lcom/strategyquant/lib/IRandomGenerator;Lcom/strategyquant/datalib/TickEvent;D)V
+      19: return
+
+  public void modifyOHLCData(com.strategyquant.datalib.data.io.VersatileData);
+    Code:
+       0: aload_0
+       1: getfield      #1                  // Field val$method:Lcom/strategyquant/tradinglib/MonteCarloRetest;
+       4: aload_0
+       5: getfield      #7                  // Field val$rng:Lcom/strategyquant/lib/IRandomGenerator;
+       8: aload_1
+       9: aload_0
+      10: getfield      #11                 // Field this$0:Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;
+      13: invokestatic  #21                 // Method com/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob.access$000:(Lcom/strategyquant/plugin/CrossCheck/impl/MonteCarloRetest/MCRetestJob;)D
+      16: invokevirtual #33                 // Method com/strategyquant/tradinglib/MonteCarloRetest.modifyOHLCData:(Lcom/strategyquant/lib/IRandomGenerator;Lcom/strategyquant/datalib/data/io/VersatileData;D)V
+      19: return
+
+  public void modifyData(com.strategyquant.datalib.TickEvent, double);
+    Code:
+       0: aload_0
+       1: getfield      #1                  // Field val$method:Lcom/strategyquant/tradinglib/MonteCarloRetest;
+       4: aload_0
+       5: getfield      #7                  // Field val$rng:Lcom/strategyquant/lib/IRandomGenerator;
+       8: aload_1
+       9: dload_2
+      10: invokevirtual #27                 // Method com/strategyquant/tradinglib/MonteCarloRetest.modifyData:(Lcom/strategyquant/lib/IRandomGenerator;Lcom/strategyquant/datalib/TickEvent;D)V
+      13: return
+}

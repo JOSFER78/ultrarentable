@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: plan de 10 fases antiguo (2026-08-17); las fases y su estado real viven en docs/00_MASTER_IDEAS_Y_PLAN.md §4. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 ---
 tipo: sub-nota
 categoria: trading

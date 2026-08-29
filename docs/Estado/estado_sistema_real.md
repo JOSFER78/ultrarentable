@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: verificación VPS del 2026-08-08 que describe MCP SQX 8080 y servicios antiguos; la realidad de hoy vive en docs/00_MASTER_IDEAS_Y_PLAN.md §2. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # Estado real del sistema Ultrarentable — Verificación VPS
 **Fecha:** 2026-08-08  
 **Entorno:** VPS 24/7, systemd user, modo REAL-ONLY  

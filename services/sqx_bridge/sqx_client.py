@@ -1,173 +1,153 @@
-"""StrategyQuant X MCP client — real HTTP JSON-RPC, fail-closed source access."""
+"""StrategyQuant X client — real sqcli HTTP API on :5050, fail-closed source access.
+
+Protocol (verified live against sqcli headless, see skill sqx-headless-workflow):
+- GET http://localhost:5050/call?cmd=<cmd with spaces -> %20 only>
+- Plain-text responses. `=` and other chars pass through unencoded.
+- `-project action=status name=X` / `-databank action=list project=X` /
+  `-databank action=count|export project=X name=Y file=/tmp/z.csv` (export writes CSV).
+"""
 from __future__ import annotations
 
-import json
+import csv
 import os
-import urllib.error
-import urllib.request
+import re
+import tempfile
 from typing import Any, Dict, List, Optional
+
+import requests
 
 
 class SQXMCPError(Exception):
     pass
 
 
+DEFAULT_SQX_API_URL = os.getenv("SQX_API_URL", "http://localhost:5050")
+SQX_TIMEOUT = int(os.getenv("SQX_TIMEOUT", "10"))
+
+
 class SQXMCPClient:
-    def __init__(self, base_url: Optional[str] = None, timeout: int = 15):
-        self.base_url = (base_url or os.getenv("SQX_MCP_URL", "http://127.0.0.1:8080/mcp")).rstrip("/")
+    """Minimal real client for the sqcli HTTP API (`/call?cmd=...`)."""
+
+    def __init__(self, base_url: Optional[str] = None, timeout: int = SQX_TIMEOUT):
+        raw = base_url or os.getenv("SQX_MCP_URL", "") or DEFAULT_SQX_API_URL
+        # Legacy MCP URLs are dead; map any /mcp host:port to the real sqcli API.
+        if raw.rstrip("/").endswith("/mcp"):
+            raw = raw.rstrip("/")[: -len("/mcp")]
+        self.base_url = raw.rstrip("/")
         self.timeout = timeout
-        self.session_id: Optional[str] = None
-        self._request_id = 0
 
-    def _next_id(self) -> int:
-        self._request_id += 1
-        return self._request_id
-
-    def _parse_sse_body(self, body: str) -> Dict[str, Any]:
-        clean_body = body
-        for line in body.split("\n"):
-            if line.startswith("data: "):
-                clean_body = line[6:].strip()
-                break
+    # ── transport ────────────────────────────────────────────────
+    def call(self, cmd: str, timeout: Optional[int] = None) -> str:
+        url = f"{self.base_url}/call?cmd=" + cmd.replace(" ", "%20")
         try:
-            return json.loads(clean_body)
-        except json.JSONDecodeError as exc:
-            raise SQXMCPError(f"Invalid JSON from SQX MCP: {clean_body}") from exc
-
-    def initialize(self) -> Dict[str, Any]:
-        payload = {
-            "jsonrpc": "2.0",
-            "id": self._next_id(),
-            "method": "initialize",
-            "params": {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {},
-                "clientInfo": {"name": "UltrarentableStrategyLab", "version": "1.0.0"},
-            },
-        }
-        req = urllib.request.Request(
-            self.base_url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json", "Accept": "text/event-stream, application/json"},
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                self.session_id = resp.headers.get("mcp-session-id")
-                parsed = self._parse_sse_body(resp.read().decode("utf-8"))
-                if "error" in parsed:
-                    raise SQXMCPError(f"Initialization error: {parsed['error']}")
-                return parsed.get("result", {})
-        except urllib.error.URLError as exc:
-            raise SQXMCPError(f"Failed to connect to SQX MCP at {self.base_url}: {exc.reason}") from exc
-
-    def _call_tool(self, tool_name: str, arguments: Optional[Dict[str, Any]] = None, retry: bool = True) -> Any:
-        if not self.session_id:
-            self.initialize()
-        payload = {
-            "jsonrpc": "2.0",
-            "id": self._next_id(),
-            "method": "tools/call",
-            "params": {"name": tool_name, "arguments": arguments or {}},
-        }
-        headers = {"Content-Type": "application/json", "Accept": "text/event-stream, application/json"}
-        if self.session_id:
-            headers["mcp-session-id"] = self.session_id
-        req = urllib.request.Request(self.base_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                parsed = self._parse_sse_body(resp.read().decode("utf-8"))
-                if "error" in parsed:
-                    if retry and "session" in str(parsed.get("error", "")).lower():
-                        self.session_id = None
-                        return self._call_tool(tool_name, arguments, retry=False)
-                    raise SQXMCPError(f"Tool {tool_name} returned RPC error: {parsed['error']}")
-                result = parsed.get("result", {})
-                content_list = result.get("content", [])
-                if isinstance(content_list, list) and content_list:
-                    first_text = content_list[0].get("text", "")
-                    try:
-                        return json.loads(first_text)
-                    except json.JSONDecodeError:
-                        return first_text
-                return result
-        except urllib.error.URLError as exc:
-            if retry:
-                self.session_id = None
-                return self._call_tool(tool_name, arguments, retry=False)
-            raise SQXMCPError(f"Error calling {tool_name}: {exc.reason}") from exc
+            resp = requests.get(url, timeout=timeout or self.timeout)
+        except requests.RequestException as exc:
+            raise SQXMCPError(f"SQX unreachable at {self.base_url}: {exc}") from exc
+        if resp.status_code != 200:
+            raise SQXMCPError(f"SQX HTTP {resp.status_code}: {resp.text[:200]}")
+        return resp.text
 
     def check_connection(self) -> Dict[str, Any]:
-        import socket
-        from urllib.parse import urlparse
         try:
-            parsed = urlparse(self.base_url)
-            host, port = parsed.hostname or "127.0.0.1", parsed.port or 8080
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(0.5)
-            res = sock.connect_ex((host, port))
-            sock.close()
-            if res != 0:
-                return {"status": "OFFLINE", "base_url": self.base_url, "error": "Port unreachable"}
-            info = self.initialize()
-            return {"status": "ONLINE", "base_url": self.base_url, "session_id": self.session_id, "server_info": info.get("serverInfo", {}), "capabilities": info.get("capabilities", {})}
-        except Exception as exc:
+            text = self.call("-project action=list")
+        except SQXMCPError as exc:
             return {"status": "OFFLINE", "base_url": self.base_url, "error": str(exc)}
+        return {
+            "status": "ONLINE",
+            "base_url": self.base_url,
+            "projects": re.findall(r"^(.+)$", text, re.M)[:0] or self._parse_project_list(text),
+        }
 
-    def list_tools(self) -> List[Dict[str, Any]]:
-        if not self.session_id:
-            self.initialize()
-        payload = {"jsonrpc": "2.0", "id": self._next_id(), "method": "tools/list", "params": {}}
-        headers = {"Content-Type": "application/json", "Accept": "text/event-stream, application/json"}
-        if self.session_id:
-            headers["mcp-session-id"] = self.session_id
-        req = urllib.request.Request(self.base_url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                parsed = self._parse_sse_body(resp.read().decode("utf-8"))
-                if "error" in parsed:
-                    raise SQXMCPError(f"tools/list error: {parsed['error']}")
-                return parsed.get("result", {}).get("tools", [])
-        except urllib.error.URLError as exc:
-            raise SQXMCPError(f"Error listing tools: {exc.reason}") from exc
+    # ── parsing helpers (plain text, simple regex) ───────────────
+    @staticmethod
+    def _parse_project_list(text: str) -> List[str]:
+        names: List[str] = []
+        started = False
+        for line in text.splitlines():
+            if "-" * 20 in line:
+                if started:
+                    break
+                started = True
+                continue
+            if started and line.strip():
+                names.append(line.strip())
+        return names
 
-    def _find_tool(self, candidates: List[str]) -> Optional[str]:
-        available = {str(item.get("name")) for item in self.list_tools() if isinstance(item, dict) and item.get("name")}
-        for name in candidates:
-            if name in available:
-                return name
-        return None
+    @staticmethod
+    def _parse_databank_list(text: str) -> List[Dict[str, Any]]:
+        out: List[Dict[str, Any]] = []
+        for line in text.splitlines():
+            m = re.match(r"^(.*?),\s*Records:\s*(\d+)\s*$", line.strip())
+            if m:
+                out.append({"name": m.group(1).strip(), "records": int(m.group(2))})
+        return out
 
-    def get_strategy_source(self, project_name: str, databank_name: str, strategy_name: str) -> Dict[str, Any]:
-        """Return source only when SQX explicitly advertises a source-export tool."""
-        tool = self._find_tool(["get_strategy_source", "get_strategy_xml", "export_strategy", "get_strategy_code"])
-        if not tool:
-            return {"status": "SOURCE_RULES_UNAVAILABLE", "reason": "SQX MCP does not advertise a strategy-source export tool", "project": project_name, "databank": databank_name, "strategy": strategy_name}
-        result = self._call_tool(tool, {"name": project_name, "databank": databank_name, "strategy": strategy_name})
-        if not result:
-            return {"status": "SOURCE_RULES_UNAVAILABLE", "reason": "SQX returned no source payload", "project": project_name, "databank": databank_name, "strategy": strategy_name}
-        payload = result if isinstance(result, (dict, list, str)) else str(result)
-        encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) if not isinstance(payload, str) else payload
-        import hashlib
-        return {"status": "SUCCESS", "tool": tool, "project": project_name, "databank": databank_name, "strategy": strategy_name, "source": payload, "source_sha256": hashlib.sha256(encoded.encode("utf-8")).hexdigest()}
+    # ── commands ─────────────────────────────────────────────────
+    def list_projects(self) -> List[str]:
+        return self._parse_project_list(self.call("-project action=list"))
 
-    def list_projects(self) -> List[Dict[str, Any]]:
-        res = self._call_tool("list_projects")
-        return res.get("projects", []) if isinstance(res, dict) else (res if isinstance(res, list) else [])
+    def project_exists(self, project_name: str) -> bool:
+        return project_name in self.list_projects()
 
     def list_databanks(self, project_name: str) -> List[Dict[str, Any]]:
-        res = self._call_tool("list_databanks", {"name": project_name})
-        return res.get("databanks", []) if isinstance(res, dict) else (res if isinstance(res, list) else [])
+        return self._parse_databank_list(self.call(f"-databank action=list project={project_name}"))
+
+    def databank_count(self, project_name: str, databank_name: str) -> int:
+        text = self.call(f"-databank action=count project={project_name} name={databank_name}")
+        m = re.search(r"Records:\s*(\d+)", text)
+        return int(m.group(1)) if m else 0
+
+    def export_databank(self, project_name: str, databank_name: str, max_rows: int = 500) -> List[Dict[str, Any]]:
+        """Export databank to a temp CSV and parse rows (semicolon-separated, quoted)."""
+        fd, path = tempfile.mkstemp(prefix="sqx_export_", suffix=".csv")
+        os.close(fd)
+        try:
+            text = self.call(
+                f"-databank action=export project={project_name} name={databank_name} file={path}",
+                timeout=60,
+            )
+            if "exported" not in text.lower():
+                raise SQXMCPError(f"SQX export failed: {text[:200]}")
+            if not os.path.exists(path) or os.path.getsize(path) == 0:
+                return []
+            with open(path, newline="", encoding="utf-8-sig", errors="replace") as fh:
+                sample = fh.read(4096)
+                fh.seek(0)
+                delim = ";" if sample.count(";") >= sample.count(",") else ","
+                rows = list(csv.DictReader(fh, delimiter=delim))
+            return rows[:max_rows]
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
     def list_strategies(self, project_name: str, databank_name: str) -> List[Dict[str, Any]]:
-        res = self._call_tool("list_strategies", {"name": project_name, "databank": databank_name})
-        return res.get("strategies", []) if isinstance(res, dict) else (res if isinstance(res, list) else [])
+        return self.export_databank(project_name, databank_name)
 
     def get_strategy_stats(self, project_name: str, databank_name: str, strategy_name: str) -> Dict[str, Any]:
-        return self._call_tool("get_strategy_stats", {"name": project_name, "databank": databank_name, "strategy": strategy_name})
+        for row in self.export_databank(project_name, databank_name):
+            if str(row.get("Strategy Name", "")).strip() == strategy_name:
+                return row
+        raise SQXMCPError(f"Strategy '{strategy_name}' not found in {project_name}/{databank_name}")
 
     def run_project(self, project_name: str) -> Dict[str, Any]:
-        return self._call_tool("run_project", {"name": project_name})
+        return {"output": self.call(f"-project action=start name={project_name}")}
 
     def stop_project(self, project_name: str) -> Dict[str, Any]:
-        return self._call_tool("stop_project", {"name": project_name})
+        return {"output": self.call(f"-project action=stop name={project_name}")}
+
+    def initialize(self) -> Dict[str, Any]:
+        return self.check_connection()
+
+    def list_tools(self) -> List[Dict[str, Any]]:
+        return []
+
+    def get_strategy_source(self, project_name: str, databank_name: str, strategy_name: str) -> Dict[str, Any]:
+        return {
+            "status": "SOURCE_RULES_UNAVAILABLE",
+            "reason": "sqcli HTTP API does not expose strategy source export",
+            "project": project_name,
+            "databank": databank_name,
+            "strategy": strategy_name,
+        }

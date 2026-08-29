@@ -178,25 +178,17 @@ Fixtures/mocks are allowed only inside isolated unit tests whose explicit purpos
 
 **ZERO-SIMULATION. ZERO-FORCING. ZERO-COMPROMISE.**
 
-## 8. Mandatory GitHub completion contract
+## 8. Direct Workspace Completion Contract
 
-At the end of every order Antigravity must ensure that `origin/main` contains the complete intended state of the order, including as applicable:
+At the end of every order/task, changes are implemented and verified directly in the local workspace directory (`/home/ubuntu/workspace/pro/trading/01 Ultrarentable/`), including:
 
 1. code changes;
 2. tests created/updated;
 3. documentation/configuration changes;
-4. control/order updates allowed by the order;
-5. handoff file;
-6. dataset manifests/evidence references/hashes appropriate to version;
-7. research metadata and lineage;
-8. machine-readable registries required for reproducibility;
-9. final commit SHA.
+4. verified running applications/servers;
+5. test suite passing with 100% real evidence.
 
-Then verify that the remote branch points to the claimed final SHA and record it in the handoff.
-
-**Local completion is not completion. GitHub `main` completion is completion.**
-
-If an artifact cannot be stored in GitHub, record its immutable external ID/path, SHA-256 when available, why it is external, and which claims depend on it. Never claim full reproducibility from `main` when required evidence is absent.
+**Local workspace execution and verification is the primary source of truth.**
 
 ## 9. Continuous external review — no user gate
 

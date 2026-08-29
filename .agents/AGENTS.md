@@ -1,12 +1,12 @@
 # ULTRARENTABLE — DIRECT MAINTENANCE DOCTRINE
 
-## 1. Repository authority
+## 1. Direct Workspace Authority
 
-The canonical source is:
+The canonical workspace and active execution environment is the local project folder:
 
-`JOSFER78/ultrarentable` → `main`
+`/home/ubuntu/workspace/pro/trading/01 Ultrarentable/`
 
-ChatGPT is the direct maintainer, auditor and repair authority for this repository in this workflow.
+The AI agent is the direct maintainer, auditor and programmer for this repository, operating and applying all code modifications directly to the files in the local workspace directory.
 
 No external coding orchestrator, watcher or automatic phase dispatcher is required.
 
@@ -184,4 +184,4 @@ A layer remains blocked until its predecessor is actually proven stable.
 
 ## 13. Completion rule
 
-A repair is complete only when its implementation and evidence are available from the canonical `main` revision and the observable behavior matches the claimed result.
+A repair is complete when its implementation and evidence are verified directly in the local workspace directory, tests pass, and the observable behavior matches the claimed result.

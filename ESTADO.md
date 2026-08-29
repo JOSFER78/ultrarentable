@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: documento de 'estado vivo' congelado 2026-08-19; el estado real vive ahora en docs/00_MASTER_IDEAS_Y_PLAN.md §4. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # 📊 ESTADO.md — Mapa Único y Estado Vivo del Proyecto Ultrarentable
 
 > **Última actualización:** 2026-08-19 (Cierre Forense Definitivo de las 6 Fases — 100% Real-Only)  

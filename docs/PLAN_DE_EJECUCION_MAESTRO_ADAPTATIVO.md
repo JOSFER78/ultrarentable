@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: plan adaptativo V2 antiguo; el plan vigente vive en docs/00_MASTER_IDEAS_Y_PLAN.md §4. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # Plan de Ejecución Maestro Adaptativo — Ultrarentable V2 (2026)
 
 > **Directiva Fundamental:** REAL-ONLY. Cero datos simulados, cero mocks, cero arrays inventados. Toda la operativa se alimenta de series de velas reales de BingX USD-M Perpetuals y Futuros CME, contratos Pydantic v2 inmutables, eventos del bus asíncrono y firmas SHA-256 de procedencia.

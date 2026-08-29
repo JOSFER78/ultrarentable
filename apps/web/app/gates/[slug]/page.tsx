@@ -52,8 +52,8 @@ const ALL_GATES = [
   { num: 7, slug: "gate-7-regime-coverage", name: "7. Cobertura Regímenes", icon: "🌐", badge: "Bull/Bear/Chop" },
   { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe (DSR)", icon: "📐", badge: "López de Prado" },
   { num: 9, slug: "gate-9-novelty-antifit", name: "9. Novedad & Inoculación", icon: "🧬", badge: "Failure DB" },
-  { num: 10, slug: "gate-10-multi-agent-debate", name: "10. Debate 5 Agentes IA", icon: "🤖", badge: "Comité Semántico" },
-  { num: 11, slug: "gate-10-nautilus-trader", name: "10. NautilusTrader Core", icon: "⚡", badge: "Event-Driven" },
+  { num: 10, slug: "gate-10-debate-agentes", name: "10. Debate Multi-Agente", icon: "🤖", badge: "Comité Semántico" },
+  { num: 11, slug: "gate-11-nautilus-event", name: "11. NautilusTrader Core", icon: "⚡", badge: "Event-Driven" },
 ];
 
 export default function GateDetailPage() {
@@ -91,16 +91,56 @@ export default function GateDetailPage() {
       const res = await fetch(`/api/v1/gates/${rawSlug}`);
       if (!res.ok) throw new Error(`Gate no encontrado: ${rawSlug}`);
       const data = await res.json();
-      setGate(data);
       
-      // Initialize form parameters
-      const initial: Record<string, any> = {};
-      if (data.params) {
-        Object.keys(data.params).forEach((k) => {
-          initial[k] = data.params[k].value;
-        });
-      }
-      setCurrentParams(initial);
+      const paramKeys = Object.keys(data.params || data.default_params || {});
+      const normalizedParams: Record<string, GateParam> = {};
+      const initialForm: Record<string, any> = {};
+
+      paramKeys.forEach((k) => {
+        const rawVal = data.params?.[k] !== undefined ? data.params[k] : (data.default_params?.[k] ?? "");
+        const isNum = typeof rawVal === "number";
+        const isBool = typeof rawVal === "boolean";
+        
+        normalizedParams[k] = {
+          label: k.replace(/_/g, " ").toUpperCase(),
+          value: rawVal,
+          type: isBool ? "boolean" : isNum ? "number" : "select",
+          desc: `Parámetro de validación: ${k}`,
+          min: isNum ? 0 : undefined,
+          max: isNum ? Math.max(100, (rawVal as number) * 3) : undefined,
+          step: isNum ? ((rawVal as number) < 1 ? 0.05 : 1) : undefined,
+        };
+        initialForm[k] = rawVal;
+      });
+
+      const normalizedGate: GateDetail = {
+        gate_number: data.id ?? data.gate_number ?? 1,
+        slug: data.slug || rawSlug,
+        name: data.name || rawSlug,
+        short_title: data.name || rawSlug,
+        category: data.category || "Validation Gate",
+        badge: data.badge || `GATE ${data.id ?? 1}`,
+        icon: data.icon || "🛡️",
+        formula: data.formula || "Verificación determinista en motor canónico",
+        objective: data.objective || data.description || "Auditoría cuantitativa de evidencia.",
+        description: data.description || "Compuerta de validación matemática.",
+        params: normalizedParams,
+        live_telemetry: data.live_telemetry || {
+          status: data.evidence_status || "NO_EVIDENCE",
+          status_color: "#94a3b8",
+          datasets_audited: data.datasets_audited ?? 0,
+          candles_verified: data.candles_verified ?? 0,
+          pass_rate_pct: data.pass_rate_pct ?? 0,
+          avg_latency_ms: data.avg_latency_ms ?? 0,
+          last_verdict: data.evidence_status === "NO_EVIDENCE" ? "NO EVIDENCE" : (data.last_verdict || "NO EVIDENCE"),
+        },
+        firebase_sync_status: data.cloud_sync_status || "NOT_CONFIGURED",
+        firebase_path: data.firebase_path || `contracts/gates/${data.slug || rawSlug}`,
+        local_persistence: data.local_persistence || "SQLite WAL",
+      };
+
+      setGate(normalizedGate);
+      setCurrentParams(initialForm);
     } catch (err: any) {
       setError(err.message || "Error al cargar la fase cuantitativa");
     } finally {
@@ -109,8 +149,10 @@ export default function GateDetailPage() {
   }, [rawSlug]);
 
   // Load candidate list for Nautilus simulation
+  const isNautilusSlug = rawSlug === "gate-11-nautilus-event" || rawSlug === "gate-10-nautilus-trader";
+
   const fetchCandidatesForNautilus = useCallback(async () => {
-    if (rawSlug !== "gate-10-nautilus-trader") return;
+    if (!isNautilusSlug) return;
     try {
       const res = await fetch("/api/v1/candidates?limit=100");
       if (res.ok) {
@@ -123,11 +165,11 @@ export default function GateDetailPage() {
     } catch (e) {
       console.error("Error loading candidates for Nautilus:", e);
     }
-  }, [rawSlug]);
+  }, [isNautilusSlug]);
 
   // Load detailed Nautilus backtest for candidate
   const fetchNautilusBacktest = useCallback(async (cId: string) => {
-    if (!cId || rawSlug !== "gate-10-nautilus-trader") return;
+    if (!cId || !isNautilusSlug) return;
     try {
       setNautilusLoading(true);
       const res = await fetch(`/api/v1/gates/nautilus/detailed-backtest/${cId}`);
@@ -140,7 +182,7 @@ export default function GateDetailPage() {
     } finally {
       setNautilusLoading(false);
     }
-  }, [rawSlug]);
+  }, [isNautilusSlug]);
 
   useEffect(() => {
     fetchGateData();
@@ -640,7 +682,7 @@ export default function GateDetailPage() {
       </div>
 
       {/* ── SECCIÓN ESPECIAL PARA GATE 11 (NAUTILUSTRADER CORE & BACKTEST DETALLADO) ── */}
-      {rawSlug === "gate-10-nautilus-trader" && (
+      {isNautilusSlug && (
         <div style={{ background: "#0a0e17", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "24px", marginTop: "24px" }}>
           
           {/* Header Nautilus */}
@@ -925,7 +967,11 @@ export default function GateDetailPage() {
                 </div>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div style={{ padding: "32px", textAlign: "center", color: "#94a3b8", background: "rgba(0, 0, 0, 0.3)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)", fontSize: "12px", fontFamily: "var(--font-mono, monospace)" }}>
+              🛡️ NO EVIDENCE · Sin artefacto de backtest determinista de Nautilus registrado para {selectedCandidateId || "este candidato"}.
+            </div>
+          )}
         </div>
       )}
 

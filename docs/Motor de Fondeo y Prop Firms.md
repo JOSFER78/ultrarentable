@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: sub-nota antigua de fondeo; el corpus de negocio vigente es docs/tradesfera/ y docs/Fondeo/. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 ---
 tipo: sub-nota
 proyecto: 01 Ultrarentable

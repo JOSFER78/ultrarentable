@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: especificación de bifurcación dual sustituida; la definición vigente de TRACK_ULTRA/TRACK_FONDEO vive en docs/00_MASTER_IDEAS_Y_PLAN.md §1. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # 🏛️ ESPECIFICACIÓN MAESTRA DE BIFURCACIÓN CUANTITATIVA: TRACK_FONDEO VS TRACK_ULTRA
 ### *Ultrarentable V2 (Canónico 2026) — Arquitectura Dual de Minería Genética, Ejecución y Meta-Portafolios*
 

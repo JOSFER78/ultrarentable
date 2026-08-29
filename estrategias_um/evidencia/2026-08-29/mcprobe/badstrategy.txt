@@ -1,0 +1,1424 @@
+public class com.strategyquant.tradinglib.BadStrategyException extends com.strategyquant.datalib.TradingException {
+  public static final int ReasonNoTrades;
+
+  public static final int ReasonTooLittleTrades;
+
+  public static final int ReasonZeroPLTrades;
+
+  public static final int ReasonTooShortTrades;
+
+  public static final int ReasonZeroDurationTrades;
+
+  public static final int ReasonTooManyOpenTrades;
+
+  public static final int ReasonTooLongTrade;
+
+  public static final int ReasonNoFilledTrades;
+
+  public static final int ReasonOutlierTrade;
+
+  public static final int ReasonAmbiguousTrades;
+
+  public static final int ReasonStockpickerShiftChanged;
+
+  public static final int ReasonThreshold;
+
+  public static final int ReasonBacktestException;
+
+  public static final int ReasonStopped;
+
+  public static final int ReasonExceptionEvaluatingConditions;
+
+  public static final int ReasonCrossCheckException;
+
+  public static final int ReasonInitialPopulation;
+
+  public static final int ReasonStrategyTooSimilar;
+
+  public static final int ReasonReplacedWithBetterStrategy;
+
+  public static final int ReasonOptProfileProfitableOptimizations;
+
+  public static final int ReasonOptProfileAvgProfit;
+
+  public static final int ReasonOptProfileUniformDistribution;
+
+  public static final int ReasonOptProfileBestOptimizationProfit;
+
+  public static final int ReasonAdditionalMarketsFilter;
+
+  public static final int ReasonWrongParamsException;
+
+  public static final int ReasonCorrelationWithExistingPortfolio;
+
+  public static final int ReasonPortfolioMasterCorrelationLimitation;
+
+  public static final int ReasonPortfolioMasterSectorLimitation;
+
+  public static final int ReasonStrategyRequireXreservedBars;
+
+  public static final int ReasonCCExceptionMCManipulation;
+
+  public static final int ReasonCCExceptionMCRetest;
+
+  public static final int ReasonCCExceptionOptProfileSPP;
+
+  public static final int ReasonCCExceptionAddMarkets;
+
+  public static final int ReasonCCExceptionWFMatrix;
+
+  public static final int ReasonCCExceptionWFOptim;
+
+  public static final int ReasonCCExceptionHigherBacktestPrecis;
+
+  public static final int ReasonCCExceptionWhatIf;
+
+  public static final int ReasonCustomAnalysisFilter;
+
+  public static final int ReasonCCExceptionSequentialOptimization;
+
+  public static final java.lang.String TxtShortReasonNoTrades;
+
+  public static final java.lang.String TxtShortReasonTooLittleTrades;
+
+  public static final java.lang.String TxtShortReasonZeroPLTrades;
+
+  public static final java.lang.String TxtShortReasonTooShortTrades;
+
+  public static final java.lang.String TxtShortReasonZeroDurationTrades;
+
+  public static final java.lang.String TxtShortReasonTooManyOpenTrades;
+
+  public static final java.lang.String TxtShortReasonTooLongTrade;
+
+  public static final java.lang.String TxtShortReasonNoFilledTrades;
+
+  private static final java.lang.String TxtShortReasonThreshold;
+
+  private static final java.lang.String TxtShortReasonBacktestException;
+
+  private static final java.lang.String TxtReasonCrossCheckException;
+
+  private static final java.lang.String TxtReasonCustomAnalysisFilter;
+
+  private static final java.lang.String TxtShortReasonStopped;
+
+  private static final java.lang.String TxtShortReasonExceptionEvaluatingConditions;
+
+  public static final java.lang.String TxtShortReasonInitialPopulation;
+
+  public static final java.lang.String TxtShortReasonStrategyTooSimilar;
+
+  public static final java.lang.String TxtShortReasonOutlierTrade;
+
+  public static final java.lang.String TxtShortReasonAmbiguousTrades;
+
+  public static final java.lang.String TxtShortReplacedWithBetterStrategy;
+
+  public static final java.lang.String TxtShortOptProfileProfitableOptimizations;
+
+  public static final java.lang.String TxtShortOptProfileAvgProfit;
+
+  public static final java.lang.String TxtShortOptProfileUniformDistribution;
+
+  public static final java.lang.String TxtShortOptProfileBestOptimizationProfit;
+
+  public static final java.lang.String TxtShorAdditionalMarketsFilter;
+
+  private static final java.lang.String TxtShortReasonWrongParamsException;
+
+  public static final java.lang.String TxtLongReasonNoTrades;
+
+  public static final java.lang.String TxtLongReasonTooLittleTrades;
+
+  public static final java.lang.String TxtLongReasonZeroPLTrades;
+
+  public static final java.lang.String TxtLongReasonTooShortTrades;
+
+  public static final java.lang.String TxtLongReasonZeroDurationTrades;
+
+  public static final java.lang.String TxtLongReasonTooManyOpenTrades;
+
+  public static final java.lang.String TxtLongReasonTooLongTrade;
+
+  public static final java.lang.String TxtLongReasonNoFilledTrades;
+
+  public static final java.lang.String TxtLongReasonInitialPopulation;
+
+  public static final java.lang.String TxtLongReasonStrategyTooSimilar;
+
+  public static final java.lang.String TxtLongReasonOutlierTrade;
+
+  public static final java.lang.String TxtLongReasonAmbiguousTrades;
+
+  public static final java.lang.String TxtLongReplacedWithBetterStrategy;
+
+  public static final java.lang.String TxtLongOptProfileProfitableOptimizations;
+
+  public static final java.lang.String TxtLongOptProfileAvgProfit;
+
+  public static final java.lang.String TxtLongOptProfileUniformDistribution;
+
+  public static final java.lang.String TxtLongOptProfileBestOptimizationProfit;
+
+  public static final java.lang.String TxtLongAdditionalMarketsFilter;
+
+  public static final java.lang.String TxtReasonCCExceptionMCManipulation;
+
+  public static final java.lang.String TxtReasonCCExceptionMCRetest;
+
+  public static final java.lang.String TxtReasonCCExceptionOptProfileSPP;
+
+  public static final java.lang.String TxtReasonCCExceptionAddMarkets;
+
+  public static final java.lang.String TxtReasonCCExceptionWFMatrix;
+
+  public static final java.lang.String TxtReasonCCExceptionWFOptim;
+
+  public static final java.lang.String TxtReasonCCExceptionSequentialOptimization;
+
+  public static final java.lang.String TxtReasonCCExceptionHigherBacktestPrecis;
+
+  public static final java.lang.String TxtCorrelationWithExistingPortfolio;
+
+  public static final java.lang.String TxtPortfolioMasterCorrelationLimitation;
+
+  public static final java.lang.String TxtPortfolioMasterSectorLimitation;
+
+  public static final java.lang.String TxtStrategyRequireXreservedBars;
+
+  public static final int PrefixInitialConditions;
+
+  public static final int PrefixNormalConditions;
+
+  public static final int PrefixCrossCheckConditions;
+
+  public static final java.lang.String ExplanationUnknown;
+
+  public static final java.lang.String ReplacedWorseStrategy;
+
+  public static final java.lang.String TxtLongReasonStockpickerShiftChanged;
+
+  private int reason;
+
+  public com.strategyquant.tradinglib.BadStrategyException(int);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method com/strategyquant/datalib/TradingException."<init>":()V
+       4: aload_0
+       5: iload_1
+       6: putfield      #7                  // Field reason:I
+       9: return
+
+  public int getReason();
+    Code:
+       0: aload_0
+       1: getfield      #7                  // Field reason:I
+       4: ireturn
+
+  public static java.lang.String getReasonAsString(int);
+    Code:
+       0: iload_0
+       1: lookupswitch  { // 38
+                     1: 316
+                     2: 554
+                     4: 350
+                     8: 384
+                    16: 418
+                    32: 452
+                    64: 486
+                   256: 520
+                   512: 588
+                  1024: 622
+                  2048: 764
+                 10000: 656
+                 10001: 660
+                 10002: 668
+                 10003: 672
+                 10004: 664
+                 10005: 676
+                 10006: 680
+                 10007: 684
+                 10008: 704
+                 10009: 708
+                 10010: 712
+                 10011: 716
+                 10012: 720
+                 10013: 724
+                 10014: 688
+                 10015: 692
+                 10016: 696
+                 10017: 700
+                 10030: 728
+                 10031: 732
+                 10032: 736
+                 10033: 740
+                 10034: 744
+                 10035: 748
+                 10036: 752
+                 10038: 760
+                 10039: 756
+               default: 768
+          }
+     316: new           #13                 // class java/lang/StringBuilder
+     319: dup
+     320: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     323: ldc           #16                 // String Automatic filter
+     325: iconst_0
+     326: anewarray     #18                 // class java/lang/Object
+     329: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     332: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     335: ldc           #30                 // String :
+     337: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     340: getstatic     #32                 // Field TxtShortReasonNoTrades:Ljava/lang/String;
+     343: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     346: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     349: areturn
+     350: new           #13                 // class java/lang/StringBuilder
+     353: dup
+     354: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     357: ldc           #16                 // String Automatic filter
+     359: iconst_0
+     360: anewarray     #18                 // class java/lang/Object
+     363: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     366: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     369: ldc           #30                 // String :
+     371: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     374: getstatic     #40                 // Field TxtShortReasonZeroPLTrades:Ljava/lang/String;
+     377: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     380: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     383: areturn
+     384: new           #13                 // class java/lang/StringBuilder
+     387: dup
+     388: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     391: ldc           #16                 // String Automatic filter
+     393: iconst_0
+     394: anewarray     #18                 // class java/lang/Object
+     397: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     400: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     403: ldc           #30                 // String :
+     405: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     408: getstatic     #43                 // Field TxtShortReasonTooShortTrades:Ljava/lang/String;
+     411: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     414: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     417: areturn
+     418: new           #13                 // class java/lang/StringBuilder
+     421: dup
+     422: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     425: ldc           #16                 // String Automatic filter
+     427: iconst_0
+     428: anewarray     #18                 // class java/lang/Object
+     431: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     434: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     437: ldc           #30                 // String :
+     439: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     442: getstatic     #46                 // Field TxtShortReasonZeroDurationTrades:Ljava/lang/String;
+     445: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     448: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     451: areturn
+     452: new           #13                 // class java/lang/StringBuilder
+     455: dup
+     456: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     459: ldc           #16                 // String Automatic filter
+     461: iconst_0
+     462: anewarray     #18                 // class java/lang/Object
+     465: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     468: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     471: ldc           #30                 // String :
+     473: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     476: getstatic     #49                 // Field TxtShortReasonTooManyOpenTrades:Ljava/lang/String;
+     479: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     482: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     485: areturn
+     486: new           #13                 // class java/lang/StringBuilder
+     489: dup
+     490: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     493: ldc           #16                 // String Automatic filter
+     495: iconst_0
+     496: anewarray     #18                 // class java/lang/Object
+     499: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     502: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     505: ldc           #30                 // String :
+     507: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     510: getstatic     #52                 // Field TxtShortReasonTooLongTrade:Ljava/lang/String;
+     513: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     516: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     519: areturn
+     520: new           #13                 // class java/lang/StringBuilder
+     523: dup
+     524: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     527: ldc           #16                 // String Automatic filter
+     529: iconst_0
+     530: anewarray     #18                 // class java/lang/Object
+     533: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     536: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     539: ldc           #30                 // String :
+     541: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     544: getstatic     #55                 // Field TxtShortReasonNoFilledTrades:Ljava/lang/String;
+     547: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     550: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     553: areturn
+     554: new           #13                 // class java/lang/StringBuilder
+     557: dup
+     558: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     561: ldc           #16                 // String Automatic filter
+     563: iconst_0
+     564: anewarray     #18                 // class java/lang/Object
+     567: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     570: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     573: ldc           #30                 // String :
+     575: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     578: getstatic     #58                 // Field TxtShortReasonTooLittleTrades:Ljava/lang/String;
+     581: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     584: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     587: areturn
+     588: new           #13                 // class java/lang/StringBuilder
+     591: dup
+     592: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     595: ldc           #16                 // String Automatic filter
+     597: iconst_0
+     598: anewarray     #18                 // class java/lang/Object
+     601: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     604: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     607: ldc           #30                 // String :
+     609: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     612: getstatic     #61                 // Field TxtShortReasonOutlierTrade:Ljava/lang/String;
+     615: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     618: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     621: areturn
+     622: new           #13                 // class java/lang/StringBuilder
+     625: dup
+     626: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     629: ldc           #16                 // String Automatic filter
+     631: iconst_0
+     632: anewarray     #18                 // class java/lang/Object
+     635: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     638: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     641: ldc           #30                 // String :
+     643: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     646: getstatic     #64                 // Field TxtShortReasonAmbiguousTrades:Ljava/lang/String;
+     649: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     652: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     655: areturn
+     656: getstatic     #67                 // Field TxtShortReasonThreshold:Ljava/lang/String;
+     659: areturn
+     660: getstatic     #70                 // Field TxtShortReasonBacktestException:Ljava/lang/String;
+     663: areturn
+     664: getstatic     #73                 // Field TxtReasonCrossCheckException:Ljava/lang/String;
+     667: areturn
+     668: getstatic     #76                 // Field TxtShortReasonStopped:Ljava/lang/String;
+     671: areturn
+     672: getstatic     #79                 // Field TxtShortReasonExceptionEvaluatingConditions:Ljava/lang/String;
+     675: areturn
+     676: getstatic     #82                 // Field TxtShortReasonInitialPopulation:Ljava/lang/String;
+     679: areturn
+     680: getstatic     #85                 // Field TxtShortReasonStrategyTooSimilar:Ljava/lang/String;
+     683: areturn
+     684: getstatic     #88                 // Field TxtShortReplacedWithBetterStrategy:Ljava/lang/String;
+     687: areturn
+     688: getstatic     #91                 // Field TxtCorrelationWithExistingPortfolio:Ljava/lang/String;
+     691: areturn
+     692: getstatic     #94                 // Field TxtPortfolioMasterCorrelationLimitation:Ljava/lang/String;
+     695: areturn
+     696: getstatic     #97                 // Field TxtPortfolioMasterSectorLimitation:Ljava/lang/String;
+     699: areturn
+     700: getstatic     #100                // Field TxtStrategyRequireXreservedBars:Ljava/lang/String;
+     703: areturn
+     704: getstatic     #103                // Field TxtShortOptProfileProfitableOptimizations:Ljava/lang/String;
+     707: areturn
+     708: getstatic     #106                // Field TxtShortOptProfileAvgProfit:Ljava/lang/String;
+     711: areturn
+     712: getstatic     #109                // Field TxtShortOptProfileUniformDistribution:Ljava/lang/String;
+     715: areturn
+     716: getstatic     #112                // Field TxtShortOptProfileBestOptimizationProfit:Ljava/lang/String;
+     719: areturn
+     720: getstatic     #115                // Field TxtShorAdditionalMarketsFilter:Ljava/lang/String;
+     723: areturn
+     724: getstatic     #118                // Field TxtShortReasonWrongParamsException:Ljava/lang/String;
+     727: areturn
+     728: getstatic     #121                // Field TxtReasonCCExceptionMCManipulation:Ljava/lang/String;
+     731: areturn
+     732: getstatic     #124                // Field TxtReasonCCExceptionMCRetest:Ljava/lang/String;
+     735: areturn
+     736: getstatic     #127                // Field TxtReasonCCExceptionOptProfileSPP:Ljava/lang/String;
+     739: areturn
+     740: getstatic     #130                // Field TxtReasonCCExceptionAddMarkets:Ljava/lang/String;
+     743: areturn
+     744: getstatic     #133                // Field TxtReasonCCExceptionWFMatrix:Ljava/lang/String;
+     747: areturn
+     748: getstatic     #136                // Field TxtReasonCCExceptionWFOptim:Ljava/lang/String;
+     751: areturn
+     752: getstatic     #139                // Field TxtReasonCCExceptionHigherBacktestPrecis:Ljava/lang/String;
+     755: areturn
+     756: getstatic     #142                // Field TxtReasonCCExceptionSequentialOptimization:Ljava/lang/String;
+     759: areturn
+     760: getstatic     #145                // Field TxtReasonCustomAnalysisFilter:Ljava/lang/String;
+     763: areturn
+     764: getstatic     #148                // Field TxtLongReasonStockpickerShiftChanged:Ljava/lang/String;
+     767: areturn
+     768: iload_0
+     769: ldc           #151                // int 100000
+     771: if_icmplt     800
+     774: iload_0
+     775: ldc           #152                // int 200000
+     777: if_icmpge     800
+     780: ldc           #153                // String initial condition: %d
+     782: iconst_1
+     783: anewarray     #18                 // class java/lang/Object
+     786: dup
+     787: iconst_0
+     788: iload_0
+     789: ldc           #151                // int 100000
+     791: isub
+     792: invokestatic  #155                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     795: aastore
+     796: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     799: areturn
+     800: iload_0
+     801: ldc           #152                // int 200000
+     803: if_icmplt     832
+     806: iload_0
+     807: ldc           #161                // int 300000
+     809: if_icmpge     832
+     812: ldc           #162                // String condition: %d
+     814: iconst_1
+     815: anewarray     #18                 // class java/lang/Object
+     818: dup
+     819: iconst_0
+     820: iload_0
+     821: ldc           #152                // int 200000
+     823: isub
+     824: invokestatic  #155                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     827: aastore
+     828: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     831: areturn
+     832: iload_0
+     833: ldc           #161                // int 300000
+     835: if_icmplt     858
+     838: ldc           #164                // String cross check condition: %d
+     840: iconst_1
+     841: anewarray     #18                 // class java/lang/Object
+     844: dup
+     845: iconst_0
+     846: iload_0
+     847: ldc           #161                // int 300000
+     849: isub
+     850: invokestatic  #155                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     853: aastore
+     854: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     857: areturn
+     858: ldc           #166                // String %s: %d
+     860: iconst_2
+     861: anewarray     #18                 // class java/lang/Object
+     864: dup
+     865: iconst_0
+     866: getstatic     #168                // Field ExplanationUnknown:Ljava/lang/String;
+     869: aastore
+     870: dup
+     871: iconst_1
+     872: iload_0
+     873: invokestatic  #155                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     876: aastore
+     877: invokestatic  #171                // Method java/lang/String.format:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     880: areturn
+
+  public static boolean isBadStrategyException(int);
+    Code:
+       0: iload_0
+       1: lookupswitch  { // 10
+                     1: 92
+                     2: 92
+                     4: 92
+                     8: 92
+                    16: 92
+                    32: 92
+                    64: 92
+                   256: 92
+                   512: 92
+                  1024: 92
+               default: 94
+          }
+      92: iconst_1
+      93: ireturn
+      94: iconst_0
+      95: ireturn
+
+  public java.lang.String getReasonAsString();
+    Code:
+       0: aload_0
+       1: getfield      #7                  // Field reason:I
+       4: invokestatic  #176                // Method getReasonAsString:(I)Ljava/lang/String;
+       7: areturn
+
+  public static boolean check(int, int);
+    Code:
+       0: iload_0
+       1: iload_1
+       2: iand
+       3: ifeq          10
+       6: iconst_1
+       7: goto          11
+      10: iconst_0
+      11: ireturn
+
+  public static int setOrThrow(int, boolean, int) throws com.strategyquant.tradinglib.BadStrategyException;
+    Code:
+       0: iload_0
+       1: iload_2
+       2: iand
+       3: ifeq          15
+       6: new           #8                  // class com/strategyquant/tradinglib/BadStrategyException
+       9: dup
+      10: iload_2
+      11: invokespecial #180                // Method "<init>":(I)V
+      14: athrow
+      15: iload_2
+      16: ireturn
+
+  public static java.lang.String getExplanation(int);
+    Code:
+       0: iload_0
+       1: lookupswitch  { // 31
+                     1: 260
+                     2: 288
+                     4: 264
+                     8: 268
+                    16: 272
+                    32: 276
+                    64: 280
+                   256: 284
+                   512: 292
+                  1024: 296
+                  2048: 380
+                 10005: 300
+                 10006: 304
+                 10007: 308
+                 10008: 324
+                 10009: 328
+                 10010: 332
+                 10011: 336
+                 10012: 340
+                 10014: 312
+                 10015: 316
+                 10016: 320
+                 10030: 344
+                 10031: 348
+                 10032: 352
+                 10033: 356
+                 10034: 360
+                 10035: 364
+                 10036: 368
+                 10038: 376
+                 10039: 372
+               default: 384
+          }
+     260: getstatic     #183                // Field TxtLongReasonNoTrades:Ljava/lang/String;
+     263: areturn
+     264: getstatic     #186                // Field TxtLongReasonZeroPLTrades:Ljava/lang/String;
+     267: areturn
+     268: getstatic     #189                // Field TxtLongReasonTooShortTrades:Ljava/lang/String;
+     271: areturn
+     272: getstatic     #192                // Field TxtLongReasonZeroDurationTrades:Ljava/lang/String;
+     275: areturn
+     276: getstatic     #195                // Field TxtLongReasonTooManyOpenTrades:Ljava/lang/String;
+     279: areturn
+     280: getstatic     #198                // Field TxtLongReasonTooLongTrade:Ljava/lang/String;
+     283: areturn
+     284: getstatic     #201                // Field TxtLongReasonNoFilledTrades:Ljava/lang/String;
+     287: areturn
+     288: getstatic     #204                // Field TxtLongReasonTooLittleTrades:Ljava/lang/String;
+     291: areturn
+     292: getstatic     #207                // Field TxtLongReasonOutlierTrade:Ljava/lang/String;
+     295: areturn
+     296: getstatic     #210                // Field TxtLongReasonAmbiguousTrades:Ljava/lang/String;
+     299: areturn
+     300: getstatic     #213                // Field TxtLongReasonInitialPopulation:Ljava/lang/String;
+     303: areturn
+     304: getstatic     #216                // Field TxtLongReasonStrategyTooSimilar:Ljava/lang/String;
+     307: areturn
+     308: getstatic     #219                // Field TxtLongReplacedWithBetterStrategy:Ljava/lang/String;
+     311: areturn
+     312: getstatic     #91                 // Field TxtCorrelationWithExistingPortfolio:Ljava/lang/String;
+     315: areturn
+     316: getstatic     #94                 // Field TxtPortfolioMasterCorrelationLimitation:Ljava/lang/String;
+     319: areturn
+     320: getstatic     #97                 // Field TxtPortfolioMasterSectorLimitation:Ljava/lang/String;
+     323: areturn
+     324: getstatic     #222                // Field TxtLongOptProfileProfitableOptimizations:Ljava/lang/String;
+     327: areturn
+     328: getstatic     #225                // Field TxtLongOptProfileAvgProfit:Ljava/lang/String;
+     331: areturn
+     332: getstatic     #228                // Field TxtLongOptProfileUniformDistribution:Ljava/lang/String;
+     335: areturn
+     336: getstatic     #231                // Field TxtLongOptProfileBestOptimizationProfit:Ljava/lang/String;
+     339: areturn
+     340: getstatic     #234                // Field TxtLongAdditionalMarketsFilter:Ljava/lang/String;
+     343: areturn
+     344: getstatic     #121                // Field TxtReasonCCExceptionMCManipulation:Ljava/lang/String;
+     347: areturn
+     348: getstatic     #124                // Field TxtReasonCCExceptionMCRetest:Ljava/lang/String;
+     351: areturn
+     352: getstatic     #127                // Field TxtReasonCCExceptionOptProfileSPP:Ljava/lang/String;
+     355: areturn
+     356: getstatic     #130                // Field TxtReasonCCExceptionAddMarkets:Ljava/lang/String;
+     359: areturn
+     360: getstatic     #133                // Field TxtReasonCCExceptionWFMatrix:Ljava/lang/String;
+     363: areturn
+     364: getstatic     #136                // Field TxtReasonCCExceptionWFOptim:Ljava/lang/String;
+     367: areturn
+     368: getstatic     #139                // Field TxtReasonCCExceptionHigherBacktestPrecis:Ljava/lang/String;
+     371: areturn
+     372: getstatic     #142                // Field TxtReasonCCExceptionSequentialOptimization:Ljava/lang/String;
+     375: areturn
+     376: getstatic     #145                // Field TxtReasonCustomAnalysisFilter:Ljava/lang/String;
+     379: areturn
+     380: getstatic     #148                // Field TxtLongReasonStockpickerShiftChanged:Ljava/lang/String;
+     383: areturn
+     384: getstatic     #168                // Field ExplanationUnknown:Ljava/lang/String;
+     387: areturn
+
+  public static java.lang.String reasonToShortText(int);
+    Code:
+       0: iload_0
+       1: lookupswitch  { // 10
+                     1: 92
+                     2: 120
+                     4: 96
+                     8: 100
+                    16: 104
+                    32: 108
+                    64: 112
+                   256: 116
+                   512: 124
+                  1024: 128
+               default: 132
+          }
+      92: getstatic     #32                 // Field TxtShortReasonNoTrades:Ljava/lang/String;
+      95: areturn
+      96: getstatic     #40                 // Field TxtShortReasonZeroPLTrades:Ljava/lang/String;
+      99: areturn
+     100: getstatic     #43                 // Field TxtShortReasonTooShortTrades:Ljava/lang/String;
+     103: areturn
+     104: getstatic     #46                 // Field TxtShortReasonZeroDurationTrades:Ljava/lang/String;
+     107: areturn
+     108: getstatic     #49                 // Field TxtShortReasonTooManyOpenTrades:Ljava/lang/String;
+     111: areturn
+     112: getstatic     #52                 // Field TxtShortReasonTooLongTrade:Ljava/lang/String;
+     115: areturn
+     116: getstatic     #55                 // Field TxtShortReasonNoFilledTrades:Ljava/lang/String;
+     119: areturn
+     120: getstatic     #58                 // Field TxtShortReasonTooLittleTrades:Ljava/lang/String;
+     123: areturn
+     124: getstatic     #61                 // Field TxtShortReasonOutlierTrade:Ljava/lang/String;
+     127: areturn
+     128: getstatic     #64                 // Field TxtShortReasonAmbiguousTrades:Ljava/lang/String;
+     131: areturn
+     132: getstatic     #168                // Field ExplanationUnknown:Ljava/lang/String;
+     135: areturn
+
+  public static it.unimi.dsi.fastutil.ints.IntArrayList getSubReasons(int);
+    Code:
+       0: new           #237                // class it/unimi/dsi/fastutil/ints/IntArrayList
+       3: dup
+       4: invokespecial #239                // Method it/unimi/dsi/fastutil/ints/IntArrayList."<init>":()V
+       7: astore_1
+       8: iload_0
+       9: sipush        10000
+      12: if_icmpge     158
+      15: iload_0
+      16: iconst_1
+      17: iand
+      18: ifle          27
+      21: aload_1
+      22: iconst_1
+      23: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+      26: pop
+      27: iload_0
+      28: iconst_2
+      29: iand
+      30: ifle          39
+      33: aload_1
+      34: iconst_2
+      35: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+      38: pop
+      39: iload_0
+      40: iconst_4
+      41: iand
+      42: ifle          51
+      45: aload_1
+      46: iconst_4
+      47: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+      50: pop
+      51: iload_0
+      52: bipush        8
+      54: iand
+      55: ifle          65
+      58: aload_1
+      59: bipush        8
+      61: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+      64: pop
+      65: iload_0
+      66: bipush        16
+      68: iand
+      69: ifle          79
+      72: aload_1
+      73: bipush        16
+      75: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+      78: pop
+      79: iload_0
+      80: bipush        32
+      82: iand
+      83: ifle          93
+      86: aload_1
+      87: bipush        32
+      89: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+      92: pop
+      93: iload_0
+      94: bipush        64
+      96: iand
+      97: ifle          107
+     100: aload_1
+     101: bipush        64
+     103: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+     106: pop
+     107: iload_0
+     108: sipush        256
+     111: iand
+     112: ifle          123
+     115: aload_1
+     116: sipush        256
+     119: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+     122: pop
+     123: iload_0
+     124: sipush        512
+     127: iand
+     128: ifle          139
+     131: aload_1
+     132: sipush        512
+     135: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+     138: pop
+     139: iload_0
+     140: sipush        1024
+     143: iand
+     144: ifle          164
+     147: aload_1
+     148: sipush        1024
+     151: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+     154: pop
+     155: goto          164
+     158: aload_1
+     159: iload_0
+     160: invokevirtual #240                // Method it/unimi/dsi/fastutil/ints/IntArrayList.add:(I)Z
+     163: pop
+     164: aload_1
+     165: areturn
+
+  public static java.util.ArrayList<com.strategyquant.tradinglib.exception.StrategyProblem> listProblems();
+    Code:
+       0: new           #244                // class java/util/ArrayList
+       3: dup
+       4: invokespecial #246                // Method java/util/ArrayList."<init>":()V
+       7: astore_0
+       8: aload_0
+       9: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+      12: dup
+      13: iconst_1
+      14: getstatic     #32                 // Field TxtShortReasonNoTrades:Ljava/lang/String;
+      17: getstatic     #183                // Field TxtLongReasonNoTrades:Ljava/lang/String;
+      20: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+      23: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      26: pop
+      27: aload_0
+      28: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+      31: dup
+      32: iconst_4
+      33: getstatic     #40                 // Field TxtShortReasonZeroPLTrades:Ljava/lang/String;
+      36: getstatic     #186                // Field TxtLongReasonZeroPLTrades:Ljava/lang/String;
+      39: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+      42: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      45: pop
+      46: aload_0
+      47: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+      50: dup
+      51: sipush        1024
+      54: getstatic     #64                 // Field TxtShortReasonAmbiguousTrades:Ljava/lang/String;
+      57: getstatic     #210                // Field TxtLongReasonAmbiguousTrades:Ljava/lang/String;
+      60: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+      63: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      66: pop
+      67: aload_0
+      68: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+      71: dup
+      72: bipush        16
+      74: getstatic     #46                 // Field TxtShortReasonZeroDurationTrades:Ljava/lang/String;
+      77: getstatic     #192                // Field TxtLongReasonZeroDurationTrades:Ljava/lang/String;
+      80: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+      83: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      86: pop
+      87: aload_0
+      88: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+      91: dup
+      92: bipush        32
+      94: getstatic     #49                 // Field TxtShortReasonTooManyOpenTrades:Ljava/lang/String;
+      97: getstatic     #195                // Field TxtLongReasonTooManyOpenTrades:Ljava/lang/String;
+     100: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+     103: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     106: pop
+     107: aload_0
+     108: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+     111: dup
+     112: bipush        64
+     114: getstatic     #52                 // Field TxtShortReasonTooLongTrade:Ljava/lang/String;
+     117: getstatic     #198                // Field TxtLongReasonTooLongTrade:Ljava/lang/String;
+     120: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+     123: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     126: pop
+     127: aload_0
+     128: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+     131: dup
+     132: sipush        256
+     135: getstatic     #55                 // Field TxtShortReasonNoFilledTrades:Ljava/lang/String;
+     138: getstatic     #201                // Field TxtLongReasonNoFilledTrades:Ljava/lang/String;
+     141: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+     144: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     147: pop
+     148: aload_0
+     149: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+     152: dup
+     153: iconst_2
+     154: getstatic     #58                 // Field TxtShortReasonTooLittleTrades:Ljava/lang/String;
+     157: getstatic     #204                // Field TxtLongReasonTooLittleTrades:Ljava/lang/String;
+     160: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+     163: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     166: pop
+     167: aload_0
+     168: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+     171: dup
+     172: sipush        512
+     175: getstatic     #61                 // Field TxtShortReasonOutlierTrade:Ljava/lang/String;
+     178: getstatic     #207                // Field TxtLongReasonOutlierTrade:Ljava/lang/String;
+     181: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+     184: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     187: pop
+     188: aload_0
+     189: new           #247                // class com/strategyquant/tradinglib/exception/StrategyProblem
+     192: dup
+     193: bipush        8
+     195: getstatic     #43                 // Field TxtShortReasonTooShortTrades:Ljava/lang/String;
+     198: getstatic     #189                // Field TxtLongReasonTooShortTrades:Ljava/lang/String;
+     201: invokespecial #249                // Method com/strategyquant/tradinglib/exception/StrategyProblem."<init>":(ILjava/lang/String;Ljava/lang/String;)V
+     204: invokevirtual #252                // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+     207: pop
+     208: aload_0
+     209: areturn
+
+  public static int getFirstReason(int);
+    Code:
+       0: iload_0
+       1: iconst_1
+       2: iand
+       3: ifle          8
+       6: iconst_1
+       7: ireturn
+       8: iload_0
+       9: iconst_2
+      10: iand
+      11: ifle          16
+      14: iconst_2
+      15: ireturn
+      16: iload_0
+      17: iconst_4
+      18: iand
+      19: ifle          24
+      22: iconst_4
+      23: ireturn
+      24: iload_0
+      25: bipush        8
+      27: iand
+      28: ifle          34
+      31: bipush        8
+      33: ireturn
+      34: iload_0
+      35: bipush        16
+      37: iand
+      38: ifle          44
+      41: bipush        16
+      43: ireturn
+      44: iload_0
+      45: bipush        32
+      47: iand
+      48: ifle          54
+      51: bipush        32
+      53: ireturn
+      54: iload_0
+      55: bipush        64
+      57: iand
+      58: ifle          64
+      61: bipush        64
+      63: ireturn
+      64: iload_0
+      65: sipush        256
+      68: iand
+      69: ifle          76
+      72: sipush        256
+      75: ireturn
+      76: iload_0
+      77: sipush        512
+      80: iand
+      81: ifle          88
+      84: sipush        512
+      87: ireturn
+      88: iload_0
+      89: sipush        1024
+      92: iand
+      93: ifle          100
+      96: sipush        1024
+      99: ireturn
+     100: iconst_0
+     101: ireturn
+
+  public static int getFirstReason(int, int);
+    Code:
+       0: iload_0
+       1: iconst_1
+       2: iand
+       3: ifle          14
+       6: iload_1
+       7: iconst_1
+       8: iand
+       9: ifle          14
+      12: iconst_1
+      13: ireturn
+      14: iload_0
+      15: iconst_2
+      16: iand
+      17: ifle          28
+      20: iload_1
+      21: iconst_2
+      22: iand
+      23: ifle          28
+      26: iconst_2
+      27: ireturn
+      28: iload_0
+      29: iconst_4
+      30: iand
+      31: ifle          42
+      34: iload_1
+      35: iconst_4
+      36: iand
+      37: ifle          42
+      40: iconst_4
+      41: ireturn
+      42: iload_0
+      43: bipush        8
+      45: iand
+      46: ifle          59
+      49: iload_1
+      50: bipush        8
+      52: iand
+      53: ifle          59
+      56: bipush        8
+      58: ireturn
+      59: iload_0
+      60: bipush        16
+      62: iand
+      63: ifle          76
+      66: iload_1
+      67: bipush        16
+      69: iand
+      70: ifle          76
+      73: bipush        16
+      75: ireturn
+      76: iload_0
+      77: bipush        32
+      79: iand
+      80: ifle          93
+      83: iload_1
+      84: bipush        32
+      86: iand
+      87: ifle          93
+      90: bipush        32
+      92: ireturn
+      93: iload_0
+      94: bipush        64
+      96: iand
+      97: ifle          110
+     100: iload_1
+     101: bipush        64
+     103: iand
+     104: ifle          110
+     107: bipush        64
+     109: ireturn
+     110: iload_0
+     111: sipush        256
+     114: iand
+     115: ifle          130
+     118: iload_1
+     119: sipush        256
+     122: iand
+     123: ifle          130
+     126: sipush        256
+     129: ireturn
+     130: iload_0
+     131: sipush        512
+     134: iand
+     135: ifle          150
+     138: iload_1
+     139: sipush        512
+     142: iand
+     143: ifle          150
+     146: sipush        512
+     149: ireturn
+     150: iload_0
+     151: sipush        1024
+     154: iand
+     155: ifle          170
+     158: iload_1
+     159: sipush        1024
+     162: iand
+     163: ifle          170
+     166: sipush        1024
+     169: ireturn
+     170: iconst_0
+     171: ireturn
+
+  public java.lang.String getMessage();
+    Code:
+       0: aload_0
+       1: getfield      #7                  // Field reason:I
+       4: invokestatic  #176                // Method getReasonAsString:(I)Ljava/lang/String;
+       7: areturn
+
+  static {};
+    Code:
+       0: ldc           #255                // String no trades
+       2: iconst_0
+       3: anewarray     #18                 // class java/lang/Object
+       6: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+       9: putstatic     #32                 // Field TxtShortReasonNoTrades:Ljava/lang/String;
+      12: ldc_w         #257                // String too little trades
+      15: iconst_0
+      16: anewarray     #18                 // class java/lang/Object
+      19: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      22: putstatic     #58                 // Field TxtShortReasonTooLittleTrades:Ljava/lang/String;
+      25: ldc_w         #259                // String zero PL trades
+      28: iconst_0
+      29: anewarray     #18                 // class java/lang/Object
+      32: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      35: putstatic     #40                 // Field TxtShortReasonZeroPLTrades:Ljava/lang/String;
+      38: ldc_w         #261                // String too many trades closing at the same bar
+      41: iconst_0
+      42: anewarray     #18                 // class java/lang/Object
+      45: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      48: putstatic     #43                 // Field TxtShortReasonTooShortTrades:Ljava/lang/String;
+      51: ldc_w         #263                // String zero duration trades
+      54: iconst_0
+      55: anewarray     #18                 // class java/lang/Object
+      58: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      61: putstatic     #46                 // Field TxtShortReasonZeroDurationTrades:Ljava/lang/String;
+      64: ldc_w         #265                // String too many open trades
+      67: iconst_0
+      68: anewarray     #18                 // class java/lang/Object
+      71: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      74: putstatic     #49                 // Field TxtShortReasonTooManyOpenTrades:Ljava/lang/String;
+      77: ldc_w         #267                // String unfinished trades
+      80: iconst_0
+      81: anewarray     #18                 // class java/lang/Object
+      84: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+      87: putstatic     #52                 // Field TxtShortReasonTooLongTrade:Ljava/lang/String;
+      90: ldc_w         #269                // String no filled trades
+      93: iconst_0
+      94: anewarray     #18                 // class java/lang/Object
+      97: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     100: putstatic     #55                 // Field TxtShortReasonNoFilledTrades:Ljava/lang/String;
+     103: ldc_w         #271                // String Fitness threshold not reached
+     106: iconst_0
+     107: anewarray     #18                 // class java/lang/Object
+     110: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     113: putstatic     #67                 // Field TxtShortReasonThreshold:Ljava/lang/String;
+     116: ldc_w         #273                // String backtest exception
+     119: iconst_0
+     120: anewarray     #18                 // class java/lang/Object
+     123: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     126: putstatic     #70                 // Field TxtShortReasonBacktestException:Ljava/lang/String;
+     129: ldc_w         #275                // String cross check exception
+     132: iconst_0
+     133: anewarray     #18                 // class java/lang/Object
+     136: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     139: putstatic     #73                 // Field TxtReasonCrossCheckException:Ljava/lang/String;
+     142: ldc_w         #277                // String custom analysis filter failed
+     145: iconst_0
+     146: anewarray     #18                 // class java/lang/Object
+     149: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     152: putstatic     #145                // Field TxtReasonCustomAnalysisFilter:Ljava/lang/String;
+     155: ldc_w         #279                // String test stopped
+     158: iconst_0
+     159: anewarray     #18                 // class java/lang/Object
+     162: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     165: putstatic     #76                 // Field TxtShortReasonStopped:Ljava/lang/String;
+     168: ldc_w         #281                // String exception evaluating conditions
+     171: iconst_0
+     172: anewarray     #18                 // class java/lang/Object
+     175: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     178: putstatic     #79                 // Field TxtShortReasonExceptionEvaluatingConditions:Ljava/lang/String;
+     181: ldc_w         #283                // String initial population
+     184: iconst_0
+     185: anewarray     #18                 // class java/lang/Object
+     188: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     191: putstatic     #82                 // Field TxtShortReasonInitialPopulation:Ljava/lang/String;
+     194: ldc_w         #285                // String too similar strategy in databank
+     197: iconst_0
+     198: anewarray     #18                 // class java/lang/Object
+     201: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     204: putstatic     #85                 // Field TxtShortReasonStrategyTooSimilar:Ljava/lang/String;
+     207: ldc_w         #287                // String outlier trade - one exceptionally big trade
+     210: iconst_0
+     211: anewarray     #18                 // class java/lang/Object
+     214: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     217: putstatic     #61                 // Field TxtShortReasonOutlierTrade:Ljava/lang/String;
+     220: ldc_w         #289                // String too many ambiguous trades
+     223: iconst_0
+     224: anewarray     #18                 // class java/lang/Object
+     227: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     230: putstatic     #64                 // Field TxtShortReasonAmbiguousTrades:Ljava/lang/String;
+     233: ldc_w         #291                // String replaced with better strategy
+     236: iconst_0
+     237: anewarray     #18                 // class java/lang/Object
+     240: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     243: putstatic     #88                 // Field TxtShortReplacedWithBetterStrategy:Ljava/lang/String;
+     246: ldc_w         #293                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': % of Profitable Optimizations
+     249: iconst_0
+     250: anewarray     #18                 // class java/lang/Object
+     253: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     256: putstatic     #103                // Field TxtShortOptProfileProfitableOptimizations:Ljava/lang/String;
+     259: ldc_w         #295                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': average profit
+     262: iconst_0
+     263: anewarray     #18                 // class java/lang/Object
+     266: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     269: putstatic     #106                // Field TxtShortOptProfileAvgProfit:Ljava/lang/String;
+     272: ldc_w         #297                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': uniform distribution
+     275: iconst_0
+     276: anewarray     #18                 // class java/lang/Object
+     279: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     282: putstatic     #109                // Field TxtShortOptProfileUniformDistribution:Ljava/lang/String;
+     285: ldc_w         #299                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': best Optimization profit
+     288: iconst_0
+     289: anewarray     #18                 // class java/lang/Object
+     292: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     295: putstatic     #112                // Field TxtShortOptProfileBestOptimizationProfit:Ljava/lang/String;
+     298: ldc_w         #301                // String Cross Check filter in \'Retest on additional markets\': additional markets filter failed (multiple conditions)
+     301: iconst_0
+     302: anewarray     #18                 // class java/lang/Object
+     305: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     308: putstatic     #115                // Field TxtShorAdditionalMarketsFilter:Ljava/lang/String;
+     311: ldc_w         #303                // String wrong params exception
+     314: iconst_0
+     315: anewarray     #18                 // class java/lang/Object
+     318: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     321: putstatic     #118                // Field TxtShortReasonWrongParamsException:Ljava/lang/String;
+     324: ldc_w         #305                // String Strategy produces no trades
+     327: iconst_0
+     328: anewarray     #18                 // class java/lang/Object
+     331: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     334: putstatic     #183                // Field TxtLongReasonNoTrades:Ljava/lang/String;
+     337: ldc_w         #307                // String Strategy produces too little trades, results are not statistically significant
+     340: iconst_0
+     341: anewarray     #18                 // class java/lang/Object
+     344: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     347: putstatic     #204                // Field TxtLongReasonTooLittleTrades:Ljava/lang/String;
+     350: ldc_w         #309                // String Strategy produces trades with zero P/L
+     353: iconst_0
+     354: anewarray     #18                 // class java/lang/Object
+     357: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     360: putstatic     #186                // Field TxtLongReasonZeroPLTrades:Ljava/lang/String;
+     363: ldc_w         #311                // String Strategy produces too many trades closing at the same bar
+     366: iconst_0
+     367: anewarray     #18                 // class java/lang/Object
+     370: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     373: putstatic     #189                // Field TxtLongReasonTooShortTrades:Ljava/lang/String;
+     376: ldc_w         #313                // String Strategy produces trades with zero duration - trades that are closed immediately after they are opened
+     379: iconst_0
+     380: anewarray     #18                 // class java/lang/Object
+     383: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     386: putstatic     #192                // Field TxtLongReasonZeroDurationTrades:Ljava/lang/String;
+     389: ldc_w         #315                // String Strategy produces too many open trades
+     392: iconst_0
+     393: anewarray     #18                 // class java/lang/Object
+     396: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     399: putstatic     #195                // Field TxtLongReasonTooManyOpenTrades:Ljava/lang/String;
+     402: ldc_w         #317                // String Strategy produces unfinished trade(s) - trade that is not closed until the very end of trading
+     405: iconst_0
+     406: anewarray     #18                 // class java/lang/Object
+     409: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     412: putstatic     #198                // Field TxtLongReasonTooLongTrade:Ljava/lang/String;
+     415: ldc_w         #319                // String Strategy produces no filled trades
+     418: iconst_0
+     419: anewarray     #18                 // class java/lang/Object
+     422: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     425: putstatic     #201                // Field TxtLongReasonNoFilledTrades:Ljava/lang/String;
+     428: ldc_w         #283                // String initial population
+     431: iconst_0
+     432: anewarray     #18                 // class java/lang/Object
+     435: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     438: putstatic     #213                // Field TxtLongReasonInitialPopulation:Ljava/lang/String;
+     441: ldc_w         #321                // String Strategy is too similar or the same as some other strategy in databank
+     444: iconst_0
+     445: anewarray     #18                 // class java/lang/Object
+     448: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     451: putstatic     #216                // Field TxtLongReasonStrategyTooSimilar:Ljava/lang/String;
+     454: ldc_w         #323                // String Strategy produces outlier trade - one exceptionally big trade
+     457: iconst_0
+     458: anewarray     #18                 // class java/lang/Object
+     461: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     464: putstatic     #207                // Field TxtLongReasonOutlierTrade:Ljava/lang/String;
+     467: ldc_w         #325                // String Strategy produces too many ambiguous trades - where it is not possible to determine if SL or PT is reached first
+     470: iconst_0
+     471: anewarray     #18                 // class java/lang/Object
+     474: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     477: putstatic     #210                // Field TxtLongReasonAmbiguousTrades:Ljava/lang/String;
+     480: ldc_w         #327                // String Replaced with better strategy
+     483: iconst_0
+     484: anewarray     #18                 // class java/lang/Object
+     487: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     490: putstatic     #219                // Field TxtLongReplacedWithBetterStrategy:Ljava/lang/String;
+     493: ldc_w         #293                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': % of Profitable Optimizations
+     496: iconst_0
+     497: anewarray     #18                 // class java/lang/Object
+     500: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     503: putstatic     #222                // Field TxtLongOptProfileProfitableOptimizations:Ljava/lang/String;
+     506: ldc_w         #295                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': average profit
+     509: iconst_0
+     510: anewarray     #18                 // class java/lang/Object
+     513: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     516: putstatic     #225                // Field TxtLongOptProfileAvgProfit:Ljava/lang/String;
+     519: ldc_w         #297                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': uniform distribution
+     522: iconst_0
+     523: anewarray     #18                 // class java/lang/Object
+     526: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     529: putstatic     #228                // Field TxtLongOptProfileUniformDistribution:Ljava/lang/String;
+     532: ldc_w         #299                // String Cross Check filter in \'Opt. Profile / Sys. Param. Permutation\': best Optimization profit
+     535: iconst_0
+     536: anewarray     #18                 // class java/lang/Object
+     539: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     542: putstatic     #231                // Field TxtLongOptProfileBestOptimizationProfit:Ljava/lang/String;
+     545: ldc_w         #301                // String Cross Check filter in \'Retest on additional markets\': additional markets filter failed (multiple conditions)
+     548: iconst_0
+     549: anewarray     #18                 // class java/lang/Object
+     552: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     555: putstatic     #234                // Field TxtLongAdditionalMarketsFilter:Ljava/lang/String;
+     558: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     561: iconst_1
+     562: anewarray     #18                 // class java/lang/Object
+     565: dup
+     566: iconst_0
+     567: getstatic     #331                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameMCManipulation:Ljava/lang/String;
+     570: aastore
+     571: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     574: putstatic     #121                // Field TxtReasonCCExceptionMCManipulation:Ljava/lang/String;
+     577: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     580: iconst_1
+     581: anewarray     #18                 // class java/lang/Object
+     584: dup
+     585: iconst_0
+     586: getstatic     #336                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameMCRetest:Ljava/lang/String;
+     589: aastore
+     590: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     593: putstatic     #124                // Field TxtReasonCCExceptionMCRetest:Ljava/lang/String;
+     596: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     599: iconst_1
+     600: anewarray     #18                 // class java/lang/Object
+     603: dup
+     604: iconst_0
+     605: getstatic     #339                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameOptProfileSPP:Ljava/lang/String;
+     608: aastore
+     609: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     612: putstatic     #127                // Field TxtReasonCCExceptionOptProfileSPP:Ljava/lang/String;
+     615: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     618: iconst_1
+     619: anewarray     #18                 // class java/lang/Object
+     622: dup
+     623: iconst_0
+     624: getstatic     #342                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameAddMarkets:Ljava/lang/String;
+     627: aastore
+     628: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     631: putstatic     #130                // Field TxtReasonCCExceptionAddMarkets:Ljava/lang/String;
+     634: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     637: iconst_1
+     638: anewarray     #18                 // class java/lang/Object
+     641: dup
+     642: iconst_0
+     643: getstatic     #345                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameWFMatrix:Ljava/lang/String;
+     646: aastore
+     647: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     650: putstatic     #133                // Field TxtReasonCCExceptionWFMatrix:Ljava/lang/String;
+     653: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     656: iconst_1
+     657: anewarray     #18                 // class java/lang/Object
+     660: dup
+     661: iconst_0
+     662: getstatic     #348                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameWFOptimization:Ljava/lang/String;
+     665: aastore
+     666: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     669: putstatic     #136                // Field TxtReasonCCExceptionWFOptim:Ljava/lang/String;
+     672: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     675: iconst_1
+     676: anewarray     #18                 // class java/lang/Object
+     679: dup
+     680: iconst_0
+     681: getstatic     #351                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameSequentialOptimization:Ljava/lang/String;
+     684: aastore
+     685: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     688: putstatic     #142                // Field TxtReasonCCExceptionSequentialOptimization:Ljava/lang/String;
+     691: ldc_w         #329                // String Cross Check filter in \'%s\': Automatic filter
+     694: iconst_1
+     695: anewarray     #18                 // class java/lang/Object
+     698: dup
+     699: iconst_0
+     700: getstatic     #354                // Field com/strategyquant/tradinglib/crosscheck/CrossCheckMethod.NameHigherBacktestPrecis:Ljava/lang/String;
+     703: aastore
+     704: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     707: putstatic     #139                // Field TxtReasonCCExceptionHigherBacktestPrecis:Ljava/lang/String;
+     710: ldc_w         #357                // String Correlation with existing portfolio
+     713: iconst_0
+     714: anewarray     #18                 // class java/lang/Object
+     717: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     720: putstatic     #91                 // Field TxtCorrelationWithExistingPortfolio:Ljava/lang/String;
+     723: ldc_w         #359                // String Correlation limitation
+     726: iconst_0
+     727: anewarray     #18                 // class java/lang/Object
+     730: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     733: putstatic     #94                 // Field TxtPortfolioMasterCorrelationLimitation:Ljava/lang/String;
+     736: ldc_w         #361                // String Sector limitation
+     739: iconst_0
+     740: anewarray     #18                 // class java/lang/Object
+     743: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     746: putstatic     #97                 // Field TxtPortfolioMasterSectorLimitation:Ljava/lang/String;
+     749: ldc_w         #363                // String Strategy require X reserved bars
+     752: iconst_0
+     753: anewarray     #18                 // class java/lang/Object
+     756: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     759: putstatic     #100                // Field TxtStrategyRequireXreservedBars:Ljava/lang/String;
+     762: ldc_w         #365                // String Unknown
+     765: iconst_0
+     766: anewarray     #18                 // class java/lang/Object
+     769: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     772: putstatic     #168                // Field ExplanationUnknown:Ljava/lang/String;
+     775: new           #13                 // class java/lang/StringBuilder
+     778: dup
+     779: invokespecial #15                 // Method java/lang/StringBuilder."<init>":()V
+     782: ldc_w         #367                // String Your strategy contains condition that uses Close, High, Low, Typical, Median, Weighted with Shift=0 in combination with trigger On Bar Open.
+     785: iconst_0
+     786: anewarray     #18                 // class java/lang/Object
+     789: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     792: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     795: ldc_w         #369                // String <br>
+     798: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     801: ldc_w         #371                // String This is not allowed, it would lead to incorrect backtests (looking into future). Shift for this condition was changed to 1.
+     804: iconst_0
+     805: anewarray     #18                 // class java/lang/Object
+     808: invokestatic  #20                 // Method com/strategyquant/lib/L.t:(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+     811: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     814: invokevirtual #36                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     817: putstatic     #148                // Field TxtLongReasonStockpickerShiftChanged:Ljava/lang/String;
+     820: return
+}

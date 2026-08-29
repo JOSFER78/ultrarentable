@@ -20,7 +20,6 @@ import {
   CandidateStrategy,
   BacktestResult,
 } from "@/lib/api";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import Link from "next/link";
 import QuantTooltip from "@/components/system/QuantTooltip";
 
@@ -136,8 +135,6 @@ export default function MotorBacktestView() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-2 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <EstrategiasHeaderNav />
-
         <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-4 gap-4">
           <div>
             <div className="flex items-center gap-2">

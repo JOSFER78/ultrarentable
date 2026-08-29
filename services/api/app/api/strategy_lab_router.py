@@ -49,6 +49,17 @@ def _explicit_market_identity(raw: Dict[str, Any]) -> tuple[str | None, str | No
             symbol = text
         if timeframe is None and label in {"timeframe", "tf", "period", "bar period"}:
             timeframe = text
+    # Flat databank-export rows (sqcli CSV): "Symbol (IS)" / "TimeFrame (IS)".
+    if symbol is None:
+        for key in ("Symbol (IS)", "Symbol", "symbol"):
+            if str(raw.get(key) or "").strip():
+                symbol = str(raw[key]).strip()
+                break
+    if timeframe is None:
+        for key in ("TimeFrame (IS)", "Timeframe", "timeframe"):
+            if str(raw.get(key) or "").strip():
+                timeframe = str(raw[key]).strip()
+                break
     return symbol, timeframe
 
 
@@ -56,7 +67,7 @@ def _strategy_name(item: Any) -> str | None:
     if isinstance(item, str) and item.strip():
         return item.strip()
     if isinstance(item, dict):
-        for key in ("name", "strategy", "strategy_name", "id"):
+        for key in ("Strategy Name", "name", "strategy", "strategy_name", "id"):
             value = item.get(key)
             if isinstance(value, str) and value.strip():
                 return value.strip()
@@ -93,9 +104,9 @@ def _source_record(strategy: StrategyModel) -> Dict[str, Any]:
 def strategy_lab_overview() -> Dict[str, Any]:
     db = SessionLocal()
     try:
-        extracted = db.query(StrategyModel).filter(StrategyModel.family == "sqx_extracted").count()
-        structural = db.query(StrategyModel).filter(StrategyModel.validation_status == "STRUCTURALLY_VERIFIED").count()
-        backtest_verified = db.query(BacktestModel).join(StrategyModel, StrategyModel.strategy_id == BacktestModel.strategy_id).filter(StrategyModel.family == "sqx_extracted", BacktestModel.status == "COMPLETED").count()
+        extracted = db.query(StrategyModel).count()
+        structural = db.query(StrategyModel).filter(StrategyModel.validation_status.in_(["STRUCTURALLY_VERIFIED", "BACKTEST_VERIFIED", "CERTIFIED_CURRENT"])).count()
+        backtest_verified = db.query(StrategyModel).filter(StrategyModel.validation_status.in_(["BACKTEST_VERIFIED", "CERTIFIED_CURRENT"])).count()
         certified = db.query(StrategyModel).filter(StrategyModel.validation_status == "CERTIFIED_CURRENT").count()
         datasets = db.query(DatasetModel).filter(DatasetModel.status == "APPROVED").count()
         return {"status": "SUCCESS", "as_of_utc": _utc_now(), "pipeline": {"extracted": extracted, "structurally_verified": structural, "backtest_verified": backtest_verified, "certified_current": certified, "approved_datasets": datasets}, "evidence_policy": "A stage never implies the next stage."}
@@ -104,10 +115,20 @@ def strategy_lab_overview() -> Dict[str, Any]:
 
 
 @router.get("/strategies")
-def strategy_lab_strategies(limit: int = Query(100, ge=1, le=1000)) -> Dict[str, Any]:
+def strategy_lab_strategies(
+    family: str | None = Query(None),
+    symbol: str | None = Query(None),
+    validation_status: str | None = Query(None),
+    limit: int = Query(250, ge=1, le=1000)
+) -> Dict[str, Any]:
     db = SessionLocal()
     try:
-        rows = db.query(StrategyModel).filter(StrategyModel.family == "sqx_extracted").order_by(StrategyModel.created_at.desc()).limit(limit).all()
+        q = db.query(StrategyModel)
+        if family and family != "ALL":
+            q = q.filter(StrategyModel.family == family)
+        if validation_status and validation_status != "ALL":
+            q = q.filter(StrategyModel.validation_status == validation_status)
+        rows = q.order_by(StrategyModel.created_at.desc()).limit(limit).all()
         return {"status": "SUCCESS", "count": len(rows), "strategies": [_source_record(row) for row in rows]}
     finally:
         db.close()
@@ -136,11 +157,22 @@ def strategy_lab_sqx_status(url: str | None = Query(None)) -> Dict[str, Any]:
 
 @router.post("/extract/{project_name}")
 def extract_from_sqx(project_name: str) -> Dict[str, Any]:
+    """Real extraction from the live sqcli HTTP API (:5050).
+
+    Flow: verify project -> list databanks (action=list) -> read the configured
+    databank (action=export to CSV) -> upsert canonical source strategies.
+    Fail-closed: any SQX failure raises SQX_UNAVAILABLE; no data is invented.
+    """
     project_name = project_name.strip()
     if not project_name:
         raise HTTPException(status_code=422, detail="PROJECT_NAME_REQUIRED")
     client = SQXMCPClient()
     try:
+        if not client.project_exists(project_name):
+            raise SQXMCPError(f"Project '{project_name}' does not exist in SQX")
+        databanks = client.list_databanks(project_name)
+        if not any(db.get("name") == DATABANK for db in databanks):
+            raise SQXMCPError(f"Databank '{DATABANK}' not found in project '{project_name}'")
         strategy_items = client.list_strategies(project_name, DATABANK) or []
     except SQXMCPError as exc:
         raise HTTPException(status_code=502, detail=f"SQX_UNAVAILABLE: {exc}") from exc
@@ -155,11 +187,14 @@ def extract_from_sqx(project_name: str) -> Dict[str, Any]:
                 quarantined += 1
                 continue
             named.append(name)
-            try:
-                raw = client.get_strategy_stats(project_name, DATABANK, name)
-            except Exception:
-                quarantined += 1
-                continue
+            # Rows from the real databank export already carry all stats columns.
+            raw = item if isinstance(item, dict) and item.get("Strategy Name") else None
+            if raw is None:
+                try:
+                    raw = client.get_strategy_stats(project_name, DATABANK, name)
+                except Exception:
+                    quarantined += 1
+                    continue
             if not isinstance(raw, dict) or not raw:
                 quarantined += 1
                 continue

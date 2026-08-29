@@ -14,7 +14,7 @@ from fastapi import APIRouter, HTTPException, Query
 from services.sqx_bridge.sqx_client import SQXMCPClient, SQXMCPError
 
 sqx_router = APIRouter(prefix="/sqx", tags=["StrategyQuant X MCP Integration"])
-DEFAULT_SQX_MCP_URL = os.getenv("SQX_MCP_URL", "http://127.0.0.1:8080/mcp")
+DEFAULT_SQX_MCP_URL = os.getenv("SQX_MCP_URL", os.getenv("SQX_API_URL", "http://localhost:5050"))
 
 
 def _client(url: Optional[str]) -> SQXMCPClient:

@@ -29,7 +29,6 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import QuantTooltip from "@/components/system/QuantTooltip";
 import { getCandidates, CandidateStrategy } from "@/lib/api";
 
@@ -252,18 +251,18 @@ export default function CandidatesExcelExplorer() {
     }
   };
 
-  // KPIs (agregación solo sobre valores reales devueltos por el backend)
+  // KPIs (agregación estrictamente sobre valores físicos reales)
   const kpis = useMemo(() => {
     const total = sortedData.length;
     const approvedCount = sortedData.filter((c) => ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(c.status)).length;
     const pfValues = sortedData.map((c) => c.profit_factor_oos).filter((v): v is number => typeof v === "number");
-    const pnlValues = sortedData.map((c) => c.net_profit_oos).filter((v): v is number => typeof v === "number");
     const ddValues = sortedData.map((c) => c.max_dd_oos_pct).filter((v): v is number => typeof v === "number");
+    const passRate = total > 0 ? (approvedCount / total) * 100 : 0;
     return {
       total,
       approvedCount,
+      passRate,
       avgPf: pfValues.length > 0 ? pfValues.reduce((acc, v) => acc + v, 0) / pfValues.length : null,
-      totalNetPnl: pnlValues.length > 0 ? pnlValues.reduce((acc, v) => acc + v, 0) : null,
       avgDd: ddValues.length > 0 ? ddValues.reduce((acc, v) => acc + v, 0) / ddValues.length : null,
     };
   }, [sortedData]);
@@ -331,8 +330,6 @@ export default function CandidatesExcelExplorer() {
   return (
     <div className="min-h-screen bg-[#05080f] text-slate-100 p-2 md:p-6 font-sans">
       <div className="max-w-[1720px] mx-auto space-y-5">
-        <EstrategiasHeaderNav />
-
         {/* CABECERA */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-800/80 pb-4 gap-4">
           <div>
@@ -475,11 +472,9 @@ export default function CandidatesExcelExplorer() {
             <span className="text-lg font-black text-sky-400">{kpis.avgPf === null ? "NO EVIDENCE" : kpis.avgPf.toFixed(2)}</span>
           </div>
           <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
-            <span className="text-[10px] uppercase text-slate-400 font-bold block">PnL Neto Total OOS</span>
-            <span className={`text-lg font-black ${kpis.totalNetPnl === null ? "text-slate-500" : kpis.totalNetPnl >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-              {kpis.totalNetPnl === null
-                ? "NO EVIDENCE"
-                : `$${kpis.totalNetPnl.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            <span className="text-[10px] uppercase text-slate-400 font-bold block">Tasa de Aprobación OOS</span>
+            <span className={`text-lg font-black ${kpis.total === 0 ? "text-slate-500" : kpis.passRate > 0 ? "text-emerald-400" : "text-slate-400"}`}>
+              {kpis.total === 0 ? "NO EVIDENCE" : `${kpis.passRate.toFixed(1)}%`}
             </span>
           </div>
           <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">

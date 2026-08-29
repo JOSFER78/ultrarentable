@@ -17,7 +17,9 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className="antialiased bg-slate-950 text-slate-100 min-h-screen" suppressHydrationWarning style={{ margin: 0, padding: 0 }}>
         <div style={{ display: "flex", minHeight: "100vh", width: "100%" }}>
-          <Sidebar />
+          <React.Suspense fallback={<aside style={{ width: "250px", background: "#070a10" }} />}>
+            <Sidebar />
+          </React.Suspense>
           <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0, overflow: "hidden" }}>
             <Header />
             <main style={{ flex: 1, padding: "20px", overflowY: "auto" }}>{children}</main>

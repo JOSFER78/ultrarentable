@@ -15,6 +15,7 @@ import {
   Radio,
   Building2,
   Lock,
+  Flame,
 } from "lucide-react";
 import {
   getCandidates,
@@ -147,45 +148,113 @@ export default function HomePage() {
         <KpiCard title="PROFIT FACTOR MEDIO" value={loading ? "…" : avgPf} detail="Certificado en OOS" accent="#38bdf8" icon={Zap} />
       </section>
 
-      {/* 3. ACCESO DIRECTO A LOS 4 PILARES MAESTROS */}
-      <div>
-        <div style={{ fontSize: "11px", fontWeight: 600, color: "#64748b", letterSpacing: "0.8px", marginBottom: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-          PILAR DE INVESTIGACIÓN & OPERATIVA
+      {/* 3. ARQUITECTURA MAESTRA DE 3 PILARES */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        {/* PILAR 1: INVESTIGACIÓN & LAB */}
+        <div>
+          <div style={{ fontSize: "11px", fontWeight: 700, color: "#64748b", letterSpacing: "0.8px", marginBottom: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+            1. INVESTIGACIÓN & LAB
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
+            <PillarCard
+              title="Strategy Lab"
+              href="/estrategias"
+              icon={Zap}
+              accent="#38bdf8"
+              badge="LAB CORE"
+              description="Descubrimiento de estrategias, normalización canónica, compilación AST y backtest sin lookahead."
+            />
+            <PillarCard
+              title="Candidatos SQLite"
+              href="/candidatos"
+              icon={Database}
+              accent="#818cf8"
+              badge="SQLITE WAL"
+              description="Explorador tipo Excel de la base de datos de candidatos con ordenación multidimensional y filtros."
+            />
+            <PillarCard
+              title="11 Evidence Gates"
+              href="/gates"
+              icon={ShieldCheck}
+              accent="#34d399"
+              badge="11/11 GATES"
+              description="Pipeline determinista de 11 compuertas: Monte Carlo 0% ruina, DSR Marcos López de Prado y Holdout OOS."
+            />
+            <PillarCard
+              title="Portafolio Studio"
+              href="/portfolio"
+              icon={PieChart}
+              accent="#c084fc"
+              badge="RISK PARITY"
+              description="Construcción de meta-estrategias por paridad de riesgo y descorrelación multiactivo."
+            />
+          </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
-          <PillarCard
-            title="Strategy Lab"
-            href="/estrategias"
-            icon={Zap}
-            accent="#38bdf8"
-            badge="LAB"
-            description="Descubrimiento de estrategias, normalización canónica, compilación AST y backtest sin lookahead."
-          />
-          <PillarCard
-            title="Bifurcación Dual"
-            href="/bifurcacion"
-            icon={GitFork}
-            accent="#f59e0b"
-            badge="DUAL"
-            description="Separación de arquitectura: Track ULTRA (BingX Perps) vs Track FONDEO (Futuros CME)."
-          />
-          <PillarCard
-            title="Portal Tradesfera"
-            href="/tradesfera"
-            icon={BookOpen}
-            accent="#fbbf24"
-            badge="18 MÓDULOS"
-            description="Tratado completo de 18 módulos: matemática de munición, esperanza matemática (EV) y psicotrading."
-          />
-          <PillarCard
-            title="Trading Desk CME"
-            href="/trading-desk"
-            icon={Activity}
-            accent="#10b981"
-            badge="LIVE"
-            description="Terminal en vivo, gestión de posiciones, brackets automáticos y centinela de riesgo Hermes."
-          />
+        {/* PILAR 2: EJECUCIÓN & RUTAS */}
+        <div>
+          <div style={{ fontSize: "11px", fontWeight: 700, color: "#64748b", letterSpacing: "0.8px", marginBottom: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+            2. EJECUCIÓN & RUTAS
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
+            <PillarCard
+              title="Bifurcación Dual"
+              href="/bifurcacion"
+              icon={GitFork}
+              accent="#f59e0b"
+              badge="DUAL TRACK"
+              description="Separación de arquitectura: Track ULTRA (BingX Perps) vs Track FONDEO (Futuros CME)."
+            />
+            <PillarCard
+              title="Track ULTRA"
+              href="/ultra"
+              icon={Flame}
+              accent="#ec4899"
+              badge="BINGX PERPS"
+              description="Mecanismo de explotación asimétrica convexa con margen aislado 1R y bóveda Ratchet."
+            />
+            <PillarCard
+              title="Track FONDEO"
+              href="/fondeo"
+              icon={Building2}
+              accent="#10b981"
+              badge="CME FUTURES"
+              description="Operativa institucional para superar evaluaciones de Prop Firms con Drawdown estricto."
+            />
+            <PillarCard
+              title="Trading Desk CME"
+              href="/trading-desk"
+              icon={Activity}
+              accent="#10b981"
+              badge="LIVE DESK"
+              description="Terminal en vivo, gestión de posiciones, brackets automáticos y centinela de riesgo."
+            />
+          </div>
+        </div>
+
+        {/* PILAR 3: MONETIZACIÓN & ECOSISTEMA */}
+        <div>
+          <div style={{ fontSize: "11px", fontWeight: 700, color: "#64748b", letterSpacing: "0.8px", marginBottom: "10px", fontFamily: "var(--font-mono, monospace)" }}>
+            3. MONETIZACIÓN & ECOSISTEMA
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px" }}>
+            <PillarCard
+              title="70 Prop Firms CME"
+              href="/prop-firms"
+              icon={Building2}
+              accent="#38bdf8"
+              badge="70 TIERS"
+              description="Matriz comparativa exhaustiva, buscador 3-clics, semáforo de reglas y calculadora de ROI."
+            />
+            <PillarCard
+              title="Portal Tradesfera"
+              href="/tradesfera"
+              icon={BookOpen}
+              accent="#fbbf24"
+              badge="18 MÓDULOS"
+              description="Tratado completo de 18 módulos: matemática de munición, esperanza matemática (EV) y psicotrading."
+            />
+          </div>
         </div>
       </div>
 
@@ -257,6 +326,7 @@ function KpiCard({
         flexDirection: "column",
         justifyContent: "space-between",
         gap: "10px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.4)",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -266,7 +336,7 @@ function KpiCard({
         <Icon style={{ width: "14px", height: "14px", color: accent }} />
       </div>
       <div>
-        <div style={{ fontSize: "22px", fontWeight: 700, color: "#f8fafc", fontFamily: "var(--font-mono, monospace)" }}>{value}</div>
+        <div style={{ fontSize: "22px", fontWeight: 700, color: "#f8fafc", fontFamily: "var(--font-mono, monospace)", fontVariantNumeric: "tabular-nums" }}>{value}</div>
         <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>{detail}</div>
       </div>
     </div>
@@ -301,8 +371,9 @@ function PillarCard({
         flexDirection: "column",
         justifyContent: "space-between",
         gap: "12px",
-        transition: "all 0.12s ease",
+        transition: "all 0.15s ease",
       }}
+      className="hover:border-white/20 hover:bg-slate-900/60"
     >
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
@@ -314,10 +385,10 @@ function PillarCard({
             style={{
               fontSize: "9.5px",
               fontFamily: "var(--font-mono, monospace)",
-              fontWeight: 600,
-              padding: "1px 6px",
-              borderRadius: "3px",
-              background: "rgba(255, 255, 255, 0.05)",
+              fontWeight: 700,
+              padding: "2px 7px",
+              borderRadius: "4px",
+              background: "rgba(255, 255, 255, 0.04)",
               color: accent,
               border: "1px solid rgba(255, 255, 255, 0.08)",
             }}
@@ -325,13 +396,13 @@ function PillarCard({
             {badge}
           </span>
         </div>
-        <p style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.4, margin: 0 }}>
+        <p style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.45, margin: 0 }}>
           {description}
         </p>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11.5px", fontWeight: 600, color: accent }}>
-        <span>Acceder</span>
+        <span>Acceder al módulo</span>
         <ArrowRight style={{ width: "13px", height: "13px" }} />
       </div>
     </Link>

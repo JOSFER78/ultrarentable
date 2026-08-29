@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: registro puntual de fix del 2026-08-09; histórico. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # ULTRA — Fix OFFLINE SQX en preview Hermes + quality gates del motor
 
 > Fecha: 2026-08-09 · Estado: RESUELTO y verificado

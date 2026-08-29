@@ -5,20 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
-  BarChart3,
+  Layers,
   Bot,
   ShieldAlert,
   FileText,
-  Sliders,
+  SlidersHorizontal,
 } from "lucide-react";
 
 const DESK_TABS = [
-  { label: "Terminal & DOM", href: "/trading-desk", icon: Activity, badge: "DOM" },
-  { label: "Posiciones & Brackets", href: "/trading-desk/posiciones", icon: BarChart3, badge: "LIVE" },
-  { label: "Estrategias Activas", href: "/trading-desk/estrategias", icon: Bot, badge: "11 GATES" },
-  { label: "Sentinel de Riesgo", href: "/trading-desk/riesgo", icon: ShieldAlert, badge: "DD GUARD" },
-  { label: "Auditoría Forense", href: "/trading-desk/auditoria", icon: FileText, badge: "WAL" },
-  { label: "Conexión Gateway", href: "/trading-desk/configuracion", icon: Sliders, badge: "CONFIG" },
+  { href: "/trading-desk", label: "Terminal & DOM", icon: Activity, badge: "LIVE" },
+  { href: "/trading-desk/posiciones", label: "Posiciones & Brackets", icon: Layers },
+  { href: "/trading-desk/estrategias", label: "Estrategias Activas", icon: Bot },
+  { href: "/trading-desk/riesgo", label: "Sentinel de Riesgo", icon: ShieldAlert },
+  { href: "/trading-desk/auditoria", label: "Auditoría Forense", icon: FileText, badge: "WAL" },
+  { href: "/trading-desk/configuracion", label: "Conexión Gateway", icon: SlidersHorizontal },
 ];
 
 export default function TradingDeskLayout({
@@ -26,66 +26,45 @@ export default function TradingDeskLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || "/trading-desk";
 
   return (
-    <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "16px" }}>
-      {/* BARRA DE PESTAÑAS INSTITUCIONAL TRADING DESK */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          background: "#0a0e17",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "8px",
-          padding: "6px 8px",
-          overflowX: "auto",
-        }}
-      >
+    <div className="w-full flex flex-col gap-4">
+      {/* TRADING DESK SUB-NAVIGATION TABS */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-white/[0.07] bg-slate-950/40 p-1.5 rounded-xl">
         {DESK_TABS.map((tab) => {
-          const isActive = pathname === tab.href;
           const Icon = tab.icon;
+          const isActive = pathname === tab.href;
+
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 12px",
-                borderRadius: "5px",
-                fontSize: "12px",
-                fontWeight: isActive ? 600 : 500,
-                color: isActive ? "#38bdf8" : "#94a3b8",
-                background: isActive ? "rgba(56, 189, 248, 0.12)" : "transparent",
-                border: isActive ? "1px solid rgba(56, 189, 248, 0.25)" : "1px solid transparent",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                transition: "all 0.12s ease",
-              }}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
+                isActive
+                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)] font-bold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] border border-transparent"
+              }`}
             >
-              <Icon style={{ width: "14px", height: "14px", color: isActive ? "#38bdf8" : "#64748b" }} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? "text-emerald-400" : "text-slate-500"}`} />
               <span>{tab.label}</span>
-              <span
-                style={{
-                  fontSize: "9px",
-                  fontFamily: "var(--font-mono, monospace)",
-                  padding: "1px 4px",
-                  borderRadius: "3px",
-                  background: isActive ? "rgba(56, 189, 248, 0.2)" : "rgba(255, 255, 255, 0.05)",
-                  color: isActive ? "#38bdf8" : "#64748b",
-                }}
-              >
-                {tab.badge}
-              </span>
+              {tab.badge && (
+                <span
+                  className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                    isActive
+                      ? "bg-emerald-500/30 text-emerald-200"
+                      : "bg-slate-800 text-slate-400"
+                  }`}
+                >
+                  {tab.badge}
+                </span>
+              )}
             </Link>
           );
         })}
       </div>
 
-      <div>{children}</div>
+      <div className="w-full">{children}</div>
     </div>
   );
 }

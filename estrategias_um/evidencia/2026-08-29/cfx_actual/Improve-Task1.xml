@@ -1,0 +1,1171 @@
+<Settings>
+  <Optimization type="1" maxOptimizations="25">
+    <Source type="2" relativePath="false" />
+    <SimpleOptimization type="10" pctToPass="60" resultsCount="5" stabilityRange="20" />
+    <OptimizationMethod settings="automatic" symmetricVariables="false" symmetryDisabled="false" />
+    <AutomaticSettings distributionUp="20" distributionDown="20" maxSteps="3" />
+    <WhatToParametrize type="0">
+      <Recommended>true</Recommended>
+      <Periods>false</Periods>
+      <Shifts>false</Shifts>
+      <Constants>false</Constants>
+      <OtherParams>false</OtherParams>
+      <EntryParams>false</EntryParams>
+      <EntryLogic>false</EntryLogic>
+      <ExitParamsUsed>false</ExitParamsUsed>
+      <ExitParamsUnused>false</ExitParamsUnused>
+      <BooleanParams>false</BooleanParams>
+      <TradingOptions>false</TradingOptions>
+    </WhatToParametrize>
+    <ManualSettings>
+      <Params />
+    </ManualSettings>
+  </Optimization>
+  <RiskMoneyManagement>
+    <MoneyManagement>
+      <InitialCapital>10000</InitialCapital>
+      <Method type="FixedSize" use="true">
+        <Params>
+          <Param key="Size" className="FixedSize">1</Param>
+        </Params>
+      </Method>
+      <Method type="RiskFixedBalancePct" use="false">
+        <Params>
+          <Param key="Risk" className="RiskFixedBalancePct">5</Param>
+          <Param key="Decimals" className="RiskFixedBalancePct">1</Param>
+          <Param key="LotsIfNoMM" className="RiskFixedBalancePct">1</Param>
+          <Param key="MaxLots" className="RiskFixedBalancePct">5</Param>
+        </Params>
+      </Method>
+      <Method type="FixedAmount" use="false">
+        <Params>
+          <Param key="RiskedMoney" className="FixedAmount">500</Param>
+          <Param key="Decimals" className="FixedAmount">1</Param>
+          <Param key="LotsIfNoMM" className="FixedAmount">1</Param>
+          <Param key="MaxLots" className="FixedAmount">5</Param>
+        </Params>
+      </Method>
+      <Method type="RiskFixedPctOfAccount" use="false">
+        <Params>
+          <Param key="Risk" className="RiskFixedPctOfAccount">5</Param>
+          <Param key="Decimals" className="RiskFixedPctOfAccount">1</Param>
+          <Param key="StopLoss" className="RiskFixedPctOfAccount">100</Param>
+          <Param key="LotsIfNoMM" className="RiskFixedPctOfAccount">1</Param>
+          <Param key="MaxLots" className="RiskFixedPctOfAccount">5</Param>
+        </Params>
+      </Method>
+      <Method type="StocksSizeByPrice" use="false">
+        <Params>
+          <Param key="UseAccountBalance" className="StocksSizeByPrice">true</Param>
+          <Param key="MaxSize" className="StocksSizeByPrice">100</Param>
+        </Params>
+      </Method>
+    </MoneyManagement>
+    <RiskManagement>
+      <Method type="AllowAllTrades" use="true">
+        <Params />
+      </Method>
+    </RiskManagement>
+  </RiskMoneyManagement>
+  <ATMs enable="false" scaleOutType="1" sizeDecimals="1" minSize="0.1">
+    <ATM id="global">
+      <Exits />
+    </ATM>
+    <GenerateConfig>
+      <Types>
+        <SLMultiple use="false" minMultiplier="0.5" maxMultiplier="2" />
+        <PTMultiple use="false" minMultiplier="0.5" maxMultiplier="2" />
+        <FixedProfit use="false" useFixedPips="false" minPips="30" maxPips="80" useATR="false" minMultiplier="1.5" maxMultiplier="3" minATRPeriod="20" maxATRPeriod="20" />
+        <TrailingStop use="false" useFixedPips="false" minPips="30" maxPips="80" useATR="false" minMultiplier="1.5" maxMultiplier="3" minATRPeriod="20" maxATRPeriod="20" />
+        <None use="false" useLimit="false" minBars="50" maxBars="50" />
+      </Types>
+      <Scenarios>
+        <TwoExits exit5050="false" exit3366="false" exit6633="false" />
+        <ThreeExits exit333333="false" exit502525="false" exit255025="false" exit252550="false" />
+      </Scenarios>
+    </GenerateConfig>
+  </ATMs>
+  <Data useFromPreviousTask="false">
+    <Setups>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AUDUSD_H1" timeframe="H1" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AUDUSD_H4" timeframe="H4" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AUDUSD_M15" timeframe="M15" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AUDUSD_M5" timeframe="M5" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AVAXUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AVAXUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AVAXUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.17" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AVAXUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.18" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="AVAXUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BNBUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BNBUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BNBUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.17" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BNBUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.18" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BNBUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BTCUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BTCUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BTCUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BTCUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.13" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="BTCUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="CL_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="CL_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="CL_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="CL_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="DOGEUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="DOGEUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="DOGEUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.17" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="DOGEUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.18" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="DOGEUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ES_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ES_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ES_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ES_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ETHUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ETHUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ETHUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ETHUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.13" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="ETHUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="EURUSD_H1" timeframe="H1" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="EURUSD_H4" timeframe="H4" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="EURUSD_M15" timeframe="M15" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="EURUSD_M5" timeframe="M5" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GBPUSD_H1" timeframe="H1" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GBPUSD_H4" timeframe="H4" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GBPUSD_M15" timeframe="M15" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GBPUSD_M5" timeframe="M5" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GC_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GC_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GC_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="GC_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="LINKUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="LINKUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="LINKUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.17" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="LINKUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.18" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="LINKUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="NQ_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="NQ_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="NQ_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="NQ_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="RTY_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="RTY_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="RTY_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="RTY_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SI_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SI_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SI_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SI_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SOLUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SOLUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SOLUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SOLUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.13" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SOLUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SUIUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.05.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SUIUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SUIUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.17" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SUIUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.18" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="SUIUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCAD_H1" timeframe="H1" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCAD_H4" timeframe="H4" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCAD_M15" timeframe="M15" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCAD_M5" timeframe="M5" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCHF_H1" timeframe="H1" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCHF_H4" timeframe="H4" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCHF_M15" timeframe="M15" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDCHF_M5" timeframe="M5" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDJPY_H1" timeframe="H1" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.11.01" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDJPY_H4" timeframe="H4" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDJPY_M15" timeframe="M15" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="USDJPY_M5" timeframe="M5" spread="2" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="3.5" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2023.09.21" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="XRPUSDT_H1" timeframe="H1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2021.11.03" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="XRPUSDT_H4" timeframe="H4" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.08.11" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="XRPUSDT_M1" timeframe="M1" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.05.17" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="XRPUSDT_M15" timeframe="M15" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.07.18" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="XRPUSDT_M5" timeframe="M5" spread="10" spreadValue="0" />
+        <Commissions>
+          <Method type="PercentageBased" use="true">
+            <Params>
+              <Param key="CommissionPct" name="Commission" dataType="2" min="-100.0" max="100.0" step="0.01" value="0.05" description="Commission in % of price per full lot" decimals="4" className="PercentageBased" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="YM_H1" timeframe="H1" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2024.03.26" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="YM_H4" timeframe="H4" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="YM_M15" timeframe="M15" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+      <Setup dateFrom="2026.06.08" dateTo="2026.08.18" testPrecision="1" session="No Session" slippage="3" minDist="0" engine="MetaTrader4">
+        <Chart symbol="YM_M5" timeframe="M5" spread="1" spreadValue="0" />
+        <Commissions>
+          <Method type="PerTrade" use="true">
+            <Params>
+              <Param key="Commission" name="Commission" dataType="2" min="-1000.0" max="1000.0" step="0.01" value="2.4" description="Commission in $ per trade" decimals="2" className="PerTrade" category="Default" engine="*" />
+            </Params>
+          </Method>
+        </Commissions>
+      </Setup>
+    </Setups>
+  
+    <OutOfSample showGraph="false">
+      <Range dateFrom="2021.11.03" dateTo="2026.08.18" />
+    </OutOfSample>
+  </Data>
+  <Options>
+    <BuildTradingOptions>
+      <Params>
+        <Param key="DontUsePriceRangeInConditions" className="DontUsePriceRangeInConditions">true</Param>
+        <Param key="ReplacePendingOrders" className="ReplacePendingOrders">false</Param>
+        <Param key="ExitAtEndOfDay" className="ExitAtEndOfDay">false</Param>
+        <Param key="EODExitTime" className="ExitAtEndOfDay">82800</Param>
+        <Param key="ExitOnFriday" className="ExitOnFriday">false</Param>
+        <Param key="FridayExitTime" className="ExitOnFriday">82800</Param>
+        <Param key="LimitTimeRange" className="LimitTimeRange">false</Param>
+        <Param key="SignalTimeRangeFrom" className="LimitTimeRange">32400</Param>
+        <Param key="SignalTimeRangeTo" className="LimitTimeRange">57600</Param>
+        <Param key="ExitAtEndOfRange" className="LimitTimeRange">false</Param>
+        <Param key="MaxTradesPerDay" className="MaxTradesPerDay">1</Param>
+        <Param key="Session" className="SessionOption">No Session</Param>
+        <Param key="StoreChartData" className="StoreChartData">false</Param>
+      </Params>
+    </BuildTradingOptions>
+    <SLPTOptions>
+      <SLValueType>pips</SLValueType>
+      <SLFixedPips>true</SLFixedPips>
+      <SLATR>true</SLATR>
+      <MinSLInPips>40</MinSLInPips>
+      <MinSLInMoney>1</MinSLInMoney>
+      <MaxSLInPips>50</MaxSLInPips>
+      <MaxSLInMoney>10</MaxSLInMoney>
+      <MinSLATRMultiple>0.5</MinSLATRMultiple>
+      <MaxSLATRMultiple>2</MaxSLATRMultiple>
+      <MinSLATRPeriod>10</MinSLATRPeriod>
+      <MaxSLATRPeriod>20</MaxSLATRPeriod>
+      <SeparatedSettings>false</SeparatedSettings>
+      <PTValueType>pips</PTValueType>
+      <PTFixedPips>true</PTFixedPips>
+      <PTATR>true</PTATR>
+      <MinPTInPips>51</MinPTInPips>
+      <MinPTInMoney>1</MinPTInMoney>
+      <MaxPTInPips>60</MaxPTInPips>
+      <MaxPTInMoney>10</MaxPTInMoney>
+      <MinPTATRMultiple>2.1</MinPTATRMultiple>
+      <MaxPTATRMultiple>3</MaxPTATRMultiple>
+      <MinPTATRPeriod>21</MinPTATRPeriod>
+      <MaxPTATRPeriod>30</MaxPTATRPeriod>
+      <LimitSLPTRRR>false</LimitSLPTRRR>
+      <LimitSLPTRRRFrom>1</LimitSLPTRRRFrom>
+      <LimitSLPTRRRTo>1</LimitSLPTRRRTo>
+    </SLPTOptions>
+  </Options>
+  <Notes />
+  <Rankings>
+    <MaxStrategies>200</MaxStrategies>
+    <FitnessCriteria method="ComputeFromStrategyResult">
+      <Settings>
+        <Ranking type="ReturnDDRatio" />
+      </Settings>
+    </FitnessCriteria>
+    <ConditionsType>1</ConditionsType>
+    <WalkForward>
+      <Conditions>
+        <Condition use="true">
+          <Left-Side valueType="column">
+            <Column-Value column="NetProfit" columnType="0" format="Decimal2PL" resultType="WalkForwardMatrix" direction="0" sampleType="20" plType="10" confidenceLevel="50" market="1" subresult="30" pctRatio="0" class="NetProfit" />
+          </Left-Side>
+          <Comparator value="&gt;" />
+          <Right-Side valueType="numeric">
+            <Numeric-Value value="0" />
+          </Right-Side>
+        </Condition>
+        <Condition use="true">
+          <Left-Side valueType="column">
+            <Column-Value column="NetProfit" columnType="0" format="Decimal2Pct" resultType="WalkForwardOptimization" direction="0" sampleType="10" plType="10" confidenceLevel="50" market="1" subresult="31" pctRatio="0" class="NetProfit" />
+          </Left-Side>
+          <Comparator value="&gt;" />
+          <Right-Side valueType="numeric">
+            <Numeric-Value value="65" />
+          </Right-Side>
+        </Condition>
+        <Condition use="true">
+          <Left-Side valueType="column">
+            <Column-Value column="WFPctOfProfitableRuns" columnType="33" name="WF Special Percentage of profitable runs" format="Decimal2Pct" resultType="WalkForwardOptimization" direction="0" sampleType="10" plType="10" confidenceLevel="50" market="1" subresult="33" pctRatio="0" class="WFPctOfProfitableRuns" />
+          </Left-Side>
+          <Comparator value="&gt;" />
+          <Right-Side valueType="numeric">
+            <Numeric-Value value="70" />
+          </Right-Side>
+        </Condition>
+        <Condition use="true">
+          <Left-Side valueType="column">
+            <Column-Value name="WF Special Max profit in one run as % of total" column="WFMaxProfitByRunInPct" format="Decimal2Pct" resultType="WalkForwardOptimization" direction="0" sampleType="10" plType="10" confidenceLevel="50" market="1" subresult="33" pctRatio="0" class="WFMaxProfitByRunInPct" />
+          </Left-Side>
+          <Comparator value="&lt;" />
+          <Right-Side valueType="numeric">
+            <Numeric-Value value="45" />
+          </Right-Side>
+        </Condition>
+      </Conditions>
+      <ThresholdPct>65</ThresholdPct>
+      <RobCombRows>4</RobCombRows>
+      <RobCombCols>4</RobCombCols>
+      <RobMinComb>10</RobMinComb>
+    </WalkForward>
+  </Rankings>
+  <Databanks>
+    <Databank label="Output databank" name="Output" value="Results_robust_20260809" />
+    <Databank label="Input databank" name="Input" value="LastGeneration" />
+  </Databanks>
+</Settings>

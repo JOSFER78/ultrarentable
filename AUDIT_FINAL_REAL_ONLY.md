@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: certificación forense puntual del 2026-08-24 (v2); el régimen de certificación vigente es docs/VERSION_GOVERNANCE_AND_CONTROL.md. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # ULTRARENTABLE V2 — FINAL FORENSIC AUDIT & SCIENTIFIC CERTIFICATION REPORT
 ## REAL-ONLY • ZERO-MOCK • ZERO-SIMULATION • ZERO-FORCING • EVIDENCE-GATED
 **Fecha de Certificación:** 24 de Agosto de 2026  

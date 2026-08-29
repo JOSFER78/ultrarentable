@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: describe la arquitectura V2 del refactor (fase 1); la arquitectura real vigente vive en docs/00_MASTER_IDEAS_Y_PLAN.md §2-3 y docs/ARCHITECTURE_CURRENT.md. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # 🏛️ ARQUITECTURA DEL SISTEMA ULTRARENTABLE V2
 ## *Clean Architecture, Microservicios Desacoplados, Contratos Inmutables y Telemetría Reactiva*
 

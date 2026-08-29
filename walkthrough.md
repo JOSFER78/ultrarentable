@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: relato histórico de la reparación forense Fases 0-12; no es estado vigente. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # WALKTHROUGH: EJECUCIÓN MAESTRA DE REPARACIÓN FORENSE (FASES 0 A 12)
 
 Se ha completado de forma integral y rigurosa la reconstrucción del laboratorio cuantitativo Ultrarentable bajo la doctrina **REAL-ONLY / ZERO-FABRICATION**, erradicando el 100% de las simplificaciones, números hardcodeados y atajos identificados en los 15 hallazgos de auditoría (**H1 a H15**).

@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: orquestación del 2026-08-09 con supuestos MCP/SQX superados; el autopiloto real es services/background_searcher.py (docs/00_MASTER_IDEAS_Y_PLAN.md §2.2). **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # ORQUESTACIÓN — Motor de búsqueda Ultrarentable (3 frentes)
 > Fecha: 2026-08-09 · Rol: orquestador + revisor (NO ejecutar)
 > Objetivo global del usuario:

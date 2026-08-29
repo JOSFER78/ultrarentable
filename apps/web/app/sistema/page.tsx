@@ -15,7 +15,6 @@ import {
   Clock,
   Terminal,
 } from "lucide-react";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import QuantTooltip from "@/components/system/QuantTooltip";
 
 interface WorkerData {
@@ -42,7 +41,7 @@ interface TelemetryHealth {
     failover_active: boolean;
     recent_recoveries_count: number;
   };
-  workers: WorkerData[];
+  workers: WorkerData[] | Record<string, WorkerData>;
 }
 
 export default function SistemaTelemetryPage() {
@@ -51,6 +50,18 @@ export default function SistemaTelemetryPage() {
   const [logs, setLogs] = useState<Array<{ ts: string; level: string; msg: string }>>([]);
   const [restarting, setRestarting] = useState<boolean>(false);
   const [lastUpdated, setLastUpdated] = useState<string>("");
+
+  const workerList: WorkerData[] = React.useMemo(() => {
+    if (!telemetry?.workers) return [];
+    if (Array.isArray(telemetry.workers)) return telemetry.workers;
+    const map = new Map<string, WorkerData>();
+    Object.values(telemetry.workers).forEach((w) => {
+      if (w && typeof w === "object" && "worker_id" in w && w.worker_id) {
+        map.set(w.worker_id, w);
+      }
+    });
+    return Array.from(map.values());
+  }, [telemetry]);
 
   useEffect(() => {
     fetchHealth();
@@ -98,8 +109,6 @@ export default function SistemaTelemetryPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-2 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <EstrategiasHeaderNav />
-
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-4 gap-4">
           <div>
@@ -213,34 +222,44 @@ export default function SistemaTelemetryPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {(telemetry?.workers || []).map((w) => (
-              <div
-                key={w.worker_id}
-                className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 hover:border-slate-700 transition"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
-                    {w.status}
-                  </span>
-                </div>
-                <h4 className="text-xs font-bold text-slate-200 line-clamp-1">{w.name}</h4>
-                <div className="text-[11px] font-mono text-slate-400 space-y-1 pt-1 border-t border-slate-900">
-                  <div className="flex justify-between">
-                    <span>Heartbeat:</span>
-                    <span className="text-emerald-400 font-bold">{w.heartbeat_age_seconds}s atrás</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Reinicios:</span>
-                    <span className="text-slate-300">{w.restart_count}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tareas:</span>
-                    <span className="text-indigo-300 font-bold">{w.jobs_processed}</span>
-                  </div>
-                </div>
+            {workerList.length === 0 ? (
+              <div className="col-span-full p-6 text-center text-xs font-mono text-slate-500 bg-slate-950 rounded-xl border border-slate-800">
+                {loading ? "Cargando telemetría de workers..." : "SIN DATOS / NO EVIDENCE DE WORKERS"}
               </div>
-            ))}
+            ) : (
+              workerList.map((w) => (
+                <div
+                  key={w.worker_id}
+                  className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 hover:border-slate-700 transition"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                      {w.status}
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-200 line-clamp-1">{w.name}</h4>
+                  <div className="text-[11px] font-mono text-slate-400 space-y-1 pt-1 border-t border-slate-900">
+                    <div className="flex justify-between">
+                      <span>Heartbeat:</span>
+                      <span className="text-emerald-400 font-bold">
+                        {typeof w.heartbeat_age_seconds === "number"
+                          ? `${w.heartbeat_age_seconds.toFixed(1)}s atrás`
+                          : "N/D"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Reinicios:</span>
+                      <span className="text-slate-300">{w.restart_count ?? 0}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tareas:</span>
+                      <span className="text-indigo-300 font-bold">{w.jobs_processed ?? 0}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

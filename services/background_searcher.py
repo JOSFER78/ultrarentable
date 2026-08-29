@@ -43,13 +43,50 @@ DB_PATH = os.getenv("STATE_DB_PATH") or os.getenv("ULTRA_DB") or os.path.expandu
 POLL_SECONDS = int(os.getenv("ULTRA_POLL_SECONDS", "40"))
 RUN_TIMEOUT_SECONDS = int(os.getenv("ULTRA_RUN_TIMEOUT_SECONDS", "3600"))
 
-# Matriz REAL de búsqueda: mercados x temporalidades con datos ya presentes.
-# BTCUSDT_H1 (3.840 barras, 5,2 meses) y SPY_D1 (33 años, referencia fondeo).
-SEARCH_MATRIX: List[Dict[str, Any]] = [
-    {"mode": "ultra",   "project": "Ultra_Auto_Pilot",   "databank": "Results", "symbol": "BTC-USDT", "interval": "1h", "chartSymbol": "BTCUSDT_AUTO"},
-    {"mode": "fondeo",  "project": "Ultra_Improve_Pilot","databank": "Results", "symbol": "SPY",      "interval": "1d", "chartSymbol": "SPY_benchmark.D"},
-    {"mode": "ultra",   "project": "Ultra_Auto_Pilot",   "databank": "Results_robust_20260809", "symbol": "BTC-USDT", "interval": "1h", "chartSymbol": "BTCUSDT_AUTO"},
+# Matriz REAL de búsqueda del motor SQX: 97 celdas, datos presentes en
+# /home/ubuntu/StrategyQuantX144/user/data/History (fuente de verdad verificada).
+#   - 9 cripto × M1                                  = 9 celdas
+#   - 22 símbolos (ES, NQ, YM, RTY, GC, CL, SI,
+#     6 forex majors, 9 cripto) × M5, M15, H1, H4    = 88 celdas
+# Naming SQX: símbolo dedicado por TF con formato <SYM>_<TF> (ej: ES_M5, BTCUSDT_H1).
+_CRYPTO = [
+    "AVAXUSDT", "BNBUSDT", "BTCUSDT", "DOGEUSDT", "ETHUSDT",
+    "LINKUSDT", "SOLUSDT", "SUIUSDT", "XRPUSDT",
 ]
+_FUTURES = ["ES", "NQ", "YM", "RTY", "GC", "CL", "SI"]
+_FOREX = ["EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD"]
+_SQX_PROJECT = "Ultra_Matrix"
+_SQX_DATABANK = "Results"
+
+
+def _build_search_matrix() -> List[Dict[str, Any]]:
+    """Construye la matriz 97 celdas a partir de los símbolos reales de SQX."""
+    cells: List[Dict[str, Any]] = []
+    # 9 cripto solo en M1 (el resto de TFs cripto entra en el bloque de 22).
+    for sym in _CRYPTO:
+        cells.append({
+            "mode": "ultra",
+            "project": _SQX_PROJECT,
+            "databank": _SQX_DATABANK,
+            "symbol": sym,
+            "interval": "M1",
+            "chartSymbol": f"{sym}_M1",
+        })
+    # 22 símbolos (7 futuros + 6 forex majors + 9 cripto) × M5, M15, H1, H4.
+    for sym in _FUTURES + _FOREX + _CRYPTO:
+        for tf in ("M5", "M15", "H1", "H4"):
+            cells.append({
+                "mode": "ultra",
+                "project": _SQX_PROJECT,
+                "databank": _SQX_DATABANK,
+                "symbol": sym,
+                "interval": tf,
+                "chartSymbol": f"{sym}_{tf}",
+            })
+    return cells
+
+
+SEARCH_MATRIX: List[Dict[str, Any]] = _build_search_matrix()
 
 # Quality gates (mismo criterio que la web):
 MIN_PF_IS = 1.3

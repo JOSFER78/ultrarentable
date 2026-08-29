@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: declara motor activo v5.3.0 y servicios desactualizados; la realidad hoy es engine 5.4.0, API :8000, Web :3005 — ver docs/00_MASTER_IDEAS_Y_PLAN.md §2.4. **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # 🎯 Ultrarentable V5.3.0 — Laboratorio Cuantitativo Autónomo (BingX + CME Globex + SQX)
 
 > **Versión Activa del Motor: `v5.3.0`** (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault).  

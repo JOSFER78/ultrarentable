@@ -61,7 +61,8 @@ def in_memory_cached(key_prefix: str, ttl: float = 2.0):
     def decorator(func: Callable):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> Response:
-            param_key = f"{key_prefix}:{sorted(kwargs.items())}"
+            clean_kwargs = {k: v for k, v in kwargs.items() if k not in ("db", "session", "request", "response")}
+            param_key = f"{key_prefix}:{sorted(clean_kwargs.items(), key=lambda x: str(x[0]))}"
 
             # 1. Fast Path: Cache Hit (< 0.05ms)
             cached = fast_cache.get_raw(param_key)

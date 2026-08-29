@@ -1,3 +1,5 @@
+> ⚠️ **SUPERSEDED (2026-08-29)** — Este documento es HISTÓRICO y ya NO es la fuente de verdad. Motivo: hallazgo P0 del 2026-08-25 ya integrado en la gobernanza vigente (17_PHASE2_EXECUTION_STATUS.md y master §4). **Fuente canónica vigente: `docs/00_MASTER_IDEAS_Y_PLAN.md`.** Contenido conservado intacto solo como referencia histórica. NO actualizar este archivo.
+
 # P0 Audit — Approved/Gates Metrics Integrity — 2026-08-25
 
 ## Finding

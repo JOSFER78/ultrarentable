@@ -137,7 +137,7 @@ export default function RobotsPage() {
           <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
             EQUITY TOTAL GESTIONADO
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: "#3b82f6", marginTop: 4 }}>
+          <div suppressHydrationWarning style={{ fontSize: 24, fontWeight: 800, color: "#3b82f6", marginTop: 4 }}>
             ${robots.reduce((acc, r) => acc + (r.equity_usd || 0), 0).toLocaleString()} USD
           </div>
           <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
@@ -149,7 +149,7 @@ export default function RobotsPage() {
           <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
             PNL HOY (CONSOLIDADO)
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: "#10b981", marginTop: 4 }}>
+          <div suppressHydrationWarning style={{ fontSize: 24, fontWeight: 800, color: "#10b981", marginTop: 4 }}>
             +${robots.reduce((acc, r) => acc + (r.daily_pnl_usd || 0), 0).toLocaleString()} USD
           </div>
           <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
@@ -161,7 +161,7 @@ export default function RobotsPage() {
           <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
             DRAWDOWN MÁXIMO ABIERTO
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: "#f59e0b", marginTop: 4 }}>
+          <div suppressHydrationWarning style={{ fontSize: 24, fontWeight: 800, color: "#f59e0b", marginTop: 4 }}>
             {(() => {
               if (!robots || robots.length === 0) return "0.0";
               const values = robots.map((r) => Number(r.open_drawdown_pct)).filter((v) => !isNaN(v) && isFinite(v));
