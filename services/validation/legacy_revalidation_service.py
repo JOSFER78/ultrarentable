@@ -352,26 +352,66 @@ class LegacyRevalidationService:
         )
 
         now_iso = datetime.now(timezone.utc).isoformat()
-        is_promoted = (gates_passed_count == 10)
+
+        # 8.1 Sello criptográfico de evidencia real: ledger OOS físico en disco +
+        # firma SHA-256 del paquete completo (snapshot + dataset + ledger + gates).
+        evidence_dir = Path(self.data_dir) / "evidence" / cid
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        ledger_payload = {
+            "candidate_id": cid,
+            "route": route_str,
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "dataset_id": ds_file.name,
+            "dataset_sha256": ds_sha256,
+            "strategy_snapshot_hash": getattr(strat_snapshot, "canonical_hash", None),
+            "engine_version": CURRENT_ENGINE_VERSION,
+            "initial_capital_usd": initial_cap,
+            "trades": trades_raw,
+        }
+        ledger_file = evidence_dir / "ledger_oos.json"
+        ledger_file.write_text(json.dumps(ledger_payload, sort_keys=True, default=str), encoding="utf-8")
+        ledger_sha256 = hashlib.sha256(ledger_file.read_bytes()).hexdigest()
+        try:
+            reloaded = json.loads(ledger_file.read_text(encoding="utf-8"))
+            ledger_verified = len(reloaded.get("trades", [])) == len(oos_bt.trades)
+        except Exception:
+            ledger_verified = False
+        strategy_hash = getattr(strat_snapshot, "canonical_hash", None) or hashlib.sha256(
+            f"{cid}|{ds_sha256}".encode("utf-8")
+        ).hexdigest()
+        bundle_signature = hashlib.sha256(json.dumps({
+            "strategy_snapshot_hash": strategy_hash,
+            "dataset_sha256": ds_sha256,
+            "ledger_sha256": ledger_sha256,
+            "gates": gates_eval.get("gates", []),
+        }, sort_keys=True, default=str).encode("utf-8")).hexdigest()
+
+        # 8.2 Estado final según contrato estricto de certificación:
+        # solo CertificationRegistry (11/11 gates + métricas de ruta) promociona.
+        is_promoted = bool(
+            verdict.is_certified
+            and verdict.certified_status in ("ULTRA_CERTIFIED", "FUNDING_CERTIFIED")
+        )
         if is_promoted:
-            new_status = "CERTIFICADA_TIER_1"
+            new_status = "APPROVED_CURRENT_ENGINE"
             cand_tier = "TIER_1_CERTIFIED"
-            cand_tier_label = "🏆 Producción Certificada (10/10)"
-        elif gates_passed_count in (8, 9):
+            cand_tier_label = "🏆 Producción Certificada (11/11)"
+        elif gates_passed_count in (9, 10):
             new_status = "REFINADO_TIER_2"
             cand_tier = "TIER_2_NEAR_CERTIFIED"
-            cand_tier_label = "💎 Diamante en I+D (8-9/10)"
-        elif gates_passed_count in (5, 6, 7):
+            cand_tier_label = "💎 Diamante en I+D (9-10/11)"
+        elif gates_passed_count in (5, 6, 7, 8):
             new_status = "INCUBADORA_REPROGRAMACION"
             cand_tier = "TIER_3_INCUBATOR"
-            cand_tier_label = "🧪 Incubadora de I+D (5-7/10)"
+            cand_tier_label = "🧪 Incubadora de I+D (5-8/11)"
         else:
             new_status = "REJECTED_ESTRUCTURAL"
             cand_tier = "TIER_4_REJECTED"
-            cand_tier_label = "❌ Rechazada Estructural (<5/10)"
+            cand_tier_label = f"❌ Rechazada Estructural ({verdict.certified_status})"
 
         new_engine_ver = CURRENT_ENGINE_VERSION
-        reason = f"Revalidación v{CURRENT_ENGINE_VERSION}: {gates_passed_count}/10 Gates superados (Score: {overall_score:.1f}/100)"
+        reason = f"Revalidación v{CURRENT_ENGINE_VERSION}: {gates_passed_count}/11 Gates superados (Score: {overall_score:.1f}/100) | {verdict.audit_summary}"
 
         # 9. Calcular métricas finales exactas (CAGR Geométrico Bounded)
         tf_bars_per_month = {"1m": 43200, "5m": 8640, "15m": 2880, "1h": 720, "4h": 180, "1d": 30}
@@ -388,14 +428,26 @@ class LegacyRevalidationService:
 
         updated_scorecard = {
             "source": f"Revalidation Engine v{CURRENT_ENGINE_VERSION}",
+            "oos_returns": [t["net_pnl_usd"] for t in trades_raw],
             "revalidated_at": now_iso,
             "revalidation_pipeline_version": CURRENT_ENGINE_VERSION,
             "gates_passed_count": gates_passed_count,
-            "total_gates": 10,
+            "total_gates": 11,
             "tier": cand_tier,
             "tier_label": cand_tier_label,
             "overall_score": overall_score,
             "gates": gates_eval.get("gates", []),
+            "gates_evaluation": gates_eval.get("gates_evaluation", {}),
+            "strategy_sha256": strategy_hash,
+            "canonical_hash": strategy_hash,
+            "dataset_id": ds_file.name,
+            "dataset_hash": ds_sha256,
+            "ledger_hash": ledger_sha256,
+            "ledger_path": str(ledger_file),
+            "ledger_verified": ledger_verified is True,
+            "bundle_signature_sha256": bundle_signature,
+            "certified_at_utc": now_iso if is_promoted else None,
+            "certification_status": verdict.certified_status,
             "nautilus_gate_10": gates_eval.get("nautilus_gate_11", {}),
             "parameters": params,
             "certified_by": "CertificationRegistry",

@@ -140,21 +140,29 @@ Preserve:
 - blind OOS / blind research;
 - robustness and execution stress.
 
-## 9. ULTRA
+## 9. ULTRA — ALL ASSETS & 5 INTRADAY TIMEFRAMES (PERMANENT MANDATE)
 
-ULTRA is registry-driven. No hard-coded crypto list or timeframe list is the scientific boundary.
+ULTRA is NOT crypto-only and NOT 4H-only. ULTRA operates on **ALL assets** in the universe:
+- Crypto Perpetuals (BingX)
+- CME Futures (ES, NQ, YM, RTY, GC, CL, SI)
+- Forex Majors (EURUSD, GBPUSD, USDJPY, USDCAD, USDCHF, AUDUSD)
+- Commodities
+
+**Timeframes:** **1min (1m), 5min (5m), 15min (15m), 1h (1h), and 4h (4h)** — **SOLO INTRADIA (Strictly Intraday)** across ALL assets.
+
+All strategies operate within an intraday execution horizon (session-bounded, zero destructive multi-day overnight drift).
 
 `+1000%` is a research objective, never a forced acceptance criterion.
 
-Extreme convexity, asymmetric payoff, aggressive exploration and independent risk budgets are allowed only when represented explicitly in the strategy/risk contract and tested with real execution assumptions.
+Extreme convexity, asymmetric payoff, aggressive exploration, isolated bullet risk (1R), and pyramiding policies are modeled with real execution assumptions.
 
-## 10. FONDEO
+## 10. FONDEO — PROP FIRMS INSTITUTIONAL (5 INTRADAY TIMEFRAMES)
 
-`TRACK_FONDEO = FUTURES ONLY`.
+`TRACK_FONDEO`: Operates on Prop-Firm eligible assets (CME Futures and Forex Majors).
 
-No Forex spot/CFD or crypto perpetual enters Fondeo research or certification.
+**Timeframes:** **1min (1m), 5min (5m), 15min (15m), 1h (1h), and 4h (4h)** — **SOLO INTRADIA (Strictly Intraday)** with mandatory session close (e.g. 16:59 EST).
 
-Evaluation and funded-account risk policies are separate and must be resolved by firm/product/account/date policy data.
+Evaluation and funded-account risk policies are separate and must be resolved by firm/product/account/date policy data (Max DD ≤ 4.0%-4.5%, DLL 0 violations, 0% compounding).
 
 ## 11. Web
 

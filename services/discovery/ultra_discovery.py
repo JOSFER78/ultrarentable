@@ -30,10 +30,16 @@ from contracts.snapshots.strategy_snapshot import (
 
 
 class UltraSearchSpace(BaseModel):
-    symbols: List[str] = Field(default_factory=lambda: ["BTCUSDT", "ETHUSDT", "SOLUSDT", "NQ", "GC"])
-    timeframes: List[str] = Field(default_factory=lambda: ["15m", "1h", "4h"])
-    leverage_tiers: List[float] = Field(default_factory=lambda: [1.0, 2.0, 3.0, 5.0])
-    max_tolerated_drawdown_pct: float = Field(default=25.0, ge=10.0, le=30.0)
+    symbols: List[str] = Field(
+        default_factory=lambda: [
+            "BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT", "SUIUSDT", "LINKUSDT", "AVAXUSDT", "BNBUSDT",
+            "NQ", "ES", "YM", "RTY", "GC", "SI", "CL",
+            "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD",
+        ]
+    )
+    timeframes: List[str] = Field(default_factory=lambda: ["1m", "5m", "15m", "1h", "4h"])
+    leverage_tiers: List[float] = Field(default_factory=lambda: [1.0, 2.0, 3.0, 5.0, 10.0, 20.0, 50.0])
+    max_tolerated_drawdown_pct: float = Field(default=75.0, ge=10.0, le=80.0)
 
 
 class UltraDiscoveryEngine:

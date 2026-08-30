@@ -3,8 +3,9 @@ Verificación de los motores de explotación especializados Ultra y Fondeo (Fase
 """
 
 import pytest
-from contracts.canonical_strategy import CanonicalStrategy, SizingAndRisk, RuleTree, ExitModel, LogicalOp, SizingType, StopLossType
+from contracts.canonical_strategy import CanonicalStrategy, SizingAndRisk, RuleTree, ExitModel, LogicalOp, SizingType, StopLossType, ConditionNode, IndicatorSpec, ComparisonOp
 from contracts.portfolio import BulletTradeDirection
+from contracts.validation_contracts import BalaState
 from services.exploitation_engines.ultra_engine import UltraExploitationEngine
 from services.exploitation_engines.prop_firm_engine import PROP_FIRM_CATALOG, PropFirmRules
 
@@ -13,18 +14,28 @@ def test_ultra_exploitation_engine_creates_and_pyramids_bullet():
     engine = UltraExploitationEngine()
     from contracts.canonical_strategy import TargetInstrument, ProvenanceMetadata, ExecutionTrack
     dummy_strat = CanonicalStrategy.create_and_hash(
-    strategy_id="strat_test_ultra",
-    route="ULTRA",
-    version="1.0.0",
-    symbol="BTC-USDT",
-    archetype="TREND_FOLLOWING",
-    name="Ultra Test",
-    timeframe="1h",
-    entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", ),
-    exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0),
-    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=3.0, max_open_positions=1, pyramiding_max_layers=3),
-    provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="1970-01-20T16:13:20+00:00")
-)
+        strategy_id="strat_test_ultra",
+        route="ULTRA",
+        version="1.0.0",
+        symbol="BTC-USDT",
+        archetype="TREND_FOLLOWING",
+        name="Ultra Test",
+        timeframe="1h",
+        entry_rules=RuleTree(
+            logic=LogicalOp.AND,
+            direction="LONG",
+            conditions=[
+                ConditionNode(
+                    left=IndicatorSpec(name="EMA", params={"period": 9}),
+                    op=ComparisonOp.GT,
+                    right=IndicatorSpec(name="EMA", params={"period": 21}),
+                )
+            ]
+        ),
+        exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0),
+        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=3.0, max_open_positions=1),
+        provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="1970-01-20T16:13:20+00:00")
+    )
 
     bullet = engine.create_bullet(
         strategy=dummy_strat,

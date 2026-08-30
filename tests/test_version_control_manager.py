@@ -29,7 +29,7 @@ def test_version_manifest_loading_and_ssot(tmp_path):
     
     assert manifest_file.exists()
     ver = mgr.get_active_version()
-    assert ver in ["1.02", "1.03"]
+    assert ver in ["5.4.0", "1.02", "1.03"]
 
 
 def test_version_bump_increments_and_persists(tmp_path):

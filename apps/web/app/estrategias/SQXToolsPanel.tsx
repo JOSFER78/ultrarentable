@@ -8,7 +8,7 @@
  *  4) /bind-dataset vía /api/v2/strategy-lab/strategies/{id}/bind-dataset (+ /binding)
  */
 import { useCallback, useEffect, useState } from "react";
-import { api, StrategyLabRecord } from "@/lib/api";
+import { api, extractStrategyLabProject, StrategyLabRecord } from "@/lib/api";
 
 interface DatabanksResponse { status: string; project: string; count: number; databanks: Array<{ name: string } | string>; }
 interface SourceResponse { status: string; source?: string | Record<string, unknown>; source_sha256?: string; error?: string; [k: string]: unknown; }
@@ -57,13 +57,25 @@ export default function SQXToolsPanel({ selected }: { selected: StrategyLabRecor
     } finally { setBusy(false); }
   }, [project]);
 
+  const extractDatabank = useCallback(async () => {
+    const p = project.trim(); const db = databank.trim();
+    if (!p) { setMsg("Indica un proyecto SQX real para extraer."); return; }
+    setBusy(true); setMsg(null);
+    try {
+      const r = await extractStrategyLabProject(p, db || undefined);
+      setMsg(r?.status === "SUCCESS" ? `Extracción real: ${r.found} encontradas (${r.databank}) · ${r.inserted} nuevas · ${r.unchanged} sin cambios · ${r.quarantined} cuarentena.` : `Extracción: ${r?.status ?? "NO DATA"}`);
+    } catch (e) {
+      setMsg(`NO DATA (extract) · ${e instanceof Error ? e.message : "error"}`);
+    } finally { setBusy(false); }
+  }, [project, databank]);
+
   const fetchSource = useCallback(async () => {
     const p = project.trim(); const db = databank.trim();
     const name = selected?.source_strategy_name ?? selected?.name ?? "";
     if (!p || !name) { setMsg("Se requieren proyecto y estrategia para /source."); return; }
     setBusy(true); setMsg(null);
     try {
-      const r = await api.get<SourceResponse>(`/api/v2/strategy-lab/source/${encodeURIComponent(p)}/${encodeURIComponent(name)}`);
+      const r = await api.get<SourceResponse>(`/api/v2/strategy-lab/source/${encodeURIComponent(p)}/${encodeURIComponent(name)}${db ? `?databank=${encodeURIComponent(db)}` : ""}`);
       setSource(r);
       setMsg(r?.status === "SUCCESS" ? `Source real obtenida · sha256 ${short(r.source_sha256)}` : `Source: ${r?.status ?? "NO DATA"}${r?.error ? ` · ${r.error}` : ""}`);
     } catch (e) {
@@ -119,6 +131,7 @@ export default function SQXToolsPanel({ selected }: { selected: StrategyLabRecor
         {databanks === null ? <option value="">Databank…</option> : databanks.length === 0 ? <option value="NO DATA">NO DATA</option> : databanks.map((n) => <option key={n} value={n}>{n}</option>)}
       </select>
       <button onClick={() => void loadDatabanks()} disabled={busy} className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold hover:bg-slate-700 disabled:opacity-50">Databanks</button>
+      <button onClick={() => void extractDatabank()} disabled={busy} data-testid="sqx-extract-btn" className="rounded-lg bg-emerald-800 px-3 py-2 text-xs font-semibold hover:bg-emerald-700 disabled:opacity-50">Extraer banco</button>
       <button onClick={() => void fetchSource()} disabled={busy} data-testid="sqx-source-btn" className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold hover:bg-slate-700 disabled:opacity-50">/source</button>
     </div>
     <div className="mt-3 flex flex-col gap-2 md:flex-row">
@@ -129,6 +142,5 @@ export default function SQXToolsPanel({ selected }: { selected: StrategyLabRecor
     <p className="mt-2 text-xs text-slate-500">Estrategia seleccionada: {selected ? <span className="font-mono text-slate-300">{selected.strategy_id}</span> : "ninguna"}</p>
     {source && <pre className="mt-2 max-h-32 overflow-auto break-all rounded-lg border border-slate-800 bg-slate-950 p-3 text-[10px] text-slate-400">{JSON.stringify(source, null, 2).slice(0, 1200)}</pre>}
     {binding && <pre className="mt-2 max-h-32 overflow-auto break-all rounded-lg border border-slate-800 bg-slate-950 p-3 text-[10px] text-slate-400">{JSON.stringify(binding, null, 2).slice(0, 1200)}</pre>}
-    {msg && <p className="mt-2 break-all text-xs text-amber-300" data-testid="sqx-tools-msg">{msg}</p>}
   </section>;
 }

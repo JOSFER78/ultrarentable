@@ -58,7 +58,8 @@
 ## ⚡ 3. ESPECIFICACIÓN DE `TRACK_ULTRA` (CONVEXIDAD ASIMÉTRICA TALEB MULTI-ACTIVO)
 
 ### 3.1. Tesis Operativa y Mecánica de Balas
-- **Activos Operados:** 100% de los 22 Activos Globales (Perpetuos USDT en BingX, Futuros CME y Forex) bajo régimen de Margen Aislado por Subcuenta.
+- **Activos Operados:** 100% del Universo Global de Activos (Cripto Perpetuos BingX, Futuros CME, Forex Majors y Commodities) bajo régimen de Margen Aislado por Subcuenta. **NUNCA es solo cripto**.
+- **Temporalidades Operadas:** **1min (1m), 5min (5m), 15min (15m), 1h (1h) y 4h (4h)** — **SOLO INTRADIA** en todos los activos (cero riesgo overnight destructivo, sin depender de swing multi-día).
 - **Doctrina de Opción Sintética:** Riesgo estrictamente acotado a $1R$ ($M_0 \approx \$100\text{--}\$1,000$) por bala aislada, con beneficio ilimitado ($\text{Gamma Positiva } \frac{d^2 \Pi}{dP^2} > 0$).
 
 ### 3.2. Los 6 Estados Discretos de una Bala (`IsolatedBullet` / `ultra_engine.py`)

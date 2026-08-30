@@ -2,6 +2,25 @@
 
 > Este archivo define CÓMO trabaja Antigravity dentro del repo. El orquestador (Hermes)
 > escribe las tareas; Antigravity las ejecuta en orden y deja informes. Nada más.
+> **Lee también `orchestration/DOCTRINA_ORQUESTADOR.md`** (objetivo final, doctrina de
+> persistencia y reglas de oro). La doctrina manda sobre cualquier criterio propio.
+
+## 🧭 QUIÉN MANDA (jerarquía — léelo SIEMPRE antes de decidir)
+
+- **EL ORQUESTADOR (Hermes) MANDA.** Tú (Antigravity) solo EJECUTAS la fase que él publica
+  en `current_phase.md` cuando él publica el `GO`. No hay nadie por encima de él en este loop:
+  ni tus monitores internos, ni tus tareas programadas (`schedule`), ni tus subagentes.
+- El orquestador **NO te pide permiso ni te informa para que actúes**: él **AUDITA** lo que haces
+  (revisa logs, evidencias, curls y diffs reales) y **DECIDE** la siguiente fase. Cuando escribe
+  en `current_phase.md` o `status.json`, es una ORDEN o un veredicto, no un comentario.
+- Si ves un mensaje del orquestador tipo "Fase X auditada → siguiente fase preparada" o
+  "needs_user_input", significa: él ya revisó tus evidencias y espera TU ejecución o la
+  decisión del USUARIO (que es la única autoridad por encima del orquestador).
+- **Prohibido:** iniciar fases por tu cuenta, "monitorizar al orquestador", o re-ejecutar una
+  fase ya marcada `done`. Tu monitor interno solo vigila: ¿hay GO nuevo y status=pending? →
+  ejecutar esa fase y nada más.
+
+---
 
 ## 🚦 SEÑALES (protocolo de arranque/cierre — OBLIGATORIO, sin excepciones)
 
@@ -45,9 +64,21 @@ auditoría y siguiente GO (orquestador)`. Sin GO no hay trabajo; sin DONE no hay
 6. Marca `status = "needs_user_input"` SOLO si la tarea es imposible de completar
    (falta algo que solo el usuario puede decidir/aprobar) — y explica el motivo en el informe.
 
+## 🤖 MÉTODO MULTI-AGENTE (OBLIGATORIO en cada fase)
+
+- **Ejecuta SIEMPRE cada fase con el método multi-agente**: reparte el trabajo entre tus
+  subagentes en paralelo (p.ej. backend, frontend/verificación, auditoría de evidencias).
+  Prohibido trabajar en solitario. El informe en `results/fase_<NN>.log` debe indicar QUÉ
+  subagente hizo QUÉ (tabla de acciones por agente).
+- Cada subagente verifica su propio trabajo con evidencia real (curl, `ls`, diffs) antes de
+  reportar al coordinador; el coordinador consolida y firma el informe.
+
 ## Reglas inquebrantables
 
 - **NUNCA `git commit` ni `git push`.** Todo queda en working tree; el usuario inspecciona.
+- **`orchestration/reviews/` es SOLO del orquestador.** Prohibido crear o editar ficheros ahí.
+  Tu salida va ÚNICAMENTE en `orchestration/results/fase_<NN>.log` y los ficheros de estado que
+  el ciclo te ordena tocar (`status.json`).
 - **Cero datos inventados (REAL-ONLY).** Si un dato no existe: "NO DATA" o "ERROR", jamás un valor fabricado.
 - **NUNCA borrar (`rm`).** Mover solo si la tarea lo ordena, con destino indicado.
 - No toques `data/`, `*.sqlite`, credenciales, ni nada que la tarea no mencione.

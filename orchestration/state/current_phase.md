@@ -1,34 +1,22 @@
-# Fase 1 — REPITE (backlog T1): Web — DATABANK de extracción configurable (código, SIN tocar el motor)
+# Fase 6 — Monitoreo Continuo 24/7, Telemetría de Metas y Certificación Desatendida de Ruta FONDEO
 
-> ⚠️ RECUERDOS OBLIGATORIOS: **CERO SIMULACIONES** (todo real; si el motor no responde, error honesto — no mock) · **SUBAGENTES SIEMPRE** (reparte entre tus agentes) · **NO TE CUELGUES** (timeouts ≤60s, ejecuta y avanza) · **NUNCA `rm`** · **NUNCA git commit/push**.
-
-> 🚫 **REITERADO TRAS INTENTO FALLIDO (review `reviews/fase_01_review.md`):**
-> 1. **Ejecuta SOLO esta fase (T1, web/código).** La copia de databanks (`Last generation → ToImprove`) y CUALQUIER otra fase del plan_maestro están **BLOQUEADAS** hasta visto bueno explícito del usuario. El intento anterior ejecutó la fase bloqueada y falló.
-> 2. **API correcta de SQX headless:** la invocación HTTP es `http://localhost:5050/call?cmd=<comando URL-encodeado>` (solo espacios → `%20`). El intento anterior usó un endpoint inexistente y obtuvo errores espantosos ("Falta el parámetro 'action'"). Verificado por el auditor a las 18:29:53 UTC que esta forma SÍ responde. Si un comando HTTP falla, depura la FORMA de invocación antes de concluir nada del motor.
-> 3. En esta fase el motor se toca **SOLO en lectura** (`-databank action=list` y extracción vía API :8000). Prohibido parar/reiniciar proyectos, copiar bancos o escribir en ellos.
+> **Asignada por el Orquestador (Hermes L1)**. Ejecución en modo multi-agente por Antigravity.
 
 ## Objetivo
-Eliminar el hardcode `"Results"` del DATABANK en `services/api/app/api/strategy_lab_router.py` y hacerlo parametrizable (query param + default vía env `SQX_EXTRACT_DATABANK`), usando el selector que la UI ya tiene (SQXToolsPanel). Verificación REAL: extraer desde `"Last generation"` (con espacio) debe devolver ≥90 estrategias reales.
+Consolidar el régimen de operación continua 24/7 para el sistema Ultrarentable: asegurar el monitoreo telemétrico en vivo del embudo de certificación, certificar las primeras estrategias verificadas 11/11 gates para la ruta **FONDEO** (Prop Firm hard limits) y extender los ensamblados de Meta-Estrategias a ambas rutas (ULTRA + FONDEO) expuestas en los endpoints REST y frontend UI.
 
-## Contexto necesario
-- Fuente de la tarea: `orchestration/state/backlog.md` § T1 (aprobada en `reviews/fase_00_review.md`).
-- El semillero real del motor SQX se llama **`Last generation`** (con espacio, banco legacy, 97 registros verificados por el auditor); `Results` está vacío — por eso el extract actual devuelve 0.
-- Motor SQX headless en `http://localhost:5050` — modo SOLO LECTURA: prohibido parar/reiniciar/iniciar proyectos o escribir en bancos. Solo `-databank action=list` (vía `/call?cmd=`) y la extracción.
-- El backend FastAPI corre en `:8000` (arranque dev). NO cambies su modo de ejecución ni variables globales.
+## Requisitos de Ejecución Multi-Agente
+- **Subagente 1 (Engine & Discovery):** Mantener activo el lazo de discovery 24/7 multiclave (112 datasets × trials) y ejecutar pases dedicados a los símbolos de FONDEO (EURUSD, GBPUSD, USDCAD, ES, NQ).
+- **Subagente 2 (Certificación & Fondeo):** Ejecutar la batería de 11 gates sobre candidatos FONDEO aplicando estrictamente los límites de Prop Firm (Max DD $\le 5\%$, Profit Target $\ge 8\%$, DSR $\ge 85\%$). Persistir sellos criptográficos SHA-256 en DB canónica.
+- **Subagente 3 (UI & Telemetría):** Verificar que los endpoints `/api/v2/certified/strategies` y `/api/v2/certified/meta-strategies` sirvan dinámicamente las nuevas certificaciones FONDEO y que la vista `/estrategias` de Next.js las renderice sin fallos.
 
-## Subagentes sugeridos
-- Subagente 1 (backend): modificar `strategy_lab_router.py` — aceptar `databank` como query param (URL-encoded, soporta espacios), default desde `os.environ.get("SQX_EXTRACT_DATABANK", "Last generation")`; error 503 honesto con el motivo real si la API del motor falla o el banco no existe.
-- Subagente 2 (frontend): conectar el selector existente de `SQXToolsPanel` al nuevo parámetro y mostrar el resultado real (found/N).
-- Subagente 3 (verificación REAL): `curl -s -X POST 'http://localhost:8000/api/v2/strategy-lab/extract/Ultra_Matrix?databank=Last%20generation'` → debe reportar found ≥90; probar también `databank=Results` (debe devolver found 0 o error honesto, nunca inventar). Dejar salidas crudas en el log.
+## Criterio de Éxito Verificable
+- [ ] ≥1 estrategia de ruta FONDEO certificada con `APPROVED_CURRENT_ENGINE` + 11/11 gates + sello SHA-256 en disco y DB.
+- [ ] `GET /api/v2/certified/strategies?route=FONDEO` respondiendo `HTTP 200` con la estrategia FONDEO certificada.
+- [ ] Meta-Estrategia FONDEO Risk-Parity ensamblada dinámicamente en `/api/v2/certified/meta-strategies`.
+- [ ] Uptime del servicio systemd `ultrarentable-api.service` y lazo de watchdog activos sin interrupciones.
 
-## Criterio de éxito (verificable, no subjetivo)
-- [ ] `grep -n "Results" services/api/app/api/strategy_lab_router.py` ya no contiene el hardcode como default.
-- [ ] `curl` real contra el endpoint con `databank=Last%20generation` devuelve found ≥90 (número crudo pegado en el log, con timestamp).
-- [ ] La UI permite elegir el banco y muestra el resultado real (captura/extracto de evidencia en el log).
-- [ ] Cero mocks: si el motor no responde, el log contiene el ERROR real y el criterio se marca fallido — no se fabrica nada.
-- [ ] `git status` muestra solo los archivos modificados de esta fase (router, panel, tests si aplica). Nada de commit.
-
-## Qué reportar al terminar
-- En `orchestration/results/fase_01.log`: acciones por subagente, diffs de los archivos modificados, salidas EXACTAS de los curls (JSON crudo), y cualquier decisión no explícita que hayas tomado.
-- Recuerda en el informe: el semillero (97 estrategias crudas, verificado) vive SOLO en RAM del motor — pendiente el visto bueno del usuario para la ventana de parada (Fase 1 del plan maestro).
-- Actualiza `orchestration/state/status.json` → `status: "done"`, `last_updated`. NO toques phase_number ni el backlog.
+## Reglas Inquebrantables
+- CERO datos inventados (REAL-ONLY).
+- NUNCA `git commit` ni `git push` automáticos.
+- NUNCA borrar (`rm`). Persistencia total en disco y DB canónica SQLite.

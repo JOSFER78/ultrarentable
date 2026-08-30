@@ -22,10 +22,18 @@
 | Dimensión | 🚀 **TRACK_ULTRA** | 🏛️ **TRACK_FONDEO** |
 | :--- | :--- | :--- |
 | Objetivo | Crecimiento asimétrico/convexo (hiperescalado) | Pasar evaluaciones de prop firms y sostener retiros netos |
-| Capital | Propio, cuentas BingX (perpetuals) | Cuentas de prop firms (futuros CME: MES/MNQ/MYM/M2K, MGC/MCL y majors forex) |
+| Activos | **TODOS LOS ACTIVOS (100% Universo):** Cripto Perpetuos (BingX), Futuros CME (ES/NQ/YM/RTY/GC/CL/SI), Forex Majors y Commodities. **NUNCA es solo cripto**. | Cuentas de prop firms (futuros CME: MES/MNQ/MYM/M2K, MGC/MCL y majors forex) |
+| Temporalidades | **1min (1m), 5min (5m), 15min (15m), 1h (1h) y 4h (4h)** — **SOLO INTRADIA** en todos los activos. | **1min (1m), 5min (5m), 15min (15m), 1h (1h) y 4h (4h)** — **SOLO INTRADIA** (cierre diario obligatorio). |
+| Horizonte | **SOLO INTRADIA** (cero riesgo overnight destructivo; salidas en sesión, sin depender de swing multi-día). **NUNCA es solo 4H conservador**. | **SOLO INTRADIA** (cierre obligatorio a las 16:59 EST para CME/FX; cero riesgo overnight de fin de semana). |
 | Riesgo | DD flotante hasta ~80%, realizado hasta ~75%; bala de margen aislado 1R ($100–$1,000) | DD realizado ≤ 4.0–4.5%; pérdida diaria ≤ 2% (~$1,000/50k); contratos fijos, 0% compounding |
 | Gestión | Sistema de **Balas y Estados** (INICIO → CONFIRMACIÓN → CRECIMIENTO → COSECHA → PROTECCIÓN → CIERRE) con bóveda ratchet (beneficio cosechado intocable, 50–85%) | Preservación institucional: cierre intradía obligatorio, 0 margin calls, sesión RTH |
 | Métrica reina | Payoff ≥ 3R–10R (skew derecho) | **Economía real neta**: retiros − (exámenes + activaciones + reinicios + datos) |
+
+> [!IMPORTANT]
+> **DIRECTIVA VIGENTE DE TEMPORALIDADES Y ACTIVOS (MANDATO PERMANENTE DEL USUARIO):**
+> 1. **ULTRA NO ES SOLO CRIPTO NI SOLO 4H CONSERVADOR:** ULTRA es un motor de convexidad hiper-asimétrica con balas aisladas y piramidación que opera en **TODOS los activos** (Cripto, Futuros CME, Forex, Commodities).
+> 2. **5 TEMPORALIDADES INTRADÍA EN TODOS LOS ACTIVOS:** **1min (`1m`), 5min (`5m`), 15min (`15m`), 1h (`1h`) y 4h (`4h`)**.
+> 3. **SOLO INTRADIA:** Todas las operativas y reglas cuantitativas en todas las temporalidades están concebidas y acotadas para ejecución intradía (cierre de posiciones al terminar la jornada/sesión, sin exposición a gaps o eventos overnight no controlados).
 
 Ambas vías comparten: motor de descubrimiento (SQX), validación canónica determinista (11 Evidence Gates), partición ciega IS/Validation/Blind-Holdout, registry de trials (DSR) y trazabilidad SHA-256 end-to-end. **Nunca comparten lógica de riesgo.**
 
@@ -184,6 +192,11 @@ Ninguna capa superior puede inventar/sobrescribir resultados de una inferior. Ci
 - **C2 → decisión #7:** `docs/STATE_OF_TRUTH.md` declara **230 estrategias certificadas v5.4.0 / 258 catalogadas**; la gobernanza posterior (17_PHASE2 + auditoría forense) declara **"NO STRATEGY IS CERTIFIED BY ASSUMPTION"**. Estatus del catálogo heredado sin resolver.
 - **C3 → resuelta documentalmente (no requiere negocio):** docs antiguos describen SQX como "MCP 8080/8081"; la realidad física es **sqcli HTTP :5050**. Reflejada en §2.1 y banners SUPERSEDED de 2026-08-29.
 - **C4:** `ARCHITECTURE.md`/`SYSTEM_DOCTRINE.md` (raíz) aún se titulan "V2 canónico" mientras el motor real es v5.4.0 y el SSOT es este master. Marcados SUPERSEDED; se listan porque cualquier cita externa a ellos produce inconsistencia hasta que el usuario decida su destino (archivar/borrar).
+
+### 5.0.1 Directiva Canónica Sellada por el Usuario (2026-08-30) — NO MODIFICABLE:
+- **ULTRA NO ES SOLO CRIPTO NI SOLO 4H CONSERVADOR:** ULTRA opera sobre el 100% del universo de activos (Cripto Perpetuos BingX, Futuros CME, Forex Majors, Commodities). Queda terminantemente prohibido restringir ULTRA a criptomonedas o a estrategias conservadoras de 4H.
+- **5 TEMPORALIDADES INTRADÍA EN TODOS LOS ACTIVOS:** Ambos tracks (ULTRA y FONDEO) buscan, validan y explotan estrategias en **1min (`1m`), 5min (`5m`), 15min (`15m`), 1h (`1h`) y 4h (`4h`)**.
+- **SOLO INTRADIA:** Todas las estrategias en todas las temporalidades tienen un horizonte operativo estrictamente intradía (cero riesgo overnight de fin de semana o multi-día descontrolado).
 
 1. **Fuente de datos 5m CME/forex (bloqueo real):** no existe fuente gratuita verificable conocida. Opciones a decidir: pagar datos (Databento/Polygon/CME oficial), reducir la matriz a las celdas con datos, u otra vía que el usuario defina. Sin decisión, 24 de las 97 celdas CME/forex a 5m-equivalente y toda la expansión M5 quedan limitadas a lo ya importado (~2–3 meses).
 2. **Puerto web canónico (3000 vs 3005):** la gobernanza documental dice 3000; el servicio real corre en 3005 (wrapper). Decidir: normalizar servicio a 3000+doc, o actualizar documentación a 3005.

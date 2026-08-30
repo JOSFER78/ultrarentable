@@ -145,7 +145,12 @@ class DiscoveryValidationPipeline:
                 logger.info(f"Durmiendo {sleep_between_cycles_sec}s antes del siguiente ciclo...")
                 time.sleep(sleep_between_cycles_sec)
 
-    def process_dataset(self, file_path: str, cycle_num: int = 1) -> Optional[Dict[str, Any]]:
+    def process_dataset(
+        self,
+        file_path: str,
+        cycle_num: int = 1,
+        force_route: Optional[StrategyRoute] = None,
+    ) -> Optional[Dict[str, Any]]:
         """Procesa un único dataset físico con particionado cronológico IS/Val/Blind OOS."""
         fname = Path(file_path).name
         parts = fname.replace(".json", "").split("_")
@@ -160,14 +165,24 @@ class DiscoveryValidationPipeline:
         else:
             symbol = symbol_raw
 
-        is_fondeo = any(
-            f_sym == symbol.upper() or f_sym in symbol.upper()
-            for f_sym in [
-                "NQ", "ES", "YM", "GC", "CL", "RTY", "SI",
-                "EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY",
-            ]
-        )
-        route = StrategyRoute.FONDEO if is_fondeo else StrategyRoute.ULTRA
+        # Determinación de ruta: si viene explícita en el nombre del dataset o por argumento
+        if force_route is not None:
+            route = force_route
+        elif "fondeo" in fname.lower():
+            route = StrategyRoute.FONDEO
+        elif "ultra" in fname.lower():
+            route = StrategyRoute.ULTRA
+        else:
+            # Por defecto, ULTRA está disponible para el 100% de los activos
+            is_fondeo = any(
+                f_sym == symbol.upper() or f_sym in symbol.upper()
+                for f_sym in [
+                    "NQ", "ES", "YM", "GC", "CL", "RTY", "SI",
+                    "EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY",
+                ]
+            )
+            route = StrategyRoute.FONDEO if (is_fondeo and "fondeo" in fname.lower()) else StrategyRoute.ULTRA
+
         initial_cap = 1000.0 if route == StrategyRoute.ULTRA else 50000.0
 
         real_file_sha256 = compute_file_sha256(file_path)
@@ -240,8 +255,10 @@ class DiscoveryValidationPipeline:
                     rsi_period=int(p_set["rsi_period"]),
                     rsi_threshold_long=float(p_set["rsi_threshold_long"]),
                     rsi_threshold_short=float(p_set["rsi_threshold_short"]),
-                    stop_loss_ticks=float(p_set["stop_loss_ticks"]),
-                    target_profit_ticks=float(p_set["target_profit_ticks"]),
+                    sl_atr_mult=float(p_set["sl_atr_mult"]) if "sl_atr_mult" in p_set else None,
+                    tp_atr_mult=float(p_set["tp_atr_mult"]) if "tp_atr_mult" in p_set else None,
+                    stop_loss_ticks=float(p_set.get("stop_loss_ticks", 15.0)),
+                    target_profit_ticks=float(p_set.get("target_profit_ticks", 45.0)),
                     archetype=str(p_set["archetype"]),
                 )
 
@@ -314,8 +331,10 @@ class DiscoveryValidationPipeline:
                     rsi_period=int(p_set["rsi_period"]),
                     rsi_threshold_long=float(p_set["rsi_threshold_long"]),
                     rsi_threshold_short=float(p_set["rsi_threshold_short"]),
-                    stop_loss_ticks=float(p_set["stop_loss_ticks"]),
-                    target_profit_ticks=float(p_set["target_profit_ticks"]),
+                    sl_atr_mult=float(p_set["sl_atr_mult"]) if "sl_atr_mult" in p_set else None,
+                    tp_atr_mult=float(p_set["tp_atr_mult"]) if "tp_atr_mult" in p_set else None,
+                    stop_loss_ticks=float(p_set.get("stop_loss_ticks", 15.0)),
+                    target_profit_ticks=float(p_set.get("target_profit_ticks", 45.0)),
                     archetype=str(p_set["archetype"]),
                 )
             val_res = self.backtest_engine.run_backtest(v_strat, candles_val, initial_capital_usd=initial_cap)
@@ -370,8 +389,10 @@ class DiscoveryValidationPipeline:
                 rsi_period=int(best_params["rsi_period"]),
                 rsi_threshold_long=float(best_params["rsi_threshold_long"]),
                 rsi_threshold_short=float(best_params["rsi_threshold_short"]),
-                stop_loss_ticks=float(best_params["stop_loss_ticks"]),
-                target_profit_ticks=float(best_params["target_profit_ticks"]),
+                sl_atr_mult=float(best_params["sl_atr_mult"]) if "sl_atr_mult" in best_params else None,
+                tp_atr_mult=float(best_params["tp_atr_mult"]) if "tp_atr_mult" in best_params else None,
+                stop_loss_ticks=float(best_params.get("stop_loss_ticks", 15.0)),
+                target_profit_ticks=float(best_params.get("target_profit_ticks", 45.0)),
                 archetype=str(best_params["archetype"]),
             )
 
@@ -439,7 +460,39 @@ class DiscoveryValidationPipeline:
             gates_passed_count=gates_eval.get("gates_passed_count", 0),
             scorecard_average=gates_eval.get("overall_score", 0.0),
         )
-        status = "APPROVED" if verdict.is_certified else verdict.certified_status
+        status = "APPROVED_CURRENT_ENGINE" if verdict.is_certified else verdict.certified_status
+
+        # Sello criptográfico de evidencia real: ledger OOS físico + firma del paquete.
+        evidence_dir = Path(self.data_dir).parent / "evidence" / strategy.strategy_id
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        ledger_payload = {
+            "candidate_id": strategy.strategy_id,
+            "route": route.value,
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "dataset_id": fname,
+            "dataset_sha256": real_file_sha256,
+            "strategy_snapshot_hash": strategy.canonical_hash,
+            "engine_version": CURRENT_ENGINE_VERSION,
+            "initial_capital_usd": initial_cap,
+            "trades": trades_raw,
+        }
+        ledger_file = evidence_dir / "ledger_oos.json"
+        ledger_payload["oos_returns"] = [t["net_pnl_usd"] for t in trades_raw]
+        ledger_file.write_text(json.dumps(ledger_payload, sort_keys=True, default=str), encoding="utf-8")
+        ledger_sha256 = hashlib.sha256(ledger_file.read_bytes()).hexdigest()
+        try:
+            reloaded = json.loads(ledger_file.read_text(encoding="utf-8"))
+            ledger_verified = len(reloaded.get("trades", [])) == len(oos_bt.trades)
+        except Exception:
+            ledger_verified = False
+        bundle_signature = hashlib.sha256(json.dumps({
+            "strategy_snapshot_hash": strategy.canonical_hash,
+            "dataset_sha256": real_file_sha256,
+            "ledger_sha256": ledger_sha256,
+            "gates": gates_eval.get("gates", []),
+        }, sort_keys=True, default=str).encode("utf-8")).hexdigest()
+        certified_at_iso = datetime.now(timezone.utc).isoformat()
 
         conn = self.get_db_connection()
         cur = conn.cursor()
@@ -466,6 +519,18 @@ class DiscoveryValidationPipeline:
             "gates_passed_count": gates_eval.get("gates_passed_count", 0),
             "overall_score": gates_eval.get("overall_score", 0.0),
             "gates": gates_eval.get("gates", []),
+            "gates_evaluation": gates_eval.get("gates_evaluation", {}),
+            "strategy_sha256": strategy.canonical_hash,
+            "canonical_hash": strategy.canonical_hash,
+            "dataset_id": fname,
+            "dataset_hash": real_file_sha256,
+            "ledger_hash": ledger_sha256,
+            "ledger_path": str(ledger_file),
+            "ledger_verified": ledger_verified is True,
+            "bundle_signature_sha256": bundle_signature,
+            "certified_at_utc": certified_at_iso if verdict.is_certified else None,
+            "oos_returns": [t["net_pnl_usd"] for t in trades_raw],
+            "certification_status": verdict.certified_status,
             "annual_return_pct": round(annual_roi_pct, 2),
             "monthly_return_pct": round(monthly_roi_pct, 2),
             "audit_summary": verdict.audit_summary,

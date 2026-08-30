@@ -5,6 +5,12 @@ Fuente de evidencia: `estrategias_um/docs/PLAN_PIPELINE.md` + `estrategias_um/do
 por ventanas de parada controladas. **Sin git commit automático** — el registro de auditoría son
 los propios archivos de `orchestration/` (results/, reviews/, history en status.json).
 
+> [!IMPORTANT]
+> **DIRECTIVA MAESTRA DE ACTIVOS Y TEMPORALIDADES (MANDATO INVIOLABLE 2026-08-30):**
+> 1. **ULTRA NO ES SOLO CRIPTO NI SOLO 4H CONSERVADOR:** ULTRA opera sobre el 100% de activos (Cripto Perpetuos, Futuros CME, Forex Majors, Commodities).
+> 2. **5 TEMPORALIDADES INTRADÍA EN TODOS LOS ACTIVOS:** `1min` (`1m`), `5min` (`5m`), `15min` (`15m`), `1h` (`1h`) y `4h` (`4h`) — **SOLO INTRADIA** en ambos tracks (ULTRA y FONDEO).
+> 3. **SOLO INTRADIA:** Cero carryover multi-día descontrolado; cierre al término de sesión/jornada en todas las temporalidades.
+
 ## Modelo de operación (AUTOMÁTICO — nadie pega tareas a mano)
 
 1. El orquestador escribe la tarea en `state/current_phase.md` y pone `status.json: pending`.

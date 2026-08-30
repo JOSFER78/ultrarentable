@@ -125,7 +125,15 @@ class MetaEnsembleService:
                 seen_symbols.add(symbol)
                 if str(row.engine_version or "") != "5.4.0":
                     raise ValueError(f"STALE_CANDIDATE: {cid} no pertenece al motor actual")
-                if str(row.status or "") not in {"APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED", "CERTIFIED_PASS", "CERTIFICADA_TIER_1"}:
+                certified_statuses = {
+                    "APPROVED_CURRENT_ENGINE",
+                    "APPROVED",
+                    "ULTRA_CERTIFIED",
+                    "FUNDING_CERTIFIED",
+                    "CERTIFIED_PASS",
+                    "CERTIFICADA_TIER_1",
+                }
+                if str(row.status or "") not in certified_statuses:
                     raise ValueError(f"NOT_CERTIFIED: {cid} no está certificado")
                 rows.append(row)
 

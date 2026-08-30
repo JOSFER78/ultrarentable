@@ -123,12 +123,21 @@ class LineageService:
             
             # Parents
             parents: List[str] = []
-            if s and s.ast_json:
+            if s and getattr(s, "parent_id", None):
+                parents.append(s.parent_id)
+            if s and getattr(s, "dsl_json", None):
                 try:
-                    ast = json.loads(s.ast_json) if isinstance(s.ast_json, str) else s.ast_json
-                    parents = ast.get("metadata", {}).get("parents", [])
+                    dsl = json.loads(s.dsl_json) if isinstance(s.dsl_json, str) else s.dsl_json
+                    parents.extend(dsl.get("metadata", {}).get("parents", []))
                 except Exception:
                     pass
+            elif s and getattr(s, "ast_json", None):
+                try:
+                    ast = json.loads(s.ast_json) if isinstance(s.ast_json, str) else s.ast_json
+                    parents.extend(ast.get("metadata", {}).get("parents", []))
+                except Exception:
+                    pass
+            parents = list(dict.fromkeys(parents))
 
             # Certifications
             certifications: List[CertificationRecord] = []
@@ -190,16 +199,25 @@ class LineageService:
         # Resolving children (strategies where strategy_id is in parents)
         all_strategies = self.db.query(StrategyModel).all()
         for s in all_strategies:
-            if s.ast_json:
+            s_parents = []
+            if getattr(s, "parent_id", None):
+                s_parents.append(s.parent_id)
+            if getattr(s, "dsl_json", None):
                 try:
-                    ast = json.loads(s.ast_json) if isinstance(s.ast_json, str) else s.ast_json
-                    s_parents = ast.get("metadata", {}).get("parents", [])
-                    if strategy_id in s_parents:
-                        child_node = _resolve_node(s.strategy_id)
-                        if child_node and s.strategy_id not in primary_node.children:
-                            primary_node.children.append(s.strategy_id)
+                    dsl = json.loads(s.dsl_json) if isinstance(s.dsl_json, str) else s.dsl_json
+                    s_parents.extend(dsl.get("metadata", {}).get("parents", []))
                 except Exception:
                     pass
+            elif getattr(s, "ast_json", None):
+                try:
+                    ast = json.loads(s.ast_json) if isinstance(s.ast_json, str) else s.ast_json
+                    s_parents.extend(ast.get("metadata", {}).get("parents", []))
+                except Exception:
+                    pass
+            if strategy_id in s_parents:
+                child_node = _resolve_node(s.strategy_id)
+                if child_node and s.strategy_id not in primary_node.children:
+                    primary_node.children.append(s.strategy_id)
 
         # Generations
         generations: List[List[str]] = [[strategy_id]]

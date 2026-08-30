@@ -64,8 +64,9 @@ graph TD
   - Una estrategia individual con $+300\%$ de retorno y $35\%$ de drawdown está **muerta y descalificada**.
   - Una meta-estrategia con $+50\%\text{--}80\%$ de retorno y $2.8\%\text{--}3.5\%$ de drawdown es **institucional, aprueba y se fondea**.
 
-### 2.2. TRACK_ULTRA: Hiperescalado Asimétrico, Balas 1R y Convexidad Pura
-- **Tesis de Inversión:** Explotación de tendencias no lineales y expansiones parabólicas de volatilidad en los **22 activos globales** (BingX USD-M Perpetuals, Futuros CME y Forex) mediante **convexidad pura de Taleb**. Se acepta un ratio de acierto moderado ($35\% - 45\%$) a cambio de ratios de pago masivos ($\ge 3.0\text{R} - 10.0\text{R}$).
+### 2.2. TRACK_ULTRA: Hiperescalado Asimétrico, Balas 1R y Convexidad Pura Multi-Activo
+- **Tesis de Inversión:** Explotación de tendencias no lineales y expansiones parabólicas de volatilidad en **todos los activos globales** (BingX USD-M Perpetuals, Futuros CME, Forex y Commodities) mediante **convexidad pura de Taleb**. **NUNCA es solo cripto ni solo 4H conservador**.
+- **Temporalidades Operadas:** **1min (`1m`), 5min (`5m`), 15min (`15m`), 1h (`1h`) y 4h (`4h`)** — **SOLO INTRADIA** en todos los activos (cero riesgo de fin de semana o gaps overnight destructivos).
 - **Régimen de Balas Sacrificables:** Cada trade opera como una "Bala Aislada" ($1\text{R} = \$100 \text{ a } \$1,000$). La máxima pérdida está sellada a priori en $1\text{R}$. Si la bala falla, muere sin contagio al resto de la cuenta; si captura una tendencia explosiva, escala mediante **piramidación Free-Risk** (financiada exclusivamente con *House Money*).
 - **Inmunidad al Freno Conservador:** Aplicar filtros de drawdown del $4.5\%$ a la ruta Ultra destruye la rentabilidad al abortar expansiones de volatilidad natural antes de que la piramidación madure. La tolerancia de drawdown flotante llega al **$80.0\%$** y el drawdown realizado al **$75.0\%$**.
 - **Bóveda Ratchet Inviolable:** Para que la convexidad se traduzca en beneficio real tangible, entre el **$50\%$ y el $85\%$** del beneficio se transfiere de forma irrevocable a una Bóveda Spot USDT separada (Ratchet Vault) que jamás se re-arriesga en la misma serie.

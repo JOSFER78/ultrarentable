@@ -26,7 +26,15 @@ class Gate09NoveltyAntiFit:
         strategy_snapshot: Optional[Any] = None,
         is_ultra: bool = True,
     ) -> Dict[str, Any]:
-        num_params = max(1, len(parameters) if parameters else 4)
+        # Contabilidad efectiva: solo los parámetros que el blueprint consume
+        # físicamente según su arquetipo (evita inflar DoF con metadata de
+        # búsqueda y dimensiones no usadas — corrección de auditoría 2026-08-29).
+        try:
+            from services.discovery.effective_dof import count_effective_parameters
+
+            num_params = count_effective_parameters(parameters)
+        except Exception:
+            num_params = max(1, len(parameters) if parameters else 4)
         
         # 1. Grados de Libertad: Relación entre observaciones (trades) y parámetros optimizados
         dof_ratio = float(trades_count) / float(num_params)

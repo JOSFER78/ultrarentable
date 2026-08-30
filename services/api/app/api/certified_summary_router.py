@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from services.api.app.db.database import CandidateModel, get_db
+from services.api.app.db.database import CandidateModel, PortfolioModel, get_db
 
 certified_summary_router = APIRouter(prefix="/certified", tags=["Canonical Certification Summary"])
 
@@ -217,8 +217,15 @@ def certified_summary(route: Optional[str] = Query(None, description="ULTRA, FON
 
 
 @certified_summary_router.get("/strategies")
-def get_certified_strategies_endpoint(db: Session = Depends(get_db), limit: int = Query(500, ge=1, le=5000)) -> List[Dict[str, Any]]:
-    rows = db.query(CandidateModel).order_by(CandidateModel.net_profit_oos.desc()).limit(limit).all()
+def get_certified_strategies_endpoint(
+    route: Optional[str] = Query(None, description="ULTRA, FONDEO"),
+    db: Session = Depends(get_db),
+    limit: int = Query(500, ge=1, le=5000),
+) -> List[Dict[str, Any]]:
+    query = db.query(CandidateModel)
+    if route and route.upper() != "ALL":
+        query = query.filter(CandidateModel.route == route.upper())
+    rows = query.order_by(CandidateModel.net_profit_oos.desc()).limit(limit).all()
     out: List[Dict[str, Any]] = []
 
     for candidate in rows:
@@ -242,6 +249,7 @@ def get_certified_strategies_endpoint(db: Session = Depends(get_db), limit: int 
             "name": candidate.name,
             "symbol": candidate.symbol,
             "timeframe": candidate.timeframe,
+            "route": candidate.route,
             "family": candidate.route,
             "status": "APPROVED_CURRENT_ENGINE",
             "engine_version": candidate.engine_version,
@@ -272,5 +280,52 @@ def get_certified_strategies_endpoint(db: Session = Depends(get_db), limit: int 
 
 
 @certified_summary_router.get("/meta-strategies")
-def get_certified_meta_strategies_endpoint(db: Session = Depends(get_db)) -> List[Dict[str, Any]]:
-    return []
+def get_certified_meta_strategies_endpoint(
+    route: Optional[str] = Query(None, description="ULTRA, FONDEO"),
+    db: Session = Depends(get_db),
+) -> List[Dict[str, Any]]:
+    """Meta-estrategias reales persistidas en portfolios (meta-ULTRA / meta-FONDEO).
+
+    Solo se exponen ensamblados construidos sobre componentes certificados con
+    evidencia criptográfica; un meta-ensamblado nunca presenta métricas de
+    portafolio hasta que exista backtest de portafolio con ledger propio.
+    """
+    try:
+        from services.portfolio.meta_strategy_pipeline import ensure_meta_strategies
+
+        ensure_meta_strategies(("ULTRA", "FONDEO"))
+    except Exception:
+        pass  # fail-closed: si el pipeline no puede correr, se sirve lo persistido
+    all_rows = (
+        db.query(PortfolioModel)
+        .filter(PortfolioModel.portfolio_id.like("meta%"))
+        .all()
+    )
+    # Solo mis IDs canónicos (meta_ultra_<hash16> / meta_fondeo_<hash16>, minúsculas exactas)
+    rows = [r for r in all_rows if r.portfolio_id.startswith(("meta_ultra_", "meta_fondeo_"))]
+    if route and route.upper() != "ALL":
+        rows = [r for r in rows if r.target_route.upper() == route.upper()]
+    out: List[Dict[str, Any]] = []
+    for row in rows:
+        out.append({
+            "meta_strategy_id": row.portfolio_id,
+            "portfolio_id": row.portfolio_id,
+            "name": row.name,
+            "route": row.target_route,
+            "target_route": row.target_route,
+            "portfolio_hash": row.canonical_hash,
+            "combined_ledger_hash": row.canonical_hash,
+            "status": row.status,
+            "engine_version": "5.4.0",
+            "base_capital_usd": row.base_capital_usd,
+            "components": json.loads(row.components_json or "[]"),
+            "correlation_matrix": json.loads(row.correlation_matrix_json or "[]"),
+            "canonical_hash": row.canonical_hash,
+            "combined_profit_factor": None if row.status == "ASSEMBLED_PENDING_PORTFOLIO_BACKTEST" else row.profit_factor,
+            "combined_sharpe_ratio": None if row.status == "ASSEMBLED_PENDING_PORTFOLIO_BACKTEST" else None,
+            "combined_max_drawdown_pct": None if row.status == "ASSEMBLED_PENDING_PORTFOLIO_BACKTEST" else row.max_drawdown_pct,
+            "monthly_return": None if row.status == "ASSEMBLED_PENDING_PORTFOLIO_BACKTEST" else row.monthly_roi_pct,
+            "max_drawdown_pct": None if row.status == "ASSEMBLED_PENDING_PORTFOLIO_BACKTEST" else row.max_drawdown_pct,
+            "created_at": row.created_at.isoformat() if row.created_at else None,
+        })
+    return out

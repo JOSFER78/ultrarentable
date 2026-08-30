@@ -22,8 +22,14 @@ from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRout
 
 
 class FundingSearchSpace(BaseModel):
-    symbols: List[str] = Field(default_factory=lambda: ["NQ", "ES", "YM", "RTY", "CL", "GC", "EURUSD", "GBPUSD"])
-    timeframes: List[str] = Field(default_factory=lambda: ["5m", "15m", "1h"])
+    symbols: List[str] = Field(
+        default_factory=lambda: [
+            "NQ", "ES", "YM", "RTY", "CL", "GC", "SI",
+            "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD",
+            "BTCUSDT", "ETHUSDT",
+        ]
+    )
+    timeframes: List[str] = Field(default_factory=lambda: ["1m", "5m", "15m", "1h", "4h"])
     max_drawdown_ceiling_pct: float = Field(default=4.0, le=4.5)
     target_pass_days: int = Field(default=5, ge=1, le=20)
 
@@ -44,6 +50,8 @@ class FundingDiscoveryEngine:
         risk_per_trade_pct: float = 0.25,
         target_profit_ticks: float = 45.0,
         stop_loss_ticks: float = 15.0,
+        sl_atr_mult: Optional[float] = None,
+        tp_atr_mult: Optional[float] = None,
         ema_fast: int = 9,
         ema_slow: int = 21,
         rsi_period: int = 14,
@@ -56,41 +64,66 @@ class FundingDiscoveryEngine:
         **kwargs: Any,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot con todos los parámetros del trial aplicados."""
+        arch_upper = str(archetype).upper() if archetype else "INSTITUTIONAL_SESSION_MOMENTUM"
+        ema_fast_spec = IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0)
+        ema_slow_spec = IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0)
+        rsi_spec = IndicatorSpec(name="RSI", params={"period": int(rsi_period)}, source_field="close", shift=0)
+
+        if arch_upper in {"MEAN_REVERSION", "RSI_REVERSION"}:
+            long_conditions = [
+                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
+                ConditionNode(left=ema_fast_spec, op=ComparisonOp.GT, right=ema_slow_spec),
+            ]
+            short_conditions = [
+                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=float(rsi_threshold_long)),
+                ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
+            ]
+        elif arch_upper in {"TREND_FOLLOWING", "EMA_CROSS"}:
+            long_conditions = [ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec)]
+            short_conditions = [ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_BELOW, right=ema_slow_spec)]
+        elif arch_upper in {"RSI_MOMENTUM", "MOMENTUM_RSI"}:
+            long_conditions = [
+                ConditionNode(left=ema_fast_spec, op=ComparisonOp.GT, right=ema_slow_spec),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=float(rsi_threshold_long)),
+            ]
+            short_conditions = [
+                ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
+            ]
+        else:
+            long_conditions = [
+                ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.GT, right=float(rsi_threshold_long)),
+            ]
+            short_conditions = [
+                ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_BELOW, right=ema_slow_spec),
+                ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
+            ]
+
         entry_rules = RuleTree(
             logic=LogicalOp.AND,
             direction="BOTH",
-            long_conditions=[
-                ConditionNode(
-                    left=IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0),
-                    op=ComparisonOp.CROSS_ABOVE,
-                    right=IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0),
-                ),
-                ConditionNode(
-                    left=IndicatorSpec(name="RSI", params={"period": int(rsi_period)}, source_field="close", shift=0),
-                    op=ComparisonOp.GT,
-                    right=float(rsi_threshold_long),
-                ),
-            ],
-            short_conditions=[
-                ConditionNode(
-                    left=IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0),
-                    op=ComparisonOp.CROSS_BELOW,
-                    right=IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0),
-                ),
-                ConditionNode(
-                    left=IndicatorSpec(name="RSI", params={"period": int(rsi_period)}, source_field="close", shift=0),
-                    op=ComparisonOp.LT,
-                    right=float(rsi_threshold_short),
-                ),
-            ],
+            long_conditions=long_conditions,
+            short_conditions=short_conditions,
         )
-        exit_rules = ExitModel(
-            sl_type=StopLossType.FIXED_POINTS,
-            sl_value=float(stop_loss_ticks),
-            tp_type=TakeProfitType.FIXED_POINTS,
-            tp_value=float(target_profit_ticks),
-            time_stop_bars=int(time_stop_bars),
-        )
+
+        if sl_atr_mult is not None and tp_atr_mult is not None:
+            exit_rules = ExitModel(
+                sl_type=StopLossType.ATR_MULTIPLE,
+                sl_value=float(sl_atr_mult),
+                tp_type=TakeProfitType.ATR_MULTIPLE,
+                tp_value=float(tp_atr_mult),
+                time_stop_bars=int(time_stop_bars),
+            )
+        else:
+            exit_rules = ExitModel(
+                sl_type=StopLossType.FIXED_POINTS,
+                sl_value=float(stop_loss_ticks),
+                tp_type=TakeProfitType.FIXED_POINTS,
+                tp_value=float(target_profit_ticks),
+                time_stop_bars=int(time_stop_bars),
+            )
+
         sizing = SizingAndRisk(
             sizing_type=SizingType.RISK_PCT_EQUITY,
             risk_value=float(risk_per_trade_pct),
@@ -106,7 +139,7 @@ class FundingDiscoveryEngine:
         return StrategySnapshot.create_and_hash(
             strategy_id=strategy_id,
             route=StrategyRoute.FONDEO,
-            archetype=str(archetype).upper(),
+            archetype=arch_upper,
             symbol=symbol,
             timeframe=timeframe,
             entry_rules=entry_rules,

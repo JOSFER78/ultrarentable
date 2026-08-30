@@ -111,39 +111,49 @@ ALL_SYMBOLS_SPECS = [
     ("HG", AssetClass.COMMODITIES, "Cobre High Grade"),
 ]
 
+INTRADAY_TIMEFRAMES: List[Timeframe] = [
+    Timeframe.M1,
+    Timeframe.M5,
+    Timeframe.M15,
+    Timeframe.H1,
+    Timeframe.H4,
+]
+
 CANONICAL_UNIVERSE_MATRIX: List[MarketCell] = []
 
 for sym, aclass, name in ALL_SYMBOLS_SPECS:
     spec = get_market_spec(sym)
     
-    # 1. RUTA ULTRA: DISPONIBLE PARA TODOS LOS 44 ACTIVOS (100%)
-    CANONICAL_UNIVERSE_MATRIX.append(
-        MarketCell(
-            symbol=sym,
-            asset_class=aclass,
-            timeframe=Timeframe.H1 if aclass in [AssetClass.FOREX, AssetClass.COMMODITIES] else Timeframe.M15,
-            target_route=TargetRoute.ULTRA,
-            primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT if aclass != AssetClass.FOREX else StrategyArchetype.TREND_MOMENTUM,
-            description=f"{sym} ULTRA Convexidad & Crecimiento Exponencial ({name})",
-            max_dd_limit_pct=25.0,
-            min_pf_target=1.20,
-        )
-    )
-    
-    # 2. RUTA FONDEO: SOLO PARA ACTIVOS ADMITIDOS EN EMPRESAS DE FONDEO REGULADAS (FTMO, APEX, TOPSTEP)
-    if spec.prop_firm_eligible:
+    # 1. RUTA ULTRA: DISPONIBLE PARA TODOS LOS 44 ACTIVOS EN TODAS LAS TEMPORALIDADES INTRADÍA (1m, 5m, 15m, 1h, 4h)
+    for tf in INTRADAY_TIMEFRAMES:
         CANONICAL_UNIVERSE_MATRIX.append(
             MarketCell(
                 symbol=sym,
                 asset_class=aclass,
-                timeframe=Timeframe.M15 if aclass != AssetClass.FOREX else Timeframe.H1,
-                target_route=TargetRoute.FONDEO,
-                primary_archetype=StrategyArchetype.TREND_MOMENTUM if aclass == AssetClass.INDICES_FUTURES else StrategyArchetype.OPENING_RANGE_BREAKOUT,
-                description=f"{sym} FONDEO Prop Firm [{spec.prop_firm_venues}] ({name})",
-                max_dd_limit_pct=4.0,
-                min_pf_target=1.25,
+                timeframe=tf,
+                target_route=TargetRoute.ULTRA,
+                primary_archetype=StrategyArchetype.VOLATILITY_BREAKOUT if aclass != AssetClass.FOREX else StrategyArchetype.TREND_MOMENTUM,
+                description=f"{sym} [{tf.value}] ULTRA Convexidad Intradía ({name})",
+                max_dd_limit_pct=75.0,
+                min_pf_target=1.20,
             )
         )
+    
+    # 2. RUTA FONDEO: DISPONIBLE PARA ACTIVOS ADMITIDOS EN PROP FIRMS EN TODAS LAS TEMPORALIDADES INTRADÍA (1m, 5m, 15m, 1h, 4h)
+    if spec.prop_firm_eligible:
+        for tf in INTRADAY_TIMEFRAMES:
+            CANONICAL_UNIVERSE_MATRIX.append(
+                MarketCell(
+                    symbol=sym,
+                    asset_class=aclass,
+                    timeframe=tf,
+                    target_route=TargetRoute.FONDEO,
+                    primary_archetype=StrategyArchetype.TREND_MOMENTUM if aclass == AssetClass.INDICES_FUTURES else StrategyArchetype.OPENING_RANGE_BREAKOUT,
+                    description=f"{sym} [{tf.value}] FONDEO Prop Firm [{spec.prop_firm_venues}] Intradía ({name})",
+                    max_dd_limit_pct=4.0,
+                    min_pf_target=1.25,
+                )
+            )
 
 
 def get_matrix_by_symbol(symbol: str) -> List[MarketCell]:

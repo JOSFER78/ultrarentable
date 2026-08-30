@@ -47,6 +47,23 @@ class SQXMCPClient:
             raise SQXMCPError(f"SQX HTTP {resp.status_code}: {resp.text[:200]}")
         return resp.text
 
+    def call_cli(self, cmd: str, timeout: Optional[int] = None) -> str:
+        """Execute command via temporary script file `-run file=<path>` on sqcli.
+
+        This bypasses the URL tokenizer limitation in sqcli HTTP servlet,
+        allowing parameters with spaces in quotes (e.g. name="Last generation").
+        """
+        fd, path = tempfile.mkstemp(prefix="sqx_cmd_", suffix=".txt")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                f.write(cmd + "\n")
+            return self.call(f"-run file={path}", timeout=timeout or 120)
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+
     def check_connection(self) -> Dict[str, Any]:
         try:
             text = self.call("-project action=list")
@@ -93,7 +110,8 @@ class SQXMCPClient:
         return self._parse_databank_list(self.call(f"-databank action=list project={project_name}"))
 
     def databank_count(self, project_name: str, databank_name: str) -> int:
-        text = self.call(f"-databank action=count project={project_name} name={databank_name}")
+        db_arg = f'"{databank_name}"' if " " in databank_name or '"' not in databank_name else databank_name
+        text = self.call_cli(f"-databank action=count project={project_name} name={db_arg}")
         m = re.search(r"Records:\s*(\d+)", text)
         return int(m.group(1)) if m else 0
 
@@ -102,9 +120,10 @@ class SQXMCPClient:
         fd, path = tempfile.mkstemp(prefix="sqx_export_", suffix=".csv")
         os.close(fd)
         try:
-            text = self.call(
-                f"-databank action=export project={project_name} name={databank_name} file={path}",
-                timeout=60,
+            db_arg = f'"{databank_name}"' if " " in databank_name or '"' not in databank_name else databank_name
+            text = self.call_cli(
+                f"-databank action=export project={project_name} name={db_arg} file={path}",
+                timeout=120,
             )
             if "exported" not in text.lower():
                 raise SQXMCPError(f"SQX export failed: {text[:200]}")

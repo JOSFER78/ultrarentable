@@ -170,37 +170,39 @@ class StrategySearchRegistry:
         space: List[Dict[str, Any]] = []
 
         if route_upper == "FONDEO":
-            fast_emas = [5, 9, 13]
-            slow_emas = [21, 34, 55]
+            fast_emas = [5, 9, 13, 20]
+            slow_emas = [21, 34, 50, 80]
             rsi_periods = [10, 14, 21]
             threshold_pairs = [(50.0, 50.0), (52.0, 48.0), (55.0, 45.0)]
-            stop_ticks = [10.0, 15.0, 20.0]
-            target_ticks = [20.0, 30.0, 45.0, 60.0]
-            for f in fast_emas:
-                for s in slow_emas:
-                    if f >= s:
-                        continue
-                    for rp in rsi_periods:
-                        for r_long, r_short in threshold_pairs:
-                            for stop in stop_ticks:
-                                for target in target_ticks:
-                                    if target <= stop:
-                                        continue
-                                    space.append(
-                                        {
-                                            "ema_fast": f,
-                                            "ema_slow": s,
-                                            "rsi_period": rp,
-                                            "rsi_threshold_long": r_long,
-                                            "rsi_threshold_short": r_short,
-                                            "stop_loss_ticks": stop,
-                                            "target_profit_ticks": target,
-                                            "archetype": "INSTITUTIONAL_SESSION_MOMENTUM",
-                                            "route": route_upper,
-                                            "symbol": symbol,
-                                            "timeframe": timeframe,
-                                        }
-                                    )
+            atr_multipliers_sl = [1.5, 2.0, 2.5]
+            atr_multipliers_tp = [3.0, 4.5, 6.0]
+            archetypes = ["INSTITUTIONAL_SESSION_MOMENTUM", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION"]
+            for archetype in archetypes:
+                for f in fast_emas:
+                    for s in slow_emas:
+                        if f >= s:
+                            continue
+                        for sl in atr_multipliers_sl:
+                            for tp in atr_multipliers_tp:
+                                for rp in rsi_periods:
+                                    for r_long, r_short in threshold_pairs:
+                                        space.append(
+                                            {
+                                                "ema_fast": f,
+                                                "ema_slow": s,
+                                                "rsi_period": rp,
+                                                "rsi_threshold_long": r_long,
+                                                "rsi_threshold_short": r_short,
+                                                "sl_atr_mult": sl,
+                                                "tp_atr_mult": tp,
+                                                "stop_loss_ticks": sl * 10.0,
+                                                "target_profit_ticks": tp * 10.0,
+                                                "archetype": archetype,
+                                                "route": route_upper,
+                                                "symbol": symbol,
+                                                "timeframe": timeframe,
+                                            }
+                                        )
         else:
             fast_emas = [8, 12, 20]
             slow_emas = [30, 50, 80]
