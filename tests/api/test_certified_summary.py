@@ -28,3 +28,23 @@ def test_duration_can_be_derived_from_real_oos_dates():
     )
     assert months is not None
     assert 5.8 < months < 6.2
+
+
+def test_master_catalog_export_csv_and_xlsx_structure():
+    from services.api.app.db.database import SessionLocal
+    from services.export.excel_master_catalog import build_master_catalog_csv, build_master_catalog_xlsx
+    
+    db = SessionLocal()
+    try:
+        csv_text = build_master_catalog_csv(db)
+        assert len(csv_text) > 0
+        assert "Tipo,ID,Nombre,Ruta" in csv_text
+        
+        xlsx_bytes = build_master_catalog_xlsx(db)
+        assert len(xlsx_bytes) > 0
+        # Valid ZIP / XLSX magic number PK\x03\x04
+        assert xlsx_bytes[:4] == b"PK\x03\x04"
+    finally:
+        db.close()
+
+

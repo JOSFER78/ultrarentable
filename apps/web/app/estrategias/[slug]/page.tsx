@@ -4,12 +4,14 @@ import React, { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import SistemaSupervisorPage from "../../sistema/page";
-import StrategiesExplorerPage from "../2-explorador-excel/page";
+import CandidatesExcelExplorer from "@/components/candidatos/CandidatesExcelExplorer";
 import CandidatosFSMPage from "../../candidatos/page";
 import ResearchLabPage from "../../research/page";
-import ApprovedStrategiesAndGatesHubPage from "../../gates/page";
+import GatesPage from "../../gates/page";
 import PortfolioStudioPage from "../../portfolio/page";
 import EstrategiasHubPage from "../page";
+import EstrategiasHeaderNav, { CANONICAL_PHASES } from "@/components/EstrategiasHeaderNav";
+import { ChevronRight, Sparkles } from "lucide-react";
 
 // Mapeo exhaustivo de slugs a fases numéricas (0 a 6)
 function parseFaseFromSlug(slug: string): number {
@@ -20,12 +22,12 @@ function parseFaseFromSlug(slug: string): number {
   if (s.startsWith("1") || s.includes("motor") || s.includes("supervisor") || s.includes("telemetria") || s.includes("autopilot")) {
     return 1;
   }
-  // Fase 2: Catálogo de Estrategias / Familias
-  if (s.startsWith("2") || s.includes("catalogo") || s.includes("familias") || s.includes("strategies")) {
+  // Fase 2: Explorador Excel / Catálogo de Candidatos / Familias
+  if (s.startsWith("2") || s.includes("excel") || s.includes("explorador") || s.includes("catalogo") || s.includes("familias")) {
     return 2;
   }
-  // Fase 3: Candidatos / Pipeline / 10 Gates / 11 Gates / FSM
-  if (s.startsWith("3") || s.includes("candidat") || s.includes("pipeline") || s.includes("fsm") || s.includes("11-gates") || s.includes("10-gates")) {
+  // Fase 3: Pipeline 11 Gates / 10 Gates / FSM / Candidatos
+  if (s.startsWith("3") || s.includes("gates") || s.includes("pipeline") || s.includes("11-gates") || s.includes("10-gates") || s.includes("fsm")) {
     return 3;
   }
   // Fase 4: Panel Investigación / Research Lab / Fallos
@@ -33,7 +35,7 @@ function parseFaseFromSlug(slug: string): number {
     return 4;
   }
   // Fase 5: Estrategias Aprobadas / Quality Gates Hub / Certificadas
-  if (s.startsWith("5") || s.includes("aprobada") || s.includes("gates") || s.includes("certificad")) {
+  if (s.startsWith("5") || s.includes("aprobada") || s.includes("certificad")) {
     return 5;
   }
   // Fase 6: Meta-Estrategias / Portfolio Studio / Ensembles
@@ -50,126 +52,57 @@ export default function DynamicEstrategiasSlugPage() {
   const slug = typeof params?.slug === "string" ? params.slug : (Array.isArray(params?.slug) ? params.slug[0] : "");
 
   const fase = useMemo(() => parseFaseFromSlug(slug), [slug]);
-
-  // Barra de navegación de retorno rápido al Hub y cambio de fase
-  const phaseNames: Record<number, { title: string; badge: string; color: string }> = {
-    0: { title: "Portada General de Estrategias", badge: "PORTADA", color: "#63e1b4" },
-    1: { title: "Fase 1: Motor 24/7 & Supervisor", badge: "24/7 LIVE", color: "#10b981" },
-    2: { title: "Fase 2: Catálogo Canónico de Estrategias", badge: "CATÁLOGO", color: "#38bdf8" },
-    3: { title: "Fase 3: Candidatos & Máquina de Estados FSM", badge: "CANDIDATOS", color: "#818cf8" },
-    4: { title: "Fase 4: Research Lab & Memoria de Fallos", badge: "RESEARCH LAB", color: "#ec4899" },
-    5: { title: "Fase 5: Quality Gates Hub & Aprobadas", badge: "11 GATES", color: "#facc15" },
-    6: { title: "Fase 6: Portfolio Studio & Meta-Estrategias", badge: "PORTFOLIO", color: "#63e1b4" },
-  };
-
-  const currentInfo = phaseNames[fase] || phaseNames[0];
+  const currentPhaseMeta = CANONICAL_PHASES[fase] || CANONICAL_PHASES[0];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#06090e", color: "#f8fafc" }}>
-      {/* Sub-Header de Ruta Canónica */}
-      <div
-        style={{
-          background: "rgba(10, 15, 26, 0.95)",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-          padding: "10px 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          fontSize: "12px",
-          fontFamily: "var(--font-mono, monospace)",
-          position: "sticky",
-          top: 0,
-          zIndex: 40,
-          backdropFilter: "blur(12px)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Link
-            href="/estrategias"
-            style={{
-              textDecoration: "none",
-              color: "#38bdf8",
-              fontWeight: 800,
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "4px 8px",
-              borderRadius: "6px",
-              background: "rgba(56, 189, 248, 0.1)",
-              border: "1px solid rgba(56, 189, 248, 0.2)",
-            }}
-          >
-            <span>◀</span>
-            <span>Hub Maestro</span>
-          </Link>
-          <span style={{ color: "#475569" }}>/</span>
-          <span style={{ color: "#94a3b8", fontWeight: 600 }}>estrategias</span>
-          <span style={{ color: "#475569" }}>/</span>
-          <span style={{ color: currentInfo.color, fontWeight: 800 }}>{slug || `fase-${fase}`}</span>
-          <span
-            style={{
-              fontSize: "10px",
-              fontWeight: 900,
-              padding: "2px 6px",
-              borderRadius: "4px",
-              background: `${currentInfo.color}22`,
-              color: currentInfo.color,
-              border: `1px solid ${currentInfo.color}44`,
-            }}
-          >
-            {currentInfo.badge}
-          </span>
-        </div>
-
-        {/* Selector rápido de las 6 Fases */}
-        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-          {[
-            { id: 0, label: "HUB" },
-            { id: 1, label: "F1: Motor" },
-            { id: 2, label: "F2: Catálogo" },
-            { id: 3, label: "F3: Candidatos" },
-            { id: 4, label: "F4: Research" },
-            { id: 5, label: "F5: Gates" },
-            { id: 6, label: "F6: Portfolio" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                if (item.id === 0) router.push("/estrategias");
-                else if (item.id === 1) router.push("/estrategias/1-motor-24-7");
-                else if (item.id === 2) router.push("/estrategias/2-catalogo");
-                else if (item.id === 3) router.push("/estrategias/3-pipeline-11-gates");
-                else if (item.id === 4) router.push("/estrategias/4-research");
-                else if (item.id === 5) router.push("/estrategias/5-estrategias-aprobadas");
-                else if (item.id === 6) router.push("/estrategias/6-meta-estrategias");
-              }}
+    <div className="min-h-screen bg-[#030712] text-slate-100 font-sans p-3 md:p-6 space-y-5">
+      <div className="max-w-[1600px] mx-auto space-y-5">
+        {/* BREADCRUMB & HEADER NAV */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3 font-mono text-xs">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/estrategias"
+              className="flex items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 font-bold text-cyan-300 shadow-sm transition hover:bg-cyan-500/20 active:scale-95 cursor-pointer"
+            >
+              <span>◀</span>
+              <span>Hub Estrategias</span>
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+            <span className="text-slate-400 font-semibold">estrategias</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+            <span className="font-extrabold text-white" style={{ color: currentPhaseMeta.accentColor }}>
+              {currentPhaseMeta.label}
+            </span>
+            <span
+              className="rounded-full border px-2 py-0.5 text-[10px] font-black"
               style={{
-                background: fase === item.id ? "rgba(99, 225, 180, 0.2)" : "rgba(255, 255, 255, 0.04)",
-                border: fase === item.id ? "1px solid #63e1b4" : "1px solid rgba(255, 255, 255, 0.06)",
-                color: fase === item.id ? "#63e1b4" : "#94a3b8",
-                padding: "3px 8px",
-                borderRadius: "4px",
-                fontSize: "10.5px",
-                fontWeight: fase === item.id ? 800 : 500,
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
+                backgroundColor: `${currentPhaseMeta.accentColor}18`,
+                color: currentPhaseMeta.accentColor,
+                borderColor: `${currentPhaseMeta.accentColor}40`,
               }}
             >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
+              {currentPhaseMeta.badge}
+            </span>
+          </div>
 
-      {/* Renderizado de la fase correspondiente */}
-      <div>
-        {fase === 0 && <EstrategiasHubPage />}
-        {fase === 1 && <SistemaSupervisorPage />}
-        {fase === 2 && <StrategiesExplorerPage />}
-        {fase === 3 && <CandidatosFSMPage />}
-        {fase === 4 && <ResearchLabPage />}
-        {fase === 5 && <ApprovedStrategiesAndGatesHubPage />}
-        {fase === 6 && <PortfolioStudioPage />}
+          <div className="flex items-center gap-2">
+            <span className="text-slate-500 text-[11px]">Ruta: /estrategias/{slug}</span>
+          </div>
+        </div>
+
+        {/* Cohesive 7-Phase Nav */}
+        <EstrategiasHeaderNav currentPhase={fase} />
+
+        {/* Renderizado dinámico de la fase correspondiente */}
+        <div className="pt-2">
+          {fase === 0 && <EstrategiasHubPage />}
+          {fase === 1 && <SistemaSupervisorPage />}
+          {fase === 2 && <CandidatesExcelExplorer />}
+          {fase === 3 && <GatesPage />}
+          {fase === 4 && <ResearchLabPage />}
+          {fase === 5 && <GatesPage />}
+          {fase === 6 && <PortfolioStudioPage />}
+        </div>
       </div>
     </div>
   );

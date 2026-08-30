@@ -34,6 +34,7 @@ async function proxyRequest(req: NextRequest, prefix: string, paramsPromise: any
     });
 
     const contentType = res.headers.get("content-type") || "";
+    const contentDisposition = res.headers.get("content-disposition");
 
     // If SSE streaming response, pipe the body directly
     if (contentType.includes("text/event-stream")) {
@@ -54,14 +55,40 @@ async function proxyRequest(req: NextRequest, prefix: string, paramsPromise: any
       return NextResponse.json(data, { status: res.status });
     }
 
-    // Text or other payload
+    // Binary file download or attachment
+    if (
+      contentDisposition ||
+      contentType.includes("spreadsheetml") ||
+      contentType.includes("octet-stream") ||
+      contentType.includes("excel") ||
+      contentType.includes("zip")
+    ) {
+      const buffer = await res.arrayBuffer();
+      const outHeaders: Record<string, string> = {
+        "Content-Type": contentType || "application/octet-stream",
+      };
+      if (contentDisposition) {
+        outHeaders["Content-Disposition"] = contentDisposition;
+      }
+      return new Response(buffer, {
+        status: res.status,
+        headers: outHeaders,
+      });
+    }
+
+    // Text or CSV payload
     const textData = await res.text();
+    const outHeaders: Record<string, string> = {
+      "Content-Type": contentType || "text/plain",
+    };
+    if (contentDisposition) {
+      outHeaders["Content-Disposition"] = contentDisposition;
+    }
     return new Response(textData, {
       status: res.status,
-      headers: {
-        "Content-Type": contentType || "text/plain",
-      },
+      headers: outHeaders,
     });
+
   } catch (err: any) {
     return NextResponse.json(
       { error: "Backend proxy error", details: err?.message, target: targetUrl },

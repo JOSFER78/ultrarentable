@@ -110,12 +110,12 @@ export default function Smart3ClickFinder({
   }, [allAccounts, strategyStep, budgetStep, platformStep]);
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-slate-900/90 to-indigo-950/30 rounded-2xl border border-indigo-500/30 p-5 md:p-6 shadow-2xl space-y-6">
+    <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 md:p-6 shadow-2xl space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
+            <span className="p-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
               <Sparkles className="w-5 h-5" />
             </span>
             <h2 className="text-lg font-black text-white tracking-tight">

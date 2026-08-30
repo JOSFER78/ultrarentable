@@ -67,6 +67,7 @@ class Gate09NoveltyAntiFit:
                 pert_fast = max(5, int(round(base_fast * (1.0 + delta))))
                 pert_slow = max(pert_fast + 5, int(round(base_slow * (1.0 + delta))))
 
+                arch = getattr(strategy_snapshot, "archetype", "INSTITUTIONAL_SESSION_MOMENTUM" if not is_ultra else "MOMENTUM_BREAKOUT")
                 if is_ultra:
                     disc = UltraDiscoveryEngine()
                     pert_strat = disc.generate_candidate_blueprint(
@@ -79,9 +80,11 @@ class Gate09NoveltyAntiFit:
                         tp_atr_mult=pert_tp,
                         ema_fast=pert_fast,
                         ema_slow=pert_slow,
+                        archetype=arch,
                     )
                 else:
                     disc_f = FundingDiscoveryEngine()
+                    risk_val = float(parameters.get("risk_pct") or parameters.get("risk_per_trade_pct") or 0.10)
                     pert_strat = disc_f.generate_candidate_blueprint(
                         strategy_id=f"pert_{int(delta*100)}_{sym}",
                         symbol=sym,
@@ -90,6 +93,10 @@ class Gate09NoveltyAntiFit:
                         dataset_sha256="sha256_pert",
                         ema_fast=pert_fast,
                         ema_slow=pert_slow,
+                        sl_atr_mult=pert_sl,
+                        tp_atr_mult=pert_tp,
+                        risk_per_trade_pct=risk_val,
+                        archetype=arch,
                     )
 
                 res = bt_engine.run_backtest(pert_strat, candles, initial_capital_usd=base_cap)

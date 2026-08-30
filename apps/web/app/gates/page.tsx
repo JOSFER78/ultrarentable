@@ -19,9 +19,23 @@ import {
   XCircle,
   AlertTriangle,
   Table,
+  Download,
+  FileSpreadsheet,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Zap,
 } from "lucide-react";
-import { getCertifiedStrategies, getCandidates, CertifiedStrategy } from "@/lib/api";
+import {
+  getCertifiedStrategies,
+  getCandidates,
+  CertifiedStrategy,
+  getExportCsvUrl,
+  getExportXlsxUrl,
+} from "@/lib/api";
 import QuantTooltip from "@/components/system/QuantTooltip";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 
 interface GateCanonicalMeta {
   id: string;
@@ -166,7 +180,9 @@ export default function GatesPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [routeFilter, setRouteFilter] = useState<"ALL" | "ULTRA" | "CME">("ALL");
+  const [routeFilter, setRouteFilter] = useState<"ALL" | "ULTRA" | "FONDEO">("ALL");
+  const [gateCategoryFilter, setGateCategoryFilter] = useState<string>("ALL");
+  const [expandedGates, setExpandedGates] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadCertified();
@@ -181,7 +197,6 @@ export default function GatesPage() {
         setCertifiedList(data);
         setSelectedStrategy(data[0]);
       } else {
-        // Consultar candidatos reales para visualización de compuertas
         const candidates = await getCandidates({ limit: 100 });
         if (Array.isArray(candidates) && candidates.length > 0) {
           const mapped: CertifiedStrategy[] = candidates.map((c: any) => ({
@@ -190,7 +205,7 @@ export default function GatesPage() {
             symbol: c.symbol || "BTC",
             timeframe: c.timeframe || "1h",
             family: c.family || c.market_category || "QUANT",
-            route: c.route || "CME",
+            route: c.route || (c.family && String(c.family).toUpperCase().includes("ULTRA") ? "ULTRA" : "FONDEO"),
             status: c.status || "CANDIDATE",
             engine_version: c.engine_version || "5.4.0",
             strategy_hash: c.strategy_sha256 || c.strategy_hash || "",
@@ -204,16 +219,20 @@ export default function GatesPage() {
             profit_factor: c.profit_factor_oos || c.profit_factor || 0,
             sharpe_ratio: c.sharpe_ratio || 0,
             max_drawdown_pct: c.max_dd_oos_pct || c.max_drawdown_pct || 0,
-            oos_profit_factor: c.profit_factor_oos || 0,
-            oos_start_timestamp_ms: null,
-            oos_end_timestamp_ms: null,
-            oos_months: c.duration_info?.oos_months || null,
-            monthly_return: c.metrics?.out_of_sample?.monthly_roi_pct || null,
-            annual_return: c.metrics?.out_of_sample?.annualized_roi_pct || null,
-            cagr: null,
+            oos_profit_factor: c.profit_factor_oos || c.profit_factor || 0,
+            oos_start_timestamp_ms: c.oos_start_timestamp_ms || null,
+            oos_end_timestamp_ms: c.oos_end_timestamp_ms || null,
+            oos_months: c.oos_months ?? c.duration_info?.oos_months ?? c.metrics?.out_of_sample?.oos_months ?? null,
+            monthly_return:
+              c.monthly_return ??
+              c.metrics?.out_of_sample?.monthly_roi_pct ??
+              c.metrics?.out_of_sample?.monthly_return_pct ??
+              null,
+            annual_return: c.annual_return ?? c.metrics?.out_of_sample?.annualized_roi_pct ?? null,
+            cagr: c.cagr ?? null,
             certified_at_utc: c.created_at || new Date().toISOString(),
-            gates: {},
-            equity_curve: [],
+            gates: c.gates || {},
+            equity_curve: c.equity_curve || [],
           }));
           setCertifiedList(mapped);
           setSelectedStrategy(mapped[0]);
@@ -236,11 +255,29 @@ export default function GatesPage() {
     }
   };
 
+  const toggleGateExpand = (gateId: string) => {
+    setExpandedGates((prev) => ({
+      ...prev,
+      [gateId]: !prev[gateId],
+    }));
+  };
+
   const filteredStrategies = useMemo(() => {
     return certifiedList.filter((st) => {
-      const isUltra = (st.family || "").toUpperCase().includes("ULTRA") || (st.name || "").toLowerCase().includes("ultra") || (st.route || "").toUpperCase() === "ULTRA";
+      const routeUpper = (st.route || "").toUpperCase();
+      const familyUpper = (st.family || "").toUpperCase();
+      const nameLower = (st.name || "").toLowerCase();
+
+      const isUltra = routeUpper === "ULTRA" || familyUpper.includes("ULTRA") || nameLower.includes("ultra");
+      const isFondeo =
+        routeUpper === "FONDEO" ||
+        routeUpper === "CME" ||
+        familyUpper.includes("FONDEO") ||
+        nameLower.includes("fondeo") ||
+        !isUltra;
+
       if (routeFilter === "ULTRA" && !isUltra) return false;
-      if (routeFilter === "CME" && isUltra) return false;
+      if (routeFilter === "FONDEO" && !isFondeo) return false;
 
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase();
@@ -259,7 +296,9 @@ export default function GatesPage() {
     let gateData: any = undefined;
 
     if (Array.isArray(rawGates)) {
-      gateData = rawGates.find((g: any) => g.gate_id === meta.num || g.gate_number === meta.num || g.name?.includes(`Gate ${meta.num}`));
+      gateData = rawGates.find(
+        (g: any) => g.gate_id === meta.num || g.gate_number === meta.num || g.name?.includes(`Gate ${meta.num}`)
+      );
     } else if (rawGates && typeof rawGates === "object") {
       const numStr = String(meta.num);
       gateData =
@@ -289,8 +328,6 @@ export default function GatesPage() {
       };
     }
 
-    // Sin entrada de gate real en el payload del backend: ausencia de evidencia explícita.
-    // Prohibido derivar pass/fail de métricas crudas (ZERO-FORCING / EVIDENCE-GATED).
     return {
       pass: false,
       score: undefined,
@@ -306,7 +343,6 @@ export default function GatesPage() {
     return false;
   };
 
-  // Contar compuertas superadas reales
   const getStrategyGateSummary = (strategy: CertifiedStrategy) => {
     let passedCount = 0;
     CANONICAL_11_GATES.forEach((meta) => {
@@ -316,16 +352,24 @@ export default function GatesPage() {
     return passedCount;
   };
 
+  const filteredGatesList = useMemo(() => {
+    if (gateCategoryFilter === "ALL") return CANONICAL_11_GATES;
+    return CANONICAL_11_GATES.filter((g) => g.category.toLowerCase().includes(gateCategoryFilter.toLowerCase()));
+  }, [gateCategoryFilter]);
+
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 p-2 md:p-6 font-sans">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#030712] text-slate-100 p-3 md:p-6 font-sans">
+      <div className="max-w-[1600px] mx-auto space-y-5">
+        {/* SUB-NAV: 7 FASES CUANTITATIVAS CANÓNICAS */}
+        <EstrategiasHeaderNav currentPhase={3} />
+
         {/* HERO STORYTELLING BANNER */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-emerald-950/40 border border-slate-800 p-5 md:p-6 shadow-2xl">
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div className="space-y-2">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#090d16] via-slate-900/90 to-emerald-950/30 border border-white/[0.08] p-5 md:p-6 shadow-2xl backdrop-blur-xl">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+            <div className="space-y-2 max-w-4xl">
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" /> FASE 3 · PIPELINE DETERMINISTA
+                  <ShieldCheck className="w-3.5 h-3.5" /> FASE 3 · PIPELINE DETERMINISTA DE 11 GATES
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800/80 text-slate-300 border border-slate-700">
                   ENGINE v5.4.0 REAL-ONLY
@@ -334,43 +378,59 @@ export default function GatesPage() {
               <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white flex items-center gap-2.5">
                 Las 11 Pruebas de Seguridad Implacables
               </h1>
-              <p className="text-xs md:text-sm text-slate-400 max-w-3xl leading-relaxed">
-                Ninguna estrategia entra a producción sin sobrevivir a las 11 compuertas cuantitativas independientes. Este pipeline audita continuidad de datos, comisiones institucionales, remuestreo Monte Carlo (0% ruina) y reconciliación de ejecución tick-a-tick con control estricto de Drawdown.
+              <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
+                Ninguna estrategia entra a producción sin sobrevivir a las 11 compuertas cuantitativas independientes. Este pipeline audita continuidad OHLCV, comisiones institucionales, remuestreo Monte Carlo (0% ruina), DSR de Marcos López de Prado y reconciliación tick-a-tick con NautilusCore.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2.5 items-center">
+            <div className="flex flex-wrap gap-2.5 items-center font-mono">
               <button
                 onClick={loadCertified}
                 disabled={loading}
-                className="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-bold text-slate-200 transition flex items-center gap-2 shadow-sm active:scale-95"
+                className="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/[0.1] text-xs font-bold text-slate-200 transition flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-400" : "text-slate-400"}`} />
                 Actualizar FSM
               </button>
+              <a
+                href={getExportCsvUrl(routeFilter)}
+                download
+                className="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/[0.1] text-xs font-bold text-slate-200 transition flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5 text-sky-400" />
+                Exportar CSV
+              </a>
+              <a
+                href={getExportXlsxUrl(routeFilter)}
+                download
+                className="px-3.5 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-700/80 text-xs font-bold text-emerald-300 transition flex items-center gap-2 shadow-md active:scale-95 cursor-pointer"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+                Exportar Excel (.xlsx)
+              </a>
               <Link
-                href="/candidatos"
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xs font-mono transition flex items-center gap-2 shadow-lg shadow-emerald-900/40 active:scale-95"
+                href="/estrategias/2-explorador-excel"
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs font-mono transition flex items-center gap-2 shadow-lg shadow-emerald-950/50 active:scale-95 cursor-pointer"
               >
                 <Table className="w-3.5 h-3.5" />
-                Explorador Excel
+                Explorador Excel WAL
               </Link>
             </div>
           </div>
         </div>
 
         {errorMsg && (
-          <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-200 flex items-start gap-3">
+          <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-200 flex items-start gap-3 font-mono text-xs shadow-lg">
             <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-bold text-sm">Error de Verificación del Pipeline:</p>
-              <p className="text-xs text-rose-300 font-mono mt-0.5">{errorMsg}</p>
+              <p className="text-rose-300 mt-0.5">{errorMsg}</p>
             </div>
           </div>
         )}
 
         {/* CONTENEDOR SPLIT: LISTA DE ESTRATEGIAS A LA IZQUIERDA Y DETALLE DE 11 GATES A LA DERECHA */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* COLUMNA IZQUIERDA: LISTA DE ESTRATEGIAS */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center justify-between">
@@ -384,62 +444,72 @@ export default function GatesPage() {
             </div>
 
             {/* FILTROS Y BÚSQUEDA */}
-            <div className="space-y-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80 font-mono text-xs">
+            <div className="space-y-2 bg-[#090d16]/90 backdrop-blur-xl p-3 rounded-2xl border border-white/[0.08] font-mono text-xs shadow-lg">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Buscar por símbolo, familia o ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-slate-950 rounded-lg border border-slate-800 text-slate-100 placeholder-slate-500 text-xs focus:border-emerald-500 focus:outline-none"
+                  className="w-full pl-9 pr-3 py-1.5 bg-[#050811] rounded-xl border border-white/[0.08] text-slate-100 placeholder-slate-500 text-xs focus:border-emerald-500 focus:outline-none"
                 />
               </div>
 
               <div className="flex gap-1.5">
                 <button
                   onClick={() => setRouteFilter("ALL")}
-                  className={`flex-1 py-1 px-2 rounded text-[10px] font-bold transition ${
-                    routeFilter === "ALL" ? "bg-emerald-600 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"
+                  className={`flex-1 py-1 px-2 rounded-xl text-[10px] font-bold transition cursor-pointer ${
+                    routeFilter === "ALL"
+                      ? "bg-emerald-500 text-slate-950 shadow-sm"
+                      : "bg-[#050811] border border-white/[0.08] text-slate-400 hover:text-white"
                   }`}
                 >
                   Todas
                 </button>
                 <button
                   onClick={() => setRouteFilter("ULTRA")}
-                  className={`flex-1 py-1 px-2 rounded text-[10px] font-bold transition ${
-                    routeFilter === "ULTRA" ? "bg-amber-600 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"
+                  className={`flex-1 py-1 px-2 rounded-xl text-[10px] font-bold transition cursor-pointer ${
+                    routeFilter === "ULTRA"
+                      ? "bg-amber-500 text-slate-950 shadow-sm"
+                      : "bg-[#050811] border border-white/[0.08] text-slate-400 hover:text-white"
                   }`}
                 >
                   ⚡ Ruta Ultra
                 </button>
                 <button
-                  onClick={() => setRouteFilter("CME")}
-                  className={`flex-1 py-1 px-2 rounded text-[10px] font-bold transition ${
-                    routeFilter === "CME" ? "bg-sky-600 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"
+                  onClick={() => setRouteFilter("FONDEO")}
+                  className={`flex-1 py-1 px-2 rounded-xl text-[10px] font-bold transition cursor-pointer ${
+                    routeFilter === "FONDEO"
+                      ? "bg-sky-500 text-slate-950 shadow-sm"
+                      : "bg-[#050811] border border-white/[0.08] text-slate-400 hover:text-white"
                   }`}
                 >
-                  🏛️ Ruta CME (Fondeo)
+                  🏛️ Ruta Fondeo
                 </button>
               </div>
             </div>
 
             {/* LISTA DE TARJETAS */}
             {loading ? (
-              <div className="py-20 text-center text-slate-400 text-xs">
+              <div className="py-20 text-center text-slate-400 text-xs font-mono">
                 <RefreshCw className="w-7 h-7 animate-spin mx-auto mb-3 text-emerald-400" />
                 Validando ledger físico contra SQLite WAL...
               </div>
             ) : filteredStrategies.length === 0 ? (
-              <div className="py-16 text-center text-slate-500 text-xs bg-slate-950/40 rounded-xl border border-slate-800/40 p-6">
+              <div className="py-16 text-center text-slate-500 text-xs bg-[#090d16]/60 rounded-2xl border border-white/[0.08] p-6 font-mono">
                 No se encontraron estrategias con los filtros seleccionados.
               </div>
             ) : (
               <div className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1">
                 {filteredStrategies.map((st) => {
                   const isSelected = selectedStrategy?.strategy_id === st.strategy_id;
-                  const isUltra = (st.family || "").toUpperCase().includes("ULTRA") || (st.name || "").toLowerCase().includes("ultra") || (st.route || "").toUpperCase() === "ULTRA";
-                  const shortHash = st.strategy_hash && st.strategy_hash.trim() !== "" ? `${st.strategy_hash.slice(0, 8)}...` : null;
+                  const isUltra =
+                    (st.family || "").toUpperCase().includes("ULTRA") ||
+                    (st.name || "").toLowerCase().includes("ultra") ||
+                    (st.route || "").toUpperCase() === "ULTRA";
+                  const shortHash =
+                    st.strategy_hash && st.strategy_hash.trim() !== "" ? `${st.strategy_hash.slice(0, 8)}...` : null;
                   const hasGateData = hasAnyGateData(st);
                   const passedCount = getStrategyGateSummary(st);
                   const isFullyCertified = hasGateData && passedCount === 11;
@@ -451,25 +521,29 @@ export default function GatesPage() {
                       onClick={() => setSelectedStrategy(st)}
                       role="button"
                       tabIndex={0}
-                      className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                      className={`w-full text-left p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer select-none ${
                         isSelected
-                          ? "bg-gradient-to-br from-emerald-950/60 via-slate-900 to-slate-950 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.18)] ring-1 ring-emerald-500/60"
-                          : "bg-slate-950/80 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/60 text-slate-300"
+                          ? "bg-gradient-to-br from-emerald-950/60 via-slate-900 to-[#090d16] border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.18)] ring-1 ring-emerald-500/60"
+                          : "bg-[#090d16]/80 border-white/[0.08] hover:border-slate-700 hover:bg-slate-900/60 text-slate-300"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-black font-mono border uppercase tracking-wider flex items-center gap-1 ${
+                            className={`px-2 py-0.5 rounded-lg text-[10px] font-black font-mono border uppercase tracking-wider flex items-center gap-1 ${
                               !hasGateData
                                 ? "bg-slate-500/10 border-slate-500/40 text-slate-300"
                                 : isFullyCertified
-                                ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-300"
-                                : "bg-rose-500/10 border-rose-500/40 text-rose-300"
+                                ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
+                                : "bg-amber-500/15 border-amber-500/40 text-amber-300"
                             }`}
                           >
                             <Award className="w-3 h-3 text-emerald-400" />
-                            {!hasGateData ? "GATES: NO EVIDENCE" : isFullyCertified ? "TIER 1 (11/11)" : `TIER 4 (${passedCount}/11)`}
+                            {!hasGateData
+                              ? "GATES: NO EVIDENCE"
+                              : isFullyCertified
+                              ? "TIER 1 (11/11 GATES)"
+                              : `TIER 4 (${passedCount}/11 GATES)`}
                           </span>
                           <span
                             className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border ${
@@ -478,10 +552,10 @@ export default function GatesPage() {
                                 : "bg-sky-950/40 text-sky-300 border-sky-800/40"
                             }`}
                           >
-                            {isUltra ? "RUTA ULTRA" : "RUTA CME"}
+                            {isUltra ? "RUTA ULTRA" : "RUTA FONDEO"}
                           </span>
                         </div>
-                        <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono text-[10px] font-bold border border-slate-700">
+                        <span className="px-2 py-0.5 rounded-lg bg-[#050811] text-slate-200 font-mono text-[10px] font-bold border border-white/[0.08]">
                           {st.symbol} · {st.timeframe}
                         </span>
                       </div>
@@ -493,30 +567,66 @@ export default function GatesPage() {
                         <div className="flex items-center gap-1.5 mt-0.5 text-[10px] font-mono text-slate-400">
                           <Hash className="w-3 h-3 text-emerald-400 flex-shrink-0" />
                           <span>{shortHash || "NO EVIDENCE"}</span>
-                          <span className={`font-bold ml-auto flex items-center gap-0.5 ${!hasGateData ? "text-slate-500" : isFullyCertified ? "text-emerald-400" : "text-amber-400"}`}>
+                          <span
+                            className={`font-bold ml-auto flex items-center gap-0.5 ${
+                              !hasGateData ? "text-slate-500" : isFullyCertified ? "text-emerald-400" : "text-amber-400"
+                            }`}
+                          >
                             {isFullyCertified ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                            {hasGateData ? `${passedCount}/11 Gates Superados` : "Gates: NO EVIDENCE"}
+                            {hasGateData ? `${passedCount}/11 Gates` : "Gates: NO EVIDENCE"}
                           </span>
+                        </div>
+
+                        {/* Visual 11-Gate Indicator Bar */}
+                        <div className="flex items-center gap-1 mt-2" title="Inspección Visual de 11 Compuertas">
+                          {CANONICAL_11_GATES.map((gate) => {
+                            const res = resolveGateItem(gate, st);
+                            return (
+                              <div
+                                key={gate.id}
+                                className={`w-3.5 h-1.5 rounded-sm transition-all ${
+                                  res.score === undefined
+                                    ? "bg-slate-800 border border-slate-700"
+                                    : res.pass
+                                    ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]"
+                                    : "bg-rose-500"
+                                }`}
+                                title={`[${gate.id}] ${gate.name}: ${res.val}`}
+                              />
+                            );
+                          })}
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-1 bg-slate-950/90 p-2 rounded-lg border border-slate-800/70 text-[10px] font-mono">
+                      <div className="grid grid-cols-5 gap-1 bg-[#050811] p-2 rounded-xl border border-white/[0.06] text-[10px] font-mono">
                         <div>
-                          <span className="text-slate-400 block text-[9px]">PF OOS</span>
-                          <span className="font-bold text-emerald-400">
-                            {st.oos_profit_factor ? st.oos_profit_factor.toFixed(2) : st.profit_factor ? st.profit_factor.toFixed(2) : "NO EVIDENCE"}
+                          <span className="text-slate-500 block text-[8.5px] font-bold">PF OOS</span>
+                          <span className="font-bold text-emerald-400 tabular-nums">
+                            {st.oos_profit_factor ? st.oos_profit_factor.toFixed(2) : st.profit_factor ? st.profit_factor.toFixed(2) : "NO EVI"}
                           </span>
                         </div>
                         <div>
-                          <span className="text-slate-400 block text-[9px]">Sharpe</span>
-                          <span className="font-bold text-indigo-300">
-                            {st.sharpe_ratio ? st.sharpe_ratio.toFixed(2) : "NO EVIDENCE"}
+                          <span className="text-slate-500 block text-[8.5px] font-bold">Sharpe</span>
+                          <span className="font-bold text-indigo-300 tabular-nums">
+                            {st.sharpe_ratio ? st.sharpe_ratio.toFixed(2) : "NO EVI"}
                           </span>
                         </div>
                         <div>
-                          <span className="text-slate-400 block text-[9px]">Max DD</span>
-                          <span className="font-bold text-slate-300">
-                            {dd === undefined ? "NO EVIDENCE" : `${dd.toFixed(1)}%`}
+                          <span className="text-slate-500 block text-[8.5px] font-bold">Max DD</span>
+                          <span className="font-bold text-slate-300 tabular-nums">
+                            {dd === undefined ? "NO EVI" : `${dd.toFixed(1)}%`}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[8.5px] font-bold">Ret. M</span>
+                          <span className="font-bold text-emerald-300 tabular-nums">
+                            {st.monthly_return !== null && st.monthly_return !== undefined ? `${st.monthly_return.toFixed(1)}%` : "NO EVI"}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[8.5px] font-bold">OOS M</span>
+                          <span className="font-bold text-sky-300 tabular-nums">
+                            {st.oos_months !== null && st.oos_months !== undefined ? `${st.oos_months.toFixed(1)}m` : "NO EVI"}
                           </span>
                         </div>
                       </div>
@@ -532,8 +642,8 @@ export default function GatesPage() {
             {selectedStrategy ? (
               <div className="space-y-4">
                 {/* TARJETA SUPERIOR DE LA ESTRATEGIA SELECCIONADA */}
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 shadow-xl space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-[#090d16] via-slate-900/90 to-slate-950 border border-white/[0.08] shadow-xl space-y-4 backdrop-blur-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
                     <div>
                       <div className="flex items-center gap-2">
                         {hasAnyGateData(selectedStrategy) && getStrategyGateSummary(selectedStrategy) === 11 ? (
@@ -541,10 +651,14 @@ export default function GatesPage() {
                         ) : (
                           <AlertTriangle className="w-5 h-5 text-amber-400" />
                         )}
-                        <h2 className="text-lg font-black text-white tracking-tight">{selectedStrategy.name || selectedStrategy.strategy_id}</h2>
+                        <h2 className="text-lg font-black text-white tracking-tight">
+                          {selectedStrategy.name || selectedStrategy.strategy_id}
+                        </h2>
                       </div>
                       <p className="text-xs text-slate-400 font-mono mt-0.5">
-                        {selectedStrategy.symbol} · {selectedStrategy.timeframe} · Familia: {selectedStrategy.family || "NO EVIDENCE"} · Estado backend: {selectedStrategy.status || "NO EVIDENCE"}
+                        {selectedStrategy.symbol} · {selectedStrategy.timeframe} · Ruta:{" "}
+                        {selectedStrategy.route || selectedStrategy.family || "NO EVIDENCE"} · Estado:{" "}
+                        {selectedStrategy.status || "NO EVIDENCE"}
                       </p>
                     </div>
 
@@ -557,93 +671,133 @@ export default function GatesPage() {
                         }`}
                       >
                         {hasAnyGateData(selectedStrategy)
-                          ? `${getStrategyGateSummary(selectedStrategy)}/11 APROBADOS`
+                          ? `${getStrategyGateSummary(selectedStrategy)}/11 COMPUERTAS APROBADAS`
                           : "GATES: NO EVIDENCE"}
                       </span>
                     </div>
                   </div>
 
                   {/* MÉTRICAS CLAVE SUPERIORES */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
-                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
-                        PF OOS FÍSICO <QuantTooltip text="Profit Factor en datos fuera de muestra." />
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 font-mono">
+                    <div className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06]">
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
+                        PF OOS <QuantTooltip text="Profit Factor en datos fuera de muestra." />
                       </span>
-                      <span className="text-base font-black text-emerald-400">
-                        {selectedStrategy.oos_profit_factor ? selectedStrategy.oos_profit_factor.toFixed(2) : selectedStrategy.profit_factor ? selectedStrategy.profit_factor.toFixed(2) : "NO EVIDENCE"}
+                      <span className="text-sm font-black text-emerald-400 tabular-nums">
+                        {selectedStrategy.oos_profit_factor
+                          ? selectedStrategy.oos_profit_factor.toFixed(2)
+                          : selectedStrategy.profit_factor
+                          ? selectedStrategy.profit_factor.toFixed(2)
+                          : "NO EVIDENCE"}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
-                        SHARPE RATIO <QuantTooltip text="Ratio de rendimiento ajustado por riesgo." />
+                    <div className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06]">
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
+                        SHARPE <QuantTooltip text="Ratio de rendimiento ajustado por riesgo." />
                       </span>
-                      <span className="text-base font-black text-indigo-300">
+                      <span className="text-sm font-black text-indigo-300 tabular-nums">
                         {selectedStrategy.sharpe_ratio ? selectedStrategy.sharpe_ratio.toFixed(2) : "NO EVIDENCE"}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
-                        MAX DRAWDOWN <QuantTooltip text="Máxima caída acumulada en la cuenta." />
+                    <div className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06]">
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
+                        MAX DD <QuantTooltip text="Máxima caída acumulada en la cuenta." />
                       </span>
-                      <span className="text-base font-black text-slate-300">
+                      <span className="text-sm font-black text-slate-300 tabular-nums">
                         {selectedStrategy.max_drawdown_pct === undefined || selectedStrategy.max_drawdown_pct === null
                           ? "NO EVIDENCE"
                           : `${selectedStrategy.max_drawdown_pct.toFixed(1)}%`}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
+                    <div className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06]">
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
+                        RET. MENSUAL <QuantTooltip text="Retorno promedio mensual OOS." />
+                      </span>
+                      <span className="text-sm font-black text-emerald-300 tabular-nums">
+                        {selectedStrategy.monthly_return !== null && selectedStrategy.monthly_return !== undefined
+                          ? `${selectedStrategy.monthly_return.toFixed(2)}%`
+                          : "NO EVIDENCE"}
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06]">
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
+                        HORIZONTE <QuantTooltip text="Duración total de la muestra OOS en meses." />
+                      </span>
+                      <span className="text-sm font-black text-sky-300 tabular-nums">
+                        {selectedStrategy.oos_months !== null && selectedStrategy.oos_months !== undefined
+                          ? `${selectedStrategy.oos_months.toFixed(1)} m`
+                          : "NO EVIDENCE"}
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06]">
+                      <span className="text-[9px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
                         TRADES OOS <QuantTooltip text="Total de operaciones físicas fuera de muestra." />
                       </span>
-                      <span className="text-base font-black text-sky-400">
-                        {selectedStrategy.total_trades === undefined || selectedStrategy.total_trades === null ? "NO EVIDENCE" : selectedStrategy.total_trades}
+                      <span className="text-sm font-black text-sky-400 tabular-nums">
+                        {selectedStrategy.total_trades === undefined || selectedStrategy.total_trades === null
+                          ? "NO EVIDENCE"
+                          : selectedStrategy.total_trades}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* LISTA DE LAS 11 COMPUERTAS EN ACORDEÓN / TARJETAS DETALLADAS */}
+                {/* LISTA DE LAS 11 COMPUERTAS EN ACORDEÓN INTERACTIVO */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between px-1">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono flex items-center gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-emerald-400" />
                       Auditoría Forense de las 11 Compuertas
                     </h3>
-                    <span className="text-[10px] font-mono text-slate-400">
-                      ESTADO: {!hasAnyGateData(selectedStrategy)
-                        ? "NO EVIDENCE"
-                        : getStrategyGateSummary(selectedStrategy) === 11
-                        ? "CERTIFICADA 100%"
-                        : "EN EVALUACIÓN"}
-                    </span>
+                    <div className="flex items-center gap-1 text-[10px] font-mono">
+                      {["ALL", "Data", "Execution", "Robustness", "Governance"].map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => setGateCategoryFilter(cat)}
+                          className={`px-2 py-0.5 rounded-lg border transition cursor-pointer ${
+                            gateCategoryFilter === cat
+                              ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300"
+                              : "bg-[#050811] border-white/[0.06] text-slate-500 hover:text-slate-300"
+                          }`}
+                        >
+                          {cat === "ALL" ? "Todas" : cat}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="space-y-2.5">
-                    {CANONICAL_11_GATES.map((gate) => {
+                  <div className="space-y-2">
+                    {filteredGatesList.map((gate) => {
                       const res = resolveGateItem(gate, selectedStrategy);
+                      const isExpanded = expandedGates[gate.id] ?? false;
 
                       return (
                         <div
                           key={gate.id}
-                          className={`p-3.5 rounded-xl border transition-all ${
+                          className={`rounded-2xl border transition-all duration-200 ${
                             res.score === undefined
-                              ? "bg-slate-950/60 border-slate-800/60"
+                              ? "bg-[#090d16]/70 border-white/[0.06]"
                               : res.pass
-                              ? "bg-slate-950/80 border-slate-800/80 hover:border-slate-700"
+                              ? "bg-[#090d16]/90 border-white/[0.08] hover:border-slate-700"
                               : "bg-rose-950/20 border-rose-900/40"
                           }`}
                         >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-start gap-2.5">
+                          <div
+                            onClick={() => toggleGateExpand(gate.id)}
+                            className="p-3.5 flex items-start justify-between gap-3 cursor-pointer select-none"
+                          >
+                            <div className="flex items-start gap-2.5 min-w-0">
                               <span className="text-base mt-0.5">{gate.icon}</span>
-                              <div className="space-y-0.5">
-                                <div className="flex items-center gap-2">
+                              <div className="space-y-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   <span className="font-mono text-[11px] font-bold text-slate-400">[{gate.id}]</span>
-                                  <h4 className="text-xs font-bold text-white">{gate.name}</h4>
-                                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                                  <h4 className="text-xs font-bold text-white truncate">{gate.name}</h4>
+                                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-md bg-[#050811] text-slate-300 border border-white/[0.06]">
                                     {gate.category}
                                   </span>
                                 </div>
@@ -651,12 +805,12 @@ export default function GatesPage() {
                                   <span className="text-slate-200 font-medium">Qué protege: </span>
                                   {gate.protectionSentence}
                                 </p>
-                                <div className="flex items-center gap-3 pt-1 text-[10px] font-mono">
+                                <div className="flex items-center gap-3 text-[10px] font-mono flex-wrap">
                                   <span className="text-slate-400">
-                                    Umbral exigido: <span className="text-slate-300">{res.threshold}</span>
+                                    Umbral: <span className="text-slate-300">{res.threshold}</span>
                                   </span>
                                   <span className="text-slate-400">
-                                    · Valor observado:{" "}
+                                    · Observado:{" "}
                                     <span className={res.pass ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>
                                       {res.val}
                                     </span>
@@ -665,9 +819,9 @@ export default function GatesPage() {
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                            <div className="flex items-center gap-2 flex-shrink-0">
                               <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-black font-mono border flex items-center gap-1 ${
+                                className={`px-2 py-0.5 rounded-lg text-[10px] font-black font-mono border flex items-center gap-1 ${
                                   res.score === undefined
                                     ? "bg-slate-800 border-slate-700 text-slate-400"
                                     : res.pass
@@ -687,8 +841,30 @@ export default function GatesPage() {
                                   </>
                                 )}
                               </span>
+                              <div className="p-1 text-slate-500 hover:text-slate-300">
+                                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                              </div>
                             </div>
                           </div>
+
+                          {/* Accordion Extended Details */}
+                          {isExpanded && (
+                            <div className="px-3.5 pb-3.5 pt-1 border-t border-white/[0.06] font-mono text-xs space-y-2 bg-[#050811]/40 rounded-b-2xl">
+                              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                                <div className="text-[11px] text-slate-400">
+                                  <span className="text-slate-500 uppercase font-bold mr-1">Ruta Canónica:</span>
+                                  /gates/{gate.slug}
+                                </div>
+                                <Link
+                                  href={`/gates/${gate.slug}`}
+                                  className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-400 hover:text-cyan-300 transition"
+                                >
+                                  <span>Inspeccionar & Telemetría AI</span>
+                                  <ExternalLink className="w-3 h-3" />
+                                </Link>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -696,13 +872,13 @@ export default function GatesPage() {
                 </div>
 
                 {/* HASHES FORENSES CRIPTOGRÁFICOS */}
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                <div className="p-4 rounded-2xl bg-[#090d16]/90 border border-white/[0.08] space-y-3 backdrop-blur-xl shadow-xl">
+                  <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
                     <span className="font-bold uppercase tracking-wider text-xs text-slate-200 flex items-center gap-2 font-mono">
                       <Hash className="w-4 h-4 text-emerald-400" />
                       Certificado Merkle de Inmutabilidad Cuantitativa
                     </span>
-                    <span className="text-[10px] text-emerald-400 font-mono font-bold flex items-center gap-1 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+                    <span className="text-[10px] text-emerald-400 font-mono font-bold flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded-lg border border-emerald-800">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Ledger WAL Sellado
                     </span>
@@ -715,11 +891,14 @@ export default function GatesPage() {
                       { label: "Dataset Checksum", val: selectedStrategy.dataset_hash || undefined, key: "data" },
                       { label: "Evidence Bundle", val: selectedStrategy.evidence_bundle_hash || undefined, key: "evid" },
                     ].map((h) => (
-                      <div key={h.key} className="p-2 rounded-lg bg-slate-900/80 border border-slate-800/80 flex items-center justify-between gap-2">
+                      <div
+                        key={h.key}
+                        className="p-2.5 rounded-xl bg-[#050811] border border-white/[0.06] flex items-center justify-between gap-2"
+                      >
                         <div className="min-w-0">
-                          <span className="text-slate-400 block text-[9px] uppercase">{h.label}</span>
+                          <span className="text-slate-500 block text-[9px] uppercase font-bold">{h.label}</span>
                           {h.val ? (
-                            <span className="text-slate-200 truncate block font-semibold">{h.val.slice(0, 20)}...</span>
+                            <span className="text-slate-200 truncate block font-semibold">{h.val.slice(0, 22)}...</span>
                           ) : (
                             <span className="text-slate-500 font-semibold">NO EVIDENCE</span>
                           )}
@@ -728,7 +907,7 @@ export default function GatesPage() {
                           <button
                             onClick={() => copyToClipboard(h.val as string, h.key)}
                             title="Copiar Hash SHA-256 completo"
-                            className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex-shrink-0"
+                            className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition flex-shrink-0 cursor-pointer"
                           >
                             {copiedHash === h.key ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                           </button>
@@ -739,7 +918,7 @@ export default function GatesPage() {
                 </div>
               </div>
             ) : (
-              <div className="py-24 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-slate-800 p-8">
+              <div className="py-24 text-center text-slate-500 bg-[#090d16]/40 rounded-2xl border border-white/[0.08] p-8 font-mono text-xs">
                 Selecciona una estrategia de la lista para inspeccionar la auditoría de sus 11 compuertas.
               </div>
             )}

@@ -167,23 +167,52 @@ class StrategySearchRegistry:
     ) -> List[Dict[str, Any]]:
         """Construye un espacio donde cada dimensión usada por discovery tiene efecto real."""
         route_upper = route.upper()
+        tf_lower = str(timeframe).lower()
         space: List[Dict[str, Any]] = []
 
-        if route_upper == "FONDEO":
-            fast_emas = [5, 9, 13, 20]
-            slow_emas = [21, 34, 50, 80]
+        if tf_lower in ["1m", "5m"]:
+            fast_emas_f = [3, 5, 8, 9, 12, 13, 20]
+            slow_emas_f = [15, 21, 30, 34, 50, 80]
+            fast_emas_u = [3, 5, 8, 12, 20]
+            slow_emas_u = [15, 21, 30, 50, 80]
+            rsi_periods = [7, 10, 14, 21]
+            threshold_pairs = [(50.0, 50.0), (52.0, 48.0), (55.0, 45.0), (60.0, 40.0)]
+            atr_sl_f = [1.0, 1.5, 2.0, 2.5, 3.0]
+            atr_tp_f = [1.5, 2.0, 3.0, 4.5, 6.0]
+            atr_sl_u = [1.0, 1.5, 2.0, 3.0]
+            atr_tp_u = [2.0, 3.0, 4.0, 6.0, 8.0]
+        elif tf_lower in ["15m", "1h"]:
+            fast_emas_f = [5, 9, 13, 20]
+            slow_emas_f = [21, 34, 50, 80, 100]
+            fast_emas_u = [8, 12, 20]
+            slow_emas_u = [30, 50, 80, 100]
             rsi_periods = [10, 14, 21]
-            threshold_pairs = [(50.0, 50.0), (52.0, 48.0), (55.0, 45.0)]
-            atr_multipliers_sl = [1.5, 2.0, 2.5]
-            atr_multipliers_tp = [3.0, 4.5, 6.0]
+            threshold_pairs = [(50.0, 50.0), (52.0, 48.0), (55.0, 45.0), (60.0, 40.0)]
+            atr_sl_f = [1.5, 2.0, 2.5, 3.0]
+            atr_tp_f = [2.5, 3.0, 4.5, 6.0, 8.0]
+            atr_sl_u = [1.5, 2.0, 3.0]
+            atr_tp_u = [4.0, 6.0, 8.0]
+        else:  # 4h y fallbacks
+            fast_emas_f = [8, 12, 20, 34]
+            slow_emas_f = [34, 50, 80, 100, 200]
+            fast_emas_u = [8, 12, 20, 34]
+            slow_emas_u = [34, 50, 80, 100, 200]
+            rsi_periods = [10, 14, 21]
+            threshold_pairs = [(52.0, 48.0), (55.0, 45.0), (60.0, 40.0)]
+            atr_sl_f = [1.5, 2.0, 2.5, 3.0]
+            atr_tp_f = [3.0, 4.5, 6.0, 8.0]
+            atr_sl_u = [1.5, 2.0, 3.0]
+            atr_tp_u = [4.0, 6.0, 8.0]
+
+        if route_upper == "FONDEO":
             archetypes = ["INSTITUTIONAL_SESSION_MOMENTUM", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION"]
             for archetype in archetypes:
-                for f in fast_emas:
-                    for s in slow_emas:
+                for f in fast_emas_f:
+                    for s in slow_emas_f:
                         if f >= s:
                             continue
-                        for sl in atr_multipliers_sl:
-                            for tp in atr_multipliers_tp:
+                        for sl in atr_sl_f:
+                            for tp in atr_tp_f:
                                 for rp in rsi_periods:
                                     for r_long, r_short in threshold_pairs:
                                         space.append(
@@ -204,21 +233,15 @@ class StrategySearchRegistry:
                                             }
                                         )
         else:
-            fast_emas = [8, 12, 20]
-            slow_emas = [30, 50, 80]
-            atr_multipliers_sl = [1.5, 2.0, 3.0]
-            atr_multipliers_tp = [4.0, 6.0, 8.0]
-            rsi_periods = [10, 14, 21]
-            threshold_pairs = [(52.0, 48.0), (55.0, 45.0), (60.0, 40.0)]
             pyramiding_counts = [0, 1, 2, 3]
             archetypes = ["MOMENTUM_BREAKOUT", "TREND_FOLLOWING", "RSI_MOMENTUM", "MEAN_REVERSION"]
             for archetype in archetypes:
-                for f in fast_emas:
-                    for s in slow_emas:
+                for f in fast_emas_u:
+                    for s in slow_emas_u:
                         if f >= s:
                             continue
-                        for sl in atr_multipliers_sl:
-                            for tp in atr_multipliers_tp:
+                        for sl in atr_sl_u:
+                            for tp in atr_tp_u:
                                 for rp in rsi_periods:
                                     for r_long, r_short in threshold_pairs:
                                         for tiers in pyramiding_counts:

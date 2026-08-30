@@ -13,10 +13,14 @@ import json
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.orm import Session
 
 from services.api.app.db.database import CandidateModel, PortfolioModel, get_db
+from services.export.excel_master_catalog import (
+    build_master_catalog_csv,
+    build_master_catalog_xlsx,
+)
 
 certified_summary_router = APIRouter(prefix="/certified", tags=["Canonical Certification Summary"])
 
@@ -130,6 +134,12 @@ def _metric(sc: Dict[str, Any], *keys: str) -> Optional[float]:
     oos = sc.get("oos_metrics")
     if isinstance(oos, dict):
         containers.append(oos)
+    metrics = sc.get("metrics")
+    if isinstance(metrics, dict):
+        containers.append(metrics)
+        out_of_sample = metrics.get("out_of_sample")
+        if isinstance(out_of_sample, dict):
+            containers.append(out_of_sample)
     for container in containers:
         for key in keys:
             value = container.get(key)
@@ -222,10 +232,11 @@ def get_certified_strategies_endpoint(
     db: Session = Depends(get_db),
     limit: int = Query(500, ge=1, le=5000),
 ) -> List[Dict[str, Any]]:
+    actual_limit = limit if isinstance(limit, int) else (getattr(limit, "default", 500) if hasattr(limit, "default") and isinstance(getattr(limit, "default"), int) else 500)
     query = db.query(CandidateModel)
     if route and route.upper() != "ALL":
         query = query.filter(CandidateModel.route == route.upper())
-    rows = query.order_by(CandidateModel.net_profit_oos.desc()).limit(limit).all()
+    rows = query.order_by(CandidateModel.net_profit_oos.desc()).limit(actual_limit).all()
     out: List[Dict[str, Any]] = []
 
     for candidate in rows:
@@ -268,7 +279,7 @@ def get_certified_strategies_endpoint(
             "oos_start_timestamp_ms": sc.get("oos_start_timestamp_ms"),
             "oos_end_timestamp_ms": sc.get("oos_end_timestamp_ms"),
             "oos_months": _real_oos_months(sc),
-            "monthly_return": _metric(sc, "monthly_return_pct", "monthly_return"),
+            "monthly_return": _metric(sc, "monthly_return_pct", "monthly_return", "roi_monthly_pct", "monthly_roi_pct"),
             "annual_return": _metric(sc, "annual_return_pct", "annual_return"),
             "cagr": _metric(sc, "cagr"),
             "certified_at_utc": certified_at,
@@ -329,3 +340,46 @@ def get_certified_meta_strategies_endpoint(
             "created_at": row.created_at.isoformat() if row.created_at else None,
         })
     return out
+
+
+@certified_summary_router.get("/export/csv")
+def export_certified_csv(
+    route: Optional[str] = Query(None, description="Filter by route: ULTRA, FONDEO, or ALL"),
+    db: Session = Depends(get_db),
+) -> Response:
+    """Export canonical master catalog (certified strategies and meta-strategies) as CSV."""
+    csv_content = build_master_catalog_csv(db, route=route)
+    timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    route_suffix = f"_{route.lower()}" if route and route.upper() != "ALL" else ""
+    filename = f"catalogo_master_certificadas{route_suffix}_{timestamp_str}.csv"
+
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+        },
+    )
+
+
+@certified_summary_router.get("/export/xlsx")
+def export_certified_xlsx(
+    route: Optional[str] = Query(None, description="Filter by route: ULTRA, FONDEO, or ALL"),
+    db: Session = Depends(get_db),
+) -> Response:
+    """Export canonical master catalog (certified strategies and meta-strategies) as structured Excel (.xlsx)."""
+    xlsx_bytes = build_master_catalog_xlsx(db, route=route)
+    timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    route_suffix = f"_{route.lower()}" if route and route.upper() != "ALL" else ""
+    filename = f"catalogo_master_certificadas{route_suffix}_{timestamp_str}.xlsx"
+
+    return Response(
+        content=xlsx_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+        },
+    )
+

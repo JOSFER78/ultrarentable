@@ -14,6 +14,7 @@ import {
   BookOpen,
   Activity,
   Radio,
+  SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -55,6 +56,8 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         altHrefs: [
           "/estrategias",
           "/estrategias/1-motor-en-vivo",
+          "/estrategias/2-explorador-excel",
+          "/estrategias/3-pipeline-11-gates",
           "/estrategias/4-panel-investigador",
           "/estrategias/5-estrategias-aprobadas",
           "/strategies",
@@ -199,6 +202,19 @@ const NAVIGATION_GROUPS: NavGroup[] = [
           { label: "M08 Psicotrading Pro", href: "/tradesfera#m08", code: "M08" },
         ],
       },
+      {
+        code: "PROV",
+        label: "Gateways & MCP",
+        subtitle: "Conectores API & Tokens",
+        href: "/proveedores",
+        icon: SlidersHorizontal,
+        badge: "MCP",
+        accent: "#a855f7",
+        subItems: [
+          { label: "Matriz de Gateways", href: "/proveedores", code: "GTW" },
+          { label: "NinjaTrader 8 Hub", href: "/ejecucion", code: "NT8", badge: "LIVE" },
+        ],
+      },
     ],
   },
   {
@@ -233,6 +249,7 @@ export default function Sidebar() {
     TSFERA: false,
     PROPS: false,
     DESK: true,
+    PROV: false,
     SIST: false,
   });
 
@@ -247,7 +264,11 @@ export default function Sidebar() {
   useEffect(() => {
     NAVIGATION_GROUPS.forEach((group) => {
       group.items.forEach((item) => {
-        if (item.subItems && (pathname === item.href || (item.altHrefs && item.altHrefs.some((a) => pathname === a || pathname.startsWith(a + "/"))))) {
+        if (
+          item.subItems &&
+          (pathname === item.href ||
+            (item.altHrefs && item.altHrefs.some((a) => pathname === a || pathname.startsWith(a + "/"))))
+        ) {
           setOpenSections((prev) => ({ ...prev, [item.code]: true }));
         }
       });
@@ -301,7 +322,8 @@ export default function Sidebar() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition:
+          "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
         position: "sticky",
         top: 0,
         zIndex: 110,
@@ -447,7 +469,7 @@ export default function Sidebar() {
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        borderRadius: "5px",
+                        borderRadius: "6px",
                         background: active && !hasSub ? "rgba(255, 255, 255, 0.07)" : "transparent",
                         border: active && !hasSub ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid transparent",
                         transition: "all 0.1s ease",
@@ -471,7 +493,7 @@ export default function Sidebar() {
                           style={{
                             width: "15px",
                             height: "15px",
-                            color: active ? (item.accent || "#38bdf8") : "#64748b",
+                            color: active ? item.accent || "#38bdf8" : "#64748b",
                             flexShrink: 0,
                           }}
                         />
@@ -615,8 +637,12 @@ export default function Sidebar() {
                 fontWeight: 700,
                 color: "#10b981",
                 fontFamily: "var(--font-mono, monospace)",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
               }}
             >
+              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#10b981" }} />
               ZERO-MOCKS · REAL-ONLY
             </div>
           </>
@@ -628,6 +654,7 @@ export default function Sidebar() {
               height: "6px",
               borderRadius: "50%",
               background: "#10b981",
+              boxShadow: "0 0 6px rgba(16,185,129,0.8)",
             }}
           />
         )}

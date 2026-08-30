@@ -1,146 +1,354 @@
-/**
- * apps/web/app/ultra/page.tsx
- * MÓDULO ULTRA — EXPLOTACIÓN ASIMÉTRICA & BÓVEDA RATCHET MONOTÓNICA (BINGX USD-M PERPETUALS)
- * ESTADO 100% HONESTO Y REAL (CERO MOCKS)
- */
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import {
+  Zap,
+  ShieldCheck,
+  TrendingUp,
+  Flame,
+  ArrowRight,
+  Layers,
+  Sparkles,
+  Calculator,
+  Activity,
+  CheckCircle2,
+  Lock,
+  ChevronRight,
+} from "lucide-react";
 
 export default function UltraPage() {
-  const [activeMargin, setActiveMargin] = useState<number>(100);
+  const [bulletSize, setBulletSize] = useState<number>(500);
+  const [targetRMultiple, setTargetRMultiple] = useState<number>(10);
+  const [pyramidLayers, setPyramidLayers] = useState<number>(2);
+
+  // Convex calculations
+  // Max loss is strictly 1R (bulletSize)
+  const maxRiskUsd = bulletSize;
+  // With 40% House Money pyramiding on 2 layers:
+  // Layer 1: at +1.5R adds 0.4R risk from profit
+  // Layer 2: at +3.0R adds 0.4R risk from profit
+  const baseRewardUsd = bulletSize * targetRMultiple;
+  const pyramidedBonusMultiplier = pyramidLayers === 0 ? 1.0 : pyramidLayers === 1 ? 1.4 : 1.96;
+  const grossConvexRewardUsd = baseRewardUsd * pyramidedBonusMultiplier;
+  const netAsymmetricGainUsd = grossConvexRewardUsd;
+  const convexAsymmetryRatio = (grossConvexRewardUsd / maxRiskUsd).toFixed(1);
 
   return (
-    <div style={{ padding: "16px 24px", width: "100%", maxWidth: "100%", margin: 0, boxSizing: "border-box" }}>
+    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-slate-100">
       {/* 1. TOP HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px", flexWrap: "wrap", gap: "16px" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-            <Link href="/" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
-              ← Volver al Panel Maestro de Estrategias
-            </Link>
-            <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-            <span style={{ fontSize: "11px", fontWeight: 900, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)", textTransform: "uppercase" }}>
-              ⚡ DOCTRINA ULTRA · EXPLOTACIÓN ASIMÉTRICA CONVEXA
-            </span>
-          </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 900, color: "#ffffff", margin: 0, letterSpacing: "-0.5px" }}>
-            Mecanismo de Explotación Ultra & Bóveda Ratchet
-          </h1>
-          <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "6px", maxWidth: "900px" }}>
-            Arquitectura de trading en margen aislado (1R). Piramidación al 40% financiada exclusivamente con ganancias flotantes (House Money) y garantía matemática de protección Free-Risk.
-          </p>
-        </div>
-
-        <div style={{ display: "flex", gap: "10px" }}>
-          <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "8px 14px", textAlign: "right" }}>
-            <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>ESTADO DEL BOT</div>
-            <div style={{ fontSize: "14px", fontWeight: 800, color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-              0 BOTS ACTIVOS (EN REPOSO)
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-xl space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 mb-1">
+              <Link href="/" className="text-xs text-slate-400 hover:text-white transition">
+                ← Command Center
+              </Link>
+              <span className="text-slate-600">/</span>
+              <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
+                DOCTRINA ULTRA · EXPLOTACIÓN ASIMÉTRICA CONVEXA
+              </span>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              Mecanismo de Explotación Ultra & Bóveda Ratchet
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
+              Arquitectura de trading en margen aislado (1R). Piramidación al 40% financiada exclusivamente con ganancias flotantes (House Money) y garantía matemática de protección Free-Risk.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-right">
+              <span className="text-[10px] text-slate-500 font-mono block uppercase">Estado del Motor</span>
+              <span className="text-xs font-mono font-black text-slate-400">
+                0 BOTS ACTIVOS (EN REPOSO)
+              </span>
+            </div>
+            <Link
+              href="/bifurcacion"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-lg shadow-emerald-500/20"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Bifurcación QVF</span>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* 2. EXPLICACIÓN DEL CICLO DE VIDA DE 6 ESTADOS */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "22px", marginBottom: "28px" }}>
-        <h3 style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", margin: "0 0 14px 0" }}>
-          🎯 Ciclo de Vida de la Bala de Margen Aislado (FSM de 6 Estados)
-        </h3>
+      {/* 2. CICLO DE VIDA DE 6 ESTADOS (FSM FINITE STATE MACHINE) */}
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-5">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 className="text-base font-black text-white flex items-center gap-2">
+            <Layers className="w-4 h-4 text-emerald-400" />
+            <span>Ciclo de Vida de la Bala de Margen Aislado (FSM 6 Estados)</span>
+          </h3>
+          <span className="text-xs font-mono text-slate-400">Garantía Zero-Risk Post +1R</span>
+        </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px", marginBottom: "20px" }}>
-          <div style={{ background: "rgba(0, 0, 0, 0.35)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "14px" }}>
-            <strong style={{ color: "#63e1b4", fontSize: "12px" }}>1. INICIO (1R Margen Aislado)</strong>
-            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Disparo con riesgo estrictamente acotado al tamaño del margen.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+          <div className="bg-slate-950/80 border border-emerald-500/30 rounded-xl p-4 space-y-2 hover:border-emerald-500/60 transition">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-black font-mono">
+                1
+              </span>
+              <span className="text-xs font-bold text-emerald-300">INICIO (1R)</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-snug">
+              Disparo con margen aislado: riesgo máximo acotado estrictamente a 1R.
+            </p>
           </div>
 
-          <div style={{ background: "rgba(0, 0, 0, 0.35)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "14px" }}>
-            <strong style={{ color: "#38bdf8", fontSize: "12px" }}>2. CONFIRMACIÓN</strong>
-            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Alcanzado +1.0R de flotante, el Stop Loss se traslada a Break-Even.</p>
+          <div className="bg-slate-950/80 border border-sky-500/30 rounded-xl p-4 space-y-2 hover:border-sky-500/60 transition">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center text-xs font-black font-mono">
+                2
+              </span>
+              <span className="text-xs font-bold text-sky-300">CONFIRMACIÓN</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-snug">
+              Al alcanzar +1.0R flotante, Stop Loss se traslada de inmediato a Break-Even ($0 riesgo).
+            </p>
           </div>
 
-          <div style={{ background: "rgba(0, 0, 0, 0.35)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "14px" }}>
-            <strong style={{ color: "#a78bfa", fontSize: "12px" }}>3. CRECIMIENTO (40% HM)</strong>
-            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Adición piramidal de capas con House Money y SL Free-Risk garantizado ≥ +0.5R.</p>
+          <div className="bg-slate-950/80 border border-purple-500/30 rounded-xl p-4 space-y-2 hover:border-purple-500/60 transition">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-xs font-black font-mono">
+                3
+              </span>
+              <span className="text-xs font-bold text-purple-300">CRECIMIENTO</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-snug">
+              Piramidación del 40% financiada con House Money asegurando profit residual ≥ +0.5R.
+            </p>
           </div>
 
-          <div style={{ background: "rgba(0, 0, 0, 0.35)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "14px" }}>
-            <strong style={{ color: "#34d399", fontSize: "12px" }}>4. COSECHA RATCHET</strong>
-            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Hitos 2x, 3x, 5x y 10x donde el capital se transfiere a Bóveda físicamente intocable.</p>
+          <div className="bg-slate-950/80 border border-emerald-500/30 rounded-xl p-4 space-y-2 hover:border-emerald-500/60 transition">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs font-black font-mono">
+                4
+              </span>
+              <span className="text-xs font-bold text-emerald-300">COSECHA RATCHET</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-snug">
+              Hitos 2x, 3x, 5x, 10x donde el 50% de ganancia se bloquea físicamente en Bóveda.
+            </p>
           </div>
 
-          <div style={{ background: "rgba(0, 0, 0, 0.35)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "14px" }}>
-            <strong style={{ color: "#fbbf24", fontSize: "12px" }}>5. PROTECCIÓN BE</strong>
-            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Seguimiento por Chandelier Stop o Parabolic SAR dinámico.</p>
+          <div className="bg-slate-950/80 border border-amber-500/30 rounded-xl p-4 space-y-2 hover:border-amber-500/60 transition">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs font-black font-mono">
+                5
+              </span>
+              <span className="text-xs font-bold text-amber-300">PROTECCIÓN BE</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-snug">
+              Trailing stop dinámico por Chandelier Exit para exprimir colas estadísticas extremas.
+            </p>
           </div>
 
-          <div style={{ background: "rgba(0, 0, 0, 0.35)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "14px" }}>
-            <strong style={{ color: "#f43f5e", fontSize: "12px" }}>6. CIERRE</strong>
-            <p style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>Liquidación ordenada de la bala y reseteo del slot para la siguiente señal.</p>
+          <div className="bg-slate-950/80 border border-rose-500/30 rounded-xl p-4 space-y-2 hover:border-rose-500/60 transition">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs font-black font-mono">
+                6
+              </span>
+              <span className="text-xs font-bold text-rose-300">CIERRE</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-snug">
+              Liquidación ordenada y liberación de slot para el siguiente disparo del radar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. ASYMMETRIC CONVEX SIMULATOR */}
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <Calculator className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-white tracking-tight">
+                Simulador de Asimetría Convexa & Retorno R-Múltiple
+              </h2>
+              <p className="text-xs text-slate-400">
+                Calcula la convexidad matemática de arriesgar 1R con piramidación House Money en trades de cola.
+              </p>
+            </div>
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Convexidad: {convexAsymmetryRatio} : 1</span>
           </div>
         </div>
 
-        {/* 3. MANIFIESTO MAESTRO: ULTRA VS FONDEO */}
-        <div style={{ marginTop: "24px", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "20px" }}>
-          <h4 style={{ fontSize: "14px", fontWeight: 900, color: "#63e1b4", marginBottom: "12px", fontFamily: "var(--font-mono, monospace)" }}>
-            ⚡ ESPECIFICACIÓN CANÓNICA: RUTA ULTRA (SUB-CUENTA BALA) VS RUTA FONDEO (APEX / TOPSTEP)
+        {/* Sliders */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between items-center text-[11px] font-mono font-bold text-slate-400 uppercase">
+              <span>Tamaño de Bala (1R):</span>
+              <span className="text-emerald-400 font-bold">${bulletSize} USD</span>
+            </div>
+            <input
+              type="range"
+              min={100}
+              max={2000}
+              step={50}
+              value={bulletSize}
+              onChange={(e) => setBulletSize(Number(e.target.value))}
+              className="w-full accent-emerald-400 cursor-pointer"
+            />
+            <span className="text-[10px] text-slate-500 block font-mono">Pérdida máxima acotada en caso de fallo</span>
+          </div>
+
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between items-center text-[11px] font-mono font-bold text-slate-400 uppercase">
+              <span>Objetivo de Cola (R):</span>
+              <span className="text-sky-400 font-bold">{targetRMultiple}R</span>
+            </div>
+            <input
+              type="range"
+              min={3}
+              max={30}
+              step={1}
+              value={targetRMultiple}
+              onChange={(e) => setTargetRMultiple(Number(e.target.value))}
+              className="w-full accent-sky-400 cursor-pointer"
+            />
+            <span className="text-[10px] text-slate-500 block font-mono">Múltiplo de expansión de tendencia</span>
+          </div>
+
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between items-center text-[11px] font-mono font-bold text-slate-400 uppercase">
+              <span>Capas de Piramidación HM:</span>
+              <span className="text-purple-400 font-bold">{pyramidLayers} {pyramidLayers === 1 ? "capa" : "capas"}</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={2}
+              step={1}
+              value={pyramidLayers}
+              onChange={(e) => setPyramidLayers(Number(e.target.value))}
+              className="w-full accent-purple-400 cursor-pointer"
+            />
+            <span className="text-[10px] text-slate-500 block font-mono">Piramidación financiada con flotante</span>
+          </div>
+        </div>
+
+        {/* Results Bar */}
+        <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4 font-mono">
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Riesgo Máx. Absoluto (1R)</span>
+            <div className="text-2xl font-black text-rose-400 tabular-nums">
+              -${maxRiskUsd.toLocaleString()} USD
+            </div>
+            <span className="text-[10px] text-slate-500 block">Margen Aislado Fijo</span>
+          </div>
+
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Retorno Bruto Estimado</span>
+            <div className="text-2xl font-black text-emerald-400 tabular-nums">
+              +${grossConvexRewardUsd.toLocaleString("en-US", { maximumFractionDigits: 0 })} USD
+            </div>
+            <span className="text-[10px] text-slate-500 block">Con Piramidación HM</span>
+          </div>
+
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Cosecha Bóveda (50%)</span>
+            <div className="text-2xl font-black text-amber-400 tabular-nums">
+              ${(grossConvexRewardUsd * 0.5).toLocaleString("en-US", { maximumFractionDigits: 0 })} USD
+            </div>
+            <span className="text-[10px] text-slate-500 block">Intocable Monotónico</span>
+          </div>
+
+          <div>
+            <span className="text-[10px] text-slate-500 uppercase block">Ratio Asimetría PnL</span>
+            <div className="text-2xl font-black text-sky-400 tabular-nums">
+              {convexAsymmetryRatio}x
+            </div>
+            <span className="text-[10px] text-slate-500 block">Retorno por cada $1 arriesgado</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. ESPECIFICACIÓN CANÓNICA: RUTA ULTRA VS RUTA FONDEO */}
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h4 className="text-sm font-black text-white font-mono uppercase tracking-wider flex items-center gap-2">
+            <Zap className="w-4 h-4 text-emerald-400" />
+            <span>Matriz Canónica: Ruta ULTRA (BingX Sub-Cuenta) vs Ruta FONDEO (CME Prop Firms)</span>
           </h4>
-          
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "var(--font-mono, monospace)" }}>
-              <thead>
-                <tr style={{ background: "rgba(255, 255, 255, 0.03)", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                  <th style={{ padding: "8px 12px", textAlign: "left", color: "#94a3b8" }}>Parámetro</th>
-                  <th style={{ padding: "8px 12px", textAlign: "left", color: "#63e1b4" }}>Ruta ULTRA (Asimétrica)</th>
-                  <th style={{ padding: "8px 12px", textAlign: "left", color: "#38bdf8" }}>Ruta FONDEO (Prop Firms)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Capital Base Inicial</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>$1.000 USD (Bala Sacrificable)</td>
-                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>$50.000 USD (Cuenta Institucional)</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Riesgo Base por Trade</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>7.5% de la Equidad Disponible</td>
-                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>0.5% - 1.0% ($250 - $500 USD)</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Interés Compuesto</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>Compounding Dinámico Activo</td>
-                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>Lotes / Contratos Fijos CME</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Piramidación</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>1 a 3 niveles en beneficio ≥ +1.5R</td>
-                  <td style={{ padding: "8px 12px", color: "#f43f5e" }}>Prohibida (Exposición fija)</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Drawdown Permitido</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>Hasta 80% (Quiebra de bala en 85-100%)</td>
-                  <td style={{ padding: "8px 12px", color: "#f43f5e" }}>Máximo 4.0% - 4.5% ($2.000 - $2.500 USD)</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Cosecha a Bóveda</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>50% del beneficio cosechado al superar +200%</td>
-                  <td style={{ padding: "8px 12px", color: "#94a3b8" }}>No aplica (Administrado por Prop Firm)</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px 12px", color: "#e2e8f0", fontWeight: 700 }}>Universo de Activos</td>
-                  <td style={{ padding: "8px 12px", color: "#63e1b4" }}>23 Activos Globales (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, LINK, XRP, NQ, ES, GC, SI, CL, EURUSD, etc.)</td>
-                  <td style={{ padding: "8px 12px", color: "#38bdf8" }}>Futuros Regulados CME & Forex (NQ, ES, YM, GC, CL, 6E)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
 
-        <div style={{ textAlign: "center", padding: "20px 0", color: "#64748b", fontSize: "13px" }}>
-          Para activar este motor en vivo, selecciona una cartera validada en el{" "}
-          <Link href="/" style={{ color: "#63e1b4", textDecoration: "none", fontWeight: 800 }}>
-            Panel Maestro de Estrategias →
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-mono">
+            <thead>
+              <tr className="border-b border-slate-800 text-[11px] text-slate-400 uppercase font-bold tracking-wider">
+                <th className="py-3 px-3">Parámetro</th>
+                <th className="py-3 px-3 text-emerald-400">Ruta ULTRA (Asimétrica)</th>
+                <th className="py-3 px-3 text-sky-400">Ruta FONDEO (Prop Firms)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Capital Base Inicial</td>
+                <td className="py-3 px-3 text-emerald-400">$1.000 USD (Bala Sacrificable)</td>
+                <td className="py-3 px-3 text-sky-400">$50.000 USD (Cuenta Institucional)</td>
+              </tr>
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Riesgo Base por Trade</td>
+                <td className="py-3 px-3 text-emerald-400">7.5% de Equidad Disponible</td>
+                <td className="py-3 px-3 text-sky-400">0.5% - 1.0% ($250 - $500 USD)</td>
+              </tr>
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Interés Compuesto</td>
+                <td className="py-3 px-3 text-emerald-400">Compounding Dinámico Activo</td>
+                <td className="py-3 px-3 text-sky-400">Contratos Fijos Micro/E-mini CME</td>
+              </tr>
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Piramidación</td>
+                <td className="py-3 px-3 text-emerald-400">1 a 3 niveles en flotante ≥ +1.5R</td>
+                <td className="py-3 px-3 text-rose-400 font-bold">Prohibida (Exposición fija)</td>
+              </tr>
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Drawdown Permitido</td>
+                <td className="py-3 px-3 text-emerald-400">Hasta 80% (Quiebra de bala en 85-100%)</td>
+                <td className="py-3 px-3 text-rose-400 font-bold">Máximo 4.0% - 4.5% ($2.000 - $2.500 USD)</td>
+              </tr>
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Cosecha a Bóveda</td>
+                <td className="py-3 px-3 text-emerald-400">50% cosechado al superar +200%</td>
+                <td className="py-3 px-3 text-slate-400">Retiros gestionados por Prop Firm</td>
+              </tr>
+              <tr className="hover:bg-slate-900/40">
+                <td className="py-3 px-3 font-bold text-white">Universo de Activos</td>
+                <td className="py-3 px-3 text-emerald-400">23 Activos Globales (BTC, ETH, SOL, SUI, DOGE, AVAX, BNB, NQ, ES, GC, etc.)</td>
+                <td className="py-3 px-3 text-sky-400">Futuros CME (NQ, ES, YM, GC, CL, 6E)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 5. CALL TO ACTION FOOTER */}
+      <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3">
+        <p className="text-xs text-slate-400">
+          Para activar este motor en vivo, selecciona una cartera validada con Gate 11 en el Command Center o en la Bifurcación QVF.
+        </p>
+        <div className="flex justify-center gap-3">
+          <Link
+            href="/bifurcacion"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-lg shadow-emerald-500/20"
+          >
+            <span>Evaluar en Bifurcación QVF</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <Link
+            href="/prop-firms"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-slate-900 hover:bg-slate-800 text-white border border-slate-700 transition"
+          >
+            <span>Ver 70 Prop Firms CME</span>
           </Link>
         </div>
       </div>

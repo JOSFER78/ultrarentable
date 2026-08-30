@@ -20,10 +20,10 @@ export default function FloatingComparisonDrawer({
   if (selectedAccounts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl bg-slate-900/95 border border-amber-500/40 rounded-2xl p-3 px-4 shadow-2xl backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl bg-[#090d16]/95 border border-amber-500/50 rounded-2xl p-3 px-5 shadow-2xl shadow-black/60 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3 transition-all animate-in fade-in slide-in-from-bottom-5 duration-300">
       {/* Slots Summary */}
-      <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
-        <div className="flex items-center gap-1.5 mr-2 text-xs font-mono font-bold text-amber-400">
+      <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 mr-2 text-xs font-mono font-black text-amber-400 shrink-0">
           <Scale className="w-4 h-4 text-amber-400" />
           <span>Comparar ({selectedAccounts.length}/4):</span>
         </div>
@@ -31,17 +31,17 @@ export default function FloatingComparisonDrawer({
         {selectedAccounts.map((acc) => (
           <div
             key={acc.id}
-            className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800 text-xs font-mono shrink-0"
+            className="flex items-center gap-2 bg-[#030712] px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono shrink-0 shadow-sm"
           >
-            <span className="font-bold text-white">{acc.firm_name}</span>
-            <span className="text-amber-400">${(acc.account_size_usd / 1000).toFixed(0)}K</span>
-            <span className="text-[11px] text-emerald-400 font-bold">${acc.total_pass_cost_usd.toFixed(2)}</span>
+            <span className="font-black text-white">{acc.firm_name}</span>
+            <span className="text-amber-400 font-bold">${(acc.account_size_usd / 1000).toFixed(0)}K</span>
+            <span className="text-[11px] text-emerald-400 font-black">${acc.total_pass_cost_usd.toFixed(2)}</span>
             <button
               onClick={() => onRemoveSlot(acc.id)}
-              className="text-slate-500 hover:text-rose-400 ml-1"
+              className="text-slate-500 hover:text-rose-400 ml-1 p-0.5 rounded transition"
               title="Quitar"
             >
-              <X className="w-3 h-3" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         ))}
@@ -51,18 +51,18 @@ export default function FloatingComparisonDrawer({
       <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
         <button
           onClick={onClearAll}
-          className="px-2.5 py-1.5 rounded-xl text-xs font-mono text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition"
+          className="p-2 rounded-xl text-xs font-mono text-slate-400 hover:text-rose-300 hover:bg-slate-800/80 transition"
           title="Limpiar todas las ranuras"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="w-4 h-4" />
         </button>
 
         <button
           onClick={onOpenComparator}
-          className="px-4 py-1.5 rounded-xl text-xs font-mono font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20 transition flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-xs font-mono font-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 transition flex items-center gap-2"
         >
           <span>Ver Cara a Cara</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
     </div>

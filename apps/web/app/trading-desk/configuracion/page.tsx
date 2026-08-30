@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   Sliders,
   Lock,
@@ -19,7 +20,13 @@ import {
   ChevronRight,
   Wifi,
   WifiOff,
+  Save,
+  LogIn,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import AuthModal from "@/components/auth/AuthModal";
 
 interface GatewayStatus {
   provider_id?: string;
@@ -27,15 +34,15 @@ interface GatewayStatus {
   user?: string;
   broker?: string;
   environment?: string;
-  base_capital_usd?: number;
-  current_equity_usd?: number;
-  daily_pnl_usd?: number;
-  trailing_drawdown_limit_usd?: number;
-  current_drawdown_usd?: number;
+  base_capital_usd?: number | null;
+  current_equity_usd?: number | null;
+  daily_pnl_usd?: number | null;
+  trailing_drawdown_limit_usd?: number | null;
+  current_drawdown_usd?: number | null;
   open_positions_count?: number;
-  trial_expires_utc?: string;
+  trial_expires_utc?: string | null;
   gateway_status?: string;
-  last_ping_latency_ms?: number;
+  last_ping_latency_ms?: number | null;
 }
 
 interface GatewayProvider {
@@ -52,10 +59,11 @@ interface GatewayProvider {
 }
 
 export default function BrokerConfigPage() {
+  const { user, profile, loading: authLoading, updateUserProfile } = useAuth();
+
   const [gatewayData, setGatewayData] = useState<GatewayStatus | null>(null);
   const [gatewaysList, setGatewaysList] = useState<GatewayProvider[]>([]);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [isPinging, setIsPinging] = useState(false);
   const [isPingingAll, setIsPingingAll] = useState(false);
   const [pingingProviderId, setPingingProviderId] = useState<string | null>(null);
   const [pingLatency, setPingLatency] = useState<number | null>(null);
@@ -63,10 +71,41 @@ export default function BrokerConfigPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ text: string; isError: boolean } | null>(null);
 
+  // Form State for Firestore Account Settings
+  const [tradovateAccountId, setTradovateAccountId] = useState<string>("");
+  const [ninjaTraderAccountId, setNinjaTraderAccountId] = useState<string>("");
+  const [pickmytradeToken, setPickmytradeToken] = useState<string>("");
+  const [gatewayWebhookToken, setGatewayWebhookToken] = useState<string>("");
+  const [broker, setBroker] = useState<string>("Tradovate");
+  const [environment, setEnvironment] = useState<"DEMO" | "LIVE">("DEMO");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+
+  // Auth modal
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
   const showToast = (text: string, isError = false) => {
     setNotification({ text, isError });
     setTimeout(() => setNotification(null), 5000);
   };
+
+  // Populate form with real user profile data from Firestore
+  useEffect(() => {
+    if (profile) {
+      const accounts = profile.trading_accounts || profile.broker_accounts || {};
+      setTradovateAccountId(accounts.tradovate_account_id || "");
+      setNinjaTraderAccountId(accounts.ninjatrader_account_id || "");
+      setPickmytradeToken(accounts.pickmytrade_token || "");
+      setGatewayWebhookToken(accounts.gateway_webhook_token || "");
+      setBroker(accounts.broker || "Tradovate");
+      setEnvironment((accounts.environment as "DEMO" | "LIVE") || "DEMO");
+    } else if (!user) {
+      setTradovateAccountId("");
+      setNinjaTraderAccountId("");
+      setPickmytradeToken("");
+      setGatewayWebhookToken("");
+    }
+  }, [profile, user]);
 
   const fetchStatus = useCallback(async () => {
     setFetchError(null);
@@ -109,6 +148,42 @@ export default function BrokerConfigPage() {
     setTimeout(() => setCopiedField(null), 2500);
   };
 
+  const handleSaveFirestoreConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveSuccess(false);
+
+    try {
+      const accountsPayload = {
+        tradovate_account_id: tradovateAccountId.trim(),
+        ninjatrader_account_id: ninjaTraderAccountId.trim(),
+        pickmytrade_token: pickmytradeToken.trim(),
+        gateway_webhook_token: gatewayWebhookToken.trim(),
+        broker: broker,
+        environment: environment,
+        updated_at: new Date().toISOString(),
+      };
+
+      await updateUserProfile({
+        trading_accounts: accountsPayload,
+        broker_accounts: accountsPayload,
+      });
+
+      setSaveSuccess(true);
+      showToast("✅ Credenciales de trading guardadas y sincronizadas en Firestore (users/" + user.uid + ")");
+      setTimeout(() => setSaveSuccess(false), 4000);
+    } catch (err: any) {
+      showToast("❌ Error al guardar en Firestore: " + err.message, true);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handlePingProvider = async (providerId: string) => {
     setPingingProviderId(providerId);
     try {
@@ -148,32 +223,38 @@ export default function BrokerConfigPage() {
     }
   };
 
-  const isConnected = gatewayData?.gateway_status === "CONNECTED" || gatewayData?.gateway_status === "IDLE_WAITING";
+  const activeAccountId =
+    tradovateAccountId.trim() ||
+    ninjaTraderAccountId.trim() ||
+    gatewayData?.account_id ||
+    "";
+  const hasLinkedAccount = Boolean(activeAccountId);
+  const isConnected = (gatewayData?.gateway_status === "CONNECTED" || gatewayData?.gateway_status === "IDLE_WAITING") && hasLinkedAccount;
 
   return (
     <div className="space-y-4 font-sans">
       {/* HEADER BAR */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-400">
+          <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400">
             <Sliders className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-black text-white">Conexión Gateway & Brokers CME</h1>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                TRADOVATE / PICKMYTRADE
+              <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">Conexión Gateway & Brokers CME</h1>
+              <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                FIRESTORE REAL-ONLY
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
-              Puente de Ejecución Institucional · Tradovate Demo ⟷ PickMyTrade API v2
+            <p className="text-xs text-slate-400 font-mono mt-1">
+              Configuración Cifrada de Cuentas Tradovate, NinjaTrader y PickMyTrade API v2
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex items-center gap-2.5 w-full md:w-auto font-mono">
           <span
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold border flex items-center gap-2 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border flex items-center gap-2 ${
               isConnected
                 ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                 : "bg-rose-500/20 text-rose-400 border-rose-500/30"
@@ -182,19 +263,19 @@ export default function BrokerConfigPage() {
             {isConnected ? (
               <>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>ONLINE · {pingLatency?.toFixed(1) ?? "--"} ms</span>
+                <span className="tabular-nums">ONLINE · {pingLatency != null ? `${pingLatency.toFixed(1)} ms` : "OK"}</span>
               </>
             ) : (
               <>
                 <WifiOff className="w-3.5 h-3.5" />
-                <span>DESCONECTADO / SIN DATOS</span>
+                <span>{hasLinkedAccount ? "GATEWAY DESCONECTADO" : "SIN CUENTA VINCULADA"}</span>
               </>
             )}
           </span>
 
           <button
             onClick={fetchStatus}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+            className="p-2 rounded-xl bg-[#050811] hover:bg-slate-800 text-slate-300 border border-white/[0.1] transition cursor-pointer"
             title="Refrescar estado"
           >
             <RefreshCw className="w-4 h-4" />
@@ -210,20 +291,44 @@ export default function BrokerConfigPage() {
               : "bg-emerald-950/90 border border-emerald-500/80 text-emerald-200"
           }`}
         >
+          {notification.isError ? <AlertTriangle className="w-4 h-4 text-rose-400" /> : <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
           {notification.text}
         </div>
       )}
 
-      {/* ERROR DISCONNECTED BANNER */}
+      {/* AUTHENTICATION STATE PROMPT */}
+      {!user && !authLoading && (
+        <div className="p-4 bg-blue-950/40 border border-blue-500/40 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-blue-200 shadow-xl">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400">
+              <User className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-bold text-white text-sm">Sesión no iniciada</div>
+              <p className="text-[11px] text-blue-300/80 font-sans mt-0.5">
+                Inicia sesión con tu cuenta para guardar y persistir de forma segura tus Account IDs y tokens en tu documento Firestore.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-900/40 shrink-0"
+          >
+            <LogIn className="w-4 h-4" />
+            Acceder / Registro
+          </button>
+        </div>
+      )}
+
       {fetchError && (
-        <div className="p-4 bg-rose-950/60 border border-rose-500/80 rounded-2xl text-xs font-mono text-rose-200 flex items-center justify-between gap-3">
+        <div className="p-4 bg-rose-950/60 border border-rose-500/80 rounded-2xl text-xs font-mono text-rose-200 flex items-center justify-between gap-3 shadow-lg">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
             <span>ESTADO: <strong>DESCONECTADO</strong> — {fetchError}</span>
           </div>
           <button
             onClick={fetchStatus}
-            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reintentar Conexión
@@ -231,132 +336,241 @@ export default function BrokerConfigPage() {
         </div>
       )}
 
-      {/* PRIMARY REAL TRADOVATE / PICKMYTRADE CONNECTION CARD */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2">
-            <Radio className="w-5 h-5 text-emerald-400 animate-pulse" />
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Gateway Principal: PickMyTrade (Tradovate Demo)
-            </h2>
+      {/* 2-COLUMN GRID: FIRESTORE INPUTS & LIVE GATEWAY TELEMETRY */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* LEFT COLUMN: REAL FIRESTORE ACCOUNT CONFIGURATION FORM (7 COLS) */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Key className="w-5 h-5 text-emerald-400" />
+                <h2 className="text-base font-bold text-white tracking-tight">
+                  Credenciales de Cuenta en Firestore
+                </h2>
+              </div>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                {user ? `UID: ${user.uid.slice(0, 8)}...` : "SIN SESIÓN"}
+              </span>
+            </div>
+
+            <form onSubmit={handleSaveFirestoreConfig} className="space-y-4 font-mono text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                    Broker / Plataforma
+                  </label>
+                  <select
+                    value={broker}
+                    onChange={(e) => setBroker(e.target.value)}
+                    className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-emerald-500"
+                  >
+                    <option value="Tradovate">Tradovate (CME Futures)</option>
+                    <option value="NinjaTrader">NinjaTrader 8 (CME Futures)</option>
+                    <option value="PickMyTrade">PickMyTrade Multi-Gateway</option>
+                    <option value="BingX">BingX (Perpetual Swaps)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                    Entorno de Ejecución
+                  </label>
+                  <select
+                    value={environment}
+                    onChange={(e) => setEnvironment(e.target.value as "DEMO" | "LIVE")}
+                    className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-emerald-500"
+                  >
+                    <option value="DEMO">DEMO / Simulación Real</option>
+                    <option value="LIVE">LIVE / Cuenta Real Financiada</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Tradovate Account ID (ej. DEMO1234567 o real)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Introduce tu ID de cuenta Tradovate..."
+                  value={tradovateAccountId}
+                  onChange={(e) => setTradovateAccountId(e.target.value)}
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-emerald-400 font-bold placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  NinjaTrader 8 Account ID (opcional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="ej. Sim101 / NT-Real-..."
+                  value={ninjaTraderAccountId}
+                  onChange={(e) => setNinjaTraderAccountId(e.target.value)}
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-slate-200 font-bold placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  PickMyTrade Token / API Key
+                </label>
+                <input
+                  type="text"
+                  placeholder="Introduce tu token privado de PickMyTrade API v2..."
+                  value={pickmytradeToken}
+                  onChange={(e) => setPickmytradeToken(e.target.value)}
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-cyan-400 font-bold placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Gateway Webhook Token (opcional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Token de autenticación para webhooks entrantes..."
+                  value={gatewayWebhookToken}
+                  onChange={(e) => setGatewayWebhookToken(e.target.value)}
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-slate-300 font-bold placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-between border-t border-white/[0.08]">
+                <div className="text-[11px] text-slate-400">
+                  {saveSuccess && (
+                    <span className="text-emerald-400 font-bold flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Sincronizado en Firestore
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-900/40 active:scale-95"
+                >
+                  <Save className="w-4 h-4" />
+                  {isSaving ? "Guardando en Firestore..." : "Guardar en Firestore"}
+                </button>
+              </div>
+            </form>
           </div>
-          <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
-            CONECTOR ACTIVO
-          </span>
+
+          {/* WEBHOOK ENDPOINT INSTRUCTION CARD */}
+          <div className="p-4 bg-[#050811] rounded-2xl border border-white/[0.08] space-y-2 font-mono text-xs">
+            <div className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1">
+              <Lock className="w-3.5 h-3.5 text-purple-400" />
+              Endpoint Webhook Oficial PickMyTrade API v2
+            </div>
+            <div className="flex items-center justify-between bg-[#090d16] p-2.5 rounded-xl border border-white/[0.08] text-slate-300">
+              <span className="truncate font-mono">https://api.pickmytrade.trade/v2/add-trade-data-latest?t=24151</span>
+              <button
+                onClick={() => handleCopy("https://api.pickmytrade.trade/v2/add-trade-data-latest?t=24151", "webhook")}
+                className="ml-2 p-1.5 rounded-lg bg-[#050811] border border-white/[0.08] text-slate-400 hover:text-white transition cursor-pointer"
+                title="Copiar endpoint"
+              >
+                {copiedField === "webhook" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-          {/* Card 1: Account Details */}
-          <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-blue-400" />
-              Cuenta & Operador
-            </div>
-            <div className="space-y-2">
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase">Cuenta Tradovate</span>
-                <div className="text-sm font-bold text-emerald-400">
-                  {gatewayData?.account_id ?? "NO EVIDENCE / SIN DATOS"}
-                </div>
+        {/* RIGHT COLUMN: LIVE STATUS & DIAGNOSTICS (5 COLS) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Radio className="w-5 h-5 text-emerald-400 animate-pulse" />
+                <h2 className="text-base font-bold text-white tracking-tight">
+                  Estado Real de la Cuenta
+                </h2>
               </div>
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase">Usuario & ID</span>
-                <div className="text-xs text-slate-200">
-                  {gatewayData?.user ?? "NO EVIDENCE / SIN DATOS"}
-                </div>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase">Entorno / Broker</span>
-                <div className="text-xs text-slate-300">
-                  {gatewayData?.environment ?? "SIN DATOS"} · {gatewayData?.broker ?? "SIN DATOS"}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Financial Capital & Drawdown */}
-          <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              Capital & Guardarraíles
-            </div>
-            <div className="space-y-2">
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase">Saldo Base / Equidad</span>
-                <div className="text-sm font-bold text-white">
-                  {gatewayData?.base_capital_usd != null
-                    ? `$${gatewayData.base_capital_usd.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`
-                    : "SIN DATOS"}
-                </div>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase">Trailing Drawdown Límite</span>
-                <div className="text-xs text-emerald-400 font-bold">
-                  {gatewayData?.current_drawdown_usd != null && gatewayData?.trailing_drawdown_limit_usd != null
-                    ? `$${gatewayData.current_drawdown_usd.toFixed(2)} / $${gatewayData.trailing_drawdown_limit_usd.toFixed(2)} USD (0.0% USADO)`
-                    : "SIN DATOS"}
-                </div>
-              </div>
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase">Vencimiento del Trial</span>
-                <div className="text-xs text-amber-400 flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {gatewayData?.trial_expires_utc ?? "NO EVIDENCE / SIN DATOS"}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Physical Latency & Ping */}
-          <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3 flex flex-col justify-between">
-            <div>
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
-                Latencia Física & Test RTT
-              </div>
-              <div className="mt-3 text-center">
-                <div className="text-3xl font-black text-emerald-400 font-mono">
-                  {pingLatency != null ? `${pingLatency.toFixed(1)} ms` : "-- ms"}
-                </div>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  Latencia de red RTT hacia PickMyTrade / CME
-                </p>
-              </div>
+              <span
+                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                  hasLinkedAccount
+                    ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                    : "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                }`}
+              >
+                {hasLinkedAccount ? "CUENTA CONFIGURADA" : "SIN CUENTA VINCULADA"}
+              </span>
             </div>
 
-            <button
-              onClick={() => handlePingProvider("pickmytrade_tradovate")}
-              disabled={pingingProviderId === "pickmytrade_tradovate"}
-              className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition flex items-center justify-center gap-2 cursor-pointer mt-2"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${pingingProviderId === "pickmytrade_tradovate" ? "animate-spin" : ""}`} />
-              {pingingProviderId === "pickmytrade_tradovate" ? "Midiendo..." : "Ping Tradovate Bridge"}
-            </button>
-          </div>
-        </div>
+            <div className="space-y-3 font-mono text-xs">
+              {/* Account ID & User */}
+              <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.08] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 uppercase">Cuenta Activa:</span>
+                  <strong className="text-emerald-400 text-sm">
+                    {activeAccountId || "SIN VINCULAR"}
+                  </strong>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 uppercase">Operador:</span>
+                  <span className="text-slate-200">
+                    {user?.email || profile?.displayName || "NO AUTENTICADO"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 uppercase">Broker / Entorno:</span>
+                  <span className="text-slate-300">
+                    {broker} ({environment})
+                  </span>
+                </div>
+              </div>
 
-        {/* API Endpoint details */}
-        <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2 font-mono text-xs">
-          <div className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1">
-            <Lock className="w-3.5 h-3.5 text-purple-400" />
-            Endpoint Webhook Tradovate
-          </div>
-          <div className="flex items-center justify-between bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-slate-300">
-            <span className="truncate">https://api.pickmytrade.trade/v2/add-trade-data-latest?t=24151</span>
-            <button
-              onClick={() => handleCopy("https://api.pickmytrade.trade/v2/add-trade-data-latest?t=24151", "webhook")}
-              className="ml-2 p-1 text-slate-400 hover:text-white transition"
-              title="Copiar endpoint"
-            >
-              {copiedField === "webhook" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            </button>
+              {/* Financial Metrics */}
+              <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.08] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 uppercase">Saldo Base:</span>
+                  <span className="font-bold text-white tabular-nums">
+                    {gatewayData?.base_capital_usd != null
+                      ? `$${gatewayData.base_capital_usd.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`
+                      : "SIN DATOS"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 uppercase">Trailing DD Límite:</span>
+                  <span className="font-bold text-emerald-400 tabular-nums">
+                    {gatewayData?.trailing_drawdown_limit_usd != null
+                      ? `$${gatewayData.trailing_drawdown_limit_usd.toFixed(2)} USD`
+                      : "SIN DATOS"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 uppercase">Vencimiento Trial:</span>
+                  <span className="text-amber-400">
+                    {gatewayData?.trial_expires_utc ?? "NO EVIDENCE"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Latency & Ping Button */}
+              <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.08] text-center space-y-2">
+                <div className="text-[10px] text-slate-400 uppercase">Latencia Física RTT</div>
+                <div className="text-2xl font-black text-emerald-400 font-mono tabular-nums">
+                  {pingLatency != null ? `${pingLatency.toFixed(1)} ms` : "SIN DATOS"}
+                </div>
+                <button
+                  onClick={() => handlePingProvider("pickmytrade_tradovate")}
+                  disabled={pingingProviderId === "pickmytrade_tradovate"}
+                  className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${pingingProviderId === "pickmytrade_tradovate" ? "animate-spin" : ""}`} />
+                  {pingingProviderId === "pickmytrade_tradovate" ? "Probando..." : "Test de Conexión Ping"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* SECONDARY REGISTERED GATEWAYS & BRIDGES */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
             <Server className="w-5 h-5 text-indigo-400" />
             <h2 className="text-base font-bold text-white tracking-tight">
@@ -366,7 +580,7 @@ export default function BrokerConfigPage() {
           <button
             onClick={handlePingAll}
             disabled={isPingingAll}
-            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-xl bg-[#050811] hover:bg-slate-800 text-slate-200 border border-white/[0.1] text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isPingingAll ? "animate-spin text-emerald-400" : ""}`} />
             {isPingingAll ? "Diagnosticando..." : "Diagnóstico Ping Global"}
@@ -383,8 +597,8 @@ export default function BrokerConfigPage() {
                 key={gw.provider_id}
                 className={`p-4 rounded-xl border space-y-2.5 flex flex-col justify-between transition-all ${
                   isGwActive
-                    ? "bg-slate-950 border-emerald-500/40 ring-1 ring-emerald-500/20"
-                    : "bg-slate-950 border-slate-800 hover:border-slate-700"
+                    ? "bg-[#050811] border-emerald-500/40 ring-1 ring-emerald-500/20"
+                    : "bg-[#050811] border-white/[0.08] hover:border-white/[0.16]"
                 }`}
               >
                 <div>
@@ -398,7 +612,7 @@ export default function BrokerConfigPage() {
                           ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                           : gw.status === "IDLE_WAITING"
                           ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
-                          : "bg-slate-800 text-slate-400 border-slate-700"
+                          : "bg-slate-800 text-slate-400 border-white/[0.08]"
                       }`}
                     >
                       {gw.status}
@@ -411,23 +625,25 @@ export default function BrokerConfigPage() {
                   </p>
                 </div>
 
-                <div className="space-y-1.5 pt-2 border-t border-slate-800 text-[10px]">
+                <div className="space-y-1.5 pt-2 border-t border-white/[0.08] text-[10px]">
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Latencia RTT:</span>
-                    <span className="text-emerald-400 font-bold">
+                    <span className="text-emerald-400 font-bold tabular-nums">
                       {gw.latency_ms > 0 ? `${gw.latency_ms.toFixed(1)} ms` : "-- ms"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-slate-400">
-                    <span>Token Auth:</span>
-                    <span className="text-slate-300 font-mono">{gw.auth_token || "NO_TOKEN"}</span>
+                    <span>Estado Auth:</span>
+                    <span className="text-slate-300 font-mono">
+                      {hasLinkedAccount && isGwActive ? "CONFIGURADO" : gw.auth_token ? "PROV_KEY" : "SIN TOKEN"}
+                    </span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handlePingProvider(gw.provider_id)}
                   disabled={isGwPinging}
-                  className="w-full py-1.5 rounded-lg text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-1.5 rounded-lg text-[11px] font-bold bg-[#090d16] hover:bg-slate-800 text-slate-200 border border-white/[0.08] transition flex items-center justify-center gap-1.5 cursor-pointer mt-2"
                 >
                   <RefreshCw className={`w-3 h-3 ${isGwPinging ? "animate-spin text-emerald-400" : ""}`} />
                   {isGwPinging ? "Midiendo..." : "Probar Ping"}
@@ -437,6 +653,13 @@ export default function BrokerConfigPage() {
           })}
         </div>
       </div>
+
+      {/* Global Auth Modal if needed */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialTab="login"
+      />
     </div>
   );
 }

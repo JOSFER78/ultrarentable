@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { LIVE_COUPONS_DATABASE } from "@/lib/prop-firms";
 import { BuyButtonWithCoupon } from "./BuyButtonWithCoupon";
-import { ShieldCheck, Percent, Flame } from "lucide-react";
+import { ShieldCheck, Percent, Flame, Sparkles, Tag, CheckCircle2 } from "lucide-react";
 
 export function LiveDealsTracker() {
   const [filterType, setFilterType] = useState<"ALL" | "ZERO_FEE" | "HIGH_DISCOUNT">("ALL");
@@ -15,126 +15,114 @@ export function LiveDealsTracker() {
   });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+    <div className="w-full space-y-6">
       {/* Cabecera & Filtros */}
-      <div style={{ background: "rgba(11, 16, 24, 0.95)", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "14px", padding: "18px 20px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Flame size={20} color="#f59e0b" />
-            <h2 style={{ fontSize: "17px", fontWeight: 800, color: "#ffffff", margin: 0 }}>Rastreador de Ofertas & Cupones Flash en Vivo</h2>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <Flame className="w-5 h-5" />
           </div>
-          <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: "2px 0 0 0" }}>
-            Códigos de descuento verificados diariamente con 1-Click Copy, enlaces directos de compra y cálculo de Coste Total de Adquisición (TCO).
-          </p>
+          <div>
+            <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+              <span>Rastreador de Ofertas & Cupones Flash en Vivo</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-black border border-emerald-500/30">
+                ACTIVO
+              </span>
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Códigos de descuento verificados con 1-Click Copy, enlaces directos de compra y cálculo de Coste Total de Adquisición (TCO).
+            </p>
+          </div>
         </div>
 
         {/* Botones de Filtro */}
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setFilterType("ALL")}
-            style={{
-              padding: "6px 12px",
-              borderRadius: "8px",
-              fontSize: "11.5px",
-              fontWeight: 800,
-              cursor: "pointer",
-              background: filterType === "ALL" ? "#63e1b4" : "#06090e",
-              color: filterType === "ALL" ? "#06090e" : "#cbd5e1",
-              border: filterType === "ALL" ? "1px solid #63e1b4" : "1px solid rgba(148, 163, 184, 0.2)",
-            }}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+              filterType === "ALL"
+                ? "bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20"
+                : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
+            }`}
           >
             Todos ({LIVE_COUPONS_DATABASE.length})
           </button>
           <button
             onClick={() => setFilterType("ZERO_FEE")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              fontSize: "11.5px",
-              fontWeight: 800,
-              cursor: "pointer",
-              background: filterType === "ZERO_FEE" ? "#38bdf8" : "#06090e",
-              color: filterType === "ZERO_FEE" ? "#06090e" : "#38bdf8",
-              border: filterType === "ZERO_FEE" ? "1px solid #38bdf8" : "1px solid rgba(56, 189, 248, 0.3)",
-            }}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+              filterType === "ZERO_FEE"
+                ? "bg-sky-500 text-slate-950 font-black shadow-md shadow-sky-500/20"
+                : "bg-slate-900 text-sky-400 hover:text-sky-300 border border-sky-900/40"
+            }`}
           >
-            <ShieldCheck size={13} />
+            <ShieldCheck className="w-3.5 h-3.5" />
             <span>$0 Activación</span>
           </button>
           <button
             onClick={() => setFilterType("HIGH_DISCOUNT")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              fontSize: "11.5px",
-              fontWeight: 800,
-              cursor: "pointer",
-              background: filterType === "HIGH_DISCOUNT" ? "#f59e0b" : "#06090e",
-              color: filterType === "HIGH_DISCOUNT" ? "#06090e" : "#f59e0b",
-              border: filterType === "HIGH_DISCOUNT" ? "1px solid #f59e0b" : "1px solid rgba(245, 158, 11, 0.3)",
-            }}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+              filterType === "HIGH_DISCOUNT"
+                ? "bg-emerald-500 text-slate-950 font-black shadow-md shadow-emerald-500/20"
+                : "bg-slate-900 text-emerald-400 hover:text-emerald-300 border border-emerald-900/40"
+            }`}
           >
-            <Percent size={13} />
+            <Percent className="w-3.5 h-3.5" />
             <span>≥50% OFF</span>
           </button>
         </div>
       </div>
 
       {/* Grid de Ofertas */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "12px" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredDeals.map((deal) => (
           <div
             key={deal.id}
-            style={{
-              background: "rgba(11, 16, 24, 0.95)",
-              border: "1px solid rgba(148, 163, 184, 0.15)",
-              borderRadius: "12px",
-              padding: "16px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              position: "relative",
-              overflow: "hidden",
-            }}
+            className="bg-[#090d16]/90 border border-white/[0.08] hover:border-amber-500/30 backdrop-blur-xl rounded-2xl p-5 shadow-lg hover:shadow-xl hover:shadow-amber-500/5 transition-all flex flex-col justify-between relative overflow-hidden group"
           >
-            <div style={{ position: "absolute", top: 0, right: 0, background: "linear-gradient(135deg, #06b6d4, #0284c7)", color: "#06090e", fontWeight: 900, fontSize: "11px", padding: "3px 10px", borderBottomLeftRadius: "8px" }}>
+            {/* Top Ribbon */}
+            <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-amber-600 text-slate-950 font-black font-mono text-[11px] px-3 py-1 rounded-bl-xl shadow-md">
               {deal.discountPercent}% OFF
             </div>
 
-            <div>
-              <div style={{ fontSize: "10.5px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>{deal.firmName}</div>
-              <div style={{ fontSize: "13px", fontWeight: 900, color: "#ffffff", marginTop: "4px", paddingRight: "50px", lineHeight: "1.4" }}>
-                {deal.highlightText}
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-black text-amber-400 uppercase tracking-wide">
+                    {deal.firmName}
+                  </span>
+                </div>
+                <h3 className="text-sm font-bold text-white mt-1 pr-16 leading-snug">
+                  {deal.highlightText}
+                </h3>
               </div>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", margin: "10px 0" }}>
+              <div className="flex flex-wrap gap-1.5">
                 {deal.waivesActivationFee && (
-                  <span style={{ fontSize: "10px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8" }}>
-                    ✓ $0 Pass Fee
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-bold">
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>$0 Pass Fee</span>
                   </span>
                 )}
-                <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "4px", background: "#06090e", color: "#94a3b8", border: "1px solid rgba(148, 163, 184, 0.15)" }}>
-                  {deal.recurrence === "LIFETIME_RECURRING" ? "Recurrente de por vida" : deal.recurrence === "ONE_TIME" ? "Pago Único" : "1ª Cuota"}
+                <span className="px-2 py-0.5 rounded-md bg-slate-950/80 text-slate-300 border border-slate-800 text-[10px] font-mono">
+                  {deal.recurrence === "LIFETIME_RECURRING"
+                    ? "Recurrente de por vida"
+                    : deal.recurrence === "ONE_TIME"
+                    ? "Pago Único"
+                    : "1ª Cuota"}
                 </span>
-                <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "4px", background: "#06090e", color: "#94a3b8", border: "1px solid rgba(148, 163, 184, 0.15)" }}>
+                <span className="px-2 py-0.5 rounded-md bg-slate-950/80 text-slate-400 border border-slate-800 text-[10px] font-mono">
                   {deal.applicableTiers}
                 </span>
               </div>
             </div>
 
-            <div style={{ marginTop: "12px", borderTop: "1px solid rgba(148, 163, 184, 0.1)", paddingTop: "12px" }}>
+            <div className="mt-4 pt-3 border-t border-slate-800/80">
               <BuyButtonWithCoupon
                 affiliateUrl={deal.affiliateUrl}
                 couponCode={deal.code}
                 discountPercent={deal.discountPercent}
                 variant="primary"
-                buttonText="🔥 Comprar con Oferta ↗"
+                buttonText={`🔥 Comprar con ${deal.code} ↗`}
               />
             </div>
           </div>

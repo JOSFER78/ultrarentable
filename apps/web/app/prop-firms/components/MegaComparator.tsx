@@ -49,8 +49,8 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Entidad oficial de fondeo y contratos CME.",
     format: (acc) => (
       <div>
-        <span style={{ fontWeight: 900, color: "#ffffff", fontSize: "12.5px" }}>{acc.firm_name}</span>
-        <div style={{ fontSize: "10.5px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>{acc.program_name}</div>
+        <span className="font-black text-white text-xs">{acc.firm_name}</span>
+        <div className="text-[11px] text-sky-400 font-mono mt-0.5">{acc.program_name}</div>
       </div>
     ),
     getRawValue: (acc) => acc.firm_name,
@@ -60,7 +60,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Programa / Modalidad",
     sector: "IDENTIFICATION",
     tooltip: "Plan (Rapid, Growth, Static, Lightning, Combine, TCP, etc.)",
-    format: (acc) => <span style={{ color: "#38bdf8", fontWeight: 700 }}>{acc.program_name}</span>,
+    format: (acc) => <span className="text-sky-400 font-bold text-xs">{acc.program_name}</span>,
     getRawValue: (acc) => acc.program_name,
   },
   {
@@ -69,7 +69,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     sector: "IDENTIFICATION",
     tooltip: "Balance simulado o nominal de la cuenta.",
     format: (acc) => (
-      <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#f1f5f9", background: "#06090e", padding: "2px 6px", borderRadius: "4px", border: "1px solid rgba(148, 163, 184, 0.15)" }}>
+      <span className="font-mono font-black text-slate-100 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800 text-xs">
         ${(acc.account_size_usd / 1000).toFixed(0)}K USD
       </span>
     ),
@@ -80,7 +80,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Mercado Operado",
     sector: "IDENTIFICATION",
     tooltip: "Activos CME (ES, NQ, MES, MNQ, YM, CL, GC).",
-    format: (acc) => <span style={{ color: "#94a3b8", fontFamily: "var(--font-mono, monospace)", fontSize: "11px" }}>{acc.market_type}</span>,
+    format: (acc) => <span className="text-slate-400 font-mono text-xs">{acc.market_type}</span>,
     getRawValue: (acc) => acc.market_type,
   },
 
@@ -90,7 +90,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Precio Regular ($)",
     sector: "COSTS_COUPONS",
     tooltip: "Coste base sin cupón aplicado.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#64748b", textDecoration: "line-through" }}>${acc.exam_price_regular_usd.toFixed(2)}</span>,
+    format: (acc) => <span className="font-mono text-slate-500 line-through text-xs">${acc.exam_price_regular_usd.toFixed(2)}</span>,
     getRawValue: (acc) => acc.exam_price_regular_usd,
   },
   {
@@ -113,7 +113,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Precio Final con Descuento",
     sector: "COSTS_COUPONS",
     tooltip: "Precio neto a pagar al contratar la evaluación.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: "#4ade80", fontSize: "13px" }}>${acc.exam_price_promo_usd.toFixed(2)}</span>,
+    format: (acc) => <span className="font-mono font-black text-emerald-400 text-xs">${acc.exam_price_promo_usd.toFixed(2)}</span>,
     getRawValue: (acc) => acc.exam_price_promo_usd,
     evaluateSemaphore: (acc) => (acc.exam_price_promo_usd <= 60 ? "GREEN" : acc.exam_price_promo_usd <= 120 ? "YELLOW" : "RED"),
   },
@@ -124,11 +124,11 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Cobro obligatorio al aprobar antes de dar la cuenta fondeada.",
     format: (acc) => (
       acc.activation_fee_usd === 0 ? (
-        <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#38bdf8", background: "rgba(56, 189, 248, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+        <span className="font-mono font-black text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/30 text-xs">
           $0 USD (GRATIS)
         </span>
       ) : (
-        <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#fb7185", background: "rgba(244, 63, 94, 0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+        <span className="font-mono font-black text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30 text-xs">
           ${acc.activation_fee_usd} USD
         </span>
       )
@@ -141,7 +141,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Coste Total de Pase (TCO)",
     sector: "COSTS_COUPONS",
     tooltip: "Inversión real total (Examen con Promo + Activación).",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: "#ffffff", fontSize: "13px" }}>${acc.total_pass_cost_usd.toFixed(2)} USD</span>,
+    format: (acc) => <span className="font-mono font-black text-white text-xs">${acc.total_pass_cost_usd.toFixed(2)} USD</span>,
     getRawValue: (acc) => acc.total_pass_cost_usd,
     evaluateSemaphore: (acc) => (acc.total_pass_cost_usd <= 90 ? "GREEN" : acc.total_pass_cost_usd <= 180 ? "YELLOW" : "RED"),
   },
@@ -150,7 +150,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Coste de Reset",
     sector: "COSTS_COUPONS",
     tooltip: "Tarifa para reiniciar la cuenta en evaluación.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>${acc.reset_fee_usd.toFixed(2)}</span>,
+    format: (acc) => <span className="font-mono text-slate-300 text-xs">${acc.reset_fee_usd.toFixed(2)}</span>,
     getRawValue: (acc) => acc.reset_fee_usd,
   },
   {
@@ -160,9 +160,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Cobro recurrente si no se aprueba en 30 días.",
     format: (acc) => (
       acc.monthly_renewal_usd === 0 ? (
-        <span style={{ color: "#38bdf8", fontWeight: 700 }}>Pago Único ($0)</span>
+        <span className="text-sky-400 font-bold text-xs">Pago Único ($0)</span>
       ) : (
-        <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>${acc.monthly_renewal_usd.toFixed(2)}/mes</span>
+        <span className="font-mono text-slate-300 text-xs">${acc.monthly_renewal_usd.toFixed(2)}/mes</span>
       )
     ),
     getRawValue: (acc) => acc.monthly_renewal_usd,
@@ -175,9 +175,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Coste mensual de datos CME Level 2 en fondeo.",
     format: (acc) => (
       acc.data_fee_funded_monthly_usd === 0 ? (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>$0 USD (Gratis)</span>
+        <span className="text-emerald-400 font-black text-xs">$0 USD (Gratis)</span>
       ) : (
-        <span style={{ color: "#fb7185", fontWeight: 800, fontFamily: "var(--font-mono, monospace)" }}>${acc.data_fee_funded_monthly_usd}/mes</span>
+        <span className="text-rose-400 font-black font-mono text-xs">${acc.data_fee_funded_monthly_usd}/mes</span>
       )
     ),
     getRawValue: (acc) => acc.data_fee_funded_monthly_usd,
@@ -191,7 +191,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     sector: "RISK_DRAWDOWN",
     tooltip: "Pérdida máxima acumulada tolerada.",
     format: (acc) => (
-      <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#fb7185" }}>
+      <span className="font-mono font-black text-rose-400 text-xs">
         ${acc.max_drawdown_usd.toLocaleString()} ({acc.max_drawdown_pct}%)
       </span>
     ),
@@ -204,12 +204,12 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Mecanismo de cálculo del umbral de pérdida.",
     format: (acc) => {
       if (acc.drawdown_type === "STATIC") {
-        return <span style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>Estático Puro</span>;
+        return <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-xs font-black">Estático Puro</span>;
       }
       if (acc.drawdown_type === "EOD_TRAILING" || acc.drawdown_type === "LOCKED_INITIAL") {
-        return <span style={{ background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>EOD Trailing (Cierre)</span>;
+        return <span className="bg-sky-500/10 text-sky-400 border border-sky-500/30 px-2 py-0.5 rounded text-xs font-black">EOD Trailing (Cierre)</span>;
       }
-      return <span style={{ background: "rgba(244, 63, 94, 0.15)", color: "#fb7185", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>Intraday Peak</span>;
+      return <span className="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-xs font-black">Intraday Peak</span>;
     },
     getRawValue: (acc) => acc.drawdown_type,
     evaluateSemaphore: (acc) => (acc.drawdown_type === "STATIC" || acc.drawdown_type === "EOD_TRAILING" || acc.drawdown_type === "LOCKED_INITIAL" ? "GREEN" : "RED"),
@@ -219,7 +219,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Freeze Level (Congelación)",
     sector: "RISK_DRAWDOWN",
     tooltip: "Momento exacto en que el trailing se detiene.",
-    format: (acc) => <span style={{ color: "#cbd5e1", fontSize: "11px" }}>{acc.freeze_level_description}</span>,
+    format: (acc) => <span className="text-slate-300 text-xs">{acc.freeze_level_description}</span>,
     getRawValue: (acc) => acc.freeze_level_description,
   },
   {
@@ -229,12 +229,12 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Límite diario de pérdida.",
     format: (acc) => {
       if (acc.daily_loss_limit_type === "NONE") {
-        return <span style={{ color: "#4ade80", fontWeight: 800 }}>Sin DLL (Libre)</span>;
+        return <span className="text-emerald-400 font-black text-xs">Sin DLL (Libre)</span>;
       }
       if (acc.daily_loss_limit_type === "SOFT_BREACH") {
-        return <span style={{ color: "#fbbf24", fontFamily: "var(--font-mono, monospace)", fontWeight: 700 }}>${acc.daily_loss_limit_usd} (Soft Lock)</span>;
+        return <span className="text-amber-400 font-mono font-bold text-xs">${acc.daily_loss_limit_usd} (Soft Lock)</span>;
       }
-      return <span style={{ color: "#fb7185", fontFamily: "var(--font-mono, monospace)", fontWeight: 800 }}>${acc.daily_loss_limit_usd} (HARD BREACH 💀)</span>;
+      return <span className="text-rose-400 font-mono font-black text-xs">${acc.daily_loss_limit_usd} (HARD BREACH 💀)</span>;
     },
     getRawValue: (acc) => acc.daily_loss_limit_type,
     evaluateSemaphore: (acc) => (acc.daily_loss_limit_type === "NONE" ? "GREEN" : acc.daily_loss_limit_type === "SOFT_BREACH" ? "YELLOW" : "RED"),
@@ -244,7 +244,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Ratio Target / Drawdown",
     sector: "RISK_DRAWDOWN",
     tooltip: "Dificultad: profit requerido por cada $1 de drawdown.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#f1f5f9" }}>{acc.target_to_drawdown_ratio.toFixed(2)}x</span>,
+    format: (acc) => <span className="font-mono font-black text-slate-100 text-xs">{acc.target_to_drawdown_ratio.toFixed(2)}x</span>,
     getRawValue: (acc) => acc.target_to_drawdown_ratio,
     evaluateSemaphore: (acc) => (acc.target_to_drawdown_ratio <= 1.2 ? "GREEN" : acc.target_to_drawdown_ratio <= 1.6 ? "YELLOW" : "RED"),
   },
@@ -255,7 +255,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Profit Target ($ y %)",
     sector: "PAYOUTS_EXTRACTION",
     tooltip: "Objetivo de ganancia para aprobar la evaluación.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#ffffff" }}>${acc.profit_target_usd.toLocaleString()} ({acc.profit_target_pct}%)</span>,
+    format: (acc) => <span className="font-mono font-black text-white text-xs">${acc.profit_target_usd.toLocaleString()} ({acc.profit_target_pct}%)</span>,
     getRawValue: (acc) => acc.profit_target_usd,
   },
   {
@@ -265,9 +265,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Días de operativa obligatorios antes de aprobar.",
     format: (acc) => (
       acc.min_trading_days_eval === 0 ? (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>0 días (Pase Día 1)</span>
+        <span className="text-emerald-400 font-black text-xs">0 días (Pase Día 1)</span>
       ) : (
-        <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>{acc.min_trading_days_eval} días</span>
+        <span className="font-mono text-slate-300 text-xs">{acc.min_trading_days_eval} días</span>
       )
     ),
     getRawValue: (acc) => acc.min_trading_days_eval,
@@ -280,9 +280,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Días requeridos en fondeo antes del primer cobro.",
     format: (acc) => (
       acc.min_trading_days_payout === 0 ? (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>Día 1 (Inmediato)</span>
+        <span className="text-emerald-400 font-black text-xs">Día 1 (Inmediato)</span>
       ) : (
-        <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>{acc.min_trading_days_payout} días</span>
+        <span className="font-mono text-slate-300 text-xs">{acc.min_trading_days_payout} días</span>
       )
     ),
     getRawValue: (acc) => acc.min_trading_days_payout,
@@ -293,7 +293,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Safety Buffer Retenido",
     sector: "PAYOUTS_EXTRACTION",
     tooltip: "Colchón de seguridad que la firma retiene permanentemente.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#fbbf24" }}>${acc.safety_buffer_usd.toLocaleString()} USD</span>,
+    format: (acc) => <span className="font-mono font-black text-amber-400 text-xs">${acc.safety_buffer_usd.toLocaleString()} USD</span>,
     getRawValue: (acc) => acc.safety_buffer_usd,
   },
   {
@@ -301,7 +301,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Capital para 1er Retiro ($1K)",
     sector: "PAYOUTS_EXTRACTION",
     tooltip: "Target + Safety Buffer + $1,000 netos: El esfuerzo real.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 900, color: "#38bdf8" }}>${acc.capital_required_first_payout_1k.toLocaleString()} USD</span>,
+    format: (acc) => <span className="font-mono font-black text-sky-400 text-xs">${acc.capital_required_first_payout_1k.toLocaleString()} USD</span>,
     getRawValue: (acc) => acc.capital_required_first_payout_1k,
     evaluateSemaphore: (acc) => (acc.capital_required_first_payout_1k <= 5500 ? "GREEN" : acc.capital_required_first_payout_1k <= 6500 ? "YELLOW" : "RED"),
   },
@@ -310,7 +310,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Frecuencia de Retiro",
     sector: "PAYOUTS_EXTRACTION",
     tooltip: "Rapidez y periodicidad de transferencias.",
-    format: (acc) => <span style={{ color: "#38bdf8", fontWeight: 800 }}>{acc.payout_frequency_label}</span>,
+    format: (acc) => <span className="text-sky-400 font-black text-xs">{acc.payout_frequency_label}</span>,
     getRawValue: (acc) => acc.payout_frequency,
     evaluateSemaphore: (acc) => (acc.payout_frequency === "DAY_1_ON_DEMAND" || acc.payout_frequency === "SAME_DAY_BUSINESS" || acc.payout_frequency === "EVERY_3_DAYS" ? "GREEN" : acc.payout_frequency === "WEEKLY" ? "YELLOW" : "RED"),
   },
@@ -319,7 +319,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Profit Split Tier 1",
     sector: "PAYOUTS_EXTRACTION",
     tooltip: "Porcentaje de ganancia asignado al trader.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#4ade80" }}>{acc.payout_split_tier_1}</span>,
+    format: (acc) => <span className="font-mono font-black text-emerald-400 text-xs">{acc.payout_split_tier_1}</span>,
     getRawValue: (acc) => acc.payout_split_tier_1,
   },
   {
@@ -327,7 +327,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Profit Split Tier 2",
     sector: "PAYOUTS_EXTRACTION",
     tooltip: "Reparto posterior a largo plazo.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>{acc.payout_split_tier_2}</span>,
+    format: (acc) => <span className="font-mono text-slate-300 text-xs">{acc.payout_split_tier_2}</span>,
     getRawValue: (acc) => acc.payout_split_tier_2,
   },
   {
@@ -337,9 +337,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Límite máximo permitido de extracción.",
     format: (acc) => (
       acc.payout_first_3m_cap_usd === 0 ? (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>Sin Límite ($0 Tope)</span>
+        <span className="text-emerald-400 font-black text-xs">Sin Límite ($0 Tope)</span>
       ) : (
-        <span style={{ color: "#fb7185", fontFamily: "var(--font-mono, monospace)", fontWeight: 800 }}>${acc.payout_first_3m_cap_usd} máx</span>
+        <span className="text-rose-400 font-mono font-black text-xs">${acc.payout_first_3m_cap_usd} máx</span>
       )
     ),
     getRawValue: (acc) => acc.payout_first_3m_cap_usd,
@@ -353,7 +353,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     sector: "MICROSTRUCTURE_RULES",
     tooltip: "Contratos simultáneos permitidos CME.",
     format: (acc) => (
-      <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#f1f5f9" }}>
+      <span className="font-mono font-black text-slate-100 text-xs">
         {acc.max_contracts_minis} Minis ({acc.max_contracts_micros} Micros)
       </span>
     ),
@@ -366,9 +366,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "¿Obligan a comenzar con pocos contratos?",
     format: (acc) => (
       acc.scaling_plan_required ? (
-        <span style={{ color: "#fb7185", fontWeight: 700 }}>Obligatorio (Restringido)</span>
+        <span className="text-rose-400 font-bold text-xs">Obligatorio (Restringido)</span>
       ) : (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>Libre desde el Día 1</span>
+        <span className="text-emerald-400 font-black text-xs">Libre desde el Día 1</span>
       )
     ),
     getRawValue: (acc) => acc.scaling_plan_required,
@@ -381,9 +381,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Porcentaje máximo de profit de un solo día.",
     format: (acc) => (
       acc.consistency_rule_pct === 0 ? (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>Sin Regla (0%)</span>
+        <span className="text-emerald-400 font-black text-xs">Sin Regla (0%)</span>
       ) : (
-        <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#fbbf24", fontWeight: 700 }}>{acc.consistency_rule_pct}% Máximo</span>
+        <span className="font-mono text-amber-400 font-bold text-xs">{acc.consistency_rule_pct}% Máximo</span>
       )
     ),
     getRawValue: (acc) => acc.consistency_rule_pct,
@@ -396,9 +396,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Obligación de durar al menos 10 segundos.",
     format: (acc) => (
       acc.trade_duration_10s_rule ? (
-        <span style={{ color: "#fb7185", fontWeight: 700 }}>Sí (Mín 10s en 50%+ trades)</span>
+        <span className="text-rose-400 font-bold text-xs">Sí (Mín 10s en 50%+ trades)</span>
       ) : (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>Sin Restricción de Tiempo</span>
+        <span className="text-emerald-400 font-black text-xs">Sin Restricción de Tiempo</span>
       )
     ),
     getRawValue: (acc) => acc.trade_duration_10s_rule,
@@ -411,9 +411,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Prohibición de operar comunicados macro.",
     format: (acc) => (
       acc.news_trading_restricted ? (
-        <span style={{ color: "#fb7185", fontWeight: 700 }}>Prohibido (±2 min)</span>
+        <span className="text-rose-400 font-bold text-xs">Prohibido (±2 min)</span>
       ) : (
-        <span style={{ color: "#4ade80", fontWeight: 800 }}>100% Permitido Operar Noticias</span>
+        <span className="text-emerald-400 font-black text-xs">100% Permitido Operar Noticias</span>
       )
     ),
     getRawValue: (acc) => acc.news_trading_restricted,
@@ -424,7 +424,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Hora de Cierre Forzoso CME",
     sector: "MICROSTRUCTURE_RULES",
     tooltip: "Hora límite diaria de liquidación.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", color: "#cbd5e1" }}>{acc.session_close_mandatory_time}</span>,
+    format: (acc) => <span className="font-mono text-slate-300 text-xs">{acc.session_close_mandatory_time}</span>,
     getRawValue: (acc) => acc.session_close_mandatory_time,
   },
   {
@@ -434,12 +434,12 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     tooltip: "Permisividad para sistemas automatizados.",
     format: (acc) => {
       if (acc.bot_policy === "ALLOWED_100") {
-        return <span style={{ color: "#4ade80", fontWeight: 800 }}>✅ 100% EAs/VPS</span>;
+        return <span className="text-emerald-400 font-black text-xs">✅ 100% EAs/VPS</span>;
       }
       if (acc.bot_policy === "PROHIBITED") {
-        return <span style={{ color: "#fb7185", fontWeight: 900 }}>❌ 100% PROHIBIDO</span>;
+        return <span className="text-rose-400 font-black text-xs">❌ 100% PROHIBIDO</span>;
       }
-      return <span style={{ color: "#fbbf24", fontWeight: 700 }}>⚠️ Restringido (Local)</span>;
+      return <span className="text-amber-400 font-bold text-xs">⚠️ Restringido (Local)</span>;
     },
     getRawValue: (acc) => acc.bot_policy,
     evaluateSemaphore: (acc) => (acc.bot_policy === "ALLOWED_100" ? "GREEN" : acc.bot_policy === "ALLOWED_LOCAL_ONLY" ? "YELLOW" : "RED"),
@@ -449,7 +449,7 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     label: "Pasarela de Datos CME",
     sector: "MICROSTRUCTURE_RULES",
     tooltip: "Proveedor de enrutamiento.",
-    format: (acc) => <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#38bdf8" }}>{acc.data_gateway}</span>,
+    format: (acc) => <span className="font-mono font-black text-sky-400 text-xs">{acc.data_gateway}</span>,
     getRawValue: (acc) => acc.data_gateway,
   },
   {
@@ -458,9 +458,9 @@ const ALL_COLUMNS: ColumnDefinition[] = [
     sector: "MICROSTRUCTURE_RULES",
     tooltip: "Software compatible.",
     format: (acc) => (
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+      <div className="flex flex-wrap gap-1">
         {acc.platforms_supported.map((p) => (
-          <span key={p} style={{ background: "#06090e", color: "#cbd5e1", padding: "1px 5px", borderRadius: "3px", fontSize: "9.5px", border: "1px solid rgba(148, 163, 184, 0.15)" }}>
+          <span key={p} className="bg-slate-950/80 text-slate-300 px-1.5 py-0.5 rounded text-[10px] border border-slate-800 font-mono">
             {p}
           </span>
         ))}
@@ -483,9 +483,9 @@ export function MegaComparator() {
   const [sizeFilter, setSizeFilter] = useState<AccountSize | "ALL">("ALL");
   const [viewMode, setViewMode] = useState<"FULL_MATRIX" | "ONLY_DIFFERENCES">("FULL_MATRIX");
   const [enableSemaphore, setEnableSemaphore] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>("" );
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Cuentas seleccionadas (de 2 a 6)
+  // Selected accounts (2 to 6)
   const [selectedIds, setSelectedIds] = useState<string[]>([
     "mffu-rapid-50k",
     "tradeify-growth-50k",
@@ -514,10 +514,6 @@ export function MegaComparator() {
       .map((id) => ALL_PROP_FIRM_ACCOUNTS.find((a) => a.id === id)!)
       .filter(Boolean);
   }, [selectedIds]);
-
-  const analysisReport = useMemo(() => {
-    return generateCriticalDifferencesReport(selectedAccounts);
-  }, [selectedAccounts]);
 
   const handleAddSlot = (id: string) => {
     if (!selectedIds.includes(id) && selectedIds.length < 6) {
@@ -563,24 +559,25 @@ export function MegaComparator() {
   }, []);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+    <div className="w-full space-y-6">
       {/* 1. PANEL SUPERIOR */}
-      <div style={{ background: "rgba(11, 16, 24, 0.95)", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <h2 style={{ fontSize: "17px", fontWeight: 900, color: "#ffffff", margin: 0 }}>
-              ⚖️ Mega-Comparador Multi-Cuenta ({ALL_PROP_FIRM_ACCOUNTS.length} Cuentas · 36 Columnas)
+            <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+              <Scale className="w-5 h-5 text-amber-400" />
+              <span>Mega-Comparador Multi-Cuenta ({ALL_PROP_FIRM_ACCOUNTS.length} Cuentas · 36 Columnas)</span>
             </h2>
-            <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: "2px 0 0 0" }}>
-              Compara de 2 a 6 cuentas de cualquier firma y tamaño con botones directos de compra, semáforo inteligente y auditoría forense.
+            <p className="text-xs text-slate-400 mt-0.5">
+              Compara de 2 a 6 cuentas simultáneamente con botones directos de compra, semáforo inteligente y auditoría forense.
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={firmFilter}
               onChange={(e) => setFirmFilter(e.target.value)}
-              style={{ background: "#06090e", color: "#ffffff", border: "1px solid rgba(148, 163, 184, 0.25)", borderRadius: "8px", padding: "6px 10px", fontSize: "11.5px", fontWeight: 700 }}
+              className="bg-slate-950 text-white border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs font-mono font-bold focus:border-amber-500 focus:outline-none"
             >
               <option value="ALL">Todas las Firmas ({uniqueFirms.length})</option>
               {uniqueFirms.map(([slug, name]) => (
@@ -591,7 +588,7 @@ export function MegaComparator() {
             <select
               value={sizeFilter}
               onChange={(e) => setSizeFilter(e.target.value === "ALL" ? "ALL" : (Number(e.target.value) as AccountSize))}
-              style={{ background: "#06090e", color: "#ffffff", border: "1px solid rgba(148, 163, 184, 0.25)", borderRadius: "8px", padding: "6px 10px", fontSize: "11.5px", fontWeight: 700 }}
+              className="bg-slate-950 text-white border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs font-mono font-bold focus:border-amber-500 focus:outline-none"
             >
               <option value="ALL">Todos los Tamaños ($9K - $300K)</option>
               <option value={9000}>$9,000 USD</option>
@@ -608,31 +605,34 @@ export function MegaComparator() {
           </div>
         </div>
 
-        {/* Ranuras Seleccionadas */}
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(6, selectedAccounts.length + (selectedAccounts.length < 6 ? 1 : 0))}, 1fr)`, gap: "10px", borderTop: "1px solid rgba(148, 163, 184, 0.12)", paddingTop: "14px" }}>
+        {/* Selected Slots Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-slate-800/80">
           {selectedAccounts.map((acc, idx) => (
-            <div key={acc.id} style={{ background: "#06090e", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "10px", padding: "10px", position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <div
+              key={acc.id}
+              className="bg-slate-950/90 border border-sky-500/30 rounded-xl p-3 relative flex flex-col justify-between space-y-2 group shadow-sm"
+            >
               <button
                 onClick={() => handleRemoveSlot(acc.id)}
                 disabled={selectedAccounts.length <= 2}
-                style={{ position: "absolute", top: "6px", right: "6px", background: "transparent", border: "none", color: "#64748b", cursor: "pointer" }}
+                className="absolute top-2 right-2 text-slate-500 hover:text-rose-400 disabled:opacity-20 transition"
                 title="Eliminar de la comparativa"
               >
-                <X size={12} />
+                <X className="w-3.5 h-3.5" />
               </button>
               <div>
-                <div style={{ fontSize: "9.5px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>
-                  Ranura {idx + 1} · {acc.firm_name}
-                </div>
-                <div style={{ fontSize: "12px", fontWeight: 800, color: "#ffffff", marginTop: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <span className="text-[10px] font-mono font-bold text-sky-400 uppercase tracking-wider block truncate pr-4">
+                  Slot {idx + 1} · {acc.firm_name}
+                </span>
+                <div className="text-xs font-black text-white truncate mt-0.5">
                   {acc.program_name}
                 </div>
-                <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px", display: "flex", gap: "6px" }}>
-                  <span style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#fff" }}>${(acc.account_size_usd / 1000).toFixed(0)}K</span>
-                  <span style={{ color: "#4ade80", fontWeight: 800 }}>${acc.exam_price_promo_usd.toFixed(0)}</span>
+                <div className="text-[11px] font-mono text-slate-400 mt-1 flex items-center justify-between">
+                  <span className="font-bold text-slate-200">${(acc.account_size_usd / 1000).toFixed(0)}K</span>
+                  <span className="text-emerald-400 font-bold">${acc.exam_price_promo_usd.toFixed(0)}</span>
                 </div>
               </div>
-              <div style={{ marginTop: "8px" }}>
+              <div className="pt-2">
                 <BuyButtonWithCoupon
                   affiliateUrl={acc.affiliate_url}
                   couponCode={acc.active_coupon_code}
@@ -645,8 +645,8 @@ export function MegaComparator() {
           ))}
 
           {selectedAccounts.length < 6 && (
-            <div style={{ background: "rgba(15, 23, 42, 0.4)", border: "1px dashed rgba(148, 163, 184, 0.3)", borderRadius: "10px", padding: "10px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontSize: "10.5px", color: "#94a3b8" }}>+ Añadir Ranura ({selectedAccounts.length}/6)</span>
+            <div className="bg-slate-950/40 border border-dashed border-slate-800 rounded-xl p-3 flex flex-col justify-center items-center gap-2">
+              <span className="text-[11px] font-mono text-slate-400">+ Slot ({selectedAccounts.length}/6)</span>
               <select
                 onChange={(e) => {
                   if (e.target.value) {
@@ -654,12 +654,14 @@ export function MegaComparator() {
                     e.target.value = "";
                   }
                 }}
-                style={{ width: "100%", background: "#06090e", color: "#38bdf8", border: "1px solid rgba(56, 189, 248, 0.4)", borderRadius: "6px", padding: "4px", fontSize: "10.5px", fontWeight: 700 }}
+                className="w-full bg-[#030712] text-sky-400 border border-sky-500/40 rounded-lg p-1.5 text-xs font-mono font-bold focus:outline-none"
                 defaultValue=""
               >
-                <option value="" disabled>Seleccionar...</option>
+                <option value="" disabled>Añadir...</option>
                 {availableAccounts.filter((a) => !selectedIds.includes(a.id)).map((acc) => (
-                  <option key={acc.id} value={acc.id}>{acc.firm_name} — {acc.program_name} (${(acc.account_size_usd / 1000).toFixed(0)}K)</option>
+                  <option key={acc.id} value={acc.id}>
+                    {acc.firm_name} — {acc.program_name} (${(acc.account_size_usd / 1000).toFixed(0)}K)
+                  </option>
                 ))}
               </select>
             </div>
@@ -668,19 +670,21 @@ export function MegaComparator() {
       </div>
 
       {/* 2. TABLA MATRICIAL DE 36 COLUMNAS */}
-      <div style={{ background: "rgba(11, 16, 24, 0.95)", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "14px", overflowX: "auto", boxShadow: "0 8px 30px rgba(0,0,0,0.4)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11.5px", textAlign: "left" }}>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl overflow-x-auto shadow-2xl">
+        <table className="w-full text-left text-xs font-mono border-collapse">
           <thead>
-            <tr style={{ background: "rgba(6, 9, 14, 0.98)", borderBottom: "1px solid rgba(148, 163, 184, 0.2)", position: "sticky", top: 0, zIndex: 10 }}>
-              <th style={{ padding: "14px 16px", width: "260px", color: "#94a3b8", fontSize: "10.5px", fontWeight: 800, textTransform: "uppercase" }}>
+            <tr className="bg-slate-950/95 border-b border-slate-800 sticky top-0 z-10">
+              <th className="py-3.5 px-4 w-64 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
                 Atributo Técnico Forense (36 Columnas)
               </th>
               {selectedAccounts.map((acc) => (
-                <th key={acc.id} style={{ padding: "14px", minWidth: "200px", borderLeft: "1px solid rgba(148, 163, 184, 0.12)" }}>
-                  <div style={{ fontSize: "10px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>{acc.firm_name}</div>
-                  <div style={{ fontSize: "13px", fontWeight: 900, color: "#ffffff" }}>{acc.program_name}</div>
-                  <div style={{ fontSize: "10.5px", color: "#94a3b8" }}>${(acc.account_size_usd / 1000).toFixed(0)}K · {acc.market_type}</div>
-                  <div style={{ marginTop: "6px" }}>
+                <th key={acc.id} className="py-3.5 px-4 min-w-[200px] border-l border-slate-800/80">
+                  <div className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">{acc.firm_name}</div>
+                  <div className="text-sm font-black text-white mt-0.5">{acc.program_name}</div>
+                  <div className="text-[11px] text-slate-400 font-sans mt-0.5">
+                    ${(acc.account_size_usd / 1000).toFixed(0)}K · {acc.market_type}
+                  </div>
+                  <div className="mt-2">
                     <BuyButtonWithCoupon
                       affiliateUrl={acc.affiliate_url}
                       couponCode={acc.active_coupon_code}
@@ -693,7 +697,7 @@ export function MegaComparator() {
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-800/60">
             {(["IDENTIFICATION", "COSTS_COUPONS", "RISK_DRAWDOWN", "PAYOUTS_EXTRACTION", "MICROSTRUCTURE_RULES"] as SectorKey[]).map((sectorKey) => {
               const sectorColumns = filteredColumns.filter((col) => col.sector === sectorKey);
               if (sectorColumns.length === 0) return null;
@@ -704,24 +708,24 @@ export function MegaComparator() {
                 <React.Fragment key={sectorKey}>
                   <tr
                     onClick={() => toggleSector(sectorKey)}
-                    style={{ background: "rgba(6, 9, 14, 0.8)", borderTop: "1px solid rgba(148, 163, 184, 0.2)", borderBottom: "1px solid rgba(148, 163, 184, 0.15)", cursor: "pointer", userSelect: "none" }}
+                    className="bg-slate-950/80 border-t border-slate-800 cursor-pointer hover:bg-slate-900/60 transition select-none"
                   >
-                    <td colSpan={selectedAccounts.length + 1} style={{ padding: "10px 16px", color: "#63e1b4", fontWeight: 900, fontSize: "11.5px", textTransform: "uppercase" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <td colSpan={selectedAccounts.length + 1} className="py-2.5 px-4 text-emerald-400 font-black text-xs uppercase tracking-wider">
+                      <div className="flex justify-between items-center">
                         <span>{meta.icon} {meta.title} ({sectorColumns.length} Atributos)</span>
-                        <span>{isExpanded ? "▲" : "▼"}</span>
+                        <span>{isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</span>
                       </div>
                     </td>
                   </tr>
 
                   {isExpanded && sectorColumns.map((col) => (
-                    <tr key={col.id} style={{ borderBottom: "1px solid rgba(148, 163, 184, 0.06)" }}>
-                      <td style={{ padding: "10px 16px", color: "#cbd5e1" }}>
-                        <div style={{ fontWeight: 700, color: "#ffffff" }}>{col.label}</div>
-                        <div style={{ fontSize: "10px", color: "#64748b", lineHeight: "1.3" }}>{col.tooltip}</div>
+                    <tr key={col.id} className="hover:bg-slate-900/40 transition">
+                      <td className="py-3 px-4 text-slate-300">
+                        <div className="font-bold text-white text-xs">{col.label}</div>
+                        <div className="text-[10px] text-slate-500 font-sans leading-tight mt-0.5">{col.tooltip}</div>
                       </td>
                       {selectedAccounts.map((acc) => (
-                        <td key={acc.id} style={{ padding: "10px 14px", borderLeft: "1px solid rgba(148, 163, 184, 0.08)", verticalAlign: "top" }}>
+                        <td key={acc.id} className="py-3 px-4 border-l border-slate-800/80 align-top">
                           {col.format(acc)}
                         </td>
                       ))}

@@ -34,6 +34,41 @@ class FundingSearchSpace(BaseModel):
     target_pass_days: int = Field(default=5, ge=1, le=20)
 
 
+def resolve_session_window(
+    symbol: str,
+    session_start_utc: Optional[str] = None,
+    session_end_utc: Optional[str] = None,
+    close_at_eod: Optional[bool] = None,
+    allowed_days: Optional[List[int]] = None,
+) -> SessionWindow:
+    """Calcula o asigna la SessionWindow correspondiente al activo y mercado."""
+    sym_upper = symbol.upper()
+    cme_symbols = {"NQ", "ES", "YM", "RTY", "CL", "GC", "SI"}
+    forex_symbols = {"EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "EURGBP", "EURJPY"}
+    crypto_symbols = {"BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT", "SUIUSDT", "LINKUSDT", "AVAXUSDT", "BNBUSDT"}
+
+    if sym_upper in cme_symbols or any(sym_upper.startswith(c) for c in cme_symbols):
+        def_start, def_end, def_days, def_close = "13:30", "20:00", [0, 1, 2, 3, 4], True
+    elif sym_upper in forex_symbols or ("USD" in sym_upper and "USDT" not in sym_upper) or "EUR" in sym_upper or "GBP" in sym_upper:
+        def_start, def_end, def_days, def_close = "07:00", "20:00", [0, 1, 2, 3, 4], True
+    elif sym_upper in crypto_symbols or "USDT" in sym_upper or "BTC" in sym_upper or "ETH" in sym_upper:
+        def_start, def_end, def_days, def_close = "00:00", "23:59", [0, 1, 2, 3, 4, 5, 6], True
+    else:
+        def_start, def_end, def_days, def_close = "13:30", "20:00", [0, 1, 2, 3, 4], True
+
+    start = session_start_utc if session_start_utc is not None else def_start
+    end = session_end_utc if session_end_utc is not None else def_end
+    days = allowed_days if allowed_days is not None else def_days
+    close = close_at_eod if close_at_eod is not None else def_close
+
+    return SessionWindow(
+        start_time_utc=start,
+        end_time_utc=end,
+        close_at_eod=close,
+        allowed_days=days,
+    )
+
+
 class FundingDiscoveryEngine:
     """Motor de generación y optimización para cuentas institucionales de Fondeo."""
 
@@ -59,8 +94,10 @@ class FundingDiscoveryEngine:
         rsi_threshold_short: float = 50.0,
         archetype: str = "INSTITUTIONAL_SESSION_MOMENTUM",
         time_stop_bars: int = 36,
-        session_start_utc: str = "13:30",
-        session_end_utc: str = "20:00",
+        session_start_utc: Optional[str] = None,
+        session_end_utc: Optional[str] = None,
+        close_at_eod: Optional[bool] = None,
+        allowed_days: Optional[List[int]] = None,
         **kwargs: Any,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot con todos los parámetros del trial aplicados."""
@@ -107,22 +144,19 @@ class FundingDiscoveryEngine:
             short_conditions=short_conditions,
         )
 
-        if sl_atr_mult is not None and tp_atr_mult is not None:
-            exit_rules = ExitModel(
-                sl_type=StopLossType.ATR_MULTIPLE,
-                sl_value=float(sl_atr_mult),
-                tp_type=TakeProfitType.ATR_MULTIPLE,
-                tp_value=float(tp_atr_mult),
-                time_stop_bars=int(time_stop_bars),
-            )
-        else:
-            exit_rules = ExitModel(
-                sl_type=StopLossType.FIXED_POINTS,
-                sl_value=float(stop_loss_ticks),
-                tp_type=TakeProfitType.FIXED_POINTS,
-                tp_value=float(target_profit_ticks),
-                time_stop_bars=int(time_stop_bars),
-            )
+        sl_type = StopLossType.ATR_MULTIPLE if sl_atr_mult is not None else StopLossType.FIXED_POINTS
+        sl_val = float(sl_atr_mult) if sl_atr_mult is not None else float(stop_loss_ticks)
+
+        tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
+        tp_val = float(tp_atr_mult) if tp_atr_mult is not None else float(target_profit_ticks)
+
+        exit_rules = ExitModel(
+            sl_type=sl_type,
+            sl_value=sl_val,
+            tp_type=tp_type,
+            tp_value=tp_val,
+            time_stop_bars=int(time_stop_bars),
+        )
 
         sizing = SizingAndRisk(
             sizing_type=SizingType.RISK_PCT_EQUITY,
@@ -130,11 +164,12 @@ class FundingDiscoveryEngine:
             max_open_positions=1,
             max_daily_loss_usd=float(kwargs.get("max_daily_loss_usd", 1000.0)),
         )
-        session_window = SessionWindow(
-            start_time_utc=session_start_utc,
-            end_time_utc=session_end_utc,
-            close_at_eod=True,
-            allowed_days=[0, 1, 2, 3, 4],
+        session_window = resolve_session_window(
+            symbol=symbol,
+            session_start_utc=session_start_utc,
+            session_end_utc=session_end_utc,
+            close_at_eod=close_at_eod,
+            allowed_days=allowed_days,
         )
         return StrategySnapshot.create_and_hash(
             strategy_id=strategy_id,

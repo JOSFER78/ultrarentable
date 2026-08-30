@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { ALL_PROP_FIRM_ACCOUNTS } from "@/lib/prop-firms";
 import { BuyButtonWithCoupon } from "./BuyButtonWithCoupon";
-import { Calculator, Sparkles, ShieldCheck } from "lucide-react";
+import { Calculator, Sparkles, ShieldCheck, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 
 export function ExtractionRoiCalculator() {
   const [selectedSize, setSelectedSize] = useState<number>(50000);
@@ -23,7 +23,7 @@ export function ExtractionRoiCalculator() {
         const netCashExtracted = Math.max(0, targetCapital - safetyBuffer);
         const netProfit = netCashExtracted - totalInvested;
         const trueRoiMultiple = totalInvested > 0 ? netCashExtracted / totalInvested : 0;
-        const requiredGrossProfit = targetCapital + (acc.profit_target_usd * (monthsToPass > 1 ? 1 : 1));
+        const requiredGrossProfit = targetCapital + acc.profit_target_usd;
 
         return {
           account: acc,
@@ -41,46 +41,61 @@ export function ExtractionRoiCalculator() {
       .sort((a, b) => b.trueRoiMultiple - a.trueRoiMultiple);
   }, [selectedSize, monthsToPass, targetCapital]);
 
+  const topAccount = simulationResults.length > 0 ? simulationResults[0] : null;
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+    <div className="w-full space-y-6">
       {/* 1. CONTROLES DEL SIMULADOR */}
-      <div style={{ background: "rgba(11, 16, 24, 0.95)", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "14px", padding: "20px", display: "flex", flexDirection: "column", gap: "16px" }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Calculator size={20} color="#63e1b4" />
-            <h2 style={{ fontSize: "17px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-              Calculadora Cuantitativa de Coste Real de Extracción & ROI
-            </h2>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <Calculator className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-white tracking-tight">
+                Calculadora Cuantitativa de Coste Real de Extracción & ROI
+              </h2>
+              <p className="text-xs text-slate-400">
+                Modela la inversión real desembolsada (Examen con Promo + Activación + Buffer) y el retorno neto real al extraer tus primeros ${targetCapital.toLocaleString()} USD.
+              </p>
+            </div>
           </div>
-          <p style={{ fontSize: "11.5px", color: "#94a3b8", margin: "2px 0 0 0" }}>
-            Modela el capital total desembolsado (Examen con Promo + Activación + Buffer) y el retorno neto real al extraer tus primeros ${targetCapital.toLocaleString()} USD.
-          </p>
+          {topAccount && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold shrink-0">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>Máx. ROI: {topAccount.trueRoiMultiple.toFixed(1)}x ({topAccount.account.firm_name})</span>
+            </div>
+          )}
         </div>
 
-        {/* Sliders */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
+        {/* Sliders and Selects */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Tamaño */}
-          <div style={{ background: "#06090e", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "10px", padding: "12px" }}>
-            <label style={{ fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
-              Tamaño de Cuenta
+          <div className="bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono block">
+              1. Tamaño de Cuenta
             </label>
             <select
               value={selectedSize}
               onChange={(e) => setSelectedSize(Number(e.target.value))}
-              style={{ width: "100%", background: "#0b1018", color: "#ffffff", border: "1px solid rgba(148, 163, 184, 0.25)", borderRadius: "6px", padding: "6px 8px", fontSize: "12px", fontWeight: 700 }}
+              className="w-full bg-[#030712] text-white border border-slate-700/80 rounded-lg px-3 py-2 text-xs font-bold font-mono focus:border-emerald-500 focus:outline-none"
             >
-              <option value={25000}>$25,000 USD (Micro)</option>
-              <option value={50000}>$50,000 USD (Estándar)</option>
+              <option value={25000}>$25,000 USD (Micro / Starter)</option>
+              <option value={50000}>$50,000 USD (Estándar Recomendado)</option>
               <option value={100000}>$100,000 USD (Avanzado)</option>
-              <option value={150000}>$150,000 USD (Master)</option>
+              <option value={150000}>$150,000 USD (Master / Whale)</option>
             </select>
+            <span className="text-[10px] text-slate-500 block font-mono">
+              Filtra entre las 70 cuentas auditadas
+            </span>
           </div>
 
-          {/* Meses */}
-          <div style={{ background: "#06090e", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "10px", padding: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "6px" }}>
-              <span>Tiempo Estimado:</span>
-              <span style={{ color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>{monthsToPass} {monthsToPass === 1 ? "mes (1 Cuota)" : "meses"}</span>
+          {/* Meses para pasar */}
+          <div className="bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono">
+              <span>2. Tiempo para Aprobar:</span>
+              <span className="text-sky-400">{monthsToPass} {monthsToPass === 1 ? "mes (1 Cuota)" : "meses (Renovaciones)"}</span>
             </div>
             <input
               type="range"
@@ -88,90 +103,150 @@ export function ExtractionRoiCalculator() {
               max={4}
               value={monthsToPass}
               onChange={(e) => setMonthsToPass(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#38bdf8" }}
+              className="w-full accent-sky-400 cursor-pointer"
             />
+            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>1 mes (Flash)</span>
+              <span>2 meses</span>
+              <span>3 meses</span>
+              <span>4 meses</span>
+            </div>
           </div>
 
-          {/* Beneficio Objetivo */}
-          <div style={{ background: "#06090e", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "10px", padding: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10.5px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", marginBottom: "6px" }}>
-              <span>Ganancia a Extraer:</span>
-              <span style={{ color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>${targetCapital.toLocaleString()} USD</span>
+          {/* Ganancia a Extraer */}
+          <div className="bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono">
+              <span>3. Beneficio Objetivo:</span>
+              <span className="text-emerald-400">${targetCapital.toLocaleString()} USD</span>
             </div>
             <input
               type="range"
-              min={2000}
+              min={2500}
               max={25000}
-              step={1000}
+              step={500}
               value={targetCapital}
               onChange={(e) => setTargetCapital(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "#63e1b4" }}
+              className="w-full accent-emerald-400 cursor-pointer"
             />
+            <div className="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>$2,500</span>
+              <span>$10,000</span>
+              <span>$25,000</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 2. TABLA DE RESULTADOS DE ROI */}
-      <div style={{ background: "rgba(11, 16, 24, 0.95)", border: "1px solid rgba(148, 163, 184, 0.15)", borderRadius: "14px", overflowX: "auto", boxShadow: "0 8px 30px rgba(0,0,0,0.4)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
-          <thead>
-            <tr style={{ background: "rgba(6, 9, 14, 0.95)", borderBottom: "1px solid rgba(148, 163, 184, 0.15)", color: "#94a3b8", fontSize: "10.5px", fontWeight: 800, textTransform: "uppercase" }}>
-              <th style={{ padding: "12px 16px" }}># Ranking ROI</th>
-              <th style={{ padding: "12px 14px" }}>Inversión Total ($TCO$)</th>
-              <th style={{ padding: "12px 14px" }}>Buffer Retenido</th>
-              <th style={{ padding: "12px 14px" }}>Extracción Neta Real</th>
-              <th style={{ padding: "12px 14px", color: "#63e1b4", fontWeight: 900 }}>Múltiplo ROI Cuantitativo</th>
-              <th style={{ padding: "12px 14px" }}>Retiros</th>
-              <th style={{ padding: "12px 16px", textAlign: "right" }}>Comprar con Oferta</th>
-            </tr>
-          </thead>
-          <tbody>
-            {simulationResults.map((item, idx) => (
-              <tr key={item.account.id} style={{ borderBottom: "1px solid rgba(148, 163, 184, 0.08)" }}>
-                <td style={{ padding: "12px 16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontWeight: 900, color: idx === 0 ? "#63e1b4" : "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-                      #{idx + 1}
-                    </span>
-                    <div>
-                      <div style={{ color: "#ffffff", fontWeight: 800 }}>{item.account.firm_name}</div>
-                      <div style={{ color: "#38bdf8", fontSize: "11px" }}>{item.account.program_name}</div>
-                    </div>
-                  </div>
-                </td>
+      {/* 2. TABLA DE RESULTADOS DE RETORNO Y EXTRACCIÓN */}
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <span>Ranking de Eficiencia Financiera (${(selectedSize / 1000).toFixed(0)}K)</span>
+            </h3>
+            <p className="text-xs text-slate-400">
+              Ordenado de mayor a menor múltiplo de ROI real sobre el capital total invertido.
+            </p>
+          </div>
+          <span className="text-xs font-mono text-slate-500">
+            {simulationResults.length} Cuentas Comparadas
+          </span>
+        </div>
 
-                <td style={{ padding: "12px 14px", fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#ffffff" }}>
-                  ${item.totalInvested.toFixed(2)} USD
-                </td>
-
-                <td style={{ padding: "12px 14px", fontFamily: "var(--font-mono, monospace)", color: "#fbbf24" }}>
-                  ${item.safetyBuffer.toLocaleString()} USD
-                </td>
-
-                <td style={{ padding: "12px 14px", fontFamily: "var(--font-mono, monospace)", fontWeight: 800, color: "#4ade80" }}>
-                  ${item.netCashExtracted.toLocaleString()} USD
-                </td>
-
-                <td style={{ padding: "12px 14px", fontFamily: "var(--font-mono, monospace)", fontWeight: 900, fontSize: "14px", color: idx === 0 ? "#63e1b4" : "#ffffff" }}>
-                  {item.trueRoiMultiple.toFixed(1)}x
-                </td>
-
-                <td style={{ padding: "12px 14px", fontSize: "11px", color: "#94a3b8" }}>
-                  {item.account.payout_frequency_label}
-                </td>
-
-                <td style={{ padding: "12px 16px", textAlign: "right" }}>
-                  <BuyButtonWithCoupon
-                    affiliateUrl={item.account.affiliate_url}
-                    couponCode={item.account.active_coupon_code}
-                    discountPercent={item.account.discount_percentage}
-                    variant="table-row"
-                  />
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-mono">
+            <thead>
+              <tr className="border-b border-slate-800 text-[11px] text-slate-400 uppercase font-bold tracking-wider">
+                <th className="py-3 px-3">Firma / Modalidad</th>
+                <th className="py-3 px-3 text-right">Inversión Total (TCO)</th>
+                <th className="py-3 px-3 text-right">Colchón Buffer</th>
+                <th className="py-3 px-3 text-right">Cash Neto Extraído</th>
+                <th className="py-3 px-3 text-right">Múltiplo ROI</th>
+                <th className="py-3 px-3 text-center">Acción Directa</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              {simulationResults.map((item, idx) => {
+                const isBest = idx === 0;
+                return (
+                  <tr
+                    key={item.account.id}
+                    className={`transition-colors ${
+                      isBest ? "bg-emerald-950/20 hover:bg-emerald-950/30" : "hover:bg-slate-900/40"
+                    }`}
+                  >
+                    <td className="py-3 px-3">
+                      <div className="flex items-center gap-2">
+                        {isBest && (
+                          <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-black border border-emerald-500/40">
+                            #1 TOP
+                          </span>
+                        )}
+                        <div>
+                          <span className="font-bold text-white text-sm">{item.account.firm_name}</span>
+                          <div className="text-[11px] text-slate-400 font-sans">
+                            {item.account.program_name} · {item.account.drawdown_type}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="py-3 px-3 text-right tabular-nums">
+                      <div className="font-bold text-white text-sm">
+                        ${item.totalInvested.toFixed(2)}
+                      </div>
+                      <div className="text-[10px] text-slate-500">
+                        Exam: ${item.examCost.toFixed(2)} + Act: ${item.activationFee.toFixed(2)}
+                      </div>
+                    </td>
+
+                    <td className="py-3 px-3 text-right tabular-nums">
+                      <span className="text-slate-300">
+                        ${item.safetyBuffer.toLocaleString()}
+                      </span>
+                      <div className="text-[10px] text-slate-500">
+                        Retención inicial
+                      </div>
+                    </td>
+
+                    <td className="py-3 px-3 text-right tabular-nums">
+                      <div className="font-bold text-emerald-400 text-sm">
+                        ${item.netCashExtracted.toLocaleString()}
+                      </div>
+                      <div className="text-[10px] text-emerald-500/80">
+                        Beneficio neto: +${item.netProfit.toFixed(2)}
+                      </div>
+                    </td>
+
+                    <td className="py-3 px-3 text-right tabular-nums">
+                      <span
+                        className={`inline-block px-2.5 py-1 rounded-lg font-black text-xs ${
+                          item.trueRoiMultiple >= 100
+                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                            : item.trueRoiMultiple >= 50
+                            ? "bg-sky-500/20 text-sky-300 border border-sky-500/40"
+                            : "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                        }`}
+                      >
+                        {item.trueRoiMultiple.toFixed(1)}x
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-3 text-center">
+                      <BuyButtonWithCoupon
+                        affiliateUrl={item.account.affiliate_url}
+                        couponCode={item.account.active_coupon_code}
+                        variant="compact"
+                        buttonText={`Comprar ${item.account.active_coupon_code} ↗`}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

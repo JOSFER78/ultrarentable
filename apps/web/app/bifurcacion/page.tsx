@@ -2,6 +2,23 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import {
+  ShieldCheck,
+  Target,
+  Zap,
+  CheckCircle2,
+  AlertTriangle,
+  Flame,
+  Scale,
+  Copy,
+  Check,
+  ArrowRight,
+  Sparkles,
+  Layers,
+  Activity,
+  ChevronRight,
+  Info,
+} from "lucide-react";
 import { ValidationTrack } from "@/types/telemetry";
 
 interface GateEvaluationResult {
@@ -21,15 +38,16 @@ export default function BifurcacionQVFPage() {
   const [strategyId, setStrategyId] = useState<string>("");
   const [evaluating, setEvaluating] = useState<boolean>(false);
   const [result, setResult] = useState<GateEvaluationResult | null>(null);
+  const [copiedHash, setCopiedHash] = useState<boolean>(false);
 
-  // Form parameters for Fondeo (ZERO-MOCKS: sin defaults hardcodeados, inicializados en null)
+  // Form parameters for Fondeo (ZERO-MOCKS: initialized as null)
   const [fondeoDsr, setFondeoDsr] = useState<number | null>(null);
   const [fondeoMaxDd, setFondeoMaxDd] = useState<number | null>(null);
   const [fondeoOutlierPct, setFondeoOutlierPct] = useState<number | null>(null);
   const [fondeoWfe, setFondeoWfe] = useState<number | null>(null);
   const [fondeoDllBreaches, setFondeoDllBreaches] = useState<number | null>(null);
 
-  // Form parameters for Ultra (ZERO-MOCKS: sin defaults hardcodeados, inicializados en null)
+  // Form parameters for Ultra (ZERO-MOCKS: initialized as null)
   const [ultraPayoff, setUltraPayoff] = useState<number | null>(null);
   const [ultraTailGain, setUltraTailGain] = useState<number | null>(null);
   const [ultraExpBala, setUltraExpBala] = useState<number | null>(null);
@@ -69,6 +87,14 @@ export default function BifurcacionQVFPage() {
       })
       .catch(() => setCandidatesList([]));
   }, [activeTrack]);
+
+  const handleCopySignature = (hash: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(hash);
+      setCopiedHash(true);
+      setTimeout(() => setCopiedHash(false), 2000);
+    }
+  };
 
   const handleEvaluate = async () => {
     if (!strategyId) return;
@@ -217,28 +243,49 @@ export default function BifurcacionQVFPage() {
   };
 
   return (
-    <div style={{ padding: "16px 24px", width: "100%", maxWidth: "100%", margin: 0, color: "#f8fafc", boxSizing: "border-box" }}>
+    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-slate-100">
       {/* 1. HEADER */}
-      <div style={{ marginBottom: "24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-          <Link href="/" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
-            ← Command Center
-          </Link>
-          <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-          <span style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-            QUANT VALIDATION FABRIC (QVF) · EVIDENCE GATE DUAL
-          </span>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Link href="/" className="text-xs text-slate-400 hover:text-white transition">
+                ← Command Center
+              </Link>
+              <span className="text-slate-600">/</span>
+              <span className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider">
+                QUANT VALIDATION FABRIC (QVF) · EVIDENCE GATE DUAL
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              Bifurcación de Validación & Compuertas de Evidencia
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              Auditoría matemática independiente: Compuerta institucional para CME Prop Firms vs Compuerta de asimetría extrema para BingX.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <Link
+              href="/bifurcacion/fondeo"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-sky-950/80 text-sky-300 border border-sky-700/60 hover:bg-sky-900 transition"
+            >
+              <ShieldCheck className="w-4 h-4 text-sky-400" />
+              <span>Ver Dashboard Fondeo</span>
+            </Link>
+            <Link
+              href="/bifurcacion/ultrarentable"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 hover:bg-emerald-900 transition"
+            >
+              <Zap className="w-4 h-4 text-emerald-400" />
+              <span>Ver Dashboard Ultra</span>
+            </Link>
+          </div>
         </div>
-        <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-          Bifurcación de Validación & Compuertas de Evidencia
-        </h1>
-        <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
-          Auditoría matemática independiente: Compuerta institucional para CME Prop Firms vs Compuerta de asimetría extrema para BingX.
-        </p>
       </div>
 
       {/* 2. DUAL TRACK SELECTOR TABS */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "24px" }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <button
           onClick={() => {
             setActiveTrack("TRACK_FONDEO");
@@ -248,28 +295,24 @@ export default function BifurcacionQVFPage() {
               setStrategyId(fondeoCand.candidate_id || fondeoCand.strategy_id);
             }
           }}
-          style={{
-            flex: 1,
-            padding: "16px 20px",
-            borderRadius: "12px",
-            background: activeTrack === "TRACK_FONDEO" ? "rgba(56, 189, 248, 0.15)" : "rgba(16, 23, 34, 0.75)",
-            border: activeTrack === "TRACK_FONDEO" ? "1px solid #38bdf8" : "1px solid rgba(255, 255, 255, 0.08)",
-            cursor: "pointer",
-            textAlign: "left",
-            transition: "all 0.15s ease",
-          }}
+          className={`p-5 rounded-2xl text-left transition-all border backdrop-blur-xl ${
+            activeTrack === "TRACK_FONDEO"
+              ? "bg-sky-950/30 border-sky-500 shadow-lg shadow-sky-500/10 ring-1 ring-sky-500/30"
+              : "bg-[#090d16]/90 border-white/[0.08] hover:border-sky-500/30"
+          }`}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-              1. TRACK_FONDEO (CME Prop Firms)
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-black text-sky-400 font-mono flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4" />
+              <span>1. TRACK_FONDEO (CME Prop Firms)</span>
             </span>
-            <span style={{ fontSize: "10px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(56, 189, 248, 0.2)", color: "#38bdf8" }}>
+            <span className="text-[10px] font-black font-mono px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40">
               INSTITUCIONAL
             </span>
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8" }}>
-            Preservación de capital · DSR ≥ 2.0 · Max DD ≤ 4.5% · 0 violaciones DLL · Outliers &lt; 15%
-          </div>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            Preservación estricta de capital: Deflated Sharpe DSR ≥ 2.0 · Max DD ≤ 4.5% · 0 violaciones DLL · Dependencia de Outliers &lt; 15%.
+          </p>
         </button>
 
         <button
@@ -281,73 +324,56 @@ export default function BifurcacionQVFPage() {
               setStrategyId(ultraCand.candidate_id || ultraCand.strategy_id);
             }
           }}
-          style={{
-            flex: 1,
-            padding: "16px 20px",
-            borderRadius: "12px",
-            background: activeTrack === "TRACK_ULTRA" ? "rgba(99, 225, 180, 0.15)" : "rgba(16, 23, 34, 0.75)",
-            border: activeTrack === "TRACK_ULTRA" ? "1px solid #63e1b4" : "1px solid rgba(255, 255, 255, 0.08)",
-            cursor: "pointer",
-            textAlign: "left",
-            transition: "all 0.15s ease",
-          }}
+          className={`p-5 rounded-2xl text-left transition-all border backdrop-blur-xl ${
+            activeTrack === "TRACK_ULTRA"
+              ? "bg-emerald-950/30 border-emerald-500 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/30"
+              : "bg-[#090d16]/90 border-white/[0.08] hover:border-emerald-500/30"
+          }`}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-            <span style={{ fontSize: "13px", fontWeight: 900, color: "#63e1b4", fontFamily: "var(--font-mono, monospace)" }}>
-              2. TRACK_ULTRA (BingX Perpetuals)
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-black text-emerald-400 font-mono flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              <span>2. TRACK_ULTRA (BingX Perpetuals)</span>
             </span>
-            <span style={{ fontSize: "10px", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(99, 225, 180, 0.2)", color: "#63e1b4" }}>
+            <span className="text-[10px] font-black font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
               ALTA ASIMETRÍA
             </span>
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8" }}>
-            Margen aislado 1R · Payoff ≥ 3.0 · Tail Gain ≥ 60% · E(Bala) ≥ 0.20R · Bóveda Ratchet
-          </div>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            Margen aislado 1R con piramidación al 40% House Money: Payoff ≥ 3.0 · Tail Gain ≥ 60% · E(Bala) ≥ +0.20R · Supervivencia MC ≥ 95%.
+          </p>
         </button>
       </div>
 
       {/* 3. EVALUATION AUDITOR PANEL */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: CRITERIA GAUGES & PARAMS */}
-        <div
-          style={{
-            background: "rgba(16, 23, 34, 0.75)",
-            backdropFilter: "blur(16px)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "14px",
-            padding: "22px",
-          }}
-        >
-          <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: "0 0 16px 0" }}>
-            Parámetros Cuantitativos de Auditoría
-          </h3>
+        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 className="text-base font-black text-white flex items-center gap-2">
+              <Target className="w-4 h-4 text-sky-400" />
+              <span>Parámetros Cuantitativos de Auditoría</span>
+            </h3>
+            <span className="text-xs font-mono text-slate-400">
+              {activeTrack === "TRACK_FONDEO" ? "CME Standard" : "Convex Standard"}
+            </span>
+          </div>
 
-          <div style={{ marginBottom: "16px" }}>
-            <label style={{ fontSize: "11px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)", display: "block", marginBottom: "6px" }}>
+          {/* Strategy Selection */}
+          <div className="space-y-2">
+            <label className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
               ID DE LA ESTRATEGIA A AUDITAR:
             </label>
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={strategyId}
-                placeholder="Seleccione o ingrese ID de estrategia..."
+                placeholder="Seleccione o ingrese ID..."
                 onChange={(e) => {
                   setStrategyId(e.target.value);
                   resetMetrics();
                 }}
-                style={{
-                  flex: 1,
-                  background: "rgba(0, 0, 0, 0.4)",
-                  border: "1px solid rgba(255, 255, 255, 0.12)",
-                  borderRadius: "8px",
-                  padding: "8px 12px",
-                  color: "#fff",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-mono, monospace)",
-                  outline: "none",
-                  boxSizing: "border-box",
-                }}
+                className="flex-1 bg-[#030712] border border-slate-700/80 rounded-xl px-3 py-2 text-xs font-mono font-bold text-white focus:border-sky-500 focus:outline-none"
               />
               {candidatesList.length > 0 && (
                 <select
@@ -356,17 +382,7 @@ export default function BifurcacionQVFPage() {
                     setStrategyId(e.target.value);
                     resetMetrics();
                   }}
-                  style={{
-                    background: "#030712",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
-                    borderRadius: "8px",
-                    padding: "8px",
-                    color: "#38bdf8",
-                    fontSize: "11px",
-                    fontFamily: "var(--font-mono, monospace)",
-                    outline: "none",
-                    maxWidth: "180px",
-                  }}
+                  className="bg-[#030712] border border-slate-700/80 rounded-xl px-3 py-2 text-xs font-mono text-sky-400 focus:border-sky-500 focus:outline-none max-w-xs"
                 >
                   <option value="">Seleccionar Candidato...</option>
                   {candidatesList.map((c: any) => (
@@ -379,19 +395,19 @@ export default function BifurcacionQVFPage() {
             </div>
           </div>
 
+          {/* Parameter Sliders / Indicators */}
           {activeTrack === "TRACK_FONDEO" ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Deflated Sharpe Ratio (DSR):</span>
+            <div className="space-y-4 pt-2">
+              {/* DSR */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Deflated Sharpe Ratio (DSR):</span>
                   {fondeoDsr !== null ? (
-                    <strong style={{ color: fondeoDsr >= 2.0 ? "#34d399" : "#f43f5e" }}>
-                      {fondeoDsr.toFixed(2)} (Min 2.0)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${fondeoDsr >= 2.0 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {fondeoDsr.toFixed(2)} (Mín 2.00)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -402,21 +418,20 @@ export default function BifurcacionQVFPage() {
                   value={fondeoDsr ?? 2.0}
                   disabled={fondeoDsr === null}
                   onChange={(e) => setFondeoDsr(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#38bdf8", opacity: fondeoDsr === null ? 0.35 : 1 }}
+                  className="w-full accent-sky-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
 
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Max Drawdown Histórico:</span>
+              {/* Max DD */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Max Drawdown Histórico:</span>
                   {fondeoMaxDd !== null ? (
-                    <strong style={{ color: fondeoMaxDd <= 4.5 ? "#34d399" : "#f43f5e" }}>
-                      {fondeoMaxDd.toFixed(1)}% (Max 4.5%)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${fondeoMaxDd <= 4.5 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {fondeoMaxDd.toFixed(1)}% (Máx 4.5%)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -427,21 +442,20 @@ export default function BifurcacionQVFPage() {
                   value={fondeoMaxDd ?? 4.5}
                   disabled={fondeoMaxDd === null}
                   onChange={(e) => setFondeoMaxDd(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#38bdf8", opacity: fondeoMaxDd === null ? 0.35 : 1 }}
+                  className="w-full accent-sky-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
 
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Dependencia de Outliers Top-2:</span>
+              {/* Outliers */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Dependencia de Outliers Top-2:</span>
                   {fondeoOutlierPct !== null ? (
-                    <strong style={{ color: fondeoOutlierPct < 15.0 ? "#34d399" : "#f43f5e" }}>
+                    <span className={`font-black ${fondeoOutlierPct < 15.0 ? "text-emerald-400" : "text-rose-400"}`}>
                       {fondeoOutlierPct.toFixed(1)}% (&lt; 15%)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -452,21 +466,20 @@ export default function BifurcacionQVFPage() {
                   value={fondeoOutlierPct ?? 15.0}
                   disabled={fondeoOutlierPct === null}
                   onChange={(e) => setFondeoOutlierPct(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#38bdf8", opacity: fondeoOutlierPct === null ? 0.35 : 1 }}
+                  className="w-full accent-sky-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
 
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Walk-Forward Efficiency (WFE):</span>
+              {/* WFE */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Walk-Forward Efficiency (WFE):</span>
                   {fondeoWfe !== null ? (
-                    <strong style={{ color: fondeoWfe >= 0.60 ? "#34d399" : "#f43f5e" }}>
-                      {(fondeoWfe * 100).toFixed(0)}% (Min 60%)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${fondeoWfe >= 0.60 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {(fondeoWfe * 100).toFixed(0)}% (Mín 60%)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -477,23 +490,22 @@ export default function BifurcacionQVFPage() {
                   value={fondeoWfe ?? 0.6}
                   disabled={fondeoWfe === null}
                   onChange={(e) => setFondeoWfe(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#38bdf8", opacity: fondeoWfe === null ? 0.35 : 1 }}
+                  className="w-full accent-sky-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Payoff Ratio (Ganancia Media / Pérdida Media):</span>
+            <div className="space-y-4 pt-2">
+              {/* Payoff Ratio */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Payoff Ratio (Ganancia / Pérdida):</span>
                   {ultraPayoff !== null ? (
-                    <strong style={{ color: ultraPayoff >= 3.0 ? "#34d399" : "#f43f5e" }}>
-                      {ultraPayoff.toFixed(1)}x (Min 3.0x)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${ultraPayoff >= 3.0 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {ultraPayoff.toFixed(1)}x (Mín 3.0x)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -504,21 +516,20 @@ export default function BifurcacionQVFPage() {
                   value={ultraPayoff ?? 3.0}
                   disabled={ultraPayoff === null}
                   onChange={(e) => setUltraPayoff(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#63e1b4", opacity: ultraPayoff === null ? 0.35 : 1 }}
+                  className="w-full accent-emerald-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
 
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Tail Gain Ratio (Beneficio en Cola &ge; 3R):</span>
+              {/* Tail Gain */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Tail Gain Ratio (Beneficio Cola ≥ 3R):</span>
                   {ultraTailGain !== null ? (
-                    <strong style={{ color: ultraTailGain >= 60.0 ? "#34d399" : "#f43f5e" }}>
-                      {ultraTailGain.toFixed(1)}% (Min 60%)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${ultraTailGain >= 60.0 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {ultraTailGain.toFixed(1)}% (Mín 60%)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -529,21 +540,20 @@ export default function BifurcacionQVFPage() {
                   value={ultraTailGain ?? 60.0}
                   disabled={ultraTailGain === null}
                   onChange={(e) => setUltraTailGain(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#63e1b4", opacity: ultraTailGain === null ? 0.35 : 1 }}
+                  className="w-full accent-emerald-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
 
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Expectativa Matemática E(Bala):</span>
+              {/* Expectativa E(Bala) */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Expectativa Matemática E(Bala):</span>
                   {ultraExpBala !== null ? (
-                    <strong style={{ color: ultraExpBala >= 0.20 ? "#34d399" : "#f43f5e" }}>
-                      {ultraExpBala >= 0 ? "+" : ""}{ultraExpBala.toFixed(2)}R (Min +0.20R)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${ultraExpBala >= 0.20 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {ultraExpBala >= 0 ? "+" : ""}{ultraExpBala.toFixed(2)}R (Mín +0.20R)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -554,21 +564,20 @@ export default function BifurcacionQVFPage() {
                   value={ultraExpBala ?? 0.2}
                   disabled={ultraExpBala === null}
                   onChange={(e) => setUltraExpBala(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#63e1b4", opacity: ultraExpBala === null ? 0.35 : 1 }}
+                  className="w-full accent-emerald-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
 
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                  <span style={{ color: "#94a3b8" }}>Supervivencia Monte Carlo (20 Balas):</span>
+              {/* Supervivencia Monte Carlo */}
+              <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-400">Supervivencia Monte Carlo (20 Balas):</span>
                   {ultraMcSurvival !== null ? (
-                    <strong style={{ color: ultraMcSurvival >= 95.0 ? "#34d399" : "#f43f5e" }}>
-                      {ultraMcSurvival.toFixed(1)}% (Min 95%)
-                    </strong>
-                  ) : (
-                    <span style={{ color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10.5px" }}>
-                      SIN DATOS / NO EVIDENCE
+                    <span className={`font-black ${ultraMcSurvival >= 95.0 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {ultraMcSurvival.toFixed(1)}% (Mín 95%)
                     </span>
+                  ) : (
+                    <span className="text-slate-500 text-[11px]">SIN DATOS / NO EVIDENCE</span>
                   )}
                 </div>
                 <input
@@ -579,114 +588,159 @@ export default function BifurcacionQVFPage() {
                   value={ultraMcSurvival ?? 95.0}
                   disabled={ultraMcSurvival === null}
                   onChange={(e) => setUltraMcSurvival(parseFloat(e.target.value))}
-                  style={{ width: "100%", accentColor: "#63e1b4", opacity: ultraMcSurvival === null ? 0.35 : 1 }}
+                  className="w-full accent-emerald-400 cursor-pointer disabled:opacity-30"
                 />
               </div>
             </div>
           )}
 
+          {/* Evaluate Action Button */}
           <button
             onClick={handleEvaluate}
             disabled={evaluating || !strategyId}
-            style={{
-              marginTop: "20px",
-              width: "100%",
-              padding: "12px",
-              borderRadius: "8px",
-              background: activeTrack === "TRACK_ULTRA" ? "linear-gradient(135deg, #63e1b4 0%, #059669 100%)" : "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)",
-              border: "none",
-              color: "#06080d",
-              fontWeight: 900,
-              fontSize: "13px",
-              cursor: (evaluating || !strategyId) ? "not-allowed" : "pointer",
-              fontFamily: "var(--font-mono, monospace)",
-              letterSpacing: "0.5px",
-              opacity: (evaluating || !strategyId) ? 0.6 : 1,
-            }}
+            className={`w-full py-3 px-4 rounded-xl text-xs font-mono font-black transition-all shadow-lg flex items-center justify-center gap-2 ${
+              activeTrack === "TRACK_ULTRA"
+                ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 shadow-emerald-500/20"
+                : "bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 text-slate-950 shadow-sky-500/20"
+            } ${evaluating || !strategyId ? "opacity-60 cursor-not-allowed" : ""}`}
           >
-            {evaluating ? "EJECUTANDO EVIDENCE GATE..." : "⚡ EVALUAR CANDIDATO EN QVF"}
+            {evaluating ? (
+              <span>EJECUTANDO EVIDENCE GATE AUDITOR...</span>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>⚡ EVALUAR CANDIDATO EN QVF</span>
+              </>
+            )}
           </button>
         </div>
 
         {/* RIGHT: GATE DECISION AUDIT CARD */}
         <div
-          style={{
-            background: "rgba(16, 23, 34, 0.75)",
-            backdropFilter: "blur(16px)",
-            border: result
+          className={`bg-[#090d16]/90 border backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col justify-between space-y-6 transition-all ${
+            result
               ? result.is_approved
-                ? "1px solid rgba(52, 211, 153, 0.4)"
-                : "1px solid rgba(244, 63, 94, 0.4)"
-              : "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "14px",
-            padding: "22px",
-            display: "flex",
-            flexDirection: "column",
-          }}
+                ? "border-emerald-500/50 shadow-emerald-500/10"
+                : "border-rose-500/50 shadow-rose-500/10"
+              : "border-white/[0.08]"
+          }`}
         >
-          <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: "0 0 16px 0" }}>
-            Veredicto de la Compuerta EvidenceGateDecision
-          </h3>
-
-          {!result ? (
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#64748b", padding: "40px" }}>
-              <span style={{ fontSize: "32px", marginBottom: "8px" }}>🛡️</span>
-              <div style={{ fontSize: "13px", fontWeight: 700 }}>Compuerta en Standby</div>
-              <div style={{ fontSize: "11px", textAlign: "center", marginTop: "4px" }}>
-                Presiona &quot;EVALUAR CANDIDATO EN QVF&quot; para ejecutar la auditoría matemática en el backend.
-              </div>
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div
-                style={{
-                  padding: "14px 18px",
-                  borderRadius: "10px",
-                  background: result.is_approved ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)",
-                  border: result.is_approved ? "1px solid #34d399" : "1px solid #f43f5e",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: "10px", fontWeight: 800, color: result.is_approved ? "#34d399" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
-                    VEREDICTO EVIDENCE GATE
-                  </div>
-                  <div style={{ fontSize: "20px", fontWeight: 900, color: "#fff", marginTop: "2px" }}>
-                    {result.is_approved ? "✓ APROBADO PARA CANDIDATO" : "✕ RECHAZADO"}
-                  </div>
-                </div>
-                <div style={{ fontSize: "22px", fontWeight: 900, color: result.is_approved ? "#34d399" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
-                  {result.score_pct}%
-                </div>
-              </div>
-
-              {/* REASONS IF REJECTED */}
-              {result.rejection_reasons.length > 0 && (
-                <div style={{ background: "rgba(244, 63, 94, 0.08)", border: "1px solid rgba(244, 63, 94, 0.2)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "11px", fontWeight: 800, color: "#f43f5e", marginBottom: "6px" }}>
-                    VIOLACIONES DETECTADAS:
-                  </div>
-                  <ul style={{ margin: 0, paddingLeft: "18px", fontSize: "11px", color: "#fda4af" }}>
-                    {result.rejection_reasons.map((r, i) => (
-                      <li key={i}>{r}</li>
-                    ))}
-                  </ul>
-                </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-base font-black text-white flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>Veredicto de la Compuerta EvidenceGate</span>
+              </h3>
+              {result && (
+                <span className="text-xs font-mono text-slate-500">
+                  {new Date(result.evaluated_at_utc_ms).toLocaleTimeString()}
+                </span>
               )}
+            </div>
 
-              {/* PROVENANCE HASH CRIPTOGRÁFICO REAL */}
-              <div style={{ background: "rgba(0, 0, 0, 0.4)", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255, 255, 255, 0.06)" }}>
-                <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                  FIRMA CRIPTOGRÁFICA INMUTABLE (SHA-256):
+            {!result ? (
+              <div className="flex flex-col items-center justify-center text-center p-12 text-slate-500 space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-2xl">
+                  🛡️
                 </div>
-                <div style={{ fontSize: "11px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)", wordBreak: "break-all", marginTop: "4px" }}>
-                  {result.provenance_signature_sha256}
+                <div className="text-sm font-bold text-slate-400">Compuerta en Standby</div>
+                <p className="text-xs text-slate-500 max-w-xs">
+                  Selecciona una estrategia y pulsa &quot;EVALUAR CANDIDATO EN QVF&quot; para ejecutar la auditoría matemática en el backend.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Result Hero Pill */}
+                <div
+                  className={`p-4 rounded-2xl border flex items-center justify-between gap-4 ${
+                    result.is_approved
+                      ? "bg-emerald-950/30 border-emerald-500/40"
+                      : "bg-rose-950/30 border-rose-500/40"
+                  }`}
+                >
+                  <div>
+                    <span
+                      className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+                        result.is_approved ? "text-emerald-400" : "text-rose-400"
+                      }`}
+                    >
+                      VEREDICTO EVIDENCE GATE
+                    </span>
+                    <div className="text-lg font-black text-white mt-0.5">
+                      {result.is_approved ? "✓ APROBADO PARA CANDIDATO" : "✕ RECHAZADO"}
+                    </div>
+                  </div>
+                  <div
+                    className={`text-2xl font-black font-mono tabular-nums ${
+                      result.is_approved ? "text-emerald-400" : "text-rose-400"
+                    }`}
+                  >
+                    {result.score_pct}%
+                  </div>
+                </div>
+
+                {/* Rejection Reasons if Any */}
+                {result.rejection_reasons.length > 0 && (
+                  <div className="bg-rose-950/20 border border-rose-500/30 rounded-xl p-4 space-y-2">
+                    <span className="text-xs font-mono font-bold text-rose-400 uppercase tracking-wider block">
+                      Violaciones Detectadas:
+                    </span>
+                    <ul className="pl-4 list-disc space-y-1 text-xs text-rose-300">
+                      {result.rejection_reasons.map((r, i) => (
+                        <li key={i}>{r}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Gate Metrics Breakdown */}
+                <div className="bg-slate-950/80 rounded-xl border border-slate-800 p-4 space-y-2">
+                  <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block">
+                    Métricas de Compuerta:
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                    {Object.entries(result.gate_metrics).map(([k, v]) => (
+                      <div key={k} className="p-2 bg-slate-900/60 rounded-lg border border-slate-800">
+                        <span className="text-slate-500 text-[10px] block">{k}</span>
+                        <span className="font-bold text-white">{String(v)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Provenance SHA-256 Hash */}
+                <div className="bg-slate-950/90 rounded-xl border border-slate-800 p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                      Firma Criptográfica Inmutable (SHA-256):
+                    </span>
+                    <button
+                      onClick={() => handleCopySignature(result.provenance_signature_sha256)}
+                      className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-sky-400 hover:text-sky-300 transition"
+                    >
+                      {copiedHash ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                      <span>{copiedHash ? "Copiado" : "Copiar"}</span>
+                    </button>
+                  </div>
+                  <code className="text-xs text-sky-400 font-mono block overflow-x-auto p-2.5 bg-[#030712] rounded-lg border border-slate-800 break-all">
+                    {result.provenance_signature_sha256}
+                  </code>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+
+          {/* Bottom Footer Link */}
+          <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
+            <span className="text-slate-500">Zero-Mocks Deterministic Ledger</span>
+            <Link
+              href="/ejecucion"
+              className="text-sky-400 hover:text-sky-300 font-bold inline-flex items-center gap-1 transition"
+            >
+              <span>Ir a Ejecución Live</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

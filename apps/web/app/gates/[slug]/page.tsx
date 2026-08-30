@@ -3,6 +3,23 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import {
+  RefreshCw,
+  ChevronRight,
+  ShieldCheck,
+  Zap,
+  Cpu,
+  Bot,
+  Sliders,
+  Activity,
+  Download,
+  CheckCircle2,
+  AlertTriangle,
+  Send,
+  Sparkles,
+} from "lucide-react";
+import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
+import QuantTooltip from "@/components/system/QuantTooltip";
 
 interface GateParam {
   label: string;
@@ -43,17 +60,17 @@ interface GateDetail {
 }
 
 const ALL_GATES = [
-  { num: 1, slug: "gate-1-data-ingest", name: "1. Data Ingest", icon: "🗄️", badge: "Integridad" },
+  { num: 1, slug: "gate-1-data-ingest", name: "1. Data Ingest", icon: "💾", badge: "Integridad" },
   { num: 2, slug: "gate-2-cost-backtest", name: "2. Costes & Fricción", icon: "💸", badge: "Costes Reales" },
-  { num: 3, slug: "gate-3-trade-significance", name: "3. Muestra Estadística", icon: "📊", badge: "Outliers & N>=20" },
-  { num: 4, slug: "gate-4-walk-forward", name: "4. Walk-Forward (WFE)", icon: "🔄", badge: "Anti-Curve Fit" },
+  { num: 3, slug: "gate-3-trade-significance", name: "3. Muestra Estadística", icon: "📊", badge: "N >= 20" },
+  { num: 4, slug: "gate-4-walk-forward", name: "4. Walk-Forward (WFE)", icon: "🔄", badge: "Anti-Overfit" },
   { num: 5, slug: "gate-5-monte-carlo", name: "5. Monte Carlo 1,000x", icon: "🎲", badge: "Ruina 0.0%" },
   { num: 6, slug: "gate-6-stress-slippage", name: "6. Estrés & Slippage", icon: "⚡", badge: "3x Fricción" },
-  { num: 7, slug: "gate-7-regime-coverage", name: "7. Cobertura Regímenes", icon: "🌐", badge: "Bull/Bear/Chop" },
+  { num: 7, slug: "gate-7-regime-coverage", name: "7. Cobertura Regímenes", icon: "🌐", badge: "Multi-Ciclo" },
   { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe (DSR)", icon: "📐", badge: "López de Prado" },
-  { num: 9, slug: "gate-9-novelty-antifit", name: "9. Novedad & Inoculación", icon: "🧬", badge: "Failure DB" },
+  { num: 9, slug: "gate-9-novelty-antifit", name: "9. Novedad & AST", icon: "🧬", badge: "DoF >= 10" },
   { num: 10, slug: "gate-10-debate-agentes", name: "10. Debate Multi-Agente", icon: "🤖", badge: "Comité Semántico" },
-  { num: 11, slug: "gate-11-nautilus-event", name: "11. NautilusTrader Core", icon: "⚡", badge: "Event-Driven" },
+  { num: 11, slug: "gate-11-nautilus-event", name: "11. NautilusCore Engine", icon: "🛡️", badge: "Event-Driven" },
 ];
 
 export default function GateDetailPage() {
@@ -70,10 +87,12 @@ export default function GateDetailPage() {
   // AI Semantic Agent Chat State
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiChatLog, setAiChatLog] = useState<Array<{ role: "user" | "assistant"; text: string; time: string; syncInfo?: string }>>([
+  const [aiChatLog, setAiChatLog] = useState<
+    Array<{ role: "user" | "assistant"; text: string; time: string; syncInfo?: string }>
+  >([
     {
       role: "assistant",
-      text: `Hola. Soy el Agente Arquitecto Cuantitativo para este Gate. Puedes darme órdenes en lenguaje natural (ej. "Ajustar para Fondeo estricto", "Aumentar exigencia de estrés a 3x", "Bajar tolerancia de gaps") y reconfiguraré el motor y Firebase al instante.`,
+      text: `Hola. Soy el Agente Arquitecto Cuantitativo para este Gate. Puedes darme directivas en lenguaje natural (ej. "Ajustar para Fondeo estricto", "Aumentar exigencia de estrés a 3x", "Bajar tolerancia de gaps") y reconfiguraré el motor determinista y la persistencia al instante.`,
       time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
@@ -91,16 +110,16 @@ export default function GateDetailPage() {
       const res = await fetch(`/api/v1/gates/${rawSlug}`);
       if (!res.ok) throw new Error(`Gate no encontrado: ${rawSlug}`);
       const data = await res.json();
-      
+
       const paramKeys = Object.keys(data.params || data.default_params || {});
       const normalizedParams: Record<string, GateParam> = {};
       const initialForm: Record<string, any> = {};
 
       paramKeys.forEach((k) => {
-        const rawVal = data.params?.[k] !== undefined ? data.params[k] : (data.default_params?.[k] ?? "");
+        const rawVal = data.params?.[k] !== undefined ? data.params[k] : data.default_params?.[k] ?? "";
         const isNum = typeof rawVal === "number";
         const isBool = typeof rawVal === "boolean";
-        
+
         normalizedParams[k] = {
           label: k.replace(/_/g, " ").toUpperCase(),
           value: rawVal,
@@ -132,7 +151,7 @@ export default function GateDetailPage() {
           candles_verified: data.candles_verified ?? 0,
           pass_rate_pct: data.pass_rate_pct ?? 0,
           avg_latency_ms: data.avg_latency_ms ?? 0,
-          last_verdict: data.evidence_status === "NO_EVIDENCE" ? "NO EVIDENCE" : (data.last_verdict || "NO EVIDENCE"),
+          last_verdict: data.evidence_status === "NO_EVIDENCE" ? "NO EVIDENCE" : data.last_verdict || "NO EVIDENCE",
         },
         firebase_sync_status: data.cloud_sync_status || "NOT_CONFIGURED",
         firebase_path: data.firebase_path || `contracts/gates/${data.slug || rawSlug}`,
@@ -148,7 +167,6 @@ export default function GateDetailPage() {
     }
   }, [rawSlug]);
 
-  // Load candidate list for Nautilus simulation
   const isNautilusSlug = rawSlug === "gate-11-nautilus-event" || rawSlug === "gate-10-nautilus-trader";
 
   const fetchCandidatesForNautilus = useCallback(async () => {
@@ -167,22 +185,24 @@ export default function GateDetailPage() {
     }
   }, [isNautilusSlug]);
 
-  // Load detailed Nautilus backtest for candidate
-  const fetchNautilusBacktest = useCallback(async (cId: string) => {
-    if (!cId || !isNautilusSlug) return;
-    try {
-      setNautilusLoading(true);
-      const res = await fetch(`/api/v1/gates/nautilus/detailed-backtest/${cId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setNautilusReport(data);
+  const fetchNautilusBacktest = useCallback(
+    async (cId: string) => {
+      if (!cId || !isNautilusSlug) return;
+      try {
+        setNautilusLoading(true);
+        const res = await fetch(`/api/v1/gates/nautilus/detailed-backtest/${cId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setNautilusReport(data);
+        }
+      } catch (e) {
+        console.error("Error loading Nautilus report:", e);
+      } finally {
+        setNautilusLoading(false);
       }
-    } catch (e) {
-      console.error("Error loading Nautilus report:", e);
-    } finally {
-      setNautilusLoading(false);
-    }
-  }, [isNautilusSlug]);
+    },
+    [isNautilusSlug]
+  );
 
   useEffect(() => {
     fetchGateData();
@@ -195,7 +215,6 @@ export default function GateDetailPage() {
     }
   }, [selectedCandidateId, fetchNautilusBacktest]);
 
-  // Save manual configuration
   const handleSaveParams = async () => {
     try {
       setSaveStatus("Guardando en Motor & Firebase...");
@@ -214,7 +233,6 @@ export default function GateDetailPage() {
     }
   };
 
-  // Submit AI Semantic Mutation
   const handleAiSemanticSubmit = async (promptToSend?: string) => {
     const text = promptToSend || aiPrompt;
     if (!text.trim() || aiLoading) return;
@@ -264,10 +282,10 @@ export default function GateDetailPage() {
 
   if (loading && !gate) {
     return (
-      <div style={{ minHeight: "100vh", background: "#06090e", color: "#f8fafc", padding: "30px", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-sans, system-ui)" }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "28px", marginBottom: "12px" }}>⚙️</div>
-          <div style={{ fontSize: "14px", color: "#94a3b8", fontWeight: 700 }}>Cargando especificación matemática del Gate...</div>
+      <div className="flex min-h-screen items-center justify-center bg-[#030712] p-8 font-sans text-slate-100">
+        <div className="text-center font-mono">
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-cyan-400" />
+          <div className="text-sm font-bold text-slate-400">Cargando especificación matemática del Gate...</div>
         </div>
       </div>
     );
@@ -275,12 +293,15 @@ export default function GateDetailPage() {
 
   if (error || !gate) {
     return (
-      <div style={{ minHeight: "100vh", background: "#06090e", color: "#f8fafc", padding: "40px", fontFamily: "var(--font-sans, system-ui)" }}>
-        <div style={{ maxWidth: "600px", margin: "0 auto", background: "rgba(244, 63, 94, 0.1)", border: "1px solid rgba(244, 63, 94, 0.3)", borderRadius: "12px", padding: "24px" }}>
-          <h2 style={{ color: "#fb7185", margin: "0 0 10px" }}>Error al cargar Gate</h2>
-          <p style={{ color: "#cbd5e1", fontSize: "13px" }}>{error || "El gate solicitado no existe."}</p>
-          <Link href="/candidatos" style={{ display: "inline-block", marginTop: "12px", padding: "8px 14px", background: "#38bdf8", color: "#000", borderRadius: "6px", fontWeight: 800, fontSize: "12px", textDecoration: "none" }}>
-            ← Volver a Candidatos & Gates
+      <div className="min-h-screen bg-[#030712] p-8 font-sans text-slate-100">
+        <div className="mx-auto max-w-xl rounded-2xl border border-rose-800 bg-rose-950/40 p-6 shadow-2xl">
+          <h2 className="mb-2 text-lg font-black text-rose-300">Error al cargar Gate</h2>
+          <p className="text-xs text-rose-200">{error || "El gate solicitado no existe."}</p>
+          <Link
+            href="/gates"
+            className="mt-4 inline-block rounded-xl bg-cyan-600 px-4 py-2 text-xs font-bold text-slate-950 transition hover:bg-cyan-500"
+          >
+            ← Volver a Matriz 11 Gates
           </Link>
         </div>
       </div>
@@ -288,693 +309,667 @@ export default function GateDetailPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#06090e", color: "#f8fafc", padding: "16px 24px", fontFamily: "var(--font-sans, system-ui)", boxSizing: "border-box" }}>
-      
-      {/* ── BREADCRUMB & BACK LINK ── */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-          <Link href="/" style={{ color: "#94a3b8", textDecoration: "none" }}>Inicio</Link>
-          <span>/</span>
-          <Link href="/candidatos" style={{ color: "#94a3b8", textDecoration: "none" }}>10 Gates</Link>
-          <span>/</span>
-          <span style={{ color: "#38bdf8", fontWeight: 800 }}>{gate.slug}</span>
-        </div>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Link href="/candidatos" style={{ padding: "5px 12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "6px", color: "#cbd5e1", fontSize: "11px", fontWeight: 700, textDecoration: "none" }}>
-            ← Ver Matriz 10 Gates
-          </Link>
-          <Link href="/strategies" style={{ padding: "5px 12px", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "6px", color: "#38bdf8", fontSize: "11px", fontWeight: 700, textDecoration: "none" }}>
-            Explorador Multiactivo →
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#030712] p-3 md:p-6 font-sans text-slate-100">
+      <div className="mx-auto max-w-[1600px] space-y-5">
+        {/* SUB-NAV: 7 FASES CUANTITATIVAS CANÓNICAS */}
+        <EstrategiasHeaderNav currentPhase={3} />
 
-      {/* ── TOP HORIZONTAL GATES SELECTOR (11 SLUGS INDEPENDIENTES) ── */}
-      <div style={{ background: "rgba(10, 14, 23, 0.85)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "8px 10px", marginBottom: "20px" }}>
-        <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "6px" }}>
-          Navegador de Fases Cuantitativas (Haz clic en cualquier fase para inspeccionar su slug):
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(11, 1fr)", gap: "6px" }}>
-          {ALL_GATES.map((g) => {
-            const isActive = g.slug === rawSlug;
-            return (
-              <Link
-                key={g.slug}
-                href={`/gates/${g.slug}`}
-                style={{
-                  textDecoration: "none",
-                  padding: "8px 6px",
-                  borderRadius: "6px",
-                  background: isActive ? "linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(99, 102, 241, 0.2))" : "rgba(255, 255, 255, 0.02)",
-                  border: isActive ? "1px solid #38bdf8" : "1px solid rgba(255, 255, 255, 0.06)",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <span style={{ fontSize: "14px", marginBottom: "2px" }}>{g.icon}</span>
-                <span style={{ fontSize: "9.5px", fontWeight: 900, color: isActive ? "#38bdf8" : "#cbd5e1", lineHeight: 1.1 }}>
-                  Gate {g.num}
-                </span>
-                <span style={{ fontSize: "7.5px", color: isActive ? "#63e1b4" : "#64748b", fontFamily: "var(--font-mono, monospace)", marginTop: "2px" }}>
-                  {g.badge}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+        {/* BREADCRUMB & TOP LINKS */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3 font-mono text-xs">
+          <div className="flex items-center gap-2 text-slate-500">
+            <Link href="/" className="transition hover:text-slate-300">
+              Inicio
+            </Link>
+            <ChevronRight className="w-3 h-3" />
+            <Link href="/gates" className="transition hover:text-slate-300">
+              11 Gates
+            </Link>
+            <ChevronRight className="w-3 h-3" />
+            <span className="font-bold text-cyan-400">{gate.slug}</span>
+          </div>
 
-      {/* ── HERO BANNER DEL GATE SELECCIONADO ── */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(10, 14, 23, 0.95))",
-          border: "1px solid rgba(56, 189, 248, 0.2)",
-          borderRadius: "12px",
-          padding: "20px 24px",
-          marginBottom: "22px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "16px",
-        }}
-      >
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-            <span style={{ fontSize: "28px" }}>{gate.icon}</span>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/gates"
+              className="rounded-xl border border-white/[0.08] bg-[#090d16]/80 px-3 py-1.5 font-bold text-slate-300 transition hover:border-slate-700 hover:bg-slate-800"
+            >
+              ← Ver Matriz 11 Gates
+            </Link>
+            <Link
+              href="/estrategias/2-explorador-excel"
+              className="rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 font-bold text-cyan-300 transition hover:bg-cyan-500/20"
+            >
+              Explorador Excel →
+            </Link>
+          </div>
+        </div>
+
+        {/* SELECTOR HORIZONTAL DE LOS 11 GATES */}
+        <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-3 shadow-xl backdrop-blur-xl">
+          <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Navegador de Fases Cuantitativas (11 Slugs Independientes):</span>
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-11 gap-1.5">
+            {ALL_GATES.map((g) => {
+              const isActive = g.slug === rawSlug;
+              return (
+                <Link
+                  key={g.slug}
+                  href={`/gates/${g.slug}`}
+                  className={`flex flex-col items-center justify-center rounded-xl p-2 text-center transition-all ${
+                    isActive
+                      ? "border border-cyan-500/60 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.25)] ring-1 ring-cyan-500/40"
+                      : "border border-white/[0.06] bg-[#050811] text-slate-400 hover:border-slate-700 hover:bg-slate-800/60 hover:text-slate-200"
+                  }`}
+                >
+                  <span className="text-base">{g.icon}</span>
+                  <span
+                    className={`mt-0.5 font-mono text-[10px] font-black leading-tight ${
+                      isActive ? "text-cyan-300" : "text-slate-200"
+                    }`}
+                  >
+                    Gate {g.num}
+                  </span>
+                  <span className="mt-0.5 font-mono text-[8px] text-slate-500 truncate max-w-full">{g.badge}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* HERO BANNER DEL GATE SELECCIONADO */}
+        <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-[#090d16] via-slate-900/90 to-slate-950 p-5 md:p-6 shadow-2xl backdrop-blur-xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "10px", fontWeight: 900, color: "#38bdf8", background: "rgba(56, 189, 248, 0.15)", padding: "2px 8px", borderRadius: "4px", textTransform: "uppercase" }}>
-                  {gate.badge}
-                </span>
-                <span style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                  Slug Oficial: /gates/{gate.slug}
-                </span>
-              </div>
-              <h1 style={{ margin: "2px 0 0", fontSize: "20px", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.5px" }}>
-                Gate {gate.gate_number}: {gate.name}
-              </h1>
-            </div>
-          </div>
-          <p style={{ margin: "6px 0 0", color: "#94a3b8", fontSize: "12.5px", maxWidth: "750px", lineHeight: 1.4 }}>
-            {gate.description}
-          </p>
-        </div>
-
-        <div style={{ textAlign: "right" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(52, 211, 153, 0.15)", border: "1px solid rgba(52, 211, 153, 0.3)", padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 800, color: "#34d399", marginBottom: "6px" }}>
-            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#34d399" }}></span>
-            {gate.live_telemetry.status}
-          </div>
-          <div style={{ fontSize: "9.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-            Persistencia: {gate.local_persistence} · {gate.firebase_sync_status}
-          </div>
-        </div>
-      </div>
-
-      {/* ── 2-COLUMN MAIN CONTENT (LEFT: TECHNICAL SPEC & PARAMS, RIGHT: AGENTIC AI SEMANTIC CHAT) ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "20px", marginBottom: "24px" }}>
-        
-        {/* LEFT COLUMN: FÓRMULAS, TELEMETRÍA Y PARÁMETROS DEL MOTOR */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          
-          {/* Fórmulas & Objetivo */}
-          <div style={{ background: "#0a0e17", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "16px 18px" }}>
-            <h3 style={{ margin: "0 0 10px", fontSize: "12px", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}>
-              <span>📐</span> Formulación Matemática & Criterios de Corte
-            </h3>
-            
-            <div style={{ background: "rgba(0, 0, 0, 0.5)", border: "1px solid rgba(56, 189, 248, 0.2)", borderRadius: "6px", padding: "10px 12px", marginBottom: "12px", fontFamily: "var(--font-mono, monospace)", fontSize: "11.5px", color: "#63e1b4" }}>
-              {gate.formula}
-            </div>
-
-            <div style={{ fontSize: "12px", color: "#cbd5e1", lineHeight: 1.5, marginBottom: "8px" }}>
-              <strong style={{ color: "#ffffff" }}>Objetivo del Gate:</strong> {gate.objective}
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
-              <div style={{ background: "rgba(244, 63, 94, 0.08)", border: "1px solid rgba(244, 63, 94, 0.2)", borderRadius: "6px", padding: "8px 10px" }}>
-                <span style={{ fontSize: "10px", fontWeight: 900, color: "#fb7185" }}>🔥 RUTA ULTRA (BingX 500x)</span>
-                <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#fda4af" }}>
-                  Admite volatilidad alta si la convexidad R:R compensa y la probabilidad de ruina es 0.0%.
-                </p>
-              </div>
-              <div style={{ background: "rgba(56, 189, 248, 0.08)", border: "1px solid rgba(56, 189, 248, 0.2)", borderRadius: "6px", padding: "8px 10px" }}>
-                <span style={{ fontSize: "10px", fontWeight: 900, color: "#38bdf8" }}>🛡️ RUTA FONDEO (Prop Firms)</span>
-                <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#bae6fd" }}>
-                  Corte tajante si Max Drawdown {">"} 4.0% o si existe vulnerabilidad en días de alta fricción.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Telemetría en Vivo */}
-          <div style={{ background: "#0a0e17", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "16px 18px" }}>
-            <h3 style={{ margin: "0 0 12px", fontSize: "12px", color: "#34d399", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}>
-              <span>📡</span> Telemetría del Motor en Tiempo Real
-            </h3>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px", marginBottom: "12px" }}>
-              <div style={{ background: "rgba(255, 255, 255, 0.03)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                <div style={{ fontSize: "10px", color: "#64748b" }}>Candidatos Auditados</div>
-                <div style={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-                  {gate.live_telemetry.datasets_audited ?? "N/D"}
-                </div>
-              </div>
-              <div style={{ background: "rgba(255, 255, 255, 0.03)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                <div style={{ fontSize: "10px", color: "#64748b" }}>Tasa de Aprobación</div>
-                <div style={{ fontSize: "16px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                  {gate.live_telemetry.pass_rate_pct != null ? `${gate.live_telemetry.pass_rate_pct}%` : "N/D"}
-                </div>
-              </div>
-              <div style={{ background: "rgba(255, 255, 255, 0.03)", padding: "10px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                <div style={{ fontSize: "10px", color: "#64748b" }}>Latencia Media</div>
-                <div style={{ fontSize: "16px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                  {gate.live_telemetry.avg_latency_ms != null ? `${gate.live_telemetry.avg_latency_ms} ms` : "N/D"}
-                </div>
-              </div>
-            </div>
-
-            <div style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-              <strong style={{ color: "#cbd5e1" }}>Último Veredicto Registrado:</strong> {gate.live_telemetry.last_verdict}
-            </div>
-          </div>
-
-          {/* Formulario Manual de Parámetros del Motor */}
-          <div style={{ background: "#0a0e17", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "16px 18px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-              <h3 style={{ margin: 0, fontSize: "12px", color: "#facc15", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}>
-                <span>🎛️</span> Configuración de Umbrales del Motor
-              </h3>
-              <button
-                onClick={handleSaveParams}
-                style={{
-                  padding: "5px 12px",
-                  background: "linear-gradient(135deg, #38bdf8, #6366f1)",
-                  color: "#000",
-                  border: "none",
-                  borderRadius: "5px",
-                  fontSize: "11px",
-                  fontWeight: 900,
-                  cursor: "pointer",
-                }}
-              >
-                Guardar en Motor & Firebase
-              </button>
-            </div>
-
-            {saveStatus && (
-              <div style={{ marginBottom: "12px", padding: "6px 10px", borderRadius: "5px", fontSize: "11px", background: saveStatus.startsWith("✅") ? "rgba(52, 211, 153, 0.15)" : "rgba(56, 189, 248, 0.15)", color: saveStatus.startsWith("✅") ? "#34d399" : "#38bdf8", fontWeight: 700 }}>
-                {saveStatus}
-              </div>
-            )}
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {Object.entries(gate.params || {}).map(([key, p]) => (
-                <div key={key} style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "6px", padding: "10px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                    <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#ffffff" }}>{p.label}</span>
-                    <span style={{ fontSize: "12px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                      {currentParams[key] !== undefined ? String(currentParams[key]) : String(p.value)} {p.unit || ""}
-                    </span>
-                  </div>
-
-                  {p.type === "number" && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <input
-                        type="range"
-                        min={p.min ?? 0}
-                        max={p.max ?? 100}
-                        step={p.step ?? 1}
-                        value={currentParams[key] ?? p.value}
-                        onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
-                        style={{ flex: 1, accentColor: "#38bdf8", cursor: "pointer" }}
-                      />
-                      <input
-                        type="number"
-                        min={p.min}
-                        max={p.max}
-                        step={p.step}
-                        value={currentParams[key] ?? p.value}
-                        onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
-                        style={{ width: "70px", background: "#06090e", border: "1px solid #334155", color: "#fff", borderRadius: "4px", padding: "3px 6px", fontSize: "11px", textAlign: "right" }}
-                      />
-                    </div>
-                  )}
-
-                  {p.type === "boolean" && (
-                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginTop: "4px" }}>
-                      <input
-                        type="checkbox"
-                        checked={currentParams[key] ?? p.value}
-                        onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.checked })}
-                        style={{ accentColor: "#34d399", width: "16px", height: "16px" }}
-                      />
-                      <span style={{ fontSize: "11px", color: currentParams[key] ? "#34d399" : "#64748b", fontWeight: 700 }}>
-                        {currentParams[key] ? "ACTIVADO" : "DESACTIVADO"}
-                      </span>
-                    </label>
-                  )}
-
-                  {p.type === "select" && (
-                    <select
-                      value={currentParams[key] ?? p.value}
-                      onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.value })}
-                      style={{ width: "100%", background: "#06090e", border: "1px solid #334155", color: "#fff", borderRadius: "4px", padding: "5px 8px", fontSize: "11px", marginTop: "4px" }}
-                    >
-                      {(p.options || []).map((opt) => (
-                        <option key={opt} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  )}
-
-                  <p style={{ margin: "4px 0 0", fontSize: "10px", color: "#64748b" }}>{p.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: EDITOR SEMÁNTICO AGÉNTICO DE IA & CLOUD SYNC */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          
-          <div style={{ background: "#0a0e17", border: "1px solid rgba(99, 102, 241, 0.3)", borderRadius: "10px", padding: "16px 18px", display: "flex", flexDirection: "column", height: "100%", minHeight: "560px" }}>
-            
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "10px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "18px" }}>🤖</span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{gate.icon}</span>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: "13px", color: "#818cf8", fontWeight: 900 }}>
-                    Editor Semántico Agéntico de IA
-                  </h3>
-                  <div style={{ fontSize: "9.5px", color: "#64748b" }}>
-                    Mutación dinámica del motor en lenguaje natural + Firebase Firestore Sync
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-2.5 py-0.5 font-mono text-[10px] font-black uppercase text-cyan-300">
+                      {gate.badge}
+                    </span>
+                    <span className="font-mono text-[10px] text-slate-500">Slug: /gates/{gate.slug}</span>
+                  </div>
+                  <h1 className="mt-1 text-xl md:text-2xl font-black text-white tracking-tight">
+                    Gate {gate.gate_number}: {gate.name}
+                  </h1>
+                </div>
+              </div>
+              <p className="mt-2 text-xs md:text-sm text-slate-300 leading-relaxed max-w-3xl">{gate.description}</p>
+            </div>
+
+            <div className="text-left md:text-right font-mono flex-shrink-0">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-black text-emerald-400 mb-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                {gate.live_telemetry.status}
+              </div>
+              <div className="text-[10px] text-slate-500">
+                Persistencia: {gate.local_persistence} · {gate.firebase_sync_status}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 2-COLUMN MAIN CONTENT (LEFT: TECHNICAL SPEC & PARAMS, RIGHT: AGENTIC AI SEMANTIC CHAT) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* LEFT COLUMN: FÓRMULAS, TELEMETRÍA Y PARÁMETROS DEL MOTOR */}
+          <div className="lg:col-span-7 space-y-4">
+            {/* Fórmulas & Criterios de Corte */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl space-y-3">
+              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-cyan-400">
+                <span>📐</span> Formulación Matemática & Criterios de Corte
+              </h3>
+
+              <div className="rounded-xl border border-cyan-500/30 bg-[#050811] p-3 font-mono text-xs text-emerald-300 shadow-inner">
+                {gate.formula}
+              </div>
+
+              <div className="text-xs text-slate-300 leading-relaxed">
+                <strong className="text-white">Objetivo del Gate:</strong> {gate.objective}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-white/[0.08]">
+                <div className="rounded-xl border border-rose-900/40 bg-rose-950/20 p-3">
+                  <span className="font-mono text-[10px] font-black uppercase text-rose-300">
+                    🔥 RUTA ULTRA (BingX 500x)
+                  </span>
+                  <p className="mt-1 text-[11px] text-rose-200/80 leading-snug">
+                    Admite volatilidad alta si la convexidad R:R compensa y la probabilidad de ruina Monte Carlo es 0.0%.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-sky-900/40 bg-sky-950/20 p-3">
+                  <span className="font-mono text-[10px] font-black uppercase text-sky-300">
+                    🛡️ RUTA FONDEO (Prop Firms)
+                  </span>
+                  <p className="mt-1 text-[11px] text-sky-200/80 leading-snug">
+                    Corte tajante si Max Drawdown &gt; 4.0% o si existe vulnerabilidad en días de alta fricción.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Telemetría en Vivo */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl space-y-3">
+              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-emerald-400">
+                <span>📡</span> Telemetría del Motor en Tiempo Real
+              </h3>
+
+              <div className="grid grid-cols-3 gap-2.5 font-mono">
+                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                  <div className="text-[10px] uppercase text-slate-500 font-bold">Candidatos Auditados</div>
+                  <div className="mt-1 text-lg font-black text-white tabular-nums">
+                    {gate.live_telemetry.datasets_audited ?? "N/D"}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                  <div className="text-[10px] uppercase text-slate-500 font-bold">Tasa de Aprobación</div>
+                  <div className="mt-1 text-lg font-black text-emerald-400 tabular-nums">
+                    {gate.live_telemetry.pass_rate_pct != null ? `${gate.live_telemetry.pass_rate_pct}%` : "N/D"}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                  <div className="text-[10px] uppercase text-slate-500 font-bold">Latencia Media</div>
+                  <div className="mt-1 text-lg font-black text-cyan-400 tabular-nums">
+                    {gate.live_telemetry.avg_latency_ms != null ? `${gate.live_telemetry.avg_latency_ms} ms` : "N/D"}
                   </div>
                 </div>
               </div>
-              <span style={{ fontSize: "9.5px", color: "#34d399", background: "rgba(52, 211, 153, 0.15)", padding: "2px 6px", borderRadius: "4px", fontWeight: 800 }}>
-                CLOUD LIVE
-              </span>
-            </div>
 
-            {/* Quick Prompt Suggestions */}
-            <div style={{ marginBottom: "12px" }}>
-              <div style={{ fontSize: "10px", color: "#64748b", fontWeight: 700, marginBottom: "5px" }}>Directivas Rápidas Recomendadas:</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                <button
-                  onClick={() => handleAiSemanticSubmit("Configurar parámetros con rigor estricto para cuenta de Fondeo 50k")}
-                  style={{ background: "rgba(56, 189, 248, 0.1)", border: "1px solid rgba(56, 189, 248, 0.25)", color: "#38bdf8", borderRadius: "4px", padding: "4px 8px", fontSize: "10px", cursor: "pointer", fontWeight: 700 }}
-                >
-                  🛡️ Modo Fondeo Estricto
-                </button>
-                <button
-                  onClick={() => handleAiSemanticSubmit("Ajustar para Ruta ULTRA con máxima convexidad y apalancamiento adaptativo")}
-                  style={{ background: "rgba(244, 63, 94, 0.1)", border: "1px solid rgba(244, 63, 94, 0.25)", color: "#fb7185", borderRadius: "4px", padding: "4px 8px", fontSize: "10px", cursor: "pointer", fontWeight: 700 }}
-                >
-                  🔥 Modo Ultra Convexo
-                </button>
-                <button
-                  onClick={() => handleAiSemanticSubmit("Incrementar el estrés de slippage a 3x y duplicar comisiones")}
-                  style={{ background: "rgba(250, 204, 21, 0.1)", border: "1px solid rgba(250, 204, 21, 0.25)", color: "#facc15", borderRadius: "4px", padding: "4px 8px", fontSize: "10px", cursor: "pointer", fontWeight: 700 }}
-                >
-                  ⚡ Estrés Extremo 3x
-                </button>
+              <div className="font-mono text-xs text-slate-400">
+                <strong className="text-slate-300">Último Veredicto Registrado:</strong> {gate.live_telemetry.last_verdict}
               </div>
             </div>
 
-            {/* Chat History Box */}
-            <div style={{ flex: 1, background: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(255, 255, 255, 0.05)", borderRadius: "8px", padding: "12px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px", maxHeight: "380px" }}>
-              {aiChatLog.map((msg, idx) => (
+            {/* Formulario Manual de Parámetros del Motor */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
+                <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-amber-400">
+                  <span>🎛️</span> Configuración de Umbrales del Motor
+                </h3>
+                <button
+                  onClick={handleSaveParams}
+                  className="rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-3.5 py-1.5 font-mono text-xs font-black text-slate-950 shadow-md transition hover:from-cyan-400 hover:to-indigo-500 active:scale-95 cursor-pointer"
+                >
+                  Guardar en Motor & Firebase
+                </button>
+              </div>
+
+              {saveStatus && (
                 <div
-                  key={idx}
-                  style={{
-                    alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                    maxWidth: "85%",
-                    background: msg.role === "user" ? "rgba(56, 189, 248, 0.2)" : "rgba(30, 41, 59, 0.7)",
-                    border: msg.role === "user" ? "1px solid rgba(56, 189, 248, 0.4)" : "1px solid rgba(255, 255, 255, 0.08)",
-                    borderRadius: "8px",
-                    padding: "8px 12px",
-                    fontSize: "11.5px",
-                    color: "#f8fafc",
-                  }}
+                  className={`p-3 rounded-xl font-mono text-xs font-bold ${
+                    saveStatus.startsWith("✅")
+                      ? "bg-emerald-950/40 text-emerald-300 border border-emerald-800/60"
+                      : "bg-cyan-950/40 text-cyan-300 border border-cyan-800/60"
+                  }`}
                 >
-                  <div style={{ whiteSpace: "pre-line", lineHeight: 1.4 }}>{msg.text}</div>
-                  {msg.syncInfo && (
-                    <div style={{ marginTop: "6px", fontSize: "9px", color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                      {msg.syncInfo}
-                    </div>
-                  )}
-                  <div style={{ fontSize: "9px", color: "#64748b", textAlign: "right", marginTop: "3px" }}>
-                    {msg.time}
-                  </div>
-                </div>
-              ))}
-              {aiLoading && (
-                <div style={{ alignSelf: "flex-start", background: "rgba(30, 41, 59, 0.7)", borderRadius: "8px", padding: "8px 12px", fontSize: "11px", color: "#818cf8" }}>
-                  ⏳ El Agente Semántico está recalculando las matrices del motor y sincronizando en Firebase...
+                  {saveStatus}
                 </div>
               )}
-            </div>
 
-            {/* Prompt Input Form */}
-            <div style={{ marginTop: "12px", display: "flex", gap: "8px" }}>
-              <input
-                type="text"
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAiSemanticSubmit()}
-                placeholder="Escribe una instrucción semántica para modificar este Gate..."
-                disabled={aiLoading}
-                style={{
-                  flex: 1,
-                  background: "#06090e",
-                  border: "1px solid #334155",
-                  color: "#ffffff",
-                  borderRadius: "6px",
-                  padding: "8px 12px",
-                  fontSize: "12px",
-                  outline: "none",
-                }}
-              />
-              <button
-                onClick={() => handleAiSemanticSubmit()}
-                disabled={aiLoading || !aiPrompt.trim()}
-                style={{
-                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "0 16px",
-                  fontSize: "12px",
-                  fontWeight: 800,
-                  cursor: aiLoading || !aiPrompt.trim() ? "not-allowed" : "pointer",
-                  opacity: aiLoading || !aiPrompt.trim() ? 0.5 : 1,
-                }}
-              >
-                Enviar
-              </button>
+              <div className="space-y-3">
+                {Object.entries(gate.params || {}).map(([key, p]) => (
+                  <div key={key} className="rounded-xl border border-white/[0.06] bg-[#050811] p-3 space-y-1.5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-slate-200">{p.label}</span>
+                      <span className="font-mono text-xs font-black text-cyan-400 tabular-nums">
+                        {currentParams[key] !== undefined ? String(currentParams[key]) : String(p.value)} {p.unit || ""}
+                      </span>
+                    </div>
+
+                    {p.type === "number" && (
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="range"
+                          min={p.min ?? 0}
+                          max={p.max ?? 100}
+                          step={p.step ?? 1}
+                          value={currentParams[key] ?? p.value}
+                          onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
+                          className="flex-1 accent-cyan-400 cursor-pointer"
+                        />
+                        <input
+                          type="number"
+                          min={p.min}
+                          max={p.max}
+                          step={p.step}
+                          value={currentParams[key] ?? p.value}
+                          onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
+                          className="w-20 rounded-lg border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs text-white text-right outline-none focus:border-cyan-500"
+                        />
+                      </div>
+                    )}
+
+                    {p.type === "boolean" && (
+                      <label className="flex items-center gap-2 cursor-pointer pt-1">
+                        <input
+                          type="checkbox"
+                          checked={currentParams[key] ?? p.value}
+                          onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.checked })}
+                          className="w-4 h-4 accent-emerald-400 cursor-pointer"
+                        />
+                        <span
+                          className={`font-mono text-xs font-bold ${
+                            currentParams[key] ? "text-emerald-400" : "text-slate-500"
+                          }`}
+                        >
+                          {currentParams[key] ? "ACTIVADO" : "DESACTIVADO"}
+                        </span>
+                      </label>
+                    )}
+
+                    {p.type === "select" && (
+                      <select
+                        value={currentParams[key] ?? p.value}
+                        onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.value })}
+                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-cyan-500 cursor-pointer"
+                      >
+                        {(p.options || []).map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    <p className="text-[10px] text-slate-500">{p.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* ── SECCIÓN ESPECIAL PARA GATE 11 (NAUTILUSTRADER CORE & BACKTEST DETALLADO) ── */}
-      {isNautilusSlug && (
-        <div style={{ background: "#0a0e17", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "12px", padding: "24px", marginTop: "24px" }}>
-          
-          {/* Header Nautilus */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "24px" }}>⚡</span>
-                <h2 style={{ margin: 0, fontSize: "18px", fontWeight: 900, color: "#ffffff" }}>
-                  NautilusTrader Event-Driven Simulation Engine
-                </h2>
-                <span style={{ fontSize: "10px", fontWeight: 900, background: "#38bdf8", color: "#000", padding: "2px 6px", borderRadius: "4px" }}>
-                  RUST / CYTHON CORE
+          {/* RIGHT COLUMN: EDITOR SEMÁNTICO AGÉNTICO DE IA & CLOUD SYNC */}
+          <div className="lg:col-span-5 flex flex-col space-y-4">
+            <div className="rounded-2xl border border-indigo-500/30 bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl flex flex-col h-full min-h-[580px]">
+              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xl">🤖</span>
+                  <div>
+                    <h3 className="font-mono text-xs font-black uppercase text-indigo-400">
+                      Editor Semántico Agéntico de IA
+                    </h3>
+                    <div className="text-[10px] text-slate-500">
+                      Mutación dinámica en lenguaje natural + Firestore Sync
+                    </div>
+                  </div>
+                </div>
+                <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-mono text-[9px] font-black text-emerald-400">
+                  CLOUD LIVE
                 </span>
               </div>
-              <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#94a3b8" }}>
-                Auditoría trade a trade de alta resolución con matching engine, comisiones reales y colchón de liquidación.
-              </p>
-            </div>
 
-            {/* Candidate Selector */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 700 }}>Estrategia a Simular:</span>
-              <select
-                value={selectedCandidateId}
-                onChange={(e) => setSelectedCandidateId(e.target.value)}
-                style={{
-                  background: "#06090e",
-                  border: "1px solid #38bdf8",
-                  color: "#38bdf8",
-                  borderRadius: "6px",
-                  padding: "6px 12px",
-                  fontSize: "12px",
-                  fontWeight: 800,
-                  outline: "none",
-                }}
-              >
-                {candidates.map((c) => (
-                  <option key={c.candidate_id} value={c.candidate_id}>
-                    {c.symbol} ({c.timeframe}) · {c.route} · {c.name}
-                  </option>
+              {/* Directivas Rápidas */}
+              <div className="mb-3">
+                <div className="font-mono text-[10px] font-bold text-slate-400 mb-1.5">Directivas Rápidas:</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => handleAiSemanticSubmit("Configurar parámetros con rigor estricto para cuenta de Fondeo 50k")}
+                    className="rounded-xl border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-sky-300 transition hover:bg-sky-500/20 active:scale-95 cursor-pointer"
+                  >
+                    🛡️ Modo Fondeo Estricto
+                  </button>
+                  <button
+                    onClick={() => handleAiSemanticSubmit("Ajustar para Ruta ULTRA con máxima convexidad y apalancamiento adaptativo")}
+                    className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-rose-300 transition hover:bg-rose-500/20 active:scale-95 cursor-pointer"
+                  >
+                    🔥 Modo Ultra Convexo
+                  </button>
+                  <button
+                    onClick={() => handleAiSemanticSubmit("Incrementar el estrés de slippage a 3x y duplicar comisiones")}
+                    className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-amber-300 transition hover:bg-amber-500/20 active:scale-95 cursor-pointer"
+                  >
+                    ⚡ Estrés Extremo 3x
+                  </button>
+                </div>
+              </div>
+
+              {/* Chat History */}
+              <div className="flex-1 overflow-y-auto rounded-xl border border-white/[0.06] bg-[#050811] p-3 space-y-2.5 max-h-[380px] shadow-inner font-mono text-xs">
+                {aiChatLog.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`max-w-[90%] rounded-xl p-3 text-xs leading-relaxed ${
+                      msg.role === "user"
+                        ? "ml-auto border border-cyan-500/40 bg-cyan-950/40 text-cyan-100"
+                        : "border border-white/[0.06] bg-slate-900/80 text-slate-200"
+                    }`}
+                  >
+                    <div className="whitespace-pre-line">{msg.text}</div>
+                    {msg.syncInfo && <div className="mt-1.5 text-[9px] text-emerald-400 font-bold">{msg.syncInfo}</div>}
+                    <div className="mt-1 text-[9px] text-slate-500 text-right">{msg.time}</div>
+                  </div>
                 ))}
-              </select>
+                {aiLoading && (
+                  <div className="rounded-xl border border-indigo-500/40 bg-indigo-950/30 p-3 text-xs text-indigo-300 animate-pulse">
+                    ⏳ El Agente Semántico está recalculando matrices del motor y sincronizando en Firebase...
+                  </div>
+                )}
+              </div>
+
+              {/* Prompt Input Form */}
+              <div className="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAiSemanticSubmit()}
+                  placeholder="Escribe una directiva semántica para modificar este Gate..."
+                  disabled={aiLoading}
+                  className="flex-1 rounded-xl border border-white/[0.08] bg-[#050811] px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition"
+                />
+                <button
+                  onClick={() => handleAiSemanticSubmit()}
+                  disabled={aiLoading || !aiPrompt.trim()}
+                  className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 font-mono text-xs font-bold text-white shadow-md transition hover:from-indigo-500 hover:to-purple-500 active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Enviar</span>
+                </button>
+              </div>
             </div>
           </div>
+        </div>
 
-          {nautilusLoading ? (
-            <div style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>
-              ⏳ Ejecutando simulación evento-a-evento con NautilusTrader Rust Core...
-            </div>
-          ) : nautilusReport ? (
-            <div>
-              {/* Hero KPI Summary */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "10px", marginBottom: "20px" }}>
-                <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "10px", color: "#64748b" }}>ROI Total</div>
-                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                    +{nautilusReport.performance_summary.total_roi_pct}%
-                  </div>
-                  <div style={{ fontSize: "9px", color: "#63e1b4" }}>
-                    ${nautilusReport.performance_summary.net_profit_usd.toLocaleString()} USD
-                  </div>
+        {/* SECCIÓN ESPECIAL PARA GATE 11 (NAUTILUSTRADER CORE & BACKTEST DETALLADO) */}
+        {isNautilusSlug && (
+          <div className="rounded-2xl border border-cyan-500/30 bg-[#090d16]/90 p-5 md:p-6 shadow-2xl backdrop-blur-xl space-y-5">
+            {/* Header Nautilus */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">⚡</span>
+                  <h2 className="text-lg md:text-xl font-black text-white">
+                    NautilusTrader Event-Driven Simulation Engine
+                  </h2>
+                  <span className="rounded-full bg-cyan-400 px-2.5 py-0.5 font-mono text-[9px] font-black text-slate-950 uppercase">
+                    RUST / CYTHON CORE
+                  </span>
                 </div>
-
-                <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "10px", color: "#64748b" }}>Profit Factor</div>
-                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                    {nautilusReport.performance_summary.profit_factor}
-                  </div>
-                  <div style={{ fontSize: "9px", color: "#94a3b8" }}>Win Rate: {nautilusReport.performance_summary.win_rate_pct}%</div>
-                </div>
-
-                <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "10px", color: "#64748b" }}>Max Drawdown</div>
-                  <div style={{ fontSize: "18px", fontWeight: 900, color: nautilusReport.performance_summary.max_drawdown_pct <= 4 ? "#34d399" : "#fb7185", fontFamily: "var(--font-mono, monospace)" }}>
-                    {nautilusReport.performance_summary.max_drawdown_pct}%
-                  </div>
-                  <div style={{ fontSize: "9px", color: "#64748b" }}>
-                    ${nautilusReport.performance_summary.max_drawdown_usd.toLocaleString()} USD
-                  </div>
-                </div>
-
-                <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "10px", color: "#64748b" }}>Sharpe / Sortino</div>
-                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#facc15", fontFamily: "var(--font-mono, monospace)" }}>
-                    {nautilusReport.performance_summary.sharpe_ratio} / {nautilusReport.performance_summary.sortino_ratio}
-                  </div>
-                  <div style={{ fontSize: "9px", color: "#64748b" }}>DSR: {nautilusReport.performance_summary.deflated_sharpe_ratio}</div>
-                </div>
-
-                <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "10px", color: "#64748b" }}>Colchón a Liquidación</div>
-                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>
-                    {nautilusReport.performance_summary.min_liquidation_distance_pct}%
-                  </div>
-                  <div style={{ fontSize: "9px", color: "#34d399" }}>0 Margin Calls</div>
-                </div>
-
-                <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.06)", borderRadius: "8px", padding: "12px" }}>
-                  <div style={{ fontSize: "10px", color: "#64748b" }}>Fricción Pagada</div>
-                  <div style={{ fontSize: "18px", fontWeight: 900, color: "#e2e8f0", fontFamily: "var(--font-mono, monospace)" }}>
-                    ${(nautilusReport.performance_summary.total_exchange_fees_usd + nautilusReport.performance_summary.total_slippage_cost_usd).toFixed(1)}
-                  </div>
-                  <div style={{ fontSize: "9px", color: "#64748b" }}>Fees + Slippage</div>
-                </div>
+                <p className="mt-1 text-xs text-slate-400">
+                  Auditoría trade a trade de alta resolución con matching engine, comisiones reales y colchón de liquidación.
+                </p>
               </div>
 
-              {/* Equity Curve Chart Visualizer */}
-              <div style={{ background: "rgba(0, 0, 0, 0.5)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "16px", marginBottom: "20px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                  <span style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", textTransform: "uppercase" }}>
-                    📈 Curva de Balance & Drawdown Dinámica (Evento a Evento)
-                  </span>
-                  <span style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-                    Capital Base: ${nautilusReport.performance_summary.initial_capital_usd.toLocaleString()} → Final: ${nautilusReport.performance_summary.ending_equity_usd.toLocaleString()} USD
-                  </span>
+              {/* Candidate Selector */}
+              <div className="flex items-center gap-2 font-mono">
+                <span className="text-xs text-slate-400 font-bold">Estrategia:</span>
+                <select
+                  value={selectedCandidateId}
+                  onChange={(e) => setSelectedCandidateId(e.target.value)}
+                  className="rounded-xl border border-cyan-500/50 bg-[#050811] px-3 py-1.5 text-xs font-bold text-cyan-300 outline-none focus:border-cyan-400 cursor-pointer"
+                >
+                  {candidates.map((c) => (
+                    <option key={c.candidate_id} value={c.candidate_id}>
+                      {c.symbol} ({c.timeframe}) · {c.route} · {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {nautilusLoading ? (
+              <div className="py-16 text-center text-xs text-slate-400 font-mono">
+                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-cyan-400" />
+                Ejecutando simulación evento-a-evento con NautilusTrader Rust Core...
+              </div>
+            ) : nautilusReport ? (
+              <div className="space-y-5 font-mono">
+                {/* Hero KPI Summary */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2.5">
+                  <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                    <div className="text-[10px] uppercase text-slate-500 font-bold">ROI Total</div>
+                    <div className="mt-1 text-lg font-black text-emerald-400 tabular-nums">
+                      +{nautilusReport.performance_summary.total_roi_pct}%
+                    </div>
+                    <div className="text-[10px] text-emerald-300">
+                      ${nautilusReport.performance_summary.net_profit_usd.toLocaleString()} USD
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                    <div className="text-[10px] uppercase text-slate-500 font-bold">Profit Factor</div>
+                    <div className="mt-1 text-lg font-black text-cyan-400 tabular-nums">
+                      {nautilusReport.performance_summary.profit_factor}
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      Win Rate: {nautilusReport.performance_summary.win_rate_pct}%
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                    <div className="text-[10px] uppercase text-slate-500 font-bold">Max Drawdown</div>
+                    <div
+                      className={`mt-1 text-lg font-black tabular-nums ${
+                        nautilusReport.performance_summary.max_drawdown_pct <= 4 ? "text-emerald-400" : "text-rose-400"
+                      }`}
+                    >
+                      {nautilusReport.performance_summary.max_drawdown_pct}%
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      ${nautilusReport.performance_summary.max_drawdown_usd.toLocaleString()} USD
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                    <div className="text-[10px] uppercase text-slate-500 font-bold">Sharpe / Sortino</div>
+                    <div className="mt-1 text-lg font-black text-amber-400 tabular-nums">
+                      {nautilusReport.performance_summary.sharpe_ratio} / {nautilusReport.performance_summary.sortino_ratio}
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      DSR: {nautilusReport.performance_summary.deflated_sharpe_ratio}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                    <div className="text-[10px] uppercase text-slate-500 font-bold">Colchón Liq.</div>
+                    <div className="mt-1 text-lg font-black text-emerald-400 tabular-nums">
+                      {nautilusReport.performance_summary.min_liquidation_distance_pct}%
+                    </div>
+                    <div className="text-[10px] text-emerald-300 font-bold">0 Margin Calls</div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
+                    <div className="text-[10px] uppercase text-slate-500 font-bold">Fricción Pagada</div>
+                    <div className="mt-1 text-lg font-black text-slate-200 tabular-nums">
+                      $
+                      {(
+                        nautilusReport.performance_summary.total_exchange_fees_usd +
+                        nautilusReport.performance_summary.total_slippage_cost_usd
+                      ).toFixed(1)}
+                    </div>
+                    <div className="text-[10px] text-slate-500">Fees + Slippage</div>
+                  </div>
                 </div>
 
-                {/* SVG Polyline Equity Curve */}
-                <div style={{ width: "100%", height: "160px", position: "relative" }}>
-                  <svg viewBox="0 0 800 150" style={{ width: "100%", height: "100%", overflow: "visible" }}>
-                    <defs>
-                      <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
+                {/* Equity Curve SVG Visualizer */}
+                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-4 space-y-2">
+                  <div className="flex flex-wrap justify-between items-center text-xs">
+                    <span className="font-bold uppercase text-cyan-400">
+                      📈 Curva de Balance & Drawdown Dinámica (Evento a Evento)
+                    </span>
+                    <span className="text-[10px] text-slate-500">
+                      Capital: ${nautilusReport.performance_summary.initial_capital_usd.toLocaleString()} → Final: $
+                      {nautilusReport.performance_summary.ending_equity_usd.toLocaleString()} USD
+                    </span>
+                  </div>
 
-                    {/* Grid lines */}
-                    <line x1="0" y1="30" x2="800" y2="30" stroke="rgba(255,255,255,0.05)" strokeDasharray="4" />
-                    <line x1="0" y1="75" x2="800" y2="75" stroke="rgba(255,255,255,0.05)" strokeDasharray="4" />
-                    <line x1="0" y1="120" x2="800" y2="120" stroke="rgba(255,255,255,0.05)" strokeDasharray="4" />
+                  <div className="w-full h-40 relative">
+                    <svg viewBox="0 0 800 150" className="w-full h-full overflow-visible">
+                      <defs>
+                        <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
+                          <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.0" />
+                        </linearGradient>
+                      </defs>
 
-                    {/* Equity Points Path */}
-                    {(() => {
-                      const pts = nautilusReport.equity_curve || [];
-                      if (pts.length < 2) return null;
-                      const minEq = Math.min(...pts.map((p: any) => p.equity)) * 0.98;
-                      const maxEq = Math.max(...pts.map((p: any) => p.equity)) * 1.02;
-                      const range = maxEq - minEq || 1;
+                      <line x1="0" y1="30" x2="800" y2="30" stroke="rgba(255,255,255,0.05)" strokeDasharray="4" />
+                      <line x1="0" y1="75" x2="800" y2="75" stroke="rgba(255,255,255,0.05)" strokeDasharray="4" />
+                      <line x1="0" y1="120" x2="800" y2="120" stroke="rgba(255,255,255,0.05)" strokeDasharray="4" />
 
-                      const coords = pts.map((p: any, idx: number) => {
-                        const x = (idx / (pts.length - 1)) * 800;
-                        const y = 140 - ((p.equity - minEq) / range) * 130;
-                        return `${x},${y}`;
-                      });
+                      {(() => {
+                        const pts = nautilusReport.equity_curve || [];
+                        if (pts.length < 2) return null;
+                        const minEq = Math.min(...pts.map((p: any) => p.equity)) * 0.98;
+                        const maxEq = Math.max(...pts.map((p: any) => p.equity)) * 1.02;
+                        const range = maxEq - minEq || 1;
 
-                      const polylineStr = coords.join(" ");
-                      const areaStr = `0,150 ${polylineStr} 800,150`;
+                        const coords = pts.map((p: any, idx: number) => {
+                          const x = (idx / (pts.length - 1)) * 800;
+                          const y = 140 - ((p.equity - minEq) / range) * 130;
+                          return `${x},${y}`;
+                        });
+
+                        const polylineStr = coords.join(" ");
+                        const areaStr = `0,150 ${polylineStr} 800,150`;
+
+                        return (
+                          <>
+                            <polygon points={areaStr} fill="url(#equityGrad)" />
+                            <polyline points={polylineStr} fill="none" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
+                            {pts.map((p: any, idx: number) => {
+                              const x = (idx / (pts.length - 1)) * 800;
+                              const y = 140 - ((p.equity - minEq) / range) * 130;
+                              return (
+                                <circle
+                                  key={idx}
+                                  cx={x}
+                                  cy={y}
+                                  r={idx === 0 || idx === pts.length - 1 ? 4 : 2}
+                                  fill={p.is_win ? "#34d399" : "#fb7185"}
+                                />
+                              );
+                            })}
+                          </>
+                        );
+                      })()}
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Trade Blotter Table */}
+                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-4 space-y-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold uppercase text-emerald-400">
+                      📋 Registro de Operaciones Event-Driven ({nautilusReport.trade_blotter?.length || 0} Trades Auditados)
+                    </span>
+                    <span className="text-[10px] text-slate-500">Matching Model: TICK_BY_TICK_QUEUE</span>
+                  </div>
+
+                  <div className="overflow-x-auto max-h-72">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead className="sticky top-0 bg-[#070b14] border-b border-white/[0.08] text-[10px] uppercase text-slate-500">
+                        <tr>
+                          <th className="p-2">Trade ID</th>
+                          <th className="p-2">Fecha / Hora</th>
+                          <th className="p-2">Lado</th>
+                          <th className="p-2">Tipo Orden</th>
+                          <th className="p-2 text-right">Precio Entrada</th>
+                          <th className="p-2 text-right">Precio Salida</th>
+                          <th className="p-2 text-right">PnL Neto</th>
+                          <th className="p-2 text-right">Apalancamiento</th>
+                          <th className="p-2 text-right">Colchón Liq.</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.04]">
+                        {(nautilusReport.trade_blotter || []).map((t: any) => (
+                          <tr key={t.trade_id} className="hover:bg-white/[0.03] transition">
+                            <td className="p-2 font-bold text-slate-200">{t.trade_id}</td>
+                            <td className="p-2 text-slate-400">{t.timestamp}</td>
+                            <td className="p-2">
+                              <span
+                                className={`rounded px-1.5 py-0.5 text-[9px] font-black border ${
+                                  t.side === "LONG"
+                                    ? "bg-emerald-950/80 text-emerald-300 border-emerald-800"
+                                    : "bg-rose-950/80 text-rose-300 border-rose-800"
+                                }`}
+                              >
+                                {t.side}
+                              </span>
+                            </td>
+                            <td className="p-2 text-slate-500 text-[10px]">{t.order_type}</td>
+                            <td className="p-2 text-right text-slate-300 tabular-nums">${t.entry_price}</td>
+                            <td className="p-2 text-right text-slate-300 tabular-nums">${t.exit_price}</td>
+                            <td
+                              className={`p-2 text-right font-bold tabular-nums ${
+                                t.net_pnl_usd >= 0 ? "text-emerald-400" : "text-rose-400"
+                              }`}
+                            >
+                              {t.net_pnl_usd >= 0 ? `+$${t.net_pnl_usd}` : `-$${Math.abs(t.net_pnl_usd)}`}
+                            </td>
+                            <td className="p-2 text-right text-cyan-300 tabular-nums">{t.effective_leverage}x</td>
+                            <td className="p-2 text-right text-emerald-400 tabular-nums">{t.liquidation_distance_pct}%</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Event Logs Visual Feed */}
+                <div className="rounded-xl border border-white/[0.06] bg-[#070b14] p-4 space-y-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-white">📡 Telemetría y Logs del Gate (VPS 24/7)</span>
+                      <span className="rounded-full bg-emerald-500/15 border border-emerald-500/40 px-2 py-0.5 text-[9px] font-black text-emerald-400">
+                        ● ZERO-MOCKS
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-slate-500">
+                      {nautilusReport.event_log?.length || 0} eventos registrados
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1 text-xs">
+                    {(nautilusReport.event_log || []).map((line: string, i: number) => {
+                      const isErr = line.includes("ERROR") || line.includes("REJECTED") || line.includes("BREACH");
+                      const isSuccess =
+                        line.includes("PASSED") ||
+                        line.includes("SUCCESS") ||
+                        line.includes("Sincronización") ||
+                        line.includes("Starting");
 
                       return (
-                        <>
-                          <polygon points={areaStr} fill="url(#equityGrad)" />
-                          <polyline points={polylineStr} fill="none" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" />
-                          {pts.map((p: any, idx: number) => {
-                            const x = (idx / (pts.length - 1)) * 800;
-                            const y = 140 - ((p.equity - minEq) / range) * 130;
-                            return (
-                              <circle
-                                key={idx}
-                                cx={x}
-                                cy={y}
-                                r={idx === 0 || idx === pts.length - 1 ? 4 : 2}
-                                fill={p.is_win ? "#34d399" : "#fb7185"}
-                              />
-                            );
-                          })}
-                        </>
-                      );
-                    })()}
-                  </svg>
-                </div>
-              </div>
-
-              {/* Trade Blotter Table (Registro Exhaustivo Trade a Trade) */}
-              <div style={{ background: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "8px", padding: "16px", marginBottom: "20px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                  <span style={{ fontSize: "11px", fontWeight: 800, color: "#63e1b4", textTransform: "uppercase" }}>
-                    📋 Registro de Operaciones Event-Driven ({nautilusReport.trade_blotter?.length || 0} Trades Auditados)
-                  </span>
-                  <span style={{ fontSize: "10px", color: "#64748b" }}>Matching Model: TICK_BY_TICK_QUEUE</span>
-                </div>
-
-                <div style={{ overflowX: "auto", maxHeight: "280px" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px" }}>
-                    <thead>
-                      <tr style={{ background: "rgba(255, 255, 255, 0.04)", color: "#64748b", textAlign: "left" }}>
-                        <th style={{ padding: "6px 8px" }}>Trade ID</th>
-                        <th style={{ padding: "6px 8px" }}>Fecha / Hora</th>
-                        <th style={{ padding: "6px 8px" }}>Lado</th>
-                        <th style={{ padding: "6px 8px" }}>Tipo Orden</th>
-                        <th style={{ padding: "6px 8px", textAlign: "right" }}>Precio Entrada</th>
-                        <th style={{ padding: "6px 8px", textAlign: "right" }}>Precio Salida</th>
-                        <th style={{ padding: "6px 8px", textAlign: "right" }}>PnL Neto</th>
-                        <th style={{ padding: "6px 8px", textAlign: "right" }}>Apalancamiento</th>
-                        <th style={{ padding: "6px 8px", textAlign: "right" }}>Colchón Liq.</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(nautilusReport.trade_blotter || []).map((t: any) => (
-                        <tr key={t.trade_id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.03)" }}>
-                          <td style={{ padding: "6px 8px", fontWeight: 800, color: "#cbd5e1", fontFamily: "var(--font-mono, monospace)" }}>{t.trade_id}</td>
-                          <td style={{ padding: "6px 8px", color: "#94a3b8" }}>{t.timestamp}</td>
-                          <td style={{ padding: "6px 8px" }}>
-                            <span style={{ fontSize: "9px", fontWeight: 900, padding: "2px 5px", borderRadius: "3px", background: t.side === "LONG" ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", color: t.side === "LONG" ? "#34d399" : "#fb7185" }}>
-                              {t.side}
+                        <div
+                          key={i}
+                          className={`flex items-center justify-between rounded-lg p-2 text-xs border ${
+                            isErr
+                              ? "bg-rose-950/30 border-rose-900/50 text-rose-200"
+                              : isSuccess
+                              ? "bg-emerald-950/20 border-emerald-900/40 text-slate-200"
+                              : "bg-[#050811] border-white/[0.06] text-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`rounded px-1.5 py-0.5 text-[9px] font-black ${
+                                isErr
+                                  ? "bg-rose-950 text-rose-300"
+                                  : isSuccess
+                                  ? "bg-emerald-950 text-emerald-300"
+                                  : "bg-slate-800 text-cyan-300"
+                              }`}
+                            >
+                              {isErr ? "❌ FALLO" : isSuccess ? "✓ OK" : "ℹ️ EVENTO"}
                             </span>
-                          </td>
-                          <td style={{ padding: "6px 8px", color: "#64748b", fontSize: "10px" }}>{t.order_type}</td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>${t.entry_price}</td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", fontFamily: "var(--font-mono, monospace)" }}>${t.exit_price}</td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 800, color: t.net_pnl_usd >= 0 ? "#34d399" : "#fb7185", fontFamily: "var(--font-mono, monospace)" }}>
-                            {t.net_pnl_usd >= 0 ? `+$${t.net_pnl_usd}` : `-$${Math.abs(t.net_pnl_usd)}`}
-                          </td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>{t.effective_leverage}x</td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", color: "#34d399", fontFamily: "var(--font-mono, monospace)" }}>{t.liquidation_distance_pct}%</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Real Logs Visual Feed */}
-              <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "10px", padding: "14px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "11px", fontWeight: 900, color: "#ffffff", fontFamily: "var(--font-mono, monospace)" }}>
-                      📡 Telemetría y Logs del Gate (VPS 24/7)
-                    </span>
-                    <span style={{ fontSize: "9px", color: "#34d399", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: "rgba(52, 211, 153, 0.15)" }}>
-                      ● ZERO-MOCKS
-                    </span>
-                  </div>
-                  <span style={{ fontSize: "9.5px", color: "#94a3b8" }}>
-                    {nautilusReport.event_log?.length || 0} eventos registrados
-                  </span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "180px", overflowY: "auto" }}>
-                  {(nautilusReport.event_log || []).map((line: string, i: number) => {
-                    const isErr = line.includes("ERROR") || line.includes("REJECTED") || line.includes("BREACH");
-                    const isSuccess = line.includes("PASSED") || line.includes("SUCCESS") || line.includes("Sincronización") || line.includes("Starting");
-                    const badgeBg = isErr ? "rgba(248, 113, 113, 0.2)" : isSuccess ? "rgba(52, 211, 153, 0.2)" : "rgba(56, 189, 248, 0.15)";
-                    const badgeColor = isErr ? "#f87171" : isSuccess ? "#34d399" : "#38bdf8";
-
-                    return (
-                      <div
-                        key={i}
-                        style={{
-                          background: "rgba(5, 8, 14, 0.8)",
-                          border: `1px solid ${isErr ? "rgba(248, 113, 113, 0.25)" : isSuccess ? "rgba(52, 211, 153, 0.2)" : "rgba(255, 255, 255, 0.05)"}`,
-                          borderRadius: "6px",
-                          padding: "8px 10px",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          fontSize: "11px",
-                          gap: "10px",
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <span
-                            style={{
-                              fontSize: "9px",
-                              fontWeight: 900,
-                              padding: "1px 5px",
-                              borderRadius: "3px",
-                              background: badgeBg,
-                              color: badgeColor,
-                              fontFamily: "var(--font-mono, monospace)",
-                            }}
-                          >
-                            {isErr ? "❌ FALLO" : isSuccess ? "✓ OK" : "ℹ️ EVENTO"}
-                          </span>
-                          <span style={{ color: "#f1f5f9" }}>{line}</span>
+                            <span>{line}</span>
+                          </div>
+                          <span className="text-[9px] text-slate-500 flex-shrink-0">#{i + 1}</span>
                         </div>
-                        <span style={{ fontSize: "9px", color: "#64748b", fontFamily: "var(--font-mono, monospace)", flexShrink: 0 }}>
-                          Evento #{i + 1}
-                        </span>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div style={{ padding: "32px", textAlign: "center", color: "#94a3b8", background: "rgba(0, 0, 0, 0.3)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.05)", fontSize: "12px", fontFamily: "var(--font-mono, monospace)" }}>
-              🛡️ NO EVIDENCE · Sin artefacto de backtest determinista de Nautilus registrado para {selectedCandidateId || "este candidato"}.
-            </div>
-          )}
-        </div>
-      )}
-
+            ) : (
+              <div className="py-12 text-center text-xs text-slate-500 font-mono rounded-xl border border-white/[0.06] bg-[#050811] p-6">
+                🛡️ NO EVIDENCE · Sin artefacto de backtest determinista de Nautilus registrado para{" "}
+                {selectedCandidateId || "este candidato"}.
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

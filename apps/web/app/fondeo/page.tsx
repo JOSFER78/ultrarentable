@@ -2,6 +2,20 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import {
+  ShieldCheck,
+  Building2,
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  ArrowRight,
+  TrendingUp,
+  Flame,
+  Zap,
+  Layers,
+  Sparkles,
+} from "lucide-react";
 
 interface PropFirmChallenge {
   id: string;
@@ -13,13 +27,16 @@ interface PropFirmChallenge {
   min_trading_days: number;
   consistency_max_pct: number;
   auto_flatten_time: string;
+  drawdown_type: string;
 }
 
 const PROP_CATALOG: PropFirmChallenge[] = [
-  { id: "topstep_50k", name: "Topstep 50K Combine", account_size: 50000, profit_target: 3000, max_trailing_dd: 2000, daily_loss_limit: 1000, min_trading_days: 2, consistency_max_pct: 50, auto_flatten_time: "15:59 CST" },
-  { id: "mffu_50k", name: "MyFundedFutures 50K Starter", account_size: 50000, profit_target: 3000, max_trailing_dd: 2000, daily_loss_limit: 1200, min_trading_days: 1, consistency_max_pct: 40, auto_flatten_time: "15:59 CST" },
-  { id: "tradeify_50k", name: "Tradeify 50K Growth", account_size: 50000, profit_target: 2500, max_trailing_dd: 1500, daily_loss_limit: 1000, min_trading_days: 3, consistency_max_pct: 40, auto_flatten_time: "15:59 CST" },
-  { id: "apex_50k", name: "Apex Trader Funding 50K", account_size: 50000, profit_target: 3000, max_trailing_dd: 2500, daily_loss_limit: 0, min_trading_days: 1, consistency_max_pct: 30, auto_flatten_time: "15:59 CST" },
+  { id: "mffu_50k", name: "MyFundedFutures 50K Rapid", account_size: 50000, profit_target: 3000, max_trailing_dd: 2000, daily_loss_limit: 1200, min_trading_days: 1, consistency_max_pct: 40, auto_flatten_time: "15:59 CST", drawdown_type: "EOD Trailing" },
+  { id: "tradeify_50k", name: "Tradeify 50K Growth", account_size: 50000, profit_target: 2500, max_trailing_dd: 1500, daily_loss_limit: 1000, min_trading_days: 3, consistency_max_pct: 40, auto_flatten_time: "15:59 CST", drawdown_type: "EOD Trailing" },
+  { id: "tradeday_50k", name: "TradeDay 50K FastPass", account_size: 50000, profit_target: 3000, max_trailing_dd: 2000, daily_loss_limit: 1000, min_trading_days: 5, consistency_max_pct: 50, auto_flatten_time: "15:59 CST", drawdown_type: "EOD Trailing" },
+  { id: "blusky_50k", name: "BluSky 50K Static", account_size: 50000, profit_target: 3000, max_trailing_dd: 1500, daily_loss_limit: 0, min_trading_days: 5, consistency_max_pct: 40, auto_flatten_time: "15:59 CST", drawdown_type: "100% Estático Fijo" },
+  { id: "topstep_50k", name: "Topstep 50K Combine", account_size: 50000, profit_target: 3000, max_trailing_dd: 2000, daily_loss_limit: 1000, min_trading_days: 2, consistency_max_pct: 50, auto_flatten_time: "15:59 CST", drawdown_type: "EOD Trailing" },
+  { id: "apex_50k", name: "Apex Trader Funding 50K", account_size: 50000, profit_target: 3000, max_trailing_dd: 2500, daily_loss_limit: 0, min_trading_days: 1, consistency_max_pct: 30, auto_flatten_time: "15:59 CST", drawdown_type: "Trailing Intradía" },
 ];
 
 export default function TrackFondeoCMEPage() {
@@ -51,168 +68,229 @@ export default function TrackFondeoCMEPage() {
   const isDllOk = selectedFirm.daily_loss_limit === 0 || todayPnl > -selectedFirm.daily_loss_limit;
 
   return (
-    <div style={{ padding: "16px 24px", width: "100%", maxWidth: "100%", margin: 0, color: "#f8fafc", boxSizing: "border-box" }}>
+    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-slate-100">
       {/* 1. HEADER */}
-      <div style={{ marginBottom: "24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-          <Link href="/" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
-            ← Command Center
-          </Link>
-          <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-          <span style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-            TRACK_FONDEO · INSTITUTIONAL CME PROP FIRMS
-          </span>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Link href="/" className="text-xs text-slate-400 hover:text-white transition">
+                ← Command Center
+              </Link>
+              <span className="text-slate-600">/</span>
+              <span className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider">
+                TRACK_FONDEO · INSTITUTIONAL CME PROP FIRMS
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              Dashboard de Fondeo CME & Compliance Guard
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              Supervisión estricta de cuentas de evaluación y fondeadas: Trailing DD intra-trade, Daily Loss Limit y regla de consistencia.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <Link
+              href="/prop-firms"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20"
+            >
+              <Building2 className="w-4 h-4" />
+              <span>Catálogo 70 Prop Firms</span>
+            </Link>
+            <Link
+              href="/tradesfera"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-sky-950/80 text-sky-300 border border-sky-700/60 hover:bg-sky-900 transition"
+            >
+              <ShieldCheck className="w-4 h-4 text-sky-400" />
+              <span>Tratado Tradesfera M01-M16</span>
+            </Link>
+          </div>
         </div>
-        <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-          Dashboard de Fondeo CME & Compliance Guard
-        </h1>
-        <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
-          Supervisión estricta de cuentas de evaluación y fondeadas: Trailing DD intra-trade, Daily Loss Limit y regla de consistencia.
-        </p>
       </div>
 
       {/* 2. SELECTOR DE EMPRESA DE FONDEO */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "24px", flexWrap: "wrap" }}>
-        {PROP_CATALOG.map((firm) => {
-          const isSelected = selectedFirm.id === firm.id;
-          return (
-            <button
-              key={firm.id}
-              onClick={() => setSelectedFirm(firm)}
-              style={{
-                flex: 1,
-                minWidth: "220px",
-                padding: "14px 16px",
-                borderRadius: "10px",
-                background: isSelected ? "rgba(56, 189, 248, 0.15)" : "rgba(16, 23, 34, 0.75)",
-                border: isSelected ? "1px solid #38bdf8" : "1px solid rgba(255, 255, 255, 0.08)",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <div style={{ fontSize: "12px", fontWeight: 800, color: isSelected ? "#38bdf8" : "#fff" }}>
-                {firm.name}
-              </div>
-              <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>
-                Target: ${firm.profit_target} · Max DD: ${firm.max_trailing_dd}
-              </div>
-            </button>
-          );
-        })}
+      <div className="space-y-2">
+        <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+          Seleccionar Programa de Fondeo para Modelar Compliance:
+        </span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {PROP_CATALOG.map((firm) => {
+            const isSelected = selectedFirm.id === firm.id;
+            return (
+              <button
+                key={firm.id}
+                onClick={() => setSelectedFirm(firm)}
+                className={`p-3.5 rounded-xl text-left transition-all border backdrop-blur-xl ${
+                  isSelected
+                    ? "bg-sky-950/40 border-sky-500 shadow-md shadow-sky-500/10 ring-1 ring-sky-500/30"
+                    : "bg-[#090d16]/90 border-white/[0.08] hover:border-sky-500/30"
+                }`}
+              >
+                <div className="text-xs font-black text-white truncate">{firm.name}</div>
+                <div className="text-[10px] text-slate-400 font-mono mt-1">
+                  Target: ${firm.profit_target.toLocaleString()}
+                </div>
+                <div className="text-[10px] text-sky-400 font-mono">
+                  Max DD: ${firm.max_trailing_dd.toLocaleString()}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* 3. MASTER COMPLIANCE METRICS */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Equity Actual */}
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
-          <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
             EQUITY REAL DE LA CUENTA
-          </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: "#fff", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+          </span>
+          <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
             ${currentEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </div>
-          <div style={{ fontSize: "11px", color: totalProfit >= 0 ? "#34d399" : "#f43f5e", marginTop: "4px" }}>
+          <div
+            className={`text-xs font-mono font-bold ${
+              totalProfit >= 0 ? "text-emerald-400" : "text-rose-400"
+            }`}
+          >
             Beneficio: {totalProfit >= 0 ? `+$${totalProfit.toFixed(2)}` : `-$${Math.abs(totalProfit).toFixed(2)}`} USD
           </div>
         </div>
 
         {/* Trailing Drawdown Buffer */}
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
-          <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
             COLCHÓN TRAILING DRAWDOWN
-          </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: ddBuffer > 800 ? "#34d399" : "#f43f5e", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+          </span>
+          <div
+            className={`text-2xl sm:text-3xl font-black font-mono tabular-nums ${
+              ddBuffer > 800 ? "text-emerald-400" : "text-rose-400"
+            }`}
+          >
             ${ddBuffer.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-            Uso: {ddUsagePct.toFixed(1)}% de ${selectedFirm.max_trailing_dd}
+          <div className="text-xs font-mono text-slate-400">
+            Uso: {ddUsagePct.toFixed(1)}% de ${selectedFirm.max_trailing_dd.toLocaleString()}
           </div>
         </div>
 
         {/* Target Progress */}
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
-          <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-            PROGRESO HACIA TARGET (${selectedFirm.profit_target})
-          </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: "#38bdf8", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+            PROGRESO TARGET (${selectedFirm.profit_target.toLocaleString()})
+          </span>
+          <div className="text-2xl sm:text-3xl font-black text-sky-400 font-mono tabular-nums">
             {targetProgress.toFixed(1)}%
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-            Faltan: ${Math.max(0, selectedFirm.profit_target - totalProfit).toFixed(2)}
+          <div className="text-xs font-mono text-slate-400">
+            Faltan: ${Math.max(0, selectedFirm.profit_target - totalProfit).toFixed(2)} USD
           </div>
         </div>
 
-        {/* Límite Pérdida Diaria */}
-        <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "18px" }}>
-          <div style={{ fontSize: "10px", fontWeight: 800, color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+        {/* Daily Loss Limit */}
+        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
             ESTADO DAILY LOSS LIMIT ({selectedFirm.daily_loss_limit > 0 ? `$${selectedFirm.daily_loss_limit}` : "SIN DLL"})
-          </div>
-          <div style={{ fontSize: "24px", fontWeight: 900, color: isDllOk ? "#34d399" : "#f43f5e", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
+          </span>
+          <div
+            className={`text-2xl sm:text-3xl font-black font-mono ${
+              isDllOk ? "text-emerald-400" : "text-rose-400"
+            }`}
+          >
             {isDllOk ? "DENTRO DE LÍMITE" : "🚨 VIOLACIÓN"}
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+          <div className="text-xs font-mono text-slate-400">
             PnL Hoy: ${todayPnl.toFixed(2)} USD
           </div>
         </div>
       </div>
 
-      {/* 4. ACTIVE SESSIONS TABLE OR CALL TO ACTION */}
-      <div style={{ background: "rgba(16, 23, 34, 0.75)", backdropFilter: "blur(16px)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "14px", padding: "20px", marginBottom: "24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-          <h2 style={{ fontSize: "15px", fontWeight: 800, color: "#fff", margin: 0 }}>
-            Sesiones de Fondeo Registradas en SQLite
-          </h2>
+      {/* 4. CME SESSION TIMER & AUTO-FLATTEN MONITOR */}
+      <div className="bg-gradient-to-r from-sky-950/40 via-[#090d16]/90 to-slate-950/90 border border-sky-500/30 backdrop-blur-xl rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+            <Clock className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-black text-white flex items-center gap-2">
+              <span>Temporizador Mandatorio de Auto-Flatten CME ({selectedFirm.auto_flatten_time})</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Cierre automático de posiciones 10 minutos antes del corte diario para evitar sanciones por overnight de las prop firms.
+            </p>
+          </div>
+        </div>
+
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono font-black shrink-0">
+          <ShieldCheck className="w-4 h-4" />
+          <span>GUARD ACTIVO · 0 OVERNIGHT</span>
+        </div>
+      </div>
+
+      {/* 5. ACTIVE SESSIONS TABLE */}
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h2 className="text-base font-black text-white flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <span>Sesiones de Fondeo Registradas en SQLite</span>
+            </h2>
+            <p className="text-xs text-slate-400">
+              Telemetría determinista en tiempo real desde la API de ejecución.
+            </p>
+          </div>
           <Link
             href="/ejecucion"
-            style={{
-              padding: "6px 14px",
-              borderRadius: "6px",
-              background: "rgba(56, 189, 248, 0.15)",
-              border: "1px solid #38bdf8",
-              color: "#38bdf8",
-              fontWeight: 800,
-              fontSize: "11px",
-              textDecoration: "none",
-              fontFamily: "var(--font-mono, monospace)",
-            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-950/80 hover:bg-sky-900 text-sky-300 border border-sky-700/60 text-xs font-mono font-bold transition"
           >
-            ⚡ IR AL CENTRO DE EJECUCIÓN →
+            <Zap className="w-3.5 h-3.5 text-sky-400" />
+            <span>Centro de Ejecución Live →</span>
           </Link>
         </div>
 
         {sessions.length === 0 ? (
-          <div style={{ padding: "20px", textAlign: "center", color: "#94a3b8", fontSize: "12px" }}>
-            No hay sesiones de fondeo activas en este momento. Despliega una estrategia en <Link href="/ejecucion" style={{ color: "#38bdf8" }}>Ejecución</Link> o conecta NinjaTrader 8.
+          <div className="p-8 text-center text-slate-400 text-xs font-mono space-y-2">
+            <div>No hay sesiones de fondeo activas en este momento.</div>
+            <p className="text-slate-500 text-[11px]">
+              Despliega una estrategia validada en <Link href="/ejecucion" className="text-sky-400 underline">Ejecución</Link> o conecta NinjaTrader 8.
+            </p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px" }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)", textAlign: "left", color: "#64748b", fontFamily: "var(--font-mono, monospace)", fontSize: "10px" }}>
-                  <th style={{ padding: "8px" }}>SESIÓN</th>
-                  <th style={{ padding: "8px" }}>ESTRATEGIA</th>
-                  <th style={{ padding: "8px" }}>SÍMBOLO</th>
-                  <th style={{ padding: "8px" }}>ESTADO</th>
-                  <th style={{ padding: "8px" }}>PNL HOY</th>
-                  <th style={{ padding: "8px" }}>PEAK EQUITY</th>
+                <tr className="border-b border-slate-800 text-[11px] text-slate-400 uppercase font-bold tracking-wider">
+                  <th className="py-2.5 px-3">Sesión</th>
+                  <th className="py-2.5 px-3">Estrategia</th>
+                  <th className="py-2.5 px-3">Símbolo</th>
+                  <th className="py-2.5 px-3">Estado</th>
+                  <th className="py-2.5 px-3 text-right">PnL Hoy</th>
+                  <th className="py-2.5 px-3 text-right">Peak Equity</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-800/60">
                 {sessions.map((s) => (
-                  <tr key={s.session_id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.04)" }}>
-                    <td style={{ padding: "10px 8px", fontFamily: "var(--font-mono, monospace)", color: "#38bdf8" }}>{s.session_id}</td>
-                    <td style={{ padding: "10px 8px" }}>{s.candidate_id}</td>
-                    <td style={{ padding: "10px 8px", fontWeight: 700 }}>{s.symbol}</td>
-                    <td style={{ padding: "10px 8px" }}>
-                      <span style={{ fontSize: "10px", padding: "2px 6px", borderRadius: "4px", background: s.status === "RUNNING" ? "rgba(52, 211, 153, 0.15)" : "rgba(244, 63, 94, 0.15)", color: s.status === "RUNNING" ? "#34d399" : "#f43f5e" }}>
+                  <tr key={s.session_id} className="hover:bg-slate-900/40 transition">
+                    <td className="py-3 px-3 text-sky-400 font-bold">{s.session_id}</td>
+                    <td className="py-3 px-3 text-slate-300 font-sans">{s.candidate_id}</td>
+                    <td className="py-3 px-3 font-bold text-white">{s.symbol}</td>
+                    <td className="py-3 px-3">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                          s.status === "RUNNING"
+                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                            : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                        }`}
+                      >
                         {s.status}
                       </span>
                     </td>
-                    <td style={{ padding: "10px 8px", color: s.daily_pnl_usd >= 0 ? "#34d399" : "#f43f5e", fontFamily: "var(--font-mono, monospace)" }}>
+                    <td className={`py-3 px-3 text-right tabular-nums font-bold ${s.daily_pnl_usd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                       {s.daily_pnl_usd >= 0 ? `+$${s.daily_pnl_usd.toFixed(2)}` : `-$${Math.abs(s.daily_pnl_usd).toFixed(2)}`}
                     </td>
-                    <td style={{ padding: "10px 8px", fontFamily: "var(--font-mono, monospace)" }}>
+                    <td className="py-3 px-3 text-right tabular-nums text-slate-300">
                       ${s.peak_equity_usd?.toFixed(2)}
                     </td>
                   </tr>
@@ -221,46 +299,6 @@ export default function TrackFondeoCMEPage() {
             </table>
           </div>
         )}
-      </div>
-
-      {/* 5. CME SESSION TIMER & AUTO-FLATTEN MONITOR */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(16, 23, 34, 0.85) 100%)",
-          border: "1px solid rgba(56, 189, 248, 0.25)",
-          borderRadius: "14px",
-          padding: "20px",
-          marginBottom: "24px",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "20px" }}>⏱️</span>
-            <div>
-              <div style={{ fontSize: "14px", fontWeight: 800, color: "#fff" }}>
-                Temporizador Mandatorio de Auto-Flatten CME ({selectedFirm.auto_flatten_time})
-              </div>
-              <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>
-                Todas las posiciones abiertas se cerrarán automáticamente 10 minutos antes del corte diario para evitar sanciones por overnight.
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "6px 14px",
-              borderRadius: "8px",
-              background: "rgba(56, 189, 248, 0.15)",
-              border: "1px solid rgba(56, 189, 248, 0.4)",
-              color: "#38bdf8",
-              fontFamily: "var(--font-mono, monospace)",
-              fontSize: "12px",
-              fontWeight: 800,
-            }}
-          >
-            GUARD ACTIVO · 0 OVERNIGHT
-          </div>
-        </div>
       </div>
     </div>
   );

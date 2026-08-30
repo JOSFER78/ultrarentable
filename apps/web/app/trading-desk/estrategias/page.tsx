@@ -19,7 +19,10 @@ import {
   WifiOff,
   AlertCircle,
   Zap,
+  TrendingUp,
+  Award,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface ExecutionSession {
   session_id: string;
@@ -67,6 +70,8 @@ interface CandidateItem {
 }
 
 export default function EstrategiasActivasPage() {
+  const { user, profile, loading: authLoading } = useAuth();
+
   const [sessions, setSessions] = useState<ExecutionSession[]>([]);
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [gatewayData, setGatewayData] = useState<GatewayStatus | null>(null);
@@ -76,6 +81,15 @@ export default function EstrategiasActivasPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ text: string; isError: boolean } | null>(null);
+
+  // Derive real credentials from Firestore User Profile
+  const linkedAccounts = profile?.trading_accounts || profile?.broker_accounts || {};
+  const linkedAccountId =
+    linkedAccounts.tradovate_account_id?.trim() ||
+    linkedAccounts.ninjatrader_account_id?.trim() ||
+    gatewayData?.account_id?.trim() ||
+    "";
+  const hasLinkedAccount = Boolean(linkedAccountId);
 
   const showToast = (text: string, isError = false) => {
     setNotification({ text, isError });
@@ -149,32 +163,32 @@ export default function EstrategiasActivasPage() {
     }
   };
 
-  const isConnected = gatewayData?.gateway_status === "CONNECTED" || gatewayData?.gateway_status === "IDLE_WAITING";
+  const isConnected = (gatewayData?.gateway_status === "CONNECTED" || gatewayData?.gateway_status === "IDLE_WAITING") && hasLinkedAccount;
 
   return (
     <div className="space-y-4 font-sans">
       {/* HEADER */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-400">
+          <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
             <Bot className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-black text-white">Estrategias & Sesiones de Ejecución</h1>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">Estrategias & Sesiones de Ejecución</h1>
+              <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg bg-purple-500/20 text-purple-400 border border-purple-500/30">
                 11 GATES & SESSIONS
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
-              Control de Sesiones de Despacho en Tradovate ({gatewayData?.account_id ?? "DEMO1279346"}) · Protocolo Fail-Closed
+            <p className="text-xs text-slate-400 font-mono mt-1">
+              Control de Sesiones de Despacho en Tradovate ({hasLinkedAccount ? linkedAccountId : "SIN CUENTA VINCULADA"}) · Protocolo Fail-Closed
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex items-center gap-2.5 w-full md:w-auto font-mono">
           <span
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold border flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border flex items-center gap-1.5 ${
               isConnected
                 ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                 : "bg-rose-500/20 text-rose-400 border-rose-500/30"
@@ -183,12 +197,12 @@ export default function EstrategiasActivasPage() {
             {isConnected ? (
               <>
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>GATEWAY ACTIVO · {gatewayData?.last_ping_latency_ms != null ? `${gatewayData.last_ping_latency_ms} ms` : "OK"}</span>
+                <span className="tabular-nums">GATEWAY ACTIVO · {gatewayData?.last_ping_latency_ms != null ? `${gatewayData.last_ping_latency_ms} ms` : "OK"}</span>
               </>
             ) : (
               <>
                 <WifiOff className="w-3.5 h-3.5" />
-                <span>DESCONECTADO</span>
+                <span>{hasLinkedAccount ? "DESCONECTADO" : "SIN CUENTA VINCULADA"}</span>
               </>
             )}
           </span>
@@ -199,7 +213,7 @@ export default function EstrategiasActivasPage() {
               fetchRealData();
             }}
             disabled={isRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-mono font-bold transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#050811] hover:bg-slate-800 text-slate-200 border border-white/[0.1] rounded-xl text-xs font-bold transition cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-emerald-400" : ""}`} />
             <span>{isRefreshing ? "Actualizando..." : "Refrescar"}</span>
@@ -220,14 +234,14 @@ export default function EstrategiasActivasPage() {
       )}
 
       {fetchError && (
-        <div className="p-4 bg-rose-950/60 border border-rose-500/80 rounded-2xl text-xs font-mono text-rose-200 flex items-center justify-between gap-3">
+        <div className="p-4 bg-rose-950/60 border border-rose-500/80 rounded-2xl text-xs font-mono text-rose-200 flex items-center justify-between gap-3 shadow-lg">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
             <span>ESTADO: <strong>DESCONECTADO</strong> — {fetchError}</span>
           </div>
           <button
             onClick={fetchRealData}
-            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reintentar
@@ -236,29 +250,29 @@ export default function EstrategiasActivasPage() {
       )}
 
       {/* SECTION 1: LIVE EXECUTION SESSIONS */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-emerald-400" />
             <h2 className="text-base font-bold text-white tracking-tight">
               Sesiones de Ejecución en Vivo ({sessions.length})
             </h2>
           </div>
-          <span className="text-xs font-mono text-emerald-400 font-bold">
+          <span className="text-xs font-mono text-emerald-400 font-bold bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-700/60">
             API /api/v1/execution/sessions
           </span>
         </div>
 
         {sessions.length === 0 ? (
-          <div className="p-12 bg-slate-950/60 rounded-2xl border border-dashed border-slate-800 text-center space-y-4 font-mono">
-            <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500">
+          <div className="p-12 bg-[#050811]/60 rounded-2xl border border-dashed border-white/[0.1] text-center space-y-4 font-mono">
+            <div className="w-12 h-12 rounded-2xl bg-[#090d16] border border-white/[0.08] flex items-center justify-center mx-auto text-slate-500">
               <ShieldAlert className="w-6 h-6" />
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
                 CERO SESIONES DE EJECUCIÓN ACTIVAS
               </h3>
-              <p className="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed">
+              <p className="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed font-sans">
                 Bajo la doctrina <strong>ZERO-MOCKS & REAL-ONLY</strong>, ninguna estrategia o sesión se despacha al mercado real sin certificación 11/11 Gates y orden explícita del operador.
               </p>
             </div>
@@ -282,7 +296,7 @@ export default function EstrategiasActivasPage() {
               return (
                 <div
                   key={sess.session_id}
-                  className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3"
+                  className="p-4 bg-[#050811] rounded-xl border border-white/[0.08] space-y-3"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
@@ -299,7 +313,7 @@ export default function EstrategiasActivasPage() {
                               ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
                               : isKillSwitchActive
                               ? "bg-rose-500/20 text-rose-400 border-rose-500/30"
-                              : "bg-slate-800 text-slate-400 border-slate-700"
+                              : "bg-slate-800 text-slate-400 border-white/[0.08]"
                           }`}
                         >
                           {sess.status}
@@ -347,16 +361,16 @@ export default function EstrategiasActivasPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-slate-800 text-[11px]">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-white/[0.08] text-[11px]">
                     <div>
                       <span className="text-slate-500 uppercase text-[10px] block">PnL Sesión</span>
-                      <span className={`font-bold ${sess.current_pnl_usd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                      <span className={`font-bold tabular-nums ${sess.current_pnl_usd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                         ${sess.current_pnl_usd.toFixed(2)} USD
                       </span>
                     </div>
                     <div>
                       <span className="text-slate-500 uppercase text-[10px] block">Drawdown Actual</span>
-                      <span className="font-bold text-slate-300">{sess.current_drawdown_pct.toFixed(2)}%</span>
+                      <span className="font-bold text-slate-300 tabular-nums">{sess.current_drawdown_pct.toFixed(2)}%</span>
                     </div>
                     <div>
                       <span className="text-slate-500 uppercase text-[10px] block">Última Señal</span>
@@ -375,8 +389,8 @@ export default function EstrategiasActivasPage() {
       </div>
 
       {/* SECTION 2: CERTIFIED CANDIDATES & VAULT */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
           <div className="flex items-center gap-2">
             <Layers className="w-5 h-5 text-indigo-400" />
             <h2 className="text-base font-bold text-white tracking-tight">
@@ -392,7 +406,7 @@ export default function EstrategiasActivasPage() {
         </div>
 
         {candidates.length === 0 ? (
-          <div className="p-8 text-center border border-dashed border-slate-800 rounded-xl bg-slate-950/40 text-xs font-mono text-slate-500">
+          <div className="p-8 text-center border border-dashed border-white/[0.1] rounded-2xl bg-[#050811]/40 text-xs font-mono text-slate-500">
             CERO ESTRATEGIAS REGISTRADAS EN BASE DE DATOS
           </div>
         ) : (
@@ -400,14 +414,14 @@ export default function EstrategiasActivasPage() {
             {candidates.map((cand) => (
               <div
                 key={cand.candidate_id}
-                className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5 flex flex-col justify-between"
+                className="p-4 bg-[#050811] rounded-xl border border-white/[0.08] space-y-2.5 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase">
                       {cand.route} · {cand.symbol} ({cand.timeframe})
                     </span>
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-white/[0.08]">
                       {cand.tier_label || cand.status}
                     </span>
                   </div>
@@ -417,14 +431,14 @@ export default function EstrategiasActivasPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-[10px]">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.08] text-[10px]">
                   <div>
                     <span className="text-slate-500 block">PF OOS:</span>
-                    <span className="font-bold text-slate-200">{cand.profit_factor_oos != null ? cand.profit_factor_oos.toFixed(2) : "NO EVIDENCE"}</span>
+                    <span className="font-bold text-slate-200 tabular-nums">{cand.profit_factor_oos != null ? cand.profit_factor_oos.toFixed(2) : "NO EVIDENCE"}</span>
                   </div>
                   <div>
                     <span className="text-slate-500 block">Max DD OOS:</span>
-                    <span className="font-bold text-slate-200">{cand.max_dd_oos_pct != null ? `${cand.max_dd_oos_pct.toFixed(1)}%` : "NO EVIDENCE"}</span>
+                    <span className="font-bold text-slate-200 tabular-nums">{cand.max_dd_oos_pct != null ? `${cand.max_dd_oos_pct.toFixed(1)}%` : "NO EVIDENCE"}</span>
                   </div>
                 </div>
               </div>

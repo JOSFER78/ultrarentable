@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, RefreshCw, History, AlertCircle } from "lucide-react";
+import { Sparkles, RefreshCw, History, AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface AISyncStatusBarProps {
   lastUpdatedText?: string;
@@ -70,160 +70,110 @@ export function AISyncStatusBar({
 
   return (
     <div
-      style={{
-        width: "100%",
-        background: "linear-gradient(135deg, rgba(6,9,14,0.95), rgba(11,16,24,0.95))",
-        border: syncError ? "1px solid rgba(244, 63, 94, 0.4)" : "1px solid rgba(148, 163, 184, 0.15)",
-        borderRadius: "14px",
-        padding: "12px 18px",
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "12px",
-        marginBottom: "16px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-      }}
+      className={`w-full bg-[#090d16]/90 backdrop-blur-xl border rounded-2xl p-3.5 px-5 shadow-xl transition-all ${
+        syncError
+          ? "border-rose-500/40 shadow-rose-500/5"
+          : "border-white/[0.08] shadow-black/20"
+      }`}
     >
-      {/* Lado Izquierdo */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <div
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "8px",
-            background: syncError
-              ? "rgba(244, 63, 94, 0.15)"
-              : "rgba(99, 225, 180, 0.12)",
-            border: syncError
-              ? "1px solid rgba(244, 63, 94, 0.4)"
-              : "1px solid rgba(99, 225, 180, 0.3)",
-            color: syncError ? "#f43f5e" : "#63e1b4",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          {syncError ? <AlertCircle size={16} /> : <Sparkles size={16} />}
-        </div>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ fontSize: "11.5px", fontWeight: 900, color: "#ffffff", letterSpacing: "0.3px" }}>
-              Motor Autónomo de Inteligencia con FreeLLMAPI
-            </span>
-            <span
-              style={{
-                fontSize: "9.5px",
-                fontWeight: 800,
-                padding: "1px 6px",
-                borderRadius: "4px",
-                background: syncError ? "rgba(244, 63, 94, 0.15)" : "rgba(56, 189, 248, 0.15)",
-                color: syncError ? "#f43f5e" : "#38bdf8",
-              }}
-            >
-              Zero-Mocks
-            </span>
-          </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Left Status Area */}
+        <div className="flex items-center gap-3">
           <div
-            style={{
-              fontSize: "11px",
-              color: syncError ? "#f43f5e" : statusMessage ? "#63e1b4" : "#94a3b8",
-              marginTop: "1px",
-              fontWeight: statusMessage || syncError ? 700 : 400,
-            }}
+            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
+              syncError
+                ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
+                : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+            }`}
           >
-            {statusMessage || `Última sincronización: ${lastUpdatedText}`}
+            {syncError ? <AlertCircle className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
           </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-white tracking-tight">
+                Motor Autónomo de Inteligencia con FreeLLMAPI
+              </span>
+              <span
+                className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                  syncError
+                    ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
+                    : "bg-sky-500/10 border-sky-500/30 text-sky-400"
+                }`}
+              >
+                Zero-Mocks
+              </span>
+            </div>
+            <div
+              className={`text-[11px] font-mono mt-0.5 ${
+                syncError
+                  ? "text-rose-400 font-bold"
+                  : statusMessage
+                  ? "text-emerald-400 font-bold"
+                  : "text-slate-400"
+              }`}
+            >
+              {statusMessage || `Última sincronización: ${lastUpdatedText}`}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowChangelog(!showChangelog)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 text-xs font-mono font-bold transition-all"
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>Changelog</span>
+          </button>
+
+          <button
+            onClick={handleTriggerSync}
+            disabled={isSyncing}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono font-black transition-all shadow-md ${
+              syncError
+                ? "bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/20"
+                : syncSuccess
+                ? "bg-emerald-600 text-white shadow-emerald-600/20"
+                : "bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20"
+            } ${isSyncing ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+            <span>
+              {isSyncing
+                ? "Sincronizando..."
+                : syncError
+                ? "Reintentar"
+                : syncSuccess
+                ? "✓ Actualizado"
+                : "Actualizar Ahora"}
+            </span>
+          </button>
         </div>
       </div>
 
-      {/* Lado Derecho */}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <button
-          onClick={() => setShowChangelog(!showChangelog)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            padding: "6px 12px",
-            borderRadius: "8px",
-            background: "#06090e",
-            color: "#94a3b8",
-            border: "1px solid rgba(148, 163, 184, 0.2)",
-            fontSize: "11.5px",
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
-        >
-          <History size={13} />
-          <span>Changelog</span>
-        </button>
-
-        <button
-          onClick={handleTriggerSync}
-          disabled={isSyncing}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            padding: "6px 14px",
-            borderRadius: "8px",
-            background: syncError ? "#ef4444" : syncSuccess ? "#22c55e" : "#63e1b4",
-            color: syncError ? "#ffffff" : "#06090e",
-            border: "none",
-            fontSize: "11.5px",
-            fontWeight: 900,
-            cursor: isSyncing ? "not-allowed" : "pointer",
-            boxShadow: syncError
-              ? "0 2px 8px rgba(239, 68, 68, 0.3)"
-              : "0 2px 8px rgba(99, 225, 180, 0.25)",
-            opacity: isSyncing ? 0.7 : 1,
-          }}
-        >
-          <RefreshCw size={13} className={isSyncing ? "animate-spin" : ""} />
-          <span>
-            {isSyncing
-              ? "Sincronizando con FreeLLMAPI..."
-              : syncError
-              ? "Reintentar Sincronización"
-              : syncSuccess
-              ? "✓ Actualizado"
-              : "Actualizar con FreeLLMAPI Ahora"}
-          </span>
-        </button>
-      </div>
-
-      {/* Changelog Modal inline */}
+      {/* Changelog Accordion */}
       {showChangelog && (
-        <div
-          style={{
-            width: "100%",
-            marginTop: "10px",
-            paddingTop: "10px",
-            borderTop: "1px solid rgba(148, 163, 184, 0.12)",
-            fontSize: "11.5px",
-            color: "#cbd5e1",
-          }}
-        >
-          <div style={{ fontWeight: 800, color: "#ffffff", marginBottom: "4px" }}>
-            📋 Registro de Auditoría FreeLLMAPI:
+        <div className="mt-3 pt-3 border-t border-slate-800 text-xs text-slate-300 space-y-1 font-mono">
+          <div className="font-bold text-white flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Registro de Auditoría y Verificación Cuantitativa:</span>
           </div>
-          <ul style={{ paddingLeft: "16px", margin: 0, lineHeight: "1.6" }}>
+          <ul className="pl-4 list-disc space-y-0.5 text-[11px] text-slate-400 font-sans">
             <li>
-              <b>Topstep:</b> Sincronizados tiers de $50K, $100K y $150K con $149 activation fee y ruta No-Fee.
+              <strong className="text-slate-200">Topstep:</strong> Sincronizados tiers de $50K, $100K y $150K con $149 activation fee y ruta No-Fee.
             </li>
             <li>
-              <b>MyFundedFutures (MFFU):</b> Activado cupón <code>300K</code> (40% OFF) en Rapid $25K, $50K, $100K y $150K con $0 Pass Fee.
+              <strong className="text-slate-200">MyFundedFutures (MFFU):</strong> Activado cupón <code className="text-amber-300 bg-amber-950/40 px-1 rounded">300K</code> (40% OFF) en Rapid $25K, $50K, $100K y $150K con $0 Pass Fee.
             </li>
             <li>
-              <b>Tradeify:</b> Cupones <code>TNT</code> y <code>SAVE40</code> en planes Growth, Select y Lightning directo a fondeo.
+              <strong className="text-slate-200">Tradeify:</strong> Cupones <code className="text-amber-300 bg-amber-950/40 px-1 rounded">TNT</code> y <code className="text-amber-300 bg-amber-950/40 px-1 rounded">SAVE40</code> en planes Growth, Select y Lightning.
             </li>
             <li>
-              <b>Apex:</b> Cupón <code>SAVINGS</code> (80% OFF) en todos los tamaños de evaluación ($25K a $300K).
+              <strong className="text-slate-200">Apex:</strong> Cupón <code className="text-amber-300 bg-amber-950/40 px-1 rounded">SAVINGS</code> (80% OFF) en todos los tamaños de evaluación.
             </li>
             <li>
-              <b>BluSky:</b> Cupón <code>BLU25</code> en planes de Drawdown 100% Estático Fijo.
+              <strong className="text-slate-200">BluSky:</strong> Cupón <code className="text-amber-300 bg-amber-950/40 px-1 rounded">BLU25</code> en planes de Drawdown 100% Estático Fijo.
             </li>
           </ul>
         </div>

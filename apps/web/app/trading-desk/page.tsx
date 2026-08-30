@@ -35,7 +35,11 @@ import {
   Server,
   AlertCircle,
   WifiOff,
+  Cpu,
+  Hash,
+  SlidersHorizontal,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface LivePosition {
   id: string;
@@ -104,7 +108,16 @@ interface GatewayItem {
   is_enabled: boolean;
 }
 
+const CME_INSTRUMENTS = [
+  { symbol: "MNQ", name: "Micro Nasdaq-100", tick: "0.25", val: "$0.50", color: "#38bdf8" },
+  { symbol: "MES", name: "Micro S&P 500", tick: "0.25", val: "$1.25", color: "#818cf8" },
+  { symbol: "MCL", name: "Micro Crude Oil", tick: "0.01", val: "$1.00", color: "#f59e0b" },
+  { symbol: "MGC", name: "Micro Gold", tick: "0.10", val: "$1.00", color: "#eab308" },
+];
+
 export default function InstitutionalTradingDesk() {
+  const { user, profile, loading: authLoading } = useAuth();
+
   const [accountInfo, setAccountInfo] = useState<AccountStatus | null>(null);
   const [positions, setPositions] = useState<LivePosition[]>([]);
   const [logs, setLogs] = useState<ExecutionLog[]>([]);
@@ -128,6 +141,19 @@ export default function InstitutionalTradingDesk() {
   const [isFlattenModalOpen, setIsFlattenModalOpen] = useState<boolean>(false);
   const [isFlattening, setIsFlattening] = useState<boolean>(false);
   const [alertNotification, setAlertNotification] = useState<string | null>(null);
+
+  // Derive real credentials from Firestore User Profile
+  const linkedAccounts = profile?.trading_accounts || profile?.broker_accounts || {};
+  const linkedAccountId =
+    linkedAccounts.tradovate_account_id?.trim() ||
+    linkedAccounts.ninjatrader_account_id?.trim() ||
+    accountInfo?.account_id?.trim() ||
+    "";
+  const linkedToken =
+    linkedAccounts.pickmytrade_token?.trim() ||
+    linkedAccounts.gateway_webhook_token?.trim() ||
+    "";
+  const hasLinkedAccount = Boolean(linkedAccountId);
 
   const fetchRealData = useCallback(async () => {
     setFetchError(null);
@@ -188,8 +214,16 @@ export default function InstitutionalTradingDesk() {
     return () => clearInterval(interval);
   }, [fetchRealData]);
 
-  // Real Order Dispatch to PickMyTrade API v2
+  // Real Order Dispatch to PickMyTrade API v2 with Firestore Profile Credentials
   const handleSendManualOrder = async () => {
+    if (!hasLinkedAccount) {
+      setOrderResultMsg({
+        text: "⚠️ Requiere vincular una cuenta real en Configuración antes de despachar órdenes.",
+        isError: true,
+      });
+      return;
+    }
+
     setIsSendingOrder(true);
     setOrderResultMsg(null);
 
@@ -198,8 +232,8 @@ export default function InstitutionalTradingDesk() {
       action: orderAction.toLowerCase(),
       contracts: orderContracts,
       orderType: "market",
-      account: accountInfo?.account_id ?? "DEMO1279346",
-      token: "3VxOjkjylyJKkt3oN4Jydg",
+      account: linkedAccountId,
+      token: linkedToken,
       comment: `sig_${orderSymbol.toLowerCase()}_${orderAction.toLowerCase()}_${Date.now().toString().slice(-6)}`,
       advance_tp_sl: [
         {
@@ -224,7 +258,7 @@ export default function InstitutionalTradingDesk() {
 
       if (res.ok && data.success) {
         setOrderResultMsg({
-          text: `✅ Orden ${orderAction} ${orderContracts}x ${orderSymbol} despachada a Tradovate Demo (${data.latency_ms} ms).`,
+          text: `✅ Orden ${orderAction} ${orderContracts}x ${orderSymbol} despachada a Tradovate (${data.latency_ms} ms).`,
           isError: false,
         });
         fetchRealData();
@@ -247,6 +281,7 @@ export default function InstitutionalTradingDesk() {
 
   // Real Targeted Close by Comment
   const handleClosePosition = async (comment: string, symbol: string) => {
+    if (!hasLinkedAccount) return;
     try {
       const res = await fetch("/api/v1/gateways/pickmytrade/close-comment", {
         method: "POST",
@@ -254,8 +289,8 @@ export default function InstitutionalTradingDesk() {
         body: JSON.stringify({
           ticker: symbol,
           comment: comment,
-          account: accountInfo?.account_id ?? "DEMO1279346",
-          token: "3VxOjkjylyJKkt3oN4Jydg",
+          account: linkedAccountId,
+          token: linkedToken,
         }),
       });
       const data = await res.json();
@@ -270,6 +305,7 @@ export default function InstitutionalTradingDesk() {
 
   // Real Emergency Flatten All
   const handleExecuteFlattenAll = async () => {
+    if (!hasLinkedAccount) return;
     setIsFlattening(true);
     try {
       const res = await fetch("/api/v1/gateways/pickmytrade/flatten", {
@@ -277,8 +313,8 @@ export default function InstitutionalTradingDesk() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ticker: "ALL",
-          account: accountInfo?.account_id ?? "DEMO1279346",
-          token: "3VxOjkjylyJKkt3oN4Jydg",
+          account: linkedAccountId,
+          token: linkedToken,
           reason: "EMERGENCY_KILL_SWITCH_MANUAL_TRIGGER",
         }),
       });
@@ -287,7 +323,7 @@ export default function InstitutionalTradingDesk() {
         setAlertNotification("🚨 ¡FLATTEN TOTAL EJECUTADO! Todas las posiciones han sido liquidadas en Tradovate.");
         fetchRealData();
       } else {
-        setAlertNotification("⚠️ Señal 'flat' despachada hacia Tradovate.");
+        setAlertNotification("⚠️ Señal 'flat' despachada hacia el broker.");
       }
     } catch (err: any) {
       setAlertNotification(`❌ Error ejecutando Flatten: ${err.message}`);
@@ -298,12 +334,15 @@ export default function InstitutionalTradingDesk() {
     }
   };
 
-  const isConnected = accountInfo?.gateway_status === "CONNECTED" || accountInfo?.gateway_status === "IDLE_WAITING";
+  const isConnected = (accountInfo?.gateway_status === "CONNECTED" || accountInfo?.gateway_status === "IDLE_WAITING") && hasLinkedAccount;
+  const trailingLimit = accountInfo?.trailing_drawdown_limit_usd;
+  const currentDd = accountInfo?.current_drawdown_usd ?? 0.0;
+  const ddPct = trailingLimit && trailingLimit > 0 ? (currentDd / trailingLimit) * 100 : 0;
 
   return (
     <div className="space-y-4 font-sans">
       {/* TOP INSTITUTIONAL TELEMETRY BAR */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl">
         <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
@@ -312,9 +351,9 @@ export default function InstitutionalTradingDesk() {
             <div>
               <div className="flex items-center gap-2.5">
                 <h1 className="text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                  Wall Street Trading Desk
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                    CME INSTITUTIONAL V3.4
+                  Trading Desk & Microestructura DOM
+                  <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                    CME GLOBEX V3.4
                   </span>
                 </h1>
                 <span
@@ -332,7 +371,7 @@ export default function InstitutionalTradingDesk() {
                   ) : (
                     <>
                       <WifiOff className="w-3.5 h-3.5" />
-                      <span>DESCONECTADO</span>
+                      <span>{hasLinkedAccount ? "DESCONECTADO" : "SIN CUENTA VINCULADA"}</span>
                     </>
                   )}
                 </span>
@@ -341,18 +380,18 @@ export default function InstitutionalTradingDesk() {
                     setIsRefreshing(true);
                     fetchRealData();
                   }}
-                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition"
+                  className="p-1.5 rounded-xl bg-[#050811] hover:bg-slate-800 text-slate-400 hover:text-white border border-white/[0.08] transition cursor-pointer"
                   title="Actualizar telemetría física"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-emerald-400" : ""}`} />
                 </button>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-2 font-mono">
-                <span>Broker: <strong className="text-slate-200">{accountInfo?.broker ?? "SIN CONEXIÓN"}</strong></span>
+              <p className="text-xs text-slate-400 mt-1 flex flex-wrap items-center gap-2 font-mono">
+                <span>Broker: <strong className="text-slate-200">{accountInfo?.broker ?? (hasLinkedAccount ? "Tradovate" : "SIN CONEXIÓN")}</strong></span>
                 <span>•</span>
-                <span>Cuenta: <strong className="text-emerald-400">{accountInfo?.account_id ?? "NO EVIDENCE"}</strong></span>
+                <span>Cuenta: <strong className="text-emerald-400">{hasLinkedAccount ? linkedAccountId : "SIN CUENTA VINCULADA"}</strong></span>
                 <span>•</span>
-                <span>Operador: <strong className="text-slate-200">{accountInfo?.user ?? "NO EVIDENCE"}</strong></span>
+                <span>Operador: <strong className="text-slate-200">{user?.email || profile?.displayName || "NO AUTENTICADO"}</strong></span>
                 <span>•</span>
                 <span>Vence: <strong className="text-amber-400">{accountInfo?.trial_expires_utc ?? "NO EVIDENCE"}</strong></span>
               </p>
@@ -360,45 +399,53 @@ export default function InstitutionalTradingDesk() {
           </div>
 
           {/* Real Financial KPI Strip */}
-          <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto">
-            <div className="px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60">
+          <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto font-mono">
+            <div className="px-3.5 py-2 rounded-xl bg-[#050811]/90 border border-white/[0.08]">
               <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Saldo Base Tradovate</div>
-              <div className="text-base font-bold font-mono text-white">
+              <div className="text-base font-bold text-white tabular-nums">
                 {accountInfo?.base_capital_usd != null
                   ? `$${accountInfo.base_capital_usd.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`
                   : "SIN DATOS"}
               </div>
             </div>
 
-            <div className="px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60">
+            <div className="px-3.5 py-2 rounded-xl bg-[#050811]/90 border border-white/[0.08]">
               <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Equidad Viva</div>
-              <div className="text-base font-bold font-mono text-white">
+              <div className="text-base font-bold text-white tabular-nums">
                 {accountInfo?.current_equity_usd != null
                   ? `$${accountInfo.current_equity_usd.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD`
                   : "SIN DATOS"}
               </div>
             </div>
 
-            <div className="px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Trailing DD Sentinel</div>
-              <div className="text-xs font-bold font-mono text-emerald-400 flex items-center gap-1.5">
+            <div className="px-3.5 py-2 rounded-xl bg-[#050811]/90 border border-white/[0.08] min-w-[170px]">
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                <span>Trailing DD</span>
+                <span className="text-emerald-400">{trailingLimit ? `${ddPct.toFixed(1)}%` : "--"}</span>
+              </div>
+              <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5 tabular-nums mt-0.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                 {accountInfo?.current_drawdown_usd != null && accountInfo?.trailing_drawdown_limit_usd != null
-                  ? `$${accountInfo.current_drawdown_usd.toFixed(0)} / $${accountInfo.trailing_drawdown_limit_usd.toFixed(0)} (0% OK)`
-                  : "SIN DATOS"}
+                  ? `$${accountInfo.current_drawdown_usd.toFixed(0)} / $${accountInfo.trailing_drawdown_limit_usd.toFixed(0)}`
+                  : hasLinkedAccount ? "ARMED (0% USADO)" : "SIN DATOS"}
               </div>
             </div>
 
-            <div className="px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60">
+            <div className="px-3.5 py-2 rounded-xl bg-[#050811]/90 border border-white/[0.08]">
               <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Latencia API v2</div>
-              <div className="text-xs font-bold font-mono text-emerald-400 flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-amber-400" /> {accountInfo?.last_ping_latency_ms != null ? `${accountInfo.last_ping_latency_ms} ms` : "OFFLINE"}
+              <div className="text-xs font-bold text-emerald-400 flex items-center gap-1 tabular-nums">
+                <Zap className="w-3.5 h-3.5 text-amber-400" /> {accountInfo?.last_ping_latency_ms != null ? `${accountInfo.last_ping_latency_ms} ms` : "SIN DATOS"}
               </div>
             </div>
 
             <button
               onClick={() => setIsFlattenModalOpen(true)}
-              className="px-4 py-2 rounded-xl text-xs font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/40 transition-all flex items-center gap-2 cursor-pointer"
+              disabled={!hasLinkedAccount}
+              className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+                hasLinkedAccount
+                  ? "bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/40 cursor-pointer active:scale-95"
+                  : "bg-slate-800 text-slate-500 border border-white/[0.05] cursor-not-allowed opacity-60"
+              }`}
             >
               <AlertOctagon className="w-4 h-4" />
               EMERGENCY FLATTEN
@@ -407,15 +454,71 @@ export default function InstitutionalTradingDesk() {
         </div>
       </div>
 
+      {/* NO LINKED ACCOUNT BANNER CTA */}
+      {!hasLinkedAccount && !authLoading && (
+        <div className="p-5 bg-gradient-to-r from-amber-950/40 via-amber-900/20 to-[#090d16] border border-amber-500/40 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl font-mono">
+          <div className="flex items-center gap-3.5">
+            <div className="p-3 bg-amber-500/20 border border-amber-500/40 rounded-xl text-amber-400">
+              <SlidersHorizontal className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-base font-bold text-white flex items-center gap-2">
+                <span>SIN CUENTA VINCULADA</span>
+                <span className="text-[10px] px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded border border-amber-500/30">
+                  REQUIERE CONFIGURACIÓN
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 font-sans mt-0.5">
+                Para despachar órdenes en tiempo real y consultar tu equidad viva en Tradovate o NinjaTrader, vincula tus credenciales en Ajustes.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/trading-desk/configuracion"
+            className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition flex items-center gap-2 shrink-0 shadow-lg shadow-amber-900/30"
+          >
+            <Sliders className="w-4 h-4" />
+            Vincular Cuenta en Ajustes →
+          </Link>
+        </div>
+      )}
+
+      {/* CME QUICK TICKER DOM STRIP */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono">
+        {CME_INSTRUMENTS.map((inst) => (
+          <div
+            key={inst.symbol}
+            onClick={() => setOrderSymbol(inst.symbol as any)}
+            className={`p-3 rounded-xl border transition-all cursor-pointer ${
+              orderSymbol === inst.symbol
+                ? "bg-[#050811] border-emerald-500/50 ring-1 ring-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                : "bg-[#090d16]/90 border-white/[0.08] hover:border-white/[0.14]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-sm text-white flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: inst.color }} />
+                {inst.symbol}
+              </span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#050811] text-slate-400 border border-white/[0.06]">
+                Tick: {inst.tick}
+              </span>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-1 truncate">{inst.name}</div>
+            <div className="text-[10px] text-emerald-400 font-bold mt-1">Valor Tick: {inst.val}</div>
+          </div>
+        ))}
+      </div>
+
       {fetchError && (
-        <div className="p-4 bg-rose-950/60 border border-rose-500/80 rounded-2xl text-xs font-mono text-rose-200 flex items-center justify-between gap-3">
+        <div className="p-4 bg-rose-950/60 border border-rose-500/80 rounded-2xl text-xs font-mono text-rose-200 flex items-center justify-between gap-3 shadow-lg">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
             <span>ESTADO: <strong>DESCONECTADO</strong> — {fetchError}</span>
           </div>
           <button
             onClick={fetchRealData}
-            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reintentar
@@ -424,7 +527,7 @@ export default function InstitutionalTradingDesk() {
       )}
 
       {alertNotification && (
-        <div className="p-4 bg-rose-950/80 border border-rose-500/80 rounded-2xl text-xs font-bold text-rose-200 flex items-center gap-2.5">
+        <div className="p-4 bg-rose-950/80 border border-rose-500/80 rounded-2xl text-xs font-bold text-rose-200 flex items-center gap-2.5 shadow-lg font-mono">
           <AlertTriangle className="w-5 h-5 text-rose-400" />
           {alertNotification}
         </div>
@@ -432,7 +535,7 @@ export default function InstitutionalTradingDesk() {
 
       {orderResultMsg && (
         <div
-          className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2.5 font-mono ${
+          className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2.5 font-mono shadow-lg ${
             orderResultMsg.isError
               ? "bg-amber-950/80 border border-amber-500/80 text-amber-200"
               : "bg-emerald-950/80 border border-emerald-500/80 text-emerald-200"
@@ -448,8 +551,8 @@ export default function InstitutionalTradingDesk() {
         {/* LEFT COLUMN: POSITIONS & QUICK ORDER PAD (8 COLS) */}
         <div className="lg:col-span-8 space-y-4">
           {/* POSITIONS MONITOR */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-blue-400" />
                 <h3 className="text-base font-bold text-white tracking-tight">
@@ -462,18 +565,28 @@ export default function InstitutionalTradingDesk() {
             </div>
 
             {positions.length === 0 ? (
-              <div className="p-10 text-center border border-dashed border-slate-800 rounded-xl bg-slate-950/60 space-y-3 font-mono">
+              <div className="p-10 text-center border border-dashed border-white/[0.1] rounded-2xl bg-[#050811]/60 space-y-3 font-mono">
                 <CheckCircle2 className="w-8 h-8 text-slate-600 mx-auto" />
                 <div className="text-sm font-bold text-slate-300">CERO POSICIONES ABIERTAS EN MERCADO</div>
                 <p className="text-xs text-slate-500 max-w-md mx-auto">
-                  El libro de órdenes no tiene exposición activa en Tradovate Demo ({accountInfo?.account_id ?? "DEMO1279346"}).
+                  {hasLinkedAccount
+                    ? `El libro de órdenes no tiene exposición activa en la cuenta ${linkedAccountId}.`
+                    : "No hay cuenta vinculada en el Trading Desk. Vincula tu cuenta en Ajustes para operar."}
                 </p>
+                {!hasLinkedAccount && (
+                  <Link
+                    href="/trading-desk/configuracion"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition mt-1"
+                  >
+                    Vincular Cuenta en Ajustes →
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse font-mono">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider bg-slate-800/40">
+                    <tr className="border-b border-white/[0.08] text-slate-400 uppercase text-[10px] tracking-wider bg-[#050811]">
                       <th className="py-2.5 px-3">Contrato</th>
                       <th className="py-2.5 px-3">Lado</th>
                       <th className="py-2.5 px-3">Cant.</th>
@@ -484,36 +597,36 @@ export default function InstitutionalTradingDesk() {
                       <th className="py-2.5 px-3 text-right">Acción</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-white/[0.05]">
                     {positions.map((pos) => (
-                      <tr key={pos.id} className="hover:bg-slate-800/30 transition-colors">
+                      <tr key={pos.id} className="hover:bg-white/[0.03] transition-colors">
                         <td className="py-2.5 px-3 font-bold text-white">{pos.symbol}</td>
                         <td className="py-2.5 px-3">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                               pos.side === "LONG"
-                                ? "bg-emerald-500/20 text-emerald-400"
-                                : "bg-rose-500/20 text-rose-400"
+                                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                             }`}
                           >
                             {pos.side}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-slate-200">{pos.contracts}x</td>
-                        <td className="py-2.5 px-3 text-slate-300">{pos.entryPrice.toFixed(2)}</td>
-                        <td className="py-2.5 px-3 font-bold text-white">{pos.currentPrice.toFixed(2)}</td>
-                        <td className="py-2.5 px-3 text-[10px] text-slate-400">
+                        <td className="py-2.5 px-3 text-slate-300 tabular-nums">{pos.entryPrice.toFixed(2)}</td>
+                        <td className="py-2.5 px-3 font-bold text-white tabular-nums">{pos.currentPrice.toFixed(2)}</td>
+                        <td className="py-2.5 px-3 text-[10px] text-slate-400 tabular-nums">
                           {pos.tp ? `TP: ${pos.tp}` : "TP: --"} / {pos.sl ? `SL: ${pos.sl}` : "SL: --"}
                         </td>
                         <td className="py-2.5 px-3">
-                          <span className={`font-bold ${pos.pnlUsd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                          <span className={`font-bold tabular-nums ${pos.pnlUsd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                             ${pos.pnlUsd?.toFixed(2)} USD
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-right">
                           <button
                             onClick={() => handleClosePosition(pos.comment, pos.symbol)}
-                            className="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-[10px] font-bold transition-colors cursor-pointer"
+                            className="px-2.5 py-1 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 text-[10px] font-bold transition-colors cursor-pointer"
                           >
                             Cerrar
                           </button>
@@ -527,8 +640,8 @@ export default function InstitutionalTradingDesk() {
           </div>
 
           {/* QUICK EXECUTION PAD */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <Send className="w-5 h-5 text-emerald-400" />
                 <h3 className="text-base font-bold text-white tracking-tight">
@@ -544,7 +657,7 @@ export default function InstitutionalTradingDesk() {
                 <select
                   value={orderSymbol}
                   onChange={(e) => setOrderSymbol(e.target.value as any)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-blue-500"
                 >
                   <option value="MNQ">MNQ (Micro Nasdaq)</option>
                   <option value="MES">MES (Micro S&P 500)</option>
@@ -555,12 +668,12 @@ export default function InstitutionalTradingDesk() {
 
               <div>
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Dirección</label>
-                <div className="grid grid-cols-2 gap-1 bg-slate-800 p-1 rounded-xl border border-slate-700">
+                <div className="grid grid-cols-2 gap-1 bg-[#050811] p-1 rounded-xl border border-white/[0.08]">
                   <button
                     type="button"
                     onClick={() => setOrderAction("BUY")}
-                    className={`py-1 rounded-lg text-xs font-bold transition-all ${
-                      orderAction === "BUY" ? "bg-emerald-600 text-white" : "text-slate-400 hover:text-slate-200"
+                    className={`py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      orderAction === "BUY" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
                     BUY
@@ -568,8 +681,8 @@ export default function InstitutionalTradingDesk() {
                   <button
                     type="button"
                     onClick={() => setOrderAction("SELL")}
-                    className={`py-1 rounded-lg text-xs font-bold transition-all ${
-                      orderAction === "SELL" ? "bg-rose-600 text-white" : "text-slate-400 hover:text-slate-200"
+                    className={`py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      orderAction === "SELL" ? "bg-rose-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
                     SELL
@@ -585,7 +698,7 @@ export default function InstitutionalTradingDesk() {
                   max="10"
                   value={orderContracts}
                   onChange={(e) => setOrderContracts(parseInt(e.target.value) || 1)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -595,7 +708,7 @@ export default function InstitutionalTradingDesk() {
                   type="number"
                   value={orderTpDollar}
                   onChange={(e) => setOrderTpDollar(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-400 focus:outline-none"
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3 py-2 text-xs font-bold text-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -605,30 +718,42 @@ export default function InstitutionalTradingDesk() {
                   type="number"
                   value={orderSlDollar}
                   onChange={(e) => setOrderSlDollar(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-rose-400 focus:outline-none"
+                  className="w-full bg-[#050811] border border-white/[0.1] rounded-xl px-3 py-2 text-xs font-bold text-rose-400 focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800 font-mono text-xs">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-white/[0.08] font-mono text-xs">
               <div className="text-slate-400">
-                Cuenta: <strong className="text-emerald-400">{accountInfo?.account_id ?? "DEMO1279346"}</strong>
+                Cuenta de despacho: <strong className="text-emerald-400">{hasLinkedAccount ? linkedAccountId : "SIN CUENTA VINCULADA"}</strong>
               </div>
 
-              <button
-                onClick={handleSendManualOrder}
-                disabled={isSendingOrder}
-                className="px-6 py-2.5 rounded-xl font-black bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/40 transition flex items-center gap-2 cursor-pointer"
-              >
-                <Zap className="w-4 h-4 text-amber-300" />
-                {isSendingOrder ? "Despachando a Tradovate..." : `DESPACHAR ${orderAction} ${orderContracts}x ${orderSymbol}`}
-              </button>
+              <div className="relative group">
+                <button
+                  onClick={handleSendManualOrder}
+                  disabled={isSendingOrder || !hasLinkedAccount}
+                  className={`px-6 py-2.5 rounded-xl font-black transition flex items-center gap-2 ${
+                    hasLinkedAccount
+                      ? "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/40 cursor-pointer active:scale-95"
+                      : "bg-slate-800 text-slate-500 border border-white/[0.05] cursor-not-allowed"
+                  }`}
+                  title={!hasLinkedAccount ? "Requiere vincular una cuenta real en Configuración" : ""}
+                >
+                  <Zap className="w-4 h-4 text-amber-300" />
+                  {isSendingOrder ? "Despachando a Tradovate..." : `DESPACHAR ${orderAction} ${orderContracts}x ${orderSymbol}`}
+                </button>
+                {!hasLinkedAccount && (
+                  <div className="hidden group-hover:block absolute bottom-full mb-2 right-0 bg-slate-900 border border-white/[0.15] text-amber-300 text-[10px] p-2 rounded-lg shadow-xl whitespace-nowrap z-20">
+                    ⚠️ Requiere vincular una cuenta real en Configuración
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* FORENSIC ORDER AUDIT TRAIL */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-3">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-400" />
                 <h3 className="text-base font-bold text-white tracking-tight">
@@ -641,14 +766,14 @@ export default function InstitutionalTradingDesk() {
             </div>
 
             {logs.length === 0 ? (
-              <div className="p-6 text-center border border-dashed border-slate-800 rounded-xl bg-slate-950/40 text-xs font-mono text-slate-500">
+              <div className="p-6 text-center border border-dashed border-white/[0.1] rounded-2xl bg-[#050811]/40 text-xs font-mono text-slate-500">
                 SIN REGISTROS FORENSES PREVIOS (0 órdenes despachadas)
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                    <tr className="border-b border-white/[0.08] text-slate-400 uppercase text-[10px] bg-[#050811]">
                       <th className="py-2 px-3">Hora UTC</th>
                       <th className="py-2 px-3">Acción</th>
                       <th className="py-2 px-3">Símbolo</th>
@@ -657,14 +782,14 @@ export default function InstitutionalTradingDesk() {
                       <th className="py-2 px-3">Estado</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 text-[11px]">
+                  <tbody className="divide-y divide-white/[0.05] text-[11px]">
                     {logs.slice(0, 5).map((log) => (
-                      <tr key={log.id}>
+                      <tr key={log.id} className="hover:bg-white/[0.03] transition-colors">
                         <td className="py-2 px-3 text-slate-400">{log.timestamp}</td>
                         <td className="py-2 px-3 font-bold text-white">{log.action}</td>
                         <td className="py-2 px-3">{log.symbol}</td>
                         <td className="py-2 px-3">{log.contracts}x</td>
-                        <td className="py-2 px-3 text-amber-400">{log.latencyMs.toFixed(1)} ms</td>
+                        <td className="py-2 px-3 text-amber-400 tabular-nums">{log.latencyMs.toFixed(1)} ms</td>
                         <td className="py-2 px-3 text-emerald-400 font-bold">{log.status}</td>
                       </tr>
                     ))}
@@ -678,8 +803,8 @@ export default function InstitutionalTradingDesk() {
         {/* RIGHT COLUMN: SESSIONS, GATEWAYS & SENTINEL (4 COLS) */}
         <div className="lg:col-span-4 space-y-4">
           {/* SESSIONS STATUS */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-3">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <Bot className="w-5 h-5 text-purple-400" />
                 <h3 className="text-base font-bold text-white tracking-tight">
@@ -692,17 +817,17 @@ export default function InstitutionalTradingDesk() {
             </div>
 
             {sessions.length === 0 ? (
-              <div className="p-6 text-center border border-dashed border-slate-800 rounded-xl bg-slate-950/40 text-xs font-mono text-slate-500 space-y-1">
+              <div className="p-6 text-center border border-dashed border-white/[0.1] rounded-xl bg-[#050811]/40 text-xs font-mono text-slate-500 space-y-1">
                 <div className="font-bold text-slate-400">CERO SESIONES ACTIVAS</div>
                 <div className="text-[11px]">No hay bots despachando órdenes actualmente.</div>
               </div>
             ) : (
               <div className="space-y-2 font-mono text-xs">
                 {sessions.map((s) => (
-                  <div key={s.session_id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+                  <div key={s.session_id} className="p-3 bg-[#050811] rounded-xl border border-white/[0.08] space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-white">{s.symbol} ({s.route})</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">{s.status}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">{s.status}</span>
                     </div>
                     <div className="text-[10px] text-slate-400 truncate">ID: {s.session_id}</div>
                   </div>
@@ -712,8 +837,8 @@ export default function InstitutionalTradingDesk() {
           </div>
 
           {/* REGISTERED GATEWAYS STATUS */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-3">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <Server className="w-5 h-5 text-indigo-400" />
                 <h3 className="text-base font-bold text-white tracking-tight">
@@ -732,7 +857,7 @@ export default function InstitutionalTradingDesk() {
                   <div
                     key={gw.provider_id}
                     className={`p-2.5 rounded-xl border flex items-center justify-between ${
-                      isActive ? "bg-slate-950 border-emerald-500/40" : "bg-slate-950 border-slate-800"
+                      isActive ? "bg-[#050811] border-emerald-500/40 ring-1 ring-emerald-500/20" : "bg-[#050811] border-white/[0.08]"
                     }`}
                   >
                     <div>
@@ -743,7 +868,7 @@ export default function InstitutionalTradingDesk() {
                       className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${
                         gw.status === "CONNECTED"
                           ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                          : "bg-slate-800 text-slate-400 border-slate-700"
+                          : "bg-slate-800 text-slate-400 border-white/[0.08]"
                       }`}
                     >
                       {gw.status}
@@ -755,8 +880,8 @@ export default function InstitutionalTradingDesk() {
           </div>
 
           {/* RISK SENTINEL SUMMARY */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-3 font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="w-5 h-5 text-rose-400" />
                 <h3 className="text-base font-bold text-white tracking-tight">
@@ -769,17 +894,23 @@ export default function InstitutionalTradingDesk() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#050811] border border-white/[0.08]">
                 <span className="text-slate-400">Trailing DD Límite:</span>
-                <span className="font-bold text-emerald-400">${accountInfo?.trailing_drawdown_limit_usd ?? 2000} USD</span>
+                <span className="font-bold text-emerald-400 tabular-nums">
+                  {accountInfo?.trailing_drawdown_limit_usd != null ? `$${accountInfo.trailing_drawdown_limit_usd.toFixed(0)} USD` : "SIN DATOS"}
+                </span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#050811] border border-white/[0.08]">
                 <span className="text-slate-400">Pérdida Diaria Máx:</span>
-                <span className="font-bold text-emerald-400">$1,000 USD</span>
+                <span className="font-bold text-emerald-400 tabular-nums">
+                  {accountInfo?.daily_pnl_usd != null ? `$${accountInfo.daily_pnl_usd.toFixed(0)} USD` : "$1,000 USD"}
+                </span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#050811] border border-white/[0.08]">
                 <span className="text-slate-400">Estado Sentinel:</span>
-                <span className="font-bold text-emerald-400">ARMED (Fail-Closed)</span>
+                <span className="font-bold text-emerald-400">
+                  {hasLinkedAccount ? "ARMED (Fail-Closed)" : "ESPERANDO CUENTA"}
+                </span>
               </div>
             </div>
           </div>
@@ -789,14 +920,14 @@ export default function InstitutionalTradingDesk() {
       {/* EMERGENCY FLATTEN MODAL */}
       {isFlattenModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="bg-slate-900 border-2 border-rose-600 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+          <div className="bg-[#090d16] border-2 border-rose-600 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-[0_0_50px_rgba(244,63,94,0.25)]">
             <div className="flex items-center gap-3 text-rose-500">
-              <div className="p-3 bg-rose-500/20 rounded-xl">
+              <div className="p-3 bg-rose-500/20 rounded-xl border border-rose-500/30">
                 <AlertOctagon className="w-8 h-8 animate-bounce" />
               </div>
               <div>
                 <h3 className="text-lg font-black text-white">¿CONFIRMAR FLATTEN TOTAL?</h3>
-                <p className="text-xs text-rose-300">Liquidación inmediata en Tradovate ({accountInfo?.account_id ?? "DEMO1279346"})</p>
+                <p className="text-xs text-rose-300 font-mono">Liquidación inmediata en Tradovate ({linkedAccountId || "SIN VINCULAR"})</p>
               </div>
             </div>
 
@@ -811,13 +942,13 @@ export default function InstitutionalTradingDesk() {
             <div className="grid grid-cols-2 gap-3 font-mono text-xs">
               <button
                 onClick={() => setIsFlattenModalOpen(false)}
-                className="py-2.5 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer"
+                className="py-2.5 rounded-xl font-bold bg-[#050811] hover:bg-slate-800 text-slate-300 border border-white/[0.1] transition cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleExecuteFlattenAll}
-                disabled={isFlattening}
+                disabled={isFlattening || !hasLinkedAccount}
                 className="py-2.5 rounded-xl font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/50 transition cursor-pointer"
               >
                 {isFlattening ? "Liquidando..." : "SÍ, LIQUIDAR TODO"}

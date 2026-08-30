@@ -15,6 +15,7 @@ import {
   Activity,
   Layers,
   Zap,
+  Grid,
 } from "lucide-react";
 import { ALL_PROP_FIRM_ACCOUNTS, PropFirmAccount } from "@/lib/prop-firms";
 import Smart3ClickFinder from "./components/Smart3ClickFinder";
@@ -25,8 +26,9 @@ import { LiveDealsTracker } from "./components/LiveDealsTracker";
 import { AISyncStatusBar } from "./components/AISyncStatusBar";
 import FloatingComparisonDrawer from "./components/FloatingComparisonDrawer";
 import PickMyTradeBridgeModal from "./components/PickMyTradeBridgeModal";
+import { MegaComparator } from "./components/MegaComparator";
 
-export type PropFirmTab = "COMPARATOR" | "FINDER" | "TABLE" | "ROI_CALC" | "LIVE_DEALS";
+export type PropFirmTab = "COMPARATOR" | "FINDER" | "TABLE" | "ROI_CALC" | "LIVE_DEALS" | "MEGA";
 
 function PropFirmsContent() {
   const searchParams = useSearchParams();
@@ -40,6 +42,7 @@ function PropFirmsContent() {
     else if (viewParam === "roi") setActiveTab("ROI_CALC");
     else if (viewParam === "deals") setActiveTab("LIVE_DEALS");
     else if (viewParam === "comparator") setActiveTab("COMPARATOR");
+    else if (viewParam === "mega") setActiveTab("MEGA");
   }, [searchParams]);
 
   // Shared state for selected comparison accounts across components (2 to 4 accounts)
@@ -63,7 +66,6 @@ function PropFirmsContent() {
       if (selectedComparisonIds.length < 4) {
         setSelectedComparisonIds([...selectedComparisonIds, account.id]);
       } else {
-        // Replace the last slot if maxed
         const updated = [...selectedComparisonIds.slice(0, 3), account.id];
         setSelectedComparisonIds(updated);
       }
@@ -77,7 +79,6 @@ function PropFirmsContent() {
   };
 
   const handleClearAllComparison = () => {
-    // Keep minimum 2 default best accounts
     setSelectedComparisonIds(["mffu-rapid-50k", "tradeify-growth-50k"]);
   };
 
@@ -93,70 +94,71 @@ function PropFirmsContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-2 md:p-6 pb-24">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-slate-100">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-4 gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <span className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
                 <Building2 className="w-6 h-6" />
-              </span>
+              </div>
               <div>
-                <h1 className="text-2xl font-black tracking-tight text-white">
-                  Fase 5: Catálogo Maestro 70 Prop Firms CME & Hub de Bots
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                  Catálogo Maestro 70 Prop Firms CME & Hub Cuantitativo
                 </h1>
-                <p className="text-slate-400 text-xs mt-0.5">
-                  Comparador Cara a Cara estilo Propinex, métricas reales de <strong className="text-emerald-400">Coste Total de Pase (Evaluación + Activación)</strong> y filtrado cuantitativo para trading algorítmico.
+                <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                  Comparador Cara a Cara estilo Propinex, métricas reales de <strong className="text-emerald-400">Coste Total de Pase (Evaluación + Activación)</strong> y filtrado para trading algorítmico.
                 </p>
               </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/trading-desk"
-              className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold font-mono bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/80 transition shadow-sm animate-pulse"
-            >
-              <Activity className="w-4 h-4 mr-1.5 text-emerald-400" />
-              ⚡ Abrir Trading Desk Institucional
-            </Link>
-            <button
-              onClick={() => setIsPmtModalOpen(true)}
-              className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold font-mono bg-indigo-950/90 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/80 transition shadow-sm"
-            >
-              <Zap className="w-4 h-4 mr-1.5 text-amber-400" />
-              Puente PickMyTrade (7d Trial)
-            </button>
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-amber-950/80 text-amber-300 border border-amber-700/60 shadow-sm">
-              <ShieldCheck className="w-4 h-4 mr-1.5 text-amber-400" />
-              70 Cuentas CME Verificadas
-            </span>
+
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <Link
+                href="/trading-desk"
+                className="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold font-mono bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/80 transition shadow-sm"
+              >
+                <Activity className="w-4 h-4 mr-1.5 text-emerald-400" />
+                ⚡ Trading Desk
+              </Link>
+              <button
+                onClick={() => setIsPmtModalOpen(true)}
+                className="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-bold font-mono bg-indigo-950/90 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/80 transition shadow-sm"
+              >
+                <Zap className="w-4 h-4 mr-1.5 text-amber-400" />
+                Puente Tradovate / CME
+              </button>
+              <span className="inline-flex items-center px-3 py-2 rounded-xl text-xs font-bold font-mono bg-amber-950/80 text-amber-300 border border-amber-700/60 shadow-sm">
+                <ShieldCheck className="w-4 h-4 mr-1.5 text-amber-400" />
+                70 Cuentas CME Verificadas
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Real KPI Strip (Corrected Total Pass Cost) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 space-y-0.5">
-            <span className="text-[11px] text-slate-400 block uppercase font-mono">Cuentas Auditadas</span>
-            <div className="text-2xl font-black text-white font-mono">70 Cuentas</div>
+          <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl rounded-2xl border border-white/[0.08] space-y-1 shadow-lg">
+            <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Cuentas Auditadas</span>
+            <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">70 Cuentas</div>
             <span className="text-[11px] text-slate-500 block">17 Firmas Reguladas CME</span>
           </div>
 
-          <div className="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 space-y-0.5">
-            <span className="text-[11px] text-slate-400 block uppercase font-mono">Coste Mínimo Real Total</span>
-            <div className="text-2xl font-black text-emerald-400 font-mono">$38.50 USD</div>
+          <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl rounded-2xl border border-white/[0.08] space-y-1 shadow-lg">
+            <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Coste Mínimo Real Total</span>
+            <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono tabular-nums">$38.50 USD</div>
             <span className="text-[11px] text-emerald-400/90 block font-medium">Examen con Promo + $0 Activación</span>
           </div>
 
-          <div className="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 space-y-0.5">
-            <span className="text-[11px] text-slate-400 block uppercase font-mono">Cuentas $0 Activación</span>
-            <div className="text-2xl font-black text-amber-400 font-mono">34 Cuentas (48%)</div>
+          <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl rounded-2xl border border-white/[0.08] space-y-1 shadow-lg">
+            <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Cuentas $0 Activación</span>
+            <div className="text-2xl sm:text-3xl font-black text-amber-400 font-mono tabular-nums">34 Cuentas (48%)</div>
             <span className="text-[11px] text-slate-400 block">Sin cuota oculta de pase</span>
           </div>
 
-          <div className="p-3.5 bg-slate-900/90 rounded-xl border border-slate-800 space-y-0.5">
-            <span className="text-[11px] text-slate-400 block uppercase font-mono">Idoneidad Bots (EAs)</span>
-            <div className="text-2xl font-black text-indigo-400 font-mono">82% Aceptan Bots</div>
+          <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl rounded-2xl border border-white/[0.08] space-y-1 shadow-lg">
+            <span className="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Idoneidad Bots (EAs)</span>
+            <div className="text-2xl sm:text-3xl font-black text-sky-400 font-mono tabular-nums">82% Aceptan Bots</div>
             <span className="text-[11px] text-slate-400 block">Tradovate API / NinjaTrader 8</span>
           </div>
         </div>
@@ -165,13 +167,13 @@ function PropFirmsContent() {
         <AISyncStatusBar lastUpdatedText="Auditoría Zero-Mocks 2026 · Precios y Políticas Certificadas" />
 
         {/* Navigation Mode Tabs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-2">
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
           <button
             onClick={() => setActiveTab("COMPARATOR")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === "COMPARATOR"
                 ? "bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
+                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
             }`}
           >
             <Scale className="w-4 h-4" />
@@ -180,10 +182,10 @@ function PropFirmsContent() {
 
           <button
             onClick={() => setActiveTab("FINDER")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === "FINDER"
                 ? "bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
+                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -192,22 +194,22 @@ function PropFirmsContent() {
 
           <button
             onClick={() => setActiveTab("TABLE")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === "TABLE"
                 ? "bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
+                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
             }`}
           >
             <Building2 className="w-4 h-4" />
-            <span>3. Tabla Comparativa Semáforo (70 Cuentas)</span>
+            <span>3. Tabla Semáforo (70 Cuentas)</span>
           </button>
 
           <button
             onClick={() => setActiveTab("ROI_CALC")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === "ROI_CALC"
                 ? "bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
+                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
             }`}
           >
             <Calculator className="w-4 h-4" />
@@ -216,14 +218,26 @@ function PropFirmsContent() {
 
           <button
             onClick={() => setActiveTab("LIVE_DEALS")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === "LIVE_DEALS"
                 ? "bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20"
-                : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
+                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
             }`}
           >
             <Flame className="w-4 h-4" />
             <span>5. Cupones & Ofertas Activas</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("MEGA")}
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+              activeTab === "MEGA"
+                ? "bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20"
+                : "bg-slate-900/90 text-slate-400 hover:text-slate-200 border border-slate-800"
+            }`}
+          >
+            <Grid className="w-4 h-4" />
+            <span>6. Mega-Matriz (36 Columnas)</span>
           </button>
         </div>
 
@@ -257,8 +271,10 @@ function PropFirmsContent() {
 
         {activeTab === "LIVE_DEALS" && <LiveDealsTracker />}
 
+        {activeTab === "MEGA" && <MegaComparator />}
+
         {/* Floating comparison drawer if active on any non-comparator tab */}
-        {activeTab !== "COMPARATOR" && (
+        {activeTab !== "COMPARATOR" && activeTab !== "MEGA" && (
           <FloatingComparisonDrawer
             selectedAccounts={selectedAccounts}
             onRemoveSlot={handleRemoveComparisonSlot}

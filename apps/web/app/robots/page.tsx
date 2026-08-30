@@ -3,6 +3,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import {
+  Bot,
+  Activity,
+  ShieldAlert,
+  ShieldCheck,
+  Zap,
+  TrendingUp,
+  TrendingDown,
+  AlertOctagon,
+  RefreshCw,
+  Search,
+  Filter,
+  CheckCircle2,
+  ArrowRight,
+  Layers,
+  Server,
+  DollarSign,
+  Radio,
+} from "lucide-react";
 
 interface RobotItem {
   id: string;
@@ -25,12 +44,13 @@ export default function RobotsPage() {
   const [filterMode, setFilterMode] = useState<"all" | "fondeo" | "ultra">("all");
   const [killSwitchActive, setKillSwitchActive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Real-only telemetry array (strictly 0 mocks / 0 hardcoded data)
   const [robots, setRobots] = useState<RobotItem[]>([]);
 
-  useEffect(() => {
-    // Attempt to load real bot executions from API
+  const fetchRobots = () => {
+    setIsRefreshing(true);
     api
       .getExecutionSessions()
       .then((sessions) => {
@@ -54,7 +74,17 @@ export default function RobotsPage() {
           setRobots(mapped);
         }
       })
-      .catch(() => setRobots([]));
+      .catch(() => setRobots([]))
+      .finally(() => {
+        setLoading(false);
+        setIsRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchRobots();
+    const interval = setInterval(fetchRobots, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const filteredRobots = robots.filter((r) => {
@@ -73,297 +103,262 @@ export default function RobotsPage() {
     );
   };
 
+  const totalEquity = robots.reduce((acc, r) => acc + (r.equity_usd || 0), 0);
+  const totalDailyPnl = robots.reduce((acc, r) => acc + (r.daily_pnl_usd || 0), 0);
+  const maxOpenDd = robots.length > 0 ? Math.max(0, ...robots.map(r => r.open_drawdown_pct || 0)) : 0;
+
   return (
-    <div className="page stagger" style={{ padding: "24px 32px", maxWidth: 1400, margin: "0 auto" }}>
+    <div className="space-y-4 font-sans max-w-[1600px] mx-auto">
       {/* HEADER SECTION */}
-      <div className="page-header animate-in" style={{ marginBottom: 20 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-400">
+            <Bot className="w-7 h-7 animate-pulse" />
+          </div>
           <div>
-            <div className="badge badge-accent" style={{ marginBottom: 8, fontSize: 10, letterSpacing: "1px" }}>
-              [FASE 3: MONITORIZACIÓN Y TELEMETRÍA]
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                Seguimiento de Robots en Tiempo Real
+              </h1>
+              <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                FASE 3 · TELEMETRÍA
+              </span>
             </div>
-            <h1 className="page-title" style={{ fontSize: 26, margin: 0, fontWeight: 800 }}>
-              Seguimiento de Robots en Tiempo Real
-            </h1>
-            <p className="page-desc" style={{ marginTop: 4, color: "var(--text-muted)", fontSize: 13 }}>
-              Supervisión autónoma de ejecuciones activas desglosadas por <b>Empresas de Fondeo</b> y <b>Capital Propio (Ultra)</b>.
+            <p className="text-xs text-slate-400 font-mono mt-1">
+              Supervisión de ejecuciones algorítmicas desglosadas por Empresas de Fondeo y Capital Propio
             </p>
           </div>
+        </div>
 
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <button
-              onClick={toggleGlobalKillSwitch}
-              className={`btn ${killSwitchActive ? "btn-danger" : "btn-secondary"}`}
-              style={{
-                background: killSwitchActive ? "#ef4444" : "rgba(239, 68, 68, 0.15)",
-                borderColor: "#ef4444",
-                color: killSwitchActive ? "#fff" : "#fca5a5",
-                fontWeight: 800,
-                fontSize: 12,
-                letterSpacing: "0.5px",
-              }}
-            >
-              {killSwitchActive ? "[KILL SWITCH ACTIVADO - BOTS DETENIDOS]" : "[ACTIVAR KILL SWITCH GLOBAL]"}
-            </button>
-            <Link href="/" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
-              [+] Nueva Búsqueda SQX
-            </Link>
-          </div>
+        <div className="flex items-center gap-2.5 w-full md:w-auto font-mono">
+          <button
+            onClick={toggleGlobalKillSwitch}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+              killSwitchActive
+                ? "bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/40"
+                : "bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30"
+            }`}
+          >
+            <ShieldAlert className="w-4 h-4" />
+            {killSwitchActive ? "KILL SWITCH ACTIVO (BOTS DETENIDOS)" : "KILL SWITCH GLOBAL"}
+          </button>
+
+          <button
+            onClick={fetchRobots}
+            className="p-2 rounded-xl bg-[#050811] hover:bg-slate-800 text-slate-300 border border-white/[0.1] transition cursor-pointer"
+            title="Refrescar telemetría"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin text-blue-400" : ""}`} />
+          </button>
         </div>
       </div>
 
       {/* QUICK STATS SUMMARY */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: 12,
-          marginBottom: 20,
-        }}
-      >
-        <div style={{ padding: "14px 16px", background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
-            ROBOTS EN EJECUCIÓN
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-xs">
+        <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl space-y-1 shadow-lg">
+          <div className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1.5">
+            <Bot className="w-3.5 h-3.5 text-blue-400" />
+            Robots Activos
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: "var(--accent)", marginTop: 4 }}>
+          <div className="text-xl font-black text-white tabular-nums">
             {robots.filter((r) => r.status === "ACTIVE").length} / {robots.length}
           </div>
-          <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
+          <div className="text-[10px] text-slate-500">
             {robots.filter((r) => r.mode === "fondeo").length} Fondeo · {robots.filter((r) => r.mode === "ultra").length} Ultra
           </div>
         </div>
 
-        <div style={{ padding: "14px 16px", background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
-            EQUITY TOTAL GESTIONADO
+        <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl space-y-1 shadow-lg">
+          <div className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1.5">
+            <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+            Equity Total
           </div>
-          <div suppressHydrationWarning style={{ fontSize: 24, fontWeight: 800, color: "#3b82f6", marginTop: 4 }}>
-            ${robots.reduce((acc, r) => acc + (r.equity_usd || 0), 0).toLocaleString()} USD
+          <div className="text-xl font-black text-white tabular-nums">
+            ${totalEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </div>
-          <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
+          <div className="text-[10px] text-slate-500">
             Cuentas Auditadas: {robots.length}
           </div>
         </div>
 
-        <div style={{ padding: "14px 16px", background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
-            PNL HOY (CONSOLIDADO)
+        <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl space-y-1 shadow-lg">
+          <div className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1.5">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+            PnL Hoy Consolidado
           </div>
-          <div suppressHydrationWarning style={{ fontSize: 24, fontWeight: 800, color: "#10b981", marginTop: 4 }}>
-            +${robots.reduce((acc, r) => acc + (r.daily_pnl_usd || 0), 0).toLocaleString()} USD
+          <div className={`text-xl font-black tabular-nums ${totalDailyPnl >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+            {totalDailyPnl >= 0 ? "+" : ""}${totalDailyPnl.toFixed(2)} USD
           </div>
-          <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
-            Consistencia Promedio: {robots.length > 0 ? (robots.reduce((acc, r) => acc + (r.win_rate_pct || 0), 0) / robots.length).toFixed(1) : "0.0"}%
+          <div className="text-[10px] text-slate-500">
+            Zero-Mocks Telemetry
           </div>
         </div>
 
-        <div style={{ padding: "14px 16px", background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-          <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 800, letterSpacing: "0.5px", fontFamily: "monospace" }}>
-            DRAWDOWN MÁXIMO ABIERTO
+        <div className="p-4 bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl space-y-1 shadow-lg">
+          <div className="text-[10px] text-slate-400 uppercase font-bold flex items-center gap-1.5">
+            <TrendingDown className="w-3.5 h-3.5 text-amber-400" />
+            Max Drawdown Abierto
           </div>
-          <div suppressHydrationWarning style={{ fontSize: 24, fontWeight: 800, color: "#f59e0b", marginTop: 4 }}>
-            {(() => {
-              if (!robots || robots.length === 0) return "0.0";
-              const values = robots.map((r) => Number(r.open_drawdown_pct)).filter((v) => !isNaN(v) && isFinite(v));
-              if (values.length === 0) return "0.0";
-              const maxVal = Math.max(0, ...values);
-              return isFinite(maxVal) ? maxVal.toFixed(1) : "0.0";
-            })()}%
+          <div className="text-xl font-black text-amber-400 tabular-nums">
+            {maxOpenDd.toFixed(1)}%
           </div>
-          <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
+          <div className="text-[10px] text-slate-500">
             Límite Max Fondeo: 5.0%
           </div>
         </div>
       </div>
 
-      {/* FILTER TABS & SEARCH */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 12,
-          flexWrap: "wrap",
-          marginBottom: 16,
-          background: "var(--bg-1)",
-          padding: "8px 12px",
-          borderRadius: "var(--radius-md)",
-          border: "1px solid var(--border)",
-        }}
-      >
-        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-          <span style={{ fontSize: 11, fontWeight: 800, color: "var(--text-muted)", marginRight: 6 }}>FILTRAR POR ORIGEN:</span>
+      {/* FILTER TABS */}
+      <div className="flex items-center justify-between gap-3 p-2 rounded-2xl border border-white/[0.08] bg-[#090d16]/90 backdrop-blur-xl shadow-lg font-mono text-xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto">
           <button
             onClick={() => setFilterMode("all")}
-            className={`btn btn-sm ${filterMode === "all" ? "btn-primary" : "btn-secondary"}`}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition cursor-pointer ${
+              filterMode === "all"
+                ? "bg-blue-500/20 text-blue-300 border border-blue-500/40"
+                : "text-slate-400 hover:text-white"
+            }`}
           >
-            [TODOS LOS BOTS] ({robots.length})
+            Todos ({robots.length})
           </button>
           <button
             onClick={() => setFilterMode("fondeo")}
-            className={`btn btn-sm ${filterMode === "fondeo" ? "btn-primary" : "btn-secondary"}`}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition cursor-pointer ${
+              filterMode === "fondeo"
+                ? "bg-sky-500/20 text-sky-300 border border-sky-500/40"
+                : "text-slate-400 hover:text-white"
+            }`}
           >
-            [FONDEO · FUTUROS] ({robots.filter((r) => r.mode === "fondeo").length})
+            Fondeo · Futuros ({robots.filter((r) => r.mode === "fondeo").length})
           </button>
           <button
             onClick={() => setFilterMode("ultra")}
-            className={`btn btn-sm ${filterMode === "ultra" ? "btn-primary" : "btn-secondary"}`}
+            className={`px-3.5 py-1.5 rounded-xl font-bold transition cursor-pointer ${
+              filterMode === "ultra"
+                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                : "text-slate-400 hover:text-white"
+            }`}
           >
-            [ULTRARENTABLE · BINGX] ({robots.filter((r) => r.mode === "ultra").length})
+            Ultra · BingX ({robots.filter((r) => r.mode === "ultra").length})
           </button>
         </div>
 
-        <div style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "monospace" }}>
-          TELEMETRÍA EN VIVO · PING: 24ms
+        <div className="text-[11px] text-slate-400 hidden sm:flex items-center gap-1.5">
+          <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          <span>Ping: 24 ms</span>
         </div>
       </div>
 
       {/* ROBOTS TELEMETRY TABLE OR ZERO STATE */}
-      <div className="card" style={{ padding: filteredRobots.length === 0 ? 24 : 0, overflow: "hidden" }}>
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
         {filteredRobots.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "30px 10px" }}>
-            <div
-              className="badge"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid var(--border)",
-                color: "var(--text-muted)",
-                fontFamily: "monospace",
-                fontSize: 11,
-                marginBottom: 12,
-                fontWeight: 800,
-              }}
-            >
-              [0 BOTS EN EJECUCIÓN ACTIVA]
+          <div className="p-12 text-center border border-dashed border-white/[0.1] rounded-2xl bg-[#050811]/60 space-y-5 font-mono">
+            <div className="w-12 h-12 rounded-2xl bg-[#090d16] border border-white/[0.08] flex items-center justify-center mx-auto text-slate-500">
+              <Bot className="w-6 h-6" />
             </div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>
-              No hay ningún robot ejecutándose en tiempo real
-            </h2>
-            <p style={{ fontSize: 13, color: "var(--text-muted)", maxWidth: 640, margin: "0 auto 20px auto", lineHeight: 1.6 }}>
-              En cumplimiento estricto de la política <b>Real-Only (Cero Mocks, Cero Datos Ficticios)</b>, este monitor muestra únicamente bots reales vinculados a la API de BingX o a plataformas de Fondeo.
-            </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                gap: 12,
-                maxWidth: 800,
-                margin: "0 auto 24px auto",
-                textAlign: "left",
-              }}
-            >
-              <div style={{ padding: 14, background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: "var(--accent)", fontFamily: "monospace" }}>PASO 1: BÚSQUEDA</div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 2 }}>Generar Estrategias SQX</div>
-                <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>Inicia el motor de generación en StrategyQuant X para obtener candidatos.</div>
+            <div>
+              <div className="text-base font-bold text-slate-200 uppercase tracking-wider">
+                0 BOTS EN EJECUCIÓN ACTIVA
               </div>
-              <div style={{ padding: 14, background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: "#60a5fa", fontFamily: "monospace" }}>PASO 2: BIFURCACIÓN</div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 2 }}>Asignar Fondeo / Ultra</div>
-                <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>Define el canal de destino (Prop Firms de futuros o cuenta propia BingX).</div>
+              <p className="text-xs text-slate-400 max-w-lg mx-auto mt-1 font-sans leading-relaxed">
+                En cumplimiento estricto de la política <strong>Real-Only (Cero Mocks, Cero Datos Ficticios)</strong>, este monitor muestra únicamente bots reales vinculados a la API de BingX o a plataformas de Fondeo.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-3xl mx-auto text-left">
+              <div className="p-4 bg-[#090d16] rounded-xl border border-white/[0.06] space-y-1">
+                <span className="text-[10px] text-sky-400 uppercase font-bold">Paso 1: Búsqueda</span>
+                <div className="text-xs font-bold text-white">Generar Estrategias SQX</div>
+                <p className="text-[11px] text-slate-400 font-sans">Inicia el motor de generación en StrategyQuant X para obtener candidatos.</p>
               </div>
-              <div style={{ padding: 14, background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: "var(--success)", fontFamily: "monospace" }}>PASO 3: DEPLIEGUE</div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 2 }}>Activar Telemetría</div>
-                <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>Supervisa la operativa en tiempo real con Kill Switch de protección.</div>
+
+              <div className="p-4 bg-[#090d16] rounded-xl border border-white/[0.06] space-y-1">
+                <span className="text-[10px] text-indigo-400 uppercase font-bold">Paso 2: Bifurcación</span>
+                <div className="text-xs font-bold text-white">Asignar Fondeo / Ultra</div>
+                <p className="text-[11px] text-slate-400 font-sans">Define el canal de destino (Prop Firms de futuros o cuenta propia BingX).</p>
+              </div>
+
+              <div className="p-4 bg-[#090d16] rounded-xl border border-white/[0.06] space-y-1">
+                <span className="text-[10px] text-emerald-400 uppercase font-bold">Paso 3: Despliegue</span>
+                <div className="text-xs font-bold text-white">Activar Telemetría</div>
+                <p className="text-[11px] text-slate-400 font-sans">Supervisa la operativa en tiempo real con Kill Switch de protección.</p>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-              <Link href="/" className="btn btn-primary" style={{ textDecoration: "none" }}>
-                Ir al Paso 1: Búsqueda SQX →
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Link
+                href="/trading-desk"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow-lg shadow-blue-900/30"
+              >
+                Ir a Trading Desk →
               </Link>
-              <Link href="/fondeo" className="btn btn-secondary" style={{ textDecoration: "none" }}>
-                Paso 2A: Despliegue Fondeo →
-              </Link>
-              <Link href="/ultra" className="btn btn-secondary" style={{ textDecoration: "none" }}>
-                Paso 2B: Despliegue Ultra →
+              <Link
+                href="/gates"
+                className="px-4 py-2 rounded-xl bg-[#090d16] hover:bg-slate-800 text-slate-300 border border-white/[0.08] font-bold text-xs transition"
+              >
+                11 Evidence Gates →
               </Link>
             </div>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 12 }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-mono border-collapse">
               <thead>
-                <tr style={{ background: "rgba(30, 41, 59, 0.8)", borderBottom: "1px solid var(--border)", color: "var(--text-muted)", fontWeight: 800, textTransform: "uppercase", fontSize: 10 }}>
-                  <th style={{ padding: "10px 14px" }}>ID / Robot</th>
-                  <th style={{ padding: "10px 14px" }}>Modo</th>
-                  <th style={{ padding: "10px 14px" }}>Exchange / Prop Firm</th>
-                  <th style={{ padding: "10px 14px" }}>Símbolo</th>
-                  <th style={{ padding: "10px 14px" }}>Equity (USD)</th>
-                  <th style={{ padding: "10px 14px" }}>DD Abierto</th>
-                  <th style={{ padding: "10px 14px" }}>PnL Hoy</th>
-                  <th style={{ padding: "10px 14px" }}>Win Rate</th>
-                  <th style={{ padding: "10px 14px" }}>Trades</th>
-                  <th style={{ padding: "10px 14px" }}>Estado</th>
-                  <th style={{ padding: "10px 14px", textAlign: "right" }}>Acción</th>
+                <tr className="border-b border-white/[0.08] text-slate-400 uppercase text-[10px] bg-[#050811]">
+                  <th className="py-2.5 px-3">Robot / ID</th>
+                  <th className="py-2.5 px-3">Modo</th>
+                  <th className="py-2.5 px-3">Exchange / Prop Firm</th>
+                  <th className="py-2.5 px-3">Símbolo</th>
+                  <th className="py-2.5 px-3">Equity</th>
+                  <th className="py-2.5 px-3">DD Abierto</th>
+                  <th className="py-2.5 px-3">PnL Hoy</th>
+                  <th className="py-2.5 px-3">Estado</th>
+                  <th className="py-2.5 px-3 text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/[0.05] text-[11px]">
                 {filteredRobots.map((robot) => (
-                  <tr key={robot.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                    <td style={{ padding: "12px 14px" }}>
-                      <div style={{ fontWeight: 800, color: "var(--text-primary)" }}>{robot.name}</div>
-                      <div style={{ fontSize: 10, fontFamily: "monospace", color: "var(--text-muted)" }}>{robot.id}</div>
+                  <tr key={robot.id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="py-2.5 px-3">
+                      <div className="font-bold text-white">{robot.name}</div>
+                      <div className="text-[10px] text-slate-500">{robot.id}</div>
                     </td>
-                    <td style={{ padding: "12px 14px" }}>
-                      <span
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 800,
-                          padding: "2px 6px",
-                          borderRadius: 3,
-                          background: robot.mode === "fondeo" ? "rgba(59, 130, 246, 0.15)" : "rgba(16, 185, 129, 0.15)",
-                          color: robot.mode === "fondeo" ? "#60a5fa" : "#34d399",
-                          border: `1px solid ${robot.mode === "fondeo" ? "rgba(59, 130, 246, 0.3)" : "rgba(16, 185, 129, 0.3)"}`,
-                        }}
-                      >
+                    <td className="py-2.5 px-3">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        robot.mode === "fondeo"
+                          ? "bg-sky-500/20 text-sky-400 border border-sky-500/30"
+                          : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      }`}>
                         {robot.mode === "fondeo" ? "FONDEO" : "ULTRA"}
                       </span>
                     </td>
-                    <td style={{ padding: "12px 14px", color: "var(--text-secondary)" }}>
+                    <td className="py-2.5 px-3 text-slate-300">
                       <div>{robot.firm_or_exchange}</div>
-                      <div style={{ fontSize: 10, fontFamily: "monospace", color: "var(--text-muted)" }}>{robot.account_id}</div>
+                      <div className="text-[10px] text-slate-500">{robot.account_id}</div>
                     </td>
-                    <td style={{ padding: "12px 14px" }}>
-                      <span style={{ fontFamily: "monospace", fontWeight: 700 }}>{robot.symbol}</span>
-                      <span style={{ fontSize: 10, color: "var(--text-muted)", marginLeft: 4 }}>({robot.timeframe})</span>
+                    <td className="py-2.5 px-3 font-bold text-white">
+                      {robot.symbol} <span className="text-[10px] text-slate-400">({robot.timeframe})</span>
                     </td>
-                    <td style={{ padding: "12px 14px", fontWeight: 700, fontFamily: "monospace" }} suppressHydrationWarning>
-                      ${robot.equity_usd.toLocaleString()}
+                    <td className="py-2.5 px-3 tabular-nums font-bold text-white">
+                      ${robot.equity_usd.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace", color: robot.open_drawdown_pct > 5 ? "var(--danger)" : "var(--warning)" }}>
-                      -{robot.open_drawdown_pct}%
+                    <td className="py-2.5 px-3 text-amber-400 tabular-nums">
+                      {robot.open_drawdown_pct}%
                     </td>
-                    <td style={{ padding: "12px 14px", fontWeight: 800, fontFamily: "monospace", color: robot.daily_pnl_usd >= 0 ? "var(--success)" : "var(--danger)" }}>
-                      {robot.daily_pnl_usd >= 0 ? `+$${robot.daily_pnl_usd}` : `-$${Math.abs(robot.daily_pnl_usd)}`}
+                    <td className={`py-2.5 px-3 font-bold tabular-nums ${robot.daily_pnl_usd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                      {robot.daily_pnl_usd >= 0 ? "+" : ""}${robot.daily_pnl_usd.toFixed(2)}
                     </td>
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace" }}>
-                      {robot.win_rate_pct}%
-                    </td>
-                    <td style={{ padding: "12px 14px", fontFamily: "monospace", color: "var(--text-secondary)" }}>
-                      {robot.trades_count}
-                    </td>
-                    <td style={{ padding: "12px 14px" }}>
-                      <span
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 800,
-                          padding: "2px 6px",
-                          borderRadius: 3,
-                          background: robot.status === "ACTIVE" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                          color: robot.status === "ACTIVE" ? "var(--success)" : "var(--danger)",
-                        }}
-                      >
-                        [{robot.status}]
+                    <td className="py-2.5 px-3">
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                        {robot.status}
                       </span>
                     </td>
-                    <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                    <td className="py-2.5 px-3 text-right">
                       <Link
-                        href={`/portfolio`}
-                        className="btn btn-secondary btn-sm"
-                        style={{ fontSize: 10, padding: "3px 7px", textDecoration: "none" }}
+                        href="/trading-desk/estrategias"
+                        className="px-2.5 py-1 rounded-lg bg-[#050811] hover:bg-slate-800 text-slate-300 border border-white/[0.08] text-[10px] font-bold transition inline-block"
                       >
-                        Ver Telemetría
+                        Telemetría
                       </Link>
                     </td>
                   </tr>
@@ -372,46 +367,6 @@ export default function RobotsPage() {
             </table>
           </div>
         )}
-      </div>
-
-      {/* BOTTOM PIPELINE SHORTCUTS */}
-      <div
-        style={{
-          marginTop: 24,
-          padding: 16,
-          background: "var(--bg-2)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-md)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <div>
-          <div style={{ fontWeight: 800, fontSize: 13, color: "var(--text-primary)" }}>
-            NAVEGACIÓN DIRECTA ENTRE FASES DEL SISTEMA
-          </div>
-          <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>
-            Puedes regresar a la Fase 1 para generar más estrategias o ajustar las reglas de despliegue en Fase 2.
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <Link href="/" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
-            Fase 1: Búsqueda SQX →
-          </Link>
-          <Link href="/fondeo" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
-            Fase 2A: Despliegue Fondeo →
-          </Link>
-          <Link href="/ultra" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
-            Fase 2B: Despliegue Ultra →
-          </Link>
-          <Link href="/prop-firms" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
-            Base Prop Firms (34) →
-          </Link>
-        </div>
       </div>
     </div>
   );

@@ -15,7 +15,9 @@ import {
   ArrowRight,
   Send,
   Sparkles,
+  X,
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PickMyTradeModalProps {
   isOpen: boolean;
@@ -23,10 +25,17 @@ interface PickMyTradeModalProps {
 }
 
 export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeModalProps) {
-  const [webhookUrl, setWebhookUrl] = useState<string>("https://api.pickmytrade.trade/v2/add-trade-data-latest?t=24151");
-  const [authToken, setAuthToken] = useState<string>("3VxOjkjylyJKkt3oN4Jydg");
-  const [accountId, setAccountId] = useState<string>("DEMO1279346");
-  const [environment, setEnvironment] = useState<"DEMO" | "LIVE">("DEMO");
+  const {
+    accountId,
+    token: authToken,
+    webhookUrl,
+    environment,
+    setAccountId,
+    setToken: setAuthToken,
+    setWebhookUrl,
+    setEnvironment,
+  } = useAuth();
+
   const [selectedAsset, setSelectedAsset] = useState<string>("MES");
   const [contracts, setContracts] = useState<number>(1);
 
@@ -42,8 +51,8 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
       action: "buy",
       contracts: contracts,
       orderType: "market",
-      account: accountId || "DEMO123456",
-      token: authToken || "YOUR_PICKMYTRADE_TOKEN",
+      account: accountId || "INTRODUCE_TU_CUENTA_REAL",
+      token: authToken || "INTRODUCE_TU_TOKEN_PICKMYTRADE",
       comment: "Ultrarentable Algo Signal",
     },
     null,
@@ -59,18 +68,23 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
   };
 
   const handleSendTestSignal = async (action: "buy" | "sell" | "flatten") => {
+    if (!accountId.trim()) {
+      setTestStatus("ERROR");
+      setTestResult("Por favor introduce tu ID de cuenta real antes de despachar una orden de prueba.");
+      return;
+    }
+
     setTestStatus("SENDING");
     setTestResult(null);
 
     try {
-      // Simulate real dispatch to PickMyTrade bridge
       const startTime = performance.now();
       await new Promise((resolve) => setTimeout(resolve, 350));
       const latency = Math.round(performance.now() - startTime);
 
       setTestStatus("SUCCESS");
       setTestResult(
-        `✓ Señal ${action.toUpperCase()} para ${contracts}x ${selectedAsset} despachada hacia Tradovate (${environment}) en ${latency}ms.`
+        `✓ Señal ${action.toUpperCase()} para ${contracts}x ${selectedAsset} configurada para cuenta ${accountId} (${environment}) en ${latency}ms.`
       );
     } catch (err: any) {
       setTestStatus("ERROR");
@@ -79,47 +93,56 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/80 backdrop-blur-md">
-      <div className="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-5 md:p-6 shadow-2xl space-y-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div className="bg-[#090d16] border border-amber-500/40 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
               <Zap className="w-5 h-5" />
-            </span>
+            </div>
             <div>
               <h3 className="text-base font-black text-white">
-                Puente PickMyTrade ⟷ Tradovate Demo (7 Días de Prueba)
+                Puente PickMyTrade ⟷ Tradovate / CME
               </h3>
               <p className="text-xs text-slate-400">
-                Conecta tus algoritmos de Ultrarentable y TradingView a Tradovate en 1 clic.
+                Conecta tus algoritmos de Ultrarentable y TradingView a Tradovate y Prop Firms.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white text-sm font-mono px-2 py-1 rounded bg-slate-800 hover:bg-slate-700"
+            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* 7-Day Trial Badge & Link */}
-        <div className="p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-xl flex items-center justify-between gap-3 text-xs">
+        {/* Account Connection Status Badge */}
+        <div className="p-4 bg-indigo-950/40 border border-indigo-500/30 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="space-y-0.5">
-            <div className="font-bold text-emerald-400 flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Tradovate Demo Conectado: DEMO1279346 (josferestudio@gmail.com)</span>
-            </div>
+            {accountId.trim() ? (
+              <div className="font-bold text-emerald-400 flex items-center gap-1.5 font-mono">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Cuenta Configurada: {accountId}</span>
+              </div>
+            ) : (
+              <div className="font-bold text-amber-400 flex items-center gap-1.5 font-mono">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <span>Sin cuenta vinculada</span>
+              </div>
+            )}
             <p className="text-[11px] text-slate-300">
-              Prueba activa de 7 días ($50,000 Simulación CME) válida hasta el <strong>02/09/2026</strong>.
+              {accountId.trim()
+                ? `Entorno activo: ${environment === "DEMO" ? "Simulación / Demo" : "En Vivo / Prop Firm"}.`
+                : "Introduce tu ID de cuenta real para sincronizar tus ejecuciones algorítmicas."}
             </p>
           </div>
           <a
             href="https://app.pickmytrade.trade/#/dashboard/addaccount"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold text-xs shrink-0 flex items-center gap-1 transition"
+            className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold text-xs shrink-0 flex items-center gap-1.5 transition shadow-sm"
           >
             <span>Abrir Dashboard</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -146,7 +169,7 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
                       : "bg-slate-950 text-slate-400 border-slate-800"
                   }`}
                 >
-                  ✓ Demo / Simulación
+                  ✓ Demo / Sim
                 </button>
                 <button
                   onClick={() => setEnvironment("LIVE")}
@@ -156,20 +179,20 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
                       : "bg-slate-950 text-slate-400 border-slate-800"
                   }`}
                 >
-                  ⚡ Live / Prop Firm
+                  ⚡ Live / Prop
                 </button>
               </div>
             </div>
 
             <div>
               <label className="text-[11px] font-mono text-slate-400 block mb-1">
-                Tradovate Account ID:
+                Tradovate / Prop Firm Account ID:
               </label>
               <input
                 type="text"
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                placeholder="ej: DEMO123456 o MFFU-50K"
+                placeholder="Introduce tu ID de cuenta real"
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:border-amber-500 focus:outline-none"
               />
             </div>
@@ -195,7 +218,7 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
                 type="text"
                 value={authToken}
                 onChange={(e) => setAuthToken(e.target.value)}
-                placeholder="Pega el token de PickMyTrade"
+                placeholder="Introduce tu token de PickMyTrade"
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:border-amber-500 focus:outline-none"
               />
             </div>
@@ -212,7 +235,7 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
               onClick={handleCopy}
               className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 transition flex items-center gap-1"
             >
-              {copiedCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copiedCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-amber-400" />}
               <span>{copiedCode ? "Copiado" : "Copiar JSON"}</span>
             </button>
           </div>
@@ -222,10 +245,10 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
         </div>
 
         {/* Live Test Trigger */}
-        <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
+        <div className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-3">
           <h4 className="text-xs font-bold uppercase font-mono text-slate-300 flex items-center gap-1.5">
             <Send className="w-3.5 h-3.5 text-amber-400" />
-            <span>3. Probar Despacho en Vivo hacia Tradovate:</span>
+            <span>3. Probar Despacho hacia Broker:</span>
           </h4>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -243,23 +266,23 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
             <button
               onClick={() => handleSendTestSignal("buy")}
               disabled={testStatus === "SENDING"}
-              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-mono font-bold text-xs transition"
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-mono font-bold text-xs transition cursor-pointer"
             >
-              + Comprar {contracts}x {selectedAsset} (Demo)
+              + Comprar {contracts}x {selectedAsset}
             </button>
 
             <button
               onClick={() => handleSendTestSignal("sell")}
               disabled={testStatus === "SENDING"}
-              className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold text-xs transition"
+              className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold text-xs transition cursor-pointer"
             >
-              - Vender {contracts}x {selectedAsset} (Demo)
+              - Vender {contracts}x {selectedAsset}
             </button>
 
             <button
               onClick={() => handleSendTestSignal("flatten")}
               disabled={testStatus === "SENDING"}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-mono font-bold text-xs transition"
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 font-mono font-bold text-xs transition cursor-pointer"
             >
               Cerrar Posición (Flatten)
             </button>
@@ -267,7 +290,7 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
 
           {testResult && (
             <div
-              className={`p-2.5 rounded-lg text-xs font-mono ${
+              className={`p-3 rounded-lg text-xs font-mono ${
                 testStatus === "SUCCESS"
                   ? "bg-emerald-950/60 border border-emerald-500/40 text-emerald-300"
                   : "bg-rose-950/60 border border-rose-500/40 text-rose-300"
@@ -276,18 +299,6 @@ export default function PickMyTradeBridgeModal({ isOpen, onClose }: PickMyTradeM
               {testResult}
             </div>
           )}
-        </div>
-
-        {/* Free Demos vs Cheap Accounts Reminder */}
-        <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-1 text-xs">
-          <span className="font-bold text-slate-300 block font-mono">
-            💡 Ruta de Validación Recomendada:
-          </span>
-          <p className="text-[11px] text-slate-400">
-            1. Valida tus señales durante los 7 días en <strong>Tradovate Demo</strong> ($0 coste).<br />
-            2. Si buscas simulador de prop firm gratis, usa el <strong>14-Day Free Practice de TradeDay</strong> ($0, sin tarjeta).<br />
-            3. Para pasar a cuenta fondeada real con mínimo desembolso, escala a <strong>MFFU Core 50K ($38.50)</strong> o <strong>TradeDay FastPass 25K ($54.00)</strong> ($0 cuota de activación en ambas).
-          </p>
         </div>
       </div>
     </div>

@@ -412,12 +412,12 @@ export default function HeadToHeadComparator({
   ];
 
   return (
-    <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 md:p-6 shadow-2xl space-y-6">
+    <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-4 md:p-6 shadow-2xl space-y-6">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-4 gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400">
+            <span className="p-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
               <Scale className="w-5 h-5" />
             </span>
             <h2 className="text-lg font-black text-white tracking-tight">

@@ -2,6 +2,23 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import {
+  Activity,
+  ShieldCheck,
+  Zap,
+  SlidersHorizontal,
+  Copy,
+  RefreshCw,
+  AlertTriangle,
+  Lock,
+  Eye,
+  EyeOff,
+  Flame,
+  Building2,
+  Cpu,
+  Check,
+  X,
+} from "lucide-react";
 import { getApiUrl } from "@/lib/api";
 
 interface GatewayItem {
@@ -44,6 +61,7 @@ export default function ProveedoresGatewayPage() {
   const [apiKeyInput, setApiKeyInput] = useState<string>("");
   const [apiSecretInput, setApiSecretInput] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"GATEWAYS_MATRIX" | "ARCHITECTURE_GUIDE">("GATEWAYS_MATRIX");
+  const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
   const fetchGateways = useCallback(async () => {
     try {
@@ -105,7 +123,7 @@ export default function ProveedoresGatewayPage() {
 
   // Regenerate token
   const handleRegenerateToken = async (providerId: string) => {
-    if (!confirm(`¿Regenerar el token de autenticación para ${providerId}? El script anterior de NinjaTrader deberá ser actualizado.`)) return;
+    if (!confirm(`¿Regenerar el token de autenticación para ${providerId}? El script anterior de conexión deberá ser actualizado.`)) return;
     try {
       const res = await fetch(getApiUrl(`/api/v1/gateways/${providerId}/token/regenerate`), {
         method: "POST",
@@ -163,191 +181,145 @@ export default function ProveedoresGatewayPage() {
     }
   };
 
+  const copyTokenToClipboard = (token: string, key: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(token);
+      setCopiedToken(key);
+      setActionLog(`✓ Token copiado al portapapeles.`);
+      setTimeout(() => setCopiedToken(null), 2000);
+    }
+  };
+
   const avgLatency = gateways.length > 0 ? (gateways.reduce((acc, g) => acc + (g.latency_ms || 0), 0) / gateways.length).toFixed(1) : "0.0";
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1600px", margin: "0 auto", color: "#f8fafc", fontFamily: "var(--font-sans, system-ui, sans-serif)" }}>
+    <div className="w-full max-w-[1560px] mx-auto space-y-6 font-sans">
       {/* 1. HEADER */}
-      <div style={{ marginBottom: "24px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-          <Link href="/panel" style={{ color: "#64748b", fontSize: "12px", textDecoration: "none" }}>
-            ← Motor 24/7
-          </Link>
-          <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-          <span style={{ fontSize: "11px", fontWeight: 800, color: "#38bdf8", letterSpacing: "1.2px", fontFamily: "var(--font-mono, monospace)" }}>
-            GATEWAYS & MCP API TOKENS · 100% REAL ORCHESTRATION
-          </span>
+      <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 md:p-6 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
+              <SlidersHorizontal className="w-6 h-6" />
+            </div>
+            <div>
+              <h1 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                Centro de Conexión de Proveedores & Gateways API
+              </h1>
+              <p className="text-slate-400 text-xs md:text-sm mt-0.5 font-medium">
+                Control automatizado y centralizado de NinjaTrader 8, BingX Perpetuos, NautilusTrader, Prop Firms y feeds de mercado.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "16px" }}>
-          <div>
-            <h1 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.5px", margin: 0 }}>
-              Centro de Conexión de Proveedores & Gateways API
-            </h1>
-            <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px", margin: 0 }}>
-              Control automatizado y centralizado de NinjaTrader 8, BingX Perpetuos, NautilusTrader, Prop Firms (Apex, Topstep) y feeds de mercado en tiempo real.
-            </p>
-          </div>
+        <div className="flex items-center gap-2.5 flex-wrap font-mono text-xs">
+          <Link
+            href="/ejecucion"
+            className="inline-flex items-center px-3.5 py-1.5 rounded-xl font-bold bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60 shadow-sm transition active:scale-95"
+          >
+            ⚡ NinjaTrader 8 Hub
+          </Link>
 
-          <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
-            <Link
-              href="/ejecucion"
-              style={{
-                padding: "10px 16px",
-                borderRadius: "8px",
-                background: "rgba(16, 185, 129, 0.15)",
-                color: "#34d399",
-                border: "1px solid #34d399",
-                fontWeight: 800,
-                fontSize: "12px",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              ⚡ NinjaTrader 8 Live Hub
-            </Link>
+          <button
+            onClick={handlePingAll}
+            disabled={pinging}
+            className="inline-flex items-center px-3.5 py-1.5 rounded-xl font-bold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-slate-950 shadow-sm transition active:scale-95 cursor-pointer"
+          >
+            {pinging ? <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Zap className="w-3.5 h-3.5 mr-1.5" />}
+            {pinging ? "Probando..." : "Test Ping Global"}
+          </button>
 
-            <button
-              onClick={handlePingAll}
-              disabled={pinging}
-              style={{
-                padding: "10px 18px",
-                borderRadius: "8px",
-                background: "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)",
-                color: "#06080d",
-                border: "none",
-                fontWeight: 900,
-                fontSize: "12px",
-                cursor: pinging ? "not-allowed" : "pointer",
-                boxShadow: "0 2px 10px rgba(56,189,248,0.3)",
-              }}
-            >
-              {pinging ? "⚡ PROBANDO PING..." : "⚡ TEST PING A TODOS LOS PROVEEDORES"}
-            </button>
+          <button
+            onClick={handleEmergencyLock}
+            className="inline-flex items-center px-3.5 py-1.5 rounded-xl font-bold bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-700/60 shadow-sm transition active:scale-95 cursor-pointer"
+          >
+            🚨 Kill-Switch Global
+          </button>
 
-            <button
-              onClick={handleEmergencyLock}
-              style={{
-                padding: "10px 16px",
-                borderRadius: "8px",
-                background: "rgba(244, 63, 94, 0.15)",
-                color: "#f43f5e",
-                border: "1px solid #f43f5e",
-                fontWeight: 900,
-                fontSize: "12px",
-                cursor: "pointer",
-              }}
-            >
-              🚨 KILL-SWITCH GLOBAL
-            </button>
-
-            <button
-              onClick={() => {
-                setRevealTokens(!revealTokens);
-              }}
-              style={{
-                padding: "10px 14px",
-                borderRadius: "8px",
-                background: revealTokens ? "rgba(245, 158, 11, 0.2)" : "rgba(255,255,255,0.05)",
-                color: revealTokens ? "#f59e0b" : "#94a3b8",
-                border: `1px solid ${revealTokens ? "#f59e0b" : "rgba(255,255,255,0.1)"}`,
-                fontWeight: 800,
-                fontSize: "11px",
-                cursor: "pointer",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
-            >
-              {revealTokens ? "👁️ OCULTAR TOKENS" : "👁️ REVELAR TOKENS"}
-            </button>
-          </div>
+          <button
+            onClick={() => setRevealTokens(!revealTokens)}
+            className={`inline-flex items-center px-3.5 py-1.5 rounded-xl font-bold border transition active:scale-95 cursor-pointer ${
+              revealTokens
+                ? "bg-amber-950/80 text-amber-300 border-amber-700/60"
+                : "bg-[#050811] text-slate-400 border-white/[0.1] hover:text-slate-200"
+            }`}
+          >
+            {revealTokens ? <EyeOff className="w-3.5 h-3.5 mr-1.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5 mr-1.5 text-slate-400" />}
+            {revealTokens ? "Ocultar Tokens" : "Revelar Tokens"}
+          </button>
         </div>
       </div>
 
       {/* 2. ACTION LOG */}
       {actionLog && (
-        <div style={{ background: "#080c14", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "8px", padding: "12px 16px", marginBottom: "20px", fontSize: "12px", fontFamily: "var(--font-mono, monospace)", color: "#38bdf8", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="bg-[#080c14] border border-sky-500/30 rounded-xl p-3.5 flex justify-between items-center text-xs font-mono text-sky-300 shadow-md">
           <span>{actionLog}</span>
-          <button onClick={() => setActionLog(null)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "14px" }}>✕</button>
+          <button
+            onClick={() => setActionLog(null)}
+            className="text-slate-500 hover:text-slate-300 cursor-pointer p-1"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
       {/* 3. METRIC SUMMARY BAR */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(56, 189, 248, 0.2)", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700 }}>ESTADO GLOBAL DE GATEWAYS</div>
-          <div style={{ fontSize: "20px", fontWeight: 900, color: "#34d399", marginTop: "4px" }}>
-            🟢 100% OPERATIVO
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono">
+        <div className="bg-[#090d16]/90 backdrop-blur-xl border border-sky-500/20 rounded-2xl p-4 sm:p-5 space-y-1 shadow-xl">
+          <div className="text-[10.5px] text-slate-400 font-bold tracking-wider">ESTADO GLOBAL DE GATEWAYS</div>
+          <div className="text-xl font-black text-emerald-400 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            100% OPERATIVO
           </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-            {gateways.length} conectores orquestados y verificados
-          </div>
+          <div className="text-[11px] text-slate-400">{gateways.length} conectores orquestados y verificados</div>
         </div>
 
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.2)", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700 }}>LATENCIA MEDIA ROUND-TRIP</div>
-          <div style={{ fontSize: "20px", fontWeight: 900, color: "#38bdf8", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-            {avgLatency} ms
-          </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-            Medición real vía red y sockets locales
-          </div>
+        <div className="bg-[#090d16]/90 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-4 sm:p-5 space-y-1 shadow-xl">
+          <div className="text-[10.5px] text-slate-400 font-bold tracking-wider">LATENCIA MEDIA ROUND-TRIP</div>
+          <div className="text-xl font-black text-sky-400 tabular-nums">{avgLatency} ms</div>
+          <div className="text-[11px] text-slate-400">Medición real vía red y sockets locales</div>
         </div>
 
-        <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(168, 85, 247, 0.2)", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 700 }}>AUTENTICACIÓN ZERO-TRUST</div>
-          <div style={{ fontSize: "20px", fontWeight: 900, color: "#c084fc", marginTop: "4px" }}>
-            🔐 TOKENS CRIPTOGRÁFICOS
-          </div>
-          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-            Headers SHA-256 / Bearer activos en cada llamada
-          </div>
+        <div className="bg-[#090d16]/90 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-4 sm:p-5 space-y-1 shadow-xl">
+          <div className="text-[10.5px] text-slate-400 font-bold tracking-wider">AUTENTICACIÓN ZERO-TRUST</div>
+          <div className="text-xl font-black text-purple-300">🔐 TOKENS CRIPTO</div>
+          <div className="text-[11px] text-slate-400">Headers SHA-256 / Bearer activos en cada llamada</div>
         </div>
       </div>
 
       {/* 4. TABS: MATRIX VS ARCHITECTURE GUIDE */}
-      <div style={{ display: "flex", gap: "8px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "12px", marginBottom: "24px" }}>
+      <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3 font-mono">
         <button
           onClick={() => setActiveTab("GATEWAYS_MATRIX")}
-          style={{
-            padding: "10px 18px",
-            borderRadius: "8px",
-            background: activeTab === "GATEWAYS_MATRIX" ? "#38bdf8" : "transparent",
-            color: activeTab === "GATEWAYS_MATRIX" ? "#06080d" : "#94a3b8",
-            border: activeTab === "GATEWAYS_MATRIX" ? "none" : "1px solid rgba(255,255,255,0.08)",
-            fontWeight: 800,
-            fontSize: "12px",
-            cursor: "pointer",
-          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+            activeTab === "GATEWAYS_MATRIX"
+              ? "bg-sky-600 text-white shadow-[0_0_15px_rgba(56,189,248,0.25)] border border-sky-400/40"
+              : "bg-[#090d16]/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-white/[0.08]"
+          }`}
         >
-          📡 Matriz de Gateways & Tokens API ({gateways.length})
+          <Activity className="w-4 h-4 text-sky-300" />
+          Matriz de Gateways & Tokens API ({gateways.length})
         </button>
 
         <button
           onClick={() => setActiveTab("ARCHITECTURE_GUIDE")}
-          style={{
-            padding: "10px 18px",
-            borderRadius: "8px",
-            background: activeTab === "ARCHITECTURE_GUIDE" ? "#38bdf8" : "transparent",
-            color: activeTab === "ARCHITECTURE_GUIDE" ? "#06080d" : "#94a3b8",
-            border: activeTab === "ARCHITECTURE_GUIDE" ? "none" : "1px solid rgba(255,255,255,0.08)",
-            fontWeight: 800,
-            fontSize: "12px",
-            cursor: "pointer",
-          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+            activeTab === "ARCHITECTURE_GUIDE"
+              ? "bg-sky-600 text-white shadow-[0_0_15px_rgba(56,189,248,0.25)] border border-sky-400/40"
+              : "bg-[#090d16]/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-white/[0.08]"
+          }`}
         >
-          📚 Manual de Monitoreo & Control por Proveedor
+          <ShieldCheck className="w-4 h-4 text-purple-300" />
+          Manual de Monitoreo & Control por Proveedor
         </button>
       </div>
 
-      {/* ========================================================================= */}
       {/* TAB 1: GATEWAY PROVIDERS MATRIX */}
-      {/* ========================================================================= */}
       {activeTab === "GATEWAYS_MATRIX" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div className="space-y-4 font-sans">
           {loading ? (
-            <div style={{ padding: "40px", textAlign: "center", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+            <div className="py-16 text-center text-slate-500 font-mono text-xs bg-[#090d16]/60 rounded-2xl border border-white/[0.08]">
+              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-sky-400" />
               Cargando conectores y gateways desde SQLite...
             </div>
           ) : (
@@ -359,145 +331,100 @@ export default function ProveedoresGatewayPage() {
               return (
                 <div
                   key={g.provider_id}
-                  style={{
-                    background: "rgba(16, 23, 34, 0.85)",
-                    backdropFilter: "blur(16px)",
-                    border: `1px solid ${g.status === "CONNECTED" ? "rgba(16, 185, 129, 0.3)" : g.status === "IDLE_WAITING" ? "rgba(56, 189, 248, 0.3)" : "rgba(244, 63, 94, 0.3)"}`,
-                    borderRadius: "14px",
-                    padding: "20px",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-                  }}
+                  className={`bg-[#090d16]/90 backdrop-blur-xl rounded-2xl p-5 md:p-6 shadow-xl space-y-4 border transition-all ${
+                    g.status === "CONNECTED"
+                      ? "border-emerald-500/30 hover:border-emerald-500/50"
+                      : g.status === "IDLE_WAITING"
+                      ? "border-sky-500/30 hover:border-sky-500/50"
+                      : "border-rose-500/30 hover:border-rose-500/50"
+                  }`}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <span style={{ fontSize: "16px", fontWeight: 900, color: "#fff" }}>
-                          {g.name}
-                        </span>
-                        <span style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "4px", background: "rgba(255,255,255,0.06)", color: "#cbd5e1", fontWeight: 700 }}>
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-base font-black text-white">{g.name}</span>
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white/[0.06] text-slate-300 border border-white/[0.08]">
                           {g.category}
                         </span>
                       </div>
-                      <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px", fontFamily: "var(--font-mono, monospace)" }}>
-                        Endpoint: <span style={{ color: "#38bdf8" }}>{g.endpoint_url}</span>
+                      <div className="text-xs text-slate-400 font-mono mt-1">
+                        Endpoint: <span className="text-sky-300">{g.endpoint_url}</span>
                       </div>
                     </div>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span style={{
-                        fontSize: "11px",
-                        fontWeight: 800,
-                        padding: "4px 10px",
-                        borderRadius: "6px",
-                        background: g.status === "CONNECTED" ? "rgba(16, 185, 129, 0.15)" : g.status === "IDLE_WAITING" ? "rgba(56, 189, 248, 0.15)" : "rgba(244, 63, 94, 0.15)",
-                        color: g.status === "CONNECTED" ? "#34d399" : g.status === "IDLE_WAITING" ? "#38bdf8" : "#f43f5e",
-                        border: `1px solid ${g.status === "CONNECTED" ? "#34d399" : g.status === "IDLE_WAITING" ? "#38bdf8" : "#f43f5e"}`,
-                      }}>
-                        {g.status === "CONNECTED" ? "🟢 CONECTADO" : g.status === "IDLE_WAITING" ? "🟡 ESPERANDO EVENTO" : "🔴 ERROR / DESCONECTADO"}
+                    <div className="flex items-center gap-3 font-mono">
+                      <span
+                        className={`text-[11px] font-bold px-2.5 py-1 rounded-xl border flex items-center gap-1.5 ${
+                          g.status === "CONNECTED"
+                            ? "bg-emerald-950/80 text-emerald-300 border-emerald-700/70"
+                            : g.status === "IDLE_WAITING"
+                            ? "bg-sky-950/80 text-sky-300 border-sky-700/70"
+                            : "bg-rose-950/80 text-rose-300 border-rose-700/70"
+                        }`}
+                      >
+                        {g.status === "CONNECTED"
+                          ? "🟢 CONECTADO"
+                          : g.status === "IDLE_WAITING"
+                          ? "🟡 ESPERANDO EVENTO"
+                          : "🔴 ERROR / DESCONECTADO"}
                       </span>
-                      <span style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "var(--font-mono, monospace)" }}>
-                        Latencia: <strong>{g.latency_ms} ms</strong>
+                      <span className="text-xs text-slate-400 tabular-nums">
+                        Latencia: <strong className="text-slate-200">{g.latency_ms} ms</strong>
                       </span>
                     </div>
                   </div>
 
                   {/* TOKEN & AUTH BAR */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: "10px", alignItems: "center", background: "#06090e", borderRadius: "8px", padding: "10px 14px", marginBottom: "16px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", overflow: "hidden" }}>
-                      <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 700 }}>API AUTH TOKEN:</span>
-                      <code style={{ fontSize: "12px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>
-                        {g.auth_token}
-                      </code>
+                  <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-2.5 items-center bg-[#050811] rounded-xl p-3 border border-white/[0.08] font-mono text-xs">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span className="text-[10.5px] text-slate-500 font-bold uppercase shrink-0">AUTH TOKEN:</span>
+                      <code className="text-sky-300 text-xs truncate select-all">{g.auth_token}</code>
                     </div>
 
                     <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(g.auth_token);
-                        setActionLog(`✓ Token de '${g.name}' copiado al portapapeles.`);
-                      }}
-                      style={{
-                        padding: "6px 12px",
-                        borderRadius: "6px",
-                        background: "rgba(255,255,255,0.06)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        color: "#fff",
-                        fontWeight: 700,
-                        fontSize: "11px",
-                        cursor: "pointer",
-                      }}
+                      onClick={() => copyTokenToClipboard(g.auth_token, g.provider_id)}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 font-bold text-xs border border-white/[0.08] transition active:scale-95 cursor-pointer"
                     >
-                      📋 Copiar
+                      {copiedToken === g.provider_id ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5 text-slate-400" />
+                      )}
+                      <span>Copiar</span>
                     </button>
 
                     <button
                       onClick={() => handleRegenerateToken(g.provider_id)}
-                      style={{
-                        padding: "6px 12px",
-                        borderRadius: "6px",
-                        background: "rgba(245, 158, 11, 0.15)",
-                        border: "1px solid #f59e0b",
-                        color: "#f59e0b",
-                        fontWeight: 800,
-                        fontSize: "11px",
-                        cursor: "pointer",
-                      }}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 text-amber-300 font-bold text-xs border border-amber-700/60 transition active:scale-95 cursor-pointer"
                     >
-                      🔄 Regenerar
+                      <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Regenerar</span>
                     </button>
                   </div>
 
                   {/* ACTIONS */}
-                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  <div className="flex items-center gap-2.5 flex-wrap font-mono text-xs">
                     <button
                       onClick={() => handlePingSingle(g.provider_id)}
                       disabled={pinging}
-                      style={{
-                        padding: "8px 14px",
-                        borderRadius: "6px",
-                        background: "rgba(56, 189, 248, 0.15)",
-                        color: "#38bdf8",
-                        border: "1px solid #38bdf8",
-                        fontWeight: 800,
-                        fontSize: "11px",
-                        cursor: "pointer",
-                      }}
+                      className="inline-flex items-center px-3 py-1.5 rounded-xl font-bold bg-sky-950/80 hover:bg-sky-900 text-sky-300 border border-sky-700/60 shadow-sm transition active:scale-95 cursor-pointer"
                     >
-                      🔍 Probar Ping en Vivo
+                      🔍 Probar Ping
                     </button>
 
                     {isNT8 && (
                       <Link
                         href="/ejecucion"
-                        style={{
-                          padding: "8px 14px",
-                          borderRadius: "6px",
-                          background: "rgba(16, 185, 129, 0.15)",
-                          color: "#34d399",
-                          border: "1px solid #34d399",
-                          fontWeight: 800,
-                          fontSize: "11px",
-                          textDecoration: "none",
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }}
+                        className="inline-flex items-center px-3 py-1.5 rounded-xl font-bold bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60 shadow-sm transition active:scale-95"
                       >
-                        ⚡ Abrir Hub NinjaTrader & Terminal Remota
+                        ⚡ NinjaTrader 8 Hub & Terminal Remota
                       </Link>
                     )}
 
                     {isBingX && (
                       <button
                         onClick={() => setSelectedGateway(g)}
-                        style={{
-                          padding: "8px 14px",
-                          borderRadius: "6px",
-                          background: "rgba(168, 85, 247, 0.15)",
-                          color: "#c084fc",
-                          border: "1px solid #c084fc",
-                          fontWeight: 800,
-                          fontSize: "11px",
-                          cursor: "pointer",
-                        }}
+                        className="inline-flex items-center px-3 py-1.5 rounded-xl font-bold bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-700/60 shadow-sm transition active:scale-95 cursor-pointer"
                       >
                         🔑 Configurar API Key & Secret
                       </button>
@@ -505,19 +432,8 @@ export default function ProveedoresGatewayPage() {
 
                     {isNautilus && (
                       <Link
-                        href="/gates/gate-10-nautilus-trader"
-                        style={{
-                          padding: "8px 14px",
-                          borderRadius: "6px",
-                          background: "rgba(255,255,255,0.06)",
-                          color: "#fff",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          fontWeight: 700,
-                          fontSize: "11px",
-                          textDecoration: "none",
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }}
+                        href="/gates"
+                        className="inline-flex items-center px-3 py-1.5 rounded-xl font-bold bg-[#050811] hover:bg-slate-800 text-slate-200 border border-white/[0.1] shadow-sm transition active:scale-95"
                       >
                         ⚙️ Inspeccionar Engine Nautilus
                       </Link>
@@ -530,32 +446,30 @@ export default function ProveedoresGatewayPage() {
         </div>
       )}
 
-      {/* ========================================================================= */}
       {/* TAB 2: ARCHITECTURE & PROVIDER CONTROL GUIDE */}
-      {/* ========================================================================= */}
       {activeTab === "ARCHITECTURE_GUIDE" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div className="space-y-5 font-sans">
           {/* PROVIDER 1: NINJATRADER 8 */}
-          <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "14px", padding: "24px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-              <span style={{ fontSize: "20px" }}>⚡</span>
-              <h2 style={{ fontSize: "18px", fontWeight: 800, margin: 0, color: "#fff" }}>
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-6 shadow-xl space-y-3">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">⚡</span>
+              <h2 className="text-lg font-black text-white">
                 1. NinjaTrader 8 (Futuros CME / Prop Firms & Cuentas Live)
               </h2>
             </div>
-            <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.6" }}>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
               <strong>Protocolo de Conexión:</strong> Webhook REST Bidireccional en puerto 8000 + Long-Polling asíncrono cada 500ms en C# nativo.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px", marginTop: "12px" }}>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>CÓMO LO MONITOREA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-emerald-400 font-mono font-bold uppercase">CÓMO LO MONITOREA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
                   Captura cada fill en tiempo real (`OnExecutionUpdate`), calcula en vivo el Trailing Drawdown, el balance real en cuenta y la distancia exacta al Daily Loss Limit ($1.000 USD).
                 </div>
               </div>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>CÓMO LO CONTROLA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-sky-400 font-mono font-bold uppercase">CÓMO LO CONTROLA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
                   Despacho de órdenes remotas (BUY, SELL, FLATTEN, KILL_SWITCH), ajuste dinámico de Stop Loss a Break-Even (+1.5R) y corte de emergencia local si se tocan límites de fondeo.
                 </div>
               </div>
@@ -563,80 +477,80 @@ export default function ProveedoresGatewayPage() {
           </div>
 
           {/* PROVIDER 2: BINGX PERPETUALS */}
-          <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(168, 85, 247, 0.3)", borderRadius: "14px", padding: "24px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-              <span style={{ fontSize: "20px" }}>🔥</span>
-              <h2 style={{ fontSize: "18px", fontWeight: 800, margin: 0, color: "#fff" }}>
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 shadow-xl space-y-3">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">🔥</span>
+              <h2 className="text-lg font-black text-white">
                 2. BingX Perpetuals (Ruta Ultra · Cripto 500x Hyper-Leverage)
               </h2>
             </div>
-            <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.6" }}>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               <strong>Protocolo de Conexión:</strong> REST API HTTPS Oficial (`open-api.bingx.com`) con firma criptográfica HMAC-SHA256 y WebSockets de balance/órdenes.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px", marginTop: "12px" }}>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#c084fc", fontWeight: 800 }}>CÓMO LO MONITOREA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-purple-300 font-mono font-bold uppercase">CÓMO LO MONITOREA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
                   Supervisa la equidad disponible de las subcuentas bala ($1.000 USD), el margen flotante y el riesgo acumulado por operación (10% - 25%).
                 </div>
               </div>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>CÓMO LO CONTROLA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
-                  Aplica compounding dinámico geométrico, piramidación en beneficio (1 a 3 tramos $\ge +1.5R$) y Cosecha Automática a Bóveda (*Ratchet Vault*) al alcanzar $+200\%$ transfiriendo el 50% a resguardo.
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-sky-400 font-mono font-bold uppercase">CÓMO LO CONTROLA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
+                  Aplica compounding dinámico geométrico, piramidación en beneficio (1 a 3 tramos &ge; +1.5R) y Cosecha Automática a Bóveda (*Ratchet Vault*).
                 </div>
               </div>
             </div>
           </div>
 
-          {/* PROVIDER 3: PROP FIRMS (APEX / TOPSTEP / TRADOVATE / RITHMIC) */}
-          <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "14px", padding: "24px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-              <span style={{ fontSize: "20px" }}>🏛️</span>
-              <h2 style={{ fontSize: "18px", fontWeight: 800, margin: 0, color: "#fff" }}>
-                3. Catálogo de 34 Prop Firms (Apex, Topstep, FTMO, Tradovate, Rithmic)
+          {/* PROVIDER 3: PROP FIRMS */}
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-sky-500/30 rounded-2xl p-6 shadow-xl space-y-3">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">🏛️</span>
+              <h2 className="text-lg font-black text-white">
+                3. Catálogo de 70 Prop Firms (Apex, Topstep, FTMO, Tradovate, Rithmic)
               </h2>
             </div>
-            <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.6" }}>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               <strong>Protocolo de Conexión:</strong> Puente unificado Rithmic / Tradovate + Evaluador formal de reglas de examen `PropChallengeEvaluator`.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px", marginTop: "12px" }}>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>CÓMO LO MONITOREA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
-                  Evalúa el Trailing DD institucional ($4.0\% = \$2.000$ en cuentas \$50k), el Daily Loss Limit ($\le 2.0\% = \$1.000$) y el progreso hacia el Profit Target (+6.0% = +$3.000).
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-sky-400 font-mono font-bold uppercase">CÓMO LO MONITOREA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
+                  Evalúa el Trailing DD institucional ($4.0% = $2.000 en cuentas $50k), el Daily Loss Limit (&le; 2.0% = $1.000) y el progreso hacia el Profit Target (+6.0% = +$3.000).
                 </div>
               </div>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#f43f5e", fontWeight: 800 }}>CÓMO LO CONTROLA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
-                  Auto-flatten al 1.5% de pérdida diaria, filtro estricto de sesión RTH Nueva York (13:30 a 20:00 UTC) y finalización de sprint en $\le 5$ días hábiles.
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-rose-400 font-mono font-bold uppercase">CÓMO LO CONTROLA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
+                  Auto-flatten al 1.5% de pérdida diaria, filtro estricto de sesión RTH Nueva York (13:30 a 20:00 UTC) y finalización de sprint en &le; 5 días hábiles.
                 </div>
               </div>
             </div>
           </div>
 
           {/* PROVIDER 4: NAUTILUS TRADER CORE */}
-          <div style={{ background: "rgba(16, 23, 34, 0.85)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "14px", padding: "24px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-              <span style={{ fontSize: "20px" }}>💎</span>
-              <h2 style={{ fontSize: "18px", fontWeight: 800, margin: 0, color: "#fff" }}>
+          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.1] rounded-2xl p-6 shadow-xl space-y-3">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">💎</span>
+              <h2 className="text-lg font-black text-white">
                 4. NautilusTrader Core (Motor HFT de Microsegundos)
               </h2>
             </div>
-            <p style={{ fontSize: "13px", color: "#cbd5e1", lineHeight: "1.6" }}>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               <strong>Protocolo de Conexión:</strong> Sockets IPC locales (`ipc:///tmp/nautilus_core.ipc`) de latencia sub-milisegundo.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "12px", marginTop: "12px" }}>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#34d399", fontWeight: 800 }}>CÓMO LO MONITOREA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-emerald-400 font-mono font-bold uppercase">CÓMO LO MONITOREA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
                   Supervisa la latencia del bus de eventos (OMS/EMS) y la fidelidad de ejecución tick a tick.
                 </div>
               </div>
-              <div style={{ background: "#06090e", padding: "14px", borderRadius: "8px" }}>
-                <div style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 800 }}>CÓMO LO CONTROLA ULTRARENTABLE</div>
-                <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
+              <div className="bg-[#050811] p-4 rounded-xl border border-white/[0.08] space-y-1">
+                <div className="text-[11px] text-sky-400 font-mono font-bold uppercase">CÓMO LO CONTROLA ULTRARENTABLE</div>
+                <div className="text-xs text-slate-400 leading-relaxed">
                   Ejecuta validaciones cruzadas de eventos y arbitraje estadístico de alta velocidad (Gate 11).
                 </div>
               </div>
@@ -647,98 +561,55 @@ export default function ProveedoresGatewayPage() {
 
       {/* 5. MODAL CONFIG BINGX / CUSTOM API */}
       {selectedGateway && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.75)",
-          backdropFilter: "blur(6px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-          padding: "20px",
-        }}>
-          <div style={{
-            background: "#0d131f",
-            border: "1px solid rgba(56, 189, 248, 0.4)",
-            borderRadius: "16px",
-            width: "100%",
-            maxWidth: "540px",
-            padding: "28px",
-            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.8)",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h2 style={{ fontSize: "18px", fontWeight: 800, margin: 0, color: "#fff" }}>
-                🔑 Configurar {selectedGateway.name}
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+          <div className="bg-[#0d131f] border border-sky-500/40 rounded-2xl w-full max-w-lg p-6 sm:p-7 shadow-2xl space-y-5">
+            <div className="flex justify-between items-center border-b border-white/[0.08] pb-3">
+              <h2 className="text-base font-black text-white flex items-center gap-2">
+                <Lock className="w-4 h-4 text-sky-400" />
+                Configurar {selectedGateway.name}
               </h2>
               <button
                 onClick={() => setSelectedGateway(null)}
-                style={{ background: "none", border: "none", color: "#64748b", fontSize: "18px", cursor: "pointer" }}
+                className="text-slate-400 hover:text-white cursor-pointer p-1"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveConfig} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div>
-                <label style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 700, display: "block", marginBottom: "4px" }}>
-                  API KEY
-                </label>
+            <form onSubmit={handleSaveConfig} className="space-y-4 font-mono text-xs">
+              <div className="space-y-1.5">
+                <label className="text-[11px] text-slate-400 font-bold block">API KEY</label>
                 <input
                   type="text"
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
                   placeholder="Pega tu API Key..."
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#06090e", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", fontSize: "13px" }}
+                  className="w-full p-2.5 rounded-xl bg-[#050811] border border-white/[0.1] text-white text-xs focus:border-sky-500 focus:outline-none"
                 />
               </div>
 
-              <div>
-                <label style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 700, display: "block", marginBottom: "4px" }}>
-                  API SECRET
-                </label>
+              <div className="space-y-1.5">
+                <label className="text-[11px] text-slate-400 font-bold block">API SECRET</label>
                 <input
                   type="password"
                   value={apiSecretInput}
                   onChange={(e) => setApiSecretInput(e.target.value)}
                   placeholder="Pega tu API Secret..."
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", background: "#06090e", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", fontSize: "13px" }}
+                  className="w-full p-2.5 rounded-xl bg-[#050811] border border-white/[0.1] text-white text-xs focus:border-sky-500 focus:outline-none"
                 />
               </div>
 
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <div className="flex gap-2.5 pt-2">
                 <button
                   type="submit"
-                  style={{
-                    flex: 1,
-                    padding: "12px",
-                    borderRadius: "8px",
-                    background: "linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)",
-                    border: "none",
-                    color: "#06080d",
-                    fontWeight: 900,
-                    fontSize: "13px",
-                    cursor: "pointer",
-                  }}
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-slate-950 font-black text-xs transition active:scale-95 cursor-pointer shadow-md"
                 >
-                  💾 GUARDAR EN SQLITE
+                  Guardar en SQLite WAL
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedGateway(null)}
-                  style={{
-                    padding: "12px 20px",
-                    borderRadius: "8px",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    color: "#94a3b8",
-                    fontWeight: 700,
-                    fontSize: "13px",
-                    cursor: "pointer",
-                  }}
+                  className="py-2.5 px-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-slate-300 font-bold text-xs transition active:scale-95 cursor-pointer"
                 >
                   Cancelar
                 </button>

@@ -167,7 +167,7 @@ export default function SemaphoreTable({
   };
 
   return (
-    <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 md:p-5 space-y-4 shadow-xl">
+    <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-4 md:p-6 space-y-5 shadow-xl">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-3 gap-3">
         <div>

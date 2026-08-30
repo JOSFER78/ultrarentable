@@ -106,6 +106,9 @@ class EventBacktestResult:
             exit_reason_enum = (
                 ExitReason.TAKE_PROFIT if t.exit_reason == "TAKE_PROFIT"
                 else ExitReason.STOP_LOSS if t.exit_reason == "STOP_LOSS"
+                else ExitReason.SESSION_EOD if t.exit_reason in ["SESSION_EOD", "SESSION_CLOSE", "EOD_CLOSE"]
+                else ExitReason.TIME_STOP if t.exit_reason == "TIME_STOP"
+                else ExitReason.LIQUIDATION if t.exit_reason == "LIQUIDATION"
                 else ExitReason.KILL_SWITCH
             )
             canonical_trades.append(
@@ -233,6 +236,95 @@ class EventBacktestEngine:
                 rsi[i] = 100.0 - (100.0 / (1.0 + rs))
 
         return rsi
+
+    @staticmethod
+    def _parse_candle_utc_dt(candle: Dict[str, Any]) -> Optional[datetime]:
+        """Extrae y normaliza la marca temporal de una vela a objeto datetime UTC."""
+        ts_val = candle.get("timestamp_ms") or candle.get("timestamp") or candle.get("time") or candle.get("datetime")
+        if ts_val is None:
+            return None
+        if isinstance(ts_val, datetime):
+            return ts_val.astimezone(timezone.utc) if ts_val.tzinfo else ts_val.replace(tzinfo=timezone.utc)
+        if isinstance(ts_val, (int, float)):
+            val = float(ts_val)
+            if val > 1e11:
+                return datetime.fromtimestamp(val / 1000.0, tz=timezone.utc)
+            elif val > 0:
+                return datetime.fromtimestamp(val, tz=timezone.utc)
+        if isinstance(ts_val, str):
+            try:
+                val = float(ts_val)
+                if val > 1e11:
+                    return datetime.fromtimestamp(val / 1000.0, tz=timezone.utc)
+                elif val > 0:
+                    return datetime.fromtimestamp(val, tz=timezone.utc)
+            except ValueError:
+                pass
+            try:
+                dt = datetime.fromisoformat(ts_val.replace("Z", "+00:00"))
+                return dt.astimezone(timezone.utc) if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+            except ValueError:
+                pass
+        return None
+
+    @staticmethod
+    def _is_in_session_window(dt: Optional[datetime], session_window: Optional[Any]) -> bool:
+        """Determina si la fecha/hora UTC está dentro de la ventana de sesión y días autorizados."""
+        if session_window is None or dt is None:
+            return True
+
+        allowed_days = getattr(session_window, "allowed_days", None)
+        if allowed_days is not None and len(allowed_days) > 0:
+            if dt.weekday() not in allowed_days:
+                return False
+
+        try:
+            start_str = getattr(session_window, "start_time_utc", "00:00")
+            end_str = getattr(session_window, "end_time_utc", "23:59")
+            sh, sm = map(int, start_str.split(":"))
+            eh, em = map(int, end_str.split(":"))
+        except Exception:
+            return True
+
+        start_time = (sh, sm)
+        end_time = (eh, em)
+        bar_time = (dt.hour, dt.minute)
+
+        if start_time <= end_time:
+            return start_time <= bar_time <= end_time
+        else:
+            return bar_time >= start_time or bar_time <= end_time
+
+    @staticmethod
+    def _is_session_end(dt: Optional[datetime], session_window: Optional[Any], is_last_bar: bool = False) -> bool:
+        """Determina si la vela actual marca el cierre de la sesión EOD para forzar salida."""
+        if session_window is None or dt is None:
+            return is_last_bar
+        close_eod = getattr(session_window, "close_at_eod", False) or getattr(session_window, "force_close_at_end", False)
+        if not close_eod:
+            return False
+
+        allowed_days = getattr(session_window, "allowed_days", None)
+        if allowed_days is not None and len(allowed_days) > 0:
+            if dt.weekday() not in allowed_days:
+                return True
+
+        try:
+            start_str = getattr(session_window, "start_time_utc", "00:00")
+            end_str = getattr(session_window, "end_time_utc", "23:59")
+            sh, sm = map(int, start_str.split(":"))
+            eh, em = map(int, end_str.split(":"))
+        except Exception:
+            return False
+
+        start_time = (sh, sm)
+        end_time = (eh, em)
+        bar_time = (dt.hour, dt.minute)
+
+        if start_time <= end_time:
+            return bar_time >= end_time or bar_time < start_time
+        else:
+            return end_time <= bar_time < start_time
 
     def run_backtest(
         self,
@@ -391,12 +483,18 @@ class EventBacktestEngine:
         total_fees = 0.0
         total_slippage = 0.0
 
+        session_window = getattr(strategy, "session_window", None)
+        time_stop_bars = getattr(strategy.exit_rules, "time_stop_bars", None) if hasattr(strategy, "exit_rules") and strategy.exit_rules else None
+
         for i in range(warmup_bars, len(closes)):
             bar_close = closes[i]
             bar_high = highs[i]
             bar_low = lows[i]
             bar_atr = max(1e-4, atr[i])
             ts = timestamps[i]
+            bar_candle = candles[i]
+            bar_dt = self._parse_candle_utc_dt(bar_candle)
+            in_session = self._is_in_session_window(bar_dt, session_window)
 
             # 1. Chequeo de salidas y liquidaci?n si estamos en posici?n
             if position_side is not None:
@@ -521,6 +619,80 @@ class EventBacktestEngine:
                     position_side = None
                     position_qty = 0.0
 
+                # Comprobar Time Stop por barras
+                elif time_stop_bars is not None and (i - position_entry_bar) >= int(time_stop_bars):
+                    exit_price = bar_close
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
+                    net_pnl = gross_pnl - comm - slip
+                    current_equity += net_pnl
+                    total_fees += comm
+                    total_slippage += slip
+
+                    trades.append(
+                        TradeRecord(
+                            trade_id=f"trade_{len(trades)+1}",
+                            entry_bar=position_entry_bar,
+                            exit_bar=i,
+                            entry_time_ms=position_entry_time,
+                            exit_time_ms=ts,
+                            side=position_side,
+                            qty=position_qty,
+                            entry_price=position_entry_price,
+                            exit_price=exit_price,
+                            gross_pnl_usd=gross_pnl,
+                            net_pnl_usd=net_pnl,
+                            return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
+                            fees_usd=comm,
+                            slippage_usd=slip,
+                            exit_reason="TIME_STOP",
+                            pyramid_level=pyramid_count,
+                            equity_before_usd=round(position_equity_before, 2),
+                            equity_after_usd=round(current_equity, 2),
+                            r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
+                        )
+                    )
+                    position_side = None
+                    position_qty = 0.0
+
+                # Comprobar Cierre por Fin de Sesión (Session Window EOD)
+                elif self._is_session_end(bar_dt, session_window, is_last_bar=(i == len(closes) - 1)):
+                    exit_price = bar_close
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
+                    net_pnl = gross_pnl - comm - slip
+                    current_equity += net_pnl
+                    total_fees += comm
+                    total_slippage += slip
+
+                    trades.append(
+                        TradeRecord(
+                            trade_id=f"trade_{len(trades)+1}",
+                            entry_bar=position_entry_bar,
+                            exit_bar=i,
+                            entry_time_ms=position_entry_time,
+                            exit_time_ms=ts,
+                            side=position_side,
+                            qty=position_qty,
+                            entry_price=position_entry_price,
+                            exit_price=exit_price,
+                            gross_pnl_usd=gross_pnl,
+                            net_pnl_usd=net_pnl,
+                            return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
+                            fees_usd=comm,
+                            slippage_usd=slip,
+                            exit_reason="SESSION_EOD",
+                            pyramid_level=pyramid_count,
+                            equity_before_usd=round(position_equity_before, 2),
+                            equity_after_usd=round(current_equity, 2),
+                            r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
+                        )
+                    )
+                    position_side = None
+                    position_qty = 0.0
+
                 # Piramidaci?n sobre beneficio si est? habilitada (Ruta Ultra)
                 elif is_ultra and strategy.pyramiding_policy.enabled and pyramid_count < strategy.pyramiding_policy.max_tiers:
                     floating_pnl_r = ((bar_close - position_entry_price) / bar_atr) if position_side == "LONG" else ((position_entry_price - bar_close) / bar_atr)
@@ -534,7 +706,7 @@ class EventBacktestEngine:
                         pyramid_count += 1
 
             # 2. Se?al de Entrada si estamos planos
-            if position_side is None and current_equity > 0:
+            if position_side is None and current_equity > 0 and in_session:
                 ema_fast_val = ema_fast_series[i]
                 ema_slow_val = ema_slow_series[i]
                 

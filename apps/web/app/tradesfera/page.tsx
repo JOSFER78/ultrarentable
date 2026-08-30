@@ -22,6 +22,11 @@ import {
   FileText,
   Clock,
   Flame,
+  Copy,
+  Check,
+  Target,
+  Sparkles,
+  X,
 } from "lucide-react";
 
 interface ModuleMeta {
@@ -33,6 +38,7 @@ interface ModuleMeta {
   summary: string;
   keyRule: string;
   filePath: string;
+  highlights: string[];
 }
 
 const TRADESFERA_MODULES: ModuleMeta[] = [
@@ -45,6 +51,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Arquitectura de las 4 Puertas, fundador Vicente Pons, Public Ledger auditado de 167K€ y estructura de partners.",
     keyRule: "Una cuenta de fondeo no es un patrimonio: es un vehículo asimétrico de extracción con vida útil finita.",
     filePath: "docs/tradesfera/01_ECOSISTEMA_TRADESFERA_Y_MODELO_DE_NEGOCIO.md",
+    highlights: [
+      "Modelo de las 4 Puertas: Descuentos, Ticks, Comunidad y Ledger.",
+      "Diferenciación radical: Extracción asimétrica vs inversión tradicional.",
+      "Auditoría inmutable de transferencias reales sin sesgo de supervivencia.",
+    ],
   },
   {
     id: "02",
@@ -55,6 +66,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Formulación de munición (N disparos), Esperanza Matemática Positiva (EV), distribución binomial y regla de cosecha 50/30/20.",
     keyRule: "P(Aprobación >= 1) = 1 - (1 - p)^N. Con 10 balas y p=26.6%, la probabilidad de cobrar supera el 95%.",
     filePath: "docs/tradesfera/02_MATEMATICA_BANKROLL_Y_CAPITAL_MUNICION.md",
+    highlights: [
+      "Cálculo estocástico de disparos con bankroll finito.",
+      "Esperanza matemática neta: EV = P(Éxito) * Payout - Bankroll.",
+      "Regla de cosecha 80/20: 80% patrimonio seguro / 20% bóveda de munición.",
+    ],
   },
   {
     id: "03",
@@ -65,6 +81,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Curvas de drawdown intradía vs EOD, cálculo de Ruina Absoluta y mitigación de rachas negativas consecutivas.",
     keyRule: "El trailing intradía aumenta la probabilidad de quiebra un 340% frente al trailing EOD a cierre de sesión.",
     filePath: "docs/tradesfera/03_TEORIA_VARIANZA_Y_CONTROL_DE_RACHAS.md",
+    highlights: [
+      "Modelado de drawdown intra-trade vs End-of-Day (EOD).",
+      "Matriz de supervivencia frente a rachas de pérdidas de 5 a 10 trades.",
+      "Estrategia de amortiguación de varianza mediante microcontratos (MES/MNQ).",
+    ],
   },
   {
     id: "04",
@@ -75,6 +96,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Fases de evaluación, gestión de microcontratos (MES/MNQ) y timing óptimo para superar el profit target sin sobreexposición.",
     keyRule: "Nunca operar contratos grandes en fase de examen: 2 micros arriesgando $60-$80 por operación garantizan longevidad.",
     filePath: "docs/tradesfera/04_PROTOCOLO_INTELIGENTE_APROBACION_CUENTAS.md",
+    highlights: [
+      "Dimensionamiento óptimo de micro-lotes para mantener el riesgo < 3% del DD.",
+      "Ventanas de alta probabilidad de aprobación en 5 a 10 sesiones.",
+      "Evitación de trampas de sobreoperativa en los últimos $300 hacia el target.",
+    ],
   },
   {
     id: "05",
@@ -85,6 +111,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Topología master-slave con NinjaTrader / Rithmic / Tradovate. Desincronización de milisegundos para evitar flags de copytrading.",
     keyRule: "Diversificar 20 cuentas entre 4 empresas (5 por firma) elimina el riesgo de impago individual de un prop broker.",
     filePath: "docs/tradesfera/05_SISTEMA_MULTICUENTA_Y_COPYTRADING.md",
+    highlights: [
+      "Topología de replicación 1:N en NinjaTrader y Tradovate.",
+      "Control de deslizamiento (slippage) cruzado en contratos múltiples.",
+      "Descentralización de brokers para inmunidad ante cambios unilaterales de reglas.",
+    ],
   },
   {
     id: "06",
@@ -95,6 +126,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Calendario de transferencias bancarias semanales rotativas entre 4 a 6 firmas complementarias.",
     keyRule: "Regla 80/20: 80% del payout va a patrimonio bancario seguro; 20% a la Caja de Munición para recomprar exámenes.",
     filePath: "docs/tradesfera/06_CICLO_OPTIMO_RETIROS_Y_PAYOUTS.md",
+    highlights: [
+      "Calendario escalonado de solicitudes de retiro semanales y quincenales.",
+      "Mantenimiento del colchón mínimo de seguridad antes de solicitar el payout.",
+      "Transición sistemática de ganancias a cuentas bancarias personales.",
+    ],
   },
   {
     id: "07",
@@ -105,6 +141,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Neurobiología del trader, erradicación de la falacia de los $50,000 nominales y protocolos de reseteo del córtex prefrontal.",
     keyRule: "Una cuenta de $50k con drawdown de $2,000 tiene SOLO $2,000 de capital real. Tu apalancamiento real es 25x mayor.",
     filePath: "docs/tradesfera/07_PSICOLOGIA_DEL_FONDEO_Y_SESGOS_OPERATIVOS.md",
+    highlights: [
+      "Desmitificación del capital nominal: el capital real es el colchón de DD.",
+      "Erradicación del sesgo de anclaje y aversión a la pérdida.",
+      "Protocolo de respiración y desconexión tras pérdida inesperada.",
+    ],
   },
   {
     id: "08",
@@ -115,6 +156,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Análisis forense de MyFundedFutures, Tradeify, TradeDay, BluSky, Lucid, Apex, Topstep, TakeProfitTrader y Bulenox.",
     keyRule: "Priorizar firmas con trailing EOD estricto y sin activación oculta: Tradeify y MyFundedFutures lideran el ranking.",
     filePath: "docs/tradesfera/08_COMPARATIVA_PROP_FIRMS_FUTUROS_CME.md",
+    highlights: [
+      "Desglose de costes ocultos: cuotas de activación y data feeds.",
+      "Evaluación del modelo de negocio de cada prop firm (B-Book vs Real).",
+      "Clasificación cuantitativa según idoneidad para bots y algoritmos.",
+    ],
   },
   {
     id: "09",
@@ -125,6 +171,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "VPS de baja latencia en Chicago (CME Aurora), configuración de brackets automáticos y conexión multi-gateway.",
     keyRule: "Configuración obligatoria de Hard Stop Loss en el servidor del broker antes de enviar la orden de mercado.",
     filePath: "docs/tradesfera/09_INFRAESTRUCTURA_TECNICA_NINJATRADER_TOOLS.md",
+    highlights: [
+      "VPS en Chicago < 2ms de latencia hacia servidores CME Aurora.",
+      "ATM Strategies con Brackets OCO incondicionales del lado del servidor.",
+      "Puentes de replicación RDL y NinjaTrader Trade Copier.",
+    ],
   },
   {
     id: "10",
@@ -135,6 +186,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Tratado general que unifica los 16 módulos: microestructura cuantitativa, psicoterapia y marco de ejecución.",
     keyRule: "El sistema cuantitativo Tradesfera eleva la tasa de fondeo de la industria del 2.5% a un 26.6% auditado.",
     filePath: "docs/tradesfera/10_DOSSIER_MAESTRO_TRADESFERA_FONDEO_FUTUROS.md",
+    highlights: [
+      "Compendio maestro que integra la matemática, psicología y operativa.",
+      "Estadísticas agregadas de 1,200+ traders auditados.",
+      "Roadmap de principiante a gestor multicuenta de 20 cuentas CME.",
+    ],
   },
   {
     id: "11",
@@ -145,6 +201,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Ventanas de liquidez institucional CME (08:30–11:00 EST / 14:30–17:00 CET), aperturas de sesión y patrones de absorción.",
     keyRule: "El 80% del profit se produce en los primeros 45 minutos tras la campana de Wall Street. Prohibido operar fuera de ventana.",
     filePath: "docs/tradesfera/11_ESTRATEGIAS_Y_HORARIOS_GERARD_GARCIA_FUTUROS.md",
+    highlights: [
+      "Patrón de Apertura ORB (Opening Range Breakout) de 15 minutos en NQ.",
+      "Gestión de noticias económicas de alto impacto (NFP, CPI, FOMC).",
+      "Filtros de absorción de volumen institucional en niveles clave.",
+    ],
   },
   {
     id: "12",
@@ -155,6 +216,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Protocolos clínicos de Víctor Corrales (@Elpsicologodeltrading): parada de pensamiento, desensibilización sistemática y diario de tilt.",
     keyRule: "Ante 2 pérdidas consecutivas en el día: cierre automático de plataforma por 24 horas sin excepción.",
     filePath: "docs/tradesfera/12_MAESTRIA_PSICOLOGICA_Y_PROTOCOLOS_EL_PSICOLOGO_DEL_TRADING.md",
+    highlights: [
+      "Técnica de parada de pensamiento ante el impulso de revancha (Revenge Trading).",
+      "Registro de estado fisiológico y nivel de estrés pre-sesión.",
+      "Desconexión física obligatoria tras alcanzar el límite de pérdida diaria.",
+    ],
   },
   {
     id: "13",
@@ -165,6 +231,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Secuencia matemática de cobros por niveles, amortización del colchón de seguridad y transición a cuenta live real.",
     keyRule: "Cosechar el primer payout en cuanto se desbloquee el umbral mínimo; nunca dejar acumular capital en un prop broker.",
     filePath: "docs/tradesfera/13_SISTEMA_TACTICO_MAXIMA_EXTRACCION_POR_EMPRESA.md",
+    highlights: [
+      "Estrategia de amortización del coste de compra en el primer retiro.",
+      "Reglas de escalado de contratos según colchón acumulado.",
+      "Plan de retiro por etapas (Tier 1 a Tier 4) en cada prop firm.",
+    ],
   },
   {
     id: "14",
@@ -175,6 +246,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Cheat sheet de 25 reglas anti-descalificación: gestión de noticias NFP/FOMC, consistencia del 30% y micro-pips.",
     keyRule: "Comprobar el calendario económico 15 minutos antes de la sesión; cancelar todas las órdenes 2 minutos antes de noticias de alto impacto.",
     filePath: "docs/tradesfera/14_HACKS_SHORTS_Y_REGLAS_RAPIDAS_DE_FONDEO.md",
+    highlights: [
+      "Checklist de 25 reglas rápidas para evitar la descalificación instantánea.",
+      "Regla de consistencia: ningún día puede superar el 30%-40% del profit total.",
+      "Gestión de días mínimos obligatorios de trading sin arriesgar el target alcanzado.",
+    ],
   },
   {
     id: "15",
@@ -185,6 +261,11 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Aprovechamiento de cupones del 80%-90%, deducción del coste de exámenes y tributación óptima como facturación de servicios.",
     keyRule: "Los payouts de prop firms se tributan como rendimiento de actividad económica / prestación de servicios, no como ganancia patrimonial directa.",
     filePath: "docs/tradesfera/15_ARBITRAJE_DE_NEGOCIO_PROMOS_Y_FISCALIDAD.md",
+    highlights: [
+      "Estructuración fiscal de cobros internacionales vía Wise / Deel / Cripto.",
+      "Deducción de costes de exámenes, herramientas y datos de mercado.",
+      "Aprovechamiento de cupones flash estacionales (Black Friday, New Year).",
+    ],
   },
   {
     id: "16",
@@ -195,20 +276,28 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Checklist de 7 pasos antes del primer click: conexión ping, sincronización de cuentas esclavas, nivel de drawdown y estado mental.",
     keyRule: "Si el checklist falla en un solo punto, la sesión queda cancelada automáticamente.",
     filePath: "docs/tradesfera/16_PLAYBOOK_OPERATIVO_DIARIO_Y_CHECKLIST_EJECUCION.md",
+    highlights: [
+      "7 pasos de verificación técnica antes del campanazo de apertura.",
+      "Comprobación de conectividad Rithmic / Tradovate / CQG.",
+      "Protocolo de cierre formal y registro en el diario de trading.",
+    ],
   },
 ];
 
 export default function TradesferaPortalPage() {
   const [selectedModule, setSelectedModule] = useState<ModuleMeta>(TRADESFERA_MODULES[0]);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [copiedCode, setCopiedCode] = useState<boolean>(false);
+  const [copiedPath, setCopiedPath] = useState<boolean>(false);
 
-  // Calculadora de Bankroll interactiva
+  // Bankroll Calculator state
   const [bankroll, setBankroll] = useState<number>(3000);
-  const [examCost, setExamCost] = useState<number>(38);
+  const [examCost, setExamCost] = useState<number>(38.5);
   const [passRate, setPassRate] = useState<number>(26.6);
   const [payoutTarget, setPayoutTarget] = useState<number>(2500);
 
-  const numBullets = Math.floor(bankroll / examCost);
+  const numBullets = Math.max(1, Math.floor(bankroll / Math.max(1, examCost)));
   const p = passRate / 100;
   const passProb = 1 - Math.pow(1 - p, numBullets);
   const expectedValue = passProb * payoutTarget - bankroll;
@@ -217,299 +306,383 @@ export default function TradesferaPortalPage() {
     ? TRADESFERA_MODULES
     : TRADESFERA_MODULES.filter((m) => m.category === activeCategory);
 
+  const handleCopyCode = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText("TRADESFERA");
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
+  };
+
+  const handleCopyPath = (path: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(path);
+      setCopiedPath(true);
+      setTimeout(() => setCopiedPath(false), 2000);
+    }
+  };
+
+  const handleOpenModule = (mod: ModuleMeta) => {
+    setSelectedModule(mod);
+    setIsModalOpen(true);
+  };
+
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="w-full max-w-7xl mx-auto space-y-8 pb-24 text-slate-100">
       {/* 1. HERO INSTITUCIONAL TRADESFERA */}
-      <div
-        style={{
-          background: "linear-gradient(180deg, #0d131f 0%, #080c14 100%)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "10px",
-          padding: "24px 28px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "20px",
-        }}
-      >
-        <div style={{ maxWidth: "780px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-            <span
-              style={{
-                fontSize: "10.5px",
-                fontWeight: 700,
-                fontFamily: "var(--font-mono, monospace)",
-                color: "#fbbf24",
-                background: "rgba(251, 191, 36, 0.1)",
-                border: "1px solid rgba(251, 191, 36, 0.25)",
-                padding: "2px 8px",
-                borderRadius: "4px",
-              }}
-            >
-              TRATADO MAESTRO V2
-            </span>
-            <span style={{ fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
-              FUTUROS CME · METODOLOGÍA TRADESFERA
-            </span>
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-black bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                TRATADO MAESTRO V2
+              </span>
+              <span className="text-xs font-mono text-slate-400">
+                FUTUROS CME · METODOLOGÍA CUANTITATIVA TRADESFERA
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                167.000€+ AUDITADOS
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+              Portal Maestro Tradesfera: Sistema Inteligente de Extracción de Capital
+            </h1>
+
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Síntesis cuantitativa del tratado integral de 16 módulos: matemática de bankroll munición, varianza y control de drawdown EOD, psicotrading clínico y arquitectura multicuenta de futuros CME.
+            </p>
           </div>
 
-          <h1 style={{ fontSize: "24px", fontWeight: 700, color: "#f8fafc", margin: "0 0 8px 0", letterSpacing: "-0.3px" }}>
-            Portal Maestro Tradesfera: Sistema Inteligente de Extracción de Capital
-          </h1>
+          {/* Quick Metrics & Links */}
+          <div className="flex flex-wrap sm:flex-nowrap gap-3 shrink-0">
+            <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 text-center min-w-[130px]">
+              <span className="text-[10px] text-slate-400 uppercase font-mono block">Tasa Auditada</span>
+              <div className="text-2xl font-black text-emerald-400 font-mono tabular-nums">26.6%</div>
+              <span className="text-[10px] text-slate-500 block">vs 2.5% industria</span>
+            </div>
 
-          <p style={{ fontSize: "13.5px", color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>
-            Síntesis cuantitativa del tratado integral de 18 módulos: matemática de bankroll munición, varianza y control de drawdown EOD, psicotrading clínico y arquitectura multicuenta de futuros CME.
-          </p>
+            <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 text-center min-w-[130px]">
+              <span className="text-[10px] text-slate-400 uppercase font-mono block">Corpus en Disco</span>
+              <div className="text-2xl font-black text-sky-400 font-mono tabular-nums">16 Módulos</div>
+              <span className="text-[10px] text-slate-500 block">Dossier integral</span>
+            </div>
+          </div>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          <div
-            style={{
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(255, 255, 255, 0.07)",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>TASA AUDITADA</div>
-            <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>26.6%</div>
-            <div style={{ fontSize: "9.5px", color: "#475569" }}>vs 2.5% media industria</div>
+        {/* Action Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-800/80">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/prop-firms"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20"
+            >
+              <Building2 className="w-4 h-4" />
+              <span>Ver Catálogo 70 Prop Firms CME</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            <Link
+              href="/trading-desk"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60 transition shadow-sm"
+            >
+              <Zap className="w-4 h-4 text-emerald-400" />
+              <span>Abrir Trading Desk</span>
+            </Link>
+
+            <Link
+              href="/bifurcacion"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-sky-950/80 hover:bg-sky-900 text-sky-300 border border-sky-700/60 transition shadow-sm"
+            >
+              <Target className="w-4 h-4 text-sky-400" />
+              <span>Bifurcación QVF</span>
+            </Link>
           </div>
 
-          <div
-            style={{
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(255, 255, 255, 0.07)",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>CORPUS DOCUMENTAL</div>
-            <div style={{ fontSize: "20px", fontWeight: 700, color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>18 MÓDULOS</div>
-            <div style={{ fontSize: "9.5px", color: "#475569" }}>Dossier completo en disco</div>
+          {/* Coupon Copy Pill */}
+          <div className="flex items-center gap-2 bg-slate-950/90 border border-amber-500/30 rounded-xl px-3 py-1.5">
+            <span className="text-[11px] text-slate-400 font-mono">Cupón Oficial Unificado:</span>
+            <button
+              onClick={handleCopyCode}
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 font-mono text-xs font-black border border-amber-500/40 transition"
+              title="Copiar cupón TRADESFERA"
+            >
+              {copiedCode ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-amber-400" />}
+              <span>{copiedCode ? "¡Copiado!" : "TRADESFERA"}</span>
+            </button>
+            <span className="text-[10px] text-emerald-400 font-mono font-bold">(50%-90% OFF)</span>
           </div>
         </div>
       </div>
 
       {/* 2. LAS 4 PUERTAS DEL ECOSISTEMA TRADESFERA */}
-      <div>
-        <div style={{ fontSize: "11px", fontWeight: 600, color: "#64748b", letterSpacing: "0.8px", marginBottom: "10px", fontFamily: "var(--font-mono, monospace)" }}>
-          ARQUITECTURA DE LAS 4 PUERTAS TRADESFERA
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-mono font-bold text-slate-400 tracking-wider uppercase">
+              ARQUITECTURA DE LAS 4 PUERTAS TRADESFERA
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Infraestructura integral diseñada por Vicente Pons para maximizar la asimetría positiva en futuros regulados.
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "12px" }}>
-          <div style={{ background: "#0b0f19", border: "1px solid rgba(255, 255, 255, 0.07)", borderRadius: "8px", padding: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-              <div style={{ width: "24px", height: "24px", borderRadius: "4px", background: "rgba(251, 191, 36, 0.1)", color: "#fbbf24", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700 }}>1</div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f1f5f9" }}>Descuentos Centralizados</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Puerta 1 */}
+          <div className="bg-[#090d16]/90 border border-white/[0.08] hover:border-amber-500/40 backdrop-blur-xl rounded-2xl p-5 shadow-lg transition-all space-y-3 group">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs font-black font-mono">
+                1
+              </div>
+              <h3 className="text-sm font-bold text-white group-hover:text-amber-300 transition">
+                Descuentos Centralizados
+              </h3>
             </div>
-            <p style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.4, margin: "0 0 10px 0" }}>
-              Convenio unificado con las mejores prop firms de futuros CME con código <code style={{ color: "#fbbf24", background: "rgba(251,191,36,0.1)", padding: "1px 4px", borderRadius: "3px" }}>TRADESFERA</code> (50%-90% OFF).
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Convenio unificado con las mejores prop firms de futuros CME con código <code className="text-amber-300 bg-amber-950/40 px-1 py-0.5 rounded font-mono font-bold">TRADESFERA</code> (50%-90% OFF).
             </p>
-            <div style={{ fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>Tradeify · MyFundedFutures · TradeDay</div>
+            <div className="text-[11px] text-emerald-400 font-mono pt-2 border-t border-slate-800/80">
+              Tradeify · MyFundedFutures · TradeDay
+            </div>
           </div>
 
-          <div style={{ background: "#0b0f19", border: "1px solid rgba(255, 255, 255, 0.07)", borderRadius: "8px", padding: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-              <div style={{ width: "24px", height: "24px", borderRadius: "4px", background: "rgba(56, 189, 248, 0.1)", color: "#38bdf8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700 }}>2</div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f1f5f9" }}>Sistema de Ticks</div>
+          {/* Puerta 2 */}
+          <div className="bg-[#090d16]/90 border border-white/[0.08] hover:border-sky-500/40 backdrop-blur-xl rounded-2xl p-5 shadow-lg transition-all space-y-3 group">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 flex items-center justify-center text-xs font-black font-mono">
+                2
+              </div>
+              <h3 className="text-sm font-bold text-white group-hover:text-sky-300 transition">
+                Sistema de Ticks
+              </h3>
             </div>
-            <p style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.4, margin: "0 0 10px 0" }}>
+            <p className="text-xs text-slate-300 leading-relaxed">
               Acumulación de Ticks por cada examen adquirido, canjeables por cuentas gratuitas, reseteos y herramientas operativas en NinjaTrader.
             </p>
-            <div style={{ fontSize: "11px", color: "#38bdf8", fontFamily: "var(--font-mono, monospace)" }}>account.tradesfera.com</div>
+            <div className="text-[11px] text-sky-400 font-mono pt-2 border-t border-slate-800/80">
+              account.tradesfera.com
+            </div>
           </div>
 
-          <div style={{ background: "#0b0f19", border: "1px solid rgba(255, 255, 255, 0.07)", borderRadius: "8px", padding: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-              <div style={{ width: "24px", height: "24px", borderRadius: "4px", background: "rgba(168, 85, 247, 0.1)", color: "#a855f7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700 }}>3</div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f1f5f9" }}>Comunidad Auditada</div>
+          {/* Puerta 3 */}
+          <div className="bg-[#090d16]/90 border border-white/[0.08] hover:border-purple-500/40 backdrop-blur-xl rounded-2xl p-5 shadow-lg transition-all space-y-3 group">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center text-xs font-black font-mono">
+                3
+              </div>
+              <h3 className="text-sm font-bold text-white group-hover:text-purple-300 transition">
+                Comunidad Auditada
+              </h3>
             </div>
-            <p style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.4, margin: "0 0 10px 0" }}>
+            <p className="text-xs text-slate-300 leading-relaxed">
               Canal privado de Telegram con operativa en directo de Gerard García, análisis de mercado diario y soporte de psicotrading clínico.
             </p>
-            <div style={{ fontSize: "11px", color: "#c084fc", fontFamily: "var(--font-mono, monospace)" }}>Comunidad de Operadores CME</div>
+            <div className="text-[11px] text-purple-400 font-mono pt-2 border-t border-slate-800/80">
+              Comunidad de Operadores CME
+            </div>
           </div>
 
-          <div style={{ background: "#0b0f19", border: "1px solid rgba(255, 255, 255, 0.07)", borderRadius: "8px", padding: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-              <div style={{ width: "24px", height: "24px", borderRadius: "4px", background: "rgba(16, 185, 129, 0.1)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700 }}>4</div>
-              <div style={{ fontSize: "13px", fontWeight: 600, color: "#f1f5f9" }}>Public Ledger Auditado</div>
+          {/* Puerta 4 */}
+          <div className="bg-[#090d16]/90 border border-white/[0.08] hover:border-emerald-500/40 backdrop-blur-xl rounded-2xl p-5 shadow-lg transition-all space-y-3 group">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xs font-black font-mono">
+                4
+              </div>
+              <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition">
+                Public Ledger Auditado
+              </h3>
             </div>
-            <p style={{ fontSize: "12px", color: "#94a3b8", lineHeight: 1.4, margin: "0 0 10px 0" }}>
+            <p className="text-xs text-slate-300 leading-relaxed">
               Libro mayor público con más de 167,000€ en transferencias de retiros reales certificados sin sesgos de supervivencia.
             </p>
-            <div style={{ fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono, monospace)" }}>167.000€+ Retiros Certificados</div>
+            <div className="text-[11px] text-emerald-400 font-mono pt-2 border-t border-slate-800/80">
+              167.000€+ Retiros Certificados
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 3. CALCULADORA DE BANKROLL DE MUNICIÓN (MATEMÁTICA TRADESFERA) */}
-      <div
-        style={{
-          background: "#0a0e17",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "10px",
-          padding: "20px 24px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-          <Calculator style={{ width: "16px", height: "16px", color: "#38bdf8" }} />
-          <div style={{ fontSize: "14px", fontWeight: 700, color: "#f8fafc" }}>
-            Calculadora Cuantitativa de Munición & Esperanza Matemática (M02)
+      {/* 3. CALCULADORA DE BANKROLL DE MUNICIÓN (MATEMÁTICA TRADESFERA M02) */}
+      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+              <Calculator className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-white tracking-tight">
+                Calculadora Cuantitativa de Munición & Esperanza Matemática (M02)
+              </h2>
+              <p className="text-xs text-slate-400">
+                Aplica la distribución binomial estocástica y la regla de cosecha 80/20 para calcular la probabilidad de cobro y EV neto.
+              </p>
+            </div>
+          </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono font-bold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Fórmula Canónica M02</span>
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "18px" }}>
-          <div>
-            <label style={{ fontSize: "11px", color: "#94a3b8", display: "block", marginBottom: "6px" }}>Bankroll Total de Fondeo ($):</label>
+        {/* Inputs Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase font-mono block">
+              Bankroll Total de Fondeo ($):
+            </label>
             <input
               type="number"
               value={bankroll}
-              onChange={(e) => setBankroll(Number(e.target.value))}
-              style={{
-                width: "100%",
-                background: "#111827",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "5px",
-                padding: "8px 10px",
-                color: "#f8fafc",
-                fontSize: "13px",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
+              onChange={(e) => setBankroll(Math.max(10, Number(e.target.value)))}
+              className="w-full bg-[#030712] text-white border border-slate-700/80 rounded-lg px-3 py-2 text-sm font-bold font-mono focus:border-sky-500 focus:outline-none"
             />
+            <span className="text-[10px] text-slate-500 block font-mono">
+              Capital disponible para comprar exámenes
+            </span>
           </div>
 
-          <div>
-            <label style={{ fontSize: "11px", color: "#94a3b8", display: "block", marginBottom: "6px" }}>Coste Examen con Descuento ($):</label>
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase font-mono block">
+              Coste Examen con Promo ($):
+            </label>
             <input
               type="number"
+              step="0.5"
               value={examCost}
-              onChange={(e) => setExamCost(Number(e.target.value))}
-              style={{
-                width: "100%",
-                background: "#111827",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "5px",
-                padding: "8px 10px",
-                color: "#f8fafc",
-                fontSize: "13px",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
+              onChange={(e) => setExamCost(Math.max(1, Number(e.target.value)))}
+              className="w-full bg-[#030712] text-white border border-slate-700/80 rounded-lg px-3 py-2 text-sm font-bold font-mono focus:border-sky-500 focus:outline-none"
             />
+            <span className="text-[10px] text-slate-500 block font-mono">
+              ej. MFFU $38.50 o Tradeify $49.00
+            </span>
           </div>
 
-          <div>
-            <label style={{ fontSize: "11px", color: "#94a3b8", display: "block", marginBottom: "6px" }}>Tasa de Aprobación Individual (%):</label>
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase font-mono block">
+              Tasa Aprobación Individual (%):
+            </label>
             <input
               type="number"
               step="0.1"
               value={passRate}
-              onChange={(e) => setPassRate(Number(e.target.value))}
-              style={{
-                width: "100%",
-                background: "#111827",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "5px",
-                padding: "8px 10px",
-                color: "#f8fafc",
-                fontSize: "13px",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
+              onChange={(e) => setPassRate(Math.min(100, Math.max(0.1, Number(e.target.value))))}
+              className="w-full bg-[#030712] text-white border border-slate-700/80 rounded-lg px-3 py-2 text-sm font-bold font-mono focus:border-sky-500 focus:outline-none"
             />
+            <span className="text-[10px] text-slate-500 block font-mono">
+              Tasa Tradesfera Auditada: 26.6%
+            </span>
           </div>
 
-          <div>
-            <label style={{ fontSize: "11px", color: "#94a3b8", display: "block", marginBottom: "6px" }}>Objetivo Payout Neto ($):</label>
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase font-mono block">
+              Objetivo Payout Neto ($):
+            </label>
             <input
               type="number"
+              step="100"
               value={payoutTarget}
-              onChange={(e) => setPayoutTarget(Number(e.target.value))}
-              style={{
-                width: "100%",
-                background: "#111827",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "5px",
-                padding: "8px 10px",
-                color: "#f8fafc",
-                fontSize: "13px",
-                fontFamily: "var(--font-mono, monospace)",
-              }}
+              onChange={(e) => setPayoutTarget(Math.max(100, Number(e.target.value)))}
+              className="w-full bg-[#030712] text-white border border-slate-700/80 rounded-lg px-3 py-2 text-sm font-bold font-mono focus:border-sky-500 focus:outline-none"
             />
+            <span className="text-[10px] text-slate-500 block font-mono">
+              Retiro proyectado en 1ª fase
+            </span>
           </div>
         </div>
 
-        {/* RESULTADOS DE LA CALCULADORA */}
-        <div
-          style={{
-            background: "rgba(15, 23, 42, 0.7)",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            borderRadius: "6px",
-            padding: "14px 18px",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "14px",
-          }}
-        >
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>DISPAROS / BALAS (N)</div>
-            <div style={{ fontSize: "18px", fontWeight: 700, color: "#f8fafc", fontFamily: "var(--font-mono, monospace)" }}>{numBullets} intentos</div>
-          </div>
-
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>PROB. APROBAR AL MENOS 1</div>
-            <div style={{ fontSize: "18px", fontWeight: 700, color: passProb > 0.9 ? "#10b981" : "#f59e0b", fontFamily: "var(--font-mono, monospace)" }}>
-              {(passProb * 100).toFixed(2)}%
+        {/* Results Bar */}
+        <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-mono block">Disparos / Balas (N)</span>
+            <div className="text-2xl font-black text-white font-mono tabular-nums">
+              {numBullets} {numBullets === 1 ? "bala" : "balas"}
             </div>
+            <span className="text-[10px] text-slate-500 block font-mono">Intentos garantizados</span>
           </div>
 
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>ESPERANZA MATEMÁTICA (EV)</div>
-            <div style={{ fontSize: "18px", fontWeight: 700, color: expectedValue > 0 ? "#10b981" : "#ef4444", fontFamily: "var(--font-mono, monospace)" }}>
+          <div className="space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-mono block">Prob. Aprobar ≥ 1</span>
+            <div
+              className={`text-2xl font-black font-mono tabular-nums ${
+                passProb >= 0.9 ? "text-emerald-400" : passProb >= 0.7 ? "text-sky-400" : "text-amber-400"
+              }`}
+            >
+              {(passProb * 100).toFixed(1)}%
+            </div>
+            <span className="text-[10px] text-slate-500 block font-mono">
+              {passProb >= 0.95 ? "✓ Certeza estadística" : "Riesgo de varianza"}
+            </span>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-mono block">Esperanza Matemática (EV)</span>
+            <div
+              className={`text-2xl font-black font-mono tabular-nums ${
+                expectedValue > 0 ? "text-emerald-400" : "text-rose-400"
+              }`}
+            >
               {expectedValue > 0 ? "+" : ""}${expectedValue.toFixed(2)}
             </div>
+            <span className="text-[10px] text-slate-500 block font-mono">Retorno neto esperado</span>
           </div>
 
-          <div>
-            <div style={{ fontSize: "10.5px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>COSECHA REGLA 80/20</div>
-            <div style={{ fontSize: "14px", fontWeight: 600, color: "#cbd5e1" }}>
-              ${(payoutTarget * 0.8).toFixed(0)} Banco / ${(payoutTarget * 0.2).toFixed(0)} Caja
+          <div className="space-y-1">
+            <span className="text-[10px] text-slate-400 uppercase font-mono block">Cosecha Regla 80/20</span>
+            <div className="text-base font-bold text-amber-300 font-mono tabular-nums mt-1">
+              ${(payoutTarget * 0.8).toFixed(0)} <span className="text-xs text-slate-400 font-normal">Banco</span> / ${(payoutTarget * 0.2).toFixed(0)} <span className="text-xs text-slate-400 font-normal">Caja</span>
             </div>
+            <span className="text-[10px] text-slate-500 block font-mono">Preservación de capital</span>
+          </div>
+        </div>
+
+        {/* Visual Probability Bar */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-mono text-slate-400">
+            <span>Barra de Seguridad Estadística (Probabilidad Acumulada):</span>
+            <span className="font-bold text-white">{(passProb * 100).toFixed(1)}%</span>
+          </div>
+          <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+            <div
+              className={`h-full transition-all duration-500 rounded-full ${
+                passProb >= 0.9
+                  ? "bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-sm shadow-emerald-500/50"
+                  : passProb >= 0.7
+                  ? "bg-gradient-to-r from-sky-600 to-sky-400"
+                  : "bg-gradient-to-r from-amber-600 to-amber-400"
+              }`}
+              style={{ width: `${Math.min(100, Math.max(2, passProb * 100))}%` }}
+            />
           </div>
         </div>
       </div>
 
-      {/* 4. EXPLORADOR INTERACTIVO DE LOS 18 MÓDULOS */}
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+      {/* 4. EXPLORADOR INTERACTIVO DE LOS 16 MÓDULOS */}
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div style={{ fontSize: "11px", fontWeight: 600, color: "#64748b", letterSpacing: "0.8px", fontFamily: "var(--font-mono, monospace)" }}>
-              CORPUS DOCUMENTAL TRADESFERA V2
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-sky-400" />
+              <h2 className="text-xl font-black text-white tracking-tight">
+                Corpus Documental Especializado (16 Módulos en Disco)
+              </h2>
             </div>
-            <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#f8fafc", margin: "2px 0 0 0" }}>
-              18 Módulos Especializados en Disco
-            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Haz clic en cualquier módulo para ver su ficha técnica, regla de oro, highlights y ruta de archivo exacta.
+            </p>
           </div>
 
-          <div style={{ display: "flex", gap: "4px", background: "rgba(15, 23, 42, 0.6)", padding: "3px", borderRadius: "6px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5 bg-[#090d16]/90 border border-white/[0.08] p-1.5 rounded-xl">
             {["ALL", "DOCTRINA", "MATEMÁTICA", "OPERATIVA", "PSICOTRADING", "EJECUCIÓN"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                style={{
-                  background: activeCategory === cat ? "rgba(255, 255, 255, 0.08)" : "transparent",
-                  border: activeCategory === cat ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid transparent",
-                  color: activeCategory === cat ? "#f8fafc" : "#94a3b8",
-                  padding: "4px 10px",
-                  borderRadius: "4px",
-                  fontSize: "11px",
-                  fontWeight: activeCategory === cat ? 600 : 500,
-                  cursor: "pointer",
-                  transition: "all 0.12s",
-                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+                  activeCategory === cat
+                    ? "bg-sky-500 text-slate-950 font-black shadow-md shadow-sky-500/20"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                }`}
               >
                 {cat}
               </button>
@@ -517,73 +690,157 @@ export default function TradesferaPortalPage() {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "12px" }}>
+        {/* Modules Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredModules.map((mod) => {
             const isSelected = selectedModule.id === mod.id;
             return (
               <div
                 key={mod.id}
-                onClick={() => setSelectedModule(mod)}
-                style={{
-                  background: isSelected ? "rgba(30, 41, 59, 0.4)" : "#090d16",
-                  border: isSelected ? "1px solid #38bdf8" : "1px solid rgba(255, 255, 255, 0.06)",
-                  borderRadius: "8px",
-                  padding: "16px",
-                  cursor: "pointer",
-                  transition: "all 0.12s ease",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  gap: "10px",
-                }}
+                onClick={() => handleOpenModule(mod)}
+                className={`bg-[#090d16]/90 border backdrop-blur-xl rounded-2xl p-5 shadow-lg transition-all cursor-pointer flex flex-col justify-between space-y-4 group ${
+                  isSelected
+                    ? "border-sky-500 shadow-sky-500/10 ring-1 ring-sky-500/30"
+                    : "border-white/[0.08] hover:border-sky-500/40 hover:shadow-xl hover:shadow-sky-500/5"
+                }`}
               >
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        fontFamily: "var(--font-mono, monospace)",
-                        fontWeight: 700,
-                        color: "#38bdf8",
-                        background: "rgba(56, 189, 248, 0.1)",
-                        padding: "1px 5px",
-                        borderRadius: "3px",
-                      }}
-                    >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono font-bold">
                       {mod.number}
                     </span>
-                    <span style={{ fontSize: "10px", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+                    <span className="text-[11px] font-mono text-slate-500 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
                       {mod.readTime}
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: "13.5px", fontWeight: 600, color: "#f8fafc", margin: "0 0 6px 0", lineHeight: 1.3 }}>
+                  <h3 className="text-sm font-bold text-white group-hover:text-sky-300 transition-colors leading-snug">
                     {mod.title}
                   </h3>
 
-                  <p style={{ fontSize: "11.5px", color: "#94a3b8", lineHeight: 1.4, margin: "0 0 8px 0" }}>
+                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                     {mod.summary}
                   </p>
                 </div>
 
-                <div
-                  style={{
-                    background: "rgba(0, 0, 0, 0.3)",
-                    borderLeft: "2px solid #fbbf24",
-                    padding: "6px 8px",
-                    borderRadius: "0 4px 4px 0",
-                    fontSize: "11px",
-                    color: "#cbd5e1",
-                    fontStyle: "italic",
-                  }}
-                >
-                  "{mod.keyRule}"
+                <div className="space-y-3">
+                  {/* Key Rule Box */}
+                  <div className="bg-slate-950/80 border-l-2 border-amber-400 p-2.5 rounded-r-lg text-xs text-slate-300 italic font-sans leading-tight">
+                    &quot;{mod.keyRule}&quot;
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-2 border-t border-slate-800/80">
+                    <span className="text-sky-400/80">{mod.category}</span>
+                    <span className="group-hover:text-white flex items-center gap-1 transition">
+                      <span>Ver Ficha</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </span>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* 5. MODAL DETALLE DE MÓDULO */}
+      {isModalOpen && selectedModule && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-[#090d16] border border-sky-500/40 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-6">
+            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-md bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono font-bold">
+                    {selectedModule.number}
+                  </span>
+                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                    {selectedModule.category} · {selectedModule.readTime}
+                  </span>
+                </div>
+                <h3 className="text-lg font-black text-white">
+                  {selectedModule.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Summary */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+                Resumen Ejecutivo:
+              </h4>
+              <p className="text-sm text-slate-200 leading-relaxed">
+                {selectedModule.summary}
+              </p>
+            </div>
+
+            {/* Key Rule */}
+            <div className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-4 space-y-1">
+              <span className="text-xs font-mono font-black text-amber-400 uppercase tracking-wider block">
+                Regla de Oro Inquebrantable:
+              </span>
+              <p className="text-xs text-amber-200/90 italic font-medium leading-relaxed">
+                &quot;{selectedModule.keyRule}&quot;
+              </p>
+            </div>
+
+            {/* Highlights Checklist */}
+            <div className="space-y-2">
+              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+                Conceptos Clave & Protocolos:
+              </h4>
+              <div className="space-y-1.5">
+                {selectedModule.highlights.map((h, i) => (
+                  <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>{h}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* File Path Reference */}
+            <div className="bg-slate-950 rounded-xl border border-slate-800 p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono text-slate-400">Ruta de Documento en Disco:</span>
+                <button
+                  onClick={() => handleCopyPath(selectedModule.filePath)}
+                  className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-sky-400 hover:text-sky-300 transition"
+                >
+                  {copiedPath ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedPath ? "Copiado" : "Copiar Ruta"}</span>
+                </button>
+              </div>
+              <code className="text-xs text-emerald-400 font-mono block overflow-x-auto p-2 bg-[#030712] rounded border border-slate-800">
+                {selectedModule.filePath}
+              </code>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-white transition"
+              >
+                Cerrar Ficha
+              </button>
+              <Link
+                href="/prop-firms"
+                className="px-4 py-2 rounded-xl text-xs font-mono font-black bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 inline-flex items-center gap-1.5"
+              >
+                <span>Aplicar en Prop Firms</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
