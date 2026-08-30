@@ -4,7 +4,7 @@ import { getFirestore, Firestore } from "firebase/firestore";
 import { getDatabase, Database } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDummyKeyForDeterministicBuildPecemi992",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBvl9kuLmNeAvEBTT8q4-8LbqGnyOn4R5E",
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "pecemi.firebaseapp.com",
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL || "https://pecemi-default-rtdb.firebaseio.com",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "pecemi",

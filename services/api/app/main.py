@@ -11,6 +11,7 @@ import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import AsyncGenerator, Dict, Any
+import dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -47,6 +48,7 @@ from services.paper.paper_router import router as paper_router
 from services.engine_version import compute_codebase_fingerprint, CURRENT_ENGINE_VERSION
 
 logger = logging.getLogger("UltrarentableAPI")
+dotenv.load_dotenv()
 
 
 def _autonomous_runtime_enabled() -> bool:

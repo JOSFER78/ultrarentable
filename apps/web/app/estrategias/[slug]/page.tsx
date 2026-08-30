@@ -10,7 +10,7 @@ import ResearchLabPage from "../../research/page";
 import GatesPage from "../../gates/page";
 import PortfolioStudioPage from "../../portfolio/page";
 import EstrategiasHubPage from "../page";
-import EstrategiasHeaderNav, { CANONICAL_PHASES } from "@/components/EstrategiasHeaderNav";
+import { CANONICAL_PHASES } from "@/components/EstrategiasHeaderNav";
 import { ChevronRight, Sparkles } from "lucide-react";
 
 // Mapeo exhaustivo de slugs a fases numéricas (0 a 6)
@@ -91,7 +91,6 @@ export default function DynamicEstrategiasSlugPage() {
         </div>
 
         {/* Cohesive 7-Phase Nav */}
-        <EstrategiasHeaderNav currentPhase={fase} />
 
         {/* Renderizado dinámico de la fase correspondiente */}
         <div className="pt-2">

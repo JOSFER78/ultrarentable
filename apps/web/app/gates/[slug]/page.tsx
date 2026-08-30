@@ -18,7 +18,6 @@ import {
   Send,
   Sparkles,
 } from "lucide-react";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import QuantTooltip from "@/components/system/QuantTooltip";
 
 interface GateParam {
@@ -312,7 +311,6 @@ export default function GateDetailPage() {
     <div className="min-h-screen bg-[#030712] p-3 md:p-6 font-sans text-slate-100">
       <div className="mx-auto max-w-[1600px] space-y-5">
         {/* SUB-NAV: 7 FASES CUANTITATIVAS CANÓNICAS */}
-        <EstrategiasHeaderNav currentPhase={3} />
 
         {/* BREADCRUMB & TOP LINKS */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3 font-mono text-xs">

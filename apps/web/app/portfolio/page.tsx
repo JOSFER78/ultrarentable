@@ -384,14 +384,20 @@ export default function PortfolioStudioPage() {
                   </div>
 
                   <div className="w-full h-4 rounded-full overflow-hidden flex bg-[#050811] border border-white/[0.08]">
-                    {selectedMeta.components.map((comp, idx) => {
-                      const rawWeight =
-                        typeof comp.weight === "number" && !isNaN(comp.weight)
-                          ? comp.weight
-                          : 1 / Math.max(1, selectedMeta.components.length);
-                      const weightPct = Number((rawWeight * 100).toFixed(1));
-                      const color = ASSET_COLORS[idx % ASSET_COLORS.length];
-                      return (
+                    {[...selectedMeta.components]
+                      .sort((a, b) => {
+                        const aWeight = typeof a.weight === "number" && !isNaN(a.weight) ? a.weight : 0;
+                        const bWeight = typeof b.weight === "number" && !isNaN(b.weight) ? b.weight : 0;
+                        return bWeight - aWeight;
+                      })
+                      .map((comp, idx) => {
+                        const rawWeight =
+                          typeof comp.weight === "number" && !isNaN(comp.weight)
+                            ? comp.weight
+                            : 1 / Math.max(1, selectedMeta.components.length);
+                        const weightPct = Number((rawWeight * 100).toFixed(1));
+                        const color = ASSET_COLORS[idx % ASSET_COLORS.length];
+                        return (
                         <div
                           key={comp.strategy_id || idx}
                           style={{ width: `${weightPct}%`, backgroundColor: color }}
@@ -402,14 +408,23 @@ export default function PortfolioStudioPage() {
                     })}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
-                    {selectedMeta.components.map((comp, idx) => {
+                  <div className="grid grid-cols-1 gap-2.5 pt-2">
+                    {[...selectedMeta.components]
+                      .sort((a, b) => {
+                        const aWeight = typeof a.weight === "number" && !isNaN(a.weight) ? a.weight : 0;
+                        const bWeight = typeof b.weight === "number" && !isNaN(b.weight) ? b.weight : 0;
+                        return bWeight - aWeight;
+                      })
+                      .map((comp, idx) => {
                       const rawWeight =
                         typeof comp.weight === "number" && !isNaN(comp.weight)
                           ? comp.weight
                           : 1 / Math.max(1, selectedMeta.components.length);
                       const weightPct = Number((rawWeight * 100).toFixed(1));
                       const color = ASSET_COLORS[idx % ASSET_COLORS.length];
+                      
+                      const fullAlpha = certifiedAlphas.find(a => a.strategy_id === comp.strategy_id);
+                      
                       return (
                         <div
                           key={comp.strategy_id || idx}
@@ -426,11 +441,42 @@ export default function PortfolioStudioPage() {
                               </span>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <span className="text-xs font-bold font-mono text-emerald-400 tabular-nums">
-                              {weightPct}%
-                            </span>
-                            <span className="text-[10px] text-slate-500 block font-mono">Peso</span>
+                          
+                          {/* Metrics Section */}
+                          <div className="flex gap-4 items-center">
+                            {fullAlpha ? (
+                              <>
+                                <div className="text-right">
+                                  <span className="text-xs font-bold font-mono text-emerald-400 tabular-nums block">
+                                    {fullAlpha.profit_factor ? fullAlpha.profit_factor.toFixed(2) : "N/A"}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-mono uppercase">PF</span>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-xs font-bold font-mono text-rose-400 tabular-nums block">
+                                    {fullAlpha.max_drawdown_pct ? `${fullAlpha.max_drawdown_pct.toFixed(1)}%` : "N/A"}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-mono uppercase">DD</span>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-xs font-bold font-mono text-indigo-300 tabular-nums block">
+                                    {fullAlpha.cagr !== null ? (fullAlpha.cagr > 1 ? `${fullAlpha.cagr.toFixed(1)}%` : `${(fullAlpha.cagr * 100).toFixed(1)}%`) : "N/A"}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-mono uppercase">CAGR</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-right">
+                                <span className="text-[10px] text-slate-500 font-mono">Sin datos base</span>
+                              </div>
+                            )}
+
+                            <div className="text-right pl-2 border-l border-white/[0.08]">
+                              <span className="text-xs font-bold font-mono text-emerald-400 tabular-nums block">
+                                {weightPct}%
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-mono uppercase">Peso</span>
+                            </div>
                           </div>
                         </div>
                       );

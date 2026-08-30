@@ -35,7 +35,6 @@ import {
   getExportXlsxUrl,
 } from "@/lib/api";
 import QuantTooltip from "@/components/system/QuantTooltip";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 
 interface GateCanonicalMeta {
   id: string;
@@ -361,7 +360,6 @@ export default function GatesPage() {
     <div className="min-h-screen bg-[#030712] text-slate-100 p-3 md:p-6 font-sans">
       <div className="max-w-[1600px] mx-auto space-y-5">
         {/* SUB-NAV: 7 FASES CUANTITATIVAS CANÓNICAS */}
-        <EstrategiasHeaderNav currentPhase={3} />
 
         {/* HERO STORYTELLING BANNER */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#090d16] via-slate-900/90 to-emerald-950/30 border border-white/[0.08] p-5 md:p-6 shadow-2xl backdrop-blur-xl">

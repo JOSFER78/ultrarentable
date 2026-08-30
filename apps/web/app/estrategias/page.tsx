@@ -33,7 +33,6 @@ import {
 } from "@/lib/api";
 import EvidenceLink from "@/components/EvidenceLink";
 import SQXToolsPanel from "./SQXToolsPanel";
-import EstrategiasHeaderNav from "@/components/EstrategiasHeaderNav";
 import { statusLabel, statusRank, statusTone } from "@/lib/status-map";
 
 const STAGES = [
@@ -192,7 +191,6 @@ export default function StrategiesPage() {
     <main className="min-h-screen bg-[#030712] px-3 py-5 text-slate-100 md:px-6">
       <div className="mx-auto max-w-[1600px] space-y-5">
         {/* SUB-NAV: 7 FASES CUANTITATIVAS CANÓNICAS */}
-        <EstrategiasHeaderNav currentPhase={0} />
 
         {/* HERO STORYTELLING & CONTROL BANNER */}
         <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-[#090d16] via-slate-900/90 to-slate-950 p-6 shadow-2xl backdrop-blur-xl">

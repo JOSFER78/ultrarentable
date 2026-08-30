@@ -93,7 +93,7 @@ export default function CandidatesExcelExplorer() {
   const [activeTab, setActiveTab] = useState<TabType>("FONDEO_CME");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [timeframeFilter, setTimeframeFilter] = useState<string>("ALL");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [statusFilter, setStatusFilter] = useState<string>("APPROVED");
   const [density, setDensity] = useState<DensityType>("normal");
 
   // Ordenación
@@ -181,7 +181,7 @@ export default function CandidatesExcelExplorer() {
       if (activeTab === "FONDEO_CME" && item.route !== "FONDEO") return false;
       if (activeTab === "ULTRA_CRYPTO" && item.route !== "ULTRA") return false;
       if (activeTab === "APPROVED_ONLY") {
-        const isAppr = ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(item.status);
+        const isAppr = item.status.includes("CERTIFIED") || item.status.includes("APPROVED");
         if (!isAppr) return false;
       }
 
@@ -201,8 +201,9 @@ export default function CandidatesExcelExplorer() {
 
       // 4. Status
       if (statusFilter !== "ALL") {
-        if (statusFilter === "APPROVED" && !item.status.includes("CERTIFIED") && item.status !== "APPROVED") return false;
-        if (statusFilter === "REJECTED" && (item.status.includes("CERTIFIED") || item.status === "APPROVED")) return false;
+        const isAppr = item.status.includes("CERTIFIED") || item.status.includes("APPROVED");
+        if (statusFilter === "APPROVED" && !isAppr) return false;
+        if (statusFilter === "REJECTED" && isAppr) return false;
       }
 
       return true;
@@ -239,7 +240,7 @@ export default function CandidatesExcelExplorer() {
   const kpis = useMemo(() => {
     const total = sortedData.length;
     const approvedCount = sortedData.filter((c) =>
-      ["APPROVED", "ULTRA_CERTIFIED", "FUNDING_CERTIFIED"].includes(c.status)
+      c.status.includes("CERTIFIED") || c.status.includes("APPROVED")
     ).length;
     const pfValues = sortedData.map((c) => c.profit_factor_oos).filter((v): v is number => typeof v === "number");
     const ddValues = sortedData.map((c) => c.max_dd_oos_pct).filter((v): v is number => typeof v === "number");
@@ -329,10 +330,10 @@ export default function CandidatesExcelExplorer() {
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                Explorador Cuantitativo Excel & Bóveda SQLite WAL
+                Tabla Comparativa de Candidatos
               </h1>
               <p className="text-slate-400 text-xs sm:text-sm mt-0.5 font-medium">
-                Hoja de cálculo interactiva multi-columna conectada a SQLite WAL. Semáforos de Fondeo CME ($50K / Max DD &le; 4.5%) y Ultra Cripto ($1,000 / Max DD &le; 75.0%).
+                Inventario de estrategias candidatas. Filtra por aprobadas para ver las que han superado los 11 gates.
               </p>
             </div>
           </div>
