@@ -1,6 +1,22 @@
 # FASE ACTUAL — BALANCE 2026-08-31 ~18:45 UTC (plan v4 por bloques)
 
-> **PAUSA ORDENADA (18:50 UTC).** Cómo retomar en la próxima sesión:
+> **PAUSA ORDENADA v2 (19:20 UTC).** Cambios desde la nota anterior: la release 5.14.0 quedó
+> CERRADA y COMMITEADA (identidad 15/15 idéntica, smoke 4 familias OK, 21 tests verdes,
+> mensajes "wer"/"werwe" reescritos, merge -s ours con origin hecho — main local ahead 13).
+> **El push a origin ABORTÓ por timeout de 10 min** (pack ~307 MB con la CPU colapsada):
+> reintentarlo con la máquina descargada, es el primer paso de la próxima sesión.
+> **Sobrecarga del VPS detectada:** al reiniciar la máquina ~18:17 systemd resucitó
+> `ultrarentable-discovery.service` (enabled) y `sqx.service` (Build a 82% CPU), y quedó un
+> minero huérfano sin gobernanza (PID variable, `run_continuous_pipeline`, ~5,8 GB RAM).
+> El orquestador no puede pararlos (permisos): Emilio debe ejecutar
+> `sudo systemctl stop ultrarentable-discovery.service sqx.service && sudo systemctl disable ultrarentable-discovery.service`
+> y matar el minero huérfano (`pkill -f run_continuous_pipeline`). La web pasó a build de
+> producción (`npm run build && npm run start -p 3000`, en marcha al pausar) con watchdog de
+> auth de 6 s; causa raíz Firebase pendiente (claves .env.local mezclan proyectos).
+> Gate 9 (novelty/DoF) NO conoce las dimensiones `archetype_params` de las 4 familias nuevas:
+> corregirlo ANTES de la re-campaña `arquetipos` o el conteo de DoF será falso.
+>
+> Nota anterior (18:50 UTC), pasos 1-3 siguen válidos con lo de arriba:
 > 1. La release **5.14.0 ya está en el árbol** (motor pineado, manifest y test de gobernanza
 >    actualizados, fix del lookahead del TP de reversion_atr aplicado en
 >    `event_backtest_engine.py:879`). Al pausar estaba corriendo la verificación de identidad
