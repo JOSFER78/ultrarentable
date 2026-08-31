@@ -17,10 +17,10 @@ APPROVED_STATUSES = ("APPROVED", "APPROVED_CURRENT_ENGINE")
 
 
 def test_ssot_version_is_current():
-    assert CURRENT_ENGINE_VERSION == "5.13.0"
-    assert "5.13.0" in CURRENT_ENGINE_NAME
+    assert CURRENT_ENGINE_VERSION == "5.14.0"
+    assert "5.14.0" in CURRENT_ENGINE_NAME
     info = version_manager.get_full_version_info()
-    assert info.get("active_version") == "5.13.0"
+    assert info.get("active_version") == "5.14.0"
 
 
 def test_version_history_current_entry():

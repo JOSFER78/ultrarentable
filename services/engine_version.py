@@ -43,9 +43,16 @@ from typing import Any, Dict, List, Optional, Tuple
 #   Ahora, por cada frontera de 8h (00:00/08:00/16:00 UTC) cruzada mientras hay posicion
 #   abierta en un par del registro BingX, se cobra/abona funding_mean*notional; long paga
 #   al short si el rate es positivo. Nuevo campo EventBacktestResult.total_funding_usd.
+# 5.14.0 (2026-08-31, F03.3): 4 familias de arquetipos EVENTO nuevas (reversion_atr,
+#   squeeze_breakout, session_momentum, streak_edge), despachadas por `strategy.archetype` +
+#   `archetype_params` (StrategySnapshot, campo aditivo con retrocompatibilidad de hash: sin
+#   archetype_params el canonical_hash es bit a bit identico al de 5.13.0). Aditivo estricto:
+#   las familias EMA/RSI/Donchian existentes no cambian ni una linea de semantica; un
+#   snapshot anterior a 5.14.0 produce EXACTAMENTE las mismas operaciones que en 5.13.0. No
+#   invalida certificaciones 5.13.0 (no las hay: 0 certificadas).
 # Las certificaciones anteriores NO son comparables: se marcan LEGACY_MOTOR_* (regla #26).
-CURRENT_ENGINE_VERSION: str = "5.13.0"
-CURRENT_ENGINE_NAME: str = "Ultrarentable V5.13.0 (Real Funding Accrual for Perpetuals)"
+CURRENT_ENGINE_VERSION: str = "5.14.0"
+CURRENT_ENGINE_NAME: str = "Ultrarentable V5.14.0 (Event Archetype Expansion: Reversion/Squeeze/Session/Streak)"
 CURRENT_PIPELINE_VERSION: str = "5.4.0"
 CURRENT_VALIDATION_PIPELINE_VERSION: str = "5.4.0"
 VALIDATION_PIPELINE_VERSION: str = "5.4.0"
@@ -59,10 +66,21 @@ CANONICAL_AUTHOR: str = "Ultrarentable Core Quantitative Team"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
-        "version": "5.13.0",
+        "version": "5.14.0",
         "name": CURRENT_ENGINE_NAME,
         "date": "2026-08-31",
         "status": "CURRENT_RECOMMENDED",
+        "changes": [
+            "Aditivo: 4 familias de arquetipos nuevas (reversion_atr, squeeze_breakout, session_momentum, streak_edge); no altera operaciones de snapshots pre-5.14.0.",
+            "StrategySnapshot.archetype_params (aditivo, retrocompatible en hash) y despacho explicito por strategy.archetype en EventBacktestEngine, separado del interprete generico de entry_rules.",
+            "Perfil de busqueda 'arquetipos' en mine.py (build_candidate_search_configs) para minar solo las familias nuevas; anadidas tambien al perfil 'amplio'.",
+        ],
+    },
+    {
+        "version": "5.13.0",
+        "name": "Ultrarentable V5.13.0 (Real Funding Accrual for Perpetuals)",
+        "date": "2026-08-31",
+        "status": "STALE",
         "changes": [
             "Acumulacion real de funding en perpetuos ULTRA: se cobra/abona funding_mean*notional por cada frontera de 8h cruzada con posicion abierta.",
             "Nuevo campo EventBacktestResult.total_funding_usd; to_canonical_ledger ya no hardcodea total_funding_paid_usd=0.0.",
@@ -190,7 +208,7 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
 ]
 
 SUPPORTED_LEGACY_VERSIONS: List[str] = [
-    "1.00", "1.01", "1.02", "1.03", "1.05", "2.0.0", "3.0.0", "4.0.0", "5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.6.0", "5.7.0", "5.8.0", "5.9.0", "5.10.0", "5.11.0", "5.12.0"
+    "1.00", "1.01", "1.02", "1.03", "1.05", "2.0.0", "3.0.0", "4.0.0", "5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.6.0", "5.7.0", "5.8.0", "5.9.0", "5.10.0", "5.11.0", "5.12.0", "5.13.0"
 ]
 
 GOVERNANCE_STATUS_APPROVED: str = "APPROVED"

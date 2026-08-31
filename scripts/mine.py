@@ -658,6 +658,7 @@ def run_mining_pipeline(
                 archetype=arch,
                 pyramiding_tiers=py_tiers,
                 breakout_lookback=brk_lk,
+                archetype_params=cfg.get("archetype_params"),
             )
         else:
             # symbol=exec_symbol (no sym_norm): StrategySnapshot.symbol debe llevar el MICRO
@@ -677,6 +678,7 @@ def run_mining_pipeline(
                 tp_atr_mult=tp_atr,
                 risk_per_trade_pct=risk_p,
                 archetype=arch,
+                archetype_params=cfg.get("archetype_params"),
             )
 
         # 1. Backtest IS

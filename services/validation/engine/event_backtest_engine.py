@@ -866,11 +866,17 @@ class EventBacktestEngine:
                 # --- 5.14.0 reversion_atr: TP DINAMICO = nivel vivo de la EMA ancla -----------
                 # No es una distancia fija desde la entrada (como el resto de arquetipos): el
                 # take profit natural de una reversion a la media es la propia media, que se
-                # mueve. Se recalcula cada barra con el mismo indicador precalculado y causal
-                # que usa el resto del motor (ema_ancla_series[i]: solo datos hasta la barra i,
-                # identico patron a ema_fast_series/rsi_series ya existentes -- cero lookahead).
+                # mueve. Se recalcula cada barra, pero con el valor de la EMA conocido al ABRIR
+                # la barra i (ema_ancla_series[i-1]), nunca con ema_ancla_series[i]: el chequeo
+                # de TP de esta misma barra compara bar_high/bar_low (movimiento intra-barra)
+                # contra este nivel, y ema_ancla_series[i] incorpora el CLOSE de la barra i --
+                # usarlo aqui seria fijar el nivel de fill con informacion posterior al propio
+                # high/low que lo cruza (lookahead con sesgo favorable). El patron de
+                # ema_fast_series/rsi_series NO aplica: esas series deciden una senal al cierre
+                # con fill en la apertura de N+1 (sin intra-barra), esto es un fill intra-barra
+                # en la barra i misma.
                 if archetype_label == "REVERSION_ATR" and _arch_ema_ancla_series is not None:
-                    take_profit_price = float(_arch_ema_ancla_series[i])
+                    take_profit_price = float(_arch_ema_ancla_series[i - 1])
 
                 # --- FUNDING 5.13.0: coste real de financiacion en perpetuos (ULTRA) --------
                 # BingX liquida el funding entre longs y shorts en cada frontera de 8h

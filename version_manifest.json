@@ -1,11 +1,22 @@
 {
-  "active_version": "5.13.0",
-  "active_name": "Ultrarentable V5.13.0 (Real Funding Accrual for Perpetuals)",
+  "active_version": "5.14.0",
+  "active_name": "Ultrarentable V5.14.0 (Event Archetype Expansion: Reversion/Squeeze/Session/Streak)",
   "pipeline_version": "5.4.0",
   "policy_version": "5.4.0",
-  "codebase_fingerprint": "719727536d9a65764d8dbb4cd1bb0971a810217ce888e254be8a2de1f1c0452c",
-  "last_bump_utc": "2026-08-31T13:56:50.328803+00:00",
+  "codebase_fingerprint": "5e7b2e1c6c72807687b94bc749ab98726d036c02cbf6f8400d1cb3aafd9e542e",
+  "last_bump_utc": "2026-08-31T18:34:32.069257+00:00",
   "history": [
+    {
+      "version": "5.14.0",
+      "name": "Ultrarentable V5.14.0 (Event Archetype Expansion: Reversion/Squeeze/Session/Streak)",
+      "description": "F03.3: 4 familias de arquetipos EVENTO nuevas (reversion_atr, squeeze_breakout, session_momentum, streak_edge), aditivo estricto sobre 5.13.0",
+      "date": "2026-08-31",
+      "changes": [
+        "Aditivo: 4 familias de arquetipos nuevas; no altera operaciones de snapshots pre-5.14.0.",
+        "StrategySnapshot.archetype_params (aditivo, retrocompatible en hash) y despacho explicito por strategy.archetype en EventBacktestEngine.",
+        "Perfil de busqueda arquetipos en mine.py para minar solo las familias nuevas; anadidas tambien al perfil amplio."
+      ]
+    },
     {
       "version": "5.13.0",
       "name": "Ultrarentable V5.13.0 (Real Funding Accrual for Perpetuals)",
