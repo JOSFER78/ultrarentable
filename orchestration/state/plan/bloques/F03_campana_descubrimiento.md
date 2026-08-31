@@ -141,9 +141,10 @@ implementación. Después: re-campaña perfil `arquetipos` sobre cripto 15m + 4h
 - Cola de minería: 20 COMPLETED / 7 CANCELLED (las 7 de 15m canceladas con motivo). Vacía y
   lista para encolar la re-campaña `arquetipos` al aterrizar 5.14.0.
 - SQX: los 2.035 .sqx de ToImprove están materializados en disco
-  (`~/StrategyQuantX144/user/projects/Ultra_Matrix/databanks/ToImprove/`), pero el export CSV
-  de métricas NO llegó (timeout 600 s de sqcli y `data/sqx_exports/` vacío) — pendiente
-  re-lanzar con fire-and-verify o parsear métricas del propio .sqx en el carril SQX.
+  (`~/StrategyQuantX144/user/projects/Ultra_Matrix/databanks/ToImprove/`) y el **export CSV de
+  métricas está HECHO** (`data/sqx_exports/toimprove_2026-08-31.csv`: 2.035 filas, 44 columnas
+  IS/OOS, separador `;`, verificado contra el count en RAM). Siguiente paso del carril SQX:
+  cruzar CSV + .sqx (parser AST) y validar con el motor propio de 11 gates.
 
 Mejora operativa de la cola: `heartbeat` del worker (un watchdog externo con umbral 300 s
 marcaba RETRYING trabajos vivos → riesgo de minería duplicada; incidente 14:08 documentado en
