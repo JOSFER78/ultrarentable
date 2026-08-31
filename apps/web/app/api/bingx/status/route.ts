@@ -3,6 +3,8 @@ import path from "path";
 import { NextResponse } from "next/server";
 import { resolveDataDir } from "@/lib/projectPaths";
 
+export const dynamic = "force-static";
+
 const BINGX_BASE = process.env.BINGX_BASE_URL || "https://open-api.bingx.com";
 
 async function fetchContracts() {

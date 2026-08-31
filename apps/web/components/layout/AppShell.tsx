@@ -16,17 +16,30 @@ import {
   Sparkles,
   Lock,
   ArrowRight,
-  TrendingUp,
+  RefreshCw,
+  LogOut,
+  Clock,
+  ShieldAlert,
 } from "lucide-react";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, isAuthorized, isSuperAdmin, logout, refreshProfile } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "register">("register");
+  const [refreshing, setRefreshing] = useState(false);
 
   const openAuth = (tab: "login" | "register") => {
     setAuthModalTab(tab);
     setAuthModalOpen(true);
+  };
+
+  const handleRefreshCheck = async () => {
+    setRefreshing(true);
+    try {
+      await refreshProfile();
+    } finally {
+      setTimeout(() => setRefreshing(false), 500);
+    }
   };
 
   // 1. ESTADO DE CARGA GLOBAL
@@ -39,14 +52,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="text-center space-y-1">
             <span className="text-sm font-bold font-mono tracking-wider text-slate-200">ULTRARENTABLE QUANT LAB</span>
-            <p className="text-xs text-slate-500 font-mono">Verificando sesión segura...</p>
+            <p className="text-xs text-slate-500 font-mono">Verificando autorización y credenciales...</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // 2. VISTA EXCLUSIVA: LANDING ÚNICO PARA USUARIOS NO AUTENTICADOS (SIN SIDEBAR, SIN HEADER INTERNO)
+  // 2. VISTA PÚBLICA: USUARIOS NO AUTENTICADOS (LANDING PAGE DE ACCESO)
   if (!user) {
     return (
       <div className="min-h-screen w-full bg-[#030712] text-slate-100 font-sans flex flex-col justify-between p-4 sm:p-8 md:p-12 overflow-x-hidden selection:bg-emerald-500/20 selection:text-emerald-300">
@@ -92,7 +105,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <section className="space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-mono font-bold tracking-wider uppercase shadow-inner">
               <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Acceso Restringido · Requiere Registro de Usuario</span>
+              <span>Acceso Exclusivo · Gobernanza Super Admin</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight sm:leading-tight">
@@ -104,7 +117,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
             <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
               Descubrimiento algorítmico, auditoría en 11 Evidence Gates y meta-portafolios de paridad de riesgo.
-              Para acceder al panel operativo, minería y herramientas de trading es obligatorio autenticarte con tu cuenta de usuario.
+              Para acceder al panel operativo es obligatorio autenticarte. Los nuevos registros son revisados y autorizados por el Super Administrador.
             </p>
 
             {/* BOTONES PRINCIPALES DE ACCIÓN */}
@@ -114,7 +127,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className="px-7 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm tracking-wide shadow-xl shadow-emerald-900/40 transition hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2.5"
               >
                 <Zap className="w-4 h-4 fill-current" />
-                <span>Registrarse Gratis con Google / Email</span>
+                <span>Registrarse con Google / Email</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -128,7 +141,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </section>
 
-          {/* 3 PILARES EXPLICATIVOS */}
+          {/* 3 PILARES */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
             <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 space-y-3 shadow-xl">
               <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold">
@@ -139,7 +152,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </span>
               <h3 className="text-base font-black text-white">Track FONDEO (CME & FX)</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Algoritmos optimizados para superar evaluaciones de Prop Firms. Control estricto de Drawdown ($DD \le 4.0\%$), Daily Loss Limit y cierre diario obligatorio.
+                Algoritmos optimizados para superar evaluaciones de Prop Firms. Control de Drawdown ($DD \le 4.0\%$), Daily Loss Limit y cierre diario obligatorio.
               </p>
             </div>
 
@@ -152,7 +165,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </span>
               <h3 className="text-base font-black text-white">Track ULTRA (Perpetuos)</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Asimetría convexa Taleb en margen aislado ($100–$1,000) con piramidación autofinanciada por beneficios flotantes y cosecha a Bóveda Ratchet.
+                Asimetría convexa Taleb en margen aislado ($100–$1,000) con piramidación autofinanciada por beneficios flotantes.
               </p>
             </div>
 
@@ -165,7 +178,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </span>
               <h3 className="text-base font-black text-white">11 Evidence Gates</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Auditoría en holdout ciego fuera de muestra (OOS), remuestreo Monte Carlo (0% ruina), estrés 3x slippage y reconciliación tick-a-tick con NautilusTrader.
+                Auditoría en holdout fuera de muestra (OOS), Monte Carlo (0% ruina), estrés 3x slippage y reconciliación tick-a-tick.
               </p>
             </div>
           </section>
@@ -178,16 +191,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-2">
               <Database className="w-4 h-4 text-indigo-400 shrink-0" />
-              <span>Base de Datos SQLite WAL + Firebase Auth</span>
+              <span>SQLite WAL + Firebase Cloud</span>
             </div>
             <div className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Sellado Criptográfico SHA-256</span>
+              <span>Gobernanza Super Admin</span>
             </div>
           </section>
         </main>
 
-        {/* PIE DE PÁGINA PÚBLICO */}
         <footer className="max-w-6xl w-full mx-auto py-6 border-t border-white/[0.06] text-center text-xs text-slate-500 font-mono">
           UltraRentable Quant Lab © 2026 · Todos los derechos reservados · Plataforma Cuantitativa Protegida
         </footer>
@@ -195,7 +207,63 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // 3. VISTA COMPLETA: USUARIO REGISTRADO Y AUTENTICADO (SIDEBAR + HEADER + PLATAFORMA ACTIVA)
+  // 3. VISTA DE BLOQUEO DE AUTORIZACIÓN: USUARIO REGISTRADO PERO NO AUTORIZADO POR EL SUPERADMIN
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen w-full bg-[#030712] text-slate-100 font-sans flex flex-col items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-lg bg-[#080d1a]/95 border border-amber-500/40 rounded-3xl p-8 backdrop-blur-2xl shadow-[0_0_80px_rgba(245,158,11,0.15)] text-center space-y-6 animate-in zoom-in-95 duration-200">
+          {/* Icon Header */}
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-inner">
+            <Clock className="w-8 h-8 animate-pulse" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold uppercase tracking-wider">
+              <ShieldAlert className="w-3.5 h-3.5" />
+              <span>Acceso en Espera de Autorización</span>
+            </div>
+            <h1 className="text-2xl font-black text-white tracking-tight">
+              Cuenta Registrada en Firebase
+            </h1>
+            <p className="text-xs text-slate-400 font-mono">
+              Usuario: <span className="text-sky-300 font-semibold">{user.email}</span>
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/[0.08] text-xs text-slate-300 leading-relaxed text-left space-y-2 font-sans">
+            <p>
+              Por directiva de gobernanza y seguridad de <strong className="text-white font-mono">UltraRentable Quant Lab</strong>, el acceso a los motores algorítmicos, datos SQLite WAL y trading desk está restringido.
+            </p>
+            <p className="text-amber-200/90 font-medium">
+              El Super Administrador (<strong className="text-white font-mono">josferestudio@gmail.com</strong>) debe autorizar tu perfil desde su panel de control para habilitar tu acceso.
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={handleRefreshCheck}
+              disabled={refreshing}
+              className="w-full py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg shadow-emerald-950/40 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+              <span>{refreshing ? "Comprobando autorización..." : "Comprobar si ya he sido autorizado"}</span>
+            </button>
+
+            <button
+              onClick={() => logout()}
+              className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-400" />
+              <span>Cerrar Sesión / Entrar con otra cuenta</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 4. VISTA COMPLETA: USUARIO REGISTRADO Y AUTORIZADO (SIDEBAR + HEADER + PLATAFORMA ACTIVA)
   return (
     <div className="flex min-h-screen w-full bg-[#030712] text-slate-100 overflow-x-hidden">
       <React.Suspense

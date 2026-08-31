@@ -46,7 +46,52 @@ interface NavGroup {
 
 const NAVIGATION_GROUPS: NavGroup[] = [
   {
-    title: "INVESTIGACIÓN & LAB",
+    title: "OPERACIÓN & TRADING DESKS",
+    items: [
+      {
+        code: "FONDEO",
+        label: "Trading Desk FONDEO",
+        subtitle: "CME Futures & DD Estricto",
+        href: "/fondeo",
+        altHrefs: [
+          "/fondeo",
+          "/trading-desk",
+          "/trading-desk/posiciones",
+          "/trading-desk/estrategias",
+          "/trading-desk/riesgo",
+          "/trading-desk/auditoria",
+          "/trading-desk/configuracion",
+        ],
+        icon: Building2,
+        badge: "CME",
+        accent: "#10b981",
+        subItems: [
+          { label: "Mesa Fondeo & Terminal", href: "/fondeo", code: "FND", badge: "LIVE" },
+          { label: "Trading Desk DOM", href: "/trading-desk", code: "DOM" },
+          { label: "Posiciones & Brackets", href: "/trading-desk/posiciones", code: "POS" },
+          { label: "Sentinel de Riesgo CME", href: "/trading-desk/riesgo", code: "RSK" },
+          { label: "Auditoría Forense WAL", href: "/trading-desk/auditoria", code: "AUD" },
+        ],
+      },
+      {
+        code: "ULTRA",
+        label: "Trading Desk ULTRA",
+        subtitle: "BingX Perps & Asimetría",
+        href: "/ultra",
+        altHrefs: ["/ultra"],
+        icon: Flame,
+        badge: "BINGX",
+        accent: "#ec4899",
+        subItems: [
+          { label: "Mesa Ultra BingX", href: "/ultra", code: "ULT", badge: "500X" },
+          { label: "Convexidad & Asimetría", href: "/ultra#convexity", code: "CVX" },
+          { label: "Hedging Dinámico", href: "/ultra#hedging", code: "HDG" },
+        ],
+      },
+    ],
+  },
+  {
+    title: "STRATEGY LAB & QUANT",
     items: [
       {
         code: "STRAT",
@@ -55,24 +100,26 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         href: "/estrategias",
         altHrefs: [
           "/estrategias",
-          "/estrategias/1-motor-en-vivo",
-          "/estrategias/2-explorador-excel",
-          "/estrategias/3-pipeline-11-gates",
-          "/estrategias/4-panel-investigador",
+          "/estrategias/0-portada",
+          "/estrategias/1-motor-247-telemetria",
+          "/estrategias/2-catalogo-candidatos-familias",
+          "/estrategias/3-fsm-candidatos",
+          "/estrategias/4-investigacion-fallos",
           "/estrategias/5-estrategias-aprobadas",
-          "/strategies",
+          "/estrategias/6-meta-estrategias-portfolio",
         ],
         icon: Zap,
         badge: "LAB",
         accent: "#38bdf8",
         subItems: [
-          { label: "Catálogo de Estrategias", href: "/estrategias", code: "CAT" },
-          { label: "Motor FastEngine 24/7", href: "/estrategias/1-motor-en-vivo", code: "ENG", badge: "24/7" },
-          { label: "Candidatos SQLite WAL", href: "/candidatos", code: "WAL", badge: "SQLITE" },
-          { label: "Pipeline 11 Evidence Gates", href: "/gates", code: "GAT", badge: "11/11" },
-          { label: "Panel Investigador & OOS", href: "/estrategias/4-panel-investigador", code: "INV" },
-          { label: "Bóveda Certificadas", href: "/estrategias/5-estrategias-aprobadas", code: "APP", badge: "TIER 1" },
-          { label: "Portafolio Studio & Meta", href: "/portfolio", code: "PRT", badge: "RISK" },
+          { label: "Hub de 7 Fases", href: "/estrategias", code: "HUB" },
+          { label: "F0: Portada General", href: "/estrategias/0-portada", code: "F0" },
+          { label: "F1: Motor 24/7", href: "/estrategias/1-motor-247-telemetria", code: "F1", badge: "24/7" },
+          { label: "F2: Catálogo & Familias", href: "/estrategias/2-catalogo-candidatos-familias", code: "F2" },
+          { label: "F3: FSM Candidatos", href: "/estrategias/3-fsm-candidatos", code: "F3" },
+          { label: "F4: Investigación & Fallos", href: "/estrategias/4-investigacion-fallos", code: "F4" },
+          { label: "F5: Estrategias Aprobadas", href: "/estrategias/5-estrategias-aprobadas", code: "F5", badge: "TIER 1" },
+          { label: "F6: Portfolio Studio & Meta", href: "/estrategias/6-meta-estrategias-portfolio", code: "F6", badge: "RISK" },
         ],
       },
       {
@@ -92,6 +139,20 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         icon: ShieldCheck,
         badge: "11/11",
         accent: "#34d399",
+        subItems: [
+          { label: "Matriz de 11 Gates", href: "/gates", code: "MAT" },
+          { label: "1. Data Ingest", href: "/gates/gate-1-data-ingest", code: "G1" },
+          { label: "2. Costes & Fricción", href: "/gates/gate-2-cost-backtest", code: "G2" },
+          { label: "3. Muestra N>=20", href: "/gates/gate-3-trade-significance", code: "G3" },
+          { label: "4. Walk-Forward (WFE)", href: "/gates/gate-4-walk-forward", code: "G4" },
+          { label: "5. Monte Carlo 1,000x", href: "/gates/gate-5-monte-carlo", code: "G5" },
+          { label: "6. Estrés Slippage 3x", href: "/gates/gate-6-stress-slippage", code: "G6" },
+          { label: "7. Cobertura Regímenes", href: "/gates/gate-7-regime-coverage", code: "G7" },
+          { label: "8. Deflated Sharpe DSR", href: "/gates/gate-8-dsr-ratio", code: "G8" },
+          { label: "9. Novedad & AST", href: "/gates/gate-9-novelty-antifit", code: "G9" },
+          { label: "10. Debate Multi-Agente", href: "/gates/gate-10-debate-agentes", code: "G10" },
+          { label: "11. Nautilus Event-Driven", href: "/gates/gate-11-nautilus-event", code: "G11" },
+        ],
       },
       {
         code: "PORT",
@@ -105,70 +166,7 @@ const NAVIGATION_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: "EJECUCIÓN & RUTAS",
-    items: [
-      {
-        code: "BIF",
-        label: "Bifurcación Master",
-        subtitle: "Selector Dual de Rutas",
-        href: "/bifurcacion",
-        icon: GitFork,
-        badge: "DUAL",
-        accent: "#f59e0b",
-        subItems: [
-          { label: "Selector Bifurcación", href: "/bifurcacion", code: "BIF" },
-          { label: "Track ULTRA (BingX)", href: "/ultra", code: "ULT", badge: "BINGX" },
-          { label: "Track FONDEO (CME)", href: "/fondeo", code: "FND", badge: "CME" },
-        ],
-      },
-      {
-        code: "ULTRA",
-        label: "Track ULTRA",
-        subtitle: "BingX Perps & Asimetría",
-        href: "/ultra",
-        altHrefs: ["/ultra", "/bifurcacion/ultrarentable"],
-        icon: Flame,
-        badge: "BINGX",
-        accent: "#ec4899",
-      },
-      {
-        code: "FONDEO",
-        label: "Track FONDEO",
-        subtitle: "CME Futures & DD Estricto",
-        href: "/fondeo",
-        altHrefs: ["/fondeo", "/bifurcacion/fondeo"],
-        icon: Building2,
-        badge: "CME",
-        accent: "#10b981",
-      },
-      {
-        code: "DESK",
-        label: "Trading Desk CME",
-        subtitle: "Mesa en Vivo & Brackets",
-        href: "/trading-desk",
-        altHrefs: [
-          "/trading-desk/posiciones",
-          "/trading-desk/estrategias",
-          "/trading-desk/riesgo",
-          "/trading-desk/auditoria",
-          "/trading-desk/configuracion",
-        ],
-        icon: Activity,
-        badge: "LIVE",
-        accent: "#10b981",
-        subItems: [
-          { label: "Terminal & DOM", href: "/trading-desk", code: "DOM", badge: "LIVE" },
-          { label: "Posiciones & Brackets", href: "/trading-desk/posiciones", code: "POS" },
-          { label: "Estrategias Activas", href: "/trading-desk/estrategias", code: "STR" },
-          { label: "Sentinel de Riesgo", href: "/trading-desk/riesgo", code: "RSK" },
-          { label: "Auditoría Forense", href: "/trading-desk/auditoria", code: "WAL" },
-          { label: "Conexión Gateway", href: "/trading-desk/configuracion", code: "CFG" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "MONETIZACIÓN & ECOSISTEMA",
+    title: "ECOSISTEMA & INFORMACIÓN",
     items: [
       {
         code: "PROPS",
@@ -188,14 +186,14 @@ const NAVIGATION_GROUPS: NavGroup[] = [
       },
       {
         code: "TSFERA",
-        label: "Portal Tradesfera",
+        label: "Dossier Tradesfera",
         subtitle: "18 Módulos & Psicotrading",
         href: "/tradesfera",
         icon: BookOpen,
         badge: "18 MÓD",
         accent: "#fbbf24",
         subItems: [
-          { label: "Dossier Tradesfera", href: "/tradesfera", code: "ALL" },
+          { label: "Dossier Completo", href: "/tradesfera", code: "ALL" },
           { label: "M01 Ecosistema & Modelo", href: "/tradesfera#m01", code: "M01" },
           { label: "M02 Bankroll & Munición", href: "/tradesfera#m02", code: "M02" },
           { label: "M03 Parámetros CME", href: "/tradesfera#m03", code: "M03" },
@@ -210,16 +208,7 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         icon: SlidersHorizontal,
         badge: "MCP",
         accent: "#a855f7",
-        subItems: [
-          { label: "Matriz de Gateways", href: "/proveedores", code: "GTW" },
-          { label: "NinjaTrader 8 Hub", href: "/ejecucion", code: "NT8", badge: "LIVE" },
-        ],
       },
-    ],
-  },
-  {
-    title: "INFRAESTRUCTURA",
-    items: [
       {
         code: "SIST",
         label: "Telemetría 24/7",
@@ -228,12 +217,6 @@ const NAVIGATION_GROUPS: NavGroup[] = [
         icon: Radio,
         badge: "SUPERVISOR",
         accent: "#64748b",
-        subItems: [
-          { label: "Estado General Motor", href: "/sistema", code: "SYS" },
-          { label: "Workers & Procesos", href: "/sistema#workers", code: "WRK" },
-          { label: "Watchdog Auto-Recover", href: "/sistema#watchdog", code: "WCH" },
-          { label: "Logs de Auditoría", href: "/sistema#logs", code: "LOG" },
-        ],
       },
     ],
   },
@@ -244,13 +227,12 @@ export default function Sidebar() {
   const searchParams = useSearchParams();
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    FONDEO: true,
+    ULTRA: false,
     STRAT: false,
-    BIF: false,
-    TSFERA: false,
+    GATES: false,
     PROPS: false,
-    DESK: true,
-    PROV: false,
-    SIST: false,
+    TSFERA: false,
   });
 
   useEffect(() => {

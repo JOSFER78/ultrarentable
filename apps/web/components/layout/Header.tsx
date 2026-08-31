@@ -24,31 +24,29 @@ interface BreadcrumbMap {
 
 const ROUTE_METADATA: BreadcrumbMap = {
   "/": { section: "Inicio", title: "Centro de Mando Cuantitativo" },
-  "/estrategias": { section: "Investigación & Lab", title: "Strategy Lab & Descubrimiento" },
-  "/estrategias/1-motor-en-vivo": { section: "Investigación & Lab", title: "Motor FastEngine 24/7" },
-  "/estrategias/2-explorador-excel": { section: "Investigación & Lab", title: "Explorador de Estrategias" },
-  "/estrategias/3-pipeline-11-gates": { section: "Investigación & Lab", title: "Pipeline 11 Evidence Gates" },
-  "/estrategias/4-panel-investigador": { section: "Investigación & Lab", title: "Panel Investigador & OOS" },
-  "/estrategias/5-estrategias-aprobadas": { section: "Investigación & Lab", title: "Bóveda Estrategias Certificadas" },
-  "/strategies": { section: "Investigación & Lab", title: "Strategy Lab" },
-  "/candidatos": { section: "Investigación & Lab", title: "Explorador de Candidatos SQLite WAL" },
-  "/gates": { section: "Investigación & Lab", title: "Pipeline de 11 Evidence Gates" },
-  "/portfolio": { section: "Investigación & Lab", title: "Portafolio Studio & Paridad de Riesgo" },
-  "/bifurcacion": { section: "Ejecución & Rutas", title: "Bifurcación Dual Master" },
-  "/bifurcacion/ultrarentable": { section: "Ejecución & Rutas", title: "Track ULTRA (BingX Perps)" },
-  "/bifurcacion/fondeo": { section: "Ejecución & Rutas", title: "Track FONDEO (CME Futures)" },
-  "/ultra": { section: "Ejecución & Rutas", title: "Track ULTRA (BingX Perps)" },
-  "/fondeo": { section: "Ejecución & Rutas", title: "Track FONDEO (CME Futures)" },
-  "/trading-desk": { section: "Ejecución & Rutas", title: "Trading Desk CME en Vivo" },
-  "/trading-desk/posiciones": { section: "Ejecución & Rutas", title: "Posiciones & Brackets" },
-  "/trading-desk/estrategias": { section: "Ejecución & Rutas", title: "Estrategias Activas" },
-  "/trading-desk/riesgo": { section: "Ejecución & Rutas", title: "Sentinel de Riesgo" },
-  "/trading-desk/auditoria": { section: "Ejecución & Rutas", title: "Auditoría Forense WAL" },
-  "/trading-desk/configuracion": { section: "Ejecución & Rutas", title: "Conexión Gateway" },
-  "/prop-firms": { section: "Monetización & Ecosistema", title: "Catálogo 70 Prop Firms CME" },
-  "/tradesfera": { section: "Monetización & Ecosistema", title: "Portal Tradesfera (18 Módulos)" },
-  "/proveedores": { section: "Monetización & Ecosistema", title: "Gateways API & MCP Conectores" },
-  "/sistema": { section: "Infraestructura", title: "Telemetría & Pulso 24/7" },
+  "/fondeo": { section: "Operación & Trading Desks", title: "Trading Desk FONDEO (CME Futures)" },
+  "/ultra": { section: "Operación & Trading Desks", title: "Trading Desk ULTRA (BingX Perps)" },
+  "/trading-desk": { section: "Operación & Trading Desks", title: "Mesa de Ejecución DOM" },
+  "/trading-desk/posiciones": { section: "Operación & Trading Desks", title: "Posiciones & Brackets" },
+  "/trading-desk/estrategias": { section: "Operación & Trading Desks", title: "Estrategias Activas" },
+  "/trading-desk/riesgo": { section: "Operación & Trading Desks", title: "Sentinel de Riesgo" },
+  "/trading-desk/auditoria": { section: "Operación & Trading Desks", title: "Auditoría Forense WAL" },
+  "/trading-desk/configuracion": { section: "Operación & Trading Desks", title: "Conexión Gateway" },
+  "/estrategias": { section: "Strategy Lab & Quant", title: "Strategy Lab & Descubrimiento" },
+  "/estrategias/0-portada": { section: "Strategy Lab & Quant", title: "F0: Portada General" },
+  "/estrategias/1-motor-247-telemetria": { section: "Strategy Lab & Quant", title: "F1: Motor 24/7 Telemetría" },
+  "/estrategias/2-catalogo-candidatos-familias": { section: "Strategy Lab & Quant", title: "F2: Catálogo de Candidatos" },
+  "/estrategias/3-fsm-candidatos": { section: "Strategy Lab & Quant", title: "F3: FSM Candidatos" },
+  "/estrategias/4-investigacion-fallos": { section: "Strategy Lab & Quant", title: "F4: Investigación de Fallos" },
+  "/estrategias/5-estrategias-aprobadas": { section: "Strategy Lab & Quant", title: "F5: Estrategias Aprobadas" },
+  "/estrategias/6-meta-estrategias-portfolio": { section: "Strategy Lab & Quant", title: "F6: Meta-Estrategias & Portfolio" },
+  "/candidatos": { section: "Strategy Lab & Quant", title: "Explorador de Candidatos SQLite WAL" },
+  "/gates": { section: "Strategy Lab & Quant", title: "Pipeline de 11 Evidence Gates" },
+  "/portfolio": { section: "Strategy Lab & Quant", title: "Portafolio Studio & Paridad de Riesgo" },
+  "/prop-firms": { section: "Ecosistema & Información", title: "Catálogo 70 Prop Firms CME" },
+  "/tradesfera": { section: "Ecosistema & Información", title: "Dossier Tradesfera (18 Módulos)" },
+  "/proveedores": { section: "Ecosistema & Información", title: "Gateways API & MCP Conectores" },
+  "/sistema": { section: "Ecosistema & Información", title: "Telemetría & Pulso 24/7" },
   "/perfil": { section: "Cuenta", title: "Perfil & Conexiones Broker" },
   "/login": { section: "Cuenta", title: "Acceso a la Plataforma" },
   "/registro": { section: "Cuenta", title: "Registro de Usuario" },
@@ -204,11 +202,15 @@ export default function Header() {
                     <p className="text-xs font-bold text-white truncate">{displayName}</p>
                     <p className="text-[10.5px] text-slate-400 font-mono truncate">{user.email}</p>
                     <div className="mt-1.5 flex items-center gap-1.5">
-                      <span className="px-1.5 py-0.5 rounded bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[9.5px] font-mono font-semibold uppercase">
-                        {profile?.role || "TRADER"}
+                      <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-mono font-semibold uppercase ${
+                        profile?.is_superadmin
+                          ? "bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold"
+                          : "bg-sky-500/10 border border-sky-500/30 text-sky-300"
+                      }`}>
+                        {profile?.is_superadmin ? "SUPER ADMIN" : (profile?.role || "TRADER")}
                       </span>
                       <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[9.5px] font-mono font-semibold">
-                        SYNC FIRESTORE
+                        FIRESTORE VERIFIED
                       </span>
                     </div>
                   </div>

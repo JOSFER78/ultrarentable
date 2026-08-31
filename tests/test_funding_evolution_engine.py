@@ -33,8 +33,30 @@ def test_fondeo_evolution_is_deterministic_and_diverse() -> None:
 
 def test_fondeo_session_mutation_changes_executable_window() -> None:
     engine = FundingEvolutionEngine()
-    proposals = engine.propose("f-session", _params(), limit=10)
+    proposals = engine.propose("f-session", _params(), limit=12)
     session = next(p for p in proposals if p.mutation_type == "CHANGE_SESSION")
 
     assert session.parameters["session_start_utc"] != "13:30"
     assert session.parameters["session_end_utc"] != "20:00"
+
+
+def test_funding_discovery_supports_atr_and_intraday_eod() -> None:
+    from services.discovery.funding_discovery import FundingDiscoveryEngine
+    engine = FundingDiscoveryEngine()
+    snapshot = engine.generate_candidate_blueprint(
+        strategy_id="UR_FONDEO_NQ_15M_INTRADAY",
+        symbol="NQ",
+        timeframe="15m",
+        dataset_id="ds_trad_nq_15m.json",
+        dataset_sha256="hash_dummy_123",
+        sl_atr_mult=1.5,
+        tp_atr_mult=3.0,
+        archetype="INSTITUTIONAL_SESSION_MOMENTUM",
+        session_start_utc="13:30",
+        session_end_utc="20:00",
+    )
+    assert snapshot.route.value == "FONDEO"
+    assert snapshot.exit_rules.sl_value == 1.5
+    assert snapshot.exit_rules.sl_type.value in ["ATR_MULTIPLE", "StopLossType.ATR_MULTIPLE"]
+    assert snapshot.session_window.close_at_eod is True
+

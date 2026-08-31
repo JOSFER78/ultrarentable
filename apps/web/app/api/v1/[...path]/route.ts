@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-static";
+
 const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:8000";
 
 async function proxyRequest(req: NextRequest, prefix: string, paramsPromise: any) {

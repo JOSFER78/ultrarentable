@@ -15,11 +15,26 @@ import {
   Server,
   Layers,
   Sparkles,
+  Users,
+  UserCheck,
+  UserX,
+  Crown,
+  RefreshCw,
 } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth, UserProfile } from "@/context/AuthContext";
 
 export default function PerfilPage() {
-  const { user, profile, loading: authLoading, updateUserProfile } = useAuth();
+  const {
+    user,
+    profile,
+    loading: authLoading,
+    isSuperAdmin,
+    isAuthorized,
+    updateUserProfile,
+    listAllUsers,
+    authorizeUser,
+    revokeUser,
+  } = useAuth();
 
   const [displayName, setDisplayName] = useState("");
   const [defaultAsset, setDefaultAsset] = useState("NQ");
@@ -36,6 +51,11 @@ export default function PerfilPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Super Admin user management state
+  const [managedUsers, setManagedUsers] = useState<UserProfile[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [adminActionMsg, setAdminActionMsg] = useState<string | null>(null);
+
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.displayName || user?.displayName || "");
@@ -48,6 +68,46 @@ export default function PerfilPage() {
       setBingxSecret(profile.broker_accounts?.bingx_secret || "");
     }
   }, [profile, user]);
+
+  useEffect(() => {
+    if (isSuperAdmin) {
+      loadRegisteredUsers();
+    }
+  }, [isSuperAdmin]);
+
+  const loadRegisteredUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const list = await listAllUsers();
+      setManagedUsers(list);
+    } catch (e) {
+      console.error("Error loading users:", e);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  const handleAuthorize = async (targetUid: string, targetEmail: string) => {
+    setAdminActionMsg(null);
+    try {
+      await authorizeUser(targetUid, "trader");
+      setAdminActionMsg(`Usuario ${targetEmail} autorizado exitosamente.`);
+      await loadRegisteredUsers();
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Error al autorizar usuario.");
+    }
+  };
+
+  const handleRevoke = async (targetUid: string, targetEmail: string) => {
+    setAdminActionMsg(null);
+    try {
+      await revokeUser(targetUid);
+      setAdminActionMsg(`Acceso de ${targetEmail} revocado.`);
+      await loadRegisteredUsers();
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Error al revocar usuario.");
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,18 +189,29 @@ export default function PerfilPage() {
                 className="w-14 h-14 rounded-2xl object-cover border-2 border-sky-500/40 shadow-lg"
               />
             ) : (
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500 to-emerald-500 text-white font-bold text-xl flex items-center justify-center shadow-lg">
-                {(displayName || user.email || "U").charAt(0).toUpperCase()}
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-500 text-white font-bold text-xl flex items-center justify-center shadow-lg">
+                {isSuperAdmin ? <Crown className="w-7 h-7 text-amber-300" /> : (displayName || user.email || "U").charAt(0).toUpperCase()}
               </div>
             )}
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-bold text-white tracking-tight">
                   {displayName || "Trader"}
                 </h1>
-                <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10.5px] font-mono font-semibold">
-                  REAL-ONLY VERIFIED
-                </span>
+                {isSuperAdmin ? (
+                  <span className="px-2.5 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[10.5px] font-mono font-bold flex items-center gap-1 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
+                    <Crown className="w-3.5 h-3.5 text-amber-400" />
+                    SUPER ADMIN (ACCESO TOTAL)
+                  </span>
+                ) : isAuthorized ? (
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10.5px] font-mono font-semibold">
+                    USUARIO AUTORIZADO
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10.5px] font-mono font-semibold">
+                    PENDIENTE DE APROBACIÓN
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-400 font-mono mt-0.5">{user.email}</p>
               <p className="text-[11px] text-slate-500 font-mono mt-1">
@@ -160,6 +231,19 @@ export default function PerfilPage() {
         </div>
       </div>
 
+      {/* Non-authorized warning banner */}
+      {!isAuthorized && (
+        <div className="p-4 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs flex items-start gap-3 shadow-lg font-mono">
+          <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1 font-sans">
+            <p className="font-bold text-amber-300">Cuenta en Espera de Autorización</p>
+            <p className="text-xs text-amber-200/80">
+              Tu cuenta está registrada en Firebase. Por política de gobernanza Zero-Trust, el Super Administrador (<strong className="text-white">josferestudio@gmail.com</strong>) debe autorizar tu acceso para operar en los módulos de Trading Desk y Bóveda Cuantitativa.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Notifications */}
       {errorMessage && (
         <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2.5">
@@ -172,6 +256,114 @@ export default function PerfilPage() {
         <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2.5">
           <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
           <div className="flex-1 font-medium">{successMessage}</div>
+        </div>
+      )}
+
+      {/* SECTION: SUPER ADMIN USER MANAGEMENT PANEL (ONLY VISIBLE TO JOSFERESTUDIO) */}
+      {isSuperAdmin && (
+        <div className="p-5 bg-[#080d1a]/95 border border-amber-500/30 rounded-2xl space-y-4 shadow-xl">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-amber-400" />
+              <h2 className="text-sm font-bold text-white tracking-wide">
+                Panel de Gobernanza Super Admin: Autorización de Usuarios Firebase
+              </h2>
+            </div>
+            <button
+              onClick={loadRegisteredUsers}
+              disabled={loadingUsers}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingUsers ? "animate-spin text-amber-400" : ""}`} />
+              <span>Refrescar</span>
+            </button>
+          </div>
+
+          {adminActionMsg && (
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>{adminActionMsg}</span>
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left text-slate-300 font-mono">
+              <thead className="bg-slate-900/80 text-slate-400 text-[10.5px] uppercase border-b border-white/[0.08]">
+                <tr>
+                  <th className="py-2.5 px-3">Usuario / Email</th>
+                  <th className="py-2.5 px-3">Rol</th>
+                  <th className="py-2.5 px-3">Estado</th>
+                  <th className="py-2.5 px-3">Fecha Registro</th>
+                  <th className="py-2.5 px-3 text-right">Acción Super Admin</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.05]">
+                {managedUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-6 text-center text-slate-500">
+                      No hay usuarios registrados pendientes.
+                    </td>
+                  </tr>
+                ) : (
+                  managedUsers.map((u) => {
+                    const isSelf = (u.email || "").toLowerCase() === "josferestudio@gmail.com";
+                    const isAuth = u.status === "AUTHORIZED" || u.is_authorized === true;
+
+                    return (
+                      <tr key={u.uid} className="hover:bg-white/[0.02]">
+                        <td className="py-3 px-3">
+                          <span className="font-bold text-white block">{u.displayName || u.email?.split("@")[0]}</span>
+                          <span className="text-[10px] text-slate-500">{u.email}</span>
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            isSelf
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                              : "bg-slate-800 text-slate-300"
+                          }`}>
+                            {isSelf ? "SUPERADMIN" : (u.role || "PENDING").toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            isAuth
+                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                              : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                          }`}>
+                            {isAuth ? "AUTORIZADO" : "PENDIENTE"}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 text-[11px] text-slate-400">
+                          {u.created_at ? new Date(u.created_at).toLocaleDateString("es-ES") : "Reciente"}
+                        </td>
+                        <td className="py-3 px-3 text-right">
+                          {isSelf ? (
+                            <span className="text-[10px] text-slate-500 italic">Propietario Base</span>
+                          ) : isAuth ? (
+                            <button
+                              onClick={() => handleRevoke(u.uid, u.email || u.uid)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[11px] transition"
+                            >
+                              <UserX className="w-3 h-3 text-rose-400" />
+                              <span>Revocar</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleAuthorize(u.uid, u.email || u.uid)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold transition shadow-sm"
+                            >
+                              <UserCheck className="w-3 h-3 text-emerald-400" />
+                              <span>Autorizar</span>
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

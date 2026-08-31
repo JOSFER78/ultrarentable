@@ -309,7 +309,7 @@ export default function HomePage() {
           subtitle="Paridad de riesgo multiactivo"
           icon={PieChart}
           accent="#c084fc"
-          href="/estrategias/6-meta-estrategia"
+          href="/portfolio"
         />
       </section>
 
@@ -327,7 +327,7 @@ export default function HomePage() {
           subtitle="Meta-FONDEO y Meta-ULTRA con matrices de covarianza real"
           icon={PieChart}
           accent="#8b5cf6"
-          href="/estrategias/6-meta-estrategia"
+          href="/portfolio"
         />
         <QuickLinkCard
           title="Trading Desk CME en Vivo"

@@ -391,11 +391,11 @@ export default function TradesferaPortalPage() {
             </Link>
 
             <Link
-              href="/bifurcacion"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-sky-950/80 hover:bg-sky-900 text-sky-300 border border-sky-700/60 transition shadow-sm"
+              href="/ultra"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-pink-950/80 hover:bg-pink-900 text-pink-300 border border-pink-700/60 transition shadow-sm"
             >
-              <Target className="w-4 h-4 text-sky-400" />
-              <span>Bifurcación QVF</span>
+              <Flame className="w-4 h-4 text-pink-400" />
+              <span>Trading Desk Ultra</span>
             </Link>
           </div>
 

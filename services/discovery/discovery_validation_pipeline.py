@@ -13,6 +13,7 @@ import hashlib
 import json
 import logging
 import math
+import os
 import sqlite3
 import sys
 import time
@@ -35,6 +36,22 @@ from services.validation.certification_registry import CertificationRegistry
 from services.engine_version import CURRENT_ENGINE_VERSION
 from services.api.app.config import DATA_DIR as BASE_DATA_DIR, STATE_DB_PATH
 
+# --- SINGLETON PROCESS LOCK ---
+import fcntl
+_DISCOVERY_LOCK_FD = None
+def _acquire_singleton_lock():
+    global _DISCOVERY_LOCK_FD
+    try:
+        _DISCOVERY_LOCK_FD = open('/tmp/ultrarentable_discovery.lock', 'w')
+        fcntl.flock(_DISCOVERY_LOCK_FD, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        _DISCOVERY_LOCK_FD.write(f"{os.getpid()}\n")
+        _DISCOVERY_LOCK_FD.flush()
+    except (IOError, BlockingIOError):
+        print(f"[DISCOVERY] Otra instancia ya esta en ejecucion. Saliendo limpiamente PID {os.getpid()}.")
+        sys.exit(0)
+
+_acquire_singleton_lock()
+# ------------------------------
 logger = logging.getLogger("DiscoveryValidationPipeline")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 

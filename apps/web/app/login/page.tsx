@@ -13,6 +13,8 @@ import {
   Loader2,
   CheckCircle2,
   ArrowRight,
+  Crown,
+  User,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -48,7 +50,16 @@ export default function LoginPage() {
         return "El formato de correo electrónico no es válido.";
       case "auth/popup-closed-by-user":
         return "Inicio de sesión con Google cancelado.";
+      case "auth/configuration-not-found":
+        return "Firebase Auth no está activado en el proyecto 'pecemi'. Ve a Firebase Console > Authentication > Get started y activa el proveedor Google.";
+      case "auth/unauthorized-domain":
+        return "Dominio no autorizado en Firebase. Añade 'localhost' en Firebase Console > Authentication > Settings > Authorized domains.";
+      case "auth/popup-blocked":
+        return "El navegador bloqueó la ventana emergente de Google. Habilita los popups en la barra de direcciones.";
       default:
+        if (err?.message?.includes("CONFIGURATION_NOT_FOUND") || err?.message?.includes("configuration-not-found")) {
+          return "Firebase Auth no está activado en el proyecto 'pecemi'. Ve a Firebase Console > Authentication > Get started y activa Google.";
+        }
         return err?.message || "Ocurrió un error al iniciar sesión.";
     }
   };
@@ -221,7 +232,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || googleLoading}
-            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-slate-200 text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50"
+            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-slate-200 text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
           >
             {googleLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
@@ -247,6 +258,8 @@ export default function LoginPage() {
             )}
             <span>Continuar con Google</span>
           </button>
+
+
 
           {/* Switch to Register */}
           <div className="pt-2 text-center text-xs text-slate-400 font-mono">

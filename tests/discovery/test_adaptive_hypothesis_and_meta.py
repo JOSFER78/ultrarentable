@@ -41,3 +41,19 @@ def test_meta_engine_rejects_unproven_members():
     )
     result = engine.build([candidate])
     assert result["status"] == "NO_META_STRATEGY"
+
+
+def test_fondeo_combinatorial_space_includes_atr_multipliers():
+    from services.discovery.strategy_search_registry import StrategySearchRegistry
+    reg = StrategySearchRegistry()
+    space = reg.generate_combinatorial_parameter_space(
+        symbol="NQ",
+        timeframe="15m",
+        route="FONDEO",
+        max_trials=256,
+        campaign_seed="TEST_FONDEO_SPACE",
+    )
+    assert len(space) > 0
+    assert any("sl_atr_mult" in p for p in space)
+    assert any("archetype" in p for p in space)
+

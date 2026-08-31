@@ -3,6 +3,8 @@ import path from "path";
 import { NextResponse } from "next/server";
 import { findRepoRoot, resolveDataDir } from "@/lib/projectPaths";
 
+export const dynamic = "force-static";
+
 function countFiles(dir: string, predicate: (name: string) => boolean = () => true): number {
   if (!fs.existsSync(dir)) return 0;
   let total = 0;

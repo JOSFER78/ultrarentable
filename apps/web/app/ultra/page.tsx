@@ -65,11 +65,11 @@ export default function UltraPage() {
               </span>
             </div>
             <Link
-              href="/bifurcacion"
+              href="/fondeo"
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-lg shadow-emerald-500/20"
             >
-              <Zap className="w-4 h-4" />
-              <span>Bifurcación QVF</span>
+              <Building2 className="w-4 h-4" />
+              <span>Trading Desk Fondeo</span>
             </Link>
           </div>
         </div>
@@ -338,10 +338,10 @@ export default function UltraPage() {
         </p>
         <div className="flex justify-center gap-3">
           <Link
-            href="/bifurcacion"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-lg shadow-emerald-500/20"
+            href="/estrategias"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition shadow-lg shadow-cyan-500/20"
           >
-            <span>Evaluar en Bifurcación QVF</span>
+            <span>Ir a Strategy Lab</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link

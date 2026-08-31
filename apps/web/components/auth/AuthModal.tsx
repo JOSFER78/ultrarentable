@@ -14,6 +14,7 @@ import {
   Loader2,
   CheckCircle2,
   Sparkles,
+  Crown,
 } from "lucide-react";
 
 interface AuthModalProps {
@@ -83,15 +84,16 @@ export default function AuthModal({
         return "Ya existe una cuenta con este correo electrónico.";
       case "auth/weak-password":
         return "La contraseña es muy débil. Debe tener al menos 6 caracteres.";
-      case "auth/invalid-email":
-        return "El formato de correo electrónico no es válido.";
-      case "auth/popup-closed-by-user":
-        return "Inicio de sesión con Google cancelado por el usuario.";
-      case "auth/cancelled-popup-request":
-        return "Solicitud de ventana emergente cancelada.";
-      case "auth/network-request-failed":
-        return "Fallo de conexión. Comprueba tu conexión a internet.";
+      case "auth/configuration-not-found":
+        return "Firebase Auth no está activado en el proyecto 'pecemi'. Ve a Firebase Console > Authentication > Get started y activa el proveedor Google.";
+      case "auth/unauthorized-domain":
+        return "Dominio no autorizado en Firebase. Añade 'localhost' en Firebase Console > Authentication > Settings > Authorized domains.";
+      case "auth/popup-blocked":
+        return "El navegador bloqueó la ventana emergente de Google. Habilita los popups en la barra de direcciones de tu navegador.";
       default:
+        if (err?.message?.includes("CONFIGURATION_NOT_FOUND") || err?.message?.includes("configuration-not-found")) {
+          return "Firebase Auth no está activado en el proyecto 'pecemi'. Ve a Firebase Console > Authentication > Get started y activa Google.";
+        }
         return err?.message || "Ocurrió un error en la autenticación.";
     }
   };
@@ -418,7 +420,7 @@ export default function AuthModal({
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || googleLoading}
-            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-slate-200 text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50"
+            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-slate-200 text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
           >
             {googleLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
@@ -444,6 +446,8 @@ export default function AuthModal({
             )}
             <span>Continuar con Google</span>
           </button>
+
+
         </div>
 
         {/* Footer info */}

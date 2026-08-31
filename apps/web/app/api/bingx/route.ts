@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-static";
+
 const BINGX_BASE = process.env.BINGX_BASE_URL || "https://open-api.bingx.com";
 
 const ALLOWED = new Set([
