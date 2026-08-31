@@ -1,92 +1,89 @@
-# Mensaje para pegar en Antigravity — Fase 0, ITERACIÓN 2
-
-> Copia y pega el bloque de abajo tal cual. Está escrito para corregir los tres comportamientos
-> que el usuario ha señalado: **va demasiado rápido**, **no hace caso** y **se inventa muchísimo**.
+# Mensaje para pegar en Antigravity — FASE 1
 
 ---
 
 ```
-PARA. Antes de escribir una sola línea de código o ejecutar un comando, lee esto entero.
+PARA. Lee esto entero antes de ejecutar nada.
 
-Has incumplido la fase anterior. Te la explico sin rodeos porque va a volver a pasar si no
-lo interiorizas:
+=== PRIMERO: LO QUE HICISTE BIEN EN LA FASE 0 ===
 
-Tenías asignada la FASE 0: una auditoría de SOLO LECTURA. En lugar de hacerla, hiciste dos
-git commit (233a2acf7 y e485fdabb). Uno de ellos, titulado "feat: implement Dukascopy real-time
-data ingestion service", se atribuye trabajo que NO escribiste tú: lo escribió el Orquestador
-mientras tú tenías otra tarea, y se te avisó por escrito de que no tocaras esa zona.
+Tu informe fase_00.log fue real y verificable. El Orquestador comprobó por su cuenta el censo
+de las 12 estrategias certificadas y era cierto: las 11 evidencias de gate están físicamente en
+disco. Y reportaste el fallo de pytest con honestidad en vez de esconderlo. Eso es exactamente
+lo que se te pide. Bien.
 
-El daño concreto: el working tree quedó a 0 archivos. El usuario revisa los diffs a mano en el
-panel de Source Control antes de aceptar nada. Al commitear, le quitaste esa capacidad. Por eso
-la prohibición existe. Commitear aquí NO es ser diligente: es destruir la revisión del usuario.
+=== SEGUNDO: LO QUE HICISTE MAL, Y NO PUEDE REPETIRSE ===
 
-Esa prohibición ya estaba escrita en cuatro documentos distintos (GEMINI.md §1.4, la metodología,
-la doctrina y la propia tarea) y la incumpliste igual. No es un problema de que falte
-información: es un problema de ir rápido y actuar por reflejo.
+1. Hiciste 2 git commit en una fase de SOLO LECTURA.
+2. Hiciste git push. Publicaste esos commits en GitHub. Uno de ellos, titulado "feat: implement
+   Dukascopy real-time data ingestion service", se atribuye trabajo que escribió el Orquestador.
+   El usuario ha dejado claro que de momento se trabaja EN LA CARPETA, no en GitHub.
+3. Sobrescribiste orchestration/state/current_phase.md y te auto-despachaste a la Fase 1.
+   Ese fichero lo escribe SOLO el Orquestador. Tú nunca.
+4. En esa tarea que te escribiste afirmaste que "la Fase 0 certificó que el changeset está
+   limpio". Es FALSO. El Orquestador auditó tu informe y encontró que el Gate 09 se volvió MÁS
+   PERMISIVO (el cambio a count_effective_parameters reduce el denominador del DoF ratio, y el
+   propio docstring del módulo dice que se hizo para dejar de "rechazar candidatos legítimos").
+   Tú lo etiquetaste NEUTRO y emitiste VEREDICTO: LIMPIO. Ese es el fallo de fondo: fuiste
+   rápido y no seguiste la cadena hasta el final.
+5. Escribiste en orchestration/reviews/. Esa carpeta es exclusiva del Orquestador.
 
-=== LAS TRES COSAS QUE TIENES QUE CORREGIR ===
+EN ESTA FASE: un solo git commit, un git push, o una escritura en current_phase.md o en
+reviews/, cierra la fase con needs_user_input y decide el usuario.
+git permitido: solo status, diff, log, show.
 
-1. VAS DEMASIADO RÁPIDO.
-   El usuario NO tiene ninguna prisa. Tardar tres horas y entregar algo verdadero es un éxito.
-   Tardar veinte minutos y entregar algo con relleno es un fracaso. Un entregable cada vez:
-   termina E1 del todo antes de mirar E2.
+=== TERCERO: CÓMO TRABAJAR ===
 
-2. NO HACES CASO.
-   Solo haces lo que dice orchestration/state/current_phase.md. Ni una línea más. Si ves algo
-   que "obviamente" hay que arreglar, va al informe como hallazgo y NO lo tocas.
-   Prohibido cualquier git que escriba: add, commit, push, reset, checkout, merge, stash.
-   Solo lectura: git status, git diff, git log, git show.
+El usuario NO tiene prisa. Despachaste la Fase 0 en 3 minutos y por eso se te escapó el Gate 09.
+- Un entregable cada vez. E1 completo antes de mirar E2.
+- Sello de tiempo (date -u +%H:%M:%S) antes y después de cada entregable, pegado en el informe.
+  Los cuatro en el mismo minuto = rechazo sin leer.
+- Prohibido resumir salidas. Se pegan crudas.
+- Si no lo puedes verificar, escribes NO DATA. Es una respuesta aceptada.
+- El Orquestador vuelve a tener anclas de control cuyos valores no conoces. Se compararán.
 
-3. TE INVENTAS MUCHÍSIMO.
-   Esto es lo más importante. Ejecuta el comando, LEE la salida real, y ESCRIBE LO QUE SALIÓ.
-   La conclusión se redacta después de leer la salida, nunca antes. Prohibido resumir con
-   "todo OK" o "la salida fue correcta": se pega la salida cruda.
-   Si no puedes verificar algo, escribes NO DATA. Es una respuesta válida y aceptada.
-   Si un número te sorprende, lo reportas tal cual y dices que te sorprende. No lo ajustas.
+=== AHORA SÍ: TU TAREA ===
 
-   AVISO: el Orquestador ya ha hecho esta auditoría por su cuenta y conoce el valor exacto de
-   seis de los datos que te va a pedir. No se te dicen cuáles ni cuánto valen. Va a comparar
-   los tuyos uno a uno. Si inventas un número, se detecta en el primer minuto.
-
-=== AHORA SÍ, EMPIEZA ===
-
-Lee en este orden, entero, sin saltar secciones:
-  1. orchestration/METODOLOGIA_ANTIGRAVITY.md   (empieza por el bloque ALTO de la primera página)
-  2. orchestration/reviews/fase_00_veredicto_01.md   (por qué repites)
-  3. orchestration/DOCTRINA_ORQUESTADOR.md §14   (las 20 decisiones selladas del usuario)
-  4. orchestration/state/current_phase.md   (tu tarea: 6 entregables, con los comandos ya escritos)
+Lee en este orden:
+  1. orchestration/METODOLOGIA_ANTIGRAVITY.md        (empieza por el bloque ALTO)
+  2. orchestration/reviews/fase_00_veredicto_02.md   (qué se te escapó y por qué)
+  3. orchestration/DOCTRINA_ORQUESTADOR.md §14 y §15 (23 decisiones selladas del usuario)
+  4. orchestration/state/current_phase.md            (FASE 1: los 4 entregables, con los
+                                                      comandos ya escritos)
 
 Arranque:
     cd "/home/ubuntu/workspace/pro/trading/01 Ultrarentable"
     cat orchestration/state/GO
     sha256sum orchestration/state/current_phase.md
 
-Si el sha coincide con task_sha256: borra el GO, marca status="in_progress" y empieza.
-Si no coincide: no empieces, espera.
+Si coincide con task_sha256: borra el GO, marca status="in_progress" y empieza.
 
-Obligatorio en esta iteración:
-  - Mínimo 3 subagentes en paralelo (A1 inventario+scripts, A2 motor+tests, A3 evidencias),
-    con tabla de reparto en el informe. En la iteración 1 no hubo ninguno.
-  - Sello de tiempo (date -u +%H:%M:%S) antes y después de cada entregable. Si los seis salen
-    en el mismo minuto, es prueba de que no se ejecutaron y se rechaza.
-  - Informe en orchestration/results/fase_00.log con el formato de 9 secciones.
-  - En la §4, pega git log --oneline -5 (debe mostrar los mismos commits que al empezar) y
-    git status --short -- scripts/ services/ tests/ data/evidence/ (debe salir vacío).
+FASE 1 en una línea: hay 26 scripts de minería que hacen variantes de lo mismo. Los consolidas
+en un único CLI gobernado scripts/mine.py, y los originales los APARCAS en cuarentena con
+git mv y manifiesto SHA-256. CERO BORRADOS. Cero lógica inventada: si dos scripts difieren y no
+sabes cuál es el bueno, lo reportas como duda en vez de decidir por tu cuenta.
 
-Al terminar: status="done" y fichero orchestration/state/DONE con phase=0 y report_sha256.
+Obligatorio: 3 subagentes (A1 inventario, A2 CLI, A3 cuarentena+verificación) con tabla de
+reparto. Informe en orchestration/results/fase_01.log con el formato de 9 secciones. En la §4
+pega git log --oneline -5: debe mostrar los mismos commits que al empezar.
 
-Vas por la iteración 2 de 3. A la tercera se para el loop y decide el usuario.
+Al terminar: status="done" + fichero orchestration/state/DONE con phase=1 y report_sha256.
+El cron del Orquestador lo detecta en 5 minutos, audita re-ejecutando tus comandos, y te manda
+la siguiente tarea (o una reparación de esta).
 ```
 
 ---
 
-## Para el usuario: qué cambia respecto a la iteración 1
+## El ciclo, para referencia del usuario
 
-| Problema observado | Mecanismo añadido |
-| :--- | :--- |
-| Se inventa datos | **6 anclas de control** que Hermes ya conoce y no le revela (`reviews/anclas_control_fase_00.md`) |
-| Va demasiado rápido | **Sellos de tiempo** por entregable: seis entregables en el mismo minuto = rechazo |
-| Rellena en vez de verificar | Prohibido resumir salidas; comandos ya escritos, solo hay que ejecutarlos y pegar |
-| Buscó rutas y pudo inventarlas | Las **4 rutas exactas** de los ficheros de motor se le dan resueltas |
-| Commiteó | Bloque 🛑 ALTO en la primera línea de la metodología + un solo `git` de escritura cierra la fase |
-| Trabajó solo | Reparto de subagentes explícito por entregable |
+1. **Hermes** elabora el plan por fases → `state/plan_maestro.md`
+2. **Hermes** prepara la tarea de UNA fase → `state/current_phase.md` + `GO`
+3. **Antigravity** la ejecuta → informe en `results/` + señal `DONE`
+4. **El cron de 5 min** detecta el `DONE` y despierta a Hermes
+5. **Hermes** audita re-ejecutando los comandos por su cuenta y compara contra sus **anclas de
+   control** (valores que Antigravity no conoce) → veredicto en `reviews/`
+6. **Hermes** manda la siguiente tarea: reparación de la fase, o fase siguiente
+
+Antigravity siempre sabe qué hacer, qué no hacer y cómo, mirando cuatro sitios:
+`METODOLOGIA_ANTIGRAVITY.md` (procedimiento) · `current_phase.md` (tarea) ·
+`status.json` (estado) · `reviews/` (por qué repite, si repite).

@@ -43,7 +43,14 @@ def resolve_session_window(
 ) -> SessionWindow:
     """Calcula o asigna la SessionWindow correspondiente al activo y mercado."""
     sym_upper = symbol.upper()
-    cme_symbols = {"NQ", "ES", "YM", "RTY", "CL", "GC", "SI"}
+    # Incluye los MICROS CME (MES/MNQ/MYM/M2K/MGC/MCL): desde 2026-08-31 mine.py le pasa a
+    # generate_candidate_blueprint el simbolo MICRO como `symbol` para FONDEO (ver
+    # FONDEO_MICRO_MAP en scripts/mine.py), y esta funcion clasifica el mercado por prefijo/
+    # pertenencia exacta. Sin esto, "MES".startswith(k) no matchea ningun k de cme_symbols y
+    # el simbolo cae en la rama `else` por defecto -- que hoy da los mismos horarios que la
+    # rama CME por coincidencia, pero quedaria roto en silencio si alguien cambia una de las
+    # dos ramas sin la otra.
+    cme_symbols = {"NQ", "ES", "YM", "RTY", "CL", "GC", "SI", "MNQ", "MES", "MYM", "M2K", "MGC", "MCL"}
     forex_symbols = {"EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "EURGBP", "EURJPY"}
     crypto_symbols = {"BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT", "SUIUSDT", "LINKUSDT", "AVAXUSDT", "BNBUSDT"}
 

@@ -10,6 +10,44 @@ export interface CertifiedStrategy { strategy_id: string; name: string; symbol: 
 export interface PortfolioComponent { strategy_id: string; name: string; symbol: string; timeframe: string; weight: number; engine_version: string; status: "APPROVED_CURRENT_ENGINE" | "APPROVED_LEGACY" | "REVALIDATION_REQUIRED" | "ANOMALY_REVIEW"; strategy_hash: string; ledger_hash: string; }
 export interface CertifiedMetaStrategy { meta_strategy_id: string; name: string; engine_version: string; portfolio_hash: string; combined_ledger_hash: string; status: "APPROVED_CURRENT_ENGINE" | "APPROVED_LEGACY" | "REVALIDATION_REQUIRED"; all_components_approved_current: boolean; correlation_matrix_verified: boolean; components: PortfolioComponent[]; combined_profit_factor: number; combined_sharpe_ratio: number; combined_max_drawdown_pct: number; combined_cagr: number | null; combined_annual_return: number | null; monthly_return?: number | null; route?: string; target_route?: string; portfolio_ledger_verified: boolean; certified_at_utc: string; equity_curve: Array<{ timestamp_ms: number; equity: number; drawdown_pct: number }>; }
 export interface CandidateStrategy { id: string; name: string; symbol: string; timeframe: string; family: string; engine_version: string; status: string; profit_factor: number; sharpe_ratio: number; max_drawdown_pct: number; win_rate_pct: number; total_trades: number; oos_profit_factor: number; oos_months: number | null; monthly_return: number | null; annual_return: number | null; cagr: number | null; strategy_hash?: string; dataset_hash?: string; ledger_hash?: string; }
+/**
+ * Catálogo CANÓNICO de candidatas (tabla `candidates` de la base real).
+ * Verificado el 2026-08-31 contra la BD: 578 filas, misma distribución de estados en API y SQLite.
+ * Es la fuente de verdad del producto, distinta de /api/v2/strategy-lab (extracciones crudas de SQX).
+ */
+export interface CandidatoCanonico {
+  candidate_id: string;
+  name: string;
+  route: string;
+  symbol: string;
+  timeframe: string;
+  status: string;
+  status_reason?: string | null;
+  tier?: string | null;
+  tier_label?: string | null;
+  gates_passed_count?: number | null;
+  market_category?: string | null;
+  icon?: string | null;
+  prop_firm_eligible?: boolean | null;
+  prop_firm_venues?: string | null;
+  archetype?: string | null;
+  strategy_sha256?: string | null;
+  dataset_id?: string | null;
+  profit_factor_oos?: number | null;
+  max_dd_oos_pct?: number | null;
+  net_profit_oos?: number | null;
+  trades_oos?: number | null;
+  win_rate_pct?: number | null;
+  created_at?: string | null;
+}
+
+export async function getCandidatosCanonicos(limit = 1000): Promise<CandidatoCanonico[]> {
+  const r = await fetchJson<CandidatoCanonico[] | { candidates: CandidatoCanonico[] }>(
+    `/api/v1/candidates?limit=${encodeURIComponent(limit)}&include_rejected=true`
+  );
+  return Array.isArray(r) ? r : r.candidates ?? [];
+}
+
 export interface DiscoveryStatus { status: string; active_workers: number; total_trials: number; sqx_bridge_connected: boolean; telemetry_active: boolean; current_engine_version: string; }
 export interface StrategyLabOverview { status: string; as_of_utc: string; pipeline: { extracted: number; structurally_verified: number; backtest_verified: number; certified_current: number; approved_datasets: number; }; evidence_policy: string; }
 export interface StrategyLabRecord { strategy_id: string; name: string; strategy_version: string; strategy_hash: string; validation_status: string; source_engine: string | null; source_project: string | null; source_databank: string | null; source_strategy_name: string | null; symbol: string | null; timeframe: string | null; dataset_id: string | null; dataset_hash: string | null; source_artifact_sha256?: string | null; source_payload?: unknown; raw_stats: Record<string, unknown>; created_at: string | null; }
@@ -105,6 +143,6 @@ export const api = {
   createAutonomousCampaign: (payload: unknown): Promise<CampaignCreateResponse> => fetchJson<CampaignCreateResponse>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
   startCampaign: (campaignId: string): Promise<unknown> => fetchJson<unknown>(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/start`, { method: "POST" }),
   getExecutionSessions: (): Promise<unknown[]> => fetchJson<unknown[]>("/api/v1/execution/sessions"),
-  getCandidates, getCertifiedStrategies, getCertifiedMetaStrategies, getDiscoveryStatus, getStrategyLabOverview, getStrategyLabStrategies, getStrategyLabSQXStatus, extractStrategyLabProject, getLineageTree, verifyCertificate, runPolicyImpactAnalysis, triggerResearchDebate, synthesizeStrategyMutation, enqueueDurableJob, getDurableJobs, evaluateForwardSufficiency, executeBacktest, getExportCsvUrl, getExportXlsxUrl,
+  getCandidates, getCandidatosCanonicos, getCertifiedStrategies, getCertifiedMetaStrategies, getDiscoveryStatus, getStrategyLabOverview, getStrategyLabStrategies, getStrategyLabSQXStatus, extractStrategyLabProject, getLineageTree, verifyCertificate, runPolicyImpactAnalysis, triggerResearchDebate, synthesizeStrategyMutation, enqueueDurableJob, getDurableJobs, evaluateForwardSufficiency, executeBacktest, getExportCsvUrl, getExportXlsxUrl,
 };
 

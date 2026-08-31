@@ -444,8 +444,29 @@ def list_candidates(
             "oos_days": int(oos_months * 30),
         }
 
-        spec = get_market_spec(c.symbol)
+        # get_market_spec() dejo de devolver un fallback silencioso el 2026-08-31: ahora lanza
+        # UnknownMarketSpecError si el simbolo no tiene especificacion verificada. Eso es correcto
+        # para calcular dinero, pero este endpoint solo LISTA candidatas para la web, y en la base
+        # hay 166 filas con simbolos sin spec (BTC/ETH/SOL sin sufijo, y basura historica como
+        # AUTO, ULTRA, 01, HASH, LOSER). Sin este guardarrail, una sola de esas filas devolveria
+        # un 500 y tumbaria la pagina de estrategias entera.
+        # Degradacion honesta: la fila se muestra, pero sin metadatos de mercado inventados.
+        try:
+            spec = get_market_spec(c.symbol)
+            market_category = spec.category
+            market_icon = spec.icon
+            prop_eligible = spec.prop_firm_eligible
+            prop_venues = spec.prop_firm_venues
+            spec_verificada = True
+        except Exception:
+            market_category = "SIN ESPECIFICACION"
+            market_icon = "⚠️"
+            prop_eligible = None
+            prop_venues = None
+            spec_verificada = False
+
         results.append({
+            "spec_verificada": spec_verificada,
             "candidate_id": c.candidate_id,
             "name": c.name,
             "route": c.route,
@@ -453,10 +474,10 @@ def list_candidates(
             "timeframe": norm_tf,
             "strategy_sha256": sha256_hash,
             "bundle_signature_sha256": sc.get("bundle_signature_sha256") or sha256_hash,
-            "market_category": spec.category,
-            "icon": spec.icon,
-            "prop_firm_eligible": spec.prop_firm_eligible,
-            "prop_firm_venues": spec.prop_firm_venues,
+            "market_category": market_category,
+            "icon": market_icon,
+            "prop_firm_eligible": prop_eligible,
+            "prop_firm_venues": prop_venues,
             "dataset_id": c.dataset_id,
             "status": resolved_status,
             "status_reason": resolved_reason,

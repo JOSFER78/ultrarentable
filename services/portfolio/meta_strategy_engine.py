@@ -32,8 +32,13 @@ class DuplicateAssetError(ValueError):
 class MetaStrategyEngine:
     """Motor central de construcción, simulación determinista y evaluación de Meta-Portafolios."""
 
-    def __init__(self, db_path: str = "data/sqlite/candidates.db") -> None:
-        self.db_path = db_path
+    # Base canónica del proyecto (62 MB, 33 tablas, 505 candidatos reales).
+    # Antes apuntaba por defecto a data/sqlite/candidates.db (12 KB, rancia desde el 20-ago):
+    # el motor existía pero nunca había visto un candidato real.
+    CANONICAL_DB = str(Path.home() / ".local/state/ultrarentable/ultrarentable.sqlite3")
+
+    def __init__(self, db_path: Optional[str] = None) -> None:
+        self.db_path = db_path or self.CANONICAL_DB
         self.backtest_engine = EventBacktestEngine()
         self._ensure_portfolio_table()
 
@@ -67,6 +72,69 @@ class MetaStrategyEngine:
         """)
         conn.commit()
         conn.close()
+
+    def load_candidates_from_db(
+        self,
+        route: Optional[Literal["ULTRA", "FONDEO"]] = None,
+        status: str = "APPROVED_CURRENT_ENGINE",
+        min_trades_oos: int = 0,
+        require_returns: bool = True,
+    ) -> List[Dict[str, Any]]:
+        """Carga candidatos REALES de la base canónica, con sus retornos OOS reales.
+
+        REAL-ONLY: solo devuelve candidatos cuyo `scorecard_json` contiene `oos_returns`
+        con datos verdaderos. Los que no los tienen se descartan y se registran, nunca se
+        completan con valores fabricados.
+
+        `min_trades_oos` permite aplicar el criterio de base válida del plan (≥200 operaciones).
+        """
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            sql = "SELECT * FROM candidates WHERE status = ?"
+            params: List[Any] = [status]
+            if route:
+                sql += " AND route = ?"
+                params.append(route)
+            if min_trades_oos > 0:
+                sql += " AND trades_oos >= ?"
+                params.append(min_trades_oos)
+            sql += " ORDER BY net_profit_oos DESC"
+            rows = conn.execute(sql, params).fetchall()
+        finally:
+            conn.close()
+
+        out: List[Dict[str, Any]] = []
+        descartados: List[str] = []
+        for row in rows:
+            item = dict(row)
+            scorecard: Dict[str, Any] = {}
+            raw = item.get("scorecard_json")
+            if raw:
+                try:
+                    scorecard = json.loads(raw)
+                except (json.JSONDecodeError, TypeError):
+                    descartados.append(f"{item.get('name')}: scorecard_json ilegible")
+                    continue
+
+            oos_returns = scorecard.get("oos_returns")
+            if require_returns and (not oos_returns or len(oos_returns) < 2):
+                descartados.append(f"{item.get('name')}: sin oos_returns reales")
+                continue
+
+            item["oos_returns"] = oos_returns
+            item["initial_capital_usd"] = scorecard.get("initial_capital_usd")
+            item["ledger_path"] = scorecard.get("ledger_path")
+            item["ledger_verified"] = scorecard.get("ledger_verified")
+            out.append(item)
+
+        if descartados:
+            logger.warning(
+                "MetaStrategyEngine: %d candidatos descartados por falta de datos reales: %s",
+                len(descartados),
+                "; ".join(descartados[:10]),
+            )
+        return out
 
     def validate_orthogonal_assets(self, strategies: List[Dict[str, Any]]) -> List[str]:
         """Verifica que no existan activos/símbolos duplicados en el ensamble."""
@@ -109,13 +177,27 @@ class MetaStrategyEngine:
         returns_series: List[np.ndarray] = []
 
         for s in strategies:
-            eq_curve = s.get("equity_curve") or s.get("equity_curve_oos") or [total_capital_usd]
-            if len(eq_curve) < 2:
-                pnl_pct = float(s.get("net_profit_pct", s.get("annualized_roi", 20.0)))
-                steps = 50
-                step_ret = pnl_pct / (steps * 100.0)
-                eq_curve = [total_capital_usd * (1.0 + step_ret * k) for k in range(steps)]
-            
+            eq_curve = s.get("equity_curve") or s.get("equity_curve_oos")
+
+            # REAL-ONLY: si no viene curva, se reconstruye desde los retornos OOS REALES
+            # (scorecard_json.oos_returns, en USD por operación). Nunca se fabrica.
+            if not eq_curve or len(eq_curve) < 2:
+                oos_returns = s.get("oos_returns")
+                if oos_returns and len(oos_returns) >= 2:
+                    equity = float(s.get("initial_capital_usd") or total_capital_usd)
+                    eq_curve = [equity]
+                    for r in oos_returns:
+                        equity += float(r)
+                        eq_curve.append(equity)
+                else:
+                    raise ValueError(
+                        f"NO DATA: la estrategia '{s.get('name', s.get('candidate_id', '?'))}' no "
+                        f"aporta curva de equity ni 'oos_returns' reales. No se construye el "
+                        f"meta-portafolio con datos fabricados. Cárgala con "
+                        f"MetaStrategyEngine.load_candidates_from_db() o adjunta su ledger real."
+                    )
+
+
             eq_arr = np.array(eq_curve, dtype=np.float64)
             peak = np.maximum.accumulate(eq_arr)
             dd_arr = (peak - eq_arr) / np.maximum(1.0, peak) * 100.0

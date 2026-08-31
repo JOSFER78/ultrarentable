@@ -93,8 +93,26 @@ class InstrumentRegistry:
             "NK225": {"tick_size": 5.0, "point_value": 5.0, "cme_fee": 2.50, "prec": 0, "name": "Nikkei 225 Futures"},
         }
 
-        for cme_key, info in cme_specs.items():
-            if norm.startswith(cme_key):
+        # PREFIJO ACOTADO (corregido 2026-08-31). Antes bastaba con `norm.startswith(cme_key)`,
+        # y eso devolvia especificaciones para simbolos que NO existen: "SIL" heredaba las de SI
+        # (5.000 USD/punto), y simbolos inventados como "GCFOO" o "NQZZ" recibian las de GC y NQ
+        # sin un solo aviso. Un error tipografico se convertia en un PnL mal calculado en silencio,
+        # que es justo el fallback complaciente que la doctrina REAL-ONLY prohibe.
+        #
+        # Ahora el prefijo solo se acepta si el resto es un CODIGO DE VENCIMIENTO CME valido:
+        # letra de mes (FGHJKMNQUVXZ) + 1 o 2 digitos de anio. Asi "ESU25" y "NQZ6" siguen
+        # resolviendo, pero "ESX", "GCFOO", "NQZZ" o "SIL" fallan de forma explicita.
+        _MESES_CME = set("FGHJKMNQUVXZ")
+
+        def _es_vencimiento(resto: str) -> bool:
+            if not resto:
+                return True                      # simbolo desnudo: "ES", "GC"
+            if len(resto) not in (2, 3):
+                return False
+            return resto[0] in _MESES_CME and resto[1:].isdigit()
+
+        for cme_key, info in sorted(cme_specs.items(), key=lambda kv: -len(kv[0])):
+            if norm.startswith(cme_key) and _es_vencimiento(norm[len(cme_key):]):
                 return InstrumentSpecification(
                     symbol=cme_key,
                     raw_symbol=symbol,
@@ -168,6 +186,33 @@ class InstrumentRegistry:
             initial_margin_rate=0.10,
             maintenance_margin_rate=0.05,
         )
+
+    # NOTA sobre el ultimo bloque generico (2026-08-31): devuelve point_value=1.0 para cualquier
+    # simbolo que no encaje en cripto, CME ni forex. Eso es correcto para un perpetuo cuyo nocional
+    # es precio x cantidad, pero PELIGROSO si el simbolo es un futuro mal escrito: se calcularia el
+    # PnL con multiplicador 1 en vez de 50. Por eso `es_spec_verificada()` permite a quien lo
+    # necesite (el motor en ruta FONDEO) distinguir una spec real de una inferida por descarte.
+
+
+def es_spec_verificada(symbol: str) -> bool:
+    """True solo si el simbolo esta en el catalogo canonico o es un vencimiento CME valido.
+
+    Un `False` significa: la especificacion devuelta por InstrumentRegistry.get() es un
+    valor por descarte, NO un dato verificado. Quien calcule dinero con ella (ruta FONDEO,
+    donde el multiplicador de contrato decide el PnL) debe tratarlo como `NO DATA` y parar,
+    en vez de operar con un multiplicador inventado.
+    """
+    norm = InstrumentRegistry.normalize_symbol(symbol)
+    if norm in {InstrumentRegistry.normalize_symbol(s) for s in _CANONICAL_SYMBOLS}:
+        return True
+    meses = set("FGHJKMNQUVXZ")
+    for base in _CANONICAL_SYMBOLS:
+        b = InstrumentRegistry.normalize_symbol(base)
+        if norm.startswith(b):
+            resto = norm[len(b):]
+            if resto and len(resto) in (2, 3) and resto[0] in meses and resto[1:].isdigit():
+                return True
+    return False
 
 
 # Pre-cargar catálogo canónico al importar

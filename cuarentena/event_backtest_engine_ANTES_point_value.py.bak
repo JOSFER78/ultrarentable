@@ -335,56 +335,6 @@ class EventBacktestEngine:
         """Ejecuta la simulaci?n determinista de la estrategia sobre el dataset de velas."""
         t_start = datetime.now(timezone.utc)
 
-        # --- MULTIPLICADOR DE CONTRATO (corregido 2026-08-31) ---------------------------
-        # Hasta hoy el PnL se calculaba como (salida - entrada) * cantidad, asumiendo que
-        # 1 punto de precio = 1 USD. Correcto en cripto (cantidad fraccionaria, el nocional
-        # coincide) pero FALSO en futuros: ES vale 50 USD/punto, NQ 20, GC 100, CL 1000.
-        # Consecuencia medida: toda estrategia sobre CME operaba posiciones ~400 veces mas
-        # pequenas de lo configurado, la comision fija dominaba y el Profit Factor caia a
-        # ~0,30 de forma sistematica en las 4 temporalidades.
-        # El catalogo con los valores correctos ya existia en
-        # services/engine/instrument_registry.py; simplemente no se consultaba.
-        # El multiplicador depende del VENUE DE EJECUCION, no solo del simbolo:
-        #   - FONDEO ejecuta contratos CME reales -> aplica point_value (ES 50, NQ 20, GC 100...)
-        #     y comision fija por contrato.
-        #   - ULTRA ejecuta PERPETUOS EN BINGX, tambien cuando descubre sobre series de TradFi.
-        #     En un perpetuo el nocional es precio x cantidad, la cantidad es fraccionaria y NO
-        #     existe multiplicador de contrato: point_value = 1 y comision porcentual.
-        # Aplicar el multiplicador CME a ULTRA inflaria su PnL por 50x sobre datos de ES.
-        _ruta = str(getattr(strategy, "route", "") or "")
-        _es_fondeo = "FONDEO" in _ruta.upper()
-        try:
-            if not _es_fondeo:
-                point_value, es_futuro = 1.0, False      # ULTRA: perpetuo BingX, nocional
-                raise StopIteration                       # salta al bloque comun sin warning
-            from services.engine.instrument_registry import (
-                InstrumentRegistry,
-                es_spec_verificada,
-            )
-            # En FONDEO el multiplicador de contrato DECIDE el PnL: con ES son 50 USD/punto y con
-            # MES son 5. Si el simbolo no esta en el catalogo canonico, el registro devuelve una
-            # spec por descarte (point_value=1.0) que produciria un PnL 50x menor sin avisar.
-            # Doctrina REAL-ONLY: sin dato verificado no se calcula, se falla.
-            if not es_spec_verificada(strategy.symbol):
-                raise ValueError(
-                    f"NO DATA: '{strategy.symbol}' no tiene especificacion de contrato verificada "
-                    f"en InstrumentRegistry. En ruta FONDEO el multiplicador decide el PnL, asi que "
-                    f"no se calcula con un valor por descarte. Registra el instrumento con specs "
-                    f"reales antes de operarlo."
-                )
-            _spec = InstrumentRegistry.get(strategy.symbol)
-            point_value = float(getattr(_spec, "point_value", 1.0) or 1.0)
-            es_futuro = point_value != 1.0
-        except StopIteration:
-            pass
-        except Exception as exc:  # noqa: BLE001
-            # Cero fallback silencioso: si no se resuelve el instrumento, queda constancia.
-            logger.warning(
-                "No se pudo resolver la especificacion de %s (%s). point_value=1.0 asumido; "
-                "si es un futuro el PnL sera INCORRECTO.", strategy.symbol, exc
-            )
-            point_value, es_futuro = 1.0, False
-
         if not candles or len(candles) < 35:
             return EventBacktestResult(
                 strategy_id=strategy.strategy_id,
@@ -561,10 +511,9 @@ class EventBacktestEngine:
                 if (position_side == "LONG" and bar_low <= liq_price) or (position_side == "SHORT" and bar_high >= liq_price):
                     # Liquidaci?n
                     exit_price = liq_price
-                    gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
                     net_pnl = gross_pnl - comm - slip
                     current_equity = max(0.0, current_equity + net_pnl)
                     total_fees += comm
@@ -599,10 +548,9 @@ class EventBacktestEngine:
                 # Comprobar Stop Loss
                 elif (position_side == "LONG" and bar_low <= stop_loss_price) or (position_side == "SHORT" and bar_high >= stop_loss_price):
                     exit_price = stop_loss_price
-                    gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -637,10 +585,9 @@ class EventBacktestEngine:
                 # Comprobar Take Profit
                 elif (position_side == "LONG" and bar_high >= take_profit_price) or (position_side == "SHORT" and bar_low <= take_profit_price):
                     exit_price = take_profit_price
-                    gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -675,10 +622,9 @@ class EventBacktestEngine:
                 # Comprobar Time Stop por barras
                 elif time_stop_bars is not None and (i - position_entry_bar) >= int(time_stop_bars):
                     exit_price = bar_close
-                    gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -713,10 +659,9 @@ class EventBacktestEngine:
                 # Comprobar Cierre por Fin de Sesión (Session Window EOD)
                 elif self._is_session_end(bar_dt, session_window, is_last_bar=(i == len(closes) - 1)):
                     exit_price = bar_close
-                    gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
+                    comm = exit_price * position_qty * self.taker_fee
+                    slip = exit_price * position_qty * self.slippage
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -764,28 +709,15 @@ class EventBacktestEngine:
             if position_side is None and current_equity > 0 and in_session:
                 ema_fast_val = ema_fast_series[i]
                 ema_slow_val = ema_slow_series[i]
-
-                # --- CRUCE, no comparacion (corregido 2026-08-31) -----------------------
-                # Las estrategias declaran CROSS_ABOVE / CROSS_BELOW en su arbol de reglas,
-                # pero aqui se evaluaba un simple ">" / "<". Un cruce ocurre SOLO en la vela
-                # en que cambia la relacion; un ">" es cierto en ~la mitad de las velas.
-                # Efecto medido del bug: la estrategia estaba permanentemente en mercado,
-                # entraba en practicamente cada vela de sesion (858 velas en sesion -> 846
-                # operaciones en ES 4h) y la rotacion se comia el edge en comisiones.
-                # Afectaba por igual a ULTRA y a FONDEO.
-                ema_fast_prev = ema_fast_series[i - 1] if i > 0 else ema_fast_val
-                ema_slow_prev = ema_slow_series[i - 1] if i > 0 else ema_slow_val
-                cruce_alcista = (ema_fast_prev <= ema_slow_prev) and (ema_fast_val > ema_slow_val)
-                cruce_bajista = (ema_fast_prev >= ema_slow_prev) and (ema_fast_val < ema_slow_val)
-
+                
                 lookback = min(breakout_lookback, i)
                 breakout_long = (bar_close >= np.max(highs[i-lookback:i])) if (use_breakout and lookback > 1) else True
                 rsi_long_ok = (rsi_series[i] >= rsi_threshold_long) if (use_rsi and rsi_series is not None) else True
-                long_signal = cruce_alcista and breakout_long and rsi_long_ok
+                long_signal = (ema_fast_val > ema_slow_val) and breakout_long and rsi_long_ok
 
                 breakout_short = (bar_close <= np.min(lows[i-lookback:i])) if (use_breakout and lookback > 1) else True
                 rsi_short_ok = (rsi_series[i] <= rsi_threshold_short) if (use_rsi and rsi_series is not None) else True
-                short_signal = cruce_bajista and breakout_short and rsi_short_ok
+                short_signal = (ema_fast_val < ema_slow_val) and breakout_short and rsi_short_ok
 
                 if long_signal:
                     position_side = "LONG"

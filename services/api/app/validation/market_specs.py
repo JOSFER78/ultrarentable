@@ -358,40 +358,128 @@ MARKET_SPECS: Dict[str, MarketSpec] = {
         default_timeframe="1h", typical_regime="Dr. Copper Macro Cycle", icon="🥉",
         prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / FTMO"
     ),
+
+    # =========================================================================
+    # 5. FUTUROS MICRO CME (6 ACTIVOS) — RUTA FONDEO (mapeo real en scripts/mine.py
+    # FONDEO_MICRO_MAP). tick_size y point_value verificados contra las specs oficiales
+    # CME/CBOT/COMEX/NYMEX de los contratos Micro E-mini / Micro Gold / Micro WTI, e
+    # idénticos a los ya usados en services/engine/instrument_registry.py::cme_specs
+    # (mismo repo, misma fecha de verificación 2026-08-31).
+    # fee_fixed_usd = 0.60 USD/contrato: tomado tal cual de esa misma tabla
+    # (instrument_registry.py, campo "cme_fee" de MES/MNQ/MYM/M2K/MGC/MCL), NO inventado
+    # aquí. Es la comisión de cambio (exchange fee) del contrato micro; no se ha
+    # verificado por separado la comisión de bróker/prop-firm específica de cada firma
+    # de fondeo (Apex/Topstep/TradeDay/Bulenox) — pendiente si se necesita ese desglose.
+    # slippage_ticks, max_leverage y maint_margin_pct se heredan del contrato completo
+    # homólogo (mismo book/tick de precio, solo cambia el multiplicador): no hay dato
+    # verificado de que difieran para el micro.
+    # =========================================================================
+    "MES": MarketSpec(
+        symbol="MES", canonical_name="Micro E-mini S&P 500", category="INDICES",
+        exchange="CME Globex", point_value=5.0, tick_size=0.25, fee_rate=0.0,
+        fee_fixed_usd=0.60, slippage_ticks=1, max_leverage=100.0, maint_margin_pct=1.0,
+        default_timeframe="15m", typical_regime="NY Session Trend (Micro)", icon="🏛️",
+        prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / TradeDay / Bulenox / FTMO"
+    ),
+    "MNQ": MarketSpec(
+        symbol="MNQ", canonical_name="Micro E-mini Nasdaq 100", category="INDICES",
+        exchange="CME Globex", point_value=2.0, tick_size=0.25, fee_rate=0.0,
+        fee_fixed_usd=0.60, slippage_ticks=1, max_leverage=100.0, maint_margin_pct=1.0,
+        default_timeframe="15m", typical_regime="Opening Range Breakout (Micro)", icon="📈",
+        prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / TradeDay / Bulenox / FTMO"
+    ),
+    "MYM": MarketSpec(
+        symbol="MYM", canonical_name="Micro E-mini Dow Jones ($0.50)", category="INDICES",
+        exchange="CBOT Globex", point_value=0.5, tick_size=1.0, fee_rate=0.0,
+        fee_fixed_usd=0.60, slippage_ticks=1, max_leverage=100.0, maint_margin_pct=1.0,
+        default_timeframe="15m", typical_regime="Value Rotation Trend (Micro)", icon="🏭",
+        prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / TradeDay / Bulenox"
+    ),
+    "M2K": MarketSpec(
+        symbol="M2K", canonical_name="Micro E-mini Russell 2000", category="INDICES",
+        exchange="CME Globex", point_value=5.0, tick_size=0.10, fee_rate=0.0,
+        fee_fixed_usd=0.60, slippage_ticks=1, max_leverage=100.0, maint_margin_pct=1.0,
+        default_timeframe="15m", typical_regime="Small-Cap Expansion (Micro)", icon="🏢",
+        prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / TradeDay / Bulenox"
+    ),
+    "MGC": MarketSpec(
+        symbol="MGC", canonical_name="Micro Oro COMEX Gold Futures", category="COMMODITIES",
+        exchange="COMEX Globex", point_value=10.0, tick_size=0.10, fee_rate=0.0,
+        fee_fixed_usd=0.60, slippage_ticks=1, max_leverage=100.0, maint_margin_pct=1.0,
+        default_timeframe="1h", typical_regime="Macro Safe Haven Trend (Micro)", icon="🥇",
+        prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / TradeDay / Bulenox"
+    ),
+    "MCL": MarketSpec(
+        symbol="MCL", canonical_name="Micro Petróleo Crudo WTI", category="COMMODITIES",
+        exchange="NYMEX Globex", point_value=100.0, tick_size=0.01, fee_rate=0.0,
+        fee_fixed_usd=0.60, slippage_ticks=2, max_leverage=100.0, maint_margin_pct=1.5,
+        default_timeframe="1h", typical_regime="OPEC Trend Expansion (Micro)", icon="🛢️",
+        prop_firm_eligible=True, prop_firm_venues="Apex / Topstep / TradeDay / FTMO"
+    ),
 }
 
 
+class UnknownMarketSpecError(ValueError):
+    """Símbolo sin especificación verificada en MARKET_SPECS.
+
+    Antes, get_market_spec() devolvía un fallback silencioso (spec CRYPTO genérica point_value=1.0,
+    o incluso la spec de OTRO símbolo si este era substring de una key existente, p.ej. "GC" dentro
+    de "MGC" o "ES" dentro de "MES") para cualquier símbolo no reconocido. Eso es exactamente el
+    fallback complaciente que causó el bug de InstrumentRegistry con "GCFOO" heredando la spec de
+    "GC" sin avisar (ver services/engine/instrument_registry.py, corregido 2026-08-31): un símbolo
+    mal escrito o sin dar de alta terminaba calculando costes/PnL con el multiplicador de OTRO
+    contrato, en silencio. Aquí se aplica la misma doctrina: si el símbolo no está verificado,
+    se falla explícito en vez de adivinar.
+    """
+
+
+_MESES_CME_VALIDOS = set("FGHJKMNQUVXZ")
+
+
+def _es_sufijo_vencimiento_cme(resto: str) -> bool:
+    """True si `resto` es un código de vencimiento CME válido (letra de mes + 1-2 dígitos de año)."""
+    if not resto:
+        return True  # símbolo desnudo, p.ej. "ES", "MES"
+    if len(resto) not in (2, 3):
+        return False
+    return resto[0] in _MESES_CME_VALIDOS and resto[1:].isdigit()
+
+
 def get_market_spec(symbol: str) -> MarketSpec:
-    """Devuelve las especificaciones de mercado para un símbolo dado, con fallback inteligente."""
-    clean_sym = symbol.upper().replace("-", "").replace("_", "").replace("/", "")
-    
-    # Búsqueda directa
+    """Devuelve las especificaciones de mercado verificadas para un símbolo dado.
+
+    Búsqueda en 3 pasos, todos exactos o acotados (sin matching por substring difuso):
+    1. Coincidencia exacta del símbolo tal cual llega.
+    2. Coincidencia exacta tras normalizar separadores ("-", "_", "/").
+    3. Prefijo exacto + código de vencimiento CME válido (p.ej. "ESU25", "MESZ6"), evaluando
+       las keys más largas primero para evitar que una key corta absorba una más específica.
+
+    Si ninguna coincide, lanza UnknownMarketSpecError: NO hay fallback silencioso. Quien reciba
+    este error debe dar de alta el símbolo en MARKET_SPECS con datos reales verificados, no
+    capturarlo para sustituirlo por un valor inventado.
+    """
+    if not symbol:
+        raise UnknownMarketSpecError("get_market_spec(): symbol vacío o None, no se puede resolver.")
+
+    clean_sym = symbol.upper().replace("-", "").replace("_", "").replace("/", "").strip()
+
+    # 1. Búsqueda directa (símbolo tal cual)
     if symbol in MARKET_SPECS:
         return MARKET_SPECS[symbol]
+    # 2. Búsqueda por símbolo normalizado
     if clean_sym in MARKET_SPECS:
         return MARKET_SPECS[clean_sym]
-    
-    # Búsqueda por prefijo
-    for key, spec in MARKET_SPECS.items():
-        if clean_sym.startswith(key.replace("_", "")) or key.replace("_", "") in clean_sym:
-            return spec
-            
-    # Fallback Cripto por defecto
-    return MarketSpec(
-        symbol=symbol,
-        canonical_name=f"{symbol} Perpetuo",
-        category="CRYPTO",
-        exchange="Perpetual Swap",
-        point_value=1.0,
-        tick_size=0.01,
-        fee_rate=0.0005,
-        fee_fixed_usd=0.0,
-        slippage_ticks=3,
-        max_leverage=500.0,
-        maint_margin_pct=0.5,
-        default_timeframe="1h",
-        typical_regime="Momentum Breakout",
-        icon="⚡",
-        prop_firm_eligible=False,
-        prop_firm_venues="Solo Ruta ULTRA (BingX 500x)",
+
+    # 3. Prefijo acotado a vencimiento CME válido (keys más largas primero: "STOXX50" antes que
+    #    cualquier substring corta que pudiera coincidir por accidente).
+    for key in sorted(MARKET_SPECS.keys(), key=len, reverse=True):
+        if clean_sym.startswith(key) and _es_sufijo_vencimiento_cme(clean_sym[len(key):]):
+            return MARKET_SPECS[key]
+
+    raise UnknownMarketSpecError(
+        f"get_market_spec(): símbolo '{symbol}' (normalizado '{clean_sym}') no tiene "
+        f"especificación verificada en MARKET_SPECS ({len(MARKET_SPECS)} símbolos dados de alta). "
+        f"No se aplica ningún valor por defecto: añade el símbolo a MARKET_SPECS en "
+        f"services/api/app/validation/market_specs.py con datos reales verificados antes de usarlo "
+        f"en los gates de validación."
     )

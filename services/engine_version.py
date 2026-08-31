@@ -12,7 +12,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-CURRENT_ENGINE_VERSION: str = "5.4.0"
+# 5.5.0 (2026-08-31): cambio de SEMANTICA de senal de entrada en event_backtest_engine.
+#   - CROSS_ABOVE/CROSS_BELOW se evaluaban como comparacion de estado (ema_fast > ema_slow),
+#     cierta en ~la mitad de las velas => la estrategia estaba casi siempre en mercado.
+#     Ahora se evaluan como EVENTO de cruce (prev <= y actual >), como define el contrato.
+#   - Multiplicador de contrato dependiente del venue: FONDEO usa point_value CME,
+#     ULTRA usa 1.0 (perpetuo BingX).
+# Las certificaciones anteriores NO son comparables: se marcan LEGACY_MOTOR_*.
+CURRENT_ENGINE_VERSION: str = "5.6.0"
 CURRENT_ENGINE_NAME: str = "Ultrarentable V5.4.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)"
 CURRENT_PIPELINE_VERSION: str = "5.4.0"
 CURRENT_VALIDATION_PIPELINE_VERSION: str = "5.4.0"

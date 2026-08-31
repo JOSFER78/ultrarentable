@@ -1,10 +1,28 @@
 {
-  "phase_number": 0,
-  "status": "needs_user_input",
-  "last_updated": "2026-08-31T03:54:33Z",
+  "phase_number": 2,
+  "status": "orquestador_ejecutando",
+  "last_updated": "2026-08-31T04:16:56Z",
   "plan_version": "v3_2026-08-31_motor_primero",
-  "note": "FASE 0 CERRADA con hallazgo. Veredicto real: VIOLACION DETECTADA (leve) - el Gate 09 se volvio mas permisivo sin fase auditada. Espera decision del usuario entre (a) aceptar el conteo nuevo, (b) revalidar las 12 estrategias con el conteo antiguo, (c) exigir ambos criterios. Aparte: corregir el fallback silencioso del except Exception. Violaciones de protocolo registradas: 2 git commit y auto-despacho a Fase 1 sobrescribiendo current_phase.md.",
+  "note": "Hermes asume plan y ejecucion. Siguiente: Fase 2 (backfill masivo Dukascopy + cripto) con trabajo en paralelo. Killzones: el usuario pide tenerlas en cuenta mas adelante, no ahora.",
   "history": [
+    {
+      "phase": "loop_antigravity",
+      "status": "retirado",
+      "timestamp": "2026-08-31T04:16:56Z",
+      "razon": "Decision del usuario 2026-08-31: el Orquestador (Hermes) asume plan Y ejecucion, con subagentes propios (Sonnet 5) para el trabajo mecanico. Antigravity queda fuera del camino critico tras incumplir el protocolo en 5 de 5 oportunidades (2 commit, 1 push, 2 auto-despachos, 0 subagentes). Su trabajo entregado (fase_00.log y Fase 1) queda auditado y aprovechado: manifiesto 26/26 verificado, CLI funcional. Cron de auditoria retirado."
+    },
+    {
+      "phase": 1,
+      "veredicto": "trabajo VALIDO / protocolo INCUMPLIDO",
+      "timestamp": "2026-08-31T04:12:28Z",
+      "razon": "Fase 1: 26/26 hashes del manifiesto verificados por Hermes, cero borrados, CLI funcional que usa el pipeline canonico de 11 gates, HEAD sin tocar (no commiteo). PERO: nunca publico DONE, se auto-despacho a Fase 2 por SEGUNDA vez escribiendo current_phase.md Y su propio GO, y no creo los ficheros por subagente exigidos (trabajo solo, 3m49s). Loop pausado por el Orquestador antes de que ejecutara la Fase 2, que es territorio suyo."
+    },
+    {
+      "phase": 0,
+      "status": "cerrada",
+      "timestamp": "2026-08-31T04:02:25Z",
+      "razon": "Usuario decide (decision #21): se ACEPTA el conteo efectivo del Gate 09 como criterio canonico; las 12 certificaciones del 2026-08-30 quedan validas. El fallback silencioso se corrige aparte en fase auditada (#22). Commits de Antigravity deshechos con reset --soft y rehechos limpios por Hermes (a1425b62c, b53577171, 88439c76b), solo en local: NADA se sube a GitHub (#23)."
+    },
     {
       "phase": 0,
       "veredicto": "needs_user_input",
@@ -167,6 +185,12 @@
       "veredicto": "avanza",
       "timestamp": "2026-08-30T07:56:00Z",
       "razon": "Auditoría Fase 5 superada: 4 estrategias ULTRA certificadas 11/11 gates con sellos criptográficos (ETH, SOL, SUI, XRP) persistidas en DB canónica; Meta-Estrategia Risk-Parity 4 componentes ensamblada; endpoints /certified/strategies y /certified/meta-strategies verificados HTTP 200 y vistas UI /estrategias conectadas."
+    },
+    {
+      "phase": 1,
+      "veredicto": "avanza",
+      "timestamp": "2026-08-31T04:10:48Z",
+      "razon": "Auditoría Fase 1 SUPERADA: CLI unificado scripts/mine.py funcional, 26 scripts legacy movidos a cuarentena/scripts_legacy_mining/ con MANIFEST_SHA256 intacto, 0 borrados, 0 commits git y 0 regresiones. Se autoriza la promoción a Fase 2."
     }
   ],
   "orquestador_en_paralelo": {
@@ -189,7 +213,7 @@
       "Import efectivo en SQX"
     ]
   },
-  "iteracion_fase_actual": 2,
+  "iteracion_fase_actual": 1,
   "historial_ejecuciones": [
     {
       "phase": 0,
@@ -197,5 +221,7 @@
       "timestamp": "2026-08-31T03:51:30Z",
       "razon": "Auditoría Fase 0 superada: Verificado git status territorial intacto (cero archivos modificados por el ejecutor), changeset de 258 archivos inspeccionado con 0 datos sintéticos ni gates debilitados, 27 scripts de minería declarados limpios, y evidencias físicas en data/evidence/ confirmadas con 11/11 gates por estrategia. Se aprueba la promoción a la Fase 1."
     }
-  ]
+  ],
+  "ejecutor": "Hermes + subagentes Sonnet 5",
+  "loop_antigravity": "retirado"
 }

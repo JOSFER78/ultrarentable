@@ -148,17 +148,74 @@ Un obstáculo técnico **no** es motivo: eso se reporta y se sigue con el resto 
 
 ---
 
-## 4. MÉTODO MULTI-AGENTE (obligatorio en toda fase)
+## 4. MÉTODO MULTI-AGENTE — OBLIGATORIO Y VERIFICABLE FÍSICAMENTE
 
-**Prohibido trabajar en solitario.** Cada fase se reparte entre subagentes en paralelo.
+### 4.1 Por qué esto no es opcional
 
-- Reparto típico: **A1** backend/lógica · **A2** verificación y tests · **A3** auditoría de evidencias.
-- **Cada subagente verifica su propio trabajo con evidencia real** (`curl`, `ls`, `diff`, salida de
-  test) *antes* de reportar al coordinador.
-- El coordinador consolida, **contrasta lo que dicen entre sí** y firma.
-- El informe **debe** incluir una tabla `subagente | qué hizo | evidencia aportada`.
+**Trabajando solo vas demasiado rápido y te inventas lo que no has comprobado.** Es tu patrón
+documentado, y el usuario lo ha señalado explícitamente. En la Fase 1 escribiste 633 líneas de
+código para sustituir 19.396 líneas repartidas en 26 ficheros **en un minuto**: es materialmente
+imposible haber leído lo que estabas consolidando.
 
-Un subagente que reporta "hecho" sin evidencia se trata igual que un dato inventado: no cuenta.
+Repartir el trabajo entre subagentes te obliga a frenar, porque cada uno tiene que **verificar su
+parte y dejar constancia** antes de que el coordinador pueda cerrar nada. Ese es el objetivo: no
+es burocracia, es el freno.
+
+### 4.2 La regla dura: un fichero por subagente
+
+Cada subagente escribe **su propio fichero físico**:
+
+```
+orchestration/results/fase_<NN>_A1.log
+orchestration/results/fase_<NN>_A2.log
+orchestration/results/fase_<NN>_A3.log
+```
+
+Cada uno de esos ficheros contiene, y solo eso:
+
+```
+# FASE <NN> — SUBAGENTE A<N> — <su cometido>
+Inicio (UTC): <date -u +%H:%M:%S>     Fin (UTC): <date -u +%H:%M:%S>
+
+## Comandos ejecutados y salida CRUDA
+<comando>
+<salida literal, sin resumir>
+
+## Qué concluyo, y de qué salida concreta lo concluyo
+<una línea por conclusión, cada una citando el comando que la respalda>
+
+## Lo que NO pude verificar
+<NO DATA + el comando que lo demuestra. Si no hay nada, escribe "nada">
+```
+
+**El Orquestador comprueba que esos ficheros existen antes de leer el informe principal.**
+
+- ¿No existen? ⇒ trabajaste solo ⇒ **fase rechazada sin leer**.
+- ¿Existen pero sin salida cruda de comandos? ⇒ subagentes decorativos ⇒ **rechazada**.
+- ¿Los tres marcan la misma hora de inicio y fin al minuto? ⇒ no se ejecutaron de verdad ⇒
+  **rechazada**.
+
+### 4.3 El trabajo del coordinador es CONTRASTAR, no pegar
+
+El coordinador **no** concatena los tres ficheros. Su trabajo es buscar **contradicciones** entre
+ellos y resolverlas **antes** de entregar:
+
+- Si A1 dice que un script está vivo y A3 lo movió a cuarentena ⇒ contradicción, se resuelve.
+- Si A2 dice que un test pasa y A3 dice que falla ⇒ contradicción, se ejecuta otra vez y se decide.
+- Si dos subagentes dan números distintos del mismo dato ⇒ se vuelve a medir.
+
+En el informe principal, la sección de reparto debe incluir una fila
+**"contradicciones detectadas entre subagentes y cómo se resolvieron"**. Si escribes "ninguna",
+el Orquestador va a comparar los tres ficheros él mismo para comprobarlo.
+
+### 4.4 Reparto por defecto
+
+- **A1** → inventario, análisis y lectura de lo existente (el que más despacio debe ir)
+- **A2** → construcción o modificación
+- **A3** → verificación independiente y evidencias en disco
+
+A3 **nunca** verifica su propio trabajo: verifica el de A2. Un subagente que se audita a sí mismo
+no está auditando nada.
 
 ---
 
@@ -322,7 +379,12 @@ Si respondes "no" a cualquiera, **no publiques `DONE` todavía**:
 - [ ] ¿He escrito `NO DATA` / `ERROR` en cada punto donde no pude verificar, en vez de rellenar?
 - [ ] ¿Hay alguna cifra en mi informe que no pueda respaldar con un comando? → **quítala**
 - [ ] ¿He hecho `git commit`, `git push` o `rm`? → si sí, **repórtalo inmediatamente**, es grave
-- [ ] ¿Tiene el informe la tabla de reparto multi-agente?
+- [ ] ¿Existen físicamente los ficheros `results/fase_<NN>_A1.log`, `_A2.log`, `_A3.log`?
+      (`ls orchestration/results/fase_<NN>_A*.log` debe listarlos. Si no existen, trabajaste solo)
+- [ ] ¿Cada uno tiene salida CRUDA de comandos, no solo conclusiones?
+- [ ] ¿Sus horas de inicio/fin son distintas entre sí y coherentes con el trabajo hecho?
+- [ ] ¿He contrastado los tres buscando contradicciones, y las he resuelto ANTES de entregar?
+- [ ] ¿Tiene el informe la tabla de reparto multi-agente con la fila de contradicciones?
 - [ ] ¿He actualizado `status.json` a `done` con `last_updated` en UTC?
 - [ ] ¿El `report_sha256` del `DONE` corresponde al informe **final** (no a una versión anterior)?
 
