@@ -48,12 +48,10 @@ TIMEFRAME_MAP = {
     "1d": "1d", "1D": "1d", "d1": "1d", "D1": "1d",
 }
 
-# Rutas estándar de bases de datos SQLite
-DEFAULT_DB_LOCATIONS = [
-    Path("services/api/app/db/ultrarentable.db"),
-    Path("database.sqlite"),
-    Path.home() / ".local" / "state" / "ultrarentable" / "ultrarentable.sqlite3",
-]
+# Sin default: la ruta services/api/app/db/ultrarentable.db no existe (retirada
+# adrede de la unificación de DB_PATH). Este script de mantenimiento masivo NO debe
+# apuntar a la BD canónica por defecto — solo opera con --db-path explícito.
+DEFAULT_DB_LOCATIONS: List[Path] = []
 
 # Umbrales Institucionales de Riesgo y Clasificación
 FONDEO_MAX_DD_PCT = 4.5

@@ -24,14 +24,12 @@ from typing import Any, Dict, List, Optional, Tuple
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data" / "normalized"
 EVIDENCE_DIR = ROOT_DIR / "data" / "evidence"
-DB_PATH = Path(
-    os.environ.get(
-        "ULTRARENTABLE_DB_PATH",
-        os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3"),
-    )
-)
 
 sys.path.insert(0, str(ROOT_DIR))
+
+from services.api.app.config import STATE_DB_PATH
+
+DB_PATH = STATE_DB_PATH
 
 from contracts.snapshots.strategy_snapshot import (
     StrategySnapshot,
@@ -212,10 +210,100 @@ def load_candles_from_file(file_path: Path) -> List[Dict[str, Any]]:
     raise ValueError(f"Extensión no soportada: {file_path.suffix}")
 
 
+def _arquetipos_5_14_0_configs(is_ultra: bool) -> List[Dict[str, Any]]:
+    """F03.3 (5.14.0): las 4 familias EVENTO nuevas -- reversion_atr, squeeze_breakout,
+    session_momentum, streak_edge -- con las rejillas de
+    orchestration/reviews/diseno_arquetipos_5_14.md. sl_atr_mult/tp_atr_mult/risk_pct
+    reutilizan las MISMAS rejillas canonicas ya usadas en el perfil `amplio` (cero
+    constantes magicas nuevas). `ema_fast`/`ema_slow` van como placeholder inerte: estos
+    arquetipos no los usan (EventBacktestEngine los despacha por `archetype`/`archetype_params`,
+    no por el interprete generico de EMAs), pero run_mining_pipeline los lee por clave fija.
+    """
+    riesgos = [0.02, 0.05, 0.10, 0.20] if is_ultra else [0.005, 0.01, 0.02, 0.04]
+    sl_only = [1.5, 2.0, 3.0]
+    sl_tp_pairs = [(1.5, 4.0), (2.0, 6.0), (3.0, 8.0)]
+    cfgs: List[Dict[str, Any]] = []
+
+    # A. reversion_atr -- TP es dinamico (la propia EMA ancla, recalculada por el motor barra
+    # a barra): no se busca; tp_atr_mult solo satisface el esquema (ExitModel.tp_value > 0).
+    for ema_ancla in (20, 50, 100):
+        for banda_atr_mult in (1.5, 2.0, 3.0):
+            for sl in sl_only:
+                for risk in riesgos:
+                    cfgs.append({
+                        "archetype": "REVERSION_ATR",
+                        "ema_fast": 20, "ema_slow": 50,
+                        "sl_atr_mult": sl, "tp_atr_mult": sl * 3.0,
+                        "risk_pct": risk,
+                        "archetype_params": {"ema_ancla": ema_ancla, "banda_atr_mult": banda_atr_mult},
+                    })
+
+    # B. squeeze_breakout -- squeeze de volatilidad (percentil de ATR) + primera ruptura
+    # Donchian durante el squeeze.
+    for squeeze_pct in (20.0, 30.0):
+        for squeeze_lookback in (50, 100):
+            for breakout_lookback in (10, 20):
+                for sl, tp in sl_tp_pairs:
+                    for risk in riesgos:
+                        cfgs.append({
+                            "archetype": "SQUEEZE_BREAKOUT",
+                            "ema_fast": 20, "ema_slow": 50,
+                            "sl_atr_mult": sl, "tp_atr_mult": tp,
+                            "risk_pct": risk,
+                            "archetype_params": {
+                                "squeeze_pct": squeeze_pct,
+                                "squeeze_lookback": squeeze_lookback,
+                                "breakout_lookback": breakout_lookback,
+                            },
+                        })
+
+    # C. session_momentum -- cierre_eod es dimension de busqueda SOLO en ULTRA; en FONDEO
+    # decision #24 lo fuerza a True siempre (funding_discovery.generate_candidate_blueprint
+    # ignora el valor recibido para este arquetipo), asi que aqui ni se explora.
+    cierre_eod_opts = [True, False] if is_ultra else [True]
+    for ancla_horas in (1, 2, 4):
+        for ema_pull in (20, 50):
+            for cierre_eod in cierre_eod_opts:
+                for sl, tp in sl_tp_pairs:
+                    for risk in riesgos:
+                        cfgs.append({
+                            "archetype": "SESSION_MOMENTUM",
+                            "ema_fast": 20, "ema_slow": 50,
+                            "sl_atr_mult": sl, "tp_atr_mult": tp,
+                            "risk_pct": risk,
+                            "archetype_params": {
+                                "ancla_horas": ancla_horas,
+                                "ema_pull": ema_pull,
+                                "cierre_eod": cierre_eod,
+                            },
+                        })
+
+    # D. streak_edge -- `modo` es dimension de busqueda: la evidencia por celda decide si
+    # continuacion o reversion funciona, no se presupone.
+    for n_racha in (3, 4, 5):
+        for modo in ("continuacion", "reversion"):
+            for sl, tp in sl_tp_pairs:
+                for risk in riesgos:
+                    cfgs.append({
+                        "archetype": "STREAK_EDGE",
+                        "ema_fast": 20, "ema_slow": 50,
+                        "sl_atr_mult": sl, "tp_atr_mult": tp,
+                        "risk_pct": risk,
+                        "archetype_params": {"n_racha": n_racha, "modo": modo},
+                    })
+
+    return cfgs
+
+
 def build_candidate_search_configs(track: str, symbol: str, timeframe: str, profile: str) -> List[Dict[str, Any]]:
     """Construye el espacio de exploración cuantitativo según track, timeframe y perfil."""
     is_ultra = (track.lower() == "ultra")
     tf_lower = timeframe.lower()
+
+    if profile.lower() == "arquetipos":
+        # F03.3 (5.14.0): perfil dedicado que mina SOLO las 4 familias nuevas (re-campana sin
+        # re-evaluar lo ya barrido por `amplio`/`default`/`champions`).
+        return _arquetipos_5_14_0_configs(is_ultra)
 
     if profile.lower() == "champions":
         if is_ultra:
@@ -305,6 +393,9 @@ def build_candidate_search_configs(track: str, symbol: str, timeframe: str, prof
                                 "pyramiding_tiers": py,
                                 "breakout_lookback": 15 if arch == "MOMENTUM_BREAKOUT" else 0,
                             })
+        # F03.3 (5.14.0): las 4 familias EVENTO nuevas se anaden AL perfil amplio (aditivo:
+        # las familias EMA/RSI/Donchian de arriba no cambian ni una linea de su rejilla).
+        configs.extend(_arquetipos_5_14_0_configs(is_ultra))
         return configs
 
     # Default / Grid Search
@@ -380,6 +471,8 @@ def save_certified_candidate_to_db(
     oos_bt: Any,
     scorecard_payload: Dict[str, Any],
     certified_at_iso: str,
+    gates_passed: int,
+    tier: str = "TIER_1_CERTIFIED",
 ) -> bool:
     try:
         conn = get_db_connection()
@@ -392,8 +485,9 @@ def save_certified_candidate_to_db(
                 net_profit_is, trades_is, profit_factor_is, max_dd_is_pct,
                 net_profit_oos, trades_oos, profit_factor_oos, max_dd_oos_pct,
                 ratio_oos_is, wfo_pass_pct, monte_carlo_score,
-                scorecard_json, engine_version, validation_pipeline_version, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                scorecard_json, engine_version, validation_pipeline_version, created_at,
+                gates_passed, tier
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 snapshot.strategy_id,
@@ -419,6 +513,8 @@ def save_certified_candidate_to_db(
                 CURRENT_ENGINE_VERSION,
                 CURRENT_ENGINE_VERSION,
                 certified_at_iso,
+                int(gates_passed),
+                tier,
             ),
         )
         conn.commit()
@@ -785,6 +881,8 @@ def run_mining_pipeline(
                 oos_bt=oos_bt,
                 scorecard_payload=scorecard_payload,
                 certified_at_iso=certified_at_iso,
+                gates_passed=gates_eval.get("gates_passed_count", 0),
+                tier="TIER_1_CERTIFIED",
             )
 
             log_msg(f"🏆 CERTIFICADA 11/11: {strat_id} (OOS PF: {oos_bt.profit_factor:.2f}, DD: {oos_bt.max_drawdown_pct:.2f}%) -> DB Saved: {saved}")

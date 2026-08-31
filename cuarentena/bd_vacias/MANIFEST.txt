@@ -2,3 +2,13 @@
 data/sqlite.db | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 data/candidates.db | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 data/state.db | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+.runtime/state/ultrarentable.sqlite3 | bytes=4096 | sha256=e3ba06536f7dbba337dee3c1c5f01b43660ce276abb54c5cee2d5defc5b970aa
+data/evidence/candidates.db | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+data/evidence/candidates_evidence.db | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+data/db/strategies.db | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+data/sqlite/candidates.db | bytes=12288 | sha256=1d401dfe3662045bf557c218e3f75d681a2188e771b9abe13da3c42b473bd73b
+services/api/app/db/ultrarentable.db | bytes=192512 | sha256=461842c041bdd931489ba7bf8862e33745e34cf3151d8500c054925c533ec08a
+data/state/ultrarentable.sqlite3-wal | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+data/state/ultrarentable.sqlite3-shm | bytes=32768 | sha256=fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb
+data/state/ultrarentable.sqlite3 (SOBRESCRITO por data/db/ultrarentable.sqlite3, ver nota) | bytes=0 | sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+# NOTA: data/state/ultrarentable.sqlite3 y data/db/ultrarentable.sqlite3 colisionaron en el mismo nombre destino (ultrarentable.sqlite3) por el comando de mv indicado en el plan; solo el segundo (data/db/ultrarentable.sqlite3) sobrevive en cuarentena. Ambos eran presumiblemente de 0 bytes (BDs vacias).

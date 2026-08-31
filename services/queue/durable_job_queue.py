@@ -200,6 +200,35 @@ class DurableJobQueue:
             conn.close()
             return changed
 
+    def heartbeat(self, job_ids: List[str]) -> int:
+        """Latido del worker: refresca updated_at_utc de sus trabajos VIVOS y los re-reclama.
+
+        Los trabajos de minería tardan >300s por celda y el watchdog por defecto los marcaba
+        RETRYING pese a estar vivos (visto 2026-08-31: volteo exacto a los 300s del claim, con
+        riesgo de minería duplicada y fuga del proceso original). El worker llama a esto en
+        cada iteración: mientras haya latido, un trabajo no es huérfano.
+        """
+        if not job_ids:
+            return 0
+        now_utc = datetime.now(timezone.utc).isoformat()
+        placeholders = ",".join("?" for _ in job_ids)
+        with self._lock:
+            conn = self._get_connection()
+            cur = conn.cursor()
+            cur.execute(
+                f"""
+                UPDATE durable_job_queue
+                SET status = 'IN_PROGRESS', updated_at_utc = ?
+                WHERE job_id IN ({placeholders})
+                  AND status IN ('IN_PROGRESS', 'RETRYING');
+                """,
+                (now_utc, *job_ids),
+            )
+            changed = cur.rowcount
+            conn.commit()
+            conn.close()
+            return changed
+
     def fail_job(self, job_id: str, error_message: str) -> JobStatus:
         """Registra un error y decide si reintentar o marcar como fallo terminal."""
         now_utc = datetime.now(timezone.utc).isoformat()

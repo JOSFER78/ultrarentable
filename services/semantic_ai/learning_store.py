@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from services.api.app.config import LEARNING_DB_PATH
 from contracts.learning_contracts import (
     AgentDebateRecord,
     FailureCategory,
@@ -40,8 +41,7 @@ class LearningStore:
 
     def __init__(self, db_path: Optional[str] = None) -> None:
         if db_path is None:
-            base_dir = Path(__file__).resolve().parent.parent.parent
-            self.db_path = str(base_dir / "learning_store.sqlite")
+            self.db_path = str(LEARNING_DB_PATH)
         else:
             self.db_path = str(db_path)
 

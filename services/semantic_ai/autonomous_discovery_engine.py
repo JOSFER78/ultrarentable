@@ -36,6 +36,7 @@ from contracts.snapshots.strategy_snapshot import (
     StrategyRoute,
     StrategySnapshot,
 )
+from services.api.app.config import STATE_DB_PATH
 from services.api.app.data_feed.feed_loader import load_candles
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.engine_version import CURRENT_ENGINE_VERSION
@@ -103,7 +104,7 @@ class AutonomousDiscoveryAgentLoop:
     """Orquestador Autónomo Multi-Agente de Descubrimiento Semántico sin Reglas Hardcodeadas."""
 
     def __init__(self, db_path: Optional[Path] = None):
-        self.db_path = db_path or Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+        self.db_path = db_path or STATE_DB_PATH
         self.profiler = SemanticMarketProfiler()
         self.backtest_engine = EventBacktestEngine()
         self.gates_orchestrator = GatePipelineOrchestrator()

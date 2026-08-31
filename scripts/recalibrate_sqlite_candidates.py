@@ -26,15 +26,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger("RecalibrateCandidates")
 
-# Rutas estándar de bases de datos
-DEFAULT_DB_LOCATIONS = [
-    Path("services/api/app/db/ultrarentable.db"),
-    Path.home() / ".local" / "state" / "ultrarentable" / "ultrarentable.sqlite3",
-    Path("C:/Users/yo/Pictures/Descargaspc/workspace (1)/services/api/app/db/ultrarentable.db"),
-    Path("C:/Users/yo/.local/state/ultrarentable/ultrarentable.sqlite3"),
-    Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/services/api/app/db/ultrarentable.db"),
-    Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"),
-]
+# Sin default: la ruta services/api/app/db/ultrarentable.db no existe (retirada
+# adrede de la unificación de DB_PATH). Este script de mantenimiento masivo NO debe
+# apuntar a la BD canónica por defecto — solo opera con --db explícito.
+DEFAULT_DB_LOCATIONS: List[Path] = []
 
 # Umbral crítico de Drawdown Realizado
 CRITICAL_DRAWDOWN_THRESHOLD_PCT = 35.0

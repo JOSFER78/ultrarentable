@@ -32,6 +32,7 @@ from services.engine_version import CURRENT_ENGINE_VERSION
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
+from services.api.app.config import STATE_DB_PATH
 from services.semantic_ai.semantic_engine import (
     FailureKnowledgeDB,
     InterpreterAgent,
@@ -44,15 +45,15 @@ from services.semantic_ai.semantic_engine import (
 logger = logging.getLogger("ExpertRefinementLoop")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+DB_PATH = STATE_DB_PATH
 DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
 
 
 class ExpertStrategyOptimizer:
     """Servicio de reprogramación, dopaje algorítmico y optimización en bucle cerrado con 5 agentes de IA."""
 
-    def __init__(self, db_path: Optional[Path] = None, data_dir: Optional[Path] = None):
-        self.db_path = db_path or DB_PATH
+    def __init__(self, db_path: Optional[str] = None, data_dir: Optional[Path] = None):
+        self.db_path = db_path
         self.data_dir = data_dir or DATA_DIR
         self.ultra_discovery = UltraDiscoveryEngine()
         self.funding_discovery = FundingDiscoveryEngine()
@@ -103,7 +104,7 @@ class ExpertStrategyOptimizer:
         """Ejecuta el bucle cerrado de diagnóstico, inyección experta, mutación y re-evaluación."""
         logger.info(f"Iniciando Bucle de Refinamiento Experto para candidato: {candidate_id} (Máx. {max_iterations} iteraciones)...")
 
-        conn = sqlite3.connect(str(self.db_path), timeout=30.0)
+        conn = sqlite3.connect(self.db_path or str(STATE_DB_PATH), timeout=30.0)
         cur = conn.cursor()
         row = cur.execute(
             """SELECT candidate_id, name, route, symbol, timeframe, status, scorecard_json, engine_version 

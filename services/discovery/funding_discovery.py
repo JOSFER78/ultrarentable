@@ -89,7 +89,10 @@ class FundingDiscoveryEngine:
         timeframe: str,
         dataset_id: str,
         dataset_sha256: str,
-        risk_per_trade_pct: float = 0.25,
+        # Unidad canonica de riesgo desde motor 5.10.0: FRACCION (0.0025 == 0.25%).
+        # El default anterior (0.25, semantica porcentaje) pasaria a significar 25% por
+        # operacion SIN que la guardia del motor (>0.5) lo detectara: 100x sobre-riesgo.
+        risk_per_trade_pct: float = 0.0025,
         target_profit_ticks: float = 45.0,
         stop_loss_ticks: float = 15.0,
         sl_atr_mult: Optional[float] = None,
@@ -105,10 +108,15 @@ class FundingDiscoveryEngine:
         session_end_utc: Optional[str] = None,
         close_at_eod: Optional[bool] = None,
         allowed_days: Optional[List[int]] = None,
+        # 5.14.0 (F03.3): parametros EXPLICITOS de las 4 familias EVENTO nuevas (reversion_atr,
+        # squeeze_breakout, session_momentum, streak_edge). Ignorado por cualquier otro
+        # arquetipo -- aditivo, no cambia ninguna llamada existente.
+        archetype_params: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> StrategySnapshot:
         """Genera un StrategySnapshot con todos los parámetros del trial aplicados."""
         arch_upper = str(archetype).upper() if archetype else "INSTITUTIONAL_SESSION_MOMENTUM"
+        _ap = archetype_params or {}
         ema_fast_spec = IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0)
         ema_slow_spec = IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0)
         rsi_spec = IndicatorSpec(name="RSI", params={"period": int(rsi_period)}, source_field="close", shift=0)
@@ -134,6 +142,21 @@ class FundingDiscoveryEngine:
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
                 ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
             ]
+        elif arch_upper in {"REVERSION_ATR", "SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}:
+            # 5.14.0 (F03.3): las 4 familias EVENTO nuevas no se interpretan via el arbol
+            # generico de indicadores -- EventBacktestEngine las despacha por `archetype`
+            # (campo explicito) y lee sus dimensiones de `archetype_params` (campo explicito,
+            # sin inferencia por nombre). Este ConditionNode es solo documentacion/huella
+            # criptografica: deja los parametros reales tambien dentro de entry_rules, que SI
+            # forma parte del canonical_hash.
+            event_spec = IndicatorSpec(
+                name=f"{arch_upper}_EVENT",
+                params=dict(_ap),
+                source_field="close",
+                shift=0,
+            )
+            long_conditions = [ConditionNode(left=event_spec, op=ComparisonOp.EQ, right=1.0)]
+            short_conditions = [ConditionNode(left=event_spec, op=ComparisonOp.EQ, right=-1.0)]
         else:
             long_conditions = [
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec),
@@ -157,6 +180,21 @@ class FundingDiscoveryEngine:
         tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
         tp_val = float(tp_atr_mult) if tp_atr_mult is not None else float(target_profit_ticks)
 
+        if arch_upper == "REVERSION_ATR":
+            # SL fijo (ATR desde la entrada); el TP REAL es dinamico (EMA ancla, recalculada
+            # barra a barra por EventBacktestEngine). tp_val aqui es un PLACEHOLDER que solo
+            # satisface el esquema (ExitModel.tp_value > 0); el motor lo ignora para este
+            # arquetipo (ver "5.14.0 reversion_atr: TP DINAMICO" en event_backtest_engine.py).
+            sl_type = StopLossType.ATR_MULTIPLE
+            sl_val = float(sl_atr_mult) if sl_atr_mult is not None else 2.0
+            tp_type = TakeProfitType.ATR_MULTIPLE
+            tp_val = float(tp_atr_mult) if tp_atr_mult is not None else (sl_val * 3.0)
+        elif arch_upper in {"SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}:
+            sl_type = StopLossType.ATR_MULTIPLE
+            sl_val = float(sl_atr_mult) if sl_atr_mult is not None else 2.0
+            tp_type = TakeProfitType.ATR_MULTIPLE
+            tp_val = float(tp_atr_mult) if tp_atr_mult is not None else 6.0
+
         exit_rules = ExitModel(
             sl_type=sl_type,
             sl_value=sl_val,
@@ -171,11 +209,15 @@ class FundingDiscoveryEngine:
             max_open_positions=1,
             max_daily_loss_usd=float(kwargs.get("max_daily_loss_usd", 1000.0)),
         )
+        # Decision #24: en FONDEO el cierre EOD de session_momentum es SIEMPRE obligatorio
+        # (no es una dimension de busqueda como en ULTRA); se fuerza aqui sin importar lo que
+        # traiga `close_at_eod` o `archetype_params["cierre_eod"]`.
+        _close_at_eod_final = True if arch_upper == "SESSION_MOMENTUM" else close_at_eod
         session_window = resolve_session_window(
             symbol=symbol,
             session_start_utc=session_start_utc,
             session_end_utc=session_end_utc,
-            close_at_eod=close_at_eod,
+            close_at_eod=_close_at_eod_final,
             allowed_days=allowed_days,
         )
         return StrategySnapshot.create_and_hash(
@@ -198,4 +240,5 @@ class FundingDiscoveryEngine:
                 vault_harvest_rate_pct=0.0,
             ),
             session_window=session_window,
+            archetype_params=archetype_params,
         )

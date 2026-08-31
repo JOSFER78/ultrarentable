@@ -37,6 +37,7 @@ def test_real_avx_discovery_produces_trades() -> None:
             tp_atr_mult=6.0,
             pyramiding_tiers_count=2,
             archetype=archetype,
+            risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
         )
         result = backtester.run_backtest(strategy, candles, initial_capital_usd=1000.0)
         results.append((archetype, result.total_trades, result.profit_factor, result.net_profit_usd))

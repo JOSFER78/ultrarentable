@@ -34,6 +34,7 @@ def test_redteam_candle_tampering_alters_backtest_deterministically():
         timeframe="1h",
         dataset_id="ds_btc_1h",
         dataset_sha256="sha_rt_1",
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     engine = EventBacktestEngine()
@@ -100,6 +101,7 @@ def test_redteam_evidence_record_sha256_integrity():
         timeframe="1h",
         dataset_id="ds_btc_1h",
         dataset_sha256="sha_rt_1",
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     engine = EventBacktestEngine()

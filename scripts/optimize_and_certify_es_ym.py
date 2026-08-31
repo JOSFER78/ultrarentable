@@ -19,9 +19,12 @@ from typing import Any, Dict, List, Optional, Tuple
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data" / "normalized"
-DB_PATH = Path(os.environ.get("ULTRARENTABLE_DB_PATH", os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3")))
 
 sys.path.insert(0, str(ROOT_DIR))
+
+from services.api.app.config import STATE_DB_PATH
+
+DB_PATH = STATE_DB_PATH
 
 from contracts.snapshots.strategy_snapshot import StrategySnapshot, StrategyRoute, PyramidingPolicy, MarginPolicy
 from contracts.canonical_strategy import (

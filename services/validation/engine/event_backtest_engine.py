@@ -96,6 +96,12 @@ class EventBacktestResult:
     order_log: List[OrderEvent] = field(default_factory=list)
     fill_log: List[FillEvent] = field(default_factory=list)
     execution_time_ms: float = 0.0
+    # 5.7.0: "MEASURED" si el dataset trae spread medido por barra (Dukascopy) y la ejecucion
+    # fue asimetrica bid/ask real; "ASSUMED" si se uso el modelo de slippage en bps.
+    friction_model: str = "ASSUMED"
+    # 5.13.0: coste NETO de funding acumulado (perpetuos ULTRA), positivo = coste pagado,
+    # negativo = ingreso neto recibido. 0.0 si no aplica (futuros, o par fuera del registro).
+    total_funding_usd: float = 0.0
 
     def to_canonical_ledger(self, symbol: str = "BTCUSDT", execution_config_hash: str = "") -> CanonicalExecutionLedger:
         """Convierte el resultado de backtest determinista a CanonicalExecutionLedger oficial con Hash-Chain Merkle."""
@@ -167,10 +173,37 @@ class EventBacktestResult:
             losing_trades_count=self.losing_trades,
             total_commission_paid_usd=self.total_fees_usd,
             total_slippage_paid_usd=self.total_slippage_usd,
-            total_funding_paid_usd=0.0,
+            total_funding_paid_usd=self.total_funding_usd,
             trades=canonical_trades,
         )
         return ledger
+
+
+# --- REGISTRO DE FRICCION REAL BINGX (5.12.0) --------------------------------------------
+# data/registry/bingx_friction.json trae spread/funding/fees MEDIDOS por par via API BingX.
+# Cache a nivel de modulo: el fichero no cambia durante la vida del proceso y se consulta
+# por cada llamada a run_backtest (potencialmente miles en un barrido de mineria).
+_BINGX_FRICTION_CACHE: Optional[Dict[str, Any]] = None
+_BINGX_FRICTION_LOADED: bool = False
+
+
+def _load_bingx_friction() -> Optional[Dict[str, Any]]:
+    """Carga (una vez por proceso) `resumen.pairs` del registro de friccion real BingX.
+    None si el fichero no existe o es invalido: el llamador cae al modelo ASSUMED."""
+    global _BINGX_FRICTION_CACHE, _BINGX_FRICTION_LOADED
+    if _BINGX_FRICTION_LOADED:
+        return _BINGX_FRICTION_CACHE
+    _BINGX_FRICTION_LOADED = True
+    try:
+        import json as _json
+        from pathlib import Path as _Path
+        _registry_path = _Path(__file__).resolve().parents[3] / "data" / "registry" / "bingx_friction.json"
+        with open(_registry_path, "r", encoding="utf-8") as _f:
+            _data = _json.load(_f)
+        _BINGX_FRICTION_CACHE = _data.get("resumen", {}).get("pairs") or None
+    except Exception:  # noqa: BLE001
+        _BINGX_FRICTION_CACHE = None
+    return _BINGX_FRICTION_CACHE
 
 
 class EventBacktestEngine:
@@ -236,6 +269,98 @@ class EventBacktestEngine:
                 rsi[i] = 100.0 - (100.0 / (1.0 + rs))
 
         return rsi
+
+    # --- 5.14.0 (F03.3): helpers de las 4 familias de arquetipos EVENTO nuevas -------------
+    # reversion_atr, squeeze_breakout, session_momentum, streak_edge. Cada helper precalcula
+    # UN array/par de arrays deterministas y causales (solo datos de la barra i y anteriores);
+    # el despacho por archetype_label en run_backtest los consume evento a evento.
+    @staticmethod
+    def _calc_streak_events(closes: np.ndarray, n_racha: int) -> "tuple[np.ndarray, np.ndarray]":
+        """Evento puntual (no estado): True en la barra i si el cierre completa una racha de
+        EXACTAMENTE `n_racha` cierres consecutivos en la misma direccion. Una racha mas larga
+        que n_racha no vuelve a disparar hasta la siguiente racha nueva."""
+        n = len(closes)
+        n_racha = max(1, int(n_racha))
+        up = np.zeros(n, dtype=bool)
+        down = np.zeros(n, dtype=bool)
+        streak_len = 0
+        streak_dir = 0
+        for i in range(1, n):
+            if closes[i] > closes[i - 1]:
+                streak_len = streak_len + 1 if streak_dir == 1 else 1
+                streak_dir = 1
+            elif closes[i] < closes[i - 1]:
+                streak_len = streak_len + 1 if streak_dir == -1 else 1
+                streak_dir = -1
+            else:
+                streak_len = 0
+                streak_dir = 0
+            if streak_dir == 1 and streak_len == n_racha:
+                up[i] = True
+            elif streak_dir == -1 and streak_len == n_racha:
+                down[i] = True
+        return up, down
+
+    @staticmethod
+    def _calc_squeeze_active(atr: np.ndarray, lookback: int, pct: float) -> np.ndarray:
+        """True en la barra i si atr[i] <= percentil `pct` del propio ATR en la ventana causal
+        que termina en i (solo pasado + barra actual: cero lookahead). Vectorizado con
+        sliding_window_view para el grueso de la serie; las primeras `lookback-1` barras usan
+        una ventana expansiva (todavia no hay historia suficiente para la ventana completa)."""
+        n = len(atr)
+        lookback = max(2, int(lookback))
+        active = np.zeros(n, dtype=bool)
+        if n == 0:
+            return active
+        prefix = min(lookback - 1, n)
+        for i in range(prefix):
+            window = atr[: i + 1]
+            if len(window) >= 2:
+                active[i] = atr[i] <= np.percentile(window, pct)
+        if n > lookback - 1:
+            windows = np.lib.stride_tricks.sliding_window_view(atr, lookback)
+            thresholds = np.percentile(windows, pct, axis=1)
+            active[lookback - 1:] = atr[lookback - 1:] <= thresholds
+        return active
+
+    def _calc_session_anchor_dir(
+        self,
+        candles: List[Dict[str, Any]],
+        opens: np.ndarray,
+        closes: np.ndarray,
+        ancla_horas: int,
+    ) -> np.ndarray:
+        """Direccion (+1 alcista, -1 bajista, 0 = tramo ancla aun sin cerrar este dia) del
+        tramo inicial del dia UTC (primeras `ancla_horas` horas). anchor_dir[i] SOLO queda
+        definido (!=0 posible) desde la PRIMERA barra cuya hora UTC ya es >= ancla_horas ese
+        mismo dia -- se calcula con el cierre de la ULTIMA barra estrictamente dentro del tramo
+        (anterior a la barra i), nunca con la barra i misma: cero lookahead."""
+        n = len(closes)
+        anchor_dir = np.zeros(n, dtype=np.float64)
+        current_day = None
+        day_open_price = None
+        last_anchor_close = None
+        anchor_ready = False
+        for i in range(n):
+            dt = self._parse_candle_utc_dt(candles[i])
+            if dt is None:
+                continue
+            day_key = (dt.year, dt.month, dt.day)
+            if day_key != current_day:
+                current_day = day_key
+                day_open_price = opens[i]
+                last_anchor_close = None
+                anchor_ready = False
+
+            if dt.hour < ancla_horas:
+                last_anchor_close = closes[i]
+            else:
+                anchor_ready = True
+
+            if anchor_ready and last_anchor_close is not None and day_open_price is not None:
+                diff = last_anchor_close - day_open_price
+                anchor_dir[i] = 1.0 if diff > 0 else (-1.0 if diff < 0 else 0.0)
+        return anchor_dir
 
     @staticmethod
     def _parse_candle_utc_dt(candle: Dict[str, Any]) -> Optional[datetime]:
@@ -417,6 +542,85 @@ class EventBacktestEngine:
         opens = np.array([float(c["open"]) for c in candles], dtype=np.float64)
         timestamps = [int(c.get("timestamp_ms") or c.get("timestamp") or 0) for c in candles]
 
+        # --- FRICCION 5.7.0: spread medido por barra y costes coherentes por venue ----------
+        # Dukascopy persiste spread_mean medido tick a tick y su OHLC esta en BID. Si >=90% de
+        # las barras traen spread medido, la ejecucion es asimetrica REAL: se compra al ask
+        # (bid + spread) y se vende al bid; el coste del spread queda EMBEBIDO en el precio de
+        # fill y no se deduce aparte (total_slippage_usd queda en 0 en este modo).
+        # Sin spread medido (klines cripto / Yahoo: OHLC de ultimo precio) se usa el modelo
+        # ASUMIDO de slippage en bps, cobrado UNA sola vez por lado: hasta 5.6.0 la entrada
+        # ajustaba el precio Y ademas deducia el mismo slippage del equity (doble cobro), la
+        # comision de entrada era porcentual incluso en futuros (la fija por contrato solo se
+        # cobraba a la salida, ida y vuelta) y el slippage de entrada omitia el point_value.
+        spreads = np.array([float(c.get("spread_mean") or 0.0) for c in candles], dtype=np.float64)
+        friccion_medida = bool(len(spreads) > 0 and float((spreads > 0).mean()) >= 0.90)
+
+        # --- FRICCION 5.12.0: spread real MEDIDO POR PAR (registro BingX) para ULTRA -------
+        # Tres capas de fill, en orden de prioridad segun cuanta realidad hay disponible:
+        #   1) MEASURED      - spread medido por barra (Dukascopy, `friccion_medida` arriba).
+        #      Gana siempre que exista: es la fuente mas fina (tick-a-tick por vela).
+        #   2) MEASURED_PAIR - spread mediano medido POR PAR via API BingX (este bloque, nuevo
+        #      en 5.12.0). Necesario porque el modelo ASUMIDO (2 bps fijos) esta calibrado
+        #      sobre BTC/ETH; pares "exoticos" como AVAX/SUI/DOGE tienen spreads reales 4-7x
+        #      mayores y el motor los subestimaba sistematicamente.
+        #   3) ASSUMED       - modelo generico de 2 bps de slippage (fallback final, sin datos).
+        # _bingx_pair_data se carga siempre que hay par (no futuro) en el registro, independiente
+        # del modo de spread: 5.13.0 lo reutiliza para el funding real, que aplica tanto si el
+        # spread por barra viene medido (Dukascopy) como si no.
+        _bingx_pair_data: Optional[Dict[str, Any]] = None
+        _half_spread_frac = 0.0
+        if not es_futuro:
+            _bingx_registry = _load_bingx_friction()
+            if _bingx_registry:
+                _bingx_pair_key = (
+                    strategy.symbol.replace("USDT", "-USDT") if strategy.symbol.endswith("USDT") else strategy.symbol
+                )
+                _bingx_pair_data = _bingx_registry.get(_bingx_pair_key)
+                if _bingx_pair_data and not friccion_medida:
+                    _half_spread_frac = (float(_bingx_pair_data.get("spread_median_pct") or 0.0) / 100.0) / 2.0
+        friccion_medida_par = bool(_bingx_pair_data is not None and not friccion_medida)
+
+        def _fill_entrada(precio: float, lado: str, idx: int) -> float:
+            if friccion_medida:
+                return precio + spreads[idx] if lado == "LONG" else precio
+            if friccion_medida_par:
+                # Coste del spread mas el impacto conservador de slippage (2 bps), ambos SOLO
+                # en la entrada; la salida solo descuenta el spread (ver _fill_salida).
+                return (
+                    precio * (1.0 + _half_spread_frac + self.slippage)
+                    if lado == "LONG"
+                    else precio * (1.0 - _half_spread_frac - self.slippage)
+                )
+            return precio * (1.0 + self.slippage) if lado == "LONG" else precio * (1.0 - self.slippage)
+
+        def _fill_salida(precio: float, lado: str, idx: int) -> float:
+            # Venta (salida LONG) al bid: precio tal cual. Recompra (salida SHORT) al ask.
+            if friccion_medida and lado == "SHORT":
+                return precio + spreads[idx]
+            if friccion_medida_par:
+                return precio * (1.0 - _half_spread_frac) if lado == "LONG" else precio * (1.0 + _half_spread_frac)
+            return precio
+
+        def _comision(precio_fill: float, qty: float) -> float:
+            # Futuros: comision fija por contrato y POR LADO. Cripto: porcentual taker.
+            return (self.cme_fee * qty) if es_futuro else (precio_fill * qty * self.taker_fee)
+
+        def _slip_salida(precio_fill: float, qty: float) -> float:
+            # Modo medido (por barra o por par): el coste ya esta embebido en el fill, no se
+            # deduce nada mas aparte.
+            return 0.0 if (friccion_medida or friccion_medida_par) else precio_fill * qty * point_value * self.slippage
+
+        # --- 5.14.0 (F03.3): despacho EXPLICITO de arquetipo -----------------------------
+        # Las 4 familias nuevas (reversion_atr, squeeze_breakout, session_momentum,
+        # streak_edge) se despachan por la etiqueta `strategy.archetype` -- nunca por
+        # inferencia de nombres de indicador -- y usan su propia logica de evento, separada
+        # del interprete generico de entry_rules de mas abajo (que queda intacto para TODO
+        # arquetipo anterior a 5.14.0: aditivo estricto, cero cambios de comportamiento).
+        _NEW_ARCHETYPES_5_14_0 = {"REVERSION_ATR", "SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}
+        archetype_label = str(getattr(strategy, "archetype", "") or "").upper()
+        archetype_params: Dict[str, Any] = dict(getattr(strategy, "archetype_params", None) or {})
+        is_new_archetype = archetype_label in _NEW_ARCHETYPES_5_14_0
+
         # 1. Extracción e Intérprete Dinámico de Indicadores del StrategySnapshot
         ema_fast_period = 20
         ema_slow_period = 50
@@ -427,7 +631,7 @@ class EventBacktestEngine:
         use_breakout = False
         breakout_lookback = 15
 
-        if hasattr(strategy, "entry_rules") and strategy.entry_rules:
+        if (not is_new_archetype) and hasattr(strategy, "entry_rules") and strategy.entry_rules:
             # Long conditions / general conditions
             all_long = getattr(strategy.entry_rules, "long_conditions", None) or []
             if not all_long and getattr(strategy.entry_rules, "direction", "LONG") in ["LONG", "BOTH"]:
@@ -487,6 +691,43 @@ class EventBacktestEngine:
         for i in range(14, len(closes)):
             atr[i] = np.mean(tr[i-14:i])
 
+        # --- 5.14.0 (F03.3): precomputo causal especifico de las 4 familias EVENTO nuevas ---
+        # Cada rama solo se activa si `archetype_label` coincide; para todo arquetipo anterior
+        # a 5.14.0 estas variables quedan en None/0 y jamas se leen (dispatch mas abajo).
+        _arch_ema_ancla_series: Optional[np.ndarray] = None
+        _arch_banda_atr_mult = 0.0
+        _arch_squeeze_active: Optional[np.ndarray] = None
+        _arch_breakout_lookback = 0
+        _arch_ema_pull_series: Optional[np.ndarray] = None
+        _arch_session_anchor_dir: Optional[np.ndarray] = None
+        _arch_streak_up: Optional[np.ndarray] = None
+        _arch_streak_down: Optional[np.ndarray] = None
+        _arch_streak_modo = "continuacion"
+        _arch_extra_warmup = 0
+
+        if archetype_label == "REVERSION_ATR":
+            _ema_ancla_period = int(archetype_params.get("ema_ancla", 50))
+            _arch_banda_atr_mult = float(archetype_params.get("banda_atr_mult", 2.0))
+            _arch_ema_ancla_series = self._calc_ema(closes, _ema_ancla_period)
+            _arch_extra_warmup = _ema_ancla_period + 5
+        elif archetype_label == "SQUEEZE_BREAKOUT":
+            _squeeze_pct = float(archetype_params.get("squeeze_pct", 20.0))
+            _squeeze_lookback = int(archetype_params.get("squeeze_lookback", 50))
+            _arch_breakout_lookback = int(archetype_params.get("breakout_lookback", 20))
+            _arch_squeeze_active = self._calc_squeeze_active(atr, _squeeze_lookback, _squeeze_pct)
+            _arch_extra_warmup = max(_squeeze_lookback, _arch_breakout_lookback) + 5
+        elif archetype_label == "SESSION_MOMENTUM":
+            _ancla_horas = int(archetype_params.get("ancla_horas", 1))
+            _ema_pull_period = int(archetype_params.get("ema_pull", 20))
+            _arch_ema_pull_series = self._calc_ema(closes, _ema_pull_period)
+            _arch_session_anchor_dir = self._calc_session_anchor_dir(candles, opens, closes, _ancla_horas)
+            _arch_extra_warmup = _ema_pull_period + 5
+        elif archetype_label == "STREAK_EDGE":
+            _n_racha = int(archetype_params.get("n_racha", 3))
+            _arch_streak_modo = str(archetype_params.get("modo", "continuacion")).lower()
+            _arch_streak_up, _arch_streak_down = self._calc_streak_events(closes, _n_racha)
+            _arch_extra_warmup = _n_racha + 5
+
         # Precalcular series de indicadores exactas según configuración del Snapshot
         ema_fast_series = self._calc_ema(closes, ema_fast_period)
         ema_slow_series = self._calc_ema(closes, ema_slow_period)
@@ -502,10 +743,21 @@ class EventBacktestEngine:
         sl_atr_mult = float(sl_val) if sl_val else 2.0
         tp_val = getattr(strategy.exit_rules, "take_profit_atr_mult", None) or getattr(strategy.exit_rules, "tp_value", 6.0) if hasattr(strategy, "exit_rules") and strategy.exit_rules else 6.0
         tp_atr_mult = float(tp_val) if tp_val else 6.0
+        # 5.10.0: unidad canonica de riesgo = FRACCION (0.02 == 2%). Hasta 5.9.0 el motor
+        # dividia el valor recibido entre 100 (lo trataba como porcentaje) mientras mine.py y
+        # los generadores de blueprints pasaban ya fracciones: TODO el sizing historico quedo
+        # ~100x por debajo de lo configurado. Guardia fail-closed: un riesgo > 0.5 (50%) por
+        # operacion no es legitimo en ningun track y delata unidades en porcentaje heredadas.
         default_risk = 0.075 if is_ultra else 0.01
         risk_raw = getattr(strategy.sizing_and_risk, "base_risk_pct", None) or getattr(strategy.sizing_and_risk, "risk_value", None) if hasattr(strategy, "sizing_and_risk") and strategy.sizing_and_risk else None
-        risk_pct = (float(risk_raw) / 100.0) if risk_raw is not None else default_risk
-        warmup_bars = max(30, ema_slow_period + 5, rsi_period + 5)
+        risk_pct = float(risk_raw) if risk_raw is not None else default_risk
+        if risk_pct > 0.5:
+            raise ValueError(
+                f"NO DATA: riesgo por operacion {risk_pct} ambiguo para {strategy.strategy_id}: "
+                f"la unidad canonica es FRACCION (0.02 == 2%). Un valor > 0.5 sugiere porcentaje "
+                f"heredado; corrige el snapshot en origen, no se adivina la unidad."
+            )
+        warmup_bars = max(30, ema_slow_period + 5, rsi_period + 5, _arch_extra_warmup)
 
         # Estado del backtest
         current_equity = base_capital
@@ -521,6 +773,7 @@ class EventBacktestEngine:
         trades: List[TradeRecord] = []
 
         position_side = None
+        pending_entry = None
         position_qty = 0.0
         position_entry_price = 0.0
         position_entry_bar = 0
@@ -532,6 +785,11 @@ class EventBacktestEngine:
         pyramid_count = 0
         total_fees = 0.0
         total_slippage = 0.0
+        total_funding = 0.0
+        FUNDING_PERIOD_MS = 8 * 3600 * 1000  # fronteras BingX: 00:00 / 08:00 / 16:00 UTC
+        # 5.14.0 session_momentum: "solo una entrada por dia y direccion". Claves (dia, lado)
+        # ya usadas -- se consulta y puebla solo en la rama SESSION_MOMENTUM del dispatch.
+        session_used_days: set = set()
 
         session_window = getattr(strategy, "session_window", None)
         time_stop_bars = getattr(strategy.exit_rules, "time_stop_bars", None) if hasattr(strategy, "exit_rules") and strategy.exit_rules else None
@@ -546,10 +804,98 @@ class EventBacktestEngine:
             bar_dt = self._parse_candle_utc_dt(bar_candle)
             in_session = self._is_in_session_window(bar_dt, session_window)
 
+            # --- 5.9.0 LATENCIA: fill diferido a la apertura de la vela siguiente ---------
+            # La senal se decide al CIERRE de la vela anterior; el fill ocurre en el OPEN de
+            # esta vela (modelo conservador de latencia para datos de barra: nunca se ejecuta
+            # al precio que dispara la senal). ATR y sesion se evaluan en la vela de fill sin
+            # lookahead (atr[i] solo usa barras completadas anteriores). Una senal en la
+            # ultima vela del dataset o con fill fuera de sesion se descarta.
+            if pending_entry is not None and position_side is None and current_equity > 0:
+                lado = pending_entry
+                pending_entry = None
+                if in_session:
+                    position_entry_price = _fill_entrada(opens[i], lado, i)
+                    position_equity_before = current_equity
+                    effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
+                    risk_amount_usd = effective_equity * risk_pct
+                    position_risk_amount = risk_amount_usd
+
+                    if sl_type_str in ["ATR_MULTIPLE", "ATR"]:
+                        sl_dist = bar_atr * sl_atr_mult
+                    elif sl_type_str == "PERCENTAGE":
+                        sl_dist = position_entry_price * (sl_atr_mult / 100.0)
+                    else:
+                        sl_dist = sl_atr_mult
+
+                    if tp_type_str in ["RR_MULTIPLE", "RISK_REWARD_MULTIPLE"]:
+                        tp_dist = sl_dist * tp_atr_mult
+                    elif tp_type_str in ["ATR_MULTIPLE", "ATR"]:
+                        tp_dist = bar_atr * tp_atr_mult
+                    elif tp_type_str == "PERCENTAGE":
+                        tp_dist = position_entry_price * (tp_atr_mult / 100.0)
+                    else:
+                        tp_dist = tp_atr_mult
+
+                    # 5.11.0: en futuros el riesgo por contrato es sl_dist * point_value USD.
+                    raw_qty = risk_amount_usd / max(1e-4, sl_dist * point_value)
+                    max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price * point_value) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price * point_value)
+                    qty = max(0.001, min(raw_qty, max_nominal_qty))
+                    if es_futuro:
+                        # 5.8.0 (decision #25): contratos CME enteros; sin 1 contrato no se opera.
+                        qty = float(math.floor(qty))
+                    if not (es_futuro and qty < 1.0):
+                        position_side = lado
+                        position_qty = qty
+                        position_entry_bar = i
+                        position_entry_time = ts
+                        if lado == "LONG":
+                            stop_loss_price = position_entry_price - sl_dist
+                            take_profit_price = position_entry_price + tp_dist
+                        else:
+                            stop_loss_price = position_entry_price + sl_dist
+                            take_profit_price = position_entry_price - tp_dist
+                        pyramid_count = 0
+                        comm = _comision(position_entry_price, position_qty)
+                        slip_info = 0.0 if friccion_medida else position_entry_price * position_qty * point_value * self.slippage
+                        current_equity -= comm
+                        total_fees += comm
+                        total_slippage += slip_info
+
             # 1. Chequeo de salidas y liquidaci?n si estamos en posici?n
             if position_side is not None:
+                # --- 5.14.0 reversion_atr: TP DINAMICO = nivel vivo de la EMA ancla -----------
+                # No es una distancia fija desde la entrada (como el resto de arquetipos): el
+                # take profit natural de una reversion a la media es la propia media, que se
+                # mueve. Se recalcula cada barra con el mismo indicador precalculado y causal
+                # que usa el resto del motor (ema_ancla_series[i]: solo datos hasta la barra i,
+                # identico patron a ema_fast_series/rsi_series ya existentes -- cero lookahead).
+                if archetype_label == "REVERSION_ATR" and _arch_ema_ancla_series is not None:
+                    take_profit_price = float(_arch_ema_ancla_series[i])
+
+                # --- FUNDING 5.13.0: coste real de financiacion en perpetuos (ULTRA) --------
+                # BingX liquida el funding entre longs y shorts en cada frontera de 8h
+                # (00:00/08:00/16:00 UTC). Se cobra/abona por CADA frontera cruzada dentro del
+                # intervalo [ts de la barra anterior, ts de esta barra) mientras la posicion
+                # esta abierta; se excluye la barra de entrada (la posicion no existia antes de
+                # su propio fill). Aritmetica pura sobre ms (sin datetime) para determinismo.
+                if position_entry_bar != i and _bingx_pair_data is not None:
+                    _ts_prev = timestamps[i - 1]
+                    _n_fronteras = (ts // FUNDING_PERIOD_MS) - (_ts_prev // FUNDING_PERIOD_MS)
+                    if _n_fronteras > 0:
+                        _funding_rate = float(_bingx_pair_data.get("funding_mean") or 0.0)
+                        _notional = position_qty * bar_close * point_value
+                        _pago_funding = _funding_rate * _notional * _n_fronteras
+                        # Long paga al short cuando el funding es positivo (regla estandar de
+                        # perpetuos); rate negativo invierte el sentido del pago.
+                        if position_side == "LONG":
+                            current_equity -= _pago_funding
+                            total_funding += _pago_funding
+                        else:
+                            current_equity += _pago_funding
+                            total_funding -= _pago_funding
+
                 # Comprobar distancia a liquidaci?n
-                margin_used = (position_qty * bar_close) / max_leverage
+                margin_used = (position_qty * bar_close * point_value) / max_leverage
                 margin_util_pct = (margin_used / max(1.0, current_equity)) * 100.0
                 peak_margin_utilization = max(peak_margin_utilization, margin_util_pct)
 
@@ -561,10 +907,10 @@ class EventBacktestEngine:
                 if (position_side == "LONG" and bar_low <= liq_price) or (position_side == "SHORT" and bar_high >= liq_price):
                     # Liquidaci?n
                     exit_price = liq_price
+                    exit_price = _fill_salida(exit_price, position_side, i)
                     gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    comm = _comision(exit_price, position_qty)
+                    slip = _slip_salida(exit_price, position_qty)
                     net_pnl = gross_pnl - comm - slip
                     current_equity = max(0.0, current_equity + net_pnl)
                     total_fees += comm
@@ -599,10 +945,10 @@ class EventBacktestEngine:
                 # Comprobar Stop Loss
                 elif (position_side == "LONG" and bar_low <= stop_loss_price) or (position_side == "SHORT" and bar_high >= stop_loss_price):
                     exit_price = stop_loss_price
+                    exit_price = _fill_salida(exit_price, position_side, i)
                     gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    comm = _comision(exit_price, position_qty)
+                    slip = _slip_salida(exit_price, position_qty)
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -637,10 +983,10 @@ class EventBacktestEngine:
                 # Comprobar Take Profit
                 elif (position_side == "LONG" and bar_high >= take_profit_price) or (position_side == "SHORT" and bar_low <= take_profit_price):
                     exit_price = take_profit_price
+                    exit_price = _fill_salida(exit_price, position_side, i)
                     gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    comm = _comision(exit_price, position_qty)
+                    slip = _slip_salida(exit_price, position_qty)
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -675,10 +1021,10 @@ class EventBacktestEngine:
                 # Comprobar Time Stop por barras
                 elif time_stop_bars is not None and (i - position_entry_bar) >= int(time_stop_bars):
                     exit_price = bar_close
+                    exit_price = _fill_salida(exit_price, position_side, i)
                     gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    comm = _comision(exit_price, position_qty)
+                    slip = _slip_salida(exit_price, position_qty)
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -713,10 +1059,10 @@ class EventBacktestEngine:
                 # Comprobar Cierre por Fin de Sesión (Session Window EOD)
                 elif self._is_session_end(bar_dt, session_window, is_last_bar=(i == len(closes) - 1)):
                     exit_price = bar_close
+                    exit_price = _fill_salida(exit_price, position_side, i)
                     gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
-                    # Futuros: comision fija por contrato (ida y vuelta). Cripto: porcentual.
-                    comm = (self.cme_fee * position_qty * 2.0) if es_futuro else (exit_price * position_qty * self.taker_fee)
-                    slip = exit_price * position_qty * point_value * self.slippage
+                    comm = _comision(exit_price, position_qty)
+                    slip = _slip_salida(exit_price, position_qty)
                     net_pnl = gross_pnl - comm - slip
                     current_equity += net_pnl
                     total_fees += comm
@@ -762,6 +1108,83 @@ class EventBacktestEngine:
 
             # 2. Se?al de Entrada si estamos planos
             if position_side is None and current_equity > 0 and in_session:
+              if is_new_archetype:
+                # --- 5.14.0 (F03.3): las 4 familias EVENTO nuevas ------------------------
+                long_signal = False
+                short_signal = False
+
+                if archetype_label == "REVERSION_ATR":
+                    # Evento de re-entrada (no estado): el cierre anterior estaba a >= banda
+                    # por debajo/encima de la EMA ancla (evaluada en la barra i-1) y el cierre
+                    # actual vuelve a cruzar esa MISMA banda de referencia. Cero lookahead: la
+                    # banda usada es la de i-1, conocida por completo antes de esta barra.
+                    band_lower_prev = _arch_ema_ancla_series[i - 1] - _arch_banda_atr_mult * atr[i - 1]
+                    band_upper_prev = _arch_ema_ancla_series[i - 1] + _arch_banda_atr_mult * atr[i - 1]
+                    was_below = closes[i - 1] <= band_lower_prev
+                    back_above = closes[i] > band_lower_prev
+                    was_above = closes[i - 1] >= band_upper_prev
+                    back_below = closes[i] < band_upper_prev
+                    long_signal = bool(was_below and back_above)
+                    short_signal = bool(was_above and back_below)
+
+                elif archetype_label == "SQUEEZE_BREAKOUT":
+                    # Estado de squeeze (ATR en percentil bajo de su propia ventana) + PRIMERA
+                    # ruptura Donchian ocurrida durante ese squeeze (evento: la barra anterior
+                    # no rompia, la actual si). shift=1: el canal Donchian excluye la barra de
+                    # decision (misma convencion que breakout_confirmation en los discovery).
+                    lb = min(_arch_breakout_lookback, i)
+                    if lb > 1 and bool(_arch_squeeze_active[i]):
+                        donch_high_now = np.max(highs[i - lb:i])
+                        donch_low_now = np.min(lows[i - lb:i])
+                        lb_prev = min(_arch_breakout_lookback, i - 1)
+                        donch_high_prev = np.max(highs[i - 1 - lb_prev:i - 1]) if lb_prev > 1 else donch_high_now
+                        donch_low_prev = np.min(lows[i - 1 - lb_prev:i - 1]) if lb_prev > 1 else donch_low_now
+                        broke_up_now = closes[i] > donch_high_now
+                        broke_up_prev = closes[i - 1] > donch_high_prev
+                        broke_down_now = closes[i] < donch_low_now
+                        broke_down_prev = closes[i - 1] < donch_low_prev
+                        long_signal = bool(broke_up_now and not broke_up_prev)
+                        short_signal = bool(broke_down_now and not broke_down_prev)
+
+                elif archetype_label == "SESSION_MOMENTUM":
+                    # Ancla = direccion del tramo inicial del dia UTC (ya cerrado, precalculada
+                    # sin lookahead en _arch_session_anchor_dir). Senal = pullback a la EMA y
+                    # giro (cruce de vuelta) EN LA DIRECCION del ancla. Una entrada por dia y
+                    # direccion (session_used_days).
+                    anchor = _arch_session_anchor_dir[i]
+                    if anchor != 0.0 and bar_dt is not None:
+                        ema_pull_val = _arch_ema_pull_series[i]
+                        ema_pull_prev = _arch_ema_pull_series[i - 1]
+                        cross_above = (closes[i - 1] <= ema_pull_prev) and (closes[i] > ema_pull_val)
+                        cross_below = (closes[i - 1] >= ema_pull_prev) and (closes[i] < ema_pull_val)
+                        day_key = (bar_dt.year, bar_dt.month, bar_dt.day)
+                        if anchor > 0 and cross_above and (day_key, "LONG") not in session_used_days:
+                            long_signal = True
+                            session_used_days.add((day_key, "LONG"))
+                        elif anchor < 0 and cross_below and (day_key, "SHORT") not in session_used_days:
+                            short_signal = True
+                            session_used_days.add((day_key, "SHORT"))
+
+                elif archetype_label == "STREAK_EDGE":
+                    # n_racha cierres consecutivos -> entrada en la apertura siguiente (via
+                    # pending_entry, identico al resto de arquetipos). `modo` decide si se
+                    # sigue la racha (continuacion) o se opera en contra (reversion): dimension
+                    # de busqueda, no una asuncion de diseno.
+                    up_event = bool(_arch_streak_up[i])
+                    down_event = bool(_arch_streak_down[i])
+                    if _arch_streak_modo == "reversion":
+                        long_signal = down_event
+                        short_signal = up_event
+                    else:
+                        long_signal = up_event
+                        short_signal = down_event
+
+                if long_signal:
+                    pending_entry = "LONG"
+                elif short_signal:
+                    pending_entry = "SHORT"
+
+              else:
                 ema_fast_val = ema_fast_series[i]
                 ema_slow_val = ema_slow_series[i]
 
@@ -788,84 +1211,10 @@ class EventBacktestEngine:
                 short_signal = cruce_bajista and breakout_short and rsi_short_ok
 
                 if long_signal:
-                    position_side = "LONG"
-                    position_entry_bar = i
-                    position_entry_time = ts
-                    position_entry_price = bar_close * (1.0 + self.slippage)
-                    position_equity_before = current_equity
-                    # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
-                    effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
-                    risk_amount_usd = effective_equity * risk_pct
-                    position_risk_amount = risk_amount_usd
-
-                    if sl_type_str in ["ATR_MULTIPLE", "ATR"]:
-                        sl_dist = bar_atr * sl_atr_mult
-                    elif sl_type_str == "PERCENTAGE":
-                        sl_dist = position_entry_price * (sl_atr_mult / 100.0)
-                    else:
-                        sl_dist = sl_atr_mult
-
-                    if tp_type_str in ["RR_MULTIPLE", "RISK_REWARD_MULTIPLE"]:
-                        tp_dist = sl_dist * tp_atr_mult
-                    elif tp_type_str in ["ATR_MULTIPLE", "ATR"]:
-                        tp_dist = bar_atr * tp_atr_mult
-                    elif tp_type_str == "PERCENTAGE":
-                        tp_dist = position_entry_price * (tp_atr_mult / 100.0)
-                    else:
-                        tp_dist = tp_atr_mult
-
-                    raw_qty = risk_amount_usd / max(1e-4, sl_dist)
-                    max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price)
-                    position_qty = max(0.001, min(raw_qty, max_nominal_qty))
-                    stop_loss_price = position_entry_price - sl_dist
-                    take_profit_price = position_entry_price + tp_dist
-                    pyramid_count = 0
-
-                    comm = position_entry_price * position_qty * self.taker_fee
-                    slip = position_entry_price * position_qty * self.slippage
-                    current_equity -= (comm + slip)
-                    total_fees += comm
-                    total_slippage += slip
+                    pending_entry = "LONG"
 
                 elif short_signal:
-                    position_side = "SHORT"
-                    position_entry_bar = i
-                    position_entry_time = ts
-                    position_entry_price = bar_close * (1.0 - self.slippage)
-                    position_equity_before = current_equity
-                    # Sizing agresivo para Ultra (subcuenta bala con reinversión de equidad) / Fondeo acotado
-                    effective_equity = current_equity if is_ultra else min(current_equity, base_capital * 1.2)
-                    risk_amount_usd = effective_equity * risk_pct
-                    position_risk_amount = risk_amount_usd
-
-                    if sl_type_str in ["ATR_MULTIPLE", "ATR"]:
-                        sl_dist = bar_atr * sl_atr_mult
-                    elif sl_type_str == "PERCENTAGE":
-                        sl_dist = position_entry_price * (sl_atr_mult / 100.0)
-                    else:
-                        sl_dist = sl_atr_mult
-
-                    if tp_type_str in ["RR_MULTIPLE", "RISK_REWARD_MULTIPLE"]:
-                        tp_dist = sl_dist * tp_atr_mult
-                    elif tp_type_str in ["ATR_MULTIPLE", "ATR"]:
-                        tp_dist = bar_atr * tp_atr_mult
-                    elif tp_type_str == "PERCENTAGE":
-                        tp_dist = position_entry_price * (tp_atr_mult / 100.0)
-                    else:
-                        tp_dist = tp_atr_mult
-
-                    raw_qty = risk_amount_usd / max(1e-4, sl_dist)
-                    max_nominal_qty = (current_equity * max_leverage * 0.85) / max(1e-4, position_entry_price) if is_ultra else (base_capital * max_leverage) / max(1e-4, position_entry_price)
-                    position_qty = max(0.001, min(raw_qty, max_nominal_qty))
-                    stop_loss_price = position_entry_price + sl_dist
-                    take_profit_price = position_entry_price - tp_dist
-                    pyramid_count = 0
-
-                    comm = position_entry_price * position_qty * self.taker_fee
-                    slip = position_entry_price * position_qty * self.slippage
-                    current_equity -= (comm + slip)
-                    total_fees += comm
-                    total_slippage += slip
+                    pending_entry = "SHORT"
 
             # Track equity curve and drawdown
             peak_equity = max(peak_equity, current_equity)
@@ -876,10 +1225,10 @@ class EventBacktestEngine:
 
         # Cierre forzado al final del dataset si queda posici?n abierta
         if position_side is not None:
-            exit_price = closes[-1]
-            gross_pnl = (exit_price - position_entry_price) * position_qty if position_side == "LONG" else (position_entry_price - exit_price) * position_qty
-            comm = exit_price * position_qty * self.taker_fee
-            slip = exit_price * position_qty * self.slippage
+            exit_price = _fill_salida(closes[-1], position_side, len(closes) - 1)
+            gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
+            comm = _comision(exit_price, position_qty)
+            slip = _slip_salida(exit_price, position_qty)
             net_pnl = gross_pnl - comm - slip
             current_equity += net_pnl
             total_fees += comm
@@ -940,9 +1289,15 @@ class EventBacktestEngine:
             min_liquidation_distance_pct=round(min_liq_dist, 2),
             total_fees_usd=round(total_fees, 2),
             total_slippage_usd=round(total_slippage, 2),
+            total_funding_usd=round(total_funding, 2),
             trades=trades,
             equity_curve=equity_curve,
             drawdown_curve=drawdown_curve,
             execution_time_ms=round(exec_time, 2),
+            friction_model=(
+                "MEASURED" if friccion_medida
+                else "MEASURED_PAIR" if friccion_medida_par
+                else "ASSUMED"
+            ),
         )
 

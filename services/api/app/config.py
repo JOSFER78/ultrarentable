@@ -31,7 +31,12 @@ DATA_DIR = resolve_local_path("DATA_DIR", "data")
 # Runtime state must be portable across local machines, CI and production.
 _canonical_user_db = Path.home() / ".local/state/ultrarentable/ultrarentable.sqlite3"
 _default_state_db = str(_canonical_user_db) if _canonical_user_db.exists() else "data/state/ultrarentable.sqlite3"
-STATE_DB_PATH = resolve_local_path("STATE_DB_PATH", _default_state_db)
+# ULTRARENTABLE_DB_PATH es un alias legacy: prioridad STATE_DB_PATH > ULTRARENTABLE_DB_PATH > default.
+_state_db_default = os.getenv("ULTRARENTABLE_DB_PATH", _default_state_db)
+STATE_DB_PATH = resolve_local_path("STATE_DB_PATH", _state_db_default)
+LEARNING_DB_PATH = resolve_local_path(
+    "LEARNING_DB_PATH", "~/.local/state/ultrarentable/learning_store.sqlite"
+)
 ARTIFACTS_DIR = resolve_local_path("ARTIFACTS_DIR", "data/artifacts")
 LOCAL_WEB_ORIGINS = [
     value.strip()

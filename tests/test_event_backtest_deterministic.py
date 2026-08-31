@@ -24,6 +24,7 @@ def test_event_backtest_runs_deterministically_on_real_candles():
         sl_atr_mult=2.0,
         tp_atr_mult=6.0,
         pyramiding_tiers_count=2,
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     engine = EventBacktestEngine(taker_fee_pct=0.05, slippage_bps=2.0)
@@ -47,7 +48,12 @@ def test_event_backtest_runs_deterministically_on_real_candles():
         assert first_trade.entry_price > 0.0
         assert first_trade.exit_price > 0.0
         assert first_trade.fees_usd > 0.0
-        assert first_trade.slippage_usd > 0.0
+        # re-pin motor 5.12.0: en modo MEASURED/MEASURED_PAIR el coste de spread va embebido
+        # en el precio de fill y slippage_usd deducido es legítimamente 0.
+        if res1.friction_model == "ASSUMED":
+            assert first_trade.slippage_usd > 0.0
+        else:
+            assert first_trade.slippage_usd >= 0.0
         assert first_trade.exit_reason in ["STOP_LOSS", "TAKE_PROFIT", "LIQUIDATION", "END_OF_DATASET"]
 
 

@@ -64,6 +64,15 @@ try:
 except Exception:
     pass
 
+try:
+    import services.optimization.expert_refinement_loop as _expert
+
+    _expert.DB_PATH = _TEST_DB_PATH
+    if hasattr(_expert, "expert_strategy_optimizer"):
+        _expert.expert_strategy_optimizer.db_path = str(_TEST_DB_PATH)
+except Exception:
+    pass
+
 
 def pytest_sessionfinish(session, exitstatus) -> None:
     """Close SQLAlchemy and remove the complete temporary SQLite set."""

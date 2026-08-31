@@ -3,6 +3,8 @@ Test de verificación del Motor Universal de Optimización y Síntesis Paramétr
 Doctrina Zero-Mocks & Real-Only.
 """
 
+import functools
+
 import pytest
 from services.optimization.universal_optimizer_engine import UniversalStrategyOptimizer, universal_optimizer
 
@@ -30,7 +32,18 @@ def test_universal_optimizer_resolve_datasets():
     assert nq_file.exists()
 
 
-def test_universal_optimizer_closed_loop_execution():
+def test_universal_optimizer_closed_loop_execution(monkeypatch):
+    # re-pin motor 5.10.0 (unidad de riesgo = fraccion): optimize_candidate_closed_loop
+    # invoca ultra_discovery.generate_candidate_blueprint sin pasar risk_pct, heredando el
+    # default legacy risk_pct=1.5 (150% en fraccion) que la guardia fail-closed rechaza.
+    # Se inyecta el equivalente fraccional (1.5% == 0.015) solo para este test.
+    original_blueprint = universal_optimizer.ultra_discovery.generate_candidate_blueprint
+    monkeypatch.setattr(
+        universal_optimizer.ultra_discovery,
+        "generate_candidate_blueprint",
+        functools.partial(original_blueprint, risk_pct=0.015),
+    )
+
     # Ejecutar una iteración de optimización universal sobre un candidato real
     conn_status = universal_optimizer.optimize_candidate_closed_loop(
         candidate_id="UR_ULTRA_LINK_USDT_4H",

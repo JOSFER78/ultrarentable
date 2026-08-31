@@ -9,12 +9,14 @@ Verifica:
 
 from __future__ import annotations
 
+import functools
 import math
 import sqlite3
 from pathlib import Path
 import pytest
 import numpy as np
 
+from services.api.app.config import STATE_DB_PATH
 from services.optimization.quantitative_arsenal import (
     MicrostructureProfiler,
     DynamicExitEngine,
@@ -147,9 +149,9 @@ def test_session_liquidity_filter_cme_rth():
     assert SessionLiquidityFilter.is_cme_rth_window(22, 0) is False
 
 
-def test_expert_refinement_loop_integrated_arsenal():
+def test_expert_refinement_loop_integrated_arsenal(monkeypatch):
     """Verifica la ejecución del bucle de refinamiento experto utilizando el QuantitativeArsenal."""
-    db_path = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+    db_path = Path(STATE_DB_PATH)
     if not db_path.exists():
         pytest.skip("Base de datos SQLite no disponible.")
 
@@ -160,6 +162,17 @@ def test_expert_refinement_loop_integrated_arsenal():
 
     if not row:
         pytest.skip("No hay candidatos reales disponibles.")
+
+    # re-pin motor 5.10.0 (unidad de riesgo = fraccion): refine_candidate_loop invoca
+    # ultra_discovery.generate_candidate_blueprint sin pasar risk_pct, heredando el
+    # default legacy risk_pct=1.5 (150% en fraccion) que la guardia fail-closed rechaza.
+    # Se inyecta el equivalente fraccional (1.5% == 0.015) solo para este test.
+    original_blueprint = expert_strategy_optimizer.ultra_discovery.generate_candidate_blueprint
+    monkeypatch.setattr(
+        expert_strategy_optimizer.ultra_discovery,
+        "generate_candidate_blueprint",
+        functools.partial(original_blueprint, risk_pct=0.015),
+    )
 
     cid = row[0]
     res = expert_strategy_optimizer.refine_candidate_loop(candidate_id=cid, max_iterations=2)

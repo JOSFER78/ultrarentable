@@ -9,15 +9,17 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from services.api.app.config import STATE_DB_PATH as _CANONICAL_STATE_DB_PATH
+
 # Repository root: services/core/runtime_paths.py -> repository root is parents[2].
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 DATA_DIR = Path(os.getenv("ULTRARENTABLE_DATA_DIR", str(REPO_ROOT / "data" / "normalized"))).resolve()
 STATE_DIR = Path(
-    os.getenv("ULTRARENTABLE_STATE_DIR", str(REPO_ROOT / ".runtime" / "state"))
+    os.getenv("ULTRARENTABLE_STATE_DIR", str(_CANONICAL_STATE_DB_PATH.parent))
 ).resolve()
 DB_PATH = Path(
-    os.getenv("ULTRARENTABLE_DB_PATH", str(STATE_DIR / "ultrarentable.sqlite3"))
+    os.getenv("ULTRARENTABLE_DB_PATH", str(_CANONICAL_STATE_DB_PATH))
 ).resolve()
 
 

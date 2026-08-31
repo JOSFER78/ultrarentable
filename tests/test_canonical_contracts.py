@@ -52,7 +52,7 @@ def create_sample_strategy() -> CanonicalStrategy:
     session_window=SessionWindow(start_time_utc="09:30", end_time_utc="16:00", close_at_eod=True, allowed_days=[0,1,2,3,4]),
     entry_rules=RuleTree( long_conditions=[ RuleCondition(left=IndicatorSpec(name="RSI", params={'period': 14}, source_field="close", shift=0), op="GREATER_THAN", right=50.0) ] ),
     exit_rules=ExitModel(stop_loss_ticks=20, take_profit_ticks=60),
-    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1, max_contracts_or_lots=4.0),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.01, max_open_positions=1, max_contracts_or_lots=4.0),
     provenance=ProvenanceMetadata(author="SQX_MCP_BRIDGE", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-18T18:00:00+00:00", project_name="Ultra_Auto_Pilot", databank_name="Results", build_id="build_001")
 )
 

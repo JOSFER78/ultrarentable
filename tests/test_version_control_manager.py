@@ -29,7 +29,9 @@ def test_version_manifest_loading_and_ssot(tmp_path):
     
     assert manifest_file.exists()
     ver = mgr.get_active_version()
-    assert ver in ["5.4.0", "1.02", "1.03"]
+    # re-pin motor 5.11.0: la version activa se lee del SSOT (services/engine_version.py),
+    # no de un literal fijo que quede desfasado en cada bump semantico del motor.
+    assert ver in [CURRENT_ENGINE_VERSION, "5.6.0", "5.4.0", "1.02", "1.03"]
 
 
 def test_version_bump_increments_and_persists(tmp_path):

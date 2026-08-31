@@ -83,7 +83,7 @@ def _create_sample_strategy() -> CanonicalStrategy:
         ]
     ),
         exit_rules=ExitModel(sl_type=StopLossType.FIXED_POINTS, sl_value=20.0, tp_type=TakeProfitType.FIXED_POINTS, tp_value=60.0),
-        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.01, max_open_positions=1),
         provenance=ProvenanceMetadata(author="FORENSIC_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
     )
 
@@ -298,7 +298,7 @@ def test_strategy_hash_tampering_blocks():
             ]
         ),
         exit_rules=ExitModel(sl_type=StopLossType.FIXED_POINTS, sl_value=21.0, tp_type=TakeProfitType.FIXED_POINTS, tp_value=60.0),
-        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+        sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.01, max_open_positions=1),
         provenance=ProvenanceMetadata(author="FORENSIC_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
     )
     hash_b = strat_b.strategy_hash

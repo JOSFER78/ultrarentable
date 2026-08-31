@@ -7,7 +7,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCAN_ROOTS = [ROOT / "apps" / "web", ROOT / "services"]
+SELF_PATH = Path(__file__).resolve()
+SCAN_ROOTS = [ROOT / "apps" / "web", ROOT / "services", ROOT / "scripts"]
 EXCLUDED_PARTS = {"node_modules", ".next", "__pycache__", ".venv", "dist", "build"}
 
 FORBIDDEN = {
@@ -15,13 +16,15 @@ FORBIDDEN = {
     "known_synthetic_timestamp": re.compile(r"\b(?:1672531200000|1704067200000)\b"),
     "known_synthetic_meta_strategy": re.compile(r"META-PORT-BTC-ETH-NQ-01"),
     "random_generator": re.compile(r"\bMath\.random\s*\("),
+    # Aplica a TODO services/ y scripts/ (no solo gates_router.py): la BD canónica
+    # nunca debe estar hardcodeada; SSOT = services/api/app/config.py::STATE_DB_PATH.
+    "hardcoded_production_sqlite_path": re.compile(r"/home/ubuntu/\.local/state/ultrarentable/ultrarentable\.sqlite3"),
 }
 GATE_TRUTH_PATTERNS = {
     "synthetic_gate_step_pnl": re.compile(r"\bstep_pnl\b"),
     "synthetic_gate_trade_id": re.compile(r"SQX_TR_"),
     "synthetic_gate_default_date": re.compile(r"2024-06-01|2024-06-15"),
     "false_cloud_sync_claim": re.compile(r"SYNCHRONIZED_CLOUD|CLOUD_SYNCED|\"status\"\s*:\s*\"SYNCHRONIZED\""),
-    "hardcoded_production_sqlite_path": re.compile(r"/home/ubuntu/\.local/state/ultrarentable/ultrarentable\.sqlite3"),
 }
 TEXT_SUFFIXES = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".py", ".json", ".yaml", ".yml"}
 
@@ -32,6 +35,8 @@ def iter_files() -> list[Path]:
             continue
         for path in scan_root.rglob("*"):
             if not path.is_file() or path.suffix not in TEXT_SUFFIXES or any(part in EXCLUDED_PARTS for part in path.parts):
+                continue
+            if path.resolve() == SELF_PATH:
                 continue
             files.append(path)
     return files

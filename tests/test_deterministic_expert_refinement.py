@@ -8,12 +8,14 @@ Verifica que:
 
 from __future__ import annotations
 
+import functools
 import sqlite3
 from pathlib import Path
 import pytest
 
 from services.semantic_ai.mutation_engine import SemanticMutationEngine
 from services.optimization.expert_refinement_loop import expert_strategy_optimizer
+from services.api.app.config import STATE_DB_PATH
 from contracts.canonical_strategy import ExecutionTrack
 
 
@@ -30,21 +32,32 @@ def test_mutation_engine_zero_random():
     assert cand1.exits.stop_loss_ticks == cand2.exits.stop_loss_ticks
 
 
-def test_expert_refinement_loop_on_real_candidate():
+def test_expert_refinement_loop_on_real_candidate(monkeypatch):
     """Verifica la ejecución del bucle de refinamiento experto sobre un candidato de disco."""
     # Verificar si existe al menos un candidato en la base de datos
-    db_path = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+    db_path = Path(STATE_DB_PATH)
     if not db_path.exists():
         pytest.skip("Base de datos SQLite no presente.")
-        
+
     conn = sqlite3.connect(str(db_path))
     cur = conn.cursor()
     row = cur.execute("SELECT candidate_id FROM candidates WHERE symbol IN ('BTC-USDT', 'ETH-USDT', 'SOL-USDT', 'NQ', 'ES') LIMIT 1").fetchone()
     conn.close()
-    
+
     if not row:
         pytest.skip("No hay candidatos cargados en SQLite.")
-        
+
+    # re-pin motor 5.10.0 (unidad de riesgo = fraccion): refine_candidate_loop invoca
+    # ultra_discovery.generate_candidate_blueprint sin pasar risk_pct, heredando el
+    # default legacy risk_pct=1.5 (interpretado como 150% en fraccion => guardia fail-closed).
+    # Se inyecta el equivalente fraccional (1.5% == 0.015) solo para este test.
+    original_blueprint = expert_strategy_optimizer.ultra_discovery.generate_candidate_blueprint
+    monkeypatch.setattr(
+        expert_strategy_optimizer.ultra_discovery,
+        "generate_candidate_blueprint",
+        functools.partial(original_blueprint, risk_pct=0.015),
+    )
+
     cid = row[0]
     res = expert_strategy_optimizer.refine_candidate_loop(candidate_id=cid, max_iterations=2)
     

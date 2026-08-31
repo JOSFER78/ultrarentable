@@ -1,11 +1,98 @@
 {
-  "active_version": "5.4.0",
-  "active_name": "Ultrarentable V5.4.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)",
+  "active_version": "5.13.0",
+  "active_name": "Ultrarentable V5.13.0 (Real Funding Accrual for Perpetuals)",
   "pipeline_version": "5.4.0",
   "policy_version": "5.4.0",
-  "codebase_fingerprint": "83e6c07e9276d745e59aaba5dddce7ab9bb06a46584db04e252751cb89a78a41",
-  "last_bump_utc": "2026-08-29T18:43:40.111178+00:00",
+  "codebase_fingerprint": "719727536d9a65764d8dbb4cd1bb0971a810217ce888e254be8a2de1f1c0452c",
+  "last_bump_utc": "2026-08-31T13:56:50.328803+00:00",
   "history": [
+    {
+      "version": "5.13.0",
+      "name": "Ultrarentable V5.13.0 (Real Funding Accrual for Perpetuals)",
+      "description": "Acumulacion real de funding en perpetuos ULTRA por frontera de 8h cruzada",
+      "date": "2026-08-31",
+      "changes": [
+        "Se cobra/abona funding_mean*notional por cada frontera de 8h (00:00/08:00/16:00 UTC) cruzada con posicion abierta",
+        "Nuevo campo EventBacktestResult.total_funding_usd; to_canonical_ledger.total_funding_paid_usd ya no hardcodea 0.0"
+      ]
+    },
+    {
+      "version": "5.12.0",
+      "name": "Ultrarentable V5.12.0 (Per-Pair Measured Crypto Spread)",
+      "description": "Spread real medido por par (registro BingX) para ULTRA cuando no hay spread medido por barra",
+      "date": "2026-08-31",
+      "changes": [
+        "friction_model=MEASURED_PAIR: capa intermedia entre MEASURED (por barra) y ASSUMED",
+        "half_spread_frac = spread_median_pct/100/2 en entrada y salida; slippage 2bps solo en entrada"
+      ]
+    },
+    {
+      "version": "5.11.0",
+      "name": "Ultrarentable V5.11.0 (Point-Value-Aware Futures Sizing & Margin)",
+      "description": "Sizing y margen conscientes del point_value en futuros",
+      "date": "2026-08-31",
+      "changes": [
+        "riesgo por contrato = sl_dist * point_value",
+        "nocional/margen usa point_value"
+      ]
+    },
+    {
+      "version": "5.10.0",
+      "name": "Ultrarentable V5.10.0 (Canonical Risk Unit: Fraction)",
+      "description": "Riesgo en fraccion canonica; fin del /100",
+      "date": "2026-08-31",
+      "changes": [
+        "unidad fraccion; guardia >0.5"
+      ]
+    },
+    {
+      "version": "5.9.0",
+      "name": "Ultrarentable V5.9.0 (Entry Latency: Next-Bar-Open Fills)",
+      "description": "Latencia de entrada: fill en la apertura de la vela siguiente a la senal",
+      "date": "2026-08-31",
+      "changes": [
+        "fill diferido a next-bar-open; senales en ultima vela o fuera de sesion se descartan"
+      ]
+    },
+    {
+      "version": "5.8.0",
+      "name": "Ultrarentable V5.8.0 (Integer CME Contracts — Decision #25)",
+      "description": "FONDEO dimensiona en contratos enteros",
+      "date": "2026-08-31",
+      "changes": [
+        "floor de contratos CME; sin 1 contrato no se opera"
+      ]
+    },
+    {
+      "version": "5.7.0",
+      "name": "Ultrarentable V5.7.0 (Measured Friction: Bid/Ask Spread Execution & Per-Side Venue Fees)",
+      "description": "Friccion de ejecucion coherente: spread medido por barra con fills bid/ask, comision de futuros por lado, fin del doble cobro de slippage.",
+      "date": "2026-08-31",
+      "changes": [
+        "Ejecucion asimetrica bid/ask con spread medido (friction_model=MEASURED) cuando el dataset lo trae.",
+        "Comision de futuros fija por lado; eliminado doble cobro de slippage; point_value en slippage de entrada y END_OF_DATASET."
+      ]
+    },
+    {
+      "version": "5.6.0",
+      "name": "Ultrarentable V5.6.0 (Dual-Track Engine: Event-Cross Semantics & Venue-Aware Point Value)",
+      "description": "Multiplicador de contrato dependiente del venue: FONDEO point_value CME real, ULTRA 1.0 (perpetuo BingX).",
+      "date": "2026-08-31",
+      "changes": [
+        "FONDEO usa point_value real de CME (ES 50, NQ 20, GC 100...); ULTRA usa 1.0.",
+        "Todo backtest de futuros anterior queda invalidado: LEGACY_MOTOR_SIN_POINT_VALUE (regla #26)."
+      ]
+    },
+    {
+      "version": "5.5.0",
+      "name": "Ultrarentable V5.5.0 (Event-Cross Signal Semantics)",
+      "description": "Semantica de senal: CROSS_ABOVE/CROSS_BELOW pasan de comparacion de estado a evento de cruce.",
+      "date": "2026-08-31",
+      "changes": [
+        "CROSS_ABOVE/CROSS_BELOW se evaluan como EVENTO de cruce (prev <= y actual >), no como estado.",
+        "Candidatas afectadas reclasificadas a LEGACY_MOTOR_SENAL_SIN_CRUCE (regla #26)."
+      ]
+    },
     {
       "version": "5.4.0",
       "name": "Ultrarentable V5.4.0 (Dual-Track Multi-Asset 24/7 Engine: CME Micro Sizing & Asymmetric Ratchet Vault)",

@@ -107,6 +107,9 @@ def _build_donchian_breakout_strategy(symbol: str = "BTC-USDT", timeframe: str =
     session_window=SessionWindow(start_time_utc="00:00", end_time_utc="23:59", close_at_eod=False, allowed_days=[0,1,2,3,4]),
     entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
     exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=3.0, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=8.0),
+    # NOTA: SizingAndRisk.risk_value en esta ruta (FastEngineAdapter -> CanonicalCompiler ->
+    # contracts.risk_model.RiskModel.base_risk_pct) usa semantica de PORCENTAJE ([0.1, 100]),
+    # no la fraccion canonica 5.10.0 del event_backtest_engine. 1.0 == 1% de riesgo.
     sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
     provenance=ProvenanceMetadata(author="FORENSIC_AST_AUDITOR", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-02T02:40:00+00:00")
 )

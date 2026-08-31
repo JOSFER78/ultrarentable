@@ -20,6 +20,7 @@ from typing import Any, Dict, List, Literal, Optional
 import numpy as np
 
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
+from services.api.app.config import STATE_DB_PATH
 
 logger = logging.getLogger("MetaStrategyEngine")
 
@@ -35,7 +36,7 @@ class MetaStrategyEngine:
     # Base canónica del proyecto (62 MB, 33 tablas, 505 candidatos reales).
     # Antes apuntaba por defecto a data/sqlite/candidates.db (12 KB, rancia desde el 20-ago):
     # el motor existía pero nunca había visto un candidato real.
-    CANONICAL_DB = str(Path.home() / ".local/state/ultrarentable/ultrarentable.sqlite3")
+    CANONICAL_DB = str(STATE_DB_PATH)
 
     def __init__(self, db_path: Optional[str] = None) -> None:
         self.db_path = db_path or self.CANONICAL_DB

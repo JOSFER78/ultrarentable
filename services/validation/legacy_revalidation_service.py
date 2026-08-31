@@ -519,7 +519,8 @@ class LegacyRevalidationService:
                 max_dd_oos_pct = ?,
                 ratio_oos_is = ?,
                 wfo_pass_pct = ?,
-                monte_carlo_score = ?
+                monte_carlo_score = ?,
+                gates_passed = ?
             WHERE candidate_id = ?
             """,
             (
@@ -539,6 +540,7 @@ class LegacyRevalidationService:
                 updated_metrics["anti_overfit"]["ratio_oos_is"],
                 g4_score,
                 g5_score,
+                gates_passed_count,
                 cid,
             ),
         )

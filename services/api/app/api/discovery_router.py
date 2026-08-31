@@ -14,6 +14,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
+from services.api.app.config import STATE_DB_PATH
 
 logger = logging.getLogger("DiscoveryRouter")
 
@@ -37,7 +38,7 @@ _discovery_state: Dict[str, Any] = {
 
 
 def _get_trials_count() -> int:
-    db_file = Path.home() / ".local" / "state" / "ultrarentable" / "ultrarentable.sqlite3"
+    db_file = Path(STATE_DB_PATH)
     if not db_file.exists():
         return 0
     try:

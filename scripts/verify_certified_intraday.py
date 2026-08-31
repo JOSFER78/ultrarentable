@@ -7,10 +7,15 @@ import json
 import hashlib
 import sqlite3
 import os
+import sys
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-DB_PATH = Path(os.environ.get("ULTRARENTABLE_DB_PATH", os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3")))
+sys.path.insert(0, str(ROOT_DIR))
+
+from services.api.app.config import STATE_DB_PATH
+
+DB_PATH = STATE_DB_PATH
 EVIDENCE_DIR = ROOT_DIR / "data" / "evidence"
 
 def audit_certified():

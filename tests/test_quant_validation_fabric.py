@@ -52,7 +52,7 @@ def create_mock_strategy(track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO) ->
         ],
     ),
     exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0, tp_type=TakeProfitType.RR_MULTIPLE, tp_value=3.0),
-    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.01, max_open_positions=1),
     provenance=ProvenanceMetadata(author="TEST", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-18T18:00:00+00:00")
 )
 
@@ -215,7 +215,7 @@ def create_mock_strategy(track: ExecutionTrack = ExecutionTrack.TRACK_FONDEO, st
         ],
     ),
     exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.0, tp_type=TakeProfitType.RR_MULTIPLE, tp_value=3.0),
-    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.01, max_open_positions=1),
     provenance=ProvenanceMetadata(author="TEST", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2026-02-18T18:00:00+00:00")
 )
 

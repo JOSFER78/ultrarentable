@@ -22,10 +22,12 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
+from services.api.app.config import STATE_DB_PATH
+
 logger = logging.getLogger("intelligent_quant_miner")
 
 DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/sqx_imports")
-DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
+DB_PATH = str(STATE_DB_PATH)
 
 
 @dataclass
@@ -53,8 +55,8 @@ class BacktestResult:
 class IntelligentQuantMiner:
     """Quantitative Strategy Discovery and Robustness Fabric."""
 
-    def __init__(self, db_path: str = DB_PATH, data_dir: Path = DATA_DIR):
-        self.db_path = db_path
+    def __init__(self, db_path: Optional[str] = None, data_dir: Path = DATA_DIR):
+        self.db_path = db_path or str(STATE_DB_PATH)
         self.data_dir = data_dir
 
     def load_dataset(self, symbol: str, timeframe: str) -> Optional[pd.DataFrame]:

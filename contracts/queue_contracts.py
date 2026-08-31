@@ -17,6 +17,7 @@ class JobType(str, Enum):
     FAST_BACKTEST_RUN = "FAST_BACKTEST_RUN"
     CANONICAL_AUDIT = "CANONICAL_AUDIT"
     PORTFOLIO_SWEEP = "PORTFOLIO_SWEEP"
+    MINE_CELL = "MINE_CELL"  # F03.2: una celda (track, symbol, tf, profile) de la campana de mineria
 
 
 class JobStatus(str, Enum):

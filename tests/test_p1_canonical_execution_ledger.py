@@ -80,7 +80,7 @@ def _create_test_snapshot():
 ),
         sizing_and_risk=SizingAndRisk(
     sizing_type=SizingType.RISK_PCT_EQUITY,
-    risk_value=15.0,
+    risk_value=0.15,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion; 15% -> 0.15)
     max_open_positions=1
 ),
         dataset_id_reference="ds_btc_test_p1",

@@ -11,14 +11,16 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
-DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+from services.api.app.config import STATE_DB_PATH
+
+DB_PATH = STATE_DB_PATH
 
 
 class SQXFeedbackLoop:
-    def __init__(self, db_path: Path = DB_PATH):
-        self.db_path = db_path
+    def __init__(self, db_path: Optional[Path] = None):
+        self.db_path = db_path or STATE_DB_PATH
 
     def analyze_learning_curve(self) -> Dict[str, Any]:
         """Analiza la fertilidad de las familias de estrategias generadas por SQX."""

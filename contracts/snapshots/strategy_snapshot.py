@@ -67,6 +67,11 @@ class StrategySnapshot(BaseModel):
     exit_rules: Optional[ExitModel] = Field(default=None, description="Reglas canónicas de salida, SL, TP y Trailing")
     sizing_and_risk: Optional[SizingAndRisk] = Field(default=None, description="Gestión de tamaño y riesgo base")
     parameters: Dict[str, Any] = Field(default_factory=dict)
+    # 5.14.0 (F03.3): parametros EXPLICITOS de las 4 familias de arquetipos EVENTO nuevas
+    # (reversion_atr, squeeze_breakout, session_momentum, streak_edge). El motor los lee por
+    # clave nombrada (ema_ancla, banda_atr_mult, squeeze_pct, ...) -- nunca por inferencia de
+    # nombres de indicador. Aditivo: default None, snapshots anteriores a 5.14.0 no lo llevan.
+    archetype_params: Optional[Dict[str, Any]] = Field(default=None)
     pyramiding_policy: PyramidingPolicy = Field(default_factory=PyramidingPolicy)
     margin_policy: MarginPolicy = Field(default_factory=MarginPolicy)
     session_window: Optional[SessionWindow] = None
@@ -93,6 +98,7 @@ class StrategySnapshot(BaseModel):
         pyramiding_policy: Optional[PyramidingPolicy] = None,
         margin_policy: Optional[MarginPolicy] = None,
         session_window: Optional[SessionWindow] = None,
+        archetype_params: Optional[Dict[str, Any]] = None,
     ) -> "StrategySnapshot":
         """Construye el snapshot y calcula el hash canónico SHA256 determinista."""
         content_dict = {
@@ -110,6 +116,13 @@ class StrategySnapshot(BaseModel):
             "dataset_id_reference": dataset_id_reference,
             "dataset_sha256_reference": dataset_sha256_reference,
         }
+        # 5.14.0: solo se anade la clave cuando hay parametros de arquetipo reales. Un snapshot
+        # sin archetype_params (todo lo anterior a 5.14.0, y cualquier llamada que no lo pase)
+        # produce un content_dict BIT A BIT IDENTICO al de 5.13.0 -- el hash no cambia. Con
+        # parametros, distintos valores (ema_ancla, banda_atr_mult, ...) producen hashes
+        # distintos: la identidad funcional queda garantizada tambien para las familias nuevas.
+        if archetype_params:
+            content_dict["archetype_params"] = archetype_params
         canonical_str = json.dumps(content_dict, sort_keys=True, separators=(",", ":"))
         canonical_hash = hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()
         return cls(
@@ -129,6 +142,7 @@ class StrategySnapshot(BaseModel):
             dataset_sha256_reference=dataset_sha256_reference,
             dataset_id=dataset_id_reference,
             dataset_sha256=dataset_sha256_reference,
+            archetype_params=archetype_params,
         )
 
     def verify_integrity(self) -> bool:
@@ -150,6 +164,8 @@ class StrategySnapshot(BaseModel):
             "dataset_id_reference": self.dataset_id_reference or self.dataset_id or "",
             "dataset_sha256_reference": self.dataset_sha256_reference or self.dataset_sha256 or "",
         }
+        if self.archetype_params:
+            content_dict["archetype_params"] = self.archetype_params
         canonical_str = json.dumps(content_dict, sort_keys=True, separators=(",", ":"))
         computed_hash = hashlib.sha256(canonical_str.encode("utf-8")).hexdigest()
         return computed_hash == self.canonical_hash

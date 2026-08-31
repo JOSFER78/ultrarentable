@@ -54,7 +54,7 @@ def _make_strategy() -> CanonicalStrategy:
     timeframe="1h",
     entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
     exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=1.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=3.0),
-    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
+    sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=0.01, max_open_positions=1),
     provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc="2023-11-14T22:13:20+00:00")
 )
 

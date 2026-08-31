@@ -1,5 +1,12 @@
 # LIMPIEZA 0.1 — Los dos árboles de validación: VEREDICTO
 
+> ⚠️ **SUPERADO E INCORRECTO EN PARTE (2026-08-31, auditoría adversarial de 16 agentes).**
+> Este documento afirma que `services/validation/engines/` "no lo ejecuta nadie": es FALSO —
+> `validation_router.py:158-160,266` lo importa a nivel de módulo y lo ejecuta en el endpoint
+> `POST /validate-11-gates` montado en `main.py`. Ejecutar la acción nº1 propuesta aquí tumbaría
+> `ultrarentable-api`. La conclusión vigente está en la síntesis F00 (ambos árboles VIVOS, son
+> implementaciones distintas; ninguno puede moverse en bloque). No usar este documento como base.
+
 **Auditor:** Hermes · **Fecha:** 2026-08-31 · **Método:** solo lectura, evidencia con grep/find
 
 ## El hallazgo

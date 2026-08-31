@@ -28,6 +28,7 @@ def test_blind_test_validator_on_real_candles():
         dataset_id="ds_binance_btcusdt_1h",
         dataset_sha256="hash_blind_btc_123",
         leverage=20.0,
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     validator = BlindTestValidator()
@@ -71,6 +72,7 @@ def test_certification_registry_multi_route_verdicts():
         timeframe="1h",
         dataset_id="ds_btc",
         dataset_sha256="hash_btc",
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     engine = EventBacktestEngine()

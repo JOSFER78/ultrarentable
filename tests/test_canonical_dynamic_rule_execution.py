@@ -86,6 +86,8 @@ def _make_donchian_strategy() -> CanonicalStrategy:
     timeframe="1h",
     entry_rules=RuleTree(logic=LogicalOp.AND, direction="LONG", long_conditions=[cond]),
     exit_rules=ExitModel(sl_type=StopLossType.ATR_MULTIPLE, sl_value=2.5, tp_type=TakeProfitType.ATR_MULTIPLE, tp_value=8.0),
+    # risk_value aqui usa semantica de PORCENTAJE (contracts.risk_model.RiskModel.base_risk_pct
+    # exige [0.1, 100]), no la fraccion canonica 5.10.0 del event_backtest_engine.
     sizing_and_risk=SizingAndRisk(sizing_type=SizingType.RISK_PCT_EQUITY, risk_value=1.0, max_open_positions=1),
     provenance=ProvenanceMetadata(author="TEST_USER", engine_version="3.0.0", policy_version="3.0.0", created_at_utc=datetime.now(timezone.utc).isoformat())
 )

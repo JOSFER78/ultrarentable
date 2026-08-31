@@ -27,6 +27,7 @@ from services.validation.engine.event_backtest_engine import EventBacktestEngine
 from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePipelineOrchestrator
 from services.validation.certification_registry import CertificationRegistry
 from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY
+from services.api.app.config import STATE_DB_PATH
 from services.optimization.quantitative_arsenal import (
     MicrostructureProfiler,
     MarketMicrostructureProfile,
@@ -46,7 +47,7 @@ from services.semantic_ai.semantic_engine import (
 logger = logging.getLogger("UniversalStrategyOptimizer")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+DB_PATH = STATE_DB_PATH
 DATA_DIR = Path("/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized")
 
 

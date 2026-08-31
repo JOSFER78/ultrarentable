@@ -19,11 +19,12 @@ from pydantic import BaseModel, Field
 
 from services.engine_version import CURRENT_ENGINE_VERSION
 from services.sync.firebase_sync_manager import firebase_sync_manager
+from services.api.app.config import STATE_DB_PATH
 
 logger = logging.getLogger("firebase_sync")
 firebase_sync_router = APIRouter(prefix="/sync/firebase", tags=["Firebase Firestore Cloud Sync"])
 
-DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
+DB_PATH = str(STATE_DB_PATH)
 
 
 class FirebaseConfigSchema(BaseModel):

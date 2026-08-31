@@ -18,6 +18,7 @@ from typing import Dict, List, Optional
 
 from contracts.canonical_strategy import CanonicalStrategy, StrategyLifecycleStatus
 from contracts.evidence_bundle import EvidenceBundle
+from services.api.app.config import STATE_DB_PATH
 
 
 class InvalidStateTransitionError(Exception):
@@ -178,8 +179,7 @@ class CandidateRegistry:
         try:
             import sqlite3
             possible_db_paths = [
-                "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3",
-                "database.sqlite",
+                str(STATE_DB_PATH),
             ]
             db_path = None
             for p in possible_db_paths:

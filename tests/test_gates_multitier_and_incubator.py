@@ -83,7 +83,7 @@ def test_tier_2_diamond_in_the_rough_classification(tmp_path):
 )
     sizing = SizingAndRisk(
     sizing_type=SizingType.RISK_PCT_EQUITY,
-    risk_value=1.0,
+    risk_value=0.01,
     max_open_positions=1,
     max_contracts_or_lots=2.0
 )

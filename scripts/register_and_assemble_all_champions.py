@@ -25,11 +25,12 @@ from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePip
 from services.validation.certification_registry import CertificationRegistry
 from services.engine_version import CURRENT_ENGINE_VERSION
 from services.portfolio.meta_strategy_pipeline import ensure_meta_strategies
+from services.api.app.config import STATE_DB_PATH
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("AllChampionsCertifier")
 
-DB_PATH = Path(os.environ.get("ULTRARENTABLE_DB_PATH", os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3")))
+DB_PATH = STATE_DB_PATH
 
 
 def get_db():

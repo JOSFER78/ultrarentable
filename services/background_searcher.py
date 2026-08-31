@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 THIS_DIR = Path(__file__).resolve().parent
+REPO_ROOT = THIS_DIR.parent
 try:
     sys.path.insert(0, str(THIS_DIR / "sqx_bridge"))
     from sqx_client import SQXMCPClient, SQXMCPError
@@ -37,9 +38,12 @@ except Exception as e:  # pragma: no cover
     SQXMCPError = Exception
     print(f"[warn] sqx_client no disponible: {e}", file=sys.stderr)
 
+sys.path.insert(0, str(REPO_ROOT))
+from services.api.app.config import STATE_DB_PATH  # noqa: E402
+
 # ── Configuración ────────────────────────────────────────────────
 SQX_MCP_URL = os.getenv("SQX_MCP_URL", "http://127.0.0.1:8081/mcp")
-DB_PATH = os.getenv("STATE_DB_PATH") or os.getenv("ULTRA_DB") or os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3")
+DB_PATH = str(STATE_DB_PATH)
 POLL_SECONDS = int(os.getenv("ULTRA_POLL_SECONDS", "40"))
 RUN_TIMEOUT_SECONDS = int(os.getenv("ULTRA_RUN_TIMEOUT_SECONDS", "3600"))
 

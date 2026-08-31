@@ -10,7 +10,21 @@ from services.api.app.validation.gates.gate_pipeline_orchestrator import GatePip
 from services.discovery.discovery_validation_pipeline import compute_file_sha256
 
 
-def test_11_gates_pipeline_evaluates_real_backtest():
+def test_11_gates_pipeline_evaluates_real_backtest(monkeypatch):
+    # re-pin motor 5.10.0 (unidad de riesgo = fraccion): Gate 9 (ANTI-CURVE-FIT) reconstruye
+    # internamente variantes perturbadas de la estrategia vía
+    # UltraDiscoveryEngine.generate_candidate_blueprint sin pasar risk_pct, heredando el
+    # default legacy risk_pct=1.5 (150% en fraccion) que la guardia fail-closed rechaza.
+    # Se parchea el default de la clase (solo durante este test) para inyectar el
+    # equivalente fraccional (1.5% == 0.015) sin tocar services/.
+    original_blueprint = UltraDiscoveryEngine.generate_candidate_blueprint
+
+    def _blueprint_with_fraction_risk(self, *args, **kwargs):
+        kwargs.setdefault("risk_pct", 0.015)
+        return original_blueprint(self, *args, **kwargs)
+
+    monkeypatch.setattr(UltraDiscoveryEngine, "generate_candidate_blueprint", _blueprint_with_fraction_risk)
+
     sample_file = "/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized/ds_binance_suiusdt_1h_1695290400000_1787086800000.json"
     with open(sample_file, "r") as f:
         candles = json.load(f)
@@ -37,6 +51,7 @@ def test_11_gates_pipeline_evaluates_real_backtest():
         sl_atr_mult=1.5,
         tp_atr_mult=7.0,
         pyramiding_tiers_count=3,
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     # 2. Ejecutar Backtest Determinista sobre In-Sample y Blind OOS

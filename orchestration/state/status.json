@@ -1,9 +1,9 @@
 {
-  "phase_number": 2,
+  "phase_number": "F00-F03 (plan v4 por bloques)",
   "status": "orquestador_ejecutando",
-  "last_updated": "2026-08-31T04:16:56Z",
-  "plan_version": "v3_2026-08-31_motor_primero",
-  "note": "Hermes asume plan y ejecucion. Siguiente: Fase 2 (backfill masivo Dukascopy + cripto) con trabajo en paralelo. Killzones: el usuario pide tenerlas en cuenta mas adelante, no ahora.",
+  "last_updated": "2026-08-31T10:06:00Z",
+  "plan_version": "v4_2026-08-31_por_bloques (orchestration/state/plan/bloques/)",
+  "note": "Sesion 2026-08-31: plan v4 troceado en bloques editables. F01 censo HECHO (regla #26: 120 filas 5.5.0 a LEGACY_MOTOR_VERSION_OBSOLETA; criterio 1.1: 0 supervivientes de 728; herramientas scripts/gobernanza_regla26.py y scripts/censo_f01.py). Gobernanza sincronizada (SSOT+manifest). F00 auditoria con workflow adversarial en curso. F02 motor: 5.7.0 aplicada (spread medido, comision por lado, fin del doble cobro); 5.8.0/5.9.0 en aplicacion por subagente; arnes scripts/verificacion_f02.py. F03.2 cola scripts/cola_mineria.py lista (33 celdas, lanzamiento tras F02). F03.1: censo real de datos = 27 celdas aptas de 110 (solo cripto); backfill Dukascopy masivo 2023-2026 lanzado en background (data/dukascopy_backfill.log). F00.5 RESUELTO: servicio ultrarentable-discovery.service detenido (inactive).",
   "history": [
     {
       "phase": "loop_antigravity",

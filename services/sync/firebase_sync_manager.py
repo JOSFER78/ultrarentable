@@ -23,9 +23,11 @@ from typing import Any, Dict, List, Optional
 
 import httpx
 
+from services.api.app.config import STATE_DB_PATH
+
 logger = logging.getLogger("FirebaseSyncManager")
 
-DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
+DB_PATH = str(STATE_DB_PATH)
 FIREBASE_CONFIG_PATH = "/home/ubuntu/.config/configstore/firebase-tools.json"
 DEFAULT_DB_URL = "https://pecemi-default-rtdb.firebaseio.com"
 CLIENT_ID = "563584335869-fgrhgmd47bqnekij5i8b5pr03ho859e1.apps.googleusercontent.com"
@@ -36,11 +38,11 @@ class FirebaseSyncManager:
 
     def __init__(
         self,
-        db_path: str = DB_PATH,
+        db_path: Optional[str] = None,
         database_url: str = DEFAULT_DB_URL,
         config_path: str = FIREBASE_CONFIG_PATH,
     ) -> None:
-        self.db_path = db_path
+        self.db_path = db_path or str(STATE_DB_PATH)
         self.database_url = database_url.rstrip("/")
         self.config_path = config_path
         self.last_sync_timestamp: Optional[str] = None
@@ -232,9 +234,10 @@ class FirebaseSyncManager:
 
             # 3. Extraer estadísticas de fallos (FailureKnowledgeDB)
             try:
-                from services.semantic_ai.failure_knowledge_db import failure_db
+                from services.semantic_ai.failure_knowledge import failure_db
                 failure_stats = failure_db.get_cluster_stats()
-            except Exception:
+            except Exception as e:
+                logger.warning(f"No se pudieron extraer estadisticas de FailureKnowledgeDB: {e}")
                 failure_stats = {}
 
             # 4. Enviar a Firebase RTDB

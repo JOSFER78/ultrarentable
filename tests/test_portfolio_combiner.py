@@ -26,6 +26,7 @@ def test_portfolio_combiner_aggregates_real_backtest_results():
         dataset_id="ds_binance_btcusdt_1h",
         dataset_sha256="hash_btc_123",
         leverage=20.0,
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
     strat_eth = ultra_discovery.generate_candidate_blueprint(
         strategy_id="strat_eth_ultra",
@@ -34,6 +35,7 @@ def test_portfolio_combiner_aggregates_real_backtest_results():
         dataset_id="ds_binance_ethusdt_1h",
         dataset_sha256="hash_eth_123",
         leverage=20.0,
+        risk_pct=0.015,  # re-pin motor 5.10.0 (unidad de riesgo = fraccion, no porcentaje)
     )
 
     engine = EventBacktestEngine()

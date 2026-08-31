@@ -50,7 +50,8 @@ def _acquire_singleton_lock():
         print(f"[DISCOVERY] Otra instancia ya esta en ejecucion. Saliendo limpiamente PID {os.getpid()}.")
         sys.exit(0)
 
-_acquire_singleton_lock()
+# El lock se adquiere SOLO al ejecutar como proceso (ver __main__): adquirirlo en el import
+# mataba a cualquier importador (pytest incluido) con sys.exit(0) mientras el servicio corria.
 # ------------------------------
 logger = logging.getLogger("DiscoveryValidationPipeline")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -574,8 +575,9 @@ class DiscoveryValidationPipeline:
                 net_profit_is, trades_is, profit_factor_is, max_dd_is_pct,
                 net_profit_oos, trades_oos, profit_factor_oos, max_dd_oos_pct,
                 ratio_oos_is, wfo_pass_pct, monte_carlo_score,
-                scorecard_json, engine_version, validation_pipeline_version, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                scorecard_json, engine_version, validation_pipeline_version, created_at,
+                gates_passed
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(candidate_id) DO UPDATE SET
                 status=excluded.status,
                 status_reason=excluded.status_reason,
@@ -592,7 +594,8 @@ class DiscoveryValidationPipeline:
                 monte_carlo_score=excluded.monte_carlo_score,
                 scorecard_json=excluded.scorecard_json,
                 engine_version=excluded.engine_version,
-                validation_pipeline_version=excluded.validation_pipeline_version
+                validation_pipeline_version=excluded.validation_pipeline_version,
+                gates_passed=excluded.gates_passed
             """,
             (
                 strategy.strategy_id,
@@ -618,6 +621,7 @@ class DiscoveryValidationPipeline:
                 CURRENT_ENGINE_VERSION,
                 CURRENT_ENGINE_VERSION,
                 datetime.now(timezone.utc).isoformat(),
+                int(gates_eval.get("gates_passed_count", 0)),
             ),
         )
         conn.commit()
@@ -645,5 +649,6 @@ class DiscoveryValidationPipeline:
 
 
 if __name__ == "__main__":
+    _acquire_singleton_lock()
     pipeline = DiscoveryValidationPipeline()
     pipeline.run_continuous_pipeline()

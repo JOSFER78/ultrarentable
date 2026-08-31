@@ -153,7 +153,7 @@ def default_provenance():
 def default_sizing():
     return SizingAndRisk(
         sizing_type=SizingType.RISK_PCT_EQUITY,
-        risk_value=1.0,
+        risk_value=0.01,
         max_open_positions=1,
         max_daily_loss_usd=500.0,
     )
@@ -893,7 +893,7 @@ def test_max_open_positions_unsupported_fail_closed(default_provenance, base_dat
     """24: max_open_positions > 1 clasificado como UNSUPPORTED_FAIL_CLOSED en el motor monohilo."""
     sizing_multi = SizingAndRisk(
         sizing_type=SizingType.FIXED_CONTRACTS,
-        risk_value=1.0,
+        risk_value=0.01,
         max_open_positions=3,
     )
     strat_multi = CanonicalStrategy.create_and_hash(
@@ -923,14 +923,14 @@ def test_max_open_positions_pydantic_boundary_validation():
     with pytest.raises(ValidationError):
         SizingAndRisk(
             sizing_type=SizingType.FIXED_CONTRACTS,
-            risk_value=1.0,
+            risk_value=0.01,
             max_open_positions=0,
         )
 
     with pytest.raises(ValidationError):
         SizingAndRisk(
             sizing_type=SizingType.FIXED_CONTRACTS,
-            risk_value=1.0,
+            risk_value=0.01,
             max_open_positions=11,
         )
 
@@ -1155,7 +1155,7 @@ def test_boundary_integration_event_backtest_engine_execution(base_dataset):
     )
     sizing = SizingAndRisk(
         sizing_type=SizingType.FIXED_CONTRACTS,
-        risk_value=1.0,
+        risk_value=0.01,
         max_open_positions=1,
     )
 

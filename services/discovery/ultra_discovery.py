@@ -56,7 +56,10 @@ class UltraDiscoveryEngine:
         dataset_id: str,
         dataset_sha256: str,
         leverage: float = 3.0,
-        risk_pct: float = 1.5,
+        # Unidad canonica de riesgo desde motor 5.10.0: FRACCION (0.015 == 1.5%).
+        # El default anterior (1.5, semantica porcentaje) haria saltar la guardia fail-closed
+        # del motor (>0.5) en todo caller que no pase risk_pct (p.ej. las variantes de gate_09).
+        risk_pct: float = 0.015,
         sl_value: float = 20.0,
         tp_value: float = 60.0,
         ema_fast: int = 20,
@@ -74,10 +77,15 @@ class UltraDiscoveryEngine:
         breakout_lookback: int = 20,
         exit_family: Optional[str] = None,
         session_profile: Optional[str] = None,
+        # 5.14.0 (F03.3): parametros EXPLICITOS de las 4 familias EVENTO nuevas (reversion_atr,
+        # squeeze_breakout, session_momentum, streak_edge). Ignorado por cualquier otro
+        # arquetipo -- aditivo, no cambia ninguna llamada existente.
+        archetype_params: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> StrategySnapshot:
         """Genera un Snapshot canónico; las mutaciones admitidas cambian reglas ejecutables reales."""
         archetype = str(archetype).upper() if archetype else "MOMENTUM_BREAKOUT"
+        _ap = archetype_params or {}
         ema_fast_spec = IndicatorSpec(name="EMA", params={"period": int(ema_fast)}, source_field="close", shift=0)
         ema_slow_spec = IndicatorSpec(name="EMA", params={"period": int(ema_slow)}, source_field="close", shift=0)
         rsi_spec = IndicatorSpec(name="RSI", params={"period": int(rsi_period)}, source_field="close", shift=0)
@@ -103,6 +111,22 @@ class UltraDiscoveryEngine:
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
                 ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
             ]
+        elif archetype in {"REVERSION_ATR", "SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}:
+            # 5.14.0 (F03.3): las 4 familias EVENTO nuevas no se interpretan via el arbol
+            # generico de indicadores -- EventBacktestEngine las despacha por `archetype`
+            # (campo explicito) y lee sus dimensiones de `archetype_params` (campo explicito,
+            # sin inferencia por nombre). Este ConditionNode es solo documentacion/huella
+            # criptografica: deja los parametros reales tambien dentro de entry_rules, que SI
+            # forma parte del canonical_hash, para que dos configuraciones con distintos
+            # valores de arquetipo obtengan hashes distintos.
+            event_spec = IndicatorSpec(
+                name=f"{archetype}_EVENT",
+                params=dict(_ap),
+                source_field="close",
+                shift=0,
+            )
+            long_conditions = [ConditionNode(left=event_spec, op=ComparisonOp.EQ, right=1.0)]
+            short_conditions = [ConditionNode(left=event_spec, op=ComparisonOp.EQ, right=-1.0)]
         else:
             long_conditions = [
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.CROSS_ABOVE, right=ema_slow_spec),
@@ -141,7 +165,24 @@ class UltraDiscoveryEngine:
             short_conditions=short_conditions,
         )
 
-        if exit_family == "RR_DYNAMIC":
+        if archetype == "REVERSION_ATR":
+            # SL fijo (distancia ATR desde la entrada, mecanismo estandar del motor). El TP
+            # REAL es dinamico -- la propia EMA ancla, recalculada barra a barra por
+            # EventBacktestEngine -- asi que tp_value aqui es un PLACEHOLDER que solo
+            # satisface el esquema (ExitModel.tp_value > 0); el motor lo ignora para este
+            # arquetipo (ver "5.14.0 reversion_atr: TP DINAMICO" en event_backtest_engine.py).
+            final_sl_type = StopLossType.ATR_MULTIPLE
+            final_sl_val = float(sl_atr_mult if sl_atr_mult is not None else 2.0)
+            final_tp_type = TakeProfitType.ATR_MULTIPLE
+            final_tp_val = float(tp_atr_mult) if tp_atr_mult is not None else (final_sl_val * 3.0)
+            trail_after_r = None
+        elif archetype in {"SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}:
+            final_sl_type = StopLossType.ATR_MULTIPLE
+            final_sl_val = float(sl_atr_mult if sl_atr_mult is not None else 2.0)
+            final_tp_type = TakeProfitType.ATR_MULTIPLE
+            final_tp_val = float(tp_atr_mult if tp_atr_mult is not None else 6.0)
+            trail_after_r = None
+        elif exit_family == "RR_DYNAMIC":
             final_sl_type = StopLossType.ATR_MULTIPLE
             final_sl_val = float(sl_atr_mult if sl_atr_mult is not None else 2.0)
             final_tp_type = TakeProfitType.RR_MULTIPLE
@@ -206,6 +247,17 @@ class UltraDiscoveryEngine:
                 close_at_eod=True,
                 allowed_days=[0, 1, 2, 3, 4],
             )
+        elif archetype == "SESSION_MOMENTUM":
+            # Ancla en dia UTC completo (decision de diseno F03.3): la ventana de sesion NO
+            # restringe horas de entrada aqui (el ancla ya filtra cuando puede activarse la
+            # senal); solo habilita el cierre EOD opcional como dimension de busqueda
+            # (cierre_eod en ULTRA es un valor real explorado, no forzado como en FONDEO).
+            session_window = SessionWindow(
+                start_time_utc="00:00",
+                end_time_utc="23:59",
+                close_at_eod=bool(_ap.get("cierre_eod", True)),
+                allowed_days=[0, 1, 2, 3, 4, 5, 6],
+            )
         margin_policy = MarginPolicy(
             margin_mode="ISOLATED",
             max_leverage_ceiling=float(leverage),
@@ -227,4 +279,5 @@ class UltraDiscoveryEngine:
             pyramiding_policy=pyramiding,
             margin_policy=margin_policy,
             session_window=session_window,
+            archetype_params=archetype_params,
         )

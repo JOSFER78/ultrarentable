@@ -30,13 +30,14 @@ from services.api.app.core.market_matrix import (
 )
 from services.api.app.data_feed.feed_loader import load_candles
 from services.api.app.factory.ai_learning_engine import ai_learning_engine
+from services.api.app.config import STATE_DB_PATH
 from services.api.app.factory.ultra_risk_controlled_engine import (
     UltraRiskControlledEngine,
     RiskControlledResult,
 )
 
 logger = logging.getLogger("continuous_search_daemon")
-DB_PATH = "/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
+DB_PATH = str(STATE_DB_PATH)
 
 ARCHETYPE_DESCRIPTIONS = {
     "MOMENTUM_BREAKOUT": "Ruptura de canal de Donchian / Volatilidad con filtro macro EMA200 y Trailing Stop dinámico. Captura impulsos direccionales.",
@@ -51,8 +52,8 @@ ARCHETYPE_DESCRIPTIONS = {
 class ContinuousSearchDaemon:
     """Autonomous 24/7 Search and Optimization Daemon."""
 
-    def __init__(self, db_path: str = DB_PATH):
-        self.db_path = db_path
+    def __init__(self, db_path: Optional[str] = None):
+        self.db_path = db_path or str(STATE_DB_PATH)
         self.is_running: bool = False
         self._thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()

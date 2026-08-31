@@ -19,11 +19,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from services.sqx_bridge.sqx_client import SQXMCPClient, SQXMCPError
+from services.api.app.config import STATE_DB_PATH
 
 logger = logging.getLogger("SQXSyncWorker")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
-DB_PATH = Path("/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3")
+DB_PATH = STATE_DB_PATH
 
 
 class SQXSyncWorker:

@@ -4,10 +4,16 @@ Migración canónica de candidatos históricos y saneamiento de estados bajo v5.
 """
 import sqlite3
 import json
+import sys
 import time
 from pathlib import Path
 
-DB_PATH = Path.home() / ".local" / "state" / "ultrarentable" / "ultrarentable.sqlite3"
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
+
+from services.api.app.config import STATE_DB_PATH
+
+DB_PATH = STATE_DB_PATH
 
 def run_migration():
     if not DB_PATH.exists():

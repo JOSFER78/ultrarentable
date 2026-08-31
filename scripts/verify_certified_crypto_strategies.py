@@ -12,7 +12,12 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 EVIDENCE_DIR = ROOT_DIR / "data" / "evidence"
-DB_PATH = Path(os.environ.get("ULTRARENTABLE_DB_PATH", os.path.expanduser("~/.local/state/ultrarentable/ultrarentable.sqlite3")))
+
+sys.path.insert(0, str(ROOT_DIR))
+
+from services.api.app.config import STATE_DB_PATH
+
+DB_PATH = STATE_DB_PATH
 
 TARGET_CRYPTO_SYMBOLS = {"SOL", "SOLUSDT", "SOL-USDT", "XRP", "XRPUSDT", "XRP-USDT", 
                          "BNB", "BNBUSDT", "BNB-USDT", "AVAX", "AVAXUSDT", "AVAX-USDT", 
