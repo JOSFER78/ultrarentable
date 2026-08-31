@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> **SUSTITUIDO (2026-08-31) por `orchestration/METODOLOGIA_ANTIGRAVITY.md`.**
+> Ese es ahora el DOCUMENTO ÚNICO de trabajo de Antigravity: contiene el mismo protocolo GO/DONE
+> ampliado, el formato obligatorio de informe, la lista negra, el mapa real del proyecto y el
+> checklist previo a `DONE`. Este archivo se conserva como referencia histórica (doctrina de
+> "nunca borrar") y **no se actualiza**. Si algo aquí contradice la METODOLOGÍA, manda la METODOLOGÍA.
+
 # Instrucciones de ejecución para Antigravity (ejecutor del loop)
 
 > Este archivo define CÓMO trabaja Antigravity dentro del repo. El orquestador (Hermes)

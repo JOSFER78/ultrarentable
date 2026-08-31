@@ -4,6 +4,24 @@
 
 ---
 
+## 0. PROYECTO ULTRARENTABLE — TU PROCEDIMIENTO OPERATIVO (2026-08-31)
+
+> **Si estás trabajando en el workspace `01 Ultrarentable`, tu documento de trabajo obligatorio es:**
+>
+> ## 👉 `orchestration/METODOLOGIA_ANTIGRAVITY.md`
+>
+> Léelo ENTERO antes de tocar nada, en cada fase. Contiene: la regla nº1 (si no lo sabes, `NO DATA`,
+> nunca lo inventes), la cadena de mando, el protocolo de señales GO/DONE, el formato obligatorio
+> del informe, la lista negra de acciones, el mapa real del proyecto y el checklist previo a `DONE`.
+>
+> **No inicies ninguna fase sin el fichero `orchestration/state/GO` publicado por el Orquestador**,
+> y verifica siempre que su `task_sha256` coincide con el sha256 real de `current_phase.md`.
+>
+> Las decisiones de negocio ya cerradas por el usuario están selladas en
+> `orchestration/DOCTRINA_ORQUESTADOR.md §14`. Contradecir una de ellas = fase rechazada.
+
+---
+
 ## 1. GUARDARRAÍLES SUPREMOS E INQUEBRANTABLES
 
 ### 1.1 DOCTRINA ZERO-MOCKS & REAL-ONLY (CERO SIMULACIONES, CERO INVENTOS)
