@@ -208,6 +208,40 @@ Ninguna capa superior puede inventar/sobrescribir resultados de una inferior. Ci
 
 ---
 
+## 5.1 DECISIONES RESUELTAS POR EL USUARIO (2026-08-31) — CIERRE DE §5
+
+El 2026-08-31 el usuario respondió a las 20 preguntas del Orquestador. Las 20 respuestas están
+selladas en `orchestration/DOCTRINA_ORQUESTADOR.md §14` y son **no renegociables**. Cierre de §5:
+
+| Decisión abierta de §5 | Estado | Resolución |
+| :--- | :--- | :--- |
+| 1. Fuente de datos 5m CME/forex | ✅ **RESUELTA** | **Coste 0 €** con proxies equivalentes. Verificado físicamente por el Orquestador: el datafeed público de **Dukascopy** sirve ticks bid/ask reales sin API key (`USA500IDXUSD`→ES, `USATECHIDXUSD`→NQ, `USA30IDXUSD`→YM, `XAUUSD`→GC, `XAGUSD`→SI, `LIGHTCMDUSD`→CL + FX majors), con ≥10 años de profundidad. Aviso: el volumen es **de tick del broker**, no del contrato CME (verificado: 100 % de barras con volumen > 0 en `USA500IDXUSD`, 49 ticks/barra, spread medio 0,50 pts). |
+| 2. Puerto web canónico (3000 vs 3005) | ✅ **RESUELTA** | El canónico es **3005** (la realidad física manda). La documentación se alinea a 3005; el health-check de la API debe apuntar ahí. |
+| 3. Cobertura mínima de barras por celda | ⏳ Se fija en la Fase 3 | La define el planificador de la cola de minería, con el dato de cobertura real por celda tras la ingesta Dukascopy. |
+| 4. Uso de los 2–3 meses de 5m CME/FX ya importados | ✅ **RESUELTA** | Se usan como **muestra de control** para medir la divergencia proxy↔CME real (correlación y spread). Deja de ser la fuente principal. |
+| 5. Alcance de TRACK_FONDEO en el MVP | ✅ **RESUELTA** | Ambos perfiles (ULTRA y FONDEO) se generan desde el inicio (Fase 3), pero **la gestión de cuentas prop queda pospuesta** (decisión #10): la prioridad exclusiva es generar estrategias. |
+| 6. Backfill M1 cripto vs. arrancar campaña | ✅ **RESUELTA** | **Ambos en paralelo.** El backfill sigue; la campaña arranca con la cobertura disponible y las celdas se activan a medida que alcanzan cobertura. |
+| 7. Catálogo heredado (230 "certificadas") | ⏳ Depende de la Fase 0 | El veredicto de la auditoría del changeset `23c8733a9..245009fef` determina si se revalida o se archiva como legacy no certificado. |
+
+### 5.1.1 Parámetros de riesgo actualizados (deroga valores anteriores)
+- **ULTRA: 70 % DD realizado · 80 % DD flotante** (el 75 % que figura en §1 y en docs antiguos queda derogado).
+- **Apalancamiento ULTRA: hasta 500x nominal en BingX**, gestionado dinámicamente por IA, con cap duro
+  por el máximo real que ofrezca el exchange en cada par.
+- **Dimensionamiento 100 % en porcentajes**, agnóstico al capital nominal.
+- **Objetivo ULTRA: ~100 % mensual.** Es una meta, no un permiso para maquillar resultados.
+- **Arranque 100 % paper/demo.** Capital real solo con autorización explícita del usuario.
+- **Killzones y filtro de noticias: capa POSTERIOR de optimización**, nunca dentro de la generación inicial.
+- **Meta-estrategias: router dinámico con debate IA multi-activo**, sin reglas hardcodeadas.
+
+### 5.1.2 Reorganización documental del 2026-08-31
+La raíz del repo pasó de 11 a 3 `.md` (`README.md` reescrito como índice, `AUTHORITY_GRAPH.md`,
+`GEMINI.md`) y `docs/` de 19 a 8 documentos canónicos. Todo lo superado se movió con `git mv` a
+`docs/archive/` (**cero borrados**), trazado en `docs/archive/MANIFIESTO_REORGANIZACION_2026-08-31.md`.
+El índice de vigencia de §6 sigue siendo válido en cuanto a *qué* está vigente; las **rutas** de los
+documentos SUPERSEDED son ahora `docs/archive/`, `docs/archive/root/` y `docs/archive/Estado/`.
+
+---
+
 ## 6. ÍNDICE DEL RESTO DE DOCS (qué queda vigente y qué está SUPERSEDED)
 
 - **Vigentes (sin banner):** este doc, `AUTHORITY_GRAPH.md` (raíz), `docs/VERSION_GOVERNANCE_AND_CONTROL.md`, `docs/ULTRARENTABLE_PRINCIPLES.md`, `docs/ARCHITECTURE_CURRENT.md` (cadena de verdad, coherente), `docs/18_STRATEGIES_PAGE_SPEC.md` (spec de página vigente), `docs/tradesfera/*` (corpus de negocio, certificado), `docs/MULTIAGENTE_Y_SEGUIMIENTO.md` (modelo de trabajo orquestador+subagentes, vigente), `docs/Gestion de Capital — Balas y Estados.md` (diseño de negocio vigente), corpus de investigación (`docs/Investigacion/`, `docs/Fondeo/`, `docs/conexiones_automatizar/`, `docs/plan_implementacion/`) como **material de referencia**, y `docs/archive/` (ya archivado de por sí).
