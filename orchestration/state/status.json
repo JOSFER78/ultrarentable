@@ -1,10 +1,16 @@
 {
-  "phase_number": "F00-F03 (plan v4 por bloques)",
+  "phase_number": "F03 (plan v4 por bloques) — release 5.14.0 + re-campana arquetipos",
   "status": "orquestador_ejecutando",
-  "last_updated": "2026-08-31T10:06:00Z",
+  "last_updated": "2026-08-31T18:05:00Z",
   "plan_version": "v4_2026-08-31_por_bloques (orchestration/state/plan/bloques/)",
-  "note": "Sesion 2026-08-31: plan v4 troceado en bloques editables. F01 censo HECHO (regla #26: 120 filas 5.5.0 a LEGACY_MOTOR_VERSION_OBSOLETA; criterio 1.1: 0 supervivientes de 728; herramientas scripts/gobernanza_regla26.py y scripts/censo_f01.py). Gobernanza sincronizada (SSOT+manifest). F00 auditoria con workflow adversarial en curso. F02 motor: 5.7.0 aplicada (spread medido, comision por lado, fin del doble cobro); 5.8.0/5.9.0 en aplicacion por subagente; arnes scripts/verificacion_f02.py. F03.2 cola scripts/cola_mineria.py lista (33 celdas, lanzamiento tras F02). F03.1: censo real de datos = 27 celdas aptas de 110 (solo cripto); backfill Dukascopy masivo 2023-2026 lanzado en background (data/dukascopy_backfill.log). F00.5 RESUELTO: servicio ultrarentable-discovery.service detenido (inactive).",
+  "note": "Sesion 2026-08-31 (tarde): motor honesto completo hasta 5.13.0 (F02.1 HECHO: 5.7.0 friccion coherente, 5.8.0 contratos CME enteros, 5.9.0 latencia next-bar-open, 5.10.0 riesgo=FRACCION canonica, 5.11.0 point_value en sizing, 5.12.0 spread real por par BingX, 5.13.0 funding real 8h; registro data/registry/bingx_friction.json). Campanas con motor honesto: 4h/1h 18 celdas ~36k configs y 15m profundo -> 0 certificadas 11/11; familia EMA/RSI/Donchian agotada (15m: embudo IS 2000/2000). Backfill profundo Binance COMPLETADO (18 datasets 15m/5m desde 2021, 0 gaps). EN VUELO: release 5.14.0 con 4 familias nuevas de arquetipos (spec orchestration/reviews/diseno_arquetipos_5_14.md) por subagente; al aterrizar: re-campana perfil arquetipos 15m+4h y censo 1.1. Dukascopy: solo USA500IDXUSD avanza (~1155 .bi5); FONDEO sigue bloqueado. SQX: 2035 .sqx ToImprove materializados; export CSV pendiente (timeout). Git: push a main AUTORIZADO expresamente por el usuario; commit tematico al aterrizar 5.14.0.",
   "history": [
+    {
+      "phase": "F02-F03",
+      "status": "hito",
+      "timestamp": "2026-08-31T18:05:00Z",
+      "razon": "Motor 5.7.0->5.13.0 verificado ledger a ledger; campanas 4h/1h y 15m con friccion honesta = 0 certificadas (diagnostico estructural: familia de senales agotada, no el criterio); backfill profundo Binance 15m/5m completado (0 gaps); diseno 5.14.0 sellado y en implementacion; cola de mineria con heartbeat y cancelacion con motivo; push a main autorizado expresamente por el usuario."
+    },
     {
       "phase": "loop_antigravity",
       "status": "retirado",

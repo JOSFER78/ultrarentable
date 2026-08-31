@@ -40,8 +40,8 @@ entonces **la envolvente ULTRA**. En paralelo desde el descubrimiento, **FONDEO*
 | :--- | :--- | :--- | :--- | :--- |
 | F00 | Limpieza del código | **PARCIAL** (C–G ejecutadas; unificaciones en Fase I) | — | `plan/bloques/F00_limpieza.md` |
 | F01 | Saneamiento del catálogo | **HECHO** (0 supervivientes de 728) | F00 | `plan/bloques/F01_censo_catalogo.md` |
-| F02 | Motor de backtest realista | **PARCIAL** (2.1 HECHO: motor 5.11.0; faltan 2.2/2.3) | F00 | `plan/bloques/F02_motor_realista.md` |
-| F03 | Campaña de descubrimiento masiva | **EN_CURSO** (cripto minando con 5.11.0; TRADFI espera backfill) | F01, F02 | `plan/bloques/F03_campana_descubrimiento.md` |
+| F02 | Motor de backtest realista | **PARCIAL** (2.1 HECHO: motor 5.13.0; 2.2 PARCIAL, 2.3 pendiente) | F00 | `plan/bloques/F02_motor_realista.md` |
+| F03 | Campaña de descubrimiento masiva | **EN_CURSO** (4h/1h y 15m barridas: 0 certif.; 5.14.0 arquetipos en implementación; TRADFI espera Dukascopy) | F01, F02 | `plan/bloques/F03_campana_descubrimiento.md` |
 | F04 | Motor de mejora inteligente | PENDIENTE | F03 | `plan/bloques/F04_mejora_inteligente.md` |
 | F05 | Envolvente ULTRA (motor de balas) | PENDIENTE | F04 | `plan/bloques/F05_envolvente_ultra.md` |
 | F06 | Meta-estrategias: el router | PENDIENTE | F05 | `plan/bloques/F06_meta_router.md` |

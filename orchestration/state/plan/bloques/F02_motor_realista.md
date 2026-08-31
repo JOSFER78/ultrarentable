@@ -52,7 +52,7 @@ nuevo y publicar la diferencia; si el P&L no baja, el modelado de fricción no e
 
 ## 2.1 Fricción medida, no asumida
 
-**Estado:** HECHO (releases 5.7.0→5.11.0, 2026-08-31, cada una con verificación ledger a ledger
+**Estado:** HECHO (releases 5.7.0→5.13.0, 2026-08-31, cada una con verificación ledger a ledger
 en `orchestration/results/verificacion_f02_diff_*.md`):
 
 - **5.7.0** fricción coherente (spread medido bid/ask, comisión futuros por lado, fin del doble
@@ -64,6 +64,12 @@ en `orchestration/results/verificacion_f02_diff_*.md`):
   Guardia fail-closed para riesgo > 0,5.
 - **5.11.0** point_value en sizing/margen/nocional de futuros (un MES con SL de 30 pts se
   dimensionaba 5x por encima del riesgo configurado).
+- **5.12.0** spread real por par BingX en ULTRA (`data/registry/bingx_friction.json`, capturado
+  2026-08-31; jerarquía `MEASURED` > `MEASURED_PAIR` > `ASSUMED`, half_spread por par; OJO:
+  `spread_median_pct` viene en PORCENTAJE en el registro, se divide entre 100).
+- **5.13.0** funding real por par en ULTRA: cargo en fronteras de 8h (00/08/16 UTC), long paga
+  funding positivo, campo `total_funding_usd` en el resultado; `funding_mean` del registro ya
+  está en FRACCIÓN (unidades mixtas documentadas en el propio JSON).
 
 Verificaciones clave: ULTRA idéntico donde debía (5.8.0, 5.11.0: point_value=1), FONDEO pasó de
 0 trades (bug expuesto) a operar con contratos enteros y riesgo correcto; latencia produjo mezcla
@@ -90,13 +96,15 @@ datasets Dukascopy con spread real sustituyan a los Yahoo (hoy las 15 celdas cor
 
 ## 2.2 Fricción específica de ULTRA
 
-**Estado:** PENDIENTE.
+**Estado:** PARCIAL (funding y spread reales HECHOS en 5.12.0/5.13.0; falta apalancamiento y
+liquidación).
 
-- **Funding real de BingX** (se consulta a su API, no se asume).
-- **Cap de apalancamiento real por par.** No sirve asumir 500x: se pregunta al exchange cuánto da
-  en ese símbolo y ese es el techo duro.
-- **Precio de liquidación real** con margen aislado. Una bala que se liquida es una bala perdida,
-  y el backtest tiene que verlo.
+- ~~**Funding real de BingX**~~ HECHO (5.13.0, registro `data/registry/bingx_friction.json`).
+- ~~**Spread real por par**~~ HECHO (5.12.0, mismo registro).
+- **Cap de apalancamiento real por par.** PENDIENTE-BLOQUEADO: el endpoint público de BingX no
+  lo expone (NO_DATA verificado 2026-08-31); requiere API key del usuario. No se asume 500x.
+- **Precio de liquidación real** con margen aislado. PENDIENTE. Una bala que se liquida es una
+  bala perdida, y el backtest tiene que verlo.
 
 ## 2.3 Fricción específica de FONDEO
 

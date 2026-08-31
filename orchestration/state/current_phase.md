@@ -1,12 +1,22 @@
-# FASE ACTUAL — F03 AMPLIACIÓN DE DATOS + F02.2 PENDIENTE (plan v4 por bloques)
+# FASE ACTUAL — F03: RELEASE 5.14.0 (ARQUETIPOS) + RE-CAMPAÑA (plan v4 por bloques)
 
-> Actualización 2026-08-31 ~13:30 UTC: F00 C–G ejecutadas (cuarentenas con manifiesto, bug
-> `gates_passed` corregido); F01 censo HECHO (0 supervivientes de 728, re-barrido idempotente);
-> F02.1 HECHO (motor 5.6.0→5.11.0, cinco releases verificadas, pytest en línea base 28);
-> F03 tramo cripto 4h/1h COMPLETADO: 18 celdas, ~36k configs, **0 certificadas** — diagnóstico:
-> muestra OOS insuficiente a 4h/1h; la ampliación es de DATOS (backfill profundo Binance 15m/5m
-> lanzado; Dukascopy TRADFI en curso). En vuelo: captura fricción BingX (F02.2) e inventario
-> DB_PATH (F00 Fase I-5).
+> Actualización 2026-08-31 ~18:00 UTC — camino crítico hacia el goal (estrategias reales
+> ULTRA / ULTRA-meta / FONDEO / FONDEO-meta):
+>
+> 1. **Motor honesto COMPLETO hasta 5.13.0** (F02.1 HECHO: fricción medida, latencia next-bar,
+>    riesgo en fracción canónica, spread y funding reales BingX por par). F02.2 PARCIAL
+>    (falta cap de apalancamiento — bloqueado por API key — y liquidación); F02.3 pendiente.
+> 2. **Evidencia de campaña:** 4h/1h (18 celdas, ~36k configs) y 15m profundo → **0 certificadas
+>    11/11**: familia EMA-cross/RSI/Donchian agotada frente a fricción honesta. Detención 15m
+>    con motivo registrado en la cola.
+> 3. **EN VUELO AHORA:** release **5.14.0** (4 familias nuevas: reversion_atr, squeeze_breakout,
+>    session_momentum, streak_edge — spec `orchestration/reviews/diseno_arquetipos_5_14.md`)
+>    implementándose por subagente; aceptación = identidad 5.13.0→5.14.0 en 15 celdas.
+> 4. **Al aterrizar 5.14.0:** re-campaña perfil `arquetipos` cripto 15m + 4h (datos profundos
+>    desde 2021 ya en disco, 0 gaps) → censo criterio 1.1 → si hay supervivientes, F04/F05/F06
+>    (ULTRA y ULTRA-meta). FONDEO/FONDEO-meta esperan backfill Dukascopy (solo USA500 avanza).
+> 5. **Git:** push a main AUTORIZADO expresamente (2026-08-31); commit temático al aterrizar
+>    5.14.0 para no subir una release a medias.
 
 # (histórico de la mañana, sigue abajo)
 
@@ -34,7 +44,9 @@
 
 ## Reglas de esta fase
 
-1. CERO `git commit` / `git push` — todo queda en el working tree para revisión del usuario.
+1. Git: **push a main autorizado expresamente por el usuario (2026-08-31)** — commits temáticos
+   con mensajes descriptivos, nunca árboles incoherentes (releases a medias), y decisión
+   explícita sobre artefactos pesados. (Sustituye a la regla anterior "CERO commit/push".)
 2. CERO `rm` — todo a `cuarentena/` con manifiesto SHA-256.
 3. Ningún movimiento sin verificación adversarial previa (un claim REFUTADO no se ejecuta).
 4. `pytest` no puede empeorar respecto al estado previo a cada movimiento.

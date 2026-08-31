@@ -48,6 +48,19 @@ actualizado: "2026-08-31"
 pendientes: (a) backfill Dukascopy masivo 7 proxies + forex, (b) reparar filas `datasets`
 corruptas y desduplicar alias, (c) backfill M1/5m cripto profundo.
 
+### ACTUALIZACIÓN DATOS (2026-08-31 ~18:00 UTC)
+
+- **(c) RESUELTO — backfill profundo Binance COMPLETADO:** 18 datasets nuevos 15m/5m desde
+  2021-01-01 (198.528 barras 15m / 595.584 5m por símbolo; SUI desde su listado 2023-05-03),
+  **0 gaps, cobertura 100 %**, manifiestos SHA-256. Log: `data/binance_backfill_profundo.log`
+  + `data/binance_backfill_profundo_summary.json`. Los datasets cortos superseded están en
+  `cuarentena/datasets_superseded/` (36 ficheros, manifiesto).
+- **(a) EN_CURSO real:** Dukascopy solo ha avanzado en `USA500IDXUSD` (~1.155 ficheros .bi5,
+  descarga nohup activa); los otros 6 proxies + forex siguen a cero. Días de descarga por
+  throttle. FONDEO sigue BLOQUEADO hasta tener celdas TRADFI verificadas.
+- (b) sigue pendiente (reparar tabla `datasets` y desduplicar alias) — no bloquea la minería,
+  que cuenta en disco.
+
 ## 3.2 Cola de minería gobernada para 4 cores
 
 **Estado:** HECHO (herramienta lista 2026-08-31; el lanzamiento masivo espera a F02).
@@ -120,6 +133,17 @@ rechazó 4.193/4.193 (banco `ToImprove` con 2.035 aparcadas, inventario en curso
 `orchestration/reviews/diseno_arquetipos_5_14.md`: reversion_atr, squeeze_breakout,
 session_momentum, streak_edge; aditivas, como evento, sin constantes mágicas), en
 implementación. Después: re-campaña perfil `arquetipos` sobre cripto 15m + 4h.
+
+**Estado operativo (2026-08-31 ~18:00 UTC):**
+- 5.14.0 EN IMPLEMENTACIÓN por subagente (motor + generadores + mine.py + snapshot); criterio
+  de aceptación: identidad 5.13.0→5.14.0 en las 15 celdas de `verificacion_f02.py --comparar`.
+  El motor en disco sigue pineado a 5.13.0 hasta que la release aterrice completa.
+- Cola de minería: 20 COMPLETED / 7 CANCELLED (las 7 de 15m canceladas con motivo). Vacía y
+  lista para encolar la re-campaña `arquetipos` al aterrizar 5.14.0.
+- SQX: los 2.035 .sqx de ToImprove están materializados en disco
+  (`~/StrategyQuantX144/user/projects/Ultra_Matrix/databanks/ToImprove/`), pero el export CSV
+  de métricas NO llegó (timeout 600 s de sqcli y `data/sqx_exports/` vacío) — pendiente
+  re-lanzar con fire-and-verify o parsear métricas del propio .sqx en el carril SQX.
 
 Mejora operativa de la cola: `heartbeat` del worker (un watchdog externo con umbral 300 s
 marcaba RETRYING trabajos vivos → riesgo de minería duplicada; incidente 14:08 documentado en
