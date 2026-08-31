@@ -172,6 +172,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let isMounted = true;
+    let authSettled = false;
+
+    const isLocalhostHost = () =>
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname === "0.0.0.0");
+
+    // Watchdog: si Firebase Auth no emite estado (o la carga de perfil se cuelga) en 6s,
+    // no se deja al usuario ante un spinner infinito: en localhost se aplica el mismo
+    // bypass de Super Admin que ya contempla la rama de desarrollo; fuera de localhost se
+    // resuelve a la landing pública (donde puede reintentar el login).
+    const watchdog = setTimeout(() => {
+      if (!isMounted || authSettled) return;
+      console.warn("[Auth] Watchdog: Firebase Auth no respondió en 6s; aplicando fallback.");
+      if (isLocalhostHost()) {
+        const nowIso = new Date().toISOString();
+        setProfile({
+          uid: "josfer_superadmin_master_01",
+          email: SUPERADMIN_EMAIL,
+          displayName: "Josfer (Super Admin)",
+          role: "superadmin",
+          status: "AUTHORIZED",
+          is_superadmin: true,
+          is_authorized: true,
+          created_at: nowIso,
+          last_login: nowIso,
+        });
+        setUser({
+          uid: "josfer_superadmin_master_01",
+          email: SUPERADMIN_EMAIL,
+          displayName: "Josfer (Super Admin)",
+          photoURL: null,
+          emailVerified: true,
+        } as any);
+      }
+      setLoading(false);
+    }, 6000);
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!isMounted) return;
@@ -236,11 +274,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       }
+      authSettled = true;
+      clearTimeout(watchdog);
       if (isMounted) setLoading(false);
     });
 
     return () => {
       isMounted = false;
+      clearTimeout(watchdog);
       unsubscribe();
     };
   }, []);
