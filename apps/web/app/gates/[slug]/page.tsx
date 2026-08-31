@@ -1,9 +1,8 @@
 import React from "react";
-import GateDetailClient, { ALL_GATES } from "./GateDetailClient";
+import GateDetailClient from "./GateDetailClient";
 
-export function generateStaticParams() {
-  return ALL_GATES.map((g) => ({ slug: g.slug }));
-}
+// Sin generateStaticParams: ALL_GATES vive en un modulo "use client" y en build llega como
+// client-reference (llamar .map() ahi rompe `next build`). La ruta se renderiza bajo demanda.
 
 export default function GateDetailPage() {
   return <GateDetailClient />;

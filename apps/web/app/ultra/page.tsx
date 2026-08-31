@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Lock,
   ChevronRight,
+  Building2,
 } from "lucide-react";
 
 export default function UltraPage() {
