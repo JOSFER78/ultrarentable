@@ -706,7 +706,89 @@ UMBRALES_EMBUDO = {
 
 
 def _nueva_casilla_causas() -> Dict[str, int]:
-    return {"total": 0, "pocas_operaciones": 0, "sin_ventaja": 0, "ambas": 0, "otro": 0}
+    return {
+        "total": 0, "pocas_operaciones": 0, "sin_ventaja": 0, "ambas": 0, "otro": 0,
+        # W2.7 (CARRIL TELEMETRIA): desglose de "sin_ventaja" por CAUSA RAIZ. "sin_ventaja" se
+        # calcula igual que siempre (pf NETO < umbral, ver resumir_causas) -- estas dos claves
+        # son un AÑADIDO que subdivide ese mismo total, nunca lo sustituyen ni lo recalculan:
+        #   sin_ventaja_bruta:    pf_bruto (antes de comisiones/slippage) YA esta por debajo
+        #                         del umbral -- la señal en si no tiene ventaja. Se arregla
+        #                         cambiando de familia/parametros de estrategia.
+        #   sin_ventaja_por_coste: pf_bruto SI alcanza el umbral, pero pf_neto no -- la señal
+        #                         es buena y la friccion (comisiones+slippage) se la come. Se
+        #                         arregla cambiando de timeframe/instrumento/broker, no de
+        #                         familia.
+        # Motivo medido por el orquestador: en ES 5m la comision fija de MES (1,75 puntos RT)
+        # es el 64,6% del ATR; el PF neto mediano fue 0,535 con ~2.000 ops, compatible con una
+        # señal bruta neutra (PF bruto ~1,0) ahogada por la friccion -- pero sin PF bruto en la
+        # telemetria esto no se podia distinguir de "la familia no vale".
+        # Solo se incrementan cuando el registro trae "pf_bruto" (float): los registros
+        # historicos/sinteticos de W2.6 que no lo traen se siguen contando en "sin_ventaja" (no
+        # se rompe nada preexistente) pero no en su desglose -- no se inventa el dato que falta.
+        "sin_ventaja_bruta": 0,
+        "sin_ventaja_por_coste": 0,
+    }
+
+
+def _pf_bruto_y_coste(bt_result: Any) -> Dict[str, Any]:
+    """Calcula PF bruto (antes de comisiones/slippage) y coste total desde el LEDGER de
+    operaciones que el motor YA devuelve -- sin tocar el motor ni sus señales (Regla #26: esto
+    es una agregacion pura de datos ya calculados por EventBacktestResult, no cambia ni una
+    operacion que el motor produce).
+
+    Por que hace falta calcularlo aqui y no leerlo del motor: EventBacktestResult expone
+    `profit_factor` (NETO, calculado con TradeRecord.net_pnl_usd -- ver
+    services/validation/engine/event_backtest_engine.py linea ~1768) pero NO expone un
+    "profit_factor bruto" propio. Si expone, por operacion, TradeRecord.gross_pnl_usd (PnL
+    ANTES de fees_usd/slippage_usd -- misma dataclass, ver su definicion) y, agregados,
+    total_fees_usd/total_slippage_usd. Con eso alcanza para reconstruir el PF bruto desde el
+    ledger sin recalcular nada del motor: exactamente lo que pedia el encargo ("si el motor no
+    lo expone directamente, calculalo desde el ledger de operaciones sumando pnl bruto").
+
+    Casos degenerados (perdidas_brutas==0) usan la MISMA convencion que ya usa el motor para el
+    PF neto (99.0 si hay ganancias sin perdidas que las compensen, 0.0 si no hay ni ganancias
+    ni perdidas) para que pf_bruto sea comparable al mismo umbral que pf_neto sin sesgo de
+    escala.
+
+    coste_pct_del_bruto = coste_total_usd como % de las GANANCIAS brutas (suma de
+    gross_pnl_usd>0, el numerador clasico de un profit factor) -- no del PF bruto neteado
+    (ganancias-perdidas), que puede rondar cero en una señal bruta neutra y volver el
+    porcentaje inestable/indefinido; ver docstring del modulo del bloque W2.7 en el .md de
+    resultados. None cuando no hay ganancias brutas (no se puede expresar el coste como % de
+    un cero sin dividir por cero ni inventar un numero).
+    """
+    trades = getattr(bt_result, "trades", None)
+    if trades is None:
+        # Estructuralmente no deberia ocurrir (EventBacktestResult.trades tiene
+        # default_factory=list, nunca None) pero si algun consumidor pasa un objeto que no
+        # trae la lista de operaciones, no hay forma de calcular el bruto sin tocar el motor:
+        # se declara explicitamente en vez de fabricar un numero.
+        return {
+            "pf_bruto": "NO DISPONIBLE",
+            "pf_bruto_motivo": "el resultado del backtest no trae lista de operaciones (trades); "
+                                "no se puede calcular el PnL bruto sin tocar el motor",
+            "pf_neto": None,
+            "coste_total_usd": None,
+            "coste_pct_del_bruto": None,
+        }
+
+    ganancias_brutas = sum(float(t.gross_pnl_usd) for t in trades if float(t.gross_pnl_usd) > 0)
+    perdidas_brutas = abs(sum(float(t.gross_pnl_usd) for t in trades if float(t.gross_pnl_usd) < 0))
+    if perdidas_brutas > 0:
+        pf_bruto = ganancias_brutas / perdidas_brutas
+    else:
+        pf_bruto = 99.0 if ganancias_brutas > 0 else 0.0
+
+    coste_total_usd = float(getattr(bt_result, "total_fees_usd", 0.0) or 0.0) + \
+        float(getattr(bt_result, "total_slippage_usd", 0.0) or 0.0)
+    coste_pct_del_bruto = round(coste_total_usd / ganancias_brutas * 100, 2) if ganancias_brutas > 0 else None
+
+    return {
+        "pf_bruto": round(pf_bruto, 3),
+        "pf_neto": round(float(getattr(bt_result, "profit_factor", 0.0) or 0.0), 3),
+        "coste_total_usd": round(coste_total_usd, 2),
+        "coste_pct_del_bruto": coste_pct_del_bruto,
+    }
 
 
 def resumir_causas(telemetria: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
@@ -724,6 +806,18 @@ def resumir_causas(telemetria: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]
     probo 1 de 6 familias". Cada registro de `telemetria` trae su "familia" (el
     `archetype` de la config, ver el bucle principal de run_mining_pipeline); sin ese campo se
     agrupa bajo "?" en vez de fallar.
+
+    W2.7 (CARRIL TELEMETRIA): el bucket "sin_ventaja" en si NO cambia -- sigue siendo
+    exactamente pf NETO < umbral de la etapa, calculado igual que antes de este cambio (misma
+    condicion `floja`, ninguna decision ni umbral se toco). Lo nuevo es que, SOLO para los
+    registros que caen en ese bucket y traen "pf_bruto" (float -- los registros historicos/de
+    test de W2.6 que no lo traen no rompen nada, simplemente no alimentan el desglose), se
+    subdivide ADEMAS por causa raiz comparando pf_bruto contra el MISMO umbral de la etapa:
+      - pf_bruto < umbral  -> "sin_ventaja_bruta": la señal ya no tenia ventaja antes de pagar
+        comision/slippage. Se arregla cambiando de familia o parametros.
+      - pf_bruto >= umbral -> "sin_ventaja_por_coste": la señal SI tenia ventaja en bruto, la
+        friccion (comisiones+slippage) la hundio por debajo del umbral en neto. Se arregla
+        cambiando de timeframe/instrumento/broker, no de familia.
     """
     resumen: Dict[str, Dict[str, Any]] = {}
     for reg in telemetria:
@@ -744,6 +838,13 @@ def resumir_causas(telemetria: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]
         casilla[bucket] += 1
         fam_casilla["total"] += 1
         fam_casilla[bucket] += 1
+
+        if bucket == "sin_ventaja":
+            pf_bruto = reg.get("pf_bruto")
+            if isinstance(pf_bruto, (int, float)):
+                sub_bucket = "sin_ventaja_bruta" if pf_bruto < umbral["pf_min"] else "sin_ventaja_por_coste"
+                casilla[sub_bucket] += 1
+                fam_casilla[sub_bucket] += 1
     return resumen
 
 
@@ -999,7 +1100,8 @@ def run_mining_pipeline(
         if is_bt.total_trades < 5 or is_bt.profit_factor < 1.05:
             telemetria.append({"strategy_id": strat_id, "etapa": "IS", "familia": arch, "motivo":
                 f"trades={is_bt.total_trades} pf={is_bt.profit_factor:.3f}",
-                "trades": is_bt.total_trades, "pf": round(is_bt.profit_factor, 3)})
+                "trades": is_bt.total_trades, "pf": round(is_bt.profit_factor, 3),
+                **_pf_bruto_y_coste(is_bt)})
             continue
 
         # 2. Backtest Val
@@ -1007,7 +1109,8 @@ def run_mining_pipeline(
         if val_bt.total_trades < 3 or val_bt.profit_factor < 1.0:
             telemetria.append({"strategy_id": strat_id, "etapa": "VAL", "familia": arch, "motivo":
                 f"trades={val_bt.total_trades} pf={val_bt.profit_factor:.3f}",
-                "trades": val_bt.total_trades, "pf": round(val_bt.profit_factor, 3)})
+                "trades": val_bt.total_trades, "pf": round(val_bt.profit_factor, 3),
+                **_pf_bruto_y_coste(val_bt)})
             continue
 
         # 3. Backtest Blind OOS
@@ -1017,7 +1120,8 @@ def run_mining_pipeline(
         if oos_bt.total_trades < MIN_OPERACIONES_OOS or oos_bt.profit_factor < 1.10:
             telemetria.append({"strategy_id": strat_id, "etapa": "OOS", "familia": arch, "motivo":
                 f"trades={oos_bt.total_trades} pf={oos_bt.profit_factor:.3f}",
-                "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3)})
+                "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3),
+                **_pf_bruto_y_coste(oos_bt)})
             continue
 
         # 4. Evaluación de 11 Gates
@@ -1102,7 +1206,8 @@ def run_mining_pipeline(
                 f"gates={gates_eval.get('gates_passed_count', 0)}/11 score={gates_eval.get('overall_score', 0.0):.1f}",
                 "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3),
                 "gates_passed": gates_eval.get("gates_passed_count", 0),
-                "dd_oos": round(oos_bt.max_drawdown_pct, 2)})
+                "dd_oos": round(oos_bt.max_drawdown_pct, 2),
+                **_pf_bruto_y_coste(oos_bt)})
 
         if verdict.is_certified:
             certified_at_iso = datetime.now(timezone.utc).isoformat()
