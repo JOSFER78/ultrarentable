@@ -9,6 +9,8 @@ strategy is frozen. Every trial is recorded with dataset custody metadata.
 from __future__ import annotations
 
 import glob
+import gc
+import ctypes
 import hashlib
 import json
 import logging
@@ -59,6 +61,16 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(na
 DB_PATH = STATE_DB_PATH
 DATA_DIR = BASE_DATA_DIR / "normalized"
 
+
+
+def _force_memory_trim():
+    """Fuerza la recolección de basura y devuelve páginas liberadas al kernel Linux."""
+    gc.collect()
+    try:
+        libc = ctypes.CDLL("libc.so.6")
+        libc.malloc_trim(0)
+    except Exception:
+        pass
 
 def compute_file_sha256(filepath: str) -> str:
     """Calcula el hash SHA-256 real de los bytes físicos de un archivo en disco."""
@@ -130,6 +142,12 @@ class DiscoveryValidationPipeline:
         max_cycles: Optional[int] = None,
     ):
         """Bucle continuo de descubrimiento y validación sobre todos los datasets físicos."""
+        # Guardarraíl de prioridad y singleton para ejecuciones externas / Claude Code
+        try:
+            os.nice(15)
+        except Exception:
+            pass
+        _acquire_singleton_lock()
         logger.info("Iniciando Pipeline Continuo de Discovery & Validación Real-Only...")
         cycle_num = 0
         while True:
