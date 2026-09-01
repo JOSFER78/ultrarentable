@@ -1,3 +1,161 @@
+# FASE ACTUAL — 2026-09-01, ~19:00 UTC · CICLO 1 DE LA ERA LOCAL (orquestador Opus 5 en el PC)
+
+> **MANDATO ACTIVO: FONDEO + META-FONDEO + arreglar `/estrategias`.** ULTRA queda **EN
+> CONSTRUCCIÓN, presente y visible en todo el proyecto**, nunca borrado y sin cerrarle puertas
+> (`PUNTO_GUARDADO_ULTRA.md`; F05/F06 con `aparcado: true`).
+>
+> Método: loop no bloqueante. Este ciclo corrieron **5 subagentes** con contrato mientras el
+> orquestador trabajaba su cola propia. Todo aterrizaje se auditó con comandos propios ANTES de
+> darlo por bueno; dos afirmaciones heredadas cayeron en esa auditoría (§3).
+
+## 1. El marcador, sin adornos
+
+**Estrategias FONDEO certificadas: 0. Meta-estrategias: 0.** No ha cambiado y no se ha maquillado.
+Lo que sí ha cambiado es que ahora sabemos que **parte de lo que creíamos saber sobre POR QUÉ era
+0 estaba mal medido** (§3).
+
+## 1.b HITO DEL CICLO — W0.2 CERRADO: el motor es IDÉNTICO en este PC (15/15)
+
+Era la puerta que bloqueaba toda la minería local ("15/15 idénticas o STOP"). **Pasada.**
+
+```
+baseline sellado : 2026-09-01T09:26:12Z   (generado en el VPS)   celdas=15
+ejecución en PC  : 2026-09-01T17:05:39Z                          celdas=15
+  BTCUSDT 4h c1/c2/c3 · ETHUSDT 4h c1/c2/c3 · LINKUSDT 1h c1/c2/c3
+  ES 4h c1/c2/c3 · GC 4h c1/c2/c3          →  todas IDÉNTICAS
+VEREDICTO W0.2: 15/15 IDENTICAS, 0 diferentes  =>  IDENTIDAD CONFIRMADA
+```
+
+La comparación es campo a campo e incluye la **huella SHA-256 del ledger de operaciones** de cada
+celda, no solo las métricas agregadas: el motor 5.17.0 en Windows nativo produce las mismas
+operaciones, una a una, que el que selló el baseline. **Desde ahora, minar en el PC es legítimo.**
+
+Evidencia: `results/verificacion_f02_5.17.0_EJECUCION_PC_2026-09-01.json` (la ejecución del PC,
+guardada aparte) y `results/verificacion_f02_5.17.0.json` (el baseline sellado, intacto:
+`c1c3a7bbff2309...`).
+
+Cómo se consiguió: los 5 datasets de referencia se trajeron del VPS por `scp` y **verifican 5/5
+contra el `checksum_sha256` de su manifiesto**, hash a hash. Sin esa verificación previa el
+resultado no valdría nada (§3.3).
+
+## 2. Lo que se ha desbloqueado hoy (verificado en esta máquina)
+
+| # | Hecho | Evidencia |
+| :-- | :--- | :--- |
+| 1 | **El entorno del PC funciona** — sin WSL, en Windows nativo | `.venv` con Python 3.11.8, `import services` OK, `CURRENT_ENGINE_VERSION = 5.17.0` |
+| 2 | **El ssh PC→VPS ya funciona sin contraseña** (W0.3 HECHO, no requería a Emilio) | `ssh -o BatchMode=yes oracle-vps 'echo ok'` → OK, clave `id_rsa_openclaw` |
+| 3 | **El sudo del VPS NO pide contraseña** — el bloqueo de días era falso | `sudo -n true` → `SUDO_NOPASSWD_OK` |
+| 4 | **Los datos SÍ existen: 1,9 GB de velas reales en el VPS**, incluidos los 5 datasets de identidad y el consolidado Dukascopy de ES (5m 42 MB, 15m 14 MB) | inventario por ssh, tamaños fichero a fichero |
+| 5 | **SQX está instalado en el PC y su licencia es una PRUEBA que caduca el 2026-09-05** | `sqcli.exe -license action=info` → `Pro Build 144 (Trial license) - valid until 05.09.2026` |
+| 6 | **Grafo de imports completo**: 310 nodos (= `find services scripts -name "*.py" \| wc -l`), 1.003 aristas | `results/grafo_imports_2026-09-01.{json,md}` |
+| 7 | **Catálogo de prop firms 2026 re-verificado contra ToS oficiales**, con cita y fecha por parámetro | `results/I4_prop_firms_hallazgos.md` |
+
+## 3. LAS DOS CORRECCIONES DEL CICLO (evidencia contra documento; manda la evidencia)
+
+### 3.1 El "20/20 sin_ventaja" no demostraba lo que decíamos — REFUTADO
+
+`current_phase` §3 (versión anterior) y la evaluación externa elevaban a "pregunta que puede
+invalidar el plan" la telemetría de ES 4h. Medido hoy: **evaluó 20 de 420 configuraciones y las
+20 son de UNA sola familia (`REVERSION_ATR`)**, porque `mine.py` trunca por **prefijo** con
+`--max-candidates`, cuyo valor por defecto es **20**. `OPENING_RANGE_BREAKOUT` y `VWAP_REVERSION`
+—las dos familias creadas expresamente para FONDEO en 5.17.0— **no se han ejecutado nunca** ahí.
+
+Cobertura real: **4,8 % del espacio, 1 de 6 familias**, en un timeframe (4h) para el que esas
+familias no están diseñadas y sobre el dataset Yahoo 4h ya declarado contaminado.
+
+**Consecuencia de plan (D1, sellada):** la regla pre-sellada *"≥80 % de muertes por `sin_ventaja`
+⇒ familia agotada"* **queda suspendida** hasta que la telemetría registre cobertura por familia:
+aplicada sobre un embudo truncado por prefijo, abandonaría una celda habiendo probado una sexta
+parte. **(D2)** Toda campaña se lanza con el espacio completo o con muestreo estratificado, nunca
+con el default. Expediente: `reviews/forense_telemetria_2026-09-01.md`.
+
+### 3.3 El `checksum_sha256` de los manifiestos nuevos NO valida el contenido — DEFECTO REAL
+
+Encontrado por el agente de datos y **confirmado por mí leyendo el código**:
+`services/data/market_ingestor.py:104` calcula lo que llama "Checksum SHA-256 determinista" así:
+
+```python
+payload = f"{venue}:{symbol}:{interval}:{len(unique_bars)}:{start_ts}:{end_ts}"
+sha_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+```
+
+Es un hash de **metadatos**, no del contenido: dos ficheros con las mismas velas contadas pero
+valores de precio distintos producen el mismo "checksum". Un dataset corrupto pasaría la custodia.
+
+**Matiz importante, medido:** los manifiestos **canónicos** del repo NO tienen este problema — sus
+checksums SÍ son del contenido, verificado 5/5 por `sha256sum` contra fichero real. Y otra ruta de
+código (`services/api/app/api/routes.py:168`) compara el hash del contenido. Es decir: **hay dos
+formas de calcular el checksum conviviendo**, y la de `market_ingestor` es la mala. Todo dataset
+ingerido por esa vía lleva un sello que no certifica nada. Va al backlog como deuda W1.6.
+
+### 3.2 Las dos suites de gates NO están entrelazadas como se creía — REFUTADO
+
+El traspaso afirmaba "las DOS suites de gates están entrelazadas (un router importa ambas)".
+Medido con `grep` propio: **ningún fichero importa las dos**. La suite A
+(`services/validation/engines/`) tiene **un único importador externo**
+(`services/validation/validation_router.py`); la suite B (`services/api/app/validation/gates/`)
+tiene 20. El acoplamiento real es un fichero-bisagra:
+`services/validation/legacy_revalidation_service.py:31`, que vive en el paquete A e importa B.
+
+**Es una buena noticia**: cortar el nudo (W4.3 / movimiento 1 de I7) es mucho más barato de lo que
+el expediente preliminar suponía. CONFIRMADO en cambio el tamaño del monolito: `services/api/` =
+**29.478 LOC** exactos.
+
+## 4. Deuda y bloqueos vivos
+
+| Bloqueo | Estado real |
+| :--- | :--- |
+| ~~W0.2 identidad del motor~~ | ✅ **CERRADA: 15/15 idénticas** (§1.b). Ya no bloquea |
+| **Datos para minar de verdad** | Solo están los 5 datasets de identidad. Falta traer el consolidado Dukascopy de ES (5m 42 MB / 15m 14 MB, ya existe en el VPS) y completar el backfill del resto de símbolos. **Es ahora el único bloqueo de la campaña** |
+| **`verificacion_f02.py` destruye su propio baseline** | Defecto nuevo encontrado al ejecutarlo: sobrescribió el fichero sellado de 5.17.0 con `SIN DATOS`. Recuperado por `git restore`, salida mala en `cuarentena/verificacion_f02_sobrescritura_2026-09-01/` con manifiesto. Corrección despachada (W4.6) |
+| **VPS saturado** | Confirmado en vivo: swap 4,0/4,0 GB, load 3,2 sobre 4 núcleos, `sqcli` al 58,9 % y 4,5 GB, `memory.events high` = **7.575.123** (eran 713.626). Los comandos están listos; **falta autorización de Emilio** (no contraseña) |
+| **Licencia SQX** | Caduca **2026-09-05**. Decisión de Emilio en `VENTANA_EMILIO.md` §3 |
+| **Login de la web** | Causa raíz CONFIRMADA leyendo `apps/web/lib/firebase.ts:5-13`: mezcla `goalskid-app` (apiKey/authDomain/projectId) con `pecemi` (databaseURL), y **no existe `.env.local`** |
+| Deudas W4.1/4.2/4.4 | En reparación (AG-C) |
+
+## 5. Hallazgo que cambia la arquitectura de ejecución
+
+**Topstep y TradeDay prohíben operar desde un VPS**, verificado por mí contra la página oficial de
+Topstep (no me fié del informe del agente):
+
+> "All trading activity must originate from your personal device. The use of VPS, VPNs, and remote
+> servers is prohibited by Topstep's Terms of Use." … "your server can watch and record, but it
+> cannot trade."
+
+**Consecuencia:** el vigía Hermes del VPS se queda en **V0 (solo lectura) de forma permanente**
+mientras esas firmas estén en juego; V1/V2 (ajustar órdenes) **no pueden vivir en el VPS**. Todo
+envío de órdenes tendrá que salir de este PC, que además es el que tiene IP residencial. Pendiente
+de reflejar en `HERMES_VPS_VIGIA.md`.
+
+## 6. Estado de los agentes de este ciclo
+
+| Agente | Contrato | Estado | Auditoría del ORQ |
+| :--- | :--- | :--- | :--- |
+| AG-10 | I4 prop firms 2026 | ✅ aterrizado | **Verificadas 2 citas** por fetch propio (Topstep y MFFU): literales exactos. Informe fiable, con marcadores honestos `[FETCH]` / `NO VERIFICABLE` |
+| AG-9 | I1 StrategyQuant X | ✅ aterrizado | **Licencia re-verificada por mí** ejecutando `sqcli.exe`: coincide. Refuta `MaxTradesPerDay=1` del repo (el valor real es 0) |
+| AG-5 | I7 grafo de imports | ✅ aterrizado | **Re-contado por mí**: 310 nodos = 310 ficheros; 29.478 LOC exactos; el fichero-bisagra está en la línea 31 declarada. Correcto |
+| AG-D | Datos (rsync + backfill) | ✅ aterrizado, lote parcialmente rechazado | **Rechacé sus 5 datasets**: no cuadraban con el manifiesto canónico (los re-generó en vez de copiarlos). A cuarentena con manifiesto; los canónicos los traje yo del VPS y verifican 5/5. **A su favor**: encontró el defecto real del §3.3 y dejó el backfill Dukascopy corriendo con crecimiento medido (692→2.131 ficheros). **Nota de proceso**: rechazó mis dos mensajes de corrección por considerarlos un canal lateral no contemplado en su contrato — cautela correcta por su parte, pero cuesta un ciclo: los contratos futuros deben declarar de entrada que el ORQ puede reorientar en marcha |
+| AG-C | Deudas de certificación | 🔄 corriendo | ya se ve `scripts/fondeo_examen.py` modificado |
+
+## 7. Siguiente ciclo (orden)
+
+1. **Traer el consolidado Dukascopy de ES del VPS** (5m/15m) y verificarlo. Es lo único que separa
+   de la primera campaña legítima.
+2. Auditar AG-C y commitear el lote de honestidad (primer commit temático del ciclo).
+3. **Experimento E1**: re-ejecutar las 20 `REVERSION_ATR` de ES sobre Dukascopy 5m/15m y comparar
+   con el PF 0,03-0,19 de Yahoo 4h. Separa "familia mala" de "dataset contaminado" de "bug de
+   coste". Nota: la ejecución de identidad de hoy da para ES 4h PF 1,01 / 0,55 / 1,83 y para GC 4h
+   PF 0,20 / 0,24 / 0,32 con el perfil `champions`, lo que refuerza que el 0,03-0,19 del embudo
+   `arquetipos` merece explicación propia.
+4. **Campaña E2**: ES 5m/15m con las **6 familias completas** (`--max-candidates 0`) y telemetría
+   con cobertura. Solo entonces "¿dato o edge?" tiene respuesta legítima.
+5. Web: poda + reescritura de `/estrategias` según `reviews/diseno_pagina_estrategias_2026-09-01.md`.
+6. Si Emilio autoriza: limpieza del VPS y experimentos SQX **antes del 5 de septiembre**.
+
+---
+
+## Histórico anterior
+
 # FASE ACTUAL — 2026-09-01, 10:20 UTC
 
 > **MANDATO ACTIVO: 100 % FONDEO.** Estrategias para futuros CME de prop firms y sus

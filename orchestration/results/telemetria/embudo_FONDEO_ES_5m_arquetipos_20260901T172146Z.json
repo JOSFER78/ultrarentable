@@ -1,0 +1,186 @@
+{
+  "generado_utc": "20260901T172146Z",
+  "engine_version": "5.17.0",
+  "contexto": {
+    "track": "FONDEO",
+    "symbol": "ES",
+    "execution_symbol": "MES",
+    "timeframe": "5m",
+    "profile": "arquetipos",
+    "dataset_source": "dukascopy",
+    "dataset_file": "ds_dukascopy_usa500idxusd_5m_consolidated.json",
+    "certified_count": 0,
+    "configuraciones_evaluadas": 20,
+    "barras_is": 150005,
+    "barras_val": 50002,
+    "barras_oos": 50002
+  },
+  "umbrales": {
+    "IS": {
+      "trades_min": 5,
+      "pf_min": 1.05
+    },
+    "VAL": {
+      "trades_min": 3,
+      "pf_min": 1.0
+    },
+    "OOS": {
+      "trades_min": 100,
+      "pf_min": 1.1
+    }
+  },
+  "embudo_por_etapa": {
+    "IS": 20
+  },
+  "causas_por_etapa": {
+    "IS": {
+      "total": 20,
+      "pocas_operaciones": 0,
+      "sin_ventaja": 20,
+      "ambas": 0,
+      "otro": 0
+    }
+  },
+  "telemetria": [
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c1",
+      "etapa": "IS",
+      "motivo": "trades=2294 pf=0.530",
+      "trades": 2294,
+      "pf": 0.53
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c2",
+      "etapa": "IS",
+      "motivo": "trades=2323 pf=0.530",
+      "trades": 2323,
+      "pf": 0.53
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c3",
+      "etapa": "IS",
+      "motivo": "trades=2323 pf=0.530",
+      "trades": 2323,
+      "pf": 0.53
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c4",
+      "etapa": "IS",
+      "motivo": "trades=2323 pf=0.530",
+      "trades": 2323,
+      "pf": 0.53
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c5",
+      "etapa": "IS",
+      "motivo": "trades=2110 pf=0.530",
+      "trades": 2110,
+      "pf": 0.53
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c6",
+      "etapa": "IS",
+      "motivo": "trades=2160 pf=0.530",
+      "trades": 2160,
+      "pf": 0.53
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c7",
+      "etapa": "IS",
+      "motivo": "trades=2161 pf=0.540",
+      "trades": 2161,
+      "pf": 0.54
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c8",
+      "etapa": "IS",
+      "motivo": "trades=2161 pf=0.540",
+      "trades": 2161,
+      "pf": 0.54
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c9",
+      "etapa": "IS",
+      "motivo": "trades=1878 pf=0.470",
+      "trades": 1878,
+      "pf": 0.47
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c10",
+      "etapa": "IS",
+      "motivo": "trades=1985 pf=0.520",
+      "trades": 1985,
+      "pf": 0.52
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c11",
+      "etapa": "IS",
+      "motivo": "trades=1996 pf=0.510",
+      "trades": 1996,
+      "pf": 0.51
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c12",
+      "etapa": "IS",
+      "motivo": "trades=1996 pf=0.510",
+      "trades": 1996,
+      "pf": 0.51
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c13",
+      "etapa": "IS",
+      "motivo": "trades=1408 pf=0.600",
+      "trades": 1408,
+      "pf": 0.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c14",
+      "etapa": "IS",
+      "motivo": "trades=1409 pf=0.610",
+      "trades": 1409,
+      "pf": 0.61
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c15",
+      "etapa": "IS",
+      "motivo": "trades=1409 pf=0.610",
+      "trades": 1409,
+      "pf": 0.61
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c16",
+      "etapa": "IS",
+      "motivo": "trades=1409 pf=0.610",
+      "trades": 1409,
+      "pf": 0.61
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c17",
+      "etapa": "IS",
+      "motivo": "trades=1341 pf=0.590",
+      "trades": 1341,
+      "pf": 0.59
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c18",
+      "etapa": "IS",
+      "motivo": "trades=1346 pf=0.590",
+      "trades": 1346,
+      "pf": 0.59
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c19",
+      "etapa": "IS",
+      "motivo": "trades=1346 pf=0.590",
+      "trades": 1346,
+      "pf": 0.59
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_5M_c20",
+      "etapa": "IS",
+      "motivo": "trades=1346 pf=0.590",
+      "trades": 1346,
+      "pf": 0.59
+    }
+  ]
+}
