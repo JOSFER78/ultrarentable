@@ -181,3 +181,9 @@ data/normalized/*
 data/sqx_imports/
 data/sqx_exports/
 data/dukascopy_backfill_progress.json
+
+# 2026-09-01 (ORQ): copia de un paquete `next` de node_modules roto por dos `npm install`
+# concurrentes (ENOTEMPTY/EPERM). Se conserva en disco por la regla "nunca rm" pero no se
+# versiona: son miles de ficheros de dependencia, no código del proyecto. Ver su MOTIVO.md.
+cuarentena/npm_next_roto_20260901/*
+!cuarentena/npm_next_roto_20260901/MOTIVO.md
