@@ -73,7 +73,25 @@ def celdas_universo(perfil: str, tfs: list[str] | None = None, solo_cripto: bool
 
 
 def clave(payload: dict) -> tuple:
-    return (payload.get("track"), payload.get("symbol"), payload.get("tf"), payload.get("profile"))
+    """Identidad de una celda de mineria a efectos de deduplicacion.
+
+    La fuente de datos forma parte de la identidad: minar ES 1h sobre el dataset corto de Yahoo y
+    minarlo sobre las 250.009 barras de Dukascopy son dos trabajos DISTINTOS, con espacios de
+    busqueda y presupuestos de operaciones distintos. Cuando la clave no incluia este campo, las
+    24 celdas FONDEO ya COMPLETED con datos cortos bloqueaban en silencio el re-encolado con
+    Dukascopy: se contaban como omitidas y no se lanzaba ni una celda, que es justo el cuello de
+    botella que se venia a resolver.
+
+    La alternativa era purgar esas filas COMPLETED, y se descarta: son evidencia de campanas
+    reales y en este proyecto no se borra nada.
+    """
+    return (
+        payload.get("track"),
+        payload.get("symbol"),
+        payload.get("tf"),
+        payload.get("profile"),
+        payload.get("dataset_source") or "auto",
+    )
 
 
 def celdas_ya_encoladas(q: DurableJobQueue) -> set[tuple]:
@@ -92,7 +110,8 @@ def celdas_hechas_campana02() -> set[tuple]:
             try:
                 r = json.loads(linea)
                 if r.get("estado") == "OK":
-                    hechas.add((r["track"], r["symbol"], r["tf"], PERFIL))
+                    # Aquella campana se corrio entera con la fuente por defecto.
+                    hechas.add((r["track"], r["symbol"], r["tf"], PERFIL, r.get("dataset_source") or "auto"))
             except (json.JSONDecodeError, KeyError):
                 continue
     return hechas
