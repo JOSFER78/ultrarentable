@@ -88,18 +88,39 @@ código (`services/api/app/api/routes.py:168`) compara el hash del contenido. Es
 formas de calcular el checksum conviviendo**, y la de `market_ingestor` es la mala. Todo dataset
 ingerido por esa vía lleva un sello que no certifica nada. Va al backlog como deuda W1.6.
 
-### 3.2 Las dos suites de gates NO están entrelazadas como se creía — REFUTADO
+### 3.2 Las dos suites de gates SÍ están entrelazadas — y peor de lo que decía el expediente
 
-El traspaso afirmaba "las DOS suites de gates están entrelazadas (un router importa ambas)".
-Medido con `grep` propio: **ningún fichero importa las dos**. La suite A
-(`services/validation/engines/`) tiene **un único importador externo**
-(`services/validation/validation_router.py`); la suite B (`services/api/app/validation/gates/`)
-tiene 20. El acoplamiento real es un fichero-bisagra:
-`services/validation/legacy_revalidation_service.py:31`, que vive en el paquete A e importa B.
+> **Corrección de una afirmación mía anterior.** En la primera versión de este checkpoint escribí
+> que el enredo entre las dos suites quedaba REFUTADO porque "ningún fichero importa las dos".
+> **Era falso, por un error de medición mío**: grepeé el subpaquete `services.validation.engines`
+> cuando el expediente I7 habla del paquete `services.validation` **entero**. Midiendo lo que
+> tocaba, el resultado se invierte. Queda escrito así, con el error a la vista, porque la
+> doctrina de esta casa vale también para el orquestador.
 
-**Es una buena noticia**: cortar el nudo (W4.3 / movimiento 1 de I7) es mucho más barato de lo que
-el expediente preliminar suponía. CONFIRMADO en cambio el tamaño del monolito: `services/api/` =
-**29.478 LOC** exactos.
+Medición correcta — ficheros que importan **ambas** (`services.validation.*` y
+`services.api.app.validation.gates.*`): **19**, entre ellos dos que están en el camino crítico:
+
+```
+scripts/mine.py                                    <-- el minero
+services/discovery/discovery_validation_pipeline.py
+services/optimization/expert_refinement_loop.py
+services/optimization/universal_optimizer_engine.py
+services/semantic_ai/autonomous_discovery_engine.py
+services/validation/legacy_revalidation_service.py
++ 13 scripts de diagnóstico/certificación
+```
+
+El expediente I7 decía "un router importa las dos". El detalle es inexacto —
+`candidates_router.py` importa `services.api.app.validation.market_specs` (no los gates) y
+`services.validation.legacy_revalidation_service`— pero **la tesis de fondo se CONFIRMA y se
+agrava**: no es un router, son 19 ficheros, y uno es `mine.py`. "Mejorar solo las puertas" hoy es
+imposible, tal como sostiene I7.
+
+Matiz útil que sí se sostiene: el subpaquete `services/validation/engines/` tiene **un único
+importador externo** (`validation_router.py`), así que **ESE** trozo concreto sí se puede extraer
+barato. Es por dónde conviene empezar el movimiento 1.
+
+CONFIRMADO además el tamaño del monolito: `services/api/` = **29.478 LOC** exactos.
 
 ## 4. Deuda y bloqueos vivos
 

@@ -3,6 +3,39 @@
 > Petición de Emilio: *"en la VPS vive Hermes, que monitorea los trades y así poder modificar
 > órdenes o tamaños"* — o la mejor alternativa si la hay. Esto es el diseño evaluado.
 
+> ## ⚠ RESTRICCIÓN EXTERNA CONFIRMADA (orquestador, 2026-09-01) — el VPS no puede enviar órdenes
+>
+> La investigación I4 (`results/I4_prop_firms_hallazgos.md`) re-verificó los Términos de Servicio
+> vigentes firma a firma. **Topstep y TradeDay prohíben operar desde un VPS de forma absoluta.**
+> Verificado por el orquestador descargando la página oficial de Topstep, no aceptado del informe
+> del subagente:
+>
+> > "All trading activity must originate from your personal device. The use of VPS, VPNs, and
+> > remote servers is prohibited by Topstep's Terms of Use." … "your server can watch and record,
+> > but it cannot trade."
+> > — help.topstep.com/en/articles/11187768-topstepx-api-access, capturado 2026-09-01
+>
+> Topstep permite bots vía su API oficial, pero exige que el tráfico de órdenes **se origine en el
+> dispositivo personal**. TradeDay es aún más tajante: *"TradeDay does not allow the use of
+> virtual private servers (VPS)"*.
+>
+> **Qué cambia en este diseño** (§5 ya lo intuía —"el ENVÍO de órdenes reales puede tener que
+> salir por otra vía"— pero lo dejaba para F08; ya no es una incógnita, es una regla ajena):
+>
+> 1. **La capa 1 (centinela) y V0 no cambian**: leer, medir y reportar desde el VPS es
+>    explícitamente lo que Topstep permite ("watch and record").
+> 2. **V1 sigue siendo válida SOLO en demo.** Ajustar órdenes desde el VPS contra una cuenta de
+>    evaluación o fondeada real de Topstep/TradeDay violaría su ToS aunque la IP fuese residencial
+>    por túnel: lo que prohíben no es la IP, es el servidor remoto como origen de la orden.
+> 3. **V2 (real) NO puede ejecutarse desde el VPS con esas firmas.** El envío de órdenes reales
+>    sale del PC, que además es quien tiene la IP residencial. El VPS se queda de vigía y espejo.
+> 4. Para MFFU, Take Profit Trader y Tradeify la restricción no está confirmada en fuente
+>    primaria (`NO VERIFICABLE`): **se aplica igualmente la regla conservadora** hasta que lo esté.
+>
+> Esto no invalida a Hermes: le quita una atribución que las firmas no permiten y refuerza su
+> papel real, que es vigilar y avisar. Ninguna puerta se cierra a ULTRA (cripto, sin prop firm de
+> por medio), donde V1/V2 desde el VPS siguen siendo legítimas.
+
 ## 1. Qué NO debe ser (alternativas descartadas y por qué)
 
 | Alternativa | Veredicto |

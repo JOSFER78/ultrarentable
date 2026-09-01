@@ -83,6 +83,70 @@ con el riesgo troceado en pasos verificables.
    SELLADA, con las fronteras definitivas, y reflejarlo en `PLAN_LOCAL_FONDEO.md` (W4.3 pasa a
    ser el Movimiento 1).
 
+## 7. AVANCE DEL 2026-09-01 (ciclo 1 de la era local) — §5.1 CERRADO, faltan los dos tests
+
+**§5.1 (grafo completo de imports) queda HECHO.** Publicado en
+`results/grafo_imports_2026-09-01.{json,md}`: analizador propio sobre `ast` de la stdlib
+(no hizo falta grimp/pydeps), con resolución de imports relativos y clasificación por contexto
+(top-level / diferido en función / condicional). Auditado por el orquestador con comandos
+independientes.
+
+| Medición | Resultado | Auditoría del ORQ |
+| :--- | :--- | :--- |
+| Nodos | **310** | `find services scripts -name "*.py" \| wc -l` = 310 ✅ coincide exacto |
+| Aristas | 1.003 | — |
+| `services/api/` | **29.478 LOC** | re-medido: coincide ✅ (§1 CONFIRMADO) |
+| Ciclos | 22 de ~24 paquetes en un único macro-ciclo (SCC) | hubs medidos: `api/app/config.py` (33 aristas entrantes) y `api/app/db/database.py` (23) |
+| Ciclo directo fichero-a-fichero | 1 solo: `services/export/excel_master_catalog.py` ↔ `services/api/app/api/certified_summary_router.py` | — |
+| Homónimos | **3 pares** (el censo de §1 decía 2) | se añade `version_control_manager.py` (`services/` vs `scripts/herramientas/`) |
+| `services/meta` y `services/fondeo` | **NO existen como paquetes** | confirmado: esa lógica vive dispersa |
+
+### 7.1 El enredo de las dos suites: CONFIRMADO y AGRAVADO (con una corrección propia)
+
+> El orquestador publicó primero que este enredo quedaba REFUTADO. **Era un error de medición
+> suyo**: grepeó el subpaquete `services.validation.engines` cuando §1 habla de
+> `services.validation` **entero**. Corregido aquí y en `current_phase.md`.
+
+Ficheros que importan **ambas** suites (`services.validation.*` **y**
+`services.api.app.validation.gates.*`): **19**. No es "un router": entre ellos están
+`scripts/mine.py` (el minero), `services/discovery/discovery_validation_pipeline.py`,
+`services/optimization/expert_refinement_loop.py`, `universal_optimizer_engine.py`,
+`services/semantic_ai/autonomous_discovery_engine.py`,
+`services/validation/legacy_revalidation_service.py` y 13 scripts.
+
+Matiz de §1 que resulta inexacto en el detalle: `candidates_router.py` **no** importa las dos
+suites de gates — importa `services.api.app.validation.market_specs` (que no son los gates) y
+`services.validation.legacy_revalidation_service`. La tesis de fondo, en cambio, se refuerza:
+**"mejorar solo las puertas" es hoy imposible**, y el radio de propagación es mayor del estimado.
+
+### 7.2 Por dónde empezar el Movimiento 1 (dato nuevo que lo abarata)
+
+El subpaquete **`services/validation/engines/` tiene UN ÚNICO importador externo**
+(`services/validation/validation_router.py`). Es el trozo más barato de extraer de todo el nudo:
+el registro de gates puede nacer ahí con un radio de cambio mínimo, y el resto de la suite se va
+migrando después. AG-5 además midió que
+`services/api/app/factory/` (`deep_strategy_improver.py`, `optimizer.py`, `quality_gates.py`,
+673 LOC) **ya es prácticamente puro** (sin imports internos del monolito): es decir, el
+**Movimiento 2 tiene coste casi cero** para `services/improvement/`. En cambio
+`services/optimization/*` viola la frontera propuesta con 5-8 imports externos por fichero.
+
+Coste de romper fronteras por módulo, medido en aristas: **M1 Generación 174 · M2 Mejora 112 ·
+M4 Meta 34 · M3 Fondeo 22**. Confirma el orden del plan: empezar por donde es barato (puertas,
+mejora) y dejar generación para el final.
+
+### 7.3 Qué falta EXACTAMENTE para sellar
+
+`§5.1` ✅ hecho. Siguen pendientes, y no se pueden adelantar porque dependen de que exista el
+registro de gates:
+
+- **Test de sustitución nº1 (puertas)** — exige ejecutar antes el Movimiento 1 (W4.3).
+- **Test de sustitución nº2 (mejora)** — exige crear `services/improvement/` (Movimiento 2).
+
+**I7 sigue ABIERTO**, y con él `ARQUITECTURA_MODULAR_ESTRATEGIAS.md` sigue siendo HIPÓTESIS. Lo
+que cambia es que ya no falta información para decidir: falta ejecutar. La opción **B gradual en
+3 movimientos se mantiene** y el grafo la respalda (un big-bang sobre un macro-ciclo de 22
+paquetes sería exactamente el riesgo que §4 describe).
+
 ## 6. Afirmaciones previas contrastadas
 
 - "Dos pipelines de validación con umbrales distintos" (F00/current_phase) — **CONFIRMADO y
