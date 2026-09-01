@@ -38,6 +38,40 @@ from services.validation.certification_registry import CertificationRegistry
 from services.engine_version import CURRENT_ENGINE_VERSION
 from services.api.app.config import DATA_DIR as BASE_DATA_DIR, STATE_DB_PATH
 
+
+def _construir_simbolos_fondeo() -> frozenset:
+    """Universo de simbolos del carril FONDEO: futuros CME, forex y los proxies CFD.
+
+    Los proxies se derivan del SSOT (`dukascopy_feed.SYMBOLS`) en vez de duplicar la lista,
+    porque anadir un proxy nuevo sin actualizar esta copia volveria a enrutar datasets de
+    FONDEO al carril ULTRA de forma silenciosa.
+    """
+    base = {
+        "ES", "MES", "NQ", "YM", "RTY", "GC", "SI", "CL",
+        "EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY",
+    }
+    try:
+        from services.data_ingestion.dukascopy_feed import SYMBOLS as _DUKA_SYMBOLS
+    except Exception:  # pragma: no cover - el pipeline no debe caer por esto
+        logger.warning(
+            "No se pudo derivar el universo FONDEO de dukascopy_feed; se usa la lista base. "
+            "Los datasets de proxies CFD se enrutaran a ULTRA."
+        )
+        return frozenset(base)
+
+    for clave, spec in _DUKA_SYMBOLS.items():
+        base.add(str(clave).upper())
+        base.add(str(getattr(spec, "dukascopy", "")).upper())
+        base.add(str(getattr(spec, "canonical", "")).upper())
+        objetivo = getattr(spec, "proxy_for", None)
+        if objetivo:
+            base.add(str(objetivo).upper())
+    base.discard("")
+    return frozenset(base)
+
+
+SIMBOLOS_FONDEO = _construir_simbolos_fondeo()
+
 # --- SINGLETON PROCESS LOCK ---
 import fcntl
 _DISCOVERY_LOCK_FD = None
@@ -209,15 +243,12 @@ class DiscoveryValidationPipeline:
         elif "ultra" in fname.lower():
             route = StrategyRoute.ULTRA
         else:
-            # Por defecto, ULTRA está disponible para el 100% de los activos
-            is_fondeo = any(
-                f_sym == symbol.upper() or f_sym in symbol.upper()
-                for f_sym in [
-                    "NQ", "ES", "YM", "GC", "CL", "RTY", "SI",
-                    "EURUSD", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "USDJPY",
-                ]
-            )
-            route = StrategyRoute.FONDEO if (is_fondeo and "fondeo" in fname.lower()) else StrategyRoute.ULTRA
+            # El enrutamiento se decide SOLO por el simbolo. La version anterior exigia ademas
+            # que el nombre del fichero contuviera "fondeo", una condicion inalcanzable en esta
+            # rama (el elif previo ya descarto ese caso), asi que TODO dataset de FONDEO cuyo
+            # nombre no llevara la palabra literal se evaluaba como ULTRA, con 1.000 USD de
+            # capital y 25% de techo de drawdown en vez de 50.000 USD y 4,5%.
+            route = StrategyRoute.FONDEO if symbol.upper() in SIMBOLOS_FONDEO else StrategyRoute.ULTRA
 
         initial_cap = 1000.0 if route == StrategyRoute.ULTRA else 50000.0
 
