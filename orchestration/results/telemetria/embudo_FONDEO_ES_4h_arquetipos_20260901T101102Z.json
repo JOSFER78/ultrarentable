@@ -1,0 +1,186 @@
+{
+  "generado_utc": "20260901T101102Z",
+  "engine_version": "5.17.0",
+  "contexto": {
+    "track": "FONDEO",
+    "symbol": "ES",
+    "execution_symbol": "MES",
+    "timeframe": "4h",
+    "profile": "arquetipos",
+    "dataset_source": "auto",
+    "dataset_file": "ds_trad_es_4h_1711425600000_1787083200000.json",
+    "certified_count": 0,
+    "configuraciones_evaluadas": 20,
+    "barras_is": 2228,
+    "barras_val": 743,
+    "barras_oos": 743
+  },
+  "umbrales": {
+    "IS": {
+      "trades_min": 5,
+      "pf_min": 1.05
+    },
+    "VAL": {
+      "trades_min": 3,
+      "pf_min": 1.0
+    },
+    "OOS": {
+      "trades_min": 100,
+      "pf_min": 1.1
+    }
+  },
+  "embudo_por_etapa": {
+    "IS": 20
+  },
+  "causas_por_etapa": {
+    "IS": {
+      "total": 20,
+      "pocas_operaciones": 0,
+      "sin_ventaja": 20,
+      "ambas": 0,
+      "otro": 0
+    }
+  },
+  "telemetria": [
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c1",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.040",
+      "trades": 17,
+      "pf": 0.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c2",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c3",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c4",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c5",
+      "etapa": "IS",
+      "motivo": "trades=11 pf=0.030",
+      "trades": 11,
+      "pf": 0.03
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c6",
+      "etapa": "IS",
+      "motivo": "trades=22 pf=0.190",
+      "trades": 22,
+      "pf": 0.19
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c7",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c8",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c9",
+      "etapa": "IS",
+      "motivo": "trades=5 pf=0.000",
+      "trades": 5,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c10",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.040",
+      "trades": 17,
+      "pf": 0.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c11",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c12",
+      "etapa": "IS",
+      "motivo": "trades=24 pf=0.180",
+      "trades": 24,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c13",
+      "etapa": "IS",
+      "motivo": "trades=15 pf=0.180",
+      "trades": 15,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c14",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.160",
+      "trades": 17,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c15",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.160",
+      "trades": 17,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c16",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.160",
+      "trades": 17,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c17",
+      "etapa": "IS",
+      "motivo": "trades=11 pf=0.050",
+      "trades": 11,
+      "pf": 0.05
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c18",
+      "etapa": "IS",
+      "motivo": "trades=16 pf=0.180",
+      "trades": 16,
+      "pf": 0.18
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c19",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.160",
+      "trades": 17,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_4H_c20",
+      "etapa": "IS",
+      "motivo": "trades=17 pf=0.160",
+      "trades": 17,
+      "pf": 0.16
+    }
+  ]
+}

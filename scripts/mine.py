@@ -696,6 +696,92 @@ def save_certified_candidate_to_db(
         return False
 
 
+# Umbrales de cada etapa del embudo, en un solo sitio para que el resumen de causas no pueda
+# desincronizarse de los filtros reales que los aplican mas abajo.
+UMBRALES_EMBUDO = {
+    "IS": {"trades_min": 5, "pf_min": 1.05},
+    "VAL": {"trades_min": 3, "pf_min": 1.00},
+    "OOS": {"trades_min": MIN_OPERACIONES_OOS, "pf_min": 1.10},
+}
+
+
+def resumir_causas(telemetria: List[Dict[str, Any]]) -> Dict[str, Dict[str, int]]:
+    """Cuenta POR QUE muere cada configuracion, no solo donde.
+
+    Distinguir "no opera lo suficiente" de "opera pero no tiene ventaja" es la unica forma de
+    saber si el problema son los datos o los arquetipos. Sin este desglose, una campana que
+    devuelve cero certificadas no dice nada: podria ser falta de barras, falta de edge, o un
+    filtro mal puesto, y las tres se arreglan de formas opuestas.
+    """
+    resumen: Dict[str, Dict[str, int]] = {}
+    for reg in telemetria:
+        etapa = reg.get("etapa", "?")
+        casilla = resumen.setdefault(
+            etapa, {"total": 0, "pocas_operaciones": 0, "sin_ventaja": 0, "ambas": 0, "otro": 0}
+        )
+        casilla["total"] += 1
+        umbral = UMBRALES_EMBUDO.get(etapa)
+        if umbral is None or reg.get("trades") is None or reg.get("pf") is None:
+            casilla["otro"] += 1
+            continue
+        pocas = reg["trades"] < umbral["trades_min"]
+        floja = reg["pf"] < umbral["pf_min"]
+        if pocas and floja:
+            casilla["ambas"] += 1
+        elif pocas:
+            casilla["pocas_operaciones"] += 1
+        elif floja:
+            casilla["sin_ventaja"] += 1
+        else:
+            casilla["otro"] += 1
+    return resumen
+
+
+def persistir_telemetria(resultado: Dict[str, Any]) -> Optional[Path]:
+    """Escribe la telemetria del embudo a disco. NO es opcional a proposito.
+
+    Antes se calculaba y se tiraba: `run_mining_pipeline` la devolvia en un dict que nadie
+    serializaba, y la cola solo conservaba las tres ultimas lineas de stdout truncadas a 500
+    caracteres. De 14.352 configuraciones evaluadas en la campana del 2026-09-01 sobrevivieron 20
+    puntos de datos, y por eso no se pudo determinar si las estrategias morian por falta de
+    operaciones o por falta de ventaja.
+
+    Un fallo al escribir la telemetria no aborta la mineria -perder el analisis es malo, perder
+    horas de computo es peor-, pero se registra de forma bien visible.
+    """
+    try:
+        destino_dir = Path(__file__).resolve().parents[1] / "orchestration" / "results" / "telemetria"
+        destino_dir.mkdir(parents=True, exist_ok=True)
+        sello = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+        nombre = "_".join(
+            str(resultado.get(k, "NA")).replace("/", "_").replace(" ", "")
+            for k in ("track", "symbol", "timeframe", "profile")
+        )
+        destino = destino_dir / f"embudo_{nombre}_{sello}.json"
+        telemetria = resultado.get("telemetria", [])
+        payload = {
+            "generado_utc": sello,
+            "engine_version": CURRENT_ENGINE_VERSION,
+            "contexto": {
+                k: resultado.get(k)
+                for k in (
+                    "track", "symbol", "execution_symbol", "timeframe", "profile",
+                    "dataset_source", "dataset_file", "certified_count",
+                    "configuraciones_evaluadas", "barras_is", "barras_val", "barras_oos",
+                )
+            },
+            "umbrales": UMBRALES_EMBUDO,
+            "embudo_por_etapa": resultado.get("embudo", {}),
+            "causas_por_etapa": resumir_causas(telemetria),
+            "telemetria": telemetria,
+        }
+        destino.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        return destino
+    except (OSError, TypeError, ValueError) as exc:
+        log_msg(f"AVISO: no se pudo persistir la telemetria del embudo: {exc}")
+        return None
+
+
 def run_mining_pipeline(
     track: str,
     symbol: str,
@@ -1118,9 +1204,18 @@ def run_mining_pipeline(
     for r in mejores:
         log_msg(f"  mejor: {r['strategy_id']} cae en {r['etapa']} -> {r['motivo']}")
     log_msg(f"Minería completada: {len(certified_candidates)} candidatas certificadas 11/11")
-    return {
+
+    causas = resumir_causas(telemetria)
+    for etapa, c in causas.items():
+        log_msg(
+            f"  causas en {etapa}: {c['total']} muertas -> pocas_operaciones={c['pocas_operaciones']} "
+            f"sin_ventaja={c['sin_ventaja']} ambas={c['ambas']} otro={c['otro']}"
+        )
+
+    resultado = {
         "status": "SUCCESS",
         "embudo": embudo,
+        "causas_por_etapa": causas,
         "telemetria": telemetria,
         "track": track_norm.upper(),
         "symbol": sym_norm,
@@ -1129,7 +1224,20 @@ def run_mining_pipeline(
         "profile": profile,
         "certified_count": len(certified_candidates),
         "certified_candidates": certified_candidates,
+        "dataset_source": dataset_source,
+        "dataset_file": dataset_file.name,
+        "dataset_source_label": dataset_source_label,
+        "configuraciones_evaluadas": len(telemetria) + len(certified_candidates),
+        "barras_is": len(candles_is),
+        "barras_val": len(candles_val),
+        "barras_oos": len(candles_blind_oos),
     }
+
+    ruta_telemetria = persistir_telemetria(resultado)
+    if ruta_telemetria is not None:
+        log_msg(f"Telemetría del embudo escrita en {ruta_telemetria}")
+    resultado["telemetria_file"] = str(ruta_telemetria) if ruta_telemetria else None
+    return resultado
 
 
 def main():
