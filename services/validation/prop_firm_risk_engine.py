@@ -86,6 +86,12 @@ class PropFirmRiskEngine:
         # (ZERO SYNTHETIC: únicamente reordena secuencias físicas sin fabricar datos)
         rng = np.random.RandomState(42)
 
+        # REAL-ONLY: días hasta alcanzar el objetivo, UNO por cada iteración MC que realmente
+        # lo alcanzó (no fabricado -- ver el hallazgo de median_days_to_target=22.0
+        # hardcodeado que este campo sustituye). Fail-closed: si ninguna iteración pasa,
+        # queda vacío y el resultado final es None, nunca un número inventado.
+        dias_hasta_target: list = []
+
         for _ in range(self.mc_iterations):
             permuted_indices = rng.choice(n_trades, size=n_trades, replace=True)
             sampled_trades = trades_arr[permuted_indices]
@@ -94,10 +100,12 @@ class PropFirmRiskEngine:
             peak_equity = account_size_usd
             busted = False
             hit_target = False
+            dia_num = 0
 
             # Agrupar operaciones en bloques de "días" (asumiendo media de 3 trades/día)
             trades_per_day = 3
             for day_idx in range(0, n_trades, trades_per_day):
+                dia_num += 1
                 day_trades = sampled_trades[day_idx : day_idx + trades_per_day]
                 day_pnl = float(np.sum(day_trades))
 
@@ -126,6 +134,7 @@ class PropFirmRiskEngine:
                 busted_accounts += 1
             elif hit_target:
                 passed_accounts += 1
+                dias_hasta_target.append(float(dia_num))
 
         p_daily = round(daily_breaches / self.mc_iterations, 3)
         p_dd = round(trailing_dd_breaches / self.mc_iterations, 3)
@@ -142,6 +151,13 @@ class PropFirmRiskEngine:
 
         passed = (p_bust <= self.max_bust_prob) and (p_pass >= self.min_pass_prob) and len(diag) == 0
 
+        # REAL-ONLY (corrige el hardcodeo median_days_to_target=22.0 detectado en revisión):
+        # mediana real de los días-hasta-objetivo observados en las iteraciones MC que sí
+        # pasaron. None si ninguna pasó -- nunca se inventa un número por rellenar el campo.
+        median_days_to_target = (
+            round(float(np.median(dias_hasta_target)), 1) if dias_hasta_target else None
+        )
+
         return PropRiskEvaluationResult(
             passed=passed,
             account_size_usd=account_size_usd,
@@ -153,6 +169,6 @@ class PropFirmRiskEngine:
             p_account_bust_before_target=p_bust,
             p_pass_challenge_probability=p_pass,
             simulated_iterations=self.mc_iterations,
-            median_days_to_target=22.0 if passed else None,
+            median_days_to_target=median_days_to_target,
             diagnostics=diag,
         )

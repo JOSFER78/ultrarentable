@@ -50,9 +50,31 @@ from typing import Any, Dict, List, Optional, Tuple
 #   las familias EMA/RSI/Donchian existentes no cambian ni una linea de semantica; un
 #   snapshot anterior a 5.14.0 produce EXACTAMENTE las mismas operaciones que en 5.13.0. No
 #   invalida certificaciones 5.13.0 (no las hay: 0 certificadas).
+# 5.15.0 (2026-08-31, F02.3): reglas de prop firm OPT-IN dentro del motor (PropFirmProfile),
+#   evaluadas sobre EQUITY FLOTANTE barra a barra (no PnL realizado): trailing/EOD/static
+#   drawdown, limite de perdida diaria, y cierre obligatorio por hora de sesion. Aditivo
+#   estricto: run_backtest(..., prop_profile=None) -- su valor por defecto -- no ejecuta ni una
+#   linea de este codigo; las 15 celdas de referencia de scripts/verificacion_f02.py salen
+#   identicas a 5.14.0. Sin prop_profile, ningun snapshot cambia de comportamiento.
+# 5.16.0 (2026-09-01): FIX CATASTROFICO de comision en FONDEO/forex. `es_futuro` se
+#   derivaba de `point_value != 1.0`, un umbral numerico que forex tambien cumple
+#   (point_value=10.0, convencion "USD por pip por lote"). Heredaba asi las DOS reglas de
+#   contratos CME liquidados en bolsa sin serlo: comision FIJA por unidad de qty (self.cme_fee
+#   ~2.50 USD) en vez de porcentual, y cantidad forzada a entero. Con qty~4.700 (unidades en
+#   la escala point_value=10 necesarias para representar ~50.000 USD de nocional a 1x), la
+#   comision facturaba ~11.700 USD POR LADO: 2-3 operaciones bastaban para quebrar una cuenta
+#   de 50.000 USD con PnL bruto de apenas +-100 USD por operacion. Medido en EURUSD 1h IS:
+#   3 operaciones, PF 0.00, cuenta a -10.572 USD. Fix: `es_futuro` se deriva del
+#   `asset_class` REAL de InstrumentRegistry (CME_FUTURES), no de un umbral sobre
+#   point_value. Verificado en las 6 divisas del universo FONDEO x 4 arquetipos EVENTO
+#   (5.14.0): 100-330 operaciones, PF 0.36-0.96, perdidas de 500-9.000 USD sobre 50.000 --
+#   mismo orden de magnitud que ES/MES (referencia sana). No toca la ruta ULTRA (nunca
+#   alcanza este bloque: `if not _es_fondeo: ... raise StopIteration`) ni los futuros CME
+#   (asset_class ya era CME_FUTURES, es_futuro sigue siendo True exactamente igual que antes).
+#   15/15 celdas de scripts/verificacion_f02.py identicas a 5.15.0 (ninguna es forex).
 # Las certificaciones anteriores NO son comparables: se marcan LEGACY_MOTOR_* (regla #26).
-CURRENT_ENGINE_VERSION: str = "5.14.0"
-CURRENT_ENGINE_NAME: str = "Ultrarentable V5.14.0 (Event Archetype Expansion: Reversion/Squeeze/Session/Streak)"
+CURRENT_ENGINE_VERSION: str = "5.16.0"
+CURRENT_ENGINE_NAME: str = "Ultrarentable V5.16.0 (Fix: comision FONDEO/forex clasificada por asset_class, no por point_value)"
 CURRENT_PIPELINE_VERSION: str = "5.4.0"
 CURRENT_VALIDATION_PIPELINE_VERSION: str = "5.4.0"
 VALIDATION_PIPELINE_VERSION: str = "5.4.0"
@@ -61,15 +83,41 @@ CURRENT_POLICY_VERSION: str = "5.4.0"
 CURRENT_GATE_POLICY_VERSION: str = "5.4.0"
 MIN_SUPPORTED_ENGINE_VERSION: str = "1.0.0"
 MINIMUM_SUPPORTED_VERSION: str = "1.0.0"
-ENGINE_RELEASE_DATE: str = "2026-08-31"
+ENGINE_RELEASE_DATE: str = "2026-09-01"
 CANONICAL_AUTHOR: str = "Ultrarentable Core Quantitative Team"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
-        "version": "5.14.0",
+        "version": "5.16.0",
         "name": CURRENT_ENGINE_NAME,
-        "date": "2026-08-31",
+        "date": "2026-09-01",
         "status": "CURRENT_RECOMMENDED",
+        "changes": [
+            "FIX CATASTROFICO: es_futuro (decide comision fija POR CONTRATO vs porcentual, y cantidad entera vs fraccionaria) se derivaba de `point_value != 1.0`. Forex (point_value=10.0, convencion USD/pip/lote) cumplia ese umbral sin ser un contrato CME, heredando comision fija de ~2.50 USD POR UNIDAD DE QTY -- con qty~4.700 eso factura ~11.700 USD por lado, suficiente para quebrar una cuenta de 50.000 USD en 2-3 operaciones (medido: EURUSD 1h IS, PF 0.00, cuenta a -10.572 USD).",
+            "Fix: es_futuro = spec.asset_class == AssetClass.CME_FUTURES (dato real de InstrumentRegistry), no un umbral numerico sobre point_value.",
+            "Verificado en las 6 divisas FONDEO x 4 arquetipos 5.14.0: 100-330 operaciones, PF 0.36-0.96, perdidas de 500-9.000 USD sobre 50.000 (antes: 3 operaciones, PF 0.00, cuenta quebrada). Mismo orden de magnitud que ES/MES.",
+            "No afecta a ULTRA (nunca alcanza este bloque) ni a futuros CME (asset_class ya era CME_FUTURES, es_futuro identico a 5.15.0). 15/15 celdas de scripts/verificacion_f02.py identicas a 5.15.0 (ninguna celda de referencia es forex).",
+        ],
+    },
+    {
+        "version": "5.15.0",
+        "name": "Ultrarentable V5.15.0 (Prop Firm Rules: Floating-Equity Trailing DD, Daily Loss, Session Cutoff)",
+        "date": "2026-08-31",
+        "status": "STALE",
+        "changes": [
+            "F02.3: reglas de prop firm OPT-IN dentro de EventBacktestEngine.run_backtest (nuevo parametro prop_profile: Optional[PropFirmProfile], default None).",
+            "Trailing/EOD/static drawdown y limite de perdida diaria evaluados sobre EQUITY FLOTANTE (mark-to-market intra-barra via bar_high/bar_low), no sobre PnL realizado -- una operacion que cierra en positivo puede violar el trailing DD a mitad de camino; el motor la detecta y cierra en el precio EXACTO de ruptura.",
+            "Cierre obligatorio de posiciones por hora de corte de sesion (PropFirmProfile.session_cutoff_utc), independiente del session_window propio de la estrategia.",
+            "TradeRecord.prop_rule_violated y EventBacktestResult.prop_firm_busted/prop_firm_violations (todos aditivos, default None/False/[]) para que el evaluador de examenes (scripts/fondeo_examen.py) consuma la violacion sin adivinar a partir de exit_reason.",
+            "consistency_pct del catalogo PROP_FIRM_CATALOG queda FUERA del motor a proposito: es una propiedad agregada de todo el ledger, se calcula mejor a posteriori.",
+            "Aditivo estricto: con prop_profile=None (default) cero lineas de este codigo se ejecutan; 15/15 celdas de scripts/verificacion_f02.py identicas a 5.14.0.",
+        ],
+    },
+    {
+        "version": "5.14.0",
+        "name": "Ultrarentable V5.14.0 (Event Archetype Expansion: Reversion/Squeeze/Session/Streak)",
+        "date": "2026-08-31",
+        "status": "STALE",
         "changes": [
             "Aditivo: 4 familias de arquetipos nuevas (reversion_atr, squeeze_breakout, session_momentum, streak_edge); no altera operaciones de snapshots pre-5.14.0.",
             "StrategySnapshot.archetype_params (aditivo, retrocompatible en hash) y despacho explicito por strategy.archetype en EventBacktestEngine, separado del interprete generico de entry_rules.",
@@ -208,7 +256,7 @@ VERSION_HISTORY: List[Dict[str, Any]] = [
 ]
 
 SUPPORTED_LEGACY_VERSIONS: List[str] = [
-    "1.00", "1.01", "1.02", "1.03", "1.05", "2.0.0", "3.0.0", "4.0.0", "5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.6.0", "5.7.0", "5.8.0", "5.9.0", "5.10.0", "5.11.0", "5.12.0", "5.13.0"
+    "1.00", "1.01", "1.02", "1.03", "1.05", "2.0.0", "3.0.0", "4.0.0", "5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.6.0", "5.7.0", "5.8.0", "5.9.0", "5.10.0", "5.11.0", "5.12.0", "5.13.0", "5.14.0"
 ]
 
 GOVERNANCE_STATUS_APPROVED: str = "APPROVED"

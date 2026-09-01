@@ -70,6 +70,64 @@ class TradeRecord:
     equity_before_usd: float = 1000.0
     equity_after_usd: float = 1000.0
     r_multiple: float = 0.0
+    # 5.15.0 (F02.3): motivo exacto cuando exit_reason == "PROP_VIOLATION" -- que regla de
+    # prop firm se violo ("TRAILING_DRAWDOWN" | "EOD_DRAWDOWN" | "STATIC_DRAWDOWN" |
+    # "DAILY_LOSS_LIMIT"). None en cualquier otro caso (incluye SIEMPRE el caso prop_profile
+    # no pasado). Aditivo: campo con default, ningun call-site existente instancia TradeRecord
+    # posicionalmente (todos usan kwargs), cero riesgo de romper construcciones previas.
+    prop_rule_violated: Optional[str] = None
+
+
+@dataclass
+class PropFirmProfile:
+    """Perfil OPT-IN de reglas de prop firm evaluadas por el motor SOBRE EQUITY FLOTANTE
+    (marcada a mercado barra a barra), NUNCA sobre PnL realizado.
+
+    Por que flotante y no realizado: una operacion puede cerrar en +100 USD pero haber estado
+    en -800 USD a mitad de camino. En una cuenta prop real el monitor de riesgo del broker
+    opera en tiempo real sobre el equity flotante -- la cuenta ya estaria muerta (trailing
+    drawdown violado) en el instante de esa excursion adversa, sin que importe como cerrara
+    el trade despues. Evaluar solo PnL realizado al cierre de operacion (como hacia hasta F02.3
+    el evaluador de examenes sobre el ledger) ignora exactamente ese riesgo intra-trade, que es
+    el que revienta cuentas reales.
+
+    Nombres de campo y unidades tomados literalmente de PROP_FIRM_CATALOG / PropFirmRules
+    (services/exploitation_engines/prop_firm_engine.py) -- no se inventan campos nuevos.
+    `consistency_pct` se deja FUERA a proposito (ver comentario junto a su chequeo en
+    run_backtest): es una propiedad agregada de TODO el ledger (que % del profit total vino de
+    un solo dia), no un evento evaluable barra a barra: se calcula mejor a posteriori sobre el
+    ledger completo, no dentro del motor.
+
+    OPT-IN estricto (regla #26): `run_backtest(..., prop_profile=None)` -- su valor por
+    defecto -- no ejecuta ni una linea del codigo de este perfil; el comportamiento es bit a
+    bit identico al de la version 5.14.0. Solo pasando una instancia de este perfil se activa
+    el chequeo.
+    """
+    # PropFirmRules.max_total_drawdown_usd: umbral absoluto en USD (no %) del drawdown maximo
+    # tolerado antes de que la cuenta se de por reventada.
+    max_total_drawdown_usd: float
+    # PropFirmRules.drawdown_type: "TRAILING_INTRADAY" (el pico de referencia se actualiza con
+    # CUALQUIER nuevo maximo de equity flotante, incluso intra-barra) | "EOD" (el pico de
+    # referencia solo avanza al cierre de cada dia UTC, pero la violacion SI se comprueba
+    # intradia contra ese pico ya fijado) | "STATIC" (el ancla nunca se mueve: es el capital
+    # inicial de la cuenta desde el primer bar).
+    drawdown_type: str = "TRAILING_INTRADAY"
+    # PropFirmRules.daily_loss_limit_usd: perdida maxima (USD) permitida DENTRO de un mismo
+    # dia UTC, medida contra el equity (flotante) al inicio de ese dia. None = sin limite
+    # diario explicito (solo aplica el drawdown total).
+    daily_loss_limit_usd: Optional[float] = None
+    # Hora de cierre obligatorio de posiciones, en "HH:MM" **UTC**. El catalogo trae horas
+    # locales con zona embebida (ej. "16:59 EST"): convertir a UTC es responsabilidad del
+    # llamador que construye este perfil. El motor NUNCA parsea zonas horarias en ningun otro
+    # punto de este fichero -- session_window ya exige start_time_utc/end_time_utc en UTC --
+    # y una tabla de offsets fijos aqui podria fallar en silencio con el cambio de horario
+    # (EST/EDT) real de cada firma. None = sin cierre obligatorio de sesion.
+    session_cutoff_utc: Optional[str] = None
+    # PropFirmRules.account_size_usd: ancla del drawdown STATIC/EOD. Si None, se usa el
+    # capital base del propio backtest (initial_capital_usd o el default de la ruta) --
+    # coherente con como el catalogo usa account_size_usd como referencia de
+    # max_total_drawdown_usd.
+    account_size_usd: Optional[float] = None
 
 
 @dataclass
@@ -102,6 +160,20 @@ class EventBacktestResult:
     # 5.13.0: coste NETO de funding acumulado (perpetuos ULTRA), positivo = coste pagado,
     # negativo = ingreso neto recibido. 0.0 si no aplica (futuros, o par fuera del registro).
     total_funding_usd: float = 0.0
+    # 5.15.0 (F02.3): resultado del chequeo de reglas prop firm SOBRE EQUITY FLOTANTE (ver
+    # PropFirmProfile). False/[] siempre que `prop_profile` no se pase a run_backtest -- 100%
+    # aditivo, cero impacto en resultados de snapshots pre-5.15.0.
+    # prop_firm_busted: True si CUALQUIER regla del perfil se violo durante el backtest (la
+    # cuenta se considera reventada desde ese instante en adelante; el motor deja de abrir
+    # posiciones nuevas a partir de esa barra -- ver run_backtest).
+    prop_firm_busted: bool = False
+    # prop_firm_violations: una entrada POR violacion (normalmente 0 o 1 -- el motor se detiene
+    # en la primera), con la regla, la barra exacta y el equity flotante que la disparo, para
+    # que el evaluador de examenes (scripts/fondeo_examen.py) lo consuma sin adivinar a partir
+    # de exit_reason. Claves: rule, bar_index, timestamp_ms, equity_floating_usd, threshold_usd,
+    # trade_id (None si no habia posicion abierta cuando se violo, p.ej. perdida diaria
+    # acumulada estando plano).
+    prop_firm_violations: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_canonical_ledger(self, symbol: str = "BTCUSDT", execution_config_hash: str = "") -> CanonicalExecutionLedger:
         """Convierte el resultado de backtest determinista a CanonicalExecutionLedger oficial con Hash-Chain Merkle."""
@@ -115,6 +187,13 @@ class EventBacktestResult:
                 else ExitReason.SESSION_EOD if t.exit_reason in ["SESSION_EOD", "SESSION_CLOSE", "EOD_CLOSE"]
                 else ExitReason.TIME_STOP if t.exit_reason == "TIME_STOP"
                 else ExitReason.LIQUIDATION if t.exit_reason == "LIQUIDATION"
+                # 5.15.0: cierre forzado por violacion de regla prop firm (trailing/EOD/static
+                # drawdown o limite de perdida diaria) sobre equity flotante -- es, por
+                # definicion, un cierre de kill-switch de riesgo.
+                else ExitReason.KILL_SWITCH if t.exit_reason == "PROP_VIOLATION"
+                # 5.15.0: cierre obligatorio por hora de corte de la prop firm (no es una
+                # violacion, es cumplimiento de la regla de sesion).
+                else ExitReason.SESSION_EOD if t.exit_reason == "PROP_SESSION_CUTOFF"
                 else ExitReason.KILL_SWITCH
             )
             canonical_trades.append(
@@ -456,6 +535,11 @@ class EventBacktestEngine:
         strategy: StrategySnapshot,
         candles: List[Dict[str, Any]],
         initial_capital_usd: Optional[float] = None,
+        # 5.15.0 (F02.3): OPT-IN estricto. None (default) = cero codigo de reglas prop
+        # ejecutado y comportamiento bit a bit identico a 5.14.0 (regla #26). Parametro nuevo
+        # anadido AL FINAL de la firma: ningun call-site existente (todos usan kwargs para
+        # initial_capital_usd, o como mucho 3 posicionales) se ve afectado.
+        prop_profile: Optional[PropFirmProfile] = None,
     ) -> EventBacktestResult:
         """Ejecuta la simulaci?n determinista de la estrategia sobre el dataset de velas."""
         t_start = datetime.now(timezone.utc)
@@ -486,6 +570,7 @@ class EventBacktestEngine:
                 InstrumentRegistry,
                 es_spec_verificada,
             )
+            from contracts.instrument_specification import AssetClass
             # En FONDEO el multiplicador de contrato DECIDE el PnL: con ES son 50 USD/punto y con
             # MES son 5. Si el simbolo no esta en el catalogo canonico, el registro devuelve una
             # spec por descarte (point_value=1.0) que produciria un PnL 50x menor sin avisar.
@@ -499,7 +584,22 @@ class EventBacktestEngine:
                 )
             _spec = InstrumentRegistry.get(strategy.symbol)
             point_value = float(getattr(_spec, "point_value", 1.0) or 1.0)
-            es_futuro = point_value != 1.0
+            # --- BUG CATASTROFICO (corregido 2026-09-01, 5.16.0) -------------------------
+            # Antes: es_futuro = point_value != 1.0. Ese booleano decide DOS cosas por venue:
+            # (a) comision fija POR CONTRATO (self.cme_fee, ~2.50 USD) en vez de porcentual, y
+            # (b) cantidad forzada a ENTERO (math.floor) -- ambas correctas SOLO para
+            # contratos CME liquidados en bolsa. Forex tambien tiene point_value != 1.0 (aqui
+            # 10.0, convencion "USD por pip por lote estandar"), asi que heredaba las DOS
+            # reglas de CME sin serlo: con qty~4.700 (unidades en la escala point_value=10
+            # necesarias para representar ~50.000 USD de nocional a 1x), la comision fija de
+            # 2.50 USD/unidad de qty facturaba ~11.700 USD POR LADO -- suficiente para quebrar
+            # una cuenta de 50.000 USD en 2-3 operaciones (medido: EURUSD 1h IS, 3 operaciones,
+            # PnL bruto de +32/-73/-15 USD pero comisiones de 11.692/11.700/6.852 USD por
+            # operacion). El PnL bruto y el sizing por riesgo eran correctos; la comision no.
+            # Fix: es_futuro se deriva del asset_class REAL de la spec (CME_FUTURES), no de un
+            # umbral numerico sobre point_value. No afecta a ES/GC (asset_class ya era
+            # CME_FUTURES) ni a ULTRA (nunca llega a este bloque, ver StopIteration arriba).
+            es_futuro = getattr(_spec, "asset_class", None) == AssetClass.CME_FUTURES
         except StopIteration:
             pass
         except Exception as exc:  # noqa: BLE001
@@ -794,6 +894,71 @@ class EventBacktestEngine:
         session_window = getattr(strategy, "session_window", None)
         time_stop_bars = getattr(strategy.exit_rules, "time_stop_bars", None) if hasattr(strategy, "exit_rules") and strategy.exit_rules else None
 
+        # --- 5.15.0 (F02.3): estado OPT-IN de reglas prop firm sobre equity flotante --------
+        # Estas variables solo se LEEN/ACTUALIZAN dentro de bloques guardados por
+        # `if prop_profile is not None:` mas abajo; con prop_profile=None (default) quedan
+        # declaradas pero inertes -- cero cambio de comportamiento (regla #26).
+        prop_account_busted = False
+        prop_firm_violations: List[Dict[str, Any]] = []
+        # Ancla del drawdown STATIC/EOD: account_size_usd del perfil si se dio, si no el
+        # capital base de este backtest (misma convencion que PROP_FIRM_CATALOG: el drawdown
+        # se mide contra account_size_usd).
+        prop_anchor_equity = (
+            (prop_profile.account_size_usd if prop_profile.account_size_usd is not None else base_capital)
+            if prop_profile is not None else 0.0
+        )
+        # Pico de referencia: en TRAILING_INTRADAY avanza con cualquier maximo de equity
+        # flotante (incluso intra-barra); en EOD solo avanza al cierre de cada dia UTC; en
+        # STATIC no se usa (el ancla es fija). Arranca en prop_anchor_equity en los 3 casos.
+        prop_peak_equity = prop_anchor_equity
+        # Bookkeeping del limite de perdida diaria: dia UTC en curso y equity (realizado, sin
+        # posicion) con el que abrio ese dia -- se fija la PRIMERA vez que se ve ese dia_key.
+        prop_current_day_key: Optional[tuple] = None
+        prop_day_start_equity = prop_anchor_equity
+
+        def _prop_check_and_update(bar_dt_local: Optional[datetime], equity_favorable: float, equity_adverse: float) -> Optional["tuple[str, float]"]:
+            """Actualiza el bookkeeping de dia UTC / pico de referencia del perfil prop y
+            devuelve (regla, suelo) si `equity_adverse` lo cruza, o None si no hay violacion.
+            Punto UNICO de calculo del suelo -- se llama tanto EN POSICION (favorable/adverso
+            = extremos intra-barra segun el lado, ver mas abajo) como EN PLANO (favorable ==
+            adverso == current_equity, sin ambiguedad de path intra-barra). Solo se invoca
+            cuando prop_profile no es None (guardas en los call-sites)."""
+            nonlocal prop_peak_equity, prop_current_day_key, prop_day_start_equity
+            _day_key = (bar_dt_local.year, bar_dt_local.month, bar_dt_local.day) if bar_dt_local is not None else None
+            if _day_key is not None and _day_key != prop_current_day_key:
+                # Nuevo dia UTC: para EOD el pico de referencia avanza ahora, anclado al
+                # equity REALIZADO con el que cierra el dia anterior (current_equity, todavia
+                # sin el floating/funding de la barra que dispara el cambio de dia). El ancla
+                # del limite diario es ese mismo valor.
+                if prop_profile.drawdown_type == "EOD":
+                    prop_peak_equity = max(prop_peak_equity, current_equity)
+                prop_current_day_key = _day_key
+                prop_day_start_equity = current_equity
+
+            if prop_profile.drawdown_type == "TRAILING_INTRADAY":
+                # Asuncion conservadora (documentada en PropFirmProfile): el pico se actualiza
+                # con el lado FAVORABLE de la barra, incluso intra-barra -- si el precio pudo
+                # haber tocado el favorable antes de revertir al adverso (desconocido sin datos
+                # tick), el broker ya habria subido el pico, endureciendo el suelo. Ignorar esto
+                # subestimaria violaciones reales.
+                prop_peak_equity = max(prop_peak_equity, equity_favorable)
+                floor_dd, rule_dd = prop_peak_equity - prop_profile.max_total_drawdown_usd, "TRAILING_DRAWDOWN"
+            elif prop_profile.drawdown_type == "EOD":
+                floor_dd, rule_dd = prop_peak_equity - prop_profile.max_total_drawdown_usd, "EOD_DRAWDOWN"
+            else:  # "STATIC": ancla fija en prop_anchor_equity, jamas se mueve.
+                floor_dd, rule_dd = prop_anchor_equity - prop_profile.max_total_drawdown_usd, "STATIC_DRAWDOWN"
+
+            floor_eff, rule_eff = floor_dd, rule_dd
+            if prop_profile.daily_loss_limit_usd is not None:
+                floor_daily = prop_day_start_equity - prop_profile.daily_loss_limit_usd
+                # Si ambos suelos estan activos, el que dispara PRIMERO segun el precio se
+                # aleja del favorable es el mas ALTO (mas cercano al equity actual): el equity
+                # flotante es lineal en el precio, asi que el suelo mas alto se cruza antes.
+                if floor_daily > floor_eff:
+                    floor_eff, rule_eff = floor_daily, "DAILY_LOSS_LIMIT"
+
+            return (rule_eff, floor_eff) if equity_adverse <= floor_eff else None
+
         for i in range(warmup_bars, len(closes)):
             bar_close = closes[i]
             bar_high = highs[i]
@@ -900,6 +1065,81 @@ class EventBacktestEngine:
                             current_equity += _pago_funding
                             total_funding -= _pago_funding
 
+                # --- 5.15.0 (F02.3) PROP FIRM opt-in: violacion EN POSICION, sobre equity ---
+                # flotante intra-barra. Se comprueba AQUI, ANTES de SL/TP/liquidacion: en una
+                # cuenta prop real el monitor de riesgo del broker corta la cuenta en el
+                # instante exacto en que el equity flotante cruza el umbral -- que puede ocurrir
+                # ANTES de que el precio alcance el stop loss propio de la estrategia, si el
+                # trailing drawdown de la prop firm es mas ajustado que la distancia de SL
+                # configurada. Es exactamente el caso que motiva F02.3: un trade que ACABA en
+                # positivo pudo haber reventado la cuenta a mitad de camino -- evaluar solo PnL
+                # realizado al cierre (como hacia el evaluador de examenes hasta ahora) ignora
+                # por completo esa excursion adversa intra-trade.
+                if prop_profile is not None and not prop_account_busted:
+                    _fav_px = bar_high if position_side == "LONG" else bar_low
+                    _adv_px = bar_low if position_side == "LONG" else bar_high
+                    _pnl_dir = 1.0 if position_side == "LONG" else -1.0
+                    _equity_fav = current_equity + _pnl_dir * (_fav_px - position_entry_price) * position_qty * point_value
+                    _equity_adv = current_equity + _pnl_dir * (_adv_px - position_entry_price) * position_qty * point_value
+                    _prop_hit = _prop_check_and_update(bar_dt, _equity_fav, _equity_adv)
+                    if _prop_hit is not None:
+                        _prop_rule, _prop_floor = _prop_hit
+                        # Precio EXACTO donde el equity flotante cruza el suelo (solucion
+                        # lineal -- mismo patron que liq_price mas abajo): usar directamente
+                        # bar_low/bar_high sobreestimaria la perdida mas alla del punto real de
+                        # ruptura.
+                        _breach_price = position_entry_price + (_prop_floor - current_equity) / (_pnl_dir * position_qty * point_value)
+                        _breach_price = min(max(_breach_price, bar_low), bar_high)
+                        exit_price = _fill_salida(_breach_price, position_side, i)
+                        gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
+                        comm = _comision(exit_price, position_qty)
+                        slip = _slip_salida(exit_price, position_qty)
+                        net_pnl = gross_pnl - comm - slip
+                        current_equity += net_pnl
+                        total_fees += comm
+                        total_slippage += slip
+
+                        trades.append(
+                            TradeRecord(
+                                trade_id=f"trade_{len(trades)+1}",
+                                entry_bar=position_entry_bar,
+                                exit_bar=i,
+                                entry_time_ms=position_entry_time,
+                                exit_time_ms=ts,
+                                side=position_side,
+                                qty=position_qty,
+                                entry_price=position_entry_price,
+                                exit_price=exit_price,
+                                gross_pnl_usd=gross_pnl,
+                                net_pnl_usd=net_pnl,
+                                return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
+                                fees_usd=comm,
+                                slippage_usd=slip,
+                                exit_reason="PROP_VIOLATION",
+                                pyramid_level=pyramid_count,
+                                equity_before_usd=round(position_equity_before, 2),
+                                equity_after_usd=round(current_equity, 2),
+                                r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
+                                prop_rule_violated=_prop_rule,
+                            )
+                        )
+                        prop_firm_violations.append({
+                            "rule": _prop_rule,
+                            "bar_index": i,
+                            "timestamp_ms": ts,
+                            "equity_floating_usd": round(_equity_adv, 2),
+                            "threshold_usd": round(_prop_floor, 2),
+                            "trade_id": trades[-1].trade_id,
+                        })
+                        position_side = None
+                        position_qty = 0.0
+                        prop_account_busted = True
+
+            # El chequeo prop de arriba puede haber cerrado la posicion en esta misma barra:
+            # re-evaluar `position_side is not None` en vez de reusar el resultado del `if`
+            # anterior -- si hubo violacion, TODO lo que sigue (margen/liquidacion/SL/TP/
+            # time-stop/session-eod/piramidacion) debe saltarse esta barra.
+            if position_side is not None:
                 # Comprobar distancia a liquidaci?n
                 margin_used = (position_qty * bar_close * point_value) / max_leverage
                 margin_util_pct = (margin_used / max(1.0, current_equity)) * 100.0
@@ -1100,6 +1340,53 @@ class EventBacktestEngine:
                     position_side = None
                     position_qty = 0.0
 
+                # --- 5.15.0 (F02.3) PROP FIRM opt-in: cierre OBLIGATORIO por hora de corte --
+                # (session_cutoff_utc). NO es una violacion -- es cumplimiento de la regla: por
+                # eso NO marca prop_account_busted ni entra en prop_firm_violations, y usa
+                # bar_close (no un precio de ruptura analitico: no hay umbral de equity que
+                # cruzar aqui, solo una hora). El catalogo trae la hora en zona local (ej.
+                # "16:59 EST"); PropFirmProfile.session_cutoff_utc exige que el llamador ya la
+                # haya convertido a UTC (ver docstring del perfil).
+                elif (
+                    prop_profile is not None and prop_profile.session_cutoff_utc and bar_dt is not None
+                    and (bar_dt.hour, bar_dt.minute) >= tuple(int(x) for x in prop_profile.session_cutoff_utc.split(":"))
+                ):
+                    exit_price = bar_close
+                    exit_price = _fill_salida(exit_price, position_side, i)
+                    gross_pnl = ((exit_price - position_entry_price) if position_side == "LONG" else (position_entry_price - exit_price)) * position_qty * point_value
+                    comm = _comision(exit_price, position_qty)
+                    slip = _slip_salida(exit_price, position_qty)
+                    net_pnl = gross_pnl - comm - slip
+                    current_equity += net_pnl
+                    total_fees += comm
+                    total_slippage += slip
+
+                    trades.append(
+                        TradeRecord(
+                            trade_id=f"trade_{len(trades)+1}",
+                            entry_bar=position_entry_bar,
+                            exit_bar=i,
+                            entry_time_ms=position_entry_time,
+                            exit_time_ms=ts,
+                            side=position_side,
+                            qty=position_qty,
+                            entry_price=position_entry_price,
+                            exit_price=exit_price,
+                            gross_pnl_usd=gross_pnl,
+                            net_pnl_usd=net_pnl,
+                            return_pct=round((net_pnl / max(1.0, position_equity_before)) * 100.0, 4),
+                            fees_usd=comm,
+                            slippage_usd=slip,
+                            exit_reason="PROP_SESSION_CUTOFF",
+                            pyramid_level=pyramid_count,
+                            equity_before_usd=round(position_equity_before, 2),
+                            equity_after_usd=round(current_equity, 2),
+                            r_multiple=round(net_pnl / max(1e-4, position_risk_amount), 2),
+                        )
+                    )
+                    position_side = None
+                    position_qty = 0.0
+
                 # Piramidaci?n sobre beneficio si est? habilitada (Ruta Ultra)
                 elif is_ultra and strategy.pyramiding_policy.enabled and pyramid_count < strategy.pyramiding_policy.max_tiers:
                     floating_pnl_r = ((bar_close - position_entry_price) / bar_atr) if position_side == "LONG" else ((position_entry_price - bar_close) / bar_atr)
@@ -1112,8 +1399,28 @@ class EventBacktestEngine:
                         position_qty = min(position_qty + added_qty, max_nominal_qty)
                         pyramid_count += 1
 
+            # --- 5.15.0 (F02.3) PROP FIRM opt-in: violacion EN PLANO (perdida REALIZADA -----
+            # acumulada, sin posicion abierta) -- p.ej. dos stops consecutivos que SUMAN mas
+            # que daily_loss_limit_usd sin que ninguno la rompiera por separado. Corre DESPUES
+            # del bloque de arriba: si un SL/TP/time-stop/session-eod cerro la posicion en ESTA
+            # misma barra, position_side ya es None aqui y current_equity ya refleja ese
+            # cierre -- se detecta en la MISMA barra del cierre, sin esperar a la siguiente.
+            if prop_profile is not None and position_side is None and not prop_account_busted:
+                _prop_hit = _prop_check_and_update(bar_dt, current_equity, current_equity)
+                if _prop_hit is not None:
+                    _prop_rule, _prop_floor = _prop_hit
+                    prop_firm_violations.append({
+                        "rule": _prop_rule,
+                        "bar_index": i,
+                        "timestamp_ms": ts,
+                        "equity_floating_usd": round(current_equity, 2),
+                        "threshold_usd": round(_prop_floor, 2),
+                        "trade_id": None,
+                    })
+                    prop_account_busted = True
+
             # 2. Se?al de Entrada si estamos planos
-            if position_side is None and current_equity > 0 and in_session:
+            if position_side is None and current_equity > 0 and in_session and not prop_account_busted:
               if is_new_archetype:
                 # --- 5.14.0 (F03.3): las 4 familias EVENTO nuevas ------------------------
                 long_signal = False
@@ -1305,5 +1612,7 @@ class EventBacktestEngine:
                 else "MEASURED_PAIR" if friccion_medida_par
                 else "ASSUMED"
             ),
+            prop_firm_busted=prop_account_busted,
+            prop_firm_violations=prop_firm_violations,
         )
 
