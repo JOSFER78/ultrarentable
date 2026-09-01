@@ -147,6 +147,56 @@ que cambia es que ya no falta información para decidir: falta ejecutar. La opci
 3 movimientos se mantiene** y el grafo la respalda (un big-bang sobre un macro-ciclo de 22
 paquetes sería exactamente el riesgo que §4 describe).
 
+### 7.4 SEGUNDA CORRECCIÓN de §7.1 (ciclo 2) — la detecta el carril GATES; verificada por el ORQ
+
+`results/W43_spec_registro_gates.md` §4 me corrige a mí: los "19 ficheros que importan ambas
+suites" **no importan la suite A**. Importan la suite B **y** el motor
+(`services.validation.engine.event_backtest_engine`) o el registro de certificación
+(`services.validation.certification_registry`), que viven en el paquete `services/validation/`
+pero **no son la suite A** (`services/validation/engines/`). Re-medido por el orquestador:
+
+| Medición (comando propio, 2026-09-01 21:25) | Resultado |
+| :--- | :--- |
+| Ficheros que importan `services.api.app.validation.gates` (suite B) | **20** (incluido el propio orquestador de B) |
+| De ellos, cuántos importan `services.validation.engines` (suite A) | **0** |
+| Qué importan de `services.validation.*` | `engine.event_backtest_engine` (19) y `certification_registry` (10) |
+| Importadores externos de la suite A | **1**: `services/validation/validation_router.py` |
+| Consumidores de `/api/v2/validation/*` en `apps/web` | **0** (`grep v2/validation` vacío) |
+
+**Veredicto definitivo sobre "las dos suites están entrelazadas"**: **NO lo están en los mismos
+ficheros.** La primera versión del checkpoint (REFUTADO) acertaba el dato y erraba la conclusión;
+la "corrección" de §7.1 erraba el dato. Lo dejo escrito así. El requisito de Emilio ("mejorar solo
+las puertas") sigue siendo imposible hoy, pero por tres razones distintas y más concretas, todas
+medidas en W43:
+
+1. La suite que certifica (B) vive dentro del monolito `api` y tiene 19 importadores.
+2. **Las dos suites divergen en los 11 gates**; en los gates 6, 7, 9 y 11 no es el número, es la
+   fórmula (métricas distintas bajo el mismo nombre). Gate 8: A compara un estadístico contra 1,5;
+   B compara una probabilidad contra 0,50.
+3. El catálogo que ve la web (`contracts/gate_directory.py`) no coincide con B en ningún gate. El
+   caso grave: gate 10, la web enseña 75,0 y el corte real es 40,0.
+
+**Qué cambia en el plan (a mejor)**: el Movimiento 1 es **más barato** de lo que estimaba §7.2. La
+suite A se cuarentena detrás de un adaptador con un único importador; la suite B conserva su ruta
+de import por re-export (los 19 no cambian ni una línea). El test de sustitución nº1 queda
+especificado en W43 §5 (diff = 2 ficheros).
+
+**Decisión D5 del orquestador (petición 1 de W43 §6 — qué umbral es canónico):**
+- **El registro v1 es PARIDAD EXACTA con la suite B**, gate a gate, `VERSION = "1.0.0"` con
+  changelog "comportamiento de la suite B en motor 5.17.0". Motivo: B es la que ha certificado
+  todo lo que hay en BD; cambiar un umbral cambia veredictos históricos, y eso exige su propio
+  bump versionado y re-censo, nunca un cambio de umbral escondido dentro de una migración
+  arquitectónica (la lección nº1 del repo: un cambio de semántica por edición).
+- `contracts/gate_directory.py` se **regenera desde los valores reales de B** en la ola de
+  integración (W4.7), para que la web deje de mentir. Hasta entonces, la página `/gates` es
+  inexacta y debe llevar el aviso.
+- La reconciliación de umbrales con el criterio 1.1 (PF OOS ≥1,25 vive hoy en
+  `certification_registry`, no en gate 2, que exige 1,10) se audita gate a gate **después**, como
+  W4.7, cada una con bump de `VERSION` del gate afectado y re-censo.
+
+Coste por módulo (§7.2) se mantiene: M1 174 · M2 112 · M4 34 · M3 22 aristas. I7 **sigue
+ABIERTO** hasta los dos tests de sustitución; la ola de implementación de W4.3 está en curso.
+
 ## 6. Afirmaciones previas contrastadas
 
 - "Dos pipelines de validación con umbrales distintos" (F00/current_phase) — **CONFIRMADO y

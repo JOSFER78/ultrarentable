@@ -1,0 +1,3502 @@
+{
+  "generado_utc": "20260901T182459Z",
+  "engine_version": "5.17.0",
+  "contexto": {
+    "track": "FONDEO",
+    "symbol": "ES",
+    "execution_symbol": "MES",
+    "timeframe": "15m",
+    "profile": "arquetipos",
+    "dataset_source": "dukascopy",
+    "dataset_file": "ds_dukascopy_usa500idxusd_15m_consolidated.json",
+    "certified_count": 0,
+    "configuraciones_evaluadas": 420,
+    "barras_is": 50026,
+    "barras_val": 16675,
+    "barras_oos": 16676,
+    "max_candidates": 0,
+    "espacio_total": 420,
+    "truncado": false
+  },
+  "umbrales": {
+    "IS": {
+      "trades_min": 5,
+      "pf_min": 1.05
+    },
+    "VAL": {
+      "trades_min": 3,
+      "pf_min": 1.0
+    },
+    "OOS": {
+      "trades_min": 100,
+      "pf_min": 1.1
+    }
+  },
+  "embudo_por_etapa": {
+    "IS": 405,
+    "OOS": 1,
+    "VAL": 14
+  },
+  "cobertura_familias": {
+    "REVERSION_ATR": 108,
+    "SQUEEZE_BREAKOUT": 96,
+    "SESSION_MOMENTUM": 72,
+    "STREAK_EDGE": 72,
+    "OPENING_RANGE_BREAKOUT": 36,
+    "VWAP_REVERSION": 36
+  },
+  "causas_por_etapa": {
+    "IS": {
+      "total": 405,
+      "pocas_operaciones": 13,
+      "sin_ventaja": 356,
+      "ambas": 36,
+      "otro": 0,
+      "por_familia": {
+        "REVERSION_ATR": {
+          "total": 105,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 105,
+          "ambas": 0,
+          "otro": 0
+        },
+        "SQUEEZE_BREAKOUT": {
+          "total": 84,
+          "pocas_operaciones": 13,
+          "sin_ventaja": 35,
+          "ambas": 36,
+          "otro": 0
+        },
+        "SESSION_MOMENTUM": {
+          "total": 72,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 72,
+          "ambas": 0,
+          "otro": 0
+        },
+        "STREAK_EDGE": {
+          "total": 72,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 72,
+          "ambas": 0,
+          "otro": 0
+        },
+        "OPENING_RANGE_BREAKOUT": {
+          "total": 36,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 36,
+          "ambas": 0,
+          "otro": 0
+        },
+        "VWAP_REVERSION": {
+          "total": 36,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 36,
+          "ambas": 0,
+          "otro": 0
+        }
+      }
+    },
+    "OOS": {
+      "total": 1,
+      "pocas_operaciones": 0,
+      "sin_ventaja": 1,
+      "ambas": 0,
+      "otro": 0,
+      "por_familia": {
+        "REVERSION_ATR": {
+          "total": 1,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 1,
+          "ambas": 0,
+          "otro": 0
+        }
+      }
+    },
+    "VAL": {
+      "total": 14,
+      "pocas_operaciones": 0,
+      "sin_ventaja": 14,
+      "ambas": 0,
+      "otro": 0,
+      "por_familia": {
+        "REVERSION_ATR": {
+          "total": 2,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 2,
+          "ambas": 0,
+          "otro": 0
+        },
+        "SQUEEZE_BREAKOUT": {
+          "total": 12,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 12,
+          "ambas": 0,
+          "otro": 0
+        }
+      }
+    }
+  },
+  "telemetria": [
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c1",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=839 pf=0.690",
+      "trades": 839,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c2",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=840 pf=0.700",
+      "trades": 840,
+      "pf": 0.7
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c3",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=840 pf=0.700",
+      "trades": 840,
+      "pf": 0.7
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c4",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=840 pf=0.700",
+      "trades": 840,
+      "pf": 0.7
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c5",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=789 pf=0.670",
+      "trades": 789,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c6",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=804 pf=0.720",
+      "trades": 804,
+      "pf": 0.72
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c7",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=804 pf=0.720",
+      "trades": 804,
+      "pf": 0.72
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c8",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=804 pf=0.720",
+      "trades": 804,
+      "pf": 0.72
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c9",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=730 pf=0.670",
+      "trades": 730,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c10",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=771 pf=0.720",
+      "trades": 771,
+      "pf": 0.72
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c11",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=772 pf=0.730",
+      "trades": 772,
+      "pf": 0.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c12",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=772 pf=0.730",
+      "trades": 772,
+      "pf": 0.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c13",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=564 pf=0.810",
+      "trades": 564,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c14",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=564 pf=0.810",
+      "trades": 564,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c15",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=564 pf=0.810",
+      "trades": 564,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c16",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=564 pf=0.810",
+      "trades": 564,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c17",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=544 pf=0.800",
+      "trades": 544,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c18",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=546 pf=0.840",
+      "trades": 546,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c19",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=546 pf=0.840",
+      "trades": 546,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c20",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=546 pf=0.840",
+      "trades": 546,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c21",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=501 pf=0.790",
+      "trades": 501,
+      "pf": 0.79
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c22",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=520 pf=0.830",
+      "trades": 520,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c23",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=520 pf=0.830",
+      "trades": 520,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c24",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=520 pf=0.830",
+      "trades": 520,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c25",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=204 pf=0.860",
+      "trades": 204,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c26",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=204 pf=0.860",
+      "trades": 204,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c27",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=204 pf=0.860",
+      "trades": 204,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c28",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=204 pf=0.860",
+      "trades": 204,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c29",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=201 pf=0.760",
+      "trades": 201,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c30",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=201 pf=0.790",
+      "trades": 201,
+      "pf": 0.79
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c31",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=201 pf=0.790",
+      "trades": 201,
+      "pf": 0.79
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c32",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=201 pf=0.790",
+      "trades": 201,
+      "pf": 0.79
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c33",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=186 pf=0.780",
+      "trades": 186,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c34",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=194 pf=0.820",
+      "trades": 194,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c35",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=194 pf=0.820",
+      "trades": 194,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c36",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=194 pf=0.820",
+      "trades": 194,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c37",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=852 pf=0.670",
+      "trades": 852,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c38",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=854 pf=0.690",
+      "trades": 854,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c39",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=854 pf=0.690",
+      "trades": 854,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c40",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=854 pf=0.690",
+      "trades": 854,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c41",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=800 pf=0.750",
+      "trades": 800,
+      "pf": 0.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c42",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=810 pf=0.770",
+      "trades": 810,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c43",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=810 pf=0.770",
+      "trades": 810,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c44",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=810 pf=0.770",
+      "trades": 810,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c45",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=737 pf=0.770",
+      "trades": 737,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c46",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=767 pf=0.830",
+      "trades": 767,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c47",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=768 pf=0.850",
+      "trades": 768,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c48",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=768 pf=0.850",
+      "trades": 768,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c49",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=681 pf=0.860",
+      "trades": 681,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c50",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=682 pf=0.890",
+      "trades": 682,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c51",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=682 pf=0.890",
+      "trades": 682,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c52",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=682 pf=0.890",
+      "trades": 682,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c53",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=650 pf=0.840",
+      "trades": 650,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c54",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=656 pf=0.880",
+      "trades": 656,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c55",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=656 pf=0.880",
+      "trades": 656,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c56",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=656 pf=0.880",
+      "trades": 656,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c57",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=589 pf=0.910",
+      "trades": 589,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c58",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=612 pf=0.940",
+      "trades": 612,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c59",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=613 pf=0.960",
+      "trades": 613,
+      "pf": 0.96
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c60",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=613 pf=0.960",
+      "trades": 613,
+      "pf": 0.96
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c61",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=384 pf=0.910",
+      "trades": 384,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c62",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=384 pf=0.920",
+      "trades": 384,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c63",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=384 pf=0.920",
+      "trades": 384,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c64",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=384 pf=0.920",
+      "trades": 384,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c65",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=368 pf=0.920",
+      "trades": 368,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c66",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=369 pf=0.940",
+      "trades": 369,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c67",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=369 pf=0.940",
+      "trades": 369,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c68",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=369 pf=0.940",
+      "trades": 369,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c69",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=344 pf=0.960",
+      "trades": 344,
+      "pf": 0.96
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c70",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=352 pf=0.960",
+      "trades": 352,
+      "pf": 0.96
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c71",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=352 pf=0.970",
+      "trades": 352,
+      "pf": 0.97
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c72",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=352 pf=0.970",
+      "trades": 352,
+      "pf": 0.97
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c73",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=782 pf=0.600",
+      "trades": 782,
+      "pf": 0.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c74",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=787 pf=0.620",
+      "trades": 787,
+      "pf": 0.62
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c75",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=787 pf=0.620",
+      "trades": 787,
+      "pf": 0.62
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c76",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=787 pf=0.620",
+      "trades": 787,
+      "pf": 0.62
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c77",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=741 pf=0.630",
+      "trades": 741,
+      "pf": 0.63
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c78",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=753 pf=0.650",
+      "trades": 753,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c79",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=753 pf=0.660",
+      "trades": 753,
+      "pf": 0.66
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c80",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=753 pf=0.660",
+      "trades": 753,
+      "pf": 0.66
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c81",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=675 pf=0.620",
+      "trades": 675,
+      "pf": 0.62
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c82",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=710 pf=0.670",
+      "trades": 710,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c83",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=712 pf=0.690",
+      "trades": 712,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c84",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=712 pf=0.690",
+      "trades": 712,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c85",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=694 pf=0.750",
+      "trades": 694,
+      "pf": 0.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c86",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=694 pf=0.760",
+      "trades": 694,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c87",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=694 pf=0.760",
+      "trades": 694,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c88",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=694 pf=0.760",
+      "trades": 694,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c89",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=642 pf=0.760",
+      "trades": 642,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c90",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=649 pf=0.800",
+      "trades": 649,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c91",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=649 pf=0.800",
+      "trades": 649,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c92",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=649 pf=0.800",
+      "trades": 649,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c93",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=570 pf=0.750",
+      "trades": 570,
+      "pf": 0.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c94",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=599 pf=0.860",
+      "trades": 599,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c95",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=599 pf=0.870",
+      "trades": 599,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c96",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=599 pf=0.870",
+      "trades": 599,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c97",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=468 pf=0.900",
+      "trades": 468,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c98",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=468 pf=0.910",
+      "trades": 468,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c99",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=468 pf=0.910",
+      "trades": 468,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c100",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=468 pf=0.910",
+      "trades": 468,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c101",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=444 pf=1.010",
+      "trades": 444,
+      "pf": 1.01
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c102",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=446 pf=1.040",
+      "trades": 446,
+      "pf": 1.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c103",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=446 pf=1.040",
+      "trades": 446,
+      "pf": 1.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c104",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=446 pf=1.040",
+      "trades": 446,
+      "pf": 1.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c105",
+      "etapa": "IS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=410 pf=0.970",
+      "trades": 410,
+      "pf": 0.97
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c106",
+      "etapa": "OOS",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=132 pf=0.650",
+      "trades": 132,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c107",
+      "etapa": "VAL",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=133 pf=0.960",
+      "trades": 133,
+      "pf": 0.96
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c108",
+      "etapa": "VAL",
+      "familia": "REVERSION_ATR",
+      "motivo": "trades=134 pf=0.990",
+      "trades": 134,
+      "pf": 0.99
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c109",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c110",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c111",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c112",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c113",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c114",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c115",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c116",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c117",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c118",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c119",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c120",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=1 pf=0.000",
+      "trades": 1,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c121",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c122",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c123",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c124",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c125",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c126",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c127",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c128",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c129",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c130",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c131",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c132",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=0 pf=0.000",
+      "trades": 0,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c133",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.400",
+      "trades": 6,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c134",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.400",
+      "trades": 6,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c135",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.400",
+      "trades": 6,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c136",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.400",
+      "trades": 6,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c137",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.250",
+      "trades": 5,
+      "pf": 0.25
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c138",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.250",
+      "trades": 5,
+      "pf": 0.25
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c139",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.250",
+      "trades": 5,
+      "pf": 0.25
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c140",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.250",
+      "trades": 5,
+      "pf": 0.25
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c141",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.170",
+      "trades": 5,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c142",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.170",
+      "trades": 5,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c143",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.170",
+      "trades": 5,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c144",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.170",
+      "trades": 5,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c145",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c146",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c147",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c148",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c149",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c150",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c151",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c152",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c153",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c154",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c155",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c156",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=0.000",
+      "trades": 3,
+      "pf": 0.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c157",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.600",
+      "trades": 6,
+      "pf": 0.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c158",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.600",
+      "trades": 6,
+      "pf": 0.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c159",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.600",
+      "trades": 6,
+      "pf": 0.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c160",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.600",
+      "trades": 6,
+      "pf": 0.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c161",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.630",
+      "trades": 5,
+      "pf": 0.63
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c162",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.630",
+      "trades": 5,
+      "pf": 0.63
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c163",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.630",
+      "trades": 5,
+      "pf": 0.63
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c164",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.630",
+      "trades": 5,
+      "pf": 0.63
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c165",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=4 pf=1.200",
+      "trades": 4,
+      "pf": 1.2
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c166",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.750",
+      "trades": 5,
+      "pf": 0.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c167",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.750",
+      "trades": 5,
+      "pf": 0.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c168",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=5 pf=0.750",
+      "trades": 5,
+      "pf": 0.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c169",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.710",
+      "trades": 3,
+      "pf": 2.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c170",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.710",
+      "trades": 3,
+      "pf": 2.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c171",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.710",
+      "trades": 3,
+      "pf": 2.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c172",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.710",
+      "trades": 3,
+      "pf": 2.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c173",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.570",
+      "trades": 3,
+      "pf": 2.57
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c174",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.570",
+      "trades": 3,
+      "pf": 2.57
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c175",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.570",
+      "trades": 3,
+      "pf": 2.57
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c176",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=2.570",
+      "trades": 3,
+      "pf": 2.57
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c177",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=1.730",
+      "trades": 3,
+      "pf": 1.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c178",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=1.730",
+      "trades": 3,
+      "pf": 1.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c179",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=1.730",
+      "trades": 3,
+      "pf": 1.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c180",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=3 pf=1.730",
+      "trades": 3,
+      "pf": 1.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c181",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=16 pf=0.980",
+      "trades": 16,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c182",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=16 pf=0.980",
+      "trades": 16,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c183",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=16 pf=0.980",
+      "trades": 16,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c184",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=16 pf=0.980",
+      "trades": 16,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c185",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.170",
+      "trades": 6,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c186",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.170",
+      "trades": 6,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c187",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.170",
+      "trades": 6,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c188",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.170",
+      "trades": 6,
+      "pf": 0.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c189",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.160",
+      "trades": 6,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c190",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.160",
+      "trades": 6,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c191",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.160",
+      "trades": 6,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c192",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.160",
+      "trades": 6,
+      "pf": 0.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c193",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.430",
+      "trades": 11,
+      "pf": 0.43
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c194",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.430",
+      "trades": 11,
+      "pf": 0.43
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c195",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.430",
+      "trades": 11,
+      "pf": 0.43
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c196",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.430",
+      "trades": 11,
+      "pf": 0.43
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c197",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.350",
+      "trades": 11,
+      "pf": 0.35
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c198",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.350",
+      "trades": 11,
+      "pf": 0.35
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c199",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.350",
+      "trades": 11,
+      "pf": 0.35
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c200",
+      "etapa": "IS",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=11 pf=0.350",
+      "trades": 11,
+      "pf": 0.35
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c201",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.110",
+      "trades": 6,
+      "pf": 0.11
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c202",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.110",
+      "trades": 6,
+      "pf": 0.11
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c203",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.110",
+      "trades": 6,
+      "pf": 0.11
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c204",
+      "etapa": "VAL",
+      "familia": "SQUEEZE_BREAKOUT",
+      "motivo": "trades=6 pf=0.110",
+      "trades": 6,
+      "pf": 0.11
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c205",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=472 pf=0.850",
+      "trades": 472,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c206",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.860",
+      "trades": 473,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c207",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.860",
+      "trades": 473,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c208",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.860",
+      "trades": 473,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c209",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=469 pf=0.900",
+      "trades": 469,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c210",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.890",
+      "trades": 473,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c211",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.890",
+      "trades": 473,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c212",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.890",
+      "trades": 473,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c213",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=460 pf=0.880",
+      "trades": 460,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c214",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=472 pf=0.910",
+      "trades": 472,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c215",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.900",
+      "trades": 473,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c216",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=473 pf=0.900",
+      "trades": 473,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c217",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.840",
+      "trades": 399,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c218",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.830",
+      "trades": 399,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c219",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.830",
+      "trades": 399,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c220",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.830",
+      "trades": 399,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c221",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=395 pf=0.870",
+      "trades": 395,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c222",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.890",
+      "trades": 399,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c223",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.880",
+      "trades": 399,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c224",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.880",
+      "trades": 399,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c225",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=386 pf=0.930",
+      "trades": 386,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c226",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.930",
+      "trades": 399,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c227",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.920",
+      "trades": 399,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c228",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=399 pf=0.920",
+      "trades": 399,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c229",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=465 pf=0.830",
+      "trades": 465,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c230",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.840",
+      "trades": 466,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c231",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.840",
+      "trades": 466,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c232",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.840",
+      "trades": 466,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c233",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=462 pf=0.870",
+      "trades": 462,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c234",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.860",
+      "trades": 466,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c235",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.860",
+      "trades": 466,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c236",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.860",
+      "trades": 466,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c237",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=452 pf=0.890",
+      "trades": 452,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c238",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=465 pf=0.920",
+      "trades": 465,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c239",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.910",
+      "trades": 466,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c240",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=466 pf=0.910",
+      "trades": 466,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c241",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=392 pf=0.850",
+      "trades": 392,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c242",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.840",
+      "trades": 393,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c243",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.840",
+      "trades": 393,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c244",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.840",
+      "trades": 393,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c245",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=389 pf=0.870",
+      "trades": 389,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c246",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.890",
+      "trades": 393,
+      "pf": 0.89
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c247",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.880",
+      "trades": 393,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c248",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.880",
+      "trades": 393,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c249",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=380 pf=0.910",
+      "trades": 380,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c250",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.920",
+      "trades": 393,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c251",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.920",
+      "trades": 393,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c252",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=393 pf=0.920",
+      "trades": 393,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c253",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=463 pf=0.800",
+      "trades": 463,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c254",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.800",
+      "trades": 464,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c255",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.800",
+      "trades": 464,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c256",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.800",
+      "trades": 464,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c257",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=460 pf=0.790",
+      "trades": 460,
+      "pf": 0.79
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c258",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.780",
+      "trades": 464,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c259",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.780",
+      "trades": 464,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c260",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.780",
+      "trades": 464,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c261",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=448 pf=0.860",
+      "trades": 448,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c262",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=463 pf=0.850",
+      "trades": 463,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c263",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.860",
+      "trades": 464,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c264",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=464 pf=0.860",
+      "trades": 464,
+      "pf": 0.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c265",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=387 pf=0.690",
+      "trades": 387,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c266",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.710",
+      "trades": 388,
+      "pf": 0.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c267",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.710",
+      "trades": 388,
+      "pf": 0.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c268",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.710",
+      "trades": 388,
+      "pf": 0.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c269",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=384 pf=0.740",
+      "trades": 384,
+      "pf": 0.74
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c270",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.760",
+      "trades": 388,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c271",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.760",
+      "trades": 388,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c272",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.760",
+      "trades": 388,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c273",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=375 pf=0.830",
+      "trades": 375,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c274",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=387 pf=0.800",
+      "trades": 387,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c275",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.810",
+      "trades": 388,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c276",
+      "etapa": "IS",
+      "familia": "SESSION_MOMENTUM",
+      "motivo": "trades=388 pf=0.810",
+      "trades": 388,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c277",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1085 pf=0.920",
+      "trades": 1085,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c278",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1085 pf=0.930",
+      "trades": 1085,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c279",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1085 pf=0.930",
+      "trades": 1085,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c280",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1085 pf=0.930",
+      "trades": 1085,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c281",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=916 pf=0.920",
+      "trades": 916,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c282",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=924 pf=0.920",
+      "trades": 924,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c283",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=924 pf=0.920",
+      "trades": 924,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c284",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=924 pf=0.920",
+      "trades": 924,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c285",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=735 pf=0.960",
+      "trades": 735,
+      "pf": 0.96
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c286",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=766 pf=0.910",
+      "trades": 766,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c287",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=766 pf=0.910",
+      "trades": 766,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c288",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=766 pf=0.910",
+      "trades": 766,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c289",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1083 pf=0.880",
+      "trades": 1083,
+      "pf": 0.88
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c290",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1084 pf=0.870",
+      "trades": 1084,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c291",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1084 pf=0.870",
+      "trades": 1084,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c292",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=1084 pf=0.870",
+      "trades": 1084,
+      "pf": 0.87
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c293",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=913 pf=0.800",
+      "trades": 913,
+      "pf": 0.8
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c294",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=922 pf=0.820",
+      "trades": 922,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c295",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=922 pf=0.820",
+      "trades": 922,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c296",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=922 pf=0.820",
+      "trades": 922,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c297",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=741 pf=0.840",
+      "trades": 741,
+      "pf": 0.84
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c298",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=776 pf=0.850",
+      "trades": 776,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c299",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=776 pf=0.850",
+      "trades": 776,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c300",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=776 pf=0.850",
+      "trades": 776,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c301",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=749 pf=0.940",
+      "trades": 749,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c302",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=750 pf=0.930",
+      "trades": 750,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c303",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=750 pf=0.930",
+      "trades": 750,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c304",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=750 pf=0.930",
+      "trades": 750,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c305",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=666 pf=0.920",
+      "trades": 666,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c306",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=673 pf=0.900",
+      "trades": 673,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c307",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=673 pf=0.900",
+      "trades": 673,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c308",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=673 pf=0.900",
+      "trades": 673,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c309",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=571 pf=0.950",
+      "trades": 571,
+      "pf": 0.95
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c310",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=594 pf=0.940",
+      "trades": 594,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c311",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=595 pf=0.930",
+      "trades": 595,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c312",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=595 pf=0.930",
+      "trades": 595,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c313",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=727 pf=0.690",
+      "trades": 727,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c314",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=729 pf=0.700",
+      "trades": 729,
+      "pf": 0.7
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c315",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=729 pf=0.700",
+      "trades": 729,
+      "pf": 0.7
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c316",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=729 pf=0.700",
+      "trades": 729,
+      "pf": 0.7
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c317",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=662 pf=0.670",
+      "trades": 662,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c318",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=668 pf=0.690",
+      "trades": 668,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c319",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=668 pf=0.690",
+      "trades": 668,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c320",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=668 pf=0.690",
+      "trades": 668,
+      "pf": 0.69
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c321",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=557 pf=0.770",
+      "trades": 557,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c322",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=583 pf=0.760",
+      "trades": 583,
+      "pf": 0.76
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c323",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=584 pf=0.770",
+      "trades": 584,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c324",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=584 pf=0.770",
+      "trades": 584,
+      "pf": 0.77
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c325",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=437 pf=0.910",
+      "trades": 437,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c326",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=437 pf=0.910",
+      "trades": 437,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c327",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=437 pf=0.910",
+      "trades": 437,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c328",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=437 pf=0.910",
+      "trades": 437,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c329",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=411 pf=0.980",
+      "trades": 411,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c330",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=414 pf=0.970",
+      "trades": 414,
+      "pf": 0.97
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c331",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=414 pf=0.970",
+      "trades": 414,
+      "pf": 0.97
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c332",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=414 pf=0.970",
+      "trades": 414,
+      "pf": 0.97
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c333",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=374 pf=0.940",
+      "trades": 374,
+      "pf": 0.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c334",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=390 pf=0.930",
+      "trades": 390,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c335",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=390 pf=0.930",
+      "trades": 390,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c336",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=390 pf=0.930",
+      "trades": 390,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c337",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=426 pf=0.780",
+      "trades": 426,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c338",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=426 pf=0.780",
+      "trades": 426,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c339",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=426 pf=0.780",
+      "trades": 426,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c340",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=426 pf=0.780",
+      "trades": 426,
+      "pf": 0.78
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c341",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=405 pf=0.820",
+      "trades": 405,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c342",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=408 pf=0.810",
+      "trades": 408,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c343",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=408 pf=0.810",
+      "trades": 408,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c344",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=408 pf=0.810",
+      "trades": 408,
+      "pf": 0.81
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c345",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=371 pf=0.820",
+      "trades": 371,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c346",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=388 pf=0.830",
+      "trades": 388,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c347",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=388 pf=0.820",
+      "trades": 388,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c348",
+      "etapa": "IS",
+      "familia": "STREAK_EDGE",
+      "motivo": "trades=388 pf=0.820",
+      "trades": 388,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c349",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=810 pf=0.850",
+      "trades": 810,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c350",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=811 pf=0.850",
+      "trades": 811,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c351",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=811 pf=0.850",
+      "trades": 811,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c352",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=811 pf=0.850",
+      "trades": 811,
+      "pf": 0.85
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c353",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=802 pf=0.930",
+      "trades": 802,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c354",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=805 pf=0.920",
+      "trades": 805,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c355",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=805 pf=0.920",
+      "trades": 805,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c356",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=805 pf=0.920",
+      "trades": 805,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c357",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=758 pf=1.040",
+      "trades": 758,
+      "pf": 1.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c358",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=771 pf=0.990",
+      "trades": 771,
+      "pf": 0.99
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c359",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=772 pf=0.980",
+      "trades": 772,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c360",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=772 pf=0.980",
+      "trades": 772,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c361",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=761 pf=0.820",
+      "trades": 761,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c362",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=762 pf=0.820",
+      "trades": 762,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c363",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=762 pf=0.820",
+      "trades": 762,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c364",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=762 pf=0.820",
+      "trades": 762,
+      "pf": 0.82
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c365",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=754 pf=0.910",
+      "trades": 754,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c366",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=756 pf=0.910",
+      "trades": 756,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c367",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=756 pf=0.910",
+      "trades": 756,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c368",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=756 pf=0.910",
+      "trades": 756,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c369",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=711 pf=0.930",
+      "trades": 711,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c370",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=733 pf=0.930",
+      "trades": 733,
+      "pf": 0.93
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c371",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=734 pf=0.920",
+      "trades": 734,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c372",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=734 pf=0.920",
+      "trades": 734,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c373",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=671 pf=0.830",
+      "trades": 671,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c374",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=672 pf=0.830",
+      "trades": 672,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c375",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=672 pf=0.830",
+      "trades": 672,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c376",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=672 pf=0.830",
+      "trades": 672,
+      "pf": 0.83
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c377",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=665 pf=0.910",
+      "trades": 665,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c378",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=669 pf=0.900",
+      "trades": 669,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c379",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=669 pf=0.900",
+      "trades": 669,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c380",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=669 pf=0.900",
+      "trades": 669,
+      "pf": 0.9
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c381",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=631 pf=0.980",
+      "trades": 631,
+      "pf": 0.98
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c382",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=652 pf=0.920",
+      "trades": 652,
+      "pf": 0.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c383",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=653 pf=0.910",
+      "trades": 653,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c384",
+      "etapa": "IS",
+      "familia": "OPENING_RANGE_BREAKOUT",
+      "motivo": "trades=653 pf=0.910",
+      "trades": 653,
+      "pf": 0.91
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c385",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1022 pf=0.390",
+      "trades": 1022,
+      "pf": 0.39
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c386",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1038 pf=0.400",
+      "trades": 1038,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c387",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1038 pf=0.400",
+      "trades": 1038,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c388",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1038 pf=0.400",
+      "trades": 1038,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c389",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=972 pf=0.400",
+      "trades": 972,
+      "pf": 0.4
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c390",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1007 pf=0.410",
+      "trades": 1007,
+      "pf": 0.41
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c391",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1007 pf=0.420",
+      "trades": 1007,
+      "pf": 0.42
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c392",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=1007 pf=0.420",
+      "trades": 1007,
+      "pf": 0.42
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c393",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=885 pf=0.360",
+      "trades": 885,
+      "pf": 0.36
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c394",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=971 pf=0.420",
+      "trades": 971,
+      "pf": 0.42
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c395",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=983 pf=0.420",
+      "trades": 983,
+      "pf": 0.42
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c396",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=983 pf=0.420",
+      "trades": 983,
+      "pf": 0.42
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c397",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=674 pf=0.650",
+      "trades": 674,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c398",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=675 pf=0.670",
+      "trades": 675,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c399",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=675 pf=0.670",
+      "trades": 675,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c400",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=675 pf=0.670",
+      "trades": 675,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c401",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=639 pf=0.610",
+      "trades": 639,
+      "pf": 0.61
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c402",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=649 pf=0.650",
+      "trades": 649,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c403",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=649 pf=0.650",
+      "trades": 649,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c404",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=649 pf=0.650",
+      "trades": 649,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c405",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=580 pf=0.550",
+      "trades": 580,
+      "pf": 0.55
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c406",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=622 pf=0.630",
+      "trades": 622,
+      "pf": 0.63
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c407",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=623 pf=0.640",
+      "trades": 623,
+      "pf": 0.64
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c408",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=623 pf=0.640",
+      "trades": 623,
+      "pf": 0.64
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c409",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=417 pf=0.680",
+      "trades": 417,
+      "pf": 0.68
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c410",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=417 pf=0.680",
+      "trades": 417,
+      "pf": 0.68
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c411",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=417 pf=0.680",
+      "trades": 417,
+      "pf": 0.68
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c412",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=417 pf=0.680",
+      "trades": 417,
+      "pf": 0.68
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c413",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=400 pf=0.670",
+      "trades": 400,
+      "pf": 0.67
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c414",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=402 pf=0.710",
+      "trades": 402,
+      "pf": 0.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c415",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=402 pf=0.710",
+      "trades": 402,
+      "pf": 0.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c416",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=402 pf=0.710",
+      "trades": 402,
+      "pf": 0.71
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c417",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=374 pf=0.650",
+      "trades": 374,
+      "pf": 0.65
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c418",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=386 pf=0.720",
+      "trades": 386,
+      "pf": 0.72
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c419",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=386 pf=0.730",
+      "trades": 386,
+      "pf": 0.73
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c420",
+      "etapa": "IS",
+      "familia": "VWAP_REVERSION",
+      "motivo": "trades=386 pf=0.730",
+      "trades": 386,
+      "pf": 0.73
+    }
+  ]
+}

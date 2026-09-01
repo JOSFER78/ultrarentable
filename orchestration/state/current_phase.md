@@ -116,6 +116,26 @@ El expediente I7 decía "un router importa las dos". El detalle es inexacto —
 agrava**: no es un router, son 19 ficheros, y uno es `mine.py`. "Mejorar solo las puertas" hoy es
 imposible, tal como sostiene I7.
 
+> **Segunda corrección de §3.2 (ciclo 2, 21:30) — y esta vez la detecta un subagente, no yo.** El
+> carril GATES (`results/W43_spec_registro_gates.md` §4) demuestra que mi "medición correcta" de
+> arriba también estaba mal planteada: los 19 ficheros importan
+> `services.validation.engine.event_backtest_engine` (el **motor**) y
+> `services.validation.certification_registry`, **no la suite A de gates**
+> (`services.validation.engines`, con "s"). Re-medido con mis comandos: de los 20 ficheros que
+> importan la suite B, **ninguno** importa `services.validation.engines`; la suite A tiene **un
+> único importador externo** (`services/validation/validation_router.py`) y **cero consumidores en
+> `apps/web`**. Conclusión honesta: **las dos suites NO están entrelazadas en los mismos ficheros**;
+> mi primera versión ("REFUTADO") tenía razón en el dato y se equivocaba en la conclusión, y mi
+> "corrección" se equivocaba en el dato. El problema real es otro, y más simple: (1) la suite que
+> certifica (B) vive dentro del monolito `api` con 19 importadores; (2) **las dos suites divergen
+> en los 11 gates** (en 4 de ellos con fórmulas distintas bajo el mismo nombre); (3) el catálogo
+> que ve la web (`contracts/gate_directory.py`) no coincide con la suite que certifica en ningún
+> gate — el caso grave es el gate 10: la web dice 75, el corte real es 40. "Mejorar solo las
+> puertas" sigue siendo imposible hoy, por esas tres razones. Y el Movimiento 1 sale **más barato**
+> de lo que estimaba I7 §7.2: A se cuarentena detrás de un adaptador con 1 importador; B conserva
+> su ruta de import por re-export. Decisión D5 (umbrales) en
+> `reviews/investigacion_I7_arquitectura_codigo.md` §7.4.
+
 Matiz útil que sí se sostiene: el subpaquete `services/validation/engines/` tiene **un único
 importador externo** (`validation_router.py`), así que **ESE** trozo concreto sí se puede extraer
 barato. Es por dónde conviene empezar el movimiento 1.
@@ -172,6 +192,19 @@ de reflejar en `HERMES_VPS_VIGIA.md`.
    con cobertura. Solo entonces "¿dato o edge?" tiene respuesta legítima.
 5. Web: poda + reescritura de `/estrategias` según `reviews/diseno_pagina_estrategias_2026-09-01.md`.
 6. Si Emilio autoriza: limpieza del VPS y experimentos SQX **antes del 5 de septiembre**.
+
+## 8. Presupuesto de máquina — corrección del ciclo 2 (Emilio: "va lento, quizás sobrecargas")
+
+Medido: CPU al **100 %** con la ola 2 lanzada como workflow de 6 agentes en paralelo (cada uno
+con pytest/build), más el backfill Dukascopy, más herramientas ajenas al proyecto corriendo a la
+vez (Orca ×3 con 1 GB, Antigravity IDE ×14 procesos, NordVPN) y un `TextInputHost` de Windows
+desbocado con 4.452 s de CPU.
+
+Aplicado: (1) workflow parado y relanzado con **semáforo de 2 agentes** (doctrina §2: "si Emilio
+está usando el PC, la mitad"), tests solo del propio carril, un único `npm run build`, SQX capado
+a ≤4 núcleos antes de cualquier build; (2) `TextInputHost` reiniciado (Windows lo relanza: 4.452 s
+→ 4 s). Resultado: 100 % → 65 % con el workflow en marcha. Lo que queda es de Emilio (Orca /
+Antigravity) y no se toca. Regla desde ahora: **2 agentes + 1 NOHUP mientras el PC esté en uso.**
 
 ---
 
