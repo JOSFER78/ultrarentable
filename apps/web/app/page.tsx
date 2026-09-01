@@ -36,9 +36,11 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import AuthModal from "@/components/auth/AuthModal";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 
 export default function HomePage() {
   const { user, profile, loading: authLoading } = useAuth();
+  const { version: engineVersion } = useEngineVersion();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "register">("register");
 
@@ -95,7 +97,7 @@ export default function HomePage() {
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-[#030712] border border-white/[0.08] p-8 sm:p-12 text-center space-y-6 shadow-2xl">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-mono font-bold tracking-wider uppercase">
             <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Laboratorio Cuantitativo Institucional v5.4.0</span>
+            <span>Laboratorio Cuantitativo Institucional{engineVersion ? ` v${engineVersion}` : ""}</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
@@ -240,8 +242,11 @@ export default function HomePage() {
       <section className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 sm:p-7 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="max-w-3xl space-y-2.5">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="text-[10.5px] font-bold font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-0.5 rounded-md tracking-wider">
-              v5.4.0 REAL-ONLY
+            <span
+              className="text-[10.5px] font-bold font-mono px-2.5 py-0.5 rounded-md tracking-wider"
+              style={{ background: "var(--surface-1)", border: "1px solid var(--border)", color: engineVersion ? "var(--text-2)" : "var(--text-3)" }}
+            >
+              {engineVersion ? `v${engineVersion} REAL-ONLY` : "MOTOR: NO DISPONIBLE"}
             </span>
             <span className="text-xs text-slate-400 font-mono tracking-wide">
               USUARIO: {user?.displayName || user?.email || "Autenticado"}
@@ -334,7 +339,7 @@ export default function HomePage() {
           subtitle="Terminal de ejecución institucional y control de riesgo en Tradovate/NinjaTrader"
           icon={Activity}
           accent="#06b6d4"
-          href="/trading-desk"
+          href="/fondeo"
         />
       </section>
     </div>

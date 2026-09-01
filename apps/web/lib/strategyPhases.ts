@@ -76,7 +76,7 @@ export const STRATEGY_PHASES: StrategyPhase[] = [
     icon: "🏆",
     badge: "CERTIFICADAS",
     color: "#10b981",
-    description: "Estrategias certificadas bajo el motor v5.4.0.",
+    description: "Estrategias certificadas bajo el motor vigente (versión leída de getDiscoveryStatus()).",
   },
   {
     id: 6,

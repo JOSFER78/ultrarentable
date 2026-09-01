@@ -12,7 +12,6 @@ import {
   ArrowRight,
   TrendingUp,
   Flame,
-  Zap,
   Layers,
   Sparkles,
 } from "lucide-react";
@@ -241,20 +240,20 @@ export default function TrackFondeoCMEPage() {
               Telemetría determinista en tiempo real desde la API de ejecución.
             </p>
           </div>
-          <Link
-            href="/ejecucion"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-950/80 hover:bg-sky-900 text-sky-300 border border-sky-700/60 text-xs font-mono font-bold transition"
+          <span
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono"
+            style={{ color: "var(--text-3)", border: "1px solid var(--border)" }}
+            title="Centro de ejecución dedicado retirado el 2026-09-01 (fuera de la misión FONDEO actual, ver cuarentena/web_poda_20260901/MOTIVO.md)"
           >
-            <Zap className="w-3.5 h-3.5 text-sky-400" />
-            <span>Centro de Ejecución Live →</span>
-          </Link>
+            Ejecución en vivo: ver esta mesa (arriba)
+          </span>
         </div>
 
         {sessions.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs font-mono space-y-2">
             <div>No hay sesiones de fondeo activas en este momento.</div>
             <p className="text-slate-500 text-[11px]">
-              Despliega una estrategia validada en <Link href="/ejecucion" className="text-sky-400 underline">Ejecución</Link> o conecta NinjaTrader 8.
+              Despliega una estrategia validada en esta mesa Fondeo o conecta NinjaTrader 8.
             </p>
           </div>
         ) : (

@@ -35,6 +35,7 @@ import {
   getExportXlsxUrl,
 } from "@/lib/api";
 import QuantTooltip from "@/components/system/QuantTooltip";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 
 interface GateCanonicalMeta {
   id: string;
@@ -173,6 +174,7 @@ const CANONICAL_11_GATES: GateCanonicalMeta[] = [
 ];
 
 export default function GatesPage() {
+  const { version: engineVersion } = useEngineVersion();
   const [certifiedList, setCertifiedList] = useState<CertifiedStrategy[]>([]);
   const [selectedStrategy, setSelectedStrategy] = useState<CertifiedStrategy | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -209,7 +211,7 @@ export default function GatesPage() {
             family: c.family || c.market_category || "QUANT",
             route: c.route || (c.family && String(c.family).toUpperCase().includes("ULTRA") ? "ULTRA" : "FONDEO"),
             status: c.status || "CANDIDATE",
-            engine_version: c.engine_version || "5.4.0",
+            engine_version: c.engine_version || "NO EVIDENCE",
             strategy_hash: c.strategy_sha256 || c.strategy_hash || "",
             dataset_hash: c.dataset_id || "",
             ledger_hash: c.bundle_signature_sha256 || "",
@@ -372,8 +374,11 @@ export default function GatesPage() {
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5" /> FASE 3 · PIPELINE DETERMINISTA DE 11 GATES
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800/80 text-slate-300 border border-slate-700">
-                  ENGINE v5.4.0 REAL-ONLY
+                <span
+                  className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold"
+                  style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: engineVersion ? "var(--text-2)" : "var(--text-3)" }}
+                >
+                  {engineVersion ? `ENGINE v${engineVersion} REAL-ONLY` : "MOTOR: NO DISPONIBLE"}
                 </span>
               </div>
               <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white flex items-center gap-2.5">

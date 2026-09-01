@@ -115,7 +115,7 @@ function PropFirmsContent() {
 
             <div className="flex flex-wrap items-center gap-2.5 shrink-0">
               <Link
-                href="/trading-desk"
+                href="/fondeo"
                 className="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold font-mono bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/80 transition shadow-sm"
               >
                 <Activity className="w-4 h-4 mr-1.5 text-emerald-400" />

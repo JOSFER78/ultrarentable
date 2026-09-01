@@ -1,85 +1,54 @@
 /**
  * apps/web/hooks/useEngineVersion.ts
- * Hook para la inspección física de versión de motor, git commit y drift criptográfico.
+ * Versión REAL del motor, leída de la API canónica (nunca hardcodeada, nunca con valor
+ * por defecto numérico). Reescrito 2026-09-01 (AG-11, T3 — W5.4: "la versión del motor deja
+ * de mentir"). Fuente única: getDiscoveryStatus().current_engine_version (lib/api.ts).
+ *
+ * Si la API no responde, `version` queda en `null` y `error` describe el fallo: la UI debe
+ * mostrar "MOTOR: NO DISPONIBLE" en gris, JAMÁS un número de versión por defecto — esa es la
+ * violación REAL-ONLY (el badge de versión fija que este hook sustituye) que había hardcodeada.
  */
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { getDiscoveryStatus } from "@/lib/api";
 
 export interface EngineVersionInfo {
-  version: string;
-  versionName: string;
-  gitCommit: string;
-  gitCommitShort: string;
-  gitBranch: string;
-  gitMessage: string;
-  gitAuthor: string;
-  codeDrift: boolean;
-  codebaseFingerprint: string;
-  lastBumpUtc: string;
+  /** Versión real reportada por la API, o null si aún no se cargó / falló la conexión. */
+  version: string | null;
   loading: boolean;
+  /** Mensaje de fallo legible, o null si la última carga fue correcta. */
   error: string | null;
   refetch: () => Promise<void>;
 }
 
 export function useEngineVersion(): EngineVersionInfo {
-  const [version, setVersion] = useState<string>("5.3.0");
-  const [versionName, setVersionName] = useState<string>("Ultrarentable v5.3.0");
-  const [gitCommit, setGitCommit] = useState<string>("");
-  const [gitCommitShort, setGitCommitShort] = useState<string>("");
-  const [gitBranch, setGitBranch] = useState<string>("main");
-  const [gitMessage, setGitMessage] = useState<string>("");
-  const [gitAuthor, setGitAuthor] = useState<string>("");
-  const [codeDrift, setCodeDrift] = useState<boolean>(false);
-  const [codebaseFingerprint, setCodebaseFingerprint] = useState<string>("");
-  const [lastBumpUtc, setLastBumpUtc] = useState<string>("");
+  const [version, setVersion] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchVersion = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
-      const res = await fetch("/api/v1/versions");
-      if (!res.ok) {
-        throw new Error(`Fallo al consultar versión del motor (HTTP ${res.status})`);
+      const status = await getDiscoveryStatus();
+      if (status?.current_engine_version) {
+        setVersion(status.current_engine_version);
+        setError(null);
+      } else {
+        setVersion(null);
+        setError("La API de discovery no reportó current_engine_version.");
       }
-      const data = await res.json();
-      setVersion(data.current_version || data.active_version || "5.3.0");
-      setVersionName(data.current_name || data.active_name || "Ultrarentable v5.3.0");
-      setGitCommit(data.git_commit || "");
-      setGitCommitShort(data.git_commit_short || (data.git_commit ? data.git_commit.slice(0, 7) : ""));
-      setGitBranch(data.git_branch || "main");
-      setGitMessage(data.git_message || "");
-      setGitAuthor(data.git_author || "");
-      setCodeDrift(Boolean(data.code_drift_detected));
-      setCodebaseFingerprint(data.codebase_fingerprint || "");
-      setLastBumpUtc(data.last_bump_utc || "");
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error al conectar con version router.";
-      setError(msg);
+      setVersion(null);
+      setError(err instanceof Error ? err.message : "Sin conexión con la API canónica.");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchVersion();
+    void fetchVersion();
   }, [fetchVersion]);
 
-  return {
-    version,
-    versionName,
-    gitCommit,
-    gitCommitShort,
-    gitBranch,
-    gitMessage,
-    gitAuthor,
-    codeDrift,
-    codebaseFingerprint,
-    lastBumpUtc,
-    loading,
-    error,
-    refetch: fetchVersion,
-  };
+  return { version, loading, error, refetch: fetchVersion };
 }

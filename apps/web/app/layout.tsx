@@ -4,12 +4,14 @@ import { AuthProvider } from "@/context/AuthContext";
 import AppShell from "@/components/layout/AppShell";
 
 export const metadata = {
-  title: "UltraRentable — Quant Lab v5.4.0",
+  // Sin número de versión hardcodeado (W5.4): la versión REAL del motor se lee en runtime de
+  // getDiscoveryStatus() (ver hooks/useEngineVersion.ts) y se muestra en el Header.
+  title: "UltraRentable — Quant Lab",
   description: "Deterministic Quantitative Strategy Discovery & Execution Engine (Zero-Mocks · Real-Only)",
 };
 
 export const viewport = {
-  themeColor: "#030712",
+  themeColor: "#0f0f0f",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -23,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="dark" suppressHydrationWarning>
       <body
-        className="antialiased bg-[#030712] text-slate-100 min-h-screen overflow-x-hidden selection:bg-emerald-500/20 selection:text-emerald-300"
+        className="antialiased bg-[var(--bg)] text-[var(--text-1)] min-h-screen overflow-x-hidden"
         suppressHydrationWarning
         style={{ margin: 0, padding: 0 }}
       >

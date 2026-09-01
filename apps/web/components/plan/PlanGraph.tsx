@@ -12,16 +12,22 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-export interface PlanBloque {
-  id: string;
-  titulo: string;
-  estado: string;
-  depende_de: string[];
-  desbloquea: string[];
-  verificacion_global: string;
-  actualizado: string;
-  archivo: string;
-}
+/**
+ * Fuente única del tipo: `app/api/plan/route.ts`, que es quien lo produce leyendo los bloques
+ * de `orchestration/state/plan/bloques/`.
+ *
+ * Corregido 2026-09-01 (orquestador): aquí vivía una SEGUNDA definición de `PlanBloque` que
+ * había derivado de la canónica — le faltaban `aparcado` y `motivo_aparcado`, mientras el
+ * propio componente ya leía `bloque.aparcado` más abajo. El build de producción nunca se había
+ * ejecutado (el expediente I5 lo advertía: "verificado sólo por lectura de código"), así que el
+ * error de tipos llevaba escondido desde entonces. Se elimina la duplicidad en vez de añadir el
+ * campo que faltaba: la dualidad de definiciones es el fallo histórico nº 1 de este repo.
+ *
+ * `import type` se borra en compilación, así que no crea acoplamiento en tiempo de ejecución
+ * entre el componente y el route handler.
+ */
+export type { PlanBloque } from "@/app/api/plan/route";
+import type { PlanBloque } from "@/app/api/plan/route";
 
 const ESTADO_STYLE: Record<string, { label: string; badge: string; icon: React.ReactNode }> = {
   PENDIENTE: {
