@@ -1,120 +1,140 @@
-# FASE ACTUAL — BALANCE 2026-09-01 (sesión FONDEO) · actualizado 10:00 UTC
+# FASE ACTUAL — 2026-09-01, 10:20 UTC
 
-> **FOCO 100 % EN FONDEO** por orden de Emilio (2026-09-01). El track ULTRA queda pausado con
-> todo su estado en `orchestration/state/PUNTO_GUARDADO_ULTRA.md` — nada a medias, nada perdido.
-> Objetivos de rentabilidad SELLADOS y ya verificables (ver `plan_maestro.md`):
-> ULTRA ~100 %/mes y **FONDEO ≥20 % mensual SOSTENIBLE con P(romper cuenta) ≤20 % a 6 meses**,
-> medidos sobre la MEDIANA de la distribución, nunca la media.
+> **MANDATO ACTIVO: 100 % FONDEO.** Estrategias para futuros CME de prop firms y sus
+> meta-estrategias. **ULTRA y META-ULTRA quedan APARCADOS**, con su estado íntegro congelado en
+> `PUNTO_GUARDADO_ULTRA.md` y sus fases F05/F06 marcadas `aparcado: true`. Aparcado no es
+> abandonado: la tesis de la envolvente de balas sigue sellada y válida, simplemente no es el
+> trabajo de ahora.
 
+## 1. Dónde estamos con el objetivo, sin adornos
 
-## ACTUALIZACIÓN 2026-09-01 ~10:00 — segunda tanda (30 agentes en 4 workflows)
+**Estrategias FONDEO certificadas: 0. Meta-estrategias FONDEO: 0.**
 
-| Qué | Evidencia |
-| :--- | :--- |
-| **Datos de ES desbloqueados**: 16 chunks trimestrales fusionados en un dataset único. 250.009 barras en 5m (83.377 en 15m, 1.230.396 en 1m), rango 2023-01 → 2026-08, SHA-256 reproducible, `gaps_filled=false`, huecos clasificados por **calendario de sesión**. Los 36 anómalos son festivos reales | `scripts/herramientas/consolidar_dukascopy.py` · manifiestos en `data/normalized/` |
-| **200 operaciones OOS pasan a ser alcanzables**: con 50.101 barras OOS en 5m basta 1 operación cada 250 barras. Antes hacía falta 1 cada 13,7, matemáticamente imposible | `mine.py --dataset-source dukascopy --dry-run` resuelve 13.723 KB frente a 963 KB |
-| **El discovery continuo llevaba >24 h sin evaluar FONDEO**: la rama por defecto exigía `"fondeo" in fname` en un `else` que sólo se alcanza cuando eso ya es falso. Todo dataset de FONDEO se evaluaba como ULTRA, con 1.000 USD de capital y 25 % de techo de drawdown en vez de 50.000 y 4,5 % | commit `1956e3816` · `orchestration/results/embudo_fondeo_forense.md` §5 |
-| **El repositorio de datasets fabricaba velas**: devolvía 100 barras en rampa ascendente ante cualquier fallo de lectura, leía `timestamp` en vez de `timestamp_utc_ms` (todas las velas con marca 0) y su "hash SHA-256 verificado" era de metadatos. Su guard llevaba en verde vigilando una **copia muerta** | commit `08058feff` · `tests/test_data_pipeline.py` (10 passed) |
-| **Meta-estrategia fantasma**: con ≤2 pasos de retorno alineados se fabricaba una correlación de 0,15, y sin periodos perdedores un profit factor de 5,0. Ahora falla cerrado | `tests/test_meta_strategy_engine.py` (5 passed) |
-| **Motor 5.17.0**: dos arquetipos intradía para futuros de índice. Regla 26 cumplida, **15/15 celdas idénticas** | `orchestration/results/verificacion_f02_diff_5.16.0_vs_5.17.0.md` |
-| **Web reorganizada**: 16 rutas duplicadas y huérfanas a cuarentena con manifiesto; el plan se lee de estos bloques en `/plan` vía `/api/plan` en vez de duplicar estados a mano | commit `08058feff` |
-| **Historia de git adelgazada**: el push pendiente pasa de 1.324 MB a 3,1 MB. `.gitignore` no aplicaba a los 302 datasets ya rastreados | commits `20bdadf6e` y anteriores |
+No es un matiz de redacción. Contra la BD canónica de producción, medido hoy:
 
-### Corrección de cifras que se habían dado por buenas
+- `route='FONDEO'` con cualquier estado certificado: **0 filas**. Todas son `REJECTED_*`,
+  `LEGACY_*` o `BLOCKED_NO_EVIDENCE`, y bajo motor 5.4.0, obsoleto.
+- `route='ULTRA'` con `APPROVED_CURRENT_ENGINE`: 5 filas, pero **ninguna alcanza las 200
+  operaciones OOS** del Criterio 1.1 (rango real 25-68). Ese estado NO implica certificación: es
+  un listón más débil, y conviene no confundirlos nunca más.
 
-- La campaña evaluó **14.352** configuraciones, no 13.504.
-- De las 24 celdas, sólo **18 son evidencia válida**: las 6 de forex corrieron con el motor anterior
-  al arreglo de la comisión, así que su veredicto sobre la ventaja no vale.
+Todo el trabajo de hoy ha sido **quitar lo que impedía siquiera intentarlo**. No se ha conseguido
+todavía ninguna estrategia.
 
-### Deuda abierta y declarada
+## 2. La cadena hacia el objetivo, eslabón por eslabón
 
-- **Build de producción de la web NO ejecutado.** Los revisores verificaron por lectura que ningún
-  import queda colgando, pero eso no sustituye al build. La VPS está a 14 de carga por procesos
-  ajenos (`sqcli` al 115 %, `discovery` al 31 %) y lanzar `next build` encima sería justo lo que hay
-  que evitar.
-- **La telemetría del embudo se calcula y se tira**: `mine.py` produce el desglose completo por
-  configuración y nunca lo escribe a disco. De 14.352 configuraciones sobreviven 20 puntos de datos
-  en los logs. Sin eso, cada campaña fallida es indiagnosticable.
-- **Liberar la VPS sigue pendiente de sudo de Emilio** (comandos en `orchestration/OPERACION_VPS.md`).
+| # | Eslabón | Estado | Evidencia |
+| :-- | :--- | :--- | :--- |
+| 1 | Datos con presupuesto de barras suficiente | ✅ | 250.009 barras 5m de ES consolidadas; 200 ops OOS exigen 1 cada 250, antes 1 cada 13,7 |
+| 2 | El proxy CFD representa al futuro | ✅ | Validación doctrinal: correlación de retornos 0,9747, peor subperiodo 0,9016 |
+| 3 | `--dataset-source` viaja de la cola a `mine.py` | ✅ | Verificado extremo a extremo contra BD temporal |
+| 4 | La deduplicación permite re-encolar con otra fuente | ✅ | Antes: 34 de 34 celdas omitidas en silencio. Ahora: 34 lanzables |
+| 5 | El discovery continuo ve FONDEO | ✅ | Bug de enrutamiento corregido (`1956e3816`) |
+| 6 | Arquetipos que operan lo suficiente intradía | ✅ | ORB y VWAP_REVERSION en motor 5.17.0, identidad 15/15 |
+| 7 | El motor cobra bien las comisiones | ✅ | 5.16.0: el forex pagaba 11.692 USD por lado |
+| 8 | Reglas de prop firm sobre equity flotante | ⚠️ PARCIAL | El motor las evalúa (5.15.0) pero **el examen no las usa para decidir**, ver §5 |
+| 9 | **Máquina capaz de correr la campaña** | ❌ **BLOQUEADO** | Swap 1 MB libre, carga 10,05, `sqcli` al 115 % |
+| 10 | Campaña FONDEO 5m/15m ejecutada | ⛔ no lanzada | Depende del 9 |
+| 11 | Meta-estrategias ensamblables | ❌ | Necesita ≥2 certificadas. Además, ver §5 |
 
-## Hallazgo que define el estado de FONDEO
+**El único eslabón roto que no depende de código es el 9**, y depende de comandos con sudo que
+sólo puede ejecutar Emilio. Están en `../OPERACION_VPS.md`.
 
-**FONDEO no está limitado por falta de edge: está limitado por falta de BARRAS.** Aritmética:
+Comando exacto en cuanto la máquina lo admita:
 
-```
-criterio 1.1 (SELLADO):   >=200 operaciones OOS
-ritmo observado:          1 operacion cada ~61 barras (mejor caso real, RTY/CL; el ~101 previo
-                          era solo el mejor caso por PF, ver embudo_fondeo_forense.md)
-barras OOS necesarias:    ~20.200  ->  dataset de ~101.000 barras
-disponible hoy (Yahoo):      13.800 barras   (7,3x por debajo)
-Dukascopy 5m desde 2023:   ~250.000 barras   (~495 operaciones OOS)
+```bash
+python -m services.ops.gobernanza_recursos ejecutar --nombre campana-fondeo-5m -- \
+  python scripts/cola_mineria.py encolar --solo-track fondeo --dataset-source dukascopy --ver
 ```
 
-El 5m de Yahoo NO es alternativa: tiene 13.813 barras, casi las mismas que 1h (13.701), porque
-su API sólo sirve 60 días de intradía fino. **Dukascopy es la única vía**. Iba a 174 ficheros/hora;
-tras sustituir `urlopen` por una `requests.Session` reutilizada va a **6.984/hora medidos en
-producción**, y ES ya está completo y consolidado. Deja de ser el cuello de botella nº 1.
+## 3. LA PREGUNTA ABIERTA QUE PUEDE INVALIDAR EL PLAN
 
-Matiz importante: el ritmo de operación varía mucho por familia (EURUSD REVERSION_ATR hace 447
-operaciones en 10.341 barras IS = 1 cada 23). El **forex tiene 17.236 barras (6,3x más historia
-que los futuros)** y es donde puede aparecer la primera candidata evaluable.
+La narrativa que este documento sostenía —*"FONDEO no está limitado por falta de edge, sino por
+falta de barras"*— **no está sostenida por los propios datos de la campaña**, y hay que decirlo.
 
-## HECHO en esta sesión (con evidencia en disco)
+Medido sobre `cola_mineria.jsonl` en GC y ES a 1h con perfil `arquetipos`, las dos únicas celdas de
+futuros limpias (sin el bug de comisión del forex):
 
-| Qué | Evidencia |
+```
+GC: 341 de 348 configuraciones mueren ya en IS
+ES: 345 de 348 configuraciones mueren ya en IS
+    con 8.220-8.242 barras IS disponibles
+    y un filtro trivialmente laxo: total_trades < 5 or profit_factor < 1.05
+```
+
+Eso **no** es escasez de barras OOS: es que casi ninguna combinación de EMA-cross / RSI / ATR
+alcanza un PF de 1,05 **en su propia muestra de entrenamiento**. Más barras resuelven el problema
+del recuento de operaciones; no resuelven la ausencia de ventaja.
+
+Las dos hipótesis siguen vivas y son distinguibles, pero **nadie las ha distinguido todavía**,
+porque no se sabe si mueren por `trades < 5` o por `PF < 1,05`. Y no se sabe porque la telemetría
+del embudo **se calcula y se tira**: `run_mining_pipeline()` produce un registro por configuración
+descartada (`strategy_id`, `etapa`, `motivo`) y lo devuelve en un `dict` que nadie serializa; la
+cola sólo guarda las 3 últimas líneas de stdout truncadas a 500 caracteres. De 14.352
+configuraciones evaluadas sobreviven **20 puntos de datos**.
+
+**Acción declarada como siguiente:** persistir esa telemetría antes de lanzar la campaña grande.
+Sin eso, la próxima campaña será tan indiagnosticable como la anterior, y si vuelve a dar cero no
+sabremos si el problema son los datos, los arquetipos o el filtro.
+
+## 4. Lo hecho hoy, con evidencia en disco
+
+### Datos
+
+- **ES completo y consolidado**: 16 chunks trimestrales fusionados. 250.009 barras en 5m, 83.377
+  en 15m, 1.230.396 en 1m. Rango 2023-01 → 2026-08, SHA-256 reproducible, `gaps_filled=false`,
+  huecos clasificados por **calendario de sesión**: los 36 anómalos son festivos reales de mercado.
+- **Ingesta 40x más rápida**: `urlopen` por petición → `requests.Session` reutilizada. De 174 a
+  **6.984 ficheros/hora medidos en producción**.
+- **Fusión no destructiva**: `ingest()` abría el CSV en modo `"w"` y volcaba sólo las barras de la
+  llamada en curso; cualquier ingesta parcial destruía el fichero entero.
+
+### Motor — tres releases, todas con identidad 15/15
+
+| Versión | Qué cambia |
 | :--- | :--- |
-| **Gate 9 corregido**: el DoF devolvía 1 para estrategias de 3-5 dimensiones (`archetype_params` anidado) y la perturbación de vecindario ni pasaba esos parámetros → test de estabilidad era un no-op | `tests/test_red_team_adversarial.py` (9 passed) |
-| **`risk_pct` cuenta como DoF** en todos los arquetipos (lo barre `mine.py` y con compounding altera PF/DD) | conteos 3→4, 5→6, 5→6, 4→5, 4→5, 7→8 |
-| **F02.3**: reglas prop (trailing DD intradiario, pérdida diaria, cierre de sesión) sobre equity FLOTANTE en el motor. Opt-in | motor **5.15.0**, identidad **15/15 idéntica** |
-| **BUG CRÍTICO forex**: `es_futuro = point_value != 1.0` clasificaba las divisas como CME → comisión `2,50 $ × qty` = **11.692 $ por lado**. Una operación ganadora perdía 11.670 $ | motor **5.16.0**, identidad 15/15 · `orchestration/results/bug_comision_forex_5_16_0.md` |
-| **Bloqueo TRADFI levantado**: el "64-73 % de cobertura" medía contra calendario 24/7; el techo estructural de un futuro CME es 68,5 %. ES 1h tiene **95,45 % de contigüidad real** y 31 huecos anómalos que son festivos de mercado | `orchestration/results/desbloqueo_tradfi_calidad_datos.md` |
-| **4h de TRADFI CONTAMINADO**: se remuestrea de 1h; 750/3.714 barras (20,2 %) con menos de 4 velas, 145 con UNA sola | mismo informe; aviso en `scripts/cola_mineria.py` |
-| **Volumen de forex FABRICADO** (`or 100.0`): EURUSD 1h tiene un único valor distinto. Impacto hoy nulo (el motor no consume volumen) | mismo informe |
-| **`fondeo_examen.py`**: el límite de pérdida diaria nunca se aplicaba (`pnl_dia += 0.0`) → P(romper cuenta) medida pasa de **0,27 % a 48,9 %**; y el ritmo de operaciones se asumía (60 días) en vez de deducirse | `tests/test_fondeo_examen_bugs.py` (7 passed) |
-| **Pipeline de examen completo**: `PROP_FIRM_CATALOG` → evaluador (`--firma "Apex 50K"`, fail-closed ante ambigüedad) → `PropFirmProfile` del motor; regla de consistencia; **ranking** ordenado por el objetivo sellado | 29 passed |
-| `median_days_to_target=22.0` inventado | corregido (violación REAL-ONLY) |
-| Perfil `arquetipos` era **imposible de invocar** (faltaba en los `choices` de `cola_mineria.py` Y de `mine.py`) | corregido; campaña lanzada |
+| 5.15.0 | Reglas de prop firm evaluadas barra a barra sobre equity **flotante** (opt-in) |
+| 5.16.0 | `es_futuro = point_value != 1.0` clasificaba el forex como CME: un EURUSD con +32,1 USD brutos pagaba 11.692,5 USD de comisión por lado |
+| 5.17.0 | Arquetipos ORB y VWAP_REVERSION para futuros intradía de índice |
 
-## Campaña FONDEO 1h — resultado honesto
+### Defectos graves corregidos fuera del motor
 
-**Perfil `arquetipos`: 12 celdas, 4.176 backtests, 0 certificadas.** Las 6 celdas de forex de esa
-tanda son inválidas (bug de comisión, motor ≤5.15.0). Las 6 de futuros son veredicto válido.
-Mejores casos en OOS: 24, 27, 8, 4, 0 operaciones — contra un mínimo de 100 y un criterio de 200.
-**No pierden: apenas operan.**
+- **El discovery llevaba >24 h sin evaluar FONDEO**: la rama por defecto exigía `"fondeo" in fname`
+  dentro de un `else` que sólo se alcanza cuando eso ya es falso. Todo dataset de FONDEO se
+  evaluaba como ULTRA, con 1.000 USD de capital y 25 % de techo de drawdown en vez de 50.000 y
+  4,5 %.
+- **El repositorio de datasets fabricaba velas**: 100 barras en rampa ascendente perfecta ante
+  cualquier fallo de lectura, campo `timestamp` en vez de `timestamp_utc_ms` (todas las velas con
+  marca 0), y un "hash SHA-256 verificado" calculado sobre metadatos. Su guard llevaba en verde
+  vigilando una **copia muerta**.
+- **Meta-estrategia fantasma**: con ≤2 pasos de retorno alineados se fabricaba una correlación de
+  0,15; sin periodos perdedores, un profit factor de 5,0.
+- **`fondeo_examen.py`**: el límite de pérdida diaria no se aplicaba nunca. P(romper cuenta) medida
+  pasó de 0,27 % a 48,9 %.
 
-**Perfil `amplio` (848 configs, 7 familias) en curso**, con el motor 5.16.0. Re-mina el forex con
-números honestos y explora `INSTITUTIONAL_SESSION_MOMENTUM`, `TREND_FOLLOWING` y `MEAN_REVERSION`.
+### Infraestructura y orden
 
-## PENDIENTE (camino crítico al goal)
+- **Gobernanza de recursos** (`services/ops/gobernanza_recursos.py`): turno único con `flock` y
+  puerta de admisión que rechaza arrancar con la máquina saturada. Ver `../OPERACION_VPS.md`.
+- **Web**: 16 rutas duplicadas y huérfanas a cuarentena con manifiesto verificado una a una; el
+  plan se lee de estos bloques en `/plan`.
+- **Git**: el push pendiente pasó de 1.324 MB a 3,1 MB.
 
-0. **ANTES de minar con datos Dukascopy — dos cosas que hay que resolver primero:**
-   a) **El mapeo símbolo→dataset NO reconoce Dukascopy.** `scripts/mine.py::resolve_dataset_file`
-      busca por patrón `*{sym}*{tf}*.json` y elige el fichero **más grande** que coincida. Para
-      `ES` el patrón `*es*5m*` NO casa con `ds_dukascopy_usa500idxusd_5m_*.json`, así que
-      seguiría usando `ds_trad_es_5m_*.json` (Yahoo, 13.813 barras) **en silencio**. Hace falta
-      un mapeo explícito FONDEO→Dukascopy: ES→USA500IDXUSD, NQ→USATECHIDXUSD, YM→USA30IDXUSD,
-      GC→XAUUSD, SI→XAGUSD, CL→LIGHTCMDUSD (el mapeo ya existe como `proxy_for` en
-      `services/data_ingestion/dukascopy_feed.py:76-84`). **RTY no tiene equivalente en
-      Dukascopy** — o se acepta el Yahoo o sale del universo FONDEO.
-   b) **Decisión doctrinal pendiente: los datos de Dukascopy son CFDs proxy, NO futuros CME.**
-      Sustituir `ES=F` (el futuro real de Yahoo) por `USA500IDXUSD` (un CFD) **no es un ascenso
-      automático de fidelidad** aunque tenga 18x más barras. Antes de certificar nada con ellos
-      hay que validar correlación y spread contra el futuro real en el tramo que solapan
-      (2024-03→2026-08, donde existen ambas series). Si divergen, certificar sobre el CFD y
-      operar el futuro sería un autoengaño. **Esta validación es requisito previo, no opcional.**
+## 5. Deuda abierta, declarada y sin disimular
 
-1. **Acelerar Dukascopy** — cuello nº 1. Hay ~47 s por fichero perdidos en reintentos (latencia
-   real del servidor: 15 s). Sospecha principal: backoff exponencial gastado en horas de mercado
-   cerrado que devuelven 404 legítimo. Agente midiéndolo.
-2. **Liberar la máquina** (requiere Emilio): `sqx.service` lleva horas al 105 % de CPU con
-   **0 % de aceptación** sobre AUDUSD_H1, y un cron (`improve_cycle.sh`, minuto :40) reinicia el
-   bucle de basura cada 20-30 min. Comandos en el informe de la sesión.
-3. **SQX sobre ES/NQ/YM**: 97 Setups cargados pero usa sólo el primero por orden alfabético
-   (AUDUSD_H1). Los CSVs de futuros ya están listos en `data/sqx_imports/`.
-4. **Cablear F02.3 al ranking**: hoy el examen usa PnL realizado; el motor con equity flotante
-   está construido pero no enchufado (`fondeo_examen.py` sólo recibe `oos_returns`, no velas).
-5. Corregir `MarketDataAuditor.audit` para medir cobertura contra calendario de sesión por venue.
-6. Push a GitHub pendiente (causa raíz diagnosticada, `.gitignore` y `filter-repo` preparados).
+| Deuda | Por qué importa |
+| :--- | :--- |
+| **Telemetría del embudo no persistida** | Sin ella la próxima campaña vuelve a ser indiagnosticable. Es el §3 |
+| **El examen de fondeo no gatea con la verificación honesta** | `reejecutar_examen_barra_a_barra()` se calcula pero **no decide**: el ranking sigue usando el bootstrap optimista. Hoy es inerte con 0 candidatas, pero en cuanto haya una podrá imprimir "CUMPLE" para una cuenta que la verificación marca como reventada |
+| **Meta: versión de motor escrita a mano** | `meta_ensemble_service.py` y `meta_strategy_pipeline.py` filtran por `engine_version == '5.4.0'` con el motor en 5.17.0. Descartarían siempre cualquier candidata nueva, y el endpoint lo envuelve en un `except Exception: pass` mudo |
+| **Dos pipelines de validación** | El que certifica es `services/api/app/validation/gates/`; el que ve la web cuelga de `services/validation/engines/`, con umbrales distintos en su gate 3 |
+| **Build de producción de la web sin ejecutar** | Verificado sólo por lectura de código |
+| **Cifra "18/24 celdas válidas" mal clasificada** | El bug de comisión afecta a **las 12** celdas de forex, no sólo a 6. Corregir en el forense |
+| **VPS pendiente de sudo** | Eslabón 9 de la cadena |
+
+## 6. Dónde está cada cosa
+
+Ver `../README.md` para el mapa completo de `orchestration/`.
 
 ---
 

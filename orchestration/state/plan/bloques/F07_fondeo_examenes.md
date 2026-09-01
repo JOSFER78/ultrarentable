@@ -5,7 +5,7 @@ estado: PENDIENTE
 depende_de: ["F03"]
 desbloquea: ["F08"]
 verificacion_global: "Ranking con días esperados hasta pasar y probabilidad de quiebre por estrategia, por Monte Carlo sobre operaciones reales. OBJETIVO SELLADO: >=20 % mensual SOSTENIBLE sobre la mediana de la distribución, con P(romper cuenta) acotada."
-actualizado: "2026-08-31"
+actualizado: "2026-09-01"
 ---
 
 # FASE 7 — FONDEO: PASAR EXÁMENES EN 3-8 DÍAS
@@ -65,3 +65,27 @@ se ve.
 Antecedente: el resultado de `fondeo_examen.py` del 31-08 (`UR_FONDEO_CL_1H`, P(pasar)=36,3 %,
 ROI cartucho +1.147 %) quedó **formalmente invalidado** por el hallazgo 02 (falta de
 `point_value`); hay que rehacerlo con candidatas certificadas por el motor ≥ 5.6.0.
+
+## Actualización 2026-09-01 — el examen ya no miente sobre la ruina, pero todavía no decide con la verdad
+
+Lo corregido y verificado:
+
+- El **límite de pérdida diaria no se aplicaba nunca**: `pnl_dia += 0.0` hacía que la condición
+  `pnl_dia < 0` fuera siempre falsa, y además se comparaba la pérdida acumulada contra el límite
+  diario. Con el arreglo, la P(romper cuenta) medida pasa de **0,27 % a 48,9 %**: el riesgo estaba
+  subestimado unas 180 veces.
+- El **ritmo de operaciones se asumía** (60 días fijos) en vez de deducirse de la duración real de
+  la serie. Ahora se deriva de `duration_info` y, si no está, el resultado es `NO_EVALUABLE`.
+- Se añade selección de firma desde `PROP_FIRM_CATALOG` y la regla de consistencia.
+
+**Hueco abierto y grave, declarado sin disimular**: el motor sabe evaluar las reglas de prop firm
+sobre equity **flotante** desde la release 5.15.0, y el examen ya sabe invocarlo
+(`reejecutar_examen_barra_a_barra()`), pero **ese resultado no gatea nada**. Las dos fases del
+examen siguen decidiendo "CUMPLE" con el bootstrap sobre PnL ya cerrado, que es ciego a la
+excursión adversa intradía. Hoy es inerte porque hay 0 candidatas FONDEO certificadas, pero en
+cuanto exista la primera, el script podrá declarar "CUMPLE" para una cuenta que la propia
+verificación honesta marca como `prop_firm_busted=True`.
+
+Es exactamente el tipo de fallo que la doctrina prohíbe: un número optimista donde debería haber
+un fallo cerrado. **Cerrar esto es condición previa a certificar ninguna estrategia de fondeo**, no
+un pulido posterior.

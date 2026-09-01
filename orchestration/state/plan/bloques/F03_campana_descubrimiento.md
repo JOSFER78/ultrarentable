@@ -1,7 +1,7 @@
 ---
 id: F03
 titulo: "Campaña de descubrimiento masiva"
-estado: PARCIAL
+estado: EN_CURSO
 depende_de: ["F01", "F02"]
 desbloquea: ["F04", "F07"]
 verificacion_global: "Se mide por volumen de candidatos que superan el criterio 1.1, no por lo bonitas que sean las curvas."
@@ -183,3 +183,31 @@ re-campaña perfil `arquetipos` sobre FONDEO ES/NQ/YM 5m y 15m (Dukascopy) vía
 `scripts/cola_mineria.py` — 72 configs nuevas por símbolo/timeframe
 (`_arquetipos_5_17_0_configs`). Solo entonces hay evidencia de VENTAJA (PF OOS), no solo de
 volumen.
+
+## Actualización 2026-09-01 10:20 — la campaña está lista pero hay una duda que la precede
+
+**La infraestructura ya no bloquea.** Datos (250.009 barras 5m de ES), propagación de
+`--dataset-source` de la cola a `mine.py`, deduplicación que permite re-encolar con otra fuente
+(antes omitía 34 de 34 celdas en silencio), enrutamiento del discovery corregido y dos arquetipos
+intradía nuevos. Lo único que impide lanzar es la VPS, pendiente de comandos con sudo.
+
+**Pero antes de lanzar hay que responder una pregunta, porque puede invalidar el diseño de la
+campaña.** La tesis vigente era que FONDEO está limitado por falta de barras. Los datos de la
+campaña anterior no la sostienen: en GC y ES a 1h con perfil `arquetipos` —las dos únicas celdas de
+futuros limpias, sin el bug de comisión del forex— **341 de 348 y 345 de 348 configuraciones mueren
+ya en IS**, con 8.220-8.242 barras disponibles y un filtro trivialmente laxo (`trades < 5` o
+`PF < 1,05`). Eso no es escasez de OOS: es que casi ninguna combinación de EMA-cross / RSI / ATR
+llega a PF 1,05 en su propia muestra de entrenamiento.
+
+Más barras arreglan el recuento de operaciones. No arreglan la ausencia de ventaja. Las dos
+hipótesis son distinguibles —basta saber si mueren por `trades < 5` o por `PF < 1,05`— pero nadie
+las ha distinguido porque **la telemetría del embudo se calcula y se tira**: `run_mining_pipeline()`
+genera un registro por configuración descartada y lo devuelve en un `dict` que nadie serializa. De
+14.352 configuraciones evaluadas sobreviven 20 puntos de datos en los logs.
+
+**Orden de trabajo decidido**: persistir la telemetría ANTES de lanzar la campaña de 5m. Es coste
+de CPU cero y evita que, si la campaña vuelve a dar cero, sea otra vez indiagnosticable.
+
+Corrección al forense: la cifra "18 de 24 celdas válidas" está mal clasificada. El bug de comisión
+del forex afecta a **las 12** celdas de divisas, no sólo a las 6 del perfil `arquetipos`, porque las
+6 del perfil `amplio` corrieron en la misma ventana previa al arreglo.
