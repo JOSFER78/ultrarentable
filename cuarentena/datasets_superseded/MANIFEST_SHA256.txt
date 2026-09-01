@@ -37,3 +37,8 @@ data/normalized/ds_binance_suiusdt_15m_1778989500000_1787088600000.json | e1a388
 data/normalized/ds_binance_suiusdt_15m_1778989500000_1787088600000_manifest.json | 6f9937780e37602ee3899f2ca07dffa9911e739435b13aff7f205d52fbd640e1
 data/normalized/ds_binance_suiusdt_5m_1784389500000_1787089200000.json | 50aae13dba1eab8b96053ab4e7a6740b094b6a7deb8f38239819cec32041f119
 data/normalized/ds_binance_suiusdt_5m_1784389500000_1787089200000_manifest.json | ac09fcb4e7c01570a62219ba90d9381a7304a514d3f5b8eec4c1fb78a65e3c2d
+# Artefactos de prueba de humo del runner dukascopy (concurrency/chunking) — 2026-08-31 — Claude
+# Motivo: dataset de 4 horas (2023-03-01 00-04h) generado sin querer al probar ingest() contra rutas de PRODUCCION
+# (data/normalized, data/sqx_imports) en vez de un directorio temporal. No representa un rango de backfill real.
+data/normalized/ds_dukascopy_usa500idxusd_1h_1677628800000_1677643200000.json | cfdbfea259441b3200bc60e7253bb7fbf7cb1724b51ffcdd8fe8907f6aba7dc9
+data/normalized/ds_dukascopy_usa500idxusd_1h_1677628800000_1677643200000_manifest.json | e690df2ebbe6f1b597c3d9e906201126f33ad15a42183a3f089dd76cc7b1c1d9

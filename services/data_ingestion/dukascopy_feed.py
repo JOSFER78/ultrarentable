@@ -25,19 +25,48 @@ import json
 import lzma
 import struct
 import sys
+import threading
 import time
-import urllib.error
-import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Tuple
+
+import requests
+import requests.adapters
 
 BASE_URL = "https://datafeed.dukascopy.com/datafeed"
 USER_AGENT = "Ultrarentable/1.0 (real-only market data ingestion)"
 TICK_STRUCT = struct.Struct(">3I2f")
 TICK_SIZE = TICK_STRUCT.size  # 20 bytes
 THROTTLE_SECONDS = 0.35  # cortesia con el feed gratuito; evita los HTTP 503
+
+# Benchmark 2026-09-01 (ver informe): abrir una conexion TCP+TLS nueva por cada hora
+# (comportamiento de urllib.request.urlopen sin pooling) cuesta 5-30s por fichero, y a
+# veces agota en un timeout de conexion de 60s -- eso, no el "503 del servidor", es la
+# causa real de los ~15s/fichero medidos originalmente. Reutilizando una unica conexion
+# HTTPS (keep-alive) el mismo fichero baja a ~0.1-0.2s: ~45x mas rapido, medido con
+# concurrency=3 sin ningun HTTP 503 en 150 horas reales. La sesion es un singleton de
+# proceso (perdura entre los ~14 trimestres que procesa run_dukascopy_backfill) para no
+# pagar el coste de conexion mas de una vez por hilo.
+_SESSION_LOCK = threading.Lock()
+_SESSION: Optional["requests.Session"] = None
+
+
+def _get_session(pool_size: int = 16) -> "requests.Session":
+    global _SESSION
+    if _SESSION is None:
+        with _SESSION_LOCK:
+            if _SESSION is None:
+                session = requests.Session()
+                adapter = requests.adapters.HTTPAdapter(
+                    pool_connections=1, pool_maxsize=pool_size, max_retries=0
+                )
+                session.mount("https://", adapter)
+                session.headers.update({"User-Agent": USER_AGENT})
+                _SESSION = session
+    return _SESSION
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CACHE_DIR = REPO_ROOT / "data" / "raw" / "dukascopy"
@@ -141,29 +170,31 @@ def download_hour(symbol: str, hour: datetime, retries: int = 6, timeout: int = 
     time.sleep(THROTTLE_SECONDS)
 
     url = _hour_url(symbol, hour)
+    session = _get_session()
     last_error = ""
     for attempt in range(1, retries + 1):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                payload = resp.read()
-            cached.parent.mkdir(parents=True, exist_ok=True)
-            tmp = cached.with_suffix(".part")
-            tmp.write_bytes(payload)
-            tmp.replace(cached)
-            return payload or None
-        except urllib.error.HTTPError as exc:
-            if exc.code == 404:
+            resp = session.get(url, timeout=timeout)
+            if resp.status_code == 200:
+                payload = resp.content
+                cached.parent.mkdir(parents=True, exist_ok=True)
+                tmp = cached.with_suffix(".part")
+                tmp.write_bytes(payload)
+                tmp.replace(cached)
+                return payload or None
+            if resp.status_code == 404:
                 # 404 = esa hora no existe en el feed. Hueco legitimo, se cachea vacio.
                 cached.parent.mkdir(parents=True, exist_ok=True)
                 cached.write_bytes(b"")
                 return None
-            last_error = f"HTTP {exc.code}"
-        except Exception as exc:  # noqa: BLE001 - se reporta el error real, no se enmascara
+            last_error = f"HTTP {resp.status_code}"
+        except requests.exceptions.RequestException as exc:
             last_error = f"{type(exc).__name__}: {exc}"
         if attempt < retries:
             # Backoff exponencial con techo. Dukascopy responde 503 cuando se le aprieta:
-            # 3 horas se perdieron asi en la primera prueba real (2026-08-31).
+            # 3 horas se perdieron asi en la primera prueba real (2026-08-31). Con
+            # conexion reutilizada esto ya casi no ocurre (ver benchmark 2026-09-01);
+            # el backoff se conserva como red de seguridad ante rafagas de conexion.
             time.sleep(min(2 ** attempt, 30))
 
     raise DukascopyError(f"{symbol} {hour.isoformat()}: fallo tras {retries} intentos ({last_error}) url={url}")
@@ -281,10 +312,18 @@ def ingest(
     end: datetime,
     timeframes: Optional[List[str]] = None,
     verbose: bool = True,
+    concurrency: int = 1,
 ) -> Dict[str, object]:
     """Descarga el rango completo y persiste un dataset por temporalidad.
 
     Devuelve un informe con conteos reales y la lista de huecos. Nunca rellena.
+
+    ``concurrency`` acota cuantas horas se piden en paralelo (I/O-bound: el cuello de
+    botella medido es la latencia del servidor de Dukascopy, ~15s por peticion, no la
+    CPU local ni el THROTTLE_SECONDS propio). Cada hilo respeta su propio throttle y
+    backoff via download_hour; no hay estado mutable compartido salvo listas locales
+    que solo se tocan desde el hilo principal al recoger cada resultado. El orden de
+    llegada no importa: all_ticks se reordena por timestamp al final.
     """
     if symbol not in SYMBOLS:
         raise DukascopyError(f"simbolo '{symbol}' no esta en el registro canonico: {list(SYMBOLS)}")
@@ -296,19 +335,37 @@ def ingest(
     failures: List[str] = []
     hours_total = 0
 
-    for hour in iter_hours(start, end):
-        hours_total += 1
+    def _fetch(hour: datetime) -> Tuple[datetime, Optional[List[Tuple[int, float, float, float]]], Optional[str]]:
         try:
             payload = download_hour(spec.dukascopy, hour)
         except DukascopyError as exc:
-            failures.append(f"{hour.isoformat()}: {exc}")
-            continue
+            return (hour, None, str(exc))
         if payload is None:
-            gaps.append(hour.isoformat())
-            continue
-        all_ticks.extend(decode_ticks(payload, hour, spec))
-        if verbose and hours_total % 24 == 0:
-            print(f"  {spec.dukascopy}: {hours_total} horas, {len(all_ticks):,} ticks", flush=True)
+            return (hour, None, None)
+        try:
+            ticks = decode_ticks(payload, hour, spec)
+        except DukascopyError as exc:
+            return (hour, None, str(exc))
+        return (hour, ticks, "")
+
+    hours = list(iter_hours(start, end))
+    workers = max(1, int(concurrency))
+
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(_fetch, hour) for hour in hours]
+        for fut in as_completed(futures):
+            hour, ticks, err = fut.result()
+            hours_total += 1
+            if err:
+                failures.append(f"{hour.isoformat()}: {err}")
+            elif ticks is None:
+                gaps.append(hour.isoformat())
+            else:
+                all_ticks.extend(ticks)
+            if verbose and hours_total % 24 == 0:
+                print(f"  {spec.dukascopy}: {hours_total}/{len(hours)} horas, {len(all_ticks):,} ticks", flush=True)
 
     all_ticks.sort(key=lambda t: t[0])
 
@@ -398,17 +455,40 @@ def ingest(
             encoding="utf-8",
         )
 
-        # CSV plano para importar en SQX (naming canonico <SYM>_<TF>)
+        # CSV plano para importar en SQX (naming canonico <SYM>_<TF>). El nombre no lleva
+        # rango de fechas (a diferencia del dataset_id), asi que una llamada a ingest()
+        # con un rango parcial DEBE fusionarse con lo ya exportado: sobrescribir sin
+        # fusionar borraria barras reales de otros rangos ya persistidos (bug real
+        # detectado 2026-08-31 al invocar ingest() con un rango corto de prueba, que
+        # trunco el CSV completo de USA500IDXUSD_H1 a solo esas horas).
         tf_sqx = {"1m": "M1", "5m": "M5", "15m": "M15", "1h": "H1", "4h": "H4"}[tf]
         csv_path = SQX_EXPORT_DIR / f"{spec.canonical}_{tf_sqx}.csv"
-        with csv_path.open("w", encoding="utf-8") as fh:
+        merged: Dict[int, Tuple[str, str, str, str, str]] = {}
+        if csv_path.exists():
+            with csv_path.open("r", encoding="utf-8") as fh:
+                next(fh, None)  # cabecera
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    dt_str, o, h, l, c, v = line.split(",")
+                    ts_existing = int(
+                        datetime.strptime(dt_str, "%Y.%m.%d %H:%M:%S")
+                        .replace(tzinfo=timezone.utc).timestamp() * 1000
+                    )
+                    merged[ts_existing] = (o, h, l, c, v)
+        for bar in bars:
+            merged[int(bar["timestamp_utc_ms"])] = (
+                str(bar["open"]), str(bar["high"]), str(bar["low"]), str(bar["close"]), str(bar["volume"]),
+            )
+        tmp_csv = csv_path.with_suffix(".part")
+        with tmp_csv.open("w", encoding="utf-8") as fh:
             fh.write("DateTime,Open,High,Low,Close,Volume\n")
-            for bar in bars:
-                dt = datetime.fromtimestamp(bar["timestamp_utc_ms"] / 1000, tz=timezone.utc)
-                fh.write(
-                    f"{dt:%Y.%m.%d %H:%M:%S},{bar['open']},{bar['high']},"
-                    f"{bar['low']},{bar['close']},{bar['volume']}\n"
-                )
+            for ts in sorted(merged):
+                o, h, l, c, v = merged[ts]
+                dt = datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
+                fh.write(f"{dt:%Y.%m.%d %H:%M:%S},{o},{h},{l},{c},{v}\n")
+        tmp_csv.replace(csv_path)
 
         report["datasets"][tf] = {
             "dataset_id": dataset_id,
@@ -430,6 +510,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--end", required=True, help="fecha fin UTC YYYY-MM-DD (inclusive)")
     parser.add_argument("--timeframes", default="1m,5m,15m,1h,4h")
     parser.add_argument("--quiet", action="store_true")
+    parser.add_argument(
+        "--concurrency", type=int, default=1,
+        help="peticiones .bi5 en paralelo (I/O-bound; recomendado 2-3, tope 4 por cortesia con el feed gratuito)",
+    )
     args = parser.parse_args(argv)
 
     start = datetime.strptime(args.start, "%Y-%m-%d")
@@ -441,7 +525,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     for sym in symbols:
         print(f"\n=== {sym} [{args.start} -> {args.end}] ===", flush=True)
         try:
-            report = ingest(sym, start, end, tfs, verbose=not args.quiet)
+            report = ingest(sym, start, end, tfs, verbose=not args.quiet, concurrency=args.concurrency)
         except DukascopyError as exc:
             print(f"ERROR {sym}: {exc}", file=sys.stderr)
             exit_code = 1
