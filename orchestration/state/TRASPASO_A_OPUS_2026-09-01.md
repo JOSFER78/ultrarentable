@@ -1,5 +1,12 @@
 # TRASPASO A OPUS — todo lo hecho, dónde está y qué hacer con ello (2026-09-01)
 
+> **ACTUALIZACIÓN 2026-09-02 — este traspaso fue EJECUTADO por Opus en los ciclos 1-2** (9 commits
+> en `main`, W0.2 cerrado 15/15, I1/I4/I7 avanzados, decisiones D1-D10). Su auditoría y el plan del
+> **ciclo 3 (orquestador en Orca + ≥10 agentes Antigravity atados)** están en
+> **`PLAN_ORCA_ANTIGRAVITY.md`**, que es ahora el punto de entrada. Lo de abajo queda como
+> histórico del arranque; varios de sus "10 hechos" ya cambiaron (sudo sin contraseña, datos
+> rescatados, licencia SQX trial hasta el 05-09) — manda `current_phase.md`.
+
 > Escrito por la sesión de análisis externa (Cowork) que auditó el proyecto completo el
 > 2026-09-01. **Tú (Opus, orquestador local) ejecutas, pruebas y analizas a partir de aquí.**
 > Regla de la casa aplicada a mí también: **no te fíes de este traspaso — re-verifica** cada

@@ -36,7 +36,12 @@ construcción, aparcado). Documentos de la era local, en orden de lectura:
 | `state/PLAN_INVESTIGACION_PROFUNDA.md` | **El plan de los planes**: 6 investigaciones (SQX al 100 %, sistema de mejora, meta-estrategias, prop firms 2026, web ¿de cero?, infra) con método sin-asunciones; sus expedientes MODIFICAN el plan de ejecución |
 | `state/ARQUITECTURA_MODULAR_ESTRATEGIAS.md` | **Las 4 partes claras del pipeline**: M1 Generación (Strategy One/SQX al 100 %) · M2 Mejora (loop iterativo con revisión) · M3 Valoración fondeo (firmas, horarios, examen) · M4 Metaestrategias — fronteras de código, contratos, página web por módulo. ULTRA presente en todo, EN CONSTRUCCIÓN |
 | `state/DESPACHO_MULTIAGENTE.md` | Plan operativo de OLAS multiagente: qué agente despachar, con qué contrato y aceptación, y qué hace el orquestador mientras |
-| `state/TRASPASO_A_OPUS_2026-09-01.md` | **Punto de entrada del orquestador**: todo lo hecho, dónde está cada cosa, los 10 hechos del estado y el orden de ejecución |
+| `state/TRASPASO_A_OPUS_2026-09-01.md` | Traspaso del ciclo 0→1: todo lo hecho por el análisis externo, dónde está cada cosa |
+| **`state/PLAN_ORCA_ANTIGRAVITY.md`** | **Punto de entrada del ciclo 3 (orquestador en Orca)**: auditoría de lo hecho por Opus en los ciclos 1-2, EL ARNÉS que ata a Antigravity, Ola A (12 agentes) y Ola B (12), ventana Emilio, integración a main |
+| `agy/PLANTILLA_GO.md`, `agy/PLANTILLA_DONE.md` | Contrato obligatorio de cada agente Antigravity (sin GO no arranca; termina con DONE + informe crudo) |
+| `../.githooks/pre-commit`, `../.githooks/pre-push` | El arnés mecánico: ningún agente AGY puede commitear ni publicar; solo el orquestador con `ORQ_COMMIT=1` / `ORQ_PUSH=1`. Activar con `git config core.hooksPath .githooks` |
+| `reviews/EVALUACION_EXTERNA_2026-09-01.md` | El diagnóstico externo completo del proyecto (copia dentro del repo para los worktrees) |
+| `ARRANQUE_RAPIDO_ORQUESTADOR.md` | Cómo arrancar la sesión del orquestador y el prompt exacto |
 | `../docs/19_UI_STYLE_SPEC.md` | Estética de la web: grises/transparencias/negro/blanco estilo Cowork; verde y rojo SOLO para profit/pérdida |
 | `HERMES_VPS_VIGIA.md` | Diseño del agente del VPS que monitoriza trades y ajusta órdenes/tamaños por fases V0/V1/V2 |
 

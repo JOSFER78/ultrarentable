@@ -24,7 +24,7 @@
 | Actor | Dónde | Qué hace |
 | :--- | :--- | :--- |
 | **Emilio/José** | — | Veto absoluto. Teclea contraseñas/claves cuando el terminal las pida, decide todo lo que sea dinero, cuentas o trading real. **Nada más: no ejecuta tareas.** |
-| **ORQUESTADOR (Opus 5)** | PC, una sesión persistente (tmux en WSL2) | Planifica, ejecuta, audita, despacha subagentes, opera el VPS por ssh. Es el único que escribe en `state/`. |
+| **ORQUESTADOR (Claude — Fable 5.1 desde el ciclo 3; antes Opus 5)** | PC, sesión en Orca (worktree devilray) | Planifica, audita, despacha agentes de ejecución (Antigravity, atados por el arnés de `state/PLAN_ORCA_ANTIGRAVITY.md`), opera el VPS por ssh, integra y commitea. Es el único que escribe en `state/`. |
 | **Subagentes (Sonnet)** | Dentro de la sesión del orquestador, en background | Trabajo mecánico paralelo con contrato escrito (ver §4). |
 | **Procesos nohup** | PC (y VPS bajo gobernanza) | Backfills, campañas, builds. Sobreviven a la sesión; un subagente los supervisa. |
 | **Hermes vigía** | VPS | Monitoriza trades/exámenes y ajusta órdenes dentro de límites duros. Diseño en `HERMES_VPS_VIGIA.md`. NO participa en el descubrimiento. |
