@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 from contracts.backtest import BarData, DatasetSnapshot
+from services.data import session_calendar
 
 
 class IngestionAuditReport(BaseModel):
@@ -25,6 +26,7 @@ class IngestionAuditReport(BaseModel):
     gap_count: int = 0
     duplicate_count: int = 0
     out_of_order_count: int = 0
+    session_closure_bars: int = 0
     coverage_pct: float = 100.0
     checksum_sha256: str
     start_time_utc_ms: int
@@ -75,17 +77,30 @@ class MarketDataAuditor:
                 seen_timestamps.add(b.timestamp_utc_ms)
                 unique_bars.append(b)
 
-        # 3. Conteo de gaps
+        # 3. Conteo de huecos contra el CALENDARIO DE SESION del venue (no 24/7). Cripto
+        # (session_calendar.is_24_7_venue) trata cualquier hueco como anomalia real, igual que
+        # antes. CME/forex/Dukascopy descuentan pausa diaria, fin de semana y festivo (deducidos
+        # por forma del hueco, no por fecha fija) -- ver services/data/session_calendar.py y
+        # orchestration/results/desbloqueo_tradfi_calidad_datos.md: medir cobertura contra un
+        # calendario 24/7 hacia que un dataset TradFi perfecto (~68.5% techo estructural en CME)
+        # se marcara siempre como incompleto.
         gap_count = 0
+        session_closure_bars = 0
         for i in range(len(unique_bars) - 1):
             diff = unique_bars[i + 1].timestamp_utc_ms - unique_bars[i].timestamp_utc_ms
             if diff > interval_ms:
-                gaps_in_window = (diff // interval_ms) - 1
-                gap_count += max(0, gaps_in_window)
+                missing_bars = max(0, (diff // interval_ms) - 1)
+                gap_type, _hours = session_calendar.classify_gap(
+                    venue, unique_bars[i].timestamp_utc_ms, unique_bars[i + 1].timestamp_utc_ms
+                )
+                if gap_type == "anomalo":
+                    gap_count += missing_bars
+                else:
+                    session_closure_bars += missing_bars
 
         start_ts = unique_bars[0].timestamp_utc_ms
         end_ts = unique_bars[-1].timestamp_utc_ms
-        expected_records = ((end_ts - start_ts) // interval_ms) + 1 if end_ts >= start_ts else 1
+        expected_records = len(unique_bars) + gap_count
         coverage_pct = round((len(unique_bars) / max(1, expected_records)) * 100.0, 2)
 
         # 4. Checksum SHA-256 determinista
@@ -103,6 +118,7 @@ class MarketDataAuditor:
             gap_count=gap_count,
             duplicate_count=duplicate_count,
             out_of_order_count=out_of_order_count,
+            session_closure_bars=session_closure_bars,
             coverage_pct=min(100.0, coverage_pct),
             checksum_sha256=sha_hash,
             start_time_utc_ms=start_ts,
@@ -164,6 +180,7 @@ class MarketDataIngestor:
             "gapCount": report.gap_count,
             "duplicateCount": report.duplicate_count,
             "outOfOrderCount": report.out_of_order_count,
+            "sessionClosureBars": report.session_closure_bars,
             "coveragePct": report.coverage_pct,
             "checksumSha256": report.checksum_sha256,
             "normalizedPath": f"normalized/{data_filename}",

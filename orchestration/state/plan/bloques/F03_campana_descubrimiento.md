@@ -5,7 +5,7 @@ estado: PARCIAL
 depende_de: ["F01", "F02"]
 desbloquea: ["F04", "F07"]
 verificacion_global: "Se mide por volumen de candidatos que superan el criterio 1.1, no por lo bonitas que sean las curvas."
-actualizado: "2026-08-31"
+actualizado: "2026-09-01"
 ---
 
 # FASE 3 — CAMPAÑA DE DESCUBRIMIENTO MASIVA
@@ -158,3 +158,28 @@ Barrer las celdas con dos perfiles de fitness distintos:
 
 **Nada se declara certificado aquí.** Esta fase produce materia prima, y se mide por volumen de
 candidatos que superan el criterio 1.1, no por lo bonitas que sean las curvas.
+
+### CUELLO 6 (FONDEO, 2026-09-01): 2 arquetipos EVENTO para futuros intradía de índice
+
+Diagnóstico: ningún arquetipo alcanzaba las ≥200 operaciones OOS del criterio 1.1 sobre
+futuros intradía (`session_momentum`: 24-27 operaciones OOS best-case en la campaña FONDEO 1h)
+— el techo es 1 señal/día/dirección sobre una sesión RTH estrecha (6,5 h). Con ES 5m ya hay
+presupuesto de barras (250.507, OOS 50.101), así que la causa raíz era la frecuencia de la
+señal, no los datos.
+
+**Respuesta: motor 5.17.0 — `OPENING_RANGE_BREAKOUT` y `VWAP_REVERSION`** (diseño en
+`orchestration/reviews/diseno_arquetipos_5_17_0.md`). Ambos anclados a `session_window`
+(sesión RTH real del futuro), aditivos estrictos, solo FONDEO
+(`_arquetipos_5_17_0_configs(is_ultra=True)` devuelve `[]`). DoF real contado
+(`OPENING_RANGE_BREAKOUT`=4, `VWAP_REVERSION`=3, `risk_pct` incluido) y vecindario del gate 9
+verificado NO-NOOP (24/24 combinaciones de rejilla × delta cambian de verdad). Verificado con
+backtest real (no solo conteo de eventos) sobre 63 días de sesión ES 5m: 101 y 307 operaciones
+respectivamente con una sola config de la rejilla — confirma que el mecanismo genera el
+volumen proyectado. Regla #26: `scripts/verificacion_f02.py --comparar 5.16.0 5.17.0` — ver
+resultado en `orchestration/results/verificacion_f02_diff_5.16.0_vs_5.17.0.md`.
+
+**Pendiente (siguiente paso, NO ejecutado en esta sesión por carga de VPS):** encolar la
+re-campaña perfil `arquetipos` sobre FONDEO ES/NQ/YM 5m y 15m (Dukascopy) vía
+`scripts/cola_mineria.py` — 72 configs nuevas por símbolo/timeframe
+(`_arquetipos_5_17_0_configs`). Solo entonces hay evidencia de VENTAJA (PF OOS), no solo de
+volumen.

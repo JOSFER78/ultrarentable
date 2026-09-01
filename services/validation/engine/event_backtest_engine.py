@@ -441,6 +441,120 @@ class EventBacktestEngine:
                 anchor_dir[i] = 1.0 if diff > 0 else (-1.0 if diff < 0 else 0.0)
         return anchor_dir
 
+    # --- 5.17.0 (F03.3 cont.): helpers de las 2 familias EVENTO nuevas para FUTUROS
+    # INTRADIA -- opening_range_breakout, vwap_reversion. Ambas dependen de `session_window`
+    # (la sesion RTH real del futuro, p.ej. ES/NQ/YM = 13:30-20:00 UTC via
+    # funding_discovery.resolve_session_window) para anclar el "dia de trading": sin
+    # session_window caen al default del propio contrato (medianoche UTC), documentado en
+    # _session_start_minutes.
+    @staticmethod
+    def _session_start_minutes(session_window: Optional[Any]) -> int:
+        """Minuto UTC (0-1439) de apertura de sesion declarado en `session_window`. Sin
+        session_window (o start_time_utc malformado) usa medianoche UTC (0) -- mismo default
+        que SessionWindow.start_time_utc en el contrato, no un valor inventado aqui."""
+        try:
+            start_str = getattr(session_window, "start_time_utc", "00:00") if session_window is not None else "00:00"
+            sh, sm = map(int, str(start_str).split(":"))
+            return sh * 60 + sm
+        except Exception:
+            return 0
+
+    def _calc_opening_range_levels(
+        self,
+        candles: List[Dict[str, Any]],
+        highs: np.ndarray,
+        lows: np.ndarray,
+        session_window: Optional[Any],
+        or_minutes: int,
+    ) -> "tuple[np.ndarray, np.ndarray, np.ndarray]":
+        """Alto/bajo del rango de apertura (primeros `or_minutes` minutos tras el inicio de
+        sesion) y si ya quedo SELLADO (congelado) ese dia. Causal por construccion: en la
+        barra i solo entran high/low de barras <= i del mismo dia; en cuanto el tramo de
+        apertura termina, or_high/or_low quedan fijos el resto del dia (no se siguen
+        actualizando con velas posteriores). Barras fuera de `session_window` no acumulan
+        rango (igual que el motor no genera entradas fuera de sesion) y heredan el ultimo
+        estado sellado conocido, inerte hasta el primer bar en sesion del siguiente dia."""
+        n = len(highs)
+        or_high = np.full(n, np.nan, dtype=np.float64)
+        or_low = np.full(n, np.nan, dtype=np.float64)
+        sealed = np.zeros(n, dtype=bool)
+        start_min = self._session_start_minutes(session_window)
+        or_minutes = max(1, int(or_minutes))
+        cur_day = None
+        cur_high: Optional[float] = None
+        cur_low: Optional[float] = None
+        cur_sealed = False
+        for i in range(n):
+            dt = self._parse_candle_utc_dt(candles[i])
+            if dt is None or not self._is_in_session_window(dt, session_window):
+                or_high[i] = cur_high if cur_high is not None else np.nan
+                or_low[i] = cur_low if cur_low is not None else np.nan
+                sealed[i] = cur_sealed
+                continue
+            day_key = (dt.year, dt.month, dt.day)
+            if day_key != cur_day:
+                cur_day = day_key
+                cur_high = None
+                cur_low = None
+                cur_sealed = False
+            mins_since_start = (dt.hour * 60 + dt.minute) - start_min
+            if mins_since_start < 0:
+                mins_since_start += 24 * 60  # sesiones que cruzan medianoche UTC (end < start)
+            if mins_since_start < or_minutes:
+                cur_high = highs[i] if cur_high is None else max(cur_high, highs[i])
+                cur_low = lows[i] if cur_low is None else min(cur_low, lows[i])
+            else:
+                cur_sealed = True
+            or_high[i] = cur_high if cur_high is not None else np.nan
+            or_low[i] = cur_low if cur_low is not None else np.nan
+            sealed[i] = cur_sealed
+        return or_high, or_low, sealed
+
+    def _calc_session_vwap(
+        self,
+        candles: List[Dict[str, Any]],
+        highs: np.ndarray,
+        lows: np.ndarray,
+        closes: np.ndarray,
+        volumes: np.ndarray,
+        session_window: Optional[Any],
+    ) -> np.ndarray:
+        """VWAP anclado a SESION (se reinicia cum_pv=cum_v=0 en la primera barra en sesion de
+        cada dia UTC), a diferencia del VWAP acumulativo global de
+        services/engine/indicator_engine.py (nunca se reinicia -- indicador distinto, uso
+        distinto). Es el benchmark real contra el que se miden las ejecuciones
+        institucionales intradia (funds, algos TWAP/VWAP), que SI resetean cada sesion. Barras
+        fuera de `session_window` no acumulan (mismo criterio que el rango de apertura de
+        arriba): el valor se mantiene inerte hasta el siguiente bar en sesion. Causal: vwap[i]
+        solo usa precio/volumen de la barra i y anteriores del mismo dia en sesion."""
+        n = len(closes)
+        vwap = np.zeros(n, dtype=np.float64)
+        cur_day = None
+        cum_pv = 0.0
+        cum_v = 0.0
+        last_val = float(closes[0]) if n > 0 else 0.0
+        for i in range(n):
+            dt = self._parse_candle_utc_dt(candles[i])
+            in_sess = dt is not None and self._is_in_session_window(dt, session_window)
+            if in_sess:
+                day_key = (dt.year, dt.month, dt.day)
+                if day_key != cur_day:
+                    cur_day = day_key
+                    cum_pv = 0.0
+                    cum_v = 0.0
+                typical = (highs[i] + lows[i] + closes[i]) / 3.0
+                # Volumen Dukascopy (tick-count derivado) es real y variable; si el dataset
+                # trajera volumen fabricado/constante (p.ej. Yahoo forex, ver
+                # orchestration/results/desbloqueo_tradfi_calidad_datos.md) esto degrada con
+                # gracia a un TWAP (media ponderada por tiempo) -- sigue siendo un nivel
+                # causal valido, solo deja de ponderar por volumen real.
+                vol = max(1e-9, float(volumes[i]))
+                cum_pv += typical * vol
+                cum_v += vol
+                last_val = cum_pv / max(1e-9, cum_v)
+            vwap[i] = last_val
+        return vwap
+
     @staticmethod
     def _parse_candle_utc_dt(candle: Dict[str, Any]) -> Optional[datetime]:
         """Extrae y normaliza la marca temporal de una vela a objeto datetime UTC."""
@@ -717,9 +831,15 @@ class EventBacktestEngine:
         # del interprete generico de entry_rules de mas abajo (que queda intacto para TODO
         # arquetipo anterior a 5.14.0: aditivo estricto, cero cambios de comportamiento).
         _NEW_ARCHETYPES_5_14_0 = {"REVERSION_ATR", "SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}
+        # 5.17.0 (F03.3 cont., CUELLO 6 del plan FONDEO): 2 familias EVENTO nuevas para
+        # FUTUROS INTRADIA -- opening_range_breakout (ruptura del rango de los primeros
+        # minutos de sesion) y vwap_reversion (reversion al VWAP anclado a sesion). Mismo
+        # patron de despacho explicito por `strategy.archetype`, mismo aislamiento del
+        # interprete generico de mas abajo. Ver orchestration/reviews/diseno_arquetipos_5_17_0.md.
+        _NEW_ARCHETYPES_5_17_0 = {"OPENING_RANGE_BREAKOUT", "VWAP_REVERSION"}
         archetype_label = str(getattr(strategy, "archetype", "") or "").upper()
         archetype_params: Dict[str, Any] = dict(getattr(strategy, "archetype_params", None) or {})
-        is_new_archetype = archetype_label in _NEW_ARCHETYPES_5_14_0
+        is_new_archetype = archetype_label in _NEW_ARCHETYPES_5_14_0 or archetype_label in _NEW_ARCHETYPES_5_17_0
 
         # 1. Extracción e Intérprete Dinámico de Indicadores del StrategySnapshot
         ema_fast_period = 20
@@ -803,6 +923,13 @@ class EventBacktestEngine:
         _arch_streak_up: Optional[np.ndarray] = None
         _arch_streak_down: Optional[np.ndarray] = None
         _arch_streak_modo = "continuacion"
+        # 5.17.0: opening_range_breakout / vwap_reversion (ver helpers arriba). Inertes
+        # (None/0.0) para cualquier otro arquetipo, incluidas las 4 familias 5.14.0.
+        _arch_or_high: Optional[np.ndarray] = None
+        _arch_or_low: Optional[np.ndarray] = None
+        _arch_or_sealed: Optional[np.ndarray] = None
+        _arch_session_vwap_series: Optional[np.ndarray] = None
+        _arch_vwap_dev_atr_mult = 0.0
         _arch_extra_warmup = 0
 
         if archetype_label == "REVERSION_ATR":
@@ -827,6 +954,24 @@ class EventBacktestEngine:
             _arch_streak_modo = str(archetype_params.get("modo", "continuacion")).lower()
             _arch_streak_up, _arch_streak_down = self._calc_streak_events(closes, _n_racha)
             _arch_extra_warmup = _n_racha + 5
+        elif archetype_label == "OPENING_RANGE_BREAKOUT":
+            # session_window se lee aqui directo del snapshot (no del bloque compartido de
+            # mas abajo, que se declara despues de este precomputo) -- rama autocontenida,
+            # cero riesgo de afectar a otro arquetipo.
+            _or_session_window = getattr(strategy, "session_window", None)
+            _or_minutes = int(archetype_params.get("or_minutes", 30))
+            _arch_or_high, _arch_or_low, _arch_or_sealed = self._calc_opening_range_levels(
+                candles, highs, lows, _or_session_window, _or_minutes
+            )
+            _arch_extra_warmup = 5
+        elif archetype_label == "VWAP_REVERSION":
+            _vwap_session_window = getattr(strategy, "session_window", None)
+            _arch_vwap_dev_atr_mult = float(archetype_params.get("vwap_dev_atr_mult", 1.5))
+            _volumes_for_vwap = np.array([float(c.get("volume", 1.0) or 1.0) for c in candles], dtype=np.float64)
+            _arch_session_vwap_series = self._calc_session_vwap(
+                candles, highs, lows, closes, _volumes_for_vwap, _vwap_session_window
+            )
+            _arch_extra_warmup = 5
 
         # Precalcular series de indicadores exactas según configuración del Snapshot
         ema_fast_series = self._calc_ema(closes, ema_fast_period)
@@ -1042,6 +1187,13 @@ class EventBacktestEngine:
                 # en la barra i misma.
                 if archetype_label == "REVERSION_ATR" and _arch_ema_ancla_series is not None:
                     take_profit_price = float(_arch_ema_ancla_series[i - 1])
+                # --- 5.17.0 vwap_reversion: TP DINAMICO = nivel vivo del VWAP de sesion -----
+                # Mismo razonamiento y misma convencion anti-lookahead que reversion_atr justo
+                # arriba (se usa el VWAP conocido AL ABRIR la barra i, _arch_session_vwap_series
+                # [i - 1], nunca el de la barra i misma): el objetivo natural de una reversion
+                # al VWAP es el propio VWAP, no una distancia fija.
+                elif archetype_label == "VWAP_REVERSION" and _arch_session_vwap_series is not None:
+                    take_profit_price = float(_arch_session_vwap_series[i - 1])
 
                 # --- FUNDING 5.13.0: coste real de financiacion en perpetuos (ULTRA) --------
                 # BingX liquida el funding entre longs y shorts en cada frontera de 8h
@@ -1491,6 +1643,40 @@ class EventBacktestEngine:
                     else:
                         long_signal = up_event
                         short_signal = down_event
+
+                elif archetype_label == "OPENING_RANGE_BREAKOUT":
+                    # Evento (no estado): el CIERRE actual rompe el rango de apertura ya
+                    # SELLADO ese dia (_arch_or_sealed[i], ver _calc_opening_range_levels) por
+                    # primera vez en esa direccion. Una entrada LONG y una SHORT por dia
+                    # (session_used_days, mismo mecanismo que session_momentum de arriba): si
+                    # el rango rompe primero al alza y mas tarde a la baja (dia en whipsaw),
+                    # ambas cuentan como eventos distintos -- no se presupone que direccion
+                    # tiene ventaja, la evidencia por celda lo decide.
+                    if bool(_arch_or_sealed[i]) and bar_dt is not None:
+                        or_h = _arch_or_high[i]
+                        or_l = _arch_or_low[i]
+                        day_key = (bar_dt.year, bar_dt.month, bar_dt.day)
+                        if not np.isnan(or_h) and closes[i] > or_h and (day_key, "LONG") not in session_used_days:
+                            long_signal = True
+                            session_used_days.add((day_key, "LONG"))
+                        elif not np.isnan(or_l) and closes[i] < or_l and (day_key, "SHORT") not in session_used_days:
+                            short_signal = True
+                            session_used_days.add((day_key, "SHORT"))
+
+                elif archetype_label == "VWAP_REVERSION":
+                    # Evento de re-entrada (no estado), misma forma que reversion_atr pero
+                    # anclado al VWAP DE SESION (se reinicia cada dia, ver _calc_session_vwap)
+                    # en vez de a una EMA continua: el nivel de referencia es el precio medio
+                    # ponderado por volumen del PROPIO dia, el benchmark real contra el que se
+                    # miden las ejecuciones institucionales intradia.
+                    band_lower_prev = _arch_session_vwap_series[i - 1] - _arch_vwap_dev_atr_mult * atr[i - 1]
+                    band_upper_prev = _arch_session_vwap_series[i - 1] + _arch_vwap_dev_atr_mult * atr[i - 1]
+                    was_below = closes[i - 1] <= band_lower_prev
+                    back_above = closes[i] > band_lower_prev
+                    was_above = closes[i - 1] >= band_upper_prev
+                    back_below = closes[i] < band_upper_prev
+                    long_signal = bool(was_below and back_above)
+                    short_signal = bool(was_above and back_below)
 
                 if long_signal:
                     pending_entry = "LONG"

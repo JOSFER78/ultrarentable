@@ -54,6 +54,7 @@ from contracts.canonical_strategy import (
 from services.engine_version import CURRENT_ENGINE_VERSION
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
 from services.discovery.funding_discovery import FundingDiscoveryEngine, resolve_session_window
+from services.data_ingestion.dukascopy_feed import SYMBOLS as DUKASCOPY_SYMBOLS
 
 logging.basicConfig(
     level=logging.INFO,
@@ -124,8 +125,58 @@ FONDEO_NO_MICRO = {"SI"}
 MIN_OPERACIONES_OOS = 100
 
 
-def resolve_dataset_file(symbol: str, timeframe: str, explicit_path: Optional[str] = None) -> Tuple[Optional[Path], Optional[Path]]:
-    """Localiza el dataset físico y su manifest correspondiente en data/normalized/."""
+# --- TAREA A (F0x, 2026-09-01): mapeo FONDEO -> proxy Dukascopy, SSOT reutilizado ---------
+# NO se duplica la tabla ES/NQ/YM/GC/SI/CL a mano: se deriva de `SymbolSpec.proxy_for` en
+# services/data_ingestion/dukascopy_feed.py::SYMBOLS (importado arriba como DUKASCOPY_SYMBOLS),
+# que ya documenta la sustitucion CFD<->CME ("ES/MES", "NQ/MNQ", ...). Aqui solo se invierte:
+# de cada simbolo CME (contrato completo O micro) al canonico Dukascopy que lo sustituye. Si
+# alguien corrige o amplia proxy_for en dukascopy_feed.py, este mapeo se actualiza solo, sin
+# tocar este fichero -- eso es justamente lo que evita que las dos tablas diverjan en silencio.
+# RTY/M2K quedan FUERA a proposito: Dukascopy no tiene un indice Russell 2000 en su catalogo
+# (verificado 2026-08-31, no existe "USARUSSIDXUSD" en SYMBOLS), asi que ningun proxy_for
+# los menciona y no aparecen aqui. Ver el fallo ruidoso para RTY en resolve_dataset_file.
+FONDEO_DUKASCOPY_PROXY: Dict[str, str] = {}
+for _duka_symbol, _duka_spec in DUKASCOPY_SYMBOLS.items():
+    if _duka_spec.proxy_for:
+        for _cme_symbol in _duka_spec.proxy_for.split("/"):
+            FONDEO_DUKASCOPY_PROXY[_cme_symbol.strip().upper()] = _duka_symbol
+
+
+class DatasetSourceError(ValueError):
+    """Fuente de dataset pedida explicitamente que no se puede resolver.
+
+    Deliberadamente distinta del `(None, None)` que devuelve resolve_dataset_file cuando el
+    modo 'auto' no encuentra nada: aqui el llamante SI dijo qué fuente quiere, así que un
+    fallback silencioso a otra fuente (p.ej. Yahoo) seria precisamente el fallo que la Tarea A
+    existe para eliminar. Se propaga como excepcion -- "falla de forma ruidosa" -- y
+    run_mining_pipeline la convierte en un status ERROR legible en vez de un stack trace pelado.
+    """
+
+
+def resolve_dataset_file(
+    symbol: str,
+    timeframe: str,
+    explicit_path: Optional[str] = None,
+    data_source: str = "auto",
+) -> Tuple[Optional[Path], Optional[Path]]:
+    """Localiza el dataset físico y su manifest correspondiente en data/normalized/.
+
+    `data_source` (Tarea A, 2026-09-01):
+      - "auto" (default): comportamiento HISTORICO sin cambios -- glob por patrones, se
+        queda con el fichero mas grande que matchee, de cualquier fuente (Yahoo/Binance/
+        BingX/Dukascopy si algun dia matcheara). Es el default a proposito: activar
+        Dukascopy debe ser un acto explicito de quien lanza la mineria, nunca un efecto
+        colateral de que aparezca un fichero mas grande en disco.
+      - "dukascopy": activación EXPLÍCITA. Resuelve `symbol` (contrato completo o micro,
+        p.ej. "ES" o "MES") al proxy Dukascopy via FONDEO_DUKASCOPY_PROXY (SSOT en
+        dukascopy_feed.py) y busca SOLO `ds_dukascopy_<proxy>_<tf>_*.json`. Si no hay proxy
+        registrado (RTY) o no hay fichero en disco para ese proxy/TF, lanza
+        DatasetSourceError -- nunca cae de vuelta a "auto" en silencio.
+      No se eligió una variable de entorno porque persiste entre invocaciones/cron y es
+      precisamente el tipo de estado invisible que causa el fallo silencioso que esta tarea
+      corrige; un parametro explícito (con su flag `--dataset-source` en el CLI) obliga a
+      declarar la fuente en cada llamada.
+    """
     if explicit_path:
         p = Path(explicit_path)
         if p.exists():
@@ -138,6 +189,44 @@ def resolve_dataset_file(symbol: str, timeframe: str, explicit_path: Optional[st
 
     if not DATA_DIR.exists():
         return None, None
+
+    data_source_norm = (data_source or "auto").strip().lower()
+
+    if data_source_norm not in ("auto", "dukascopy"):
+        raise DatasetSourceError(
+            f"data_source invalido: '{data_source}'. Valores permitidos: 'auto' (default), "
+            f"'dukascopy'."
+        )
+
+    if data_source_norm == "dukascopy":
+        duka_symbol = FONDEO_DUKASCOPY_PROXY.get(sym_clean)
+        if duka_symbol is None:
+            raise DatasetSourceError(
+                f"data_source='dukascopy' pedido explicitamente para simbolo '{symbol}' pero no "
+                f"existe proxy Dukascopy registrado (ver SYMBOLS/proxy_for en "
+                f"services/data_ingestion/dukascopy_feed.py). Simbolos con proxy disponible: "
+                f"{sorted(FONDEO_DUKASCOPY_PROXY.keys())}. Si es RTY: Dukascopy no tiene indice "
+                f"Russell 2000 en su catalogo -- no hay sustituto, usa data_source='auto' (Yahoo) "
+                f"a sabiendas de sus ~13.700 barras/1h, o excluye RTY de esta campana."
+            )
+        pattern = f"ds_dukascopy_{duka_symbol.lower()}_{tf_clean}_*.json"
+        matches = [m for m in DATA_DIR.glob(pattern) if not m.name.endswith("_manifest.json")]
+        if not matches:
+            raise DatasetSourceError(
+                f"data_source='dukascopy' pedido explicitamente para '{symbol}' (proxy "
+                f"{duka_symbol}, TF={tf_clean}) pero no hay ningun fichero '{pattern}' en "
+                f"{DATA_DIR}. El backfill de Dukascopy probablemente aun no ha llegado a este "
+                f"simbolo/timeframe -- NO se cae a Yahoo en silencio; reintenta cuando el "
+                f"backfill lo produzca."
+            )
+        matches.sort(key=lambda x: x.stat().st_size, reverse=True)
+        chosen = matches[0]
+        manifest = chosen.parent / f"{chosen.stem}_manifest.json"
+        logger.info(
+            f"[dataset-source=DUKASCOPY] '{symbol}' -> proxy CFD '{duka_symbol}' -> "
+            f"{chosen.name} (activado explicitamente via data_source='dukascopy', NO es Yahoo)"
+        )
+        return chosen, (manifest if manifest.exists() else None)
 
     patterns = [
         f"ds_binance_{sym_clean.lower()}_{tf_clean}_*.json",
@@ -156,6 +245,35 @@ def resolve_dataset_file(symbol: str, timeframe: str, explicit_path: Optional[st
             return chosen, (manifest if manifest.exists() else None)
 
     return None, None
+
+
+def infer_dataset_source_label(dataset_file: Path, manifest_file: Optional[Path]) -> str:
+    """Deriva la fuente real del dataset resuelto, para loguearla sin ambigüedad (Tarea A).
+
+    Prioriza el campo `venue` del manifest (viene del propio pipeline de ingesta, es la
+    fuente de verdad) y solo cae al prefijo del nombre de fichero si no hay manifest o no
+    trae `venue`. Nunca se infiere del tamaño ni de ningun otro heurístico que pueda
+    confundirse entre fuentes.
+    """
+    if manifest_file is not None and manifest_file.exists():
+        try:
+            with open(manifest_file, "r", encoding="utf-8") as f:
+                venue = json.load(f).get("venue")
+            if venue:
+                return str(venue).upper()
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    name = dataset_file.name.lower()
+    if name.startswith("ds_dukascopy_"):
+        return "DUKASCOPY (sin manifest/venue)"
+    if name.startswith("ds_binance_"):
+        return "BINANCE (sin manifest/venue)"
+    if name.startswith("ds_bingx_"):
+        return "BINGX (sin manifest/venue)"
+    if name.startswith("ds_trad_"):
+        return "YAHOO (sin manifest/venue)"
+    return "DESCONOCIDA (prefijo de fichero no reconocido)"
 
 
 def _normalizar_timestamps(candles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -295,15 +413,66 @@ def _arquetipos_5_14_0_configs(is_ultra: bool) -> List[Dict[str, Any]]:
     return cfgs
 
 
+def _arquetipos_5_17_0_configs(is_ultra: bool) -> List[Dict[str, Any]]:
+    """5.17.0 (F03.3 cont., CUELLO 6 del plan FONDEO): 2 familias EVENTO nuevas disenadas para
+    FUTUROS INTRADIA DE INDICE en 5m/15m -- opening_range_breakout y vwap_reversion. Ambas
+    dependen de `session_window` (la sesion RTH real del futuro: ES/NQ/YM = 13:30-20:00 UTC,
+    ver funding_discovery.resolve_session_window) para anclar el "dia de trading", algo que
+    solo tiene sentido en un mercado con sesion regulada -- NO se generan para ULTRA (perpetuos
+    24/7 sin sesion RTH real: devuelve lista vacia). Justificacion completa (por que se espera
+    volumen SUFICIENTE de operaciones CON ventaja, no solo mucho volumen) en
+    orchestration/reviews/diseno_arquetipos_5_17_0.md.
+    """
+    if is_ultra:
+        return []
+    riesgos = [0.005, 0.01, 0.02, 0.04]
+    sl_tp_pairs = [(1.5, 4.0), (2.0, 6.0), (3.0, 8.0)]
+    cfgs: List[Dict[str, Any]] = []
+
+    # E. opening_range_breakout -- ruptura del rango de los primeros `or_minutes` minutos tras
+    # la apertura de sesion (session_window.start_time_utc: 13:30 UTC en CME = 9:30 ET, el
+    # bell de la sesion regular). SL/TP fijos por ATR: ambos son dimension real de busqueda
+    # (igual que squeeze_breakout/session_momentum/streak_edge).
+    for or_minutes in (15, 30, 60):
+        for sl, tp in sl_tp_pairs:
+            for risk in riesgos:
+                cfgs.append({
+                    "archetype": "OPENING_RANGE_BREAKOUT",
+                    "ema_fast": 20, "ema_slow": 50,
+                    "sl_atr_mult": sl, "tp_atr_mult": tp,
+                    "risk_pct": risk,
+                    "archetype_params": {"or_minutes": or_minutes},
+                })
+
+    # F. vwap_reversion -- reversion al VWAP anclado a sesion (se reinicia cada dia RTH, ver
+    # EventBacktestEngine._calc_session_vwap). TP dinamico (el propio VWAP vivo); tp_atr_mult
+    # es placeholder inerte igual que en reversion_atr, sl_only reutiliza los mismos valores
+    # curados que ese arquetipo.
+    for vwap_dev_atr_mult in (1.0, 1.5, 2.0):
+        for sl in (1.5, 2.0, 3.0):
+            for risk in riesgos:
+                cfgs.append({
+                    "archetype": "VWAP_REVERSION",
+                    "ema_fast": 20, "ema_slow": 50,
+                    "sl_atr_mult": sl, "tp_atr_mult": sl * 3.0,
+                    "risk_pct": risk,
+                    "archetype_params": {"vwap_dev_atr_mult": vwap_dev_atr_mult},
+                })
+
+    return cfgs
+
+
 def build_candidate_search_configs(track: str, symbol: str, timeframe: str, profile: str) -> List[Dict[str, Any]]:
     """Construye el espacio de exploración cuantitativo según track, timeframe y perfil."""
     is_ultra = (track.lower() == "ultra")
     tf_lower = timeframe.lower()
 
     if profile.lower() == "arquetipos":
-        # F03.3 (5.14.0): perfil dedicado que mina SOLO las 4 familias nuevas (re-campana sin
-        # re-evaluar lo ya barrido por `amplio`/`default`/`champions`).
-        return _arquetipos_5_14_0_configs(is_ultra)
+        # F03.3 (5.14.0 + 5.17.0): perfil dedicado que mina SOLO las familias EVENTO nuevas
+        # (re-campana sin re-evaluar lo ya barrido por `amplio`/`default`/`champions`). Las 2
+        # de 5.17.0 (opening_range_breakout, vwap_reversion) devuelven [] en ULTRA (ver
+        # docstring de _arquetipos_5_17_0_configs): no rompe nada, solo no aporta nuevas celdas.
+        return _arquetipos_5_14_0_configs(is_ultra) + _arquetipos_5_17_0_configs(is_ultra)
 
     if profile.lower() == "champions":
         if is_ultra:
@@ -393,9 +562,11 @@ def build_candidate_search_configs(track: str, symbol: str, timeframe: str, prof
                                 "pyramiding_tiers": py,
                                 "breakout_lookback": 15 if arch == "MOMENTUM_BREAKOUT" else 0,
                             })
-        # F03.3 (5.14.0): las 4 familias EVENTO nuevas se anaden AL perfil amplio (aditivo:
-        # las familias EMA/RSI/Donchian de arriba no cambian ni una linea de su rejilla).
+        # F03.3 (5.14.0 + 5.17.0): las familias EVENTO nuevas se anaden AL perfil amplio
+        # (aditivo: las familias EMA/RSI/Donchian de arriba no cambian ni una linea de su
+        # rejilla).
         configs.extend(_arquetipos_5_14_0_configs(is_ultra))
+        configs.extend(_arquetipos_5_17_0_configs(is_ultra))
         return configs
 
     # Default / Grid Search
@@ -533,6 +704,7 @@ def run_mining_pipeline(
     dry_run: bool = False,
     max_candidates: int = 20,
     dataset_path: Optional[str] = None,
+    dataset_source: str = "auto",
 ) -> Dict[str, Any]:
     track_norm = track.lower()
     if track_norm not in ["ultra", "fondeo"]:
@@ -566,13 +738,28 @@ def run_mining_pipeline(
         + f", TF={tf_norm}, Profile={profile}, DryRun={dry_run}"
     )
 
-    dataset_file, manifest_file = resolve_dataset_file(sym_norm, tf_norm, dataset_path)
+    try:
+        dataset_file, manifest_file = resolve_dataset_file(
+            sym_norm, tf_norm, dataset_path, data_source=dataset_source
+        )
+    except DatasetSourceError as e:
+        # Tarea A: fuente pedida explicitamente que no se puede resolver (RTY sin proxy,
+        # backfill Dukascopy incompleto para este simbolo/TF, etc.) -- ruidoso, no crashea el
+        # proceso con un stack trace pelado, pero tampoco cae a Yahoo en silencio.
+        err_msg = f"ERROR: {e}"
+        log_msg(err_msg)
+        return {"status": "ERROR", "message": err_msg, "certified_count": 0}
     if dataset_file is None or not dataset_file.exists():
         err_msg = f"ERROR: No dataset found for symbol '{sym_norm}' and timeframe '{tf_norm}' in {DATA_DIR}"
         log_msg(err_msg)
         return {"status": "ERROR", "message": err_msg, "certified_count": 0}
 
-    log_msg(f"Dataset físico resuelto: {dataset_file.name} ({dataset_file.stat().st_size / 1024:.1f} KB)")
+    dataset_source_label = infer_dataset_source_label(dataset_file, manifest_file)
+    log_msg(
+        f"Dataset físico resuelto: {dataset_file.name} "
+        f"({dataset_file.stat().st_size / 1024:.1f} KB) [FUENTE={dataset_source_label}, "
+        f"dataset_source pedido='{dataset_source}']"
+    )
     file_sha256 = compute_file_sha256(dataset_file)
     dataset_id = dataset_file.stem.replace("_manifest", "")
 
@@ -843,6 +1030,28 @@ def run_mining_pipeline(
                 ).encode("utf-8")
             ).hexdigest()
 
+            # CUELLO 2 (F07): duration_info REAL del tramo blind OOS, derivado de los propios
+            # timestamps de candles_blind_oos (ya cargados, reales -- ningun valor inventado).
+            # Sin esto, scripts/fondeo_examen.py::deducir_ops_por_dia no puede derivar el ritmo
+            # real de operaciones/dia y marca la candidata NO_EVALUABLE (fail-closed correcto,
+            # pero evitable: el dato ya esta disponible aqui). Si faltan timestamps validos se
+            # omite la clave (mismo fail-closed que aplica a oos_returns): nunca se asume una
+            # ventana fija.
+            _oos_ts = [c.get("timestamp_ms") for c in candles_blind_oos if c.get("timestamp_ms")]
+            duration_info_payload = None
+            if len(_oos_ts) >= 2:
+                _oos_days = (max(_oos_ts) - min(_oos_ts)) / 86_400_000.0
+                if _oos_days > 0:
+                    duration_info_payload = {
+                        "total_bars": total_bars,
+                        "is_bars": len(candles_is),
+                        "validation_bars": len(candles_val),
+                        "blind_oos_bars": len(candles_blind_oos),
+                        "oos_days": round(_oos_days, 4),
+                        "oos_start_ms": min(_oos_ts),
+                        "oos_end_ms": max(_oos_ts),
+                    }
+
             scorecard_payload = {
                 "strategy_id": strat_id,
                 "strategy_sha256": snapshot.canonical_hash,
@@ -853,6 +1062,7 @@ def run_mining_pipeline(
                 "timeframe": tf_norm,
                 "dataset_id": dataset_file.name,
                 "dataset_hash": file_sha256,
+                "duration_info": duration_info_payload,
                 "ledger_hash": ledger_sha256,
                 "ledger_path": str(ledger_file),
                 "bundle_signature_sha256": bundle_signature,
@@ -952,7 +1162,11 @@ def main():
         "--profile",
         type=str,
         default="default",
-        choices=["default", "amplio", "champions", "breakout", "momentum", "trend", "reversion"],
+        # "arquetipos" (5.14.0, F03.3) mina SOLO las 4 familias EVENTO nuevas -- ver
+        # build_candidate_search_configs/_arquetipos_5_14_0_configs. Estaba implementado pero
+        # no expuesto en choices, asi que la cola fallaba con rc=2 al invocarlo.
+        choices=["default", "amplio", "champions", "breakout", "momentum", "trend", "reversion",
+                 "arquetipos"],
         help="Perfil de búsqueda cuantitativo (default: default)",
     )
     parser.add_argument(
@@ -972,6 +1186,21 @@ def main():
         default=None,
         help="Ruta explícita al dataset (opcional)",
     )
+    parser.add_argument(
+        "--dataset-source",
+        dest="dataset_source",
+        type=str,
+        default="auto",
+        choices=["auto", "dukascopy"],
+        help=(
+            "Fuente de datos a usar para resolver el dataset físico (Tarea A, 2026-09-01). "
+            "'auto' (default): comportamiento histórico sin cambios, NO usa Dukascopy aunque "
+            "haya un fichero ds_dukascopy_* más grande en disco. 'dukascopy': activación "
+            "EXPLÍCITA del proxy CFD Dukascopy para FONDEO (ES->USA500IDXUSD, etc., ver "
+            "FONDEO_DUKASCOPY_PROXY en este fichero); falla con error claro si el símbolo no "
+            "tiene proxy (RTY) o si el backfill aún no tiene ese símbolo/TF en disco."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -983,6 +1212,7 @@ def main():
         dry_run=args.dry_run,
         max_candidates=args.max_candidates,
         dataset_path=args.dataset,
+        dataset_source=args.dataset_source,
     )
 
     if result.get("status") == "ERROR":

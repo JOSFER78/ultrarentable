@@ -11,6 +11,22 @@
 
 ---
 
+## MANDATO ACTIVO (2026-09-01) — SOLO FONDEO
+
+> **El 100 % del trabajo va a FONDEO y a las META-ESTRATEGIAS DE FONDEO.** Orden literal de
+> Emilio: *"debes adaptar todo a de momento solo buscar estrategias fondeo y fondeo meta. DEBES
+> DEJAR EN PARA FUTURO ULTRA"*.
+>
+> **ULTRA y META-ULTRA quedan APARCADOS, no abandonados.** Las fases F05 (envolvente ULTRA) y F06
+> (router de meta-estrategias ULTRA) conservan su contenido íntegro y llevan `aparcado: true` en
+> su cabecera. Su estado completo —lo hecho y lo que faltaba— está congelado en
+> `state/PUNTO_GUARDADO_ULTRA.md`. Se retoman cuando FONDEO tenga estrategias certificadas.
+>
+> La tesis de la envolvente de balas que se explica arriba **sigue siendo válida y sellada**: es
+> el camino a los miles de % de ULTRA. Simplemente no es el trabajo de ahora.
+
+---
+
 ## LA TESIS DEL PLAN (leer esto antes que las fases)
 
 **Los miles de % no salen de encontrar una señal de entrada mágica.** No existe. Salen de esto:
@@ -38,16 +54,16 @@ entonces **la envolvente ULTRA**. En paralelo desde el descubrimiento, **FONDEO*
 
 | Bloque | Fase | Estado | Depende de | Fichero |
 | :--- | :--- | :--- | :--- | :--- |
-| F00 | Limpieza del código | **PARCIAL** (C–G ejecutadas; unificaciones en Fase I) | — | `plan/bloques/F00_limpieza.md` |
+| F00 | Limpieza del código | **EN_CURSO** (web: 16 rutas duplicadas a cuarentena; detectados 9 módulos homónimos vivos y DOS pipelines de validación con umbrales distintos) | — | `plan/bloques/F00_limpieza.md` |
 | F01 | Saneamiento del catálogo | **HECHO** (0 supervivientes de 728) | F00 | `plan/bloques/F01_censo_catalogo.md` |
-| F02 | Motor de backtest realista | **PARCIAL** (2.1 HECHO: motor 5.13.0; 2.2 PARCIAL, 2.3 pendiente) | F00 | `plan/bloques/F02_motor_realista.md` |
-| F03 | Campaña de descubrimiento masiva | **EN_CURSO** (4h/1h y 15m barridas: 0 certif.; 5.14.0 arquetipos en implementación; TRADFI espera Dukascopy) | F01, F02 | `plan/bloques/F03_campana_descubrimiento.md` |
+| F02 | Motor de backtest realista | **PARCIAL** (motor **5.17.0**; 2.3 HECHO: reglas prop sobre equity flotante en 5.15.0; comisión de forex corregida en 5.16.0; las tres releases con identidad 15/15) | F00 | `plan/bloques/F02_motor_realista.md` |
+| F03 | Campaña de descubrimiento masiva | **EN_CURSO** (4h/1h y 15m barridas: 0 certif.; motor 5.17.0 con 6 arquetipos EVENTO — 5.14.0 + ORB/VWAP_REVERSION intradía; re-campaña FONDEO 5m/15m pendiente) | F01, F02 | `plan/bloques/F03_campana_descubrimiento.md` |
 | F04 | Motor de mejora inteligente | PENDIENTE | F03 | `plan/bloques/F04_mejora_inteligente.md` |
-| F05 | Envolvente ULTRA (motor de balas) | PENDIENTE | F04 | `plan/bloques/F05_envolvente_ultra.md` |
-| F06 | Meta-estrategias: el router | PENDIENTE | F05 | `plan/bloques/F06_meta_router.md` |
+| F05 | Envolvente ULTRA (motor de balas) | **APARCADO** — ver mandato activo |  F04 | `plan/bloques/F05_envolvente_ultra.md` |
+| F06 | Meta-estrategias: el router | **APARCADO** — ver mandato activo |  F05 | `plan/bloques/F06_meta_router.md` |
 | F07 | FONDEO: exámenes 3-8 días | PENDIENTE | F03 | `plan/bloques/F07_fondeo_examenes.md` |
 | F08 | Verificación end-to-end y paper | PENDIENTE | F06, F07 | `plan/bloques/F08_verificacion_paper.md` |
-| F09 | Front limpio | PENDIENTE | F08 | `plan/bloques/F09_front_limpio.md` |
+| F09 | Front limpio | **PARCIAL** (16 rutas retiradas; el plan se lee de los bloques en `/plan`) | F08 | `plan/bloques/F09_front_limpio.md` |
 | — | Riesgos | VIGENTE | — | `plan/bloques/RIESGOS.md` |
 | — | Reglas invariantes | VIGENTE | — | `plan/bloques/REGLAS_INVARIANTES.md` |
 

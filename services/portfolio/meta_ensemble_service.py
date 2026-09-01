@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from services.api.app.db.database import CandidateModel, PortfolioModel
+from services.engine_version import CURRENT_ENGINE_VERSION, is_version_stale
 
 logger = logging.getLogger("MetaEnsembleService")
 
@@ -123,8 +124,17 @@ class MetaEnsembleService:
                 if symbol in seen_symbols:
                     raise ValueError(f"Violación de Regla Multi-Activo: símbolo duplicado {symbol} en {cid}")
                 seen_symbols.add(symbol)
-                if str(row.engine_version or "") != "5.4.0":
-                    raise ValueError(f"STALE_CANDIDATE: {cid} no pertenece al motor actual")
+                # Igualdad exacta con el SSOT (services.engine_version.CURRENT_ENGINE_VERSION),
+                # vía el mismo helper que aplica la Regla #26 (scripts/gobernanza_regla26.py):
+                # no existe en el repo un registro de equivalencia entre versiones de motor, así
+                # que no se acepta ninguna versión antigua en silencio aunque un cambio reciente
+                # haya sido aditivo para otras familias de arquetipos (ver docstring del módulo
+                # meta_strategy_pipeline para la justificación completa).
+                if is_version_stale(str(row.engine_version or "")):
+                    raise ValueError(
+                        f"STALE_CANDIDATE: {cid} tiene engine_version="
+                        f"{row.engine_version!r}, motor vigente={CURRENT_ENGINE_VERSION!r}"
+                    )
                 certified_statuses = {
                     "APPROVED_CURRENT_ENGINE",
                     "APPROVED",
@@ -153,7 +163,7 @@ class MetaEnsembleService:
                 "candidate_ids": sorted_ids,
                 "weights": weights,
                 "correlation_matrix": corr_matrix,
-                "engine_version": "5.4.0",
+                "engine_version": CURRENT_ENGINE_VERSION,
             }
             canonical_hash = hashlib.sha256(
                 json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
@@ -181,7 +191,7 @@ class MetaEnsembleService:
                 "weighted_max_drawdown_oos_pct": round(weighted_dd, 8),
                 "canonical_hash": canonical_hash,
                 "status": "ASSEMBLED_PENDING_PORTFOLIO_BACKTEST",
-                "engine_version": "5.4.0",
+                "engine_version": CURRENT_ENGINE_VERSION,
                 "created_at_utc": datetime.now(timezone.utc).isoformat(),
             }
         finally:

@@ -332,3 +332,143 @@ def test_gate_09_evaluates_new_archetype_family_end_to_end_with_real_data():
     assert res["evidence"]["rebacktest_performed"] is True
     assert res["evidence"]["parameters_count"] == 4  # ema_ancla, banda_atr_mult, sl_atr_mult, risk_pct
     assert len(res["evidence"]["perturbed_neighborhood_pfs"]) == 4
+
+
+def test_gate_09_counts_effective_dof_for_new_archetype_families_5_17_0():
+    """5.17.0 (F03.3 cont., CUELLO 6): opening_range_breakout y vwap_reversion son familias
+    EVENTO nuevas para futuros intradía de índice (misma arquitectura que las 4 de 5.14.0:
+    dimensiones reales en `archetype_params`, fuera del `base` genérico). Sin registrar sus
+    claves exactas en services/discovery/effective_dof.py, colapsarían a DoF=1 igual que el
+    bug original de 5.14.0 -- error más peligroso posible aquí: infla el DoF ratio del Gate 9
+    y deja pasar sobreajuste."""
+    from services.discovery.effective_dof import count_effective_parameters
+
+    orb_params = {
+        "archetype": "OPENING_RANGE_BREAKOUT", "ema_fast": 20, "ema_slow": 50,
+        "sl_atr_mult": 2.0, "tp_atr_mult": 6.0, "risk_pct": 0.02,
+        "archetype_params": {"or_minutes": 30},
+    }
+    assert count_effective_parameters(orb_params) == 4  # or_minutes, sl_atr_mult, tp_atr_mult, risk_pct
+
+    vwap_params = {
+        "archetype": "VWAP_REVERSION", "ema_fast": 20, "ema_slow": 50,
+        "sl_atr_mult": 2.0, "tp_atr_mult": 6.0, "risk_pct": 0.02,
+        "archetype_params": {"vwap_dev_atr_mult": 1.5},
+    }
+    # tp_atr_mult NO cuenta: es placeholder inerte (TP dinamico = VWAP vivo, ver
+    # event_backtest_engine.py rama VWAP_REVERSION del bloque "TP DINAMICO").
+    assert count_effective_parameters(vwap_params) == 3  # vwap_dev_atr_mult, sl_atr_mult, risk_pct
+
+
+def test_gate_09_perturbation_never_noop_on_real_archetype_grid_5_17_0():
+    """Mismo ataque adversarial que test_gate_09_perturbation_never_noop_on_real_archetype_grid_
+    5_14_0, aplicado a la rejilla REAL de opening_range_breakout/vwap_reversion
+    (scripts/mine.py::_arquetipos_5_17_0_configs): recorre cada valor del grid x los 4 deltas
+    de Gate09NoveltyAntiFit.evaluate (±10%/±20%) y exige que la dimension perturbada difiera
+    de la base -- si no, el test de estabilidad de vecindario del Gate 9 seria un no-op
+    silencioso para estos 2 arquetipos nuevos."""
+    from services.api.app.validation.gates.gate_09_novelty_antifit import (
+        _perturb_archetype_params,
+        _ARCHETYPE_NEIGHBORHOOD_SPEC,
+    )
+
+    perturbation_deltas = [-0.20, -0.10, 0.10, 0.20]
+
+    real_grid_cases = {
+        "OPENING_RANGE_BREAKOUT": [{"or_minutes": v} for v in (15, 30, 60)],
+        "VWAP_REVERSION": [{"vwap_dev_atr_mult": v} for v in (1.0, 1.5, 2.0)],
+    }
+
+    checked = 0
+    for archetype, cases in real_grid_cases.items():
+        spec = _ARCHETYPE_NEIGHBORHOOD_SPEC[archetype]
+        for base_case in cases:
+            for delta in perturbation_deltas:
+                perturbed = _perturb_archetype_params(base_case, archetype, delta)
+                for key, base_val in base_case.items():
+                    floor = spec[key][1]
+                    checked += 1
+                    if delta < 0 and base_val <= floor:
+                        assert perturbed[key] == floor
+                        continue
+                    assert perturbed[key] != base_val, (
+                        f"{archetype}.{key}={base_val} delta={delta} -> perturbado "
+                        f"identico a la base (no-op de vecindario)"
+                    )
+    assert checked == 24  # 3 valores x 4 deltas x 2 arquetipos: cobertura completa del grid real
+
+
+def test_gate_09_evaluates_opening_range_breakout_and_vwap_reversion_end_to_end_with_real_data():
+    """5.17.0 (F03.3 cont., CUELLO 6): integracion real (zero-mocks) -- construye blueprints
+    OPENING_RANGE_BREAKOUT y VWAP_REVERSION con FundingDiscoveryEngine (ruta FONDEO, la unica
+    que los genera: is_ultra=True devuelve archetype_params=None y estos arquetipos son
+    inertes fuera de FONDEO) y los evalua con el Gate 9 fisico sobre velas reales de
+    USA500IDXUSD (proxy Dukascopy de ES) 5m, ~63 dias de sesion. Confirma que ambos arquetipos
+    generan operaciones reales (no solo eventos contados) y que el vecindario perturbado del
+    Gate 9 se re-ejecuta con archetype_params correctos, no con el default silencioso."""
+    from services.discovery.funding_discovery import FundingDiscoveryEngine
+
+    sample_file = (
+        "/home/ubuntu/workspace/pro/trading/01 Ultrarentable/data/normalized/"
+        "ds_dukascopy_usa500idxusd_5m_1704150000000_1711929300000.json"
+    )
+    with open(sample_file, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+    candles = raw["bars"]
+    # El motor solo lee `timestamp_ms`/`timestamp`/`time`/`datetime`; el dataset normalizado
+    # guarda `timestamp_utc_ms` -- mismo puente que scripts/mine.py::_normalizar_timestamps y
+    # tests/test_engine_prop_firm_floating_equity.py::_load_candles_con_timestamp_real. Critico
+    # para estos 2 arquetipos: sin `timestamp_ms` correcto, _is_in_session_window no puede
+    # resolver el dia/hora UTC y el rango de apertura / VWAP de sesion no se ancla a nada.
+    for c in candles:
+        if "timestamp_ms" not in c and "timestamp_utc_ms" in c:
+            c["timestamp_ms"] = int(c["timestamp_utc_ms"])
+
+    disc_f = FundingDiscoveryEngine()
+    g9 = Gate09NoveltyAntiFit()
+
+    casos = [
+        ("OPENING_RANGE_BREAKOUT", {"or_minutes": 15}, 1.5, 4.0, 4),
+        ("VWAP_REVERSION", {"vwap_dev_atr_mult": 1.0}, 1.5, 4.5, 3),
+    ]
+    for archetype, archetype_params, sl, tp, expected_dof in casos:
+        strat = disc_f.generate_candidate_blueprint(
+            strategy_id=f"strat_rt_{archetype.lower()}",
+            symbol="MES",
+            timeframe="5m",
+            dataset_id="ds_dukascopy_usa500idxusd_5m",
+            dataset_sha256="sha_rt_arch_5_17_0",
+            sl_atr_mult=sl,
+            tp_atr_mult=tp,
+            risk_per_trade_pct=0.005,
+            archetype=archetype,
+            archetype_params=archetype_params,
+        )
+        assert strat.archetype_params == archetype_params
+
+        res = g9.evaluate(
+            parameters={
+                "archetype": archetype, "ema_fast": 20, "ema_slow": 50,
+                "sl_atr_mult": sl, "tp_atr_mult": tp, "risk_pct": 0.005,
+                "archetype_params": archetype_params,
+            },
+            trades_count=100,
+            oos_pf=1.2,
+            candles=candles,
+            strategy_snapshot=strat,
+            is_ultra=False,
+        )
+        assert res["evidence"]["rebacktest_performed"] is True
+        assert res["evidence"]["parameters_count"] == expected_dof
+        assert len(res["evidence"]["perturbed_neighborhood_pfs"]) == 4
+
+        # Backtest directo (fuera del Gate 9) para confirmar volumen real de operaciones sobre
+        # el mismo tramo de 63 dias de sesion usado en el diseno (ver
+        # orchestration/reviews/diseno_arquetipos_5_17_0.md): >=50 operaciones en ~63 dias
+        # confirma que el mecanismo dispara con la frecuencia proyectada, no solo que compila.
+        bt_engine = EventBacktestEngine()
+        bt = bt_engine.run_backtest(strat, candles, initial_capital_usd=50000.0)
+        assert bt.total_trades >= 50, (
+            f"{archetype}: solo {bt.total_trades} operaciones en 63 dias de sesion -- muy por "
+            f"debajo del volumen proyectado en el diseno, revisar el anclaje de sesion"
+        )

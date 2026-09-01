@@ -10,17 +10,21 @@ REAL-ONLY / ZERO-INFERENCE:
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 
 from services.api.app.db.database import CandidateModel, PortfolioModel, get_db
+from services.engine_version import CURRENT_ENGINE_VERSION
 from services.export.excel_master_catalog import (
     build_master_catalog_csv,
     build_master_catalog_xlsx,
 )
+
+logger = logging.getLogger("CertifiedSummaryRouter")
 
 certified_summary_router = APIRouter(prefix="/certified", tags=["Canonical Certification Summary"])
 
@@ -304,9 +308,30 @@ def get_certified_meta_strategies_endpoint(
     try:
         from services.portfolio.meta_strategy_pipeline import ensure_meta_strategies
 
-        ensure_meta_strategies(("ULTRA", "FONDEO"))
-    except Exception:
-        pass  # fail-closed: si el pipeline no puede correr, se sirve lo persistido
+        pipeline_results = ensure_meta_strategies(("ULTRA", "FONDEO"))
+    except Exception as exc:
+        # El pipeline en sí (import o ensure_meta_strategies) reventó de forma inesperada:
+        # esto NO es "sin evidencia todavía" (esa rama devuelve None por ruta sin excepción,
+        # ver meta_strategy_pipeline.build_meta_for_route), es un fallo real del sistema.
+        # Debe ser distinguible de un 200 con lista vacía/persistida.
+        logger.error("META_STRATEGY_PIPELINE_CRASHED: %s", exc, exc_info=True)
+        raise HTTPException(
+            status_code=503,
+            detail=f"META_STRATEGY_PIPELINE_ERROR: {exc.__class__.__name__}: {exc}",
+        ) from exc
+    pipeline_errors = {
+        r: res["error"] for r, res in (pipeline_results or {}).items()
+        if isinstance(res, dict) and "error" in res
+    }
+    if pipeline_errors:
+        # ensure_meta_strategies() captura errores por ruta (build_meta_for_route) en vez de
+        # relanzarlos; si los descartamos aquí, la API no distingue "0 candidatas FONDEO
+        # certificadas" (NO_EVALUABLE honesto) de "el ensamblador de esa ruta falló".
+        logger.error("META_STRATEGY_PIPELINE_ROUTE_ERROR: %s", pipeline_errors)
+        raise HTTPException(
+            status_code=503,
+            detail={"error": "META_STRATEGY_PIPELINE_ROUTE_ERROR", "routes": pipeline_errors},
+        )
     all_rows = (
         db.query(PortfolioModel)
         .filter(PortfolioModel.portfolio_id.like("meta%"))
@@ -327,7 +352,13 @@ def get_certified_meta_strategies_endpoint(
             "portfolio_hash": row.canonical_hash,
             "combined_ledger_hash": row.canonical_hash,
             "status": row.status,
-            "engine_version": "5.4.0",
+            # PortfolioModel no persiste engine_version por fila (sin columna dedicada); se
+            # informa el motor vigente porque ensure_meta_strategies() se acaba de ejecutar
+            # arriba y build_meta_for_route solo ensambla sobre candidatos filtrados por
+            # CURRENT_ENGINE_VERSION (services/portfolio/meta_strategy_pipeline.py). Filas
+            # históricas de una versión previa del motor no son distinguibles con el esquema
+            # actual; añadir esa provenance exacta requeriría una columna nueva y migración.
+            "engine_version": CURRENT_ENGINE_VERSION,
             "base_capital_usd": row.base_capital_usd,
             "components": json.loads(row.components_json or "[]"),
             "correlation_matrix": json.loads(row.correlation_matrix_json or "[]"),

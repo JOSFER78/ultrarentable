@@ -142,7 +142,12 @@ class FundingDiscoveryEngine:
                 ConditionNode(left=ema_fast_spec, op=ComparisonOp.LT, right=ema_slow_spec),
                 ConditionNode(left=rsi_spec, op=ComparisonOp.LT, right=float(rsi_threshold_short)),
             ]
-        elif arch_upper in {"REVERSION_ATR", "SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}:
+        elif arch_upper in {
+            "REVERSION_ATR", "SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE",
+            # 5.17.0 (F03.3 cont., CUELLO 6): opening_range_breakout / vwap_reversion, mismo
+            # patron de despacho explicito -- ver docstring de generate_candidate_blueprint.
+            "OPENING_RANGE_BREAKOUT", "VWAP_REVERSION",
+        }:
             # 5.14.0 (F03.3): las 4 familias EVENTO nuevas no se interpretan via el arbol
             # generico de indicadores -- EventBacktestEngine las despacha por `archetype`
             # (campo explicito) y lee sus dimensiones de `archetype_params` (campo explicito,
@@ -180,16 +185,17 @@ class FundingDiscoveryEngine:
         tp_type = TakeProfitType.ATR_MULTIPLE if tp_atr_mult is not None else TakeProfitType.FIXED_POINTS
         tp_val = float(tp_atr_mult) if tp_atr_mult is not None else float(target_profit_ticks)
 
-        if arch_upper == "REVERSION_ATR":
-            # SL fijo (ATR desde la entrada); el TP REAL es dinamico (EMA ancla, recalculada
-            # barra a barra por EventBacktestEngine). tp_val aqui es un PLACEHOLDER que solo
-            # satisface el esquema (ExitModel.tp_value > 0); el motor lo ignora para este
-            # arquetipo (ver "5.14.0 reversion_atr: TP DINAMICO" en event_backtest_engine.py).
+        if arch_upper in {"REVERSION_ATR", "VWAP_REVERSION"}:
+            # SL fijo (ATR desde la entrada); el TP REAL es dinamico (nivel vivo de la EMA
+            # ancla / del VWAP de sesion segun el arquetipo, recalculado barra a barra por
+            # EventBacktestEngine). tp_val aqui es un PLACEHOLDER que solo satisface el esquema
+            # (ExitModel.tp_value > 0); el motor lo ignora para estos 2 arquetipos (ver
+            # "TP DINAMICO" en event_backtest_engine.py, ramas REVERSION_ATR y VWAP_REVERSION).
             sl_type = StopLossType.ATR_MULTIPLE
             sl_val = float(sl_atr_mult) if sl_atr_mult is not None else 2.0
             tp_type = TakeProfitType.ATR_MULTIPLE
             tp_val = float(tp_atr_mult) if tp_atr_mult is not None else (sl_val * 3.0)
-        elif arch_upper in {"SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE"}:
+        elif arch_upper in {"SQUEEZE_BREAKOUT", "SESSION_MOMENTUM", "STREAK_EDGE", "OPENING_RANGE_BREAKOUT"}:
             sl_type = StopLossType.ATR_MULTIPLE
             sl_val = float(sl_atr_mult) if sl_atr_mult is not None else 2.0
             tp_type = TakeProfitType.ATR_MULTIPLE

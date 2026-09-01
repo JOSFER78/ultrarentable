@@ -34,8 +34,15 @@ from services.queue.durable_job_queue import DurableJobQueue  # noqa: E402
 RESULTADOS = REPO_ROOT / "orchestration" / "results" / "cola_mineria.jsonl"
 CAMPANA02 = REPO_ROOT / "orchestration" / "results" / "campana_02_amplia.jsonl"
 
-# Universo de la campana (mismo criterio que scripts/campana.py: 4h primero, unico TF donde
-# el edge sobrevive al coste por operacion con el motor actual).
+# Universo de la campana.
+# AVISO 2026-08-31 (evidencia: orchestration/results/desbloqueo_tradfi_calidad_datos.md):
+# el TF "4h" de TRADFI esta CONTAMINADO -- no se descarga, se remuestrea de 1h sin comprobar
+# que la barra este completa (data_downloader.py:266). En ES, 750 de 3.714 barras 4h (20,2 %)
+# se construyen con menos de 4 velas horarias y 145 con UNA sola: una barra de 1 hora
+# etiquetada como barra de 4 horas, que corrompe cualquier indicador de rango/ATR.
+# Para TRADFI/FONDEO usar SIEMPRE `--tfs 1h` (13.701 barras en ES, contiguidad real 95,45 %,
+# solo 31 huecos anomalos que ademas son festivos de mercado). El default de abajo se conserva
+# por compatibilidad con las campanas de cripto ya registradas.
 CRIPTO = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "AVAXUSDT", "BNBUSDT", "LINKUSDT", "DOGEUSDT", "SUIUSDT"]
 TRADFI = ["ES", "NQ", "YM", "RTY", "GC", "CL", "SI", "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF"]
 TRADFI_FONDEO = [s for s in TRADFI if s != "SI"]  # FONDEO solo micros verificados
@@ -45,10 +52,13 @@ PERFIL = "amplio"
 PRIORIDAD = {"fondeo": 7, "ultra": 5}  # FONDEO primero: 4x mas rapido y desbloquea meta-FONDEO
 
 
-def celdas_universo(perfil: str, tfs: list[str] | None = None, solo_cripto: bool = False) -> list[dict]:
+def celdas_universo(perfil: str, tfs: list[str] | None = None, solo_cripto: bool = False,
+                     dataset_source: str = "auto") -> list[dict]:
     # solo_cripto: mandato del censo F03.1 (2026-08-31) — los datasets Yahoo de TRADFI tienen
     # 64-73% de cobertura y minar sobre ellos viola REAL-ONLY; TRADFI espera al backfill
     # Dukascopy verificado. Cripto Binance 1h/4h esta al 100% de cobertura.
+    # dataset_source (Tarea B, 2026-09-01): se persiste en el payload del job y viaja hasta
+    # mine.py via _lanzar(); ver DatasetSourceError/resolve_dataset_file en scripts/mine.py.
     celdas = []
     for track, universo in (("fondeo", TRADFI_FONDEO), ("ultra", CRIPTO + TRADFI)):
         if solo_cripto and track == "fondeo":
@@ -57,7 +67,8 @@ def celdas_universo(perfil: str, tfs: list[str] | None = None, solo_cripto: bool
             if solo_cripto and sym not in CRIPTO:
                 continue
             for tf in (tfs or TFS):
-                celdas.append({"track": track, "symbol": sym, "tf": tf, "profile": perfil})
+                celdas.append({"track": track, "symbol": sym, "tf": tf, "profile": perfil,
+                                "dataset_source": dataset_source})
     return celdas
 
 
@@ -93,7 +104,8 @@ def cmd_encolar(args) -> int:
     hechas = celdas_hechas_campana02() if args.respetar_campana02 else set()
     nuevas, omitidas = [], 0
     tfs = [t.strip() for t in args.tfs.split(",") if t.strip()] if args.tfs else None
-    for c in celdas_universo(args.perfil, tfs=tfs, solo_cripto=args.solo_cripto):
+    for c in celdas_universo(args.perfil, tfs=tfs, solo_cripto=args.solo_cripto,
+                              dataset_source=args.dataset_source):
         if args.solo_track and c["track"] != args.solo_track:
             continue
         if clave(c) in ya or clave(c) in hechas:
@@ -113,14 +125,26 @@ def cmd_encolar(args) -> int:
     return 0
 
 
-def _lanzar(payload: dict, max_candidates: int = 2000) -> subprocess.Popen:
-    cmd = [
+def _comando_mine(payload: dict, max_candidates: int = 2000) -> list[str]:
+    """Construye el comando exacto de mine.py para una celda.
+
+    Factorizado fuera de _lanzar() para poder trazarlo (tests/verificación) sin lanzar el
+    subproceso real. payload.get(..., default) en vez de indexación directa: los jobs ya
+    encolados antes de la Tarea B (2026-09-01) no tienen "dataset_source" en su payload y
+    deben seguir comportándose como "auto" (comportamiento histórico, sin cambios).
+    """
+    return [
         "nice", "-n", "15", "ionice", "-c", "3",
         sys.executable, str(REPO_ROOT / "scripts" / "mine.py"),
         "--track", payload["track"], "--symbol", payload["symbol"],
         "--tf", payload["tf"], "--profile", payload["profile"],
         "--max-candidates", str(int(payload.get("max_candidates") or max_candidates)),
+        "--dataset-source", str(payload.get("dataset_source") or "auto"),
     ]
+
+
+def _lanzar(payload: dict, max_candidates: int = 2000) -> subprocess.Popen:
+    cmd = _comando_mine(payload, max_candidates)
     return subprocess.Popen(
         cmd, cwd=str(REPO_ROOT),
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
@@ -250,7 +274,9 @@ def main() -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_enc = sub.add_parser("encolar", help="Encola las celdas del universo de campana")
-    p_enc.add_argument("--perfil", default=PERFIL, choices=["default", "amplio", "champions"])
+    # 5.14.0 (F03.3): "arquetipos" mina SOLO las 4 familias nuevas (mine.py::build_candidate_
+    # search_configs). Sin este choice la re-campana de arquetipos no se podia encolar.
+    p_enc.add_argument("--perfil", default=PERFIL, choices=["default", "amplio", "champions", "arquetipos"])
     p_enc.add_argument("--solo-track", choices=["ultra", "fondeo"], default=None)
     p_enc.add_argument("--ver", action="store_true", help="Muestra qué se encolaría, sin encolar")
     p_enc.add_argument("--respetar-campana02", action=argparse.BooleanOptionalAction, default=True,
@@ -258,6 +284,14 @@ def main() -> int:
     p_enc.add_argument("--tfs", default=None, help="TFs separados por coma (p.ej. '4h,1h'); por defecto los del universo")
     p_enc.add_argument("--solo-cripto", action="store_true",
                        help="Solo celdas cripto (mandato censo F03.1: TRADFI bloqueado hasta backfill Dukascopy)")
+    p_enc.add_argument("--dataset-source", dest="dataset_source", default="auto",
+                       choices=["auto", "dukascopy"],
+                       help=(
+                           "Fuente de dataset a propagar a mine.py --dataset-source por celda "
+                           "(Tarea B, 2026-09-01). 'auto' (default): sin cambios de comportamiento. "
+                           "'dukascopy': activa el proxy CFD Dukascopy para FONDEO (ES->USA500IDXUSD, "
+                           "etc.); ver FONDEO_DUKASCOPY_PROXY en scripts/mine.py."
+                       ))
     p_enc.set_defaults(fn=cmd_encolar)
 
     p_tra = sub.add_parser("trabajar", help="Worker: ejecuta celdas de la cola")

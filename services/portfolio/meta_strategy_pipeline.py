@@ -1,9 +1,28 @@
 """Pipeline de Meta-Estrategias (meta-ULTRA / meta-FONDEO).
 
 Ensambla meta-portafolios de paridad de riesgo EXCLUSIVAMENTE sobre candidatos
-certificados (APPROVED_CURRENT_ENGINE, motor 5.4.0) con serie de retornos OOS
-real persistida en el scorecard. Fail-closed: si faltan componentes o evidencia,
-no se construye nada.
+certificados (APPROVED_CURRENT_ENGINE, motor vigente == services.engine_version
+.CURRENT_ENGINE_VERSION, SSOT) con serie de retornos OOS real persistida en el
+scorecard. Fail-closed: si faltan componentes o evidencia, no se construye nada.
+
+Política de versión (igualdad exacta, no rango de compatibilidad): un candidato
+solo cuenta como componente meta si su engine_version coincide EXACTAMENTE con
+el motor vigente. No existe en el repositorio ningún registro de equivalencia
+entre versiones de motor (grep de "equivalen|COMPATIBLE_VERSIONS" sobre
+services/ y scripts/ vacío); el precedente doctrinal es la Regla #26
+(services/engine_version.py::is_version_stale, aplicada de forma idéntica por
+scripts/gobernanza_regla26.py con `engine_version <> CURRENT_ENGINE_VERSION`):
+toda aprobación con motor no vigente se reclasifica a LEGACY_MOTOR_*, sin
+excepción por "el cambio no alteró esta familia de arquetipos". Aceptar aquí
+una versión antigua porque scripts/verificacion_f02.py dio N/N celdas
+idénticas extrapolaría evidencia agregada (5 celdas representativas) a TODAS
+las familias de arquetipos sin verificación por candidato: eso es exactamente
+"aceptar una versión en silencio" que la doctrina REAL-ONLY prohíbe. Si en el
+futuro se quiere relajar esto, el mecanismo correcto es una tabla explícita y
+versionada en engine_version.py (p.ej. ENGINE_VERSION_EQUIVALENCE: dict[str,
+list[str]]) poblada SOLO cuando verificacion_f02.py confirme celdas idénticas
+que cubran la familia de arquetipo del candidato en cuestión, con revisión
+humana — nunca una comparación `>=` o un rango silencioso.
 
 Regla doctrinal: un meta-ensamblado NUNCA fabrica equity, profit factor ni
 drawdown a nivel de portafolio; esos campos quedan a cero y el estado
@@ -22,11 +41,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from services.core.runtime_paths import DB_PATH
+from services.engine_version import CURRENT_ENGINE_VERSION
 
 logger = logging.getLogger("MetaStrategyPipeline")
 
 CERTIFIED_STATUS = "APPROVED_CURRENT_ENGINE"
-ENGINE_VERSION = "5.4.0"
 
 
 import os
@@ -48,7 +67,7 @@ def _load_certified_for_route(route: str) -> List[Dict[str, Any]]:
             WHERE route = ? AND status = ? AND engine_version = ?
             ORDER BY profit_factor_oos DESC
             """,
-            (route.upper(), CERTIFIED_STATUS, ENGINE_VERSION),
+            (route.upper(), CERTIFIED_STATUS, CURRENT_ENGINE_VERSION),
         )
         rows = cur.fetchall()
     finally:
@@ -190,7 +209,7 @@ def build_meta_for_route(route: str, base_capital: Optional[float] = None) -> Op
         "candidate_ids": ids,
         "weights": weights,
         "correlation_matrix": corr,
-        "engine_version": ENGINE_VERSION,
+        "engine_version": CURRENT_ENGINE_VERSION,
     }
     canonical_hash = hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")

@@ -35,6 +35,13 @@ from services.portfolio.meta_strategy_engine import MetaStrategyEngine  # noqa: 
 PRESUPUESTO_DD = {"ULTRA": 70.0, "FONDEO": 4.0}
 CAPITAL_BASE = {"ULTRA": 1000.0, "FONDEO": 50000.0}
 
+# Criterio 1.1 SELLADO (no se relaja): suelo de 200 trades OOS por candidata.
+# Ver orchestration/state/plan/bloques/REGLAS_INVARIANTES.md. Este es el valor por defecto de
+# --min-trades. Si se baja explícitamente para exploración, el resultado NO certifica y se marca
+# de forma imborrable como NO_CONFORME_CRITERIO_1_1 tanto en consola como en el JSON persistido
+# y en el propio registro del Meta-Portafolio (portfolio_id/name) dentro de la BD canónica.
+SUELO_SELLADO_TRADES_OOS = 200
+
 
 def serie_portafolio(cands: List[Dict[str, Any]], capital: float) -> np.ndarray:
     """Serie de retornos fraccionales del portafolio, ponderado por volatilidad inversa."""
@@ -89,6 +96,13 @@ def seleccionar_ortogonales(cands: List[Dict[str, Any]], min_trades: int) -> Lis
 
 
 def evaluar(route: str, min_trades: int, fraccion: float, solo_nuevas: bool) -> Optional[Dict[str, Any]]:
+    conforme = min_trades >= SUELO_SELLADO_TRADES_OOS
+    if not conforme:
+        print(f"\n{'!'*74}\n  NO_CONFORME_CRITERIO_1_1: --min-trades={min_trades} < suelo sellado "
+              f"{SUELO_SELLADO_TRADES_OOS}. Este resultado es EXPLORATORIO, no una meta-estrategia "
+              f"certificable. Queda marcado de forma imborrable en el veredicto, en el JSON de "
+              f"salida y en el propio registro persistido en la BD canónica.\n{'!'*74}")
+
     engine = MetaStrategyEngine()
     cands = engine.load_candidates_from_db(route=route)
     if solo_nuevas:
@@ -111,9 +125,16 @@ def evaluar(route: str, min_trades: int, fraccion: float, solo_nuevas: bool) -> 
     dd_budget = PRESUPUESTO_DD[route]
 
     # --- Meta-portafolio con el motor canónico (persiste con hash SHA-256) ---
-    pid = f"META_{route}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M')}"
+    ts = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M')
+    pid = f"META_{route}_{ts}" if conforme else f"EXPLORATORIO_NOCONFORME_C11_{route}_{ts}"
+    nombre_meta = (
+        None if conforme
+        else f"[NO_CONFORME_CRITERIO_1_1 min_trades={min_trades}<{SUELO_SELLADO_TRADES_OOS}] "
+             f"Meta-Portafolio exploratorio {route}"
+    )
     meta = engine.assemble_meta_portfolio(
-        portfolio_id=pid, route=route, strategies=sel, allocation_method="RISK_PARITY"
+        portfolio_id=pid, route=route, strategies=sel, allocation_method="RISK_PARITY",
+        custom_name=nombre_meta,
     )
     print(f"\n  Meta-portafolio {pid}")
     for k in ("average_cross_correlation", "drawdown_reduction_pct", "combined_sharpe_ratio",
@@ -127,7 +148,10 @@ def evaluar(route: str, min_trades: int, fraccion: float, solo_nuevas: bool) -> 
     if mitad < 5:
         print(f"\n  >>> NO_EVIDENCE: solo {len(r)} periodos. Insuficiente para partir en dos "
               f"y validar a ciegas. No se emite veredicto.")
-        return {"portfolio_id": pid, "meta": meta, "veredicto": "NO_EVIDENCE"}
+        veredicto_ne = "NO_EVIDENCE" if conforme else "NO_CONFORME_CRITERIO_1_1__NO_EVIDENCE"
+        return {"portfolio_id": pid, "meta": meta, "veredicto": veredicto_ne,
+                "criterio_1_1_conforme": conforme, "min_trades_usado": min_trades,
+                "suelo_sellado_criterio_1_1": SUELO_SELLADO_TRADES_OOS}
 
     entreno, validacion = r[:mitad], r[mitad:]
     k_tope = k_maxima(entreno, dd_budget)
@@ -149,21 +173,31 @@ def evaluar(route: str, min_trades: int, fraccion: float, solo_nuevas: bool) -> 
         veredicto = "SIN_EDGE_PERSISTENTE"
     else:
         veredicto = "VALIDA"
-    print(f"    VEREDICTO     : {veredicto}")
+    # Marca imborrable: si min_trades no llega al suelo sellado (200 OOS, Criterio 1.1), el
+    # veredicto NUNCA se reporta como si fuera una meta-estrategia certificable.
+    veredicto_final = veredicto if conforme else f"NO_CONFORME_CRITERIO_1_1__{veredicto}"
+    print(f"    VEREDICTO     : {veredicto_final}")
     if veredicto == "SIN_EDGE_PERSISTENTE":
         print("      El edge no persiste fuera de muestra. Una envolvente amplifica lo que haya:")
         print("      si la esperanza es negativa, amplifica pérdidas. No se despliega.")
+    if not conforme:
+        print(f"      NO CONFORME AL CRITERIO 1.1 SELLADO: min_trades={min_trades} < "
+              f"{SUELO_SELLADO_TRADES_OOS}. Resultado exploratorio, no certificable.")
 
     return {"portfolio_id": pid, "meta": meta, "k_tope": k_tope, "k_usada": k_usada,
             "retorno_ciego_pct": round(ret_v, 2), "dd_ciego_pct": round(dd_v, 2),
-            "veredicto": veredicto, "activos": [c.get("symbol") for c in sel]}
+            "veredicto": veredicto_final, "activos": [c.get("symbol") for c in sel],
+            "criterio_1_1_conforme": conforme, "min_trades_usado": min_trades,
+            "suelo_sellado_criterio_1_1": SUELO_SELLADO_TRADES_OOS}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Ensamblado y validación de meta-estrategias.")
     ap.add_argument("--route", choices=["ULTRA", "FONDEO", "AMBOS"], default="AMBOS")
-    ap.add_argument("--min-trades", type=int, default=20,
-                    help="operaciones OOS mínimas por candidata (por defecto 20)")
+    ap.add_argument("--min-trades", type=int, default=SUELO_SELLADO_TRADES_OOS,
+                    help=f"operaciones OOS mínimas por candidata (suelo SELLADO Criterio 1.1 = "
+                         f"{SUELO_SELLADO_TRADES_OOS}, por defecto; bajarlo marca el resultado "
+                         f"de forma imborrable como NO_CONFORME_CRITERIO_1_1)")
     ap.add_argument("--fraccion", type=float, default=0.5,
                     help="fracción del presupuesto de DD que se usa (por defecto 0.5)")
     ap.add_argument("--solo-nuevas", action="store_true",

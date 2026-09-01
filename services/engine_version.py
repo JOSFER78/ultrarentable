@@ -72,9 +72,26 @@ from typing import Any, Dict, List, Optional, Tuple
 #   alcanza este bloque: `if not _es_fondeo: ... raise StopIteration`) ni los futuros CME
 #   (asset_class ya era CME_FUTURES, es_futuro sigue siendo True exactamente igual que antes).
 #   15/15 celdas de scripts/verificacion_f02.py identicas a 5.15.0 (ninguna es forex).
+# 5.17.0 (2026-09-01, F03.3 cont., CUELLO 6): 2 familias de arquetipos EVENTO nuevas para
+#   FUTUROS INTRADIA DE INDICE en 5m/15m -- opening_range_breakout (ruptura del rango de los
+#   primeros `or_minutes` minutos tras la apertura de sesion RTH) y vwap_reversion (reversion
+#   al VWAP anclado a sesion, se reinicia cada dia). Causa: ningun arquetipo existente opera
+#   lo suficiente en futuros intradia para alcanzar las >=200 operaciones OOS del criterio 1.1
+#   sellado (session_momentum: 24-27 operaciones OOS best-case). Ambas familias se despachan
+#   por `strategy.archetype` + `archetype_params`, mismo patron aditivo que 5.14.0 (helpers
+#   nuevos _calc_opening_range_levels/_calc_session_vwap en EventBacktestEngine; cero lineas
+#   tocadas de las familias EMA/RSI/Donchian/REVERSION_ATR/SQUEEZE_BREAKOUT/SESSION_MOMENTUM/
+#   STREAK_EDGE existentes). DoF real contado en services/discovery/effective_dof.py
+#   (OPENING_RANGE_BREAKOUT=4, VWAP_REVERSION=3, risk_pct incluido) y vecindario perturbable
+#   NO-NOOP verificado en gate_09_novelty_antifit.py (_ARCHETYPE_NEIGHBORHOOD_SPEC, paso
+#   minimo forzado en enteros como el resto de familias 5.14.0). Diseno completo con
+#   justificacion de ventaja esperada (no solo volumen) en
+#   orchestration/reviews/diseno_arquetipos_5_17_0.md. Aditivo estricto: 15/15 celdas de
+#   scripts/verificacion_f02.py identicas a 5.16.0 (el perfil `champions` que usa esa
+#   verificacion no incluye estas 2 familias nuevas).
 # Las certificaciones anteriores NO son comparables: se marcan LEGACY_MOTOR_* (regla #26).
-CURRENT_ENGINE_VERSION: str = "5.16.0"
-CURRENT_ENGINE_NAME: str = "Ultrarentable V5.16.0 (Fix: comision FONDEO/forex clasificada por asset_class, no por point_value)"
+CURRENT_ENGINE_VERSION: str = "5.17.0"
+CURRENT_ENGINE_NAME: str = "Ultrarentable V5.17.0 (Opening Range Breakout + VWAP Reversion: arquetipos intradia de futuros de indice)"
 CURRENT_PIPELINE_VERSION: str = "5.4.0"
 CURRENT_VALIDATION_PIPELINE_VERSION: str = "5.4.0"
 VALIDATION_PIPELINE_VERSION: str = "5.4.0"
@@ -88,10 +105,26 @@ CANONICAL_AUTHOR: str = "Ultrarentable Core Quantitative Team"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
-        "version": "5.16.0",
+        "version": "5.17.0",
         "name": CURRENT_ENGINE_NAME,
         "date": "2026-09-01",
         "status": "CURRENT_RECOMMENDED",
+        "changes": [
+            "CUELLO 6 (plan FONDEO): 2 familias de arquetipos EVENTO nuevas para futuros intradia de indice en 5m/15m -- opening_range_breakout (ruptura del rango de los primeros `or_minutes` {15,30,60} minutos tras la apertura de sesion RTH, session_window.start_time_utc) y vwap_reversion (reversion al VWAP anclado a sesion, se reinicia cada dia; TP dinamico = VWAP vivo, igual patron que reversion_atr).",
+            "Causa: ningun arquetipo existente opera lo suficiente en futuros intradia para las >=200 operaciones OOS del criterio 1.1 sellado (session_momentum: 24-27 operaciones OOS best-case en la campana 1h). Estimado por conteo de eventos (sin backtest) sobre ES 5m/15m Dukascopy: ORB ~1.5 eventos/dia-sesion, VWAP_REVERSION ~1.5-3.3 eventos/dia-sesion -- ambos proyectan varios cientos de operaciones sobre el tramo OOS completo.",
+            "Nuevos helpers causales en EventBacktestEngine: _calc_opening_range_levels (rango sellado por dia, sin lookahead) y _calc_session_vwap (VWAP que se reinicia en la primera barra en sesion de cada dia UTC, distinto del VWAP acumulativo global de indicator_engine.py). Despacho por `strategy.archetype` + `archetype_params`, mismo patron aditivo estricto que 5.14.0 -- cero lineas tocadas de las familias EMA/RSI/Donchian/REVERSION_ATR/SQUEEZE_BREAKOUT/SESSION_MOMENTUM/STREAK_EDGE existentes.",
+            "DoF real: OPENING_RANGE_BREAKOUT=4 (or_minutes + sl_atr_mult + tp_atr_mult + risk_pct), VWAP_REVERSION=3 (vwap_dev_atr_mult + sl_atr_mult + risk_pct; tp_atr_mult inerte, TP dinamico) en services/discovery/effective_dof.py.",
+            "Vecindario de perturbacion (gate 9) NO-NOOP verificado por enumeracion exhaustiva de grid x delta: paso minimo forzado en enteros (or_minutes), igual criterio que el resto de familias 5.14.0.",
+            "Solo FONDEO (futuros CME reales, requieren session_window de una sesion regulada): _arquetipos_5_17_0_configs(is_ultra=True) devuelve [] a proposito, ULTRA queda fuera de alcance.",
+            "Diseno completo con justificacion de ventaja esperada (no solo volumen) en orchestration/reviews/diseno_arquetipos_5_17_0.md.",
+            "Aditivo estricto: 15/15 celdas de scripts/verificacion_f02.py identicas a 5.16.0 (el perfil `champions` que usa esa verificacion no incluye estas 2 familias nuevas, ni ninguna de las 4 de 5.14.0).",
+        ],
+    },
+    {
+        "version": "5.16.0",
+        "name": "Ultrarentable V5.16.0 (Fix: comision FONDEO/forex clasificada por asset_class, no por point_value)",
+        "date": "2026-09-01",
+        "status": "STALE",
         "changes": [
             "FIX CATASTROFICO: es_futuro (decide comision fija POR CONTRATO vs porcentual, y cantidad entera vs fraccionaria) se derivaba de `point_value != 1.0`. Forex (point_value=10.0, convencion USD/pip/lote) cumplia ese umbral sin ser un contrato CME, heredando comision fija de ~2.50 USD POR UNIDAD DE QTY -- con qty~4.700 eso factura ~11.700 USD por lado, suficiente para quebrar una cuenta de 50.000 USD en 2-3 operaciones (medido: EURUSD 1h IS, PF 0.00, cuenta a -10.572 USD).",
             "Fix: es_futuro = spec.asset_class == AssetClass.CME_FUTURES (dato real de InstrumentRegistry), no un umbral numerico sobre point_value.",

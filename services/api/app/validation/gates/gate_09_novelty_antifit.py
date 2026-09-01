@@ -11,6 +11,85 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 import numpy as np
 
+# 5.14.0 (F03.3): dimensiones perturbables (±10%/±20%) de las 4 familias EVENTO nuevas,
+# dentro de su dict anidado `archetype_params`. Nombres y tipos tomados de
+# scripts/mine.py::_arquetipos_5_14_0_configs (p_set real de la búsqueda) contrastados con
+# EventBacktestEngine.run_backtest (claves leídas vía `archetype_params.get(...)`). Solo se
+# listan las dimensiones NUMÉRICAS: `modo` (STREAK_EDGE) y `cierre_eod` (SESSION_MOMENTUM)
+# son categóricas/booleanas -- cuentan para DoF (services/discovery/effective_dof.py) pero
+# no tienen "vecindario" bajo una perturbación multiplicativa, así que se mantienen fijas al
+# valor certificado durante el re-backtest de estabilidad.
+# Formato por clave: (tipo, piso_minimo[, techo_maximo]).
+_ARCHETYPE_NEIGHBORHOOD_SPEC: Dict[str, Dict[str, tuple]] = {
+    "REVERSION_ATR": {
+        "ema_ancla": ("int", 5),
+        "banda_atr_mult": ("float", 0.5),
+    },
+    "SQUEEZE_BREAKOUT": {
+        "squeeze_pct": ("float", 1.0, 99.0),  # percentil: acotado a (0, 100)
+        "squeeze_lookback": ("int", 10),
+        "breakout_lookback": ("int", 3),
+    },
+    "SESSION_MOMENTUM": {
+        "ancla_horas": ("int", 1),
+        "ema_pull": ("int", 5),
+    },
+    "STREAK_EDGE": {
+        "n_racha": ("int", 2),
+    },
+    # 5.17.0 (F03.3 cont., CUELLO 6): 2 familias EVENTO nuevas para futuros intradia de
+    # indice. Nombres/tipos tomados de scripts/mine.py::_arquetipos_5_17_0_configs
+    # contrastados con EventBacktestEngine.run_backtest (archetype_params.get(...) en
+    # _calc_opening_range_levels / rama VWAP_REVERSION).
+    "OPENING_RANGE_BREAKOUT": {
+        # Grid real {15, 30, 60} minutos: floor=5 deja margen por debajo del valor mas bajo
+        # de la rejilla sin llegar a 0 (un rango de apertura de 0 minutos no tiene sentido).
+        "or_minutes": ("int", 5),
+    },
+    "VWAP_REVERSION": {
+        # Grid real {1.0, 1.5, 2.0}: floor=0.25 dista de la banda de multiplicadores
+        # explorada (evita un floor que coincida con -20% del valor mas bajo del grid).
+        "vwap_dev_atr_mult": ("float", 0.25),
+    },
+}
+
+
+def _perturb_archetype_params(base_params: Dict[str, Any], archetype: str, delta: float) -> Dict[str, Any]:
+    """Perturba ±delta las dimensiones numéricas reales de `archetype` dentro de
+    archetype_params (copia; nunca muta base_params). Claves ausentes o no numéricas del
+    registro (categóricas/booleanas) se copian sin tocar.
+
+    Corrección 2026-08-31 (auditoría orquestador): para tipo "int" NO se puede perturbar por
+    `base_val * (1+delta) -> round()`, porque en enteros pequeños el redondeo anula el delta
+    (n_racha=3, delta=-0.10 -> 2.7 -> round=3: perturbado == base, el vecindario comparaba el
+    candidato consigo mismo e inflaba su estabilidad de forma artificial). Se fuerza un paso
+    minimo de 1 unidad en el sentido del delta. Excepción legítima e inevitable: cuando el
+    paso choca con `floor` (p.ej. ancla_horas=1, floor=1, delta negativo) el resultado se
+    clampa de vuelta al floor y sí puede coincidir con la base -- no hay vecindario por debajo
+    del mínimo físico permitido."""
+    spec = _ARCHETYPE_NEIGHBORHOOD_SPEC.get(archetype, {})
+    out = dict(base_params)
+    for key, type_spec in spec.items():
+        if key not in out or out[key] is None:
+            continue
+        kind, floor = type_spec[0], type_spec[1]
+        ceiling = type_spec[2] if len(type_spec) > 2 else None
+        base_val = float(out[key])
+        if kind == "int":
+            step = max(1, int(round(abs(base_val) * abs(delta))))
+            new_val = base_val + step if delta > 0 else base_val - step
+            new_val = max(int(floor), int(new_val))
+            if ceiling is not None:
+                new_val = min(int(ceiling), new_val)
+            out[key] = new_val
+        else:
+            new_val = base_val * (1.0 + delta)
+            new_val = max(float(floor), round(new_val, 4))
+            if ceiling is not None:
+                new_val = min(float(ceiling), new_val)
+            out[key] = new_val
+    return out
+
 
 class Gate09NoveltyAntiFit:
     GATE_ID = 9
@@ -60,14 +139,26 @@ class Gate09NoveltyAntiFit:
             base_slow = int(parameters.get("ema_slow") or 50)
             sym = strategy_snapshot.symbol if hasattr(strategy_snapshot, "symbol") else "BTCUSDT"
             tf = strategy_snapshot.timeframe if hasattr(strategy_snapshot, "timeframe") else "1h"
+            arch = str(getattr(strategy_snapshot, "archetype", None) or ("INSTITUTIONAL_SESSION_MOMENTUM" if not is_ultra else "MOMENTUM_BREAKOUT")).upper()
+            # 5.14.0 (F03.3): archetype_params REAL del blueprint certificado -- las 4
+            # familias EVENTO nuevas (reversion_atr, squeeze_breakout, session_momentum,
+            # streak_edge) leen sus dimensiones de aquí, no del árbol genérico de
+            # indicadores. Sin esto, el vecindario perturbado se generaba SIEMPRE con
+            # archetype_params por defecto (idéntico para los 4 deltas): el re-backtest de
+            # estabilidad era un no-op silencioso para estas familias.
+            base_archetype_params = dict(getattr(strategy_snapshot, "archetype_params", None) or {})
 
             for delta in perturbation_deltas:
                 pert_sl = max(0.8, round(base_sl * (1.0 + delta), 2))
                 pert_tp = max(1.5, round(base_tp * (1.0 + delta), 2))
                 pert_fast = max(5, int(round(base_fast * (1.0 + delta))))
                 pert_slow = max(pert_fast + 5, int(round(base_slow * (1.0 + delta))))
+                pert_archetype_params = (
+                    _perturb_archetype_params(base_archetype_params, arch, delta)
+                    if arch in _ARCHETYPE_NEIGHBORHOOD_SPEC
+                    else (dict(base_archetype_params) if base_archetype_params else None)
+                )
 
-                arch = getattr(strategy_snapshot, "archetype", "INSTITUTIONAL_SESSION_MOMENTUM" if not is_ultra else "MOMENTUM_BREAKOUT")
                 if is_ultra:
                     disc = UltraDiscoveryEngine()
                     pert_strat = disc.generate_candidate_blueprint(
@@ -81,6 +172,7 @@ class Gate09NoveltyAntiFit:
                         ema_fast=pert_fast,
                         ema_slow=pert_slow,
                         archetype=arch,
+                        archetype_params=pert_archetype_params,
                     )
                 else:
                     disc_f = FundingDiscoveryEngine()
@@ -97,6 +189,7 @@ class Gate09NoveltyAntiFit:
                         tp_atr_mult=pert_tp,
                         risk_per_trade_pct=risk_val,
                         archetype=arch,
+                        archetype_params=pert_archetype_params,
                     )
 
                 res = bt_engine.run_backtest(pert_strat, candles, initial_capital_usd=base_cap)

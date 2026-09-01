@@ -151,6 +151,47 @@ class MetaStrategyEngine:
             )
         return symbols
 
+    MIN_COMPONENTS = 2
+
+    def assembly_readiness(
+        self,
+        route: Literal["ULTRA", "FONDEO"],
+        status: str = "APPROVED_CURRENT_ENGINE",
+        min_trades_oos: int = 0,
+    ) -> Dict[str, Any]:
+        """Chequeo explícito y auditable de si HOY se puede ensamblar una meta-estrategia.
+
+        No lanza excepción: declara NO_EVALUABLE con el motivo exacto cuando no hay
+        componentes suficientes, para que un caller (API, script, dashboard) pueda mostrarlo
+        sin necesidad de capturar una excepción ni de inferirlo de una lista vacía que podría
+        confundirse con "todavía no se ha intentado".
+        """
+        candidatas = self.load_candidates_from_db(
+            route=route, status=status, min_trades_oos=min_trades_oos, require_returns=True
+        )
+        simbolos_unicos = {c.get("symbol") for c in candidatas if c.get("symbol")}
+        evaluable = len(simbolos_unicos) >= self.MIN_COMPONENTS
+        reason = None
+        if not evaluable:
+            reason = (
+                f"INSUFFICIENT_CERTIFIED_COMPONENTS: {len(candidatas)} candidata(s) con status="
+                f"'{status}' y oos_returns reales en route={route} (trades_oos>={min_trades_oos}), "
+                f"repartidas en {len(simbolos_unicos)} activo(s) distinto(s); se requieren "
+                f">={self.MIN_COMPONENTS} activos ortogonales con evidencia real persistida."
+            )
+        return {
+            "route": route,
+            "status_filter": status,
+            "min_trades_oos": min_trades_oos,
+            "evaluable": evaluable,
+            "assembly_status": "READY" if evaluable else "NO_EVALUABLE",
+            "reason": reason,
+            "certified_component_count": len(candidatas),
+            "orthogonal_symbol_count": len(simbolos_unicos),
+            "min_components_required": self.MIN_COMPONENTS,
+            "checked_at_utc": datetime.now(timezone.utc).isoformat(),
+        }
+
     def assemble_meta_portfolio(
         self,
         portfolio_id: str,
@@ -161,8 +202,12 @@ class MetaStrategyEngine:
         custom_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Construye, simula deterministamente y evalúa la Estrategia de Estrategias."""
-        if len(strategies) < 2:
-            raise ValueError("Se requieren al menos 2 estrategias en activos distintos para construir un Meta-Portafolio.")
+        if len(strategies) < self.MIN_COMPONENTS:
+            raise ValueError(
+                f"INSUFFICIENT_CERTIFIED_COMPONENTS: se requieren al menos {self.MIN_COMPONENTS} "
+                "estrategias en activos distintos para construir un Meta-Portafolio; llamar "
+                "antes a assembly_readiness(route) para un diagnóstico NO_EVALUABLE explícito."
+            )
 
         # 1. Validación estricta de no repetición de símbolos
         symbols = self.validate_orthogonal_assets(strategies)
@@ -228,8 +273,18 @@ class MetaStrategyEngine:
 
         # 4. Matriz de Correlación Cruzada entre Activos Ortogonales
         min_steps = min(len(r) for r in returns_series)
+        # Regla Invariante #1 (REAL-ONLY): "Sin dato ⇒ NO DATA/ERROR, nunca un valor por
+        # defecto". Con <=2 pasos alineados una correlación muestral no es estimable de forma
+        # fiable; antes se fabricaba c_val=0.15, una meta-estrategia fantasma con evidencia
+        # inventada. Fail-closed explícito en su lugar.
+        if min_steps <= 2:
+            raise ValueError(
+                f"INSUFFICIENT_OVERLAP: solo {min_steps} pasos de retorno alineados entre las "
+                f"{n} estrategias (mínimo 3 para una correlación real). No se fabrica un valor "
+                f"de correlación por defecto; certifica más historial OOS o amplía el solape."
+            )
         aligned_returns = np.array([r[:min_steps] for r in returns_series])
-        
+
         corr_matrix: Dict[str, Dict[str, float]] = {}
         pair_correlations = []
         for i, s_i in enumerate(strategies):
@@ -240,16 +295,21 @@ class MetaStrategyEngine:
                 if i == j:
                     corr_matrix[s_id_i][s_id_j] = 1.0
                 else:
-                    if min_steps > 2:
-                        c = float(np.corrcoef(aligned_returns[i], aligned_returns[j])[0, 1])
-                        c_val = round(0.0 if math.isnan(c) else c, 3)
-                    else:
-                        c_val = 0.15
+                    c = float(np.corrcoef(aligned_returns[i], aligned_returns[j])[0, 1])
+                    if math.isnan(c):
+                        raise ValueError(
+                            f"NAN_CORRELATION: covarianza no definida entre {s_id_i} y {s_id_j} "
+                            f"en la ventana alineada de {min_steps} pasos. No se fabrica 0.0 en "
+                            f"su lugar."
+                        )
+                    c_val = round(c, 3)
                     corr_matrix[s_id_i][s_id_j] = c_val
                     if i < j:
                         pair_correlations.append(c_val)
 
-        avg_correlation = float(np.mean(pair_correlations)) if pair_correlations else 0.15
+        # n >= 2 está garantizado (chequeo al inicio del método), así que pair_correlations
+        # siempre tiene al menos un elemento real: sin fallback fabricado.
+        avg_correlation = float(np.mean(pair_correlations))
 
         # 5. Simulación de la Curva de Equidad Combinada Ponderada
         combined_equity = [total_capital_usd]
@@ -270,17 +330,27 @@ class MetaStrategyEngine:
 
         # 6. Métricas Finales de Portafolio
         total_pnl_pct = round(((combined_equity[-1] - total_capital_usd) / total_capital_usd) * 100.0, 2)
-        worst_individual_dd = max(individual_dds) if individual_dds else 5.0
+        # individual_dds tiene exactamente n>=2 entradas (una por estrategia, paso 2): nunca
+        # está vacía aquí, así que no hace falta (ni se fabrica) un DD por defecto.
+        worst_individual_dd = max(individual_dds)
         dd_reduction_pct = round(max(0.0, ((worst_individual_dd - max_comb_dd) / max(0.1, worst_individual_dd)) * 100.0), 1)
 
+        # min_steps > 2 está garantizado arriba, así que comb_rets tiene siempre >=3
+        # observaciones reales: tampoco hacen falta valores por defecto para media/desviación.
         comb_rets = np.diff(combined_equity) / np.maximum(1.0, combined_equity[:-1])
-        mean_comb = float(np.mean(comb_rets)) if len(comb_rets) > 0 else 0.0
-        std_comb = float(np.std(comb_rets)) if len(comb_rets) > 1 else 0.01
+        mean_comb = float(np.mean(comb_rets))
+        std_comb = float(np.std(comb_rets))
         combined_sharpe = round(float((mean_comb / max(1e-4, std_comb)) * math.sqrt(252)), 2)
 
         comb_gains = sum(r for r in comb_rets if r > 0)
         comb_losses = abs(sum(r for r in comb_rets if r < 0))
-        comb_pf = round(float(comb_gains / max(1e-4, comb_losses)), 2) if comb_losses > 0 else 5.0
+        # Si no hubo ningún paso perdedor en la ventana OOS alineada, el profit factor no tiene
+        # un valor finito bien definido (división por pérdidas nulas). Antes se fabricaba un
+        # techo arbitrario (5.0); ahora se representa como infinito explícito y se marca con
+        # `no_losing_periods_oos=True` para que ningún consumidor lo confunda con un ratio
+        # calculado sobre pérdidas reales.
+        no_losing_periods_oos = bool(comb_losses <= 0.0)
+        comb_pf = float("inf") if no_losing_periods_oos else round(float(comb_gains / comb_losses), 2)
 
         weighted_vol_sum = sum(weights[k] * vols[k] for k in range(n))
         div_ratio = round(float(weighted_vol_sum / max(1e-4, std_comb)), 2)
@@ -319,6 +389,7 @@ class MetaStrategyEngine:
             "drawdown_reduction_pct": dd_reduction_pct,
             "combined_sharpe_ratio": combined_sharpe,
             "combined_profit_factor": comb_pf,
+            "no_losing_periods_oos": no_losing_periods_oos,
             "diversification_ratio": div_ratio,
             "combined_equity_curve": combined_equity,
             "created_at_utc": now_utc,
