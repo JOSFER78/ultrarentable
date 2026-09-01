@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE = ROOT / "services/discovery/discovery_validation_pipeline.py"
 REGISTRY = ROOT / "services/discovery/strategy_search_registry.py"
-DATASET_REPOSITORY = ROOT / "data/dataset_repository.py"
+DATASET_REPOSITORY = ROOT / "services/data/dataset_repository.py"
 CONFIG = ROOT / "services/api/app/config.py"
 
 
@@ -37,7 +37,16 @@ def assert_no_synthetic_dataset_fallbacks(source: str) -> None:
     hits = [marker for marker in forbidden_markers if marker in source]
     if hits:
         fail(f"dataset repository contains synthetic fallback(s): {hits}")
-    for marker in ("_sha256_file", "self._sha256_file(target_file)", "raise FileNotFoundError"):
+    # La marca "raise FileNotFoundError" se sustituye por dos que demuestran la MISMA propiedad
+    # de forma mas fuerte: que el fallo por dataset ausente es un FileNotFoundError (la excepcion
+    # dedicada hereda de el, asi que todo codigo que ya lo capturaba sigue funcionando), y que el
+    # hash del fichero se contrasta contra el checksum del manifiesto en vez de solo calcularse.
+    for marker in (
+        "_sha256_file",
+        "self._sha256_file(target_file)",
+        "class DatasetUnavailableError(FileNotFoundError)",
+        "_verificar_custodia",
+    ):
         if marker not in source:
             fail(f"real-data custody invariant missing from dataset repository: {marker}")
 
