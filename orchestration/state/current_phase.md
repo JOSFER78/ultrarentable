@@ -1,4 +1,4 @@
-# FASE ACTUAL — BALANCE 2026-09-01 (sesión FONDEO)
+# FASE ACTUAL — BALANCE 2026-09-01 (sesión FONDEO) · actualizado 10:00 UTC
 
 > **FOCO 100 % EN FONDEO** por orden de Emilio (2026-09-01). El track ULTRA queda pausado con
 > todo su estado en `orchestration/state/PUNTO_GUARDADO_ULTRA.md` — nada a medias, nada perdido.
@@ -6,21 +6,54 @@
 > ULTRA ~100 %/mes y **FONDEO ≥20 % mensual SOSTENIBLE con P(romper cuenta) ≤20 % a 6 meses**,
 > medidos sobre la MEDIANA de la distribución, nunca la media.
 
+
+## ACTUALIZACIÓN 2026-09-01 ~10:00 — segunda tanda (30 agentes en 4 workflows)
+
+| Qué | Evidencia |
+| :--- | :--- |
+| **Datos de ES desbloqueados**: 16 chunks trimestrales fusionados en un dataset único. 250.009 barras en 5m (83.377 en 15m, 1.230.396 en 1m), rango 2023-01 → 2026-08, SHA-256 reproducible, `gaps_filled=false`, huecos clasificados por **calendario de sesión**. Los 36 anómalos son festivos reales | `scripts/herramientas/consolidar_dukascopy.py` · manifiestos en `data/normalized/` |
+| **200 operaciones OOS pasan a ser alcanzables**: con 50.101 barras OOS en 5m basta 1 operación cada 250 barras. Antes hacía falta 1 cada 13,7, matemáticamente imposible | `mine.py --dataset-source dukascopy --dry-run` resuelve 13.723 KB frente a 963 KB |
+| **El discovery continuo llevaba >24 h sin evaluar FONDEO**: la rama por defecto exigía `"fondeo" in fname` en un `else` que sólo se alcanza cuando eso ya es falso. Todo dataset de FONDEO se evaluaba como ULTRA, con 1.000 USD de capital y 25 % de techo de drawdown en vez de 50.000 y 4,5 % | commit `1956e3816` · `orchestration/results/embudo_fondeo_forense.md` §5 |
+| **El repositorio de datasets fabricaba velas**: devolvía 100 barras en rampa ascendente ante cualquier fallo de lectura, leía `timestamp` en vez de `timestamp_utc_ms` (todas las velas con marca 0) y su "hash SHA-256 verificado" era de metadatos. Su guard llevaba en verde vigilando una **copia muerta** | commit `08058feff` · `tests/test_data_pipeline.py` (10 passed) |
+| **Meta-estrategia fantasma**: con ≤2 pasos de retorno alineados se fabricaba una correlación de 0,15, y sin periodos perdedores un profit factor de 5,0. Ahora falla cerrado | `tests/test_meta_strategy_engine.py` (5 passed) |
+| **Motor 5.17.0**: dos arquetipos intradía para futuros de índice. Regla 26 cumplida, **15/15 celdas idénticas** | `orchestration/results/verificacion_f02_diff_5.16.0_vs_5.17.0.md` |
+| **Web reorganizada**: 16 rutas duplicadas y huérfanas a cuarentena con manifiesto; el plan se lee de estos bloques en `/plan` vía `/api/plan` en vez de duplicar estados a mano | commit `08058feff` |
+| **Historia de git adelgazada**: el push pendiente pasa de 1.324 MB a 3,1 MB. `.gitignore` no aplicaba a los 302 datasets ya rastreados | commits `20bdadf6e` y anteriores |
+
+### Corrección de cifras que se habían dado por buenas
+
+- La campaña evaluó **14.352** configuraciones, no 13.504.
+- De las 24 celdas, sólo **18 son evidencia válida**: las 6 de forex corrieron con el motor anterior
+  al arreglo de la comisión, así que su veredicto sobre la ventaja no vale.
+
+### Deuda abierta y declarada
+
+- **Build de producción de la web NO ejecutado.** Los revisores verificaron por lectura que ningún
+  import queda colgando, pero eso no sustituye al build. La VPS está a 14 de carga por procesos
+  ajenos (`sqcli` al 115 %, `discovery` al 31 %) y lanzar `next build` encima sería justo lo que hay
+  que evitar.
+- **La telemetría del embudo se calcula y se tira**: `mine.py` produce el desglose completo por
+  configuración y nunca lo escribe a disco. De 14.352 configuraciones sobreviven 20 puntos de datos
+  en los logs. Sin eso, cada campaña fallida es indiagnosticable.
+- **Liberar la VPS sigue pendiente de sudo de Emilio** (comandos en `orchestration/OPERACION_VPS.md`).
+
 ## Hallazgo que define el estado de FONDEO
 
 **FONDEO no está limitado por falta de edge: está limitado por falta de BARRAS.** Aritmética:
 
 ```
 criterio 1.1 (SELLADO):   >=200 operaciones OOS
-ritmo observado:          1 operacion cada ~101 barras (mejor caso por PF en futuros)
+ritmo observado:          1 operacion cada ~61 barras (mejor caso real, RTY/CL; el ~101 previo
+                          era solo el mejor caso por PF, ver embudo_fondeo_forense.md)
 barras OOS necesarias:    ~20.200  ->  dataset de ~101.000 barras
 disponible hoy (Yahoo):      13.800 barras   (7,3x por debajo)
 Dukascopy 5m desde 2023:   ~250.000 barras   (~495 operaciones OOS)
 ```
 
 El 5m de Yahoo NO es alternativa: tiene 13.813 barras, casi las mismas que 1h (13.701), porque
-su API sólo sirve 60 días de intradía fino. **Dukascopy es la única vía**, y va a ~174
-ficheros/hora (≈5 días sólo para USA500IDXUSD). Acelerarlo es el cuello de botella nº 1.
+su API sólo sirve 60 días de intradía fino. **Dukascopy es la única vía**. Iba a 174 ficheros/hora;
+tras sustituir `urlopen` por una `requests.Session` reutilizada va a **6.984/hora medidos en
+producción**, y ES ya está completo y consolidado. Deja de ser el cuello de botella nº 1.
 
 Matiz importante: el ritmo de operación varía mucho por familia (EURUSD REVERSION_ATR hace 447
 operaciones en 10.341 barras IS = 1 cada 23). El **forex tiene 17.236 barras (6,3x más historia

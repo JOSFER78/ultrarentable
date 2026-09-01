@@ -105,7 +105,13 @@ export default function PlanGraph({ bloques }: { bloques: PlanBloque[] }) {
                 {style.icon}
               </div>
 
-              <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 md:p-5 hover:border-white/[0.16] transition-colors">
+              <div
+                className={`bg-[#090d16]/90 backdrop-blur-xl border rounded-2xl p-4 md:p-5 transition-colors ${
+                  bloque.aparcado
+                    ? "border-white/[0.05] opacity-60 hover:opacity-100 hover:border-white/[0.12]"
+                    : "border-white/[0.08] hover:border-white/[0.16]"
+                }`}
+              >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -113,13 +119,27 @@ export default function PlanGraph({ bloques }: { bloques: PlanBloque[] }) {
                       <h3 className="text-sm md:text-base font-bold text-white tracking-tight">{bloque.titulo}</h3>
                     </div>
                   </div>
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-mono uppercase tracking-wide shrink-0 ${style.badge}`}
-                  >
-                    {style.icon}
-                    {style.label}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {bloque.aparcado && (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-500/40 bg-slate-500/10 text-slate-300 text-[11px] font-mono uppercase tracking-wide">
+                        <Lock className="w-3 h-3" />
+                        Aparcado
+                      </span>
+                    )}
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-mono uppercase tracking-wide ${style.badge}`}
+                    >
+                      {style.icon}
+                      {style.label}
+                    </span>
+                  </div>
                 </div>
+
+                {bloque.aparcado && bloque.motivo_aparcado && (
+                  <p className="mt-3 text-[12px] leading-relaxed text-slate-400 border-l-2 border-slate-500/40 pl-3">
+                    {bloque.motivo_aparcado}
+                  </p>
+                )}
 
                 {bloque.verificacion_global && (
                   <p className="mt-3 text-[13px] leading-relaxed text-slate-400">

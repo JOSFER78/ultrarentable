@@ -5,7 +5,7 @@ estado: PARCIAL
 depende_de: ["F00"]
 desbloquea: ["F03"]
 verificacion_global: "Re-ejecutar una estrategia conocida con motor viejo y nuevo y publicar la diferencia. Si el P&L no baja, el motor nuevo no está modelando fricción de verdad."
-actualizado: "2026-08-31"
+actualizado: "2026-09-01"
 ---
 
 # FASE 2 — MOTOR DE BACKTEST REALISTA
@@ -112,3 +112,19 @@ liquidación).
 
 - **Trailing DD intradiario**, no de cierre. Es la regla que mata las cuentas.
 - Pérdida diaria, regla de consistencia, cierre obligatorio intradía.
+
+## Actualización 2026-09-01 — tres releases del motor, todas con identidad verificada
+
+| Versión | Qué cambia | Regla 26 |
+| :--- | :--- | :--- |
+| **5.15.0** | F02.3: reglas de prop firm (trailing drawdown intradía, pérdida diaria, corte de sesión) evaluadas barra a barra sobre la equity **FLOTANTE**, no sólo al cierre de cada operación. Es opt-in: sin `PropFirmProfile` el motor se comporta exactamente igual | 15/15 idénticas |
+| **5.16.0** | Corrección crítica: `es_futuro = point_value != 1.0` clasificaba el forex como futuro CME y le cobraba la tarifa fija por contrato. Un EURUSD que cerraba en take-profit con +32,1 USD brutos pagaba 11.692,5 USD de comisión por lado. Pasa a leer `spec.asset_class` | 15/15 idénticas |
+| **5.17.0** | Dos arquetipos intradía para futuros de índice, con sus grados de libertad registrados en `effective_dof.py` y su vecindad en el gate 9 | 15/15 idénticas |
+
+Defecto grave corregido fuera del motor pero en su misma cadena: el **repositorio de datasets**
+devolvía 100 velas fabricadas en rampa ascendente ante cualquier fallo de lectura, leía el campo
+`timestamp` cuando el canónico es `timestamp_utc_ms` (todas las velas con marca 0 sobre datos
+reales) y su "hash SHA-256 verificado" se calculaba sobre metadatos, de modo que dos series con
+precios distintos daban el mismo hash. El guard que debía impedirlo llevaba en verde porque
+validaba la copia duplicada y muerta. Ahora falla cerrado, el hash cubre los precios y se
+contrasta contra el checksum del manifiesto.

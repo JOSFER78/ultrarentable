@@ -5,7 +5,7 @@ estado: EN_CURSO
 depende_de: []
 desbloquea: ["F01", "F02"]
 verificacion_global: "Un mapa de una página de qué es el sistema, sin ambigüedad."
-actualizado: "2026-08-31"
+actualizado: "2026-09-01"
 ---
 
 # FASE 0 — LIMPIEZA DEL CÓDIGO
@@ -138,3 +138,32 @@ Además hay DOS motores de backtest vivos (`EventBacktestEngine` oficial y
   y plan de acción A–I archivados en el journal del workflow; refutados relevantes: DB-04
   (mecanismo falso), CL-05 (`paper_executor.py` tiene importador vivo), 0.4-C1 (no vio el
   segundo motor), y la nota `reviews/limpieza_01_arboles_validacion.md` (marcada como superada).
+
+## Actualización 2026-09-01 — limpieza de código ambiguo
+
+Se atacó la ambigüedad estructural, que es la que hace que un arreglo se aplique al fichero
+equivocado. Hallazgos con evidencia:
+
+- **Nueve módulos Python homónimos** conviven en el árbol. Los peligrosos no son los de
+  `cuarentena/` (esos están retirados por diseño) sino los que están vivos por duplicado:
+  `market_ingestor.py`, `dataset_repository.py`, `meta_strategy_engine.py` (cuatro copias) y
+  `gate_03_trade_significance.py`.
+- **Dos pipelines de validación completos y distintos**: `services/api/app/validation/gates/`
+  (11 gates + orquestador, lo usan `mine.py`, el discovery y 25 llamadas más — es el que
+  CERTIFICA) y `services/validation/engines/` (11 motores + su propio orquestador, lo usa
+  `validation_router.py`, que a su vez cuelga de la API en `services/api/app/main.py`). Sus
+  implementaciones del gate 3 tienen umbrales diferentes. Consecuencia: la web puede mostrar un
+  veredicto de gates distinto del que aplicaría el certificador. **Decidido**: el SSOT es el de
+  `services/api/app/validation/gates/`. Sin resolver todavía cómo se reconcilia el segundo, que
+  está cableado a la API y no se puede retirar sin romperla.
+- **`data/` es un paquete-sombra de `services/data/`**: su `__init__.py` reexporta de
+  `services.data`, pero contiene copias obsoletas de `market_ingestor.py` y `dataset_repository.py`.
+  `import data.market_ingestor` devuelve código muerto mientras `from data import MarketDataAuditor`
+  devuelve el vivo. Esa trampa ya hizo que el guard de fase 2 llevara meses en verde vigilando la
+  copia equivocada (ver F02).
+- **`estrategias_um/`**: 1.089 ficheros rastreados, de los que **1.043 son `.class`** — bytecode
+  de StrategyQuant extraído como evidencia el 2026-08-29, 26 MB sin fuentes `.java`. Pendiente de
+  decidir con Emilio si sale del índice de git (queda en disco, con manifiesto).
+
+Pendiente: retirar a cuarentena las copias muertas de `data/` una vez terminen los agentes que
+tienen abiertos ficheros de `services/data/`.

@@ -15,6 +15,8 @@ export interface PlanBloque {
   desbloquea: string[];
   verificacion_global: string;
   actualizado: string;
+  aparcado: boolean;
+  motivo_aparcado: string;
   archivo: string;
 }
 
@@ -98,6 +100,11 @@ function parseBloqueFile(filePath: string, filename: string): PlanBloque | PlanB
     desbloquea: array("desbloquea"),
     verificacion_global: scalar("verificacion_global") ?? "",
     actualizado: scalar("actualizado") ?? "",
+    // Una fase aparcada no esta pendiente por falta de trabajo: esta congelada a proposito.
+    // Sin este campo la web mostraba F05 y F06 (ULTRA) como simples PENDIENTE, indistinguibles
+    // de las fases que si estan en el camino critico de FONDEO.
+    aparcado: (scalar("aparcado") ?? "").toLowerCase() === "true",
+    motivo_aparcado: scalar("motivo_aparcado") ?? "",
     archivo: filename,
   };
 }
