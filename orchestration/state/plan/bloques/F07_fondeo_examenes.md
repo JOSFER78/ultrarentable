@@ -80,7 +80,10 @@ Lo corregido y verificado:
 
 **Hueco abierto y grave, declarado sin disimular**: el motor sabe evaluar las reglas de prop firm
 sobre equity **flotante** desde la release 5.15.0, y el examen ya sabe invocarlo
-(`reejecutar_examen_barra_a_barra()`), pero **ese resultado no gatea nada**. Las dos fases del
+(`reejecutar_examen_barra_a_barra()`), pero **ese resultado no gatea nada**.
+
+> **CORRECCIÓN (2026-09-01, ciclo 2, ORQ tras I3 §2.7)**: el párrafo anterior quedó DESACTUALIZADO el mismo día. W4.1 (AG-C) añadió `determinar_veredicto_sellado()` (`scripts/fondeo_examen.py:595-624`, usado en 899-900): con `prop_firm_busted=True` el veredicto es siempre `NO_CUMPLE`, y sin verificación barra a barra es `NO_EVALUABLE`, nunca `CUMPLE`. Verificado leyendo el código, no el documento. El hueco que sigue abierto es otro: no existe verificación barra a barra a nivel de **portafolio** (I3 §3.5, W6.0).
+ Las dos fases del
 examen siguen decidiendo "CUMPLE" con el bootstrap sobre PnL ya cerrado, que es ciego a la
 excursión adversa intradía. Hoy es inerte porque hay 0 candidatas FONDEO certificadas, pero en
 cuanto exista la primera, el script podrá declarar "CUMPLE" para una cuenta que la propia

@@ -208,6 +208,43 @@ Antigravity) y no se toca. Regla desde ahora: **2 agentes + 1 NOHUP mientras el 
 
 ---
 
+## 9. Ciclo 2 (21:00-22:00) — aterrizajes auditados y decisiones D5-D9
+
+**Ola 2 en marcha con semáforo de 2** (workflow `wf_32b93e71`, 8 carriles, pipeline
+investigar → 3 refutadores → implementar → aceptación+3 revisores). Aterrizajes de la etapa
+"investigar" auditados con comandos propios del orquestador (todas las afirmaciones clave
+reproducidas; las discrepancias, anotadas):
+
+| Carril | Informe | Auditoría ORQ | Lo que cambia |
+| :--- | :--- | :--- | :--- |
+| GATES | `results/W43_spec_registro_gates.md` | CONFIRMADO (gate 10: 40 real vs 75 web; 11/11 divergen; 1 importador de A). **Me corrige a mí** (§3.2) | D5; W4.7 |
+| MEJORA | `results/I2_diseno_mejora.md` | CONFIRMADO (fabricación en `deep_strategy_improver`, `trials_tested=iteration`, blind OOS dentro del bucle, `venue=BINGX`) | cuarentena hecha; W3.5.b; W2.8 |
+| META | `results/I3_diseno_meta.md` | CONFIRMADO salvo un matiz: `portfolio_engine` no es "huérfano total" — lo exporta `services/portfolio/__init__.py` y lo usa un test multi-módulo (ningún código de producción lo usa) | W6.0; D8; pregunta 5.2 a Emilio |
+| FONDEO | `results/M3_plan_catalogo_firmas.md` | CONFIRMADO (5 catálogos, ruta Linux en `/research-doc`, `verified_at` repintado, consistencia 40/30 en el motor) | D6, D7; W4.8, W4.9, W5.8 |
+
+**Decisiones del orquestador** (las peticiones que los carriles no podían decidir):
+
+- **D5 — umbrales canónicos**: registro v1 = paridad exacta con la suite B; `gate_directory.py`
+  regenerado desde B; reconciliación con criterio 1.1 después, gate a gate, con bump (I7 §7.4).
+- **D6 — dato no verificable en el catálogo de firmas**: el valor raíz es `None` **y** se conserva
+  un `SourceRef(confidence="unverified", url=None, note=...)` para distinguir "buscado y no
+  encontrado" de "nunca buscado". Test: valor distinto de None ⇒ confidence en {fetch, ws_official}
+  y url no vacía. Nunca `url=""`.
+- **D7 — página `/prop-firms`**: muestra el catálogo v2 verificado; cupones/afiliados fuera hasta
+  re-verificarse aparte (W5.8). No se mete la parte comercial en `PROP_FIRM_CATALOG`.
+- **D8 — fabricadores meta**: `portfolio_engine.py`, `portfolio_combiner.py`,
+  `factory/portfolio_sprint_engine.py`, `factory/ultra_portfolio_engine.py` a cuarentena con sus
+  tests dedicados; el daemon meta se retira del arranque (W6.0). `services/meta/` nace de
+  `meta_strategy_pipeline` + `meta_ensemble_service` (los dos vivos y REAL-ONLY).
+- **D9 — meta FONDEO sin router hasta que Emilio conteste 5.2**: asignación estática (HRP +
+  mínima varianza del examen); el router queda diseñado, no construido.
+- **D10 — motor 5.18.0 (regla #26)**: el FORENSE encontró un bug de DST (sesión fija 13:30 UTC; 1 de cada 3 días desplazado 1 h) y que `funding_discovery` pone la ventana RTH a las 6 familias. Reproducido por el ORQ (picos 14:30/13:30 UTC en ene/jul; 381/1.141 días). Contrato `state/contratos/W29_motor_5_18_sesiones_dst.md`: hora local + `zoneinfo`, familias A/B/D con Globex + flat 15:10 CT (no `None`, porque Topstep exige flat diario), bump + baseline F02 nuevo. **E1/E2 quedan etiquetadas 'sesión sin DST' y se repiten con 5.18.0.** Mi hipótesis del `volume` por defecto quedó REFUTADA con datos (volumen real, 0 ceros).
+- **W0.7 hecho**: `main` local == remoto (`df3906745`), rebase limpio sobre el commit de Hermes
+  (15 manifiestos NQ 2026 verificados byte a byte); `origin/tmp-sync` intacto (22 commits/829
+  ficheros de datos por reconciliar: tarea aparte, no se toca sin verificar).
+- **Datos**: W1.7 (backfill degradante, parado), W1.8 (YM+NQ+XAU rescatados del VPS 155/155),
+  YM y NQ consolidados 5m/15m (0 conflictos). El backfill no se relanza hasta arreglar W1.7.
+
 ## Histórico anterior
 
 # FASE ACTUAL — 2026-09-01, 10:20 UTC

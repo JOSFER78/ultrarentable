@@ -168,6 +168,15 @@ el que tiene la IP residencial. **No tienes que hacer nada**, es aviso.
 
 ---
 
+### 5.2 Una pregunta corta sobre la meta (no urgente; sin respuesta asumo lo conservador)
+
+El diseño de la meta-estrategia FONDEO (I3, carril META) hereda la forma del "router con debate
+IA" que tú aparcaste para ULTRA (`F06_meta_router.md`, `aparcado: true`). **¿Ese aparcamiento
+aplica también a la versión FONDEO del router, o la meta FONDEO puede llevar router dinámico?**
+Mientras no digas nada, asumo lo conservador: la meta FONDEO se construye con **asignación
+estática** (HRP + mínima varianza del examen) y el router queda diseñado pero sin construir.
+No bloquea nada hoy: no hay 2 certificadas con las que ensamblar.
+
 ## 6. Resumen: qué te pido, en tres líneas
 
 | # | Qué | Urgencia | Tu esfuerzo |
