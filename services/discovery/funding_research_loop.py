@@ -19,12 +19,20 @@ from services.discovery.funding_discovery import FundingDiscoveryEngine
 from services.discovery.funding_evolution_engine import FundingEvolutionEngine
 from services.discovery.research_objective import robust_research_score
 from services.discovery.strategy_search_registry import SearchTrialRecord, StrategySearchRegistry
+from services.engine_version import CURRENT_ENGINE_VERSION
 
 
 class FundingResearchLoop:
     """Generate/evolve FONDEO hypotheses against real datasets only."""
 
-    def __init__(self, registry: StrategySearchRegistry, engine_version: str = "5.4.0") -> None:
+    def __init__(self, registry: StrategySearchRegistry,
+                engine_version: str = CURRENT_ENGINE_VERSION) -> None:
+        # W4.2: el default ANTES estaba hardcodeado a "5.4.0" (motor vigente: ver
+        # services/engine_version.py). Candidatas generadas por este loop sin pasar
+        # engine_version explícito (p.ej. scripts/run_strategy_research.py) quedaban
+        # estampadas con un motor viejo y is_version_stale() las descartaba SIEMPRE aguas
+        # abajo (meta_ensemble_service.py, scripts/gobernanza_regla26.py), pase lo que pase
+        # con el motor real usado para generarlas.
         self.registry = registry
         self.engine_version = engine_version
         self.discovery = FundingDiscoveryEngine()

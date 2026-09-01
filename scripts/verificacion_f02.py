@@ -20,6 +20,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -48,11 +49,46 @@ def _cargar_mine():
     return mine
 
 
-def correr() -> Path:
+class VerificacionF02Error(RuntimeError):
+    """Aborto fail-closed de correr(): ni sobrescribe un baseline existente sin --force, ni
+    escribe un JSON parcial cuando alguna celda de referencia sale sin datos."""
+
+
+def correr(out_path: Optional[Path] = None, force: bool = False) -> Path:
+    """Ejecuta las celdas de referencia y escribe el baseline del motor vigente.
+
+    W4.6 (AG-C, 2026-09-01): antes escribía SIEMPRE en la ruta por defecto
+    (orchestration/results/verificacion_f02_<version>.json), que para la versión vigente ES
+    el fichero SELLADO de referencia contra el que compara la regla #26. Ejecutar este script
+    sin datasets disponibles sobrescribía silenciosamente ese baseline (6.553 bytes, 15
+    celdas) con un JSON de aspecto válido pero vacío (678 bytes, 5 "SIN DATOS") que certifica
+    un motor que en realidad nunca se verificó. Se recuperó desde git, pero con el árbol
+    sucio se habría perdido sin aviso.
+
+    Dos guardas fail-closed, ninguna condicionada a que falten datos HOY -- protegen contra
+    CUALQUIER ejecución futura, con o sin velas en disco:
+      1. Si el destino (por defecto o `--out`) YA EXISTE, se aborta sin tocarlo salvo
+         `--force` explícito. Un baseline sellado no se pisa por accidente.
+      2. Si CUALQUIER celda no sale "OK" (sin datos, sin micro FONDEO, etc.), se aborta con
+         código de salida != 0 y NO se escribe el JSON -- nunca un baseline de aspecto válido
+         que en realidad no verificó nada.
+    """
     mine = _cargar_mine()
     from services.validation.engine.event_backtest_engine import EventBacktestEngine
     from services.discovery.ultra_discovery import UltraDiscoveryEngine
     from services.discovery.funding_discovery import FundingDiscoveryEngine
+
+    destino = Path(out_path) if out_path is not None else (OUT_DIR / f"verificacion_f02_{CURRENT_ENGINE_VERSION}.json")
+
+    if destino.exists() and not force:
+        raise VerificacionF02Error(
+            f"ABORTADO (fail-closed, W4.6): {destino} ya existe. Para la versión vigente "
+            f"({CURRENT_ENGINE_VERSION}) ese fichero es el BASELINE SELLADO de referencia "
+            f"contra el que compara la regla #26 (gobernanza de versión del motor) -- "
+            f"sobrescribirlo sin más borraría la evidencia de la última verificación real. "
+            f"Usa --force si de verdad quieres reemplazarlo a sabiendas, o --out RUTA.json "
+            f"para escribir a un fichero distinto sin tocar el baseline."
+        )
 
     engine = EventBacktestEngine()
     ultra_discovery = UltraDiscoveryEngine()
@@ -115,14 +151,7 @@ def correr() -> Path:
                 "ledger_sha256": ledger_sha,
             })
 
-    out = OUT_DIR / f"verificacion_f02_{CURRENT_ENGINE_VERSION}.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({
-        "engine_version": CURRENT_ENGINE_VERSION,
-        "generado": datetime.now(timezone.utc).isoformat(),
-        "celdas": resultados,
-    }, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"Baseline motor {CURRENT_ENGINE_VERSION}: {out}")
+    print(f"Resultado por celda (antes de decidir si se escribe {destino}):")
     for r in resultados:
         if r["estado"] == "OK":
             print(f"  {r['track']:>6} {r['symbol']:>8} {r['tf']:>3} c{r['config']} "
@@ -130,7 +159,29 @@ def correr() -> Path:
                   f"pf={r['profit_factor']:>7.3f} fees={r['fees_usd']:>10.2f}")
         else:
             print(f"  {r['track']:>6} {r['symbol']:>8} {r['tf']:>3} -> {r['estado']}")
-    return out
+
+    # Fail-closed (W4.6): cualquier celda sin "OK" (sin dataset, sin micro FONDEO...) aborta
+    # SIN escribir el JSON. La alternativa -- escribir igual -- produce un fichero de aspecto
+    # válido (mismo esquema, misma extensión) que en realidad certifica un motor que nunca se
+    # verificó de verdad: exactamente el incidente que motivó esta tarea.
+    celdas_sin_ok = [r for r in resultados if r["estado"] != "OK"]
+    if celdas_sin_ok:
+        detalle = ", ".join(f"{r['track']}/{r['symbol']}/{r['tf']}={r['estado']}" for r in celdas_sin_ok)
+        raise VerificacionF02Error(
+            f"ABORTADO (fail-closed, W4.6): {len(celdas_sin_ok)}/{len(resultados)} celdas de "
+            f"referencia sin estado OK ({detalle}). No se escribe {destino}: un baseline que "
+            f"certifica el motor {CURRENT_ENGINE_VERSION} debe tener las {len(resultados)} "
+            f"celdas verificadas de verdad, no un JSON de aspecto válido con huecos."
+        )
+
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(json.dumps({
+        "engine_version": CURRENT_ENGINE_VERSION,
+        "generado": datetime.now(timezone.utc).isoformat(),
+        "celdas": resultados,
+    }, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"Baseline motor {CURRENT_ENGINE_VERSION} escrito: {destino}")
+    return destino
 
 
 def comparar(v_old: str, v_new: str) -> int:
@@ -175,10 +226,26 @@ def comparar(v_old: str, v_new: str) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--comparar", nargs=2, metavar=("V_VIEJO", "V_NUEVO"))
+    parser.add_argument(
+        "--out", default=None, metavar="RUTA.json",
+        help=(
+            "Ruta de salida (default: orchestration/results/verificacion_f02_<version>.json, "
+            "el baseline sellado de la versión vigente). Usa --out para escribir a un fichero "
+            "distinto sin arriesgar el baseline."
+        ),
+    )
+    parser.add_argument(
+        "--force", action="store_true",
+        help="Permite sobrescribir el destino (--out o el baseline por defecto) si ya existe.",
+    )
     args = parser.parse_args()
     if args.comparar:
         return comparar(*args.comparar)
-    correr()
+    try:
+        correr(out_path=Path(args.out) if args.out else None, force=args.force)
+    except VerificacionF02Error as exc:
+        print(str(exc))
+        return 1
     return 0
 
 

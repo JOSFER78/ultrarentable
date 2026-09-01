@@ -48,6 +48,7 @@ from services.api.app.data_feed.feed_loader import load_candles
 from services.backtest.engine_port import BacktestEnginePort
 from services.data.instrument_cost_registry import CANONICAL_COST_REGISTRY, InstrumentCostProfile, get_instrument_cost_profile
 from services.engine.universal_backtest_engine import UniversalDeterministicBacktestEngine
+from services.engine_version import CURRENT_ENGINE_VERSION
 from services.strategy_core.canonical_compiler import CanonicalCompiler
 
 
@@ -373,7 +374,11 @@ class FastEngineAdapter(BacktestEnginePort):
                 json.dumps({"fee_multiplier": request.fee_multiplier, "slippage_bps": request.slippage_bps}, sort_keys=True).encode()
             ).hexdigest(),
             engine_name="UniversalDeterministicBacktestEngine",
-            engine_version="5.4.0",
+            # W4.2: antes hardcodeado a "5.4.0" -- estampaba SIEMPRE un motor viejo en el
+            # EvidenceBundle aunque el backtest se ejecutara con el motor vigente (SSOT:
+            # services/engine_version.py). Aguas abajo (is_version_stale, gobernanza_regla26)
+            # eso descartaba la evidencia como STALE pase lo que pase.
+            engine_version=CURRENT_ENGINE_VERSION,
             commit_sha=commit_sha,
             initial_capital_usd=request.initial_capital_usd,
             is_trades_count=is_result.total_trades,

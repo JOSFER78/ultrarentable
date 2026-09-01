@@ -705,35 +705,45 @@ UMBRALES_EMBUDO = {
 }
 
 
-def resumir_causas(telemetria: List[Dict[str, Any]]) -> Dict[str, Dict[str, int]]:
-    """Cuenta POR QUE muere cada configuracion, no solo donde.
+def _nueva_casilla_causas() -> Dict[str, int]:
+    return {"total": 0, "pocas_operaciones": 0, "sin_ventaja": 0, "ambas": 0, "otro": 0}
+
+
+def resumir_causas(telemetria: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """Cuenta POR QUE muere cada configuracion, no solo donde -- y de que FAMILIA (W2.6).
 
     Distinguir "no opera lo suficiente" de "opera pero no tiene ventaja" es la unica forma de
     saber si el problema son los datos o los arquetipos. Sin este desglose, una campana que
     devuelve cero certificadas no dice nada: podria ser falta de barras, falta de edge, o un
     filtro mal puesto, y las tres se arreglan de formas opuestas.
+
+    El desglose por familia (`por_familia`, dentro de cada etapa) es igual de necesario: con
+    el perfil "arquetipos" emitiendo primero las 108 configuraciones de REVERSION_ATR, una
+    campana con --max-candidates por defecto (20) mineaba SIEMPRE esa unica familia sin
+    decirlo -- "20/20 sin_ventaja" no distingue "las 6 familias fallan por igual" de "solo se
+    probo 1 de 6 familias". Cada registro de `telemetria` trae su "familia" (el
+    `archetype` de la config, ver el bucle principal de run_mining_pipeline); sin ese campo se
+    agrupa bajo "?" en vez de fallar.
     """
-    resumen: Dict[str, Dict[str, int]] = {}
+    resumen: Dict[str, Dict[str, Any]] = {}
     for reg in telemetria:
         etapa = reg.get("etapa", "?")
-        casilla = resumen.setdefault(
-            etapa, {"total": 0, "pocas_operaciones": 0, "sin_ventaja": 0, "ambas": 0, "otro": 0}
-        )
-        casilla["total"] += 1
+        familia = str(reg.get("familia") or "?")
+        casilla = resumen.setdefault(etapa, {**_nueva_casilla_causas(), "por_familia": {}})
+        fam_casilla = casilla["por_familia"].setdefault(familia, _nueva_casilla_causas())
+
         umbral = UMBRALES_EMBUDO.get(etapa)
         if umbral is None or reg.get("trades") is None or reg.get("pf") is None:
-            casilla["otro"] += 1
-            continue
-        pocas = reg["trades"] < umbral["trades_min"]
-        floja = reg["pf"] < umbral["pf_min"]
-        if pocas and floja:
-            casilla["ambas"] += 1
-        elif pocas:
-            casilla["pocas_operaciones"] += 1
-        elif floja:
-            casilla["sin_ventaja"] += 1
+            bucket = "otro"
         else:
-            casilla["otro"] += 1
+            pocas = reg["trades"] < umbral["trades_min"]
+            floja = reg["pf"] < umbral["pf_min"]
+            bucket = "ambas" if (pocas and floja) else "pocas_operaciones" if pocas else "sin_ventaja" if floja else "otro"
+
+        casilla["total"] += 1
+        casilla[bucket] += 1
+        fam_casilla["total"] += 1
+        fam_casilla[bucket] += 1
     return resumen
 
 
@@ -768,10 +778,18 @@ def persistir_telemetria(resultado: Dict[str, Any]) -> Optional[Path]:
                     "track", "symbol", "execution_symbol", "timeframe", "profile",
                     "dataset_source", "dataset_file", "certified_count",
                     "configuraciones_evaluadas", "barras_is", "barras_val", "barras_oos",
+                    # W2.6: tamano del espacio ANTES de truncar, el limite aplicado y si el
+                    # recorte realmente se activo -- sin esto "20/20 sin_ventaja" no dice si
+                    # se evaluo el universo completo o un prefijo de una sola familia.
+                    "max_candidates", "espacio_total", "truncado",
                 )
             },
             "umbrales": UMBRALES_EMBUDO,
             "embudo_por_etapa": resultado.get("embudo", {}),
+            # W2.6: histograma {familia: nº configuraciones evaluadas} del espacio REALMENTE
+            # atacado esta corrida (post-truncado). resumir_causas() ademas desglosa cada
+            # etapa del embudo por familia (clave "por_familia" dentro de cada etapa).
+            "cobertura_familias": resultado.get("cobertura_familias", {}),
             "causas_por_etapa": resumir_causas(telemetria),
             "telemetria": telemetria,
         }
@@ -849,11 +867,29 @@ def run_mining_pipeline(
     file_sha256 = compute_file_sha256(dataset_file)
     dataset_id = dataset_file.stem.replace("_manifest", "")
 
-    search_space = build_candidate_search_configs(track_norm, sym_norm, tf_norm, profile)
-    if max_candidates > 0:
-        search_space = search_space[:max_candidates]
+    # W2.6 (CUELLO, telemetria del embudo): el recorte de --max-candidates es un PREFIJO del
+    # espacio de busqueda completo. Con el perfil "arquetipos" emitiendo primero las 108
+    # configuraciones de REVERSION_ATR y --max-candidates por defecto en 20, TODA campana por
+    # defecto evaluaba UNA sola familia de seis sin que la telemetria lo dijera ("20/20
+    # sin_ventaja" no distingue "las 6 familias fallan igual" de "solo se probo 1 de 6"). Se
+    # calcula el tamano ANTES de truncar y la cobertura por familia del espacio REALMENTE
+    # evaluado para que quede persistido, no solo el conteo final.
+    search_space_completo = build_candidate_search_configs(track_norm, sym_norm, tf_norm, profile)
+    espacio_total = len(search_space_completo)
+    search_space = (search_space_completo[:max_candidates] if max_candidates > 0
+                    else search_space_completo)
+    truncado = max_candidates > 0 and len(search_space) < espacio_total
 
-    log_msg(f"Espacio de búsqueda generado: {len(search_space)} configuraciones")
+    cobertura_familias: Dict[str, int] = {}
+    for _cfg in search_space:
+        _familia = str(_cfg.get("archetype", "?"))
+        cobertura_familias[_familia] = cobertura_familias.get(_familia, 0) + 1
+
+    log_msg(
+        f"Espacio de búsqueda generado: {espacio_total} configuraciones totales"
+        + (f" -> recortado a {len(search_space)} (--max-candidates {max_candidates})" if truncado else "")
+        + f" · cobertura por familia: {cobertura_familias}"
+    )
 
     if dry_run:
         log_msg("MODO DRY-RUN ACTIVADO: Simulación de flujo sin escrituras a disco ni BD.")
@@ -867,6 +903,10 @@ def run_mining_pipeline(
             "dataset_resolved": str(dataset_file),
             "dataset_sha256": file_sha256,
             "search_space_count": len(search_space),
+            "max_candidates": max_candidates,
+            "espacio_total": espacio_total,
+            "truncado": truncado,
+            "cobertura_familias": cobertura_familias,
             "sample_config": search_space[0] if search_space else None,
             "certified_count": 0,
         }
@@ -957,7 +997,7 @@ def run_mining_pipeline(
         # 1. Backtest IS
         is_bt = backtest_engine.run_backtest(snapshot, candles_is, initial_capital_usd=initial_cap)
         if is_bt.total_trades < 5 or is_bt.profit_factor < 1.05:
-            telemetria.append({"strategy_id": strat_id, "etapa": "IS", "motivo":
+            telemetria.append({"strategy_id": strat_id, "etapa": "IS", "familia": arch, "motivo":
                 f"trades={is_bt.total_trades} pf={is_bt.profit_factor:.3f}",
                 "trades": is_bt.total_trades, "pf": round(is_bt.profit_factor, 3)})
             continue
@@ -965,7 +1005,7 @@ def run_mining_pipeline(
         # 2. Backtest Val
         val_bt = backtest_engine.run_backtest(snapshot, candles_val, initial_capital_usd=initial_cap)
         if val_bt.total_trades < 3 or val_bt.profit_factor < 1.0:
-            telemetria.append({"strategy_id": strat_id, "etapa": "VAL", "motivo":
+            telemetria.append({"strategy_id": strat_id, "etapa": "VAL", "familia": arch, "motivo":
                 f"trades={val_bt.total_trades} pf={val_bt.profit_factor:.3f}",
                 "trades": val_bt.total_trades, "pf": round(val_bt.profit_factor, 3)})
             continue
@@ -975,7 +1015,7 @@ def run_mining_pipeline(
         # MIN_OPERACIONES_OOS: con 5 operaciones no hay estadistica. El 2026-08-31 se colaron 30
         # candidatas de 17-18 operaciones que certificaron por no operar (DD 0,08%), no por edge.
         if oos_bt.total_trades < MIN_OPERACIONES_OOS or oos_bt.profit_factor < 1.10:
-            telemetria.append({"strategy_id": strat_id, "etapa": "OOS", "motivo":
+            telemetria.append({"strategy_id": strat_id, "etapa": "OOS", "familia": arch, "motivo":
                 f"trades={oos_bt.total_trades} pf={oos_bt.profit_factor:.3f}",
                 "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3)})
             continue
@@ -1058,7 +1098,7 @@ def run_mining_pipeline(
         )
 
         if not verdict.is_certified:
-            telemetria.append({"strategy_id": strat_id, "etapa": "GATES", "motivo":
+            telemetria.append({"strategy_id": strat_id, "etapa": "GATES", "familia": arch, "motivo":
                 f"gates={gates_eval.get('gates_passed_count', 0)}/11 score={gates_eval.get('overall_score', 0.0):.1f}",
                 "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3),
                 "gates_passed": gates_eval.get("gates_passed_count", 0),
@@ -1228,6 +1268,10 @@ def run_mining_pipeline(
         "dataset_file": dataset_file.name,
         "dataset_source_label": dataset_source_label,
         "configuraciones_evaluadas": len(telemetria) + len(certified_candidates),
+        "max_candidates": max_candidates,
+        "espacio_total": espacio_total,
+        "truncado": truncado,
+        "cobertura_familias": cobertura_familias,
         "barras_is": len(candles_is),
         "barras_val": len(candles_val),
         "barras_oos": len(candles_blind_oos),

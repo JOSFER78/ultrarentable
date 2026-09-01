@@ -592,6 +592,36 @@ def reejecutar_examen_barra_a_barra(candidate: Dict[str, Any],
     }
 
 
+def determinar_veredicto_sellado(cumple_bootstrap: bool,
+                                 verif_flotante: Optional[Dict[str, Any]]) -> str:
+    """Veredicto FINAL del objetivo sellado F07 (W4.1): combina el Monte Carlo por bootstrap
+    (COTA INFERIOR optimista, ver docstring de reejecutar_examen_barra_a_barra -- remuestrea
+    PnL YA CERRADO, ciego a la excursión adversa intra-operación) con la verificación honesta
+    barra a barra sobre equity FLOTANTE (prop_profile, F02.3).
+
+    FAIL-CLOSED, sin excepciones:
+      - Sin verificación barra a barra (verif_flotante is None -- no hay blueprint
+        reconstruible, el dataset cambió de SHA-256, o se desactivó explícitamente con
+        --sin-verificacion-flotante): el veredicto es SIEMPRE "NO_EVALUABLE". Nunca "CUMPLE"
+        por defecto, nunca una caída silenciosa a lo que diga el bootstrap.
+      - Con verificación disponible, una cuenta que la reprodujo REVENTADA
+        (prop_firm_busted=True) es SIEMPRE "NO_CUMPLE", pase lo que pase en el bootstrap: el
+        dato honesto (equity flotante, marcado a mercado barra a barra) manda sobre el
+        optimista (PnL neto por operación ya cerrada).
+      - Solo con verificación disponible Y la cuenta sin reventar en la reproducción real se
+        deja que decida el resultado económico del bootstrap (mensual mediano / P(romper)
+        sobre el horizonte, calculado en evaluar_rendimiento_mensual/evaluar_negocio).
+
+    Devuelve "CUMPLE" | "NO_CUMPLE" | "NO_EVALUABLE" -- nunca un booleano ambiguo, para que
+    ningún llamador pueda confundir "no evaluado" con "evaluado y rechazado".
+    """
+    if verif_flotante is None:
+        return "NO_EVALUABLE"
+    if verif_flotante.get("prop_firm_busted"):
+        return "NO_CUMPLE"
+    return "CUMPLE" if cumple_bootstrap else "NO_CUMPLE"
+
+
 def deducir_ops_por_dia(candidate: Dict[str, Any], n_trades: int,
                         override: Optional[float] = None) -> Optional[float]:
     """Ritmo real de operaciones/día del periodo OOS. NO se asume (p.ej. 60 días fijos):
@@ -856,15 +886,26 @@ def main() -> int:
             elegida = next(f for f in candidatas_sostenibles if f["mult_fondeada"] == 1.0)
 
         mult_fondeada_elegido = elegida["mult_fondeada"]
-        cumple_sellado = (elegida["retorno_mensual_mediana_pct"] >= UMBRAL_SELLADO_MENSUAL_PCT
-                          and elegida["p_romper_cuenta_horizonte"] <= UMBRAL_SELLADO_BUST_6M)
+        # Decisión ECONÓMICA del bootstrap (optimista, ciego a la excursión adversa
+        # intra-operación) -- NUNCA es el veredicto final por sí sola. Ver W4.1.
+        cumple_sellado_bootstrap = (
+            elegida["retorno_mensual_mediana_pct"] >= UMBRAL_SELLADO_MENSUAL_PCT
+            and elegida["p_romper_cuenta_horizonte"] <= UMBRAL_SELLADO_BUST_6M
+        )
+        # Veredicto FINAL (W4.1, fail-closed): decide con la verificación honesta barra a
+        # barra, no con el bootstrap. Sin verificación -> NO_EVALUABLE, jamás CUMPLE por
+        # defecto. Con verificación y cuenta reventada -> NO_CUMPLE, aunque el bootstrap
+        # dijera lo contrario. Ver determinar_veredicto_sellado().
+        veredicto_sellado = determinar_veredicto_sellado(cumple_sellado_bootstrap, verif_flotante)
+        cumple_sellado = veredicto_sellado == "CUMPLE"
 
         # Días esperados / P(pasar) del examen: del mismo multiplicador usado para pasarlo
         # (óptimo cartucho si lo hay; si no, escala real 1x -- misma convención que Fase 2).
         mult_examen_elegido = mejor["multiplicador"] if mejor else 1.0
         r_examen = por_mult_examen.get(mult_examen_elegido) or por_mult_examen[1]
 
-        veredicto = "CUMPLE" if cumple_sellado else "no cumple"
+        veredicto = {"CUMPLE": "CUMPLE", "NO_CUMPLE": "no cumple",
+                    "NO_EVALUABLE": "NO_EVALUABLE (sin verificación barra a barra)"}[veredicto_sellado]
         print(f"  -> SOSTENIBLE (objetivo sellado F07, x{mult_fondeada_elegido:g} fondeada): "
               f"mensual mediano {elegida['retorno_mensual_mediana_pct']:+.1f}% "
               f"(p5 {elegida['retorno_mensual_p5_pct']:+.1f}% / "
@@ -883,6 +924,8 @@ def main() -> int:
                 "retorno_mensual_p95_pct": elegida["retorno_mensual_p95_pct"],
                 "p_romper_cuenta_horizonte": elegida["p_romper_cuenta_horizonte"],
                 "horizonte_meses": args.horizonte_meses,
+                "cumple_objetivo_sellado_bootstrap": cumple_sellado_bootstrap,
+                "veredicto_sellado": veredicto_sellado,
                 "cumple_objetivo_sellado": cumple_sellado,
             },
             "firma": base["firma"],
@@ -908,14 +951,20 @@ def main() -> int:
             "rendimiento_mensual_p5_pct": elegida["retorno_mensual_p5_pct"],
             "rendimiento_mensual_p95_pct": elegida["retorno_mensual_p95_pct"],
             "multiplicador_fondeada": mult_fondeada_elegido,
+            "cumple_objetivo_sellado_bootstrap": cumple_sellado_bootstrap,
+            "veredicto_sellado": veredicto_sellado,
             "cumple_objetivo_sellado": cumple_sellado,
             "verificado_equity_flotante": verif_flotante is not None,
             "prop_firm_busted_verificado": (verif_flotante or {}).get("prop_firm_busted"),
         })
 
-    # Ranking ORDENADO (item F07): primero quien cumple el objetivo sellado, luego por
-    # rendimiento mensual mediano descendente, y a igualdad de rendimiento, menor P(romper).
-    ranking.sort(key=lambda f: (not f["cumple_objetivo_sellado"],
+    # Ranking ORDENADO (item F07): primero quien CUMPLE de verdad (verificado barra a barra,
+    # no reventado, y económicamente sostenible), luego NO_CUMPLE, y al final NO_EVALUABLE
+    # (sin verificación honesta -- ninguna candidata sin verificar puede colarse por delante
+    # de una candidata verificada que no cumple, aunque su bootstrap se vea mejor). Dentro de
+    # cada grupo, por rendimiento mensual mediano descendente y, a igualdad, menor P(romper).
+    _PRIORIDAD_VEREDICTO = {"CUMPLE": 0, "NO_CUMPLE": 1, "NO_EVALUABLE": 2}
+    ranking.sort(key=lambda f: (_PRIORIDAD_VEREDICTO[f["veredicto_sellado"]],
                                 -f["rendimiento_mensual_mediano_pct"],
                                 f["p_romper_cuenta"]))
 
@@ -927,19 +976,22 @@ def main() -> int:
         print("=" * 100)
         print(f"{'#':>3} {'estrategia':<30} {'días':>6} {'P(pasar)':>9} {'mensual med.':>13} "
               f"{'P(romper)':>10}  veredicto")
+        _VEREDICTO_TXT = {"CUMPLE": "CUMPLE", "NO_CUMPLE": "no cumple",
+                         "NO_EVALUABLE": "NO_EVALUABLE (sin verif. barra a barra)"}
         for i, fila in enumerate(ranking, 1):
-            veredicto = "CUMPLE" if fila["cumple_objetivo_sellado"] else "no cumple"
+            veredicto_txt = _VEREDICTO_TXT[fila["veredicto_sellado"]]
             dias_txt = str(fila["dias_esperados_mediana"] or "-")
             print(f"{i:>3} {fila['nombre'][:30]:<30} {dias_txt:>6} "
                   f"{fila['p_pasar_examen']:>9.1%} "
                   f"{fila['rendimiento_mensual_mediano_pct']:>+12.1f}% "
-                  f"{fila['p_romper_cuenta']:>10.1%}  {veredicto}")
+                  f"{fila['p_romper_cuenta']:>10.1%}  {veredicto_txt}")
         n_verificadas = sum(1 for f in ranking if f["verificado_equity_flotante"])
         if n_verificadas < len(ranking):
-            print(f"\nAVISO METODOLÓGICO (F02.3, CUELLO 2): {len(ranking) - n_verificadas}/"
+            print(f"\nAVISO METODOLÓGICO (F02.3, CUELLO 2, W4.1): {len(ranking) - n_verificadas}/"
                   f"{len(ranking)} candidatas del ranking SIN verificar barra a barra sobre "
-                  "equity flotante -- su P(romper cuenta) es una COTA INFERIOR optimista "
-                  "(bootstrap ciego a la excursión adversa intra-operación), no el riesgo real. "
+                  "equity flotante -- se marcan NO_EVALUABLE (nunca CUMPLE) y su "
+                  "p_romper_cuenta es una COTA INFERIOR optimista (bootstrap ciego a la "
+                  "excursión adversa intra-operación), no el riesgo real. "
                   "Motivo: scripts/mine.py hoy solo persiste el blueprint reconstruible "
                   "(\"parameters\") para candidatas certificadas 11/11 con el motor actual; "
                   "ninguna candidata FONDEO en la BD lo cumple todavía (todas motor 5.4.0, "

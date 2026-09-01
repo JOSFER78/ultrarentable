@@ -25,6 +25,7 @@ from services.discovery.research_objective import robust_research_score
 from services.discovery.strategy_evolution_engine import StrategyEvolutionEngine
 from services.discovery.strategy_search_registry import SearchTrialRecord, StrategySearchRegistry
 from services.discovery.ultra_discovery import UltraDiscoveryEngine
+from services.engine_version import CURRENT_ENGINE_VERSION
 from services.validation.engine.event_backtest_engine import EventBacktestEngine
 
 
@@ -49,7 +50,13 @@ class ResearchCandidate:
 class StrategyResearchLoop:
     """Generate/evolve real hypotheses and rank them using IS + held-out Validation."""
 
-    def __init__(self, registry: StrategySearchRegistry, engine_version: str = "5.4.0") -> None:
+    def __init__(self, registry: StrategySearchRegistry,
+                engine_version: str = CURRENT_ENGINE_VERSION) -> None:
+        # W4.2: el default ANTES estaba hardcodeado a "5.4.0" (motor vigente: ver
+        # services/engine_version.py). scripts/run_strategy_research.py instancia esta clase
+        # sin pasar engine_version explícito, así que las candidatas quedaban estampadas con
+        # un motor viejo y is_version_stale() las descartaba SIEMPRE aguas abajo
+        # (meta_ensemble_service.py, scripts/gobernanza_regla26.py).
         self.registry = registry
         self.engine_version = engine_version
         self.discovery = UltraDiscoveryEngine()
@@ -163,7 +170,7 @@ class StrategyResearchLoop:
         snapshot: StrategySnapshot,
         parent_strategy_id: Optional[str] = None,
         mutation_type: Optional[str] = None,
-        engine_version: str = "5.4.0",
+        engine_version: str = CURRENT_ENGINE_VERSION,
     ) -> CanonicalStrategy:
         """Bridge the immutable StrategySnapshot into the canonical executable AST."""
         if not snapshot.entry_rules or not snapshot.exit_rules or not snapshot.sizing_and_risk:

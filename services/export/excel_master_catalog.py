@@ -89,7 +89,12 @@ def get_master_catalog_rows(db: Session, route: Optional[str] = None) -> List[Di
             "profit_factor": st.get("profit_factor", st.get("oos_profit_factor")),
             "max_drawdown_pct": st.get("max_drawdown_pct"),
             "gate_audit_status": "11/11 APROBADO" if st.get("all_gates_pass") else "PENDIENTE",
-            "engine_version": st.get("engine_version", "5.4.0"),
+            # W4.2: antes el fallback (para el caso improbable de que el dict no traiga la
+            # clave) era el literal hardcodeado "5.4.0" -- con el motor vigente en 5.17.0
+            # (services/engine_version.py) eso habría mentido en el catálogo de auditoría
+            # afirmando un motor viejo concreto que no es el real. Sin dato real, se reporta
+            # explícitamente que no hay dato, nunca un número inventado.
+            "engine_version": st.get("engine_version") or "SIN_DATO",
             "strategy_hash": st.get("strategy_hash", ""),
             "ledger_hash": st.get("ledger_hash", ""),
             "evidence_bundle_hash": st.get("evidence_bundle_hash", ""),
@@ -127,7 +132,8 @@ def get_master_catalog_rows(db: Session, route: Optional[str] = None) -> List[Di
             "profit_factor": ms.get("combined_profit_factor"),
             "max_drawdown_pct": ms.get("combined_max_drawdown_pct") or ms.get("max_drawdown_pct"),
             "gate_audit_status": "COMPONENTES_11/11_VERIFICADOS",
-            "engine_version": ms.get("engine_version", "5.4.0"),
+            # W4.2: mismo fix que arriba -- sin dato real, nunca un literal hardcodeado.
+            "engine_version": ms.get("engine_version") or "SIN_DATO",
             "strategy_hash": ms.get("canonical_hash", ms.get("portfolio_hash", "")),
             "ledger_hash": ms.get("combined_ledger_hash", ms.get("canonical_hash", "")),
             "evidence_bundle_hash": ms.get("canonical_hash", ""),
