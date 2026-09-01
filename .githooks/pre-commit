@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# ARNÉS ANTIGRAVITY — pre-commit
+# Regla: SOLO el orquestador commitea (ORQ_COMMIT=1). Los agentes de ejecución (AGY) trabajan en
+# ramas agy/* dentro de su propio worktree, dejan el working tree listo y escriben DONE. Nunca commitean.
+# Activar una vez por repo (lo hace el orquestador):  git config core.hooksPath .githooks
+set -u
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo desconocida)"
+
+if [[ "${ORQ_COMMIT:-}" != "1" ]]; then
+  if [[ "$branch" == agy/* ]]; then
+    echo "[ARNÉS] commit BLOQUEADO en rama '$branch': los agentes AGY no commitean. Deja el working tree y escribe DONE_<ID>.md." >&2
+    exit 1
+  fi
+  if [[ -n "${AGY_AGENT:-}" ]]; then
+    echo "[ARNÉS] commit BLOQUEADO: sesión de agente AGY ('$AGY_AGENT'). Solo el orquestador commitea (ORQ_COMMIT=1)." >&2
+    exit 1
+  fi
+fi
+
+# Nunca datasets pesados al índice (manifiestos sí).
+if git diff --cached --name-only | grep -E '^data/(normalized|raw|sqx_imports)/' | grep -Ev '(manifest|MANIFEST|\.md$)' | grep -E '\.(json|csv|parquet|bi5|zip)$' >/dev/null 2>&1; then
+  echo "[ARNÉS] commit BLOQUEADO: hay datasets pesados en el índice (data/normalized|raw|sqx_imports). Solo manifiestos." >&2
+  exit 1
+fi
+
+# Nunca 'rm' de ficheros versionados sin pasar por cuarentena: un borrado (D) exige un MANIFEST en cuarentena/ en el mismo commit.
+if git diff --cached --name-status | grep -E '^D\s' >/dev/null 2>&1; then
+  if ! git diff --cached --name-only | grep -E '^cuarentena/.*MANIFEST' >/dev/null 2>&1; then
+    echo "[ARNÉS] commit BLOQUEADO: borras ficheros sin manifiesto en cuarentena/ (regla: nunca rm; se aparca con MANIFEST SHA-256)." >&2
+    exit 1
+  fi
+fi
+exit 0

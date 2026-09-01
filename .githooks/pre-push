@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# ARNÉS ANTIGRAVITY — pre-push
+# Regla: push SOLO del orquestador (ORQ_PUSH=1) y NUNCA de ramas agy/*. Un agente AGY no puede
+# publicar nada aunque lo intente: el hook lo corta antes de salir de la máquina.
+set -u
+if [[ "${ORQ_PUSH:-}" != "1" ]]; then
+  echo "[ARNÉS] push BLOQUEADO: solo el orquestador puede publicar (ORQ_PUSH=1), tras auditar el lote." >&2
+  exit 1
+fi
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$local_ref" in
+    refs/heads/agy/*)
+      echo "[ARNÉS] push BLOQUEADO: la rama '$local_ref' es de un agente de ejecución; se integra a main por el orquestador, no se publica." >&2
+      exit 1 ;;
+  esac
+done
+exit 0
