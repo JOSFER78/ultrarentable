@@ -168,3 +168,15 @@ data/artifacts/
 artifacts/
 *.log
 data/evidence/
+
+# Datasets derivados: regenerables desde Binance/Dukascopy con los scripts de ingesta.
+# Son la misma clase de artefacto que data/raw/ y data/artifacts/ (ya excluidos) y suponian
+# el 99,8 % del pack de push (307 MB en un solo commit), lo que hacia fallar el push a
+# GitHub con HTTP 408 de forma sistematica.
+# IMPORTANTE: los *_manifest.json SI se versionan -- son la evidencia REAL-ONLY
+# (checksum_sha256, record_count, coverage_pct, gap_count) que permite verificar que un
+# dataset regenerado es identico al usado en una certificacion. Pesan KB.
+data/normalized/*
+!data/normalized/*_manifest.json
+data/sqx_imports/
+data/sqx_exports/

@@ -51,6 +51,30 @@ entonces **la envolvente ULTRA**. En paralelo desde el descubrimiento, **FONDEO*
 | — | Riesgos | VIGENTE | — | `plan/bloques/RIESGOS.md` |
 | — | Reglas invariantes | VIGENTE | — | `plan/bloques/REGLAS_INVARIANTES.md` |
 
+## OBJETIVOS DE RENTABILIDAD — SELLADOS (2026-08-31)
+
+Hasta esta fecha el plan v4 no contenía ningún objetivo de rentabilidad **verificable**: "miles
+de %" era prosa, y el objetivo de FONDEO no existía escrito en ninguna parte. El criterio 1.1
+mide robustez, **no rentabilidad**, así que el sistema podía certificar como buena una
+estrategia robusta pero pobre. Corregido:
+
+| Track | Objetivo sellado | Se mide sobre | Techo de riesgo | Bloque |
+| :--- | :--- | :--- | :--- | :--- |
+| ULTRA | **~100 % mensual** (miles % anuales, decisión #5) | mediana de la distribución | reportar P(ruina) junto a la cifra | F05 |
+| FONDEO | **≥20 % mensual SOSTENIBLE** | mediana de la distribución | **P(romper cuenta) ≤ 20 %** a 6 meses | F07 |
+
+Reglas comunes a ambos: se mide sobre la **mediana**, nunca sobre la media (las colas derechas
+la inflan); se reporta siempre con **p5, p95 y probabilidad de ruina**; son filtros
+**POSTERIORES** al criterio 1.1, que sigue SELLADO y no se relaja; y si ninguna estrategia
+llega, **se reporta la cifra real alcanzada** — ajustar costes, datos o gates para alcanzar el
+número es violación grave de la doctrina.
+
+En FONDEO, ante el conflicto entre maximizar ROI por cartucho y mantener la cuenta viva, manda
+la **rentabilidad mensual sostenible** (decisión del usuario). El sistema venía optimizando ROI
+por cartucho, que lleva a estrategias distintas.
+
+---
+
 Estados posibles de un bloque: `PENDIENTE` · `EN_CURSO` · `PARCIAL` · `HECHO` · `BLOQUEADO` · `VIGENTE` (doctrinal).
 
 **Cómo se actualiza:** se edita el fichero del bloque (contenido y/o `estado` del frontmatter) y

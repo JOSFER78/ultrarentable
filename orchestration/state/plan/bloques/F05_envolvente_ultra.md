@@ -4,7 +4,7 @@ titulo: "Envolvente ULTRA: el motor de balas"
 estado: PENDIENTE
 depende_de: ["F04"]
 desbloquea: ["F06"]
-verificacion_global: "Distribución completa de resultados (mediana, p5, p95, probabilidad de ruina), nunca la media sola. Si ninguna base alcanza el objetivo, se reporta la cifra real."
+verificacion_global: "Distribución completa de resultados (mediana, p5, p95, probabilidad de ruina), nunca la media sola. OBJETIVO SELLADO (decisión #5): ~100 % mensual (miles % anuales) medido sobre la MEDIANA. Si ninguna base alcanza el objetivo, se reporta la cifra real."
 actualizado: "2026-08-31"
 ---
 
@@ -38,6 +38,36 @@ arranque **100 % paper**.
   probabilidad de perderlo todo hay que decirlo así.
 - **Si ninguna base alcanza el objetivo, se reporta la cifra real alcanzada.** Ajustar costes,
   datos o gates para llegar al número es violación grave de la doctrina.
+
+## OBJETIVO DE RENTABILIDAD — SELLADO (Emilio, 2026-08-31)
+
+El plan v4 heredó "miles de %" como **prosa sin umbral verificable**: la cifra concreta vivía
+sólo en la decisión #5 de `DOCTRINA_ORQUESTADOR.md:81` y se perdió al reescribir el plan. Con
+ello, ninguna comprobación automática podía decir si una estrategia cumple el objetivo — el
+criterio 1.1 mide robustez (≥200 trades OOS, PF ≥1,25, OOS/IS ≥0,5, 11 gates, DSR,
+persistencia) pero **no mide rentabilidad**. Tal cual, el sistema podía certificar como buena
+una estrategia robusta que rindiera un 4 % anual. Queda restaurado y sellado:
+
+**ULTRA debe alcanzar ~100 % mensual (miles % anuales), decisión #5.**
+
+**Cómo se verifica (obligatorio):**
+
+1. Sobre la **mediana** de la distribución de la envolvente, jamás sobre la media: en
+   distribuciones con cola derecha gorda —que es exactamente lo que produce el motor de
+   balas— la media la fija un puñado de trayectorias afortunadas y no representa el resultado
+   esperable.
+2. Acompañado SIEMPRE de **p5, p95 y probabilidad de ruina**. Un sistema con 3.000 % de
+   mediana y 40 % de probabilidad de ruina se reporta así, con las dos cifras juntas.
+3. Este umbral es un filtro **POSTERIOR** al criterio 1.1, no lo sustituye ni lo relaja: una
+   estrategia debe pasar 1.1 (que sigue SELLADO) **y además** llegar al objetivo con la
+   envolvente aplicada.
+4. **Si ninguna base alcanza el objetivo, se reporta la cifra real.** Ajustar costes, datos o
+   gates para llegar al número es violación grave de la doctrina.
+
+**Ojo al orden causal:** el objetivo NO se le exige a la señal desnuda. Una base con PF 1,3 y
+30 % anual es materia prima legítima; el ~100 % mensual se le exige al conjunto
+`base × envolvente de balas`. Confundir ambos llevaría a descartar bases buenas por no ser
+espectaculares por sí solas, que es justo el error que la tesis del plan quiere evitar.
 
 Antecedente (hallazgo 01, 2026-08-31): la envolvente NO puede salvar un edge inexistente — el
 catálogo actual pierde a cualquier apalancamiento fuera de muestra. Esta fase queda sin materia

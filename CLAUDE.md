@@ -24,9 +24,15 @@ en paralelo; Antigravity está retirado del proyecto (2026-08-31).
 - **Nunca `rm`**: todo a `cuarentena/` con manifiesto SHA-256.
 - **Git**: push a main AUTORIZADO expresamente por Emilio para este repo — commits temáticos
   descriptivos con trailer de Claude, nunca árboles incoherentes (releases a medias).
-- **Carga del VPS (4 cores)**: no simultanear procesos pesados; `nice -n 19` / `ionice -c 3`;
-  la web SIEMPRE en build de producción, no `next dev`. Ojo: `ultrarentable-discovery.service`
-  y `sqx.service` resucitan tras reinicio (enabled) y saturan la máquina.
+- **Carga del VPS (4 cores) — SSOT: `orchestration/OPERACION_VPS.md`, LEER ANTES DE LANZAR NADA**.
+  Estabilizar la máquina es la PRIMERA tarea de cada sesión, no algo que se gestione sobre la
+  marcha. Un solo proceso pesado a la vez con `nice -n 19` / `ionice -c 3` (el backfill de
+  Dukascopy es la única excepción: es I/O-bound, ~3 % CPU). La web SIEMPRE en build de
+  producción, no `next dev`. Si la máquina ya está saturada por procesos ajenos, NO se añade
+  trabajo encima: se reporta y se espera. Ojo a lo que resucita solo:
+  `ultrarentable-discovery.service` y `sqx.service` están `enabled` (systemd los relanza) y un
+  cron (`improve_cycle.sh`, minuto :40) revive el bucle de SQX cada 20-30 min — parar el proceso
+  no basta si no se cortan las tres vías.
 - **Multiagentes**: subagentes simultáneos para lo mecánico; el orquestador analiza, decide
   y verifica.
 
