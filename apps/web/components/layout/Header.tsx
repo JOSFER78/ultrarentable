@@ -33,15 +33,9 @@ const ROUTE_METADATA: BreadcrumbMap = {
   "/trading-desk/auditoria": { section: "Operación & Trading Desks", title: "Auditoría Forense WAL" },
   "/trading-desk/configuracion": { section: "Operación & Trading Desks", title: "Conexión Gateway" },
   "/estrategias": { section: "Strategy Lab & Quant", title: "Strategy Lab & Descubrimiento" },
-  "/estrategias/0-portada": { section: "Strategy Lab & Quant", title: "F0: Portada General" },
-  "/estrategias/1-motor-247-telemetria": { section: "Strategy Lab & Quant", title: "F1: Motor 24/7 Telemetría" },
-  "/estrategias/2-catalogo-candidatos-familias": { section: "Strategy Lab & Quant", title: "F2: Catálogo de Candidatos" },
-  "/estrategias/3-fsm-candidatos": { section: "Strategy Lab & Quant", title: "F3: FSM Candidatos" },
-  "/estrategias/4-investigacion-fallos": { section: "Strategy Lab & Quant", title: "F4: Investigación de Fallos" },
-  "/estrategias/5-estrategias-aprobadas": { section: "Strategy Lab & Quant", title: "F5: Estrategias Aprobadas" },
-  "/estrategias/6-meta-estrategias-portfolio": { section: "Strategy Lab & Quant", title: "F6: Meta-Estrategias & Portfolio" },
   "/candidatos": { section: "Strategy Lab & Quant", title: "Explorador de Candidatos SQLite WAL" },
   "/gates": { section: "Strategy Lab & Quant", title: "Pipeline de 11 Evidence Gates" },
+  "/research": { section: "Strategy Lab & Quant", title: "Panel Investigador & Research Lab" },
   "/portfolio": { section: "Strategy Lab & Quant", title: "Portafolio Studio & Paridad de Riesgo" },
   "/prop-firms": { section: "Ecosistema & Información", title: "Catálogo 70 Prop Firms CME" },
   "/tradesfera": { section: "Ecosistema & Información", title: "Dossier Tradesfera (18 Módulos)" },
@@ -234,7 +228,7 @@ export default function Header() {
                       <span>Conexión Gateway & APIs</span>
                     </Link>
                     <Link
-                      href="/estrategias/5-estrategias-aprobadas"
+                      href="/gates"
                       onClick={() => setIsDropdownOpen(false)}
                       className="flex items-center gap-2.5 px-3.5 py-2 text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
                     >

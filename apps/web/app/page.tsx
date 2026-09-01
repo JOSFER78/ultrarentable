@@ -293,7 +293,7 @@ export default function HomePage() {
           subtitle="11/11 Gates Pass (Auditadas)"
           icon={ShieldCheck}
           accent="#34d399"
-          href="/estrategias/5-estrategias-aprobadas"
+          href="/gates"
         />
         <KpiCard
           title="PROFIT FACTOR MEDIO OOS"
@@ -320,7 +320,7 @@ export default function HomePage() {
           subtitle="Catálogo oficial con evidencia 11/11 gates y descarga en Excel/CSV"
           icon={Award}
           accent="#10b981"
-          href="/estrategias/5-estrategias-aprobadas"
+          href="/gates"
         />
         <QuickLinkCard
           title="Portfolio Studio & Meta-Estrategias"

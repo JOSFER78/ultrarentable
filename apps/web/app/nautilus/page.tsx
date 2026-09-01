@@ -36,6 +36,15 @@ interface CandidateItem {
   };
 }
 
+function fmtOrSinDatos(
+  v: number | null | undefined,
+  opts?: { decimals?: number; prefix?: string; suffix?: string }
+): string {
+  if (v == null) return "SIN DATOS";
+  const decimals = opts?.decimals ?? 2;
+  return `${opts?.prefix ?? ""}${v.toFixed(decimals)}${opts?.suffix ?? ""}`;
+}
+
 export default function NautilusTraderStudioPage() {
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
@@ -173,13 +182,13 @@ export default function NautilusTraderStudioPage() {
               <div className="flex justify-between">
                 <span className="text-slate-400">PF OOS:</span>
                 <strong className="text-emerald-400 tabular-nums">
-                  {(selectedCand.metrics?.out_of_sample?.profit_factor || 0).toFixed(2)}
+                  {fmtOrSinDatos(selectedCand.metrics?.out_of_sample?.profit_factor)}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Max DD:</span>
                 <strong className="text-rose-400 tabular-nums">
-                  {(selectedCand.metrics?.out_of_sample?.max_drawdown_pct || 0).toFixed(2)}%
+                  {fmtOrSinDatos(selectedCand.metrics?.out_of_sample?.max_drawdown_pct, { suffix: "%" })}
                 </strong>
               </div>
             </div>
@@ -292,25 +301,25 @@ export default function NautilusTraderStudioPage() {
               <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.06]">
                 <span className="text-[10px] text-slate-400 block">PnL FastEngine</span>
                 <span className="text-base font-bold text-white tabular-nums">
-                  ${(simulationResult.reconciliation?.fast_engine_pnl || 0).toFixed(2)}
+                  {fmtOrSinDatos(simulationResult.reconciliation?.fast_engine_pnl, { prefix: "$" })}
                 </span>
               </div>
               <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.06]">
                 <span className="text-[10px] text-slate-400 block">PnL NautilusTrader</span>
                 <span className="text-base font-bold text-sky-400 tabular-nums">
-                  ${(simulationResult.reconciliation?.nautilus_pnl || 0).toFixed(2)}
+                  {fmtOrSinDatos(simulationResult.reconciliation?.nautilus_pnl, { prefix: "$" })}
                 </span>
               </div>
               <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.06]">
                 <span className="text-[10px] text-slate-400 block">Discrepancia PnL</span>
                 <span className="text-base font-bold text-emerald-400 tabular-nums">
-                  {(simulationResult.reconciliation?.discrepancy_pct || 0).toFixed(2)}% (≤ 5.0%)
+                  {fmtOrSinDatos(simulationResult.reconciliation?.discrepancy_pct, { suffix: "%" })} (≤ 5.0%)
                 </span>
               </div>
               <div className="p-3.5 bg-[#050811] rounded-xl border border-white/[0.06]">
                 <span className="text-[10px] text-slate-400 block">Trades Reconciliados</span>
                 <span className="text-base font-bold text-amber-400 tabular-nums">
-                  {simulationResult.reconciliation?.trades_executed || 0}
+                  {simulationResult.reconciliation?.trades_executed ?? "SIN DATOS"}
                 </span>
               </div>
             </div>

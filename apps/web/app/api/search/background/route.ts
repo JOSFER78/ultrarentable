@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = "force-static";
-
 /**
  * API route Next.ts que proxea /api/search/background -> FastAPI :8000.
  * Estrategia same-origin ya usada en la app: el navegador habla con :3000 y Next

@@ -77,9 +77,18 @@ export default function DataPipelinePage() {
               límites, aprobar archivos ni rellenar parámetros técnicos.
             </p>
           </div>
-          <button type="button" className="btn btn-primary" onClick={prepareEth} disabled={preparing}>
-            {preparing ? "Preparando datos ETH…" : "Preparar datos ETH"}
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={prepareEth}
+            disabled
+            title="Función no disponible: falta el endpoint POST /api/v1/datasets/prepare-eth en el backend"
+          >
+            Función no disponible (falta endpoint backend)
           </button>
+        </div>
+        <div style={{ marginTop: 16, color: "var(--text-muted)", fontSize: 13 }}>
+          Función no disponible: falta el endpoint en el backend (POST /api/v1/datasets/prepare-eth).
         </div>
         {message ? (
           <div style={{ marginTop: 16, color: "var(--success)", fontSize: 13 }}>{message}</div>

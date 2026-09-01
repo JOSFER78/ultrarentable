@@ -84,12 +84,12 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
   }
   const text = await response.text();
   if (!text || !text.trim()) {
-    return [] as unknown as T;
+    throw new Error(`Respuesta vacía o JSON inválido de ${endpoint}`);
   }
   try {
     return JSON.parse(text) as T;
   } catch {
-    return [] as unknown as T;
+    throw new Error(`Respuesta vacía o JSON inválido de ${endpoint}`);
   }
 }
 export async function executeBacktest(params: BacktestParams): Promise<BacktestResult> { if (!params.dataset_id?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id"); const payload: Record<string, unknown> = { strategy_id: params.strategy_id, dataset_id: params.dataset_id }; if (params.initial_capital !== undefined) payload.initial_capital = params.initial_capital; if (params.slippage_ticks !== undefined) payload.slippage_ticks = params.slippage_ticks; if (params.commission_per_order !== undefined) payload.commission_per_order = params.commission_per_order; if (params.start_timestamp_utc_ms !== undefined) payload.start_timestamp_utc_ms = params.start_timestamp_utc_ms; if (params.end_timestamp_utc_ms !== undefined) payload.end_timestamp_utc_ms = params.end_timestamp_utc_ms; if (params.ast !== undefined) payload.ast = params.ast; if (params.parameters !== undefined) payload.parameters = params.parameters; return fetchJson<BacktestResult>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) }); }

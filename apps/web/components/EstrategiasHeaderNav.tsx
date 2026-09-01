@@ -9,7 +9,6 @@ import {
   Table,
   ShieldCheck,
   FlaskConical,
-  Award,
   PieChart,
 } from "lucide-react";
 
@@ -41,17 +40,17 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     label: "Motor 24/7 en Vivo",
     shortLabel: "Motor en Vivo",
     badge: "24/7 LIVE",
-    href: "/estrategias/1-motor-en-vivo",
+    href: "/sistema",
     icon: Activity,
     accentColor: "#10b981", // Emerald
   },
   {
     id: 2,
     num: "02",
-    label: "Explorador Excel WAL",
-    shortLabel: "Explorador Excel",
+    label: "Candidatos/Excel",
+    shortLabel: "Candidatos",
     badge: "EXCEL WAL",
-    href: "/estrategias/2-explorador-excel",
+    href: "/candidatos",
     icon: Table,
     accentColor: "#818cf8", // Indigo
   },
@@ -61,7 +60,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     label: "Pipeline 11 Gates",
     shortLabel: "11 Gates",
     badge: "11 GATES",
-    href: "/estrategias/3-pipeline-11-gates",
+    href: "/gates",
     icon: ShieldCheck,
     accentColor: "#facc15", // Amber
   },
@@ -71,27 +70,17 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     label: "Panel Investigador",
     shortLabel: "Research Lab",
     badge: "RESEARCH",
-    href: "/estrategias/4-panel-investigador",
+    href: "/research",
     icon: FlaskConical,
     accentColor: "#ec4899", // Pink
   },
   {
-    id: 5,
-    num: "05",
-    label: "Estrategias Aprobadas",
-    shortLabel: "Certificadas Hub",
-    badge: "CERTIFICADAS",
-    href: "/estrategias/5-estrategias-aprobadas",
-    icon: Award,
-    accentColor: "#22c55e", // Green
-  },
-  {
     id: 6,
-    num: "06",
+    num: "05",
     label: "Meta-Estrategias Studio",
     shortLabel: "Portfolio Studio",
     badge: "PORTFOLIO",
-    href: "/estrategias/6-meta-estrategia",
+    href: "/portfolio",
     icon: PieChart,
     accentColor: "#06b6d4", // Cyan
   },
@@ -112,7 +101,6 @@ export default function EstrategiasHeaderNav({ currentPhase }: EstrategiasHeader
     if (pathname.includes("2-explorador-excel") || pathname.includes("candidatos")) return 2;
     if (pathname.includes("3-pipeline-11-gates") || (pathname.startsWith("/gates") && !pathname.includes("aprobadas"))) return 3;
     if (pathname.includes("4-panel-investigador") || pathname.includes("research")) return 4;
-    if (pathname.includes("5-estrategias-aprobadas")) return 5;
     if (pathname.includes("6-meta-estrategia") || pathname.includes("portfolio")) return 6;
     return 0;
   }, [currentPhase, pathname]);

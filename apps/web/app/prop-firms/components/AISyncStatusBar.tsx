@@ -56,7 +56,11 @@ export function AISyncStatusBar({
         }
         setSyncSuccess(false);
         setSyncError(true);
-        setStatusMessage(`ERROR / DESCONECTADO (HTTP ${res.status}): ${errDetail}`);
+        setStatusMessage(
+          res.status === 404
+            ? "Sincronización IA no disponible: el endpoint aún no existe en el backend."
+            : `ERROR / DESCONECTADO (HTTP ${res.status}): ${errDetail}`
+        );
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error de red / servicio no disponible";

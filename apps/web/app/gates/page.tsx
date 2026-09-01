@@ -177,6 +177,7 @@ export default function GatesPage() {
   const [selectedStrategy, setSelectedStrategy] = useState<CertifiedStrategy | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [usingFallback, setUsingFallback] = useState<boolean>(false);
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [routeFilter, setRouteFilter] = useState<"ALL" | "ULTRA" | "FONDEO">("ALL");
@@ -190,12 +191,14 @@ export default function GatesPage() {
   async function loadCertified() {
     setLoading(true);
     setErrorMsg(null);
+    setUsingFallback(false);
     try {
       const data = await getCertifiedStrategies();
       if (Array.isArray(data) && data.length > 0) {
         setCertifiedList(data);
         setSelectedStrategy(data[0]);
       } else {
+        setUsingFallback(true);
         const candidates = await getCandidates({ limit: 100 });
         if (Array.isArray(candidates) && candidates.length > 0) {
           const mapped: CertifiedStrategy[] = candidates.map((c: any) => ({
@@ -424,6 +427,15 @@ export default function GatesPage() {
               <p className="font-bold text-sm">Error de Verificación del Pipeline:</p>
               <p className="text-rose-300 mt-0.5">{errorMsg}</p>
             </div>
+          </div>
+        )}
+
+        {!errorMsg && usingFallback && (
+          <div className="p-4 rounded-xl bg-amber-950/60 border border-amber-800 text-amber-200 flex items-start gap-3 font-mono text-xs shadow-lg">
+            <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="font-bold">
+              Sin estrategias certificadas todavía — mostrando candidatas en evaluación de las 11 Gates.
+            </p>
           </div>
         )}
 

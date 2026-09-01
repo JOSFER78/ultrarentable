@@ -1,0 +1,22 @@
+# Manifiesto — retiro de wrappers/paginas huerfanas de navegacion web (Carril A) — 2026-09-01 — Hermes
+# Motivo: 5 wrappers estrategias/N-* (re-export puro sin logica propia), catch-all [slug] sin destino
+# util tras retirar sus 5 hijos, 4 wrappers sueltos (panel/pasos/bifurcacion-fondeo/bifurcacion-ultra),
+# dashboard huerfano (MODULES[] hardcodeado), alertas+seguridad+ModuleMap (FLOW[] hardcodeado, huerfanos),
+# TradesAndStrategyDashboard.tsx (630 lineas, 0 imports, duplica trading-desk/page.tsx).
+# Verificacion: grep de imports/hrefs entrantes antes de mover, 0 referencias tras el retiro.
+apps/web/app/estrategias/1-motor-en-vivo/page.tsx | b305aef83a56d9607f539a60ccb1911b7b28c5848c38f97f1ebb480a28a9a546
+apps/web/app/estrategias/3-pipeline-11-gates/page.tsx | 35975cf763c7f4120045e9380d1497e938b81627d40a56cdb65224d7b4beaa17
+apps/web/app/estrategias/4-panel-investigador/page.tsx | 35137c947402c6be23133ac9117640c0f01d3771fc2e727a3d926a51ff2e0641
+apps/web/app/estrategias/5-estrategias-aprobadas/page.tsx | 63094067e07761b8e1c0cf788876a5b23359268fea6a5ddfdca997d072181446
+apps/web/app/estrategias/6-meta-estrategia/page.tsx | 29020b827cc4322e651afe052f40f4b77b1f72cb3023de47bbb5c23a3435a4c5
+apps/web/app/estrategias/[slug]/page.tsx | 9742002d2487eb4466845736504dd2efb34306cb4f6a78d815c597a6287904de
+apps/web/app/estrategias/[slug]/DynamicEstrategiasSlugClient.tsx | 61fde53d57e3aa90bd22f6d8fc3102b576c59aeed07670f91586a771992a8a5f
+apps/web/app/panel/page.tsx | d26ee8890acf410e3e02144236728768c87b7ec3259d669d010c90d48a3d94ed
+apps/web/app/pasos/page.tsx | ba647c6a24cf6596dc4a33b33cc11c83958fe12c0b1c67f024db34be3bc09b84
+apps/web/app/bifurcacion/fondeo/page.tsx | 7a54f6a06496655b5f1c2ba54a4b08643f8ef2a91257a701fd2a9ba68af22f5f
+apps/web/app/bifurcacion/ultrarentable/page.tsx | 5ad8452f12db9b1e788ef2f7a096bc1f04f9f84aa54d8943d8bd888c51699dff
+apps/web/app/dashboard/page.tsx | f3c3270b1a5fe3de8770268c06b3afba2a28af88349d793a510dbd999cece34b
+apps/web/app/alertas/page.tsx | bf6250b8241cef69db1e8b7589ab1a86ee5cd7f59e30e48a6ab5543403b3a9fd
+apps/web/app/seguridad/page.tsx | 582aaa409e6f04399489ae4a21fa826d10d6f70694d39ad2e857215c37dc7428
+apps/web/components/ModuleMap.tsx | c0032f41efeed92e0d4b6ec9a2b0235e3d2f0d76ca4f890192f147313706f711
+apps/web/app/prop-firms/components/TradesAndStrategyDashboard.tsx | 8c9484855c71cd0da0d68ff3242b59b2beff2b61678fb6bf4da046ea59eb21ff
