@@ -22,6 +22,27 @@ mismo que pendiente:
 
 Se retoma ULTRA cuando FONDEO tenga estrategias certificadas bajo el Criterio 1.1.
 
+## ⚡ MODO LOCAL (desde 2026-09-01) — leer esto primero
+
+El proyecto pasa a operarse **desde el PC local**; el VPS queda como servidor + vigía de trades.
+El objetivo único es **FONDEO + META-FONDEO + arreglar la página `/estrategias`** (ULTRA en
+construcción, aparcado). Documentos de la era local, en orden de lectura:
+
+| Documento | Qué es |
+| :--- | :--- |
+| `DOCTRINA_ORQUESTADOR_LOCAL.md` | Cómo trabaja el orquestador Opus 5 local: loop no bloqueante, subagentes con contrato, territorios, papel mínimo de Emilio |
+| `OPERACION_LOCAL.md` | SSOT de recursos y topología PC+VPS: qué corre dónde, datos/BD, bus de sincronización, ventana sudo |
+| `state/PLAN_LOCAL_FONDEO.md` | El plan de ejecución detallado por carriles W0-W7, con reglas de decisión pre-selladas y cronología |
+| `state/PLAN_INVESTIGACION_PROFUNDA.md` | **El plan de los planes**: 6 investigaciones (SQX al 100 %, sistema de mejora, meta-estrategias, prop firms 2026, web ¿de cero?, infra) con método sin-asunciones; sus expedientes MODIFICAN el plan de ejecución |
+| `state/ARQUITECTURA_MODULAR_ESTRATEGIAS.md` | **Las 4 partes claras del pipeline**: M1 Generación (Strategy One/SQX al 100 %) · M2 Mejora (loop iterativo con revisión) · M3 Valoración fondeo (firmas, horarios, examen) · M4 Metaestrategias — fronteras de código, contratos, página web por módulo. ULTRA presente en todo, EN CONSTRUCCIÓN |
+| `state/DESPACHO_MULTIAGENTE.md` | Plan operativo de OLAS multiagente: qué agente despachar, con qué contrato y aceptación, y qué hace el orquestador mientras |
+| `state/TRASPASO_A_OPUS_2026-09-01.md` | **Punto de entrada del orquestador**: todo lo hecho, dónde está cada cosa, los 10 hechos del estado y el orden de ejecución |
+| `../docs/19_UI_STYLE_SPEC.md` | Estética de la web: grises/transparencias/negro/blanco estilo Cowork; verde y rojo SOLO para profit/pérdida |
+| `HERMES_VPS_VIGIA.md` | Diseño del agente del VPS que monitoriza trades y ajusta órdenes/tamaños por fases V0/V1/V2 |
+
+Las decisiones selladas de `DOCTRINA_ORQUESTADOR.md` (§14-§18) y los bloques `state/plan/bloques/`
+siguen siendo fuente de verdad; el plan local los ejecuta, no los sustituye.
+
 ## Mapa del directorio
 
 | Ruta | Qué es |
