@@ -1,0 +1,35 @@
+# DONE_B10
+
+- Agente: `B10` · Rama: `JOSFER78/agy-B10` · Inicio: `2026-09-02T13:20:00+02:00` · Fin: `2026-09-02T13:28:00+02:00`
+- Informe: `orchestration/results/agy/B10.md`
+- Ficheros tocados:
+  - Modificados (`git diff --name-only`):
+    - `apps/web/app/prop-firms/components/AISyncStatusBar.tsx`
+    - `apps/web/app/prop-firms/components/BuyButtonWithCoupon.tsx`
+    - `apps/web/app/prop-firms/components/ExtractionRoiCalculator.tsx`
+    - `apps/web/app/prop-firms/components/FloatingComparisonDrawer.tsx`
+    - `apps/web/app/prop-firms/components/HeadToHeadComparator.tsx`
+    - `apps/web/app/prop-firms/components/LiveDealsTracker.tsx`
+    - `apps/web/app/prop-firms/components/MegaComparator.tsx`
+    - `apps/web/app/prop-firms/components/PickMyTradeBridgeModal.tsx`
+    - `apps/web/app/prop-firms/components/SemaphoreTable.tsx`
+    - `apps/web/app/prop-firms/components/Smart3ClickFinder.tsx`
+    - `apps/web/app/prop-firms/page.tsx`
+  - Nuevos (`git status --porcelain`):
+    - `apps/web/lib/propFirmsV2.ts`
+    - `cuarentena/web_prop_firms_ts_20260902/MANIFEST.sha256`
+    - `cuarentena/web_prop_firms_ts_20260902/MOTIVO.md`
+    - `cuarentena/web_prop_firms_ts_20260902/prop-firms.ts`
+    - `orchestration/results/agy/B10.md`
+    - `orchestration/agy/DONE_B10.md`
+- Aceptación ejecutada por el agente: `PASA`
+  - `npx tsc --noEmit -p .` ⇒ `rc=0`
+  - `0` imports de `lib/prop-firms` en todo `apps/web`
+  - `apps/web/lib/propFirmsV2.ts` implementado con tipado fail-closed y `prop-firms/v2`
+  - `0` colores fuera de tokens docs/19 (escala de grises estricta)
+  - `NO EVIDENCE` presente en celdas y vistas detalladas
+  - Banner D7 informativo presente sin cupones/afiliados comerciales
+  - `cuarentena/web_prop_firms_ts_20260902/` verificado con `sha256sum -c` ⇒ `OK`
+- Lo que NO se pudo hacer y por qué:
+  - Ninguno. Todos los pasos completados y verificados.
+- Confirmo: sin `git` de escritura · sin `rm` · sin datos inventados · nada fuera del territorio · motor no tocado.
