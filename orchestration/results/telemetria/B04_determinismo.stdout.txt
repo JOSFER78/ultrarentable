@@ -1,0 +1,9 @@
+[2026-09-02 18:51:05] Iniciando minería: Track=FONDEO, Symbol=ES (ejecución: MES), TF=15m, Profile=reversion, DryRun=False
+2026-09-02 18:51:05,742 [INFO] MineCLI: [dataset-source=DUKASCOPY] 'ES' -> proxy CFD 'USA500IDXUSD' -> ds_dukascopy_usa500idxusd_15m_consolidated.json (activado explicitamente via data_source='dukascopy', NO es Yahoo)
+[2026-09-02 18:51:05] Dataset físico resuelto: ds_dukascopy_usa500idxusd_15m_consolidated.json (13723.9 KB) [FUENTE=DUKASCOPY, dataset_source pedido='dukascopy']
+[2026-09-02 18:51:05] Espacio de búsqueda generado: 27 configuraciones totales -> recortado a 3 (--max-candidates 3) · cobertura por familia: {'INSTITUTIONAL_SESSION_MOMENTUM': 3}
+[2026-09-02 18:51:06] Particionado cronológico: IS=50026 bars, Val=16675 bars, Blind OOS=16676 bars
+[2026-09-02 18:52:31] Embudo: {'IS': 3}
+[2026-09-02 18:52:31] Minería completada: 0 candidatas certificadas 11/11
+[2026-09-02 18:52:31]   causas en IS: 3 muertas -> pocas_operaciones=0 sin_ventaja=3 ambas=0 otro=0
+[2026-09-02 18:52:31] Telemetría del embudo escrita en /home/ubuntu/workspace/pro/trading/01 Ultrarentable/orchestration/results/telemetria/embudo_FONDEO_ES_15m_reversion_20260902T185231Z.json
