@@ -7,9 +7,12 @@ if [[ "${ORQ_PUSH:-}" != "1" ]]; then
   echo "[ARNÉS] push BLOQUEADO: solo el orquestador puede publicar (ORQ_PUSH=1), tras auditar el lote." >&2
   exit 1
 fi
+# Las ramas de agente NUNCA se publican. Ojo al nombre real: Orca crea la rama con el namespace
+# del usuario ('JOSFER78/agy-SMOKE'), así que el patrón 'refs/heads/agy/*' NO casaba y el push
+# pasaba (fallo detectado el 2026-09-02 con el agente SMOKE). Se casa 'agy' en cualquier posición.
 while read -r local_ref local_sha remote_ref remote_sha; do
   case "$local_ref" in
-    refs/heads/agy/*)
+    *agy/*|*agy-*|*AGY/*|*AGY-*)
       echo "[ARNÉS] push BLOQUEADO: la rama '$local_ref' es de un agente de ejecución; se integra a main por el orquestador, no se publica." >&2
       exit 1 ;;
   esac

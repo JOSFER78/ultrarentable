@@ -6,15 +6,16 @@
 set -u
 branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo desconocida)"
 
+# REGLA INVERTIDA (2026-09-02, tras el fallo del agente SMOKE): antes se BLOQUEABA por lista
+# negra (rama agy/* o AGY_AGENT definido) y las dos guardas resultaron MUERTAS en el montaje
+# real: Orca crea las ramas con el namespace del usuario ('JOSFER78/agy-SMOKE', que no casa con
+# 'agy/*') y no propaga AGY_AGENT al entorno del worker. Un agente commiteó de verdad.
+# Ahora es lista BLANCA: NADIE commitea salvo el orquestador con ORQ_COMMIT=1, sea cual sea la
+# rama, el usuario o las variables de entorno. No depende de cómo se llame nada.
 if [[ "${ORQ_COMMIT:-}" != "1" ]]; then
-  if [[ "$branch" == agy/* ]]; then
-    echo "[ARNÉS] commit BLOQUEADO en rama '$branch': los agentes AGY no commitean. Deja el working tree y escribe DONE_<ID>.md." >&2
-    exit 1
-  fi
-  if [[ -n "${AGY_AGENT:-}" ]]; then
-    echo "[ARNÉS] commit BLOQUEADO: sesión de agente AGY ('$AGY_AGENT'). Solo el orquestador commitea (ORQ_COMMIT=1)." >&2
-    exit 1
-  fi
+  echo "[ARNÉS] commit BLOQUEADO en '$branch': solo el orquestador commitea (ORQ_COMMIT=1)." >&2
+  echo "[ARNÉS] Si eres un agente: deja el working tree como está y escribe DONE_<ID>.md." >&2
+  exit 1
 fi
 
 # Nunca datasets pesados al índice (manifiestos sí).
