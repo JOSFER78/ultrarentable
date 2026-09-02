@@ -3,8 +3,14 @@
   "status": "orquestador_ejecutando",
   "last_updated": "2026-08-31T18:05:00Z",
   "plan_version": "v4_2026-08-31_por_bloques (orchestration/state/plan/bloques/)",
-  "note": "Sesion 2026-08-31 (tarde): motor honesto completo hasta 5.13.0 (F02.1 HECHO: 5.7.0 friccion coherente, 5.8.0 contratos CME enteros, 5.9.0 latencia next-bar-open, 5.10.0 riesgo=FRACCION canonica, 5.11.0 point_value en sizing, 5.12.0 spread real por par BingX, 5.13.0 funding real 8h; registro data/registry/bingx_friction.json). Campanas con motor honesto: 4h/1h 18 celdas ~36k configs y 15m profundo -> 0 certificadas 11/11; familia EMA/RSI/Donchian agotada (15m: embudo IS 2000/2000). Backfill profundo Binance COMPLETADO (18 datasets 15m/5m desde 2021, 0 gaps). EN VUELO: release 5.14.0 con 4 familias nuevas de arquetipos (spec orchestration/reviews/diseno_arquetipos_5_14.md) por subagente; al aterrizar: re-campana perfil arquetipos 15m+4h y censo 1.1. Dukascopy: solo USA500IDXUSD avanza (~1155 .bi5); FONDEO sigue bloqueado. SQX: 2035 .sqx ToImprove materializados; export CSV pendiente (timeout). Git: push a main AUTORIZADO expresamente por el usuario; commit tematico al aterrizar 5.14.0.",
+  "note": "Sesion 2026-08-31 (tarde): motor honesto completo hasta 5.13.0 (F02.1 HECHO: 5.7.0 friccion coherente, 5.8.0 contratos CME enteros, 5.9.0 latencia next-bar-open, 5.10.0 riesgo=FRACCION canonica, 5.11.0 point_value en sizing, 5.12.0 spread real por par BingX, 5.13.0 funding real 8h; registro data/registry/bingx_friction.json). Campanas con motor honesto: 4h/1h 18 celdas ~36k configs y 15m profundo -> 0 certificadas 11/11; familia EMA/RSI/Donchian agotada (15m: embudo IS 2000/2000). Backfill profundo Binance COMPLETADO (18 datasets 15m/5m desde 2021, 0 gaps). EN VUELO: release 5.14.0 con 4 familias nuevas de arquetipos (spec orchestration/reviews/diseno_arquetipos_5_14.md) por subagente; al aterrizar: re-campana perfil arquetipos 15m+4h y censo 1.1. Dukascopy: solo USA500IDXUSD avanza (~1155 .bi5); FONDEO sigue bloqueado. SQX: 2035 .sqx ToImprove materializados; export CSV pendiente (timeout). Git: push a main AUTORIZADO expresamente por el usuario; commit tematico al aterrizar 5.14.0. AUTOREPARACION 2026-09-02: discovery estaba 28h atascado por fuga de memoria (swap 100%); limitado swap del cgroup + RuntimeMaxSec=12h y reiniciado; ver detalles en results/autoreparacion_discovery_swap_2026-09-02.md.",
   "history": [
+    {
+      "phase": "autoreparacion",
+      "status": "hecho",
+      "timestamp": "2026-09-02T13:55:00Z",
+      "razon": "Discovery pipeline (PID 1368614) llevaba 28h sin emitir veredictos: fuga de memoria (RSS 1.5G + swap 2.6G, swap del sistema 100%, proceso en D-state). Aplicado drop-in MemorySwapMax=1G + RuntimeMaxSec=12h (fail-fast, Restart=always renace limpio) y reinicio. Nuevo PID 555795 computando normal, swap liberado a 1.5G/4G, ciclo re-arrancado con 556 datasets (backfill profundo incluido). Evidencia: results/autoreparacion_discovery_swap_2026-09-02.md"
+    },
     {
       "phase": "F02-F03",
       "status": "hito",
