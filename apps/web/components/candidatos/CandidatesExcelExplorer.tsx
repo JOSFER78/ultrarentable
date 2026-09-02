@@ -147,11 +147,12 @@ export default function CandidatesExcelExplorer() {
           trades_oos: tradesOos,
           total_trades: tradesOos,
           cumulative_return_pct: oosM.roi_pct ?? c.cumulative_return_pct ?? undefined,
-          // Los ROI se derivan de la duracion OOS. Si la API dice que esa duracion es
-          // ESTIMADO (no venia en el scorecard), el porcentaje seria una suposicion: se
-          // deja en undefined para que la tabla escriba NO EVIDENCE (REAL-ONLY).
-          annual_return_pct: oosM.oos_months_source === "REAL" ? oosM.annualized_roi_pct ?? undefined : undefined,
-          monthly_return_pct: oosM.oos_months_source === "REAL" ? oosM.monthly_roi_pct ?? undefined : undefined,
+          // Solo se acepta el ROI que declara el scorecard de la candidata. Si la API dice
+          // NO_EVIDENCE, la celda escribe NO EVIDENCE: la alternativa era derivarlo de
+          // net_profit_oos, una columna con unidades mixtas que daba cifras falsas e
+          // incluso con el signo cambiado (medido el 2026-09-02 en UR_ULTRA_ETH_USDT_5M).
+          annual_return_pct: oosM.roi_source === "SCORECARD" ? oosM.annualized_roi_pct ?? undefined : undefined,
+          monthly_return_pct: oosM.roi_source === "SCORECARD" ? oosM.monthly_roi_pct ?? undefined : undefined,
           sharpe_ratio: c.sharpe_ratio ?? undefined,
           dsr_ratio: c.dsr_ratio ?? undefined,
           wfo_pass_pct: antiOverfit.wfo_pass_pct ?? c.wfo_pass_pct ?? undefined,

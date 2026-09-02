@@ -99,6 +99,34 @@ def resolve_strategy_sha256(
     return hashlib.sha256(payload).hexdigest()
 
 
+_CLAVES_ROI_MENSUAL = ("roi_monthly_pct", "monthly_return_pct", "monthly_return")
+_CLAVES_ROI_ANUAL = ("roi_annualized_pct", "annual_return_pct", "annual_return")
+
+
+def _roi_declarado(scorecard: Optional[Dict[str, Any]], claves) -> Optional[float]:
+    """Lee un ROI que el scorecard declare explicitamente. Nunca lo calcula.
+
+    Se busca en el propio scorecard y en sus contenedores anidados habituales
+    (`oos_metrics`, `metrics`, `metrics.out_of_sample`), igual que hace
+    `certified_summary_router._metric`, para no inventar una jerarquia distinta.
+    """
+    sc = scorecard or {}
+    contenedores = [sc]
+    for clave in ("oos_metrics", "metrics"):
+        anidado = sc.get(clave)
+        if isinstance(anidado, dict):
+            contenedores.append(anidado)
+            fuera_de_muestra = anidado.get("out_of_sample")
+            if isinstance(fuera_de_muestra, dict):
+                contenedores.append(fuera_de_muestra)
+    for contenedor in contenedores:
+        for k in claves:
+            v = contenedor.get(k)
+            if isinstance(v, (int, float)) and not isinstance(v, bool) and v == v:
+                return float(v)
+    return None
+
+
 def compute_financial_metrics(
     net_profit_oos: float,
     initial_capital: float,
@@ -438,6 +466,10 @@ def list_candidates(
                 continue
             seen_dedup_keys.add(dedup_key)
 
+        roi_mensual_declarado = _roi_declarado(sc, _CLAVES_ROI_MENSUAL)
+        roi_anual_declarado = _roi_declarado(sc, _CLAVES_ROI_ANUAL)
+        roi_source = "SCORECARD" if (roi_mensual_declarado is not None and roi_anual_declarado is not None) else "NO_EVIDENCE"
+
         duration_info_payload = dur if dur else {
             "total_bars": total_bars,
             "total_months": calc_months,
@@ -511,8 +543,9 @@ def list_candidates(
                 "out_of_sample": {
                     "net_profit_usd": net_prof_oos,
                     "roi_pct": fin["cumulative_return_pct"],
-                    "annualized_roi_pct": fin["annualized_cagr_pct"],
-                    "monthly_roi_pct": fin["monthly_roi_pct"],
+                    "annualized_roi_pct": roi_anual_declarado,
+                    "monthly_roi_pct": roi_mensual_declarado,
+                    "roi_source": roi_source,
                     "oos_months_source": oos_months_source,
                     "trades_per_month": tpm,
                     "base_capital_usd": base_cap,
@@ -626,8 +659,14 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
                 "max_dd_floating_pct": max_dd_floating_oos,
                 "max_dd_realized_pct": max_dd_realized_oos,
                 "roi_pct": fin["cumulative_return_pct"],
-                "monthly_roi_pct": fin["monthly_roi_pct"],
-                "annualized_roi_pct": fin["annualized_cagr_pct"],
+                "monthly_roi_pct": _roi_declarado(sc, _CLAVES_ROI_MENSUAL),
+                "annualized_roi_pct": _roi_declarado(sc, _CLAVES_ROI_ANUAL),
+                "roi_source": (
+                    "SCORECARD"
+                    if (_roi_declarado(sc, _CLAVES_ROI_MENSUAL) is not None
+                        and _roi_declarado(sc, _CLAVES_ROI_ANUAL) is not None)
+                    else "NO_EVIDENCE"
+                ),
                 "oos_months_source": oos_months_source,
                 "base_capital_usd": base_cap,
                 "oos_months": oos_months,

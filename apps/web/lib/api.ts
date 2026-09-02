@@ -39,14 +39,22 @@ export interface CandidatoCanonico {
   trades_oos?: number | null;
   win_rate_pct?: number | null;
   created_at?: string | null;
-  /** Metricas del backtest canonico. `oos_months_source` dice si la duracion OOS con la que
-   *  se derivan los ROI es REAL (viene del scorecard) o ESTIMADO (la infiere el endpoint).
-   *  Bajo REAL-ONLY la web solo pinta rendimiento cuando es REAL. */
+  /** Metricas del backtest canonico.
+   *
+   *  `roi_source` dice de donde salen `monthly_roi_pct` / `annualized_roi_pct`:
+   *  "SCORECARD" = los declara el scorecard de la candidata (cifras en USD del motor);
+   *  "NO_EVIDENCE" = no hay ROI declarado y los dos campos vienen a null. NO se derivan de
+   *  `net_profit_usd`, porque la columna `candidates.net_profit_oos` de la que sale tiene
+   *  unidades mixtas segun que pipeline la escribiera (unas filas en USD, otras como suma de
+   *  fracciones), y derivarlo daba cifras falsas e incluso con el signo cambiado.
+   *
+   *  `oos_months_source` es independiente: dice si la duracion OOS es REAL o ESTIMADO. */
   metrics?: {
     out_of_sample?: {
       roi_pct?: number | null;
       monthly_roi_pct?: number | null;
       annualized_roi_pct?: number | null;
+      roi_source?: "SCORECARD" | "NO_EVIDENCE" | null;
       oos_months?: number | null;
       oos_months_source?: "REAL" | "ESTIMADO" | null;
     } | null;
