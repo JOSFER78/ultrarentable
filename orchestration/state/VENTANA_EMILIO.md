@@ -18,6 +18,40 @@
 
 ---
 
+## 0. NUEVO 2026-09-02 (noche) — cinco cosas, en orden de urgencia
+
+**0.1 Autorizar el censo del criterio 1.1 en la base del VPS (1 minuto).** Las 5 estrategias que la web
+enseña como "aprobadas con motor vigente" son ULTRA, con motor 5.13.0/5.16.0 (el vigente es 5.18.0) y
+25-68 operaciones fuera de muestra (el criterio exige ≥ 200). El censo en seco (`scripts/censo_f01.py`,
+19:41 UTC) confirma: 728 candidatas, 0 supervivientes, exactamente esas 5 reclasificables a
+`LEGACY_NO_CERTIFICADO` (nada se borra; queda rastro en `audit_events`). Mi guardián bloqueó la escritura
+en la base canónica. Opción A: me escribes "autorizado el censo" y lo aplico. Opción B: lo pegas tú:
+```bash
+ssh oracle-vps
+cd "/home/ubuntu/workspace/pro/trading/01 Ultrarentable"
+.venv/bin/python scripts/censo_f01.py --aplicar --out orchestration/results/censo_f01_2026-09-02_vps.md
+```
+Después la web dirá "0 estrategias listas", que es la verdad de hoy.
+
+**0.2 El VPS está saturado por herramientas tuyas, no del proyecto (medido 19:36-19:38 UTC):** carga 13 sobre
+4 núcleos y swap con 63 MB libres de 4 GB. Lo que consume: el agente Hermes (`hermes serve`, `tirith`,
+`fetch_cloud.py` de Hetzner), un Chromium de Playwright bajo `node dist/api.js`, un Brave headless con
+depuración remota, `cleanlinux_gui.py`/`cleanlinux-daemon.py`, y cuatro procesos `agy` zombis colgando de
+`antigravity_bridge.py`. Yo no mato nada que no sea mío. Mientras eso siga, la gobernanza no admite ni el
+build de la web ni campañas en el VPS. Si vas a cambiar de servidor (vi Hetzner en tus pestañas), este
+inventario te sirve para dimensionar: el proyecto solo necesita API + web + una campaña a la vez.
+
+**0.3 Dos sesiones de Claude Code editan el mismo checkout de `main` en tu PC** (esta y `ultrarentablepc-30`).
+Nos hemos repartido ficheros por mensaje, pero cada instrucción tuya sobre la web conviene dársela a una sola
+sesión. Propuesta: portada y `/estrategias` = esta sesión; menú lateral, resto de páginas y `lib/` = la otra.
+
+**0.4 Identidad git del VPS.** Los commits hechos desde el VPS salen como `Hermes User <hermes@localhost>`.
+Si quieres que salgan a tu nombre: `git config --global user.name "JOSFER78" && git config --global user.email "josferestudio@gmail.com"` en el VPS.
+
+**0.5 Sigue pendiente lo de abajo** (limpieza del VPS con sudo, nginx, licencia SQX que caduca el 05-09).
+
+---
+
 ## 1. LO ÚNICO BLOQUEANTE — autorizar la limpieza del VPS (2 minutos)
 
 **Qué pasa**: el VPS sigue exactamente igual de ahogado que el 2026-09-01 por la mañana, y lo he

@@ -85,6 +85,7 @@ Regla: **ninguna celda entra en campaña sin consolidado + manifiesto + W1.3 apr
   **SUSPENDIDA por D1.** Redacción vigente: una celda solo puede declararse agotada cuando el
   embudo demuestre que **las 6 familias** estuvieron representadas y ≥80 % murió por
   `sin_ventaja`. Mientras W2.6 no exista, ninguna celda se declara agotada.
+  **D1 LEVANTADA el 2026-09-02**: W2.6 quedó HECHO en `ad9e179ff` (2026-09-01) y E2 (B03) lo demuestra en sus dos embudos (`max_candidates=0`, `espacio_total=420`, `truncado=False`, `cobertura_familias` con 6 claves). La regla AGOTADA vuelve a aplicarse tal como está redactada abajo.
 - Celda con ≥50 % `pocas_operaciones` ⇒ falta frecuencia/datos: se revisa arquetipo de sesión o
   se amplía histórico (W1), no el espacio de parámetros.
 - Dos celdas consecutivas de un símbolo con embudo completo `{'IS': N}` y PF máximo <0,9 ⇒ las

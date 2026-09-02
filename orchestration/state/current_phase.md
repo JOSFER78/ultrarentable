@@ -1,5 +1,7 @@
 # FASE ACTUAL — 2026-09-02, ~11:30 UTC · CICLO 3 DE LA ERA LOCAL (orquestador Fable 5.1 en Orca; agentes Antigravity atados)
 
+> **LEER PRIMERO — 2026-09-02 ~20:00 UTC (sesión Claude Code en el PC, orquestador):** B03 y B04 CERRADOS y firmados (E2: 840/840 muertas en IS, AGOTADA con matiz SESSION_MOMENTUM; D15 CONFIRMADA; ver `plan/bloques/F03_campana_descubrimiento.md`, actualización 19:55). Hallazgo verificado: el motor cobra a MES la comisión de ES (2,50 en vez de 0,60 USD/lado) → motor 5.19.0 y E2c antes de W3.4. API del VPS reiniciada con HEAD y publica `current_engine_version`. Web: portada y `/estrategias` en rediseño (mandato de Emilio: solo lo que funciona). Censo criterio 1.1 en seco: 5 APPROVED (ULTRA, motor viejo) reclasificables; aplicar requiere permiso. Traspaso: `TRASPASO_2026-09-02_PC_noche.md`.
+>
 > **LEER PRIMERO — 2026-09-02 18:30 UTC, el trabajo continúa en el VPS:**
 > `orchestration/state/TRASPASO_2026-09-02_VPS.md`. Sucede al traspaso del PC (que sigue valiendo
 > para el detalle de worktrees y ramas `agy-*`). Resumen: web servida en build de producción y con

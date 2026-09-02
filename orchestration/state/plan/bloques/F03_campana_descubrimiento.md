@@ -5,7 +5,7 @@ estado: EN_CURSO
 depende_de: ["F01", "F02"]
 desbloquea: ["F04", "F07"]
 verificacion_global: "Se mide por volumen de candidatos que superan el criterio 1.1, no por lo bonitas que sean las curvas."
-actualizado: "2026-09-01"
+actualizado: "2026-09-02"
 ---
 
 # FASE 3 — CAMPAÑA DE DESCUBRIMIENTO MASIVA
@@ -211,3 +211,13 @@ de CPU cero y evita que, si la campaña vuelve a dar cero, sea otra vez indiagno
 Corrección al forense: la cifra "18 de 24 celdas válidas" está mal clasificada. El bug de comisión
 del forex afecta a **las 12** celdas de divisas, no sólo a las 6 del perfil `arquetipos`, porque las
 6 del perfil `amplio` corrieron en la misma ventana previa al arreglo.
+
+## Actualización 2026-09-02 19:55 UTC — E2 (B03) cerrada, B04 firmado, y un bug de fricción que cambia el paso siguiente
+
+**E2 (B03), motor 5.18.0, VPS**: 420 configuraciones × 2 celdas (ES 5m y 15m, 6 familias, espacio completo, `truncado=False`). Las 840 mueren en IS. 5m: 400 `sin_ventaja_bruta` + 20 `sin_ventaja_por_coste` (las 20 son SESSION_MOMENTUM: PF bruto 1,053-1,114, neto 0,97-1,03). 15m: 419 + 1 (OPENING_RANGE_BREAKOUT c357). `pocas_operaciones` = 0 en las dos celdas. Near-misses: 0 (nadie pasa de IS). PF neto máximo: 1,03 (5m) y 1,01 (15m), así que la regla "PF máximo < 0,9" no se dispara. Veredicto por las reglas preselladas: **AGOTADA** en las dos celdas y en las 6 familias, con matiz obligatorio en SESSION_MOMENTUM 5m (edge bruto real hundido por el coste). La hipótesis del traspaso ("bajar a 15m rescata a SESSION_MOMENTUM") queda **refutada**: es la única familia que empeora en 15m (PF bruto −0,112 de mediana; 0 de 72 mejoran; 0 de 72 con PF bruto ≥ 1,05). Informe: `orchestration/results/agy/B03.md`; telemetría: `orchestration/results/telemetria/embudo_FONDEO_ES_{5m,15m}_arquetipos_20260902T*.json`; aceptación re-ejecutada por el orquestador.
+
+**B04 (forense, refutador)**: `D15 CONFIRMADA`. 0 anomalías en los 5 embudos; bucket `sin_ventaja_bruta` recomputado = persistido (0 discrepancias); determinismo 3/3 idéntico entre PC (E1) y VPS (re-ejecución `--max-candidates 3`); umbrales de `mine.py` sin cambios desde el 4h del 01-09. Informe: `orchestration/results/agy/B04.md` + `B04_leer_embudos.py`.
+
+**Hallazgo que cambia el paso siguiente (verificado por el orquestador en el código, no solo por los agentes)**: el motor cobra a MES la comisión de ES completo. `services/validation/engine/event_backtest_engine.py:296` (`cme_fee_per_contract_usd=2.50` por defecto) y `:972` (`_comision` usa `self.cme_fee` para todo futuro), mientras `services/engine/instrument_registry.py:80` registra MES a 0,60 USD/lado y `scripts/mine.py:1039` instancia el motor sin argumentos. Sobrecoste: 3,80 USD por operación y contrato. Además `max_leverage_ceiling=1.0` (`services/discovery/funding_discovery.py:304`, aplicado en el motor `:903`) satura el tamaño y convierte `risk_pct` en dimensión degenerada: 157/420 (5m) y 182/420 (15m) configuraciones son repeticiones exactas de otra.
+
+**Siguiente paso (sustituye a "W3.4 directamente")**: (1) motor **5.19.0**: comisión por símbolo de ejecución desde el registro de instrumentos (regla #26: bump + baseline F02 + diff explicado celda a celda); (2) **E2c**: repetir SESSION_MOMENTUM ES 5m (72 configs, ~10 min en el VPS bajo gobernanza) con la comisión correcta; (3) solo si E2c sigue en 0 supervivientes, W3.4 (familias nuevas). Dueño: orquestador (Claude Code). D1 queda LEVANTADA por escrito (W2.6 HECHO en `ad9e179ff`; anotado en `PLAN_LOCAL_FONDEO.md`). Issue de seguimiento: la creada el 02-09 "Motor 5.19.0 — comisión por símbolo de ejecución".

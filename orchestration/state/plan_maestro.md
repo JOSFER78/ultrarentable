@@ -57,7 +57,7 @@ entonces **la envolvente ULTRA**. En paralelo desde el descubrimiento, **FONDEO*
 | F00 | Limpieza del código | **EN_CURSO** (web: 16 rutas duplicadas a cuarentena; detectados 9 módulos homónimos vivos y DOS pipelines de validación con umbrales distintos) | — | `plan/bloques/F00_limpieza.md` |
 | F01 | Saneamiento del catálogo | **HECHO** (0 supervivientes de 728) | F00 | `plan/bloques/F01_censo_catalogo.md` |
 | F02 | Motor de backtest realista | **PARCIAL** (motor **5.17.0**; 2.3 HECHO: reglas prop sobre equity flotante en 5.15.0; comisión de forex corregida en 5.16.0; las tres releases con identidad 15/15) | F00 | `plan/bloques/F02_motor_realista.md` |
-| F03 | Campaña de descubrimiento masiva | **EN_CURSO** (4h/1h y 15m barridas: 0 certif.; motor 5.17.0 con 6 arquetipos EVENTO — 5.14.0 + ORB/VWAP_REVERSION intradía; re-campaña FONDEO 5m/15m pendiente) | F01, F02 | `plan/bloques/F03_campana_descubrimiento.md` |
+| F03 | Campaña de descubrimiento masiva | **EN_CURSO** (4h/1h y 15m barridas: 0 certif.; motor 5.17.0 con 6 arquetipos EVENTO — 5.14.0 + ORB/VWAP_REVERSION intradía; E2 ES 5m/15m HECHA 02-09 con 5.18.0: 840/840 muertas en IS, AGOTADA con matiz SESSION_MOMENTUM; bug comisión MES→motor 5.19.0 y E2c pendientes) | F01, F02 | `plan/bloques/F03_campana_descubrimiento.md` |
 | F04 | Motor de mejora inteligente | PENDIENTE | F03 | `plan/bloques/F04_mejora_inteligente.md` |
 | F05 | Envolvente ULTRA (motor de balas) | **APARCADO** — ver mandato activo |  F04 | `plan/bloques/F05_envolvente_ultra.md` |
 | F06 | Meta-estrategias: el router | **APARCADO** — ver mandato activo |  F05 | `plan/bloques/F06_meta_router.md` |
