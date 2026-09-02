@@ -73,6 +73,24 @@ Pendiente de la Ola A: A02 (`agy`, refutador del arnés: hooks + `aceptar_agy.py
 agente (#3-#21, #24-#28), ventana única #22 asignada a él. Orden de Emilio (12:45): **nunca codex**;
 A02 relanzado en `agy`. B07 (`services/improvement`) integrado (`cf91ac01b`).
 
+## 3 bis. Ola B — aterrizajes auditados e integrados (13:05 UTC)
+
+| ID | Qué | Veredicto del ORQ (re-ejecutado) | Merge |
+| :-- | :--- | :--- | :--- |
+| B07 | `services/improvement` (M2, W3.5.b) | ACEPTA; frontera limpia por AST; 423 trials al gate 8 | `cf91ac01b` |
+| B05 | parser `.sqx` piloto (W3.3) | ACEPTA; 20 en 3,15 s, 9 AST completos, 0/11 gates sin backtest propio. **Hallazgo: 117 `.sqx` en el PC, no 2.035** (databanks en el VPS) | `a5eebf31b` |
+| B02 | **E1** (20 configs `reversion` ES 5m/15m, 5.18.0) | ACEPTA. **20/20 `sin_ventaja_bruta` en 5m y 15m** con 1.143-4.097 ops por config: **familia mala, no dataset ni coste**. La lectura "PF 0,03-0,19 del 4h Yahoo" era muestra pequeña; en datos reales la señal sigue sin ventaja antes de costes | `dbbe0b693` |
+| B08 | `services/meta` (M4, W6.0, D8/D9) | ACEPTA; 10/10; correlación fail-closed; HRP/mín-var deterministas; sin router | `00175aff9` |
+
+**Decisión D15 (nace de E1):** la pregunta "¿dato o edge?" para la familia `reversion` de ES queda
+respondida: **es edge** (la familia no tiene ventaja bruta). E2 (B03, en vuelo) lo mide sobre las 6
+familias con espacio completo; si confirma `AGOTADA` por familia, el siguiente paso es **W3.4 (diseño
+de familias nuevas, tarea del ORQ)** y el carril SQX (B06), no más barridos de parámetros.
+
+En vuelo a 13:05: A02 (refutador del arnés), B09 (aterrizado, en auditoría), B11 (aterrizado, en
+auditoría), B13 (W4.2-bis), B06 (SQX A/B), B03 (E2, lanzando). Pendientes: B04 (tras B03), B10
+(tras B09 + Firebase), B12 (tras VPS).
+
 **Ola B (adaptativa) lanzada a 12:35 UTC** con contratos en `GO_B02/B03/B05/B07/B08/B09/B11.md`
 (`cd94632c9`): B02 = E1 (20 REVERSION_ATR de ES en 5m/15m con 5.18.0), B07 improvement, B08 meta,
 B09 catálogo v2, B05 parser .sqx, B11 inventario/consolidación; B03 (E2) tras B02; B04/B06/B10/B12
