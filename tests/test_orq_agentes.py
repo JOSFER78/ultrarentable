@@ -259,3 +259,153 @@ Write-Output "TODO_CORRECTO"
     res = _run_cmd(cmd)
     assert res.returncode == 0, f"Fallo test_agy_matar_protection_tree:\n{res.stderr}\n{res.stdout}"
     assert "TODO_CORRECTO" in res.stdout
+
+
+def _get_bash() -> str:
+    """Helper to find bash executable."""
+    git_bash = pathlib.Path(r"C:\Program Files\Git\bin\bash.exe")
+    if git_bash.exists():
+        return str(git_bash)
+    return "bash"
+
+
+def test_esperar_worktree_success(tmp_path: pathlib.Path):
+    """(3b) Valida que esperar_worktree devuelve 0 cuando .git aparece a los 4s con AGY_LANZAR_MAX_ESPERA=6."""
+    import threading
+    wt_test = tmp_path / "test_wt_ok"
+    wt_test.mkdir(parents=True, exist_ok=True)
+    git_marker = wt_test / ".git"
+
+    def _create_git():
+        time.sleep(4)
+        git_marker.mkdir(parents=True, exist_ok=True)
+
+    t = threading.Thread(target=_create_git, daemon=True)
+    t.start()
+
+    sh_script = SCRIPTS_ORQ / "agy_lanzar.sh"
+    bash_bin = _get_bash()
+    env = os.environ.copy()
+    env["AGY_LANZAR_MAX_ESPERA"] = "6"
+
+    cmd = [bash_bin, str(sh_script), "--test-esperar-worktree", str(wt_test).replace("\\", "/")]
+    t0 = time.time()
+    res = subprocess.run(
+        cmd,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    elapsed = time.time() - t0
+    assert res.returncode == 0, f"esperar_worktree debio retornar 0 al aparecer .git a los 4s:\n{res.stderr}\n{res.stdout}"
+    assert elapsed >= 3.5, f"La espera debio durar al menos ~4s, duro {elapsed:.2f}s"
+    assert git_marker.exists()
+
+
+def test_esperar_worktree_timeout(tmp_path: pathlib.Path):
+    """(3b) Valida que esperar_worktree devuelve rc!=0 cuando .git no aparece en 6s con AGY_LANZAR_MAX_ESPERA=6."""
+    wt_test = tmp_path / "test_wt_timeout"
+    wt_test.mkdir(parents=True, exist_ok=True)
+
+    sh_script = SCRIPTS_ORQ / "agy_lanzar.sh"
+    bash_bin = _get_bash()
+    env = os.environ.copy()
+    env["AGY_LANZAR_MAX_ESPERA"] = "6"
+
+    cmd = [bash_bin, str(sh_script), "--test-esperar-worktree", str(wt_test).replace("\\", "/")]
+    t0 = time.time()
+    res = subprocess.run(
+        cmd,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    elapsed = time.time() - t0
+    assert res.returncode != 0, f"esperar_worktree debio retornar rc!=0 por timeout, retorno {res.returncode}"
+    assert elapsed >= 5.0, f"La espera debio durar al menos ~6s antes de fallar por timeout, duro {elapsed:.2f}s"
+
+
+def test_registrar_agente_json(tmp_path: pathlib.Path):
+    """(3c) Valida que registrar_agente_json genera un registro JSON valido con todas las claves de telemetria."""
+    out_file = tmp_path / "agentes.jsonl"
+    sh_script = SCRIPTS_ORQ / "agy_lanzar.sh"
+    bash_bin = _get_bash()
+
+    cmd = [
+        bash_bin,
+        str(sh_script),
+        "--test-registrar-json",
+        str(out_file).replace("\\", "/"),
+        "B19",
+        "2026-09-02 18:00:00",
+        "12345",
+        "C:/Users/yo/orca/workspaces/ultrarentable/agy-B19",
+        "10",
+        "2",
+        "8",
+        "12",
+        "1",
+        "33",
+        "3",
+        "320",
+        "false",
+        "task_c79771f2d5b7",
+        "ctx_cc6db4af99f7",
+        "term_8b4cb2c1-dfa5-40bc-b2fb-cf91c777032d",
+        "0",
+    ]
+    res = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    assert res.returncode == 0, f"Error al ejecutar registrar_agente_json:\n{res.stderr}\n{res.stdout}"
+    assert out_file.exists(), "No se creo el fichero agentes.jsonl"
+
+    content = out_file.read_text(encoding="utf-8").strip()
+    assert len(content) > 0, "El fichero agentes.jsonl esta vacio"
+    data = json.loads(content)
+
+    required_keys = [
+        "id",
+        "hora",
+        "pid",
+        "worktree",
+        "t_worktree",
+        "t_terminal",
+        "t_banner",
+        "t_idle",
+        "t_start",
+        "t_total",
+        "hijos",
+        "mb",
+        "reintento_prompt",
+        "task",
+        "dispatch",
+        "terminal",
+        "hijos_no_shell",
+    ]
+    for k in required_keys:
+        assert k in data, f"Falta clave obligatoria '{k}' en registro JSON: {data}"
+
+    assert data["id"] == "B19"
+    assert data["pid"] == 12345
+    assert data["t_total"] == 33
+    assert data["reintento_prompt"] is False
+    assert isinstance(data["reintento_prompt"], bool), "reintento_prompt debe ser tipo bool nativo en JSON"
+    assert data["hijos_no_shell"] == 0
+
+
+def test_lanzar_patrones_endurecidos():
+    """Valida la presencia de patrones de endurecimiento clave en agy_lanzar.sh."""
+    sh_script = SCRIPTS_ORQ / "agy_lanzar.sh"
+    content = sh_script.read_text(encoding="utf-8")
+    for pattern in ["How's the CLI experience", "task-update", "t_total", ".git"]:
+        assert pattern in content, f"Falta patron clave '{pattern}' en {sh_script.name}"
+

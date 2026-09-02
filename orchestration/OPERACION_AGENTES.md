@@ -25,13 +25,32 @@ El ciclo de vida de todo worker despachado consta de 4 fases deterministas:
  (agy_lanzar.sh)     (agy_censo.ps1)        (Orquestador)      (worker-release + agy_matar.ps1)
 ```
 
-### Fase 1: Lanzamiento Limpio (`scripts/orq/agy_lanzar.sh`)
-1. Comprobar que MCP está limpio ejecutando `mcp_vacio.ps1`.
-2. Crear worktree aislado con `orca worktree create <rama> --setup skip`.
-3. Inyectar el worktree en `.gemini/antigravity-ide/settings.json` (`security.workspace.trust.untrustedFiles = "open"`).
-4. Crear terminal con `orca terminal create --type antigravity-cli --args "--model gemini-3.7-flash-high"`.
-5. Esperar banner inicial y sincronización a `tui-idle`.
-6. Crear tarea en Orca (`orca task create`) y despachar worker (`orca task start`).
+### Fase 1: Lanzamiento Limpio y Endurecido (`scripts/orq/agy_lanzar.sh` v2)
+1. **Vaciar MCP**: Ejecuta `mcp_vacio.ps1` antes de arrancar para evitar carga parasitaria de servidores Node/Python.
+2. **Worktree Resiliente**: Crea worktree aislado con `orca worktree create <rama> --setup skip`. Si Orca agota su timeout (60-90 s) pero el directorio aparece, `esperar_worktree` sondea la existencia de `<worktree>/.git` (≤ 90 s, sondeo cada 2 s) sin abortar. Restaura drift en `package-lock.json` y crea junctions (`node_modules`, `data/normalized`) según el tipo de agente.
+3. **Confianza Pre-sembrada**: Inyecta la ruta del worktree en `trustedWorkspaces` de `.gemini/antigravity-cli/settings.json` antes de iniciar el agente.
+4. **Terminal Puro y TUI**: Crea terminal con comando puro (`agy --model gemini-3.7-flash-high --dangerously-skip-permissions`), espera banner y sincronización a `tui-idle`.
+5. **Creación de Tarea y Worker**: Crea la tarea en Orca (`orca orchestration task-create`) y vincula el worker (`orca orchestration worker-start`).
+6. **Verificación de Prompt y Re-despacho Único**: Comprueba durante 60 s que el prompt se envió correctamente. Si `orca orchestration worker-list --json` muestra `dispatchStatus: failed` o el cuadro de entrada queda atascado con el spec, detiene el terminal (`orca terminal stop --worktree path:<ruta>`), resetea la tarea (`orca orchestration task-update --id <task> --status ready`) y re-despacha UNA sola vez reutilizando la secuencia limpia.
+7. **Vigilancia Activa de Encuesta CLI**: Durante los primeros 180 s vigila la pantalla cada 10 s y, si aparece `How's the CLI experience`, envía `0` + Enter de forma autónoma.
+8. **Telemetría y Registro de Fases**: Registra en `orchestration/state/agentes.jsonl` una línea JSON estructurada con: `id`, `hora`, `pid`, `worktree`, `t_worktree`, `t_terminal`, `t_banner`, `t_idle`, `t_start`, `t_total`, `hijos`, `mb`, `reintento_prompt`, `task`, `dispatch`, `terminal`, `hijos_no_shell`.
+
+#### Tiempos Esperados por Fase (Medidos en Host Windows 11)
+- **`t_worktree`**: 0 - 30 s (worktree existente / rápido) o 60 - 90 s si Orca agota timeout pero completa creación.
+- **`t_terminal`**: 0.7 - 5 s (creación de terminal puro).
+- **`t_banner`**: 4 - 20 s (detección de banner Antigravity CLI).
+- **`t_idle`**: 5 - 25 s (sincronización `tui-idle`).
+- **`t_start`**: 1 - 3 s (`worker-start` y asignación de `dispatchId`).
+- **`t_total`**: Típico 25 - 75 s en despacho limpio sin reintento; hasta 150 s si hubo reintento o espera de worktree.
+
+#### Protocolo de Actuación si `t_total` > 180 s
+- Si `t_total` > 180 s, el script sale estrictamente con error `rc=1` y no autoriza el despacho.
+- **Diagnóstico y Corrección**:
+  1. Inspeccionar `orchestration/state/agentes.jsonl` para identificar la fase con exceso de latencia (`t_worktree`, `t_idle`, etc.).
+  2. Verificar estado de terminales con `orca terminal list` y leer la consola con `orca terminal read --terminal <handle>`.
+  3. Auditar censo de procesos con `powershell -File scripts/orq/agy_censo.ps1` y terminar procesos huérfanos/lentos con `agy_matar.ps1`.
+  4. Vaciar servidores parásitos con `powershell -File scripts/orq/mcp_vacio.ps1`.
+  5. Comprobar carga de RAM (<78%) y CPU antes de reintentar el despacho.
 
 ### Fase 2: Auditoría Parasitaria a los 45 Segundos
 A los 45 segundos del arranque, auditar el censo de procesos:
