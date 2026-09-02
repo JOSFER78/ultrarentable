@@ -80,9 +80,34 @@ export default function HomePage() {
   const engineVersion = discovery?.current_engine_version || hookVersion || null;
   const apiConectada = !error && !hookError && Boolean(engineVersion);
 
-  const avgPfOos = certified.length
-    ? (certified.reduce((acc, curr) => acc + (curr.profit_factor || 0), 0) / certified.length).toFixed(2)
+  // REAL-ONLY (2026-09-02): solo cuentan como "certificadas FONDEO" las de ruta FONDEO con el motor
+  // vigente. Una certificacion con motor anterior es LEGACY (regla #26) y una de ruta ULTRA no es
+  // FONDEO. Antes la tarjeta mostraba certified.length (5 ULTRA con motor 5.13/5.16) como FONDEO.
+  const certFondeoVigentes = certified.filter(
+    (c) => (c.route || "").toUpperCase() === "FONDEO" && Boolean(engineVersion) && c.engine_version === engineVersion
+  );
+  const certUltra = certified.filter((c) => (c.route || "").toUpperCase() === "ULTRA").length;
+  const certMotorAnterior = certified.filter((c) => Boolean(engineVersion) && c.engine_version !== engineVersion).length;
+  const avgPfOos = certFondeoVigentes.length
+    ? (certFondeoVigentes.reduce((acc, curr) => acc + (curr.profit_factor || 0), 0) / certFondeoVigentes.length).toFixed(2)
     : "NO EVIDENCE";
+  // Meta-portafolios: solo APPROVED_CURRENT_ENGINE es "aprobado". SUPERSEDED y los pendientes de
+  // backtest no lo son (antes se mostraba meta.length: 17 "aprobados" que eran 15 sustituidos y 2 pendientes).
+  const metaAprobados = meta.filter((m) => String(m.status) === "APPROVED_CURRENT_ENGINE").length;
+  const metaSustituidos = meta.filter((m) => String(m.status) === "SUPERSEDED").length;
+  const metaPendientes = meta.length - metaAprobados - metaSustituidos;
+  const detalleCertificadas = loading
+    ? "…"
+    : certified.length === 0
+      ? "Ninguna certificación en la base"
+      : !engineVersion
+        ? `${certified.length} en la base · sin versión de motor no se puede validar la regla #26`
+        : `${certified.length} en la base: ${certUltra} de ruta ULTRA · ${certMotorAnterior} con motor anterior (LEGACY, regla #26)`;
+  const detalleMeta = loading
+    ? "…"
+    : meta.length === 0
+      ? "Ninguna composición en la base"
+      : `${meta.length} composiciones en la base: ${metaSustituidos} sustituidas · ${metaPendientes} pendientes de backtest`;
 
   return (
     <div
@@ -317,9 +342,9 @@ export default function HomePage() {
             <ShieldCheck style={{ width: "15px", height: "15px", color: "var(--text-3)" }} />
           </div>
           <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-2)", fontFamily: "var(--font-mono, monospace)" }}>
-            {loading ? "…" : certified.length}
+            {loading ? "…" : certFondeoVigentes.length}
           </div>
-          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>11/11 Evidence Gates superadas</div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>{detalleCertificadas}</div>
         </Link>
 
         <Link
@@ -345,7 +370,7 @@ export default function HomePage() {
           <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-3)", fontFamily: "var(--font-mono, monospace)" }}>
             {loading ? "…" : avgPfOos}
           </div>
-          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>Holdout ciego fuera de muestra</div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>Holdout ciego fuera de muestra · solo FONDEO con motor vigente</div>
         </Link>
 
         <Link
@@ -369,9 +394,9 @@ export default function HomePage() {
             <Layers style={{ width: "15px", height: "15px", color: "var(--text-3)" }} />
           </div>
           <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-2)", fontFamily: "var(--font-mono, monospace)" }}>
-            {loading ? "…" : meta.length}
+            {loading ? "…" : metaAprobados}
           </div>
-          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>Composiciones multi-estrategia M4</div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>{detalleMeta}</div>
         </Link>
       </section>
 

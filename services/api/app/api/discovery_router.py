@@ -15,6 +15,7 @@ from pydantic import BaseModel
 
 from services.api.app.factory.continuous_search_daemon import continuous_search_daemon
 from services.api.app.config import STATE_DB_PATH
+from services.engine_version import CURRENT_ENGINE_VERSION
 
 logger = logging.getLogger("DiscoveryRouter")
 
@@ -92,6 +93,11 @@ def get_discovery_status() -> Dict[str, Any]:
     with _discovery_lock:
         state = dict(_discovery_state)
         state["total_trials_in_db"] = _get_trials_count()
+        # La web (apps/web/hooks/useEngineVersion.ts) exige current_engine_version: sin el,
+        # marcaba "API NO DISPONIBLE" y "MOTOR: NO DISPONIBLE" aunque la API respondiera.
+        # Nunca un valor por defecto: es la constante real del motor (services/engine_version.py).
+        state["current_engine_version"] = CURRENT_ENGINE_VERSION
+        state["engine_version"] = CURRENT_ENGINE_VERSION
         return state
 
 
