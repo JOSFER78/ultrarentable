@@ -44,3 +44,19 @@ git de escritura en el repo · rm recursivo · `Remove-Item -Recurse` sobre repa
 ## SALIDA
 1. Working tree con los cambios (SIN commit). 2. orchestration/results/agy/B20.md. 3. orchestration/agy/DONE_B20.md.
 4. Cierre: orca orchestration send --type worker_done --subject "B20 <PASA|FALLA|PARCIAL>" --body "<3 frases>" --task-id <T> --dispatch-id <D> --outcome succeeded|failed --json
+
+## CORRECCION_1 (ORQ, 2026-09-02 18:25) — el cierre real falla en el paso 4 (junctions): variables de PowerShell expandidas por bash
+
+Hechos (prueba real del ORQ sobre B19 y B20 con `bash scripts/orq/agy_cerrar.sh B19 ctx_cc6db4af99f7 --issue 34 --etiqueta integrado`): pasos 1-3 OK; en el paso 4 el script muere con `line 295: ErrorActionPreference: unbound variable` y `line 295: wt: unbound variable`, y los pasos 5-7 no se ejecutan (worktree sin retirar, issue sin etiquetar). Causa: el bloque de PowerShell va dentro de comillas dobles de bash con `set -u`, y `$ErrorActionPreference`, `$wt` (y cualquier otra `$variable` de PowerShell) los expande bash. El test `test_agy_cerrar_junctions_safe_removal` pasó porque no ejecuta ese camino del script.
+
+Qué hacer:
+1. Todo bloque de PowerShell embebido va con `\$` escapado o, mejor, en un heredoc con delimitador entre comillas simples (`<<'PS'`) escrito a un fichero temporal y ejecutado con `powershell -NoProfile -ExecutionPolicy Bypass -File`. Revisa TODOS los bloques de PowerShell del script, no solo el del paso 4 (`grep -n 'powershell' scripts/orq/agy_cerrar.sh`).
+2. Idempotencia: si `worker-release` responde que el dispatch ya no existe o está liberado, o `terminal stop` no encuentra terminales, el paso se marca `OK (ya hecho)` y se sigue; el ORQ va a re-ejecutar el cierre de B19 y B20 con el script corregido.
+3. Test de punta a punta REAL: nuevo flag `--solo-junctions <ruta>` que ejecuta únicamente el paso 4 sobre un directorio; el test crea un árbol temporal con `cmd /c mklink /J` hacia un destino con 3 ficheros, invoca el SCRIPT (no una función) con `bash scripts/orq/agy_cerrar.sh X --solo-junctions <tmp>`, y comprueba rc=0, junction eliminada y destino intacto. Añade también `bash -n` y una ejecución con `--sin-worktree` sobre un ID inexistente (`ZZZ`) que debe terminar con rc≠0 y mensaje claro, sin `unbound variable`.
+4. Los 14 tests actuales de `tests/test_orq_agentes.py` siguen en verde (ojo: en tu worktree hay 10; el ORQ ya fusionó B19 y B20 en devilray: no reescribas el fichero entero, añade tus casos al final).
+
+Aceptación adicional (el ORQ la re-ejecuta):
+```bash
+grep -c "unbound" <(bash scripts/orq/agy_cerrar.sh ZZZ --sin-worktree 2>&1) || true     # esperado: 0
+grep -c -- "--solo-junctions" scripts/orq/agy_cerrar.sh                                  # esperado: >= 2
+```
