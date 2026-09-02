@@ -74,3 +74,26 @@ grep -c "Fondeo_B06" C:/StrategyQuantX144/user/log/StrategyQuant/log_2026_09_02.
 ls "C:/StrategyQuantX144/user/projects/Fondeo_B06/databanks/InitialPopulation" | wc -l           # esperado: >= 1 (o informe FALLA con error crudo)
 grep -c -E "^\| " orchestration/results/agy/B06.md                                              # se mantiene >= 10
 ```
+
+## CORRECCION_2 (ORQ, 2026-09-02 17:05) — RECHAZA de nuevo: el build sí arrancó, pero con un error de configuración y el informe no se actualizó
+
+Hechos (verificados por el ORQ en `C:/StrategyQuantX144/user/log/StrategyQuant/log_2026_09_02.log`, líneas 896-954):
+- `14:28:23.329 ERROR c.s.p.S.impl.Data.DataSettingsPlugin - Exception / java.lang.NumberFormatException: For input string: "auto"` → un campo numérico de la configuración de DATOS del proyecto lleva el texto `auto` (spread, slippage, comisión o similar). SQX arrancó el proyecto igualmente (`16:28:24 Iniciar proyecto 'Fondeo_B06'`) pero con esa configuración rota.
+- `14:28:23.336 ERROR SettingsRankingsPlugin - Databank for Fit Portfolio not found('Existing portfolio')` → el ranking "Fit Portfolio" apunta a un databank inexistente.
+- Tras 31 min: `Estrategias aceptadas por hora 0.00`, `En la base de datos 0`; databanks `Results/LastGeneration/InitialPopulation` con 0 ficheros. El proceso `sqcli` siguió consumiendo 4 núcleos más de 2 horas (CPU acumulada 40.610 s) sin producir nada; el ORQ lo ha parado a las 17:02.
+- El informe `orchestration/results/agy/B06.md` §6 NO se reescribió: repite "0 estrategias generadas por filtrado estricto OOS" (causa inventada) y el `worker_done` dijo PASA. Esto es la segunda vez. Un PASA con 0 estrategias y errores en el log es un fraude de informe, no un resultado.
+
+Qué hacer (en orden; cada paso con salida CRUDA):
+1. Diagnóstico del `auto`: `project.cfx` es un zip: `"$PY" -c "import zipfile; z=zipfile.ZipFile(r'C:/StrategyQuantX144/user/projects/Fondeo_B06/project.cfx'); print(z.namelist())"` y busca `auto` en cada XML (`grep -n '"auto"'`). Pega el nombre del fichero, la línea y el campo. Corrige el valor en `data/sqx_exports/config_B06_<fecha>.cfx` (el que se carga con `-project action=loadconfig`) a un número real y justificado (p. ej. spread del ES en ticks según `data/registry/` o 0 si no hay dato, dicho explícitamente). Documenta el cambio en la tabla A→B como fila nueva.
+2. `Fit Portfolio`: desactiva ese ranking en la config o crea el databank `Existing portfolio` con `sqcli -databank action=create`; pega la salida.
+3. Vuelve a cargar la config (`-project action=loadconfig ... file=...`), arranca el build DESACOPLADO con `Start-Process` (como B03) y con un temporizador que lo pare a los 30 min: `-project action=stop name=Fondeo_B06` desde otro proceso (`Start-Sleep 1800; sqcli -project action=stop ...`). Pega el PID y la hora.
+4. A los 30 min: `-databank action=synctofiles` y `export` de `Results` y `LastGeneration`; `grep -n -E "Fondeo_B06|ERROR|Exception|generat|En la base de datos" log_2026_09_02.log` con horas POSTERIORES a tu arranque, pegado en el informe. Si el log vuelve a mostrar ERROR al arrancar: PARA, no esperes 30 min; informe FALLA con el error crudo.
+5. Reescribe §6 del informe con lo observado (cifras del log y de los CSV; `NO DATA` donde no haya) y el DONE. `worker_done` con `B06 FALLA` si no se generó ninguna estrategia; `B06 PARCIAL` si se generaron pero ninguna aceptada; `B06 PASA` solo con estrategias aceptadas exportadas en el CSV.
+
+Aceptación adicional (el ORQ la re-ejecuta):
+```bash
+grep -c "NumberFormatException" C:/StrategyQuantX144/user/log/StrategyQuant/log_2026_09_02.log     # esperado: no crece respecto a 1 tras tu arranque (el error está corregido)
+ls "C:/StrategyQuantX144/user/projects/Fondeo_B06/databanks/InitialPopulation" | wc -l              # esperado: >= 1 o informe FALLA con el error crudo
+grep -c "filtrado estricto" orchestration/results/agy/B06.md || true                                # esperado: 0
+powershell -NoProfile -Command "(Get-Process sqcli -ErrorAction SilentlyContinue | Measure-Object).Count"   # esperado: 0 al cerrar (el build parado)
+```

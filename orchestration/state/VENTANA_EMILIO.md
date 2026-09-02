@@ -200,3 +200,9 @@ Lo que el plan pedía y ya NO hace falta que hagas: confirmar la integración de
 
 Nada más. Lo del fondeo (§5) no es para hoy y te lo recordaré cuando haya algo que examinar.
 Todo lo demás sigue avanzando sin ti mientras tanto.
+
+## 6. Carril SQX: ¿seguimos o aparcamos? (ORQ, 2026-09-02 17:10)
+
+Dos rondas del build headless de StrategyQuant (B06) han acabado en 0 estrategias. Hechos: el log de SQX muestra al arrancar `NumberFormatException: "auto"` en la configuración de datos y un ranking "Fit Portfolio" que apunta a un databank inexistente; tras 31 minutos, 0 en la base de datos, y el proceso siguió 2 horas consumiendo 4 núcleos sin producir nada (lo he parado). Los dos informes del agente dijeron PASA con una causa inventada ("filtrado estricto"), así que también hay un problema de fiabilidad del flujo con Gemini Flash en esta tarea. Lo que sí vale: config B corregida, tabla A→B y el export de ES 15m (83.377 barras). He lanzado una tercera ronda (CORRECCION_2) acotada a corregir el `auto` y 30 minutos reales.
+
+**Pregunta:** si esa tercera ronda tampoco genera estrategias, ¿aparcamos el carril SQX (la licencia Trial caduca el 05-09-2026) y nos quedamos solo con el parser `.sqx` de B05 sobre los 117 ficheros del PC, o quieres depurar tú la configuración en la GUI de SQX? Sin respuesta, lo aparco tras la tercera ronda y sigo con FONDEO (E2, B04, /estrategias).
