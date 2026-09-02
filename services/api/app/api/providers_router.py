@@ -10,8 +10,9 @@ from pydantic import BaseModel, Field
 
 from services.api.app.db.database import get_db, ProviderRuleSetModel
 from services.api.app.db.seed_prop_firms import PROP_FIRMS_CATALOG
+from services.fondeo.catalogo_firmas_v2 import CATALOGO_V2, get_firm_v2
 
-providers_router = APIRouter(prefix="/providers", tags=["Prop Firm Providers"])
+providers_router = APIRouter(tags=["Prop Firm Providers"])
 
 
 class ProviderCreateSchema(BaseModel):
@@ -100,7 +101,8 @@ def _format_provider(p: ProviderRuleSetModel) -> Dict[str, Any]:
     }
 
 
-@providers_router.get("")
+@providers_router.get("/providers")
+@providers_router.get("/providers/")
 def list_providers(
     market_type: Optional[str] = Query(None, description="FUTURES, CFD, CRYPTO"),
     account_tier: Optional[str] = Query(None, description="10K, 25K, 50K, 100K, 150K, 200K, 250K, 300K"),
@@ -157,7 +159,7 @@ def list_providers(
     return [_format_provider(p) for p in query.all()]
 
 
-@providers_router.get("/meta/summary")
+@providers_router.get("/providers/meta/summary")
 def get_meta_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Return summary statistics of all cataloged prop firms."""
     all_providers = db.query(ProviderRuleSetModel).all()
@@ -185,38 +187,38 @@ def get_meta_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
     }
 
 
-@providers_router.post("/sync")
+@providers_router.post("/providers/sync")
 def sync_prop_firms(db: Session = Depends(get_db)) -> Dict[str, Any]:
-    """Synchronize / Refresh catalog with verified canonical data."""
-    updated = 0
-    created = 0
-    now_str = datetime.utcnow().strftime("%Y-%m-%d")
-    
-    for item in PROP_FIRMS_CATALOG:
-        item_copy = dict(item)
-        item_copy["verified_at"] = now_str
-        
-        p = db.query(ProviderRuleSetModel).filter(ProviderRuleSetModel.provider_id == item["provider_id"]).first()
-        if p:
-            for k, v in item_copy.items():
-                setattr(p, k, v)
-            updated += 1
-        else:
-            p_new = ProviderRuleSetModel(**item_copy)
-            db.add(p_new)
-            created += 1
-            
-    db.commit()
-    
-    return {
-        "status": "SUCCESS",
-        "message": f"Sincronización completada exitosamente. {updated} cuentas actualizadas, {created} nuevas registradas.",
-        "timestamp": datetime.utcnow().isoformat(),
-        "total_cataloged": len(PROP_FIRMS_CATALOG)
-    }
+    """Fail-closed: sin re-verificación real implementada (W4.8, ver M3 §1.3)."""
+    raise HTTPException(
+        status_code=501,
+        detail="sin re-verificación real implementada; ver M3 §1.3"
+    )
 
 
-@providers_router.get("/recommend")
+@providers_router.get("/prop-firms/v2", tags=["v2-prop-firms"])
+@providers_router.get("/providers/v2", tags=["v2-prop-firms"])
+@providers_router.get("/providers/prop-firms/v2", tags=["v2-prop-firms"])
+def get_prop_firms_v2() -> List[Dict[str, Any]]:
+    """Devuelve el catálogo de firmas de fondeo V2 re-verificado con metadatos de SourceRef (D6)."""
+    return [f.to_api_dict() for f in CATALOGO_V2]
+
+
+@providers_router.get("/prop-firms/v2/{firm_id}", tags=["v2-prop-firms"])
+@providers_router.get("/providers/v2/{firm_id}", tags=["v2-prop-firms"])
+def get_prop_firm_v2_by_id(firm_id: str) -> Dict[str, Any]:
+    """Devuelve el detalle de una firma de fondeo V2 con sus SourceRef por campo."""
+    firm = get_firm_v2(firm_id.lower().strip())
+    if firm is None:
+        valid_ids = ", ".join(sorted(f.id for f in CATALOGO_V2))
+        raise HTTPException(
+            status_code=404,
+            detail=f"'{firm_id}' no está en el catálogo v2. Disponibles: {valid_ids}",
+        )
+    return firm.to_api_dict()
+
+
+@providers_router.get("/providers/recommend")
 def recommend_accounts(
     budget_usd: float = Query(100.0, description="Presupuesto disponible en USD para la compra"),
     use_bots: bool = Query(True, description="¿Vas a operar con bots automáticos?"),
@@ -291,7 +293,7 @@ class ChatRequestSchema(BaseModel):
     history: Optional[List[ChatMessage]] = Field(default=[], description="Previous conversation turns")
 
 
-@providers_router.post("/chat")
+@providers_router.post("/providers/chat")
 def chat_expert_advisor(
     req: ChatRequestSchema,
     db: Session = Depends(get_db)
@@ -414,7 +416,7 @@ def chat_expert_advisor(
     }
 
 
-@providers_router.get("/{provider_id}")
+@providers_router.get("/providers/{provider_id}")
 def get_provider(provider_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
     """Get single provider rule set by ID."""
     p = db.query(ProviderRuleSetModel).filter(ProviderRuleSetModel.provider_id == provider_id).first()
