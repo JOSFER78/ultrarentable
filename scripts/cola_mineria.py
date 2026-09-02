@@ -144,7 +144,7 @@ def cmd_encolar(args) -> int:
     return 0
 
 
-def _comando_mine(payload: dict, max_candidates: int = 2000) -> list[str]:
+def _comando_mine(payload: dict, max_candidates: int = 0) -> list[str]:
     """Construye el comando exacto de mine.py para una celda.
 
     Factorizado fuera de _lanzar() para poder trazarlo (tests/verificación) sin lanzar el
@@ -162,7 +162,7 @@ def _comando_mine(payload: dict, max_candidates: int = 2000) -> list[str]:
     ]
 
 
-def _lanzar(payload: dict, max_candidates: int = 2000) -> subprocess.Popen:
+def _lanzar(payload: dict, max_candidates: int = 0) -> subprocess.Popen:
     cmd = _comando_mine(payload, max_candidates)
     return subprocess.Popen(
         cmd, cwd=str(REPO_ROOT),
@@ -315,8 +315,8 @@ def main() -> int:
 
     p_tra = sub.add_parser("trabajar", help="Worker: ejecuta celdas de la cola")
     p_tra.add_argument("--concurrencia", type=int, default=2)
-    p_tra.add_argument("--max-candidates", type=int, default=2000,
-                       help="Configuraciones máximas por celda (default 2000, como campana_02)")
+    p_tra.add_argument("--max-candidates", type=int, default=0,
+                       help="Configuraciones máximas por celda (default: 0 = espacio completo / D2)")
     p_tra.add_argument("--max-celdas", type=int, default=0, help="0 = sin límite")
     p_tra.add_argument("--recuperar", action=argparse.BooleanOptionalAction, default=True)
     p_tra.add_argument("--huerfano-seg", type=int, default=4 * 3600,
