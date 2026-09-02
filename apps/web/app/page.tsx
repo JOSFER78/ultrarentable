@@ -1,420 +1,613 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+/**
+ * apps/web/app/page.tsx
+ * Portada y Centro de Mando Cuantitativo FONDEO.
+ *
+ * Cumple con docs/18_STRATEGIES_PAGE_SPEC.md, docs/19_UI_STYLE_SPEC.md y GO_A12:
+ * - Monocromo estricto con tokens de docs/19
+ * - Cero colores fuera de tokens (sin hex ni clases tailwind de colores)
+ * - Versión de motor 100% dinámica y leída desde la API canónica
+ * - Marcador honesto (0 certificadas mostrado con sobriedad en gris)
+ * - ULTRA presente como bloque atenuado "EN CONSTRUCCIÓN", nunca borrado
+ */
+
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
-  Zap,
-  GitFork,
-  BookOpen,
-  Activity,
-  ShieldCheck,
   Database,
-  PieChart,
+  ShieldCheck,
+  Zap,
+  Layers,
+  Building2,
+  Activity,
+  ClipboardList,
+  Radio,
+  Flame,
   RefreshCw,
   ArrowRight,
-  Radio,
-  Building2,
-  Lock,
-  Flame,
-  CheckCircle2,
   Sparkles,
-  TrendingUp,
-  Award,
-  Layers,
-  ArrowUpRight,
-  Key,
+  CheckCircle2,
+  XCircle,
+  Lock,
 } from "lucide-react";
 import {
-  getCandidates,
-  getCertifiedMetaStrategies,
+  getCandidatosCanonicos,
   getCertifiedStrategies,
+  getCertifiedMetaStrategies,
   getDiscoveryStatus,
-  type CandidateStrategy,
-  type CertifiedMetaStrategy,
+  type CandidatoCanonico,
   type CertifiedStrategy,
+  type CertifiedMetaStrategy,
   type DiscoveryStatus,
 } from "@/lib/api";
-import { useAuth } from "@/context/AuthContext";
-import AuthModal from "@/components/auth/AuthModal";
 import { useEngineVersion } from "@/hooks/useEngineVersion";
 
 export default function HomePage() {
-  const { user, profile, loading: authLoading } = useAuth();
-  const { version: engineVersion } = useEngineVersion();
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalTab, setAuthModalTab] = useState<"login" | "register">("register");
-
-  const [candidates, setCandidates] = useState<CandidateStrategy[]>([]);
+  const { version: hookVersion, error: hookError } = useEngineVersion();
+  const [candidatos, setCandidatos] = useState<CandidatoCanonico[]>([]);
   const [certified, setCertified] = useState<CertifiedStrategy[]>([]);
   const [meta, setMeta] = useState<CertifiedMetaStrategy[]>([]);
   const [discovery, setDiscovery] = useState<DiscoveryStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function refresh() {
+  const refrescar = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [candidateResult, certifiedResult, metaResult, discoveryResult] = await Promise.all([
-        getCandidates({ limit: 100 }),
-        getCertifiedStrategies(),
-        getCertifiedMetaStrategies(),
-        getDiscoveryStatus(),
+      const [candRes, certRes, metaRes, discRes] = await Promise.all([
+        getCandidatosCanonicos(1000).catch(() => []),
+        getCertifiedStrategies().catch(() => []),
+        getCertifiedMetaStrategies().catch(() => []),
+        getDiscoveryStatus().catch(() => null),
       ]);
-      setCandidates(Array.isArray(candidateResult) ? candidateResult : []);
-      setCertified(Array.isArray(certifiedResult) ? certifiedResult : []);
-      setMeta(Array.isArray(metaResult) ? metaResult : []);
-      setDiscovery(discoveryResult || null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Sin conexión con API canónica.");
-      setCandidates([]);
-      setCertified([]);
-      setMeta([]);
-      setDiscovery(null);
+      setCandidatos(Array.isArray(candRes) ? candRes : []);
+      setCertified(Array.isArray(certRes) ? certRes : []);
+      setMeta(Array.isArray(metaRes) ? metaRes : []);
+      setDiscovery(discRes);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error al conectar con la API canónica.");
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    void refresh();
   }, []);
 
-  const openAuth = (tab: "login" | "register") => {
-    setAuthModalTab(tab);
-    setAuthModalOpen(true);
-  };
+  useEffect(() => {
+    void refrescar();
+  }, [refrescar]);
 
-  // =========================================================================
-  // VISTA 1: LANDING EXPLICATIVO (SI NO HAY USUARIO REGISTRADO / AUTENTICADO)
-  // =========================================================================
-  if (!user && !authLoading) {
-    return (
-      <div className="w-full max-w-6xl mx-auto space-y-12 py-6 sm:py-10 font-sans animate-in fade-in duration-300">
-        <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} initialTab={authModalTab} />
+  const engineVersion = discovery?.current_engine_version || hookVersion || null;
+  const apiConectada = !error && !hookError && Boolean(engineVersion);
 
-        {/* 1. HERO PRINCIPAL */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-[#030712] border border-white/[0.08] p-8 sm:p-12 text-center space-y-6 shadow-2xl">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-mono font-bold tracking-wider uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Laboratorio Cuantitativo Institucional{engineVersion ? ` v${engineVersion}` : ""}</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
-            Minería Algorítmica, 11 Evidence Gates y Meta-Portafolios con{" "}
-            <span className="bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">
-              Evidencia Real
-            </span>
-          </h1>
-
-          <p className="text-slate-400 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed">
-            Plataforma institucional de investigación determinista y ejecución automatizada. Toda estrategia es auditada en holdout ciego fuera de muestra (OOS) y protegida por la doctrina inmutable{" "}
-            <strong className="text-slate-200 font-mono">Zero-Mocks · Real-Only</strong>.
-          </p>
-
-          {/* BOTONES DE ACCIÓN PRINCIPALES */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <button
-              onClick={() => openAuth("register")}
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-emerald-900/40 transition active:scale-95 cursor-pointer flex items-center gap-2"
-            >
-              <Zap className="w-4 h-4 fill-current" />
-              <span>Crear Cuenta Gratis</span>
-            </button>
-
-            <button
-              onClick={() => openAuth("login")}
-              className="px-6 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-sm transition active:scale-95 cursor-pointer flex items-center gap-2 shadow-sm"
-            >
-              <Key className="w-4 h-4 text-sky-400" />
-              <span>Iniciar Sesión</span>
-            </button>
-          </div>
-
-          {/* BADGES DE VERIFICACIÓN */}
-          <div className="pt-6 border-t border-white/[0.06] flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 font-mono">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Cero Datos Sintéticos (Zero-Mocks)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-sky-400" />
-              <span>11 Evidence Gates Auditadas</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Database className="w-4 h-4 text-indigo-400" />
-              <span>Trazabilidad SQLite WAL + SHA-256</span>
-            </div>
-          </div>
-        </section>
-
-        {/* 2. LOS 3 PILARES CUANTITATIVOS */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* PILAR 1 */}
-          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 sm:p-7 space-y-4 hover:border-sky-500/30 transition shadow-xl flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold">
-                <Building2 className="w-6 h-6" />
-              </div>
-              <span className="text-[11px] font-mono font-bold text-sky-400 tracking-wider uppercase block">
-                Ruta 01 · Institucional
-              </span>
-              <h3 className="text-lg font-black text-white">Track FONDEO (CME & FX)</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Algoritmos diseñados estrictamente para superar evaluaciones de Prop Firms. Control inviolable de Drawdown ($DD \le 4.0\%$), Daily Loss Limit ($0$ violaciones) y cierre diario obligatorio a las 16:59 EST.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-white/[0.06] text-[11px] font-mono text-slate-400">
-              NQ · ES · YM · GC · SI · CL · EURUSD · GBPUSD
-            </div>
-          </div>
-
-          {/* PILAR 2 */}
-          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 sm:p-7 space-y-4 hover:border-amber-500/30 transition shadow-xl flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">
-                <Flame className="w-6 h-6" />
-              </div>
-              <span className="text-[11px] font-mono font-bold text-amber-400 tracking-wider uppercase block">
-                Ruta 02 · Convexidad Taleb
-              </span>
-              <h3 className="text-lg font-black text-white">Track ULTRA (Perpetuos)</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Asimetría convexa multi-activo con margen aislado ($100–$1,000 por bala) y piramidación secuencial autofinanciada por beneficios flotantes. Cosecha automática a Bóveda Ratchet en Spot USDT.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-white/[0.06] text-[11px] font-mono text-slate-400">
-              5 Temporalidades Intradía (1m, 5m, 15m, 1h, 4h)
-            </div>
-          </div>
-
-          {/* PILAR 3 */}
-          <div className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 sm:p-7 space-y-4 hover:border-emerald-500/30 transition shadow-xl flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <span className="text-[11px] font-mono font-bold text-emerald-400 tracking-wider uppercase block">
-                Gobernanza Cuantitativa
-              </span>
-              <h3 className="text-lg font-black text-white">11 Evidence Gates</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Ninguna estrategia entra a producción sin aprobar las 11 pruebas: continuidad OHLCV, costes institucionales, significancia muestral, WFO móvil, Monte Carlo 0% ruina, estrés 3x slippage y reconciliación NautilusTrader.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-white/[0.06] text-[11px] font-mono text-slate-400">
-              Holdout Ciego OOS Inviolable
-            </div>
-          </div>
-        </section>
-
-        {/* 3. CTA FOOTER */}
-        <section className="bg-gradient-to-r from-slate-900 to-indigo-950/60 border border-white/[0.08] rounded-3xl p-8 text-center space-y-4 shadow-xl">
-          <h2 className="text-xl sm:text-2xl font-black text-white">
-            Desbloquea el Acceso Completo a la Plataforma
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto">
-            Regístrate para explorar el Catálogo Master de Estrategias Certificadas, consultar los Meta-Portafolios Risk-Parity, conectar tu Trading Desk y exportar auditorías en Excel (.xlsx) y CSV.
-          </p>
-          <div className="pt-2">
-            <button
-              onClick={() => openAuth("register")}
-              className="px-8 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm tracking-wide shadow-lg shadow-emerald-900/40 transition active:scale-95 cursor-pointer"
-            >
-              Comenzar Ahora con Google / Email
-            </button>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  // =========================================================================
-  // VISTA 2: DASHBOARD / CENTRO DE MANDO (USUARIO AUTENTICADO)
-  // =========================================================================
-  const avgPf = certified.length
-    ? (certified.reduce((sum, item) => sum + item.profit_factor, 0) / certified.length).toFixed(2)
+  const avgPfOos = certified.length
+    ? (certified.reduce((acc, curr) => acc + (curr.profit_factor || 0), 0) / certified.length).toFixed(2)
     : "NO EVIDENCE";
 
   return (
-    <div className="w-full max-w-[1560px] mx-auto space-y-6 font-sans">
-      {/* HERO CANÓNICO PARA USUARIOS AUTENTICADOS */}
-      <section className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 sm:p-7 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="max-w-3xl space-y-2.5">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span
-              className="text-[10.5px] font-bold font-mono px-2.5 py-0.5 rounded-md tracking-wider"
-              style={{ background: "var(--surface-1)", border: "1px solid var(--border)", color: engineVersion ? "var(--text-2)" : "var(--text-3)" }}
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--bg)",
+        color: "var(--text-1)",
+        padding: "24px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "24px",
+        maxWidth: "1400px",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
+      {/* 1. CABECERA Y HERO HONESTO */}
+      <header
+        style={{
+          background: "var(--surface-1)",
+          border: "1px solid var(--border)",
+          borderRadius: "8px",
+          padding: "20px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "8px",
+                background: "var(--surface-2)",
+                border: "1px solid var(--border-strong)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-1)",
+                fontFamily: "var(--font-mono, monospace)",
+                fontWeight: 700,
+                fontSize: "13px",
+              }}
             >
-              {engineVersion ? `v${engineVersion} REAL-ONLY` : "MOTOR: NO DISPONIBLE"}
-            </span>
-            <span className="text-xs text-slate-400 font-mono tracking-wide">
-              USUARIO: {user?.displayName || user?.email || "Autenticado"}
-            </span>
+              UR
+            </div>
+            <div>
+              <h1 style={{ fontSize: "22px", fontWeight: 700, margin: 0, letterSpacing: "-0.02em" }}>
+                Centro de Mando Cuantitativo — Track FONDEO
+              </h1>
+              <p style={{ margin: "2px 0 0", fontSize: "12.5px", color: "var(--text-2)" }}>
+                Plataforma institucional de minería algorítmica, 11 Evidence Gates y evaluación de Prop Firms (CME Futures & Forex Majors).
+              </p>
+            </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Centro de Mando Cuantitativo
-          </h1>
-
-          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-            Plataforma institucional de investigación determinista, validación OOS ciego y ejecución algorítmica.
-            Todos los datos presentados provienen exclusivamente de registros físicos verificados en base de datos SQLite WAL.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-          <button
-            onClick={() => void refresh()}
-            disabled={loading}
-            className="inline-flex items-center gap-2 bg-[#050811] hover:bg-slate-850 text-slate-200 border border-white/[0.1] px-4 py-2 rounded-xl text-xs font-bold font-mono shadow-sm transition active:scale-95 cursor-pointer"
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              fontFamily: "var(--font-mono, monospace)",
+              fontSize: "12px",
+              flexWrap: "wrap",
+            }}
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-sky-400" : "text-slate-400"}`} />
-            <span>{loading ? "Actualizando…" : "Actualizar Motor"}</span>
-          </button>
-        </div>
-      </section>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "5px 10px",
+                borderRadius: "6px",
+                background: "var(--surface-2)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  background: apiConectada ? "var(--profit)" : "var(--loss)",
+                }}
+              />
+              <span style={{ color: apiConectada ? "var(--text-1)" : "var(--loss)" }}>
+                {apiConectada ? "API CONECTADA" : "API NO DISPONIBLE"}
+              </span>
+            </div>
 
+            <div
+              style={{
+                padding: "5px 10px",
+                borderRadius: "6px",
+                background: "var(--surface-2)",
+                border: "1px solid var(--border)",
+                color: engineVersion ? "var(--text-1)" : "var(--text-3)",
+              }}
+            >
+              {engineVersion ? `Motor ${engineVersion}` : "MOTOR: NO DISPONIBLE"}
+            </div>
+
+            <button
+              onClick={() => void refrescar()}
+              disabled={loading}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "5px 12px",
+                borderRadius: "6px",
+                background: "var(--surface-3)",
+                border: "1px solid var(--border-strong)",
+                color: "var(--text-1)",
+                cursor: "pointer",
+              }}
+            >
+              <RefreshCw
+                style={{
+                  width: "13px",
+                  height: "13px",
+                  animation: loading ? "spin 1s linear infinite" : "none",
+                }}
+              />
+              <span>Actualizar</span>
+            </button>
+          </div>
+        </div>
+
+        {/* BARRAS DE DOCTRINA */}
+        <div
+          style={{
+            borderTop: "1px solid var(--border)",
+            paddingTop: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "10px",
+            fontSize: "11.5px",
+            color: "var(--text-3)",
+            fontFamily: "var(--font-mono, monospace)",
+          }}
+        >
+          <div>ZERO-MOCKS · REAL-ONLY · SIN DATOS SINTÉTICOS · BASE DE DATOS SQLITE WAL</div>
+          <div>CRITERIO 1.1: ≥ 200 OPS OOS · PROFIT FACTOR OOS ≥ 1.25 · 11 GATES INMUTABLES</div>
+        </div>
+      </header>
+
+      {/* ERROR DE API (FAIL-CLOSED) */}
       {error && (
-        <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-800 text-rose-200 flex items-start gap-3 shadow-lg font-mono text-xs">
-          <span className="text-rose-400 font-bold">✕ Error:</span>
-          <span>{error}</span>
+        <div
+          style={{
+            padding: "12px 16px",
+            borderRadius: "8px",
+            background: "var(--loss-dim)",
+            border: "1px solid var(--loss)",
+            color: "var(--text-1)",
+            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <XCircle style={{ width: "16px", height: "16px", color: "var(--loss)" }} />
+          <span>Error de conexión: {error}</span>
         </div>
       )}
 
-      {/* TARJETAS KPI CUANTITATIVAS */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 font-mono">
-        <KpiCard
-          title="CANDIDATOS SQLITE WAL"
-          value={loading ? "…" : String(candidates.length)}
-          subtitle="Base de datos SQLite local"
-          icon={Database}
-          accent="#818cf8"
+      {/* 2. MARCADOR HONESTO / KPIS CUANTITATIVOS */}
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: "14px",
+        }}
+      >
+        <Link
           href="/candidatos"
-        />
-        <KpiCard
-          title="ESTRATEGIAS CERTIFICADAS"
-          value={loading ? "…" : String(certified.length)}
-          subtitle="11/11 Gates Pass (Auditadas)"
-          icon={ShieldCheck}
-          accent="#34d399"
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            padding: "16px 20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-3)", letterSpacing: "0.4px" }}>
+              Candidatas en Catálogo
+            </span>
+            <Database style={{ width: "15px", height: "15px", color: "var(--text-3)" }} />
+          </div>
+          <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-1)", fontFamily: "var(--font-mono, monospace)" }}>
+            {loading ? "…" : candidatos.length}
+          </div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>Base canónica SQLite WAL</div>
+        </Link>
+
+        <Link
           href="/gates"
-        />
-        <KpiCard
-          title="PROFIT FACTOR MEDIO OOS"
-          value={loading ? "…" : avgPf}
-          subtitle="Calculado sobre Blind Holdout"
-          icon={Zap}
-          accent="#38bdf8"
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            padding: "16px 20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-3)", letterSpacing: "0.4px" }}>
+              Certificadas FONDEO
+            </span>
+            <ShieldCheck style={{ width: "15px", height: "15px", color: "var(--text-3)" }} />
+          </div>
+          <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-2)", fontFamily: "var(--font-mono, monospace)" }}>
+            {loading ? "…" : certified.length}
+          </div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>11/11 Evidence Gates superadas</div>
+        </Link>
+
+        <Link
           href="/estrategias"
-        />
-        <KpiCard
-          title="META-PORTAFOLIOS"
-          value={loading ? "…" : String(meta.length)}
-          subtitle="Paridad de riesgo multiactivo"
-          icon={PieChart}
-          accent="#c084fc"
-          href="/portfolio"
-        />
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            padding: "16px 20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-3)", letterSpacing: "0.4px" }}>
+              PF Medio Certificadas (OOS)
+            </span>
+            <Zap style={{ width: "15px", height: "15px", color: "var(--text-3)" }} />
+          </div>
+          <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-3)", fontFamily: "var(--font-mono, monospace)" }}>
+            {loading ? "…" : avgPfOos}
+          </div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>Holdout ciego fuera de muestra</div>
+        </Link>
+
+        <Link
+          href="/estrategias"
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            padding: "16px 20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-3)", letterSpacing: "0.4px" }}>
+              Meta-Portafolios Aprobados
+            </span>
+            <Layers style={{ width: "15px", height: "15px", color: "var(--text-3)" }} />
+          </div>
+          <div style={{ fontSize: "26px", fontWeight: 700, color: "var(--text-2)", fontFamily: "var(--font-mono, monospace)" }}>
+            {loading ? "…" : meta.length}
+          </div>
+          <div style={{ fontSize: "11.5px", color: "var(--text-3)" }}>Composiciones multi-estrategia M4</div>
+        </Link>
       </section>
 
-      {/* ACCESOS DIRECTOS */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <QuickLinkCard
-          title="Bóveda de Estrategias Aprobadas"
-          subtitle="Catálogo oficial con evidencia 11/11 gates y descarga en Excel/CSV"
-          icon={Award}
-          accent="#10b981"
-          href="/gates"
-        />
-        <QuickLinkCard
-          title="Portfolio Studio & Meta-Estrategias"
-          subtitle="Meta-FONDEO y Meta-ULTRA con matrices de covarianza real"
-          icon={PieChart}
-          accent="#8b5cf6"
-          href="/portfolio"
-        />
-        <QuickLinkCard
-          title="Trading Desk CME en Vivo"
-          subtitle="Terminal de ejecución institucional y control de riesgo en Tradovate/NinjaTrader"
-          icon={Activity}
-          accent="#06b6d4"
-          href="/fondeo"
-        />
+      {/* 3. ARQUITECTURA MODULAR M1-M4 (NAVEGACIÓN A SECCIONES) */}
+      <section style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-2)", letterSpacing: "0.3px" }}>
+          Pipeline Modular Cuantitativo (M1 — M4)
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "14px",
+          }}
+        >
+          <Link
+            href="/estrategias"
+            style={{
+              background: "var(--surface-1)",
+              border: "1px solid var(--border)",
+              borderRadius: "8px",
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono, monospace)", color: "var(--text-3)" }}>
+                MÓDULO 01
+              </span>
+              <ArrowRight style={{ width: "14px", height: "14px", color: "var(--text-3)" }} />
+            </div>
+            <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)" }}>
+              M1 — Generación (StrategyQuant X)
+            </div>
+            <p style={{ margin: 0, fontSize: "12px", color: "var(--text-2)", lineHeight: "1.4" }}>
+              Fábrica de hipótesis crudas. Extracción desde databanks, control de configuración y enlace de datasets verificados.
+            </p>
+          </Link>
+
+          <Link
+            href="/estrategias"
+            style={{
+              background: "var(--surface-1)",
+              border: "1px solid var(--border)",
+              borderRadius: "8px",
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono, monospace)", color: "var(--text-3)" }}>
+                MÓDULO 02
+              </span>
+              <ArrowRight style={{ width: "14px", height: "14px", color: "var(--text-3)" }} />
+            </div>
+            <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)" }}>
+              M2 — Mejora (Loop Iterativo)
+            </div>
+            <p style={{ margin: 0, fontSize: "12px", color: "var(--text-2)", lineHeight: "1.4" }}>
+              Ciclo continuo de reparación de fallos en gates, árbol de linaje, holdout inviolable y penalización DSR.
+            </p>
+          </Link>
+
+          <Link
+            href="/fondeo"
+            style={{
+              background: "var(--surface-1)",
+              border: "1px solid var(--border)",
+              borderRadius: "8px",
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono, monospace)", color: "var(--text-3)" }}>
+                MÓDULO 03
+              </span>
+              <ArrowRight style={{ width: "14px", height: "14px", color: "var(--text-3)" }} />
+            </div>
+            <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)" }}>
+              M3 — Valoración para Fondeo
+            </div>
+            <p style={{ margin: 0, fontSize: "12px", color: "var(--text-2)", lineHeight: "1.4" }}>
+              Simulación barra a barra contra reglas de Prop Firms: P(pasar), P(ruina), control de DD y horarios óptimos.
+            </p>
+          </Link>
+
+          <Link
+            href="/estrategias"
+            style={{
+              background: "var(--surface-1)",
+              border: "1px solid var(--border)",
+              borderRadius: "8px",
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono, monospace)", color: "var(--text-3)" }}>
+                MÓDULO 04
+              </span>
+              <ArrowRight style={{ width: "14px", height: "14px", color: "var(--text-3)" }} />
+            </div>
+            <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-1)" }}>
+              M4 — Metaestrategias
+            </div>
+            <p style={{ margin: 0, fontSize: "12px", color: "var(--text-2)", lineHeight: "1.4" }}>
+              Composición multiactivo para reducción de varianza del examen, matrices de covarianza real y paridad de riesgo.
+            </p>
+          </Link>
+        </div>
+      </section>
+
+      {/* 4. ACCESOS DIRECTOS A PÁGINAS DE LA MISIÓN */}
+      <section style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-2)", letterSpacing: "0.3px" }}>
+          Secciones de la Misión
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "10px",
+          }}
+        >
+          {[
+            { label: "Catálogo Canónico", href: "/estrategias", icon: Database, desc: "Búsqueda e inspección de hipótesis" },
+            { label: "11 Evidence Gates", href: "/gates", icon: ShieldCheck, desc: "Pipeline inmutable de validación" },
+            { label: "Trading Desk FONDEO", href: "/fondeo", icon: Building2, desc: "Ejecución institucional CME" },
+            { label: "Catálogo Prop Firms", href: "/prop-firms", icon: Layers, desc: "Reglas oficiales y evaluación" },
+            { label: "Plan Maestro", href: "/plan", icon: ClipboardList, desc: "Estado y hoja de ruta" },
+            { label: "Sistema & Telemetría", href: "/sistema", icon: Radio, desc: "Supervisor y salud del motor" },
+          ].map((sec) => {
+            const Icon = sec.icon;
+            return (
+              <Link
+                key={sec.href}
+                href={sec.href}
+                style={{
+                  background: "var(--surface-1)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "6px",
+                  padding: "12px 14px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                <Icon style={{ width: "16px", height: "16px", color: "var(--text-3)", flexShrink: 0 }} />
+                <div>
+                  <div style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--text-1)" }}>{sec.label}</div>
+                  <div style={{ fontSize: "11px", color: "var(--text-3)" }}>{sec.desc}</div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 5. BLOQUE ULTRA — ATENUADO, SIEMPRE VISIBLE, NUNCA BORRADO */}
+      <section
+        style={{
+          borderTop: "1px solid var(--border)",
+          paddingTop: "20px",
+        }}
+      >
+        <Link
+          href="/ultra"
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            padding: "16px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
+            textDecoration: "none",
+            color: "inherit",
+            opacity: 0.8,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Flame style={{ width: "18px", height: "18px", color: "var(--text-3)" }} />
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontWeight: 600, fontSize: "13px", color: "var(--text-2)" }}>
+                  Track ULTRA (Asimetría Convexa y Balas Aisladas)
+                </span>
+                <span
+                  style={{
+                    fontSize: "10px",
+                    fontFamily: "var(--font-mono, monospace)",
+                    padding: "2px 6px",
+                    borderRadius: "4px",
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-3)",
+                  }}
+                >
+                  EN CONSTRUCCIÓN
+                </span>
+              </div>
+              <p style={{ margin: "3px 0 0", fontSize: "11.5px", color: "var(--text-3)" }}>
+                Ruta hermana multi-activo en 5 temporalidades (1m, 5m, 15m, 1h, 4h) congelada en <code>state/PUNTO_GUARDADO_ULTRA.md</code>.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ fontSize: "12px", color: "var(--text-3)", display: "flex", alignItems: "center", gap: "4px" }}>
+            <span>Ver Trading Desk ULTRA</span>
+            <ArrowRight style={{ width: "12px", height: "12px" }} />
+          </div>
+        </Link>
       </section>
     </div>
-  );
-}
-
-function KpiCard({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  accent,
-  href,
-}: {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  accent: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] hover:border-white/[0.18] rounded-xl p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-lg transition-all hover:-translate-y-0.5 group no-underline"
-    >
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{title}</span>
-        <div className="p-2 rounded-lg bg-slate-900 border border-white/[0.05] group-hover:border-white/[0.15] transition">
-          <Icon className="w-4 h-4 text-slate-300" />
-        </div>
-      </div>
-
-      <div>
-        <div className="text-2xl sm:text-3xl font-black text-white tabular-nums tracking-tight">{value}</div>
-        <div className="text-[11px] text-slate-500 mt-1 font-mono">{subtitle}</div>
-      </div>
-    </Link>
-  );
-}
-
-function QuickLinkCard({
-  title,
-  subtitle,
-  icon: Icon,
-  accent,
-  href,
-}: {
-  title: string;
-  subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  accent: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="bg-[#090d16]/90 backdrop-blur-xl border border-white/[0.08] hover:border-white/[0.18] rounded-2xl p-5 flex items-start gap-4 transition hover:-translate-y-0.5 group no-underline shadow-lg"
-    >
-      <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-        style={{ backgroundColor: `${accent}15`, color: accent }}
-      >
-        <Icon className="w-5 h-5" />
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
-          <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition truncate">
-            {title}
-          </h4>
-          <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition shrink-0" />
-        </div>
-        <p className="text-xs text-slate-400 leading-relaxed mt-1">{subtitle}</p>
-      </div>
-    </Link>
   );
 }
