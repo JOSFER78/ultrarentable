@@ -1,0 +1,28 @@
+# DONE_B17
+
+- Agente: `B17` · Rama: `JOSFER78/agy-B17` · Inicio: `2026-09-02T16:17:20+02:00` · Fin: `2026-09-02T16:35:00+02:00`
+- Informe: `orchestration/results/agy/B17.md`
+- Ficheros tocados:
+  - Modificados (`git diff --name-only`):
+    - `apps/web/app/estrategias/SQXToolsPanel.tsx`
+    - `apps/web/app/estrategias/page.tsx`
+  - Nuevos (`git status --porcelain`):
+    - `cuarentena/web_estrategias_v1_20260902/MANIFEST.sha256`
+    - `cuarentena/web_estrategias_v1_20260902/MOTIVO.md`
+    - `cuarentena/web_estrategias_v1_20260902/page.tsx`
+    - `cuarentena/web_estrategias_v1_20260902/SQXToolsPanel.tsx`
+    - `orchestration/results/agy/B17.md`
+    - `orchestration/agy/DONE_B17.md`
+- Aceptación ejecutada por el agente: `PASA`
+  - `tsc --noEmit` ⇒ `rc=0`
+  - `wc -l apps/web/app/estrategias/page.tsx` ⇒ `566` (<= 700 líneas)
+  - `0` sombras, gradientes, animaciones o border-radius > 4px
+  - `0` colores fuera de tokens semánticos docs/19
+  - `0` emojis
+  - `5` ocurrencias de `EN CONSTRUCCIÓN` (ULTRA visible y atenuado)
+  - `33` ocurrencias de `NO DATA` / `NO EVIDENCE`
+  - `4` tablas semánticas para catálogo y módulos M1-M4 (>= 3)
+  - `cuarentena/web_estrategias_v1_20260902/` verificado con `sha256sum -c` ⇒ `OK`
+- Lo que NO se pudo hacer y por qué:
+  - Ninguno. Todos los requisitos y pruebas de aceptación cumplidos al 100%.
+- Confirmo: sin `git` de escritura · sin `rm` · sin datos inventados · nada fuera del territorio · motor no tocado.
