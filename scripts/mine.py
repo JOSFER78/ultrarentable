@@ -907,7 +907,7 @@ def run_mining_pipeline(
     timeframe: str,
     profile: str,
     dry_run: bool = False,
-    max_candidates: int = 20,
+    max_candidates: int = 0,
     dataset_path: Optional[str] = None,
     dataset_source: str = "auto",
 ) -> Dict[str, Any]:
@@ -1110,6 +1110,7 @@ def run_mining_pipeline(
             telemetria.append({"strategy_id": strat_id, "etapa": "VAL", "familia": arch, "motivo":
                 f"trades={val_bt.total_trades} pf={val_bt.profit_factor:.3f}",
                 "trades": val_bt.total_trades, "pf": round(val_bt.profit_factor, 3),
+                "is_trades": is_bt.total_trades, "is_pf": round(is_bt.profit_factor, 3),
                 **_pf_bruto_y_coste(val_bt)})
             continue
 
@@ -1121,6 +1122,8 @@ def run_mining_pipeline(
             telemetria.append({"strategy_id": strat_id, "etapa": "OOS", "familia": arch, "motivo":
                 f"trades={oos_bt.total_trades} pf={oos_bt.profit_factor:.3f}",
                 "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3),
+                "is_trades": is_bt.total_trades, "is_pf": round(is_bt.profit_factor, 3),
+                "val_trades": val_bt.total_trades, "val_pf": round(val_bt.profit_factor, 3),
                 **_pf_bruto_y_coste(oos_bt)})
             continue
 
@@ -1207,6 +1210,8 @@ def run_mining_pipeline(
                 "trades": oos_bt.total_trades, "pf": round(oos_bt.profit_factor, 3),
                 "gates_passed": gates_eval.get("gates_passed_count", 0),
                 "dd_oos": round(oos_bt.max_drawdown_pct, 2),
+                "is_trades": is_bt.total_trades, "is_pf": round(is_bt.profit_factor, 3),
+                "val_trades": val_bt.total_trades, "val_pf": round(val_bt.profit_factor, 3),
                 **_pf_bruto_y_coste(oos_bt)})
 
         if verdict.is_certified:
@@ -1434,8 +1439,8 @@ def main():
     parser.add_argument(
         "--max-candidates",
         type=int,
-        default=20,
-        help="Límite máximo de configuraciones a evaluar (default: 20)",
+        default=0,
+        help="Límite máximo de configuraciones a evaluar (default: 0 = espacio completo / D2, nunca truncar por defecto)",
     )
     parser.add_argument(
         "--dataset",
