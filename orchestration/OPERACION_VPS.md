@@ -78,7 +78,15 @@ otro trabajo, pero sigue pasando por la puerta para que quede registrado.
 
 1. **Primero estabilizar, luego producir.** Inventario al empezar: `ps aux --sort=-%cpu | head`,
    `free -h`, y los `memory.events` de los cgroups del proyecto.
-2. **La web se sirve en build de producción** (`npm run build && npm run start`), nunca `next dev`.
+2. **La web se sirve en build de producción**, nunca `next dev`. Desde 2026-09-02 la regla ya no
+   depende de acordarse: `ultrarentable-web.service` (systemd `--user`, `enabled`) ejecuta
+   `/home/ubuntu/ultra-web-wrapper.sh`, que compila sólo si falta `.next/BUILD_ID` (con
+   `nice -n 19 ionice -c 3`) y arranca `next start -p 3005`. El wrapper anterior, que lanzaba
+   `next dev -p 3005` y por tanto mantenía un watcher recompilando en caliente, está en
+   `cuarentena/web_wrapper_2026-09-02/` con su SHA-256. Nginx publica ese 3005 en
+   `http://143.47.35.167/pro/ultrarentable/`. Aviso: `next dev` y `next build` comparten `.next`,
+   así que compilar con el servidor de desarrollo vivo corrompe `app-paths-manifest.json` y deja
+   la mitad de las rutas en 404; hay que parar el servicio antes de compilar.
 3. **Cuidado con lo que resucita solo.** `ultrarentable-discovery.service` y `sqx.service` quedan
    `enabled` y systemd los relanza; el cron `improve_cycle.sh` (minuto :40) revive el bucle de SQX
    cada hora. Parar el proceso no basta si no se cortan las tres vías.

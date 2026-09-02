@@ -1,0 +1,6 @@
+648d8a42e91a25959de6bf42abdd9a88d72a385c664f2906afeed2c1966cebbd  /home/ubuntu/workspace/pro/trading/01 Ultrarentable/cuarentena/web_wrapper_2026-09-02/ultra-web-wrapper.sh.dev-original
+
+# Original de /home/ubuntu/ultra-web-wrapper.sh (systemd --user ultrarentable-web.service),
+# que arrancaba la web con `next dev -p 3005`, incumpliendo la regla de OPERACION_VPS.md
+# ("la web SIEMPRE en build de produccion"). Sustituido el 2026-09-02 por una version que
+# sirve el build de produccion y solo compila si no existe .next/BUILD_ID.

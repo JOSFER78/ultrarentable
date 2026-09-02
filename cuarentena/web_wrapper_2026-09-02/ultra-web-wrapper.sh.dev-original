@@ -1,0 +1,5 @@
+#!/bin/bash
+export PORT=3005
+export HOSTNAME=0.0.0.0
+cd '/home/ubuntu/workspace/pro/trading/01 Ultrarentable/apps/web' || exit 1
+exec /usr/bin/node node_modules/.bin/next dev -p 3005 -H 0.0.0.0
