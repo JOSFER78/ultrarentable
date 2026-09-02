@@ -22,6 +22,8 @@ import {
   ClipboardList,
   Radio,
   Flame,
+  Gauge,
+  BookOpen,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -33,7 +35,12 @@ interface NavItem {
   icon: React.ComponentType<{ style?: React.CSSProperties; className?: string }>;
 }
 
-/** Las 8 entradas de la misión FONDEO (decisión sellada, ver docs/19 §3). */
+/**
+ * Entradas de la misión FONDEO (docs/19 §3) más las dos que Emilio mandó recuperar el
+ * 2026-09-02: Trading Desk (mesa de ejecución CME, hoy sin motor conectado pero necesaria
+ * en cuanto haya estrategia certificada) y Tradesfera (tratado M01-M16 con la comparativa
+ * de prop firms). Ambas salieron de cuarentena/web_poda_20260901 con su hash verificado.
+ */
 const NAV_ITEMS: NavItem[] = [
   { code: "HOME", label: "Inicio", href: "/", icon: Home },
   { code: "STRAT", label: "Estrategias", href: "/estrategias", icon: Zap },
@@ -41,6 +48,8 @@ const NAV_ITEMS: NavItem[] = [
   { code: "GATES", label: "Gates", href: "/gates", icon: ShieldCheck },
   { code: "FONDEO", label: "Fondeo", href: "/fondeo", icon: Building2 },
   { code: "PROPS", label: "Prop-firms", href: "/prop-firms", icon: Layers },
+  { code: "DESK", label: "Trading Desk", href: "/trading-desk", icon: Gauge },
+  { code: "TSFERA", label: "Tradesfera", href: "/tradesfera", icon: BookOpen },
   { code: "PLAN", label: "Plan", href: "/plan", icon: ClipboardList },
   { code: "SIST", label: "Sistema", href: "/sistema", icon: Radio },
 ];
@@ -193,7 +202,7 @@ export default function Sidebar() {
         </button>
       )}
 
-      {/* LAS 8 ENTRADAS DE LA MISIÓN */}
+      {/* ENTRADAS DE LA MISIÓN */}
       <nav
         style={{
           flex: 1,

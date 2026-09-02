@@ -19,13 +19,13 @@ export default function MetricWithTooltip({
   termKey,
   customTooltip,
   benchmark,
-  valueColor = "text-slate-100",
+  valueColor = "text-[var(--text-1)]",
   subValue,
 }: MetricWithTooltipProps) {
   return (
-    <div className="p-3 bg-slate-950/60 rounded-xl border border-slate-800/80 backdrop-blur-md hover:border-slate-700 transition flex flex-col justify-between">
+    <div className="p-3 bg-[var(--surface-1)] rounded-xl border border-[var(--border)] backdrop-blur-md hover:border-[var(--border)] transition flex flex-col justify-between">
       <div className="flex items-center justify-between gap-1 mb-1">
-        <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+        <span className="text-xs font-medium text-[var(--text-2)] flex items-center gap-1">
           {label}
         </span>
         <QuantTooltip
@@ -40,7 +40,7 @@ export default function MetricWithTooltip({
           {value}
         </span>
         {subValue && (
-          <span className="text-[11px] text-slate-500 block mt-0.5">{subValue}</span>
+          <span className="text-[11px] text-[var(--text-3)] block mt-0.5">{subValue}</span>
         )}
       </div>
     </div>

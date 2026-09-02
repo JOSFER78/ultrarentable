@@ -173,21 +173,21 @@ export default function AuthModal({
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md bg-[#080d1a]/95 border border-white/[0.12] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-[var(--surface-1)] border border-white/[0.12] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-200">
         {/* Glow Header Accent */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-500 via-emerald-500 to-indigo-500" />
+        <div className="absolute top-0 inset-x-0 h-1 bg-[var(--surface-1)]   " />
 
         {/* Modal Header */}
         <div className="px-6 pt-6 pb-4 flex items-center justify-between border-b border-white/[0.06]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+            <div className="w-8 h-8 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-[var(--text-2)]">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-1.5">
-                UltraRentable <span className="text-sky-400 font-mono text-xs">Auth</span>
+              <h3 className="text-base font-bold text-[var(--text-1)] tracking-tight flex items-center gap-1.5">
+                UltraRentable <span className="text-[var(--text-2)] font-mono text-xs">Auth</span>
               </h3>
-              <p className="text-[11px] text-slate-400 font-mono">
+              <p className="text-[11px] text-[var(--text-2)] font-mono">
                 Pecemi Quant Hub & Gateway
               </p>
             </div>
@@ -195,7 +195,7 @@ export default function AuthModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+            className="p-1.5 rounded-lg text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-white/[0.08] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -203,7 +203,7 @@ export default function AuthModal({
 
         {/* Tab Selector */}
         <div className="px-6 pt-4">
-          <div className="grid grid-cols-2 p-1 bg-slate-900/90 border border-white/[0.06] rounded-xl text-xs font-semibold">
+          <div className="grid grid-cols-2 p-1 bg-[var(--surface-1)] border border-white/[0.06] rounded-xl text-xs font-semibold">
             <button
               type="button"
               onClick={() => {
@@ -213,8 +213,8 @@ export default function AuthModal({
               }}
               className={`py-2 px-3 rounded-lg transition-all ${
                 activeTab === "login"
-                  ? "bg-sky-500/20 text-sky-300 border border-sky-500/30 shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-[var(--surface-2)] text-[var(--text-1)] border border-[var(--border)] shadow-sm"
+                  : "text-[var(--text-2)] hover:text-[var(--text-1)]"
               }`}
             >
               Iniciar Sesión
@@ -228,8 +228,8 @@ export default function AuthModal({
               }}
               className={`py-2 px-3 rounded-lg transition-all ${
                 activeTab === "register"
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-[var(--profit-dim)] text-[var(--profit)] border border-[var(--profit)] shadow-sm"
+                  : "text-[var(--text-2)] hover:text-[var(--text-1)]"
               }`}
             >
               Crear Cuenta
@@ -241,15 +241,15 @@ export default function AuthModal({
         <div className="p-6 pt-4 space-y-4">
           {/* Alerts */}
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2 animate-in fade-in">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+            <div className="p-3 rounded-xl bg-[var(--loss-dim)] border border-[var(--loss)] text-[var(--loss)] text-xs flex items-start gap-2 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[var(--loss)]" />
               <div className="flex-1 font-medium leading-relaxed">{errorMessage}</div>
             </div>
           )}
 
           {successMessage && (
-            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2 animate-in fade-in">
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
+            <div className="p-3 rounded-xl bg-[var(--profit-dim)] border border-[var(--profit)] text-[var(--profit)] text-xs flex items-start gap-2 animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-[var(--profit)]" />
               <div className="flex-1 font-medium leading-relaxed">{successMessage}</div>
             </div>
           )}
@@ -258,40 +258,40 @@ export default function AuthModal({
           {activeTab === "login" ? (
             <form onSubmit={handleLoginSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1.5 font-mono">
+                <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1.5 font-mono">
                   Correo Electrónico
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="trader@quant.com"
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-slate-900/80 border border-white/[0.08] focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--border)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1.5 font-mono">
+                <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1.5 font-mono">
                   Contraseña
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-900/80 border border-white/[0.08] focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all font-mono"
+                    className="w-full pl-10 pr-10 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--border)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all font-mono"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)] hover:text-[var(--text-1)]"
                   >
                     {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
@@ -301,7 +301,7 @@ export default function AuthModal({
               <button
                 type="submit"
                 disabled={loading || googleLoading}
-                className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-sky-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-1)]   hover: hover: text-[var(--text-1)] text-xs font-semibold rounded-xl shadow-lg  disabled:opacity-50 transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -320,42 +320,42 @@ export default function AuthModal({
             /* Register Form */
             <form onSubmit={handleRegisterSubmit} className="space-y-3">
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1 font-mono">
+                <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1 font-mono">
                   Nombre Completo o Alias
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
                   <input
                     type="text"
                     required
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="Trader Master Quant"
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-slate-900/80 border border-white/[0.08] focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--profit)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-300 mb-1 font-mono">
+                <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1 font-mono">
                   Correo Electrónico
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="trader@quant.com"
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-slate-900/80 border border-white/[0.08] focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--profit)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-300 mb-1 font-mono">
+                  <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1 font-mono">
                     Contraseña
                   </label>
                   <div className="relative">
@@ -365,12 +365,12 @@ export default function AuthModal({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Mín. 6 chars"
-                      className="w-full px-3 py-2.5 bg-slate-900/80 border border-white/[0.08] focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all font-mono"
+                      className="w-full px-3 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--profit)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all font-mono"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-300 mb-1 font-mono">
+                  <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1 font-mono">
                     Confirmar
                   </label>
                   <div className="relative">
@@ -380,7 +380,7 @@ export default function AuthModal({
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Repetir clave"
-                      className="w-full px-3 py-2.5 bg-slate-900/80 border border-white/[0.08] focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 rounded-xl text-xs text-white placeholder-slate-500 outline-none transition-all font-mono"
+                      className="w-full px-3 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--profit)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all font-mono"
                     />
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export default function AuthModal({
               <button
                 type="submit"
                 disabled={loading || googleLoading}
-                className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-emerald-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-1)]   hover: hover: text-[var(--text-1)] text-xs font-semibold rounded-xl shadow-lg  disabled:opacity-50 transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -409,7 +409,7 @@ export default function AuthModal({
           {/* Social Sign-in Divider */}
           <div className="relative flex py-1 items-center">
             <div className="flex-grow border-t border-white/[0.08]"></div>
-            <span className="flex-shrink mx-3 text-[10px] uppercase font-mono tracking-widest text-slate-500">
+            <span className="flex-shrink mx-3 text-[10px] uppercase font-mono tracking-widest text-[var(--text-3)]">
               o continuar con
             </span>
             <div className="flex-grow border-t border-white/[0.08]"></div>
@@ -420,10 +420,10 @@ export default function AuthModal({
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || googleLoading}
-            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-slate-200 text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-[var(--text-1)] text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
           >
             {googleLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+              <Loader2 className="w-4 h-4 animate-spin text-[var(--text-2)]" />
             ) : (
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -451,7 +451,7 @@ export default function AuthModal({
         </div>
 
         {/* Footer info */}
-        <div className="px-6 py-3 bg-black/40 border-t border-white/[0.04] text-[10.5px] text-slate-500 text-center font-mono">
+        <div className="px-6 py-3 bg-black/40 border-t border-white/[0.04] text-[10.5px] text-[var(--text-3)] text-center font-mono">
           Autenticación segura Firebase v12 · Zero-Mocks Real-Only
         </div>
       </div>

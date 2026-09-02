@@ -31,6 +31,26 @@ const isCertified = (s: string) => CERTIFIED_STATUSES.has(s);
 const isRejected = (s: string) => REJECTED_PREFIXES.some((p) => s.startsWith(p));
 const databankName = (d: { name: string } | string): string => (typeof d === "string" ? d : d.name);
 
+/**
+ * Rendimiento OOS mensual/anual. Solo devuelve numero cuando la API confirma que la duracion
+ * OOS es REAL (`oos_months_source === "REAL"`); si la duracion esta estimada, el porcentaje
+ * seria una suposicion y aqui vale mas un NO EVIDENCE honesto (docs/19 -4, REAL-ONLY).
+ */
+const rendimientoOos = (
+  c: CandidatoCanonico,
+  campo: "monthly_roi_pct" | "annualized_roi_pct",
+): number | null => {
+  const oos = c.metrics?.out_of_sample;
+  if (!oos || oos.oos_months_source !== "REAL") return null;
+  const v = oos[campo];
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+};
+
+const celdaRendimiento = (v: number | null) => ({
+  texto: v === null ? "NO EVIDENCE" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`,
+  color: v === null ? "var(--text-3)" : v >= 0 ? "var(--profit)" : "var(--loss)",
+});
+
 interface FilaCandidato { c: CandidatoCanonico; a: AuditoriaCandidata }
 type TabModulo = "M1" | "M2" | "M3" | "M4";
 
@@ -255,6 +275,15 @@ export default function PaginaEstrategiasMaestra() {
         return true;
       })
       .sort((a, b) => {
+        if (ordenCampo === "monthly_roi_pct" || ordenCampo === "annualized_roi_pct") {
+          // Las filas sin evidencia caen siempre al final, no se cuelan como si fueran 0.
+          const rA = rendimientoOos(a.c, ordenCampo);
+          const rB = rendimientoOos(b.c, ordenCampo);
+          if (rA === null && rB === null) return 0;
+          if (rA === null) return 1;
+          if (rB === null) return -1;
+          return ordenAsc ? rA - rB : rB - rA;
+        }
         const vA = a.c[ordenCampo as keyof CandidatoCanonico] ?? (ordenCampo === "max_dd_oos_pct" ? 9999 : -1);
         const vB = b.c[ordenCampo as keyof CandidatoCanonico] ?? (ordenCampo === "max_dd_oos_pct" ? 9999 : -1);
         if (typeof vA === "number" && typeof vB === "number") return ordenAsc ? vA - vB : vB - vA;
@@ -345,13 +374,15 @@ export default function PaginaEstrategiasMaestra() {
                   <th onClick={() => alternarOrden("profit_factor_oos")} style={{ padding: "5px 6px", textAlign: "right", cursor: "pointer" }}>PF OOS</th>
                   <th onClick={() => alternarOrden("trades_oos")} style={{ padding: "5px 6px", textAlign: "right", cursor: "pointer" }}>Ops OOS</th>
                   <th onClick={() => alternarOrden("max_dd_oos_pct")} style={{ padding: "5px 6px", textAlign: "right", cursor: "pointer" }}>DD OOS</th>
+                  <th onClick={() => alternarOrden("monthly_roi_pct")} title="Rendimiento OOS mensual compuesto (CAGR mensual). NO EVIDENCE si la duración OOS no es real." style={{ padding: "5px 6px", textAlign: "right", cursor: "pointer" }}>Rend. mes {ordenCampo === "monthly_roi_pct" ? (ordenAsc ? "^" : "v") : ""}</th>
+                  <th onClick={() => alternarOrden("annualized_roi_pct")} title="Rendimiento OOS anualizado (CAGR). NO EVIDENCE si la duración OOS no es real." style={{ padding: "5px 6px", textAlign: "right", cursor: "pointer" }}>Rend. año {ordenCampo === "annualized_roi_pct" ? (ordenAsc ? "^" : "v") : ""}</th>
                   <th style={{ padding: "5px 6px" }}>Hash</th>
                   <th style={{ padding: "5px 6px" }}>Dataset</th>
                 </tr>
               </thead>
               <tbody>
-                {loading && candidatos.length === 0 && <tr><td colSpan={11} style={{ padding: "12px", textAlign: "center", color: "var(--text-3)" }}>Cargando catálogo canónico...</td></tr>}
-                {!loading && candidatasVisibles.length === 0 && <tr><td colSpan={11} style={{ padding: "12px", textAlign: "center", color: "var(--text-3)" }}>NO EVIDENCE con los filtros actuales.</td></tr>}
+                {loading && candidatos.length === 0 && <tr><td colSpan={13} style={{ padding: "12px", textAlign: "center", color: "var(--text-3)" }}>Cargando catálogo canónico...</td></tr>}
+                {!loading && candidatasVisibles.length === 0 && <tr><td colSpan={13} style={{ padding: "12px", textAlign: "center", color: "var(--text-3)" }}>NO EVIDENCE con los filtros actuales.</td></tr>}
                 {candidatasVisibles.map((fila) => {
                   const c = fila.c;
                   const esCert = isCertified(c.status);
@@ -362,6 +393,8 @@ export default function PaginaEstrategiasMaestra() {
                   const pfVal = c.profit_factor_oos;
                   const colorPf = pfVal === null || pfVal === undefined ? "var(--text-3)" : pfVal >= 1.0 ? "var(--profit)" : "var(--loss)";
                   const gatesStr = c.gates_passed_count !== null && c.gates_passed_count !== undefined ? `${c.gates_passed_count}/11` : "NO EVIDENCE";
+                  const rendMes = rendimientoOos(c, "monthly_roi_pct");
+                  const rendAnio = rendimientoOos(c, "annualized_roi_pct");
 
                   return (
                     <tr key={c.candidate_id} onClick={() => setSeleccion(fila)} style={{ borderBottom: "1px solid var(--border)", background: isSel ? "var(--surface-3)" : "transparent", opacity: esUltra ? 0.7 : 1, cursor: "pointer" }}>
@@ -377,6 +410,8 @@ export default function PaginaEstrategiasMaestra() {
                       <td style={{ padding: "4px 6px", textAlign: "right", fontFamily: "monospace", color: colorPf }}>{pfVal !== null && pfVal !== undefined ? pfVal.toFixed(2) : "NO EVIDENCE"}</td>
                       <td style={{ padding: "4px 6px", textAlign: "right", fontFamily: "monospace", color: c.trades_oos !== null ? "var(--text-2)" : "var(--text-3)" }}>{c.trades_oos ?? "NO EVIDENCE"}</td>
                       <td style={{ padding: "4px 6px", textAlign: "right", fontFamily: "monospace", color: c.max_dd_oos_pct !== null ? "var(--loss)" : "var(--text-3)" }}>{c.max_dd_oos_pct !== null && c.max_dd_oos_pct !== undefined ? `${c.max_dd_oos_pct.toFixed(2)}%` : "NO EVIDENCE"}</td>
+                      <td style={{ padding: "4px 6px", textAlign: "right", fontFamily: "monospace", color: celdaRendimiento(rendMes).color }} title={rendMes === null ? "Sin duración OOS real en el scorecard: el porcentaje sería una estimación." : undefined}>{celdaRendimiento(rendMes).texto}</td>
+                      <td style={{ padding: "4px 6px", textAlign: "right", fontFamily: "monospace", color: celdaRendimiento(rendAnio).color }} title={rendAnio === null ? "Sin duración OOS real en el scorecard: el porcentaje sería una estimación." : undefined}>{celdaRendimiento(rendAnio).texto}</td>
                       <td style={{ padding: "4px 6px", fontFamily: "monospace", color: c.strategy_sha256 ? "var(--text-2)" : "var(--text-3)" }}>{c.strategy_sha256 ? c.strategy_sha256.slice(0, 8) : "NO EVIDENCE"}</td>
                       <td style={{ padding: "4px 6px", fontFamily: "monospace", color: c.dataset_id ? "var(--text-2)" : "var(--text-3)" }} title={c.dataset_id || undefined}>{c.dataset_id ? (c.dataset_id.length > 12 ? `${c.dataset_id.slice(0, 10)}...` : c.dataset_id) : "NO EVIDENCE"}</td>
                     </tr>

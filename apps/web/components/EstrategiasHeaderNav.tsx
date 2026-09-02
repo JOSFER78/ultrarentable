@@ -32,7 +32,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     badge: "CANÓNICO",
     href: "/estrategias",
     icon: Sparkles,
-    accentColor: "#38bdf8", // Sky
+    accentColor: "var(--text-2)", // Sky
   },
   {
     id: 1,
@@ -42,7 +42,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     badge: "24/7 LIVE",
     href: "/sistema",
     icon: Activity,
-    accentColor: "#10b981", // Emerald
+    accentColor: "var(--profit)", // Emerald
   },
   {
     id: 2,
@@ -52,7 +52,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     badge: "EXCEL WAL",
     href: "/candidatos",
     icon: Table,
-    accentColor: "#818cf8", // Indigo
+    accentColor: "var(--text-2)", // Indigo
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     badge: "11 GATES",
     href: "/gates",
     icon: ShieldCheck,
-    accentColor: "#facc15", // Amber
+    accentColor: "var(--text-2)", // Amber
   },
   {
     id: 4,
@@ -72,7 +72,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     badge: "RESEARCH",
     href: "/research",
     icon: FlaskConical,
-    accentColor: "#ec4899", // Pink
+    accentColor: "var(--text-2)", // Pink
   },
   {
     id: 6,
@@ -82,7 +82,7 @@ export const CANONICAL_PHASES: PhaseItem[] = [
     badge: "PORTFOLIO",
     href: "/portfolio",
     icon: PieChart,
-    accentColor: "#06b6d4", // Cyan
+    accentColor: "var(--text-2)", // Cyan
   },
 ];
 
@@ -108,11 +108,11 @@ export default function EstrategiasHeaderNav({ currentPhase }: EstrategiasHeader
   return (
     <nav
       aria-label="Fases cuantitativas del Strategy Lab"
-      className="w-full rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-2 shadow-xl backdrop-blur-xl"
+      className="w-full rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-2 shadow-xl backdrop-blur-xl"
     >
       <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent py-0.5">
-        <div className="hidden lg:flex items-center gap-1.5 px-3 border-r border-white/[0.08] font-mono text-[10px] font-black uppercase tracking-wider text-slate-500 flex-shrink-0">
-          <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+        <div className="hidden lg:flex items-center gap-1.5 px-3 border-r border-white/[0.08] font-mono text-[10px] font-black uppercase tracking-wider text-[var(--text-3)] flex-shrink-0">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--text-2)]"></span>
           <span>FASES CUANTITATIVAS:</span>
         </div>
 
@@ -126,25 +126,25 @@ export default function EstrategiasHeaderNav({ currentPhase }: EstrategiasHeader
               href={p.href}
               className={`group relative flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-1.5 font-mono text-xs transition-all duration-200 flex-shrink-0 cursor-pointer ${
                 isActive
-                  ? "border border-cyan-500/50 bg-gradient-to-r from-cyan-500/15 via-slate-900 to-indigo-500/15 text-cyan-200 shadow-[0_0_15px_rgba(56,189,248,0.2)]"
-                  : "border border-transparent text-slate-400 hover:border-slate-800 hover:bg-slate-800/60 hover:text-slate-200"
+                  ? "border border-[var(--border)] bg-[var(--surface-1)]    text-[var(--text-1)] shadow-[0_0_15px_rgba(255,255,255,0.06)]"
+                  : "border border-transparent text-[var(--text-2)] hover:border-[var(--border)] hover:bg-[var(--surface-1)] hover:text-[var(--text-1)]"
               }`}
             >
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded-lg text-[11px] font-black transition-colors ${
                   isActive
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
-                    : "bg-slate-900/80 text-slate-500 border border-slate-800 group-hover:text-slate-300"
+                    ? "bg-[var(--surface-2)] text-[var(--text-1)] border border-[var(--border)]"
+                    : "bg-[var(--surface-1)] text-[var(--text-3)] border border-[var(--border)] group-hover:text-[var(--text-1)]"
                 }`}
               >
                 <Icon className="h-3 w-3" />
               </span>
 
               <div className="flex items-center gap-1.5">
-                <span className={`text-[10px] font-bold ${isActive ? "text-cyan-400" : "text-slate-600"}`}>
+                <span className={`text-[10px] font-bold ${isActive ? "text-[var(--text-2)]" : "text-[var(--text-3)]"}`}>
                   {p.num}
                 </span>
-                <span className={`font-semibold ${isActive ? "text-white font-bold" : "text-slate-300"}`}>
+                <span className={`font-semibold ${isActive ? "text-[var(--text-1)] font-bold" : "text-[var(--text-1)]"}`}>
                   {p.shortLabel}
                 </span>
               </div>
@@ -152,8 +152,8 @@ export default function EstrategiasHeaderNav({ currentPhase }: EstrategiasHeader
               <span
                 className={`hidden xl:inline-block rounded-md px-1.5 py-0.5 text-[9px] font-bold border transition-colors ${
                   isActive
-                    ? "bg-cyan-950/60 border-cyan-500/40 text-cyan-300"
-                    : "bg-slate-950/60 border-slate-800 text-slate-500 group-hover:text-slate-400"
+                    ? "bg-[var(--surface-2)] border-[var(--border)] text-[var(--text-1)]"
+                    : "bg-[var(--surface-1)] border-[var(--border)] text-[var(--text-3)] group-hover:text-[var(--text-2)]"
                 }`}
               >
                 {p.badge}

@@ -39,6 +39,18 @@ export interface CandidatoCanonico {
   trades_oos?: number | null;
   win_rate_pct?: number | null;
   created_at?: string | null;
+  /** Metricas del backtest canonico. `oos_months_source` dice si la duracion OOS con la que
+   *  se derivan los ROI es REAL (viene del scorecard) o ESTIMADO (la infiere el endpoint).
+   *  Bajo REAL-ONLY la web solo pinta rendimiento cuando es REAL. */
+  metrics?: {
+    out_of_sample?: {
+      roi_pct?: number | null;
+      monthly_roi_pct?: number | null;
+      annualized_roi_pct?: number | null;
+      oos_months?: number | null;
+      oos_months_source?: "REAL" | "ESTIMADO" | null;
+    } | null;
+  } | null;
 }
 
 export async function getCandidatosCanonicos(limit = 1000): Promise<CandidatoCanonico[]> {

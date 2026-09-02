@@ -55,7 +55,7 @@
 
 | Componente | Regla |
 | :--- | :--- |
-| **Sidebar** | Estrecho, gris, las 8 entradas de la misión (Inicio · Estrategias · Candidatos · Gates · Fondeo · Prop-firms · Plan · Sistema) **+ al final, atenuada: "Ultra — EN CONSTRUCCIÓN"** (visible siempre, texto `--text-3`). Activo = `--surface-3` + texto `--text-1`; nada de iconos de colores |
+| **Sidebar** | Estrecho, gris, las 10 entradas de la misión (Inicio · Estrategias · Candidatos · Gates · Fondeo · Prop-firms · Trading Desk · Tradesfera · Plan · Sistema) **+ al final, atenuada: "Ultra — EN CONSTRUCCIÓN"** (visible siempre, texto `--text-3`). Activo = `--surface-3` + texto `--text-1`; nada de iconos de colores |
 | **Header** | Título de página + versión REAL del motor (dinámica) + estado de conexión API en gris (verde solo si se quiere marcar "operativo", punto de 6px) |
 | **Tablas** | El corazón de la app. Cabecera `--text-2` uppercase 11px; filas separadas por `--border`; números alineados a la derecha, tabulares; PnL/PF en `--profit`/`--loss` según signo; el resto SIEMPRE gris. Orden y filtro nativos, sin librerías pesadas |
 | **Estados de estrategia** | Texto plano con prefijo: `CERTIFIED_CURRENT` (verde), `REJECTED_*`/`BUSTED` (rojo), todo lo demás (`EXTRACTED`, `BACKTEST_VERIFIED`, `LEGACY_*`, `EN MEJORA`…) gris `--text-2`. Nunca chips multicolor |
@@ -82,3 +82,29 @@
 2. Captura de cada página en build de producción: solo grises + verde/rojo semántico.
 3. Contraste AA mínimo: `--text-1` sobre `--bg` ≥ 12:1; `--text-3` reservado a texto no esencial.
 4. Los 5 puntos con `v5.4.0` hardcodeado sustituidos por la versión dinámica.
+
+
+## 6. Enmienda 2026-09-02 (mandato de Emilio)
+
+Emilio revisó la web y pidió tres cosas, que quedan selladas aquí:
+
+1. **Todas las páginas con el mismo aspecto gris.** La estética que ya tenía `/estrategias`
+   (grises, negro, blanco, transparencias) manda sobre el resto. El 2026-09-02 se normalizaron
+   las 26 páginas y componentes de `apps/web`: cero clases de color de Tailwind, cero
+   hexadecimales cromáticos y cero degradados. La verificación es medible: el CSS que sirve
+   el build de producción no genera ni una sola utilidad `text-/bg-/border-…-{sky,amber,
+   violet,…}`. Única excepción consciente: el logotipo de Google del botón de acceso, que es
+   marca de un tercero y en gris se lee como un icono roto.
+2. **Trading Desk y Tradesfera vuelven.** Se sacaron de `cuarentena/web_poda_20260901`
+   (hashes verificados contra su `MANIFEST.sha256`) y se re-tematizaron. Trading Desk hoy no
+   tiene motor conectado, pero la mesa hará falta en cuanto haya estrategia certificada;
+   Tradesfera guarda el tratado M01-M16, con la comparativa de prop firms CME en M08.
+3. **Rendimiento mensual y anual en las tablas.** Columnas nuevas en el catálogo canónico
+   (`/estrategias`), en el explorador de candidatos y en la tabla de certificadas. Se pintan
+   **solo** cuando la API confirma que la duración OOS con la que se derivan es REAL
+   (`oos_months_source`); si la duración está estimada, la celda dice `NO EVIDENCE`, porque
+   un porcentaje derivado de una duración inventada es una cifra inventada.
+
+Además, los chips de estado (`lib/status-map.ts`) dejan de ser multicolor: verde solo para
+`CERTIFIED_CURRENT`, todo lo demás en grises, y desaparecen las animaciones de parpadeo
+(`animate-pulse` / `animate-ping`) que contradecían el principio 5.

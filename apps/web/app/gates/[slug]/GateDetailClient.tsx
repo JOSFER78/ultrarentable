@@ -145,7 +145,7 @@ export default function GateDetailClient() {
         params: normalizedParams,
         live_telemetry: data.live_telemetry || {
           status: data.evidence_status || "NO_EVIDENCE",
-          status_color: "#94a3b8",
+          status_color: "var(--text-2)",
           datasets_audited: data.datasets_audited ?? 0,
           candles_verified: data.candles_verified ?? 0,
           pass_rate_pct: data.pass_rate_pct ?? 0,
@@ -281,10 +281,10 @@ export default function GateDetailClient() {
 
   if (loading && !gate) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#030712] p-8 font-sans text-slate-100">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] p-8 font-sans text-[var(--text-1)]">
         <div className="text-center font-mono">
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-cyan-400" />
-          <div className="text-sm font-bold text-slate-400">Cargando especificación matemática del Gate...</div>
+          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-[var(--text-2)]" />
+          <div className="text-sm font-bold text-[var(--text-2)]">Cargando especificación matemática del Gate...</div>
         </div>
       </div>
     );
@@ -292,13 +292,13 @@ export default function GateDetailClient() {
 
   if (error || !gate) {
     return (
-      <div className="min-h-screen bg-[#030712] p-8 font-sans text-slate-100">
-        <div className="mx-auto max-w-xl rounded-2xl border border-rose-800 bg-rose-950/40 p-6 shadow-2xl">
-          <h2 className="mb-2 text-lg font-black text-rose-300">Error al cargar Gate</h2>
-          <p className="text-xs text-rose-200">{error || "El gate solicitado no existe."}</p>
+      <div className="min-h-screen bg-[var(--bg)] p-8 font-sans text-[var(--text-1)]">
+        <div className="mx-auto max-w-xl rounded-2xl border border-[var(--loss)] bg-[var(--loss-dim)] p-6 shadow-2xl">
+          <h2 className="mb-2 text-lg font-black text-[var(--loss)]">Error al cargar Gate</h2>
+          <p className="text-xs text-[var(--loss)]">{error || "El gate solicitado no existe."}</p>
           <Link
             href="/gates"
-            className="mt-4 inline-block rounded-xl bg-cyan-600 px-4 py-2 text-xs font-bold text-slate-950 transition hover:bg-cyan-500"
+            className="mt-4 inline-block rounded-xl bg-[var(--surface-3)] border border-[var(--border-strong)] px-4 py-2 text-xs font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)]"
           >
             ← Volver a Matriz 11 Gates
           </Link>
@@ -308,32 +308,32 @@ export default function GateDetailClient() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030712] p-3 md:p-6 font-sans text-slate-100">
+    <div className="min-h-screen bg-[var(--bg)] p-3 md:p-6 font-sans text-[var(--text-1)]">
       <div className="mx-auto max-w-[1600px] space-y-5">
         {/* BREADCRUMB & TOP LINKS */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3 font-mono text-xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <Link href="/" className="transition hover:text-slate-300">
+          <div className="flex items-center gap-2 text-[var(--text-3)]">
+            <Link href="/" className="transition hover:text-[var(--text-1)]">
               Inicio
             </Link>
             <ChevronRight className="w-3 h-3" />
-            <Link href="/gates" className="transition hover:text-slate-300">
+            <Link href="/gates" className="transition hover:text-[var(--text-1)]">
               11 Gates
             </Link>
             <ChevronRight className="w-3 h-3" />
-            <span className="font-bold text-cyan-400">{gate.slug}</span>
+            <span className="font-bold text-[var(--text-2)]">{gate.slug}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <Link
               href="/gates"
-              className="rounded-xl border border-white/[0.08] bg-[#090d16]/80 px-3 py-1.5 font-bold text-slate-300 transition hover:border-slate-700 hover:bg-slate-800"
+              className="rounded-xl border border-white/[0.08] bg-[var(--surface-1)] px-3 py-1.5 font-bold text-[var(--text-1)] transition hover:border-[var(--border)] hover:bg-[var(--surface-1)]"
             >
               ← Ver Matriz 11 Gates
             </Link>
             <Link
               href="/estrategias/2-explorador-excel"
-              className="rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 font-bold text-cyan-300 transition hover:bg-cyan-500/20"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)]"
             >
               Explorador Excel →
             </Link>
@@ -341,9 +341,9 @@ export default function GateDetailClient() {
         </div>
 
         {/* SELECTOR HORIZONTAL DE LOS 11 GATES */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-3 shadow-xl backdrop-blur-xl">
-          <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-3 shadow-xl backdrop-blur-xl">
+          <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-3)] flex items-center gap-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-[var(--text-2)]" />
             <span>Navegador de Fases Cuantitativas (11 Slugs Independientes):</span>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-11 gap-1.5">
@@ -355,19 +355,19 @@ export default function GateDetailClient() {
                   href={`/gates/${g.slug}`}
                   className={`flex flex-col items-center justify-center rounded-xl p-2 text-center transition-all ${
                     isActive
-                      ? "border border-cyan-500/60 bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.25)] ring-1 ring-cyan-500/40"
-                      : "border border-white/[0.06] bg-[#050811] text-slate-400 hover:border-slate-700 hover:bg-slate-800/60 hover:text-slate-200"
+                      ? "border border-[var(--border)] bg-[var(--surface-1)]   text-[var(--text-1)] shadow-[0_0_15px_rgba(255,255,255,0.06)] ring-1 ring-[var(--border-strong)]"
+                      : "border border-white/[0.06] bg-[var(--bg)] text-[var(--text-2)] hover:border-[var(--border)] hover:bg-[var(--surface-1)] hover:text-[var(--text-1)]"
                   }`}
                 >
                   <span className="text-base">{g.icon}</span>
                   <span
                     className={`mt-0.5 font-mono text-[10px] font-black leading-tight ${
-                      isActive ? "text-cyan-300" : "text-slate-200"
+                      isActive ? "text-[var(--text-1)]" : "text-[var(--text-1)]"
                     }`}
                   >
                     Gate {g.num}
                   </span>
-                  <span className="mt-0.5 font-mono text-[8px] text-slate-500 truncate max-w-full">{g.badge}</span>
+                  <span className="mt-0.5 font-mono text-[8px] text-[var(--text-3)] truncate max-w-full">{g.badge}</span>
                 </Link>
               );
             })}
@@ -375,32 +375,32 @@ export default function GateDetailClient() {
         </div>
 
         {/* HERO BANNER DEL GATE SELECCIONADO */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-[#090d16] via-slate-900/90 to-slate-950 p-5 md:p-6 shadow-2xl backdrop-blur-xl">
+        <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] from-[var(--surface-1)]   p-5 md:p-6 shadow-2xl backdrop-blur-xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{gate.icon}</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-2.5 py-0.5 font-mono text-[10px] font-black uppercase text-cyan-300">
+                    <span className="rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-0.5 font-mono text-[10px] font-black uppercase text-[var(--text-1)]">
                       {gate.badge}
                     </span>
-                    <span className="font-mono text-[10px] text-slate-500">Slug: /gates/{gate.slug}</span>
+                    <span className="font-mono text-[10px] text-[var(--text-3)]">Slug: /gates/{gate.slug}</span>
                   </div>
-                  <h1 className="mt-1 text-xl md:text-2xl font-black text-white tracking-tight">
+                  <h1 className="mt-1 text-xl md:text-2xl font-black text-[var(--text-1)] tracking-tight">
                     Gate {gate.gate_number}: {gate.name}
                   </h1>
                 </div>
               </div>
-              <p className="mt-2 text-xs md:text-sm text-slate-300 leading-relaxed max-w-3xl">{gate.description}</p>
+              <p className="mt-2 text-xs md:text-sm text-[var(--text-1)] leading-relaxed max-w-3xl">{gate.description}</p>
             </div>
 
             <div className="text-left md:text-right font-mono flex-shrink-0">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-black text-emerald-400 mb-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--profit)] bg-[var(--profit-dim)] px-3 py-1 text-xs font-black text-[var(--profit)] mb-1.5">
+                <span className="h-2 w-2 rounded-full bg-[var(--profit)] animate-pulse"></span>
                 {gate.live_telemetry.status}
               </div>
-              <div className="text-[10px] text-slate-500">
+              <div className="text-[10px] text-[var(--text-3)]">
                 Persistencia: {gate.local_persistence} · {gate.firebase_sync_status}
               </div>
             </div>
@@ -412,33 +412,33 @@ export default function GateDetailClient() {
           {/* LEFT COLUMN */}
           <div className="lg:col-span-7 space-y-4">
             {/* Fórmulas & Criterios de Corte */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl space-y-3">
-              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-cyan-400">
+            <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl space-y-3">
+              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-[var(--text-2)]">
                 <span>📐</span> Formulación Matemática & Criterios de Corte
               </h3>
 
-              <div className="rounded-xl border border-cyan-500/30 bg-[#050811] p-3 font-mono text-xs text-emerald-300 shadow-inner">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 font-mono text-xs text-[var(--profit)] shadow-inner">
                 {gate.formula}
               </div>
 
-              <div className="text-xs text-slate-300 leading-relaxed">
-                <strong className="text-white">Objetivo del Gate:</strong> {gate.objective}
+              <div className="text-xs text-[var(--text-1)] leading-relaxed">
+                <strong className="text-[var(--text-1)]">Objetivo del Gate:</strong> {gate.objective}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-white/[0.08]">
-                <div className="rounded-xl border border-rose-900/40 bg-rose-950/20 p-3">
-                  <span className="font-mono text-[10px] font-black uppercase text-rose-300">
+                <div className="rounded-xl border border-[var(--loss)] bg-[var(--loss-dim)] p-3">
+                  <span className="font-mono text-[10px] font-black uppercase text-[var(--loss)]">
                     🔥 RUTA ULTRA (BingX 500x)
                   </span>
-                  <p className="mt-1 text-[11px] text-rose-200/80 leading-snug">
+                  <p className="mt-1 text-[11px] text-[var(--loss)] leading-snug">
                     Admite volatilidad alta si la convexidad R:R compensa y la probabilidad de ruina Monte Carlo es 0.0%.
                   </p>
                 </div>
-                <div className="rounded-xl border border-sky-900/40 bg-sky-950/20 p-3">
-                  <span className="font-mono text-[10px] font-black uppercase text-sky-300">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-3">
+                  <span className="font-mono text-[10px] font-black uppercase text-[var(--text-1)]">
                     🛡️ RUTA FONDEO (Prop Firms)
                   </span>
-                  <p className="mt-1 text-[11px] text-sky-200/80 leading-snug">
+                  <p className="mt-1 text-[11px] text-[var(--text-1)] leading-snug">
                     Corte tajante si Max Drawdown &gt; 4.0% o si existe vulnerabilidad en días de alta fricción.
                   </p>
                 </div>
@@ -446,46 +446,46 @@ export default function GateDetailClient() {
             </div>
 
             {/* Telemetría en Vivo */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl space-y-3">
-              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-emerald-400">
+            <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl space-y-3">
+              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-[var(--profit)]">
                 <span>📡</span> Telemetría del Motor en Tiempo Real
               </h3>
 
               <div className="grid grid-cols-3 gap-2.5 font-mono">
-                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
-                  <div className="text-[10px] uppercase text-slate-500 font-bold">Candidatos Auditados</div>
-                  <div className="mt-1 text-lg font-black text-white tabular-nums">
+                <div className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3">
+                  <div className="text-[10px] uppercase text-[var(--text-3)] font-bold">Candidatos Auditados</div>
+                  <div className="mt-1 text-lg font-black text-[var(--text-1)] tabular-nums">
                     {gate.live_telemetry.datasets_audited ?? "N/D"}
                   </div>
                 </div>
-                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
-                  <div className="text-[10px] uppercase text-slate-500 font-bold">Tasa de Aprobación</div>
-                  <div className="mt-1 text-lg font-black text-emerald-400 tabular-nums">
+                <div className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3">
+                  <div className="text-[10px] uppercase text-[var(--text-3)] font-bold">Tasa de Aprobación</div>
+                  <div className="mt-1 text-lg font-black text-[var(--profit)] tabular-nums">
                     {gate.live_telemetry.pass_rate_pct != null ? `${gate.live_telemetry.pass_rate_pct}%` : "N/D"}
                   </div>
                 </div>
-                <div className="rounded-xl border border-white/[0.06] bg-[#050811] p-3">
-                  <div className="text-[10px] uppercase text-slate-500 font-bold">Latencia Media</div>
-                  <div className="mt-1 text-lg font-black text-cyan-400 tabular-nums">
+                <div className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3">
+                  <div className="text-[10px] uppercase text-[var(--text-3)] font-bold">Latencia Media</div>
+                  <div className="mt-1 text-lg font-black text-[var(--text-2)] tabular-nums">
                     {gate.live_telemetry.avg_latency_ms != null ? `${gate.live_telemetry.avg_latency_ms} ms` : "N/D"}
                   </div>
                 </div>
               </div>
 
-              <div className="font-mono text-xs text-slate-400">
-                <strong className="text-slate-300">Último Veredicto Registrado:</strong> {gate.live_telemetry.last_verdict}
+              <div className="font-mono text-xs text-[var(--text-2)]">
+                <strong className="text-[var(--text-1)]">Último Veredicto Registrado:</strong> {gate.live_telemetry.last_verdict}
               </div>
             </div>
 
             {/* Formulario Manual de Parámetros del Motor */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl space-y-4">
+            <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
-                <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-amber-400">
+                <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-[var(--text-2)]">
                   <span>🎛️</span> Configuración de Umbrales del Motor
                 </h3>
                 <button
                   onClick={handleSaveParams}
-                  className="rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 px-3.5 py-1.5 font-mono text-xs font-black text-slate-950 shadow-md transition hover:from-cyan-400 hover:to-indigo-500 active:scale-95 cursor-pointer"
+                  className="rounded-xl bg-[var(--surface-1)]   px-3.5 py-1.5 font-mono text-xs font-black text-[var(--text-1)] shadow-md transition hover: hover: active:scale-95 cursor-pointer"
                 >
                   Guardar en Motor & Firebase
                 </button>
@@ -495,8 +495,8 @@ export default function GateDetailClient() {
                 <div
                   className={`p-3 rounded-xl font-mono text-xs font-bold ${
                     saveStatus.startsWith("✅")
-                      ? "bg-emerald-950/40 text-emerald-300 border border-emerald-800/60"
-                      : "bg-cyan-950/40 text-cyan-300 border border-cyan-800/60"
+                      ? "bg-[var(--profit-dim)] text-[var(--profit)] border border-[var(--profit)]"
+                      : "bg-[var(--surface-2)] text-[var(--text-1)] border border-[var(--border)]"
                   }`}
                 >
                   {saveStatus}
@@ -505,10 +505,10 @@ export default function GateDetailClient() {
 
               <div className="space-y-3">
                 {Object.entries(gate.params || {}).map(([key, p]) => (
-                  <div key={key} className="rounded-xl border border-white/[0.06] bg-[#050811] p-3 space-y-1.5">
+                  <div key={key} className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3 space-y-1.5">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-slate-200">{p.label}</span>
-                      <span className="font-mono text-xs font-black text-cyan-400 tabular-nums">
+                      <span className="text-xs font-bold text-[var(--text-1)]">{p.label}</span>
+                      <span className="font-mono text-xs font-black text-[var(--text-2)] tabular-nums">
                         {currentParams[key] !== undefined ? String(currentParams[key]) : String(p.value)} {p.unit || ""}
                       </span>
                     </div>
@@ -522,7 +522,7 @@ export default function GateDetailClient() {
                           step={p.step ?? 1}
                           value={currentParams[key] ?? p.value}
                           onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
-                          className="flex-1 accent-cyan-400 cursor-pointer"
+                          className="flex-1 accent-[var(--text-1)] cursor-pointer"
                         />
                         <input
                           type="number"
@@ -531,7 +531,7 @@ export default function GateDetailClient() {
                           step={p.step}
                           value={currentParams[key] ?? p.value}
                           onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
-                          className="w-20 rounded-lg border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs text-white text-right outline-none focus:border-cyan-500"
+                          className="w-20 rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-2 py-1 font-mono text-xs text-[var(--text-1)] text-right outline-none focus:border-[var(--border)]"
                         />
                       </div>
                     )}
@@ -542,11 +542,11 @@ export default function GateDetailClient() {
                           type="checkbox"
                           checked={currentParams[key] ?? p.value}
                           onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.checked })}
-                          className="w-4 h-4 accent-emerald-400 cursor-pointer"
+                          className="w-4 h-4 accent-[var(--text-1)] cursor-pointer"
                         />
                         <span
                           className={`font-mono text-xs font-bold ${
-                            currentParams[key] ? "text-emerald-400" : "text-slate-500"
+                            currentParams[key] ? "text-[var(--profit)]" : "text-[var(--text-3)]"
                           }`}
                         >
                           {currentParams[key] ? "ACTIVADO" : "DESACTIVADO"}
@@ -558,7 +558,7 @@ export default function GateDetailClient() {
                       <select
                         value={currentParams[key] ?? p.value}
                         onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.value })}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-cyan-500 cursor-pointer"
+                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-3 py-1.5 text-xs text-[var(--text-1)] outline-none focus:border-[var(--border)] cursor-pointer"
                       >
                         {(p.options || []).map((opt) => (
                           <option key={opt} value={opt}>
@@ -568,7 +568,7 @@ export default function GateDetailClient() {
                       </select>
                     )}
 
-                    <p className="text-[10px] text-slate-500">{p.desc}</p>
+                    <p className="text-[10px] text-[var(--text-3)]">{p.desc}</p>
                   </div>
                 ))}
               </div>
@@ -577,43 +577,43 @@ export default function GateDetailClient() {
 
           {/* RIGHT COLUMN */}
           <div className="lg:col-span-5 flex flex-col space-y-4">
-            <div className="rounded-2xl border border-indigo-500/30 bg-[#090d16]/90 p-5 shadow-xl backdrop-blur-xl flex flex-col h-full min-h-[580px]">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl flex flex-col h-full min-h-[580px]">
               <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
                 <div className="flex items-center gap-2.5">
                   <span className="text-xl">🤖</span>
                   <div>
-                    <h3 className="font-mono text-xs font-black uppercase text-indigo-400">
+                    <h3 className="font-mono text-xs font-black uppercase text-[var(--text-2)]">
                       Editor Semántico Agéntico de IA
                     </h3>
-                    <div className="text-[10px] text-slate-500">
+                    <div className="text-[10px] text-[var(--text-3)]">
                       Mutación dinámica en lenguaje natural + Firestore Sync
                     </div>
                   </div>
                 </div>
-                <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-mono text-[9px] font-black text-emerald-400">
+                <span className="rounded-full border border-[var(--profit)] bg-[var(--profit-dim)] px-2 py-0.5 font-mono text-[9px] font-black text-[var(--profit)]">
                   CLOUD LIVE
                 </span>
               </div>
 
               {/* Directivas Rápidas */}
               <div className="mb-3">
-                <div className="font-mono text-[10px] font-bold text-slate-400 mb-1.5">Directivas Rápidas:</div>
+                <div className="font-mono text-[10px] font-bold text-[var(--text-2)] mb-1.5">Directivas Rápidas:</div>
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     onClick={() => handleAiSemanticSubmit("Configurar parámetros con rigor estricto para cuenta de Fondeo 50k")}
-                    className="rounded-xl border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-sky-300 transition hover:bg-sky-500/20 active:scale-95 cursor-pointer"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)] active:scale-95 cursor-pointer"
                   >
                     🛡️ Modo Fondeo Estricto
                   </button>
                   <button
                     onClick={() => handleAiSemanticSubmit("Ajustar para Ruta ULTRA con máxima convexidad y apalancamiento adaptativo")}
-                    className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-rose-300 transition hover:bg-rose-500/20 active:scale-95 cursor-pointer"
+                    className="rounded-xl border border-[var(--loss)] bg-[var(--loss-dim)] px-2.5 py-1 font-mono text-[10px] font-bold text-[var(--loss)] transition hover:bg-[var(--loss-dim)] active:scale-95 cursor-pointer"
                   >
                     🔥 Modo Ultra Convexo
                   </button>
                   <button
                     onClick={() => handleAiSemanticSubmit("Incrementar el estrés de slippage a 3x y duplicar comisiones")}
-                    className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 font-mono text-[10px] font-bold text-amber-300 transition hover:bg-amber-500/20 active:scale-95 cursor-pointer"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)] active:scale-95 cursor-pointer"
                   >
                     ⚡ Estrés Extremo 3x
                   </button>
@@ -621,23 +621,23 @@ export default function GateDetailClient() {
               </div>
 
               {/* Chat History */}
-              <div className="flex-1 overflow-y-auto rounded-xl border border-white/[0.06] bg-[#050811] p-3 space-y-2.5 max-h-[380px] shadow-inner font-mono text-xs">
+              <div className="flex-1 overflow-y-auto rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3 space-y-2.5 max-h-[380px] shadow-inner font-mono text-xs">
                 {aiChatLog.map((msg, idx) => (
                   <div
                     key={idx}
                     className={`max-w-[90%] rounded-xl p-3 text-xs leading-relaxed ${
                       msg.role === "user"
-                        ? "ml-auto border border-cyan-500/40 bg-cyan-950/40 text-cyan-100"
-                        : "border border-white/[0.06] bg-slate-900/80 text-slate-200"
+                        ? "ml-auto border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-1)]"
+                        : "border border-white/[0.06] bg-[var(--surface-1)] text-[var(--text-1)]"
                     }`}
                   >
                     <div className="whitespace-pre-line">{msg.text}</div>
-                    {msg.syncInfo && <div className="mt-1.5 text-[9px] text-emerald-400 font-bold">{msg.syncInfo}</div>}
-                    <div className="mt-1 text-[9px] text-slate-500 text-right">{msg.time}</div>
+                    {msg.syncInfo && <div className="mt-1.5 text-[9px] text-[var(--profit)] font-bold">{msg.syncInfo}</div>}
+                    <div className="mt-1 text-[9px] text-[var(--text-3)] text-right">{msg.time}</div>
                   </div>
                 ))}
                 {aiLoading && (
-                  <div className="rounded-xl border border-indigo-500/40 bg-indigo-950/30 p-3 text-xs text-indigo-300 animate-pulse">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-3 text-xs text-[var(--text-1)] animate-pulse">
                     ⏳ El Agente Semántico está recalculando matrices del motor y sincronizando en Firebase...
                   </div>
                 )}
@@ -652,12 +652,12 @@ export default function GateDetailClient() {
                   onKeyDown={(e) => e.key === "Enter" && handleAiSemanticSubmit()}
                   placeholder="Escribe una directiva semántica para modificar este Gate..."
                   disabled={aiLoading}
-                  className="flex-1 rounded-xl border border-white/[0.08] bg-[#050811] px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition"
+                  className="flex-1 rounded-xl border border-white/[0.08] bg-[var(--bg)] px-3 py-2 text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none focus:border-[var(--border)] transition"
                 />
                 <button
                   onClick={() => handleAiSemanticSubmit()}
                   disabled={aiLoading || !aiPrompt.trim()}
-                  className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 font-mono text-xs font-bold text-white shadow-md transition hover:from-indigo-500 hover:to-purple-500 active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+                  className="rounded-xl bg-[var(--surface-1)]   px-4 py-2 font-mono text-xs font-bold text-[var(--text-1)] shadow-md transition hover: hover: active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Enviar</span>

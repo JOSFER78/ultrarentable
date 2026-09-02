@@ -3,7 +3,7 @@
 // validation_status sobre este ciclo de vida documentado:
 //   EXTRACTED_UNVERIFIED -> SOURCE_RULES_AVAILABLE -> STRUCTURALLY_VERIFIED
 //   -> BACKTEST_VERIFIED -> CERTIFIED_CURRENT
-// Cualquier valor fuera de este registro cae en UNKNOWN (chip ámbar neutral),
+// Cualquier valor fuera de este registro cae en UNKNOWN (chip gris neutral),
 // nunca en un estado inventado. NO DATA / NO EVIDENCE nunca se traduce a 0.
 export type ValidationStatus =
   | "EXTRACTED_UNVERIFIED"
@@ -33,14 +33,17 @@ export const STATUS_LABEL: Record<ValidationStatus, string> = {
   UNKNOWN: "ESTADO DESCONOCIDO",
 };
 
+// docs/19_UI_STYLE_SPEC.md: los chips de estado NUNCA son multicolor. Verde solo para
+// certificada en motor vigente; todo lo demas en gris, con la jerarquia dada por el tono
+// del texto, no por el color (2026-09-02, mandato de Emilio: toda la web en grises).
 export const STATUS_TONE: Record<ValidationStatus, string> = {
-  CERTIFIED_CURRENT: "text-emerald-300 border-emerald-800 bg-emerald-950/30",
-  CERTIFIED_LEGACY: "text-emerald-300/70 border-emerald-900 bg-emerald-950/20",
-  BACKTEST_VERIFIED: "text-sky-300 border-sky-800 bg-sky-950/30",
-  STRUCTURALLY_VERIFIED: "text-violet-300 border-violet-800 bg-violet-950/30",
-  SOURCE_RULES_AVAILABLE: "text-cyan-300 border-cyan-800 bg-cyan-950/30",
-  EXTRACTED_UNVERIFIED: "text-slate-300 border-slate-700 bg-slate-950",
-  UNKNOWN: "text-amber-300 border-amber-800 bg-amber-950/30",
+  CERTIFIED_CURRENT: "text-[var(--profit)] border-[var(--profit)] bg-[var(--profit-dim)]",
+  CERTIFIED_LEGACY: "text-[var(--text-2)] border-[var(--border-strong)] bg-[var(--surface-2)]",
+  BACKTEST_VERIFIED: "text-[var(--text-1)] border-[var(--border-strong)] bg-[var(--surface-2)]",
+  STRUCTURALLY_VERIFIED: "text-[var(--text-2)] border-[var(--border)] bg-[var(--surface-1)]",
+  SOURCE_RULES_AVAILABLE: "text-[var(--text-2)] border-[var(--border)] bg-[var(--surface-1)]",
+  EXTRACTED_UNVERIFIED: "text-[var(--text-3)] border-[var(--border)] bg-[var(--surface-1)]",
+  UNKNOWN: "text-[var(--text-3)] border-[var(--border)] bg-[var(--surface-1)]",
 };
 
 /** Normaliza cualquier valor crudo de la API a una clave conocida del mapa. */

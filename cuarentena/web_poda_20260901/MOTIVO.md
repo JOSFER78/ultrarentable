@@ -53,3 +53,22 @@ plan · shell/login). Todas pertenecen al peso muerto medido en la investigació
   certeza código muerto igual que `MotorBacktestView.tsx`, pero no estaba nombrado en el
   contrato de poda (que enumera rutas de `app/` + ese componente específico). No se movió a
   cuarentena por prudencia de alcance; solo se corrigió su badge `v5.4.0` hardcodeado (T3).
+
+
+---
+
+## REVERSIÓN PARCIAL — 2026-09-02 (mandato de Emilio)
+
+Emilio pidió expresamente recuperar dos de las 16 rutas retiradas:
+
+| Ruta | Estado | Motivo de la vuelta |
+| :--- | :--- | :--- |
+| `trading-desk/` (7 ficheros) | **RESTAURADA** en `apps/web/app/trading-desk/` | "aunque ahora nos dedicamos solo a la estrategia, en un futuro hará falta trading desk". |
+| `tradesfera/` | **RESTAURADA** en `apps/web/app/tradesfera/` | Contiene el tratado M01-M16 y, en M08, la comparativa de prop firms de futuros CME que Emilio quiere a mano. |
+
+Los 8 ficheros se copiaron con su hash comprobado contra `MANIFEST.sha256` de esta carpeta
+(coincidencia exacta antes de mover) y después se re-tematizaron a la paleta gris de
+`docs/19_UI_STYLE_SPEC.md`, igual que el resto de la web. **Las copias de cuarentena no se
+borran** (regla "nunca `rm`"): siguen aquí como constancia del estado en que se retiraron.
+
+Las otras 14 rutas siguen en cuarentena y no se han tocado.

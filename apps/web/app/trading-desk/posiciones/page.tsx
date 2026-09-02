@@ -1,0 +1,837 @@
+"use client";
+
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import Link from "next/link";
+import {
+  Activity,
+  BarChart3,
+  CheckCircle2,
+  AlertTriangle,
+  AlertOctagon,
+  RefreshCw,
+  Zap,
+  ShieldCheck,
+  ShieldAlert,
+  TrendingUp,
+  TrendingDown,
+  Send,
+  Target,
+  Sliders,
+  Percent,
+  SlidersHorizontal,
+  ChevronRight,
+  Info,
+  Clock,
+  Layers,
+  FileText,
+  DollarSign,
+  Lock,
+  ArrowUpRight,
+  ArrowDownRight,
+  Flame,
+  XCircle,
+  AlertCircle,
+  WifiOff,
+  Hash,
+} from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+
+interface CmeInstrumentSpec {
+  symbol: "MNQ" | "MES" | "MCL" | "MGC";
+  name: string;
+  exchange: "CME" | "NYMEX" | "COMEX";
+  tickSize: number;
+  tickValueUsd: number;
+  pointValueUsd: number;
+  multiplier: string;
+  dayMarginUsd: number;
+  tradingHours: string;
+  color: string;
+}
+
+const CME_SPECS: Record<string, CmeInstrumentSpec> = {
+  MNQ: {
+    symbol: "MNQ",
+    name: "Micro E-mini Nasdaq-100",
+    exchange: "CME",
+    tickSize: 0.25,
+    tickValueUsd: 0.5,
+    pointValueUsd: 2.0,
+    multiplier: "$2.00 × Índice",
+    dayMarginUsd: 100,
+    tradingHours: "17:00 Dom - 16:00 Vie CT",
+    color: "var(--text-2)",
+  },
+  MES: {
+    symbol: "MES",
+    name: "Micro E-mini S&P 500",
+    exchange: "CME",
+    tickSize: 0.25,
+    tickValueUsd: 1.25,
+    pointValueUsd: 5.0,
+    multiplier: "$5.00 × Índice",
+    dayMarginUsd: 100,
+    tradingHours: "17:00 Dom - 16:00 Vie CT",
+    color: "var(--text-2)",
+  },
+  MCL: {
+    symbol: "MCL",
+    name: "Micro WTI Crude Oil",
+    exchange: "NYMEX",
+    tickSize: 0.01,
+    tickValueUsd: 1.0,
+    pointValueUsd: 100.0,
+    multiplier: "100 Barriles",
+    dayMarginUsd: 100,
+    tradingHours: "17:00 Dom - 16:00 Vie CT",
+    color: "var(--text-2)",
+  },
+  MGC: {
+    symbol: "MGC",
+    name: "Micro Gold",
+    exchange: "COMEX",
+    tickSize: 0.1,
+    tickValueUsd: 1.0,
+    pointValueUsd: 100.0,
+    multiplier: "10 Troy Oz",
+    dayMarginUsd: 100,
+    tradingHours: "17:00 Dom - 16:00 Vie CT",
+    color: "var(--text-2)",
+  },
+};
+
+interface AdvanceTpSlBracket {
+  quantity: number;
+  tp?: number;
+  sl?: number;
+  dollar_tp?: number;
+  dollar_sl?: number;
+  percentage_tp?: number;
+  percentage_sl?: number;
+  breakeven?: number;
+  breakeven_offset?: number;
+  trail?: number;
+  trail_stop?: number;
+  trail_trigger?: number;
+  trail_freq?: number;
+}
+
+interface LivePosition {
+  id: string;
+  symbol: "MNQ" | "MES" | "MCL" | "MGC" | string;
+  side: "LONG" | "SHORT";
+  contracts: number;
+  entryPrice: number;
+  currentPrice: number;
+  pnlUsd: number;
+  pnlTicks: number;
+  comment: string;
+  tp?: number | null;
+  sl?: number | null;
+  advance_tp_sl?: AdvanceTpSlBracket[];
+  status: string;
+  account: string;
+  createdAt: string;
+}
+
+interface AccountStatus {
+  provider_id: string;
+  account_id: string;
+  user: string;
+  broker: string;
+  environment: string;
+  base_capital_usd: number | null;
+  current_equity_usd: number | null;
+  daily_pnl_usd: number | null;
+  trailing_drawdown_limit_usd: number | null;
+  current_drawdown_usd: number | null;
+  open_positions_count: number;
+  trial_expires_utc: string | null;
+  gateway_status: string;
+  last_ping_latency_ms: number | null;
+}
+
+export default function PosicionesBracketsPage() {
+  const { user, profile, loading: authLoading } = useAuth();
+
+  const [positions, setPositions] = useState<LivePosition[]>([]);
+  const [accountInfo, setAccountInfo] = useState<AccountStatus | null>(null);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const [filterSymbol, setFilterSymbol] = useState<string>("ALL");
+  const [filterSide, setFilterSide] = useState<string>("ALL");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const [notification, setNotification] = useState<{
+    text: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
+
+  const [isFlattenModalOpen, setIsFlattenModalOpen] = useState<boolean>(false);
+  const [isFlattening, setIsFlattening] = useState<boolean>(false);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState<boolean>(false);
+  const [isSendingOrder, setIsSendingOrder] = useState<boolean>(false);
+
+  const [newOrderSymbol, setNewOrderSymbol] = useState<"MNQ" | "MES" | "MCL" | "MGC">("MNQ");
+  const [newOrderAction, setNewOrderAction] = useState<"BUY" | "SELL">("BUY");
+  const [newOrderContracts, setNewOrderContracts] = useState<number>(1);
+  const [newOrderTpTicks, setNewOrderTpTicks] = useState<number>(20);
+  const [newOrderSlTicks, setNewOrderSlTicks] = useState<number>(12);
+  const [newOrderBreakevenTicks, setNewOrderBreakevenTicks] = useState<number>(10);
+  const [newOrderBreakevenOffset, setNewOrderBreakevenOffset] = useState<number>(1);
+  const [newOrderTrailTicks, setNewOrderTrailTicks] = useState<number>(15);
+  const [newOrderEnableTrail, setNewOrderEnableTrail] = useState<boolean>(true);
+
+  // Derive real credentials from Firestore User Profile
+  const linkedAccounts = profile?.trading_accounts || profile?.broker_accounts || {};
+  const linkedAccountId =
+    linkedAccounts.tradovate_account_id?.trim() ||
+    linkedAccounts.ninjatrader_account_id?.trim() ||
+    accountInfo?.account_id?.trim() ||
+    "";
+  const linkedToken =
+    linkedAccounts.pickmytrade_token?.trim() ||
+    linkedAccounts.gateway_webhook_token?.trim() ||
+    "";
+  const hasLinkedAccount = Boolean(linkedAccountId);
+
+  const showToast = (text: string, type: "success" | "error" | "info" = "info", durationMs = 5000) => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification(null), durationMs);
+  };
+
+  const fetchRealData = useCallback(async () => {
+    setFetchError(null);
+    try {
+      const [statusRes, posRes] = await Promise.all([
+        fetch("/api/v1/gateways/pickmytrade/status"),
+        fetch("/api/v1/gateways/pickmytrade/positions"),
+      ]);
+
+      if (statusRes.ok) {
+        const statusData = await statusRes.json();
+        setAccountInfo(statusData);
+      } else {
+        setAccountInfo(null);
+        setFetchError(`Error al consultar estado del gateway (HTTP ${statusRes.status}).`);
+      }
+
+      if (posRes.ok) {
+        const posData = await posRes.json();
+        setPositions(Array.isArray(posData) ? posData : []);
+      } else {
+        setPositions([]);
+      }
+    } catch (e: any) {
+      setAccountInfo(null);
+      setPositions([]);
+      setFetchError(e.message || "Error de conexión con el backend API.");
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRealData();
+    if (!autoRefresh) return;
+    const interval = setInterval(fetchRealData, 4000);
+    return () => clearInterval(interval);
+  }, [fetchRealData, autoRefresh]);
+
+  const handleClosePosition = async (pos: LivePosition) => {
+    if (!hasLinkedAccount) {
+      showToast("⚠️ Requiere vincular una cuenta real en Configuración", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/v1/gateways/pickmytrade/close-comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticker: pos.symbol,
+          comment: pos.comment,
+          account: linkedAccountId,
+          token: linkedToken,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast(`✅ Posición ${pos.symbol} (${pos.comment}) cerrada en Tradovate (${data.latency_ms} ms).`, "success");
+        fetchRealData();
+      } else {
+        showToast(`⚠️ Error al cerrar posición: ${data.response?.message || "Rechazada por el broker"}`, "error");
+      }
+    } catch (err: any) {
+      showToast(`❌ Error de red al ejecutar cierre: ${err.message}`, "error");
+    }
+  };
+
+  const handleExecuteFlattenAll = async () => {
+    if (!hasLinkedAccount) {
+      showToast("⚠️ Requiere vincular una cuenta real en Configuración", "error");
+      return;
+    }
+
+    setIsFlattening(true);
+    try {
+      const res = await fetch("/api/v1/gateways/pickmytrade/flatten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticker: "ALL",
+          account: linkedAccountId,
+          token: linkedToken,
+          reason: "POSICIONES_PAGE_FLATTEN_ALL_TRIGGER",
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("🚨 ¡FLATTEN TOTAL EJECUTADO! Todas las posiciones liquidadas en Tradovate.", "success", 7000);
+        fetchRealData();
+      } else {
+        showToast("⚠️ Señal 'flat' despachada al broker.", "info");
+      }
+    } catch (err: any) {
+      showToast(`❌ Error al ejecutar Flatten: ${err.message}`, "error");
+    } finally {
+      setIsFlattening(false);
+      setIsFlattenModalOpen(false);
+    }
+  };
+
+  const handleDispatchOrder = async () => {
+    if (!hasLinkedAccount) {
+      showToast("⚠️ Requiere vincular una cuenta real en Configuración antes de operar.", "error");
+      return;
+    }
+
+    setIsSendingOrder(true);
+    const spec = CME_SPECS[newOrderSymbol] || CME_SPECS.MNQ;
+    const dollarTp = newOrderTpTicks * spec.tickValueUsd * newOrderContracts;
+    const dollarSl = newOrderSlTicks * spec.tickValueUsd * newOrderContracts;
+
+    const payload = {
+      ticker: newOrderSymbol,
+      action: newOrderAction.toLowerCase(),
+      contracts: newOrderContracts,
+      orderType: "market",
+      account: linkedAccountId,
+      token: linkedToken,
+      comment: `sig_${newOrderSymbol.toLowerCase()}_${newOrderAction.toLowerCase()}_${Date.now().toString().slice(-6)}`,
+      advance_tp_sl: [
+        {
+          quantity: newOrderContracts,
+          dollar_tp: dollarTp,
+          dollar_sl: dollarSl,
+          breakeven: newOrderBreakevenTicks,
+          breakeven_offset: newOrderBreakevenOffset,
+          trail: newOrderEnableTrail ? 1 : 0,
+          trail_stop: newOrderTrailTicks,
+          trail_trigger: newOrderTpTicks * 0.5,
+          trail_freq: 1,
+        },
+      ],
+    };
+
+    try {
+      const res = await fetch("/api/v1/gateways/pickmytrade/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast(
+          `✅ Orden ${newOrderAction} ${newOrderContracts}x ${newOrderSymbol} despachada a Tradovate (${data.latency_ms} ms).`,
+          "success",
+          6000
+        );
+        setIsOrderModalOpen(false);
+        fetchRealData();
+      } else {
+        showToast(`⚠️ Despacho: ${data.pickmytrade_response?.message || JSON.stringify(data.pickmytrade_response)}`, "error");
+      }
+    } catch (err: any) {
+      showToast(`❌ Error de conexión con gateway PickMyTrade: ${err.message}`, "error");
+    } finally {
+      setIsSendingOrder(false);
+    }
+  };
+
+  const filteredPositions = useMemo(() => {
+    return positions.filter((pos) => {
+      const matchSymbol = filterSymbol === "ALL" || pos.symbol.toUpperCase() === filterSymbol.toUpperCase();
+      const matchSide = filterSide === "ALL" || pos.side.toUpperCase() === filterSide.toUpperCase();
+      const matchSearch =
+        !searchQuery ||
+        pos.comment?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pos.symbol?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pos.id?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchSymbol && matchSide && matchSearch;
+    });
+  }, [positions, filterSymbol, filterSide, searchQuery]);
+
+  const totalFloatingPnlUsd = useMemo(() => {
+    return positions.reduce((acc, p) => acc + (p.pnlUsd || 0), 0);
+  }, [positions]);
+
+  const totalActiveContracts = useMemo(() => {
+    return positions.reduce((acc, p) => acc + (p.contracts || 0), 0);
+  }, [positions]);
+
+  const isConnected = (accountInfo?.gateway_status === "CONNECTED" || accountInfo?.gateway_status === "IDLE_WAITING") && hasLinkedAccount;
+
+  return (
+    <div className="space-y-4 font-sans">
+      {/* TOP TELEMETRY BAR & CME FINANCIAL STRIP */}
+      <div className="bg-[var(--surface-1)] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl">
+        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)]">
+              <BarChart3 className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-xl md:text-2xl font-black text-[var(--text-1)] tracking-tight flex items-center gap-2">
+                  Monitor de Posiciones & Brackets
+                  <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-lg bg-[var(--surface-2)] text-[var(--text-2)] border border-[var(--border)]">
+                    CME MICROESTRUCTURA
+                  </span>
+                </h1>
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-bold border flex items-center gap-1.5 font-mono ${
+                    isConnected
+                      ? "bg-[var(--profit-dim)] text-[var(--profit)] border-[var(--profit)]"
+                      : "bg-[var(--loss-dim)] text-[var(--loss)] border-[var(--loss)]"
+                  }`}
+                >
+                  {isConnected ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-[var(--profit)] animate-ping" />
+                      <span>ONLINE · {accountInfo?.last_ping_latency_ms != null ? `${accountInfo.last_ping_latency_ms} ms` : "ACTIVO"}</span>
+                    </>
+                  ) : (
+                    <>
+                      <WifiOff className="w-3.5 h-3.5" />
+                      <span>{hasLinkedAccount ? "DESCONECTADO" : "SIN CUENTA VINCULADA"}</span>
+                    </>
+                  )}
+                </span>
+                <button
+                  onClick={() => {
+                    setIsRefreshing(true);
+                    fetchRealData();
+                  }}
+                  className="p-1.5 rounded-xl bg-[var(--bg)] hover:bg-[var(--surface-1)] text-[var(--text-2)] hover:text-[var(--text-1)] border border-white/[0.08] transition cursor-pointer"
+                  title="Refrescar posiciones"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-[var(--profit)]" : ""}`} />
+                </button>
+              </div>
+              <p className="text-xs text-[var(--text-2)] mt-1 flex flex-wrap items-center gap-2 font-mono">
+                <span>Broker: <strong className="text-[var(--text-1)]">{accountInfo?.broker ?? (hasLinkedAccount ? "Tradovate" : "SIN CONEXIÓN")}</strong></span>
+                <span>•</span>
+                <span>Cuenta: <strong className="text-[var(--profit)]">{hasLinkedAccount ? linkedAccountId : "SIN CUENTA VINCULADA"}</strong></span>
+                <span>•</span>
+                <span>Saldo: <strong className="text-[var(--text-1)] tabular-nums">{accountInfo?.base_capital_usd != null ? `$${accountInfo.base_capital_usd.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD` : "SIN DATOS"}</strong></span>
+                <span>•</span>
+                <span>Protocolo: <strong className="text-[var(--text-2)]">advance_tp_sl v2</strong></span>
+              </p>
+            </div>
+          </div>
+
+          {/* Key Metrics Strip with FLATTEN ALL and Order buttons */}
+          <div className="flex flex-wrap items-center gap-2.5 w-full xl:w-auto font-mono">
+            <div className="px-3.5 py-2 rounded-xl bg-[var(--bg)] border border-white/[0.08] flex-1 min-w-[120px]">
+              <div className="text-[10px] uppercase font-bold text-[var(--text-2)] tracking-wider">Contratos Activos</div>
+              <div className="text-base font-bold text-[var(--text-1)] flex items-center gap-1 tabular-nums">
+                <span>{totalActiveContracts}x</span>
+                <span className="text-[10px] font-normal text-[var(--text-2)]">({positions.length} pos)</span>
+              </div>
+            </div>
+
+            <div className="px-3.5 py-2 rounded-xl bg-[var(--bg)] border border-white/[0.08] flex-1 min-w-[150px]">
+              <div className="text-[10px] uppercase font-bold text-[var(--text-2)] tracking-wider">PnL Flotante Total</div>
+              <div className={`text-base font-bold flex items-center gap-1 tabular-nums ${totalFloatingPnlUsd >= 0 ? "text-[var(--profit)]" : "text-[var(--loss)]"}`}>
+                {totalFloatingPnlUsd >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                {totalFloatingPnlUsd >= 0 ? "+" : ""}${totalFloatingPnlUsd.toFixed(2)} USD
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsOrderModalOpen(true)}
+              disabled={!hasLinkedAccount}
+              className={`px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
+                hasLinkedAccount
+                  ? "bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] shadow-lg  cursor-pointer active:scale-95"
+                  : "bg-[var(--surface-1)] text-[var(--text-3)] border border-white/[0.05] cursor-not-allowed"
+              }`}
+            >
+              <Send className="w-3.5 h-3.5" />
+              Nueva Orden Bracket
+            </button>
+
+            <button
+              onClick={() => setIsFlattenModalOpen(true)}
+              disabled={!hasLinkedAccount}
+              className={`px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
+                hasLinkedAccount
+                  ? "bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] shadow-lg  cursor-pointer active:scale-95"
+                  : "bg-[var(--surface-1)] text-[var(--text-3)] border border-white/[0.05] cursor-not-allowed opacity-60"
+              }`}
+            >
+              <AlertOctagon className="w-3.5 h-3.5" />
+              FLATTEN ALL
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {notification && (
+        <div
+          className={`p-3.5 rounded-xl text-xs font-bold font-mono flex items-center gap-2.5 transition-all shadow-lg ${
+            notification.type === "error"
+              ? "bg-[var(--loss-dim)] border border-[var(--loss)] text-[var(--loss)]"
+              : "bg-[var(--profit-dim)] border border-[var(--profit)] text-[var(--profit)]"
+          }`}
+        >
+          <span>{notification.text}</span>
+        </div>
+      )}
+
+      {/* NO LINKED ACCOUNT WARNING */}
+      {!hasLinkedAccount && !authLoading && (
+        <div className="p-4 bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-[var(--text-1)] shadow-xl">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-[var(--surface-2)] text-[var(--text-2)]">
+              <SlidersHorizontal className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-bold text-[var(--text-1)] text-sm">Sin cuenta vinculada en Trading Desk</div>
+              <p className="text-[11px] text-[var(--text-1)] font-sans mt-0.5">
+                Para consultar posiciones y enviar órdenes bracket con Take Profit y Stop Loss dinámicos, vincula tu cuenta Tradovate o NinjaTrader.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/trading-desk/configuracion"
+            className="px-4 py-2 bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-black font-bold text-xs rounded-xl transition flex items-center gap-2 shrink-0 shadow-lg "
+          >
+            <Sliders className="w-4 h-4" />
+            Vincular Cuenta en Ajustes →
+          </Link>
+        </div>
+      )}
+
+      {fetchError && (
+        <div className="p-4 bg-[var(--loss-dim)] border border-[var(--loss)] rounded-2xl text-xs font-mono text-[var(--loss)] flex items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-[var(--loss)] flex-shrink-0" />
+            <span>ESTADO: <strong>DESCONECTADO</strong> — {fetchError}</span>
+          </div>
+          <button
+            onClick={fetchRealData}
+            className="px-3 py-1.5 rounded-lg bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] font-bold transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Reintentar
+          </button>
+        </div>
+      )}
+
+      {/* CME QUICK CARDS */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono">
+        {Object.values(CME_SPECS).map((spec) => {
+          const specCount = positions.filter((p) => p.symbol.toUpperCase() === spec.symbol).length;
+          const isFilterActive = filterSymbol === spec.symbol;
+
+          return (
+            <div
+              key={spec.symbol}
+              onClick={() => setFilterSymbol(isFilterActive ? "ALL" : spec.symbol)}
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
+                isFilterActive
+                  ? "bg-[var(--bg)] border-[var(--border)] ring-1 ring-[var(--border-strong)] shadow-[0_0_15px_rgba(59,130,246,0.15)]"
+                  : "bg-[var(--surface-1)] backdrop-blur-xl border-white/[0.08] hover:border-white/[0.16]"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: spec.color }} />
+                  <strong className="text-sm font-black text-[var(--text-1)]">{spec.symbol}</strong>
+                </div>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[var(--bg)] text-[var(--text-2)] border border-white/[0.08]">
+                  {specCount} abiertas
+                </span>
+              </div>
+              <div className="text-[11px] text-[var(--text-1)] font-sans font-medium truncate">{spec.name}</div>
+              <div className="grid grid-cols-2 gap-1 mt-2 pt-2 border-t border-white/[0.08] text-[10px] text-[var(--text-2)]">
+                <div>Tick: <span className="text-[var(--text-1)]">{spec.tickSize} pts</span></div>
+                <div>Valor: <span className="text-[var(--profit)] tabular-nums">${spec.tickValueUsd.toFixed(2)}</span></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* MAIN POSITIONS SECTION */}
+      <div className="bg-[var(--surface-1)] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[var(--text-2)]" />
+            <h3 className="text-base font-bold text-[var(--text-1)] tracking-tight">
+              Posiciones Abiertas en Tradovate ({positions.length})
+            </h3>
+          </div>
+          <span className="text-xs font-mono text-[var(--profit)] font-bold bg-[var(--profit-dim)] px-2.5 py-1 rounded-xl border border-[var(--profit)]">
+            100% Zero-Mocks & SQLite WAL
+          </span>
+        </div>
+
+        {positions.length === 0 ? (
+          <div className="p-12 text-center border border-dashed border-white/[0.1] rounded-2xl bg-[var(--bg)] space-y-4 font-mono">
+            <CheckCircle2 className="w-10 h-10 text-[var(--text-3)] mx-auto" />
+            <div>
+              <div className="text-base font-bold text-[var(--text-1)]">
+                SIN POSICIONES ABIERTAS EN MERCADO
+              </div>
+              <p className="text-xs text-[var(--text-2)] max-w-lg mx-auto mt-1 font-sans">
+                {hasLinkedAccount
+                  ? `El libro de órdenes no tiene exposición activa en la cuenta ${linkedAccountId}.`
+                  : "No hay cuenta vinculada en el Trading Desk. Vincula tu cuenta en Ajustes para operar."}
+              </p>
+            </div>
+            {hasLinkedAccount ? (
+              <button
+                onClick={() => setIsOrderModalOpen(true)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] transition cursor-pointer inline-flex items-center gap-2"
+              >
+                <Send className="w-3.5 h-3.5" />
+                Despachar Orden de Prueba con Brackets
+              </button>
+            ) : (
+              <Link
+                href="/trading-desk/configuracion"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-black transition inline-flex items-center gap-2 font-mono"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                Vincular Cuenta en Ajustes →
+              </Link>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse font-mono">
+              <thead>
+                <tr className="border-b border-white/[0.08] text-[var(--text-2)] uppercase text-[10px] tracking-wider bg-[var(--bg)]">
+                  <th className="py-3 px-3">Contrato</th>
+                  <th className="py-3 px-3">Lado</th>
+                  <th className="py-3 px-3">Cant.</th>
+                  <th className="py-3 px-3">Entrada</th>
+                  <th className="py-3 px-3">Actual</th>
+                  <th className="py-3 px-3">Bracket TP / SL</th>
+                  <th className="py-3 px-3">PnL Flotante</th>
+                  <th className="py-3 px-3">UID / Señal</th>
+                  <th className="py-3 px-3 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.05] text-xs">
+                {filteredPositions.map((pos) => (
+                  <tr key={pos.id} className="hover:bg-white/[0.03] transition-colors">
+                    <td className="py-3 px-3 font-bold text-[var(--text-1)] flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[var(--profit)] animate-ping" />
+                      {pos.symbol}
+                    </td>
+                    <td className="py-3 px-3">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                          pos.side === "LONG"
+                            ? "bg-[var(--profit-dim)] text-[var(--profit)] border border-[var(--profit)]"
+                            : "bg-[var(--loss-dim)] text-[var(--loss)] border border-[var(--loss)]"
+                        }`}
+                      >
+                        {pos.side}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-[var(--text-1)]">{pos.contracts}x</td>
+                    <td className="py-3 px-3 text-[var(--text-1)] tabular-nums">{pos.entryPrice.toFixed(2)}</td>
+                    <td className="py-3 px-3 font-bold text-[var(--text-1)] tabular-nums">{pos.currentPrice.toFixed(2)}</td>
+                    <td className="py-3 px-3 text-[11px] text-[var(--text-1)] tabular-nums">
+                      {pos.tp ? <span className="text-[var(--profit)]">TP: {pos.tp}</span> : <span className="text-[var(--text-3)]">TP: --</span>} /{" "}
+                      {pos.sl ? <span className="text-[var(--loss)]">SL: {pos.sl}</span> : <span className="text-[var(--text-3)]">SL: --</span>}
+                    </td>
+                    <td className="py-3 px-3">
+                      <span className={`font-bold text-sm tabular-nums ${pos.pnlUsd >= 0 ? "text-[var(--profit)]" : "text-[var(--loss)]"}`}>
+                        {pos.pnlUsd >= 0 ? "+" : ""}${pos.pnlUsd.toFixed(2)} USD
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-[11px] text-[var(--text-2)] truncate max-w-[120px]">
+                      {pos.comment}
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <button
+                        onClick={() => handleClosePosition(pos)}
+                        className="px-2.5 py-1 rounded-lg bg-[var(--loss-dim)] hover:bg-[var(--loss-dim)] text-[var(--loss)] border border-[var(--loss)] text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        Cerrar 100%
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* NEW ORDER MODAL */}
+      {isOrderModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-[var(--surface-1)] border border-white/[0.1] rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Send className="w-5 h-5 text-[var(--text-2)]" />
+                <h3 className="text-base font-bold text-[var(--text-1)]">Nueva Orden con advance_tp_sl</h3>
+              </div>
+              <button
+                onClick={() => setIsOrderModalOpen(false)}
+                className="text-[var(--text-2)] hover:text-[var(--text-1)] transition cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs font-mono">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] text-[var(--text-2)] uppercase font-bold block mb-1">Activo CME</label>
+                  <select
+                    value={newOrderSymbol}
+                    onChange={(e) => setNewOrderSymbol(e.target.value as any)}
+                    className="w-full bg-[var(--bg)] border border-white/[0.1] rounded-xl p-2.5 text-[var(--text-1)] font-bold"
+                  >
+                    <option value="MNQ">MNQ (Micro Nasdaq-100)</option>
+                    <option value="MES">MES (Micro S&P 500)</option>
+                    <option value="MCL">MCL (Micro Crude Oil)</option>
+                    <option value="MGC">MGC (Micro Gold)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-[var(--text-2)] uppercase font-bold block mb-1">Dirección</label>
+                  <select
+                    value={newOrderAction}
+                    onChange={(e) => setNewOrderAction(e.target.value as any)}
+                    className="w-full bg-[var(--bg)] border border-white/[0.1] rounded-xl p-2.5 text-[var(--text-1)] font-bold"
+                  >
+                    <option value="BUY">BUY (Largo)</option>
+                    <option value="SELL">SELL (Corto)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] text-[var(--text-2)] uppercase font-bold block mb-1">Contratos</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={newOrderContracts}
+                  onChange={(e) => setNewOrderContracts(parseInt(e.target.value) || 1)}
+                  className="w-full bg-[var(--bg)] border border-white/[0.1] rounded-xl p-2.5 text-[var(--text-1)] font-bold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] text-[var(--profit)] uppercase font-bold block mb-1">TP Ticks</label>
+                  <input
+                    type="number"
+                    value={newOrderTpTicks}
+                    onChange={(e) => setNewOrderTpTicks(parseInt(e.target.value) || 20)}
+                    className="w-full bg-[var(--bg)] border border-white/[0.1] rounded-xl p-2.5 text-[var(--profit)] font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[var(--loss)] uppercase font-bold block mb-1">SL Ticks</label>
+                  <input
+                    type="number"
+                    value={newOrderSlTicks}
+                    onChange={(e) => setNewOrderSlTicks(parseInt(e.target.value) || 12)}
+                    className="w-full bg-[var(--bg)] border border-white/[0.1] rounded-xl p-2.5 text-[var(--loss)] font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3 bg-[var(--bg)] rounded-xl border border-white/[0.08] text-[11px] text-[var(--text-2)]">
+                Cuenta de despacho: <strong className="text-[var(--profit)] font-mono">{linkedAccountId || "SIN VINCULAR"}</strong>
+              </div>
+
+              <button
+                onClick={handleDispatchOrder}
+                disabled={isSendingOrder || !hasLinkedAccount}
+                className={`w-full py-3 rounded-xl font-black transition flex items-center justify-center gap-2 ${
+                  hasLinkedAccount
+                    ? "bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] shadow-lg  cursor-pointer active:scale-95"
+                    : "bg-[var(--surface-1)] text-[var(--text-3)] border border-white/[0.05] cursor-not-allowed"
+                }`}
+              >
+                <Zap className="w-4 h-4 text-[var(--text-1)]" />
+                {isSendingOrder ? "Despachando a Tradovate..." : `DESPACHAR ${newOrderAction} ${newOrderContracts}x ${newOrderSymbol}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLATTEN ALL CONFIRMATION MODAL */}
+      {isFlattenModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="bg-[var(--surface-1)] border-2 border-[var(--loss)] rounded-2xl max-w-md w-full p-6 space-y-5 shadow-[0_0_50px_rgba(244,63,94,0.25)]">
+            <div className="flex items-center gap-3 text-[var(--loss)]">
+              <div className="p-3 bg-[var(--loss-dim)] rounded-xl border border-[var(--loss)]">
+                <AlertOctagon className="w-8 h-8 animate-bounce" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-[var(--text-1)]">¿CONFIRMAR FLATTEN TOTAL?</h3>
+                <p className="text-xs text-[var(--loss)] font-mono">Liquidación inmediata en libro de órdenes CME</p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-[var(--loss-dim)] border border-[var(--loss)] rounded-xl space-y-2 text-xs text-[var(--text-1)] font-mono">
+              <p>Esta acción enviará la señal <strong className="text-[var(--text-1)]">flat</strong> a Tradovate ({linkedAccountId || "SIN VINCULAR"}):</p>
+              <ul className="list-disc list-inside space-y-1 text-[11px] text-[var(--loss)]">
+                <li>Liquidará todas las posiciones abiertas a precio de mercado.</li>
+                <li>Cancelará todos los brackets pendientes.</li>
+              </ul>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+              <button
+                onClick={() => setIsFlattenModalOpen(false)}
+                className="py-2.5 rounded-xl font-bold bg-[var(--bg)] hover:bg-[var(--surface-1)] text-[var(--text-1)] border border-white/[0.1] transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleExecuteFlattenAll}
+                disabled={isFlattening || !hasLinkedAccount}
+                className="py-2.5 rounded-xl font-black bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] shadow-lg  transition cursor-pointer"
+              >
+                {isFlattening ? "Liquidando..." : "SÍ, LIQUIDAR TODO"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

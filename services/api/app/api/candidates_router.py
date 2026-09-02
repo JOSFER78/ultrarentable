@@ -332,7 +332,9 @@ def list_candidates(
         bars_per_m = tf_bars_per_month.get(norm_tf, 720)
         total_bars = int(dur.get("total_bars") or 3840)
         calc_months = max(0.5, round(total_bars / bars_per_m, 1))
-        oos_months = float(dur.get("oos_months") or oos_m.get("oos_months") or max(0.2, round(calc_months * 0.2, 1)))
+        oos_months_real = dur.get("oos_months") or oos_m.get("oos_months")
+        oos_months = float(oos_months_real or max(0.2, round(calc_months * 0.2, 1)))
+        oos_months_source = "REAL" if oos_months_real else "ESTIMADO"
 
         # Cálculo normalizado de Retorno OOS y CAGR geométrica
         fin = compute_financial_metrics(net_prof_oos, base_cap, oos_months, sc)
@@ -511,6 +513,7 @@ def list_candidates(
                     "roi_pct": fin["cumulative_return_pct"],
                     "annualized_roi_pct": fin["annualized_cagr_pct"],
                     "monthly_roi_pct": fin["monthly_roi_pct"],
+                    "oos_months_source": oos_months_source,
                     "trades_per_month": tpm,
                     "base_capital_usd": base_cap,
                     "trades": trades_count_oos,
@@ -562,7 +565,9 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
     bars_per_m = tf_bars_per_month.get(norm_tf, 720)
     total_bars = int(dur.get("total_bars") or 3840)
     calc_months = max(0.5, round(total_bars / bars_per_m, 1))
-    oos_months = float(dur.get("oos_months") or oos_m.get("oos_months") or max(0.2, round(calc_months * 0.2, 1)))
+    oos_months_real = dur.get("oos_months") or oos_m.get("oos_months")
+    oos_months = float(oos_months_real or max(0.2, round(calc_months * 0.2, 1)))
+    oos_months_source = "REAL" if oos_months_real else "ESTIMADO"
 
     fin = compute_financial_metrics(net_prof_oos, base_cap, oos_months, sc)
 
@@ -623,6 +628,7 @@ def get_candidate(candidate_id: str, db: Session = Depends(get_db)) -> Dict[str,
                 "roi_pct": fin["cumulative_return_pct"],
                 "monthly_roi_pct": fin["monthly_roi_pct"],
                 "annualized_roi_pct": fin["annualized_cagr_pct"],
+                "oos_months_source": oos_months_source,
                 "base_capital_usd": base_cap,
                 "oos_months": oos_months,
             },

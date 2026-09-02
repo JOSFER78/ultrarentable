@@ -67,24 +67,24 @@ export default function TrackFondeoCMEPage() {
   const isDllOk = selectedFirm.daily_loss_limit === 0 || todayPnl > -selectedFirm.daily_loss_limit;
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-slate-100">
+    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-[var(--text-1)]">
       {/* 1. HEADER */}
-      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+      <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Link href="/" className="text-xs text-slate-400 hover:text-white transition">
+              <Link href="/" className="text-xs text-[var(--text-2)] hover:text-[var(--text-1)] transition">
                 ← Command Center
               </Link>
-              <span className="text-slate-600">/</span>
-              <span className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider">
+              <span className="text-[var(--text-3)]">/</span>
+              <span className="text-xs font-mono font-bold text-[var(--text-2)] uppercase tracking-wider">
                 TRACK_FONDEO · INSTITUTIONAL CME PROP FIRMS
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-1)]">
               Dashboard de Fondeo CME & Compliance Guard
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-[var(--text-2)] mt-1">
               Supervisión estricta de cuentas de evaluación y fondeadas: Trailing DD intra-trade, Daily Loss Limit y regla de consistencia.
             </p>
           </div>
@@ -92,16 +92,16 @@ export default function TrackFondeoCMEPage() {
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
               href="/prop-firms"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] transition shadow-lg "
             >
               <Building2 className="w-4 h-4" />
               <span>Catálogo 70 Prop Firms</span>
             </Link>
             <Link
               href="/tradesfera"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-sky-950/80 text-sky-300 border border-sky-700/60 hover:bg-sky-900 transition"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-[var(--surface-2)] text-[var(--text-1)] border border-[var(--border)] hover:bg-[var(--surface-3)] transition"
             >
-              <ShieldCheck className="w-4 h-4 text-sky-400" />
+              <ShieldCheck className="w-4 h-4 text-[var(--text-2)]" />
               <span>Tratado Tradesfera M01-M16</span>
             </Link>
           </div>
@@ -110,7 +110,7 @@ export default function TrackFondeoCMEPage() {
 
       {/* 2. SELECTOR DE EMPRESA DE FONDEO */}
       <div className="space-y-2">
-        <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+        <span className="text-[11px] font-mono font-bold text-[var(--text-2)] uppercase tracking-wider block">
           Seleccionar Programa de Fondeo para Modelar Compliance:
         </span>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -122,15 +122,15 @@ export default function TrackFondeoCMEPage() {
                 onClick={() => setSelectedFirm(firm)}
                 className={`p-3.5 rounded-xl text-left transition-all border backdrop-blur-xl ${
                   isSelected
-                    ? "bg-sky-950/40 border-sky-500 shadow-md shadow-sky-500/10 ring-1 ring-sky-500/30"
-                    : "bg-[#090d16]/90 border-white/[0.08] hover:border-sky-500/30"
+                    ? "bg-[var(--surface-2)] border-[var(--border)] shadow-md  ring-1 ring-[var(--border-strong)]"
+                    : "bg-[var(--surface-1)] border-white/[0.08] hover:border-[var(--border)]"
                 }`}
               >
-                <div className="text-xs font-black text-white truncate">{firm.name}</div>
-                <div className="text-[10px] text-slate-400 font-mono mt-1">
+                <div className="text-xs font-black text-[var(--text-1)] truncate">{firm.name}</div>
+                <div className="text-[10px] text-[var(--text-2)] font-mono mt-1">
                   Target: ${firm.profit_target.toLocaleString()}
                 </div>
-                <div className="text-[10px] text-sky-400 font-mono">
+                <div className="text-[10px] text-[var(--text-2)] font-mono">
                   Max DD: ${firm.max_trailing_dd.toLocaleString()}
                 </div>
               </button>
@@ -142,16 +142,16 @@ export default function TrackFondeoCMEPage() {
       {/* 3. MASTER COMPLIANCE METRICS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Equity Actual */}
-        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
-          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-[var(--text-2)] uppercase tracking-wider block">
             EQUITY REAL DE LA CUENTA
           </span>
-          <div className="text-2xl sm:text-3xl font-black text-white font-mono tabular-nums">
+          <div className="text-2xl sm:text-3xl font-black text-[var(--text-1)] font-mono tabular-nums">
             ${currentEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </div>
           <div
             className={`text-xs font-mono font-bold ${
-              totalProfit >= 0 ? "text-emerald-400" : "text-rose-400"
+              totalProfit >= 0 ? "text-[var(--profit)]" : "text-[var(--loss)]"
             }`}
           >
             Beneficio: {totalProfit >= 0 ? `+$${totalProfit.toFixed(2)}` : `-$${Math.abs(totalProfit).toFixed(2)}`} USD
@@ -159,84 +159,84 @@ export default function TrackFondeoCMEPage() {
         </div>
 
         {/* Trailing Drawdown Buffer */}
-        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
-          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-[var(--text-2)] uppercase tracking-wider block">
             COLCHÓN TRAILING DRAWDOWN
           </span>
           <div
             className={`text-2xl sm:text-3xl font-black font-mono tabular-nums ${
-              ddBuffer > 800 ? "text-emerald-400" : "text-rose-400"
+              ddBuffer > 800 ? "text-[var(--profit)]" : "text-[var(--loss)]"
             }`}
           >
             ${ddBuffer.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </div>
-          <div className="text-xs font-mono text-slate-400">
+          <div className="text-xs font-mono text-[var(--text-2)]">
             Uso: {ddUsagePct.toFixed(1)}% de ${selectedFirm.max_trailing_dd.toLocaleString()}
           </div>
         </div>
 
         {/* Target Progress */}
-        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
-          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-[var(--text-2)] uppercase tracking-wider block">
             PROGRESO TARGET (${selectedFirm.profit_target.toLocaleString()})
           </span>
-          <div className="text-2xl sm:text-3xl font-black text-sky-400 font-mono tabular-nums">
+          <div className="text-2xl sm:text-3xl font-black text-[var(--text-2)] font-mono tabular-nums">
             {targetProgress.toFixed(1)}%
           </div>
-          <div className="text-xs font-mono text-slate-400">
+          <div className="text-xs font-mono text-[var(--text-2)]">
             Faltan: ${Math.max(0, selectedFirm.profit_target - totalProfit).toFixed(2)} USD
           </div>
         </div>
 
         {/* Daily Loss Limit */}
-        <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
-          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+        <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-5 shadow-xl space-y-1.5">
+          <span className="text-[10px] font-mono font-bold text-[var(--text-2)] uppercase tracking-wider block">
             ESTADO DAILY LOSS LIMIT ({selectedFirm.daily_loss_limit > 0 ? `$${selectedFirm.daily_loss_limit}` : "SIN DLL"})
           </span>
           <div
             className={`text-2xl sm:text-3xl font-black font-mono ${
-              isDllOk ? "text-emerald-400" : "text-rose-400"
+              isDllOk ? "text-[var(--profit)]" : "text-[var(--loss)]"
             }`}
           >
             {isDllOk ? "DENTRO DE LÍMITE" : "🚨 VIOLACIÓN"}
           </div>
-          <div className="text-xs font-mono text-slate-400">
+          <div className="text-xs font-mono text-[var(--text-2)]">
             PnL Hoy: ${todayPnl.toFixed(2)} USD
           </div>
         </div>
       </div>
 
       {/* 4. CME SESSION TIMER & AUTO-FLATTEN MONITOR */}
-      <div className="bg-gradient-to-r from-sky-950/40 via-[#090d16]/90 to-slate-950/90 border border-sky-500/30 backdrop-blur-xl rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-[var(--surface-1)]  via-[var(--surface-1)]  border border-[var(--border)] backdrop-blur-xl rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+          <div className="w-10 h-10 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-[var(--text-2)]">
             <Clock className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-black text-white flex items-center gap-2">
+            <h3 className="text-sm font-black text-[var(--text-1)] flex items-center gap-2">
               <span>Temporizador Mandatorio de Auto-Flatten CME ({selectedFirm.auto_flatten_time})</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[var(--text-2)] mt-0.5">
               Cierre automático de posiciones 10 minutos antes del corte diario para evitar sanciones por overnight de las prop firms.
             </p>
           </div>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono font-black shrink-0">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] text-xs font-mono font-black shrink-0">
           <ShieldCheck className="w-4 h-4" />
           <span>GUARD ACTIVO · 0 OVERNIGHT</span>
         </div>
       </div>
 
       {/* 5. ACTIVE SESSIONS TABLE */}
-      <div className="bg-[#090d16]/90 border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border)] pb-4">
           <div>
-            <h2 className="text-base font-black text-white flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-base font-black text-[var(--text-1)] flex items-center gap-2">
+              <Activity className="w-4 h-4 text-[var(--profit)]" />
               <span>Sesiones de Fondeo Registradas en SQLite</span>
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[var(--text-2)]">
               Telemetría determinista en tiempo real desde la API de ejecución.
             </p>
           </div>
@@ -250,9 +250,9 @@ export default function TrackFondeoCMEPage() {
         </div>
 
         {sessions.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-xs font-mono space-y-2">
+          <div className="p-8 text-center text-[var(--text-2)] text-xs font-mono space-y-2">
             <div>No hay sesiones de fondeo activas en este momento.</div>
-            <p className="text-slate-500 text-[11px]">
+            <p className="text-[var(--text-3)] text-[11px]">
               Despliega una estrategia validada en esta mesa Fondeo o conecta NinjaTrader 8.
             </p>
           </div>
@@ -260,7 +260,7 @@ export default function TrackFondeoCMEPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-slate-800 text-[11px] text-slate-400 uppercase font-bold tracking-wider">
+                <tr className="border-b border-[var(--border)] text-[11px] text-[var(--text-2)] uppercase font-bold tracking-wider">
                   <th className="py-2.5 px-3">Sesión</th>
                   <th className="py-2.5 px-3">Estrategia</th>
                   <th className="py-2.5 px-3">Símbolo</th>
@@ -269,27 +269,27 @@ export default function TrackFondeoCMEPage() {
                   <th className="py-2.5 px-3 text-right">Peak Equity</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-[var(--border)]">
                 {sessions.map((s) => (
-                  <tr key={s.session_id} className="hover:bg-slate-900/40 transition">
-                    <td className="py-3 px-3 text-sky-400 font-bold">{s.session_id}</td>
-                    <td className="py-3 px-3 text-slate-300 font-sans">{s.candidate_id}</td>
-                    <td className="py-3 px-3 font-bold text-white">{s.symbol}</td>
+                  <tr key={s.session_id} className="hover:bg-[var(--surface-1)] transition">
+                    <td className="py-3 px-3 text-[var(--text-2)] font-bold">{s.session_id}</td>
+                    <td className="py-3 px-3 text-[var(--text-1)] font-sans">{s.candidate_id}</td>
+                    <td className="py-3 px-3 font-bold text-[var(--text-1)]">{s.symbol}</td>
                     <td className="py-3 px-3">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                           s.status === "RUNNING"
-                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                            : "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                            ? "bg-[var(--profit-dim)] text-[var(--profit)] border border-[var(--profit)]"
+                            : "bg-[var(--loss-dim)] text-[var(--loss)] border border-[var(--loss)]"
                         }`}
                       >
                         {s.status}
                       </span>
                     </td>
-                    <td className={`py-3 px-3 text-right tabular-nums font-bold ${s.daily_pnl_usd >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                    <td className={`py-3 px-3 text-right tabular-nums font-bold ${s.daily_pnl_usd >= 0 ? "text-[var(--profit)]" : "text-[var(--loss)]"}`}>
                       {s.daily_pnl_usd >= 0 ? `+$${s.daily_pnl_usd.toFixed(2)}` : `-$${Math.abs(s.daily_pnl_usd).toFixed(2)}`}
                     </td>
-                    <td className="py-3 px-3 text-right tabular-nums text-slate-300">
+                    <td className="py-3 px-3 text-right tabular-nums text-[var(--text-1)]">
                       ${s.peak_equity_usd?.toFixed(2)}
                     </td>
                   </tr>

@@ -51,40 +51,40 @@ export default function QuantTooltip({
 
   const variantStyles = {
     indigo: {
-      accentGlow: "shadow-[0_8px_30px_rgba(99,102,241,0.22)]",
-      iconColor: "text-indigo-400 hover:text-indigo-300",
-      borderColor: "border-indigo-500/40",
-      pillBg: "bg-indigo-500/10 text-indigo-300 border-indigo-500/20",
+      accentGlow: "shadow-[0_8px_30px_rgba(255,255,255,0.06)]",
+      iconColor: "text-[var(--text-2)] hover:text-[var(--text-1)]",
+      borderColor: "border-[var(--border)]",
+      pillBg: "bg-[var(--surface-2)] text-[var(--text-1)] border-[var(--border)]",
     },
     emerald: {
-      accentGlow: "shadow-[0_8px_30px_rgba(16,185,129,0.22)]",
-      iconColor: "text-emerald-400 hover:text-emerald-300",
-      borderColor: "border-emerald-500/40",
-      pillBg: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+      accentGlow: "shadow-[0_8px_30px_rgba(255,255,255,0.06)]",
+      iconColor: "text-[var(--profit)] hover:text-[var(--profit)]",
+      borderColor: "border-[var(--profit)]",
+      pillBg: "bg-[var(--profit-dim)] text-[var(--profit)] border-[var(--profit)]",
     },
     rose: {
-      accentGlow: "shadow-[0_8px_30px_rgba(244,63,94,0.22)]",
-      iconColor: "text-rose-400 hover:text-rose-300",
-      borderColor: "border-rose-500/40",
-      pillBg: "bg-rose-500/10 text-rose-300 border-rose-500/20",
+      accentGlow: "shadow-[0_8px_30px_rgba(255,255,255,0.06)]",
+      iconColor: "text-[var(--loss)] hover:text-[var(--loss)]",
+      borderColor: "border-[var(--loss)]",
+      pillBg: "bg-[var(--loss-dim)] text-[var(--loss)] border-[var(--loss)]",
     },
     sky: {
-      accentGlow: "shadow-[0_8px_30px_rgba(56,189,248,0.22)]",
-      iconColor: "text-sky-400 hover:text-sky-300",
-      borderColor: "border-sky-500/40",
-      pillBg: "bg-sky-500/10 text-sky-300 border-sky-500/20",
+      accentGlow: "shadow-[0_8px_30px_rgba(255,255,255,0.06)]",
+      iconColor: "text-[var(--text-2)] hover:text-[var(--text-1)]",
+      borderColor: "border-[var(--border)]",
+      pillBg: "bg-[var(--surface-2)] text-[var(--text-1)] border-[var(--border)]",
     },
     amber: {
-      accentGlow: "shadow-[0_8px_30px_rgba(245,158,11,0.22)]",
-      iconColor: "text-amber-400 hover:text-amber-300",
-      borderColor: "border-amber-500/40",
-      pillBg: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+      accentGlow: "shadow-[0_8px_30px_rgba(255,255,255,0.06)]",
+      iconColor: "text-[var(--text-2)] hover:text-[var(--text-1)]",
+      borderColor: "border-[var(--border)]",
+      pillBg: "bg-[var(--surface-2)] text-[var(--text-1)] border-[var(--border)]",
     },
     slate: {
       accentGlow: "shadow-[0_8px_30px_rgba(0,0,0,0.4)]",
-      iconColor: "text-slate-400 hover:text-slate-200",
-      borderColor: "border-slate-700",
-      pillBg: "bg-slate-800 text-slate-300 border-slate-700",
+      iconColor: "text-[var(--text-2)] hover:text-[var(--text-1)]",
+      borderColor: "border-[var(--border)]",
+      pillBg: "bg-[var(--surface-1)] text-[var(--text-1)] border-[var(--border)]",
     },
   }[finalVariant];
 
@@ -156,7 +156,7 @@ export default function QuantTooltip({
           />
         </>
       ) : (
-        <span className="p-0.5 rounded-full hover:bg-slate-800/60 transition">
+        <span className="p-0.5 rounded-full hover:bg-[var(--surface-1)] transition">
           <HelpCircle
             style={{ width: iconSize, height: iconSize }}
             className={`transition-all duration-200 ${variantStyles.iconColor} ${
@@ -177,29 +177,29 @@ export default function QuantTooltip({
             transform: coords.actualPos === "top" ? "translate(-50%, -100%)" : "translate(-50%, 0)",
             zIndex: 9999,
           }}
-          className={`w-72 max-w-[calc(100vw-24px)] p-3 rounded-xl border ${variantStyles.borderColor} ${variantStyles.accentGlow} bg-slate-950/95 backdrop-blur-xl text-slate-100 text-xs shadow-2xl animate-in fade-in zoom-in-95 duration-150 pointer-events-auto`}
+          className={`w-72 max-w-[calc(100vw-24px)] p-3 rounded-xl border ${variantStyles.borderColor} ${variantStyles.accentGlow} bg-[var(--surface-1)] backdrop-blur-xl text-[var(--text-1)] text-xs shadow-2xl animate-in fade-in zoom-in-95 duration-150 pointer-events-auto`}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-white/10">
-            <div className="flex items-center gap-1.5 font-bold tracking-wide text-slate-100 text-xs">
-              <Info className="w-3.5 h-3.5 text-indigo-400" />
+            <div className="flex items-center gap-1.5 font-bold tracking-wide text-[var(--text-1)] text-xs">
+              <Info className="w-3.5 h-3.5 text-[var(--text-2)]" />
               <span>{displayTitle}</span>
             </div>
             {dictionaryEntry?.category && (
-              <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+              <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-[var(--surface-1)] text-[var(--text-2)] border border-[var(--border)]">
                 {dictionaryEntry.category}
               </span>
             )}
           </div>
 
-          <div className="space-y-1.5 text-slate-300 leading-relaxed text-[11px]">
+          <div className="space-y-1.5 text-[var(--text-1)] leading-relaxed text-[11px]">
             <p>{displayText}</p>
             {displayBenchmark && (
               <div className={`p-1.5 rounded-lg border flex items-start gap-1.5 ${variantStyles.pillBg}`}>
                 <CheckCircle2 className="w-3 h-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <span className="font-semibold block text-[10px] text-slate-200">Objetivo Óptimo:</span>
+                  <span className="font-semibold block text-[10px] text-[var(--text-1)]">Objetivo Óptimo:</span>
                   <span className="text-[10px] opacity-90">{displayBenchmark}</span>
                 </div>
               </div>
