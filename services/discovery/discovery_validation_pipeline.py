@@ -78,15 +78,21 @@ def _acquire_singleton_lock():
     global _DISCOVERY_LOCK_FD
     try:
         import fcntl
+    except ImportError:
+        print("[DISCOVERY] AVISO: candado de instancia única no disponible en este sistema (sin fcntl); ejecución sin protección de instancia")
+        return
+
+    import errno
+    try:
         _DISCOVERY_LOCK_FD = open('/tmp/ultrarentable_discovery.lock', 'w')
         fcntl.flock(_DISCOVERY_LOCK_FD, fcntl.LOCK_EX | fcntl.LOCK_NB)
         _DISCOVERY_LOCK_FD.write(f"{os.getpid()}\n")
         _DISCOVERY_LOCK_FD.flush()
-    except (IOError, BlockingIOError):
-        print(f"[DISCOVERY] Otra instancia ya esta en ejecucion. Saliendo limpiamente PID {os.getpid()}.")
-        sys.exit(0)
-    except (ImportError, OSError):
-        pass
+    except (BlockingIOError, IOError) as e:
+        if isinstance(e, BlockingIOError) or getattr(e, "errno", None) in (errno.EAGAIN, errno.EWOULDBLOCK):
+            print(f"[DISCOVERY] Otra instancia ya esta en ejecucion. Saliendo limpiamente PID {os.getpid()}.")
+            sys.exit(0)
+        raise
 
 # El lock se adquiere SOLO al ejecutar como proceso (ver __main__): adquirirlo en el import
 # mataba a cualquier importador (pytest incluido) con sys.exit(0) mientras el servicio corria.
