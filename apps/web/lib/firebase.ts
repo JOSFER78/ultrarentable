@@ -7,6 +7,14 @@
  * Esos fallbacks eran los que se usaban de verdad (no existía apps/web/.env.local), y son la
  * causa raíz medida del watchdog de 6s en el login.
  *
+ * 2026-09-02: la mezcla seguía viva en .env.local, y con ella el login era imposible de
+ * completar: un ID token emitido por "goalskid-app" no vale como `auth` en las reglas de la
+ * base de datos de "pecemi" (que además no tenía ninguna regla para la rama `ultrarentable`,
+ * o sea todo denegado). Las 7 variables apuntan ahora al proyecto 02 ULTRAFONDEO
+ * ("traderbot-josfer"), que tiene el proveedor Google habilitado, localhost y 127.0.0.1 entre
+ * sus dominios autorizados y su propia Realtime Database, con reglas para `ultrarentable/users`
+ * (cada usuario su perfil; josferestudio@gmail.com como superadministrador real).
+ *
  * AHORA: la configuración sale EXCLUSIVAMENTE de las 7 variables NEXT_PUBLIC_FIREBASE_*.
  * Si falta una, se lanza un error explícito y legible. NUNCA se rellena con un valor por
  * defecto: arrancar en silencio contra el proyecto equivocado es justamente la mentira que se

@@ -1,5 +1,12 @@
 # FASE ACTUAL — 2026-09-02, ~11:30 UTC · CICLO 3 DE LA ERA LOCAL (orquestador Fable 5.1 en Orca; agentes Antigravity atados)
 
+> **LEER PRIMERO — 2026-09-02 18:30 UTC, el trabajo continúa en el VPS:**
+> `orchestration/state/TRASPASO_2026-09-02_VPS.md`. Sucede al traspaso del PC (que sigue valiendo
+> para el detalle de worktrees y ramas `agy-*`). Resumen: web servida en build de producción y con
+> el login de Google arreglado (un solo proyecto Firebase, 02 ULTRAFONDEO); campaña E2 de ES 5m
+> TERMINADA — 420 de 420 configuraciones muertas en IS, 400 sin ventaja bruta, 20 sólo por coste,
+> **ninguna por falta de operaciones**; campaña de 15m en curso. Carril Orca/agy retirado.
+
 > **ESTADO 2026-09-02 18:40 - ORCA PARADO por Emilio ("va terriblemente lento").** Todos los agentes, terminales, monitores, la campana E2 y el localhost estan parados; la maquina limpia (0 agy, 0 node, 0 python del proyecto). El traspaso completo para seguir en Claude Code esta en `orchestration/state/TRASPASO_CLAUDE_CODE_2026-09-02.md` (que hay hecho, que esta a medias con su commit WIP, que falta, como arrancar cada pieza).
 
 > **MANDATO ACTIVO (sin cambios): FONDEO + META-FONDEO + `/estrategias`.** ULTRA EN CONSTRUCCIÓN,
