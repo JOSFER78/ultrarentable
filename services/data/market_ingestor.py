@@ -15,6 +15,117 @@ from pydantic import BaseModel, Field
 from contracts.backtest import BarData, DatasetSnapshot
 from services.data import session_calendar
 
+CLAVES_CHECKSUM_MANIFIESTO = ("checksumSha256", "checksum_sha256")
+CLAVES_CONTEO_MANIFIESTO = ("recordCount", "record_count", "bar_count")
+
+
+def serializar_velas_canonico(bars: List[BarData]) -> bytes:
+    """Bytes EXACTOS del fichero normalizado. Mismo criterio que routes.py::_canonical_json."""
+    raw_list = [
+        {
+            "timestamp": b.timestamp_utc_ms,
+            "open": b.open,
+            "high": b.high,
+            "low": b.low,
+            "close": b.close,
+            "volume": b.volume,
+        }
+        for b in bars
+    ]
+    return json.dumps(raw_list, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+
+def checksum_contenido_sha256(bars: List[BarData]) -> str:
+    return hashlib.sha256(serializar_velas_canonico(bars)).hexdigest()
+
+
+def sha256_fichero(path: Path) -> str:
+    """SHA-256 de los bytes del fichero, leídos por bloques de 1 MiB."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        while chunk := f.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+class VerificacionCustodia(BaseModel):
+    dataset_path: str
+    manifest_path: str
+    hash_fichero: str
+    hash_manifiesto: Optional[str] = None  # None => el manifiesto no declara checksum (NO DATA)
+    conteo_fichero: Optional[int] = None
+    conteo_manifiesto: Optional[int] = None
+    coincide: bool
+    motivo: str
+
+
+def verificar_dataset_contra_manifiesto(
+    dataset_path: Path, manifest_path: Optional[Path] = None
+) -> VerificacionCustodia:
+    dataset_path = Path(dataset_path)
+    if manifest_path is None:
+        manifest_path = dataset_path.with_name(dataset_path.stem + "_manifest.json")
+    else:
+        manifest_path = Path(manifest_path)
+
+    if not dataset_path.exists():
+        raise FileNotFoundError(f"Dataset no encontrado: {dataset_path}")
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"Manifiesto no encontrado: {manifest_path}")
+
+    hash_fichero = sha256_fichero(dataset_path)
+
+    try:
+        manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise ValueError(f"Error parseando manifiesto {manifest_path}: {exc}") from exc
+
+    hash_manifiesto: Optional[str] = None
+    for k in CLAVES_CHECKSUM_MANIFIESTO:
+        if k in manifest_data and manifest_data[k]:
+            hash_manifiesto = manifest_data[k]
+            break
+
+    conteo_manifiesto: Optional[int] = None
+    for k in CLAVES_CONTEO_MANIFIESTO:
+        if k in manifest_data and manifest_data[k] is not None:
+            conteo_manifiesto = int(manifest_data[k])
+            break
+
+    conteo_fichero: Optional[int] = None
+    try:
+        obj = json.loads(dataset_path.read_bytes())
+        if isinstance(obj, list):
+            conteo_fichero = len(obj)
+        elif isinstance(obj, dict) and "bars" in obj and isinstance(obj["bars"], list):
+            conteo_fichero = len(obj["bars"])
+    except Exception:
+        conteo_fichero = None
+
+    if hash_manifiesto is None:
+        motivo = "NO DATA: el manifiesto no declara checksum"
+        coincide = False
+    elif hash_fichero != hash_manifiesto:
+        motivo = "HASH_MISMATCH"
+        coincide = False
+    elif conteo_fichero is not None and conteo_manifiesto is not None and conteo_fichero != conteo_manifiesto:
+        motivo = "RECORD_COUNT_MISMATCH"
+        coincide = False
+    else:
+        motivo = "OK"
+        coincide = True
+
+    return VerificacionCustodia(
+        dataset_path=str(dataset_path),
+        manifest_path=str(manifest_path),
+        hash_fichero=hash_fichero,
+        hash_manifiesto=hash_manifiesto,
+        conteo_fichero=conteo_fichero,
+        conteo_manifiesto=conteo_manifiesto,
+        coincide=coincide,
+        motivo=motivo,
+    )
+
 
 class IngestionAuditReport(BaseModel):
     """Informe cuantitativo de calidad e integridad de datos."""
@@ -104,8 +215,7 @@ class MarketDataAuditor:
         coverage_pct = round((len(unique_bars) / max(1, expected_records)) * 100.0, 2)
 
         # 4. Checksum SHA-256 determinista
-        payload = f"{venue}:{symbol}:{interval}:{len(unique_bars)}:{start_ts}:{end_ts}"
-        sha_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        sha_hash = checksum_contenido_sha256(unique_bars)
 
         dataset_id = f"ds_{venue.lower()}_{symbol.lower().replace('-', '_')}_{interval}_{start_ts}_{end_ts}_{sha_hash[:10]}"
 
@@ -147,27 +257,14 @@ class MarketDataIngestor:
         """Audita y guarda el archivo JSON de velas y su manifest criptográfico correspondiente."""
         clean_bars, report = MarketDataAuditor.audit(bars, venue, symbol, interval)
 
-        # Serialización de velas
-        raw_list = [
-            {
-                "timestamp": b.timestamp_utc_ms,
-                "open": b.open,
-                "high": b.high,
-                "low": b.low,
-                "close": b.close,
-                "volume": b.volume,
-            }
-            for b in clean_bars
-        ]
-
         data_filename = f"{report.dataset_id}.json"
         manifest_filename = f"{report.dataset_id}_manifest.json"
 
         data_path = self.normalized_dir / data_filename
         manifest_path = self.normalized_dir / manifest_filename
 
-        with open(data_path, "w", encoding="utf-8") as f:
-            json.dump(raw_list, f, separators=(",", ":"))
+        contenido = serializar_velas_canonico(clean_bars)
+        data_path.write_bytes(contenido)
 
         manifest_data = {
             "datasetId": report.dataset_id,
@@ -183,6 +280,7 @@ class MarketDataIngestor:
             "sessionClosureBars": report.session_closure_bars,
             "coveragePct": report.coverage_pct,
             "checksumSha256": report.checksum_sha256,
+            "checksumScope": "normalized-file-bytes",
             "normalizedPath": f"normalized/{data_filename}",
             "createdAt": datetime.now(timezone.utc).isoformat(),
         }
