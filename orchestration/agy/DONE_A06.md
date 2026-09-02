@@ -1,0 +1,35 @@
+# DONE_A06
+
+- Agente: `A06` · Rama: `JOSFER78/agy-A06` · Inicio: `2026-09-02T09:31:26Z` · Fin: `2026-09-02T09:50:00Z`
+- Informe: `orchestration/results/agy/A06.md`
+- Ficheros tocados:
+  - Modificados (`git diff --name-only`):
+    - `contracts/gate_directory.py`
+    - `services/validation/validation_router.py`
+  - Nuevos (`git status --porcelain`):
+    - `services/validation/registry/__init__.py`
+    - `services/validation/registry/contratos.py`
+    - `services/validation/registry/registro.py`
+    - `services/validation/registry/pipeline.py`
+    - `services/validation/registry/adaptadores.py`
+    - `services/validation/registry/gates/__init__.py`
+    - `services/validation/registry/gates/gate_01.py`
+    - `services/validation/registry/gates/gate_02.py`
+    - `services/validation/registry/gates/gate_03.py`
+    - `services/validation/registry/gates/gate_04.py`
+    - `services/validation/registry/gates/gate_05.py`
+    - `services/validation/registry/gates/gate_06.py`
+    - `services/validation/registry/gates/gate_07.py`
+    - `services/validation/registry/gates/gate_08.py`
+    - `services/validation/registry/gates/gate_09.py`
+    - `services/validation/registry/gates/gate_10.py`
+    - `services/validation/registry/gates/gate_11.py`
+    - `tests/test_gate_registry_paridad_b.py`
+    - `tests/test_gate_registry_sustitucion.py`
+    - `tests/test_gate_registry_directorio.py`
+    - `orchestration/results/agy/A06.md`
+    - `orchestration/agy/DONE_A06.md`
+- Aceptación ejecutada por el agente: `PASA` (8 passed en tests de registro con dataset real, 5 passed en baseline suite B, 3 passed en suite A; salidas crudas en informe).
+- Lo que NO se pudo hacer y por qué:
+  - Ninguno. Todos los pasos completados satisfactoriamente.
+- Confirmo: sin `git` de escritura · sin `rm` · sin datos inventados · nada fuera del territorio.
