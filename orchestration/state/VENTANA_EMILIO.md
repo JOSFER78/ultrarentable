@@ -1,4 +1,13 @@
-# VENTANA EMILIO — lo único que necesito de ti (abierta 2026-09-01, ciclo 1)
+# VENTANA EMILIO — lo único que necesito de ti (abierta 2026-09-01; actualizada 2026-09-02, ciclo 3)
+
+> **Estado del ciclo 3 (orquestador Fable 5.1 en Orca, 2026-09-02):** los ciclos 1-2 están
+> commiteados en `main`; el arnés de los agentes está activo y **probado en la rama real de un
+> agente** (un agente de humo encontró que el arnés original no ataba nada y se corrigió: lista
+> blanca `ORQ_COMMIT=1`, hooks fuera de los worktrees). La **Ola A** se despacha con hasta 10
+> agentes en vuelo (9 `agy` + el refutador A02 en `codex`), cada uno en su worktree `agy-<ID>`,
+> con su contrato `orchestration/agy/GO_<ID>.md`. Dónde mirar: Panel de agentes y Tareas de
+> Orca; informes en `orchestration/results/agy/`. **Nada de lo de abajo ha cambiado: sigue
+> siendo lo único que necesito de ti, y la licencia SQX caduca en 3 días.**
 
 > Regla de la casa: **una sola ventana, no goteo.** Todo lo que sigue está preparado para que te
 > cueste minutos. Mientras tanto sigo trabajando en todo lo que NO depende de ti, que es la mayor
@@ -85,7 +94,7 @@ Si prefieres, dime solo **cuál es el proyecto correcto** y me encargo del resto
 
 ---
 
-## 3. ⏳ LICENCIA DE STRATEGYQUANT X — CADUCA EN 4 DÍAS (decisión de dinero, es tuya)
+## 3. ⏳ LICENCIA DE STRATEGYQUANT X — CADUCA EL 2026-09-05, EN 3 DÍAS (decisión de dinero, es tuya)
 
 **Esto ya no es un "puede que sí". Lo he ejecutado yo en tu PC y esta es la salida literal:**
 
@@ -184,6 +193,10 @@ No bloquea nada hoy: no hay 2 certificadas con las que ensamblar.
 | 1 | **Autorízame a limpiar el VPS** (§1), o pega tú los comandos | Alta — es el único bloqueo físico real | 1 frase, o 2 minutos |
 | 2 | **Autoriza los experimentos de SQX antes del día 5** y decide si se compra licencia (§3) | **Caduca el 2026-09-05** | 1 frase ahora; la compra, después y con datos |
 | 3 | **Dime cuál es el proyecto de Firebase correcto** (§2); las 7 claves me las pegas cuando te deje el fichero listo | Media — bloquea el login de la web | 1 frase ahora, 5 min luego |
+| 4 | **Pregunta 5.2** (router dinámico de la meta FONDEO): sin respuesta asumo asignación estática (D9) | Baja — no bloquea hoy | 1 frase |
+
+Lo que el plan pedía y ya NO hace falta que hagas: confirmar la integración de devilray a `main`
+(la hago yo por fast-forward tras auditar cada ola; el arnés impide que ningún agente publique).
 
 Nada más. Lo del fondeo (§5) no es para hoy y te lo recordaré cuando haya algo que examinar.
 Todo lo demás sigue avanzando sin ti mientras tanto.
