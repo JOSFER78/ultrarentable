@@ -1,0 +1,92 @@
+{
+  "vigia_version": "0.1.0",
+  "timestamp_utc": "2026-09-02T14:21:11.555065+00:00",
+  "fecha": "2026-09-02",
+  "host": "pc",
+  "plataforma": "win32",
+  "fuentes": {
+    "api": {
+      "estado": "ONLINE",
+      "codigo_http": 200,
+      "latencia_ms": 95.71,
+      "url": "http://127.0.0.1:8000/",
+      "version_api": "2.2.0",
+      "engine_version": "5.13.0",
+      "runtime_mode": "AUTONOMOUS_24X7",
+      "autonomous_runtime_enabled": true
+    },
+    "systemd": {
+      "estado": "NO DATA",
+      "motivo": "systemctl no disponible en este entorno (sistema no-Linux o sin systemd)",
+      "servicios": {
+        "ultrarentable-api.service": {
+          "estado": "NO DATA",
+          "motivo": "systemctl no disponible"
+        },
+        "ultrarentable-discovery.service": {
+          "estado": "NO DATA",
+          "motivo": "systemctl no disponible"
+        },
+        "sqx.service": {
+          "estado": "NO DATA",
+          "motivo": "systemctl no disponible"
+        },
+        "ultrarentable-vigia.service": {
+          "estado": "NO DATA",
+          "motivo": "systemctl no disponible"
+        }
+      }
+    },
+    "recursos": {
+      "estado": "DISPONIBLE",
+      "nucleos": 8,
+      "carga_1m": "NO DATA",
+      "carga_relativa": "NO DATA",
+      "memoria_disponible_mb": 14143.9,
+      "swap_libre_mb": 11270.8,
+      "cpu_pct": 100.0,
+      "ram_pct": 56.0,
+      "admision_trabajo_pesado": {
+        "admitido": true,
+        "motivo": "admitida: CPU 100.0%, 14144 MB libres (RAM 56.0%)"
+      },
+      "turno_trabajo_pesado": {
+        "nombre": "B03_E2_5m",
+        "pid": 30512,
+        "inicio_utc": "2026-09-02T14:01:01Z",
+        "carga_al_arrancar": 100.0,
+        "memoria_disponible_mb": 12114
+      }
+    },
+    "discovery": {
+      "estado": "NO DATA",
+      "motivo": "fichero cgroup memory.events no existe en rutas del sistema (/sys/fs/cgroup/...). Discovery inactivo o entorno sin cgroup v2.",
+      "eventos": {},
+      "alerta_thrashing": false
+    },
+    "bd": {
+      "estado": "DISPONIBLE",
+      "db_path": "C:\\Users\\yo\\.local\\state\\ultrarentable\\ultrarentable.sqlite3",
+      "size_bytes": 532480,
+      "size_mb": 0.51,
+      "wal_active": false,
+      "conteos_tablas": {
+        "strategies": 0,
+        "candidates": 0,
+        "backtests": 0,
+        "execution_sessions": 0,
+        "audit_events": 1,
+        "datasets": 1,
+        "portfolios": 0,
+        "provider_rule_sets": 40
+      },
+      "ultimos_trades": "sin_registros",
+      "ultimos_examenes": "sin_registros"
+    }
+  },
+  "resumen": {
+    "alerta_critica": false,
+    "total_alertas": 0,
+    "motivos_alerta": []
+  }
+}

@@ -1,0 +1,47 @@
+[Unit]
+Description=Ultrarentable Vigia V0 - Daily Read-Only Health & Integrity Inspector
+Documentation=file:///home/ubuntu/workspace/pro/trading/01%%20Ultrarentable/orchestration/HERMES_VPS_VIGIA.md
+After=network.target ultrarentable-api.service
+Wants=ultrarentable-api.service
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/workspace/pro/trading/01 Ultrarentable
+Environment="PYTHONPATH=/home/ubuntu/workspace/pro/trading/01 Ultrarentable"
+Environment="STATE_DB_PATH=/home/ubuntu/.local/state/ultrarentable/ultrarentable.sqlite3"
+ExecStart=/home/ubuntu/workspace/pro/trading/01 Ultrarentable/.venv/bin/python -m services.vigia.vigia_v0 --out-dir /home/ubuntu/workspace/pro/trading/01\x20Ultrarentable/orchestration/results/vigia
+
+# Sandboxing y endurecimiento estricto de seguridad (Solo Lectura)
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/workspace/pro/trading/01 Ultrarentable/orchestration/results/vigia
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+
+# Aislamiento de red: solo localhost para sondear la API interna, prohibido trafico saliente a internet
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+IPAddressAllow=localhost 127.0.0.1 ::1
+IPAddressDeny=any
+
+# Gobernanza de recursos: minima prioridad para no interferir con produccion
+Nice=19
+IOSchedulingClass=idle
+IOSchedulingPriority=7
+CPUQuota=10%
+MemoryHigh=256M
+MemoryMax=512M
+
+# Registro
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ultrarentable-vigia
+
+[Install]
+WantedBy=multi-user.target
