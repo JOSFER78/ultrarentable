@@ -295,13 +295,18 @@ class SizingAndRisk(BaseModel):
 
 
 class SessionWindow(BaseModel):
-    """Ventana horaria de sesión operativa permitida en horario UTC sin defaults silenciosos."""
+    """Ventana horaria de sesión operativa permitida en horario UTC o local (DST-aware) sin defaults silenciosos."""
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     start_time_utc: str = Field(default="00:00", description="HH:MM UTC apertura")
     end_time_utc: str = Field(default="23:59", description="HH:MM UTC cierre")
     close_at_eod: bool = Field(default=False, description="Cerrar posiciones al final del día")
     allowed_days: List[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4, 5, 6], description="Lista explícita de días permitidos")
+    market_tz: Optional[str] = Field(default=None, description="Zona horaria IANA del mercado e.g. America/New_York")
+    start_time_local: Optional[str] = Field(default=None, description="HH:MM hora local apertura")
+    end_time_local: Optional[str] = Field(default=None, description="HH:MM hora local cierre")
+    flat_time_local: Optional[str] = Field(default=None, description="HH:MM hora local flat obligatorio")
+    flat_tz: Optional[str] = Field(default=None, description="Zona horaria IANA para flat obligatorio e.g. America/Chicago")
 
     @model_validator(mode="before")
     @classmethod
@@ -315,9 +320,33 @@ class SessionWindow(BaseModel):
                 data.setdefault("allowed_days", [0, 1, 2, 3, 4, 5, 6])
         return data
 
+    @model_validator(mode="after")
+    def validate_tz(self) -> "SessionWindow":
+        import zoneinfo
+        if self.market_tz is not None:
+            try:
+                zoneinfo.ZoneInfo(self.market_tz)
+            except Exception as e:
+                raise ValueError(f"Zona horaria invalida en market_tz: {self.market_tz}") from e
+        if self.flat_tz is not None:
+            try:
+                zoneinfo.ZoneInfo(self.flat_tz)
+            except Exception as e:
+                raise ValueError(f"Zona horaria invalida en flat_tz: {self.flat_tz}") from e
+        return self
+
     @property
     def force_close_at_end(self) -> bool:
         return self.close_at_eod
+
+    def model_dump(self, *args, **kwargs) -> Dict[str, Any]:
+        d = super().model_dump(*args, **kwargs)
+        # 5.18.0: Campos aditivos opcionales de sesion con DST / flat
+        # Para preservar el canonical_hash bit a bit identico con 5.17.0 cuando no estan presentes
+        for k in ("market_tz", "start_time_local", "end_time_local", "flat_time_local", "flat_tz"):
+            if k in d and d[k] is None:
+                d.pop(k)
+        return d
 
 
 class TargetInstrument(BaseModel):

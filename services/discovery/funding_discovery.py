@@ -36,13 +36,21 @@ class FundingSearchSpace(BaseModel):
 
 def resolve_session_window(
     symbol: str,
+    archetype: Optional[str] = None,
     session_start_utc: Optional[str] = None,
     session_end_utc: Optional[str] = None,
     close_at_eod: Optional[bool] = None,
     allowed_days: Optional[List[int]] = None,
+    market_tz: Optional[str] = None,
+    start_time_local: Optional[str] = None,
+    end_time_local: Optional[str] = None,
+    flat_time_local: Optional[str] = None,
+    flat_tz: Optional[str] = None,
 ) -> SessionWindow:
-    """Calcula o asigna la SessionWindow correspondiente al activo y mercado."""
+    """Calcula o asigna la SessionWindow correspondiente al activo, mercado y familia."""
     sym_upper = symbol.upper()
+    arch_upper = str(archetype).upper() if archetype else ""
+
     # Incluye los MICROS CME (MES/MNQ/MYM/M2K/MGC/MCL): desde 2026-08-31 mine.py le pasa a
     # generate_candidate_blueprint el simbolo MICRO como `symbol` para FONDEO (ver
     # FONDEO_MICRO_MAP en scripts/mine.py), y esta funcion clasifica el mercado por prefijo/
@@ -54,25 +62,77 @@ def resolve_session_window(
     forex_symbols = {"EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "EURGBP", "EURJPY"}
     crypto_symbols = {"BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT", "SUIUSDT", "LINKUSDT", "AVAXUSDT", "BNBUSDT"}
 
-    if sym_upper in cme_symbols or any(sym_upper.startswith(c) for c in cme_symbols):
-        def_start, def_end, def_days, def_close = "13:30", "20:00", [0, 1, 2, 3, 4], True
-    elif sym_upper in forex_symbols or ("USD" in sym_upper and "USDT" not in sym_upper) or "EUR" in sym_upper or "GBP" in sym_upper:
+    is_cme = sym_upper in cme_symbols or any(sym_upper.startswith(c) for c in cme_symbols)
+    is_fx = sym_upper in forex_symbols or ("USD" in sym_upper and "USDT" not in sym_upper) or "EUR" in sym_upper or "GBP" in sym_upper
+    is_crypto = sym_upper in crypto_symbols or "USDT" in sym_upper or "BTC" in sym_upper or "ETH" in sym_upper
+
+    rth_archetypes = {
+        "SESSION_MOMENTUM",
+        "INSTITUTIONAL_SESSION_MOMENTUM",
+        "OPENING_RANGE_BREAKOUT",
+        "VWAP_REVERSION",
+    }
+
+    if is_cme:
+        if arch_upper in rth_archetypes:
+            # Familias ancladas a sesión RTH (09:30-16:00 ET)
+            def_start_local, def_end_local = "09:30", "16:00"
+            def_start, def_end = "13:30", "20:00"
+            def_market_tz = "America/New_York"
+            def_flat_local, def_flat_tz = "15:10", "America/Chicago"
+            def_days, def_close = [0, 1, 2, 3, 4], True
+        else:
+            # Familias Globex (REVERSION_ATR, SQUEEZE_BREAKOUT, STREAK_EDGE, etc.):
+            # Sesión completa 18:00 ET (día anterior) -> 17:00 ET, con flat obligatorio 15:10 CT
+            def_start_local, def_end_local = "18:00", "17:00"
+            def_start, def_end = "22:00", "21:00"
+            def_market_tz = "America/New_York"
+            def_flat_local, def_flat_tz = "15:10", "America/Chicago"
+            def_days, def_close = [0, 1, 2, 3, 4, 6], True
+    elif is_fx:
         def_start, def_end, def_days, def_close = "07:00", "20:00", [0, 1, 2, 3, 4], True
-    elif sym_upper in crypto_symbols or "USDT" in sym_upper or "BTC" in sym_upper or "ETH" in sym_upper:
+        def_market_tz = None
+        def_start_local, def_end_local = None, None
+        def_flat_local, def_flat_tz = None, None
+    elif is_crypto:
         def_start, def_end, def_days, def_close = "00:00", "23:59", [0, 1, 2, 3, 4, 5, 6], True
+        def_market_tz = None
+        def_start_local, def_end_local = None, None
+        def_flat_local, def_flat_tz = None, None
     else:
-        def_start, def_end, def_days, def_close = "13:30", "20:00", [0, 1, 2, 3, 4], True
+        if arch_upper in rth_archetypes:
+            def_start_local, def_end_local = "09:30", "16:00"
+            def_start, def_end = "13:30", "20:00"
+            def_market_tz = "America/New_York"
+            def_flat_local, def_flat_tz = "15:10", "America/Chicago"
+            def_days, def_close = [0, 1, 2, 3, 4], True
+        else:
+            def_start_local, def_end_local = "18:00", "17:00"
+            def_start, def_end = "22:00", "21:00"
+            def_market_tz = "America/New_York"
+            def_flat_local, def_flat_tz = "15:10", "America/Chicago"
+            def_days, def_close = [0, 1, 2, 3, 4, 6], True
 
     start = session_start_utc if session_start_utc is not None else def_start
     end = session_end_utc if session_end_utc is not None else def_end
     days = allowed_days if allowed_days is not None else def_days
     close = close_at_eod if close_at_eod is not None else def_close
+    m_tz = market_tz if market_tz is not None else def_market_tz
+    s_loc = start_time_local if start_time_local is not None else def_start_local
+    e_loc = end_time_local if end_time_local is not None else def_end_local
+    f_loc = flat_time_local if flat_time_local is not None else def_flat_local
+    f_tz = flat_tz if flat_tz is not None else def_flat_tz
 
     return SessionWindow(
         start_time_utc=start,
         end_time_utc=end,
         close_at_eod=close,
         allowed_days=days,
+        market_tz=m_tz,
+        start_time_local=s_loc,
+        end_time_local=e_loc,
+        flat_time_local=f_loc,
+        flat_tz=f_tz,
     )
 
 
@@ -218,9 +278,10 @@ class FundingDiscoveryEngine:
         # Decision #24: en FONDEO el cierre EOD de session_momentum es SIEMPRE obligatorio
         # (no es una dimension de busqueda como en ULTRA); se fuerza aqui sin importar lo que
         # traiga `close_at_eod` o `archetype_params["cierre_eod"]`.
-        _close_at_eod_final = True if arch_upper == "SESSION_MOMENTUM" else close_at_eod
+        _close_at_eod_final = True if arch_upper in {"SESSION_MOMENTUM", "INSTITUTIONAL_SESSION_MOMENTUM"} else close_at_eod
         session_window = resolve_session_window(
             symbol=symbol,
+            archetype=arch_upper,
             session_start_utc=session_start_utc,
             session_end_utc=session_end_utc,
             close_at_eod=_close_at_eod_final,

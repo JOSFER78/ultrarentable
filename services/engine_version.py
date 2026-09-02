@@ -89,9 +89,14 @@ from typing import Any, Dict, List, Optional, Tuple
 #   orchestration/reviews/diseno_arquetipos_5_17_0.md. Aditivo estricto: 15/15 celdas de
 #   scripts/verificacion_f02.py identicas a 5.16.0 (el perfil `champions` que usa esa
 #   verificacion no incluye estas 2 familias nuevas).
+# 5.18.0 (W2.9): Sesiones conscientes de DST por vela con zoneinfo y ventanas por familia.
+#   Apertura RTH (09:30 ET) en America/New_York cae a las 13:30 UTC en verano y a las 14:30 UTC
+#   en invierno, corrigiendo el 33.4% de dias en horario estandar. Ventanas diferenciadas:
+#   RTH (09:30-16:00 ET) para ancladas a sesion; Globex (18:00-17:00 ET) con flat 15:10 CT
+#   (America/Chicago) para familias continuas de fondeo (Topstep).
 # Las certificaciones anteriores NO son comparables: se marcan LEGACY_MOTOR_* (regla #26).
-CURRENT_ENGINE_VERSION: str = "5.17.0"
-CURRENT_ENGINE_NAME: str = "Ultrarentable V5.17.0 (Opening Range Breakout + VWAP Reversion: arquetipos intradia de futuros de indice)"
+CURRENT_ENGINE_VERSION: str = "5.18.0"
+CURRENT_ENGINE_NAME: str = "Ultrarentable V5.18.0 (Sesiones conscientes de DST por vela + ventanas por familia y flat obligatorio 15:10 CT)"
 CURRENT_PIPELINE_VERSION: str = "5.4.0"
 CURRENT_VALIDATION_PIPELINE_VERSION: str = "5.4.0"
 VALIDATION_PIPELINE_VERSION: str = "5.4.0"
@@ -100,15 +105,28 @@ CURRENT_POLICY_VERSION: str = "5.4.0"
 CURRENT_GATE_POLICY_VERSION: str = "5.4.0"
 MIN_SUPPORTED_ENGINE_VERSION: str = "1.0.0"
 MINIMUM_SUPPORTED_VERSION: str = "1.0.0"
-ENGINE_RELEASE_DATE: str = "2026-09-01"
+ENGINE_RELEASE_DATE: str = "2026-09-02"
 CANONICAL_AUTHOR: str = "Ultrarentable Core Quantitative Team"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
-        "version": "5.17.0",
+        "version": "5.18.0",
         "name": CURRENT_ENGINE_NAME,
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "status": "CURRENT_RECOMMENDED",
+        "changes": [
+            "W2.9 (regla #26, D10): sesiones conscientes de DST por vela con zoneinfo (America/New_York para indices CME; apertura RTH 09:30 ET cae a las 13:30 UTC en verano y 14:30 UTC en invierno, corrigiendo el 33.4% de dias en horario estandar con sesion fija).",
+            "Ventana de sesion por familia: RTH 09:30-16:00 ET para ancladas a sesion (SESSION_MOMENTUM, OPENING_RANGE_BREAKOUT, VWAP_REVERSION); ventana Globex 18:00-17:00 ET con flat obligatorio a las 15:10 America/Chicago (Topstep / firmas verificadas) para REVERSION_ATR, SQUEEZE_BREAKOUT, STREAK_EDGE y resto de familias FONDEO CME.",
+            "Campos aditivos opcionales en SessionWindow (market_tz, start_time_local, end_time_local, flat_time_local, flat_tz) con defaults None; hash canonico de snapshots sin campos nuevos 100% bit a bit identico a 5.17.0.",
+            "Conversion por vela en EventBacktestEngine (_is_in_session_window, _session_start_minutes, _is_session_end, _calc_session_vwap, _calc_opening_range_levels) sin tablas fijas de DST, fail-closed ante market_tz invalido.",
+            "9 celdas ULTRA de verificacion_f02 identicas bit a bit (ledger SHA-256 intacto); 6 celdas FONDEO actualizadas reflejando el horario local real y el flat obligatorio.",
+        ],
+    },
+    {
+        "version": "5.17.0",
+        "name": "Ultrarentable V5.17.0 (Opening Range Breakout + VWAP Reversion: arquetipos intradia de futuros de indice)",
+        "date": "2026-09-01",
+        "status": "STALE",
         "changes": [
             "CUELLO 6 (plan FONDEO): 2 familias de arquetipos EVENTO nuevas para futuros intradia de indice en 5m/15m -- opening_range_breakout (ruptura del rango de los primeros `or_minutes` {15,30,60} minutos tras la apertura de sesion RTH, session_window.start_time_utc) y vwap_reversion (reversion al VWAP anclado a sesion, se reinicia cada dia; TP dinamico = VWAP vivo, igual patron que reversion_atr).",
             "Causa: ningun arquetipo existente opera lo suficiente en futuros intradia para las >=200 operaciones OOS del criterio 1.1 sellado (session_momentum: 24-27 operaciones OOS best-case en la campana 1h). Estimado por conteo de eventos (sin backtest) sobre ES 5m/15m Dukascopy: ORB ~1.5 eventos/dia-sesion, VWAP_REVERSION ~1.5-3.3 eventos/dia-sesion -- ambos proyectan varios cientos de operaciones sobre el tramo OOS completo.",
