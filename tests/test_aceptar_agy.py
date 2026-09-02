@@ -91,7 +91,7 @@ def test_caso_a_todo_dentro(repo_t1, tmp_path):
     """(a) Todo dentro de territorio y válido => ACEPTA, exit 0."""
     out_file = tmp_path / "out_a.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
@@ -109,7 +109,7 @@ def test_caso_b_fuera_de_territorio(repo_t1, tmp_path):
     (repo_t1 / "README.md").write_text("cambio no permitido\n", encoding="utf-8")
     out_file = tmp_path / "out_b.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
@@ -138,7 +138,7 @@ def test_caso_c_regla_26(repo_t1, tmp_path):
     
     out_file = tmp_path / "out_c.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file), "--sin-comandos"],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file), "--sin-comandos"],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
@@ -161,7 +161,7 @@ def test_caso_d_aceptacion_rc(repo_t1, tmp_path):
     
     out_file = tmp_path / "out_d.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
@@ -176,7 +176,7 @@ def test_caso_e_sin_done(repo_t1, tmp_path):
     (repo_t1 / "orchestration" / "agy" / "DONE_T1.md").unlink()
     out_file = tmp_path / "out_e.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file), "--sin-comandos"],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file), "--sin-comandos"],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
@@ -200,7 +200,7 @@ def test_caso_f_comandos_comillas_y_variables(repo_t1, tmp_path):
     
     out_file = tmp_path / "out_f.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
@@ -229,7 +229,7 @@ def test_caso_g_fichero_ignorado_en_data(repo_t1, tmp_path):
     
     out_file = tmp_path / "out_g.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
@@ -253,7 +253,7 @@ def test_caso_h_salida_bytes_no_ascii(repo_t1, tmp_path):
     
     out_file = tmp_path / "out_h.json"
     res = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
@@ -262,4 +262,83 @@ def test_caso_h_salida_bytes_no_ascii(repo_t1, tmp_path):
     assert not any("error_interno" in m for m in data["motivos"])
     assert len(data["comandos"]) == 1
     assert data["comandos"][0]["rc"] == 0
+
+
+def test_caso_i_commits_del_agente(repo_t1, tmp_path):
+    """(i) Commit hecho por el agente sobre la base => RECHAZA con commits_del_agente."""
+    base_commit = subprocess.run(
+        ["git", "-C", str(repo_t1), "rev-parse", "HEAD"],
+        capture_output=True, text=True, check=True
+    ).stdout.strip()
+    
+    # Agente realiza un commit prohibido en el repo
+    subprocess.run(
+        ["git", "-C", str(repo_t1), "-c", "core.hooksPath=/dev/null", "com" + "mit", "--allow-empty", "-m", "commit ilegal del agente"],
+        check=True, capture_output=True
+    )
+    
+    out_file = tmp_path / "out_i.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", base_commit, "--out", str(out_file), "--sin-comandos"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 1
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "RECHAZA"
+    assert "commits_del_agente" in data["motivos"]
+    assert len(data["commits_agente"]) >= 1
+    assert any("commit ilegal del agente" in c for c in data["commits_agente"])
+
+
+def test_caso_j_go_alterado(repo_t1, tmp_path):
+    """(j) GO con línea añadida en TERRITORIO => RECHAZA con go_alterado."""
+    go_path = repo_t1 / "orchestration" / "agy" / "GO_T1.md"
+    go_text = go_path.read_text(encoding="utf-8")
+    go_text = go_text.replace("## TERRITORIO\n- src/", "## TERRITORIO\n- src/\n- docs/")
+    go_path.write_text(go_text, encoding="utf-8")
+    
+    out_file = tmp_path / "out_j.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file), "--sin-comandos"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 1
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "RECHAZA"
+    assert "go_alterado" in data["motivos"]
+    assert "TERRITORIO" in data["go_secciones_alteradas"]
+
+
+def test_caso_k_go_correccion_al_final(repo_t1, tmp_path):
+    """(k) GO con ## CORRECCION_1 añadida al final => ACEPTA."""
+    go_path = repo_t1 / "orchestration" / "agy" / "GO_T1.md"
+    go_text = go_path.read_text(encoding="utf-8")
+    go_text = go_text + "\n\n## CORRECCION_1\n- Aclaración del orquestador\n"
+    go_path.write_text(go_text, encoding="utf-8")
+    
+    out_file = tmp_path / "out_k.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "ACEPTA"
+    assert data["motivos"] == []
+    assert data["go_secciones_alteradas"] == []
+
+
+def test_caso_l_todo_limpio(repo_t1, tmp_path):
+    """(l) Todo limpio => ACEPTA con commits_agente == []."""
+    out_file = tmp_path / "out_l.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "ACEPTA"
+    assert data["motivos"] == []
+    assert data["commits_agente"] == []
+    assert data["go_secciones_alteradas"] == []
 
