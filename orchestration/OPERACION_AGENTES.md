@@ -116,3 +116,5 @@ Si Antigravity IDE o una extensión reescribe `~/.gemini/config/mcp_config.json`
 ## 4. Prohibición Explícita de Codex (Emilio, 2026-09-02)
 
 Queda **estrictamente prohibido** invocar, configurar o referenciar `codex` como backend o worker. Todos los agentes deben operar bajo el motor oficial Antigravity (`agy` con modelo `gemini-3.7-flash-high`).
+
+> **AVISO (2026-09-02 18:40):** `scripts/orq/agy_cerrar.sh` esta ROTO en uso real: muere en el paso 4 (variables de PowerShell expandidas por bash con `set -u`) y su paso 3 (purga de "MCP huerfanos") mato la web y la API locales (uvicorn 8100 / next 3100) dos veces. NO usarlo hasta aplicar `orchestration/agy/GO_B20.md` seccion CORRECCION_1 (WIP en la rama `agy-B20`, `79af47a16`). Cierre manual mientras tanto: `orca orchestration worker-release --dispatch <ctx>` -> `orca terminal stop --worktree path:<ruta>` -> `Get-Process agy` -> junctions con `DirectoryInfo.Delete()` -> `git worktree remove --force`.

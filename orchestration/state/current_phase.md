@@ -1,5 +1,7 @@
 # FASE ACTUAL — 2026-09-02, ~11:30 UTC · CICLO 3 DE LA ERA LOCAL (orquestador Fable 5.1 en Orca; agentes Antigravity atados)
 
+> **ESTADO 2026-09-02 18:40 - ORCA PARADO por Emilio ("va terriblemente lento").** Todos los agentes, terminales, monitores, la campana E2 y el localhost estan parados; la maquina limpia (0 agy, 0 node, 0 python del proyecto). El traspaso completo para seguir en Claude Code esta en `orchestration/state/TRASPASO_CLAUDE_CODE_2026-09-02.md` (que hay hecho, que esta a medias con su commit WIP, que falta, como arrancar cada pieza).
+
 > **MANDATO ACTIVO (sin cambios): FONDEO + META-FONDEO + `/estrategias`.** ULTRA EN CONSTRUCCIÓN,
 > presente y visible, nunca borrado. **Regla de este ciclo (Emilio):** todo lo mecánico lo
 > ejecutan hasta 10 agentes en vuelo por el sistema multiagente de Orca (todos `agy` con Gemini 3.7
