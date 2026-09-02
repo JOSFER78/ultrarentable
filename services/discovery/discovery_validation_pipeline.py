@@ -73,11 +73,11 @@ def _construir_simbolos_fondeo() -> frozenset:
 SIMBOLOS_FONDEO = _construir_simbolos_fondeo()
 
 # --- SINGLETON PROCESS LOCK ---
-import fcntl
 _DISCOVERY_LOCK_FD = None
 def _acquire_singleton_lock():
     global _DISCOVERY_LOCK_FD
     try:
+        import fcntl
         _DISCOVERY_LOCK_FD = open('/tmp/ultrarentable_discovery.lock', 'w')
         fcntl.flock(_DISCOVERY_LOCK_FD, fcntl.LOCK_EX | fcntl.LOCK_NB)
         _DISCOVERY_LOCK_FD.write(f"{os.getpid()}\n")
@@ -85,6 +85,8 @@ def _acquire_singleton_lock():
     except (IOError, BlockingIOError):
         print(f"[DISCOVERY] Otra instancia ya esta en ejecucion. Saliendo limpiamente PID {os.getpid()}.")
         sys.exit(0)
+    except (ImportError, OSError):
+        pass
 
 # El lock se adquiere SOLO al ejecutar como proceso (ver __main__): adquirirlo en el import
 # mataba a cualquier importador (pytest incluido) con sys.exit(0) mientras el servicio corria.
