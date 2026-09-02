@@ -91,6 +91,7 @@ A02 relanzado en `agy`. B07 (`services/improvement`) integrado (`cf91ac01b`).
 | B15 | higiene sostenible de agentes agy (`scripts/orq/`, OPERACION_AGENTES.md) | ACEPTA; 5 tests reales (agy_matar protege pesados + ancestros); mcp_vacio; censo JSON; lanzador con medición de hijos | `500f85031` |
 | B16 | localhost de ULTRARENTABLE en el PC (`web_local.ps1`, 3100/8100, BACKEND_URL) | ACEPTA; tsc rc=0; valores por defecto intactos; el agente arrancó, comprobó y paró la instancia | `c294b51ca` |
 | B06 | config B de SQX (A/B) + build headless (W3.2) | **PARCIAL, integrado en 3ª ronda** (`dcf2c096c`): 1ª ronda sin build; 2ª con `NumberFormatException "auto"` y 0 estrategias; 3ª real: 30 min 19 s, 19.924 candidatos, 0 aceptados bajo criterio 1.1, 100 en Last generation. Carril SQX aparcado salvo decisión (VENTANA §6) | `dcf2c096c` |
+| B18 | instantánea de la BD canónica del VPS en el PC (solo lectura en el VPS) | ACEPTA; integrity ok; 525 estrategias y 38.456 trials en el PC = VPS; SHA-256 idéntico; BD vacía anterior en cuarentena; el localhost enseña datos reales | `7c80779a6` |
 | A02 | refutador del arnés | ACEPTA; 7/10 bloqueos; agujeros de cliente documentados; k5: el agente puede ampliar su TERRITORIO → **D16** | `552ce5c11` |
 | B13 | W4.2-bis candado del discovery | ACEPTA; aviso explícito sin fcntl; resto se propaga | `405ff4095` |
 
@@ -109,7 +110,7 @@ respondida: **es edge** (la familia no tiene ventaja bruta). E2 (B03, en vuelo) 
 familias con espacio completo; si confirma `AGOTADA` por familia, el siguiente paso es **W3.4 (diseño
 de familias nuevas, tarea del ORQ)** y el carril SQX (B06), no más barridos de parámetros.
 
-En vuelo a 17:50 (agy limpios): B03 CONTINUACION `ctx_b4973eb21529` (E2 5m corriendo bajo gobernanza; la de 15m después) y B18 `ctx_38cc89ca51ad` (instantánea de la BD canónica del VPS al PC para que el localhost muestre datos reales; issue #33). Integrados hoy: B10, B14, B12, B17, B15, B16, B06 (parcial). Worktrees terminados retirados (quedan B03, B18, devilray, ratfish). Localhost: terminal de Orca "web-local 3100/8100" con `scripts/orq/web_local.ps1` (web 3100, API 8100; la BD del PC está vacía hasta B18). Pendiente: B04 (tras B03).
+En vuelo a 18:10 (mandato de Emilio 18:00: primero el sistema, luego muchos trabajos mini): **Ola S** B19 lanzador v2 `ctx_cc6db4af99f7`, B20 cierre completo `ctx_675fbc52ee66`, B21 arnés v3 `ctx_a34f1964ca6d`, B22 vigilante + plantilla v2 `ctx_5bb30397fa4f` (issues #34-#37; los 4 despachados en paralelo en 113 s con el despachador corregido); B03 CONTINUACION `ctx_b4973eb21529` (E2 5m, ~1 h de CPU). Integrados hoy: B10, B14, B12, B17, B15, B16, B06 (parcial), B18. Después de la ola S: trabajo de humo cronometrado del bucle completo y, si pasa, tanda de trabajos mini (B04 tras B03). Localhost: terminal de Orca "web-local 3100/8100" sirviendo desde devilray con la BD real (38.456 trials). Worktrees vivos: B03, B19-B22.
 
 **Ola B (adaptativa) lanzada a 12:35 UTC** con contratos en `GO_B02/B03/B05/B07/B08/B09/B11.md`
 (`cd94632c9`): B02 = E1 (20 REVERSION_ATR de ES en 5m/15m con 5.18.0), B07 improvement, B08 meta,

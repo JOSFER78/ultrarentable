@@ -193,3 +193,8 @@ orchestration/site/*.log
 orchestration/site/local.pids.json
 orchestration/site/local.pids.*.json
 
+
+# BD aparcadas en cuarentena: quedan en disco con su MANIFEST, nunca en git (el arnes bloquea datos)
+cuarentena/**/*.sqlite3
+cuarentena/**/*.sqlite3-wal
+cuarentena/**/*.sqlite3-shm
