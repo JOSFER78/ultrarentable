@@ -1,0 +1,61 @@
+{
+  "id": "A04",
+  "worktree": "C:\\Users\\yo\\orca\\workspaces\\ultrarentable\\agy-A04",
+  "veredicto": "ACEPTA",
+  "motivos": [],
+  "ficheros_tocados": [],
+  "fuera_de_territorio": [],
+  "toca_motor": false,
+  "comandos": [
+    {
+      "cmd": "export AGY_AGENT=A04 PYTHONPATH=.",
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "PY=\"C:/Users/yo/Pictures/Descargaspc/pro/UltrarentablePC/ultrarentable/.venv/Scripts/python.exe\"",
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "\"$PY\" -m pytest tests/test_market_ingestor_checksum_contenido.py -q -p no:cacheprovider -rs",
+      "rc": 0,
+      "stdout_tail": "....s                                                                    [100%]\n=========================== short test summary info ===========================\nSKIPPED [1] tests\\test_market_ingestor_checksum_contenido.py:128: NO DATA: en este worktree data/normalized solo contiene manifiestos\n4 passed, 1 skipped in 2.95s",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "\"$PY\" -m pytest tests/test_data_pipeline.py -q -p no:cacheprovider -k market_data",
+      "rc": 0,
+      "stdout_tail": ".......                                                                  [100%]\n7 passed, 3 deselected in 3.13s",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "\"$PY\" -c \"from contracts.backtest import BarData; from services.data.market_ingestor import checksum_contenido_sha256 as c; t=1771718400000; print(c([BarData(timestamp_utc_ms=t+i*3600000, open=100+i, high=105+i, low=95+i, close=102+i, volume=50) for i in range(3)]))\"",
+      "rc": 0,
+      "stdout_tail": "2a5c29e758a06521eafd0f0dcb6277703ac31904f82de127cc303ae52d156de1",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "grep -n 'venue}:{symbol}:{interval}' services/data/market_ingestor.py",
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "grep -c \"def serializar_velas_canonico\\|def checksum_contenido_sha256\\|def verificar_dataset_contra_manifiesto\" services/data/market_ingestor.py",
+      "rc": 0,
+      "stdout_tail": "3",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "git diff --name-only   # \u2286 TERRITORIO (m\u00e1s GO_A04.md si el ORQ a\u00f1adi\u00f3 CORRECCION_n)",
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "avisos": [],
+  "generado_utc": "2026-09-02T09:47:39.040674+00:00"
+}

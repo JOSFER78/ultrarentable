@@ -61,3 +61,13 @@ git add/commit/push/reset/checkout/merge/stash en el repo del proyecto (en el re
 2. orchestration/results/agy/A01.md: comandos ejecutados y salida CRUDA pegada literal; lo que no se pudo; hallazgos; veredicto propio.
 3. orchestration/agy/DONE_A01.md (plantilla: orchestration/agy/PLANTILLA_DONE.md).
 4. Cierre: orca orchestration send --type worker_done --subject "A01 <PASA|FALLA|PARCIAL>" --body "<3 frases>" --task-id <T> --dispatch-id <D> --outcome succeeded|failed --json
+
+## CORRECCION_1 (ORQ, 2026-09-02 11:40) — dos defectos encontrados al auditar con casos reales; REPITE
+
+Tu script pasó su propio test, pero al ejecutarlo contra el worktree real de A04 (`scripts/aceptar_agy.py A04 --worktree ../agy-A04`) rechazó en falso: los 11 comandos de aceptación salieron `rc=-1 "No ejecutado"` aunque todos pasan. Causa, en `ejecutar_comandos_aceptacion`: el marcador `echo "### CMD: {cmd}"` NO escapa las comillas del comando, así que bash imprime `PY=C:/...` donde el GO decía `PY="C:/..."`, el texto no coincide con `cmd_lines` y el parser lo da por no ejecutado.
+
+1. **Marcadores por índice, no por texto.** Emite `echo "### CMD 3"` (número de línea del comando) y `echo "### RC 3: $?"`, y asocia por índice con `cmd_lines[i]`. El texto del comando se guarda desde `cmd_lines`, nunca desde la salida del shell. Así ninguna comilla, `$`, `|` o `#` del comando puede romper el emparejamiento.
+2. **Ficheros en rutas IGNORADAS bajo `data/`**: hoy `git ls-files --others --exclude-standard` no ve un fichero nuevo en `data/normalized/` (probado: escribí `data/normalized/ds_prueba_orq.json` en A04 y el veredicto fue ACEPTA con 0 ficheros). Añade `git ls-files --others --ignored --exclude-standard -- data/` y vuelca el resultado (máximo 50 rutas) en `avisos` como `ignorado_en_data: <ruta>`. NO es rechazo automático (en algunos worktrees `data/normalized` es un enlace a datos reales), pero el ORQ tiene que verlo.
+3. Añade a `tests/test_aceptar_agy.py`: (f) aceptación con un comando que contiene comillas dobles y `$VAR` (p. ej. `PY="$(command -v git)"` seguido de `"$PY" --version`) ⇒ ACEPTA y los dos comandos con `rc=0` y su `cmd` igual al texto original del GO; (g) fichero nuevo en una ruta ignorada por un `.gitignore` del repo temporal bajo `data/` ⇒ ACEPTA pero `avisos` contiene `ignorado_en_data: data/x.json`.
+4. Repite la ACEPTACIÓN del GO (ahora `7 passed`) y añade a tu informe la salida de `"$PY" scripts/aceptar_agy.py A04 --worktree ../agy-A04 --out ../agy-A01/orchestration/results/agy/aceptacion_A04_prueba.json` ⇒ `ACEPTA`, 11 comandos con rc=0 (A04 ya está integrado y su árbol limpio: 0 ficheros tocados es lo esperado).
+Cierra con un nuevo `worker_done` (subject `A01 CORRECCION_1 <PASA|FALLA>`).
