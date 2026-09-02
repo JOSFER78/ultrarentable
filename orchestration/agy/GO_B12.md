@@ -48,3 +48,13 @@ git de escritura · rm · escribir/instalar/parar/arrancar nada en el VPS · esc
 ## SALIDA
 1. Working tree con los cambios (SIN commit). 2. orchestration/results/agy/B12.md. 3. orchestration/agy/DONE_B12.md.
 4. Cierre: orca orchestration send --type worker_done --subject "B12 <PASA|FALLA|PARCIAL>" --body "<3 frases>" --task-id <T> --dispatch-id <D> --outcome succeeded|failed --json
+
+## CORRECCION_1 (ORQ, 2026-09-02 14:05) — continuación: el agente anterior murió a las 13:30 sin informe ni DONE
+
+Hechos (verificados por el ORQ): en este worktree ya existen `services/vigia/`, `deploy/vigia/`, `tests/test_vigia_v0.py` y `orchestration/results/vigia/` (sin versionar), escritos por el agente anterior antes de morir; NO existen `orchestration/results/agy/B12.md` ni `orchestration/agy/DONE_B12.md`. Tú eres un agente nuevo: no rehagas desde cero; verifica lo que hay.
+
+Qué hacer:
+1. `git status --porcelain` (pega la salida) y lee los ficheros existentes.
+2. Ejecuta los comandos de ACEPTACIÓN tal cual. Lo que falle, corrígelo (dentro del TERRITORIO). Lo que no puedas verificar: `NO DATA`.
+3. Ejecuta la lectura ssh de ENTRADAS (solo lectura) y pégala en el informe; si `ssh oracle-vps` falla, `NO DATA` con el error.
+4. Escribe `orchestration/results/agy/B12.md` (con las salidas crudas) y `orchestration/agy/DONE_B12.md`; cierre con `worker_done`.

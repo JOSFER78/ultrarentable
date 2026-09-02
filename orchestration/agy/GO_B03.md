@@ -50,3 +50,14 @@ git de escritura · rm · escribir en data/ · tocar código · datos sintético
 2. orchestration/results/agy/B03.md con comandos, salida cruda, tablas por celda y veredictos.
 3. orchestration/agy/DONE_B03.md.
 4. Cierre: orca orchestration send --type worker_done --subject "B03 <PASA|FALLA|PARCIAL>" --body "<3 frases>" --task-id <T> --dispatch-id <D> --outcome succeeded|failed --json
+
+## CORRECCION_1 (ORQ, 2026-09-02 14:05) — continuación: el agente anterior fue cerrado y la campaña E2 5m murió sin telemetría
+
+Hechos (verificados por el ORQ): el agente B03 anterior (pid 28076, config MCP vieja) fue cerrado a las 13:58 por orden de Emilio; la campaña `B03_E2_5m` (gobernanza `--nombre B03_E2_5m`, PID 17012 → `scripts/mine.py`, arrancada 13:12) ya no existe y NO dejó ningún fichero en `orchestration/results/telemetria/` ni en el worktree (`find . -mmin -60` vacío). Hay que relanzarla. Tú eres un agente nuevo y limpio: no des por hecho nada del anterior.
+
+Qué hacer:
+1. `"$PY" -m services.ops.gobernanza_recursos estado` (pega la salida). Pesados ahora mismo: el build de SQX de B06 (sqcli, ~4 GB). Tu campaña es el segundo pesado admitido (admisión del ORQ ya concedida: 2 campañas SECUENCIALES, 5m y después 15m, concurrencia 2). No pidas admisión de nuevo.
+2. Lanza cada campaña DESACOPLADA de tu proceso, para que sobreviva si tú mueres: `powershell -NoProfile -Command "Start-Process -WindowStyle Hidden -FilePath '<PY>' -ArgumentList '-m','services.ops.gobernanza_recursos','ejecutar','--nombre','B03_E2_5m','--','<PY>','scripts/mine.py',<args de mine.py como en el GO> -WorkingDirectory '<tu worktree>' -RedirectStandardOutput 'orchestration/results/telemetria/B03_E2_5m.stdout.txt' -RedirectStandardError 'orchestration/results/telemetria/B03_E2_5m.stderr.txt' -PassThru | Select-Object -ExpandProperty Id"` y escribe el PID en `orchestration/results/telemetria/B03_pids.txt` (una línea por campaña: nombre, pid, hora). Crea la carpeta si no existe.
+3. Supervisa cada 5 min (`gobernanza_recursos estado`, tamaño de los `.stdout.txt`, `Get-Process -Id <pid>`); latido con `orca orchestration send --type heartbeat`. Cuando termine la de 5m, lanza la de 15m igual.
+4. Si tu timebox (45 min) se agota con una campaña corriendo: informe PARCIAL con PIDs, ficheros de salida y hora de arranque; DONE; cierre con `B03 PARCIAL`. El ORQ continúa desde los PIDs.
+5. Ninguna cifra que no salga de los JSON de telemetría reales; si una campaña muere, pega el stderr completo.
