@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-Arnés de aceptación para agentes Antigravity (AGY).
+Arnés de aceptación para agentes Antigravity (AGY) v3.
 Verifica territorio, regla #26, comandos de aceptación, lista negra y ficheros de cierre.
-Produce veredicto JSON y sale con 0 solo si ACEPTA.
+Soporta rutas múltiples en TERRITORIO con separador ' · ', comodines (<fecha>, <YYYYMMDD>, <ID>, *)
+y ejecución robusta de ACEPTACIÓN línea a línea con ["bash", "-lc", cmd].
+Produce veredicto JSON y genera informe Markdown con --informe.
 Solo dependencias de la biblioteca estándar (stdlib).
 """
 
@@ -48,6 +50,39 @@ def find_bash() -> str:
     return "bash"
 
 
+def pattern_to_regex(pat: str) -> re.Pattern:
+    """
+    Convierte una ruta de territorio (con comodines <fecha>, <YYYYMMDD>, <ID>, *, etc.)
+    en una expresión regular. Si termina en '/', cubre todo el subárbol.
+    """
+    norm = pat.replace("\\", "/").strip()
+    if norm.startswith("./"):
+        norm = norm[2:]
+
+    is_dir = norm.endswith("/")
+    if is_dir:
+        norm = norm.rstrip("/")
+
+    # Reemplazar comodines: <fecha>, <YYYYMMDD>, <YYYY-MM-DD>, <ID>, <id>, <fecha-hora>, <timestamp>, *
+    tokens = []
+    def _repl(match):
+        tokens.append(match.group(0))
+        return f"__WILDCARD_{len(tokens)-1}__"
+
+    replaced = re.sub(r"<[^>]+>|\*", _repl, norm)
+    escaped = re.escape(replaced)
+
+    for i in range(len(tokens)):
+        escaped = escaped.replace(re.escape(f"__WILDCARD_{i}__"), r"[A-Za-z0-9_.-]+")
+
+    if is_dir:
+        regex_str = rf"^{escaped}(?:/.*)?$"
+    else:
+        regex_str = rf"^{escaped}$"
+
+    return re.compile(regex_str)
+
+
 def leer_go(ruta: Path) -> dict:
     """Lee y parsea un fichero GO_<ID>.md."""
     if not ruta.is_file():
@@ -71,19 +106,27 @@ def leer_go(ruta: Path) -> dict:
             sline = line.strip()
             if not sline.startswith("-"):
                 continue
-            content = sline[1:].strip()
-            # Separar por '·' o patrones de separación
-            parts = re.split(r"[·]|(?<=\))\s+y\s+|(?<=\.md)\s+y\s+|(?<=\.json)\s+y\s+", content)
+            content = sline.lstrip("- *").strip()
+            # Separar por ' · ' o viñetas o conjunciones de ficheros
+            parts = re.split(
+                r"\s*[·•]\s*|(?<=\))\s+y\s+|(?<=\.md)\s+y\s+|(?<=\.json)\s+y\s+|(?<=\.py)\s+y\s+|(?<=\.ts)\s+y\s+|(?<=\.tsx)\s+y\s+|(?<=\.ps1)\s+y\s+|(?<=\.sh)\s+y\s+",
+                content
+            )
             for part in parts:
                 p = part.strip().replace("`", "")
+                if not p:
+                    continue
                 if "SOLO LECTURA" in p.upper() or "TEMPORALES" in p.upper() or "SOLO-LECTURA" in p.upper():
                     continue
                 if p.startswith("Scripts ef") or p.startswith("SOLO LECTURA"):
                     continue
-                token = re.split(r"[\s—–]+SOLO\b| \(| — | – ", p)[0].strip()
-                if token.startswith("-"):
-                    token = token[1:].strip()
-                token = token.replace("`", "").strip()
+                
+                # Quitar aclaraciones entre paréntesis o tras guiones
+                token = re.sub(r"\(.*?\)", "", p).strip()
+                if "(" in token:
+                    token = token.split("(")[0].strip()
+                token = re.split(r"[\s—–]+SOLO\b| — | – | -- ", token)[0].strip()
+                token = token.lstrip("- *").strip()
                 token = token.replace("\\", "/")
                 if token.startswith("./"):
                     token = token[2:]
@@ -91,6 +134,9 @@ def leer_go(ruta: Path) -> dict:
                     token = token[:-2]
                 elif token.endswith("/*"):
                     token = token[:-1]
+                
+                token = token.rstrip(":,").strip()
+                
                 if token and token not in territorio:
                     territorio.append(token)
     
@@ -100,6 +146,7 @@ def leer_go(ruta: Path) -> dict:
         f"orchestration/agy/DONE_{id_str}.md",
         f"orchestration/results/agy/{id_str}.md",
         "orchestration/results/agy/",
+        "orchestration/results/auditorias/",
     ]
     for tol in tolerados:
         if tol not in territorio:
@@ -143,15 +190,14 @@ def esta_en_territorio(archivo: str, territorio: list[str], agent_id: str) -> bo
         return True
     if arch_norm.startswith("orchestration/results/agy/"):
         return True
+    if arch_norm.startswith("orchestration/results/auditorias/"):
+        return True
     
     for item in territorio:
-        norm_item = item.replace("\\", "/").lstrip("./")
-        if norm_item.endswith("/"):
-            if arch_norm.startswith(norm_item):
-                return True
-        else:
-            if arch_norm == norm_item:
-                return True
+        reg = pattern_to_regex(item)
+        if reg.match(arch_norm):
+            return True
+            
     return False
 
 
@@ -192,128 +238,106 @@ def obtener_ficheros_tocados(worktree: Path) -> list[str]:
     return sorted(tocados)
 
 
-def ejecutar_comandos_aceptacion(comandos_raw: str, worktree: Path, agent_id: str, timeout: int = 900) -> tuple[list[dict], bool]:
+def ejecutar_comandos_aceptacion(comandos_raw: str, worktree: Path, agent_id: str, timeout: int = 600) -> tuple[list[dict], bool]:
     """
-    Transforma el bloque de comandos en un script bash, lo ejecuta y parsea los pares CMD/RC por índice.
+    Ejecuta el bloque de comandos línea a línea pasando cada comando como argumento a `["bash", "-lc", cmd]`.
+    Preserva variables de entorno asignadas en líneas previas (ej. PY=...).
     Devuelve lista de dicts de comandos y booleano indicando si todos los necesarios pasaron.
     """
     raw_lines = comandos_raw.splitlines()
     cmd_lines = []
-    cmd_comments = {}  # idx -> list of comments
     
-    current_cmd_idx = -1
     for line in raw_lines:
         s = line.strip()
-        if not s:
-            continue
-        if s.startswith("#"):
-            if current_cmd_idx >= 0:
-                cmd_comments.setdefault(current_cmd_idx, []).append(s)
+        if not s or s.startswith("#"):
             continue
         cmd_lines.append(s)
-        current_cmd_idx = len(cmd_lines) - 1
-        cmd_comments[current_cmd_idx] = []
         
     if not cmd_lines:
         return [], True
-        
-    script_parts = ["set +e\n"]
-    for idx, cmd in enumerate(cmd_lines):
-        script_parts.append(f'echo "### CMD {idx}"\n')
-        script_parts.append(f'{cmd}\n')
-        script_parts.append(f'echo "### RC {idx}: $?"\n')
-    full_script = "".join(script_parts)
-    
+
     bash_exe = find_bash()
     env = os.environ.copy()
     env["PYTHONPATH"] = str(worktree.resolve())
     env["AGY_AGENT"] = agent_id
-    
-    try:
-        proc = subprocess.run(
-            [bash_exe, "-lc", full_script],
-            cwd=str(worktree.resolve()),
-            env=env,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=timeout
-        )
-        stdout = proc.stdout
-        stderr = proc.stderr
-    except subprocess.TimeoutExpired as exc:
-        return [{
-            "cmd": "bash execution timeout",
-            "rc": -1,
-            "stdout_tail": (exc.stdout or "")[-2000:],
-            "stderr_tail": f"Timeout {timeout}s superado"
-        }], False
-    except Exception as exc:
-        return [{
-            "cmd": "bash execution exception",
-            "rc": -1,
-            "stdout_tail": "",
-            "stderr_tail": f"Error ejecutando bash: {exc}"
-        }], False
-        
-    # Parse output por índice
-    cmd_stdout = {idx: [] for idx in range(len(cmd_lines))}
-    cmd_rc = {idx: None for idx in range(len(cmd_lines))}
-    
-    current_idx = None
-    for line in stdout.splitlines():
-        m_cmd = re.match(r"^### CMD (\d+)$", line.strip())
-        if m_cmd:
-            current_idx = int(m_cmd.group(1))
-            continue
-        m_rc = re.match(r"^### RC (\d+):\s*(-?\d+)$", line.strip())
-        if m_rc:
-            idx = int(m_rc.group(1))
-            rc_val = int(m_rc.group(2))
-            cmd_rc[idx] = rc_val
-            current_idx = None
-            continue
-        if current_idx is not None and current_idx in cmd_stdout:
-            cmd_stdout[current_idx].append(line)
-            
+    default_py = "C:/Users/yo/Pictures/Descargaspc/pro/UltrarentablePC/ultrarentable/.venv/Scripts/python.exe"
+    if os.path.exists(default_py):
+        env["PY"] = default_py
+    else:
+        env["PY"] = sys.executable
+
     results = []
     all_ok = True
-    for idx, cmd in enumerate(cmd_lines):
-        rc = cmd_rc[idx]
-        if rc is None:
-            rc = -1
-            stderr_msg = "No ejecutado (el shell terminó anticipadamente)"
+    assigned_vars = []
+
+    for cmd_line in cmd_lines:
+        es_rc_libre = bool(re.search(r"#\s*rc-libre\b", cmd_line, re.IGNORECASE))
+        es_sin_salida = bool(re.search(r"#\s*(?:sin salida|esperado:\s*0)\b", cmd_line, re.IGNORECASE))
+        
+        # Detectar asignación simple de variable para persistirla para comandos subsiguientes
+        m_assign = re.match(r"^(?:export\s+)?[A-Za-z_][A-Za-z0-9_]*=(?:'[^']*'|\"[^\"]*\"|\$\([^)]+\)|[^\s;&|]+)$", cmd_line.strip())
+        if m_assign and cmd_line.strip() not in assigned_vars:
+            assigned_vars.append(cmd_line.strip())
+
+        if assigned_vars:
+            vars_prefix = "\n".join(assigned_vars)
+            if cmd_line.strip() == assigned_vars[-1]:
+                cmd_to_run = vars_prefix
+            else:
+                cmd_to_run = f"{vars_prefix}\n{cmd_line}"
         else:
-            stderr_msg = "\n".join(stderr.splitlines()[-20:]) if stderr else ""
-            
-        stdout_tail = "\n".join(cmd_stdout[idx][-20:])
-        
-        # Evaluar tolerancia de rc
-        comments_list = cmd_comments.get(idx, [])
-        comments_text = " ".join(comments_list).lower()
-        es_rc_libre = bool(re.search(r"#\s*rc-libre\s*$", cmd)) or ("rc-libre" in comments_text)
-        
+            cmd_to_run = cmd_line
+
+        try:
+            proc = subprocess.run(
+                [bash_exe, "-lc", cmd_to_run],
+                cwd=str(worktree.resolve()),
+                env=env,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout
+            )
+            raw_stdout = proc.stdout or ""
+            raw_stderr = proc.stderr or ""
+            rc = proc.returncode
+
+            stdout_tail = raw_stdout[-2000:]
+            stderr_tail = raw_stderr[-2000:]
+
+        except subprocess.TimeoutExpired as exc:
+            rc = -1
+            stdout_tail = (exc.stdout or "")[-2000:]
+            stderr_tail = f"Timeout {timeout}s superado"
+        except Exception as exc:
+            rc = -1
+            stdout_tail = ""
+            stderr_tail = f"Error ejecutando comando: {exc}"
+
         # En grep, si el resultado esperado es sin salida (0 coincidencias), grep retorna rc=1 con stdout vacio
         es_grep_esperado_vacio = (
-            cmd.strip().startswith("grep ")
+            cmd_line.strip().startswith("grep ")
             and rc == 1
             and not stdout_tail.strip()
-            and ("sin salida" in comments_text or "sin salida" in cmd.lower() or "0" in comments_text)
+            and (es_sin_salida or "0" in cmd_line)
         )
-        
+
         effective_rc = 0 if es_grep_esperado_vacio else rc
-        
-        results.append({
-            "cmd": cmd,
+
+        cmd_result = {
+            "cmd": cmd_line,
             "rc": effective_rc,
+            "stdout": stdout_tail,
+            "stderr": stderr_tail,
             "stdout_tail": stdout_tail,
-            "stderr_tail": stderr_msg
-        })
-        
+            "stderr_tail": stderr_tail,
+        }
+        results.append(cmd_result)
+
         if effective_rc != 0 and not es_rc_libre:
             all_ok = False
-            
+
     return results, all_ok
 
 
@@ -348,8 +372,9 @@ def verificar_lista_negra_y_avisos(worktree: Path, ficheros_tocados: list[str]) 
                 continue
             if not current_file:
                 continue
-            # Excluir informes, GOs y el propio script/test del arnés
+            # Excluir informes, auditorías, GOs y el propio script/test del arnés
             if (current_file.startswith("orchestration/results/agy/") or 
+                current_file.startswith("orchestration/results/auditorias/") or
                 current_file.startswith("orchestration/agy/") or
                 current_file == "scripts/aceptar_agy.py" or
                 current_file == "tests/test_aceptar_agy.py"):
@@ -374,6 +399,7 @@ def verificar_lista_negra_y_avisos(worktree: Path, ficheros_tocados: list[str]) 
         if not fnorm:
             continue
         if (fnorm.startswith("orchestration/results/agy/") or 
+            fnorm.startswith("orchestration/results/auditorias/") or
             fnorm.startswith("orchestration/agy/") or
             fnorm == "scripts/aceptar_agy.py" or
             fnorm == "tests/test_aceptar_agy.py"):
@@ -540,6 +566,99 @@ def resolver_base_y_verificar_commits(worktree: Path, base_ref: str | None = Non
     return motivos, commits_agente
 
 
+def generar_informe_auditoria(
+    worktree: Path,
+    agent_id: str,
+    veredicto: str,
+    motivos: list[str],
+    territorio: list[str],
+    ficheros_tocados: list[str],
+    fuera_de_territorio: list[str],
+    comandos: list[dict],
+    avisos: list[str],
+    commits_agente: list[str],
+    go_secciones_alteradas: list[str],
+    toca_motor: bool,
+) -> Path:
+    """Genera el informe de auditoría Markdown en orchestration/results/auditorias/<ID>_<fecha-hora>.md."""
+    now_dt = datetime.datetime.now()
+    timestamp = now_dt.strftime("%Y%m%d_%H%M%S")
+    now_utc_str = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    
+    auditorias_dir = worktree / "orchestration" / "results" / "auditorias"
+    auditorias_dir.mkdir(parents=True, exist_ok=True)
+    
+    report_file = auditorias_dir / f"{agent_id}_{timestamp}.md"
+    
+    lines = [
+        f"# Auditoría de Aceptación — {agent_id}",
+        "",
+        f"- **Fecha UTC**: `{now_utc_str}`",
+        f"- **Worktree**: `{worktree}`",
+        f"- **Veredicto**: **{veredicto}**",
+        f"- **Motivos de rechazo**: {json.dumps(motivos) if motivos else 'Ninguno'}",
+        "",
+        "## 1. Territorio Declarado",
+        "",
+    ]
+    for t in territorio:
+        lines.append(f"- `{t}`")
+    lines.append("")
+    
+    lines.append(f"## 2. Ficheros Tocados ({len(ficheros_tocados)})")
+    lines.append("")
+    if ficheros_tocados:
+        for f in ficheros_tocados:
+            marca = " ⚠️ [FUERA DE TERRITORIO]" if f in fuera_de_territorio else " ✅"
+            lines.append(f"- `{f}`{marca}")
+    else:
+        lines.append("- *Ninguno (working tree limpio)*")
+    lines.append("")
+    
+    if fuera_de_territorio:
+        lines.append(f"### Fuera de Territorio ({len(fuera_de_territorio)})")
+        for f in fuera_de_territorio:
+            lines.append(f"- `{f}`")
+        lines.append("")
+        
+    lines.append(f"## 3. Comandos de Aceptación ({len(comandos)})")
+    lines.append("")
+    if comandos:
+        for idx, c in enumerate(comandos, start=1):
+            status = "✅ OK" if c.get("rc", 0) == 0 else f"❌ FAIL (rc={c.get('rc')})"
+            lines.append(f"### 3.{idx}. [{status}] `{c.get('cmd')}`")
+            lines.append(f"- **Código de retorno (rc)**: `{c.get('rc')}`")
+            if c.get("stdout"):
+                lines.append("```text")
+                lines.append(c.get("stdout").rstrip())
+                lines.append("```")
+            else:
+                lines.append("- *Stdout vacío*")
+            if c.get("stderr"):
+                lines.append("**Stderr**:")
+                lines.append("```text")
+                lines.append(c.get("stderr").rstrip())
+                lines.append("```")
+            lines.append("")
+    else:
+        lines.append("- *Sin comandos ejecutados*")
+        lines.append("")
+        
+    lines.append("## 4. Verificaciones de Integridad y Reglas")
+    lines.append("")
+    lines.append(f"- **Integridad del GO**: {'❌ Alterado: ' + ', '.join(go_secciones_alteradas) if go_secciones_alteradas else '✅ Intacto'}")
+    lines.append(f"- **Commits del Agente**: {'❌ Detectados: ' + str(len(commits_agente)) if commits_agente else '✅ Ninguno (working tree puro)'}")
+    lines.append(f"- **Regla #26 (Motor)**: {'⚠️ Modifica motor (declarado)' if toca_motor else '✅ No afecta motor'}")
+    lines.append(f"- **Avisos de Calidad**: {len(avisos)} aviso(s)")
+    if avisos:
+        for a in avisos:
+            lines.append(f"  - `{a}`")
+    lines.append("")
+    
+    report_file.write_text("\n".join(lines), encoding="utf-8")
+    return report_file
+
+
 def main():
     parser = argparse.ArgumentParser(description="Arnés de aceptación AGY")
     parser.add_argument("id", help="ID del agente (ej. A01)")
@@ -547,6 +666,7 @@ def main():
     parser.add_argument("--base", **{"def" + "ault": None}, help="Ref de base para auditar commits del agente")
     parser.add_argument("--out", **{"def" + "ault": None}, help="Ruta para el JSON de veredicto")
     parser.add_argument("--sin-comandos", action="store_true", help="Omitir ejecución de comandos de aceptación")
+    parser.add_argument("--informe", action="store_true", help="Genera informe de auditoría Markdown en orchestration/results/auditorias/")
     
     args = parser.parse_args()
     agent_id = args.id
@@ -566,6 +686,7 @@ def main():
     fuera_de_territorio = []
     commits_agente = []
     go_secciones_alteradas = []
+    territorio = []
     toca_motor = False
     
     try:
@@ -590,6 +711,12 @@ def main():
             }
             out_path.parent.mkdir(parents=True, exist_ok=True)
             out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            if args.informe:
+                generar_informe_auditoria(
+                    worktree, agent_id, veredicto, motivos, territorio,
+                    ficheros_tocados, fuera_de_territorio, comandos, avisos,
+                    commits_agente, go_secciones_alteradas, toca_motor
+                )
             print(f"[RECHAZA] Motivos: {motivos}")
             sys.exit(1)
             
@@ -617,7 +744,6 @@ def main():
         fuera_de_territorio = sorted(fuera_de_territorio)
         if fuera_de_territorio:
             motivos.append("fuera_de_territorio")
-            # No se ejecuta nada más según paso 3
             veredicto = "RECHAZA"
             payload = {
                 "id": agent_id,
@@ -635,6 +761,12 @@ def main():
             }
             out_path.parent.mkdir(parents=True, exist_ok=True)
             out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            if args.informe:
+                generar_informe_auditoria(
+                    worktree, agent_id, veredicto, sorted(set(motivos)), territorio,
+                    ficheros_tocados, fuera_de_territorio, comandos, avisos,
+                    commits_agente, go_secciones_alteradas, toca_motor
+                )
             print(f"[RECHAZA] Fuera de territorio: {fuera_de_territorio}")
             sys.exit(1)
             
@@ -687,6 +819,15 @@ def main():
             "go_secciones_alteradas": go_secciones_alteradas,
             "generado_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
+        
+        if args.informe:
+            inf_file = generar_informe_auditoria(
+                worktree, agent_id, veredicto, motivos, territorio,
+                ficheros_tocados, fuera_de_territorio, comandos, avisos,
+                commits_agente, go_secciones_alteradas, toca_motor
+            )
+            payload["informe_path"] = str(inf_file)
+            
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         
@@ -733,6 +874,12 @@ def main():
         try:
             out_path.parent.mkdir(parents=True, exist_ok=True)
             out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            if args.informe:
+                generar_informe_auditoria(
+                    worktree, agent_id, "RECHAZA", sorted(set(motivos)), territorio,
+                    ficheros_tocados, fuera_de_territorio, comandos, avisos,
+                    commits_agente, go_secciones_alteradas, toca_motor
+                )
         except Exception:
             pass
         print(f"[RECHAZA] Error interno: {exc}", file=sys.stderr)
