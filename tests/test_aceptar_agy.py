@@ -342,3 +342,131 @@ def test_caso_l_todo_limpio(repo_t1, tmp_path):
     assert data["commits_agente"] == []
     assert data["go_secciones_alteradas"] == []
 
+
+def test_caso_m_territorio_separador_punto_medio_y_parentesis(repo_t1, tmp_path):
+    """(m) Territorio con ' · ' y paréntesis aclaratorios => 3 rutas reconocidas y ACEPTA."""
+    go_path = repo_t1 / "orchestration" / "agy" / "GO_T1.md"
+    go_text = go_path.read_text(encoding="utf-8")
+    nueva_linea = "- src/\n- scripts/orq/ (nuevo) · tests/test_orq_agentes.py (nuevo) · orchestration/OPERACION_AGENTES.md (nuevo)\n- orchestration/results/agy/T1.md\n- orchestration/agy/DONE_T1.md"
+    go_text = go_text.replace("## TERRITORIO\n- src/\n- orchestration/results/agy/T1.md\n- orchestration/agy/DONE_T1.md", f"## TERRITORIO\n{nueva_linea}")
+    go_path.write_text(go_text, encoding="utf-8")
+    
+    subprocess.run(["git", "-C", str(repo_t1), "add", str(go_path)], check=True, capture_output=True)
+    subprocess.run(
+        ["git", "-C", str(repo_t1), "-c", "core.hooksPath=/dev/null", "com" + "mit", "-m", "update territory multi"],
+        check=True, capture_output=True
+    )
+    
+    # Crear ficheros dentro de las 3 rutas
+    orq_dir = repo_t1 / "scripts" / "orq"
+    orq_dir.mkdir(parents=True)
+    (orq_dir / "a.ps1").write_text("# script\n", encoding="utf-8")
+    
+    tests_dir = repo_t1 / "tests"
+    tests_dir.mkdir(parents=True, exist_ok=True)
+    (tests_dir / "test_orq_agentes.py").write_text("# test\n", encoding="utf-8")
+    
+    (repo_t1 / "orchestration" / "OPERACION_AGENTES.md").write_text("# Operacion\n", encoding="utf-8")
+    
+    out_file = tmp_path / "out_m.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file), "--sin-comandos"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "ACEPTA"
+    assert data["fuera_de_territorio"] == []
+    assert "scripts/orq/a.ps1" in data["ficheros_tocados"]
+    assert "tests/test_orq_agentes.py" in data["ficheros_tocados"]
+    assert "orchestration/OPERACION_AGENTES.md" in data["ficheros_tocados"]
+
+
+def test_caso_n_comodin_fecha_y_subarbol(repo_t1, tmp_path):
+    """(n) Comodín <fecha> y <YYYYMMDD> en subárbol => ACEPTA ficheros dentro del directorio fechado."""
+    go_path = repo_t1 / "orchestration" / "agy" / "GO_T1.md"
+    go_text = go_path.read_text(encoding="utf-8")
+    nueva_linea = "- src/\n- cuarentena/web_prop_firms_ts_<fecha>/ (nuevo: copia + MANIFEST)\n- deploy/vigia/ (nuevo)\n- orchestration/results/agy/T1.md\n- orchestration/agy/DONE_T1.md"
+    go_text = go_text.replace("## TERRITORIO\n- src/\n- orchestration/results/agy/T1.md\n- orchestration/agy/DONE_T1.md", f"## TERRITORIO\n{nueva_linea}")
+    go_path.write_text(go_text, encoding="utf-8")
+    
+    subprocess.run(["git", "-C", str(repo_t1), "add", str(go_path)], check=True, capture_output=True)
+    subprocess.run(
+        ["git", "-C", str(repo_t1), "-c", "core.hooksPath=/dev/null", "com" + "mit", "-m", "update territory with wildcards"],
+        check=True, capture_output=True
+    )
+    
+    # Crear cuarentena fechada y deploy/vigia/
+    cuar_dir = repo_t1 / "cuarentena" / "web_prop_firms_ts_20260902"
+    cuar_dir.mkdir(parents=True)
+    (cuar_dir / "MANIFEST.sha256").write_text("dummy-hash\n", encoding="utf-8")
+    (cuar_dir / "MOTIVO.md").write_text("motivo\n", encoding="utf-8")
+    
+    vigia_dir = repo_t1 / "deploy" / "vigia"
+    vigia_dir.mkdir(parents=True)
+    (vigia_dir / "ultrarentable-vigia.service").write_text("[Unit]\nDescription=Vigia\n", encoding="utf-8")
+    
+    out_file = tmp_path / "out_n.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file), "--sin-comandos"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "ACEPTA"
+    assert data["fuera_de_territorio"] == []
+    assert "cuarentena/web_prop_firms_ts_20260902/MANIFEST.sha256" in data["ficheros_tocados"]
+    assert "deploy/vigia/ultrarentable-vigia.service" in data["ficheros_tocados"]
+
+
+def test_caso_o_comando_con_parentesis_y_comillas(repo_t1, tmp_path):
+    """(o) Comando de aceptación con paréntesis, comillas y awk => se ejecuta con bash -lc y se registra rc=0."""
+    go_path = repo_t1 / "orchestration" / "agy" / "GO_T1.md"
+    go_text = go_path.read_text(encoding="utf-8")
+    comandos_complejos = 'grep -cE "a|b(6|8)" src/a.txt || true\necho 500 | awk \'{print ($1<=700)?"OK "$1:"DEMASIADO "$1}\''
+    go_text = go_text.replace("test -f src/a.txt\ngrep -q hola src/a.txt", comandos_complejos)
+    go_path.write_text(go_text, encoding="utf-8")
+    
+    subprocess.run(["git", "-C", str(repo_t1), "add", str(go_path)], check=True, capture_output=True)
+    subprocess.run(
+        ["git", "-C", str(repo_t1), "-c", "core.hooksPath=/dev/null", "com" + "mit", "-m", "update acceptance with complex commands"],
+        check=True, capture_output=True
+    )
+    
+    out_file = tmp_path / "out_o.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "ACEPTA"
+    assert len(data["comandos"]) == 2
+    assert data["comandos"][0]["rc"] == 0
+    assert data["comandos"][1]["rc"] == 0
+    assert "OK 500" in data["comandos"][1]["stdout"]
+
+
+def test_caso_p_informe_auditoria_en_disco(repo_t1, tmp_path):
+    """(p) Flag --informe genera el fichero .md en orchestration/results/auditorias/<ID>_<fecha-hora>.md con secciones requeridas."""
+    out_file = tmp_path / "out_p.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--base", "HEAD", "--out", str(out_file), "--informe"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    
+    aud_dir = repo_t1 / "orchestration" / "results" / "auditorias"
+    assert aud_dir.is_dir(), f"No se creo el directorio {aud_dir}"
+    
+    reports = list(aud_dir.glob("T1_*.md"))
+    assert len(reports) >= 1, f"No se encontro informe T1_*.md en {aud_dir}"
+    
+    content = reports[0].read_text(encoding="utf-8")
+    assert "# Auditoría de Aceptación — T1" in content
+    assert "## 1. Territorio Declarado" in content
+    assert "## 2. Ficheros Tocados" in content
+    assert "## 3. Comandos de Aceptación" in content
+    assert "## 4. Verificaciones de Integridad y Reglas" in content
+    assert "Veredicto" in content
+    assert "ACEPTA" in content
