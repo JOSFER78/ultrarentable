@@ -1,3 +1,69 @@
+# FASE ACTUAL — 2026-09-02, ~11:30 UTC · CICLO 3 DE LA ERA LOCAL (orquestador Fable 5.1 en Orca; agentes Antigravity atados)
+
+> **MANDATO ACTIVO (sin cambios): FONDEO + META-FONDEO + `/estrategias`.** ULTRA EN CONSTRUCCIÓN,
+> presente y visible, nunca borrado. **Regla de este ciclo (Emilio):** todo lo mecánico lo
+> ejecutan hasta 10 agentes en vuelo por el sistema multiagente y multiproveedor de Orca (9 `agy`
+> con Gemini 3.7 Flash + el refutador A02 en `codex`); el orquestador planifica, despacha, audita
+> re-ejecutando, integra y commitea. Punto de entrada: `PLAN_ORCA_ANTIGRAVITY.md`.
+
+## 0. Marcador, sin adornos
+
+**Estrategias FONDEO certificadas: 0. Meta-estrategias: 0.** Sin cambios.
+
+## 1. §0 del plan (integrar y verificar) — HECHO, con dos correcciones al arnés
+
+| Paso | Estado | Evidencia |
+| :-- | :--- | :--- |
+| Commits de los ciclos 1-2 en `main` | ✅ 4 commits temáticos: arnés+plantillas, docs ciclo 3, telemetría W2.7 (auditada: 8/8 + 3/3 tests, diff aditivo), `export_to_sqx.py` (verificado: 83.377 filas = barras ES 15m) | `234d48d0f`, `8fd3c9334`, `06b46b579`, `98450ec90` |
+| Arnés activado y probado | ✅ pero **el arnés original NO ataba nada en el montaje real** (ver §2) → corregido y re-probado en la rama real de un agente: commit de agente BLOQUEADO, commit del ORQ PASA, push bloqueado con y sin `ORQ_PUSH`, dataset pesado BLOQUEADO | `9e63ba021`; `orchestration/results/agy/SMOKE.md` |
+| devilray ← main (ff) | ✅ | `git log` devilray |
+| `VENTANA_EMILIO.md` | ✅ actualizada (SQX caduca el 05-09; pregunta 5.2 añadida) | `4366f8903` |
+
+## 2. Decisiones nuevas (D11-D14) — todas nacidas de evidencia
+
+- **D11 — pre-commit en lista blanca.** Un agente de humo (`SMOKE`, primer worker real por el
+  camino nativo de Orca) commiteó de verdad: Orca nombra las ramas `JOSFER78/agy-<ID>` (el patrón
+  `agy/*` nunca casaba) y `worker-start` no propaga `AGY_AGENT`. Ahora nadie commitea sin
+  `ORQ_COMMIT=1`, sea cual sea la rama o el entorno. El pre-push casa `agy` en cualquier posición.
+- **D12 — hooks fuera de los worktrees.** `core.hooksPath=.githooks` (relativa) hacía que cada
+  worktree ejecutara la copia del hook de SU rama, editable por el agente. Ahora
+  `core.hooksPath=C:/Users/yo/.orq-hooks` (absoluta; los ficheros del repo son la fuente y se
+  copian ahí tras cada cambio). Agujero conocido y aceptado: `--no-verify` y `-c core.hooksPath=`
+  saltan cualquier hook de git; la defensa es que ninguna rama de agente se integra sin auditar
+  y sin comprobar que no trae commits.
+- **D13 — despacho nativo de Orca, receta de 5 pasos.** Documentada en la skill `orquesta` §7 ter:
+  worktree propio (`--setup skip`: Orca lanzaba `npm install` en cada worktree), terminal con
+  comando PURO (`agy …`; con prefijo de entorno Orca no reconoce al agente), confianza sembrada en
+  `~/.gemini/antigravity-cli/settings.json`, `tui-idle`, `worker-start --worktree … --terminal …`.
+  El entorno por worktree (`AGY_AGENT`, `PYTHONPATH`, `A06_DATASET_FILE`) lo pone un bloque
+  acotado por ruta en el perfil de PowerShell.
+- **D14 — Ola A re-planificada sobre lo ya hecho.** AG-C ya cerró W4.1/W4.2/W4.4/W4.6 (commit
+  `ad9e179ff`): A03 pasa a **W0.8** (portar la puerta de admisión a Windows: hoy revienta por
+  `fcntl`, y sin ella no hay semáforo de pesados), A10 audita esas deudas **con tests**, A11 cierra
+  D2 + W2.8. Hasta que A03 aterrice, la admisión de pesados la da el ORQ a mano vía
+  `orca orchestration ask`.
+
+## 3. Ola A — en vuelo (Run `run_19da24acd52a`)
+
+Contratos en `orchestration/agy/GO_A01..A12.md` (commit `f92b192cc`). En vuelo: A01, A03, A04,
+A05, A06, A10, A11, A12, A08 (`agy`) y A02 (`codex`). A07 y A09 (refutadores) se despachan al
+aterrizar A06 y A08. Cada aterrizaje: `aceptar_agy.py` (A01) o auditoría manual → veredicto →
+`git merge --no-ff` en devilray con `ORQ_COMMIT=1` → al cerrar la ola, `main` ← devilray (ff).
+Informes: `orchestration/results/agy/<ID>.md`. Despachos: Panel de agentes y Tareas de Orca.
+
+## 4. Deuda y bloqueos vivos
+
+| Bloqueo | Estado real |
+| :--- | :--- |
+| Puerta de admisión en Windows | ❌ hasta A03; mientras, `ask` al ORQ antes de cualquier pesado |
+| VPS saturado / licencia SQX (05-09) / Firebase / pregunta 5.2 | ⏳ `VENTANA_EMILIO.md` (sin cambios) |
+| Datos ES en el PC para E1/E2 | ⏳ Ola B (B01) |
+| CPU del PC | ⚠ 8 núcleos; con 3 `agy` arrancando + `npm install` de setup llegó al 100 %; regla: tandas de 3 con guarda de CPU <75 % |
+
+---
+
+## Histórico anterior
+
 # FASE ACTUAL — 2026-09-01, ~19:00 UTC · CICLO 1 DE LA ERA LOCAL (orquestador Opus 5 en el PC)
 
 > **MANDATO ACTIVO: FONDEO + META-FONDEO + arreglar `/estrategias`.** ULTRA queda **EN
