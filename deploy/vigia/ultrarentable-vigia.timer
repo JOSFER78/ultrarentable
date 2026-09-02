@@ -1,0 +1,13 @@
+[Unit]
+Description=Ultrarentable Vigia V0 Daily Inspection Timer (06:30 UTC)
+Documentation=file:///home/ubuntu/workspace/pro/trading/01%%20Ultrarentable/orchestration/HERMES_VPS_VIGIA.md
+After=time-sync.target
+
+[Timer]
+OnCalendar=*-*-* 06:30:00 UTC
+Persistent=true
+RandomizedDelaySec=60
+Unit=ultrarentable-vigia.service
+
+[Install]
+WantedBy=timers.target
