@@ -60,9 +60,20 @@ Contratos en `orchestration/agy/GO_A01..A12.md` (commit `f92b192cc`).
 | A10 | tests de W4.2/W4.4/W4.6 | ACEPTA tras apartar un artefacto del `--comparar`; **deuda W4.2-bis** (except mudo en discovery) | `e88b1de81` |
 | A08 | motor 5.18.0 (regla #26, D10) | ACEPTA; 9 ULTRA idénticas, 6 FONDEO explicadas; territorio ampliado por W29 | `19b39b596` |
 
-En vuelo: A12 (web, `next build` admitido), A02 (`codex`, refutador del arnés con CORRECCION_1
-para atacar `aceptar_agy.py`), A07 (refutador de A06) y A09 (refutador de A08). Lo que revelen
-los refutadores decide REPITE de A06/A08 antes de cerrar la ola. Cada aterrizaje: `aceptar_agy.py` (A01) o auditoría manual → veredicto →
+| A12 | W5.2 web maestra + home | ACEPTA; tsc limpio, 0 colores fuera de tokens; build ORQ 23 rutas | `fe686c0de` |
+| A07 | refutador de A06 | CONFIRMADO: 0 divergencias en 3 evidencias, determinista (reproducido) | `b8c2686b9` |
+| A09 | refutador de A08 | CONFIRMADO: 9 ULTRA idénticas, 6 FONDEO explicadas (reproducido) | `ef1d8ed37` |
+| A01 | CORRECCION_2 (UTF-8 en subprocess) | ACEPTA 8/8; el arnés ya no muere con salidas no ASCII | `61bd2f273` |
+
+**Integración global verificada** en devilray: 78 tests (todos los nuevos + suites tocadas) en verde,
+`next build` 23 rutas. **`main` ← devilray (ff) y push a origin: `a1564650f..ef1d8ed37`** (12:30 UTC).
+Pendiente de la Ola A: A02 (`codex`, refutador del arnés: hooks + `aceptar_agy.py`).
+
+**Ola B (adaptativa) lanzada a 12:35 UTC** con contratos en `GO_B02/B03/B05/B07/B08/B09/B11.md`
+(`cd94632c9`): B02 = E1 (20 REVERSION_ATR de ES en 5m/15m con 5.18.0), B07 improvement, B08 meta,
+B09 catálogo v2, B05 parser .sqx, B11 inventario/consolidación; B03 (E2) tras B02; B04/B06/B10/B12
+al aterrizar sus dependencias. Guarda de máquina: RAM <78 % y CPU real <80 % entre lanzamientos;
+un solo proceso pesado a la vez vía `gobernanza_recursos` (ya operativa en Windows). Cada aterrizaje: `aceptar_agy.py` (A01) o auditoría manual → veredicto →
 `git merge --no-ff` en devilray con `ORQ_COMMIT=1` → al cerrar la ola, `main` ← devilray (ff).
 Informes: `orchestration/results/agy/<ID>.md`. Despachos: Panel de agentes y Tareas de Orca.
 
