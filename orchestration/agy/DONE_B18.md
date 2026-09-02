@@ -1,0 +1,27 @@
+# DONE_B18
+
+- Agente: `B18` · Rama: `JOSFER78/agy-B18` · Inicio: `2026-09-02T17:40:28+02:00` · Fin: `2026-09-02T17:59:30+02:00`
+- Informe: `orchestration/results/agy/B18.md`
+- Ficheros tocados:
+  - Modificados (`git diff --name-only`):
+    - `orchestration/agy/GO_B18.md` (anotado por el orquestador con CORRECCION_1)
+  - Nuevos (`git status --porcelain`):
+    - `cuarentena/bd_local_pc_20260902/MANIFEST.sha256`
+    - `cuarentena/bd_local_pc_20260902/MOTIVO.md`
+    - `cuarentena/bd_local_pc_20260902/ultrarentable.sqlite3`
+    - `cuarentena/bd_local_pc_20260902/ultrarentable.sqlite3-shm`
+    - `cuarentena/bd_local_pc_20260902/ultrarentable.sqlite3-wal`
+    - `orchestration/results/agy/B18.md`
+    - `orchestration/agy/DONE_B18.md`
+- Aceptación ejecutada por el agente: `PASA`
+  - Tamaño BD local PC: `65765376` bytes (> 50.000.000)
+  - `integrity_check` ⇒ `ok`
+  - SQLite `strategies` ⇒ `525`, `discovery_search_trials` ⇒ `38456`
+  - `cuarentena/bd_local_pc_20260902/` verificado con `sha256sum -c` ⇒ `OK`
+  - `/api/v1/discovery/status` ⇒ `total_trials_in_db: 38456`
+  - `/api/v1/candidates?limit=3&include_rejected=true` ⇒ `200 OK` con filas reales
+  - `/api/v2/strategy-lab/overview` ⇒ `200 OK` (525 extracted, 5 certified)
+  - `/estrategias` (Web puerto 3100) ⇒ `200 OK`
+- Lo que NO se pudo hacer y por qué:
+  - Ninguno. Todos los requisitos y pruebas de aceptación cumplidos al 100%.
+- Confirmo: sin `git` de escritura · sin `rm` (salvo temporal en /tmp del VPS) · sin datos inventados · nada fuera del territorio · motor no tocado · servicios locales 8100 y 3100 quedan activos.

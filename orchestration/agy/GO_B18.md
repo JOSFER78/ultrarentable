@@ -53,3 +53,9 @@ git de escritura · rm (salvo el temporal `/tmp/...snapshot...` del VPS) · para
 ## SALIDA
 1. Working tree con los cambios (SIN commit). 2. orchestration/results/agy/B18.md. 3. orchestration/agy/DONE_B18.md.
 4. Cierre: orca orchestration send --type worker_done --subject "B18 <PASA|FALLA|PARCIAL>" --body "<3 frases>" --task-id <T> --dispatch-id <D> --outcome succeeded|failed --json
+
+## CORRECCION_1 (ORQ, 2026-09-02 17:55) — cifras reales del VPS y quoting del ssh
+
+- Medido por el ORQ en el VPS (`sqlite3 -readonly`, 1 s): `journal_mode=wal`, `strategies=525`, `campaign_trials=0`. La cifra `total_trials_in_db` de la API sale de `SELECT count(*) FROM discovery_search_trials` (`services/api/app/api/discovery_router.py::_get_trials_count`), NO de `campaign_trials`.
+- Aceptación corregida: en el PC, `select count(*) from strategies` = 525 (o el valor que midas en el VPS en el mismo momento) y `select count(*) from discovery_search_trials` = el del VPS; `/api/v1/discovery/status` → `total_trials_in_db` = ese mismo número.
+- Tu primer `ssh` se quedó colgado 9 minutos (comillas anidadas ⇒ `sqlite3` en modo interactivo esperando stdin); el ORQ lo mató. Usa `ssh -o BatchMode=yes oracle-vps '<comando remoto entre comillas simples, SQL entre dobles>'` o un fichero `.sql` redirigido; nunca un `sqlite3` sin consulta.
