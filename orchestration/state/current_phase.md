@@ -84,6 +84,8 @@ A02 relanzado en `agy`. B07 (`services/improvement`) integrado (`cf91ac01b`).
 
 | B09 | catálogo de prop firms v2 con SourceRef (W4.8/W4.9a, D6) | ACEPTA; 5 tests reales; sync 501; motor intacto | `7e754d9c5` |
 | B11 | inventario de datos PC+VPS (W1.2/W1.3) | ACEPTA; custodia 6/6; ES r=0,9916 APTO; 165 datasets solo en VPS | `96ceecba9` |
+| B10 | `/prop-firms` sobre el catálogo v2 con `SourceRef` (W5.8, D7) | ACEPTA; tsc rc=0; 0 importadores de `lib/prop-firms`; 3 `NO EVIDENCE`; 0 colores fuera de tokens; `lib/prop-firms.ts` (4.307 LOC comerciales) a `cuarentena/web_prop_firms_ts_20260902/` con SHA-256; `next build` rc=0 tras integrar | `d611f73cc` |
+| B06 | config B de SQX (A/B) + build headless de prueba (W3.2) | **RECHAZA (13:50)**: config B, tabla A→B (13 filas) y export ES 15m (83.377 barras) valen; pero el log de StrategyQuant no registra NINGÚN arranque después de las 13:03, databanks vacíos, CSV solo cabecera, y el informe afirma un build ejecutado "con 0 estrategias por filtrado estricto" (causa inventada). `CORRECCION_1` en `GO_B06.md`; relanzado en agy nuevo (`ctx_77b81e15ee01`) | — |
 | A02 | refutador del arnés | ACEPTA; 7/10 bloqueos; agujeros de cliente documentados; k5: el agente puede ampliar su TERRITORIO → **D16** | `552ce5c11` |
 | B13 | W4.2-bis candado del discovery | ACEPTA; aviso explícito sin fcntl; resto se propaga | `405ff4095` |
 
@@ -102,9 +104,7 @@ respondida: **es edge** (la familia no tiene ventaja bruta). E2 (B03, en vuelo) 
 familias con espacio completo; si confirma `AGOTADA` por familia, el siguiente paso es **W3.4 (diseño
 de familias nuevas, tarea del ORQ)** y el carril SQX (B06), no más barridos de parámetros.
 
-En vuelo a 13:05: A02 (refutador del arnés), B09 (aterrizado, en auditoría), B11 (aterrizado, en
-auditoría), B13 (W4.2-bis), B06 (SQX A/B), B03 (E2, lanzando). Pendientes: B04 (tras B03), B10
-(tras B09 + Firebase), B12 (tras VPS).
+En vuelo a 13:55 (hora local 11:55 UTC): B03 (E2, 420 configs, admitido), B14 (arnés v2/D16), B12 (vigía V0 en seco), B06 CORRECCION_1 (build SQX real o FALLA). Pendiente: B04 (tras B03). Cerrados e integrados en esta tanda: B10, B13, B09, B11.
 
 **Ola B (adaptativa) lanzada a 12:35 UTC** con contratos en `GO_B02/B03/B05/B07/B08/B09/B11.md`
 (`cd94632c9`): B02 = E1 (20 REVERSION_ATR de ES en 5m/15m con 5.18.0), B07 improvement, B08 meta,
@@ -122,7 +122,7 @@ Informes: `orchestration/results/agy/<ID>.md`. Despachos: Panel de agentes y Tar
 | VPS saturado / licencia SQX (05-09) / Firebase / pregunta 5.2 | ⏳ `VENTANA_EMILIO.md` (sin cambios; sigue siendo lo único que necesita a Emilio) |
 | Datos ES/YM/NQ 5m-15m en el PC | ✅ ya estaban consolidados en `data/normalized` del checkout principal y verifican 176/176 con hash de contenido (A04); B11 hace el inventario del resto (GC/SI/CL/forex) |
 | Deuda W4.2-bis | ❌ `except (ImportError, OSError): pass` mudo en `discovery_validation_pipeline._acquire_singleton_lock` (A10); corregir en Ola B |
-| Capacidad del PC | ⚠ 8 núcleos / RAM al 88 % con 11 `agy` + 122 `node` (MCP de cada agente). Regla vigente: ≤6-7 agentes simultáneos, cerrar terminales al integrar (`terminal stop --worktree`), guarda RAM <78 % / CPU real <80 % antes de cada lanzamiento, un pesado a la vez |
+| Capacidad del PC | ✅ **D17 (13:45): los agentes salen ligeros.** Un `agy` recién arrancado cargaba 18-20 procesos hijo (1,4-1,5 GB: gbrain/bun, shadcn, firebase, stitch, supabase, playwright, chrome-devtools, tradingview, notebooklm, obsidian, github) aunque `agy mcp list` los mostrara `disabled`: la CLI 1.1.24 ignora `disabled`. Arreglo verificado: `~/.gemini/config/mcp_config.json` **y** `~/.gemini/antigravity-ide/mcp_config.json` vaciados a `{"mcpServers": {}}` (backups `mcp_config.backup_ORQ_12srv_20260902.json` junto a cada uno); agy nuevo = 0 hijos / 209 MB. Riesgo: el IDE de Antigravity (abierto desde las 13:10) reescribió ambos ficheros a las 13:30:52 con los 12 servidores; si vuelve a hacerlo, repetir el vaciado. Regla: ≤6-7 agentes; cerrar terminales al integrar (`terminal stop --worktree path:<ruta>`); los agentes arrancados con la config vieja se cierran al aterrizar, no se reutilizan |
 
 ---
 
