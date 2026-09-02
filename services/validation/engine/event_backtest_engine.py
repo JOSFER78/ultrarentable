@@ -449,11 +449,14 @@ class EventBacktestEngine:
     # _session_start_minutes.
     @staticmethod
     def _session_start_minutes(session_window: Optional[Any]) -> int:
-        """Minuto UTC (0-1439) de apertura de sesion declarado en `session_window`. Sin
-        session_window (o start_time_utc malformado) usa medianoche UTC (0) -- mismo default
-        que SessionWindow.start_time_utc en el contrato, no un valor inventado aqui."""
+        """Minuto UTC/local (0-1439) de apertura de sesion declarado en `session_window`. Sin
+        session_window (o start_time_utc malformado) usa medianoche (0) -- mismo default
+        que SessionWindow.start_time_utc en el contrato."""
         try:
-            start_str = getattr(session_window, "start_time_utc", "00:00") if session_window is not None else "00:00"
+            start_str = (
+                getattr(session_window, "start_time_local", None)
+                or getattr(session_window, "start_time_utc", "00:00")
+            ) if session_window is not None else "00:00"
             sh, sm = map(int, str(start_str).split(":"))
             return sh * 60 + sm
         except Exception:
@@ -478,7 +481,21 @@ class EventBacktestEngine:
         or_high = np.full(n, np.nan, dtype=np.float64)
         or_low = np.full(n, np.nan, dtype=np.float64)
         sealed = np.zeros(n, dtype=bool)
-        start_min = self._session_start_minutes(session_window)
+
+        market_tz_str = getattr(session_window, "market_tz", None) if session_window is not None else None
+        if market_tz_str is not None:
+            import zoneinfo
+            try:
+                tz = zoneinfo.ZoneInfo(market_tz_str)
+            except Exception as e:
+                raise ValueError(f"Zona horaria invalida en market_tz: {market_tz_str}") from e
+            start_local_str = getattr(session_window, "start_time_local", None) or getattr(session_window, "start_time_utc", "09:30")
+            sh, sm = map(int, str(start_local_str).split(":"))
+            start_min = sh * 60 + sm
+        else:
+            tz = None
+            start_min = self._session_start_minutes(session_window)
+
         or_minutes = max(1, int(or_minutes))
         cur_day = None
         cur_high: Optional[float] = None
@@ -491,15 +508,23 @@ class EventBacktestEngine:
                 or_low[i] = cur_low if cur_low is not None else np.nan
                 sealed[i] = cur_sealed
                 continue
-            day_key = (dt.year, dt.month, dt.day)
+
+            if tz is not None:
+                dt_loc = dt.astimezone(tz)
+                day_key = (dt_loc.year, dt_loc.month, dt_loc.day)
+                bar_min = dt_loc.hour * 60 + dt_loc.minute
+            else:
+                day_key = (dt.year, dt.month, dt.day)
+                bar_min = dt.hour * 60 + dt.minute
+
             if day_key != cur_day:
                 cur_day = day_key
                 cur_high = None
                 cur_low = None
                 cur_sealed = False
-            mins_since_start = (dt.hour * 60 + dt.minute) - start_min
+            mins_since_start = bar_min - start_min
             if mins_since_start < 0:
-                mins_since_start += 24 * 60  # sesiones que cruzan medianoche UTC (end < start)
+                mins_since_start += 24 * 60  # sesiones que cruzan medianoche (end < start)
             if mins_since_start < or_minutes:
                 cur_high = highs[i] if cur_high is None else max(cur_high, highs[i])
                 cur_low = lows[i] if cur_low is None else min(cur_low, lows[i])
@@ -520,15 +545,23 @@ class EventBacktestEngine:
         session_window: Optional[Any],
     ) -> np.ndarray:
         """VWAP anclado a SESION (se reinicia cum_pv=cum_v=0 en la primera barra en sesion de
-        cada dia UTC), a diferencia del VWAP acumulativo global de
+        cada dia), a diferencia del VWAP acumulativo global de
         services/engine/indicator_engine.py (nunca se reinicia -- indicador distinto, uso
         distinto). Es el benchmark real contra el que se miden las ejecuciones
         institucionales intradia (funds, algos TWAP/VWAP), que SI resetean cada sesion. Barras
-        fuera de `session_window` no acumulan (mismo criterio que el rango de apertura de
-        arriba): el valor se mantiene inerte hasta el siguiente bar en sesion. Causal: vwap[i]
-        solo usa precio/volumen de la barra i y anteriores del mismo dia en sesion."""
+        fuera de `session_window` no acumulan: el valor se mantiene inerte hasta el siguiente bar en sesion."""
         n = len(closes)
         vwap = np.zeros(n, dtype=np.float64)
+        market_tz_str = getattr(session_window, "market_tz", None) if session_window is not None else None
+        if market_tz_str is not None:
+            import zoneinfo
+            try:
+                tz = zoneinfo.ZoneInfo(market_tz_str)
+            except Exception as e:
+                raise ValueError(f"Zona horaria invalida en market_tz: {market_tz_str}") from e
+        else:
+            tz = None
+
         cur_day = None
         cum_pv = 0.0
         cum_v = 0.0
@@ -537,17 +570,17 @@ class EventBacktestEngine:
             dt = self._parse_candle_utc_dt(candles[i])
             in_sess = dt is not None and self._is_in_session_window(dt, session_window)
             if in_sess:
-                day_key = (dt.year, dt.month, dt.day)
+                if tz is not None:
+                    dt_loc = dt.astimezone(tz)
+                    day_key = (dt_loc.year, dt_loc.month, dt_loc.day)
+                else:
+                    day_key = (dt.year, dt.month, dt.day)
+
                 if day_key != cur_day:
                     cur_day = day_key
                     cum_pv = 0.0
                     cum_v = 0.0
                 typical = (highs[i] + lows[i] + closes[i]) / 3.0
-                # Volumen Dukascopy (tick-count derivado) es real y variable; si el dataset
-                # trajera volumen fabricado/constante (p.ej. Yahoo forex, ver
-                # orchestration/results/desbloqueo_tradfi_calidad_datos.md) esto degrada con
-                # gracia a un TWAP (media ponderada por tiempo) -- sigue siendo un nivel
-                # causal valido, solo deja de ponderar por volumen real.
                 vol = max(1e-9, float(volumes[i]))
                 cum_pv += typical * vol
                 cum_v += vol
@@ -591,26 +624,87 @@ class EventBacktestEngine:
         if session_window is None or dt is None:
             return True
 
+        market_tz_str = getattr(session_window, "market_tz", None)
+        if market_tz_str is None:
+            allowed_days = getattr(session_window, "allowed_days", None)
+            if allowed_days is not None and len(allowed_days) > 0:
+                if dt.weekday() not in allowed_days:
+                    return False
+
+            try:
+                start_str = getattr(session_window, "start_time_utc", "00:00")
+                end_str = getattr(session_window, "end_time_utc", "23:59")
+                sh, sm = map(int, start_str.split(":"))
+                eh, em = map(int, end_str.split(":"))
+            except Exception:
+                return True
+
+            start_time = (sh, sm)
+            end_time = (eh, em)
+            bar_time = (dt.hour, dt.minute)
+
+            if start_time <= end_time:
+                return start_time <= bar_time <= end_time
+            else:
+                return bar_time >= start_time or bar_time <= end_time
+
+        # 5.18.0: Modo consciente de zona horaria de mercado (DST-aware por vela con zoneinfo)
+        import zoneinfo
+        try:
+            tz = zoneinfo.ZoneInfo(market_tz_str)
+        except Exception as e:
+            raise ValueError(f"Zona horaria invalida en market_tz: {market_tz_str}") from e
+
+        dt_local = dt.astimezone(tz)
         allowed_days = getattr(session_window, "allowed_days", None)
         if allowed_days is not None and len(allowed_days) > 0:
-            if dt.weekday() not in allowed_days:
+            if dt_local.weekday() not in allowed_days:
                 return False
 
         try:
-            start_str = getattr(session_window, "start_time_utc", "00:00")
-            end_str = getattr(session_window, "end_time_utc", "23:59")
-            sh, sm = map(int, start_str.split(":"))
-            eh, em = map(int, end_str.split(":"))
+            start_str = getattr(session_window, "start_time_local", None) or getattr(session_window, "start_time_utc", "00:00")
+            end_str = getattr(session_window, "end_time_local", None) or getattr(session_window, "end_time_utc", "23:59")
+            sh, sm = map(int, str(start_str).split(":"))
+            eh, em = map(int, str(end_str).split(":"))
         except Exception:
             return True
 
         start_time = (sh, sm)
         end_time = (eh, em)
-        bar_time = (dt.hour, dt.minute)
+        bar_time = (dt_local.hour, dt_local.minute)
+
+        # Flat obligatorio (e.g. 15:10 America/Chicago)
+        flat_time_local = getattr(session_window, "flat_time_local", None)
+        flat_tz_str = getattr(session_window, "flat_tz", None)
+        if flat_time_local is not None and flat_tz_str is not None:
+            try:
+                ftz = zoneinfo.ZoneInfo(flat_tz_str)
+                dt_flat = dt.astimezone(ftz)
+                fh, fm = map(int, str(flat_time_local).split(":"))
+                flat_t = (fh, fm)
+                bar_f_t = (dt_flat.hour, dt_flat.minute)
+                # Mon-Thu (0..3): periodo de flat / mantenimiento entre 15:10 CT y 17:00 CT
+                if dt_flat.weekday() in (0, 1, 2, 3):
+                    if flat_t <= bar_f_t < (17, 0):
+                        return False
+                elif dt_flat.weekday() == 4:
+                    # Viernes: despues de flat 15:10 CT queda cerrado todo el fin de semana
+                    if bar_f_t >= flat_t:
+                        return False
+                elif dt_flat.weekday() == 6:
+                    # Domingo: cerrado antes de las 17:00 CT (18:00 ET)
+                    if bar_f_t < (17, 0):
+                        return False
+            except Exception as e:
+                raise ValueError(f"Error evaluando flat_tz: {flat_tz_str}") from e
 
         if start_time <= end_time:
             return start_time <= bar_time <= end_time
         else:
+            if dt_local.weekday() == 6 and bar_time < start_time:
+                return False
+            if dt_local.weekday() == 4 and bar_time >= start_time:
+                return False
             return bar_time >= start_time or bar_time <= end_time
 
     @staticmethod
@@ -622,26 +716,84 @@ class EventBacktestEngine:
         if not close_eod:
             return False
 
+        market_tz_str = getattr(session_window, "market_tz", None)
+        if market_tz_str is None:
+            allowed_days = getattr(session_window, "allowed_days", None)
+            if allowed_days is not None and len(allowed_days) > 0:
+                if dt.weekday() not in allowed_days:
+                    return True
+
+            try:
+                start_str = getattr(session_window, "start_time_utc", "00:00")
+                end_str = getattr(session_window, "end_time_utc", "23:59")
+                sh, sm = map(int, start_str.split(":"))
+                eh, em = map(int, end_str.split(":"))
+            except Exception:
+                return False
+
+            start_time = (sh, sm)
+            end_time = (eh, em)
+            bar_time = (dt.hour, dt.minute)
+
+            if start_time <= end_time:
+                return bar_time >= end_time or bar_time < start_time
+            else:
+                return end_time <= bar_time < start_time
+
+        # 5.18.0: Modo consciente de zona horaria de mercado (DST-aware por vela con zoneinfo)
+        import zoneinfo
+        try:
+            tz = zoneinfo.ZoneInfo(market_tz_str)
+        except Exception as e:
+            raise ValueError(f"Zona horaria invalida en market_tz: {market_tz_str}") from e
+
+        dt_local = dt.astimezone(tz)
         allowed_days = getattr(session_window, "allowed_days", None)
         if allowed_days is not None and len(allowed_days) > 0:
-            if dt.weekday() not in allowed_days:
+            if dt_local.weekday() not in allowed_days:
                 return True
 
+        # Flat obligatorio (e.g. 15:10 America/Chicago)
+        flat_time_local = getattr(session_window, "flat_time_local", None)
+        flat_tz_str = getattr(session_window, "flat_tz", None)
+        if flat_time_local is not None and flat_tz_str is not None:
+            try:
+                ftz = zoneinfo.ZoneInfo(flat_tz_str)
+                dt_flat = dt.astimezone(ftz)
+                fh, fm = map(int, str(flat_time_local).split(":"))
+                flat_t = (fh, fm)
+                bar_f_t = (dt_flat.hour, dt_flat.minute)
+                if dt_flat.weekday() in (0, 1, 2, 3):
+                    if flat_t <= bar_f_t < (17, 0):
+                        return True
+                elif dt_flat.weekday() == 4:
+                    if bar_f_t >= flat_t:
+                        return True
+                elif dt_flat.weekday() == 6:
+                    if bar_f_t < (17, 0):
+                        return True
+            except Exception as e:
+                raise ValueError(f"Error evaluando flat_tz: {flat_tz_str}") from e
+
         try:
-            start_str = getattr(session_window, "start_time_utc", "00:00")
-            end_str = getattr(session_window, "end_time_utc", "23:59")
-            sh, sm = map(int, start_str.split(":"))
-            eh, em = map(int, end_str.split(":"))
+            start_str = getattr(session_window, "start_time_local", None) or getattr(session_window, "start_time_utc", "00:00")
+            end_str = getattr(session_window, "end_time_local", None) or getattr(session_window, "end_time_utc", "23:59")
+            sh, sm = map(int, str(start_str).split(":"))
+            eh, em = map(int, str(end_str).split(":"))
         except Exception:
             return False
 
         start_time = (sh, sm)
         end_time = (eh, em)
-        bar_time = (dt.hour, dt.minute)
+        bar_time = (dt_local.hour, dt_local.minute)
 
         if start_time <= end_time:
             return bar_time >= end_time or bar_time < start_time
         else:
+            if dt_local.weekday() == 6 and bar_time < start_time:
+                return True
+            if dt_local.weekday() == 4 and bar_time >= start_time:
+                return True
             return end_time <= bar_time < start_time
 
     def run_backtest(
