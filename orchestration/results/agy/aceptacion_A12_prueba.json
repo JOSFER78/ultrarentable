@@ -1,0 +1,61 @@
+{
+  "id": "A12",
+  "worktree": "C:\\Users\\yo\\orca\\workspaces\\ultrarentable\\agy-A12",
+  "veredicto": "ACEPTA",
+  "motivos": [],
+  "ficheros_tocados": [],
+  "fuera_de_territorio": [],
+  "toca_motor": false,
+  "comandos": [
+    {
+      "cmd": "cd apps/web && npx tsc --noEmit -p . ; echo \"rc=$?\"; cd ../..                      # esperado: rc=0",
+      "rc": 0,
+      "stdout_tail": "rc=0",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "git diff --name-only -- apps/web | grep -v globals.css | xargs grep -nE \"#[0-9a-fA-F]{3,8}\\b|\\b(blue|amber|purple|yellow|indigo|emerald|rose|sky|violet|orange|teal|cyan|lime|pink)-\" | wc -l   # esperado: 0",
+      "rc": 0,
+      "stdout_tail": "0",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "git ls-files --others --exclude-standard -- apps/web | xargs grep -nE \"#[0-9a-fA-F]{3,8}\\b|\\b(blue|amber|purple|yellow|indigo|emerald|rose|sky|violet|orange|teal|cyan|lime|pink)-\" | wc -l   # esperado: 0",
+      "rc": 0,
+      "stdout_tail": "0",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "grep -rn \"5\\.4\\.0\" apps/web/app/estrategias apps/web/app/page.tsx | wc -l          # esperado: 0",
+      "rc": 0,
+      "stdout_tail": "0",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "grep -rln \"EN CONSTRUCCI\" apps/web/components/layout/Sidebar.tsx apps/web/app/page.tsx | wc -l   # esperado: 2",
+      "rc": 0,
+      "stdout_tail": "2",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "grep -c \"NO EVIDENCE\" apps/web/app/estrategias/page.tsx                            # esperado: >= 1",
+      "rc": 0,
+      "stdout_tail": "20",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "grep -cE \"Generaci|Mejora|Valoraci|Meta\" apps/web/app/estrategias/page.tsx         # esperado: >= 4",
+      "rc": 0,
+      "stdout_tail": "11",
+      "stderr_tail": ""
+    },
+    {
+      "cmd": "git diff --name-only   # \u2286 TERRITORIO (m\u00e1s GO_A12.md si el ORQ a\u00f1adi\u00f3 CORRECCION_n)",
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "avisos": [],
+  "generado_utc": "2026-09-02T10:20:03.241770+00:00"
+}

@@ -92,7 +92,7 @@ def test_caso_a_todo_dentro(repo_t1, tmp_path):
     out_file = tmp_path / "out_a.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
     data = json.loads(out_file.read_text(encoding="utf-8"))
@@ -110,7 +110,7 @@ def test_caso_b_fuera_de_territorio(repo_t1, tmp_path):
     out_file = tmp_path / "out_b.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
     data = json.loads(out_file.read_text(encoding="utf-8"))
@@ -139,7 +139,7 @@ def test_caso_c_regla_26(repo_t1, tmp_path):
     out_file = tmp_path / "out_c.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file), "--sin-comandos"],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
     data = json.loads(out_file.read_text(encoding="utf-8"))
@@ -162,7 +162,7 @@ def test_caso_d_aceptacion_rc(repo_t1, tmp_path):
     out_file = tmp_path / "out_d.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
     data = json.loads(out_file.read_text(encoding="utf-8"))
@@ -177,7 +177,7 @@ def test_caso_e_sin_done(repo_t1, tmp_path):
     out_file = tmp_path / "out_e.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file), "--sin-comandos"],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 1
     data = json.loads(out_file.read_text(encoding="utf-8"))
@@ -201,7 +201,7 @@ def test_caso_f_comandos_comillas_y_variables(repo_t1, tmp_path):
     out_file = tmp_path / "out_f.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
     data = json.loads(out_file.read_text(encoding="utf-8"))
@@ -230,9 +230,36 @@ def test_caso_g_fichero_ignorado_en_data(repo_t1, tmp_path):
     out_file = tmp_path / "out_g.json"
     res = subprocess.run(
         [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
     data = json.loads(out_file.read_text(encoding="utf-8"))
     assert data["veredicto"] == "ACEPTA"
     assert any("ignorado_en_data: data/x.json" in aviso for aviso in data["avisos"])
+
+
+def test_caso_h_salida_bytes_no_ascii(repo_t1, tmp_path):
+    """(h) Aceptación con un comando que imprime bytes no ASCII (printf '\\xe2\\x9c\\x93 ok \\x8d\\n') => ACEPTA con rc=0 y sin error_interno."""
+    go_path = repo_t1 / "orchestration" / "agy" / "GO_T1.md"
+    go_text = go_path.read_text(encoding="utf-8")
+    comando_no_ascii = "printf '\\xe2\\x9c\\x93 ok \\x8d\\n'"
+    go_text = go_text.replace("test -f src/a.txt\ngrep -q hola src/a.txt", comando_no_ascii)
+    go_path.write_text(go_text, encoding="utf-8")
+    subprocess.run(["git", "-C", str(repo_t1), "add", str(go_path)], check=True, capture_output=True)
+    subprocess.run(
+        ["git", "-C", str(repo_t1), "-c", "core.hooksPath=/dev/null", "com" + "mit", "-m", "acceptance with non-ascii output"],
+        check=True, capture_output=True
+    )
+    
+    out_file = tmp_path / "out_h.json"
+    res = subprocess.run(
+        [sys.executable, str(SCRIPT_PATH), "T1", "--worktree", str(repo_t1), "--out", str(out_file)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    assert res.returncode == 0, f"stdout: {res.stdout}, stderr: {res.stderr}"
+    data = json.loads(out_file.read_text(encoding="utf-8"))
+    assert data["veredicto"] == "ACEPTA"
+    assert not any("error_interno" in m for m in data["motivos"])
+    assert len(data["comandos"]) == 1
+    assert data["comandos"][0]["rc"] == 0
+
