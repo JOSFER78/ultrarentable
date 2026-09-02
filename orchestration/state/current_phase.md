@@ -45,9 +45,24 @@
 
 ## 3. Ola A — en vuelo (Run `run_19da24acd52a`)
 
-Contratos en `orchestration/agy/GO_A01..A12.md` (commit `f92b192cc`). En vuelo: A01, A03, A04,
-A05, A06, A10, A11, A12, A08 (`agy`) y A02 (`codex`). A07 y A09 (refutadores) se despachan al
-aterrizar A06 y A08. Cada aterrizaje: `aceptar_agy.py` (A01) o auditoría manual → veredicto →
+Contratos en `orchestration/agy/GO_A01..A12.md` (commit `f92b192cc`).
+
+**Aterrizajes auditados e integrados en devilray (12:10 UTC):**
+
+| ID | Qué | Veredicto del ORQ (re-ejecutado) | Merge |
+| :-- | :--- | :--- | :--- |
+| A04 | W1.6 checksum de contenido | ACEPTA; 176/176 datasets reales verifican | `afecc3ee3` |
+| A03 | W0.8 puerta de admisión en Windows | ACEPTA; umbrales intactos; candado real | `11de1dfa6` |
+| A05 | W1.7 backfill idempotente | ACEPTA; 8/8 tests; dry-run real 10 PENDIENTE | `695ecee7b` |
+| A01 | arnés `aceptar_agy.py` | REPITE 1 (comillas rompían el parser; ignorados en data/) → ACEPTA 7/7 | `85ae6deb4` |
+| A11 | telemetría D2 + W2.8 | ACEPTA; 21/21 tests; espacio arquetipos = 420 | `1b9d189b3` |
+| A06 | W4.7 registro de gates v1 (D5) | ACEPTA; paridad con B, gate 10 = 40; dataset real 4/4 | `9f1e33ef2` |
+| A10 | tests de W4.2/W4.4/W4.6 | ACEPTA tras apartar un artefacto del `--comparar`; **deuda W4.2-bis** (except mudo en discovery) | `e88b1de81` |
+| A08 | motor 5.18.0 (regla #26, D10) | ACEPTA; 9 ULTRA idénticas, 6 FONDEO explicadas; territorio ampliado por W29 | `19b39b596` |
+
+En vuelo: A12 (web, `next build` admitido), A02 (`codex`, refutador del arnés con CORRECCION_1
+para atacar `aceptar_agy.py`), A07 (refutador de A06) y A09 (refutador de A08). Lo que revelen
+los refutadores decide REPITE de A06/A08 antes de cerrar la ola. Cada aterrizaje: `aceptar_agy.py` (A01) o auditoría manual → veredicto →
 `git merge --no-ff` en devilray con `ORQ_COMMIT=1` → al cerrar la ola, `main` ← devilray (ff).
 Informes: `orchestration/results/agy/<ID>.md`. Despachos: Panel de agentes y Tareas de Orca.
 
