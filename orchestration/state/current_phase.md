@@ -92,6 +92,9 @@ A02 relanzado en `agy`. B07 (`services/improvement`) integrado (`cf91ac01b`).
 | B16 | localhost de ULTRARENTABLE en el PC (`web_local.ps1`, 3100/8100, BACKEND_URL) | ACEPTA; tsc rc=0; valores por defecto intactos; el agente arrancó, comprobó y paró la instancia | `c294b51ca` |
 | B06 | config B de SQX (A/B) + build headless (W3.2) | **PARCIAL, integrado en 3ª ronda** (`dcf2c096c`): 1ª ronda sin build; 2ª con `NumberFormatException "auto"` y 0 estrategias; 3ª real: 30 min 19 s, 19.924 candidatos, 0 aceptados bajo criterio 1.1, 100 en Last generation. Carril SQX aparcado salvo decisión (VENTANA §6) | `dcf2c096c` |
 | B18 | instantánea de la BD canónica del VPS en el PC (solo lectura en el VPS) | ACEPTA; integrity ok; 525 estrategias y 38.456 trials en el PC = VPS; SHA-256 idéntico; BD vacía anterior en cuarentena; el localhost enseña datos reales | `7c80779a6` |
+| B19 | `agy_lanzar.sh` v2 (timeout de worktree tolerado, prompt verificado, encuesta, tiempos por fase) | ACEPTA; 9 passed; 13 patrones; OPERACION_AGENTES.md Fase 1 | `0959f500a` |
+| B21 | `aceptar_agy.py` v3 (multi-ruta, comodines, bash -lc, informe) | ACEPTA; 16 passed; se acepta a sí mismo con `--informe` | `566cee0d9` |
+| B20 | `agy_cerrar.sh` (cierre completo en un comando) | integrado el código (`193c33c10`, 14 passed en el fichero fusionado) pero la **prueba real** sobre B19/B20 murió en el paso 4 (`$ErrorActionPreference`/`$wt` expandidos por bash con `set -u`); CORRECCION_1 en vuelo (`ctx_bf11fd185d3a`) | `193c33c10` |
 | A02 | refutador del arnés | ACEPTA; 7/10 bloqueos; agujeros de cliente documentados; k5: el agente puede ampliar su TERRITORIO → **D16** | `552ce5c11` |
 | B13 | W4.2-bis candado del discovery | ACEPTA; aviso explícito sin fcntl; resto se propaga | `405ff4095` |
 
@@ -110,7 +113,7 @@ respondida: **es edge** (la familia no tiene ventaja bruta). E2 (B03, en vuelo) 
 familias con espacio completo; si confirma `AGOTADA` por familia, el siguiente paso es **W3.4 (diseño
 de familias nuevas, tarea del ORQ)** y el carril SQX (B06), no más barridos de parámetros.
 
-En vuelo a 18:10 (mandato de Emilio 18:00: primero el sistema, luego muchos trabajos mini): **Ola S** B19 lanzador v2 `ctx_cc6db4af99f7`, B20 cierre completo `ctx_675fbc52ee66`, B21 arnés v3 `ctx_a34f1964ca6d`, B22 vigilante + plantilla v2 `ctx_5bb30397fa4f` (issues #34-#37; los 4 despachados en paralelo en 113 s con el despachador corregido); B03 CONTINUACION `ctx_b4973eb21529` (E2 5m, ~1 h de CPU). Integrados hoy: B10, B14, B12, B17, B15, B16, B06 (parcial), B18. Después de la ola S: trabajo de humo cronometrado del bucle completo y, si pasa, tanda de trabajos mini (B04 tras B03). Localhost: terminal de Orca "web-local 3100/8100" sirviendo desde devilray con la BD real (38.456 trials). Worktrees vivos: B03, B19-B22.
+En vuelo a 18:35 (ola S, agentes limpios): B20 CORRECCION_1 `ctx_bf11fd185d3a` (escapar PowerShell, idempotencia, test de punta a punta), B22 `ctx_5bb30397fa4f` (vigilante único + PLANTILLA_SPEC v2; su turno se paró a medias y fue reactivado 18:30), B03 `ctx_b4973eb21529` (E2 5m, ~76 min de CPU). Integrados en la ola S: B19, B21, B20 (código; cierre pendiente de corrección). Worktrees pendientes de retirar con `agy_cerrar.sh` corregido: B19, B20, B21. Después: S01 (humo cronometrado) y tanda de trabajos mini.
 
 **Ola B (adaptativa) lanzada a 12:35 UTC** con contratos en `GO_B02/B03/B05/B07/B08/B09/B11.md`
 (`cd94632c9`): B02 = E1 (20 REVERSION_ATR de ES en 5m/15m con 5.18.0), B07 improvement, B08 meta,
