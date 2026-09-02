@@ -2,8 +2,8 @@
 
 > **MANDATO ACTIVO (sin cambios): FONDEO + META-FONDEO + `/estrategias`.** ULTRA EN CONSTRUCCIÓN,
 > presente y visible, nunca borrado. **Regla de este ciclo (Emilio):** todo lo mecánico lo
-> ejecutan hasta 10 agentes en vuelo por el sistema multiagente y multiproveedor de Orca (9 `agy`
-> con Gemini 3.7 Flash + el refutador A02 en `codex`); el orquestador planifica, despacha, audita
+> ejecutan hasta 10 agentes en vuelo por el sistema multiagente de Orca (todos `agy` con Gemini 3.7
+> Flash; Hermes cuando Emilio lo diga; **nunca codex**, orden de Emilio del 02-09); el orquestador planifica, despacha, audita
 > re-ejecutando, integra y commitea. Punto de entrada: `PLAN_ORCA_ANTIGRAVITY.md`.
 
 ## 0. Marcador, sin adornos
@@ -67,7 +67,7 @@ Contratos en `orchestration/agy/GO_A01..A12.md` (commit `f92b192cc`).
 
 **Integración global verificada** en devilray: 78 tests (todos los nuevos + suites tocadas) en verde,
 `next build` 23 rutas. **`main` ← devilray (ff) y push a origin: `a1564650f..ef1d8ed37`** (12:30 UTC).
-Pendiente de la Ola A: A02 (`codex`, refutador del arnés: hooks + `aceptar_agy.py`).
+Pendiente de la Ola A: A02 (`agy`, refutador del arnés: hooks + `aceptar_agy.py`).
 
 **Seguimiento para Emilio: GitHub Issues del repo (pestaña Tareas de Orca):** tablero #23, un issue por
 agente (#3-#21, #24-#28), ventana única #22 asignada a él. Orden de Emilio (12:45): **nunca codex**;
