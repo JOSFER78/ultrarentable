@@ -22,7 +22,7 @@ El ciclo de vida de todo worker despachado consta de 4 fases deterministas:
 
 ```
 [1. LANZAR] ──> [2. AUDITAR (45s)] ──> [3. INTEGRAR] ──> [4. CERRAR]
- (agy_lanzar.sh)     (agy_censo.ps1)        (Orquestador)      (worker-release + agy_matar.ps1)
+ (agy_lanzar.sh)     (agy_censo.ps1)        (Orquestador)      (agy_cerrar.sh)
 ```
 
 ### Fase 1: Lanzamiento Limpio (`scripts/orq/agy_lanzar.sh`)
@@ -45,23 +45,33 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/orq/agy_censo.ps1
 ### Fase 3: Integración del Entregable
 El coordinador de Orca verifica el commit/diff en el worktree del worker y re-ejecuta los comandos de verificación de forma independiente.
 
-### Fase 4: Cierre Atómico y Censo a Cero
-1. Notificar liberación del worker en Orca:
-   ```bash
-   orca terminal send-raw --handle <worker_terminal> --data "exit\r"
-   ```
-2. Detener terminal en Orca:
-   ```bash
-   orca terminal stop --worktree "path:<ruta_worktree>"
-   ```
-3. Terminar árbol de procesos residuales protegiendo ancestros y procesos críticos:
-   ```powershell
-   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/orq/agy_matar.ps1 -ProcesoId <PID_AGY>
-   ```
-4. Comprobar que el censo no contiene procesos huérfanos:
-   ```powershell
-   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/orq/agy_censo.ps1
-   ```
+### Fase 4: Cierre Atómico y Censo a Cero (`scripts/orq/agy_cerrar.sh`)
+
+Cierre completo, determinista y seguro de un agente agy:
+```bash
+scripts/orq/agy_cerrar.sh <ID> [<dispatchId>] [--sin-worktree] [--issue N --etiqueta integrado|repite]
+```
+
+Ejemplos:
+```bash
+# Cierre tras integración completa (libera worker, detiene terminal, limpia censo, borra junctions, elimina worktree y cierra issue)
+scripts/orq/agy_cerrar.sh B15 --issue 42 --etiqueta integrado
+
+# Cierre conservando el worktree para inspección forense
+scripts/orq/agy_cerrar.sh B15 --sin-worktree
+
+# Cierre con dispatch explícito
+scripts/orq/agy_cerrar.sh B15 ctx_675fbc52ee66 --issue 42 --etiqueta repite
+```
+
+El script ejecuta de forma secuencial y parando al primer fallo (`fail-closed`):
+1. `orca orchestration worker-release --dispatch <ctx>` (timeout 25s; auto-descubrimiento en `worker-list` si no se especifica `ctx`).
+2. `orca terminal stop --worktree path:<ruta_worktree>` para terminar el terminal supervisado.
+3. Censo de procesos: comprueba que ningún `agy.exe` del worktree sigue vivo (vía `agy_matar.ps1` sin `-Forzar` protegiendo ancestros/minería) y purga procesos MCP huérfanos.
+4. Reparse Points / Junctions: eliminación segura con `(New-Object IO.DirectoryInfo <ruta>).Delete()` tras verificar que los destinos existen y preservan todas sus entradas.
+5. Worktree Git: eliminación atómica con `git -C <checkout> worktree remove --force <ruta>` y `git worktree prune` (omitido con `--sin-worktree`).
+6. GitHub Issues: si se pasa `--issue N`, ejecuta `gh issue edit N --add-label <etiqueta> --remove-label en-vuelo` (y `gh issue close N` si `--etiqueta integrado`).
+7. Registro de auditoría: emite evento estructurado en `orchestration/state/agentes.jsonl` (`evento: cierre`).
 
 ---
 
