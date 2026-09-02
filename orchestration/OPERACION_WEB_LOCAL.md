@@ -64,3 +64,7 @@ Los logs de ejecución y error de los procesos desacoplados se almacenan en `orc
 - `orchestration/site/web.log` / `web_err.log`: Logs del servidor Next.js en producción.
 - `orchestration/site/build.log` / `build_err.log`: Logs del proceso `npm run build`.
 - `orchestration/site/local.pids.json`: PIDs y metadatos de la sesión activa.
+
+## Arranque persistente (2026-09-02 18:40)
+
+Los procesos que lanza `web_local.ps1` mueren si el shell que los arranca termina (shells de fondo de Claude Code, tareas programadas que acaban). Arranque estable: tarea programada `ULTRARENTABLE_web_local` cuya acción es `orchestration/site/arrancar_local.cmd` (ejecuta `-Arrancar` y luego se queda en un bucle de espera para que el Programador no cierre el job). Parar: `Stop-ScheduledTask -TaskName ULTRARENTABLE_web_local` (mata web y API). Arrancar: `Start-ScheduledTask -TaskName ULTRARENTABLE_web_local` (reconstruye la web, ~2-3 min). Ver: `web_local.ps1 -Estado`.

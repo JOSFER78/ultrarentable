@@ -16,7 +16,7 @@ import {
   set,
   update,
 } from "firebase/database";
-import { auth, rtdb, googleProvider } from "@/lib/firebase";
+import { auth, rtdb, googleProvider, isFirebaseConfigured, missingFirebaseEnvVars } from "@/lib/firebase";
 
 export const SUPERADMIN_EMAIL = "josferestudio@gmail.com";
 
@@ -174,40 +174,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let isMounted = true;
     let authSettled = false;
 
-    const isLocalhostHost = () =>
-      typeof window !== "undefined" &&
-      (window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1" ||
-        window.location.hostname === "0.0.0.0");
 
     // Watchdog: si Firebase Auth no emite estado (o la carga de perfil se cuelga) en 6s,
     // no se deja al usuario ante un spinner infinito: en localhost se aplica el mismo
     // bypass de Super Admin que ya contempla la rama de desarrollo; fuera de localhost se
     // resuelve a la landing pública (donde puede reintentar el login).
+    if (!isFirebaseConfigured()) {
+      console.warn("[Auth] Firebase sin configurar: faltan " + missingFirebaseEnvVars().join(", ") + ". Inicio de sesión no disponible hasta rellenar apps/web/.env.local.");
+      setUser(null);
+      setProfile(null);
+      setLoading(false);
+      return () => { isMounted = false; };
+    }
     const watchdog = setTimeout(() => {
       if (!isMounted || authSettled) return;
       console.warn("[Auth] Watchdog: Firebase Auth no respondió en 6s; aplicando fallback.");
-      if (isLocalhostHost()) {
-        const nowIso = new Date().toISOString();
-        setProfile({
-          uid: "josfer_superadmin_master_01",
-          email: SUPERADMIN_EMAIL,
-          displayName: "Josfer (Super Admin)",
-          role: "superadmin",
-          status: "AUTHORIZED",
-          is_superadmin: true,
-          is_authorized: true,
-          created_at: nowIso,
-          last_login: nowIso,
-        });
-        setUser({
-          uid: "josfer_superadmin_master_01",
-          email: SUPERADMIN_EMAIL,
-          displayName: "Josfer (Super Admin)",
-          photoURL: null,
-          emailVerified: true,
-        } as any);
-      }
+      // Sin sesión forjada: si Firebase no responde, se vuelve a la landing pública con el
+      // inicio de sesión disponible. (Antes, en localhost, se fabricaba un Super Admin sin
+      // autenticar: retirado el 2026-09-02 por orden de Emilio: solo superadmin REAL.)
+      setUser(null);
+      setProfile(null);
       setLoading(false);
     }, 6000);
 
@@ -223,55 +209,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error("Failed to load user profile:", err);
         }
       } else {
-        // In localhost development, load real Super Admin identity from Firebase Realtime Database
-        const isLocalhost =
-          typeof window !== "undefined" &&
-          (window.location.hostname === "localhost" ||
-            window.location.hostname === "127.0.0.1" ||
-            window.location.hostname === "0.0.0.0");
-
-        if (isLocalhost) {
-          const defaultAdminProf: UserProfile = {
-            uid: "josfer_superadmin_master_01",
-            email: SUPERADMIN_EMAIL,
-            displayName: "Josfer (Super Admin)",
-            role: "superadmin",
-            status: "AUTHORIZED",
-            is_superadmin: true,
-            is_authorized: true,
-            created_at: new Date().toISOString(),
-            last_login: new Date().toISOString(),
-          };
-
-          if (isMounted) {
-            setProfile(defaultAdminProf);
-            setUser({
-              uid: "josfer_superadmin_master_01",
-              email: SUPERADMIN_EMAIL,
-              displayName: "Josfer (Super Admin)",
-              photoURL: null,
-              emailVerified: true,
-            } as any);
-          }
-
-          try {
-            const superAdminRef = ref(rtdb, "ultrarentable/users/josfer_superadmin_master_01");
-            get(superAdminRef).then((snap) => {
-              if (snap.exists() && isMounted) {
-                const freshData = snap.val() as UserProfile;
-                setProfile({ ...freshData, is_superadmin: true, is_authorized: true, role: "superadmin", status: "AUTHORIZED" });
-              }
-            }).catch((err) => {
-              console.warn("RTDB sync note:", err);
-            });
-          } catch (err) {
-            console.warn("RTDB connection note:", err);
-          }
-        } else {
-          if (isMounted) {
-            setUser(null);
-            setProfile(null);
-          }
+        // Sin sesión de Firebase no hay usuario: ni en localhost ni en producción. (El atajo que
+        // fabricaba un Super Admin en localhost se retiró el 2026-09-02: solo superadmin REAL,
+        // autenticado con Firebase; los registros quedan PENDING_APPROVAL hasta que el superadmin autorice.)
+        if (isMounted) {
+          setUser(null);
+          setProfile(null);
         }
       }
       authSettled = true;
