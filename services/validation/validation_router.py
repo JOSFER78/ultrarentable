@@ -155,7 +155,7 @@ async def list_candidates(status_filter: Optional[StrategyLifecycleStatus] = Non
 # ----------------------------------------------------------------------------
 # 11 MODULAR VALIDATION ENGINES ENDPOINTS
 # ----------------------------------------------------------------------------
-from services.validation.engines.pipeline_orchestrator import ModularValidationPipeline
+from services.validation.registry.adaptadores import ModularValidationPipeline
 
 modular_pipeline = ModularValidationPipeline()
 
