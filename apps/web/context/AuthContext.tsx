@@ -16,7 +16,16 @@ import {
   set,
   update,
 } from "firebase/database";
-import { auth, rtdb, googleProvider, isFirebaseConfigured, missingFirebaseEnvVars } from "@/lib/firebase";
+import {
+  auth,
+  rtdb,
+  googleProvider,
+  getFirebaseAuth,
+  getFirebaseRtdb,
+  getGoogleProvider,
+  isFirebaseConfigured,
+  missingFirebaseEnvVars,
+} from "@/lib/firebase";
 
 export const SUPERADMIN_EMAIL = "josferestudio@gmail.com";
 
@@ -89,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userEmail = (firebaseUser.email || "").toLowerCase().trim();
     const isSuperAdminEmail = userEmail === SUPERADMIN_EMAIL.toLowerCase();
     const nowIso = new Date().toISOString();
-    const userRef = ref(rtdb, `ultrarentable/users/${firebaseUser.uid}`);
+    const userRef = ref(getFirebaseRtdb(), `ultrarentable/users/${firebaseUser.uid}`);
 
     try {
       const snap = await get(userRef);
@@ -197,7 +206,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }, 6000);
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), async (firebaseUser) => {
       if (!isMounted) return;
 
       if (firebaseUser) {
@@ -232,7 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
       const userProf = await syncUserProfile(userCredential.user);
       setUser(userCredential.user);
       setProfile(userProf);
@@ -244,7 +253,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (email: string, password: string, displayName?: string) => {
     setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
       if (displayName && displayName.trim()) {
         try {
           await updateProfile(userCredential.user, { displayName: displayName.trim() });
@@ -261,7 +270,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async () => {
     setLoading(true);
     try {
-      const userCredential = await signInWithPopup(auth, googleProvider);
+      const authInst = getFirebaseAuth();
+      const providerInst = getGoogleProvider();
+      const userCredential = await signInWithPopup(authInst, providerInst);
       if (userCredential?.user) {
         const userProf = await syncUserProfile(userCredential.user);
         setUser(userCredential.user);
@@ -275,7 +286,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     setLoading(true);
     try {
-      await signOut(auth);
+      await signOut(getFirebaseAuth());
       setUser(null);
       setProfile(null);
     } finally {
@@ -287,7 +298,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) {
       throw new Error("No hay una sesión activa para actualizar el perfil.");
     }
-    const userRef = ref(rtdb, `ultrarentable/users/${user.uid}`);
+    const userRef = ref(getFirebaseRtdb(), `ultrarentable/users/${user.uid}`);
     await update(userRef, data);
 
     if (data.displayName && data.displayName !== user.displayName) {
@@ -296,7 +307,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {}
     }
 
-    setProfile((prev) => (prev ? { ...prev, ...data } : null));
+    setProfile((prev: any) => (prev ? { ...prev, ...data } : null));
   };
 
   const refreshProfile = async () => {
@@ -308,7 +319,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const listAllUsers = async (): Promise<UserProfile[]> => {
     try {
-      const usersRef = ref(rtdb, "ultrarentable/users");
+      const usersRef = ref(getFirebaseRtdb(), "ultrarentable/users");
       const snap = await get(usersRef);
       if (snap.exists()) {
         const data = snap.val();
@@ -326,7 +337,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Acción denegada: Solo el Super Administrador (josferestudio@gmail.com) puede autorizar nuevos usuarios.");
     }
 
-    const userRef = ref(rtdb, `ultrarentable/users/${targetUid}`);
+    const userRef = ref(getFirebaseRtdb(), `ultrarentable/users/${targetUid}`);
     const nowIso = new Date().toISOString();
     await update(userRef, {
       status: "AUTHORIZED",
@@ -343,7 +354,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Acción denegada: Solo el Super Administrador (josferestudio@gmail.com) puede revocar usuarios.");
     }
 
-    const userRef = ref(rtdb, `ultrarentable/users/${targetUid}`);
+    const userRef = ref(getFirebaseRtdb(), `ultrarentable/users/${targetUid}`);
     await update(userRef, {
       status: "BLOCKED",
       is_authorized: false,

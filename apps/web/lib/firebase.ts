@@ -130,11 +130,14 @@ export function getGoogleProvider(): GoogleAuthProvider {
  * accede de verdad a una propiedad. Si falta configuración, el error salta AHÍ, con su
  * mensaje completo — no al importar el módulo.
  */
-function lazyProxy<T extends object>(resolve: () => T): T {
-  return new Proxy({} as T, {
+function lazyProxy<T extends object>(resolve: () => T, proto?: object): T {
+  const target = proto ? Object.create(proto) : {};
+  return new Proxy(target as T, {
     get(_target, prop, receiver) {
-      const value = Reflect.get(resolve() as object, prop, receiver);
-      return typeof value === "function" ? value.bind(resolve()) : value;
+      const real = resolve() as any;
+      if (prop === Symbol.toStringTag) return real[Symbol.toStringTag];
+      const value = Reflect.get(real, prop, receiver);
+      return typeof value === "function" ? value.bind(real) : value;
     },
     set(_target, prop, value) {
       return Reflect.set(resolve() as object, prop, value);
@@ -147,6 +150,10 @@ function lazyProxy<T extends object>(resolve: () => T): T {
 
 export const auth: Auth = lazyProxy<Auth>(getFirebaseAuth);
 export const rtdb: Database = lazyProxy<Database>(getFirebaseRtdb);
-export const googleProvider: GoogleAuthProvider = lazyProxy<GoogleAuthProvider>(getGoogleProvider);
+export const googleProvider: GoogleAuthProvider = lazyProxy<GoogleAuthProvider>(
+  getGoogleProvider,
+  GoogleAuthProvider.prototype
+);
 
 export default getFirebaseApp;
+
