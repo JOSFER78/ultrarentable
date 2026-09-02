@@ -69,6 +69,10 @@ Contratos en `orchestration/agy/GO_A01..A12.md` (commit `f92b192cc`).
 `next build` 23 rutas. **`main` ← devilray (ff) y push a origin: `a1564650f..ef1d8ed37`** (12:30 UTC).
 Pendiente de la Ola A: A02 (`codex`, refutador del arnés: hooks + `aceptar_agy.py`).
 
+**Seguimiento para Emilio: GitHub Issues del repo (pestaña Tareas de Orca):** tablero #23, un issue por
+agente (#3-#21, #24-#28), ventana única #22 asignada a él. Orden de Emilio (12:45): **nunca codex**;
+A02 relanzado en `agy`. B07 (`services/improvement`) integrado (`cf91ac01b`).
+
 **Ola B (adaptativa) lanzada a 12:35 UTC** con contratos en `GO_B02/B03/B05/B07/B08/B09/B11.md`
 (`cd94632c9`): B02 = E1 (20 REVERSION_ATR de ES en 5m/15m con 5.18.0), B07 improvement, B08 meta,
 B09 catálogo v2, B05 parser .sqx, B11 inventario/consolidación; B03 (E2) tras B02; B04/B06/B10/B12
