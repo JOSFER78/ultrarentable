@@ -1,47 +1,49 @@
-# GO_B16 — Sitio local de seguimiento (plan · estado · tareas · agentes · ventana) en una página simple
+# GO_B16 — Localhost de ULTRARENTABLE en el PC: web en producción + API locales, arrancables/parables con un script, para ver `/estrategias` al momento
 
 ## Identidad
 - ID: B16 · Ola: B · Rama/worktree: JOSFER78/agy-B16 · Timebox: 45 min
-- Variables ya puestas: AGY_AGENT=B16, PYTHONPATH=<raíz de tu worktree>. Python: `PY="C:/Users/yo/Pictures/Descargaspc/pro/UltrarentablePC/ultrarentable/.venv/Scripts/python.exe"`.
+- Variables ya puestas: AGY_AGENT=B16, PYTHONPATH=<raíz de tu worktree>. Node: `node_modules/` y `apps/web/node_modules/` de tu worktree son junctions al worktree del orquestador; NO ejecutes `npm install`/`npm ci`. Python: `PY="C:/Users/yo/Pictures/Descargaspc/pro/UltrarentablePC/ultrarentable/.venv/Scripts/python.exe"`.
 
 ## OBJETIVO (una frase verificable)
-`scripts/orq/sitio_seguimiento.py` genera `orchestration/site/index.html`: UNA página estática y sobria al estilo de la interfaz de Orca / Claude Code (fuente del sistema, negro sobre blanco, bordes grises, tablas; SIN colores, SIN paneles, SIN gráficos, SIN JavaScript, SIN CSS externo, SIN emojis ni iconos, nada que parezca "hecho con IA") con cinco secciones en este orden: **Plan** (la tabla de fases de `orchestration/state/plan_maestro.md`), **Estado** (la sección `## 3 bis` de `orchestration/state/current_phase.md` con su tabla de aterrizajes y el párrafo "En vuelo"), **Tareas** (`gh issue list --state all --limit 100 --json number,title,state,labels,updatedAt`: número, título, estado, etiquetas, fecha; agrupadas en Abiertas / Cerradas), **Agentes** (si existe `scripts/orq/agy_censo.ps1`, su salida `-Json` en tabla; si no, `NO DATA (agy_censo.ps1 no disponible)`), **Ventana de Emilio** (`orchestration/state/VENTANA_EMILIO.md` completo); cabecera con "Generado: <fecha-hora local>" y `<meta http-equiv="refresh" content="60">`. Y `scripts/orq/sitio_servir.ps1` que regenera cada 60 s y sirve la carpeta en `http://localhost:8765` con `python -m http.server` (proceso ligero, sin frameworks).
+`scripts/orq/web_local.ps1` levanta en el PC una instancia LOCAL de ULTRARENTABLE con el código del worktree desde el que se ejecuta: la API FastAPI (`services/api/app/main.py`, uvicorn del venv) en `-PuertoApi` (por defecto **8100**) y la web Next.js en **build de producción** (`npm run build` + `npm run start -- -p <PuertoWeb>`, por defecto **3100**), ambas como procesos desacoplados (`Start-Process`, PIDs en `orchestration/site/local.pids.json`, salida en `orchestration/site/*.log`), con `-Estado` (HTTP 200 en `/`, `/estrategias`, `/prop-firms` y en `/api/v1/...` de salud de la API, más versión del motor leída de la API), `-Parar` (mata solo esos PIDs) y `-Reconstruir` (build + reinicio de la web); y la web local habla con la API local: `next.config` y `apps/web/lib/api.ts` leen `BACKEND_URL` (por defecto `http://127.0.0.1:8000`, sin cambiar el comportamiento actual) y el script arranca la web con `BACKEND_URL=http://127.0.0.1:<PuertoApi>`. Los puertos 3000 y 8000 del PC los ocupa hoy un túnel `sshd` hacia el VPS: NO se tocan.
 
 ## TERRITORIO (únicas rutas donde puede ESCRIBIR; fuera, solo lectura)
-- scripts/orq/sitio_seguimiento.py (nuevo) · scripts/orq/sitio_servir.ps1 (nuevo) · orchestration/site/ (nuevo; index.html generado)
-- tests/test_sitio_seguimiento.py (nuevo)
+- scripts/orq/web_local.ps1 (nuevo) · orchestration/site/ (nuevo: pids, logs; añade `orchestration/site/*.log` y `local.pids.json` a `.gitignore` SOLO si `.gitignore` ya existe en la raíz; si no, déjalo como HALLAZGO)
+- apps/web/next.config.* y apps/web/lib/api.ts (SOLO para leer `BACKEND_URL` con el mismo valor por defecto de hoy)
+- orchestration/OPERACION_WEB_LOCAL.md (nuevo; 1 página: cómo arrancar, ver, reconstruir y parar)
 - orchestration/results/agy/B16.md (nuevo) · orchestration/agy/DONE_B16.md (nuevo)
 
 ## ENTRADAS (leer antes de tocar nada; con ruta exacta)
-- orchestration/state/plan_maestro.md (tabla de fases), orchestration/state/current_phase.md (sección `## 3 bis` y "En vuelo"), orchestration/state/VENTANA_EMILIO.md.
-- `gh issue list --state all --limit 100 --json number,title,state,labels,updatedAt` (ejecútalo y pega las 3 primeras líneas crudas).
-- docs/19_UI_STYLE_SPEC.md solo para lo que prohíbe (colores); la referencia visual aquí es la propia terminal de Orca / Claude Code: monocromo, denso, legible.
+- apps/web/next.config.* (rewrites `/api/:path*` → `${backendUrl}`; mira de dónde sale `backendUrl` hoy) y apps/web/lib/api.ts líneas 60-125 (`BASE_URL` servidor = `http://127.0.0.1:8000`).
+- services/api/app/main.py y services/api/app/config.py (`STATE_DB_PATH`; la BD canónica está FUERA del repo: si no existe en el PC, la API debe arrancar igual y decirlo en `-Estado` como `NO DATA`).
+- `powershell -NoProfile -Command "Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -in 3000,8000,3100,8100 }"` (pega la salida: 3000/8000 = túnel sshd).
+- CLAUDE.md §"Servicios locales" (la web SIEMPRE en build de producción; nunca `next dev`).
 
 ## PASOS (numerados, cortos, en orden)
-1. `git status --porcelain` vacío; lee las ENTRADAS.
-2. `sitio_seguimiento.py` (stdlib: `argparse, subprocess, re, html, json, datetime, pathlib`): conversor mínimo Markdown→HTML propio (títulos, tablas con `|`, listas, negrita, `código`, párrafos; NADA más), extracción por encabezado (`## 3 bis` hasta el siguiente `## `), llamada a `gh` con timeout 20 s y `NO DATA (gh: <error>)` si falla, escape HTML de todo, `--out` (por defecto `orchestration/site/index.html`) y `--sin-gh` para tests. CSS embebido de ≤ 40 líneas: `font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color:#111; background:#fff; max-width:1100px; border:1px solid #ddd` y grises; PROHIBIDO cualquier otro color.
-3. `sitio_servir.ps1 [-Puerto 8765] [-Intervalo 60] [-Parar]`: arranca UNA vez `python -m http.server <puerto>` sobre `orchestration/site/` en segundo plano (`Start-Process`, PID guardado en `orchestration/site/servidor.pid`) y en bucle regenera el HTML cada `-Intervalo` segundos; `-Parar` mata ese PID y sale.
-4. Tests reales en `tests/test_sitio_seguimiento.py`: genera con `--sin-gh --out <tmp>` desde los ficheros reales del repo ⇒ el fichero existe, contiene `<h2>Plan`, `<h2>Estado`, `<h2>Tareas`, `<h2>Agentes`, `<h2>Ventana`, contiene `Generado:`, NO contiene `<script`, y ningún color hex fuera de la lista de grises permitida (`#fff #ffffff #111 #000 #333 #555 #777 #999 #ccc #ddd #eee #f5f5f5 #fafafa`).
-5. Genera el index.html real (con gh) y pega en el informe sus primeras 30 líneas; arranca `sitio_servir.ps1`, comprueba `curl -s http://localhost:8765/ | head -5`, y PÁRALO (`-Parar`) antes de cerrar (el ORQ lo arranca en producción). DONE; cierre.
+1. `git status --porcelain` vacío; lee las ENTRADAS; comprueba que `apps/web/.next/` no existe o ignórala.
+2. `BACKEND_URL` en `next.config.*` y `lib/api.ts` (valor por defecto idéntico al actual). `npx tsc --noEmit -p apps/web` ⇒ rc=0.
+3. `web_local.ps1` (PowerShell 5.1: sin `&&`, sin `??`): `-Arrancar` (por defecto): uvicorn `services.api.app.main:app --host 127.0.0.1 --port <PuertoApi>` con `-WorkingDirectory` = raíz del worktree y `PYTHONPATH` = raíz; espera hasta 30 s a que responda; luego `npm run build` (PESADO: ~2 min; pide admisión con `orca orchestration ask` si el ORQ no la ha dado ya en el spec) y `npm run start -- -p <PuertoWeb>` con `BACKEND_URL` en el entorno del proceso; guarda PIDs. `-Estado`: tabla puerto/proceso/HTTP por URL. `-Parar`: mata los PIDs del fichero y lo borra... NO: lo renombra a `local.pids.<fecha>.json` (nunca `rm`). `-Reconstruir`: build + reinicio solo de la web.
+4. Ejecuta `-Arrancar` de verdad; pega `-Estado`; abre `curl -s http://127.0.0.1:3100/estrategias | head -c 600` y pégalo; `-Parar`; vuelve a `-Estado` (todo caído). Deja la instancia PARADA al cerrar (el ORQ la arranca desde devilray).
+5. `orchestration/OPERACION_WEB_LOCAL.md`; informe con salidas crudas; DONE; cierre.
 
 ## ACEPTACIÓN (comandos exactos + salida esperada; el orquestador los re-ejecuta desde la raíz del worktree)
 ```bash
-PY="C:/Users/yo/Pictures/Descargaspc/pro/UltrarentablePC/ultrarentable/.venv/Scripts/python.exe"
-"$PY" -m pytest tests/test_sitio_seguimiento.py -q -p no:cacheprovider                   # esperado: >= 3 passed
-"$PY" scripts/orq/sitio_seguimiento.py --out /tmp/site_B16.html; echo "rc=$?"; grep -c "<h2" /tmp/site_B16.html   # esperado: rc=0; 5
-grep -c "<script" /tmp/site_B16.html || true                                             # esperado: 0 (rc-libre)
-grep -oE "#[0-9a-fA-F]{3,6}\b" /tmp/site_B16.html | sort -u | grep -vE "^#(fff|ffffff|111|000|333|555|777|999|ccc|ddd|eee|f5f5f5|fafafa)$" | wc -l   # esperado: 0
-grep -c "http.server" scripts/orq/sitio_servir.ps1                                        # esperado: >= 1
-git diff --name-only   # ⊆ TERRITORIO; esperado: vacio (solo ficheros nuevos)
+cd apps/web && npx tsc --noEmit -p . ; echo "rc=$?"; cd ../..                                  # esperado: rc=0
+grep -c "BACKEND_URL" apps/web/lib/api.ts apps/web/next.config.* | tail -2                       # esperado: >= 1 en cada uno
+grep -cE "8000" apps/web/lib/api.ts                                                              # esperado: >= 1 (el valor por defecto sigue)
+powershell -NoProfile -Command "[scriptblock]::Create((Get-Content -Raw scripts/orq/web_local.ps1)) | Out-Null; 'sintaxis ok'"   # esperado: sintaxis ok
+grep -cE "Start-Process|uvicorn|npm run start" scripts/orq/web_local.ps1                          # esperado: >= 3
+grep -c "3100" orchestration/OPERACION_WEB_LOCAL.md                                              # esperado: >= 1
+git diff --name-only   # ⊆ TERRITORIO; esperado: apps/web/lib/api.ts y apps/web/next.config.* (y .gitignore si existía)
 ```
 
 ## RIESGO Y REGLAS ESPECÍFICAS
-- ¿Toca semántica del motor? NO. ¿Ejecuta algo pesado? NO (http.server es trivial).
-- La página NO inventa estado: todo sale de los ficheros y de `gh`; donde falte, `NO DATA` con motivo.
-- Sin frameworks, sin npm, sin CDN, sin JavaScript, sin emojis, sin iconos, sin colores.
+- ¿Toca semántica del motor? NO. ¿Ejecuta algo pesado? SÍ, `npm run build` (~2 min, 1 vez): ADMITIDO por el ORQ para esta tarea (semáforo: build SQX de B06 + campaña E2 de B03 son los dos pesados; el build de web se tolera como tercero por ser corto). Ejecútalo con `Start-Process -PriorityClass BelowNormal` o `cmd /c start /low /b /wait`.
+- NO tocar los puertos 3000/8000 (túnel al VPS) ni ningún proceso `sshd`.
+- `.env.local`/Firebase NO se tocan (issue #22 punto 3).
 
 ## PROHIBIDO (lista negra, sin excepciones)
-git de escritura · rm · `npm`/CDN/JS · colores fuera de la lista de grises · escribir fuera del TERRITORIO · dejar el servidor arrancado al cerrar · inventar cifras · declarar subagentes.
+git de escritura · rm (los ficheros de PIDs se renombran) · `npm install` · `next dev` · matar procesos que no arrancó el script · escribir fuera del TERRITORIO · inventar cifras · declarar subagentes.
 
 ## SALIDA
 1. Working tree con los cambios (SIN commit). 2. orchestration/results/agy/B16.md. 3. orchestration/agy/DONE_B16.md.
