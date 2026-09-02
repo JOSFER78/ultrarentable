@@ -81,10 +81,11 @@ Informes: `orchestration/results/agy/<ID>.md`. Despachos: Panel de agentes y Tar
 
 | Bloqueo | Estado real |
 | :--- | :--- |
-| Puerta de admisión en Windows | ❌ hasta A03; mientras, `ask` al ORQ antes de cualquier pesado |
-| VPS saturado / licencia SQX (05-09) / Firebase / pregunta 5.2 | ⏳ `VENTANA_EMILIO.md` (sin cambios) |
-| Datos ES en el PC para E1/E2 | ⏳ Ola B (B01) |
-| CPU del PC | ⚠ 8 núcleos; con 3 `agy` arrancando + `npm install` de setup llegó al 100 %; regla: tandas de 3 con guarda de CPU <75 % |
+| Puerta de admisión en Windows | ✅ A03 integrada: `gobernanza_recursos estado/ejecutar` funciona; los agentes siguen pidiendo `ask` antes de lo pesado y el ORQ concede uno a la vez (registro en el scratchpad `semaforo_pesados.txt`) |
+| VPS saturado / licencia SQX (05-09) / Firebase / pregunta 5.2 | ⏳ `VENTANA_EMILIO.md` (sin cambios; sigue siendo lo único que necesita a Emilio) |
+| Datos ES/YM/NQ 5m-15m en el PC | ✅ ya estaban consolidados en `data/normalized` del checkout principal y verifican 176/176 con hash de contenido (A04); B11 hace el inventario del resto (GC/SI/CL/forex) |
+| Deuda W4.2-bis | ❌ `except (ImportError, OSError): pass` mudo en `discovery_validation_pipeline._acquire_singleton_lock` (A10); corregir en Ola B |
+| Capacidad del PC | ⚠ 8 núcleos / RAM al 88 % con 11 `agy` + 122 `node` (MCP de cada agente). Regla vigente: ≤6-7 agentes simultáneos, cerrar terminales al integrar (`terminal stop --worktree`), guarda RAM <78 % / CPU real <80 % antes de cada lanzamiento, un pesado a la vez |
 
 ---
 
