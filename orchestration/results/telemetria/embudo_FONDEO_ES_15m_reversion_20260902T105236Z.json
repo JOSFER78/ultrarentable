@@ -1,0 +1,325 @@
+{
+  "generado_utc": "20260902T105236Z",
+  "engine_version": "5.18.0",
+  "contexto": {
+    "track": "FONDEO",
+    "symbol": "ES",
+    "execution_symbol": "MES",
+    "timeframe": "15m",
+    "profile": "reversion",
+    "dataset_source": "dukascopy",
+    "dataset_file": "ds_dukascopy_usa500idxusd_15m_consolidated.json",
+    "certified_count": 0,
+    "configuraciones_evaluadas": 20,
+    "barras_is": 50026,
+    "barras_val": 16675,
+    "barras_oos": 16676,
+    "max_candidates": 20,
+    "espacio_total": 27,
+    "truncado": true
+  },
+  "umbrales": {
+    "IS": {
+      "trades_min": 5,
+      "pf_min": 1.05
+    },
+    "VAL": {
+      "trades_min": 3,
+      "pf_min": 1.0
+    },
+    "OOS": {
+      "trades_min": 100,
+      "pf_min": 1.1
+    }
+  },
+  "embudo_por_etapa": {
+    "IS": 20
+  },
+  "cobertura_familias": {
+    "INSTITUTIONAL_SESSION_MOMENTUM": 9,
+    "TREND_FOLLOWING": 9,
+    "MEAN_REVERSION": 2
+  },
+  "causas_por_etapa": {
+    "IS": {
+      "total": 20,
+      "pocas_operaciones": 0,
+      "sin_ventaja": 20,
+      "ambas": 0,
+      "otro": 0,
+      "sin_ventaja_bruta": 20,
+      "sin_ventaja_por_coste": 0,
+      "por_familia": {
+        "INSTITUTIONAL_SESSION_MOMENTUM": {
+          "total": 9,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 9,
+          "ambas": 0,
+          "otro": 0,
+          "sin_ventaja_bruta": 9,
+          "sin_ventaja_por_coste": 0
+        },
+        "TREND_FOLLOWING": {
+          "total": 9,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 9,
+          "ambas": 0,
+          "otro": 0,
+          "sin_ventaja_bruta": 9,
+          "sin_ventaja_por_coste": 0
+        },
+        "MEAN_REVERSION": {
+          "total": 2,
+          "pocas_operaciones": 0,
+          "sin_ventaja": 2,
+          "ambas": 0,
+          "otro": 0,
+          "sin_ventaja_bruta": 2,
+          "sin_ventaja_por_coste": 0
+        }
+      }
+    }
+  },
+  "telemetria": [
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c1",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=736 pf=0.830",
+      "trades": 736,
+      "pf": 0.83,
+      "pf_bruto": 0.897,
+      "pf_neto": 0.83,
+      "coste_total_usd": 5585.0,
+      "coste_pct_del_bruto": 17.17
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c2",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=600 pf=0.840",
+      "trades": 600,
+      "pf": 0.84,
+      "pf_bruto": 0.903,
+      "pf_neto": 0.84,
+      "coste_total_usd": 4600.0,
+      "coste_pct_del_bruto": 14.86
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c3",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=542 pf=0.850",
+      "trades": 542,
+      "pf": 0.85,
+      "pf_bruto": 0.902,
+      "pf_neto": 0.85,
+      "coste_total_usd": 4135.0,
+      "coste_pct_del_bruto": 13.43
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c4",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=550 pf=0.800",
+      "trades": 550,
+      "pf": 0.8,
+      "pf_bruto": 0.871,
+      "pf_neto": 0.8,
+      "coste_total_usd": 4130.0,
+      "coste_pct_del_bruto": 17.19
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c5",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=491 pf=0.850",
+      "trades": 491,
+      "pf": 0.85,
+      "pf_bruto": 0.913,
+      "pf_neto": 0.85,
+      "coste_total_usd": 3680.0,
+      "coste_pct_del_bruto": 14.75
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c6",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=454 pf=0.860",
+      "trades": 454,
+      "pf": 0.86,
+      "pf_bruto": 0.917,
+      "pf_neto": 0.86,
+      "coste_total_usd": 3405.0,
+      "coste_pct_del_bruto": 13.92
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c7",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=418 pf=0.920",
+      "trades": 418,
+      "pf": 0.92,
+      "pf_bruto": 0.989,
+      "pf_neto": 0.92,
+      "coste_total_usd": 3185.0,
+      "coste_pct_del_bruto": 15.56
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c8",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=395 pf=0.890",
+      "trades": 395,
+      "pf": 0.89,
+      "pf_bruto": 0.951,
+      "pf_neto": 0.89,
+      "coste_total_usd": 2985.0,
+      "coste_pct_del_bruto": 13.68
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c9",
+      "etapa": "IS",
+      "familia": "INSTITUTIONAL_SESSION_MOMENTUM",
+      "motivo": "trades=377 pf=0.890",
+      "trades": 377,
+      "pf": 0.89,
+      "pf_bruto": 0.95,
+      "pf_neto": 0.89,
+      "coste_total_usd": 2845.0,
+      "coste_pct_del_bruto": 12.68
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c10",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1989 pf=0.810",
+      "trades": 1989,
+      "pf": 0.81,
+      "pf_bruto": 0.897,
+      "pf_neto": 0.81,
+      "coste_total_usd": 15125.0,
+      "coste_pct_del_bruto": 22.62
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c11",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1614 pf=0.810",
+      "trades": 1614,
+      "pf": 0.81,
+      "pf_bruto": 0.88,
+      "pf_neto": 0.81,
+      "coste_total_usd": 12275.0,
+      "coste_pct_del_bruto": 19.04
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c12",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1383 pf=0.800",
+      "trades": 1383,
+      "pf": 0.8,
+      "pf_bruto": 0.857,
+      "pf_neto": 0.8,
+      "coste_total_usd": 10450.0,
+      "coste_pct_del_bruto": 16.62
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c13",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1414 pf=0.750",
+      "trades": 1414,
+      "pf": 0.75,
+      "pf_bruto": 0.828,
+      "pf_neto": 0.75,
+      "coste_total_usd": 10665.0,
+      "coste_pct_del_bruto": 23.0
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c14",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1243 pf=0.750",
+      "trades": 1243,
+      "pf": 0.75,
+      "pf_bruto": 0.812,
+      "pf_neto": 0.75,
+      "coste_total_usd": 9360.0,
+      "coste_pct_del_bruto": 19.23
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c15",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1127 pf=0.730",
+      "trades": 1127,
+      "pf": 0.73,
+      "pf_bruto": 0.789,
+      "pf_neto": 0.73,
+      "coste_total_usd": 8460.0,
+      "coste_pct_del_bruto": 17.16
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c16",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=1031 pf=0.760",
+      "trades": 1031,
+      "pf": 0.76,
+      "pf_bruto": 0.836,
+      "pf_neto": 0.76,
+      "coste_total_usd": 7855.0,
+      "coste_pct_del_bruto": 22.23
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c17",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=947 pf=0.780",
+      "trades": 947,
+      "pf": 0.78,
+      "pf_bruto": 0.843,
+      "pf_neto": 0.78,
+      "coste_total_usd": 7160.0,
+      "coste_pct_del_bruto": 17.94
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c18",
+      "etapa": "IS",
+      "familia": "TREND_FOLLOWING",
+      "motivo": "trades=875 pf=0.810",
+      "trades": 875,
+      "pf": 0.81,
+      "pf_bruto": 0.868,
+      "pf_neto": 0.81,
+      "coste_total_usd": 6590.0,
+      "coste_pct_del_bruto": 15.32
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c19",
+      "etapa": "IS",
+      "familia": "MEAN_REVERSION",
+      "motivo": "trades=1965 pf=0.810",
+      "trades": 1965,
+      "pf": 0.81,
+      "pf_bruto": 0.897,
+      "pf_neto": 0.81,
+      "coste_total_usd": 14935.0,
+      "coste_pct_del_bruto": 22.6
+    },
+    {
+      "strategy_id": "UR_FONDEO_ES_15M_c20",
+      "etapa": "IS",
+      "familia": "MEAN_REVERSION",
+      "motivo": "trades=1606 pf=0.810",
+      "trades": 1606,
+      "pf": 0.81,
+      "pf_bruto": 0.882,
+      "pf_neto": 0.81,
+      "coste_total_usd": 12210.0,
+      "coste_pct_del_bruto": 19.08
+    }
+  ]
+}
