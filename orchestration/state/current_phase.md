@@ -82,6 +82,21 @@ A02 relanzado en `agy`. B07 (`services/improvement`) integrado (`cf91ac01b`).
 | B02 | **E1** (20 configs `reversion` ES 5m/15m, 5.18.0) | ACEPTA. **20/20 `sin_ventaja_bruta` en 5m y 15m** con 1.143-4.097 ops por config: **familia mala, no dataset ni coste**. La lectura "PF 0,03-0,19 del 4h Yahoo" era muestra pequeña; en datos reales la señal sigue sin ventaja antes de costes | `dbbe0b693` |
 | B08 | `services/meta` (M4, W6.0, D8/D9) | ACEPTA; 10/10; correlación fail-closed; HRP/mín-var deterministas; sin router | `00175aff9` |
 
+| B09 | catálogo de prop firms v2 con SourceRef (W4.8/W4.9a, D6) | ACEPTA; 5 tests reales; sync 501; motor intacto | `7e754d9c5` |
+| B11 | inventario de datos PC+VPS (W1.2/W1.3) | ACEPTA; custodia 6/6; ES r=0,9916 APTO; 165 datasets solo en VPS | `96ceecba9` |
+| A02 | refutador del arnés | ACEPTA; 7/10 bloqueos; agujeros de cliente documentados; k5: el agente puede ampliar su TERRITORIO → **D16** | `552ce5c11` |
+| B13 | W4.2-bis candado del discovery | ACEPTA; aviso explícito sin fcntl; resto se propaga | `405ff4095` |
+
+**Decisión D16 (nace de A02):** los bypass de cliente (`--no-verify`, `-c core.hooksPath`, `ORQ_COMMIT=1`
+puesto por el agente) no se pueden impedir con hooks; la soberanía está en la aceptación: el arnés
+exige **0 commits del agente sobre la base** y **GO íntegro** (TERRITORIO/ACEPTACIÓN/RIESGO idénticos a
+HEAD; solo se toleran `## CORRECCION_n` al final). Lo implementa B14 (#29).
+
+**Incidente 13:02 UTC:** Orca se auto-actualizó (`orca-windows-setup`; `Orca.exe` desapareció ~5 min).
+Los workers sobrevivieron en `orca-terminal-daemon`; los despachos siguieron válidos; el CLI nuevo
+imprime una línea de `crashpad` por stderr (parsear con `2>/dev/null`). `main` publicado
+`ef1d8ed37..29b37ba72` con B02/B05/B07/B08 (37 tests verdes).
+
 **Decisión D15 (nace de E1):** la pregunta "¿dato o edge?" para la familia `reversion` de ES queda
 respondida: **es edge** (la familia no tiene ventaja bruta). E2 (B03, en vuelo) lo mide sobre las 6
 familias con espacio completo; si confirma `AGOTADA` por familia, el siguiente paso es **W3.4 (diseño
