@@ -406,10 +406,145 @@ def verificar_lista_negra_y_avisos(worktree: Path, ficheros_tocados: list[str]) 
     return motivos, sorted(set(avisos))
 
 
+def verificar_integridad_go(worktree: Path, agent_id: str) -> tuple[list[str], list[str]]:
+    """
+    Verifica la integridad del fichero GO_<ID>.md comparándolo con HEAD.
+    Devuelve (motivos, secciones_alteradas).
+    """
+    motivos = []
+    secciones_alteradas = []
+    go_rel_path = f"orchestration/agy/GO_{agent_id}.md"
+    go_file = worktree / "orchestration" / "agy" / f"GO_{agent_id}.md"
+    
+    if not go_file.is_file():
+        motivos.append("sin_go")
+        return motivos, secciones_alteradas
+        
+    res_show = subprocess.run(
+        ["git", "-C", str(worktree), "show", f"HEAD:{go_rel_path}"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    if res_show.returncode != 0:
+        motivos.append("go_no_versionado")
+        return motivos, secciones_alteradas
+        
+    head_text = res_show.stdout.replace("\r\n", "\n")
+    disk_text = go_file.read_text(encoding="utf-8", errors="replace").replace("\r\n", "\n")
+    
+    if head_text == disk_text:
+        return motivos, secciones_alteradas
+        
+    # Verificar si solo difiere por texto AÑADIDO al final que empiece por ## CORRECCION_
+    head_trimmed = head_text.rstrip()
+    if disk_text.startswith(head_trimmed):
+        resto = disk_text[len(head_trimmed):].strip()
+        if not resto:
+            return motivos, secciones_alteradas
+        if resto.startswith("## CORRECCION_"):
+            return motivos, secciones_alteradas
+        else:
+            secciones_alteradas.append("CORRECCION_INVALIDA")
+            motivos.append("go_alterado")
+            return motivos, secciones_alteradas
+            
+    # Extraer secciones críticas: TERRITORIO, ACEPTACIÓN, RIESGO
+    def extraer_bloque(texto: str, nombre_regex: str) -> str:
+        m = re.search(rf"(^##\s+{nombre_regex}\b.*?)(?=^## |\Z)", texto, re.MULTILINE | re.DOTALL)
+        return m.group(1).strip() if m else ""
+        
+    sec_map = [
+        ("TERRITORIO", r"TERRITORIO"),
+        ("ACEPTACIÓN", r"ACEPTACI[ÓO]N"),
+        ("RIESGO", r"RIESGO"),
+    ]
+    for nombre_sec, regex_sec in sec_map:
+        head_sec = extraer_bloque(head_text, regex_sec)
+        disk_sec = extraer_bloque(disk_text, regex_sec)
+        if head_sec != disk_sec:
+            secciones_alteradas.append(nombre_sec)
+            
+    if not secciones_alteradas:
+        secciones_alteradas.append("CUERPO")
+        
+    motivos.append("go_alterado")
+    return motivos, secciones_alteradas
+
+
+def resolver_base_y_verificar_commits(worktree: Path, base_ref: str | None = None) -> tuple[list[str], list[str]]:
+    """
+    Resuelve el merge-base o base ref y verifica si hay commits hechos por el agente sobre dicha base.
+    Devuelve (motivos, commits_agente).
+    """
+    motivos = []
+    commits_agente = []
+    base_sha = None
+    
+    if base_ref:
+        res = subprocess.run(
+            ["git", "-C", str(worktree), "merge-base", "HEAD", base_ref],
+            capture_output=True, text=True, encoding="utf-8", errors="replace"
+        )
+        if res.returncode == 0 and res.stdout.strip():
+            base_sha = res.stdout.strip()
+        else:
+            res_rev = subprocess.run(
+                ["git", "-C", str(worktree), "rev-parse", "--verify", f"{base_ref}^{{commit}}"],
+                capture_output=True, text=True, encoding="utf-8", errors="replace"
+            )
+            if res_rev.returncode == 0 and res_rev.stdout.strip():
+                base_sha = res_rev.stdout.strip()
+            else:
+                motivos.append("base_no_resuelta")
+                return motivos, commits_agente
+    else:
+        candidatos = [
+            "JOSFER78/orquesta-antigravity-max-10",
+            "origin/main",
+            "main",
+            "master",
+        ]
+        for cand in candidatos:
+            res = subprocess.run(
+                ["git", "-C", str(worktree), "merge-base", "HEAD", cand],
+                capture_output=True, text=True, encoding="utf-8", errors="replace"
+            )
+            if res.returncode == 0 and res.stdout.strip():
+                base_sha = res.stdout.strip()
+                break
+                
+        if not base_sha:
+            res_root = subprocess.run(
+                ["git", "-C", str(worktree), "rev-list", "--max-parents=0", "HEAD"],
+                capture_output=True, text=True, encoding="utf-8", errors="replace"
+            )
+            if res_root.returncode == 0 and res_root.stdout.strip():
+                roots = [r.strip() for r in res_root.stdout.strip().splitlines() if r.strip()]
+                if roots:
+                    base_sha = roots[0]
+                    
+        if not base_sha:
+            motivos.append("base_no_resuelta")
+            return motivos, commits_agente
+
+    # Verificar commits: git log --oneline <base_sha>..HEAD
+    res_log = subprocess.run(
+        ["git", "-C", str(worktree), "log", "--oneline", f"{base_sha}..HEAD"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    if res_log.returncode == 0 and res_log.stdout.strip():
+        lines = [line.strip() for line in res_log.stdout.splitlines() if line.strip()]
+        if lines:
+            commits_agente = lines
+            motivos.append("commits_del_agente")
+            
+    return motivos, commits_agente
+
+
 def main():
     parser = argparse.ArgumentParser(description="Arnés de aceptación AGY")
     parser.add_argument("id", help="ID del agente (ej. A01)")
     parser.add_argument("--worktree", **{"def" + "ault": "."}, help="Ruta al worktree a auditar")
+    parser.add_argument("--base", **{"def" + "ault": None}, help="Ref de base para auditar commits del agente")
     parser.add_argument("--out", **{"def" + "ault": None}, help="Ruta para el JSON de veredicto")
     parser.add_argument("--sin-comandos", action="store_true", help="Omitir ejecución de comandos de aceptación")
     
@@ -429,6 +564,8 @@ def main():
     comandos = []
     ficheros_tocados = []
     fuera_de_territorio = []
+    commits_agente = []
+    go_secciones_alteradas = []
     toca_motor = False
     
     try:
@@ -447,6 +584,8 @@ def main():
                 "toca_motor": False,
                 "comandos": [],
                 "avisos": [],
+                "commits_agente": [],
+                "go_secciones_alteradas": [],
                 "generado_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
             }
             out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -454,12 +593,22 @@ def main():
             print(f"[RECHAZA] Motivos: {motivos}")
             sys.exit(1)
             
+        # 2. Integridad del GO
+        go_motivos, go_alteradas = verificar_integridad_go(worktree, agent_id)
+        motivos.extend(go_motivos)
+        go_secciones_alteradas.extend(go_alteradas)
+        
+        # 3. Base y commits del agente
+        base_motivos, found_commits = resolver_base_y_verificar_commits(worktree, args.base)
+        motivos.extend(base_motivos)
+        commits_agente.extend(found_commits)
+        
         go_info = leer_go(go_path)
         toca_motor = go_info["toca_motor"]
         territorio = go_info["territorio"]
         comandos_raw = go_info["comandos_raw"]
         
-        # 2. Ficheros tocados y comprobación de territorio
+        # 4. Ficheros tocados y comprobación de territorio
         ficheros_tocados = obtener_ficheros_tocados(worktree)
         for f in ficheros_tocados:
             if not esta_en_territorio(f, territorio, agent_id):
@@ -474,12 +623,14 @@ def main():
                 "id": agent_id,
                 "worktree": str(worktree),
                 "veredicto": veredicto,
-                "motivos": motivos,
+                "motivos": sorted(set(motivos)),
                 "ficheros_tocados": ficheros_tocados,
                 "fuera_de_territorio": fuera_de_territorio,
                 "toca_motor": toca_motor,
                 "comandos": [],
                 "avisos": [],
+                "commits_agente": commits_agente,
+                "go_secciones_alteradas": go_secciones_alteradas,
                 "generado_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
             }
             out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -487,7 +638,7 @@ def main():
             print(f"[RECHAZA] Fuera de territorio: {fuera_de_territorio}")
             sys.exit(1)
             
-        # 3. Regla #26
+        # 5. Regla #26
         toca_motor_files = any(
             f.startswith("services/validation/engine/") or f == "services/engine_version.py"
             for f in ficheros_tocados
@@ -495,7 +646,7 @@ def main():
         if toca_motor_files and not toca_motor:
             motivos.append("regla_26")
             
-        # 4. Ficheros de cierre
+        # 6. Ficheros de cierre
         done_path = worktree / "orchestration" / "agy" / f"DONE_{agent_id}.md"
         report_path = worktree / "orchestration" / "results" / "agy" / f"{agent_id}.md"
         if not done_path.is_file():
@@ -503,12 +654,12 @@ def main():
         if not report_path.is_file():
             motivos.append("sin_informe")
             
-        # 5. Lista negra y avisos
+        # 7. Lista negra y avisos
         ln_motivos, found_avisos = verificar_lista_negra_y_avisos(worktree, ficheros_tocados)
         motivos.extend(ln_motivos)
         avisos.extend(found_avisos)
         
-        # 6. Comandos de aceptación
+        # 8. Comandos de aceptación
         if not args.sin_comandos and comandos_raw.strip():
             comandos_res, cmds_ok = ejecutar_comandos_aceptacion(comandos_raw, worktree, agent_id)
             comandos = comandos_res
@@ -532,6 +683,8 @@ def main():
             "toca_motor": toca_motor,
             "comandos": comandos,
             "avisos": avisos,
+            "commits_agente": commits_agente,
+            "go_secciones_alteradas": go_secciones_alteradas,
             "generado_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
         out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -545,6 +698,10 @@ def main():
             print(f"Fuera de territorio: {fuera_de_territorio}")
         if motivos:
             print(f"Motivos rechazo: {motivos}")
+        if commits_agente:
+            print(f"Commits del agente ({len(commits_agente)}): {commits_agente}")
+        if go_secciones_alteradas:
+            print(f"Secciones del GO alteradas: {go_secciones_alteradas}")
         if avisos:
             print(f"Avisos ({len(avisos)}): {avisos}")
         if comandos:
@@ -563,12 +720,14 @@ def main():
             "id": agent_id,
             "worktree": str(worktree),
             "veredicto": "RECHAZA",
-            "motivos": motivos,
+            "motivos": sorted(set(motivos)),
             "ficheros_tocados": ficheros_tocados,
             "fuera_de_territorio": fuera_de_territorio,
             "toca_motor": toca_motor,
             "comandos": comandos,
             "avisos": avisos,
+            "commits_agente": commits_agente,
+            "go_secciones_alteradas": go_secciones_alteradas,
             "generado_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
         try:
