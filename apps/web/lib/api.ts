@@ -64,7 +64,7 @@ export interface SQXProject { name: string; }
 export interface SQXStatus { status: string; base_url?: string; session_id?: string; server_info?: { name: string; version: string }; error?: string; }
 export interface SQXDatabank { name: string; [key: string]: unknown; }
 export interface PrepareEthResponse { datasets: unknown[]; sourcePages: number; [key: string]: unknown; }
-const BASE_URL = typeof window !== "undefined" ? "" : "http://127.0.0.1:8000";
+const BASE_URL = typeof window !== "undefined" ? "" : (process.env.BACKEND_URL || process.env.ULTRARENTABLE_API_URL || "http://127.0.0.1:8000");
 async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
