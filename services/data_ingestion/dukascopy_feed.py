@@ -306,6 +306,80 @@ def iter_hours(start: datetime, end: datetime) -> Iterator[datetime]:
         cur += timedelta(hours=1)
 
 
+def write_dataset_files(
+    bars: List[Dict[str, object]],
+    spec: SymbolSpec,
+    tf: str,
+    out_dir: Path,
+    *,
+    hours_empty: int = 0,
+    hours_failed: int = 0,
+    has_volume: bool = True,
+) -> Dict[str, object]:
+    """Persiste el dataset normalizado (.json) y su manifiesto (.json).
+
+    Devuelve dict con dataset_id, data_path, manifest_path, bar_count y checksum_sha256.
+    """
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    first, last = bars[0]["timestamp_utc_ms"], bars[-1]["timestamp_utc_ms"]
+    dataset_id = f"ds_dukascopy_{spec.canonical.lower()}_{tf}_{first}_{last}"
+
+    payload_json = json.dumps(
+        {
+            "dataset_id": dataset_id,
+            "venue": "dukascopy",
+            "symbol": spec.canonical,
+            "timeframe": tf,
+            "proxy_for": spec.proxy_for,
+            "bars": bars,
+        },
+        separators=(",", ":"),
+        sort_keys=True,
+    )
+    raw_bytes = payload_json.encode("utf-8")
+    checksum = hashlib.sha256(raw_bytes).hexdigest()
+
+    data_path = out_dir / f"{dataset_id}.json"
+    manifest_path = out_dir / f"{dataset_id}_manifest.json"
+
+    data_path.write_bytes(raw_bytes)
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "dataset_id": dataset_id,
+                "venue": "dukascopy",
+                "symbol": spec.canonical,
+                "timeframe": tf,
+                "proxy_for": spec.proxy_for,
+                "bar_count": len(bars),
+                "start_time_utc_ms": first,
+                "end_time_utc_ms": last,
+                "checksum_sha256": checksum,
+                "source_url_pattern": f"{BASE_URL}/{spec.dukascopy}/YYYY/MM0/DD/HHh_ticks.bi5",
+                "price_divisor": spec.price_divisor,
+                "ohlc_basis": "bid",
+                "has_volume": has_volume,
+                "hours_empty": hours_empty,
+                "hours_failed": hours_failed,
+                "real_only": True,
+                "gaps_filled": False,
+                "ingested_at_utc": datetime.now(timezone.utc).isoformat(),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    return {
+        "dataset_id": dataset_id,
+        "data_path": data_path,
+        "manifest_path": manifest_path,
+        "bar_count": len(bars),
+        "checksum_sha256": checksum,
+    }
+
+
 def ingest(
     symbol: str,
     start: datetime,
@@ -313,6 +387,7 @@ def ingest(
     timeframes: Optional[List[str]] = None,
     verbose: bool = True,
     concurrency: int = 1,
+    output_dir: Optional[Path] = None,
 ) -> Dict[str, object]:
     """Descarga el rango completo y persiste un dataset por temporalidad.
 
@@ -401,7 +476,8 @@ def ingest(
             "Toda estrategia que dependa del volumen NO es portable al futuro CME real."
         )
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir = Path(output_dir) if output_dir else OUTPUT_DIR
+    out_dir.mkdir(parents=True, exist_ok=True)
     SQX_EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     for tf in timeframes:
@@ -410,50 +486,17 @@ def ingest(
             report["datasets"][tf] = {"status": "NO DATA", "bars": 0}
             continue
 
-        first, last = bars[0]["timestamp_utc_ms"], bars[-1]["timestamp_utc_ms"]
-        dataset_id = f"ds_dukascopy_{spec.canonical.lower()}_{tf}_{first}_{last}"
-
-        payload_json = json.dumps(
-            {
-                "dataset_id": dataset_id,
-                "venue": "dukascopy",
-                "symbol": spec.canonical,
-                "timeframe": tf,
-                "proxy_for": spec.proxy_for,
-                "bars": bars,
-            },
-            separators=(",", ":"),
-            sort_keys=True,
+        written = write_dataset_files(
+            bars,
+            spec,
+            tf,
+            out_dir,
+            hours_empty=len(gaps),
+            hours_failed=len(failures),
+            has_volume=bool(report["has_volume"]),
         )
-        checksum = hashlib.sha256(payload_json.encode()).hexdigest()
-
-        (OUTPUT_DIR / f"{dataset_id}.json").write_text(payload_json, encoding="utf-8")
-        (OUTPUT_DIR / f"{dataset_id}_manifest.json").write_text(
-            json.dumps(
-                {
-                    "dataset_id": dataset_id,
-                    "venue": "dukascopy",
-                    "symbol": spec.canonical,
-                    "timeframe": tf,
-                    "proxy_for": spec.proxy_for,
-                    "bar_count": len(bars),
-                    "start_time_utc_ms": first,
-                    "end_time_utc_ms": last,
-                    "checksum_sha256": checksum,
-                    "source_url_pattern": f"{BASE_URL}/{spec.dukascopy}/YYYY/MM0/DD/HHh_ticks.bi5",
-                    "price_divisor": spec.price_divisor,
-                    "ohlc_basis": "bid",
-                    "has_volume": report["has_volume"],
-                    "hours_empty": len(gaps),
-                    "hours_failed": len(failures),
-                    "real_only": True,
-                    "gaps_filled": False,
-                    "ingested_at_utc": datetime.now(timezone.utc).isoformat(),
-                },
-                indent=2,
-            ),
-            encoding="utf-8",
-        )
+        dataset_id = str(written["dataset_id"])
+        checksum = str(written["checksum_sha256"])
 
         # CSV plano para importar en SQX (naming canonico <SYM>_<TF>). El nombre no lleva
         # rango de fechas (a diferencia del dataset_id), asi que una llamada a ingest()
