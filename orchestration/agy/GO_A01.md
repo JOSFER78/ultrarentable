@@ -71,3 +71,11 @@ Tu script pasó su propio test, pero al ejecutarlo contra el worktree real de A0
 3. Añade a `tests/test_aceptar_agy.py`: (f) aceptación con un comando que contiene comillas dobles y `$VAR` (p. ej. `PY="$(command -v git)"` seguido de `"$PY" --version`) ⇒ ACEPTA y los dos comandos con `rc=0` y su `cmd` igual al texto original del GO; (g) fichero nuevo en una ruta ignorada por un `.gitignore` del repo temporal bajo `data/` ⇒ ACEPTA pero `avisos` contiene `ignorado_en_data: data/x.json`.
 4. Repite la ACEPTACIÓN del GO (ahora `7 passed`) y añade a tu informe la salida de `"$PY" scripts/aceptar_agy.py A04 --worktree ../agy-A04 --out ../agy-A01/orchestration/results/agy/aceptacion_A04_prueba.json` ⇒ `ACEPTA`, 11 comandos con rc=0 (A04 ya está integrado y su árbol limpio: 0 ficheros tocados es lo esperado).
 Cierra con un nuevo `worker_done` (subject `A01 CORRECCION_1 <PASA|FALLA>`).
+
+## CORRECCION_2 (ORQ, 2026-09-02 12:20) — rechazo falso por codificación; REPITE (cambio mínimo)
+
+Al auditar A12 (web) el arnés murió con `UnicodeDecodeError: 'charmap' codec can't decode byte 0x8d` en el hilo lector de `subprocess` y acabó en `[RECHAZA] Error interno: 'NoneType' object has no attribute 'splitlines'`. Causa: `subprocess.run(..., text=True)` decodifica con la codificación de la consola (cp1252); `tsc`/`next` emiten UTF-8.
+1. En TODAS las llamadas a `subprocess.run` de `scripts/aceptar_agy.py` sustituye `text=True` por `text=True, encoding="utf-8", errors="replace"` (la de bash y las de git).
+2. Test nuevo (h) en `tests/test_aceptar_agy.py`: aceptación con un comando que imprime bytes no ASCII (`printf '\xe2\x9c\x93 ok \x8d\n'`) ⇒ ACEPTA con rc=0 y sin `error_interno`.
+3. Repite la ACEPTACIÓN (ahora `8 passed`) y añade al informe la salida de `"$PY" scripts/aceptar_agy.py A12 --worktree ../agy-A12 --out ../agy-A01/orchestration/results/agy/aceptacion_A12_prueba.json` ⇒ sin `error_interno` (el veredicto que salga, el que sea, con sus comandos y rc).
+Cierra con `worker_done` (subject `A01 CORRECCION_2 <PASA|FALLA>`).

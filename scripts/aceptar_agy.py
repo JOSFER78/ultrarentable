@@ -162,7 +162,7 @@ def obtener_ficheros_tocados(worktree: Path) -> list[str]:
     # git diff --name-only
     res1 = subprocess.run(
         ["git", "-C", str(worktree), "diff", "--name-only"],
-        capture_output=True, text=True, check=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True
     )
     for line in res1.stdout.splitlines():
         l = line.strip().replace("\\", "/")
@@ -172,7 +172,7 @@ def obtener_ficheros_tocados(worktree: Path) -> list[str]:
     # git diff --name-only --cached
     res2 = subprocess.run(
         ["git", "-C", str(worktree), "diff", "--name-only", "--cached"],
-        capture_output=True, text=True, check=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True
     )
     for line in res2.stdout.splitlines():
         l = line.strip().replace("\\", "/")
@@ -182,7 +182,7 @@ def obtener_ficheros_tocados(worktree: Path) -> list[str]:
     # git ls-files --others --exclude-standard
     res3 = subprocess.run(
         ["git", "-C", str(worktree), "ls-files", "--others", "--exclude-standard"],
-        capture_output=True, text=True, check=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=True
     )
     for line in res3.stdout.splitlines():
         l = line.strip().replace("\\", "/")
@@ -236,6 +236,8 @@ def ejecutar_comandos_aceptacion(comandos_raw: str, worktree: Path, agent_id: st
             env=env,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout
         )
         stdout = proc.stdout
@@ -330,11 +332,11 @@ def verificar_lista_negra_y_avisos(worktree: Path, ficheros_tocados: list[str]) 
     # 1. Diff de ficheros modificados/indexados
     diff_res = subprocess.run(
         ["git", "-C", str(worktree), "diff", "-U0"],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     diff_cached_res = subprocess.run(
         ["git", "-C", str(worktree), "diff", "-U0", "--cached"],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     
     diff_texts = [diff_res.stdout, diff_cached_res.stdout]
@@ -365,7 +367,7 @@ def verificar_lista_negra_y_avisos(worktree: Path, ficheros_tocados: list[str]) 
     # 2. Contenido completo de ficheros nuevos untracked
     untracked_res = subprocess.run(
         ["git", "-C", str(worktree), "ls-files", "--others", "--exclude-standard"],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     for ufile in untracked_res.stdout.splitlines():
         fnorm = ufile.strip().replace("\\", "/")
@@ -394,7 +396,7 @@ def verificar_lista_negra_y_avisos(worktree: Path, ficheros_tocados: list[str]) 
     # 3. Ficheros ignorados bajo data/
     res_ign = subprocess.run(
         ["git", "-C", str(worktree), "ls-files", "--others", "--ignored", "--exclude-standard", "--", "data/"],
-        capture_output=True, text=True
+        capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
     if res_ign.returncode == 0 and res_ign.stdout.strip():
         ign_lines = [l.strip().replace("\\", "/") for l in res_ign.stdout.splitlines() if l.strip()]

@@ -22,13 +22,13 @@
     {
       "cmd": "\"$PY\" -m pytest tests/test_market_ingestor_checksum_contenido.py -q -p no:cacheprovider -rs",
       "rc": 0,
-      "stdout_tail": "....s                                                                    [100%]\n=========================== short test summary info ===========================\nSKIPPED [1] tests\\test_market_ingestor_checksum_contenido.py:128: NO DATA: en este worktree data/normalized solo contiene manifiestos\n4 passed, 1 skipped in 2.95s",
+      "stdout_tail": "....s                                                                    [100%]\n=========================== short test summary info ===========================\nSKIPPED [1] tests\\test_market_ingestor_checksum_contenido.py:128: NO DATA: en este worktree data/normalized solo contiene manifiestos\n4 passed, 1 skipped in 1.06s",
       "stderr_tail": ""
     },
     {
       "cmd": "\"$PY\" -m pytest tests/test_data_pipeline.py -q -p no:cacheprovider -k market_data",
       "rc": 0,
-      "stdout_tail": ".......                                                                  [100%]\n7 passed, 3 deselected in 3.13s",
+      "stdout_tail": ".......                                                                  [100%]\n7 passed, 3 deselected in 0.64s",
       "stderr_tail": ""
     },
     {
@@ -57,5 +57,5 @@
     }
   ],
   "avisos": [],
-  "generado_utc": "2026-09-02T09:47:39.040674+00:00"
+  "generado_utc": "2026-09-02T10:19:42.964381+00:00"
 }
