@@ -52,6 +52,8 @@ export interface TareaTablero {
   tiene_verificacion: boolean;
   /** Primera línea de "Por qué", para la tarjeta. Sin inventar: vacío si no hay. */
   resumen: string;
+  /** Primera frase del motivo de devolución de la sección "Verificación del orquestador" */
+  motivo_devolucion: string;
 }
 
 interface TareaIlegible {
@@ -97,6 +99,26 @@ function resumenDeTarea(cuerpo: string): string {
   for (const linea of resto.split(/\r?\n/)) {
     const t = linea.trim();
     if (t.length > 0 && !t.startsWith("#")) return t.length > 220 ? `${t.slice(0, 217)}…` : t;
+  }
+  return "";
+}
+
+/** Primera frase de la sección "Verificación del orquestador" que explica por qué volvió. */
+function motivoDevolucion(cuerpo: string): string {
+  const i = cuerpo.indexOf("## Verificación del orquestador");
+  if (i === -1) return "";
+  const resto = cuerpo.slice(i + "## Verificación del orquestador".length);
+  const m = resto.match(/\*\*Por qué vuelve[:\*]?\s*([^\n\r]+)/i);
+  if (m) {
+    const frase = m[1].trim().replace(/\*\*/g, "");
+    return frase.length > 220 ? `${frase.slice(0, 217)}…` : frase;
+  }
+  for (const linea of resto.split(/\r?\n/)) {
+    const t = linea.trim();
+    if (t.length > 0 && !t.startsWith("#") && !/^\(lo rellena/i.test(t)) {
+      const limpia = t.replace(/\*\*/g, "");
+      return limpia.length > 220 ? `${limpia.slice(0, 217)}…` : limpia;
+    }
   }
   return "";
 }
@@ -155,6 +177,7 @@ function leerTarea(ruta: string, archivo: string): TareaTablero | TareaIlegible 
     tiene_parte: seccionRellena(cuerpo, "Parte de entrega"),
     tiene_verificacion: seccionRellena(cuerpo, "Verificación del orquestador"),
     resumen: resumenDeTarea(cuerpo),
+    motivo_devolucion: motivoDevolucion(cuerpo),
   };
 }
 
