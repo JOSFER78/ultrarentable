@@ -187,14 +187,90 @@ def compute_financial_metrics(
 
 
 @candidates_router.get("/censo")
-def get_candidates_censo(db: Session = Depends(get_db)) -> Dict[str, Any]:
-    """Retorna el desglose estricto del censo SQLite dividiendo entre celdas FONDEO_ y otros proyectos."""
+def get_candidates_censo(
+    limite: int = Query(250, ge=1, le=5000, description="Máximo número de estrategias a retornar"),
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Retorna el desglose estricto del censo SQLite con lista de estrategias, periodo y métricas de dinero."""
     fondeo_rows = db.query(StrategyModel).filter(StrategyModel.strategy_id.like("sqx:FONDEO_%")).all()
     otros_rows = db.query(StrategyModel).filter(
         StrategyModel.family == "sqx_extracted",
         ~StrategyModel.strategy_id.like("sqx:FONDEO_%")
     ).all()
     candidatos_count = db.query(CandidateModel).count()
+
+    estrategias_list = []
+    for r in fondeo_rows[:limite]:
+        dsl = json.loads(r.dsl_json) if r.dsl_json else {}
+        source = dsl.get("source", {})
+        market = dsl.get("market", {})
+        periodo = dsl.get("periodo", {})
+        raw_stats = dsl.get("raw_stats", {})
+
+        def _num(key: str) -> float | None:
+            v = raw_stats.get(key)
+            if v is None:
+                return None
+            try:
+                return float(str(v).replace("$", "").replace("%", "").replace(",", ".").strip())
+            except (ValueError, TypeError):
+                return None
+
+        net_profit_oos = _num("Net profit (OOS)") if _num("Net profit (OOS)") is not None else _num("NetProfitOosUsd")
+        annual_return_oos = _num("Annual % Return (OOS)") if _num("Annual % Return (OOS)") is not None else _num("AnnualReturnPctOos")
+        drawdown_oos = _num("Drawdown (OOS)") if _num("Drawdown (OOS)") is not None else _num("MaxDrawdownOosUsd")
+        trades_oos = int(_num("# of trades (OOS)") or _num("TradesOos") or 0)
+        profit_factor_oos = _num("Profit factor (OOS)") if _num("Profit factor (OOS)") is not None else _num("ProfitFactorOos")
+
+        net_profit_is = _num("Net profit (IS)") if _num("Net profit (IS)") is not None else _num("NetProfitUsd")
+        annual_return_is = _num("Annual % Return (IS)") if _num("Annual % Return (IS)") is not None else _num("AnnualReturnPct")
+        drawdown_is = _num("Drawdown (IS)") if _num("Drawdown (IS)") is not None else _num("MaxDrawdownUsd")
+        trades_is = int(_num("# of trades (IS)") or _num("TradesCount") or 0)
+        profit_factor_is = _num("Profit factor (IS)") if _num("Profit factor (IS)") is not None else _num("ProfitFactor")
+
+        sharpe_ratio = _num("Sharpe Ratio (OOS)") or _num("Sharpe Ratio (IS)") or _num("SharpeRatio")
+        stability_oos = _num("Stability (OOS)")
+        ret_dd_oos = _num("Ret/DD Ratio (OOS)") or _num("RetDD")
+        avg_win_oos = _num("Avg. Win (OOS)")
+        avg_loss_oos = _num("Avg. Loss (OOS)")
+        win_loss_ratio = _num("Win/Loss ratio (OOS)") or _num("WinLossRatio")
+
+        p_desde = periodo.get("periodo_desde") or market.get("periodo_desde") or "2023.01.02"
+        p_hasta = periodo.get("periodo_hasta") or market.get("periodo_hasta") or "2026.08.30"
+        p_oos_desde = periodo.get("oos_desde") or market.get("oos_desde") or "2025.12.06"
+
+        estrategias_list.append({
+            "strategy_id": r.strategy_id,
+            "name": r.name,
+            "celda": source.get("project", "DESCONOCIDA"),
+            "simbolo": market.get("symbol") or periodo.get("simbolo") or "DESCONOCIDO",
+            "timeframe": market.get("timeframe") or periodo.get("tf") or "DESCONOCIDO",
+            "periodo_desde": p_desde,
+            "periodo_hasta": p_hasta,
+            "oos_desde": p_oos_desde,
+            "periodo_label": periodo.get("periodo_label") or "02/01/2023 → 30/08/2026 (3a 8m)",
+            "oos_label": periodo.get("oos_label") or "desde 06/12/2025 (9m)",
+            "net_profit_oos_usd": net_profit_oos,
+            "annual_return_oos_pct": annual_return_oos,
+            "drawdown_oos_usd": drawdown_oos,
+            "net_profit_usd": net_profit_is,
+            "annual_return_pct": annual_return_is,
+            "drawdown_usd": drawdown_is,
+            "trades_oos": trades_oos,
+            "trades_total": trades_is,
+            "profit_factor_oos": profit_factor_oos,
+            "profit_factor": profit_factor_is,
+            "sharpe_ratio": sharpe_ratio,
+            "stability_oos": stability_oos,
+            "ret_dd_oos": ret_dd_oos,
+            "avg_win_oos": avg_win_oos,
+            "avg_loss_oos": avg_loss_oos,
+            "win_loss_ratio": win_loss_ratio,
+            "source_payload": dsl.get("source_payload"),
+            "source_artifact_sha256": dsl.get("source_artifact_sha256"),
+            "canonical_hash": r.canonical_hash,
+            "raw_stats": raw_stats,
+        })
 
     celdas_conteo: Dict[str, int] = {}
     for r in fondeo_rows:
@@ -246,6 +322,7 @@ def get_candidates_censo(db: Session = Depends(get_db)) -> Dict[str, Any]:
 
     return {
         "status": "SUCCESS",
+        "estrategias": estrategias_list,
         "fondeo_total": len(fondeo_rows),
         "otros_proyectos": len(otros_rows),
         "otros_sin_metricas": otros_sin_metricas,

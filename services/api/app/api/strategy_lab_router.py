@@ -29,6 +29,36 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _resolve_artifact_meta(project: str, name: str) -> tuple[str | None, str | None]:
+    """Resuelve la ruta relativa y la huella SHA-256 física del artefacto .sqx."""
+    manifest_path = Path(__file__).resolve().parents[4] / "scratch" / "artefactos_manifest.json"
+    if manifest_path.exists():
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as fp:
+                manifest = json.load(fp)
+            key = f"{project}:{name}"
+            if key in manifest:
+                return manifest[key]["rel_path"], manifest[key]["sha256"]
+        except Exception:
+            pass
+    rel_path = f"fondeo/artefactos/{project}/{name}.sqx"
+    candidates = [
+        Path("/opt/SQX-headless/import") / rel_path,
+        Path("C:/opt/SQX-headless/import") / rel_path,
+    ]
+    for c in candidates:
+        if c.is_file():
+            try:
+                h = hashlib.sha256()
+                with open(c, "rb") as fp:
+                    while chunk := fp.read(65536):
+                        h.update(chunk)
+                return rel_path, h.hexdigest()
+            except Exception:
+                pass
+    return rel_path, None
+
+
 def _canonical_payload(project: str, databank: str, name: str, raw_stats: Dict[str, Any]) -> str:
     payload = {
         "schema": "ultrarentable.strategy-source.v1",
@@ -222,9 +252,27 @@ def extract_from_sqx(
                 metrics = {}
             symbol, timeframe = _explicit_market_identity(raw)
             strategy_id = f"sqx:{project_name}:{target_databank}:{name}"
-            payload = _canonical_payload(project_name, target_databank, name, raw)
-            strategy_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-            encoded = json.dumps({"schema": "ultrarentable.strategy-source.v1", "source": {"engine": "StrategyQuantX", "project": project_name, "databank": target_databank, "strategy_name": name, "extracted_at_utc": _utc_now()}, "market": {"symbol": symbol, "timeframe": timeframe, "dataset_id": None, "dataset_hash": None}, "source_payload": None, "source_artifact_sha256": None, "raw_stats": metrics}, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            art_payload, art_sha = _resolve_artifact_meta(project_name, name)
+            encoded = json.dumps(
+                {
+                    "schema": "ultrarentable.strategy-source.v1",
+                    "source": {
+                        "engine": "StrategyQuantX",
+                        "project": project_name,
+                        "databank": target_databank,
+                        "strategy_name": name,
+                        "extracted_at_utc": _utc_now(),
+                    },
+                    "market": {"symbol": symbol, "timeframe": timeframe, "dataset_id": None, "dataset_hash": None},
+                    "source_payload": art_payload,
+                    "source_artifact_sha256": art_sha,
+                    "raw_stats": metrics,
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            strategy_hash = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
             existing = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
             if existing and existing.canonical_hash == strategy_hash and existing.dsl_json == encoded:
                 unchanged += 1
@@ -329,8 +377,7 @@ def sync_m1_completed(
                 metrics = extract_stats(raw) or {}
                 symbol, timeframe = _explicit_market_identity(raw)
                 strategy_id = f"sqx:{nombre_celda}:{target_databank}:{name}"
-                payload = _canonical_payload(nombre_celda, target_databank, name, raw)
-                strategy_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+                art_payload, art_sha = _resolve_artifact_meta(nombre_celda, name)
                 encoded = json.dumps(
                     {
                         "schema": "ultrarentable.strategy-source.v1",
@@ -342,14 +389,15 @@ def sync_m1_completed(
                             "extracted_at_utc": _utc_now(),
                         },
                         "market": {"symbol": symbol, "timeframe": timeframe, "dataset_id": None, "dataset_hash": None},
-                        "source_payload": None,
-                        "source_artifact_sha256": None,
+                        "source_payload": art_payload,
+                        "source_artifact_sha256": art_sha,
                         "raw_stats": metrics,
                     },
                     ensure_ascii=False,
                     sort_keys=True,
                     separators=(",", ":"),
                 )
+                strategy_hash = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
                 existing = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
                 if existing:

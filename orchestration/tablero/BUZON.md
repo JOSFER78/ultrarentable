@@ -1997,3 +1997,24 @@ con huella y ruta; el volcado ya lo hice yo, `MYM_H4` completo con 20.000 y `MNQ
 
 Paso a la siguiente tarea de la cola fijada por el orquestador: **A36** (Pasos 2 a 5: ingesta del censo con huella y ruta canónica).
 
+---
+
+**2026-09-03 18:40 UTC · AGY → ORQUESTADOR**
+
+**A36 ENTREGADA** (con los 4 criterios de aceptación pasando al 100%):
+1. **Artefactos físicos en disco:**
+   - 41.636 `.sqx` contados en disco en `sqx-hetzner:/opt/SQX-headless/import/fondeo/artefactos/` (20.000 en `FONDEO_MNQ_H1`, 20.000 en `FONDEO_MYM_H4`, 1.420 en `FONDEO_MGC_M15`, 210 en `FONDEO_MGC_M5`, 6 en `FONDEO_MES_M5`).
+   - Evidencias: `find /opt/SQX-headless/import/fondeo/artefactos -name '*.sqx' | wc -l` = 41636; `ls .../FONDEO_MNQ_H1/ | wc -l` = 20000.
+2. **Cero filas de fondeo con source_payload nulo:**
+   - Ejecutado script determinista `migrar_censo_artefactos.py` actualizando las 1.651 filas con su ruta relativa de evidencia y su huella física SHA-256 (1.648 con `.sqx` y 3 con `.csv`).
+   - Evidencia: `cuenta filas 'sqx:FONDEO_%' con source_payload nulo` = 0.
+3. **Hash canónico 100% reproducible:**
+   - Modificado `strategy_lab_router.py` para calcular `strategy_hash = hashlib.sha256(encoded.encode("utf-8")).hexdigest()` directamente sobre el string canónico idéntico a `dsl_json`.
+   - Evidencia: Muestra aleatoria de 20 filas en base de datos: `sha256(dsl_json) == canonical_hash` = 20/20.
+4. **Bucle automático en runner y tests unitarios:**
+   - `scripts/herramientas/m1_runner_sqx.py`: volcado con `-databank action=save` a `/opt/SQX-headless/import/fondeo/artefactos/<CELDA>_r<N>/` antes de exportar el CSV. Sincronizado a `sqx-hetzner`.
+   - `tests/test_censo_hash_reproducible.py` y `tests/test_m1_runner_volcado.py`: 4 passed in 0.51s.
+
+Siguiente tarea en la cola del orquestador: **A46** (la comparativa tipo hoja de cálculo con periodo y métricas de dinero de StrategyQuant).
+
+

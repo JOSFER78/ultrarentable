@@ -344,7 +344,14 @@ def main() -> int:
                 log(f"  {celda}: el arranque no confirmó -> {resp.strip()[:200]}")
             st = esperar_fin(args.cli, celda, tope_seg, log)
 
-        # 3) Exportar el banco de esta celda con su huella
+        # 3) Volcar artefactos .sqx del banco a disco antes de exportar CSV
+        dir_artefactos = args.base / "artefactos" / f"{celda}_r{estado['ronda']}"
+        dir_artefactos.mkdir(parents=True, exist_ok=True)
+        resp_volcado = cli(args.cli, f"-databank action=save project={celda} name=Results folder={dir_artefactos}", timeout=600)
+        sqx_contados = len(list(dir_artefactos.glob("*.sqx"))) if dir_artefactos.is_dir() else 0
+        log(f"  {celda}: artefactos volcados en {dir_artefactos} ({sqx_contados} ficheros .sqx)")
+
+        # 4) Exportar el banco de esta celda con su huella
         csv = args.base / "resultados" / f"{celda}_r{estado['ronda']}.csv"
         cli(args.cli, f"-databank action=export project={celda} name=Results file={csv}", timeout=300)
         fila = {
@@ -356,6 +363,8 @@ def main() -> int:
             "aceptadas_por_hora": (st or {}).get("aceptadas_por_hora"),
             "aceptado_pct": (st or {}).get("aceptado_pct"),
             "tiempo": (st or {}).get("tiempo_crudo"),
+            "artefactos_dir": str(dir_artefactos) if sqx_contados > 0 else None,
+            "artefactos_contados": sqx_contados,
             "csv": str(csv) if csv.is_file() else None,
             "csv_sha256": sha256(csv) if csv.is_file() else None,
             "csv_filas": (sum(1 for _ in csv.open("rb")) - 1) if csv.is_file() else None,
