@@ -1,4 +1,4 @@
-# PLAN MAESTRO v5 — ULTRARENTABLE: qué tiene que hacer la aplicación y cómo, en principio, se consigue
+# PLAN MAESTRO v5.1 — ULTRARENTABLE: qué tiene que hacer la aplicación y cómo, en principio, se consigue
 
 > Escrito por el orquestador el 2026-09-03 a petición de Emilio: *"analiza todo lo que te he pedido
 > para la app y prepara la mejor manera para conseguirlo; deja clarísimo y completo el plan en la
@@ -195,6 +195,42 @@ permisivos; orden de las celdas; si conviene una sola instalación automática c
 en paralelo; cuánto rinde de verdad el servidor; y el camino del puente de reglas.
 
 ---
+
+### 4.bis — Lo primero que ha medido M1 funcionando (03-09, tarde)
+
+M1 dejó de ser un plan y empezó a producir. Estas son las cifras reales de las primeras horas, y
+cambian cómo hay que repartir la máquina.
+
+**La rejilla es de 40 celdas** (8 activos × 5 marcos), no de 25: Emilio lo fijó así el 03-09. Hoy 30
+tienen datos y proyecto; las 10 de Russell 2000 y bono a 30 años están descargándose. Los ocho
+activos existen en la fuente y está comprobado uno a uno; el código del Russell es
+`USSC2000IDXUSD` y el del bono `USTBONDTRUSD` (`USA2000IDXUSD` da 404, no es ese).
+
+**El caudal depende brutalmente del marco temporal.** Medido con una hora de máquina por celda:
+
+| Celda | Estrategias por hora | Aceptadas | En banco tras 1 h |
+| :--- | ---: | ---: | ---: |
+| Nasdaq 1 hora | 246.067 | 18,5 % | 20.000 |
+| S&P 500 5 minutos | 5.166 | 0 % | 0 |
+
+Son **48 veces** menos estrategias por hora en 5 minutos que en 1 hora, porque cada prueba recorre
+muchas más velas. Y con los umbrales iniciales (factor de beneficio 1,2, retorno/caída 2, aciertos
+30 %) los marcos rápidos rechazaban el 100 %: la fricción real de un micro (1 tick de diferencial,
+2 de deslizamiento, ~2 USD por contrato ida y vuelta) se come casi todo el margen bruto en 5 minutos.
+Los umbrales se bajaron a 1,05 / 0,5 / 20 % siguiendo la orden de Emilio de ser permisivos en
+StrategyQuant, porque el criterio sellado se aplica después, en M2.
+
+**Y la primera candidata real.** De las 20.000 estrategias del banco del Nasdaq en 1 hora, **una**
+cumple ya el listón sellado (factor de beneficio fuera de muestra ≥ 1,25 con ≥ 200 operaciones).
+Una de veinte mil, en la primera de cuarenta celdas. No significa que sea buena: el criterio completo
+son once comprobaciones y esta es la primera. Pero es la primera vez que el sistema produce algo que
+llega ahí.
+
+**Qué decide esto para la ronda 2.** La ronda 1 da a todas las celdas la misma hora, que es lo que
+permite comparar. Cuando termine, el reparto de horas debe seguir al rendimiento medido, no a un
+reparto igualitario: no tiene sentido dar la misma máquina a una celda que produce 20.000 candidatas
+por hora y a otra que produce cero. Esa decisión se toma con la tabla completa de las 40, no antes.
+
 
 ## 5. M2 — MEJORAR Y APRENDER: probar duro, descartar con motivo, no repetir
 
