@@ -163,9 +163,12 @@ def build_task(plantilla: str, sym: str, tf: str, desde: str, hasta: str, horas:
     t = sustituir_una_vez(t, r"<Conditions>\s*<Condition use=\"true\">.*?</Conditions>\s*<AutomaticDismissal",
                           "<Conditions>\n" + conds + "    </Conditions>\n    <AutomaticDismissal", "Conditions de ranking")
 
-    # 5) Parada: por tiempo (horas) o al llenar el banco, lo que llegue antes.
+    # 5) Parada: la gobierna EL TIEMPO. El tope de banco se pone deliberadamente alto (100.000) para
+    #    que nunca sea él quien pare: así cada celda recibe exactamente las mismas horas de máquina y
+    #    el caudal por hora es comparable entre celdas. La evolución se reinicia sola al estancarse
+    #    (EvoRestartOnStagnation, ya en la plantilla), que es lo que da variedad dentro de la hora.
     t = sustituir_una_vez(t, r'<StopCondition type="databank-full"[^>]*/>',
-                          f'<StopCondition type="databank-full" passedStrategies="500" restartCount="3" days="0" hours="{horas}" minutes="0" />',
+                          f'<StopCondition type="databank-full" passedStrategies="100000" restartCount="0" days="0" hours="{horas}" minutes="0" />',
                           "StopCondition")
 
     # 6) La prueba en mercados adicionales está desactivada, pero que no apunte a un símbolo ajeno.
