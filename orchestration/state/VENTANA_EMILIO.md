@@ -52,6 +52,14 @@ Si quieres que salgan a tu nombre: `git config --global user.name "JOSFER78" && 
 
 ---
 
+### 0.6 Quién edita la web (decisión pendiente, 03-09 01:05 UTC)
+
+Tres editores sobre el mismo checkout: tu Antigravity en VS Code, la sesión Claude `ultrarentablepc-12` y la
+sesión Claude orquestadora. Propuesta por defecto (ya aplicada hasta que digas otra cosa): mientras trabajes en
+VS Code, `apps/web` entero es de Antigravity; la sesión `-12` se queda con `services/api` y verificación de
+solo lectura; la orquestadora con `orchestration/` y `services/` (motor). Si prefieres que la web la lleve una
+sesión Claude, dilo y Antigravity deja de tocar `apps/web`. Las dos cosas a la vez pierden trabajo.
+
 ## 1. LO ÚNICO BLOQUEANTE — autorizar la limpieza del VPS (2 minutos)
 
 **Qué pasa**: el VPS sigue exactamente igual de ahogado que el 2026-09-01 por la mañana, y lo he

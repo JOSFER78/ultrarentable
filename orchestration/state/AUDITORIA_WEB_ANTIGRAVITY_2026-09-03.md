@@ -60,3 +60,18 @@ No toques services/, orchestration/ ni scripts/. Al terminar: git add solo de ap
 ORQ_COMMIT=1 git commit, push con ORQ_PUSH=1 git push, y escribe en ESPECIFICACION_WEB.md §8 el estado
 real de cada W9.x que hayas cerrado.
 ```
+
+## 6. Actualización 01:05 UTC — verificado por el auditor
+
+- **Punto 8 (menú) corregido en `f4b69af49`** por la sesión Claude `ultrarentablepc-12`, verificado por mí:
+  5 ficheros, `MANIFEST.sha256` de `cuarentena/web_componentes_muertos_20260903/` OK, 0 importadores de
+  los dos componentes retirados, los 19 enlaces del Sidebar tienen `page.tsx` en disco, `tsc` rc=0.
+  Fuera 22 entradas a rutas que existen en disco pero NO en HEAD (`/tradesfera/01-…`, `/estrategias/candidatos`)
+  y todos los números a mano ("578", "70 Cuentas", "11", "36 Col"). **Antigravity no debe deshacerlo**: si
+  añade una entrada al menú, la página tiene que estar commiteada e IMPLEMENTADA según `ESPECIFICACION_WEB.md` §6.
+- **Punto 3 medido**: `GET /api/v1/candidates?include_rejected=true&limit=1000` → **728** candidatas (no 578).
+  Trampa: el router (`candidates_router.py:196` y `:302`) usa `limit` 250 por defecto y tope 1000; una consulta
+  sin `limit` devuelve 250 y parece otra cifra. La web debe pedir `limit=1000` o paginar, nunca escribir el número.
+- **Reparto de lanes desde ahora (propuesto a Emilio)**: mientras trabaje en VS Code, `apps/web` entero es de
+  Antigravity; la sesión Claude `-12` se queda con `services/api` (unidad de `net_profit_oos`, `roi_source`) y
+  verificación de solo lectura; esta sesión, `orchestration/` y `services/` (motor, contratos, auditoría).
