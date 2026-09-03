@@ -244,9 +244,18 @@ def list_candidates_summary(
         base_cap = 50000.0 if is_fondeo else 1000.0
         net_val = float(net_oos or 0.0)
         
-        # Cálculo financiero normalizado
+        # SOLO detección de anomalías. Sus cifras NO se publican: ver más abajo.
+        #
+        # Este endpoint es el "compact" y por diseño no carga el scorecard, que es la única
+        # fuente admitida de ROI (decisión sellada, commit 4e75a19b4: "el ROI mensual/anual
+        # sale del scorecard o dice NO EVIDENCE, nunca de net_profit_oos"). Sin scorecard no
+        # hay ROI que publicar, y punto.
+        #
+        # El 2.4 de meses OOS es una constante inventada, igual para las 728 candidatas: aquí
+        # solo sirve para que la fórmula no divida por cero al medir el orden de magnitud.
+        # No se usa para ninguna cifra que salga en la respuesta.
         fin = compute_financial_metrics(net_val, base_cap, 2.4, None)
-        
+
         resolved_status = r_st or "REJECTED"
         resolved_reason = r_rs or ""
         
@@ -278,9 +287,19 @@ def list_candidates_summary(
             "trades_is": int(tr_is or 0),
             "trades_oos": int(tr_oos or 0),
             "net_profit_oos": net_val,
-            "monthly_return_pct": fin["monthly_roi_pct"],
-            "annual_return_pct": fin["annualized_cagr_pct"],
-            "cumulative_return_pct": fin["cumulative_return_pct"],
+            # Las tres cifras de rentabilidad van a null a propósito, con roi_source diciendo
+            # por qué. Antes se derivaban de net_profit_oos y mentían: para
+            # UR_ULTRA_DOGEUSDT_1h este endpoint publicaba monthly_return_pct = 991174931940.51
+            # y annual_return_pct = 8.99e121, mientras /api/v1/candidates, que sí mira el
+            # scorecard, devolvía roi_source=NO_EVIDENCE y los dos campos a null para esa misma
+            # candidata. La causa es que candidates.net_profit_oos tiene unidades mixtas según
+            # qué pipeline escribiera la fila (unas en USD, otras como suma de fracciones), así
+            # que derivar ROI de esa columna da cifras falsas e incluso con el signo cambiado.
+            # Quien necesite ROI real que use /api/v1/candidates.
+            "monthly_return_pct": None,
+            "annual_return_pct": None,
+            "cumulative_return_pct": None,
+            "roi_source": "NO_EVIDENCE",
             "strategy_sha256": sha256_hash,
             "engine_version": eng_ver or CURRENT_ENGINE_VERSION,
         })
