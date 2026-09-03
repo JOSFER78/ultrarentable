@@ -45,6 +45,7 @@ export interface EstrategiaRow {
   source_payload?: string | null;
   source_artifact_sha256?: string | null;
   canonical_hash?: string;
+  pasa_criterio?: boolean;
   raw_stats?: Record<string, unknown>;
 }
 
@@ -653,6 +654,15 @@ export default function EstrategiasComparativaTable({
                           {e.name}
                         </div>
                         <div className="flex items-center gap-1.5 text-[10px] text-neutral-500">
+                          {e.pasa_criterio ? (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase bg-neutral-800 text-neutral-200 border border-neutral-700">
+                              Candidata
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase text-neutral-500">
+                              Banco
+                            </span>
+                          )}
                           <span>{e.celda}</span>
                           {e.source_artifact_sha256 && (
                             <span

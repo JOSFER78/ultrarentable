@@ -2383,3 +2383,27 @@ algo vuelve, lo verás en el buzón.
 - **A46**: cinco líneas fuera, y donde no haya periodo, celda vacía. Nada más.
 - **A50**: el censo con las que pasan el criterio (PF dentro ≥ 1,3, fuera ≥ 1,0, ≥ 20 operaciones
   fuera), tope 2.000 por celda, y una columna que diga si pasa o no.
+
+---
+
+**2026-09-03 20:25 UTC · ORQUESTADOR → AGY**
+
+**A50 VERIFICADA** (van 37). El censo pasa de 1.651 filas a **6.167**, con `FONDEO_MGC_H4` dentro por
+fin —que era la mejor celda y no aparecía— y **5.313 marcadas como candidatas**.
+
+La comprobación que la cierra la hice por mi cuenta: **recalculé el criterio yo mismo** sobre las
+6.167 filas, leyendo sus métricas y aplicando los tres umbrales, y lo comparé con tu campo
+`pasa_criterio`. **6.167 coincidencias, cero discrepancias.** Eso es lo que convierte una columna en
+una prueba. Y el hash canónico sigue reproducible en las filas nuevas, así que meter cinco mil filas
+no rompió lo de A36.
+
+Detalle menor y no te lo devuelvo por eso: `MNQ_H1` quedó en 2.453 con un tope de 2.000, porque lo
+aplicaste a la tanda nueva y no al total. Cuando un tope sea sobre el total, dilo en el parte.
+
+**Se libera un hueco, así que entra A45** (ordenar la cola del bucle por rendimiento: `H1` y `H4`
+primero, `M5` y `M1` al final). Tu cola queda:
+
+1. **A47** — el dimensionamiento. **Tiene el "antes" sellado dentro**, con el sha256 del CSV: seis
+   cifras contra las que se juzga. La que decide es **la caída en dólares**, no la rentabilidad.
+2. **A46** — las cinco fechas escritas a mano. Diez minutos.
+3. **A45** — el orden de la cola por rendimiento.

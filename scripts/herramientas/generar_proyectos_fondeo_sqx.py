@@ -72,6 +72,11 @@ MIN_PF = 1.05
 MIN_RET_DD = 0.5
 MIN_WIN_PCT = 20
 
+# Dimensionamiento de cuenta de fondeo (A47):
+# 50.000 USD de capital inicial (cuenta real de fondeo) y 0.5% de riesgo por operacion
+FONDEO_CAPITAL_INICIAL = 50000
+FONDEO_RIESGO_PCT_DEFECTO = 0.5
+
 FECHA_DESDE = "2023.01.02"
 FECHA_HASTA = "2026.08.30"
 OOS_FRACCION = 0.20  # tramo final reservado
@@ -132,7 +137,16 @@ def condicion(columna: str, valor: str, fmt: str = "Decimal2") -> str:
     )
 
 
-def build_task(plantilla: str, sym: str, tf: str, desde: str, hasta: str, horas: int) -> str:
+def build_task(
+    plantilla: str,
+    sym: str,
+    tf: str,
+    desde: str,
+    hasta: str,
+    horas: int,
+    capital_inicial: int = FONDEO_CAPITAL_INICIAL,
+    riesgo_pct: float = FONDEO_RIESGO_PCT_DEFECTO,
+) -> str:
     c = COSTES[sym]
     t = plantilla
 
@@ -189,6 +203,32 @@ def build_task(plantilla: str, sym: str, tf: str, desde: str, hasta: str, horas:
     # 7) Recursos incrustados de la plantilla (@NQ/@ES de otra instalación): fuera. SQX resuelve el
     #    símbolo por nombre en su gestor de datos.
     t = sustituir_una_vez(t, r"<Symbols>.*?</Symbols>", "<Symbols />", "Resources/Symbols")
+
+    # 8) Money Management / Dimensionamiento de cuenta de fondeo (A47):
+    #    Se pasa de contrato fijo (1 micro sobre 100k) a riesgo porcentual del balance (0.5% sobre 50k)
+    mm_bloque_nuevo = (
+        '    <MoneyManagement>\n'
+        '      <Method type="FixedSize" use="false">\n'
+        '        <Params>\n'
+        '          <Param key="Size" className="FixedSize">1</Param>\n'
+        '        </Params>\n'
+        '      </Method>\n'
+        f'      <InitialCapital>{capital_inicial}</InitialCapital>\n'
+        '      <Method type="RiskFixedBalancePct" use="true">\n'
+        '        <Params>\n'
+        f'          <Param key="Risk" className="RiskFixedBalancePct">{riesgo_pct}</Param>\n'
+        '          <Param key="Decimals" className="RiskFixedBalancePct">1</Param>\n'
+        '          <Param key="LotsIfNoMM" className="RiskFixedBalancePct">1</Param>\n'
+        '          <Param key="MaxLots" className="RiskFixedBalancePct">5</Param>\n'
+        '        </Params>\n'
+        '      </Method>\n'
+    )
+    t = sustituir_una_vez(
+        t,
+        r'<MoneyManagement>\s*<Method type="FixedSize" use="true">.*?</Method>\s*<InitialCapital>\d+</InitialCapital>\s*<Method type="RiskFixedBalancePct" use="false">.*?</Method>\s*',
+        mm_bloque_nuevo,
+        "MoneyManagement / Dimensionamiento",
+    )
     return t
 
 
@@ -208,6 +248,8 @@ def main() -> int:
     ap.add_argument("--cli", default="http://127.0.0.1:5051", help="modo de comandos de SQX")
     ap.add_argument("--solo", default="", help="una celda, p. ej. MNQ_H1 (por defecto las 25)")
     ap.add_argument("--horas", type=int, default=2, help="tope de horas por construcción")
+    ap.add_argument("--capital", type=int, default=FONDEO_CAPITAL_INICIAL, help="capital inicial cuenta fondeo (default: 50000)")
+    ap.add_argument("--riesgo", type=float, default=FONDEO_RIESGO_PCT_DEFECTO, help="riesgo porcentual por operacion (default: 0.5)")
     ap.add_argument("--cargar", action="store_true", help="loadconfig de cada .cfx generado (crea el proyecto)")
     args = ap.parse_args()
 
@@ -246,6 +288,8 @@ def main() -> int:
         "aceptacion": {"min_ops_mes": MIN_OPS_MES, "min_pf": MIN_PF, "min_ret_dd": MIN_RET_DD, "min_win_pct": MIN_WIN_PCT},
         "oos_fraccion": OOS_FRACCION,
         "horas_tope": args.horas,
+        "capital_inicial": args.capital,
+        "riesgo_pct": args.riesgo,
         "universo": SIMBOLOS,
         "sin_datos_todavia": faltan,
         "proyectos": [],
@@ -256,7 +300,7 @@ def main() -> int:
         destino = args.out / f"{nombre}.cfx"
         with zipfile.ZipFile(destino, "w", compression=zipfile.ZIP_DEFLATED) as z:
             z.writestr("config.xml", config_xml(plantilla_config, nombre))
-            z.writestr("Build-Task1.xml", build_task(plantilla_build, s, tf, d0, d1, args.horas))
+            z.writestr("Build-Task1.xml", build_task(plantilla_build, s, tf, d0, d1, args.horas, args.capital, args.riesgo))
         fila = {"proyecto": nombre, "simbolo": s, "tf": tf, "desde": d0, "hasta": d1,
                 "oos_desde": oos_desde(d0, d1), "cfx": str(destino), "sha256": sha256(destino), "cargado": None}
         if args.cargar:

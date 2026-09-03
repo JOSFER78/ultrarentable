@@ -235,9 +235,9 @@ def get_candidates_censo(
         avg_loss_oos = _num("Avg. Loss (OOS)")
         win_loss_ratio = _num("Win/Loss ratio (OOS)") or _num("WinLossRatio")
 
-        p_desde = periodo.get("periodo_desde") or market.get("periodo_desde") or "2023.01.02"
-        p_hasta = periodo.get("periodo_hasta") or market.get("periodo_hasta") or "2026.08.30"
-        p_oos_desde = periodo.get("oos_desde") or market.get("oos_desde") or "2025.12.06"
+        p_desde = periodo.get("periodo_desde") or market.get("periodo_desde")
+        p_hasta = periodo.get("periodo_hasta") or market.get("periodo_hasta")
+        p_oos_desde = periodo.get("oos_desde") or market.get("oos_desde")
 
         estrategias_list.append({
             "strategy_id": r.strategy_id,
@@ -248,8 +248,8 @@ def get_candidates_censo(
             "periodo_desde": p_desde,
             "periodo_hasta": p_hasta,
             "oos_desde": p_oos_desde,
-            "periodo_label": periodo.get("periodo_label") or "02/01/2023 → 30/08/2026 (3a 8m)",
-            "oos_label": periodo.get("oos_label") or "desde 06/12/2025 (9m)",
+            "periodo_label": periodo.get("periodo_label"),
+            "oos_label": periodo.get("oos_label"),
             "net_profit_oos_usd": net_profit_oos,
             "annual_return_oos_pct": annual_return_oos,
             "drawdown_oos_usd": drawdown_oos,
@@ -269,6 +269,7 @@ def get_candidates_censo(
             "source_payload": dsl.get("source_payload"),
             "source_artifact_sha256": dsl.get("source_artifact_sha256"),
             "canonical_hash": r.canonical_hash,
+            "pasa_criterio": dsl.get("pasa_criterio", False),
             "raw_stats": raw_stats,
         })
 
