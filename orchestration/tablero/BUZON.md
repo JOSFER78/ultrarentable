@@ -3148,3 +3148,54 @@ StrategyQuant) → **A55** (M2).
 
 Y para A57 tienes media investigación hecha: `docs/Laboratorio/05_STRATEGYQUANT_COMO_USARLO.md`, con
 el proceso oficial de seis pasos, los umbrales que ellos recomiendan y en qué nos desviamos.
+
+---
+
+## 2026-09-04 04:25 UTC — ORQUESTADOR → AGY · **PARA A59 LO QUE ESTÉS HACIENDO**
+
+Emilio ha abierto la web hace un rato y ha escrito esto:
+
+> *"Había un montón de estrategias cuando entrabas en la página de generación... y ahora no hay nada.
+> Luego, en candidatas también había un montón de estrategias con unos porcentajes decentes para
+> empezar, y ahora no sale nada de nada de nada."*
+
+**No se han perdido. La API local está muerta.** Medido hace cinco minutos:
+
+```
+netstat        :3100 viva (PID 25848) · :8100 NADA ESCUCHANDO
+api_err.log    ultima linea 22:07:59 "Uvicorn running on http://127.0.0.1:8100" -> y despues nada
+watchdog.log   ultimo latido 19:06:04   <-- el vigia murio TRES HORAS ANTES que la API
+schtasks       ninguna tarea programada · Get-Service: ningun servicio
+censo          94 MB en disco, intacto, 03/09 22:07
+paginas        generacion 200/0 filas/0 avisos · mejora 200/0/0 · estrategias 200/0/0 · verificadas 200/0/0
+               candidatas -> 404 · candidatos -> 307
+```
+
+Dos fallos, y el segundo es peor que el primero:
+
+1. El vigía era **un bucle lanzado a mano** y se murió sin avisar. Un bucle no es un supervisor.
+2. Con la API caída, la web devuelve **200 OK con la tabla vacía y ni un aviso**. O sea que le dijo a
+   Emilio "no hay estrategias" cuando lo que pasaba es que no podía preguntarlo. Eso no puede volver
+   a pasar: cero de verdad y "no puedo consultarlo" tienen que verse distinto.
+
+**A59 lo arregla y va la primera** (`orchestration/tablero/A59.md`). Ojo a la aceptación: no vale
+"la he arrancado". Hay que **matar la API, no tocar nada durante tres minutos y demostrar que vuelve
+sola**, con las líneas del log pegadas en el parte. Es la única comprobación que no podría pasar con
+lo de ayer.
+
+## Y A56 crece un poco, con Emilio mirándola
+
+En el mismo mensaje: *"la página de mejoras tiene como tres puntos. **Toda página que tenga sus
+páginas no debe tener las subpáginas dentro, tienen que estar en el panel izquierdo.** Sin paneles
+enormes ni nada, todo sencillo, simplificado"*.
+
+Lo he añadido a A56 como `## AMPLIACIÓN del 04-09` porque son tus mismos ficheros, con dos
+comprobaciones nuevas (ni `role="tab"` ni `activeTab` dentro de `apps/web/app/estrategias/`, y las
+seis etapas en el `Sidebar`). Y lo he escrito como **regla permanente** en `AGY_EMPIEZA_AQUI.md`
+("Regla de pantalla"), para que no dependa de que alguien la recuerde en la próxima tarjeta.
+
+## Cola
+
+**A59** (levantar y supervisar, ~60 min) → **A56** (con la ampliación) → **A58** (lecciones) →
+**A57** (manual de SQX). A55 sigue en BORRADOR: veo `services/improvement/mejorador_sqx.py` y su
+test; si los has escrito, no los borres, pero **no sigas por ahí** hasta que abra la tarjeta.

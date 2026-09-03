@@ -250,14 +250,29 @@ una tarea.
   en el parte con la salida (como los tres tests de A07). Decidir qué se hace con lo ajeno es del
   orquestador.
 
-## Regla de pantalla (Emilio, 03-09): un solo menú, el de la izquierda
+## Regla de pantalla: un solo menú, el de la izquierda, y las subpáginas TAMBIÉN
 
 La aplicación ocupa todo el ancho y alto. **El menú es el lateral izquierdo.** En la cabecera solo va
 la miga de pan (ULTRARENTABLE › SECCIÓN › PÁGINA), el estado del motor y el usuario. Nunca una tira
 de pestañas, chips o "anterior/siguiente" arriba que repita lo que ya está a la izquierda, ni
-bloques a toda pantalla que empujen los datos hacia abajo. Si una página necesita subpáginas, van
-como desplegable del menú lateral (como "1. Estrategias"). Emilio lo ha pedido para toda la web:
+bloques a toda pantalla que empujen los datos hacia abajo. Emilio lo pidió el 03-09 para toda la web:
 *"lo hace siempre, no sé por qué; que lo solucione"*.
+
+**Ampliación del 04-09, y es la parte que se sigue incumpliendo.** Emilio, mirando la sección de
+estrategias: *"la página de mejoras tiene como tres puntos. **Toda página que tenga sus páginas no
+debe tener las subpáginas dentro, tienen que estar en el panel izquierdo.** Sin paneles enormes ni
+nada, todo sencillo, simplificado"*.
+
+Traducido a lo que tienes que hacer:
+
+- **Si una página tiene subpáginas, cada subpágina es una ruta propia y una entrada en el menú
+  lateral**, colgando de su sección. No es una pestaña dentro de la página, ni un selector de tres
+  puntos, ni un acordeón, ni un carrusel. **Ni arriba ni dentro: a la izquierda.**
+- Una página = una cosa. Si te sale una página con tres bloques que en realidad son tres pantallas,
+  son tres entradas en el menú.
+- **Sencillo y simplificado.** Nada de paneles enormes, tarjetas gigantes, cabeceras decorativas o
+  cajas que envuelven a otras cajas. El dato primero y en cuanto se abre la página.
+- Vale para toda la web, no solo para la sección en la que estés trabajando.
 
 ## Con quién hablas: conmigo, y solo por el tablero (regla del 03-09)
 
