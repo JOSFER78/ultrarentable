@@ -140,3 +140,8 @@ una tarea.
   contradice al informe, **primero se duda del método propio**.
 - **2026-09-03, A12**: la comprobación `ps -eo cmd | grep -c "[s]qcli"` cuenta la propia orden que la
   ejecuta y devuelve 1 aunque no quede ningún proceso. Para contar procesos se usa `pgrep -f`.
+- **2026-09-03, A13 y A17**: tres etiquetas de la misma página afirmaban cosas que nadie había
+  medido ("Proyectos Activos", "cola de procesamiento del Builder", "conexión con la instancia
+  headless"). El dato de al lado era correcto en los tres casos, y por eso la etiqueta falsa colaba.
+  **Una etiqueta que afirma un estado es una afirmación y necesita su medición**, igual que una
+  cifra. Si no se ha medido, se describe lo que se sabe y punto.

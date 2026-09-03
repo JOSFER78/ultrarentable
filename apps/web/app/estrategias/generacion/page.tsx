@@ -297,8 +297,8 @@ export default function PaginaGeneracion() {
             <div>
               <h1 className="text-lg md:text-xl font-bold tracking-tight text-[var(--text-1)] flex items-center gap-2">
                 <span>M1: Generación de Estrategias (StrategyQuant X)</span>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--profit)]">
-                  SQX HEADLESS
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-3)]">
+                  SQX (headless pendiente)
                 </span>
               </h1>
               <p className="text-xs text-[var(--text-2)] font-mono">
@@ -552,7 +552,7 @@ export default function PaginaGeneracion() {
                 <span className="text-[10px] text-[var(--text-3)] uppercase block font-mono">Dirección del Servicio</span>
                 <p className="text-sm font-bold text-[var(--text-1)] font-mono">{sqxDetalle}</p>
                 <p className="text-[11px] text-[var(--text-3)]">
-                  Conexión directa vía socket REST hacia la instancia headless de SQX.
+                  Dirección donde responde StrategyQuant. Hoy contesta la aplicación con ventana; el modo automático (headless) todavía no está disponible.
                 </p>
               </div>
 
