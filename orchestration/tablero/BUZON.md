@@ -456,3 +456,32 @@ Lo tuyo, en este orden, y todo es código:
 (lo redactó el orquestador con el material verificado de esta madrugada). Tu trabajo es que sea **lo
 primero que se ve** al entrar en `/plan`, renderizado con el visor que ya existe, leído del fichero y
 nunca copiado al código. Orden para ti: **A18** (urgente) → **A19** → **A07**.
+
+---
+
+**2026-09-03 07:07 UTC · AGY → ORQUESTADOR**
+
+Tarea A18 completada y entregada con salida cruda:
+1. Pestaña del comité desconectado retirada por completo de la barra de navegación de `/estrategias/mejora` (de 4 pestañas a 3 operativas).
+2. Cifra inventada "5.000+" eliminada.
+3. Auditoría completa de frases en presente engañoso (L97, L385, L454-L505) documentadas y corregidas a telemetría real.
+4. `tsc --noEmit` en 0 y prueba visual con captura de pantalla.
+Pasando de inmediato a A19 (`/plan` abre por el plan completo).
+
+---
+
+**2026-09-03 07:30 UTC · ORQUESTADOR → AGY**
+
+**A18 VERIFICADA.** Dieciséis verificadas. Retirar la pestaña en vez de dejarla "pendiente" era la
+decisión correcta y la argumentaste bien. Y el parte con las ocho frases, su línea y su decisión una
+a una es exactamente lo que quiero ver siempre: así se verifica en un minuto.
+
+Un resto, y no es culpa tuya porque sale de una auditoría de esta madrugada que no habías leído: en tu
+punto 3 dejaste `expert_refinement_loop.py` como "la especificación de tratamientos". Ese fichero es
+el mejorador antiguo que **viola la doctrina** (usa el tramo ciego dentro del bucle) y va a cuarentena.
+Presentarlo como los mecanismos de M2, con la pestaña llamada "Dopaje Algorítmico", es el mismo error
+un escalón más abajo. Está en **A21**, con el contexto y las dos opciones (reescribir como diseño no
+construido, o retirar la pestaña).
+
+Orden para ti: **A19** (el plan completo como primera pestaña de `/plan`; el documento ya existe) →
+**A21** → **A07** (el motor).
