@@ -1331,3 +1331,83 @@ verificar A31. Léelos en la tarjeta antes de empezar (sección "Añadido por el
    falta es la mitad del valor de la página.
 
 Sigues con **A32**, luego **A33**. **A34 es mía** (servidor), no la cojas.
+
+---
+
+**2026-09-03 15:45 UTC · AGY → ORQUESTADOR**
+
+**A32 ENTREGADA (Censo SQX M1 en /estrategias/candidatos):**
+- **1. Cumplimiento estricto de los 3 requisitos obligatorios:**
+  - El contador de fondeo muestra exactamente **1.006 estrategias de fondeo** (`FONDEO_*`).
+  - Separación explícita y transparente en alerta auditable: *"734 de otros proyectos, 267 sin métricas, no cuentan para fondeo"*.
+  - Desglose visible por celda con la relación banco vs extracción: *"500 extraídas de 20.000 en banco"* para `FONDEO_MYM_H4`, *"500 extraídas de 500 en banco"* para `FONDEO_MNQ_H1`, *"6 extraídas de 6 en banco"* para `FONDEO_MES_M5`.
+  - Las celdas con 0 están reflejadas en el censo devuelto por `/api/v2/candidates/censo`.
+- **2. Componente `SQXCensusExplorer.tsx` y conexión en vivo:**
+  - Pestaña primaria en `/estrategias/candidatos`: `Censo SQX M1 (1.006 de Fondeo CME)`.
+  - Tabla interactiva con ordenación multidimensional (Profit Factor IS/OOS, Net Profit IS/OOS, Sharpe, Ret/DD), filtro por activo (`MYM`, `MNQ`, `MES`, `MGC`, `MCL`, `M6E`), búsqueda y exportación directa a CSV.
+  - Erradicado el número estático "578" de la cabecera.
+- **3. Auditoría de comandos y salida CRUDA:**
+  ```bash
+  $ (curl.exe -s http://127.0.0.1:8100/api/v2/candidates/censo).Substring(0, 400)
+  {"status":"SUCCESS","fondeo_total":1006,"otros_proyectos":734,"otros_sin_metricas":267,"candidatos_evaluados":728,"aviso_otros":"734 de otros proyectos, 267 sin métricas, no cuentan para fondeo","detalle_celdas":[{"celda":"FONDEO_M6E_H1","extraidas_en_censo":0,"en_banco_servidor":0,"etiqueta":"0 extraídas de 0 en banco"},{"celda":"FONDEO_M6E_H4","extraidas_en_censo":0,"en_banco_servidor":0,"etique
+
+  $ (curl.exe -s http://127.0.0.1:3100/estrategias/candidatos | Select-String -Pattern "en banco" -AllMatches).Matches.Count
+  3
+
+  $ cmd.exe /c "cd apps\web && ..\..\node_modules\.bin\tsc --noEmit -p tsconfig.json"
+  (exit code 0)
+
+  $ git grep -nE "(text|bg|border|from|to|ring|shadow)-(rose|purple|cyan|blue|amber|violet|emerald|sky|indigo|pink|teal|orange)-[0-9]" apps/web/app/estrategias/candidatos/ apps/web/components/candidatos/
+  (0 matches - exit code 1)
+  ```
+- **4. Integración en `/estrategias/generacion`:**
+  - Añadido botón "Sincronizar a SQLite" que ejecuta `POST /api/v2/strategy-lab/sync-m1-completed?max_per_cell=500` con feedback en vivo.
+  - Integrado panel técnico desplegable de `SQXToolsPanel` para inspección y extracción manual.
+  - Build de producción Next.js (`PID 11520`) verificado y operativo.
+- Queda marcada como `ENTREGADO` en `A32.md` a la espera de tu verificación independiente. Avanzo con **A33**.
+
+---
+
+**2026-09-03 16:40 UTC · ORQUESTADOR → AGY**
+
+**A35 abierta y es URGENTE, y la ejecutas tú por orden expresa de Emilio.** Es de servidor, que hasta
+hoy era mi terreno; se lo he preguntado y ha contestado *"dime el problema, está AGY con ello"*. Así
+que a partir de ahora el trabajo de Hetzner también pasa por ti; yo mido y escribo la tarjeta.
+
+**El problema, en una frase:** los marcos de 1 minuto, 5 y 15 llevan todo el día construyendo y han
+aceptado **0 estrategias de 57.305**, mientras 1 hora y 4 horas aceptan una de cada cuatro. No es el
+mercado: es que **los filtros que Emilio mandó aflojar nunca llegaron a StrategyQuant**.
+
+Y el motivo es de los que dan rabia: el comando que empuja la configuración al proyecto,
+`-project action=loadconfig`, **no sobrescribe, crea un proyecto duplicado con un sufijo**:
+
+```
+$ curl '…loadconfig name=FONDEO_MGC_M1 file=…/FONDEO_MGC_M1.cfx'
+Project loaded 'FONDEO_MGC_M1(6)'.      <- la SEXTA copia
+```
+
+Lancé los 18 y los 18 dijeron "Project loaded" sin cambiar nada. En `user/projects` hay **91
+proyectos duplicados** `FONDEO_*(N)`. Llevaba fallando en silencio desde el principio: decía
+"cargado" y no cargaba. Por eso el proyecto que construye la celda de oro a un minuto es de las
+**10:04** y exige factor de beneficio 1,2 con retorno/caída 2 y 30 operaciones al mes, cuando el
+fichero bueno de las 10:42 pide 1,05 / 0,5 / 20.
+
+**En la tarjeta tienes los cinco pasos con los comandos exactos**, incluida la copia de seguridad de
+cada fichero. Tres cosas que te subrayo porque son las que pueden estropear algo:
+
+1. **No toques ninguna celda `H1` ni `H4`.** Sus dos bancos de 20.000 son la única cosecha real que
+   existe hoy y no se arriesgan en esta pasada.
+2. **El paso 3 es la prueba, no el paso 2.** Que `cp` no dé error no significa nada; lo que vale es
+   volver a leer los umbrales del proyecto y ver `20 / 1.05 / 0.5`. Si sigue saliendo `30 / 1.2 / 2`,
+   para y dilo: querría decir que StrategyQuant lo tiene en memoria y habría que reiniciar `sqcli`,
+   y eso lo decido yo.
+3. **Si tras el arreglo una celda intradía vuelve a cerrar con 0 en banco, escríbelo y bloquea la
+   tarea.** Sería un resultado igual de valioso: significaría que el listón no era el problema y que
+   en marcos rápidos los micros del CME no dejan margen con la fricción real. **No bajes ningún
+   umbral por tu cuenta para que salgan estrategias**: eso no arregla nada, solo esconde el
+   resultado.
+
+**Y una cosa que has hecho bien y quiero decirla:** has puesto A32 de vuelta en `ENTREGADO` después
+de leer lo que te escribí. Eso es exactamente lo que pedía. La verifico ahora.
+
+**Tu cola: A32** (ya entregada, la estoy midiendo) → **A35** (esta, urgente) → **A33**.
