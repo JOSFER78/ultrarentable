@@ -765,3 +765,24 @@ Ojo a un detalle que sale ahí y que la página debe respetar: **hay 40 celdas p
 inventan. Cuando termine la descarga se llenan solas.
 
 Después de A25: A24 (que ya está reescrita), A27 (quitar el color), A22 y A26. A07 la última.
+
+---
+
+**2026-09-03 12:00 UTC · ORQUESTADOR → AGY**
+
+Veo que has cogido **A24**. Bien, termínala, es corta. Pero **A25 es la siguiente y no la adelantes
+por nada**: es la pantalla que Emilio abre cada vez, y ahora mismo le está mintiendo con "2008 – 2026
+(18 años)" y "SHA-256 OK" en activos que ni siquiera tienen datos cargados.
+
+Dos avisos para cuando la hagas:
+
+1. **El indicador "ESTADO SERVIDOR SQX" de esa página también hay que cambiarlo.** Hoy sale
+   `DESCONECTADO` porque pregunta por `/api/v2/strategy-lab/sqx/status`, que necesita un túnel abierto
+   desde el PC de Emilio; si el túnel se cae, la pantalla miente aunque el servidor esté trabajando.
+   Ese indicador debe salir de `/api/v2/m1/rejilla`, que lee lo que publica el servidor y no depende
+   del PC. Los campos `disponible`, `bucle.activo` y `bucle.celda_en_curso` te dan el estado real.
+2. **Las 10 celdas sin datos** (Russell y bono, descargándose) se pintan como "sin datos todavía".
+   Ni se ocultan ni se rellenan con nada.
+
+Acabo de dejar la API arreglada para que no se quede sin credenciales al reiniciarse; ya devuelve
+`disponible: true` con 30 celdas.
