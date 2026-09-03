@@ -5,7 +5,7 @@ import { findRepoRoot } from "@/lib/projectPaths";
 
 export const dynamic = "force-dynamic";
 
-const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestration"; filename: string; title: string }> = {
+const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestration" | "tablero"; filename: string; title: string }> = {
   current_phase: { folder: "state", filename: "current_phase.md", title: "Seguimiento en Vivo (Current Phase)" },
   especificacion_web: { folder: "state", filename: "ESPECIFICACION_WEB.md", title: "Especificación de la Web" },
   plan_maestro: { folder: "state", filename: "plan_maestro.md", title: "Plan Maestro v4" },
@@ -15,6 +15,7 @@ const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestratio
   punto_guardado_ultra: { folder: "state", filename: "PUNTO_GUARDADO_ULTRA.md", title: "Punto de Guardado ULTRA" },
   plan_local_fondeo: { folder: "state", filename: "PLAN_LOCAL_FONDEO.md", title: "Plan Local FONDEO" },
   tareas_agy: { folder: "bloques", filename: "F10_operaciones_infra.md", title: "Tareas para AGY — infraestructura" },
+  protocolo_tablero: { folder: "tablero", filename: "README.md", title: "Cómo funciona el tablero (orquestador ↔ AGY)" },
   arquitectura_recursos: { folder: "orchestration", filename: "ARQUITECTURA_RECURSOS.md", title: "Arquitectura de recursos (3 máquinas)" },
   runbook_hetzner: { folder: "orchestration", filename: "RUNBOOK_HETZNER_SEGURIDAD.md", title: "Runbook de seguridad del Hetzner" },
 };
@@ -40,7 +41,11 @@ export async function GET(req: NextRequest) {
     const entry = SAFE_DOC_MAP[name];
     filename = entry.filename;
     title = entry.title;
-    const baseDir = entry.folder === "state" ? stateDir : entry.folder === "bloques" ? bloquesDir : path.join(repoRoot, "orchestration");
+    const baseDir =
+      entry.folder === "state" ? stateDir
+      : entry.folder === "bloques" ? bloquesDir
+      : entry.folder === "tablero" ? path.join(repoRoot, "orchestration", "tablero")
+      : path.join(repoRoot, "orchestration");
     targetPath = path.join(baseDir, entry.filename);
   }
   // 2. Caso fase directa por nombre de archivo Fxx_*.md
@@ -48,6 +53,16 @@ export async function GET(req: NextRequest) {
     filename = name;
     title = name.replace(/\.md$/, "").replace(/_/g, " ");
     targetPath = path.join(bloquesDir, name);
+  }
+  // 2 bis. Tarea del tablero de orquestacion por su ID (ej. "A01"): un fichero por tarea en
+  // orchestration/tablero/. Es como se abre una tarjeta del tablero desde /plan.
+  else if (/^[A-Z]\d{2,3}$/.test(name)) {
+    const tareaPath = path.join(repoRoot, "orchestration", "tablero", `${name}.md`);
+    if (fs.existsSync(tareaPath)) {
+      filename = `${name}.md`;
+      title = `Tarea ${name}`;
+      targetPath = tareaPath;
+    }
   }
   // 3. Caso fase por ID (ej. "F03")
   else if (/^F\d{2}$/.test(name)) {

@@ -20,7 +20,29 @@ import PlanGraph, { type PlanBloque } from "@/components/plan/PlanGraph";
 import DocViewer from "@/components/plan/DocViewer";
 import type { PlanApiResponse } from "@/app/api/plan/route";
 
-type TabId = "fases" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento";
+type TabId = "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento";
+
+/** Forma que devuelve GET /api/tablero (apps/web/app/api/tablero/route.ts). */
+interface TareaTablero {
+  id: string;
+  titulo: string;
+  agente: string;
+  estado: string;
+  prioridad: string;
+  maquina: string;
+  depende_de: string[];
+  actualizado: string;
+  tiene_parte: boolean;
+  tiene_verificacion: boolean;
+  resumen: string;
+}
+interface TableroApi {
+  total: number;
+  sin_verificar: number;
+  tareas: TareaTablero[];
+  por_estado: Record<string, number>;
+  ilegibles: Array<{ archivo: string; error: string }>;
+}
 
 interface ActiveDoc {
   title: string;
@@ -36,6 +58,18 @@ export default function PlanPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState<boolean>(false);
+
+  const [tablero, setTablero] = useState<TableroApi | null>(null);
+
+  const loadTablero = useCallback(async () => {
+    try {
+      const res = await fetch("/api/tablero", { cache: "no-store" });
+      if (!res.ok) throw new Error(String(res.status));
+      setTablero((await res.json()) as TableroApi);
+    } catch {
+      setTablero(null); // sin datos se dice; nunca un tablero de ejemplo
+    }
+  }, []);
 
   // Visor de documento Markdown dedicado
   const [activeDoc, setActiveDoc] = useState<ActiveDoc | null>(null);
@@ -81,7 +115,8 @@ export default function PlanPage() {
 
   useEffect(() => {
     void loadPlan();
-  }, [loadPlan]);
+    void loadTablero();
+  }, [loadPlan, loadTablero]);
 
   // Intervalo de auto-refresco opcional
   useEffect(() => {
@@ -122,8 +157,9 @@ export default function PlanPage() {
   // Tareas para AGY: el bloque F10 del plan es el tablero. /api/plan ya cuenta sus filas de tarea
   // (tareas_totales / tareas_completadas); aqui solo se resta. null = todavia no hay datos, y
   // entonces el boton no inventa un numero.
-  const bloqueAgy = bloques.find((b) => b.id === "F10") ?? null;
-  const agyPendientes = bloqueAgy ? Math.max(0, bloqueAgy.tareas_totales - bloqueAgy.tareas_completadas) : null;
+  // Tablero de orquestacion: la fuente es orchestration/tablero/*.md via /api/tablero. El estado
+  // de cada tarea es EXACTAMENTE el que pone su fichero; aqui no se deduce ninguno.
+  const agyPendientes = tablero ? tablero.sin_verificar : null;
 
   return (
     <div className="w-full max-w-[1240px] mx-auto space-y-4 font-sans pb-16">
@@ -155,12 +191,16 @@ export default function PlanPage() {
             orchestration/state/plan/bloques/F10_operaciones_infra.md y se abre en el visor:
             el agente escribe alli su parte de entrega y el orquestador lo verifica. */}
         <button
-          onClick={() => void loadDocument("F10", "Tareas para AGY — infraestructura")}
+          onClick={() => { setActiveTab("agy"); setActiveDoc(null); void loadTablero(); }}
           title="Tareas pendientes para los agentes: seguridad del servidor, infraestructura y traslado de StrategyQuant"
-          className="px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap text-[var(--text-1)] bg-[var(--surface-2)] border border-[var(--border-strong)] hover:bg-[var(--surface-3)]"
+          className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === "agy"
+              ? "bg-[var(--surface-2)] text-[var(--text-1)] border-b-2 border-[var(--profit)]"
+              : "text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--surface-1)]"
+          }`}
         >
           <Terminal className="w-3.5 h-3.5" />
-          <span>Tareas AGY{agyPendientes !== null ? ` (${agyPendientes} pendiente${agyPendientes === 1 ? "" : "s"})` : ""}</span>
+          <span>Tareas AGY{agyPendientes !== null ? ` (${agyPendientes} sin verificar)` : ""}</span>
         </button>
 
         <button
@@ -266,6 +306,80 @@ export default function PlanPage() {
           )}
 
           {/* PESTAÑA 2: PIPELINE M1-M4 (STRATEGYQUANT X AL 100%) */}
+          {activeTab === "agy" && (
+            <div className="space-y-3">
+              <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-3.5 text-[12px] text-[var(--text-2)] leading-relaxed">
+                Tablero de orquestacion. Un fichero por tarea en{" "}
+                <code className="font-mono text-[var(--text-1)]">orchestration/tablero/</code>, leido en vivo: el
+                orquestador escribe la tarea y la verifica, AGY la ejecuta y deja su parte de entrega en el mismo
+                fichero.{" "}
+                <button
+                  onClick={() => void loadDocument("protocolo_tablero", "Como funciona el tablero")}
+                  className="underline text-[var(--text-1)] cursor-pointer"
+                >
+                  Como funciona
+                </button>
+              </div>
+
+              {!tablero && (
+                <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-6 text-center text-xs font-mono text-[var(--text-3)]">
+                  Sin datos del tablero (/api/tablero no responde).
+                </div>
+              )}
+
+              {tablero && tablero.tareas.length === 0 && (
+                <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-6 text-center text-xs font-mono text-[var(--text-3)]">
+                  No hay tareas en el tablero.
+                </div>
+              )}
+
+              {tablero && tablero.tareas.length > 0 && (
+                <div className="space-y-3">
+                  {["EN_CURSO", "ENTREGADO", "PENDIENTE", "DEVUELTO", "BLOQUEADO", "VERIFICADO", "DESCONOCIDO"].map((estado) => {
+                    const enEstado = tablero.tareas.filter((t) => t.estado === estado);
+                    if (enEstado.length === 0) return null;
+                    return (
+                      <div key={estado} className="space-y-1.5">
+                        <div className="text-[10.5px] font-mono uppercase tracking-wide text-[var(--text-3)]">
+                          {estado.replace("_", " ")} ({enEstado.length})
+                        </div>
+                        {enEstado.map((t) => (
+                          <button
+                            key={t.id}
+                            onClick={() => void loadDocument(t.id, t.id + " - " + t.titulo)}
+                            className="w-full text-left bg-[var(--surface-1)] border border-[var(--border)] hover:border-[var(--border-strong)] rounded-lg p-3 cursor-pointer transition-colors"
+                          >
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-mono text-[13px] font-bold text-[var(--text-1)]">{t.id}</span>
+                              <span className="text-[13px] text-[var(--text-1)]">{t.titulo}</span>
+                            </div>
+                            <div className="mt-1 flex items-center gap-3 flex-wrap text-[10.5px] font-mono text-[var(--text-3)]">
+                              <span>{t.agente}</span>
+                              <span>{t.prioridad}</span>
+                              {t.maquina && <span>{t.maquina}</span>}
+                              {t.depende_de.length > 0 && <span>depende de {t.depende_de.join(", ")}</span>}
+                              {t.tiene_parte && <span className="text-[var(--text-2)]">parte entregado</span>}
+                              {t.tiene_verificacion && <span className="text-[var(--profit)]">verificado</span>}
+                              {t.actualizado && <span>{t.actualizado}</span>}
+                            </div>
+                            {t.resumen && <div className="mt-1 text-[11.5px] text-[var(--text-3)]">{t.resumen}</div>}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {tablero && tablero.ilegibles.length > 0 && (
+                <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-lg p-3 text-[11px] font-mono text-[var(--text-2)]">
+                  {tablero.ilegibles.length} fichero(s) del tablero no legibles:{" "}
+                  {tablero.ilegibles.map((i) => i.archivo + " (" + i.error + ")").join(" - ")}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === "pipeline" && (
             <PipelineEstrategiasM1M4 modulos={pipeline} />
           )}
