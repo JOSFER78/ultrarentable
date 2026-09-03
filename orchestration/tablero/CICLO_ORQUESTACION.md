@@ -30,10 +30,25 @@ Esto es esa organización, escrita para que no dependa de que yo la recuerde.
 ## Qué NO es una espera
 
 El orquestador **nunca se queda parado** esperando a AGY, ni AGY esperando al orquestador. Mientras
-AGY programa, el orquestador trabaja en los servidores, escribe las siguientes tareas y verifica lo
-que va llegando. Ese fue el error del 02-09, cuando AGY se quedó diez minutos esperando una auditoría
-que dependía del servidor: por eso el trabajo de servidor es del orquestador y el de código y web es
-de AGY, y ninguna tarea puede depender de que el otro conteste.
+AGY trabaja, el orquestador escribe las siguientes tarjetas, decide el orden y comprueba lo que va
+llegando. Ninguna tarea puede depender de que el otro conteste.
+
+**Corregido el 03-09 por orden de Emilio.** Hasta esa fecha aquí decía que "el trabajo de servidor es
+del orquestador y el de código y web es de AGY". Ya no: *"todo lo que puedas delegar lo delegas; para
+cosas desarrolladas, analizar y corroborar y comprobar lo haces tú, pero todo lo que puedas delegar
+que lo haga otro"*. Es decir:
+
+| Se delega en AGY | Se queda el orquestador |
+| :--- | :--- |
+| Código, web y base de datos | Escribir la tarjeta y el aviso del buzón |
+| **Los servidores** (Hetzner y Oracle) | Decidir el orden y qué se devuelve |
+| **Averiguar la causa de un síntoma** | **Analizar y comprobar lo entregado**, y firmar |
+| | Commitear lo verificado |
+
+Ante un síntoma, el orquestador no se pone a leer código hasta dar con la causa: **encarga la
+investigación** con el síntoma medido, lo que quiere saber y qué evidencia quiere ver. Analizar lo ya
+entregado sí es suyo, y es donde está el valor de su firma: la pone alguien que no escribió el
+código.
 
 ## Estados, y qué significa cada uno
 
