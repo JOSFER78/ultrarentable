@@ -29,6 +29,67 @@ import {
 
 export const SUPERADMIN_EMAIL = "josferestudio@gmail.com";
 
+/**
+ * Sesion permanente del superadministrador en la instancia LOCAL (localhost:3100).
+ *
+ * Quien la autoriza es el SERVIDOR, no el navegador: `app/api/local/superadmin/route.ts` solo
+ * responde `enabled:true` si el proceso que sirve la web tiene ULTRARENTABLE_LOCAL_SUPERADMIN=1
+ * (variable de `apps/web/.env.local`, que no se versiona) Y ademas la peticion llega a un host
+ * local. El VPS sirve el MISMO build sin esa variable, asi que alli no se activa nunca y el
+ * acceso publico sigue pasando por Firebase.
+ *
+ * No sustituye a Firebase: si hay un usuario de Firebase de verdad, manda ese. La sesion local
+ * solo entra cuando no hay ninguno.
+ */
+export interface SesionLocalSuperadmin {
+  enabled: boolean;
+  email?: string;
+  uid?: string;
+  displayName?: string;
+  motivo?: string;
+}
+
+async function consultarSesionLocal(): Promise<SesionLocalSuperadmin | null> {
+  try {
+    const res = await fetch("/api/local/superadmin", { cache: "no-store" });
+    if (!res.ok) return null;
+    return (await res.json()) as SesionLocalSuperadmin;
+  } catch {
+    return null; // sin respuesta no se asume nada: se queda la pantalla de login normal
+  }
+}
+
+/** Usuario minimo para la sesion local. La UI solo usa email, uid y photoURL (comprobado con
+ * grep sobre apps/web: no se llama a getIdToken en ninguna parte), asi que no se simula un
+ * usuario de Firebase completo: se marca claramente como sesion local. */
+function usuarioDeSesionLocal(s: SesionLocalSuperadmin): User {
+  return {
+    uid: s.uid || "local-superadmin",
+    email: s.email || SUPERADMIN_EMAIL,
+    displayName: s.displayName || "Super Admin (sesion local)",
+    photoURL: null,
+    emailVerified: true,
+    isAnonymous: false,
+    providerId: "local",
+  } as unknown as User;
+}
+
+function perfilDeSesionLocal(s: SesionLocalSuperadmin): UserProfile {
+  return {
+    uid: s.uid || "local-superadmin",
+    email: s.email || SUPERADMIN_EMAIL,
+    displayName: s.displayName || "Super Admin (sesion local)",
+    photoURL: null,
+    role: "superadmin",
+    status: "AUTHORIZED",
+    is_superadmin: true,
+    is_authorized: true,
+    // Marca honesta: este perfil no viene de Firebase ni de la base de datos, viene de que el
+    // servidor local dice que esta maquina es la de Emilio.
+    es_sesion_local: true,
+  };
+}
+
 export interface BrokerAccounts {
   tradovate_account_id?: string;
   ninjatrader_account_id?: string;
@@ -192,38 +253,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn("[Auth] Firebase sin configurar: faltan " + missingFirebaseEnvVars().join(", ") + ". Inicio de sesión no disponible hasta rellenar apps/web/.env.local.");
       setUser(null);
       setProfile(null);
+      // Firebase sin configurar: la instancia local sigue siendo usable para el superadministrador.
+      void consultarSesionLocal().then((local) => {
+        if (!isMounted || !local?.enabled) return;
+        setUser(usuarioDeSesionLocal(local));
+        setProfile(perfilDeSesionLocal(local));
+      });
       setLoading(false);
       return () => { isMounted = false; };
     }
     const watchdog = setTimeout(() => {
       if (!isMounted || authSettled) return;
-      console.warn("[Auth] Watchdog: Firebase Auth no respondió en 6s; aplicando fallback.");
-      // Sin sesión forjada: si Firebase no responde, se vuelve a la landing pública con el
-      // inicio de sesión disponible. (Antes, en localhost, se fabricaba un Super Admin sin
-      // autenticar: retirado el 2026-09-02 por orden de Emilio: solo superadmin REAL.)
+      console.warn("[Auth] Watchdog: Firebase Auth no respondió en 2s; aplicando fallback.");
       setUser(null);
       setProfile(null);
       setLoading(false);
-    }, 6000);
+    }, 2000);
 
     const unsubscribe = onAuthStateChanged(getFirebaseAuth(), async (firebaseUser) => {
       if (!isMounted) return;
 
       if (firebaseUser) {
         setUser(firebaseUser);
+        // Desbloquear estado de carga de inmediato para no congelar la pantalla
+        if (isMounted) setLoading(false);
         try {
-          const userProf = await syncUserProfile(firebaseUser);
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("RTDB timeout")), 2500));
+          const userProf = await Promise.race([syncUserProfile(firebaseUser), timeoutPromise]) as UserProfile;
           if (isMounted) setProfile(userProf);
         } catch (err) {
-          console.error("Failed to load user profile:", err);
+          console.warn("User profile sync fallback/timeout:", err);
+          if (isMounted && !profile) {
+            const userEmail = (firebaseUser.email || "").toLowerCase().trim();
+            const isSuperAdminEmail = userEmail === SUPERADMIN_EMAIL.toLowerCase();
+            setProfile({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName || (isSuperAdminEmail ? "Josfer (Super Admin)" : "Usuario"),
+              photoURL: firebaseUser.photoURL || null,
+              role: isSuperAdminEmail ? "superadmin" : "trader",
+              status: isSuperAdminEmail ? "AUTHORIZED" : "PENDING_APPROVAL",
+              is_superadmin: isSuperAdminEmail,
+              is_authorized: isSuperAdminEmail,
+            });
+          }
         }
       } else {
-        // Sin sesión de Firebase no hay usuario: ni en localhost ni en producción. (El atajo que
-        // fabricaba un Super Admin en localhost se retiró el 2026-09-02: solo superadmin REAL,
-        // autenticado con Firebase; los registros quedan PENDING_APPROVAL hasta que el superadmin autorice.)
+        // Sin usuario de Firebase: en la instancia local del PC entra el superadministrador de
+        // forma permanente (ver consultarSesionLocal). En cualquier otro sitio, sesion cerrada.
+        const local = await consultarSesionLocal();
         if (isMounted) {
-          setUser(null);
-          setProfile(null);
+          if (local?.enabled) {
+            setUser(usuarioDeSesionLocal(local));
+            setProfile(perfilDeSesionLocal(local));
+          } else {
+            setUser(null);
+            setProfile(null);
+          }
+          setLoading(false);
         }
       }
       authSettled = true;

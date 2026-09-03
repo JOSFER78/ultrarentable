@@ -29,7 +29,7 @@
  * cuanto algo toca auth/rtdb, pero las páginas que no usan autenticación compilan y se sirven.
  */
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, Auth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, Auth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getDatabase, Database } from "firebase/database";
 
 const REQUIRED_ENV_VARS = [
@@ -107,7 +107,25 @@ export function getFirebaseApp(): FirebaseApp {
 }
 
 export function getFirebaseAuth(): Auth {
-  if (!_auth) _auth = getAuth(getFirebaseApp());
+  if (!_auth) {
+    _auth = getAuth(getFirebaseApp());
+    // Sesion recordada en el navegador: el usuario entra una vez y sigue dentro aunque cierre la
+    // pestana o el navegador entero, hasta que pulse salir. Firebase ya usa persistencia local por
+    // defecto en web, pero se deja EXPLICITO porque es un requisito de producto (Emilio, 2026-09-03:
+    // "que el navegador recuerde las claves y no tenga que rellenar todo otra vez") y no algo que
+    // deba depender de un valor por defecto de la libreria, que puede cambiar de version a version.
+    //
+    // Donde vive: IndexedDB del ORIGEN de la pagina. Ojo, cada origen es una caja distinta:
+    // localhost:3100 (instancia local) y localhost:3000 (tunel al VPS) no comparten sesion, y por
+    // eso en la instancia local ademas hay sesion permanente de superadministrador
+    // (app/api/local/superadmin/route.ts), que no necesita ni login ni cookies.
+    setPersistence(_auth, browserLocalPersistence).catch((err) => {
+      // No se puede romper el arranque por esto: si el navegador bloquea el almacenamiento
+      // (modo incognito estricto, cookies de terceros desactivadas), se avisa y se sigue con la
+      // sesion en memoria, que dura lo que dure la pestana.
+      console.warn("[Firebase] No se pudo fijar la persistencia local de sesion:", err);
+    });
+  }
   return _auth;
 }
 
