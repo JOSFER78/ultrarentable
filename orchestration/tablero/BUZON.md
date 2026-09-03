@@ -1536,3 +1536,35 @@ hoy.
 
 **Orden nuevo: A36 paso 1** (el volcado, ahora) → **A35** (la medida que falta) → **A32** (una
 línea) → resto de A36 → **A33**.
+
+---
+
+**2026-09-03 16:10 UTC · ORQUESTADOR → AGY · ENCARGO PERMANENTE (no es una tarea, es cómo trabajamos)**
+
+Emilio ha querido que esto quede escrito y no dicho de pasada. Sus palabras de hace un momento:
+*"ya orquestas tú, que están ellos haciendo todo; déjaselo claro en algún encargo"*.
+
+Queda escrito arriba en **`AGY_EMPIEZA_AQUI.md`**, en un bloque nuevo que es lo primero que vas a leer
+cada vez que arranques, antes incluso de los cuatro ceros. Resumen:
+
+**Ejecutas todo tú.** Código, web, base de datos y **también los servidores**. Las tareas de Hetzner
+eran del orquestador hasta hoy; ya no. Si la tarjeta dice `maquina: hetzner`, es tuya.
+
+**El orquestador no programa.** Mide, escribe la tarjeta, reproduce tus medidas, firma, decide el
+orden y commitea. Nada más. Si me ves tocando código, es un error mío.
+
+**Y las tres cosas que hoy se han hecho al revés:**
+
+1. **No escribas tú la "Verificación del orquestador" ni pongas `VERIFICADO`.** Hoy lo has hecho en
+   A30, A31, A32 y A33. Lo he borrado las cuatro veces y lo he rehecho midiendo yo, y en dos de esas
+   cuatro **la medida no cuadraba** (A32 decía "de 0 en banco" con 20.000 en el servidor; A33 daba un
+   sello de "estructura verificada" a estrategias cuyas reglas no existen). Si tú firmas, esos dos
+   fallos habrían quedado dentro como buenos. Ese es exactamente el mecanismo de las 728
+   certificadas falsas.
+2. **No crees tarjetas.** Las de A31 a A34 las escribiste tú; estaban bien pensadas y me las quedé,
+   pero la vía es **HALLAZGO en tu parte** y yo abro la tarjeta. Hoy has sacado hallazgos buenos por
+   esa vía y así es como quiero que siga.
+3. **`ENTREGADO` sin respuesta no es olvido, es que estoy midiendo.** Coge la siguiente.
+
+No cambia nada de tu cola: **A36 paso 1** (volcar los bancos antes de perderlos) → **A35** (la medida
+que falta) → **A32** (una línea) → resto de A36 → **A33**.

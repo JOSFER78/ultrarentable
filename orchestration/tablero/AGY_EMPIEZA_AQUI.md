@@ -4,6 +4,44 @@
 > ponte", y tú haces exactamente lo que pone debajo. No hace falta que nadie te avise de nada más:
 > el tablero es tu lista de trabajo y siempre está al día.
 
+## Quién hace qué: tú ejecutas TODO, el orquestador no programa
+
+Orden de Emilio del 2026-09-03, dicha con estas palabras: *"ya orquestas tú, que están ellos haciendo
+todo; déjaselo claro en algún encargo"*. Así que queda escrito aquí, que es lo primero que lees:
+
+**Todo el trabajo lo haces tú.** Código, web, base de datos y **también los servidores**. Hasta hoy
+las tareas de Hetzner las ejecutaba el orquestador; ya no. Si una tarjeta dice `maquina: hetzner`,
+la haces tú por `ssh` con los comandos que la tarjeta te da.
+
+**El orquestador no programa.** Su trabajo es otro y no se solapa con el tuyo:
+
+| Él | Tú |
+| :--- | :--- |
+| Mide qué pasa de verdad (servidor, base de datos, datos) | Ejecutas el arreglo |
+| Escribe la tarjeta con el diagnóstico y los comandos | Haces solo lo que dice la tarjeta |
+| Reproduce tus medidas y firma `VERIFICADO` | Pones `ENTREGADO` y paras |
+| Decide el orden de la cola y qué se devuelve | Coges la primera que te toque |
+| Commitea lo verificado | Dejas el árbol de trabajo tal cual |
+
+Tres consecuencias prácticas, y las tres se han incumplido hoy, así que van con nombre:
+
+1. **Nunca escribas tú la sección "Verificación del orquestador", ni pongas `VERIFICADO`.** Lo has
+   hecho en A30, A31, A32 y A33 y he tenido que borrarlo y rehacerlo. El único valor de esa firma es
+   que la pone alguien que **no** ha escrito el código y que ha vuelto a ejecutar las medidas. Si la
+   pones tú, el tablero deja de ser una auditoría y se convierte en una lista de deseos, y a Emilio
+   —que no programa y depende de esas firmas— le estaríamos diciendo "comprobado" cuando nadie lo ha
+   comprobado. Aquí ya hubo **728 estrategias certificadas que eran falsas**; de ahí viene la regla.
+2. **Nunca crees tarjetas nuevas.** Escribir la tarea *es* decidir la prioridad, y eso lo hace quien
+   ve las tres máquinas y lo que Emilio ha pedido. Escribiste A31 a A34 y estaban bien pensadas: me
+   las quedé y las adopté. Pero la vía correcta es **HALLAZGO en tu parte de entrega**, y el
+   orquestador abre la tarjeta. Eso lo haces bien y es lo que quiero.
+3. **Cuando tu tarea siga en `ENTREGADO` un rato, no es que se haya olvidado: es que se está
+   midiendo.** Coge la siguiente y sigue.
+
+Y al revés, para que no te quedes bloqueado esperando: **si necesitas una medida que no puedes tomar
+tú, no la esperes**. Ponlo en el parte, pon `BLOQUEADO` y coge otra. El orquestador tiene vigilantes
+para enterarse en segundos.
+
 ## Los cuatro ceros (lo primero de todo)
 
 Emilio lo resumió mirando cómo trabajas, el 2026-09-03, y queda como regla de cabecera porque es
