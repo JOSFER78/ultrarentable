@@ -46,6 +46,12 @@ export interface EstrategiaRow {
   source_artifact_sha256?: string | null;
   canonical_hash?: string;
   pasa_criterio?: boolean;
+  sizing?: {
+    metodo: string;
+    contratos?: number;
+    riesgo_pct?: number;
+    capital?: number;
+  } | null;
   raw_stats?: Record<string, unknown>;
 }
 
@@ -145,6 +151,7 @@ export default function EstrategiasComparativaTable({
   const [filterSimbolo, setFilterSimbolo] = useState("TODOS");
   const [filterTf, setFilterTf] = useState("TODOS");
   const [filterCelda, setFilterCelda] = useState("TODAS");
+  const [filterSizing, setFilterSizing] = useState("TODOS");
   const [sortField, setSortField] = useState<SortField>("net_profit_oos_usd");
   const [sortAsc, setSortAsc] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -193,6 +200,10 @@ export default function EstrategiasComparativaTable({
       if (filterCelda !== "TODAS" && e.celda !== filterCelda) {
         return false;
       }
+      if (filterSizing !== "TODOS") {
+        const metodo = e.sizing?.metodo || "FixedSize";
+        if (metodo !== filterSizing) return false;
+      }
       if (search.trim()) {
         const q = search.toLowerCase();
         const matchesName = e.name.toLowerCase().includes(q);
@@ -202,7 +213,15 @@ export default function EstrategiasComparativaTable({
       }
       return true;
     });
-  }, [estrategias, filterSimbolo, filterTf, filterCelda, search]);
+  }, [estrategias, filterSimbolo, filterTf, filterCelda, filterSizing, search]);
+
+  const hayMezclaSizing = useMemo(() => {
+    const metodos = new Set<string>();
+    filtered.forEach((e) => {
+      metodos.add(e.sizing?.metodo || "FixedSize");
+    });
+    return metodos.size > 1;
+  }, [filtered]);
 
   // Ordenación
   const sorted = useMemo(() => {
@@ -441,6 +460,28 @@ export default function EstrategiasComparativaTable({
             </select>
           </div>
         </div>
+
+        {/* Aviso de mezcla de dimensionamientos (A51) */}
+        {hayMezclaSizing && (
+          <div className="mt-2.5 p-2.5 rounded bg-neutral-950 border border-neutral-700 text-neutral-300 text-xs flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-neutral-400">⚠️</span>
+              <span className="font-sans">Estas filas se midieron con reglas distintas y sus rentabilidades no son comparables.</span>
+            </div>
+            <div className="flex items-center gap-2 font-mono">
+              <span className="text-neutral-400">Filtrar regla:</span>
+              <select
+                value={filterSizing}
+                onChange={(e) => setFilterSizing(e.target.value)}
+                className="bg-neutral-900 border border-neutral-700 rounded px-2 py-1 text-xs text-neutral-200 focus:outline-none"
+              >
+                <option value="TODOS">Todas las reglas</option>
+                <option value="FixedSize">1 micro fijo (100k USD)</option>
+                <option value="RiskFixedBalancePct">0,5% riesgo (50k USD)</option>
+              </select>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tabla con scroll horizontal */}

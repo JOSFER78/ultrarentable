@@ -278,22 +278,19 @@ def main() -> int:
         s, tf = args.solo.split("_")
         celdas = [(s, tf)]
 
-    args.out.mkdir(parents=True, exist_ok=True)
-    manifiesto = {
-        "schema": "ultrarentable.sqx.fondeo_proyectos.v2",
-        "creado": dt.datetime.now(dt.UTC).isoformat(),
-        "plantilla": str(args.template),
-        "plantilla_sha256": sha256(args.template),
-        "costes_supuestos": COSTES,
-        "aceptacion": {"min_ops_mes": MIN_OPS_MES, "min_pf": MIN_PF, "min_ret_dd": MIN_RET_DD, "min_win_pct": MIN_WIN_PCT},
-        "oos_fraccion": OOS_FRACCION,
-        "horas_tope": args.horas,
-        "capital_inicial": args.capital,
-        "riesgo_pct": args.riesgo,
-        "universo": SIMBOLOS,
-        "sin_datos_todavia": faltan,
-        "proyectos": [],
-    }
+    manifest_path = args.out / "manifiesto.json"
+    if args.solo and manifest_path.exists():
+        try:
+            manifiesto = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifiesto["actualizado"] = dt.datetime.now(dt.UTC).isoformat()
+            manifiesto["capital_inicial"] = args.capital
+            manifiesto["riesgo_pct"] = args.riesgo
+        except Exception:
+            pass
+
+    # Indexar proyectos existentes por nombre para actualizar in-place
+    proyectos_dict = {p["proyecto"]: p for p in manifiesto.get("proyectos", [])}
+
     for s, tf in celdas:
         nombre = f"FONDEO_{s}_{tf}"
         _, d0, d1 = en_sqx[s]
@@ -309,10 +306,12 @@ def main() -> int:
             print(f"{nombre}: {'CARGADO' if fila['cargado'] else 'ERROR -> ' + resp.strip()[:160]}")
         else:
             print(f"{nombre}: generado ({destino.name}, OOS desde {fila['oos_desde']})")
-        manifiesto["proyectos"].append(fila)
 
-    (args.out / "manifiesto.json").write_text(json.dumps(manifiesto, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"manifiesto: {args.out / 'manifiesto.json'} ({len(celdas)} proyectos)")
+        proyectos_dict[nombre] = fila
+
+    manifiesto["proyectos"] = list(proyectos_dict.values())
+    manifest_path.write_text(json.dumps(manifiesto, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"manifiesto: {manifest_path} ({len(manifiesto['proyectos'])} proyectos en total)")
     return 0
 
 

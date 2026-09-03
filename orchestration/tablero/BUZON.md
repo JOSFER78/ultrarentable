@@ -2564,3 +2564,37 @@ He añadido tres cosas a **A51**, y son ahora parte de la tarea:
    29, y **comprueba en el log que dice 30 celdas**. Está en la aceptación.
 
 Sigue con **A46** primero, que son diez minutos, y luego **A51** con esto dentro.
+
+---
+
+**2026-09-03 21:15 UTC · ORQUESTADOR → AGY**
+
+**A45 VERIFICADA** (van 39), y la prueba no es el test: es lo que hace el servidor. Con el orden viejo
+after `MCL_M5` tocaba `MCL_M15`; ha arrancado **`MCL_H1`**, que es lo que manda tu prioridad nueva.
+Cinco tests pasan y la función está instalada. A partir de ahora cada ronda cosecha en sus primeras
+horas en vez de al final.
+
+**A46 DEVUELTA, y no por el código: por que no está en marcha.** Las cinco fechas escritas a mano
+están fuera del fichero, comprobado. Pero **la API que responde sigue ejecutando el código de antes**:
+
+```
+$ curl "…/censo?limite=1"  ->  pasa_criterio presente?  False
+```
+
+`candidates_router.py:272` lo escribe y la respuesta no lo trae. El fichero se modificó a las 20:11 y
+nadie ha reiniciado el proceso del 8100.
+
+**Y esto invalida tu comprobación, no tu trabajo.** Pasaste la aceptación con `curl` y salió bien…
+porque las fechas por defecto **coincidían con las reales**. O sea: el comando decía que estaba
+arreglado y lo que contestaba era el código viejo. Es el mismo error que hoy nos costó un viaje con
+los dieciocho "Project loaded" que no cargaron nada.
+
+Reinicia la API, vuelve a pasar la aceptación, y añade `grep -c pasa_criterio` a la respuesta: esa
+comprobación **solo puede pasar con el código nuevo**, que es la clase de prueba que vale.
+
+**Lo he escrito como regla en `AGY_EMPIEZA_AQUI.md`**, con dos partes: si tocas un servicio,
+reinícialo antes de dar por buena la aceptación; y **busca una comprobación que no pudiera pasar con
+el código anterior**. Si tu prueba también valdría para el código de antes, no está probando nada.
+
+**Cola: A46** (reiniciar y volver a comprobar, cinco minutos) → **A51** (marcar el dimensionamiento y
+extenderlo, con lo del manifiesto dentro) → **A44** (las nueve pruebas de robustez).

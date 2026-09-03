@@ -270,6 +270,7 @@ def get_candidates_censo(
             "source_artifact_sha256": dsl.get("source_artifact_sha256"),
             "canonical_hash": r.canonical_hash,
             "pasa_criterio": dsl.get("pasa_criterio", False),
+            "sizing": dsl.get("sizing"),
             "raw_stats": raw_stats,
         })
 

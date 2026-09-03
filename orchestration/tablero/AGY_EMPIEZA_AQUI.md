@@ -68,6 +68,20 @@ real y firma `VERIFICADO`; **no programa**. Tú coges la tarea activa de la fase
 código, entregas la evidencia cruda y marcas `ENTREGADO`; **no firmas verificaciones ni te inventas
 tarjetas**.
 
+## Si tocas un servicio, reinícialo antes de dar por buena la aceptación
+
+Añadido el 2026-09-03 tras devolver A46 por esto mismo. Cambiaste el código de la API, pasaste la
+aceptación con `curl`, salió bien... y lo que respondía era **el proceso viejo**, que seguía
+ejecutando el código anterior. La prueba decía que sí y no era verdad.
+
+- **API (puerto 8100), web (3100), bucle del servidor**: si tocas su código, **reinicia el proceso**
+  y **vuelve a pasar la aceptación** contra el proceso nuevo. Una aceptación pasada contra el proceso
+  viejo no vale.
+- **Y busca una comprobación que solo pueda pasar con el código nuevo**: un campo nuevo en la
+  respuesta, un texto nuevo en la pantalla. Si tu comprobación también pasaría con el código de
+  antes, no está comprobando nada. En A46 las fechas nuevas coincidían con las viejas por
+  casualidad, y por eso el `curl` engañaba.
+
 ## El trabajo va por fases, y tu tarea pertenece a una
 
 Desde el 2026-09-03, por orden de Emilio, cada tarjeta declara su fase en la cabecera (`fase: F03`) y

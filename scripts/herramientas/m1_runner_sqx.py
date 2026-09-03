@@ -271,6 +271,14 @@ def main() -> int:
 
     CELDAS = celdas_del_manifiesto(args.base)
     estado = json.loads(ruta_estado.read_text(encoding="utf-8")) if ruta_estado.exists() else estado_inicial(args.horas, CELDAS)
+
+    # Salvaguarda A51: Si el manifiesto tiene menos celdas que las registradas en estado.json,
+    # significa que el manifiesto fue truncado o corrompido accidentalmente.
+    # En ese caso, avisar en el log y adoptar el universo completo de estado.json.
+    if ruta_estado.exists() and len(CELDAS) < len(estado.get("celdas", {})):
+        log(f"AVISO CRÍTICO UNIVERSO: manifiesto.json tiene solo {len(CELDAS)} celdas pero estado.json tiene {len(estado['celdas'])}. Adopto el universo completo de estado.json.")
+        CELDAS = ordenar_celdas_por_rendimiento(list(estado["celdas"].keys()))
+
     # Celdas nuevas (activo recién descargado) entran como PENDIENTE sin tocar lo ya hecho.
     nuevas = [c for c in CELDAS if c not in estado["celdas"]]
     if nuevas:

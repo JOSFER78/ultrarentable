@@ -20,13 +20,14 @@ import EspecificacionWebVisual from "@/components/plan/EspecificacionWebVisual";
 import PlanGraph, { type PlanBloque } from "@/components/plan/PlanGraph";
 import DocViewer from "@/components/plan/DocViewer";
 import TableroAgentes from "@/components/plan/TableroAgentes";
+import SwarmMissionControl from "@/components/plan/SwarmMissionControl";
 import PlanFasesView from "@/components/plan/PlanFasesView";
 import Comentarios from "@/components/plan/Comentarios";
 import type { PlanApiResponse } from "@/app/api/plan/route";
 import type { FasesPlanData } from "@/lib/fasesServer";
 import type { TableroApi } from "@/components/plan/TableroAgentes";
 
-type TabId = "fases" | "tablero" | "plan_completo" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
+type TabId = "fases" | "enjambre" | "tablero" | "plan_completo" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
 
 interface ActiveDoc {
   title: string;
@@ -217,6 +218,20 @@ export default function PlanPageClient({ initialTablero, initialFases }: PlanPag
           <span>Fases del Plan ({fasesData?.total_fases || 11}){fasesData?.fase_activa ? ` · Activa: ${fasesData.fase_activa}` : ""}</span>
         </button>
 
+        {/* PESTAÑA: MISSION CONTROL (ENJAMBRE REAL-TIME) */}
+        <button
+          onClick={() => { setActiveTab("enjambre"); setActiveDoc(null); }}
+          title="Mission Control en tiempo real del enjambre Opus + Antigravity (SSE cero tokens)"
+          className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === "enjambre"
+              ? "bg-[var(--surface-2)] text-[var(--text-1)] border-b-2 border-[var(--profit)]"
+              : "text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--surface-1)]"
+          }`}
+        >
+          <Zap className="w-3.5 h-3.5 text-[var(--profit)] animate-pulse" />
+          <span>Mission Control (Enjambre en Vivo)</span>
+        </button>
+
         {/* PESTAÑA 2: TABLERO DE TAREAS EN VIVO */}
         <button
           onClick={() => { setActiveTab("tablero"); setActiveDoc(null); void loadTablero(); }}
@@ -333,6 +348,11 @@ export default function PlanPageClient({ initialTablero, initialFases }: PlanPag
       {/* 4. Contenido Principal según Pestaña (solo cuando activeDoc no cubre la pantalla completa) */}
       {!activeDoc && (
         <>
+          {/* PESTAÑA: MISSION CONTROL (ENJAMBRE EN TIEMPO REAL) */}
+          {activeTab === "enjambre" && (
+            <SwarmMissionControl />
+          )}
+
           {/* PESTAÑA PRINCIPAL: TABLERO DE TAREAS EN VIVO */}
           {(activeTab === "tablero" || activeTab === "agy") && (
             <TableroAgentes
