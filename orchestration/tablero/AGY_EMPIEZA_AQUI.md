@@ -113,3 +113,7 @@ una tarea.
 - **2026-09-03, A09**: el mapa de documentos de la web no admitía la carpeta `archive`, así que había
   que ampliarlo. Se hizo sin inventar rutas. Ese es el patrón: cuando falta una pieza, se añade la
   pieza, no se apaña el camino.
+- **2026-09-03, A04**: cinco componentes que la página `/plan` importa existían en el disco pero no
+  estaban en git, así que la página funcionaba en esta máquina y habría fallado en un servidor recién
+  clonado. **Cuando crees un fichero nuevo que otro importa, dilo en el parte con su ruta.** Tú no
+  commiteas, pero el orquestador necesita saberlo para dejar el repositorio coherente.

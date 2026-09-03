@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   CheckCircle2,
   Circle,
@@ -10,22 +10,11 @@ import {
   Loader2,
   ArrowRight,
   ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  FileText,
 } from "lucide-react";
 
-/**
- * Fuente única del tipo: `app/api/plan/route.ts`, que es quien lo produce leyendo los bloques
- * de `orchestration/state/plan/bloques/`.
- *
- * Corregido 2026-09-01 (orquestador): aquí vivía una SEGUNDA definición de `PlanBloque` que
- * había derivado de la canónica — le faltaban `aparcado` y `motivo_aparcado`, mientras el
- * propio componente ya leía `bloque.aparcado` más abajo. El build de producción nunca se había
- * ejecutado (el expediente I5 lo advertía: "verificado sólo por lectura de código"), así que el
- * error de tipos llevaba escondido desde entonces. Se elimina la duplicidad en vez de añadir el
- * campo que faltaba: la dualidad de definiciones es el fallo histórico nº 1 de este repo.
- *
- * `import type` se borra en compilación, así que no crea acoplamiento en tiempo de ejecución
- * entre el componente y el route handler.
- */
 export type { PlanBloque } from "@/app/api/plan/route";
 import type { PlanBloque } from "@/app/api/plan/route";
 
@@ -84,38 +73,49 @@ function DepChip({ id, dir }: { id: string; dir: "in" | "out" }) {
   );
 }
 
-/**
- * Grafo de fases del plan maestro: cada bloque F00_*.md..F09_*.md renderizado
- * como nodo con su estado real (leído del frontmatter YAML por /api/plan) y
- * sus aristas depende_de / desbloquea como chips enlazados por ancla al nodo
- * correspondiente. Presentación pura — no hace fetch ni conoce la API.
- */
-export default function PlanGraph({ bloques }: { bloques: PlanBloque[] }) {
+interface PlanGraphProps {
+  bloques: PlanBloque[];
+  onSelectBloque?: (bloque: PlanBloque) => void;
+}
+
+export default function PlanGraph({ bloques, onSelectBloque }: PlanGraphProps) {
   const porId = new Map(bloques.map((b) => [b.id, b]));
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleExpand = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="relative">
       <div
-        className="absolute left-[15px] top-2 bottom-2 w-px bg-[var(--surface-1)]   to-transparent"
+        className="absolute left-[15px] top-2 bottom-2 w-px bg-[var(--border)]"
         aria-hidden
       />
-      <div className="space-y-4">
+      <div className="space-y-3">
         {bloques.map((bloque) => {
           const style = estadoStyle(bloque.estado);
+          const isExpanded = expandedIds.has(bloque.id);
+
           return (
             <div key={bloque.id} id={`bloque-${bloque.id}`} className="relative pl-10 scroll-mt-24">
               <div
-                className={`absolute left-0 top-4 w-8 h-8 rounded-full border flex items-center justify-center ${style.badge}`}
+                className={`absolute left-0 top-3.5 w-8 h-8 rounded-full border flex items-center justify-center ${style.badge}`}
                 aria-hidden
               >
                 {style.icon}
               </div>
 
               <div
-                className={`bg-[var(--surface-1)] backdrop-blur-xl border rounded-2xl p-4 md:p-5 transition-colors ${
+                className={`bg-[var(--surface-1)] border rounded-lg p-3.5 md:p-4 transition-colors ${
                   bloque.aparcado
-                    ? "border-white/[0.05] opacity-60 hover:opacity-100 hover:border-white/[0.12]"
-                    : "border-white/[0.08] hover:border-white/[0.16]"
+                    ? "border-[var(--border)] opacity-70 hover:opacity-100"
+                    : "border-[var(--border)] hover:border-[var(--border-strong)]"
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -154,6 +154,21 @@ export default function PlanGraph({ bloques }: { bloques: PlanBloque[] }) {
                   </p>
                 )}
 
+                {bloque.tareas_totales > 1 && (
+                  <div className="mt-3 space-y-1">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-[var(--text-3)]">
+                      <span>Progreso de tareas ({bloque.tareas_completadas}/{bloque.tareas_totales})</span>
+                      <span>{Math.round((bloque.tareas_completadas / bloque.tareas_totales) * 100)}%</span>
+                    </div>
+                    <div className="w-full bg-[var(--surface-3)] h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-[var(--profit)] h-full transition-all duration-300 rounded-full"
+                        style={{ width: `${Math.round((bloque.tareas_completadas / bloque.tareas_totales) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px]">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-[var(--text-3)] font-mono uppercase">Depende de</span>
@@ -173,10 +188,47 @@ export default function PlanGraph({ bloques }: { bloques: PlanBloque[] }) {
                   </div>
                 </div>
 
-                <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-[var(--text-3)]">
-                  <span>{bloque.archivo}</span>
-                  <span>Actualizado {bloque.actualizado || "—"}</span>
+                <div className="mt-3 pt-3 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-[var(--text-3)]">
+                  <div className="flex items-center gap-3">
+                    <span>{bloque.archivo}</span>
+                    <span>Actualizado {bloque.actualizado || "—"}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {bloque.content && (
+                      <button
+                        onClick={() => toggleExpand(bloque.id)}
+                        className="inline-flex items-center gap-1 text-[var(--text-2)] hover:text-[var(--text-1)] px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--surface-2)] cursor-pointer"
+                      >
+                        {isExpanded ? (
+                          <>
+                            <ChevronUp className="w-3 h-3" />
+                            <span>Plegar documento</span>
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="w-3 h-3" />
+                            <span>Desplegar texto completo</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                    {onSelectBloque && (
+                      <button
+                        onClick={() => onSelectBloque(bloque)}
+                        className="inline-flex items-center gap-1 text-[var(--profit)] hover:text-white px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--surface-2)] cursor-pointer"
+                      >
+                        <FileText className="w-3 h-3" />
+                        <span>Abrir en visor</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {isExpanded && bloque.content && (
+                  <div className="mt-3.5 p-3.5 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-xs font-mono text-[var(--text-1)] leading-relaxed whitespace-pre-wrap max-h-96 overflow-y-auto">
+                    {bloque.content}
+                  </div>
+                )}
 
                 {bloque.depende_de.some((id) => !porId.has(id)) && (
                   <p className="mt-2 text-[10px] font-mono text-[var(--text-3)]">
