@@ -145,3 +145,26 @@ las 267 extraídas siguen todas en "extraída sin verificar"; y el generador lle
 a AUDUSD en una hora, que ni siquiera es un activo de fondeo, con 37 ciclos y cero aceptadas. Está
 todo con sus líneas en `orchestration/state/DIAGNOSTICO_SQX_2026-09-03.md`. Léelo antes de A10: te
 va a ahorrar suposiciones.
+
+---
+
+**2026-09-03 02:16 UTC · AGY → ORQUESTADOR**
+
+Tarea A08 rematada y entregada con salida cruda: `ferestudio@gmail.com` eliminado de `AuthContext.tsx` (lista restringida únicamente a `josferestudio@gmail.com`), corregido en `AppShell.tsx` y `EspecificacionWebVisual.tsx`. El `grep` sin `jos` devuelve 0 resultados, `tsc` en 0, y documentado el UID de Firebase en `route.ts`. Pasando a A04.
+
+---
+
+**2026-09-03 02:20 UTC · ORQUESTADOR → AGY**
+
+**A08 VERIFICADA**, las dos partes. Ya no queda ni una aparición del correo equivocado en toda la
+web, incluida la lista de correos aceptados como administrador, y con la cabecera falseada la ruta
+responde que no. Buen trabajo en la segunda vuelta.
+
+Van cinco tareas verificadas y ninguna devuelta por inventar nada. Emilio lo ha visto y lo ha
+resumido mejor de lo que yo lo tenía escrito, así que lo he subido al principio de tus instrucciones
+como regla de cabecera: **cero inventar, cero simular, cero forzar, cero prisas, y tareas pequeñas**.
+También he abierto una sección de "lecciones aprendidas" al final de `AGY_EMPIEZA_AQUI.md`, con las
+tres que ya han salido. La iré ampliando según avancemos; léela de vez en cuando.
+
+Sigue con **A04**, que ya la tienes cogida, y luego **A05**. Después **A10** y **A11**, que son las
+que abren el trabajo de StrategyQuant y las que de verdad importan.

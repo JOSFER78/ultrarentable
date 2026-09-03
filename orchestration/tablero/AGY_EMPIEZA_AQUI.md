@@ -4,6 +4,24 @@
 > ponte", y tú haces exactamente lo que pone debajo. No hace falta que nadie te avise de nada más:
 > el tablero es tu lista de trabajo y siempre está al día.
 
+## Los cuatro ceros (lo primero de todo)
+
+Emilio lo resumió mirando cómo trabajas, el 2026-09-03, y queda como regla de cabecera porque es
+mejor formulación que cualquier lista larga:
+
+**Cero inventar · cero simular · cero forzar · cero prisas.**
+
+- **Cero inventar**: ninguna cifra, ruta, salida ni nombre que no hayas visto con tus ojos en la
+  salida de un comando. Si no lo sabes: `NO DATA`.
+- **Cero simular**: nada de datos de ejemplo, de relleno ni "provisionales". Si algo no se puede
+  hacer de verdad, se dice que no se puede.
+- **Cero forzar**: si una comprobación no da lo esperado, no la retuerzas hasta que dé. Puede que la
+  comprobación esté mal escrita (ya ha pasado, y era culpa del orquestador). Lo anotas y sigues.
+- **Cero prisas**: no hay plazo. Entre entregar ya o comprobarlo otra vez, comprueba otra vez.
+
+Y una quinta que va con ellas: **tareas pequeñas**. Si una tarea se te hace larga o vaga, párala y
+dilo en el buzón; se parte en dos. Vas rápido y bien cuando el encargo es pequeño y clarísimo.
+
 ## Regla número uno: leer no es empezar
 
 Vas a leer tareas que **no** son para ti todavía. Leer el tablero nunca autoriza a trabajar. Solo
@@ -77,3 +95,21 @@ Bloquearse y decirlo está bien; adivinar para salir del paso, no.
 | Cómo se ve todo esto | `http://localhost:3100/plan` → pestaña **Tareas AGY** |
 | El plan del proyecto | `orchestration/state/plan/bloques/F*.md` |
 | Las reglas del proyecto | `CLAUDE.md` en la raíz |
+
+
+## Lecciones que ya hemos aprendido (esto crece)
+
+Se apunta aquí lo que ha salido trabajando, para no repetirlo. Lo añade el orquestador cuando cierra
+una tarea.
+
+- **2026-09-03, A06**: una comprobación pedía contar apariciones de un texto dentro del propio
+  fichero de la tarea, y el texto aparecía también en el enunciado, así que no podía dar el número
+  esperado. El fallo era del orquestador. Desde entonces, esas comprobaciones usan un patrón que no
+  aparezca en el enunciado. **Si ves una comprobación imposible, no la fuerces: dilo.**
+- **2026-09-03, A08**: la tarea decía "no toques `AuthContext.tsx`, ahí el correo está bien", y para
+  cuando AGY la cogió ya no era cierto porque otro editor lo había cambiado. **Si un fichero no se
+  parece a lo que describe la tarea, para y dilo en el buzón** en vez de adaptarte a lo que ves. El
+  orquestador reescribe la tarea con lo que hay.
+- **2026-09-03, A09**: el mapa de documentos de la web no admitía la carpeta `archive`, así que había
+  que ampliarlo. Se hizo sin inventar rutas. Ese es el patrón: cuando falta una pieza, se añade la
+  pieza, no se apaña el camino.
