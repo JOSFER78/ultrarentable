@@ -101,6 +101,20 @@ def cli(base_url: str, cmd: str, timeout: int = 180) -> str:
     return "ERROR_CLI: inalcanzable"
 
 
+def segundos_de_tiempo(crudo: str) -> int:
+    """Convierte el tiempo que escribe StrategyQuant a segundos.
+
+    Acepta las formas que da el programa en espanol y en ingles: "17 min. 58 s.",
+    "1 hr. 14 min.", "4 hrs. 29 min.", "2 h. 5 min.", "850 ms.". Las horas cuentan: antes se
+    escapaban del patron ("hrs." no casa con "h\\.") y una celda de dos horas se leia como si
+    llevara veinte minutos.
+    """
+    seg = 0
+    for valor, unidad in re.findall(r"(\d+)\s*(hrs|hr|h|min|ms|s)\.", crudo):
+        seg += int(valor) * {"hrs": 3600, "hr": 3600, "h": 3600, "min": 60, "s": 1, "ms": 0}[unidad]
+    return seg
+
+
 def leer_estado_proyecto(base_url: str, proyecto: str) -> dict:
     """Devuelve {generadas, en_banco, seg_ejecucion, por_hora, aceptadas_por_hora} o {} si no se pudo."""
     txt = cli(base_url, f"-project action=status name={proyecto}", timeout=120)
@@ -122,13 +136,14 @@ def leer_estado_proyecto(base_url: str, proyecto: str) -> dict:
     out["aceptadas_por_hora"] = m.group(1) if m else "0"
     m = re.search(r"Aceptado\s+([\d.,]+)\s*%", txt)
     out["aceptado_pct"] = m.group(1) if m else "0"
-    # "Tiempo de funcionamiento hasta ahora  1 h. 14 min. 19 s."
-    m = re.search(r"Tiempo de funcionamiento hasta ahora\s+(.+)", txt)
+    # "Tiempo de funcionamiento hasta ahora  17 min. 58 s." pero tambien, sin ningun espacio
+    # porque StrategyQuant rellena la columna a lo ancho: "...hasta ahora4 hrs. 29 min.".
+    # Medido el 03-09 con `cat -A`. Con `\s+` la linea larga no casaba, el tiempo se leia como 0
+    # en cada sondeo y el bucle daba la celda por "parada sola" a los 3 minutos dejandola viva:
+    # asi se acumularon 29 proyectos construyendo a la vez sobre 8 hilos. Ver #M1-PARADA-FALSA.
+    m = re.search(r"Tiempo de funcionamiento hasta ahora\s*(.+)", txt)
     crudo = m.group(1).strip() if m else ""
-    seg = 0
-    for valor, unidad in re.findall(r"(\d+)\s*(h|min|s|ms)\.", crudo):
-        seg += int(valor) * {"h": 3600, "min": 60, "s": 1, "ms": 0}[unidad]
-    out["seg_ejecucion"] = seg
+    out["seg_ejecucion"] = segundos_de_tiempo(crudo)
     out["tiempo_crudo"] = crudo
     return out
 
@@ -150,9 +165,39 @@ def estado_inicial(horas: int, CELDAS: list) -> dict:
     }
 
 
+def parar_proyecto(base_url: str, proyecto: str, log: Registro) -> bool:
+    """Manda parar y comprueba que de verdad paró. Devuelve True si dejó de avanzar.
+
+    Es obligatorio antes de pasar a la celda siguiente: una celda que se abandona sin parar
+    sigue construyendo y se lleva su parte de los 8 hilos. El 03-09 asi se juntaron 29
+    construcciones a la vez y el caudal por celda cayo de 4.368/h a ~500/h.
+    """
+    cli(base_url, f"-project action=stop name={proyecto}")
+    time.sleep(20)
+    a = leer_estado_proyecto(base_url, proyecto)
+    time.sleep(SONDEO_SEG)
+    b = leer_estado_proyecto(base_url, proyecto)
+    if a and b and (a.get("generadas"), a.get("seg_ejecucion")) == (b.get("generadas"), b.get("seg_ejecucion")):
+        return True
+    log(f"  {proyecto}: AVISO, le he mandado parar y sigue avanzando; lo repito")
+    cli(base_url, f"-project action=stop name={proyecto}")
+    time.sleep(30)
+    c = leer_estado_proyecto(base_url, proyecto)
+    quieta = bool(b and c and (b.get("generadas"), b.get("seg_ejecucion")) == (c.get("generadas"), c.get("seg_ejecucion")))
+    if not quieta:
+        log(f"  {proyecto}: NO PARA. Sigue construyendo y le robara hilos a la siguiente celda.")
+    return quieta
+
+
 def esperar_fin(base_url: str, proyecto: str, tope_seg: int, log: Registro) -> dict:
-    """Sondea hasta que la construcción deja de avanzar o se agota el tope. Devuelve el último estado."""
-    ultimo_tiempo = -1
+    """Sondea hasta que la construcción deja de avanzar o se agota el tope. Devuelve el último estado.
+
+    El avance se mide por **dos** señales: el tiempo de funcionamiento y las estrategias
+    generadas. El tiempo solo no vale — cuando StrategyQuant lo escribe pegado a la etiqueta se
+    lee como 0 y una celda viva parece parada (#M1-PARADA-FALSA, 03-09). Las generadas suben
+    siempre que la construccion respira.
+    """
+    ultimo_avance = (-1, -1)
     quieto = 0
     inicio = time.time()
     ultimo: dict = {}
@@ -163,22 +208,23 @@ def esperar_fin(base_url: str, proyecto: str, tope_seg: int, log: Registro) -> d
             log(f"  {proyecto}: el modo de comandos no responde; reintento en el siguiente sondeo")
             continue
         ultimo = st
-        if st["seg_ejecucion"] == ultimo_tiempo:
+        avance = (st["generadas"], st["seg_ejecucion"])
+        if avance == ultimo_avance:
             quieto += 1
             if quieto >= QUIETO_PARA_FIN:
-                log(f"  {proyecto}: parada sola tras {st['tiempo_crudo']} ({st['generadas']} generadas, {st['en_banco']} en banco)")
+                log(f"  {proyecto}: parada sola tras {st['tiempo_crudo'] or '?'} ({st['generadas']} generadas, {st['en_banco']} en banco)")
+                parar_proyecto(base_url, proyecto, log)
                 return ultimo
         else:
             if quieto:
                 quieto = 0
-            ultimo_tiempo = st["seg_ejecucion"]
+            ultimo_avance = avance
             transcurrido = int(time.time() - inicio)
             if transcurrido % (SONDEO_SEG * 10) < SONDEO_SEG:
-                log(f"  {proyecto}: {st['tiempo_crudo']}, {st['generadas']} generadas, {st['en_banco']} en banco, {st['por_hora']}/h")
+                log(f"  {proyecto}: {st['tiempo_crudo'] or '?'}, {st['generadas']} generadas, {st['en_banco']} en banco, {st['por_hora']}/h")
         if time.time() - inicio > tope_seg:
             log(f"  {proyecto}: alcanzado el tope duro ({tope_seg // 60} min); la paro yo")
-            cli(base_url, f"-project action=stop name={proyecto}")
-            time.sleep(30)
+            parar_proyecto(base_url, proyecto, log)
             return leer_estado_proyecto(base_url, proyecto) or ultimo
     return ultimo
 
@@ -228,6 +274,25 @@ def main() -> int:
     if nuevas:
         log(f"celdas nuevas en el universo: {', '.join(nuevas)}")
 
+    # Limpieza de arranque: nadie construye salvo la celda que este bucle tenga en curso.
+    # Un proceso que muere (o un fallo como #M1-PARADA-FALSA) deja celdas vivas que siguen
+    # comiendo hilos para siempre; al arrancar se paran todas y se empieza con la maquina limpia.
+    en_curso = estado.get("celda_en_curso")
+    vivas = []
+    for c in CELDAS:
+        if c == en_curso:
+            continue
+        st0 = leer_estado_proyecto(args.cli, c)
+        if st0 and (st0.get("seg_ejecucion", 0) > 0 or st0.get("generadas", 0) > 0):
+            st1 = leer_estado_proyecto(args.cli, c)
+            if st1 and (st1.get("generadas"), st1.get("seg_ejecucion")) != (st0.get("generadas"), st0.get("seg_ejecucion")):
+                vivas.append(c)
+    if vivas:
+        log(f"limpieza de arranque: {len(vivas)} celdas seguian construyendo sin permiso: {', '.join(vivas)}")
+        for c in vivas:
+            parar_proyecto(args.cli, c, log)
+        log("limpieza de arranque terminada")
+
     while not _parar:
         # 1) ¿Había una celda a medias (reinicio del proceso o de la máquina)?
         celda = estado.get("celda_en_curso")
@@ -238,11 +303,12 @@ def main() -> int:
                 st_prev = st
                 time.sleep(SONDEO_SEG)
                 st = leer_estado_proyecto(args.cli, celda)
-                if st and st["seg_ejecucion"] > st_prev["seg_ejecucion"]:
+                if st and (st["generadas"], st["seg_ejecucion"]) != (st_prev["generadas"], st_prev["seg_ejecucion"]):
                     log(f"  {celda} sigue viva en StrategyQuant: la adopto en vez de relanzarla")
                     st = esperar_fin(args.cli, celda, tope_seg, log)
                 else:
                     log(f"  {celda} ya no avanza: la doy por terminada")
+                    parar_proyecto(args.cli, celda, log)
         else:
             # 2) Siguiente celda pendiente
             pendientes = [c for c in CELDAS if estado["celdas"][c]["estado"] == "PENDIENTE"]
