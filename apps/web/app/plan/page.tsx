@@ -23,7 +23,7 @@ import TableroAgentes from "@/components/plan/TableroAgentes";
 import Comentarios from "@/components/plan/Comentarios";
 import type { PlanApiResponse } from "@/app/api/plan/route";
 
-type TabId = "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
+type TabId = "plan_completo" | "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
 
 import type { TableroApi } from "@/components/plan/TableroAgentes";
 
@@ -36,7 +36,7 @@ interface ActiveDoc {
 }
 
 export default function PlanPage() {
-  const [activeTab, setActiveTab] = useState<TabId>("fases");
+  const [activeTab, setActiveTab] = useState<TabId>("plan_completo");
   const [data, setData] = useState<PlanApiResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +60,33 @@ export default function PlanPage() {
   // Visor de documento Markdown dedicado
   const [activeDoc, setActiveDoc] = useState<ActiveDoc | null>(null);
   const [loadingDoc, setLoadingDoc] = useState<boolean>(false);
+
+  // Plan completo (orchestration/state/plan_maestro.md)
+  const [planCompleto, setPlanCompleto] = useState<ActiveDoc | null>(null);
+  const [cargandoPlan, setCargandoPlan] = useState<boolean>(true);
+  const [errorPlan, setErrorPlan] = useState<string | null>(null);
+
+  const loadPlanCompleto = useCallback(async () => {
+    setCargandoPlan(true);
+    try {
+      const res = await fetch("/api/plan/doc?name=plan_maestro", { cache: "no-store" });
+      if (!res.ok) throw new Error(`Documento no disponible (${res.status})`);
+      const json = await res.json();
+      setPlanCompleto({
+        title: json.title || "Plan Maestro v5",
+        filename: json.filename || "plan_maestro.md",
+        content: json.content,
+        lastModified: json.lastModified,
+        sizeBytes: json.sizeBytes,
+      });
+      setErrorPlan(null);
+    } catch (err) {
+      setErrorPlan(err instanceof Error ? err.message : String(err));
+      setPlanCompleto(null);
+    } finally {
+      setCargandoPlan(false);
+    }
+  }, []);
 
   const loadPlan = useCallback(async () => {
     try {
@@ -102,7 +129,8 @@ export default function PlanPage() {
   useEffect(() => {
     void loadPlan();
     void loadTablero();
-  }, [loadPlan, loadTablero]);
+    void loadPlanCompleto();
+  }, [loadPlan, loadTablero, loadPlanCompleto]);
 
   // Intervalo de auto-refresco opcional
   useEffect(() => {
@@ -110,9 +138,10 @@ export default function PlanPage() {
     const interval = setInterval(() => {
       void loadPlan();
       void loadTablero();
-    }, 30000);
+      void loadPlanCompleto();
+    }, 15000);
     return () => clearInterval(interval);
-  }, [autoRefresh, loadPlan, loadTablero]);
+  }, [autoRefresh, loadPlan, loadTablero, loadPlanCompleto]);
 
   const handleSelectBloque = (bloque: PlanBloque) => {
     setActiveDoc({
@@ -163,6 +192,18 @@ export default function PlanPage() {
       {/* 2. Barra de Pestañas del Dashboard Visual */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[var(--border)] text-xs font-mono">
         <button
+          onClick={() => { setActiveTab("plan_completo"); setActiveDoc(null); }}
+          className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === "plan_completo"
+              ? "bg-[var(--surface-2)] text-[var(--text-1)] border-b-2 border-[var(--profit)]"
+              : "text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--surface-1)]"
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5 text-[var(--profit)]" />
+          <span>Plan completo</span>
+        </button>
+
+        <button
           onClick={() => { setActiveTab("fases"); setActiveDoc(null); }}
           className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === "fases"
@@ -171,7 +212,7 @@ export default function PlanPage() {
           }`}
         >
           <Layers className="w-3.5 h-3.5" />
-          <span>Fases del plan ({bloques.length})</span>
+          <span>Fases y estado ({bloques.length})</span>
         </button>
 
         {/* Tablero de tareas para los agentes de Emilio (AGY). Vive en
@@ -280,6 +321,42 @@ export default function PlanPage() {
       {/* 4. Contenido Principal según Pestaña (solo cuando activeDoc no cubre la pantalla completa) */}
       {!activeDoc && (
         <>
+          {/* PESTAÑA 0: PLAN COMPLETO (ORCHESTRATION/STATE/PLAN_MAESTRO.MD) */}
+          {activeTab === "plan_completo" && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-3)] bg-[var(--surface-1)] border border-[var(--border)] rounded px-3 py-1.5">
+                <span>
+                  Última modificación:{" "}
+                  <strong className="text-[var(--text-2)] font-mono">
+                    {planCompleto?.lastModified
+                      ? new Date(planCompleto.lastModified).toISOString().replace("T", " ").slice(0, 19) + " UTC"
+                      : "leyendo..."}
+                  </strong>
+                </span>
+                <span>Se actualiza solo con el fichero del repositorio</span>
+              </div>
+
+              {cargandoPlan ? (
+                <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-8 text-center text-xs text-[var(--text-3)] font-mono">
+                  <RefreshCw className="w-4 h-4 animate-spin mx-auto mb-2 text-[var(--text-3)]" />
+                  <span>Cargando plan completo desde orchestration/state/plan_maestro.md…</span>
+                </div>
+              ) : errorPlan || !planCompleto ? (
+                <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-8 text-center text-xs text-[var(--text-3)] font-mono">
+                  orchestration/state/plan_maestro.md no disponible ({errorPlan || "sin contenido"})
+                </div>
+              ) : (
+                <DocViewer
+                  title={planCompleto.title || "Plan Maestro v5"}
+                  filename={planCompleto.filename || "plan_maestro.md"}
+                  content={planCompleto.content}
+                  lastModified={planCompleto.lastModified}
+                  sizeBytes={planCompleto.sizeBytes}
+                />
+              )}
+            </div>
+          )}
+
           {/* PESTAÑA 1: FASES F00-F09 */}
           {activeTab === "fases" && (
             <div className="space-y-4">

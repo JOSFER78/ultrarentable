@@ -33,7 +33,7 @@ import {
   type RespuestaTelemetria,
 } from "../_bloques/comun";
 
-type MejoraSubmenuTab = "embudo_etapas" | "diagnostico_causas" | "dopaje_reprogramacion";
+type MejoraSubmenuTab = "embudo_etapas" | "diagnostico_causas" | "diseno_mejora";
 
 function resumenFamilias(por_familia: CampanaTelemetria["por_familia"]): string {
   const entradas = Object.entries(por_familia).sort((a, b) => b[1].total - a[1].total);
@@ -171,16 +171,16 @@ export default function PaginaMejora() {
         </button>
 
         <button
-          onClick={() => setActiveTab("dopaje_reprogramacion")}
+          onClick={() => setActiveTab("diseno_mejora")}
           className={`px-3 py-1.5 rounded transition ${
-            activeTab === "dopaje_reprogramacion"
+            activeTab === "diseno_mejora"
               ? "bg-[var(--surface-3)] text-[var(--text-1)] font-bold border border-[var(--border-strong)]"
               : "text-[var(--text-2)] hover:bg-[var(--surface-2)] border border-transparent"
           }`}
         >
           <div className="flex items-center gap-1.5">
             <Zap className="w-3.5 h-3.5 text-[var(--profit)]" />
-            <span>3. Mecanismos de Dopaje Algorítmico</span>
+            <span>3. Qué se hará con las que fallan por poco</span>
           </div>
         </button>
       </div>
@@ -358,68 +358,44 @@ export default function PaginaMejora() {
         </div>
       )}
 
-      {/* CONTENIDO TAB 3: MECANISMOS DE DOPAJE ALGORÍTMICO */}
-      {activeTab === "dopaje_reprogramacion" && (
+      {/* CONTENIDO TAB 3: DISEÑO DE MEJORA (QUÉ SE HARÁ CON LAS QUE FALLAN POR POCO) */}
+      {activeTab === "diseno_mejora" && (
         <div className="space-y-4">
-          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-5 space-y-3 font-mono text-xs">
-            <div className="border-b border-[var(--border)] pb-2 font-sans">
-              <h2 className="text-sm font-bold text-[var(--text-1)] flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[var(--profit)]" />
-                <span>Los 5 Tratamientos Cuantitativos de Reprogramación (services/optimization/expert_refinement_loop.py)</span>
-              </h2>
-              <p className="text-xs text-[var(--text-3)] mt-0.5">
-                Especificación de tratamientos cuantitativos de reprogramación (services/optimization/expert_refinement_loop.py) cuando una candidata falla por poco en M2.
+          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-5 space-y-4 font-mono text-xs">
+            <div className="border-b border-[var(--border)] pb-3 font-sans space-y-1">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <h2 className="text-sm font-bold text-[var(--text-1)] flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-[var(--profit)]" />
+                  <span>Diseño de M2: Qué se hará con las candidatas que fallan por poco</span>
+                </h2>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-3)] font-bold">
+                  DISEÑO PENDIENTE · NO CONECTADO
+                </span>
+              </div>
+              <p className="text-xs text-[var(--text-3)]">
+                Este módulo está <strong>especificado pero no construido</strong> (fuente: <code className="text-[var(--text-2)]">docs/arquitectura/ARQUITECTURA_MODULAR_ESTRATEGIAS.md</code> y el esqueleto limpio en <code className="text-[var(--text-2)]">services/improvement/</code>). Todavía no está conectado en producción.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-sans pt-1">
-              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[var(--text-1)]">1. Filtro de Régimen de Volatilidad (ATR/ADX)</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--surface-3)] text-[var(--profit)]">ANTI-CHOP</span>
-                </div>
-                <p className="text-[11px] text-[var(--text-3)]">
-                  Inyección de un detector de régimen de volatilidad (expansión ATR o umbral ADX &gt; 25) para prohibir entradas durante compresiones laterales donde las comisiones erosionan la cuenta.
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-sans pt-1">
+              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-2">
+                <span className="text-xs font-bold text-[var(--text-1)] block">1. Hipótesis formulada antes de tocar nada</span>
+                <p className="text-[11px] text-[var(--text-3)] leading-relaxed">
+                  No se aplican multiplicadores ciegos ni mutaciones aleatorias. Cada intento de ajuste debe nacer de una hipótesis cuantitativa explícita registrada en bitácora sobre la causa raíz del fallo.
                 </p>
               </div>
 
-              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[var(--text-1)]">2. Bloqueo Asimétrico Free-Risk (Break-Even)</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--surface-3)] text-[var(--profit)]">+1.2R a +1.5R</span>
-                </div>
-                <p className="text-[11px] text-[var(--text-3)]">
-                  Mueve automáticamente el stop loss al precio de entrada (+ costes) cuando el trade alcanza +1.2R, blindando el capital y convirtiendo operaciones ganadoras en riesgo cero.
+              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-2">
+                <span className="text-xs font-bold text-[var(--text-1)] block">2. Ajuste limitado a In-Sample y Validación</span>
+                <p className="text-[11px] text-[var(--text-3)] leading-relaxed">
+                  Cualquier refinamiento o reentrenamiento de filtros opera únicamente sobre las muestras de desarrollo y validación intermedia, sin tocar el futuro.
                 </p>
               </div>
 
-              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[var(--text-1)]">3. Chandelier ATR Trailing Stop Multi-Tier</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--surface-3)] text-[var(--profit)]">LOCK PROFITS</span>
-                </div>
-                <p className="text-[11px] text-[var(--text-3)]">
-                  Trailing stop adaptativo que rastrea máximos relativos con distancia elástica basada en múltiplos de ATR, capturando tendencias hiperbólicas sin devolver el drawdown intradía.
-                </p>
-              </div>
-
-              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[var(--text-1)]">4. Filtro de Microestructura & Spread Anti-Fricción</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--surface-3)] text-[var(--profit)]">GATE 2 / 6</span>
-                </div>
-                <p className="text-[11px] text-[var(--text-3)]">
-                  Descarta ejecuciones en momentos de horquilla ancha (aperturas de noticias o rollover de contratos CME) garantizando que la ventaja matemática sobreviva al slippage.
-                </p>
-              </div>
-
-              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-1.5 md:col-span-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-[var(--text-1)]">5. Dimensionamiento Asimétrico: Lineal Fondeo vs Piramidación Convexa Ultra</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[var(--surface-3)] text-[var(--text-2)]">TRACK SEPARATION</span>
-                </div>
-                <p className="text-[11px] text-[var(--text-3)]">
-                  Para Fondeo CME: sizing lineal estricto sin martingala (Gate 10). Para Ultra Cripto (en construcción): piramidación convexa sobre ganancias no realizadas con stop ajustado.
+              <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded p-3.5 space-y-2">
+                <span className="text-xs font-bold text-[var(--text-1)] block">3. El tramo ciego (OOS) es sagrado</span>
+                <p className="text-[11px] text-[var(--text-3)] leading-relaxed">
+                  A diferencia de scripts antiguos en cuarentena, el tramo fuera de muestra jamás se evalúa durante el bucle de mejora. Solo se abre una vez completado el ajuste para comprobar si la ventaja sobrevive.
                 </p>
               </div>
             </div>

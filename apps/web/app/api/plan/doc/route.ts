@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestration" | "tablero" | "archive"; filename: string; title: string }> = {
   current_phase: { folder: "state", filename: "current_phase.md", title: "Seguimiento en Vivo (Current Phase)" },
   especificacion_web: { folder: "state", filename: "ESPECIFICACION_WEB.md", title: "Especificación de la Web" },
-  plan_maestro: { folder: "state", filename: "plan_maestro.md", title: "Plan Maestro v4" },
+  plan_maestro: { folder: "state", filename: "plan_maestro.md", title: "Plan Maestro v5" },
   ventana_emilio: { folder: "state", filename: "VENTANA_EMILIO.md", title: "Ventana de Decisiones (Emilio)" },
   traspaso_vps: { folder: "state", filename: "TRASPASO_2026-09-02_VPS.md", title: "Informe de Traspaso VPS" },
   traspaso_pc: { folder: "state", filename: "TRASPASO_2026-09-02_PC_noche.md", title: "Informe de Traspaso PC Noche" },

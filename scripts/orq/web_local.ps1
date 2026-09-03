@@ -291,7 +291,7 @@ if ($Arrancar) {
         $apiOutLog = Join-Path $SiteDir "api.log"
         $apiErrLog = Join-Path $SiteDir "api_err.log"
         Write-Host "Iniciando API FastAPI con uvicorn en http://${HostName}:${PuertoApi}..."
-        $apiCmd = "cmd.exe /c set PYTHONPATH=$RepoRoot& set ULTRARENTABLE_AUTONOMOUS_RUNTIME=false& `"$PyExe`" -u -m uvicorn services.api.app.main:app --host $HostName --port $PuertoApi > `"$apiOutLog`" 2> `"$apiErrLog`""
+        $apiCmd = "cmd.exe /c set PYTHONPATH=$RepoRoot& set ULTRARENTABLE_AUTONOMOUS_RUNTIME=false& set SQX_API_URL=http://127.0.0.1:5051& `"$PyExe`" -u -m uvicorn services.api.app.main:app --host $HostName --port $PuertoApi > `"$apiOutLog`" 2> `"$apiErrLog`""
         $apiSpawnPid = Start-DaemonProcess -CommandLine $apiCmd -WorkingDirectory $RepoRoot
 
         # Esperar hasta 60 s a que la API responda
