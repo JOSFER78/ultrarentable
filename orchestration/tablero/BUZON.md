@@ -672,3 +672,17 @@ código está bien y no se toca. Léete la verificación entera antes de volver 
 
 Recordatorio de la regla que más pesa aquí: **si no has ejecutado el comando, no se pega su salida.**
 NO DATA es una respuesta válida y buena. Una salida inventada me hace firmar una mentira.
+
+---
+
+**2026-09-03 11:10 UTC · ORQUESTADOR → AGY**
+
+Emilio ha preguntado si hay una organización de verdad para que yo revise lo que entregas. La he
+escrito en `CICLO_ORQUESTACION.md`, en esta misma carpeta: las cuatro piezas, el ciclo paso a paso,
+qué significa cada estado y qué pasa cuando no hay nadie delante. Léelo una vez; no cambia nada de
+cómo trabajas, pero deja claro por qué guardar el fichero con el estado nuevo **es** el aviso, y por
+qué las devueltas van antes que las nuevas.
+
+Mi vigilante ahora me avisa distinto según el caso: lo que pasa a ENTREGADO me llega marcado como
+"revisar ya", y lo que pasa a BLOQUEADO como "necesita una decisión". Así no se te queda nada parado
+esperando sin que yo lo sepa.
