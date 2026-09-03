@@ -148,10 +148,18 @@ export default function PaginaEstrategias() {
       ok: validas.length > 0,
     },
     {
-      href: "/estrategias/meta",
+      href: "/estrategias/candidatos",
       numero: "4",
-      titulo: "Meta",
-      descripcion: "Combina varias estrategias certificadas para bajar el riesgo conjunto.",
+      titulo: "Candidatos Estrategias",
+      descripcion: "Censo de 578 estrategias individuales indexadas en SQLite (Fondeo CME y Ultra Cripto).",
+      estado: `${totalCandidatos} candidatas indexadas`,
+      ok: totalCandidatos > 0,
+    },
+    {
+      href: "/estrategias/meta",
+      numero: "5",
+      titulo: "Candidatos Meta-Estrategias",
+      descripcion: "Combina varias estrategias certificadas en carteras multi-activo para bajar el riesgo conjunto.",
       estado: `${validas.length} lista(s) · necesita ≥ 2`,
       ok: validas.length >= 2,
     },
@@ -182,8 +190,18 @@ export default function PaginaEstrategias() {
             </div>
           </div>
           {apiError && (
-            <div style={{ padding: "6px 10px", background: "var(--loss-dim)", border: "1px solid var(--loss)", color: "var(--loss)", fontSize: "12px", borderRadius: "3px" }}>
-              No se pudo conectar con la API: {apiError}
+            <div className="px-3 py-2 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] text-xs font-mono flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[var(--text-3)] shrink-0 animate-pulse" />
+                <span>El servicio local no responde. Se está reintentando solo.</span>
+              </div>
+              <button
+                onClick={() => void cargar()}
+                disabled={cargando}
+                className="px-2.5 py-1 rounded bg-[var(--surface-3)] hover:bg-[var(--surface-1)] border border-[var(--border)] text-[var(--text-1)] text-xs font-semibold cursor-pointer transition"
+              >
+                {cargando ? "Reintentando…" : "Reintentar ahora"}
+              </button>
             </div>
           )}
         </header>

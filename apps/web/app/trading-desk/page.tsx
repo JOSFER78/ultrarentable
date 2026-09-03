@@ -456,29 +456,29 @@ export default function InstitutionalTradingDesk() {
 
       {/* NO LINKED ACCOUNT BANNER CTA */}
       {!hasLinkedAccount && !authLoading && (
-        <div className="p-5 bg-[var(--surface-1)]   to-[var(--surface-1)] border border-[var(--border)] rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl font-mono">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 bg-[var(--surface-2)] border border-[var(--border)] rounded-xl text-[var(--text-2)]">
-              <SlidersHorizontal className="w-6 h-6" />
+        <div className="p-4 bg-[var(--surface-1)] border border-[var(--border)] rounded-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-[var(--surface-2)] border border-[var(--border)] rounded-md text-[var(--text-2)]">
+              <SlidersHorizontal className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-base font-bold text-[var(--text-1)] flex items-center gap-2">
+              <div className="text-sm font-bold text-[var(--text-1)] flex items-center gap-2">
                 <span>SIN CUENTA VINCULADA</span>
-                <span className="text-[10px] px-2 py-0.5 bg-[var(--surface-2)] text-[var(--text-1)] rounded border border-[var(--border)]">
+                <span className="text-[10px] px-2 py-0.5 bg-[var(--surface-2)] text-[var(--text-2)] rounded border border-[var(--border)]">
                   REQUIERE CONFIGURACIÓN
                 </span>
               </div>
-              <p className="text-xs text-[var(--text-1)] font-sans mt-0.5">
+              <p className="text-xs text-[var(--text-2)] font-sans mt-0.5">
                 Para despachar órdenes en tiempo real y consultar tu equidad viva en Tradovate o NinjaTrader, vincula tus credenciales en Ajustes.
               </p>
             </div>
           </div>
           <Link
             href="/trading-desk/configuracion"
-            className="px-5 py-2.5 bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-black font-bold text-xs rounded-xl transition flex items-center gap-2 shrink-0 shadow-lg "
+            className="px-4 py-2 bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] font-semibold text-xs rounded-md transition flex items-center gap-2 shrink-0"
           >
-            <Sliders className="w-4 h-4" />
-            Vincular Cuenta en Ajustes →
+            <Sliders className="w-3.5 h-3.5" />
+            <span>Configurar Conexión</span>
           </Link>
         </div>
       )}
@@ -511,17 +511,17 @@ export default function InstitutionalTradingDesk() {
       </div>
 
       {fetchError && (
-        <div className="p-4 bg-[var(--loss-dim)] border border-[var(--loss)] rounded-2xl text-xs font-mono text-[var(--loss)] flex items-center justify-between gap-3 shadow-lg">
+        <div className="p-3.5 bg-[var(--surface-2)] border border-[var(--border)] rounded-xl text-xs font-mono text-[var(--text-2)] flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-[var(--loss)] flex-shrink-0" />
-            <span>ESTADO: <strong>DESCONECTADO</strong> — {fetchError}</span>
+            <span className="w-2 h-2 rounded-full bg-[var(--text-3)] shrink-0 animate-pulse" />
+            <span>El servicio local no responde. Se está reintentando solo.</span>
           </div>
           <button
             onClick={fetchRealData}
-            className="px-3 py-1.5 rounded-lg bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] font-bold transition flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-[var(--surface-3)] hover:bg-[var(--surface-1)] text-[var(--text-1)] border border-[var(--border)] font-bold transition flex items-center gap-1.5 cursor-pointer text-xs"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            Reintentar
+            Reintentar ahora
           </button>
         </div>
       )}

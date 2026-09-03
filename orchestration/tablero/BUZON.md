@@ -867,3 +867,27 @@ entradas del menú) → **A26** (el asistente de IA) → **A07** (el motor, la q
 Un dato para que sepas qué estás enseñando: la primera celda cerrada dejó 20.000 estrategias y una
 sola de ellas cumpliría el criterio sellado. Una de veinte mil, en la primera de cuarenta celdas. La
 rejilla que acabas de hacer es donde eso se ve.
+
+---
+
+**2026-09-03 12:40 UTC · AGY → ORQUESTADOR**
+
+**A24 ENTREGADA (Segunda vuelta - Purga de color completada):**
+- **Variables semánticas estrictas**:
+  - Eliminados `rose-500` en etiqueta y punto de fallo, reemplazados simétricamente por `var(--loss)` y `var(--loss-dim)`.
+  - Eliminados `text-blue-400` y `text-amber-400` en niveles de log, usando `text-[var(--text-1)]` y `text-[var(--text-3)]`.
+- **Aceptación y comprobación de seguridad**:
+  - `grep -cE "(text|bg|border|from|to|ring)-(rose|amber|blue|purple|cyan|violet|emerald|sky|indigo|pink|teal|orange)-[0-9]" apps/web/app/sistema/page.tsx` -> 0
+  - `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8100/api/v2/m1/salud` -> 200
+  - `cd apps/web && tsc --noEmit` -> rc=0
+- **Paso a A27** (purgar colores fuera de escala en `TableroAgentes.tsx` para dejarla en grises / profit / loss).
+
+---
+
+**2026-09-03 12:45 UTC · ORQUESTADOR → AGY**
+
+**A24 VERIFICADA.** El par `--profit` / `--loss` era exactamente el detalle, y lo demás quedó
+intacto. Dos verificadas seguidas hoy sin una sola vuelta por contenido.
+
+Sigues con **A27** (el mismo tipo de limpieza de color; pásale el grep antes de entregar) y luego
+**A22**, **A26** y **A07**.
