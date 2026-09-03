@@ -68,3 +68,60 @@ detectar.
 Y una nota sobre lo que viene: hay una investigación en marcha sobre **cómo se usa bien
 StrategyQuant X**, porque llevamos tres días generando miles de estrategias y ninguna sirve. Cuando
 termine saldrán tareas nuevas de ahí, probablemente pequeñas y de configuración. No las adelantes.
+
+---
+
+**2026-09-03 01:52 UTC · AGY → ORQUESTADOR**
+
+Tarea A06 completada y entregada con salida cruda; circuito probado correctamente.
+
+---
+
+**2026-09-03 02:00 UTC · ORQUESTADOR → AGY**
+
+A06 **VERIFICADA**. Re-ejecuté tus comandos y cuadran: el hash `deb16eb17` es el HEAD real, tu
+listado de ficheros coincide con el de disco, las horas son coherentes y la respuesta del tablero
+tiene la forma exacta. Las tres respuestas de protocolo, correctas. Buen trabajo y buen parte.
+
+Un fallo que era MÍO y ya está corregido: la comprobación
+`grep -c "Comandos y salida CRUDA" A06.md   # esperado: 1` daba 2, porque el propio enunciado de la
+aceptación contiene ese texto dentro del mismo fichero. Tú hiciste lo correcto. A partir de ahora,
+cuando una tarea te pida contar algo dentro de su propio fichero, usaré un patrón que no aparezca en
+el enunciado. **Si vuelves a ver una comprobación que no puede dar el resultado esperado, no la
+fuerces: dilo en el parte como HALLAZGO y sigue.** Eso es exactamente lo que quiero que hagas.
+
+Siguiente: **A08**, y es urgente. El fichero `apps/web/app/api/local/superadmin/route.ts` tiene un
+agujero: da sesión de superadministrador a cualquier petición cuya cabecera `Host` contenga "3100",
+y esa cabecera la elige quien llama. Además el correo quedó escrito como `ferestudio@gmail.com`
+cuando el bueno, confirmado por Emilio, es **josferestudio@gmail.com**, el único registrado en
+Firebase. La tarea trae la prueba con la cabecera falseada: esa es la que cuenta.
+
+Después: A09 (el plan completo en /plan), A04, A05, y luego A10 y A11, que son las dos mediciones
+que abren el trabajo de verdad sobre StrategyQuant. A07 (el motor) cuando el resto esté.
+
+---
+
+**2026-09-03 02:05 UTC · AGY → ORQUESTADOR**
+
+Tarea A08 completada y entregada con salida cruda: host local blindado contra spoofing de cabeceras, doble verificación activada (ULTRARENTABLE_LOCAL_SUPERADMIN === "1" Y host local) y correo unificado a josferestudio@gmail.com.
+
+---
+
+**2026-09-03 02:10 UTC · ORQUESTADOR → AGY**
+
+**A08: el agujero está cerrado, bien hecho.** Lo comprobé yo con la cabecera falseada y responde
+`enabled:false`, y la variable de entorno vuelve a ser obligatoria. Eso era lo urgente.
+
+**Pero te la devuelvo a PENDIENTE por un resto, y la culpa del enunciado es mía.** Te dije que no
+tocaras `AuthContext.tsx` porque ahí el correo estaba bien; ya no lo está. El correo equivocado
+sigue en tres sitios y uno es de seguridad: `AuthContext.tsx:38` lo tiene dentro de una **lista de
+correos aceptados como superadministrador**, así que hoy el proyecto reconocería como administrador
+a una dirección que no es la de Emilio. Los otros dos son texto visible en `AppShell.tsx:223` y
+`EspecificacionWebVisual.tsx:218`.
+
+He ampliado el ámbito de A08 a esos tres ficheros y he quitado la prohibición de tocar
+`AuthContext.tsx`. La lista concreta de cuatro correcciones está en la verificación de la tarea.
+Cuando el `grep` de `ferestudio@gmail.com` sin `jos` delante dé cero resultados, cierro.
+
+Esto es exactamente para lo que sirve el circuito: yo escribí una premisa que ya no era cierta, tú
+hiciste lo que decía, y la verificación lo ha cazado antes de que se quedara ahí.
