@@ -18,31 +18,12 @@ import DoctrinaVisualView from "@/components/plan/DoctrinaVisualView";
 import EspecificacionWebVisual from "@/components/plan/EspecificacionWebVisual";
 import PlanGraph, { type PlanBloque } from "@/components/plan/PlanGraph";
 import DocViewer from "@/components/plan/DocViewer";
+import TableroAgentes from "@/components/plan/TableroAgentes";
 import type { PlanApiResponse } from "@/app/api/plan/route";
 
 type TabId = "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento";
 
-/** Forma que devuelve GET /api/tablero (apps/web/app/api/tablero/route.ts). */
-interface TareaTablero {
-  id: string;
-  titulo: string;
-  agente: string;
-  estado: string;
-  prioridad: string;
-  maquina: string;
-  depende_de: string[];
-  actualizado: string;
-  tiene_parte: boolean;
-  tiene_verificacion: boolean;
-  resumen: string;
-}
-interface TableroApi {
-  total: number;
-  sin_verificar: number;
-  tareas: TareaTablero[];
-  por_estado: Record<string, number>;
-  ilegibles: Array<{ archivo: string; error: string }>;
-}
+import type { TableroApi } from "@/components/plan/TableroAgentes";
 
 interface ActiveDoc {
   title: string;
@@ -373,93 +354,14 @@ export default function PlanPage() {
             </div>
           )}
 
-          {/* PESTAÑA 2: PIPELINE M1-M4 (STRATEGYQUANT X AL 100%) */}
+          {/* PESTAÑA 2: TABLERO DE TAREAS AGY (A05) */}
           {activeTab === "agy" && (
-            <div className="space-y-3">
-              <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-3.5 text-[12px] text-[var(--text-2)] leading-relaxed">
-                Tablero de orquestacion. Un fichero por tarea en{" "}
-                <code className="font-mono text-[var(--text-1)]">orchestration/tablero/</code>, leido en vivo: el
-                orquestador escribe la tarea y la verifica, AGY la ejecuta y deja su parte de entrega en el mismo
-                fichero.{" "}
-                <button
-                  onClick={() => void loadDocument("protocolo_tablero", "Como funciona el tablero")}
-                  className="underline text-[var(--text-1)] cursor-pointer"
-                >
-                  Como funciona
-                </button>
-                {" · "}
-                <button
-                  onClick={() => void loadDocument("agy_empieza_aqui", "AGY: empieza aqui")}
-                  className="underline text-[var(--text-1)] cursor-pointer"
-                >
-                  Instrucciones de AGY
-                </button>
-                {" · "}
-                <button
-                  onClick={() => void loadDocument("buzon", "Buzon orquestador / AGY")}
-                  className="underline text-[var(--text-1)] cursor-pointer"
-                >
-                  Buzon
-                </button>
-              </div>
-
-              {!tablero && (
-                <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-6 text-center text-xs font-mono text-[var(--text-3)]">
-                  Sin datos del tablero (/api/tablero no responde).
-                </div>
-              )}
-
-              {tablero && tablero.tareas.length === 0 && (
-                <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-6 text-center text-xs font-mono text-[var(--text-3)]">
-                  No hay tareas en el tablero.
-                </div>
-              )}
-
-              {tablero && tablero.tareas.length > 0 && (
-                <div className="space-y-3">
-                  {["EN_CURSO", "ENTREGADO", "PENDIENTE", "DEVUELTO", "BLOQUEADO", "VERIFICADO", "DESCONOCIDO"].map((estado) => {
-                    const enEstado = tablero.tareas.filter((t) => t.estado === estado);
-                    if (enEstado.length === 0) return null;
-                    return (
-                      <div key={estado} className="space-y-1.5">
-                        <div className="text-[10.5px] font-mono uppercase tracking-wide text-[var(--text-3)]">
-                          {estado.replace("_", " ")} ({enEstado.length})
-                        </div>
-                        {enEstado.map((t) => (
-                          <button
-                            key={t.id}
-                            onClick={() => void loadDocument(t.id, t.id + " - " + t.titulo)}
-                            className="w-full text-left bg-[var(--surface-1)] border border-[var(--border)] hover:border-[var(--border-strong)] rounded-lg p-3 cursor-pointer transition-colors"
-                          >
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-mono text-[13px] font-bold text-[var(--text-1)]">{t.id}</span>
-                              <span className="text-[13px] text-[var(--text-1)]">{t.titulo}</span>
-                            </div>
-                            <div className="mt-1 flex items-center gap-3 flex-wrap text-[10.5px] font-mono text-[var(--text-3)]">
-                              <span>{t.agente}</span>
-                              <span>{t.prioridad}</span>
-                              {t.maquina && <span>{t.maquina}</span>}
-                              {t.depende_de.length > 0 && <span>depende de {t.depende_de.join(", ")}</span>}
-                              {t.tiene_parte && <span className="text-[var(--text-2)]">parte entregado</span>}
-                              {t.tiene_verificacion && <span className="text-[var(--profit)]">verificado</span>}
-                              {t.actualizado && <span>{t.actualizado}</span>}
-                            </div>
-                            {t.resumen && <div className="mt-1 text-[11.5px] text-[var(--text-3)]">{t.resumen}</div>}
-                          </button>
-                        ))}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {tablero && tablero.ilegibles.length > 0 && (
-                <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-lg p-3 text-[11px] font-mono text-[var(--text-2)]">
-                  {tablero.ilegibles.length} fichero(s) del tablero no legibles:{" "}
-                  {tablero.ilegibles.map((i) => i.archivo + " (" + i.error + ")").join(" - ")}
-                </div>
-              )}
-            </div>
+            <TableroAgentes
+              onSelectTarea={(id, titulo) => void loadDocument(id, `Tarea ${id}: ${titulo}`)}
+              onOpenDoc={(docName, title) => void loadDocument(docName, title)}
+              tableroData={tablero}
+              onRefresh={() => void loadTablero()}
+            />
           )}
 
           {activeTab === "pipeline" && (
