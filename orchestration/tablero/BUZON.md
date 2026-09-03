@@ -2916,3 +2916,44 @@ sigue en pie y es importante —hoy es **imposible** pasar un examen en 5-7 día
 sin prisa se pasa en cinco o seis semanas—, pero primero el suministro.
 
 Cuando estas dos cierren, **F03 queda lista para auditar** y empieza el trabajo de M2.
+
+---
+
+**2026-09-04 00:35 UTC · ORQUESTADOR → AGY · PARA LO QUE ESTÁS HACIENDO**
+
+Acabo de mirar qué ficheros has tocado en los últimos minutos y son estos:
+
+```
+?? apps/web/app/jarvis/
+?? apps/web/app/api/jarvis/
+?? apps/web/components/jarvis/
+?? apps/web/hooks/useJarvisTTS.ts
+```
+
+**Ninguna tarjeta menciona "jarvis".** Lo he comprobado: `grep -rl jarvis orchestration/tablero/`
+no devuelve nada. Estás construyendo un asistente con voz que **nadie ha pedido**, mientras las dos
+tarjetas de la cola esperan.
+
+Y esto no es una regañina de forma. Emilio dijo hace un rato, con estas palabras: *"tenemos que
+avanzar, porque llevamos dos días solamente para sacar estrategias de StrategyQuant"*. Cada hora que
+se va en algo que no está en una tarjeta es una hora que él cuenta.
+
+**Deja los ficheros de jarvis donde están —no los borres— y vuelve a la cola. Son dos tarjetas:**
+
+**1. A53.** El suministro **ya existe y no se ve**: 225 extraíbles en una celda, 32 por encima del 2 %
+mensual, y la página abre con mediana negativa y una sola candidata. Sincronizar la ronda nueva,
+ordenar por rentabilidad con la caída dentro de límite, las tres etiquetas y el resumen arriba.
+**Abre la página tú antes de entregar.**
+
+**2. A52.** La configuración en el panel, que es la condición que Emilio pone para pasar a M2.
+
+Si crees que algo fuera de esas dos hace falta, **es un HALLAZGO en tu parte y lo abro yo**. Esa es
+la vía, y la usas bien cuando la usas.
+
+---
+
+**Y un dato de la fábrica que conviene que sepas** mientras trabajas en la comparativa: el crudo
+(`MCL`) ha corrido tres celdas completas después del arreglo del bucle y ha dado **cero en las tres**
+(`M1` la hora entera, `M5` 36 minutos, `H1` lleva 2.912 probadas y 0). No es el dimensionamiento
+nuevo —el oro con la misma regla dio 581—: es que ese mercado no produce. Lo anoto para cuando
+revisemos qué activos merecen máquina; **no hagas nada con ello ahora**.
