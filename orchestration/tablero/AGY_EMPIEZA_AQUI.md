@@ -42,6 +42,32 @@ Y al revés, para que no te quedes bloqueado esperando: **si necesitas una medid
 tú, no la esperes**. Ponlo en el parte, pon `BLOQUEADO` y coge otra. El orquestador tiene vigilantes
 para enterarse en segundos.
 
+## Directiva permanente: cero consolas, coordinación por ficheros
+
+Emilio, 2026-09-03, directiva formal *"ZERO-POPUPS & ARCHIVOS DIRECTOS"*. Es permanente y no admite
+excepciones.
+
+**1. Ni una consola en su escritorio.** La instancia local (API `:8100`, web `:3100`) corre como
+demonio interno en segundo plano. Queda **prohibido** ejecutar scripts o vigías interactivos que
+abran consolas o ventanas de Windows Terminal. Si algo tiene que estar vivo, vive oculto y sin
+sesión interactiva. Una tarea programada de Windows nueva necesita mi aprobación.
+
+**2. La verdad está en los ficheros, no en la web.** `http://localhost:3100/plan` es **solo un visor
+para Emilio**, que es humano. Tú **no** abres navegadores, no haces scraping y no dependes del
+servidor de Next.js para saber en qué estado está nada. Te coordinas leyendo y escribiendo con tus
+herramientas de disco:
+
+- Tablero y estado de las tareas: `orchestration/tablero/A*.md`
+- Buzón: `orchestration/tablero/BUZON.md`
+- Reglas maestras: este fichero
+
+Que la web esté caída no es una excusa para no avanzar: la web refleja el estado, no lo contiene.
+
+**3. Roles, sin solaparse.** El orquestador diagnostica, escribe las tarjetas, valida la evidencia
+real y firma `VERIFICADO`; **no programa**. Tú coges la tarea activa de la fase en curso, aplicas el
+código, entregas la evidencia cruda y marcas `ENTREGADO`; **no firmas verificaciones ni te inventas
+tarjetas**.
+
 ## El trabajo va por fases, y tu tarea pertenece a una
 
 Desde el 2026-09-03, por orden de Emilio, cada tarjeta declara su fase en la cabecera (`fase: F03`) y

@@ -1810,3 +1810,47 @@ buena.
 
 **Tu cola no cambia de cabeza: A36** (los bancos, que se pierden) → **A40** (el plan por fases en la
 web) → **A39** → **A37** (desplegar) → **A38** → **A35** → **A41** → **A42** → **A33**.
+
+---
+
+**2026-09-03 17:15 UTC · ORQUESTADOR → AGY · DIRECTIVA PERMANENTE DE EMILIO**
+
+Emilio ha emitido una directiva formal, *"ZERO-POPUPS & ARCHIVOS DIRECTOS"*. Está copiada arriba en
+`AGY_EMPIEZA_AQUI.md`, delante de todo lo demás. Tres puntos:
+
+1. **Ni una consola en su escritorio.** La instancia local corre como demonio oculto; prohibido
+   ejecutar scripts o vigías interactivos que abran consolas o ventanas de Windows Terminal. Tarea
+   programada nueva, solo con mi aprobación.
+2. **La verdad está en los ficheros, no en la web.** `localhost:3100/plan` es solo el visor de
+   Emilio. Ni tú ni yo abrimos navegadores ni dependemos del servidor de Next para coordinarnos: se
+   lee y se escribe en `orchestration/tablero/`. La web refleja el estado, no lo contiene.
+3. **Roles sin solaparse.** Yo diagnostico, escribo tarjetas, valido evidencia y firmo; no programo.
+   Tú coges la tarea activa de la fase en curso, aplicas el código, entregas evidencia cruda y marcas
+   `ENTREGADO`; no firmas ni te inventas tarjetas.
+
+**Y la directiva deja algo mío incumpliéndola, así que lo abro como tarea: A43.** El vigía de la
+instancia local es una tarea programada que se dispara **cada tres minutos en la sesión interactiva
+de Emilio**:
+
+```
+Execute : powershell.exe -WindowStyle Hidden … web_local_vigia.ps1
+Hidden  : False          <-- la TAREA no esta marcada como oculta
+NextRunTime : 18:24:00   (cada 3 min)
+```
+
+Lo puse yo y estaba mal puesto. En A43 se retira, y **la salud de la instancia la publica el propio
+demonio** en el endpoint que ya existe, midiendo en el momento en vez de leer la última foto de un
+vigía.
+
+**Ojo con dos cosas de A43**, que por eso las he escrito en la tarjeta:
+
+- **`/sistema` depende de ese fichero** (es A30, verificada esta tarde). Si retiras el vigía sin
+  cambiar el endpoint, la pantalla se queda ciega y encima avisará en rojo. Las dos cosas van juntas
+  en la misma tarea, y **la forma de respuesta del endpoint no se toca**.
+- **Antes de proponer nada, averigua cómo está arrancada hoy la instancia**: he medido que el `node`
+  del 3100 tiene un `cmd` por padre. Si la web depende de una consola, muere con ella, y eso es justo
+  lo que la directiva quiere evitar. Dilo en el parte con la salida cruda.
+
+**Cola: A36** (los bancos, que se pierden) → **A43** (esta, es directiva) → **A40** (el plan por
+fases en la web) → **A39** → **A37** (desplegar de verdad) → **A38** → **A35** → **A41** → **A42** →
+**A33**.
