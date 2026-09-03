@@ -38,12 +38,12 @@ interface TableroAgentesProps {
 }
 
 const COLUMNAS_ORDEN = [
-  { id: "DEVUELTO", label: "DEVUELTO", sublabel: "retomar primero", badgeClass: "bg-[var(--loss-dim)] text-[var(--loss)] border border-[var(--loss)]" },
-  { id: "PENDIENTE", label: "PENDIENTE", sublabel: "listas para coger", badgeClass: "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border)]" },
-  { id: "EN_CURSO", label: "EN CURSO", sublabel: "en ejecución", badgeClass: "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border-strong)]" },
-  { id: "ENTREGADO", label: "ENTREGADO", sublabel: "esperando verificación", badgeClass: "bg-[var(--surface-3)] text-[var(--text-2)] border border-[var(--border)]" },
-  { id: "VERIFICADO", label: "VERIFICADO", sublabel: "auditadas y cerradas", badgeClass: "bg-[var(--profit)]/15 text-[var(--profit)] border border-[var(--profit)]/30" },
-  { id: "BLOQUEADO", label: "BLOQUEADO", sublabel: "bloqueadas", badgeClass: "bg-[var(--surface-2)] text-[var(--text-3)] border border-[var(--border)]" },
+  { id: "DEVUELTO", label: "DEVUELTA", sublabel: "devuelta con correcciones", badgeClass: "bg-[var(--loss-dim)] text-[var(--loss)] border border-[var(--loss)]" },
+  { id: "PENDIENTE", label: "ESPERANDO", sublabel: "listas para coger", badgeClass: "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border)]" },
+  { id: "EN_CURSO", label: "EN MARCHA", sublabel: "en ejecución activa", badgeClass: "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border-strong)]" },
+  { id: "ENTREGADO", label: "ENTREGADA", sublabel: "pendiente de comprobar", badgeClass: "bg-[var(--surface-3)] text-[var(--text-2)] border border-[var(--border)]" },
+  { id: "VERIFICADO", label: "COMPROBADA Y CERRADA", sublabel: "auditadas y verificadas", badgeClass: "bg-[var(--profit)]/15 text-[var(--profit)] border border-[var(--profit)]/30" },
+  { id: "BLOQUEADO", label: "BLOQUEADA", sublabel: "bloqueadas", badgeClass: "bg-[var(--surface-2)] text-[var(--text-3)] border border-[var(--border)]" },
 ] as const;
 
 export default function TableroAgentes({
@@ -317,8 +317,13 @@ export default function TableroAgentes({
                               )}
                             </div>
 
-                            {/* Badge de Responsable Distinguible */}
+                            {/* Badge de Responsable y Máquina */}
                             <div className="flex items-center gap-1 shrink-0">
+                              {t.maquina && (
+                                <span className="px-1.5 py-0.5 rounded font-mono text-[9.5px] uppercase bg-[var(--surface-2)] text-[var(--text-3)] border border-[var(--border)]">
+                                  {t.maquina}
+                                </span>
+                              )}
                               {esEmilio ? (
                                 <span className="px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border-strong)] flex items-center gap-1">
                                   <User className="w-2.5 h-2.5 text-[var(--text-2)]" />

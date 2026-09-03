@@ -354,7 +354,7 @@ export default function DocViewer({
           )}
           {frontmatter.estado && (
             <span className="px-2 py-0.5 rounded bg-[var(--surface-3)] text-[var(--text-1)] font-semibold border border-[var(--border)]">
-              Estado: <span className={frontmatter.estado === "VERIFICADO" ? "text-[var(--profit)]" : frontmatter.estado === "ENTREGADO" ? "text-amber-400" : "text-[var(--text-2)]"}>{frontmatter.estado}</span>
+              Estado: <span className={frontmatter.estado === "VERIFICADO" ? "text-[var(--profit)]" : frontmatter.estado === "ENTREGADO" ? "text-[var(--text-1)]" : "text-[var(--text-2)]"}>{frontmatter.estado}</span>
             </span>
           )}
           {frontmatter.prioridad && (
