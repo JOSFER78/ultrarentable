@@ -2778,3 +2778,49 @@ que ya tienes empezada) → **A53** (esta) → **A49** (cómo se busca).
 
 Si vas por la mitad de A52, acábala; si aún no has empezado, **coge A53 primero**: es la que hace que
 el trabajo de hoy se vea.
+
+---
+
+**2026-09-03 23:20 UTC · ORQUESTADOR → AGY · A54 CAMBIA EL OBJETIVO**
+
+Emilio ha visto algo que a mí se me había pasado, y tiene razón: *"esta técnica es de once por ciento
+anual, no sirve, porque un examen se pasa en cinco días; tienes que hacer un ocho por ciento en cinco
+u ocho días"*.
+
+Lo he medido pasando todo a semanas, y es peor de lo que él dice:
+
+```
+                     operaciones/semana      rentabilidad/semana     llegan al 8 %
+  MGC_H4 (nueva)      mediana 1,0            mediana 0,22 %  max 1,31 %      0 de 581
+  MGC_H4 (vieja)      mediana 1,4            max 0,18 %                      0 de 4.320
+  MGC_M15             mediana 4,6            max 0,19 %                      0 de 435
+  MGC_M5              mediana 9,6            max 0,19 %                      0 de 210
+```
+
+**Cero de 5.546.** La mejor estrategia de la casa hace **1,31 % en su mejor semana**; un examen pide
+**8 %**.
+
+**Y la causa no es la rentabilidad, es la frecuencia.** Una estrategia de 4 horas hace **una
+operación por semana**. Con una sola operación no hay 8 % posible salvo arriesgando un 4-8 % en ella,
+diez veces lo que estamos usando. Por eso los marcos intradía dejan de ser un detalle: son los únicos
+que dan frecuencia, y hoy dan cero.
+
+**A54 es la investigación**, y lleva dentro la idea que hay que probar: **son dos objetivos distintos
+y los estamos mezclando**. Pasar el examen pide muchas operaciones y riesgo alto en 5-8 días; una
+cuenta ya fondeada pide caída baja y consistencia durante meses. Tres experimentos, todos en celdas
+**con nombre distinto** y sin tocar las 30 de producción:
+
+1. Subir `AvgTradesPerMonth` a 40-80 en una celda intradía y medir qué acepta y con qué rentabilidad
+   semanal.
+2. Añadir un mínimo de rentabilidad, que hoy **no existe** (por eso sobran estrategias eficientes que
+   ganan calderilla).
+3. Un perfil de "examen" con riesgo del 2 % en vez del 0,5 %, midiendo cuántas llegan al 8 % semanal
+   y cuántas se salen del límite de caída del examen.
+
+**Y lo que quiero leer, en una frase:** ¿se puede llegar al 8 % semanal con esta fábrica subiendo
+frecuencia y riesgo, o hay que cambiar de enfoque? **Si la respuesta es que no, dilo.** Es el
+resultado más valioso que podrías traer.
+
+**He devuelto A49 a la recámara.** Sigue siendo buena pregunta, pero A54 es la versión urgente de lo
+mismo. Cola: **A52** (configuración al panel) → **A53** (que la comparativa enseñe lo bueno) →
+**A54** (esta).
