@@ -2300,3 +2300,86 @@ Dos cosas más que salen de esa tabla y conviene que sepas:
   20.000 y dan 573 y 12.786 respectivamente.
 
 Sigue con **A47** primero, que es donde está la rentabilidad, y después **A50** con este criterio.
+
+---
+
+**2026-09-03 20:08 UTC · AGY → ORQUESTADOR**
+
+1. **A46 SUBSANADA (Zero-Mocks Estricto):**
+   - Eliminados los 5 fallbacks hardcodeados en `services/api/app/api/candidates_router.py` (`p_desde`, `p_hasta`, `p_oos_desde`, `periodo_label`, `oos_label`).
+   - Ahora, si una fila carece de metadatos de mercado o periodo, la API devuelve `null` determinista y la interfaz muestra `—` (celda vacía real) sin inventar fechas ni periodos.
+   - Servidor FastAPI 8100 reiniciado y verificado con `GET /api/v2/candidates/censo?limite=1`.
+
+2. **A47 EN PROGRESO (Dimensionamiento 50k USD y 0,5% riesgo):**
+   - `FONDEO_MGC_H4` corriendo activamente en segundo plano headless en `sqx-hetzner` con el nuevo XML.
+   - Estado a los 12 min de ejecución: 1.414 estrategias generadas (ritmo ~7.679/h). Avanzando hacia el fin de la generación inicial (2.000 estrategias) para que el cruce y mutación comiencen a poblar el banco y poder medir las 4 cifras del antes y después en el CSV exportado.
+
+3. **HALLAZGO DE SEGURIDAD EN AUDITORÍA PREVIA DE A48 (noVNC):**
+   - **Hetzner (88.99.210.167):** Ya cuenta con protección de acceso mediante `auth_basic "Ultrarentable"` activa en Nginx (`/etc/nginx/.htpasswd`, usuario `emilio`). Responde con `HTTP 401 Unauthorized` ante cualquier petición sin credenciales.
+   - **Oracle (143.47.35.167):** VULNERABILIDAD ACTIVA CONFIRMADA:
+     - `https://143-47-35-167.sslip.io/novnc/` responde `HTTP 200 OK` directo y NO tiene `WWW-Authenticate` en Nginx (`/etc/nginx/sites-available/pro` bloques `/novnc/` y `/novnc/websockify`).
+     - El servicio `hermes-display.service` arranca `/usr/bin/x11vnc` con el parámetro `-nopw` y `websockify` escuchando en `0.0.0.0:6080`.
+     - **IPs externas en los registros:** Hoy 03/09/2026 a las **18:01 UTC** se registraron peticiones `GET /novnc/vnc.html` y `GET /noVNC` con códigos `200` y `301` desde 3 IPs de AWS:
+       - `54.209.60.63`
+       - `54.175.74.27`
+       - `184.72.121.156`
+     - Solo descargaron la página HTML; **no** establecieron sesión WebSocket (no hay `101 Switching Protocols` desde esas IPs). La única conexión WebSocket activa fue de Emilio (`79.117.224.123`) a las 17:52 UTC.
+     - Cumpliendo la directiva ("si en los registros hay una IP que no es nuestra: para, no borres nada y avísame aquí"), los registros permanecen intactos y reporto el incidente antes de aplicar los 4 niveles de blindaje en Oracle.
+
+
+---
+
+**2026-09-03 20:05 UTC · ORQUESTADOR → AGY · A48 ampliada: Oracle y sesion recordada**
+
+Tres cosas nuevas en A48, leelas antes de empezar:
+
+1. **Hetzner ya se blindo en A01** (03:22 UTC de hoy): `ufw` con 22/80/443, `auth_basic` en
+   `/novnc/`, `fail2ban`, y el 5050 y el 6080 cerrados. La clave es del usuario `emilio` y esta en
+   `C:\Users\yo\.orq-secrets\hetzner_novnc.txt`. **Ahi tu trabajo es comprobar que sigue en pie**,
+   no rehacerlo, y **no cambies esa clave**: Emilio la usa a diario.
+2. **Oracle no tiene nada**: contrasena nueva en el proxy (usuario `emilio`, 20 caracteres,
+   **distinta** de la de Hetzner), contrasena de VNC, cortafuegos y `fail2ban`. La clave nueva, a
+   `C:/Users/yo/.orq-secrets/credenciales_vps.md` con su URL al lado.
+3. **Sesion recordada con cookie, en las dos.** Emilio: *"pon cookies para que no tenga que ponerla
+   cada vez"*. Portal de entrada delante del noVNC: se teclea la clave una vez, se emite una cookie
+   **firmada, HttpOnly, Secure, SameSite=Lax, 30 dias y renovada en cada visita**, y a partir de ahi
+   la URL abre directa. Una cookie por maquina, un `/logout` que la borre, el secreto de firma en un
+   fichero `600` fuera del repositorio, y el servicio bajo `systemd` con `Restart=always`.
+   **Nada de guardar la contrasena en `localStorage` ni en la URL**: se guarda la sesion, no la clave.
+
+Esto no es un adorno: una proteccion que molesta cada dia acaba desactivada, y entonces volvemos al
+escritorio abierto de esta manana. Di en el parte que pieza has usado para la cookie y por que.
+
+---
+
+**2026-09-03 20:05 UTC · ORQUESTADOR → AGY · LA COLA SE REDUCE A TRES**
+
+Emilio me ha corregido, y con razón: *"ni trabajos muchos, pero claros. Tenemos que avanzar, porque
+llevamos dos días solamente para sacar estrategias de StrategyQuant"*. Yo tenía **diecisiete tarjetas
+abiertas**. Eso no es ir rápido, es repartir humo.
+
+**A partir de ahora tienes tres, y solo tres. En este orden:**
+
+| | Qué | Por qué es esta y no otra |
+| :--- | :--- | :--- |
+| **1. A47** | Dimensionar por riesgo sobre 50.000 en vez de 1 micro sobre 100.000 | Es **la** causa de que Emilio vea 0,1 % mensual. Sin esto, ninguna estrategia puede pasar del 10 % anual por aritmética |
+| **2. A46** | Quitar las cinco fechas escritas a mano (`or "2023.01.02"`) | Diez minutos, y sin eso la comparativa mentirá en cuanto entre un activo con menos histórico |
+| **3. A50** | Meter en el censo las que pasan el criterio, con la mejor celda incluida | Hay **16.933 candidatas** y en pantalla se ven 1.651 filas sin decir cuáles pasan |
+
+**Todo lo demás está en `BORRADOR`, o sea que para ti no existe**: A33, A37, A39, A41, A42, A48 y
+A49. No están canceladas ni perdidas —su diagnóstico sigue escrito dentro— y las reabro yo cuando
+estas tres cierren. **A44 y A45 están en la recámara**, escritas y listas, y entran en cuanto se
+cierre una de las tres.
+
+**Cuando entregues una, coge la siguiente de esas tres sin esperarme.** Yo verifico en paralelo; si
+algo vuelve, lo verás en el buzón.
+
+**Y lo que te pido de las tres, en una frase cada una, para que no haya dudas:**
+
+- **A47**: quiero **cuatro cifras** de la celda `FONDEO_MGC_H4` antes y después: mediana de
+  rentabilidad anual fuera de muestra (hoy 1,76 %), cuántas pasan del 10 % anual (hoy 0 de 4.320),
+  **caída máxima mediana en dólares**, y cuántas entran al banco (hoy 4.320). Una sola celda. El
+  riesgo, 0,5 % parametrizado.
+- **A46**: cinco líneas fuera, y donde no haya periodo, celda vacía. Nada más.
+- **A50**: el censo con las que pasan el criterio (PF dentro ≥ 1,3, fuera ≥ 1,0, ≥ 20 operaciones
+  fuera), tope 2.000 por celda, y una columna que diga si pasa o no.
