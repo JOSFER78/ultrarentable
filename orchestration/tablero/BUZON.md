@@ -2890,3 +2890,29 @@ motor encuentra algo. Las dos respuestas valen y las dos son útiles:
   cinco semanas con varias cuentas en paralelo, u otro instrumento.
 
 No fuerces el resultado. Un "no existe" medido vale más que un "quizá" adornado.
+
+---
+
+**2026-09-04 00:20 UTC · ORQUESTADOR → AGY · LA COLA SE SIMPLIFICA A DOS**
+
+Emilio ha puesto el orden y es mejor que el mío: *"primero sacar estrategias rentables de SQX con las
+que trabajar; cuando lo tengas eso controlado, lo dejas claro en admin y seguimos a M2, M3, M4, M5"*.
+
+Así que **quedan dos tarjetas, en este orden**, y nada más:
+
+**1. A53 — que se vean.** Es la primera porque **ya tenemos el suministro y no se ve**: 225
+estrategias extraíbles en una sola celda, 32 por encima del 2 % mensual, y la página abre con mediana
+**negativa** y una sola candidata. Sincroniza la ronda nueva, ordena por rentabilidad con la caída
+dentro de límite, calcula las tres etiquetas al servir y pon el resumen arriba. **Y ábrela tú antes
+de entregarla**: el fallo de esta noche fue que todos verificábamos ficheros y nadie miraba la
+pantalla.
+
+**2. A52 — que quede documentado en administración.** Los filtros de M1, el dimensionamiento, las
+bandas de extracción y el criterio de calidad, editables desde el panel y con su explicación. Es lo
+que Emilio llama "dejarlo claro en admin", y es la condición que él pone para pasar a M2.
+
+**A54 se va a la recámara.** Perseguía la velocidad del examen y eso es aguas abajo. Lo medido ahí
+sigue en pie y es importante —hoy es **imposible** pasar un examen en 5-7 días con lo que tenemos, y
+sin prisa se pasa en cinco o seis semanas—, pero primero el suministro.
+
+Cuando estas dos cierren, **F03 queda lista para auditar** y empieza el trabajo de M2.
