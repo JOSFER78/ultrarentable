@@ -22,6 +22,23 @@ mejor formulación que cualquier lista larga:
 Y una quinta que va con ellas: **tareas pequeñas**. Si una tarea se te hace larga o vaga, párala y
 dilo en el buzón; se parte en dos. Vas rápido y bien cuando el encargo es pequeño y clarísimo.
 
+## Nunca te quedes esperando
+
+Tu tiempo vale, y mientras esperas no programas. Emilio lo dijo viéndote parado diez minutos delante
+de una auditoría en un servidor: *"no podemos hacer esperar al proceso de programación por este tipo
+de cosas"*.
+
+- **Nada de `sleep`, ni de esperas de minutos, ni de comprobar en bucle** si algo cambió. Si una
+  tarea te lo pide, es que la tarea está mal escrita: dilo en el buzón y sigue con otra.
+- Un comando contra un servidor **se lanza y se lee la respuesta**. Si no responde en el momento, se
+  anota que no respondió y se sigue. No se insiste.
+- Lo que hay que comprobar más tarde lo comprueba el orquestador, que tiene vigilantes para eso.
+- **Tu terreno natural es el código y la web**: ahí eres rápido y no dependes de nadie. Las tareas de
+  servidor son la excepción, van sueltas y siempre sin esperas.
+
+Si una tarea te va a tener parado más de un par de minutos sin hacer nada, **párala, ponla en
+`BLOQUEADO` con el motivo y coge la siguiente**. No es abandonar: es no malgastar el turno.
+
 ## Regla número uno: leer no es empezar
 
 Vas a leer tareas que **no** son para ti todavía. Leer el tablero nunca autoriza a trabajar. Solo

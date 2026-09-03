@@ -220,3 +220,59 @@ Cuando la entregues, tienes dos más, y las dos son de las que mueven la aguja:
   es un activo de fondeo. Lee bien el paso 0: **antes de apagar nada hay que comprobar que el
   servidor nuevo tiene los datos**. Y ojo, hacen falta tres acciones (parar, deshabilitar y comentar
   el cron) o en media hora vuelve solo.
+
+---
+
+**2026-09-03 02:49 UTC · AGY → ORQUESTADOR**
+
+Tarea A10 completada y entregada con salida cruda en `orchestration/results/agy/A10_inventario_sqx.md`.
+Hallazgos clave:
+1. Licencia Pro Build 144 (Trial) válida hasta el **17 de septiembre de 2026** (no el 5 de septiembre como en el PC).
+2. CLI not ready: la causa raíz es que la GUI `./StrategyQuantX` está activa en PID 29693 y SQX prohíbe por diseño dos instancias sobre la misma carpeta (`Exit app - Another instance of StrategyQuant X is running`). El motor CLI no se inicializa mientras la GUI tenga el lock.
+3. Datos en SQX: de las 25 celdas M1, 20 están cargadas en `/user/data/History/` (ES, NQ, YM, GC, CL en 5m, 15m, 1h, 4h). Falta exclusivamente el marco temporal de 1 minuto (M1) en los 5 activos.
+4. Parámetros en proyecto: `Build-Task1.xml` tiene `MaxTradesPerDay=0` y `WFMinTradesInRun > 8` apuntando a `AUDUSD_H1/H4`, pero en la tarea de optimización `Improve-Task1.xml` `MaxTradesPerDay` está forzado a `1`.
+5. Recursos: 57 GB de RAM libre y 8 hilos al 98% ociosos.
+Pasando a A11.
+
+---
+
+**2026-09-03 03:02 UTC · AGY → ORQUESTADOR**
+
+Tarea A11 completada y entregada con salida cruda en `orchestration/results/agy/A11_inventario_datos.md`.
+Hallazgos clave de las 25 celdas (5 activos CME × 5 timeframes):
+1. Celdas con datos completos utilizables (2023-2026, >3,6 años): exactamente 12 celdas (NQ en 1m/5m/15m/1h/4h, YM en 1m/5m/15m/1h/4h, y ES en 5m y 15m).
+2. Celdas con datos parciales: 8 celdas (ES en 1m/1h/4h con solo 6 meses de 2023, y GC en 1m/5m/15m/1h/4h con solo 3 meses de 2023-Q1).
+3. Celdas con cero datos: 5 celdas (CL / Crudo WTI no tiene ningún fichero en disco).
+4. Celda con más historia: NQ 1m con 1.248.322 velas; celda con menos historia: GC 4h con 397 velas.
+Listo para el siguiente paso (A12 o verificación).
+
+---
+
+**2026-09-03 03:10 UTC · ORQUESTADOR → AGY · LEE ESTO ANTES DE SEGUIR**
+
+**Si ahora mismo estás esperando a que responda algo de un servidor, déjalo.** Entrega lo que
+tengas con lo que hayas medido hasta ahora y sigue. Emilio te ha visto parado diez minutos delante de
+una consulta al servidor y tiene razón: eso no se hace.
+
+He cambiado dos cosas por eso:
+
+1. **A12 ya no te hace esperar.** El paso que decía "espera cinco minutos y vuelve a mirar" está
+   fuera. Haces la foto inmediata y entregas. De comprobar dentro de un rato que StrategyQuant no ha
+   resucitado me encargo yo, que tengo vigilantes para eso.
+2. **Regla nueva al principio de tus instrucciones: "Nunca te quedes esperando".** Nada de `sleep`,
+   nada de esperas de minutos, nada de comprobar en bucle. Un comando contra un servidor se lanza,
+   se lee la respuesta y se sigue. Si no responde, se anota que no respondió. Si una tarea te va a
+   tener parado más de un par de minutos sin hacer nada, la pones en `BLOQUEADO` con el motivo y
+   coges otra. **Eso no es abandonar: es no malgastar el turno.**
+
+Y una cosa que va conmigo, no contigo: **las tareas de servidor son la excepción**. Tu terreno es el
+código y la web, que es donde vas rápido y no dependes de nadie. Voy a dejar de mandarte trabajo de
+infraestructura salvo que sea corto y sin esperas.
+
+Ahora mismo tienes dos que son puro código y no tocan ningún servidor:
+- **A13**: la página de Generación llama "Proyectos Activos" a una lista de carpetas y dice que están
+  en una cola que no existe. Cuatro afirmaciones sin medir en cuatro líneas.
+- **A14**: la pantalla de comentarios, para que Emilio pueda decir "esto está raro" desde la web y
+  quede guardado en el repositorio.
+
+Cógelas en ese orden.
