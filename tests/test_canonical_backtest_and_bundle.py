@@ -95,7 +95,7 @@ def _build_rsi_reversion_strategy(symbol: str = "BTC-USDT", timeframe: str = "1h
 
 def _build_donchian_breakout_strategy(symbol: str = "BTC-USDT", timeframe: str = "1h") -> CanonicalStrategy:
     """Estrategia Canónica 2: Ruptura tendencial por canal Donchian High de 20 periodos."""
-    cond = RuleCondition(left=IndicatorSpec(name="PRICE_CLOSE", params={'period': 1}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="DONCHIAN_HIGH", params={'period': 20}, source_field="close", shift=0))
+    cond = RuleCondition(left=IndicatorSpec(name="PRICE_CLOSE", params={'period': 1}, source_field="close", shift=0), op=ComparisonOperator.GT, right=IndicatorSpec(name="DONCHIAN_HIGH", params={'period': 20}, source_field="high", shift=1))
     return CanonicalStrategy.create_and_hash(
     strategy_id="UR-STRAT-DONCHIAN-BREAKOUT",
     route="FONDEO",

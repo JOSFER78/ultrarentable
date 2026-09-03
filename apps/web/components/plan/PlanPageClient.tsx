@@ -20,12 +20,13 @@ import EspecificacionWebVisual from "@/components/plan/EspecificacionWebVisual";
 import PlanGraph, { type PlanBloque } from "@/components/plan/PlanGraph";
 import DocViewer from "@/components/plan/DocViewer";
 import TableroAgentes from "@/components/plan/TableroAgentes";
+import PlanFasesView from "@/components/plan/PlanFasesView";
 import Comentarios from "@/components/plan/Comentarios";
 import type { PlanApiResponse } from "@/app/api/plan/route";
-
-type TabId = "tablero" | "plan_completo" | "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
-
+import type { FasesPlanData } from "@/lib/fasesServer";
 import type { TableroApi } from "@/components/plan/TableroAgentes";
+
+type TabId = "fases" | "tablero" | "plan_completo" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
 
 interface ActiveDoc {
   title: string;
@@ -37,15 +38,17 @@ interface ActiveDoc {
 
 interface PlanPageClientProps {
   initialTablero?: TableroApi | null;
+  initialFases?: FasesPlanData | null;
 }
 
-export default function PlanPageClient({ initialTablero }: PlanPageClientProps) {
-  const [activeTab, setActiveTab] = useState<TabId>("tablero");
+export default function PlanPageClient({ initialTablero, initialFases }: PlanPageClientProps) {
+  const [activeTab, setActiveTab] = useState<TabId>("fases");
   const [data, setData] = useState<PlanApiResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
 
+  const [fasesData, setFasesData] = useState<FasesPlanData | null>(initialFases ?? null);
   const [tablero, setTablero] = useState<TableroApi | null>(initialTablero ?? null);
 
   const loadTablero = useCallback(async () => {
@@ -95,6 +98,14 @@ export default function PlanPageClient({ initialTablero }: PlanPageClientProps) 
       if (!res.ok) throw new Error(`/api/plan respondió ${res.status}`);
       const json: PlanApiResponse = await res.json();
       setData(json);
+      if (json.fases) {
+        setFasesData({
+          generatedAt: json.generatedAt,
+          fase_activa: json.fase_activa || "F03",
+          total_fases: json.fases.length,
+          fases: json.fases,
+        });
+      }
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar /api/plan");
@@ -192,7 +203,21 @@ export default function PlanPageClient({ initialTablero }: PlanPageClientProps) 
 
       {/* 2. Barra de Pestañas del Dashboard Visual */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[var(--border)] text-xs font-mono">
-        {/* PESTAÑA PRINCIPAL: TABLERO DE TAREAS EN VIVO */}
+        {/* PESTAÑA 1 (POR DEFECTO): FASES DEL PLAN CON AVANCE CALCULADO (A40) */}
+        <button
+          onClick={() => { setActiveTab("fases"); setActiveDoc(null); }}
+          title="Plan por fases con sus minitareas y avance calculado solo"
+          className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === "fases"
+              ? "bg-[var(--surface-2)] text-[var(--text-1)] border-b-2 border-[var(--profit)]"
+              : "text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--surface-1)]"
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5 text-[var(--profit)]" />
+          <span>Fases del Plan ({fasesData?.total_fases || 11}){fasesData?.fase_activa ? ` · Activa: ${fasesData.fase_activa}` : ""}</span>
+        </button>
+
+        {/* PESTAÑA 2: TABLERO DE TAREAS EN VIVO */}
         <button
           onClick={() => { setActiveTab("tablero"); setActiveDoc(null); void loadTablero(); }}
           title="Tablero de orquestación y tareas en vivo leídas de orchestration/tablero/*.md"
@@ -216,18 +241,6 @@ export default function PlanPageClient({ initialTablero }: PlanPageClientProps) 
         >
           <FileText className="w-3.5 h-3.5 text-[var(--profit)]" />
           <span>Plan completo</span>
-        </button>
-
-        <button
-          onClick={() => { setActiveTab("fases"); setActiveDoc(null); }}
-          className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-            activeTab === "fases"
-              ? "bg-[var(--surface-2)] text-[var(--text-1)] border-b-2 border-[var(--profit)]"
-              : "text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--surface-1)]"
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Fases y estado ({bloques.length})</span>
         </button>
 
         <button
@@ -366,9 +379,21 @@ export default function PlanPageClient({ initialTablero }: PlanPageClientProps) 
             </div>
           )}
 
-          {/* PESTAÑA 1: FASES F00-F09 */}
+          {/* PESTAÑA 1 (POR DEFECTO): FASES DEL PLAN CON AVANCE CALCULADO (A40) */}
           {activeTab === "fases" && (
-            <div className="space-y-4">
+            <div className="space-y-6">
+              <PlanFasesView
+                data={fasesData}
+                onSelectTarea={(id) => void loadDocument(id, `Tarea ${id}`)}
+                ultimaActualizacion={
+                  data?.generatedAt
+                    ? new Date(data.generatedAt).toISOString().replace("T", " ").slice(11, 19) + " UTC"
+                    : undefined
+                }
+                onRefresh={() => { void loadPlan(); void loadTablero(); }}
+                cargando={loading}
+              />
+
               {/* Franja de acceso al Plan Completo (A09) */}
               <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-3.5">
                 <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-[var(--border)]">

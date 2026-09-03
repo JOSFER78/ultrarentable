@@ -27,6 +27,7 @@ export interface TareaTablero {
   agente: string;
   estado: EstadoTablero | "DESCONOCIDO";
   prioridad: string;
+  fase: string;
   maquina: string;
   ambito: string[];
   depende_de: string[];
@@ -158,6 +159,7 @@ function leerTarea(ruta: string, archivo: string): TareaTablero | TareaIlegible 
     agente: escalar("agente") || "sin asignar",
     estado,
     prioridad: escalar("prioridad") || "sin prioridad",
+    fase: escalar("fase") || "",
     maquina: escalar("maquina"),
     ambito: lista("ambito"),
     depende_de: lista("depende_de"),

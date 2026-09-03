@@ -5,10 +5,14 @@ import { findRepoRoot } from "@/lib/projectPaths";
 
 export const dynamic = "force-dynamic";
 
+import { obtenerFasesPlanData, type FaseCalculada } from "@/lib/fasesServer";
+import type { TareaTablero } from "@/lib/tableroServer";
+
 export interface PlanBloque {
   id: string;
   titulo: string;
   estado: string;
+  estado_calculado?: string;
   depende_de: string[];
   desbloquea: string[];
   verificacion_global: string;
@@ -19,6 +23,9 @@ export interface PlanBloque {
   content: string;
   tareas_totales: number;
   tareas_completadas: number;
+  avance?: string;
+  tareas?: TareaTablero[];
+  es_activa?: boolean;
 }
 
 interface PlanBloqueError {
@@ -75,6 +82,8 @@ export interface PlanApiResponse {
   generatedAt: string;
   source: string;
   count: number;
+  fase_activa: string;
+  fases: FaseCalculada[];
   bloques: PlanBloque[];
   errores: PlanBloqueError[];
   hud: HudStatus;
@@ -396,6 +405,26 @@ export async function GET() {
     bloques.sort((a, b) => a.id.localeCompare(b.id));
   }
 
+  const fasesPlan = obtenerFasesPlanData();
+  const fasesMap = new Map(fasesPlan.fases.map((f) => [f.id, f]));
+
+  for (const b of bloques) {
+    const calc = fasesMap.get(b.id);
+    if (calc) {
+      b.tareas = calc.tareas;
+      b.avance = calc.avance_label;
+      b.estado_calculado = calc.estado_calculado;
+      b.es_activa = calc.es_activa;
+      b.tareas_totales = calc.total_tareas;
+      b.tareas_completadas = calc.verificadas;
+    } else {
+      b.tareas = [];
+      b.avance = "0 de 0";
+      b.estado_calculado = "esperando turno";
+      b.es_activa = false;
+    }
+  }
+
   const hud: HudStatus = {
     motor_version: "5.18.0",
     certificadas_fondeo: 0,
@@ -417,6 +446,8 @@ export async function GET() {
     generatedAt: new Date().toISOString(),
     source: bloquesDir,
     count: bloques.length,
+    fase_activa: fasesPlan.fase_activa,
+    fases: fasesPlan.fases,
     bloques,
     errores,
     hud,
