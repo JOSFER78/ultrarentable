@@ -9,8 +9,11 @@
  * solo la piel visual — el paso 2 (contenido de /estrategias) no toca este fichero.
  */
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { LayoutProvider, useLayout } from "@/context/LayoutContext";
+import { getNavigationInfo } from "@/lib/navigationSequence";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import AuthModal from "@/components/auth/AuthModal";
@@ -249,13 +252,80 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   // 4. VISTA COMPLETA: USUARIO AUTORIZADO (SIDEBAR + HEADER + PLATAFORMA ACTIVA)
   return (
+    <LayoutProvider>
+      <AppShellPlatform>{children}</AppShellPlatform>
+    </LayoutProvider>
+  );
+}
+
+function AppShellPlatform({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname() || "/";
+  const { mobileMenuOpen, setMobileMenuOpen } = useLayout();
+  const navInfo = getNavigationInfo(pathname);
+
+  // Soporte de navegación táctil con el dedo en móvil (Swipe gestures)
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+
+    // Desplazamiento horizontal predominante de más de 65px (evita disparar en scroll vertical)
+    if (Math.abs(diffX) > 65 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      if (diffX > 0 && navInfo.nextHref) {
+        // Deslizar a la izquierda con el dedo -> avanzar
+        router.push(navInfo.nextHref);
+      } else if (diffX < 0 && navInfo.prevHref) {
+        // Deslizar a la derecha con el dedo -> retroceder
+        router.push(navInfo.prevHref);
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
+  return (
     <div className="flex min-h-screen w-full bg-[var(--bg)] text-[var(--text-1)] overflow-x-hidden">
-      <React.Suspense fallback={<aside className="w-[220px] min-w-[220px] max-w-[220px] h-screen bg-[var(--bg)] border-r border-[var(--border)] sticky top-0 z-[110]" />}>
-        <Sidebar />
-      </React.Suspense>
+      {/* 1. Sidebar Fijo en Escritorio */}
+      <div className="hidden md:block shrink-0">
+        <React.Suspense fallback={<aside className="w-[240px] h-screen bg-[var(--bg)] border-r border-[var(--border)] sticky top-0 z-[110]" />}>
+          <Sidebar />
+        </React.Suspense>
+      </div>
+
+      {/* 2. Menú Lateral en Móvil (Drawer overlay) */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-[150] flex">
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="relative z-10 w-[260px] max-w-[85vw] h-full bg-[var(--bg)] border-r border-[var(--border)] shadow-2xl flex flex-col animate-in slide-in-from-left duration-200">
+            <React.Suspense fallback={<div className="p-4 text-xs font-mono text-[var(--text-3)]">Cargando menú…</div>}>
+              <Sidebar />
+            </React.Suspense>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Área Principal: Header sticky + Contenido ocupando todo el ancho y alto responsive */}
       <div className="flex flex-col flex-1 min-w-0 min-h-screen overflow-x-hidden bg-[var(--bg)]">
         <Header />
-        <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-7 overflow-y-auto overflow-x-hidden max-w-full">{children}</main>
+        <main
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="flex-1 p-2.5 sm:p-3.5 md:p-4 overflow-y-auto overflow-x-hidden w-full max-w-full flex flex-col min-h-0"
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

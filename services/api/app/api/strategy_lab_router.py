@@ -399,3 +399,103 @@ def sync_m1_completed(
         }
     finally:
         db.close()
+
+
+def _verify_strategy_structure(strategy: StrategyModel) -> tuple[bool, str]:
+    if not strategy.strategy_id or not strategy.name or not strategy.canonical_hash:
+        return False, "MISSING_IDENTITY_FIELDS"
+    if len(strategy.canonical_hash) != 64:
+        return False, "INVALID_CANONICAL_HASH_LENGTH"
+
+    if not strategy.dsl_json:
+        return False, "EMPTY_DSL_JSON"
+    try:
+        dsl = json.loads(strategy.dsl_json)
+    except Exception:
+        return False, "CORRUPT_DSL_JSON"
+
+    market = dsl.get("market") or {}
+    symbol = market.get("symbol")
+    timeframe = market.get("timeframe")
+    if not symbol or not timeframe:
+        return False, "MISSING_MARKET_SYMBOL_OR_TIMEFRAME"
+
+    raw_stats = dsl.get("raw_stats")
+    if not isinstance(raw_stats, dict) or not raw_stats:
+        return False, "MISSING_RAW_STATS"
+
+    trades = raw_stats.get("TradesCount") or raw_stats.get("trades") or 0
+    if trades <= 0:
+        return False, "ZERO_TRADES_IN_RAW_STATS"
+
+    if "NetProfitUsd" not in raw_stats and "NetProfit" not in raw_stats and "net_profit" not in raw_stats:
+        return False, "MISSING_NET_PROFIT_METRIC"
+
+    return True, "STRUCTURALLY_SOUND"
+
+
+@router.post("/verify-structural/{strategy_id:path}")
+def verify_strategy_structural(strategy_id: str) -> Dict[str, Any]:
+    """Verifica la integridad estructural de una estrategia extraída."""
+    db = SessionLocal()
+    try:
+        row = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
+        if not row:
+            raise HTTPException(status_code=404, detail="STRATEGY_NOT_FOUND")
+
+        ok, reason = _verify_strategy_structure(row)
+        if ok:
+            if row.validation_status == "EXTRACTED_UNVERIFIED":
+                row.validation_status = "STRUCTURALLY_VERIFIED"
+                db.commit()
+            return {"status": "SUCCESS", "strategy_id": strategy_id, "validation_status": row.validation_status, "reason": reason}
+        else:
+            return {"status": "REJECTED", "strategy_id": strategy_id, "validation_status": row.validation_status, "reason": reason}
+    finally:
+        db.close()
+
+
+@router.post("/verify-batch")
+def verify_batch_structural(
+    limit: int = Query(50, ge=1, le=1000, description="Límite de estrategias a verificar"),
+    family: str | None = Query(None, description="Filtro opcional por familia, ej. sqx_extracted"),
+    project: str | None = Query(None, description="Filtro opcional por proyecto, ej. FONDEO_MYM_H4")
+) -> Dict[str, Any]:
+    """Verifica en lote estrategias en estado EXTRACTED_UNVERIFIED y las promueve si cumplen la integridad estructural."""
+    db = SessionLocal()
+    try:
+        q = db.query(StrategyModel).filter(StrategyModel.validation_status == "EXTRACTED_UNVERIFIED")
+        if family and family != "ALL":
+            q = q.filter(StrategyModel.family == family)
+        if project and project != "ALL":
+            q = q.filter(StrategyModel.strategy_id.like(f"sqx:{project}:%"))
+
+        candidates = q.limit(limit).all()
+        promoted = 0
+        rejected = 0
+        details = []
+
+        for row in candidates:
+            ok, reason = _verify_strategy_structure(row)
+            if ok:
+                row.validation_status = "STRUCTURALLY_VERIFIED"
+                promoted += 1
+                details.append({"strategy_id": row.strategy_id, "status": "PROMOTED", "reason": reason})
+            else:
+                rejected += 1
+                details.append({"strategy_id": row.strategy_id, "status": "KEPT_UNVERIFIED", "reason": reason})
+
+        db.commit()
+        total_structural = db.query(StrategyModel).filter(StrategyModel.validation_status.in_(["STRUCTURALLY_VERIFIED", "BACKTEST_VERIFIED", "CERTIFIED_CURRENT"])).count()
+
+        return {
+            "status": "SUCCESS",
+            "evaluated": len(candidates),
+            "promoted": promoted,
+            "rejected": rejected,
+            "total_structurally_verified": total_structural,
+            "details": details[:20]
+        }
+    finally:
+        db.close()
+

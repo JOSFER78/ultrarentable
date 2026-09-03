@@ -329,29 +329,29 @@ export default function CandidatesExcelExplorer() {
       : "py-2.5 px-3 text-xs";
 
   return (
-    <div className="w-full max-w-[1720px] mx-auto space-y-5 font-sans">
+    <div className="w-full max-w-[1720px] mx-auto space-y-4 font-sans">
       {/* CABECERA */}
-      <div className="bg-[var(--surface-1)] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 md:p-6 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)]">
-              <Table className="w-6 h-6" />
+            <div className="p-2 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)]">
+              <Table className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-black tracking-tight text-[var(--text-1)] flex items-center gap-2">
+              <h1 className="text-lg md:text-xl font-bold tracking-tight text-[var(--text-1)] flex items-center gap-2">
                 Tabla Comparativa de Candidatos
               </h1>
-              <p className="text-[var(--text-2)] text-xs sm:text-sm mt-0.5 font-medium">
+              <p className="text-[var(--text-2)] text-xs mt-0.5">
                 Inventario de estrategias candidatas. Filtra por aprobadas para ver las que han superado los 11 gates.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap font-mono">
+        <div className="flex items-center gap-2 flex-wrap font-mono">
           <button
             onClick={exportToCSV}
-            className="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[var(--profit-dim)] hover:bg-[var(--surface-3)] text-[var(--profit)] border border-[var(--profit)] shadow-sm transition active:scale-95 cursor-pointer"
+            className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--profit)] border border-[var(--border)] transition cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 mr-1.5 text-[var(--profit)]" />
             Descargar CSV
@@ -359,7 +359,7 @@ export default function CandidatesExcelExplorer() {
           <button
             onClick={loadCandidatesData}
             disabled={loading}
-            className="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[var(--bg)] hover:bg-[var(--surface-1)] text-[var(--text-1)] border border-white/[0.1] transition active:scale-95 shadow-sm cursor-pointer"
+            className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border)] transition cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? "animate-spin text-[var(--text-2)]" : "text-[var(--text-2)]"}`} />
             Refrescar WAL
@@ -368,87 +368,83 @@ export default function CandidatesExcelExplorer() {
       </div>
 
       {errorMsg && (
-        <div className="p-4 rounded-2xl bg-[var(--loss-dim)] border border-[var(--loss)] text-[var(--loss)] flex items-start gap-3 shadow-lg font-mono text-xs">
-          <AlertTriangle className="w-5 h-5 text-[var(--loss)] flex-shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-lg bg-[var(--loss-dim)] border border-[var(--loss)] text-[var(--loss)] flex items-start gap-2.5 font-mono text-xs">
+          <AlertTriangle className="w-4 h-4 text-[var(--loss)] flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-bold text-sm">Error de Comunicación con SQLite WAL:</p>
+            <p className="font-bold text-xs">Error de Comunicación con SQLite WAL:</p>
             <p className="text-xs text-[var(--loss)] mt-0.5">{errorMsg}</p>
           </div>
         </div>
       )}
 
       {/* PESTAÑAS PRINCIPALES */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[var(--surface-1)] backdrop-blur-xl p-2.5 rounded-2xl border border-white/[0.08] shadow-xl">
-        <div className="flex items-center gap-2 overflow-x-auto">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-[var(--surface-1)] p-2 rounded-lg border border-[var(--border)]">
+        <div className="flex items-center gap-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveTab("FONDEO_CME")}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-mono text-xs transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "FONDEO_CME"
-                ? "bg-[var(--surface-1)]   text-[var(--text-1)] border border-[var(--border)] shadow-[0_0_15px_rgba(255,255,255,0.06)]"
-                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-white/[0.04] border border-transparent"
+                ? "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border-strong)] font-bold"
+                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--surface-2)] border border-transparent"
             }`}
           >
-            <span className="text-sm">🏛️</span>
             <div className="text-left">
-              <span className="block font-black leading-tight">Cuentas Fondeo CME ($50K)</span>
-              <span className="text-[10px] text-[var(--text-2)] font-normal">Regla Estricta: Max DD &le; 4.5%</span>
+              <span className="block font-bold leading-tight">Cuentas Fondeo CME ($50K)</span>
+              <span className="text-[10px] text-[var(--text-2)] font-normal">Max DD &le; 4.5%</span>
             </div>
           </button>
 
           <button
             onClick={() => setActiveTab("ULTRA_CRYPTO")}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-mono text-xs transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "ULTRA_CRYPTO"
-                ? "bg-[var(--surface-1)]   text-[var(--text-1)] border border-[var(--border)] shadow-[0_0_15px_rgba(255,255,255,0.06)]"
-                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-white/[0.04] border border-transparent"
+                ? "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border-strong)] font-bold"
+                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--surface-2)] border border-transparent"
             }`}
           >
-            <span className="text-sm">⚡</span>
             <div className="text-left">
-              <span className="block font-black leading-tight">Cuentas Ultra Cripto ($1,000)</span>
-              <span className="text-[10px] text-[var(--text-2)] font-normal">1R Aislado / Max DD &le; 75.0% (Doctrina Convexidad)</span>
+              <span className="block font-bold leading-tight">Cuentas Ultra Cripto ($1,000)</span>
+              <span className="text-[10px] text-[var(--text-2)] font-normal">1R Aislado / Max DD &le; 75%</span>
             </div>
           </button>
 
           <button
             onClick={() => setActiveTab("APPROVED_ONLY")}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-mono text-xs transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "APPROVED_ONLY"
-                ? "bg-[var(--surface-1)]   text-[var(--profit)] border border-[var(--profit)] shadow-[0_0_15px_rgba(255,255,255,0.06)]"
-                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-white/[0.04] border border-transparent"
+                ? "bg-[var(--surface-3)] text-[var(--profit)] border border-[var(--profit)] font-bold"
+                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--surface-2)] border border-transparent"
             }`}
           >
-            <span className="text-sm">🏆</span>
             <div className="text-left">
-              <span className="block font-black leading-tight">Aprobadas Reales (11/11)</span>
-              <span className="text-[10px] text-[var(--profit)] font-normal">Sin Violación de Drawdown</span>
+              <span className="block font-bold leading-tight">Aprobadas Reales (11/11)</span>
+              <span className="text-[10px] text-[var(--profit)] font-normal">Sin Violación de DD</span>
             </div>
           </button>
 
           <button
             onClick={() => setActiveTab("ALL_STRATEGIES")}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md font-mono text-xs transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "ALL_STRATEGIES"
-                ? "bg-[var(--surface-1)]   text-[var(--text-1)] border border-[var(--border)] shadow-[0_0_15px_rgba(255,255,255,0.06)]"
-                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-white/[0.04] border border-transparent"
+                ? "bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border-strong)] font-bold"
+                : "text-[var(--text-2)] hover:text-[var(--text-1)] hover:bg-[var(--surface-2)] border border-transparent"
             }`}
           >
-            <span className="text-sm">📊</span>
             <div className="text-left">
-              <span className="block font-black leading-tight">Catálogo Completo ({candidates.length})</span>
-              <span className="text-[10px] text-[var(--text-2)] font-normal">Inventario Maestro SQLite WAL</span>
+              <span className="block font-bold leading-tight">Catálogo Completo ({candidates.length})</span>
+              <span className="text-[10px] text-[var(--text-2)] font-normal">Inventario Maestro WAL</span>
             </div>
           </button>
         </div>
 
-        <div className="flex items-center gap-1 self-end sm:self-auto bg-[var(--bg)] p-1 rounded-xl border border-white/[0.08] text-[10px] font-mono">
-          <span className="text-[var(--text-2)] px-2 font-semibold">Densidad:</span>
+        <div className="flex items-center gap-1 self-end sm:self-auto bg-[var(--surface-2)] p-0.5 rounded-md border border-[var(--border)] text-[10.5px] font-mono">
+          <span className="text-[var(--text-2)] px-1.5 font-medium">Densidad:</span>
           {(["compact", "normal", "spacious"] as DensityType[]).map((d) => (
             <button
               key={d}
               onClick={() => setDensity(d)}
-              className={`px-2 py-1 rounded-lg capitalize transition font-bold cursor-pointer ${
-                density === d ? "bg-[var(--surface-3)] text-[var(--text-1)] shadow-sm" : "text-[var(--text-2)] hover:text-[var(--text-1)]"
+              className={`px-2 py-0.5 rounded capitalize transition font-medium cursor-pointer ${
+                density === d ? "bg-[var(--surface-3)] text-[var(--text-1)] font-bold" : "text-[var(--text-2)] hover:text-[var(--text-1)]"
               }`}
             >
               {d === "compact" ? "Compacta" : d === "normal" ? "Normal" : "Amplia"}
@@ -458,35 +454,35 @@ export default function CandidatesExcelExplorer() {
       </div>
 
       {/* KPIS DE BANNER */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 font-mono">
-        <div className="p-3.5 bg-[var(--surface-1)] backdrop-blur-md rounded-xl border border-white/[0.08]">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 font-mono">
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)]">
           <span className="text-[10px] uppercase text-[var(--text-2)] font-bold block">Estrategias Listadas</span>
-          <span className="text-lg font-black text-[var(--text-1)] tabular-nums">{kpis.total}</span>
+          <span className="text-base font-bold text-[var(--text-1)] tabular-nums">{kpis.total}</span>
         </div>
-        <div className="p-3.5 bg-[var(--surface-1)] backdrop-blur-md rounded-xl border border-white/[0.08]">
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)]">
           <span className="text-[10px] uppercase text-[var(--text-2)] font-bold block">Certificadas Reales</span>
-          <span className="text-lg font-black text-[var(--profit)] tabular-nums">{kpis.approvedCount}</span>
+          <span className="text-base font-bold text-[var(--profit)] tabular-nums">{kpis.approvedCount}</span>
         </div>
-        <div className="p-3.5 bg-[var(--surface-1)] backdrop-blur-md rounded-xl border border-white/[0.08]">
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)]">
           <span className="text-[10px] uppercase text-[var(--text-2)] font-bold block">Profit Factor OOS Medio</span>
-          <span className="text-lg font-black text-[var(--text-2)] tabular-nums">
+          <span className="text-base font-bold text-[var(--text-1)] tabular-nums">
             {kpis.avgPf === null ? "NO EVIDENCE" : kpis.avgPf.toFixed(2)}
           </span>
         </div>
-        <div className="p-3.5 bg-[var(--surface-1)] backdrop-blur-md rounded-xl border border-white/[0.08]">
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)]">
           <span className="text-[10px] uppercase text-[var(--text-2)] font-bold block">Tasa de Aprobación OOS</span>
           <span
-            className={`text-lg font-black tabular-nums ${
+            className={`text-base font-bold tabular-nums ${
               kpis.total === 0 ? "text-[var(--text-3)]" : kpis.passRate > 0 ? "text-[var(--profit)]" : "text-[var(--text-2)]"
             }`}
           >
             {kpis.total === 0 ? "NO EVIDENCE" : `${kpis.passRate.toFixed(1)}%`}
           </span>
         </div>
-        <div className="p-3.5 bg-[var(--surface-1)] backdrop-blur-md rounded-xl border border-white/[0.08]">
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)]">
           <span className="text-[10px] uppercase text-[var(--text-2)] font-bold block">Max DD OOS Promedio</span>
           <span
-            className={`text-lg font-black tabular-nums ${
+            className={`text-base font-bold tabular-nums ${
               kpis.avgDd === null ? "text-[var(--text-3)]" : kpis.avgDd <= 4.5 ? "text-[var(--profit)]" : "text-[var(--text-2)]"
             }`}
           >
@@ -496,15 +492,15 @@ export default function CandidatesExcelExplorer() {
       </div>
 
       {/* BUSCADOR Y FILTROS */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[var(--surface-1)] backdrop-blur-md p-3.5 rounded-2xl border border-white/[0.08] font-mono text-xs shadow-lg">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-[var(--surface-1)] p-2.5 rounded-lg border border-[var(--border)] font-mono text-xs">
         <div className="relative">
-          <Search className="w-4 h-4 text-[var(--text-3)] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-[var(--text-3)] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Buscar símbolo, ID o hash..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-[var(--bg)] rounded-xl border border-white/[0.1] text-[var(--text-1)] placeholder-[var(--text-3)] text-xs focus:border-[var(--border)] focus:outline-none"
+            className="w-full pl-8 pr-3 py-1.5 bg-[var(--surface-1)] rounded-md border border-[var(--border)] text-[var(--text-1)] placeholder-[var(--text-3)] text-xs focus:border-[var(--border-strong)] focus:outline-none"
           />
         </div>
 
@@ -512,7 +508,7 @@ export default function CandidatesExcelExplorer() {
           <select
             value={timeframeFilter}
             onChange={(e) => setTimeframeFilter(e.target.value)}
-            className="w-full py-2 px-3 bg-[var(--bg)] rounded-xl border border-white/[0.1] text-[var(--text-1)] text-xs focus:border-[var(--border)] focus:outline-none"
+            className="w-full py-1.5 px-2.5 bg-[var(--surface-1)] rounded-md border border-[var(--border)] text-[var(--text-1)] text-xs focus:border-[var(--border-strong)] focus:outline-none"
           >
             <option value="ALL">Timeframe: TODOS</option>
             <option value="1m">1 Minuto (1m)</option>
@@ -528,7 +524,7 @@ export default function CandidatesExcelExplorer() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full py-2 px-3 bg-[var(--bg)] rounded-xl border border-white/[0.1] text-[var(--text-1)] text-xs focus:border-[var(--border)] focus:outline-none"
+            className="w-full py-1.5 px-2.5 bg-[var(--surface-1)] rounded-md border border-[var(--border)] text-[var(--text-1)] text-xs focus:border-[var(--border-strong)] focus:outline-none"
           >
             <option value="ALL">Estatus: TODOS</option>
             <option value="APPROVED">Solo Certificadas</option>
@@ -538,10 +534,10 @@ export default function CandidatesExcelExplorer() {
       </div>
 
       {/* TABLA EXCEL MULTI-COLUMNA ULTRA-COMPLETA */}
-      <div className="bg-[var(--surface-1)] backdrop-blur-xl rounded-2xl border border-white/[0.08] overflow-hidden shadow-2xl">
+      <div className="bg-[var(--surface-1)] rounded-lg border border-[var(--border)] overflow-hidden">
         <div className="overflow-x-auto max-h-[750px]">
           <table className="w-full text-left border-collapse font-mono text-xs">
-            <thead className="bg-[var(--bg)] sticky top-0 z-10 border-b border-white/[0.08] text-[var(--text-2)] text-[11px] select-none">
+            <thead className="bg-[var(--surface-2)] sticky top-0 z-10 border-b border-[var(--border)] text-[var(--text-2)] text-[10.5px] uppercase select-none">
               <tr>
                 <th className="py-3 px-2 w-10 text-center text-[var(--text-3)]">#</th>
                 <th onClick={() => handleSort("symbol")} className="py-3 px-3 cursor-pointer hover:text-[var(--text-1)] transition w-24">

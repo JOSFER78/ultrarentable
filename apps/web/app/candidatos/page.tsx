@@ -1,7 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import CandidatesExcelExplorer from "@/components/candidatos/CandidatesExcelExplorer";
-
-export default function CandidatosPage() {
-  return <CandidatesExcelExplorer />;
+export default function CandidatosRedirectPage() {
+  redirect("/estrategias/candidatos");
 }

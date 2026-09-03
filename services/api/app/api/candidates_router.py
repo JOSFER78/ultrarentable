@@ -7,6 +7,7 @@ import json
 import math
 import re
 from typing import Any, Dict, List, Optional, Set
+import requests
 from fastapi import APIRouter, Depends, HTTPException, Query, Body, Response
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
@@ -182,6 +183,64 @@ def compute_financial_metrics(
         "monthly_roi_pct": monthly_roi_pct,
         "is_anomalous": is_anomalous,
         "oos_months": safe_oos_months,
+    }
+
+
+@candidates_router.get("/censo")
+def get_candidates_censo(db: Session = Depends(get_db)) -> Dict[str, Any]:
+    """Retorna el desglose estricto del censo SQLite dividiendo entre celdas FONDEO_ y otros proyectos."""
+    fondeo_rows = db.query(StrategyModel).filter(StrategyModel.strategy_id.like("sqx:FONDEO_%")).all()
+    otros_rows = db.query(StrategyModel).filter(
+        StrategyModel.family == "sqx_extracted",
+        ~StrategyModel.strategy_id.like("sqx:FONDEO_%")
+    ).all()
+    candidatos_count = db.query(CandidateModel).count()
+
+    celdas_conteo: Dict[str, int] = {}
+    for r in fondeo_rows:
+        parts = r.strategy_id.split(":")
+        celda = parts[1] if len(parts) > 1 else "OTRA"
+        celdas_conteo[celda] = celdas_conteo.get(celda, 0) + 1
+
+    bancos_servidor: Dict[str, int] = {}
+    try:
+        r = requests.get("http://127.0.0.1:5052/estado.json", timeout=3)
+        if r.status_code == 200:
+            data = r.json()
+            for k, v in data.get("celdas", {}).items():
+                bancos_servidor[k] = v.get("en_banco") or 0
+    except Exception:
+        pass
+
+    todas_celdas = sorted(list(set(list(celdas_conteo.keys()) + list(bancos_servidor.keys()))))
+    detalle_celdas = []
+    for c in todas_celdas:
+        extraidas = celdas_conteo.get(c, 0)
+        en_banco = bancos_servidor.get(c, 0)
+        detalle_celdas.append({
+            "celda": c,
+            "extraidas_en_censo": extraidas,
+            "en_banco_servidor": en_banco,
+            "etiqueta": f"{extraidas} extraídas de {en_banco} en banco",
+        })
+
+    otros_sin_metricas = 0
+    for r in otros_rows:
+        try:
+            dsl = json.loads(r.dsl_json) if r.dsl_json else {}
+            if not dsl.get("raw_stats"):
+                otros_sin_metricas += 1
+        except Exception:
+            otros_sin_metricas += 1
+
+    return {
+        "status": "SUCCESS",
+        "fondeo_total": len(fondeo_rows),
+        "otros_proyectos": len(otros_rows),
+        "otros_sin_metricas": otros_sin_metricas,
+        "candidatos_evaluados": candidatos_count,
+        "aviso_otros": f"{len(otros_rows)} de otros proyectos, {otros_sin_metricas} sin métricas, no cuentan para fondeo",
+        "detalle_celdas": detalle_celdas,
     }
 
 

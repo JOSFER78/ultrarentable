@@ -14,10 +14,12 @@ import {
 } from "lucide-react";
 import {
   getM1Rejilla,
+  syncM1Completed,
   type RejillaM1Response,
   type CeldaRejillaM1,
 } from "@/lib/api";
 import NavBloques from "../_bloques/NavBloques";
+import SQXToolsPanel from "../SQXToolsPanel";
 
 const TF_ORDEN = ["1m", "5m", "15m", "1h", "4h"];
 
@@ -45,6 +47,8 @@ export default function PaginaGeneracion() {
   const [cargando, setCargando] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [sincronizando, setSincronizando] = useState<boolean>(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
     setCargando(true);
@@ -60,6 +64,22 @@ export default function PaginaGeneracion() {
       setCargando(false);
     }
   }, []);
+
+  const sincronizar = useCallback(async () => {
+    setSincronizando(true);
+    setSyncMsg(null);
+    try {
+      const res = await syncM1Completed(500);
+      setSyncMsg(
+        `Sincronización M1 completada: ${res.total_insertadas} nuevas insertadas, ${res.total_actualizadas} actualizadas en SQLite (Total en censo: ${res.total_estrategias_db} estrategias).`
+      );
+      void cargar();
+    } catch (e: any) {
+      setSyncMsg(`Error sincronizando celdas M1: ${e?.message || "error conectando con el servidor"}`);
+    } finally {
+      setSincronizando(false);
+    }
+  }, [cargar]);
 
   useEffect(() => {
     void cargar();
@@ -144,6 +164,15 @@ export default function PaginaGeneracion() {
               </span>
             )}
             <button
+              onClick={() => void sincronizar()}
+              disabled={sincronizando}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--surface-3)] border border-[var(--border-strong)] font-mono text-xs font-semibold hover:bg-[var(--surface-2)] transition cursor-pointer text-[var(--text-1)]"
+              title="Volcar estrategias de las celdas terminadas de M1 hacia la base de datos local SQLite"
+            >
+              <Database className={`w-3.5 h-3.5 text-[var(--profit)] ${sincronizando ? "animate-spin" : ""}`} />
+              <span>{sincronizando ? "Sincronizando..." : "Sincronizar a SQLite"}</span>
+            </button>
+            <button
               onClick={() => void cargar()}
               disabled={cargando}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--surface-2)] border border-[var(--border)] font-mono text-xs hover:bg-[var(--surface-3)] transition cursor-pointer"
@@ -154,6 +183,19 @@ export default function PaginaGeneracion() {
           </div>
         </div>
       </div>
+
+      {/* Alerta de Sincronización M1 */}
+      {syncMsg && (
+        <div className="p-3 bg-[var(--surface-2)] border border-[var(--border)] rounded-lg text-xs font-mono text-[var(--text-1)] flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[var(--profit)] shrink-0" />
+            <span>{syncMsg}</span>
+          </div>
+          <button onClick={() => setSyncMsg(null)} className="text-[var(--text-3)] hover:text-[var(--text-1)] cursor-pointer">
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Navegación Modular M1–M5 */}
       <NavBloques activo="generacion" />
@@ -481,6 +523,22 @@ export default function PaginaGeneracion() {
           </div>
         </div>
       )}
+
+      {/* 5. HERRAMIENTAS TÉCNICAS DE STRATEGYQUANT X (PLEGADO) */}
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+        <details className="group">
+          <summary className="font-mono text-xs font-bold text-[var(--text-1)] cursor-pointer flex items-center justify-between list-none">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-[var(--profit)]" />
+              <span>Inspección Técnica de StrategyQuant X (Proyectos, Databanks y Extracción Manual)</span>
+            </div>
+            <span className="text-[11px] text-[var(--text-3)] group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div className="mt-4 pt-3 border-t border-[var(--border)]">
+            <SQXToolsPanel onExtraccion={cargar} />
+          </div>
+        </details>
+      </div>
     </div>
   );
 }

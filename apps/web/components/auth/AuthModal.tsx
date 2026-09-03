@@ -173,12 +173,9 @@ export default function AuthModal({
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md bg-[var(--surface-1)] border border-white/[0.12] rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-200">
-        {/* Glow Header Accent */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-[var(--surface-1)]   " />
-
+      <div className="relative w-full max-w-md bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg shadow-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="px-6 pt-6 pb-4 flex items-center justify-between border-b border-white/[0.06]">
+        <div className="px-6 pt-5 pb-4 flex items-center justify-between border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-[var(--text-2)]">
               <ShieldCheck className="w-4 h-4" />
@@ -301,7 +298,7 @@ export default function AuthModal({
               <button
                 type="submit"
                 disabled={loading || googleLoading}
-                className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-1)]   hover: hover: text-[var(--text-1)] text-xs font-semibold rounded-xl shadow-lg  disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] text-xs font-semibold rounded-md disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>
@@ -389,7 +386,7 @@ export default function AuthModal({
               <button
                 type="submit"
                 disabled={loading || googleLoading}
-                className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-1)]   hover: hover: text-[var(--text-1)] text-xs font-semibold rounded-xl shadow-lg  disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] text-xs font-semibold rounded-md disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>
@@ -420,7 +417,7 @@ export default function AuthModal({
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || googleLoading}
-            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-[var(--text-1)] text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 px-4 bg-[var(--surface-2)] hover:bg-[var(--surface-3)] border border-[var(--border)] text-[var(--text-1)] text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
           >
             {googleLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-[var(--text-2)]" />

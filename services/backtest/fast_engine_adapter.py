@@ -355,8 +355,25 @@ class FastEngineAdapter(BacktestEnginePort):
         is_candles = candles[:split_idx]
         oos_candles = candles[split_idx:]
         base_request = request.model_copy(update={"strategy": strategy_obj})
-        is_request = base_request.model_copy(update={"request_id": f"{request.request_id}:IS"})
-        oos_request = base_request.model_copy(update={"request_id": f"{request.request_id}:OOS"})
+        is_sha = hashlib.sha256(json.dumps(is_candles, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        oos_sha = hashlib.sha256(json.dumps(oos_candles, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        split_bar_ts = int(candles[split_idx].get("timestamp_utc_ms") or candles[split_idx].get("timestamp_ms") or 0)
+        is_dataset = request.dataset.model_copy(update={
+            "dataset_id": f"{request.dataset.dataset_id}_IS",
+            "sha256_hash": is_sha,
+            "total_bars": split_idx,
+            "end_timestamp_utc_ms": split_bar_ts,
+            "is_in_sample": True,
+        })
+        oos_dataset = request.dataset.model_copy(update={
+            "dataset_id": f"{request.dataset.dataset_id}_OOS",
+            "sha256_hash": oos_sha,
+            "total_bars": n_bars - split_idx,
+            "start_timestamp_utc_ms": split_bar_ts,
+            "is_in_sample": False,
+        })
+        is_request = base_request.model_copy(update={"request_id": f"{request.request_id}:IS", "dataset": is_dataset})
+        oos_request = base_request.model_copy(update={"request_id": f"{request.request_id}:OOS", "dataset": oos_dataset})
         is_result = self._execute_on_candles(is_request, is_candles)
         oos_result = self._execute_on_candles(oos_request, oos_candles)
 
@@ -365,11 +382,11 @@ class FastEngineAdapter(BacktestEnginePort):
             strategy_id=request.strategy_id,
             strategy_sha256=strategy_obj.strategy_hash,
             dataset_id=request.dataset.dataset_id,
-            dataset_is_sha256=hashlib.sha256(json.dumps(is_candles, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
-            dataset_oos_sha256=hashlib.sha256(json.dumps(oos_candles, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+            dataset_is_sha256=is_sha,
+            dataset_oos_sha256=oos_sha,
             symbol=symbol,
             timeframe=timeframe,
-            route=str(getattr(strategy_obj, "route", request.strategy.route)),
+            target_track=str(getattr(strategy_obj, "route", request.strategy.route)),
             execution_config_hash=request.execution_config_hash or hashlib.sha256(
                 json.dumps({"fee_multiplier": request.fee_multiplier, "slippage_bps": request.slippage_bps}, sort_keys=True).encode()
             ).hexdigest(),

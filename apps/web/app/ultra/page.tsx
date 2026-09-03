@@ -36,40 +36,40 @@ export default function UltraPage() {
   const convexAsymmetryRatio = (grossConvexRewardUsd / maxRiskUsd).toFixed(1);
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-[var(--text-1)]">
+    <div className="w-full space-y-3 pb-8 text-[var(--text-1)] font-sans">
       {/* 1. TOP HEADER */}
-      <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-xl space-y-4">
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <div className="flex items-center gap-2 mb-1">
-              <Link href="/" className="text-xs text-[var(--text-2)] hover:text-[var(--text-1)] transition">
+              <Link href="/" className="text-xs text-[var(--text-3)] hover:text-[var(--text-1)] transition">
                 ← Command Center
               </Link>
               <span className="text-[var(--text-3)]">/</span>
-              <span className="text-xs font-mono font-bold text-[var(--profit)] uppercase tracking-wider">
-                DOCTRINA ULTRA · EXPLOTACIÓN ASIMÉTRICA CONVEXA
+              <span className="text-xs font-mono text-[var(--text-2)] uppercase tracking-wider">
+                DOCTRINA ULTRA · EN CONSTRUCCIÓN
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[var(--text-1)]">
+            <h1 className="text-lg md:text-xl font-bold tracking-tight text-[var(--text-1)]">
               Mecanismo de Explotación Ultra & Bóveda Ratchet
             </h1>
-            <p className="text-xs sm:text-sm text-[var(--text-1)] max-w-3xl leading-relaxed">
+            <p className="text-xs text-[var(--text-2)] max-w-3xl leading-relaxed">
               Arquitectura de trading en margen aislado (1R). Piramidación al 40% financiada exclusivamente con ganancias flotantes (House Money) y garantía matemática de protección Free-Risk.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-xl p-3 text-right">
-              <span className="text-[10px] text-[var(--text-3)] font-mono block uppercase">Estado del Motor</span>
-              <span className="text-xs font-mono font-black text-[var(--text-2)]">
+          <div className="flex flex-wrap items-center gap-2 shrink-0 font-mono">
+            <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-md px-3 py-1.5 text-right">
+              <span className="text-[9.5px] text-[var(--text-3)] block uppercase">Estado del Motor</span>
+              <span className="text-xs font-bold text-[var(--text-2)]">
                 0 BOTS ACTIVOS (EN REPOSO)
               </span>
             </div>
             <Link
               href="/fondeo"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] transition shadow-lg "
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] transition"
             >
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-3.5 h-3.5" />
               <span>Trading Desk Fondeo</span>
             </Link>
           </div>
@@ -77,19 +77,19 @@ export default function UltraPage() {
       </div>
 
       {/* 2. CICLO DE VIDA DE 6 ESTADOS (FSM FINITE STATE MACHINE) */}
-      <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-5">
-        <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
-          <h3 className="text-base font-black text-[var(--text-1)] flex items-center gap-2">
-            <Layers className="w-4 h-4 text-[var(--profit)]" />
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+        <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-2)] flex items-center gap-1.5 font-mono">
+            <Layers className="w-3.5 h-3.5 text-[var(--profit)]" />
             <span>Ciclo de Vida de la Bala de Margen Aislado (FSM 6 Estados)</span>
           </h3>
-          <span className="text-xs font-mono text-[var(--text-2)]">Garantía Zero-Risk Post +1R</span>
+          <span className="text-[11px] font-mono text-[var(--text-3)]">Garantía Zero-Risk Post +1R</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          <div className="bg-[var(--surface-1)] border border-[var(--profit)] rounded-xl p-4 space-y-2 hover:border-[var(--profit)] transition">
-            <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-[var(--profit-dim)] text-[var(--profit)] flex items-center justify-center text-xs font-black font-mono">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
+          <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-md p-3 space-y-1.5">
+            <div className="flex items-center gap-1.5">
+              <span className="w-5 h-5 rounded bg-[var(--surface-3)] text-[var(--profit)] flex items-center justify-center text-xs font-bold font-mono">
                 1
               </span>
               <span className="text-xs font-bold text-[var(--profit)]">INICIO (1R)</span>
@@ -161,15 +161,15 @@ export default function UltraPage() {
         </div>
       </div>
 
-      {/* 3. ASYMMETRIC CONVEX SIMULATOR */}
-      <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border)] pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--profit-dim)] border border-[var(--profit)] flex items-center justify-center text-[var(--profit)]">
+      {/* 3. SIMULADOR CONVEXO INTERACTIVO */}
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--profit)]">
               <Calculator className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-[var(--text-1)] tracking-tight">
+              <h2 className="text-sm md:text-base font-bold text-[var(--text-1)] tracking-tight">
                 Simulador de Asimetría Convexa & Retorno R-Múltiple
               </h2>
               <p className="text-xs text-[var(--text-2)]">
@@ -177,16 +177,16 @@ export default function UltraPage() {
               </p>
             </div>
           </div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--profit-dim)] border border-[var(--profit)] text-[var(--profit)] text-xs font-mono font-bold">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--profit-dim)] border border-[var(--profit)] text-[var(--profit)] text-xs font-mono font-bold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Convexidad: {convexAsymmetryRatio} : 1</span>
           </div>
         </div>
 
         {/* Sliders */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-xl p-4 space-y-2">
-            <div className="flex justify-between items-center text-[11px] font-mono font-bold text-[var(--text-2)] uppercase">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-md p-3 space-y-1.5">
+            <div className="flex justify-between items-center text-[10.5px] font-mono font-bold text-[var(--text-2)] uppercase">
               <span>Tamaño de Bala (1R):</span>
               <span className="text-[var(--profit)] font-bold">${bulletSize} USD</span>
             </div>
@@ -202,8 +202,8 @@ export default function UltraPage() {
             <span className="text-[10px] text-[var(--text-3)] block font-mono">Pérdida máxima acotada en caso de fallo</span>
           </div>
 
-          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-xl p-4 space-y-2">
-            <div className="flex justify-between items-center text-[11px] font-mono font-bold text-[var(--text-2)] uppercase">
+          <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-md p-3 space-y-1.5">
+            <div className="flex justify-between items-center text-[10.5px] font-mono font-bold text-[var(--text-2)] uppercase">
               <span>Objetivo de Cola (R):</span>
               <span className="text-[var(--text-2)] font-bold">{targetRMultiple}R</span>
             </div>
@@ -219,8 +219,8 @@ export default function UltraPage() {
             <span className="text-[10px] text-[var(--text-3)] block font-mono">Múltiplo de expansión de tendencia</span>
           </div>
 
-          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-xl p-4 space-y-2">
-            <div className="flex justify-between items-center text-[11px] font-mono font-bold text-[var(--text-2)] uppercase">
+          <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-md p-3 space-y-1.5">
+            <div className="flex justify-between items-center text-[10.5px] font-mono font-bold text-[var(--text-2)] uppercase">
               <span>Capas de Piramidación HM:</span>
               <span className="text-[var(--text-2)] font-bold">{pyramidLayers} {pyramidLayers === 1 ? "capa" : "capas"}</span>
             </div>
@@ -238,18 +238,18 @@ export default function UltraPage() {
         </div>
 
         {/* Results Bar */}
-        <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-2xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4 font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono border-t border-[var(--border)] pt-3 text-center">
           <div>
             <span className="text-[10px] text-[var(--text-3)] uppercase block">Riesgo Máx. Absoluto (1R)</span>
-            <div className="text-2xl font-black text-[var(--loss)] tabular-nums">
-              -${maxRiskUsd.toLocaleString()} USD
+            <div className="text-xl font-bold text-[var(--loss)] tabular-nums">
+              -${maxRiskUsd} USD
             </div>
             <span className="text-[10px] text-[var(--text-3)] block">Margen Aislado Fijo</span>
           </div>
 
           <div>
             <span className="text-[10px] text-[var(--text-3)] uppercase block">Retorno Bruto Estimado</span>
-            <div className="text-2xl font-black text-[var(--profit)] tabular-nums">
+            <div className="text-xl font-bold text-[var(--profit)] tabular-nums">
               +${grossConvexRewardUsd.toLocaleString("en-US", { maximumFractionDigits: 0 })} USD
             </div>
             <span className="text-[10px] text-[var(--text-3)] block">Con Piramidación HM</span>
@@ -257,7 +257,7 @@ export default function UltraPage() {
 
           <div>
             <span className="text-[10px] text-[var(--text-3)] uppercase block">Cosecha Bóveda (50%)</span>
-            <div className="text-2xl font-black text-[var(--text-2)] tabular-nums">
+            <div className="text-xl font-bold text-[var(--text-2)] tabular-nums">
               ${(grossConvexRewardUsd * 0.5).toLocaleString("en-US", { maximumFractionDigits: 0 })} USD
             </div>
             <span className="text-[10px] text-[var(--text-3)] block">Intocable Monotónico</span>
@@ -265,7 +265,7 @@ export default function UltraPage() {
 
           <div>
             <span className="text-[10px] text-[var(--text-3)] uppercase block">Ratio Asimetría PnL</span>
-            <div className="text-2xl font-black text-[var(--text-2)] tabular-nums">
+            <div className="text-xl font-bold text-[var(--text-1)] tabular-nums">
               {convexAsymmetryRatio}x
             </div>
             <span className="text-[10px] text-[var(--text-3)] block">Retorno por cada $1 arriesgado</span>
@@ -274,7 +274,7 @@ export default function UltraPage() {
       </div>
 
       {/* 4. ESPECIFICACIÓN CANÓNICA: RUTA ULTRA VS RUTA FONDEO */}
-      <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 shadow-xl space-y-4">
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3">
         <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
           <h4 className="text-sm font-black text-[var(--text-1)] font-mono uppercase tracking-wider flex items-center gap-2">
             <Zap className="w-4 h-4 text-[var(--profit)]" />
@@ -333,21 +333,21 @@ export default function UltraPage() {
       </div>
 
       {/* 5. CALL TO ACTION FOOTER */}
-      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-2xl p-6 text-center space-y-3">
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-5 text-center space-y-2.5">
         <p className="text-xs text-[var(--text-2)]">
           Para activar este motor en vivo, selecciona una cartera validada con Gate 11 en el Command Center o en la Bifurcación QVF.
         </p>
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-2.5 font-mono">
           <Link
             href="/estrategias"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] transition shadow-lg "
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] transition"
           >
             <span>Ir a Strategy Lab</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link
             href="/prop-firms"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[var(--surface-1)] hover:bg-[var(--surface-1)] text-[var(--text-1)] border border-[var(--border)] transition"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border)] transition"
           >
             <span>Ver 70 Prop Firms CME</span>
           </Link>

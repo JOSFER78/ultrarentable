@@ -4,666 +4,621 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
-  RefreshCw,
-  ChevronRight,
   ShieldCheck,
-  Zap,
-  Cpu,
-  Bot,
-  Sliders,
-  Activity,
-  Download,
+  RefreshCw,
+  ArrowLeft,
+  ArrowRight,
   CheckCircle2,
+  XCircle,
   AlertTriangle,
-  Send,
-  Sparkles,
+  FileCode2,
+  Database,
+  Terminal,
+  Layers,
+  Scale,
+  Activity,
+  ExternalLink,
 } from "lucide-react";
-import QuantTooltip from "@/components/system/QuantTooltip";
+import { getCertifiedStrategies, getCandidates, type CertifiedStrategy, type CandidateStrategy } from "@/lib/api";
+import { useEngineVersion } from "@/hooks/useEngineVersion";
 
-interface GateParam {
-  label: string;
-  value: any;
-  unit?: string;
-  type: "number" | "boolean" | "select";
-  min?: number;
-  max?: number;
-  step?: number;
-  options?: string[];
-  desc: string;
-}
-
-interface GateDetail {
-  gate_number: number;
+export interface GateCanonicalSpec {
+  num: number;
+  id: string;
   slug: string;
   name: string;
   short_title: string;
-  category: string;
+  category: "Data Ingest" | "Fricción & Ejecución" | "Robustez Estadística" | "Anti-Overfit" | "Gobernanza" | "Event-Driven";
   badge: string;
   icon: string;
-  formula: string;
+  pythonFile: string;
+  version: string;
   objective: string;
-  description: string;
-  params: Record<string, GateParam>;
-  live_telemetry: {
-    status: string;
-    status_color: string;
-    datasets_audited: number;
-    candles_verified: number;
-    pass_rate_pct: number;
-    avg_latency_ms: number;
-    last_verdict: string;
-  };
-  firebase_sync_status: string;
-  firebase_path: string;
-  local_persistence: string;
+  formula: string;
+  riskMitigated: string;
+  thresholdsFondeo: Array<{ param: string; value: string; desc: string }>;
+  thresholdsUltra: Array<{ param: string; value: string; desc: string }>;
 }
 
-export const ALL_GATES = [
-  { num: 1, slug: "gate-1-data-ingest", name: "1. Data Ingest", icon: "💾", badge: "Integridad" },
-  { num: 2, slug: "gate-2-cost-backtest", name: "2. Costes & Fricción", icon: "💸", badge: "Costes Reales" },
-  { num: 3, slug: "gate-3-trade-significance", name: "3. Muestra Estadística", icon: "📊", badge: "N >= 20" },
-  { num: 4, slug: "gate-4-walk-forward", name: "4. Walk-Forward (WFE)", icon: "🔄", badge: "Anti-Overfit" },
-  { num: 5, slug: "gate-5-monte-carlo", name: "5. Monte Carlo 1,000x", icon: "🎲", badge: "Ruina 0.0%" },
-  { num: 6, slug: "gate-6-stress-slippage", name: "6. Estrés & Slippage", icon: "⚡", badge: "3x Fricción" },
-  { num: 7, slug: "gate-7-regime-coverage", name: "7. Cobertura Regímenes", icon: "🌐", badge: "Multi-Ciclo" },
-  { num: 8, slug: "gate-8-dsr-ratio", name: "8. Deflated Sharpe (DSR)", icon: "📐", badge: "López de Prado" },
-  { num: 9, slug: "gate-9-novelty-antifit", name: "9. Novedad & AST", icon: "🧬", badge: "DoF >= 10" },
-  { num: 10, slug: "gate-10-debate-agentes", name: "10. Debate Multi-Agente", icon: "🤖", badge: "Comité Semántico" },
-  { num: 11, slug: "gate-11-nautilus-event", name: "11. NautilusCore Engine", icon: "🛡️", badge: "Event-Driven" },
+export const ALL_GATES: GateCanonicalSpec[] = [
+  {
+    num: 1,
+    id: "G01",
+    slug: "gate-1-data-ingest",
+    name: "Integridad OHLCV, Continuidad & Checksum SHA-256",
+    short_title: "1. Data Ingest",
+    category: "Data Ingest",
+    badge: "Integridad",
+    icon: "💾",
+    pythonFile: "services/validation/registry/gates/gate_01.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Garantizar 100% de datos continuos sin huecos, desórdenes temporales ni precios anómalos sobre futuros CME regulados con sellado criptográfico.",
+    formula: "Gap_Frac <= 0.02 (2%) ∧ Precios > 0 ∧ Timestamps estrictamente crecientes ∧ Checksum_SHA256(dataset) verificado",
+    riskMitigated: "Lookahead bias, datos corrompidos, saltos de sesión mal procesados o datasets sintéticos complacientes.",
+    thresholdsFondeo: [
+      { param: "max_gap_frac", value: "<= 2.0%", desc: "Fracción máxima admisible de huecos temporales en la serie de velas" },
+      { param: "min_bars_1h", value: ">= 200 velas", desc: "Mínimo de velas consecutivas de 1 hora requeridas para auditar" },
+      { param: "integrity_check", value: "SHA-256 Sellado", desc: "Hash criptográfico inmutable del archivo fuente de ticks/velas en disco" },
+    ],
+    thresholdsUltra: [
+      { param: "max_gap_frac", value: "<= 3.0%", desc: "Tolerancia ante desconexiones de exchanges de futuros perpetuos" },
+      { param: "min_bars_1h", value: ">= 150 velas", desc: "Mínimo de velas 1h para validación en pares cripto de alta liquidez" },
+    ],
+  },
+  {
+    num: 2,
+    id: "G02",
+    slug: "gate-2-cost-backtest",
+    name: "Cost Backtest con Comisiones Reales y Fricción",
+    short_title: "2. Costes & Fricción",
+    category: "Fricción & Ejecución",
+    badge: "Costes Reales",
+    icon: "💸",
+    pythonFile: "services/validation/registry/gates/gate_02.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Comprobar que la ventaja matemática sobrevive a los costes del broker y del exchange descontando comisiones exactas y 1 tick de slippage por operación.",
+    formula: "Net_PnL_OOS = Gross_PnL - (N_trades * Comision_Por_Lado * 2) - (N_trades * Slippage_Minimo) > 0 ∧ PF_Net >= 1.10",
+    riskMitigated: "Estrategias de alta frecuencia ilusorias que ganan en bruto pero son destruidas por el coste transaccional en CME.",
+    thresholdsFondeo: [
+      { param: "cme_fee_mes", value: "$0.60 / lado", desc: "Comisión fija por contrato para Micro E-mini S&P 500 (Issue #38)" },
+      { param: "cme_fee_es", value: "$2.50 / contrato", desc: "Comisión estándar para contratos E-mini grandes" },
+      { param: "min_net_pf", value: ">= 1.10", desc: "Profit Factor neto mínimo tras deducir todas las comisiones y deslizamiento" },
+    ],
+    thresholdsUltra: [
+      { param: "crypto_taker_fee", value: "0.05% (5 bps)", desc: "Comisión de taker en órdenes a mercado sobre futuros BingX/Binance" },
+      { param: "min_net_pf", value: ">= 1.10", desc: "Profit Factor neto tras deducir comisiones y financiación" },
+    ],
+  },
+  {
+    num: 3,
+    id: "G03",
+    slug: "gate-3-trade-significance",
+    name: "Significancia Estadística de Muestra (N >= 200)",
+    short_title: "3. Muestra Estadística",
+    category: "Robustez Estadística",
+    badge: "N >= 200",
+    icon: "📊",
+    pythonFile: "services/validation/registry/gates/gate_03.py",
+    version: "1.0.0 (Criterio 1.1)",
+    objective: "Descartar la suerte muestral exigiendo un volumen de operaciones fuera de muestra estadísticamente representativo (N >= 200 en Criterio 1.1) y ausencia de dependencia de outliers.",
+    formula: "N_Trades_OOS >= 200 ∧ Outlier_Dependency_Ratio <= 50.0% (los 2 mejores trades no superan el 50% del PnL total)",
+    riskMitigated: "Sesgo de supervivencia por muestras reducidas donde 2 o 3 operaciones afortunadas enmascaran un sistema perdedor.",
+    thresholdsFondeo: [
+      { param: "min_oos_trades", value: ">= 200 trades", desc: "Regla #26 del Criterio 1.1 sellado para considerar la estrategia válida" },
+      { param: "max_outlier_ratio", value: "<= 50.0%", desc: "Porcentaje máximo de beneficio aportado por los dos trades más grandes" },
+      { param: "max_drawdown_fondeo", value: "<= 4.0%", desc: "Caída máxima porcentual del equity respecto al límite de cuenta CME" },
+    ],
+    thresholdsUltra: [
+      { param: "min_oos_trades", value: ">= 10 trades", desc: "Umbral mínimo de incubación preliminar para activos convexos" },
+      { param: "max_outlier_ratio", value: "<= 85.0%", desc: "Tolerancia adaptada a modelos de tendencia tipo 'fat tail'" },
+    ],
+  },
+  {
+    num: 4,
+    id: "G04",
+    slug: "gate-4-walk-forward",
+    name: "Eficiencia Walk-Forward Auténtica (Rolling WFO)",
+    short_title: "4. Walk-Forward (WFE)",
+    category: "Anti-Overfit",
+    badge: "Anti-Overfit",
+    icon: "🔄",
+    pythonFile: "services/validation/registry/gates/gate_04.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Evaluar la estabilidad paramétrica a través de 5 ventanas rodantes sucesivas (Rolling Walk-Forward) para certificar consistencia temporal.",
+    formula: "WFE = (Annualized_Return_OOS / Annualized_Return_IS) >= 50% ∧ Consistencia_Ventanas >= 40%",
+    riskMitigated: "Memorización de datos (curvatura) y sobreajuste estático a un único tramo histórico de mercado.",
+    thresholdsFondeo: [
+      { param: "num_windows", value: "5 ventanas", desc: "Número de sub-periodos rodantes de calibración y prueba OOS" },
+      { param: "min_avg_wfe", value: ">= 50.0%", desc: "Eficiencia Walk-Forward promedio exigida para cuentas de fondeo" },
+      { param: "min_consistency_pct", value: ">= 40.0%", desc: "Porcentaje de ventanas OOS rodantes con PnL neto positivo" },
+    ],
+    thresholdsUltra: [
+      { param: "num_windows", value: "5 ventanas", desc: "Ventanas móviles adaptadas a ciclos cripto de 4 años" },
+      { param: "min_avg_wfe", value: ">= 40.0%", desc: "Eficiencia mínima en entornos de alta volatilidad" },
+    ],
+  },
+  {
+    num: 5,
+    id: "G05",
+    slug: "gate-5-monte-carlo",
+    name: "Remuestreo Monte Carlo (1,000x & 0% Ruina)",
+    short_title: "5. Monte Carlo 1000x",
+    category: "Robustez Estadística",
+    badge: "Ruina 0.0%",
+    icon: "🎲",
+    pythonFile: "services/validation/registry/gates/gate_05.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Simular 1,000 permutaciones bootstrap de trades para calcular la probabilidad empírica de ruina y el Drawdown en el percentil 95.",
+    formula: "P(Ruina) = (Simulaciones con DD >= Límite_Fondeo / 1000) <= 0.5% ∧ DD_Percentil_95 <= 4.0%",
+    riskMitigated: "Quiebra de cuenta provocada por agrupamiento aleatorio de rachas perdedoras (losing streaks).",
+    thresholdsFondeo: [
+      { param: "num_simulations", value: "1,000 runs", desc: "Permutaciones independientes mediante muestreo con reemplazo" },
+      { param: "max_ruin_prob", value: "<= 0.5%", desc: "Probabilidad máxima de tocar el límite de drawdown de la prop firm" },
+      { param: "max_dd95_pct", value: "<= 4.0%", desc: "Máximo drawdown tolerable en el percentil 95 de las 1,000 curvas" },
+      { param: "ruin_drawdown_limit", value: "4.5% ($1,800)", desc: "Límite de trailing drawdown absoluto en una cuenta 50k" },
+    ],
+    thresholdsUltra: [
+      { param: "max_ruin_prob", value: "<= 5.0%", desc: "Tolerancia de ruina para asignaciones convexas con 1R aislado" },
+      { param: "max_dd95_pct", value: "<= 80.0%", desc: "Límite para carteras spot/perpetuos descorrelacionadas" },
+    ],
+  },
+  {
+    num: 6,
+    id: "G06",
+    slug: "gate-6-stress-slippage",
+    name: "Estrés de Fricción, Latencia & Shocks de Liquidez (3x)",
+    short_title: "6. Estrés & Slippage",
+    category: "Fricción & Ejecución",
+    badge: "3x Fricción",
+    icon: "⚡",
+    pythonFile: "services/validation/registry/gates/gate_06.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Evaluar la rentabilidad residual al triplicar el deslizamiento y las comisiones en escenarios de ensanchamiento de spreads y noticias.",
+    formula: "PF_Estres = Gross_Profit / (Gross_Loss + (N_Trades * 3 * Friccion_Base)) >= 1.05 ∧ Supervivencia >= 2 escenarios",
+    riskMitigated: "Estrategias de scalping o breakout que se derrumban cuando la volatilidad triplica los spreads reales en apertura americana.",
+    thresholdsFondeo: [
+      { param: "multiplier_slippage", value: "3.0x", desc: "Factor multiplicador aplicado a los costes habituales de ejecución" },
+      { param: "min_survival_pf", value: ">= 1.05", desc: "Profit Factor neto mínimo exigido bajo condiciones de fricción 3x" },
+      { param: "required_scenarios", value: ">= 2 escenarios", desc: "Debe resistir escenarios Base, +1-Sigma y +2-Sigma" },
+    ],
+    thresholdsUltra: [
+      { param: "multiplier_slippage", value: "3.0x", desc: "Simulación de mechas de liquidación en exchanges cripto" },
+      { param: "min_survival_pf", value: ">= 1.00", desc: "Exigencia de umbral de equilibrio bajo estrés severo" },
+    ],
+  },
+  {
+    num: 7,
+    id: "G07",
+    slug: "gate-7-regime-coverage",
+    name: "Cobertura y Desempeño en 4 Regímenes de Mercado",
+    short_title: "7. Cobertura Regímenes",
+    category: "Robustez Estadística",
+    badge: "Multi-Ciclo",
+    icon: "🌐",
+    pythonFile: "services/validation/registry/gates/gate_07.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Clasificar objetivamente cada periodo histórico en 4 regímenes (Alcista, Bajista, Rango, Volatilidad) cruzando cada trade con la vela activa.",
+    formula: "Trades_en_Regimenes >= 2 ∧ PnL_Neto > 0 en al menos 2 regímenes independientes (sin asignaciones sintéticas)",
+    riskMitigated: "Sistemas optimizados en mercados alcistas unidireccionales (ej. 2020-2021) que quiebran en mercados de rango o bajistas.",
+    thresholdsFondeo: [
+      { param: "min_active_regimes", value: ">= 2 regímenes", desc: "Debe operar y mantener ventaja en al menos 2 estados de mercado" },
+      { param: "min_candles", value: ">= 50 velas", desc: "Mínimo de velas auditadas por régimen para validar la clasificación" },
+      { param: "regimes_classified", value: "BULL, BEAR, CHOP, VOL", desc: "Matriz objetiva de clasificación basada en volatilidad y pendiente" },
+    ],
+    thresholdsUltra: [
+      { param: "min_active_regimes", value: ">= 2 regímenes", desc: "Demostración de resiliencia en ciclos de acumulación y distribución" },
+    ],
+  },
+  {
+    num: 8,
+    id: "G08",
+    slug: "gate-8-dsr-ratio",
+    name: "Deflated Sharpe Ratio (DSR de Marcos López de Prado)",
+    short_title: "8. Deflated Sharpe (DSR)",
+    category: "Anti-Overfit",
+    badge: "López de Prado",
+    icon: "📐",
+    pythonFile: "services/validation/registry/gates/gate_08.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Penalizar el ratio Sharpe en función del número de combinaciones de parámetros probadas para eliminar el sesgo de selección (Data Snooping).",
+    formula: "DSR_Prob = Norm_CDF( (SR - SR_Esperado_Maximo(N_ensayos, Varianza)) / SE(SR) ) >= 50.0%",
+    riskMitigated: "Estrategias descubiertas por minería masiva donde el resultado positivo es mero ruido estadístico aleatorio.",
+    thresholdsFondeo: [
+      { param: "min_dsr_prob", value: ">= 50.0%", desc: "Probabilidad mínima de que el ratio Sharpe observado no sea fruto del azar" },
+      { param: "min_trades", value: ">= 10 trades", desc: "Mínimo de trades OOS necesarios para calcular asimetría y curtosis" },
+      { param: "penalty_model", value: "Bailey & López de Prado", desc: "Formulación institucional sellada en Advances in Financial Machine Learning" },
+    ],
+    thresholdsUltra: [
+      { param: "min_dsr_prob", value: ">= 50.0%", desc: "Mismo estándar estadístico para evitar falsos positivos cripto" },
+    ],
+  },
+  {
+    num: 9,
+    id: "G09",
+    slug: "gate-9-novelty-antifit",
+    name: "Distancia AST & Grados de Libertad (Anti-Curvatura)",
+    short_title: "9. Novedad & AST",
+    category: "Anti-Overfit",
+    badge: "DoF >= 15",
+    icon: "🧬",
+    pythonFile: "services/validation/registry/gates/gate_09.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Evaluar la complejidad estructural del árbol sintáctico (AST) y asegurar un ratio elevado de grados de libertad por parámetro.",
+    formula: "DoF = Total_Trades / N_Parametros >= 15.0 ∧ AST_Bloques_Condicionales <= 4 ∧ Param_Stability >= 60%",
+    riskMitigated: "Sistemas con decenas de parámetros que memorizan el pasado mediante reglas excesivamente complejas o anidadas.",
+    thresholdsFondeo: [
+      { param: "min_dof", value: ">= 15.0 DoF", desc: "Ratio de grados de libertad: al menos 15 trades por cada parámetro optimizable" },
+      { param: "max_params", value: "<= 8 parámetros", desc: "Número máximo de parámetros configurables admitidos en la lógica" },
+      { param: "min_stability_pct", value: ">= 60.0%", desc: "Estabilidad de PnL ante variaciones del +/- 10% en los parámetros" },
+    ],
+    thresholdsUltra: [
+      { param: "min_dof", value: ">= 10.0 DoF", desc: "Grados de libertad adaptados a temporalidades de swing o 4 horas" },
+      { param: "min_stability_pct", value: ">= 50.0%", desc: "Estabilidad mínima ante variaciones paramétricas" },
+    ],
+  },
+  {
+    num: 10,
+    id: "G10",
+    slug: "gate-10-debate-agentes",
+    name: "Auditoría Semántica Cuantitativa (Cero Martingala/Grid)",
+    short_title: "10. Debate Multi-Agente",
+    category: "Gobernanza",
+    badge: "Cero Martingala",
+    icon: "🤖",
+    pythonFile: "services/validation/registry/gates/gate_10.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Auditoría determinista del código para prohibir formalmente rejillas (grids), martingalas o promediar a la baja, con veto de riesgo vinculante.",
+    formula: "Consenso >= 40.0% ∧ Veto_Riesgo == OK ∧ Has_Martingale == FALSE ∧ Has_Grid == FALSE",
+    riskMitigated: "Algoritmos tóxicos que incrementan el tamaño de posición tras pérdidas para ocultar drawdowns hasta la quiebra total.",
+    thresholdsFondeo: [
+      { param: "prohibited_patterns", value: "MARTINGALA, GRID, PROMEDIAR", desc: "Patrones prohibidos de dimensionamiento que violan la gestión de riesgo" },
+      { param: "max_dd_limit", value: "<= 4.0%", desc: "Corte tajante si el drawdown máximo supera el 4% en cuentas de fondeo" },
+      { param: "min_consensus_score", value: ">= 40.0%", desc: "Aprobación mínima requerida por los comités cuantitativos de auditoría" },
+    ],
+    thresholdsUltra: [
+      { param: "max_dd_limit", value: "<= 30.0%", desc: "Límite de riesgo para carteras convexas con stop loss estructural" },
+    ],
+  },
+  {
+    num: 11,
+    id: "G11",
+    slug: "gate-11-nautilus-event",
+    name: "Simulación de Eventos NautilusCore & Trailing Intradía",
+    short_title: "11. NautilusCore Engine",
+    category: "Event-Driven",
+    badge: "Event-Driven",
+    icon: "🛡️",
+    pythonFile: "services/validation/registry/gates/gate_11.py",
+    version: "1.0.0 (Motor 5.18.0)",
+    objective: "Ejecutar una auditoría independiente orden a orden en NautilusCore modelando trailing drawdown flotante intra-vela y verificación de no-liquidación.",
+    formula: "Simulacion_Event_Driven_Passed == TRUE ∧ Min_Distancia_Liquidacion >= 20.0% ∧ Cero_Violaciones_Trailing_Intradia",
+    riskMitigated: "Discrepancias entre backtests cerrados por vela y la regla de trailing drawdown intradía en tiempo real de Topstep y MFFU.",
+    thresholdsFondeo: [
+      { param: "event_engine", value: "NautilusCore", desc: "Motor determinista de eventos tick-a-tick con libro de órdenes simulado" },
+      { param: "trailing_model", value: "Intraday Equity High", desc: "El drawdown persigue el equity máximo intra-barra (regla estricta CME)" },
+      { param: "min_dist_liquidation", value: ">= 20.0%", desc: "Margen de seguridad respecto al umbral de cierre automático de la cuenta" },
+    ],
+    thresholdsUltra: [
+      { param: "min_dist_liquidation", value: ">= 2.0%", desc: "Distancia mínima a la liquidación del margen en futuros perpetuos" },
+    ],
+  },
 ];
 
 export default function GateDetailClient() {
   const params = useParams();
-  const router = useRouter();
   const rawSlug = (params?.slug as string) || "gate-1-data-ingest";
+  const { version: engineVersion } = useEngineVersion();
 
-  const [gate, setGate] = useState<GateDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentParams, setCurrentParams] = useState<Record<string, any>>({});
-  const [saveStatus, setSaveStatus] = useState<string | null>(null);
-
-  // AI Semantic Agent Chat State
-  const [aiPrompt, setAiPrompt] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiChatLog, setAiChatLog] = useState<
-    Array<{ role: "user" | "assistant"; text: string; time: string; syncInfo?: string }>
-  >([
-    {
-      role: "assistant",
-      text: `Hola. Soy el Agente Arquitecto Cuantitativo para este Gate. Puedes darme directivas en lenguaje natural (ej. "Ajustar para Fondeo estricto", "Aumentar exigencia de estrés a 3x", "Bajar tolerancia de gaps") y reconfiguraré el motor determinista y la persistencia al instante.`,
-      time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
-    },
-  ]);
-
-  // Nautilus Backtest View State
-  const [candidates, setCandidates] = useState<any[]>([]);
-  const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
-  const [nautilusReport, setNautilusReport] = useState<any | null>(null);
-  const [nautilusLoading, setNautilusLoading] = useState(false);
-
-  // Load Gate Data
-  const fetchGateData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`/api/v1/gates/${rawSlug}`);
-      if (!res.ok) throw new Error(`Gate no encontrado: ${rawSlug}`);
-      const data = await res.json();
-
-      const paramKeys = Object.keys(data.params || data.default_params || {});
-      const normalizedParams: Record<string, GateParam> = {};
-      const initialForm: Record<string, any> = {};
-
-      paramKeys.forEach((k) => {
-        const rawVal = data.params?.[k] !== undefined ? data.params[k] : data.default_params?.[k] ?? "";
-        const isNum = typeof rawVal === "number";
-        const isBool = typeof rawVal === "boolean";
-
-        normalizedParams[k] = {
-          label: k.replace(/_/g, " ").toUpperCase(),
-          value: rawVal,
-          type: isBool ? "boolean" : isNum ? "number" : "select",
-          desc: `Parámetro de validación: ${k}`,
-          min: isNum ? 0 : undefined,
-          max: isNum ? Math.max(100, (rawVal as number) * 3) : undefined,
-          step: isNum ? ((rawVal as number) < 1 ? 0.05 : 1) : undefined,
-        };
-        initialForm[k] = rawVal;
-      });
-
-      const normalizedGate: GateDetail = {
-        gate_number: data.id ?? data.gate_number ?? 1,
-        slug: data.slug || rawSlug,
-        name: data.name || rawSlug,
-        short_title: data.name || rawSlug,
-        category: data.category || "Validation Gate",
-        badge: data.badge || `GATE ${data.id ?? 1}`,
-        icon: data.icon || "🛡️",
-        formula: data.formula || "Verificación determinista en motor canónico",
-        objective: data.objective || data.description || "Auditoría cuantitativa de evidencia.",
-        description: data.description || "Compuerta de validación matemática.",
-        params: normalizedParams,
-        live_telemetry: data.live_telemetry || {
-          status: data.evidence_status || "NO_EVIDENCE",
-          status_color: "var(--text-2)",
-          datasets_audited: data.datasets_audited ?? 0,
-          candles_verified: data.candles_verified ?? 0,
-          pass_rate_pct: data.pass_rate_pct ?? 0,
-          avg_latency_ms: data.avg_latency_ms ?? 0,
-          last_verdict: data.evidence_status === "NO_EVIDENCE" ? "NO EVIDENCE" : data.last_verdict || "NO EVIDENCE",
-        },
-        firebase_sync_status: data.cloud_sync_status || "NOT_CONFIGURED",
-        firebase_path: data.firebase_path || `contracts/gates/${data.slug || rawSlug}`,
-        local_persistence: data.local_persistence || "SQLite WAL",
-      };
-
-      setGate(normalizedGate);
-      setCurrentParams(initialForm);
-    } catch (err: any) {
-      setError(err.message || "Error al cargar la fase cuantitativa");
-    } finally {
-      setLoading(false);
-    }
+  const currentGate = useMemo(() => {
+    return ALL_GATES.find((g) => g.slug === rawSlug) || ALL_GATES[0];
   }, [rawSlug]);
 
-  const isNautilusSlug = rawSlug === "gate-11-nautilus-event" || rawSlug === "gate-10-nautilus-trader";
+  const [certificadas, setCertificadas] = useState<CertifiedStrategy[]>([]);
+  const [candidatas, setCandidatas] = useState<CandidateStrategy[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchCandidatesForNautilus = useCallback(async () => {
-    if (!isNautilusSlug) return;
+  const cargarDatos = useCallback(async () => {
+    setCargando(true);
+    setError(null);
     try {
-      const res = await fetch("/api/v1/candidates?limit=100");
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setCandidates(data);
-          setSelectedCandidateId(data[0].candidate_id);
-        }
-      }
-    } catch (e) {
-      console.error("Error loading candidates for Nautilus:", e);
-    }
-  }, [isNautilusSlug]);
-
-  const fetchNautilusBacktest = useCallback(
-    async (cId: string) => {
-      if (!cId || !isNautilusSlug) return;
-      try {
-        setNautilusLoading(true);
-        const res = await fetch(`/api/v1/gates/nautilus/detailed-backtest/${cId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setNautilusReport(data);
-        }
-      } catch (e) {
-        console.error("Error loading Nautilus report:", e);
-      } finally {
-        setNautilusLoading(false);
-      }
-    },
-    [isNautilusSlug]
-  );
-
-  useEffect(() => {
-    fetchGateData();
-    fetchCandidatesForNautilus();
-  }, [fetchGateData, fetchCandidatesForNautilus]);
-
-  useEffect(() => {
-    if (selectedCandidateId) {
-      fetchNautilusBacktest(selectedCandidateId);
-    }
-  }, [selectedCandidateId, fetchNautilusBacktest]);
-
-  const handleSaveParams = async () => {
-    try {
-      setSaveStatus("Guardando en Motor & Firebase...");
-      const res = await fetch(`/api/v1/gates/${rawSlug}/config`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ params: currentParams, source: "UI_MANUAL_SLIDER" }),
-      });
-      if (!res.ok) throw new Error("Error al guardar parámetros");
-      const resData = await res.json();
-      setSaveStatus(`✅ Guardado en SQLite WAL y Firebase (${resData.firebase_sync?.project || "pecemi"})`);
-      setTimeout(() => setSaveStatus(null), 4000);
-      fetchGateData();
-    } catch (e: any) {
-      setSaveStatus(`❌ Error: ${e.message || e}`);
-    }
-  };
-
-  const handleAiSemanticSubmit = async (promptToSend?: string) => {
-    const text = promptToSend || aiPrompt;
-    if (!text.trim() || aiLoading) return;
-
-    const userMsg = {
-      role: "user" as const,
-      text,
-      time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
-    };
-    setAiChatLog((prev) => [...prev, userMsg]);
-    setAiPrompt("");
-    setAiLoading(true);
-
-    try {
-      const res = await fetch(`/api/v1/gates/${rawSlug}/ai-semantic-edit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: text }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const assistantMsg = {
-          role: "assistant" as const,
-          text: `⚡ ${data.explanation}\n\n⚙️ Parámetros Modificados:\n${Object.entries(data.applied_changes || {})
-            .map(([k, v]) => `• ${k}: ${v}`)
-            .join("\n")}`,
-          time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
-          syncInfo: `☁️ Firebase Synced (${data.firebase_cloud_sync?.project || "pecemi"}) · 💾 SQLite WAL`,
-        };
-        setAiChatLog((prev) => [...prev, assistantMsg]);
-        fetchGateData();
-      } else {
-        throw new Error("El motor no pudo procesar la directiva");
-      }
-    } catch (e: any) {
-      const errorMsg = {
-        role: "assistant" as const,
-        text: `⚠️ No se pudo aplicar la mutación: ${e.message || e}`,
-        time: new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
-      };
-      setAiChatLog((prev) => [...prev, errorMsg]);
+      const [certs, cands] = await Promise.all([
+        getCertifiedStrategies().catch(() => []),
+        getCandidates().catch(() => []),
+      ]);
+      setCertificadas(certs);
+      setCandidatas(cands);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al conectar con la API.");
     } finally {
-      setAiLoading(false);
+      setCargando(false);
     }
-  };
+  }, []);
 
-  if (loading && !gate) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] p-8 font-sans text-[var(--text-1)]">
-        <div className="text-center font-mono">
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-[var(--text-2)]" />
-          <div className="text-sm font-bold text-[var(--text-2)]">Cargando especificación matemática del Gate...</div>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    void cargarDatos();
+  }, [cargarDatos]);
 
-  if (error || !gate) {
-    return (
-      <div className="min-h-screen bg-[var(--bg)] p-8 font-sans text-[var(--text-1)]">
-        <div className="mx-auto max-w-xl rounded-2xl border border-[var(--loss)] bg-[var(--loss-dim)] p-6 shadow-2xl">
-          <h2 className="mb-2 text-lg font-black text-[var(--loss)]">Error al cargar Gate</h2>
-          <p className="text-xs text-[var(--loss)]">{error || "El gate solicitado no existe."}</p>
-          <Link
-            href="/gates"
-            className="mt-4 inline-block rounded-xl bg-[var(--surface-3)] border border-[var(--border-strong)] px-4 py-2 text-xs font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)]"
-          >
-            ← Volver a Matriz 11 Gates
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Auditoría real de estrategias evaluadas en este Gate (Zero-Mocks)
+  const auditResultados = useMemo(() => {
+    const gateNumStr = String(currentGate.num);
+    const rows: Array<{
+      id: string;
+      name: string;
+      symbol: string;
+      timeframe: string;
+      route: string;
+      status: string;
+      gatePassed: boolean | null;
+      gateScore?: number;
+      evidenceNote?: string;
+    }> = [];
+
+    // Analizar certificadas
+    for (const cert of certificadas) {
+      const rawGate = cert.gates ? (cert.gates as Record<string, any>)[gateNumStr] : undefined;
+      const passed = rawGate ? rawGate.passed === true : null;
+      const score = rawGate?.score;
+      rows.push({
+        id: cert.strategy_id,
+        name: cert.name || cert.strategy_id,
+        symbol: cert.symbol || "MES",
+        timeframe: cert.timeframe || "1h",
+        route: cert.route || "FONDEO",
+        status: cert.status,
+        gatePassed: passed,
+        gateScore: score,
+        evidenceNote: rawGate?.verdict || (passed ? "Comprobación superada" : "Sin evidencia de paso"),
+      });
+    }
+
+    return rows;
+  }, [certificadas, currentGate.num]);
+
+  const statsGate = useMemo(() => {
+    const evaluadas = auditResultados.filter((r) => r.gatePassed !== null);
+    const aprobadas = evaluadas.filter((r) => r.gatePassed === true);
+    return {
+      total: auditResultados.length,
+      evaluadas: evaluadas.length,
+      aprobadas: aprobadas.length,
+      tasaPaso: evaluadas.length > 0 ? ((aprobadas.length / evaluadas.length) * 100).toFixed(1) : "0.0",
+    };
+  }, [auditResultados]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] p-3 md:p-6 font-sans text-[var(--text-1)]">
-      <div className="mx-auto max-w-[1600px] space-y-5">
-        {/* BREADCRUMB & TOP LINKS */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3 font-mono text-xs">
-          <div className="flex items-center gap-2 text-[var(--text-3)]">
-            <Link href="/" className="transition hover:text-[var(--text-1)]">
-              Inicio
-            </Link>
-            <ChevronRight className="w-3 h-3" />
-            <Link href="/gates" className="transition hover:text-[var(--text-1)]">
-              11 Gates
-            </Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="font-bold text-[var(--text-2)]">{gate.slug}</span>
+    <div className="w-full space-y-3 pb-8 text-[var(--text-1)] font-sans">
+      {/* 1. Header Banner Institucional */}
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-md bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-center text-lg shrink-0">
+              {currentGate.icon}
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--profit)]">
+                  {currentGate.id}
+                </span>
+                <span className="text-xs font-mono text-[var(--text-3)] uppercase tracking-wider">
+                  {currentGate.category}
+                </span>
+                <span className="text-xs font-mono text-[var(--text-3)]">·</span>
+                <span className="text-xs font-mono text-[var(--text-2)]">{currentGate.version}</span>
+              </div>
+              <h1 className="text-lg md:text-xl font-bold tracking-tight text-[var(--text-1)] mt-0.5">
+                {currentGate.name}
+              </h1>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 font-mono text-xs">
             <Link
-              href="/gates"
-              className="rounded-xl border border-white/[0.08] bg-[var(--surface-1)] px-3 py-1.5 font-bold text-[var(--text-1)] transition hover:border-[var(--border)] hover:bg-[var(--surface-1)]"
+              href="/estrategias/valoracion"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text-2)] hover:text-[var(--text-1)] border border-[var(--border)] transition"
             >
-              ← Ver Matriz 11 Gates
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Volver a M3 Valoración</span>
             </Link>
-            <Link
-              href="/estrategias/2-explorador-excel"
-              className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)]"
+            <button
+              onClick={() => void cargarDatos()}
+              disabled={cargando}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-1)] hover:bg-[var(--surface-3)] transition cursor-pointer"
             >
-              Explorador Excel →
-            </Link>
+              <RefreshCw className={`w-3.5 h-3.5 ${cargando ? "animate-spin text-[var(--profit)]" : ""}`} />
+              <span>Actualizar</span>
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* SELECTOR HORIZONTAL DE LOS 11 GATES */}
-        <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-3 shadow-xl backdrop-blur-xl">
-          <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--text-3)] flex items-center gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-[var(--text-2)]" />
-            <span>Navegador de Fases Cuantitativas (11 Slugs Independientes):</span>
-          </div>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-11 gap-1.5">
+      {/* 2. Navegador Modular de los 11 Gates */}
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-2.5">
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="flex items-center gap-1.5 shrink-0">
             {ALL_GATES.map((g) => {
-              const isActive = g.slug === rawSlug;
+              const isCurrent = g.slug === currentGate.slug;
               return (
                 <Link
                   key={g.slug}
-                  href={`/gates/${g.slug}`}
-                  className={`flex flex-col items-center justify-center rounded-xl p-2 text-center transition-all ${
-                    isActive
-                      ? "border border-[var(--border)] bg-[var(--surface-1)]   text-[var(--text-1)] shadow-[0_0_15px_rgba(255,255,255,0.06)] ring-1 ring-[var(--border-strong)]"
-                      : "border border-white/[0.06] bg-[var(--bg)] text-[var(--text-2)] hover:border-[var(--border)] hover:bg-[var(--surface-1)] hover:text-[var(--text-1)]"
+                  href={`/estrategias/valoracion/${g.slug}`}
+                  className={`px-2.5 py-1 rounded text-xs font-mono transition flex items-center gap-1.5 shrink-0 ${
+                    isCurrent
+                      ? "bg-[var(--surface-3)] border border-[var(--border-strong)] text-[var(--profit)] font-bold shadow-sm"
+                      : "bg-transparent hover:bg-[var(--surface-2)] border border-transparent text-[var(--text-2)] hover:text-[var(--text-1)]"
                   }`}
                 >
-                  <span className="text-base">{g.icon}</span>
-                  <span
-                    className={`mt-0.5 font-mono text-[10px] font-black leading-tight ${
-                      isActive ? "text-[var(--text-1)]" : "text-[var(--text-1)]"
-                    }`}
-                  >
-                    Gate {g.num}
-                  </span>
-                  <span className="mt-0.5 font-mono text-[8px] text-[var(--text-3)] truncate max-w-full">{g.badge}</span>
+                  <span>{g.icon}</span>
+                  <span>{g.id}</span>
                 </Link>
               );
             })}
           </div>
+          <Link
+            href="/estrategias/valoracion"
+            className="text-xs font-mono text-[var(--text-3)] hover:text-[var(--text-1)] shrink-0 px-2 py-1 hover:underline flex items-center gap-1"
+          >
+            <span>Matriz M3</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
         </div>
+      </div>
 
-        {/* HERO BANNER DEL GATE SELECCIONADO */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] from-[var(--surface-1)]   p-5 md:p-6 shadow-2xl backdrop-blur-xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{gate.icon}</span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-0.5 font-mono text-[10px] font-black uppercase text-[var(--text-1)]">
-                      {gate.badge}
-                    </span>
-                    <span className="font-mono text-[10px] text-[var(--text-3)]">Slug: /gates/{gate.slug}</span>
-                  </div>
-                  <h1 className="mt-1 text-xl md:text-2xl font-black text-[var(--text-1)] tracking-tight">
-                    Gate {gate.gate_number}: {gate.name}
-                  </h1>
-                </div>
-              </div>
-              <p className="mt-2 text-xs md:text-sm text-[var(--text-1)] leading-relaxed max-w-3xl">{gate.description}</p>
+      {/* 3. Grid de Especificación y Umbrales Canónicos */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 font-mono text-xs">
+        {/* Columna Izquierda: Definición Matemática & Criterio 1.1 */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3 font-sans">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 font-mono">
+              <span className="text-xs font-bold text-[var(--text-1)] flex items-center gap-2">
+                <FileCode2 className="w-4 h-4 text-[var(--profit)]" />
+                <span>Contrato Canónico de Validación</span>
+              </span>
+              <span className="text-[11px] text-[var(--text-3)] font-mono">{currentGate.pythonFile}</span>
             </div>
 
-            <div className="text-left md:text-right font-mono flex-shrink-0">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--profit)] bg-[var(--profit-dim)] px-3 py-1 text-xs font-black text-[var(--profit)] mb-1.5">
-                <span className="h-2 w-2 rounded-full bg-[var(--profit)] animate-pulse"></span>
-                {gate.live_telemetry.status}
+            <div className="space-y-1 font-mono text-xs">
+              <span className="text-[10px] text-[var(--text-3)] uppercase font-semibold block">Objetivo Cuantitativo:</span>
+              <p className="text-[12px] text-[var(--text-2)] leading-relaxed font-sans">{currentGate.objective}</p>
+            </div>
+
+            <div className="space-y-1 font-mono text-xs">
+              <span className="text-[10px] text-[var(--text-3)] uppercase font-semibold block">Condición Matemática Exacta:</span>
+              <div className="p-2.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--profit)] font-mono text-[11px] leading-relaxed break-all">
+                {currentGate.formula}
               </div>
-              <div className="text-[10px] text-[var(--text-3)]">
-                Persistencia: {gate.local_persistence} · {gate.firebase_sync_status}
-              </div>
+            </div>
+
+            <div className="space-y-1 font-mono text-xs">
+              <span className="text-[10px] text-[var(--text-3)] uppercase font-semibold block">Riesgo Mitigado (Por qué es obligatorio):</span>
+              <p className="text-[12px] text-[var(--text-2)] leading-relaxed font-sans">{currentGate.riskMitigated}</p>
             </div>
           </div>
-        </div>
 
-        {/* 2-COLUMN MAIN CONTENT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* LEFT COLUMN */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Fórmulas & Criterios de Corte */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl space-y-3">
-              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-[var(--text-2)]">
-                <span>📐</span> Formulación Matemática & Criterios de Corte
-              </h3>
-
-              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 font-mono text-xs text-[var(--profit)] shadow-inner">
-                {gate.formula}
-              </div>
-
-              <div className="text-xs text-[var(--text-1)] leading-relaxed">
-                <strong className="text-[var(--text-1)]">Objetivo del Gate:</strong> {gate.objective}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-white/[0.08]">
-                <div className="rounded-xl border border-[var(--loss)] bg-[var(--loss-dim)] p-3">
-                  <span className="font-mono text-[10px] font-black uppercase text-[var(--loss)]">
-                    🔥 RUTA ULTRA (BingX 500x)
-                  </span>
-                  <p className="mt-1 text-[11px] text-[var(--loss)] leading-snug">
-                    Admite volatilidad alta si la convexidad R:R compensa y la probabilidad de ruina Monte Carlo es 0.0%.
-                  </p>
-                </div>
-                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-3">
-                  <span className="font-mono text-[10px] font-black uppercase text-[var(--text-1)]">
-                    🛡️ RUTA FONDEO (Prop Firms)
-                  </span>
-                  <p className="mt-1 text-[11px] text-[var(--text-1)] leading-snug">
-                    Corte tajante si Max Drawdown &gt; 4.0% o si existe vulnerabilidad en días de alta fricción.
-                  </p>
-                </div>
-              </div>
+          {/* Umbrales Oficiales Fondeo CME */}
+          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 font-mono">
+              <span className="text-xs font-bold text-[var(--text-1)] flex items-center gap-2 font-sans">
+                <Scale className="w-4 h-4 text-[var(--profit)]" />
+                <span>Umbrales Oficiales para Fondeo CME (Regla #26 Invariable)</span>
+              </span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--profit)] border border-[var(--border)]">
+                ESTRICTO
+              </span>
             </div>
 
-            {/* Telemetría en Vivo */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl space-y-3">
-              <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-[var(--profit)]">
-                <span>📡</span> Telemetría del Motor en Tiempo Real
-              </h3>
-
-              <div className="grid grid-cols-3 gap-2.5 font-mono">
-                <div className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3">
-                  <div className="text-[10px] uppercase text-[var(--text-3)] font-bold">Candidatos Auditados</div>
-                  <div className="mt-1 text-lg font-black text-[var(--text-1)] tabular-nums">
-                    {gate.live_telemetry.datasets_audited ?? "N/D"}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3">
-                  <div className="text-[10px] uppercase text-[var(--text-3)] font-bold">Tasa de Aprobación</div>
-                  <div className="mt-1 text-lg font-black text-[var(--profit)] tabular-nums">
-                    {gate.live_telemetry.pass_rate_pct != null ? `${gate.live_telemetry.pass_rate_pct}%` : "N/D"}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3">
-                  <div className="text-[10px] uppercase text-[var(--text-3)] font-bold">Latencia Media</div>
-                  <div className="mt-1 text-lg font-black text-[var(--text-2)] tabular-nums">
-                    {gate.live_telemetry.avg_latency_ms != null ? `${gate.live_telemetry.avg_latency_ms} ms` : "N/D"}
-                  </div>
-                </div>
-              </div>
-
-              <div className="font-mono text-xs text-[var(--text-2)]">
-                <strong className="text-[var(--text-1)]">Último Veredicto Registrado:</strong> {gate.live_telemetry.last_verdict}
-              </div>
-            </div>
-
-            {/* Formulario Manual de Parámetros del Motor */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
-                <h3 className="flex items-center gap-2 font-mono text-xs font-black uppercase tracking-wider text-[var(--text-2)]">
-                  <span>🎛️</span> Configuración de Umbrales del Motor
-                </h3>
-                <button
-                  onClick={handleSaveParams}
-                  className="rounded-xl bg-[var(--surface-1)]   px-3.5 py-1.5 font-mono text-xs font-black text-[var(--text-1)] shadow-md transition hover: hover: active:scale-95 cursor-pointer"
-                >
-                  Guardar en Motor & Firebase
-                </button>
-              </div>
-
-              {saveStatus && (
+            <div className="space-y-2">
+              {currentGate.thresholdsFondeo.map((t, idx) => (
                 <div
-                  className={`p-3 rounded-xl font-mono text-xs font-bold ${
-                    saveStatus.startsWith("✅")
-                      ? "bg-[var(--profit-dim)] text-[var(--profit)] border border-[var(--profit)]"
-                      : "bg-[var(--surface-2)] text-[var(--text-1)] border border-[var(--border)]"
-                  }`}
+                  key={idx}
+                  className="p-2.5 rounded bg-[var(--surface-2)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                 >
-                  {saveStatus}
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {Object.entries(gate.params || {}).map(([key, p]) => (
-                  <div key={key} className="rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3 space-y-1.5">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-[var(--text-1)]">{p.label}</span>
-                      <span className="font-mono text-xs font-black text-[var(--text-2)] tabular-nums">
-                        {currentParams[key] !== undefined ? String(currentParams[key]) : String(p.value)} {p.unit || ""}
-                      </span>
-                    </div>
-
-                    {p.type === "number" && (
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="range"
-                          min={p.min ?? 0}
-                          max={p.max ?? 100}
-                          step={p.step ?? 1}
-                          value={currentParams[key] ?? p.value}
-                          onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
-                          className="flex-1 accent-[var(--text-1)] cursor-pointer"
-                        />
-                        <input
-                          type="number"
-                          min={p.min}
-                          max={p.max}
-                          step={p.step}
-                          value={currentParams[key] ?? p.value}
-                          onChange={(e) => setCurrentParams({ ...currentParams, [key]: parseFloat(e.target.value) })}
-                          className="w-20 rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-2 py-1 font-mono text-xs text-[var(--text-1)] text-right outline-none focus:border-[var(--border)]"
-                        />
-                      </div>
-                    )}
-
-                    {p.type === "boolean" && (
-                      <label className="flex items-center gap-2 cursor-pointer pt-1">
-                        <input
-                          type="checkbox"
-                          checked={currentParams[key] ?? p.value}
-                          onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.checked })}
-                          className="w-4 h-4 accent-[var(--text-1)] cursor-pointer"
-                        />
-                        <span
-                          className={`font-mono text-xs font-bold ${
-                            currentParams[key] ? "text-[var(--profit)]" : "text-[var(--text-3)]"
-                          }`}
-                        >
-                          {currentParams[key] ? "ACTIVADO" : "DESACTIVADO"}
-                        </span>
-                      </label>
-                    )}
-
-                    {p.type === "select" && (
-                      <select
-                        value={currentParams[key] ?? p.value}
-                        onChange={(e) => setCurrentParams({ ...currentParams, [key]: e.target.value })}
-                        className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-1)] px-3 py-1.5 text-xs text-[var(--text-1)] outline-none focus:border-[var(--border)] cursor-pointer"
-                      >
-                        {(p.options || []).map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-
-                    <p className="text-[10px] text-[var(--text-3)]">{p.desc}</p>
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-[var(--text-1)] text-xs font-mono">{t.param}</span>
+                    <p className="text-[11px] text-[var(--text-3)] font-sans">{t.desc}</p>
                   </div>
-                ))}
-              </div>
+                  <span className="font-mono text-xs font-bold text-[var(--profit)] px-2 py-0.5 rounded bg-[var(--surface-3)] border border-[var(--border)] shrink-0 self-start sm:self-auto">
+                    {t.value}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="lg:col-span-5 flex flex-col space-y-4">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-5 shadow-xl backdrop-blur-xl flex flex-col h-full min-h-[580px]">
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-3">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xl">🤖</span>
-                  <div>
-                    <h3 className="font-mono text-xs font-black uppercase text-[var(--text-2)]">
-                      Editor Semántico Agéntico de IA
-                    </h3>
-                    <div className="text-[10px] text-[var(--text-3)]">
-                      Mutación dinámica en lenguaje natural + Firestore Sync
-                    </div>
-                  </div>
-                </div>
-                <span className="rounded-full border border-[var(--profit)] bg-[var(--profit-dim)] px-2 py-0.5 font-mono text-[9px] font-black text-[var(--profit)]">
-                  CLOUD LIVE
+        {/* Columna Derecha: Telemetría Real de la Base de Datos */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 font-mono">
+              <span className="text-xs font-bold text-[var(--text-1)] flex items-center gap-2 font-sans">
+                <Activity className="w-4 h-4 text-[var(--profit)]" />
+                <span>Telemetría de la Puerta en Motor Vigente</span>
+              </span>
+              <span className="text-[10px] text-[var(--text-3)] font-mono">{engineVersion || "v5.18.0"}</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 font-mono">
+              <div className="p-3 rounded bg-[var(--surface-2)] border border-[var(--border)] space-y-1">
+                <span className="text-[10px] text-[var(--text-3)] block uppercase">Certificadas Auditadas</span>
+                <div className="text-xl font-bold text-[var(--text-1)]">{statsGate.total}</div>
+                <span className="text-[10px] text-[var(--text-3)] block">Estrategias en SQLite</span>
+              </div>
+
+              <div className="p-3 rounded bg-[var(--surface-2)] border border-[var(--border)] space-y-1">
+                <span className="text-[10px] text-[var(--text-3)] block uppercase">Tasa de Aprobación</span>
+                <div className="text-xl font-bold text-[var(--profit)]">{statsGate.tasaPaso}%</div>
+                <span className="text-[10px] text-[var(--text-3)] block">
+                  {statsGate.aprobadas} de {statsGate.evaluadas} con evidencia
                 </span>
               </div>
-
-              {/* Directivas Rápidas */}
-              <div className="mb-3">
-                <div className="font-mono text-[10px] font-bold text-[var(--text-2)] mb-1.5">Directivas Rápidas:</div>
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    onClick={() => handleAiSemanticSubmit("Configurar parámetros con rigor estricto para cuenta de Fondeo 50k")}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)] active:scale-95 cursor-pointer"
-                  >
-                    🛡️ Modo Fondeo Estricto
-                  </button>
-                  <button
-                    onClick={() => handleAiSemanticSubmit("Ajustar para Ruta ULTRA con máxima convexidad y apalancamiento adaptativo")}
-                    className="rounded-xl border border-[var(--loss)] bg-[var(--loss-dim)] px-2.5 py-1 font-mono text-[10px] font-bold text-[var(--loss)] transition hover:bg-[var(--loss-dim)] active:scale-95 cursor-pointer"
-                  >
-                    🔥 Modo Ultra Convexo
-                  </button>
-                  <button
-                    onClick={() => handleAiSemanticSubmit("Incrementar el estrés de slippage a 3x y duplicar comisiones")}
-                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] font-bold text-[var(--text-1)] transition hover:bg-[var(--surface-2)] active:scale-95 cursor-pointer"
-                  >
-                    ⚡ Estrés Extremo 3x
-                  </button>
-                </div>
-              </div>
-
-              {/* Chat History */}
-              <div className="flex-1 overflow-y-auto rounded-xl border border-white/[0.06] bg-[var(--bg)] p-3 space-y-2.5 max-h-[380px] shadow-inner font-mono text-xs">
-                {aiChatLog.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`max-w-[90%] rounded-xl p-3 text-xs leading-relaxed ${
-                      msg.role === "user"
-                        ? "ml-auto border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-1)]"
-                        : "border border-white/[0.06] bg-[var(--surface-1)] text-[var(--text-1)]"
-                    }`}
-                  >
-                    <div className="whitespace-pre-line">{msg.text}</div>
-                    {msg.syncInfo && <div className="mt-1.5 text-[9px] text-[var(--profit)] font-bold">{msg.syncInfo}</div>}
-                    <div className="mt-1 text-[9px] text-[var(--text-3)] text-right">{msg.time}</div>
-                  </div>
-                ))}
-                {aiLoading && (
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-3 text-xs text-[var(--text-1)] animate-pulse">
-                    ⏳ El Agente Semántico está recalculando matrices del motor y sincronizando en Firebase...
-                  </div>
-                )}
-              </div>
-
-              {/* Prompt Input Form */}
-              <div className="mt-3 flex gap-2">
-                <input
-                  type="text"
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAiSemanticSubmit()}
-                  placeholder="Escribe una directiva semántica para modificar este Gate..."
-                  disabled={aiLoading}
-                  className="flex-1 rounded-xl border border-white/[0.08] bg-[var(--bg)] px-3 py-2 text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none focus:border-[var(--border)] transition"
-                />
-                <button
-                  onClick={() => handleAiSemanticSubmit()}
-                  disabled={aiLoading || !aiPrompt.trim()}
-                  className="rounded-xl bg-[var(--surface-1)]   px-4 py-2 font-mono text-xs font-bold text-[var(--text-1)] shadow-md transition hover: hover: active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Enviar</span>
-                </button>
-              </div>
             </div>
+
+            <div className="p-3 rounded bg-[var(--surface-2)] border border-[var(--border)] space-y-1 font-sans">
+              <span className="text-[10px] text-[var(--text-3)] uppercase font-semibold font-mono block">
+                Doctrina de Validación Zero-Mocks:
+              </span>
+              <p className="text-[11px] text-[var(--text-2)] leading-relaxed">
+                Ninguna estrategia se marca como aprobada por deducción o estado. Solo se certifica si existe un registro físico en base de datos con veredicto determinista e inmutable.
+              </p>
+            </div>
+          </div>
+
+          {/* Tabla de Estrategias Evaluadas en esta Puerta */}
+          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3 font-sans">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 font-mono">
+              <span className="text-xs font-bold text-[var(--text-1)] flex items-center gap-2">
+                <Database className="w-4 h-4 text-[var(--profit)]" />
+                <span>Auditoría de Estrategias en {currentGate.id}</span>
+              </span>
+              <span className="text-[10px] text-[var(--text-3)]">{auditResultados.length} Registros</span>
+            </div>
+
+            {auditResultados.length === 0 ? (
+              <div className="p-6 text-center text-xs font-mono text-[var(--text-3)]">
+                Sin estrategias certificadas en la base de datos actual.
+              </div>
+            ) : (
+              <div className="space-y-1.5 max-h-[320px] overflow-y-auto pr-1">
+                {auditResultados.map((row) => {
+                  const hasPassed = row.gatePassed === true;
+                  const hasFailed = row.gatePassed === false;
+                  return (
+                    <div
+                      key={row.id}
+                      className="p-2.5 rounded bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between gap-2 font-mono text-xs"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <span className="font-bold text-[var(--text-1)] truncate">{row.name}</span>
+                          <span className="text-[10px] text-[var(--text-3)] shrink-0">
+                            ({row.symbol} · {row.timeframe})
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-[var(--text-3)] truncate mt-0.5">{row.evidenceNote}</p>
+                      </div>
+
+                      <div className="shrink-0">
+                        {hasPassed ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--profit)] px-2 py-0.5 rounded bg-[var(--surface-3)] border border-[var(--border)]">
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>PASA</span>
+                          </span>
+                        ) : hasFailed ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[var(--loss)] px-2 py-0.5 rounded bg-[var(--surface-3)] border border-[var(--border)]">
+                            <XCircle className="w-3 h-3" />
+                            <span>NO PASA</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-[var(--text-3)] px-2 py-0.5 rounded bg-[var(--surface-3)] border border-[var(--border)]">
+                            <span>SIN DATOS</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>

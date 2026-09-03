@@ -182,6 +182,7 @@ app.include_router(research_lab_router, prefix="/api/v2", tags=["v2-research-lab
 app.include_router(job_queue_router, prefix="/api/v2", tags=["v2-jobs"])
 app.include_router(forward_router, prefix="/api/v2", tags=["v2-forward"])
 app.include_router(certified_summary_router, prefix="/api/v2", tags=["v2-certified"])
+app.include_router(candidates_router, prefix="/api/v2", tags=["v2-candidates"])
 app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])
 app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-alias"])
 

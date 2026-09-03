@@ -123,76 +123,73 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[75vh] p-4">
-      <div className="w-full max-w-md bg-[var(--surface-1)] border border-white/[0.12] rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.8)] backdrop-blur-2xl overflow-hidden">
-        {/* Glow Accent */}
-        <div className="h-1 bg-[var(--surface-1)]   " />
-
+    <div className="flex flex-col items-center justify-center min-h-[75vh] p-4 font-sans">
+      <div className="w-full max-w-md bg-[var(--bg)] border border-[var(--border-strong)] rounded-lg shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-white/[0.06] text-center">
-          <div className="w-10 h-10 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] flex items-center justify-center mx-auto mb-3">
-            <ShieldCheck className="w-5 h-5" />
+        <div className="p-5 pb-4 border-b border-[var(--border)] text-center">
+          <div className="w-9 h-9 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] flex items-center justify-center mx-auto mb-2.5">
+            <ShieldCheck className="w-4 h-4" />
           </div>
-          <h1 className="text-lg font-bold text-[var(--text-1)] tracking-tight">
+          <h1 className="text-base font-bold text-[var(--text-1)] tracking-tight">
             Acceso UltraRentable Quant Hub
           </h1>
-          <p className="text-xs text-[var(--text-2)] font-mono mt-1">
+          <p className="text-[11px] text-[var(--text-2)] font-mono mt-0.5">
             Autenticación determinista Firebase v12
           </p>
         </div>
 
         {/* Form */}
-        <div className="p-6 space-y-4">
+        <div className="p-5 space-y-3.5">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-[var(--loss-dim)] border border-[var(--loss)] text-[var(--loss)] text-xs flex items-start gap-2">
+            <div className="p-2.5 rounded-md bg-[var(--loss-dim)] border border-[var(--loss)] text-[var(--loss)] text-xs flex items-start gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[var(--loss)]" />
               <div className="flex-1 font-medium">{errorMessage}</div>
             </div>
           )}
 
           {successMessage && (
-            <div className="p-3 rounded-xl bg-[var(--profit-dim)] border border-[var(--profit)] text-[var(--profit)] text-xs flex items-start gap-2">
+            <div className="p-2.5 rounded-md bg-[var(--profit-dim)] border border-[var(--profit)] text-[var(--profit)] text-xs flex items-start gap-2">
               <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-[var(--profit)]" />
               <div className="flex-1 font-medium">{successMessage}</div>
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-3.5">
+          <form onSubmit={handleLogin} className="space-y-3">
             <div>
-              <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1.5 font-mono">
+              <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1 font-mono">
                 Correo Electrónico
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
+                <Mail className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="trader@quant.com"
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--border)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all"
+                  className="w-full pl-9 pr-3 py-2 bg-[var(--surface-1)] border border-[var(--border)] focus:border-[var(--border-strong)] rounded-md text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1.5 font-mono">
+              <label className="block text-[11px] font-medium text-[var(--text-1)] mb-1 font-mono">
                 Contraseña
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
+                <Lock className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]" />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 bg-[var(--surface-1)] border border-white/[0.08] focus:border-[var(--border)] focus:ring-1 focus:ring-[var(--border-strong)] rounded-xl text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all font-mono"
+                  className="w-full pl-9 pr-9 py-2 bg-[var(--surface-1)] border border-[var(--border)] focus:border-[var(--border-strong)] rounded-md text-xs text-[var(--text-1)] placeholder-[var(--text-3)] outline-none transition-all font-mono"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-3)] hover:text-[var(--text-1)]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-3)] hover:text-[var(--text-1)]"
                 >
                   {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
@@ -202,7 +199,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || googleLoading}
-              className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-1)]   hover: hover: text-[var(--text-1)] text-xs font-bold rounded-xl shadow-lg  disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              className="w-full mt-2 py-2.5 px-4 bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] text-xs font-semibold rounded-md disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -220,11 +217,11 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-white/[0.08]"></div>
+            <div className="flex-grow border-t border-[var(--border)]"></div>
             <span className="flex-shrink mx-3 text-[10px] uppercase font-mono tracking-widest text-[var(--text-3)]">
               o
             </span>
-            <div className="flex-grow border-t border-white/[0.08]"></div>
+            <div className="flex-grow border-t border-[var(--border)]"></div>
           </div>
 
           {/* Google Button */}
@@ -232,7 +229,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || googleLoading}
-            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] hover:border-white/[0.2] text-[var(--text-1)] text-xs font-medium rounded-xl transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 px-4 bg-[var(--surface-2)] hover:bg-[var(--surface-3)] border border-[var(--border)] text-[var(--text-1)] text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
           >
             {googleLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-[var(--text-2)]" />

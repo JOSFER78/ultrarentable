@@ -1,9 +1,8 @@
-import React from "react";
-import GateDetailClient from "./GateDetailClient";
+import { redirect } from "next/navigation";
 
-// Sin generateStaticParams: ALL_GATES vive en un modulo "use client" y en build llega como
-// client-reference (llamar .map() ahi rompe `next build`). La ruta se renderiza bajo demanda.
+// Redirección canónica: las 11 puertas viven en su carpeta física correspondiente (M3 Valoración)
+// /estrategias/valoracion/[slug]
 
-export default function GateDetailPage() {
-  return <GateDetailClient />;
+export default function GateDetailLegacyPage({ params }: { params: { slug: string } }) {
+  redirect(`/estrategias/valoracion/${params.slug}`);
 }

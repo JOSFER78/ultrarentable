@@ -293,6 +293,18 @@ export async function getCandidates(params?: { limit?: number; include_rejected?
 export async function getStrategyLabOverview(): Promise<StrategyLabOverview> { return fetchJson<StrategyLabOverview>("/api/v2/strategy-lab/overview"); }
 export async function getStrategyLabStrategies(limit = 100): Promise<StrategyLabListResponse> { return fetchJson<StrategyLabListResponse>(`/api/v2/strategy-lab/strategies?limit=${encodeURIComponent(limit)}`); }
 export async function getStrategyLabSQXStatus(): Promise<StrategyLabSQXStatus> { return fetchJson<StrategyLabSQXStatus>("/api/v2/strategy-lab/sqx/status"); }
+export interface M1SyncResponse {
+  status: string;
+  celdas_procesadas: number;
+  total_encontradas: number;
+  total_insertadas: number;
+  total_actualizadas: number;
+  total_estrategias_db: number;
+  detalle: Array<{ celda: string; encontradas: number; insertadas: number; actualizadas: number }>;
+}
+export async function syncM1Completed(maxPerCell = 500): Promise<M1SyncResponse> {
+  return fetchJson<M1SyncResponse>(`/api/v2/strategy-lab/sync-m1-completed?max_per_cell=${encodeURIComponent(maxPerCell)}`, { method: "POST" });
+}
 export async function extractStrategyLabProject(projectName: string, databank?: string): Promise<StrategyLabExtractionResult> { if (!projectName.trim()) throw new Error("PROJECT_NAME_REQUIRED"); const qs = databank ? `?databank=${encodeURIComponent(databank)}` : ""; return fetchJson<StrategyLabExtractionResult>(`/api/v2/strategy-lab/extract/${encodeURIComponent(projectName)}${qs}`, { method: "POST" }); }
 export async function getDiscoveryStatus(): Promise<DiscoveryStatus> { return fetchJson<DiscoveryStatus>("/api/v1/discovery/status"); }
 export interface CertificationRecord { strategy_id: string; version: string; strategy_hash: string; dataset_id: string; dataset_checksum_sha256: string; engine_version: string; codebase_fingerprint: string; metrics_snapshot: Record<string, number>; route: string; status: string; scorecard: Record<string, unknown>; certified_at_utc: string; certificate_hash: string; }
@@ -337,6 +349,6 @@ export const api = {
   createAutonomousCampaign: (payload: unknown): Promise<CampaignCreateResponse> => fetchJson<CampaignCreateResponse>("/api/v1/campaigns", { method: "POST", body: JSON.stringify(payload) }),
   startCampaign: (campaignId: string): Promise<unknown> => fetchJson<unknown>(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/start`, { method: "POST" }),
   getExecutionSessions: (): Promise<unknown[]> => fetchJson<unknown[]>("/api/v1/execution/sessions"),
-  getCandidates, getCandidatosCanonicos, getCertifiedStrategies, getCertifiedMetaStrategies, getDiscoveryStatus, getStrategyLabOverview, getStrategyLabStrategies, getStrategyLabSQXStatus, extractStrategyLabProject, getLineageTree, verifyCertificate, runPolicyImpactAnalysis, triggerResearchDebate, synthesizeStrategyMutation, enqueueDurableJob, getDurableJobs, evaluateForwardSufficiency, executeBacktest, getExportCsvUrl, getExportXlsxUrl,
+  getCandidates, getCandidatosCanonicos, getCertifiedStrategies, getCertifiedMetaStrategies, getDiscoveryStatus, getStrategyLabOverview, getStrategyLabStrategies, getStrategyLabSQXStatus, syncM1Completed, extractStrategyLabProject, getLineageTree, verifyCertificate, runPolicyImpactAnalysis, triggerResearchDebate, synthesizeStrategyMutation, enqueueDurableJob, getDurableJobs, evaluateForwardSufficiency, executeBacktest, getExportCsvUrl, getExportXlsxUrl,
 };
 

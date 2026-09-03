@@ -78,7 +78,7 @@ export default function PaginaMejora() {
   }, [cargar]);
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-4 pb-20 text-[var(--text-1)] font-sans">
+    <div className="w-full space-y-3 pb-8 text-[var(--text-1)] font-sans">
       {/* Header Banner */}
       <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-1">
         <div className="flex items-center justify-between">

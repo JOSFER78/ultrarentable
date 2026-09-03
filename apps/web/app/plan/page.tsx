@@ -178,7 +178,7 @@ export default function PlanPage() {
   const agyPendientes = tablero ? tablero.sin_verificar : null;
 
   return (
-    <div className="w-full max-w-[1240px] mx-auto space-y-4 font-sans pb-16">
+    <div className="w-full space-y-3 font-sans pb-8">
       {/* 1. HUD Visual de Telemetría (Erradica el volcado de texto) */}
       <PlanDashboardHUD
         hud={hud}

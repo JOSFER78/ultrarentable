@@ -3,19 +3,20 @@
 /**
  * apps/web/app/estrategias/_bloques/NavBloques.tsx
  *
- * Barra de navegación común a las 4 subpáginas del catálogo de estrategias
- * (Generación · Mejora · Valoración · Meta) más la vuelta a la página maestra.
+ * Barra de navegación común a las 5 subpáginas del catálogo de estrategias
+ * (Generación · Mejora · Valoración · Meta · Candidatos) más la vuelta a la página maestra.
  */
 
 import Link from "next/link";
 
-export type BloqueId = "generacion" | "mejora" | "valoracion" | "meta";
+export type BloqueId = "generacion" | "mejora" | "valoracion" | "meta" | "candidatos";
 
 const BLOQUES: Array<{ id: BloqueId; href: string; label: string }> = [
   { id: "generacion", href: "/estrategias/generacion", label: "1. Generación" },
   { id: "mejora", href: "/estrategias/mejora", label: "2. Mejora" },
   { id: "valoracion", href: "/estrategias/valoracion", label: "3. Valoración" },
-  { id: "meta", href: "/estrategias/meta", label: "4. Meta" },
+  { id: "candidatos", href: "/estrategias/candidatos", label: "4. Candidatos" },
+  { id: "meta", href: "/estrategias/meta", label: "5. Meta-Estrategias" },
 ];
 
 export default function NavBloques({ activo }: { activo: BloqueId }) {

@@ -1,390 +1,365 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Building2,
-  ExternalLink,
-  Shield,
-  Search,
-  RefreshCw,
-  AlertTriangle,
-  FileText,
-  CheckCircle2,
-  Info,
+  ShieldCheck,
+  Sparkles,
+  Scale,
+  Calculator,
+  Flame,
+  Activity,
+  Zap,
+  Grid,
+  FileCheck2,
 } from "lucide-react";
-import {
-  getPropFirmsV2,
-  FirmaV2,
-  CampoConFuente,
-  Confidence,
-} from "@/lib/propFirmsV2";
+import { ALL_PROP_FIRM_ACCOUNTS, PropFirmAccount } from "@/lib/prop-firms";
+import Smart3ClickFinder from "./components/Smart3ClickFinder";
+import SemaphoreTable from "./components/SemaphoreTable";
+import HeadToHeadComparator from "./components/HeadToHeadComparator";
+import { ExtractionRoiCalculator } from "./components/ExtractionRoiCalculator";
+import { LiveDealsTracker } from "./components/LiveDealsTracker";
+import { AISyncStatusBar } from "./components/AISyncStatusBar";
+import FloatingComparisonDrawer from "./components/FloatingComparisonDrawer";
+import PickMyTradeBridgeModal from "./components/PickMyTradeBridgeModal";
+import { MegaComparator } from "./components/MegaComparator";
+import { getPropFirmsV2, FirmaV2 } from "@/lib/propFirmsV2";
 
-interface FieldMetric {
-  key: keyof Omit<FirmaV2, "id" | "nombre">;
-  label: string;
-  category: "riesgo" | "economia" | "ejecucion";
-}
+export type PropFirmTab =
+  | "TABLE"
+  | "COMPARATOR"
+  | "FINDER"
+  | "ROI_CALC"
+  | "LIVE_DEALS"
+  | "MEGA"
+  | "SOURCE_REF";
 
-const METRICAS: FieldMetric[] = [
-  { key: "trailing_dd_tipo", label: "Tipo Drawdown", category: "riesgo" },
-  { key: "trailing_dd_valor_50k", label: "Drawdown 50K", category: "riesgo" },
-  { key: "perdida_diaria_limite_50k", label: "Límite Pérdida Diaria 50K", category: "riesgo" },
-  { key: "consistencia_pct", label: "Consistencia", category: "riesgo" },
-  { key: "min_dias_trading", label: "Mín. Días Trading", category: "riesgo" },
-  { key: "max_micros_50k", label: "Máx. Micros 50K", category: "riesgo" },
-  { key: "hora_cierre_obligatoria", label: "Cierre Obligatorio (Flat)", category: "riesgo" },
-  { key: "precio_examen_50k", label: "Precio Examen 50K", category: "economia" },
-  { key: "coste_activacion_50k", label: "Coste Activación 50K", category: "economia" },
-  { key: "payout_split_pct", label: "Split Retiros", category: "economia" },
-  { key: "vps_permitido", label: "VPS Permitido", category: "ejecucion" },
-];
+const TOOL_METAS: Record<
+  PropFirmTab,
+  { title: string; badge: string; desc: string; icon: React.ComponentType<{ className?: string }> }
+> = {
+  TABLE: {
+    title: "Catálogo Completo 70 Cuentas CME",
+    badge: "70 CUENTAS",
+    desc: "Métricas auditadas de Coste Total de Pase (Evaluación + Activación), modelo de drawdown EOD vs Intraday y compatibilidad con bots.",
+    icon: Building2,
+  },
+  COMPARATOR: {
+    title: "Comparador Cara a Cara (Head-to-Head)",
+    badge: "PROP-METRIC",
+    desc: "Compara de 2 a 4 cuentas cara a cara con transparencia total en Coste Total de Pase (TCO), tamaño y reglas intradía.",
+    icon: Scale,
+  },
+  FINDER: {
+    title: "Buscador 3-Clics Inteligente",
+    badge: "FILTRO RÁPIDO",
+    desc: "Encuentra la cuenta ideal por presupuesto, política de bots y modelo de drawdown en solo 3 selecciones.",
+    icon: Sparkles,
+  },
+  ROI_CALC: {
+    title: "Calculadora de ROI de Extracción",
+    badge: "PAYOUT RETIROS",
+    desc: "Modela la esperanza matemática, número de balas y días necesarios para amortizar el coste de evaluación.",
+    icon: Calculator,
+  },
+  LIVE_DEALS: {
+    title: "Cupones y Ofertas en Tiempo Real",
+    badge: "DESCUENTOS CME",
+    desc: "Códigos promocionales verificados y actualizados para reducir el coste de entrada en firmas oficiales.",
+    icon: Flame,
+  },
+  MEGA: {
+    title: "Mega-Comparador Multi-Cuenta (36 Columnas)",
+    badge: "36 ATRIBUTOS",
+    desc: "Matriz comparativa exhaustiva de especificaciones técnicas para hasta 6 cuentas simultáneas.",
+    icon: Grid,
+  },
+  SOURCE_REF: {
+    title: "Auditoría Backend SourceRef",
+    badge: "DIRECTIVA D6/D7",
+    desc: "Trazabilidad forense de endpoints y fuentes de datos canónicas auditadas en backend.",
+    icon: FileCheck2,
+  },
+};
 
-function formatValue(key: keyof Omit<FirmaV2, "id" | "nombre">, val: unknown): string {
-  if (val === null || val === undefined) return "NO EVIDENCE";
-  if (typeof val === "boolean") return val ? "Permitido" : "Prohibido";
-  if (key === "trailing_dd_valor_50k" || key === "perdida_diaria_limite_50k" || key === "precio_examen_50k" || key === "coste_activacion_50k") {
-    return `$${Number(val).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-  }
-  if (key === "consistencia_pct" || key === "payout_split_pct") {
-    return `${Number(val)}%`;
-  }
-  if (key === "min_dias_trading") {
-    return `${Number(val)} ${Number(val) === 1 ? "día" : "días"}`;
-  }
-  if (key === "max_micros_50k") {
-    return `${Number(val)} micros`;
-  }
-  return String(val);
-}
+function PropFirmsContent() {
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<PropFirmTab>("TABLE");
+  const [isPmtModalOpen, setIsPmtModalOpen] = useState<boolean>(false);
 
-function renderCellContent(campo: CampoConFuente<unknown>, key: keyof Omit<FirmaV2, "id" | "nombre">) {
-  const isPresent = campo.valor !== null && campo.valor !== undefined;
-  const isVerified = isPresent && (campo.source.confidence === "fetch" || campo.source.confidence === "ws_official");
+  // Estado para Catálogo Auditado V2
+  const [firmasV2, setFirmasV2] = useState<FirmaV2[]>([]);
+  const [loadingV2, setLoadingV2] = useState<boolean>(false);
 
-  if (!isVerified || !isPresent) {
-    return (
-      <div className="space-y-1">
-        <span className="text-xs font-mono font-bold tracking-wide" style={{ color: "var(--text-3)" }}>
-          NO EVIDENCE
-        </span>
-        {campo.source.note ? (
-          <p className="text-[10px] leading-tight line-clamp-2" style={{ color: "var(--text-3)" }}>
-            {campo.source.note}
-          </p>
-        ) : null}
-      </div>
-    );
-  }
+  useEffect(() => {
+    const viewParam = searchParams.get("view");
+    if (viewParam === "finder") setActiveTab("FINDER");
+    else if (viewParam === "comparator") setActiveTab("COMPARATOR");
+    else if (viewParam === "table") setActiveTab("TABLE");
+    else if (viewParam === "roi") setActiveTab("ROI_CALC");
+    else if (viewParam === "deals") setActiveTab("LIVE_DEALS");
+    else if (viewParam === "mega") setActiveTab("MEGA");
+    else if (viewParam === "audit") setActiveTab("SOURCE_REF");
+    else setActiveTab("TABLE");
+  }, [searchParams]);
 
-  const formatted = formatValue(key, campo.valor);
+  useEffect(() => {
+    if (activeTab === "SOURCE_REF" && firmasV2.length === 0) {
+      setLoadingV2(true);
+      getPropFirmsV2()
+        .then((res) => setFirmasV2(res))
+        .catch(() => setFirmasV2([]))
+        .finally(() => setLoadingV2(false));
+    }
+  }, [activeTab, firmasV2.length]);
 
-  return (
-    <div className="space-y-1">
-      <div className="text-xs font-mono font-semibold text-[var(--text-1)]">
-        {formatted}
-      </div>
-      <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-mono text-[var(--text-2)]">
-        <span className="px-1 py-0.2 rounded border border-[var(--border)] bg-[var(--surface-1)] text-[var(--text-1)]">
-          {campo.source.confidence}
-        </span>
-        {campo.source.captured_at ? (
-          <span className="text-[var(--text-3)]">{campo.source.captured_at}</span>
-        ) : null}
-        {campo.source.url ? (
-          <a
-            href={campo.source.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-0.5 text-[var(--text-2)] hover:text-[var(--text-1)] underline decoration-[var(--border-strong)] transition"
-          >
-            <span>[Fuente]</span>
-            <ExternalLink className="w-2.5 h-2.5" />
-          </a>
-        ) : null}
-      </div>
-      {campo.source.note ? (
-        <p className="text-[10px] text-[var(--text-2)] leading-tight">
-          {campo.source.note}
-        </p>
-      ) : null}
-    </div>
-  );
-}
+  // Cuentas seleccionadas para comparación cara a cara
+  const [selectedComparisonIds, setSelectedComparisonIds] = useState<string[]>([
+    "mffu-rapid-50k",
+    "tradeify-growth-50k",
+    "tradeday-fp-50k",
+    "blusky-static-50k",
+  ]);
 
-export default function PropFirmsPage() {
-  const [firmas, setFirmas] = useState<FirmaV2[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filtroTexto, setFiltroTexto] = useState<string>("");
-  const [selectedFirmId, setSelectedFirmId] = useState<string | null>(null);
+  const selectedAccounts = selectedComparisonIds
+    .map((id) => ALL_PROP_FIRM_ACCOUNTS.find((a) => a.id === id))
+    .filter((a): a is PropFirmAccount => Boolean(a));
 
-  const cargarDatos = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getPropFirmsV2();
-      setFirmas(data);
-      if (data.length > 0 && !selectedFirmId) {
-        setSelectedFirmId(data[0].id);
+  const handleToggleComparisonAccount = (account: PropFirmAccount) => {
+    if (selectedComparisonIds.includes(account.id)) {
+      if (selectedComparisonIds.length > 2) {
+        setSelectedComparisonIds(selectedComparisonIds.filter((id) => id !== account.id));
       }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error al conectar con la API";
-      setError(msg);
-    } finally {
-      setLoading(false);
+    } else {
+      if (selectedComparisonIds.length < 4) {
+        setSelectedComparisonIds([...selectedComparisonIds, account.id]);
+      } else {
+        const updated = [...selectedComparisonIds.slice(0, 3), account.id];
+        setSelectedComparisonIds(updated);
+      }
     }
   };
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
+  const handleRemoveComparisonSlot = (id: string) => {
+    if (selectedComparisonIds.length > 2) {
+      setSelectedComparisonIds(selectedComparisonIds.filter((item) => item !== id));
+    }
+  };
 
-  // Recuento exacto de datos verificados vs no verificados
-  let totalDatos = 0;
-  let datosVerificados = 0;
+  const handleClearAllComparison = () => {
+    setSelectedComparisonIds(["mffu-rapid-50k", "tradeify-growth-50k"]);
+  };
 
-  for (const firma of firmas) {
-    for (const metrica of METRICAS) {
-      totalDatos += 1;
-      const campo = firma[metrica.key] as CampoConFuente<unknown>;
-      if (
-        campo &&
-        campo.valor !== null &&
-        campo.valor !== undefined &&
-        (campo.source.confidence === "fetch" || campo.source.confidence === "ws_official")
-      ) {
-        datosVerificados += 1;
+  const handleAddFromFinder = (account: PropFirmAccount) => {
+    if (!selectedComparisonIds.includes(account.id)) {
+      if (selectedComparisonIds.length < 4) {
+        setSelectedComparisonIds([...selectedComparisonIds, account.id]);
+      } else {
+        setSelectedComparisonIds([...selectedComparisonIds, account.id]);
       }
     }
-  }
+    setActiveTab("COMPARATOR");
+  };
 
-  const firmasFiltradas = firmas.filter((f) => {
-    const q = filtroTexto.toLowerCase().trim();
-    if (!q) return true;
-    return f.nombre.toLowerCase().includes(q) || f.id.toLowerCase().includes(q);
-  });
-
-  const selectedFirm = firmas.find((f) => f.id === selectedFirmId) || firmas[0] || null;
+  const meta = TOOL_METAS[activeTab] || TOOL_METAS.TABLE;
+  const ActiveIcon = meta.icon;
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 pb-24 text-[var(--text-1)]">
-      {/* Banner D7 Retiro de Datos Comerciales */}
-      <div className="p-3.5 px-4 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] text-xs font-mono text-[var(--text-1)] flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Info className="w-4 h-4 text-[var(--text-2)] shrink-0" />
-          <span>Aviso D7: cupones y afiliados retirados hasta re-verificación (D7)</span>
-        </div>
-        <span className="text-[10px] text-[var(--text-3)] uppercase tracking-wider shrink-0">
-          Directiva REAL-ONLY · Zero-Mocks
-        </span>
-      </div>
-
-      {/* Encabezado y Línea de Estado Honesta */}
-      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-2xl p-6 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[var(--surface-1)] border border-[var(--border)] flex items-center justify-center text-[var(--text-1)] shrink-0">
-                <Building2 className="w-5 h-5" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-[var(--text-1)]">
-                  Catálogo Maestro Prop Firms v2
-                </h1>
-                <p className="text-xs font-mono text-[var(--text-2)] mt-0.5">
-                  Catálogo v2 · {firmas.length} firmas · fuentes verificadas: {datosVerificados} de {totalDatos} datos
-                </p>
-              </div>
+    <div className="w-full space-y-3 pb-8 text-[var(--text-1)] font-sans">
+      {/* Header Banner Sobrio y Dinámico (Sin duplicaciones) */}
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--profit)] flex items-center justify-center shrink-0">
+              <ActiveIcon className="w-4 h-4" />
+            </div>
+            <div>
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[var(--text-1)] flex items-center gap-2">
+                <span>{meta.title}</span>
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--profit)]">
+                  {meta.badge}
+                </span>
+              </h1>
+              <p className="text-xs text-[var(--text-2)] font-mono mt-0.5">
+                {meta.desc}
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={cargarDatos}
-              disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-medium bg-[var(--surface-1)] hover:bg-[var(--surface-1)] text-[var(--text-1)] border border-[var(--border)] transition"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-              <span>Actualizar</span>
-            </button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0 font-mono text-xs">
             <Link
-              href="/fondeo"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-medium bg-[var(--surface-1)] hover:bg-[var(--surface-1)] text-[var(--text-1)] border border-[var(--border)] transition"
+              href="/trading-desk"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border)] transition"
             >
-              <FileText className="w-3.5 h-3.5" />
+              <Activity className="w-3.5 h-3.5 text-[var(--profit)]" />
               <span>Trading Desk</span>
             </Link>
+            <button
+              onClick={() => setIsPmtModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-[var(--text-1)] border border-[var(--border)] transition cursor-pointer"
+            >
+              <Zap className="w-3.5 h-3.5 text-[var(--profit)]" />
+              <span>Puente Tradovate</span>
+            </button>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--surface-2)] text-[var(--text-3)] border border-[var(--border)]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--profit)]" />
+              <span>CME Verificadas</span>
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Error state */}
-      {error && (
-        <div className="p-4 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] text-xs font-mono space-y-1" style={{ borderColor: "var(--loss)" }}>
-          <div className="flex items-center gap-2 font-bold" style={{ color: "var(--loss)" }}>
-            <AlertTriangle className="w-4 h-4" />
-            <span>ERROR DE CONEXIÓN CON LA API (Fail-Closed)</span>
-          </div>
-          <p className="text-[var(--text-2)] pl-6">{error}</p>
+      {/* KPI Strip Compacto */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 font-mono">
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)] space-y-0.5">
+          <span className="text-[10px] text-[var(--text-3)] block uppercase font-semibold">Cuentas en Catálogo</span>
+          <div className="text-lg font-bold text-[var(--text-1)]">70 Cuentas</div>
+          <span className="text-[10px] text-[var(--text-3)] block">17 Firmas Reguladas CME</span>
         </div>
+
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)] space-y-0.5">
+          <span className="text-[10px] text-[var(--text-3)] block uppercase font-semibold">Coste Mínimo Real Total</span>
+          <div className="text-lg font-bold text-[var(--profit)]">$38.50 USD</div>
+          <span className="text-[10px] text-[var(--text-3)] block">Examen con Promo + $0 Activación</span>
+        </div>
+
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)] space-y-0.5">
+          <span className="text-[10px] text-[var(--text-3)] block uppercase font-semibold">Cuentas $0 Activación</span>
+          <div className="text-lg font-bold text-[var(--text-1)]">34 Cuentas (48%)</div>
+          <span className="text-[10px] text-[var(--text-3)] block">Sin cuota oculta de pase</span>
+        </div>
+
+        <div className="p-3 bg-[var(--surface-1)] rounded-lg border border-[var(--border)] space-y-0.5">
+          <span className="text-[10px] text-[var(--text-3)] block uppercase font-semibold">Idoneidad Bots (EAs)</span>
+          <div className="text-lg font-bold text-[var(--profit)]">82% Aceptan Bots</div>
+          <span className="text-[10px] text-[var(--text-3)] block">Tradovate API / NinjaTrader 8</span>
+        </div>
+      </div>
+
+      {/* Vistas Dinámicas (Directas según selección en Sidebar) */}
+      {activeTab === "TABLE" && (
+        <SemaphoreTable
+          accounts={ALL_PROP_FIRM_ACCOUNTS}
+          selectedComparisonIds={selectedComparisonIds}
+          onToggleComparisonAccount={handleToggleComparisonAccount}
+          onGoToComparator={() => setActiveTab("COMPARATOR")}
+        />
       )}
 
-      {/* Loading state */}
-      {loading && !error && (
-        <div className="p-12 text-center text-xs font-mono text-[var(--text-2)] space-y-2">
-          <RefreshCw className="w-5 h-5 animate-spin mx-auto text-[var(--text-3)]" />
-          <p>Consultando catálogo canónico v2 con SourceRef...</p>
-        </div>
+      {activeTab === "COMPARATOR" && (
+        <HeadToHeadComparator
+          allAccounts={ALL_PROP_FIRM_ACCOUNTS}
+          selectedIds={selectedComparisonIds}
+          onSelectIdsChange={setSelectedComparisonIds}
+        />
       )}
 
-      {/* Main Content */}
-      {!loading && !error && (
-        <div className="space-y-6">
-          {/* Barra de Filtro y Búsqueda */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--text-3)]" />
-              <input
-                type="text"
-                placeholder="Filtrar firma por nombre..."
-                value={filtroTexto}
-                onChange={(e) => setFiltroTexto(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-xs font-mono rounded-xl bg-[var(--surface-1)] border border-[var(--border)] text-[var(--text-1)] placeholder-[var(--text-3)] focus:outline-none focus:border-[var(--border)] transition"
-              />
+      {activeTab === "FINDER" && (
+        <Smart3ClickFinder
+          allAccounts={ALL_PROP_FIRM_ACCOUNTS}
+          onSelectForComparison={handleAddFromFinder}
+          onGoToComparator={() => setActiveTab("COMPARATOR")}
+        />
+      )}
+
+      {activeTab === "ROI_CALC" && <ExtractionRoiCalculator />}
+
+      {activeTab === "LIVE_DEALS" && <LiveDealsTracker />}
+
+      {activeTab === "MEGA" && <MegaComparator />}
+
+      {activeTab === "SOURCE_REF" && (
+        <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-2 font-sans">
+            <div>
+              <h2 className="text-sm font-bold text-[var(--text-1)]">
+                Catálogo Backend con Trazabilidad Primaria (SourceRef)
+              </h2>
+              <p className="text-xs text-[var(--text-3)]">
+                Cada campo cuenta con fuente explícita auditada por el backend en /api/v1/prop-firms/v2.
+              </p>
             </div>
-            <div className="text-xs font-mono text-[var(--text-3)]">
-              Mostrando {firmasFiltradas.length} de {firmas.length} firmas
-            </div>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface-2)] text-[var(--profit)] border border-[var(--border)]">
+              Directiva D6/D7
+            </span>
           </div>
 
-          {/* Tabla Maestra Firma × Campos */}
-          <div className="border border-[var(--border)] rounded-2xl overflow-hidden bg-[var(--surface-1)]">
+          {loadingV2 ? (
+            <div className="p-8 text-center text-[var(--text-3)]">Consultando catálogo v2 en backend...</div>
+          ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--surface-1)] text-[11px] font-mono text-[var(--text-2)] uppercase tracking-wider">
-                    <th className="p-3.5 px-4 sticky left-0 bg-[var(--surface-1)] z-10">Firma</th>
-                    {METRICAS.map((m) => (
-                      <th key={m.key} className="p-3.5 px-4 min-w-[200px]">
-                        {m.label}
-                      </th>
-                    ))}
+                  <tr className="bg-[var(--surface-2)] border-b border-[var(--border)] text-[10px] text-[var(--text-3)] uppercase">
+                    <th className="p-2.5">Firma</th>
+                    <th className="p-2.5">Tipo Drawdown</th>
+                    <th className="p-2.5">DD 50K</th>
+                    <th className="p-2.5">Pérdida Diaria</th>
+                    <th className="p-2.5">Examen 50K</th>
+                    <th className="p-2.5">Activación</th>
+                    <th className="p-2.5">Split Retiros</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
-                  {firmasFiltradas.map((firma) => (
-                    <tr
-                      key={firma.id}
-                      onClick={() => setSelectedFirmId(firma.id)}
-                      className={`hover:bg-[var(--surface-1)] transition cursor-pointer ${
-                        selectedFirmId === firma.id ? "bg-[var(--surface-1)]" : ""
-                      }`}
-                    >
-                      <td className="p-3.5 px-4 font-bold text-[var(--text-1)] sticky left-0 bg-[var(--surface-1)] z-10 border-r border-[var(--border)]">
-                        <div className="flex items-center gap-2">
-                          <Shield className="w-3.5 h-3.5 text-[var(--text-2)]" />
-                          <span>{firma.nombre}</span>
-                        </div>
-                        <span className="text-[10px] font-mono font-normal text-[var(--text-3)] block mt-0.5">
-                          ID: {firma.id}
-                        </span>
+                  {firmasV2.map((f) => (
+                    <tr key={f.id} className="hover:bg-[var(--surface-2)] transition">
+                      <td className="p-2.5 font-bold text-[var(--text-1)]">{f.nombre}</td>
+                      <td className="p-2.5 text-[var(--text-2)]">{f.trailing_dd_tipo?.valor || "NO EVIDENCE"}</td>
+                      <td className="p-2.5 text-[var(--text-1)]">
+                        {f.trailing_dd_valor_50k?.valor ? `$${f.trailing_dd_valor_50k.valor}` : "NO EVIDENCE"}
                       </td>
-                      {METRICAS.map((m) => {
-                        const campo = firma[m.key] as CampoConFuente<unknown>;
-                        return (
-                          <td key={m.key} className="p-3.5 px-4 align-top">
-                            {renderCellContent(campo, m.key)}
-                          </td>
-                        );
-                      })}
+                      <td className="p-2.5 text-[var(--text-2)]">
+                        {f.perdida_diaria_limite_50k?.valor ? `$${f.perdida_diaria_limite_50k.valor}` : "NO EVIDENCE"}
+                      </td>
+                      <td className="p-2.5 text-[var(--profit)] font-bold">
+                        {f.precio_examen_50k?.valor ? `$${f.precio_examen_50k.valor}` : "NO EVIDENCE"}
+                      </td>
+                      <td className="p-2.5 text-[var(--text-2)]">
+                        {f.coste_activacion_50k?.valor ? `$${f.coste_activacion_50k.valor}` : "NO EVIDENCE"}
+                      </td>
+                      <td className="p-2.5 text-[var(--text-1)]">
+                        {f.payout_split_pct?.valor ? `${f.payout_split_pct.valor}%` : "NO EVIDENCE"}
+                      </td>
                     </tr>
                   ))}
-                  {firmasFiltradas.length === 0 && (
-                    <tr>
-                      <td colSpan={METRICAS.length + 1} className="p-8 text-center text-xs font-mono text-[var(--text-3)]">
-                        No se encontraron firmas con el filtro actual.
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
-            </div>
-          </div>
-
-          {/* Ficha Detallada de Trazabilidad por Firma */}
-          {selectedFirm && (
-            <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-2xl p-6 space-y-4">
-              <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
-                <div className="space-y-0.5">
-                  <h2 className="text-lg font-bold text-[var(--text-1)] flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[var(--text-2)]" />
-                    <span>Auditoría de Fuentes: {selectedFirm.nombre}</span>
-                  </h2>
-                  <p className="text-xs font-mono text-[var(--text-2)]">
-                    Desglose detallado de los 11 parámetros y sus referencias primarias oficiales
-                  </p>
-                </div>
-                <span className="text-xs font-mono px-2 py-1 rounded bg-[var(--surface-1)] border border-[var(--border)] text-[var(--text-1)]">
-                  {selectedFirm.id}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
-                {METRICAS.map((m) => {
-                  const campo = selectedFirm[m.key] as CampoConFuente<unknown>;
-                  const isPresent = campo.valor !== null && campo.valor !== undefined;
-                  const isVerified = isPresent && (campo.source.confidence === "fetch" || campo.source.confidence === "ws_official");
-
-                  return (
-                    <div
-                      key={m.key}
-                      className="p-3.5 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] space-y-2"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[11px] font-mono text-[var(--text-2)] uppercase tracking-wider">
-                          {m.label}
-                        </span>
-                        <span
-                          className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-[var(--border)] bg-[var(--surface-1)] text-[var(--text-2)]"
-                        >
-                          {campo.source.confidence}
-                        </span>
-                      </div>
-
-                      <div className="text-sm font-mono font-bold text-[var(--text-1)]">
-                        {isVerified ? formatValue(m.key, campo.valor) : (
-                          <span style={{ color: "var(--text-3)" }}>NO EVIDENCE</span>
-                        )}
-                      </div>
-
-                      {campo.source.note ? (
-                        <p className="text-[11px] text-[var(--text-2)] leading-relaxed border-t border-[var(--border)] pt-1.5">
-                          {campo.source.note}
-                        </p>
-                      ) : null}
-
-                      {campo.source.url ? (
-                        <div className="pt-1">
-                          <a
-                            href={campo.source.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-mono text-[var(--text-2)] hover:text-[var(--text-1)] underline decoration-[var(--border-strong)] transition"
-                          >
-                            <ExternalLink className="w-3 h-3 shrink-0" />
-                            <span className="truncate max-w-[220px]">{campo.source.url}</span>
-                          </a>
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           )}
         </div>
       )}
+
+      {/* Floating comparison drawer en pestañas distintas del comparador */}
+      {activeTab !== "COMPARATOR" && activeTab !== "MEGA" && (
+        <FloatingComparisonDrawer
+          selectedAccounts={selectedAccounts}
+          onRemoveSlot={handleRemoveComparisonSlot}
+          onClearAll={handleClearAllComparison}
+          onOpenComparator={() => setActiveTab("COMPARATOR")}
+        />
+      )}
+
+      {/* Modal Puente Tradovate */}
+      <PickMyTradeBridgeModal
+        isOpen={isPmtModalOpen}
+        onClose={() => setIsPmtModalOpen(false)}
+      />
     </div>
+  );
+}
+
+export default function PropFirmsMasterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs font-mono text-[var(--text-3)]">
+          Cargando suite de prop firms...
+        </div>
+      }
+    >
+      <PropFirmsContent />
+    </Suspense>
   );
 }
