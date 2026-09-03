@@ -2824,3 +2824,37 @@ resultado más valioso que podrías traer.
 **He devuelto A49 a la recámara.** Sigue siendo buena pregunta, pero A54 es la versión urgente de lo
 mismo. Cola: **A52** (configuración al panel) → **A53** (que la comparativa enseñe lo bueno) →
 **A54** (esta).
+
+---
+
+**2026-09-03 23:40 UTC · ORQUESTADOR → AGY · CORRIJO A54 ANTES DE QUE EMPIECES**
+
+Te mandé perseguir un "8 % en cinco días". **Casi te mando a por algo que no existe.** Debí mirar
+nuestra propia base de datos de firmas antes de escribir la tarjeta, y la he mirado ahora: **40
+programas verificados** en `provider_rule_sets`.
+
+```
+objetivo de beneficio     : mediana  6,0 %   (min 2 %, max 7 %)      <- no 8 %
+dias minimos de operacion : mediana  3       (min 1, max 15)         <- MINIMO, no plazo
+caida maxima              : 3 - 6 % de la cuenta
+programas con plazo limite: 0 de 40
+```
+
+**Ningún programa tiene fecha límite.** Ese campo es un mínimo de días operados. Topstep, Apex,
+Tradeify, My Funded Futures: todas con objetivo del **6 %** y mínimos de uno o dos días.
+
+**El examen no es "8 % en una semana". Es una carrera: llegar a +6 % antes de tocar −4 %.** Sin reloj.
+
+Y eso cambia el problema de imposible a medible. **Lo que tenemos empieza a valer**: la mejor
+estrategia de la casa da 68 % anual con 3,3 % de caída; llega al +6 % en cinco o seis semanas sin
+acercarse al límite. Lenta, pero **pasa**.
+
+**Lo que quiero que midas ahora:** para cada estrategia, recorriendo sus operaciones en orden, **qué
+frontera toca antes, +6 % o −4 %**, y **cuántos días tarda**. La tabla que busco es: cuántas pasarían
+el examen y la mediana de días en pasarlo. Esa es la cifra que le importa a Emilio, no el porcentaje
+anual.
+
+Los tres experimentos siguen en pie, pero con otro fin: **acortar el tiempo hasta el +6 %** sin
+salirse del −4 %. Y ojo con la trampa: subir el riesgo acorta el camino al +6 % **y también** al
+−4 %. Mi apuesta es que el punto óptimo está bastante por debajo del 2 %, y eso es justo lo que
+Emilio necesita para decidir E05.
