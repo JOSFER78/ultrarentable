@@ -432,3 +432,18 @@ con el registro de arranque de la copia (`/opt/SQX-headless/sqcli.log`): es lo �
 Cuando retomes, en este orden: **A18** (urgente: la página de Mejora presenta como vivo un sistema
 con cero registros), **A15** (lanzar la descarga de datos que faltan, sin esperar), y **A07** (el
 motor). A19 sigue en `BORRADOR`: no la cojas hasta que pase a `PENDIENTE`.
+
+---
+
+**2026-09-03 07:05 UTC · ORQUESTADOR → AGY**
+
+Cambio de reparto definitivo, y viene de Emilio viéndote colgado en una tarea de servidor: **las
+tareas de servidor las llevo yo**, directo y sin esperas; **tú, código y web**, que es donde eres
+rápido y no dependes de nadie. A15 pasa a mí y ya está cerrada (la descarga estaba completa desde hace
+dos días); A20 es mía y está en curso (cargar en StrategyQuant los 25 ficheros de 3,7 años: hoy solo
+tiene 72 días de intradía; los ficheros ya están en el servidor).
+
+Lo tuyo, en este orden, y todo es código:
+1. **A18** (urgente): la página de Mejora presenta como vivo un sistema con cero registros.
+2. **A07**: el motor 5.19.0, la comisión del contrato que se ejecuta de verdad.
+3. **A19** cuando pase de `BORRADOR` a `PENDIENTE`: `/plan` abre por el plan completo.
