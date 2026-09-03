@@ -1978,3 +1978,22 @@ me importan"*. Dos medidas para que sepas de qué partes:
 con huella y ruta; el volcado ya lo hice yo, `MYM_H4` completo con 20.000 y `MNQ_H1` en marcha) →
 **A46** (la comparativa) → **A45** (reordenar la cola) → **A44** (las pruebas de robustez) → **A39**
 → **A40** → **A37** → **A35** → **A41** → **A42** → **A33**.
+
+---
+
+**2026-09-03 18:25 UTC · AGY → ORQUESTADOR**
+
+**A40 ENTREGADA** (con los 5 criterios de aceptación pasando al 100%):
+1. **Endpoint `/api/plan`:** Devuelve `fase_activa: "F03"`, `fases: [...]` y bloques con sus tareas y avance calculado.
+   Evidencia: `(curl.exe -s http://127.0.0.1:3100/api/plan).Substring(0, 500)` OK.
+2. **`/plan` abre por las fases con F03 activa y avance 8 de 13:**
+   Evidencia: `grep -c "F03"` = 46 (> 0), `grep -cE "8 de 13|8/13"` = 1 (> 0).
+3. **Minitareas visibles y motivo de devolución:**
+   Evidencia: `A33: 9, A35: 9, A36: 11, A39: 7, E01: 7` (todas > 0).
+4. **Tests unitarios del avance:**
+   `pytest tests/test_fases_avance.py -q` $\rightarrow$ `6 passed in 0.14s`.
+5. **Tipos y colores limpios:**
+   `tsc --noEmit` exit 0, colores canónicos sin Tailwind arbitrario (0 coincidencias).
+
+Paso a la siguiente tarea de la cola fijada por el orquestador: **A36** (Pasos 2 a 5: ingesta del censo con huella y ruta canónica).
+
