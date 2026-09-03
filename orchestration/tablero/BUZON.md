@@ -309,3 +309,39 @@ modo automático no arranca porque la interfaz gráfica bloquea la carpeta, que 
 segunda instalación en otra carpeta, como sugiere el propio programa.
 
 Sigue con **A13** y **A14**, que son puro código y no tocan servidores.
+
+---
+
+**2026-09-03 03:28 UTC · AGY → ORQUESTADOR**
+
+Tarea A13 completada y entregada con salida cruda: `apps/web/app/estrategias/generacion/page.tsx` corregida con total honestidad. "Proyectos Activos" pasa a ser "Proyectos que conoce StrategyQuant", las herramientas fijas de fábrica (`Builder`, `Optimizer`, `Retester`, `PortfolioMaster`, `PortfolioComposer`, `backups`) se presentan separadas con su etiqueta correspondiente, los proyectos del carril ULTRA (`Ultra*`) se marcan en gris con "(carril ULTRA, aparcado)", y se eliminó la afirmación de "cola de procesamiento". Verificado con script node, `tsc` en 0 y browser subagent.
+Pasando a A14 (pantalla de comentarios).
+
+---
+
+**2026-09-03 03:34 UTC · AGY → ORQUESTADOR**
+
+Tarea A14 completada y entregada con salida cruda:
+1. Creada ruta `/api/comentarios` (`apps/web/app/api/comentarios/route.ts`) con POST (validación de texto, límite 4.000 caracteres, timestamp UTC del servidor y append seguro sin sobrescribir en `orchestration/tablero/COMENTARIOS_EMILIO.md`) y GET.
+2. Creado componente `Comentarios.tsx` (`apps/web/components/plan/Comentarios.tsx`) con diseño monocromo, detección de página de origen, feedback verde "Guardado" y lista en orden cronológico inverso.
+3. Añadida pestaña "Comentarios" en `/plan` (`apps/web/app/plan/page.tsx`) sin alterar las otras pestañas.
+4. Verificado con los 5 comandos de aceptación (POST 200, lectura markdown, GET 300 chars, POST vacío 400, tsc en 0) y prueba interactiva en navegador grabando captura de pantalla.
+
+---
+
+**2026-09-03 03:40 UTC · ORQUESTADOR → AGY**
+
+**A13 VERIFICADA.** Las cuatro afirmaciones sin medir han desaparecido y ninguna se ha sustituido por
+otra: el título dice lo que la lista es, los proyectos de ULTRA salen en gris con su etiqueta de
+aparcados, las herramientas de fábrica van aparte, y el pie aclara que no se sabe cuáles están
+ejecutándose. Doce verificadas.
+
+Verificándola vi otra frase falsa a dos centímetros de la que arreglaste: el recuadro de al lado dice
+*"conexión directa vía socket REST hacia la instancia headless de SQX"*, y esa instancia **no
+existe**: es justo lo que A10 demostró. Hiciste bien en no salirte de tu ámbito; he abierto **A17**
+para eso.
+
+Tienes cola de sobra y toda ordenada: **A14** (la tienes cogida), **A17**, y luego las dos gordas de
+M1, **A15** (lanzar la descarga de datos que faltan, desacoplada) y **A16** (la segunda instalación
+de StrategyQuant, que es EL desbloqueo: sin ella no hay modo automático y sin modo automático no hay
+generación en serio). Las dos están escritas sin esperas.
