@@ -128,9 +128,18 @@ def guardar_proveedor(payload: IAConfigGuardar) -> IAConfigPublica:
     )
 
 
+def _resolver_url_chat(endpoint: str) -> str:
+    ep = endpoint.rstrip("/")
+    if "/chat/completions" in ep:
+        return ep
+    if ep.endswith("/v1"):
+        return f"{ep}/chat/completions"
+    return f"{ep}/v1/chat/completions"
+
+
 @router.post("/probar", response_model=IAProbarResponse)
 def probar_proveedor() -> IAProbarResponse:
-    """Realiza una petición real al endpoint configurado y devuelve el código HTTP y las primeras líneas."""
+    """Realiza una llamada real de prueba (prompt 'ping') al endpoint configurado y devuelve el código HTTP y respuesta."""
     cfg = _leer_config_disco()
     if not cfg or not cfg.get("endpoint"):
         return IAProbarResponse(
@@ -139,28 +148,50 @@ def probar_proveedor() -> IAProbarResponse:
             detalle="No hay proveedor de IA configurado en el servidor.",
         )
 
-    endpoint = cfg["endpoint"].rstrip("/")
+    endpoint = cfg["endpoint"].strip()
     api_key = cfg.get("api_key", "")
+    modelo = cfg.get("modelo") or "default"
 
-    # Determinar URL de sondeo: si el endpoint termina en /v1, consultar /models; si no, intentar /models o la base
-    url_test = f"{endpoint}/models" if not endpoint.endswith("/models") else endpoint
+    url_test = _resolver_url_chat(endpoint)
+
+    body_dict = {
+        "model": modelo,
+        "messages": [
+            {"role": "user", "content": "ping"}
+        ],
+        "max_tokens": 15,
+        "temperature": 0.1,
+    }
+    data = json.dumps(body_dict).encode("utf-8")
 
     headers = {
+        "Content-Type": "application/json",
         "User-Agent": "Ultrarentable-IA-Client/1.0",
         "Accept": "application/json",
     }
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
 
-    req = urllib.request.Request(url_test, headers=headers, method="GET")
+    req = urllib.request.Request(url_test, data=data, headers=headers, method="POST")
 
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            body = resp.read()[:500].decode("utf-8", errors="replace")
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            raw = resp.read()[:500].decode("utf-8", errors="replace")
+            try:
+                parsed = json.loads(raw)
+                choices = parsed.get("choices", [])
+                if choices and "message" in choices[0]:
+                    contenido = choices[0]["message"].get("content", "").strip()
+                    detalle = f"HTTP {resp.status} OK (modelo: {parsed.get('model', modelo)}): \"{contenido}\""
+                else:
+                    detalle = f"HTTP {resp.status} OK: {raw.strip()}"
+            except Exception:
+                detalle = f"HTTP {resp.status} OK: {raw.strip()}"
+
             return IAProbarResponse(
                 ok=200 <= resp.status < 300,
                 status_code=resp.status,
-                detalle=f"HTTP {resp.status} OK: {body.strip()}",
+                detalle=detalle,
             )
     except urllib.error.HTTPError as he:
         err_body = he.read()[:500].decode("utf-8", errors="replace")
@@ -193,17 +224,11 @@ def completar_consulta(payload: IACompletarRequest) -> IACompletarResponse:
             detail="Falta configurar el proveedor de IA en el panel de superadmin.",
         )
 
-    endpoint = cfg["endpoint"].rstrip("/")
+    endpoint = cfg["endpoint"].strip()
     api_key = cfg.get("api_key", "")
     modelo = cfg.get("modelo", "")
 
-    # URL estándar de chat completions
-    if "/chat/completions" in endpoint:
-        url_chat = endpoint
-    elif endpoint.endswith("/v1"):
-        url_chat = f"{endpoint}/chat/completions"
-    else:
-        url_chat = f"{endpoint}/v1/chat/completions"
+    url_chat = _resolver_url_chat(endpoint)
 
     body_dict = {
         "model": modelo,

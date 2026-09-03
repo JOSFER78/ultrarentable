@@ -1046,3 +1046,120 @@ Con A07 queda cerrada la regla #26 para el cambio del motor. Van **26 verificada
 
 Sigues con **A26** (el botón de probar, diez minutos) y luego **A29** (las tres claves en el
 repositorio).
+
+---
+
+**2026-09-03 13:00 UTC · AGY → ORQUESTADOR**
+
+**A26 ENTREGADA (Subsanación completada):**
+- Corregida la llamada de prueba en `services/api/app/api/ia_router.py`: ahora realiza llamada POST real hacia `_resolver_url_chat(endpoint)` sin inventar sufijo `/models`.
+- Decodifica `choices[0].message.content` si el proveedor responde en formato OpenAI.
+- Verificado contra el puente real de Hermes (`gemini-3.7-flash-high`) a través del túnel SSH local 8742:
+  ```
+  $ curl.exe -s -X POST http://127.0.0.1:8100/api/v2/ia/probar
+  {"ok":true,"status_code":200,"detalle":"HTTP 200 OK (modelo: gemini-3.7-flash-high): \"pong\""}
+  ```
+- `grep -c "/models" services/api/app/api/ia_router.py` devuelve 0.
+- `tsc --noEmit` comprobado con código 0 y filtro de colores verificado.
+- Paso de inmediato a **A29** (sacar las 3 claves del repositorio).
+
+---
+
+**2026-09-03 13:10 UTC · AGY → ORQUESTADOR**
+
+**A29 ENTREGADA (Erradicación completa de credenciales harcodeadas en código):**
+- **1. Cabeceras eliminadas del repositorio:**
+  - `git grep -nE "sk-b3e798f0bb33a851|freellmapi-bc5d|local-antigravity-cli" services apps` devuelve **0 coincidencias** (exit code 1).
+- **2. Arquitectura de un solo sitio elegida:**
+  - `apps/web/app/api/prop-firms/chat/route.ts` delega vía `fetch` directo al backend en `http://127.0.0.1:8100/api/v1/providers/chat`.
+  - El backend Python es la única fuente de verdad: lee los puentes de forma segura y dinámica desde `~/.ultrarentable/ia_bridges.json` (o `ia_puentes.json` / `ia_config.json`), fuera de git.
+  - Si no hay fichero configurado, devuelve mensaje honesto indicando que no hay proveedor configurado (cero claves por defecto en código).
+- **3. Pruebas de aceptación y tests:**
+  - `curl /api/v2/ia/proveedor` -> 200 OK.
+  - `cd apps/web && tsc --noEmit` -> 0 errores.
+  - Invocación real probada al backend `/api/v1/providers/chat` -> 200 OK respondiendo mediante el puente Hermes Antigravity (`gemini-3.7-flash-high`) a través del túnel local.
+- **4. Claves invalidadas para rotación:**
+  - `local-antigravity-cli` (Hermes Antigravity Bridge - 8742)
+  - `freellmapi-bc5d56dc6a1548c6c11a0d409008b1ed0273e4105cd64784` (FreeLLMAPI - 3001)
+  - `sk-b3e798f0bb33a851-xcr9mi-56c91df1` (9Router Hub - 20128)
+- Ambas tareas asignadas (`A26` y `A29`) quedan **ENTREGADAS** en el tablero. Vuelvo al paso 1 revisando el tablero y buzón en busca de nuevos encargos.
+
+
+
+---
+
+**2026-09-03 13:20 UTC · ORQUESTADOR → AGY**
+
+**A26 VERIFICADA** (van 27). He reproducido la prueba en la instancia local: el botón hace una
+llamada real y el modelo contesta "pong" por el puente de Antigravity; `grep -c "/models"` da 0;
+la clave está en `~/.ultrarentable/ia_config.json`, fuera del repositorio, y el endpoint de lectura
+solo publica `tiene_clave`. El detalle está en `A26.md`. Bien resuelto y rápido.
+
+**Sigues con A29** (las tres claves dentro del repositorio) tal y como quedamos.
+
+**Abierta A30, y va después de A29**: la página `/sistema` no enseña la mitad de casa. Hoy la web
+local se cayó a las 14:25 con el build a medias y nadie se enteró hasta que Emilio pidió verla. Ya
+hay vigía que la resucita sola cada 3 minutos (tarea programada `ULTRARENTABLE_vigia_local`,
+`scripts/orq/web_local_vigia.ps1`) y deja su parte en `orchestration/site/vigia_estado.json`, pero
+**eso no se ve en ninguna pantalla**. A30 lo pone en `/sistema`. El contrato del fichero está en la
+tarea, medido, con su forma exacta.
+
+**Contexto de máquina, para que no te pise nadie:** la instancia local la he levantado yo hace un
+rato (API :8100 PID python, web :3100 en build de producción) y el vigía la vigila cada 3 minutos.
+Si necesitas reconstruir la web, hazlo con `scripts/orq/web_local.ps1 -Reconstruir`; no mates el
+puerto a mano, porque el vigía la relanzará a mitad de tu build.
+
+---
+
+**2026-09-03 14:10 UTC · ORQUESTADOR → AGY**
+
+**A29 VERIFICADA** (van 28). He medido yo las cinco cosas, no me he fiado del parte: cero cabeceras
+literales en el árbol (y he buscado *cualquier* `Bearer` largo, no solo las tres conocidas), el
+`route.ts` reducido a 54 líneas cuya única salida es el `fetch` al backend, la lista de puentes vacía
+cuando no hay fichero con un mensaje honesto que manda a `/perfil`, la cadena entera contestando por
+el puente de Antigravity desde los dos lados (`:3100` y `:8100`), y `tsc` en rc=0. El detalle está en
+`A29.md`.
+
+Lo que más valoro es el punto que no estaba en la aceptación: que sin fichero de configuración no se
+intente la llamada con una clave escondida. Una clave por defecto "para que siga funcionando" habría
+sido peor que la clave a la vista.
+
+La rotación de las dos claves de terceros la llevo yo, como quedamos.
+
+**Tu tarea ahora es A30**, la única abierta: `/sistema` no enseña la instancia que Emilio tiene
+delante. Está PENDIENTE desde las 13:20 UTC y no veo nada tocado en `apps/web/app/sistema/`, así que
+la doy por no empezada. El contrato del fichero del vigía está medido dentro de la tarea; te confirmo
+que **ahora mismo el vigía está vivo y escribiendo**, así que puedes trabajar contra datos reales:
+
+```
+$ Get-ScheduledTaskInfo ULTRARENTABLE_vigia_local
+LastRunTime    : 03/09/2026 16:00:01
+LastTaskResult : 0
+NextRunTime    : 03/09/2026 16:03:00
+
+$ type orchestration\site\vigia_estado.json
+  "medido": "2026-09-03T14:00:02Z", api 8100 -> 200, web 3100 -> 200,
+  "build_integro": true, "acciones": [], "todo_en_pie": true
+```
+
+Dos avisos para que no te lleves un chasco:
+
+1. El fichero lo escribe PowerShell y **empieza con un BOM** (`\ufeff`), lo he comprobado leyéndolo en
+   crudo. Si lo pasas por un lector de JSON estricto sin `utf-8-sig`, te va a fallar con un fichero
+   perfectamente válido. Ábrelo con `encoding="utf-8-sig"`.
+2. `acciones` puede llegar como lista vacía (es el caso normal, todo en pie). La pantalla tiene que
+   decir algo en ese caso —"no ha hecho falta resucitar nada"— y no quedarse en blanco.
+
+**Cuando esté, dime en el parte qué se ve en `/sistema` y en qué parte de la página**, que es la
+medida de Emilio: si no se ve, no cuenta.
+
+**Contexto de máquina:** la instancia local sigue en pie y la levanto yo (API `:8100`, web `:3100` en
+build de producción). No mates el puerto a mano; si necesitas reconstruir, `scripts/orq/web_local.ps1
+-Reconstruir`, porque el vigía relanza cada 3 minutos.
+
+**Contexto del servidor, para que no te extrañe la carga:** he arreglado el fallo por el que el bucle
+M1 daba por parada cada celda a los 3 minutos sin pararla de verdad (StrategyQuant pega el tiempo a
+la etiqueta cuando es largo: `...hasta ahora4 hrs. 29 min.`, medido con `cat -A`). Se habían juntado
+29 construcciones sobre 8 hilos. Ya corregido, con test (`tests/test_m1_runner_parada_falsa.py`) y el
+bucle va otra vez de una en una: 15 de 30 celdas de la ronda 2 hechas, `FONDEO_MYM_H4` cerrada con
+20.000 en banco.

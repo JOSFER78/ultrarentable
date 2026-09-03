@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+import logging
+import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -12,7 +15,53 @@ from services.api.app.db.database import get_db, ProviderRuleSetModel
 from services.api.app.db.seed_prop_firms import PROP_FIRMS_CATALOG
 from services.fondeo.catalogo_firmas_v2 import CATALOGO_V2, get_firm_v2
 
+logger = logging.getLogger(__name__)
+
 providers_router = APIRouter(tags=["Prop Firm Providers"])
+
+
+def _cargar_puentes_externos() -> List[Dict[str, Any]]:
+    """Carga la lista de puentes de IA desde archivos de configuración fuera del repositorio git.
+
+    Busca en ~/.ultrarentable/ia_bridges.json o ~/.ultrarentable/ia_puentes.json.
+    Si no existen o están vacíos, busca ~/.ultrarentable/ia_config.json.
+    Si ninguno existe, devuelve lista vacía (cero claves en el repositorio).
+    """
+    config_dir = os.path.expanduser("~/.ultrarentable")
+    bridges_paths = [
+        os.path.join(config_dir, "ia_bridges.json"),
+        os.path.join(config_dir, "ia_puentes.json"),
+    ]
+    bridges: List[Dict[str, Any]] = []
+    for p in bridges_paths:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        bridges = data
+                        break
+            except Exception as e:
+                logger.warning(f"No se pudo leer {p}: {e}")
+
+    if not bridges:
+        ia_cfg_path = os.path.join(config_dir, "ia_config.json")
+        if os.path.exists(ia_cfg_path):
+            try:
+                with open(ia_cfg_path, "r", encoding="utf-8") as f:
+                    cfg = json.load(f)
+                    if cfg.get("endpoint"):
+                        bridges = [{
+                            "name": cfg.get("nombre") or "Proveedor Principal (Hermes)",
+                            "url": cfg["endpoint"],
+                            "api_key": cfg.get("api_key", ""),
+                            "model": cfg.get("modelo") or "default",
+                            "timeout": 60,
+                        }]
+            except Exception as e:
+                logger.warning(f"No se pudo leer {ia_cfg_path}: {e}")
+
+    return bridges
 
 
 class ProviderCreateSchema(BaseModel):
@@ -349,35 +398,44 @@ def chat_expert_advisor(
             formatted_messages.append({"role": role, "content": h.content})
     formatted_messages.append({"role": "user", "content": user_msg})
 
-    # Llamada en Cascada a Puentes Internos Propios (Hermes Antigravity Bridge -> FreeLLMAPI -> 9Router)
+    # Llamada en Cascada a Puentes Internos Propios leídos desde disco seguro fuera de git
     ai_response_text = None
-    bridge_configs = [
-        {
-            "name": "Hermes Antigravity Bridge",
-            "url": "http://127.0.0.1:8742/v1/chat/completions",
-            "headers": {"Authorization": "Bearer local-antigravity-cli", "Content-Type": "application/json"},
-            "payload": {"model": "gemini-3.7-flash-high", "messages": formatted_messages, "temperature": 0.5, "max_tokens": 1500},
-            "timeout": 60,
-        },
-        {
-            "name": "FreeLLMAPI",
-            "url": "http://127.0.0.1:3001/v1/chat/completions",
-            "headers": {"Authorization": "Bearer freellmapi-bc5d56dc6a1548c6c11a0d409008b1ed0273e4105cd64784", "Content-Type": "application/json"},
-            "payload": {"model": "auto", "messages": formatted_messages, "temperature": 0.5, "max_tokens": 1500},
-            "timeout": 25,
-        },
-        {
-            "name": "9Router Hub",
-            "url": "http://127.0.0.1:20128/v1/chat/completions",
-            "headers": {"Authorization": "Bearer sk-b3e798f0bb33a851-xcr9mi-56c91df1", "Content-Type": "application/json"},
-            "payload": {"model": "FREE_ONLY", "messages": formatted_messages, "temperature": 0.5, "max_tokens": 1500},
-            "timeout": 25,
-        },
-    ]
+    puentes = _cargar_puentes_externos()
 
-    for bridge in bridge_configs:
+    if not puentes:
+        return {
+            "response": (
+                "⚠️ No hay ningún proveedor o puente de IA configurado en el servidor.\n\n"
+                "Para activarlo, configure un proveedor en el panel de administración (/perfil) "
+                "o en el archivo de configuración seguro `~/.ultrarentable/ia_bridges.json` fuera del repositorio."
+            ),
+            "suggested_actions": [
+                "Configurar proveedor en /perfil",
+            ],
+            "active_coupons": [],
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+
+    for bridge in puentes:
+        url = bridge.get("url")
+        if not url:
+            continue
+        api_key = bridge.get("api_key", "")
+        headers = {"Content-Type": "application/json"}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+
+        model = bridge.get("model") or "gemini-3.7-flash-high"
+        timeout = bridge.get("timeout", 45)
+        payload = {
+            "model": model,
+            "messages": formatted_messages,
+            "temperature": 0.5,
+            "max_tokens": 1500,
+        }
+
         try:
-            res = http_requests.post(bridge["url"], headers=bridge["headers"], json=bridge["payload"], timeout=bridge["timeout"])
+            res = http_requests.post(url, headers=headers, json=payload, timeout=timeout)
             if res.status_code == 200:
                 data = res.json()
                 content = data.get("choices", [{}])[0].get("message", {}).get("content")
@@ -385,7 +443,7 @@ def chat_expert_advisor(
                     ai_response_text = content
                     break
         except Exception as e:
-            print(f"Error calling {bridge['name']}: {e}")
+            logger.warning(f"Error calling bridge {bridge.get('name', url)}: {e}")
 
     if not ai_response_text:
         ai_response_text = (
