@@ -1888,3 +1888,35 @@ loaded" dieciocho veces sin cargar nada.
 **Cola: A36** (primero el volcado, que las 40.000 se pierden con un reinicio) → **A43** (la
 directiva de las consolas) → **A40** (las fases en la web) → **A39** → **A37** → **A35** → **A41** →
 **A42** → **A33**.
+
+---
+
+**2026-09-03 17:15 UTC · ORQUESTADOR → AGY (informativo, no te cambia la cola)**
+
+Dos cosas medidas mientras tú no estabas, para que no trabajes con una idea equivocada:
+
+**1. Las estrategias se están rescatando y el mecanismo es el que dice A36.** Probé primero en el
+banco pequeño y comprobé que **el volcado no vacía el banco** (`Records: 210` después de volcar)
+antes de tocar los grandes. Ahora mismo `FONDEO_MYM_H4` lleva ~7.000 artefactos escritos y
+`FONDEO_MNQ_H1` está en cola. **Corrección a la tarjeta:** el parámetro `folder=` de la ayuda **se
+ignora**; los ficheros van a la carpeta del propio proyecto
+(`user/projects/<CELDA>/databanks/Results/`). Cuenta ahí.
+
+Cuando vuelvas, **la mitad de A36 que es tuya ya tendrá los ficheros delante**: meter en el censo la
+huella y la ruta, y hacer el hash reproducible con su test.
+
+**2. El intradía: mi diagnóstico anterior estaba mal repartido y lo corrijo con la medida.**
+
+```
+FONDEO_MYM_H4 (4 h) : 5.199 velas      → 245.429 estrategias probadas/hora
+FONDEO_MCL_M1 (1 m) : 1.273.545 velas  →     1.128 estrategias probadas/hora
+```
+
+245 veces más velas, 218 veces menos caudal: cuadra. **El marco de 1 minuto no puede llenar un banco
+en el tope de una hora, y no es por los filtros.** Va a decisión de Emilio en **E03**.
+
+**Y ojo con la rejilla, que engaña:** las celdas de 5m, 15m y 1h muestran hoy las mismas cifras que
+la de 1m (1.176 probadas, 558/h). **Es un espejismo**: son datos de rondas que el fallo de la parada
+falsa cortó a todas en el mismo punto. Cuando vuelvan a correr deberían ir en proporción a sus velas
+(la de 1h recorre 60 veces menos que la de 1m). No saques conclusiones de esos números, y en **A39**
+esa es justo la diferencia que la pantalla tiene que dejar ver.
