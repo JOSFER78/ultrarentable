@@ -1935,3 +1935,46 @@ esa es justo la diferencia que la pantalla tiene que dejar ver.
 Quedo con alerta interna periódica activa (cada 5 min) revisando tareas y el buzón.
 Siguiente en cola: **A40** (Plan por fases en la web con función pura y tests).
 
+---
+
+**2026-09-03 17:40 UTC · ORQUESTADOR → AGY**
+
+**A43 VERIFICADA** (van 33): la tarea programada del vigía ya no existe y el endpoint mide en vivo
+—lo probé pidiéndolo dos veces con dos segundos de diferencia y la marca avanza—. Y tu diagnóstico
+previo era el bueno: la web local cuelga de un `cmd` con `CreateNoWindow`, así que no hay ventana
+pero **depende de la sesión de Windows**. Conclusión correcta y bien dicha: la autonomía vive en
+Oracle.
+
+**Tres tarjetas nuevas, y las tres salen de lo que Emilio ha pedido esta tarde.**
+
+**A44 — estamos usando una décima parte de StrategyQuant.** La plantilla `NQ_TS.cfx` trae **once
+tareas** (`Build-Task1` más `Retest-Task2…Task10`, con Monte Carlo, walk-forward, aleatorización,
+deslizamiento y diferencial dentro) y nuestros 30 proyectos tienen **una**: el generador tira las
+nueve. Emilio quiere que aprovechemos el motor; esto es el motor. Empieza por entender las nueve y
+probar en **una sola celda**.
+
+**A45 — dos tercios de la máquina se van en los marcos que no producen.**
+```
+M1   23,0 % del tiempo →      0 al banco →      0 por hora de maquina
+M5   28,9 % →    217 →     91
+M15  14,4 % →    435 →    366
+H1    8,2 % → 20.000 → 29.472
+H4   25,5 % → 24.320 → 11.526
+```
+Y el bucle empieza siempre por lo que menos rinde, porque recorre el manifiesto por símbolo y de
+menor a mayor marco. A45 lo reordena sin quitar ninguna celda.
+
+**A46 — la comparativa tipo hoja de cálculo, que es petición literal de Emilio:** *"se tiene que
+saber de cuánto tiempo se ha aprobado la estrategia; ahora mismo no se ve nada; los datos de dinero
+me importan"*. Dos medidas para que sepas de qué partes:
+
+- **El periodo existe y no lo estamos usando**: el manifiesto tiene por celda
+  `desde 2023.01.02 → hasta 2026.08.30` y `oos_desde 2025.12.06`. En el censo **no hay ni una fecha**.
+- **Estamos tirando dos tercios de los datos**: StrategyQuant exporta **44 columnas** y guardamos
+  **12**. Entre las perdidas están `Annual % Return`, `Drawdown`, `Avg. Win`, `Avg. Loss` y
+  `Stability`, dentro y fuera de muestra. Justo las de dinero.
+
+**Cola, con la prioridad de Emilio (sacar estrategias y que se vean): A36** (mitad de código: censo
+con huella y ruta; el volcado ya lo hice yo, `MYM_H4` completo con 20.000 y `MNQ_H1` en marcha) →
+**A46** (la comparativa) → **A45** (reordenar la cola) → **A44** (las pruebas de robustez) → **A39**
+→ **A40** → **A37** → **A35** → **A41** → **A42** → **A33**.
