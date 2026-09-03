@@ -67,15 +67,33 @@ COSTES = {
 # micro (1 tick de diferencial, 2 de deslizamiento, ~2 USD por contrato ida y vuelta), los marcos
 # rápidos casi no dejan margen bruto. Bajar el listón aquí no relaja nada: solo evita que la celda
 # entregue un banco vacío y deja que sea M2, con el criterio sellado, quien decida.
-MIN_OPS_MES = {"M1": 20, "M5": 10, "M15": 5, "H1": 2, "H4": 1}
-MIN_PF = 1.05
-MIN_RET_DD = 0.5
-MIN_WIN_PCT = 20
+def _cargar_config_m1() -> dict:
+    """Lee la configuración centralizada de motores (A52). Falla si no existe."""
+    cfg_path = Path.home() / ".ultrarentable" / "config_motores.json"
+    if not cfg_path.exists():
+        alt_path = Path("/opt/SQX-headless/import/config_motores.json")
+        if alt_path.exists():
+            cfg_path = alt_path
+        else:
+            raise FileNotFoundError(
+                f"Configuración de motores no encontrada en {cfg_path} ni en {alt_path}. "
+                "Cree la configuración en el panel de administración o ejecute la API (A52)."
+            )
+    with cfg_path.open(encoding="utf-8") as fh:
+        data = json.load(fh)
+    return data["m1_strategyquant"]
 
-# Dimensionamiento de cuenta de fondeo (A47):
-# 50.000 USD de capital inicial (cuenta real de fondeo) y 0.5% de riesgo por operacion
-FONDEO_CAPITAL_INICIAL = 50000
-FONDEO_RIESGO_PCT_DEFECTO = 0.5
+
+_cfg_m1 = _cargar_config_m1()
+_cfg_acp = _cfg_m1["aceptacion_sqx"]
+_cfg_dim = _cfg_m1["dimensionamiento"]
+
+cfg_ops_mes = _cfg_acp["min_ops_mes"]
+cfg_pf = _cfg_acp["min_pf"]
+cfg_ret_dd = _cfg_acp["min_ret_dd"]
+cfg_win_pct = _cfg_acp["min_win_pct"]
+cfg_capital = _cfg_dim["capital_inicial"]
+cfg_riesgo = _cfg_dim["riesgo_pct"]
 
 FECHA_DESDE = "2023.01.02"
 FECHA_HASTA = "2026.08.30"
@@ -179,12 +197,12 @@ def build_task(
     t = sustituir_una_vez(t, r'<Param key="Session" className="SessionOption">[^<]*</Param>',
                           '<Param key="Session" className="SessionOption">No Session</Param>', "Session")
 
-    # 4) Condiciones de aceptación permisivas.
+    # 4) Condiciones de aceptación permisivas (configuradas centralizadamente).
     conds = (
-        condicion("AvgTradesPerMonth", str(MIN_OPS_MES[tf]))
-        + condicion("ProfitFactor", str(MIN_PF))
-        + condicion("ReturnDDRatio", str(MIN_RET_DD))
-        + condicion("WinningPct", str(MIN_WIN_PCT), "Decimal2Pct")
+        condicion("AvgTradesPerMonth", str(cfg_ops_mes[tf]))
+        + condicion("ProfitFactor", str(cfg_pf))
+        + condicion("ReturnDDRatio", str(cfg_ret_dd))
+        + condicion("WinningPct", str(cfg_win_pct), "Decimal2Pct")
     )
     t = sustituir_una_vez(t, r"<Conditions>\s*<Condition use=\"true\">.*?</Conditions>\s*<AutomaticDismissal",
                           "<Conditions>\n" + conds + "    </Conditions>\n    <AutomaticDismissal", "Conditions de ranking")
@@ -248,8 +266,8 @@ def main() -> int:
     ap.add_argument("--cli", default="http://127.0.0.1:5051", help="modo de comandos de SQX")
     ap.add_argument("--solo", default="", help="una celda, p. ej. MNQ_H1 (por defecto las 25)")
     ap.add_argument("--horas", type=int, default=2, help="tope de horas por construcción")
-    ap.add_argument("--capital", type=int, default=FONDEO_CAPITAL_INICIAL, help="capital inicial cuenta fondeo (default: 50000)")
-    ap.add_argument("--riesgo", type=float, default=FONDEO_RIESGO_PCT_DEFECTO, help="riesgo porcentual por operacion (default: 0.5)")
+    ap.add_argument("--capital", type=int, default=cfg_capital, help="capital inicial cuenta fondeo")
+    ap.add_argument("--riesgo", type=float, default=cfg_riesgo, help="riesgo porcentual por operacion")
     ap.add_argument("--cargar", action="store_true", help="loadconfig de cada .cfx generado (crea el proyecto)")
     args = ap.parse_args()
 
@@ -285,7 +303,7 @@ def main() -> int:
         "plantilla": str(args.template),
         "plantilla_sha256": sha256(args.template),
         "costes_supuestos": COSTES,
-        "aceptacion": {"min_ops_mes": MIN_OPS_MES, "min_pf": MIN_PF, "min_ret_dd": MIN_RET_DD, "min_win_pct": MIN_WIN_PCT},
+        "aceptacion": {"min_ops_mes": cfg_ops_mes, "min_pf": cfg_pf, "min_ret_dd": cfg_ret_dd, "min_win_pct": cfg_win_pct},
         "oos_fraccion": OOS_FRACCION,
         "horas_tope": args.horas,
         "capital_inicial": args.capital,

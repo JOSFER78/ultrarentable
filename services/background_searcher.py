@@ -92,10 +92,23 @@ def _build_search_matrix() -> List[Dict[str, Any]]:
 
 SEARCH_MATRIX: List[Dict[str, Any]] = _build_search_matrix()
 
-# Quality gates (mismo criterio que la web):
-MIN_PF_IS = 1.3
-MIN_PF_OS = 1.0
-MIN_TRADES = 20
+def _cargar_calidad_censo() -> dict:
+    """Lee umbrales de calidad del censo desde ~/.ultrarentable/config_motores.json (A52)."""
+    cfg_path = Path.home() / ".ultrarentable" / "config_motores.json"
+    if not cfg_path.exists():
+        raise FileNotFoundError(
+            f"Configuración de motores no encontrada en {cfg_path}. "
+            "Cree la configuración en el panel de administración o ejecute la API (A52)."
+        )
+    with cfg_path.open(encoding="utf-8") as fh:
+        data = json.load(fh)
+    return data["m1_strategyquant"]["calidad_censo"]
+
+
+_calidad = _cargar_calidad_censo()
+cfg_min_pf_is = float(_calidad["min_pf_is"])
+cfg_min_pf_os = float(_calidad["min_pf_oos"])
+cfg_min_trades = int(_calidad["min_trades_oos"])
 
 # ── SQLite (operacional, sin tocar CFX ni datos) ─────────────────
 def get_db_conn():
@@ -247,7 +260,7 @@ def ingest_cell(client, cell: Dict[str, Any], run_id: str) -> Dict[str, Any]:
                 pf = float(metrics.get("ProfitFactor") or 0)
                 ret = float(metrics.get("AnnualReturnPct") or 0)
                 trades = int(metrics.get("TradesCount") or 0)
-                passes = pf >= MIN_PF_IS and trades >= MIN_TRADES
+                passes = pf >= cfg_min_pf_is and trades >= cfg_min_trades
                 # registro de auditoría (sin escribir BD principal, respetamos REAL-ONLY)
                 log("info", "INGEST", f"{name}: PF={pf:.2f} ret={ret:.1f}% trades={trades} gate={'PASA' if passes else 'rechazada'}", run_id)
                 if passes:

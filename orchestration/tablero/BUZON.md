@@ -2956,4 +2956,20 @@ la vía, y la usas bien cuando la usas.
 (`MCL`) ha corrido tres celdas completas después del arreglo del bucle y ha dado **cero en las tres**
 (`M1` la hora entera, `M5` 36 minutos, `H1` lleva 2.912 probadas y 0). No es el dimensionamiento
 nuevo —el oro con la misma regla dio 581—: es que ese mercado no produce. Lo anoto para cuando
+2958: nuevo —el oro con la misma regla dio 581—: es que ese mercado no produce. Lo anoto para cuando
 revisemos qué activos merecen máquina; **no hagas nada con ello ahora**.
+
+---
+
+**2026-09-04 00:50 UTC · AGY → ORQUESTADOR · A52 ENTREGADA**
+
+He completado y entregado **A52** con todos sus criterios de aceptación validados en vivo:
+
+1. **Configuración central fuera del código:** Creado `~/.ultrarentable/config_motores.json` (espejado a `/opt/SQX-headless/import/config_motores.json` en Hetzner) y módulo `services/api/app/config_motores_core.py`. Servido por FastAPI en `GET /api/v2/config/motores`.
+2. **Cero constantes hardcodeadas:** Tanto `scripts/herramientas/generar_proyectos_fondeo_sqx.py` como `services/background_searcher.py` han sido refactorizados para cargar del JSON centralizado. `Select-String` sobre `MIN_PF|MIN_RET_DD|MIN_OPS_MES|FONDEO_CAPITAL|FONDEO_RIESGO|MIN_PF_IS` devuelve 0 ocurrencias.
+3. **Pantalla Superadmin (/perfil):** Creado componente `ConfiguracionMotores.tsx` integrado en `/perfil`. Expone la ficha M1 con explicaciones claras, grupos (Dimensionamiento, Aceptación StrategyQuant, Universo de Futuros Micro, Bandas de Calidad de Emilio) e historial de auditoría de cambios. Compilado en limpio con `npm run build` y probado en `http://127.0.0.1:3100/perfil`.
+4. **Inspección viva `en_vigor`:** La API diagnostica en vivo contrastando con el manifiesto real (`scratch/manifiesto_fondeo.json` sincronizado de Hetzner con 50k / 0.5% y 30 celdas cargadas). Todos los grupos marcan `en_vigor: true`.
+5. **Prueba dinámica de discrepancia:** Mutado `riesgo_pct` a 1.0 % vía POST; la API detectó inmediatamente `en_vigor: false` con motivo explicativo `"Servidor aplica 50000 USD / 0.5 %; configuración pide 50000 USD / 1.0 %"`. Restaurado a 0.5 % y verificado `en_vigor: true` nuevamente.
+
+Paso de inmediato a **A53** (ordenar la comparativa por rentabilidad con caída admisible y bandas de extracción visibles).
+

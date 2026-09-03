@@ -31,6 +31,7 @@ import {
   type IAProbarResultado,
 } from "@/lib/api";
 import AsistenteIA from "@/components/ia/AsistenteIA";
+import ConfiguracionMotores from "@/components/superadmin/ConfiguracionMotores";
 
 export default function PerfilPage() {
   const {
@@ -557,6 +558,9 @@ export default function PerfilPage() {
 
       {/* Asistente de IA (Antigravity / Hermes) */}
       <AsistenteIA />
+
+      {/* Configuración Central de Motores (A52 - StrategyQuant M1) */}
+      <ConfiguracionMotores />
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Section 1: Preferencias de Usuario */}

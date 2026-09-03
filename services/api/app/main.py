@@ -8,6 +8,13 @@ Local development must remain independently startable without launching the 24/7
 from __future__ import annotations
 import logging
 import os
+import sys
+from pathlib import Path
+
+_REPO_ROOT = str(Path(__file__).resolve().parents[3])
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import AsyncGenerator, Dict, Any
@@ -41,6 +48,7 @@ from services.api.app.api.gates_router import gates_router
 from services.api.app.api.firebase_sync_router import firebase_sync_router
 from services.api.app.api.certified_summary_router import certified_summary_router
 from services.api.app.api.gateways_router import gateways_router
+from services.api.app.api.config_router import router as config_router
 from services.monitoring.telemetry_router import router as telemetry_router, supervisor_instance
 from services.validation.validation_router import router as validation_router
 from services.semantic_ai.semantic_router import router as semantic_router
@@ -185,6 +193,7 @@ app.include_router(certified_summary_router, prefix="/api/v2", tags=["v2-certifi
 app.include_router(candidates_router, prefix="/api/v2", tags=["v2-candidates"])
 app.include_router(real_data_router, prefix="/api/v2", tags=["v2-real-data"])
 app.include_router(real_data_router, prefix="/api/v2/real", tags=["v2-real-data-alias"])
+app.include_router(config_router, prefix="/api/v2/config", tags=["v2-config"])
 
 @app.get("/", tags=["system"])
 def root() -> Dict[str, Any]:

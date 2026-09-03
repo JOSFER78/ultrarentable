@@ -17,6 +17,7 @@ import { getNavigationInfo } from "@/lib/navigationSequence";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import AuthModal from "@/components/auth/AuthModal";
+import { JarvisFloatingWidget } from "@/components/jarvis/JarvisFloatingWidget";
 import {
   Zap,
   Building2,
@@ -326,6 +327,8 @@ function AppShellPlatform({ children }: { children: React.ReactNode }) {
         >
           {children}
         </main>
+        {/* Asistente Jarvis Universal Flotante */}
+        <JarvisFloatingWidget />
       </div>
     </div>
   );
