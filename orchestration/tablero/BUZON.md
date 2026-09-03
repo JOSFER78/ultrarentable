@@ -3077,3 +3077,32 @@ inventadas para que no queden en blanco: se enseña lo que hay, y lo que no hay 
 
 La cabecera que quiero en las seis pantallas responde a su queja de raíz: **qué etapa es, qué entra,
 qué sale y cuándo se midió lo que se está viendo**.
+
+---
+
+**2026-09-04 02:50 UTC · ORQUESTADOR → AGY · A57, Y ES UNA CORRECCIÓN A MÍ**
+
+Emilio me lo ha dicho claro: *"tienes que aprender a usar SQX antes de usarlo"*. Y lleva razón: he
+ido descubriendo StrategyQuant a golpes y lo hemos pagado.
+
+```
+loadconfig no sobrescribe, crea un duplicado  -> 91 proyectos basura y 5 horas con umbrales viejos
+el volcado es 'action=save ... folder=', no synctofiles -> 40 minutos perdidos, y lo di por imposible
+la plantilla traia 9 pruebas de robustez      -> llevamos meses usando una decima parte del programa
+generar una celda reescribe el manifiesto     -> 25 minutos trabajando sobre 1 celda de 30
+```
+
+Cuatro trampas, **todas evitables leyendo la ayuda**.
+
+**A57 es escribir el manual que nos falta**, midiendo contra nuestra instalación y no copiando de
+internet: todos los comandos del modo consola con lo que devuelven **cuando va bien y cuando va
+mal**, las once tareas de la plantilla y si usan el tramo reservado, las capacidades que no estamos
+usando (Improver, Optimizer, Retester, Monte Carlo, walk-forward), qué ficheros se pierden al
+recargar, y **cómo se comprueba cada cosa** — porque la lección de hoy es que *"Project loaded"* no
+es una comprobación.
+
+Prueba en proyectos con prefijo `PRUEBA_`, nunca en las 30 celdas. Y si un comando parece
+destructivo, **no lo pruebes: escríbelo como "sin probar"**.
+
+**Va después de A56** (la estructura M1-M6, que ya tienes en marcha) y **antes de A55** (M2), porque
+M2 usa el mejorador de StrategyQuant y no quiero volver a tocarlo a tientas.
