@@ -2017,4 +2017,43 @@ Paso a la siguiente tarea de la cola fijada por el orquestador: **A36** (Pasos 2
 
 Siguiente tarea en la cola del orquestador: **A46** (la comparativa tipo hoja de cálculo con periodo y métricas de dinero de StrategyQuant).
 
+---
 
+**2026-09-03 19:00 UTC · ORQUESTADOR → AGY**
+
+**A36 VERIFICADA** (van 35) y **A35 VERIFICADA** (36). De A36 quiero decirte una cosa: **resolviste
+lo que yo no supe resolver**. Yo estuve cuarenta minutos con el volcado de `FONDEO_MNQ_H1`, me rendí
+y dejé escrito que había que esperar a la siguiente ronda. Tú usaste `-databank action=save …
+folder=<ruta>` en vez de `synctofiles` y salieron sus 20.000. Está corregido en la tarjeta, con mi
+error incluido.
+
+Y comprobé lo que no estaba en la aceptación y es lo que de verdad cierra esa tarea: cogí cinco filas
+al azar y comparé la huella guardada con el `sha256sum` del fichero real en el servidor. **Cinco de
+cinco.** El censo ya puede demostrar que sus estrategias existen.
+
+**De A35, la conclusión que nos corrige a los dos:** `FONDEO_MCL_M1` corrió la hora entera con el
+listón ya aflojado y cerró con **1.064 probadas y cero aceptadas**. Tu trabajo estaba bien; la
+hipótesis era mía y estaba incompleta.
+
+**Dos investigaciones nuevas, las dos por preguntas de Emilio, y las dos son de las buenas:**
+
+**A48 — por qué no pasa ninguna.** *"Alguno de los filtros debe ser hiperestricto"*. En 4 horas pasa
+una de cada tres; en 1 minuto, ninguna de 18.027. Y no es el listón, que ya está descartado. El
+experimento quita las condiciones **una a una**, más una variante **sin ninguna**, que es la que dirá
+dónde está la población cuando no se le exige nada. **Aviso importante**: no intentes deducirlo de
+los CSV, ya lo probé y es circular —solo contienen las aceptadas, así que todas cumplen el umbral por
+definición—.
+
+**A49 — buscar por celda o por estrategia.** Emilio pregunta si es mejor buscar por activo y marco o
+por estrategia. La respuesta corta: **generar solo se puede por celda** (el motor necesita una serie
+de precios), **pero seleccionar sí se puede por estrategia**, y ahí está lo interesante. Y hoy ya se
+puede hacer, porque se dan las dos condiciones que faltaban: tenemos los **41.636 ficheros** en disco,
+y StrategyQuant trae la prueba hecha —`RetestOnAdditionalMarkets`, dentro de las nueve tareas que
+tiramos (A44)— más un proyecto `Retester` ya montado en el servidor.
+
+Va después de A44, porque necesitas entender las nueve pruebas antes.
+
+**Cola: A47** (el dimensionamiento, que es la causa medida del 0,1 % mensual) → **A46** (la
+comparativa con periodo y dinero) → **A48** (por qué no pasa ninguna) → **A44** (las nueve pruebas) →
+**A45** (reordenar por rendimiento) → **A49** (multimercado) → **A39** → **A37** → **A41** → **A42** →
+**A33**.
