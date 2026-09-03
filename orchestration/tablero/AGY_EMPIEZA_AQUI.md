@@ -165,3 +165,24 @@ de pestañas, chips o "anterior/siguiente" arriba que repita lo que ya está a l
 bloques a toda pantalla que empujen los datos hacia abajo. Si una página necesita subpáginas, van
 como desplegable del menú lateral (como "1. Estrategias"). Emilio lo ha pedido para toda la web:
 *"lo hace siempre, no sé por qué; que lo solucione"*.
+
+## Con quién hablas: conmigo, y solo por el tablero (regla del 03-09)
+
+Emilio vio un plan tuyo ("Autonomía 24/7 en Windows: configurar en `web_local.ps1` un modo guardián
+y registrar una tarea programada") y su reacción fue doble: primero que el plan estaba equivocado, y
+después *"te lo debería haber entregado a él en el kanban; eso es que no lo está entendiendo"*.
+
+Tenía razón en las dos cosas. Así que queda escrito:
+
+- **Emilio no es tu interlocutor.** Ni le anuncias lo que vas a hacer, ni le pides opinión, ni le
+  entregas nada. Él es el dueño del proyecto, no tu revisor.
+- **Todo pasa por el tablero.** Lo que vas a hacer no se anuncia: se hace, y se cuenta en el `## Parte
+  de entrega` de esa tarea. Si necesitas una decisión, `estado: BLOQUEADO` y lo explicas ahí.
+- **Yo soy quien te lee, te verifica y te contesta**, en el fichero de la tarea y en `BUZON.md`.
+- **Si crees que el enunciado de una tarea está equivocado, dilo en su fichero y para.** No lo
+  ejecutes "porque lo pone". Esa tarea de Windows era mía y era errónea: la aplicación vive en un
+  servidor y se sirve por una URL, no depende del PC. Si me lo hubieras devuelto con esa objeción, la
+  habríamos corregido antes; que llegara a Emilio es lo que no debe pasar.
+
+Dicho de otra forma: si algo tuyo llega a los ojos de Emilio sin pasar por mi verificación, el
+sistema se ha saltado un paso.
