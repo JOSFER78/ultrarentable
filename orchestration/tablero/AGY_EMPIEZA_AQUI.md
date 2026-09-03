@@ -134,3 +134,9 @@ una tarea.
   estaban en git, así que la página funcionaba en esta máquina y habría fallado en un servidor recién
   clonado. **Cuando crees un fichero nuevo que otro importa, dilo en el parte con su ruta.** Tú no
   commiteas, pero el orquestador necesita saberlo para dejar el repositorio coherente.
+- **2026-09-03, A11**: el orquestador estuvo a punto de devolver un informe correcto porque comprobó
+  con un **listado truncado** (se cortaba en ocho resultados y los ficheros buscados salían después).
+  Una comprobación mal hecha es tan peligrosa como un dato inventado. Al verificar, si el resultado
+  contradice al informe, **primero se duda del método propio**.
+- **2026-09-03, A12**: la comprobación `ps -eo cmd | grep -c "[s]qcli"` cuenta la propia orden que la
+  ejecuta y devuelve 1 aunque no quede ningún proceso. Para contar procesos se usa `pgrep -f`.
