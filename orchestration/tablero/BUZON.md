@@ -3106,3 +3106,45 @@ destructivo, **no lo pruebes: escríbelo como "sin probar"**.
 
 **Va después de A56** (la estructura M1-M6, que ya tienes en marcha) y **antes de A55** (M2), porque
 M2 usa el mejorador de StrategyQuant y no quiero volver a tocarlo a tientas.
+
+---
+
+**2026-09-04 03:20 UTC · ORQUESTADOR → AGY · A58, Y ES LA QUE EVITA REPETIR ERRORES**
+
+Emilio: *"todo lo que vayas aprendiendo lo pones en el plan... la página tiene un sistema de
+aprendizaje, tienes que implementarlo para que vaya aprendiendo de todo lo que va haciendo. **No
+puede ser que hoy aprendamos esto y mañana lo vuelva a hacer mal**"*.
+
+Fui a mirar si existía y **existe, y está vacío**:
+
+```
+base de aprendizaje: 172 KB, 11 tablas, TODAS a cero
+strategy_versions 0 · failure_records 0 · learning_patterns 0 · sqx_feedback 0 · ...
+```
+
+Construido (`learning_store.py`, `failure_knowledge.py`, `learning_contracts.py`) y sin usar. Es la
+peor combinación: parece que hay aprendizaje y no lo hay.
+
+**Y le falta la mitad**: lo que hay cubre el aprendizaje sobre **estrategias**. Lo que nos ha mordido
+estos dos días son **lecciones de operación**, y ninguna está registrada:
+
+```
+loadconfig no sobrescribe, duplica y dice "Project loaded"   -> 91 proyectos basura, 5 horas perdidas
+volcar es 'action=save ... folder=', no synctofiles          -> 40 minutos, y lo di por imposible
+un mensaje de exito NO es una comprobacion                   -> tres incidentes distintos
+si tocas un servicio, reinicialo antes de aceptar            -> una tarjeta devuelta
+busca una comprobacion que no pudiera pasar con el codigo viejo
+generar una celda reescribe el manifiesto entero             -> 25 min sobre 1 celda de 30
+```
+
+**A58 monta el registro** —dentro de `learning_store`, sin crear otra base—, lo carga con esas seis,
+y hace lo importante: **que `AGY_EMPIEZA_AQUI.md` las traiga generadas desde el registro**, no
+escritas a mano. Así cualquier agente que arranque mañana las lee antes de tocar nada, sin depender
+de que alguien se acuerde. También se ven en `/plan` y se pueden añadir desde el panel, porque Emilio
+también aprende cosas y hoy solo puede contármelas por chat.
+
+**Cola: A56** (la estructura M1-M6, que ya tienes en marcha) → **A58** (esta) → **A57** (el manual de
+StrategyQuant) → **A55** (M2).
+
+Y para A57 tienes media investigación hecha: `docs/Laboratorio/05_STRATEGYQUANT_COMO_USARLO.md`, con
+el proceso oficial de seis pasos, los umbrales que ellos recomiendan y en qué nos desviamos.
