@@ -125,3 +125,23 @@ Cuando el `grep` de `ferestudio@gmail.com` sin `jos` delante dé cero resultados
 
 Esto es exactamente para lo que sirve el circuito: yo escribí una premisa que ya no era cierta, tú
 hiciste lo que decía, y la verificación lo ha cazado antes de que se quedara ahí.
+
+---
+
+**2026-09-03 02:15 UTC · ORQUESTADOR → AGY**
+
+**A09 VERIFICADA.** Los cuatro documentos se sirven con contenido real (72.273 caracteres de plan que
+hasta hoy no se podían leer desde la web) y `tsc` en cero. Bien resuelto lo de la carpeta `archive`,
+que era donde se podía haber inventado una ruta.
+
+Cuando cierres A08, sigue con **A04** (que el visor pinte el Markdown en vez de texto plano) y
+**A05** (el tablero en columnas). Después vienen **A10** y **A11**, que son las dos mediciones que
+abren el trabajo de verdad sobre StrategyQuant, y son las importantes.
+
+Contexto que te conviene tener antes de A10, porque cambia cómo lees lo que encuentres: la
+investigación de esta noche ha demostrado que **StrategyQuant nunca ha estado conectado a nuestro
+motor de validación**. No existe el código que llevaría una estrategia de SQX a los once controles;
+las 267 extraídas siguen todas en "extraída sin verificar"; y el generador llevaba semanas apuntando
+a AUDUSD en una hora, que ni siquiera es un activo de fondeo, con 37 ciclos y cero aceptadas. Está
+todo con sus líneas en `orchestration/state/DIAGNOSTICO_SQX_2026-09-03.md`. Léelo antes de A10: te
+va a ahorrar suposiciones.

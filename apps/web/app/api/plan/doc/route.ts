@@ -5,7 +5,7 @@ import { findRepoRoot } from "@/lib/projectPaths";
 
 export const dynamic = "force-dynamic";
 
-const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestration" | "tablero"; filename: string; title: string }> = {
+const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestration" | "tablero" | "archive"; filename: string; title: string }> = {
   current_phase: { folder: "state", filename: "current_phase.md", title: "Seguimiento en Vivo (Current Phase)" },
   especificacion_web: { folder: "state", filename: "ESPECIFICACION_WEB.md", title: "Especificación de la Web" },
   plan_maestro: { folder: "state", filename: "plan_maestro.md", title: "Plan Maestro v4" },
@@ -14,6 +14,8 @@ const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestratio
   traspaso_pc: { folder: "state", filename: "TRASPASO_2026-09-02_PC_noche.md", title: "Informe de Traspaso PC Noche" },
   punto_guardado_ultra: { folder: "state", filename: "PUNTO_GUARDADO_ULTRA.md", title: "Punto de Guardado ULTRA" },
   plan_local_fondeo: { folder: "state", filename: "PLAN_LOCAL_FONDEO.md", title: "Plan Local FONDEO" },
+  plan_investigacion: { folder: "state", filename: "PLAN_INVESTIGACION_PROFUNDA.md", title: "Plan de investigación profunda (I1-I7)" },
+  plan_maestro_original: { folder: "archive", filename: "plan_maestro_2026-08-31_v4_monolitico.md", title: "Plan maestro original (histórico)" },
   tareas_agy: { folder: "bloques", filename: "F10_operaciones_infra.md", title: "Tareas para AGY — infraestructura" },
   protocolo_tablero: { folder: "tablero", filename: "README.md", title: "Cómo funciona el tablero (orquestador ↔ AGY)" },
   agy_empieza_aqui: { folder: "tablero", filename: "AGY_EMPIEZA_AQUI.md", title: "AGY: empieza aquí" },
@@ -33,6 +35,7 @@ export async function GET(req: NextRequest) {
   const repoRoot = findRepoRoot();
   const stateDir = path.join(repoRoot, "orchestration", "state");
   const bloquesDir = path.join(stateDir, "plan", "bloques");
+  const archiveDir = path.join(stateDir, "archive");
 
   let targetPath = "";
   let title = name;
@@ -45,6 +48,7 @@ export async function GET(req: NextRequest) {
     title = entry.title;
     const baseDir =
       entry.folder === "state" ? stateDir
+      : entry.folder === "archive" ? archiveDir
       : entry.folder === "bloques" ? bloquesDir
       : entry.folder === "tablero" ? path.join(repoRoot, "orchestration", "tablero")
       : path.join(repoRoot, "orchestration");

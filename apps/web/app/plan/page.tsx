@@ -288,6 +288,70 @@ export default function PlanPage() {
           {/* PESTAÑA 1: FASES F00-F09 */}
           {activeTab === "fases" && (
             <div className="space-y-4">
+              {/* Franja de acceso al Plan Completo (A09) */}
+              <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-3.5">
+                <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-[var(--border)]">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-[var(--profit)]" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-1)]">
+                      Plan Completo del Proyecto
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[var(--text-3)] font-mono">
+                    4 documentos fuente
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                  <button
+                    onClick={() => void loadDocument("plan_local_fondeo", "Plan de ejecución FONDEO")}
+                    className="flex flex-col text-left p-2.5 rounded border border-[var(--border)] bg-[var(--surface-2)]/40 hover:bg-[var(--surface-2)] hover:border-[var(--profit)]/40 transition group cursor-pointer"
+                  >
+                    <span className="font-medium text-[var(--text-1)] group-hover:text-[var(--profit)] transition">
+                      Plan de ejecución FONDEO — 41 tareas con su criterio de aceptación
+                    </span>
+                    <span className="text-[11px] text-[var(--text-3)] mt-0.5">
+                      41 tareas de ejecución con criterio de aceptación auditable
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => void loadDocument("plan_investigacion", "Plan de investigación profunda")}
+                    className="flex flex-col text-left p-2.5 rounded border border-[var(--border)] bg-[var(--surface-2)]/40 hover:bg-[var(--surface-2)] hover:border-[var(--profit)]/40 transition group cursor-pointer"
+                  >
+                    <span className="font-medium text-[var(--text-1)] group-hover:text-[var(--profit)] transition">
+                      Plan de investigación profunda — I1 a I7, empezando por StrategyQuant X al 100 %
+                    </span>
+                    <span className="text-[11px] text-[var(--text-3)] mt-0.5">
+                      Siete investigaciones clave, con I1 centrada en rendimiento y caudal de SQX
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => void loadDocument("plan_maestro_original", "Plan maestro original (histórico)")}
+                    className="flex flex-col text-left p-2.5 rounded border border-[var(--border)] bg-[var(--surface-2)]/40 hover:bg-[var(--surface-2)] hover:border-[var(--profit)]/40 transition group cursor-pointer"
+                  >
+                    <span className="font-medium text-[var(--text-1)] group-hover:text-[var(--profit)] transition">
+                      Plan maestro original (histórico) — antes de partirlo en fases
+                    </span>
+                    <span className="text-[11px] text-[var(--text-3)] mt-0.5">
+                      Versión monolítica v4 fundacional previa a la división en 11 fases
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => void loadDocument("especificacion_web", "Especificación de la web")}
+                    className="flex flex-col text-left p-2.5 rounded border border-[var(--border)] bg-[var(--surface-2)]/40 hover:bg-[var(--surface-2)] hover:border-[var(--profit)]/40 transition group cursor-pointer"
+                  >
+                    <span className="font-medium text-[var(--text-1)] group-hover:text-[var(--profit)] transition">
+                      Especificación de la web — qué debe hacer cada página
+                    </span>
+                    <span className="text-[11px] text-[var(--text-3)] mt-0.5">
+                      Definición de rutas, contratos de datos y directivas de interfaz
+                    </span>
+                  </button>
+                </div>
+              </div>
+
               {loading && bloques.length === 0 && (
                 <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-8 text-center font-mono text-xs">
                   <RefreshCw className="w-5 h-5 mx-auto mb-2 text-[var(--text-3)] animate-spin" />
