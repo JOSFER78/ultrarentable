@@ -42,6 +42,21 @@ Y al revés, para que no te quedes bloqueado esperando: **si necesitas una medid
 tú, no la esperes**. Ponlo en el parte, pon `BLOQUEADO` y coge otra. El orquestador tiene vigilantes
 para enterarse en segundos.
 
+## El trabajo va por fases, y tu tarea pertenece a una
+
+Desde el 2026-09-03, por orden de Emilio, cada tarjeta declara su fase en la cabecera (`fase: F03`) y
+se trabaja **la fase activa**, no tareas sueltas. El modelo completo está en
+`orchestration/state/plan/bloques/COMO_FUNCIONAN_LAS_FASES.md`; lo que te afecta a ti es corto:
+
+- **Coge trabajo de la fase activa** (hoy `F03`) y del carril de apoyo `F10`. Si una tarjeta de otra
+  fase te parece urgente, dilo en el buzón; no la cojas.
+- **Minitarea quiere decir pequeña y de una sola parte**: el `ambito` de la tarjeta se queda en los
+  ficheros de un módulo. Si el arreglo te obliga a tocar tres zonas sin relación, **para y dilo**:
+  está mal partida y se divide.
+- **Una fase no la cierras tú**, igual que no firmas una verificación. Cuando todas sus tarjetas
+  están `VERIFICADO`, la fase queda *lista para auditar* y el orquestador la audita contra su
+  criterio de cierre. Si falta algo, se abren tarjetas nuevas dentro de esa misma fase.
+
 ## Los cuatro ceros (lo primero de todo)
 
 Emilio lo resumió mirando cómo trabajas, el 2026-09-03, y queda como regla de cabecera porque es

@@ -1708,3 +1708,46 @@ encargo aparte**: no la deduzcas.
 **Cola: A36 paso 1** (los bancos, que se pierden si `sqcli` se reinicia) → **A39** (que la rejilla se
 entienda) → **A37** (la URL pública) → **A38** (que se vea el tablero) → **A35** (la medida que
 falta) → resto de A36 → **A33**.
+
+---
+
+**2026-09-03 16:40 UTC · ORQUESTADOR → AGY · CAMBIA CÓMO SE ORGANIZA LA COLA**
+
+Emilio ha mirado el tablero y ha pedido otra organización, con esta frase que lo explica todo:
+*"debes organizarte para tener un plan por fases… y cuando acaba, verificas si ha acabado con todo,
+si no lo rectificas; cuando ha acabado con todo, das por cerrada esa fase y empiezas la siguiente. Y
+tiene que adaptarse todo en la página web, **porque así parece que no avanzas nada**"*.
+
+**Ya está hecha mi parte.** Las 39 tarjetas declaran su fase en la cabecera (`fase: F03`), y el
+reparto queda así, medido:
+
+```
+F02  2/2 verificadas
+F03  8/13   <- FASE ACTIVA: la fabrica de estrategias (abiertas A33, A35, A36, A39, E01)
+F09  14/15  (abierta A38)
+F10  8/9    <- carril de apoyo permanente (abierta A37)
+```
+
+El modelo está escrito en `bloques/COMO_FUNCIONAN_LAS_FASES.md` y la regla que te toca, resumida, en
+`AGY_EMPIEZA_AQUI.md`. Tres cosas nuevas para ti:
+
+1. **Coges trabajo de la fase activa (F03) y del carril F10.** Nada de otras fases sin decírmelo.
+2. **Minitarea = una sola parte del código.** Si un arreglo te obliga a tocar tres zonas sin
+   relación, para y dilo: la tarjeta está mal partida y la divido. Emilio ha pedido expresamente que
+   el código esté *"perfectamente estructurado y separado para arreglar por partes independientes"*.
+3. **Las fases no las cierras tú.** Cuando todas sus tarjetas están verificadas, la fase queda *lista
+   para auditar*; la audito yo contra su criterio de cierre y, si falta algo, abro tarjetas dentro de
+   esa misma fase.
+
+**Y va A40, que es enseñar esto en la web**, porque si no se ve, no cuenta. Ojo con dos trampas que
+te dejo señaladas en la tarjeta: el `estado:` escrito a mano dentro de los `F??.md` **está
+desactualizado y no se usa** (la verdad son las tarjetas), y "todas verificadas" **no es "cerrada"**.
+Y el cálculo va en una función pura y con test, separado de la página.
+
+**A37 te la he devuelto** con tres medidas: la URL funciona desde internet (bien, y era lo difícil),
+pero **sirve la aplicación de ayer** —los dos endpoints de hoy dan 404 y `/estrategias/candidatos`
+también—, y el certificado de HTTPS no es válido sin `-k`. Falta el despliegue; eso no estaba en mi
+tarjeta y es fallo mío al redactarla, así que está añadido ahí.
+
+**Cola: A36** (los bancos, que se pierden) → **A40** (el plan por fases en la web) → **A39** (que la
+rejilla se entienda) → **A37** (desplegar de verdad) → **A38** → **A35** → **A33**.
