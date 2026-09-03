@@ -64,6 +64,7 @@ entonces **la envolvente ULTRA**. En paralelo desde el descubrimiento, **FONDEO*
 | F07 | FONDEO: exámenes 3-8 días | PENDIENTE | F03 | `plan/bloques/F07_fondeo_examenes.md` |
 | F08 | Verificación end-to-end y paper | PENDIENTE | F06, F07 | `plan/bloques/F08_verificacion_paper.md` |
 | F09 | Front limpio | **PARCIAL** (16 rutas retiradas; el plan se lee de los bloques en `/plan`) | F08 | `plan/bloques/F09_front_limpio.md` |
+| F10 | Operaciones e infraestructura (tareas para agentes) | EN_CURSO | — | `plan/bloques/F10_operaciones_infra.md` |
 | — | Riesgos | VIGENTE | — | `plan/bloques/RIESGOS.md` |
 | — | Reglas invariantes | VIGENTE | — | `plan/bloques/REGLAS_INVARIANTES.md` |
 
