@@ -46,6 +46,10 @@ export interface EstrategiaRow {
   source_artifact_sha256?: string | null;
   canonical_hash?: string;
   pasa_criterio?: boolean;
+  etiqueta?: string | null;
+  etiqueta_codigo?: string;
+  ret_mes_pct?: number | null;
+  caida_pct?: number | null;
   sizing?: {
     metodo: string;
     contratos?: number;
@@ -61,6 +65,7 @@ interface Props {
 }
 
 type SortField =
+  | "etiqueta_calidad"
   | "name"
   | "simbolo"
   | "timeframe"
@@ -152,7 +157,7 @@ export default function EstrategiasComparativaTable({
   const [filterTf, setFilterTf] = useState("TODOS");
   const [filterCelda, setFilterCelda] = useState("TODAS");
   const [filterSizing, setFilterSizing] = useState("TODOS");
-  const [sortField, setSortField] = useState<SortField>("net_profit_oos_usd");
+  const [sortField, setSortField] = useState<SortField>("etiqueta_calidad");
   const [sortAsc, setSortAsc] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showCompareModal, setShowCompareModal] = useState(false);
@@ -226,6 +231,22 @@ export default function EstrategiasComparativaTable({
   // Ordenación
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
+      if (sortField === "etiqueta_calidad") {
+        const rank = (e: EstrategiaRow) => {
+          if (e.etiqueta === "Apta para operar") return 1;
+          if (e.etiqueta === "Apta para mejorar") return 2;
+          if (e.etiqueta === "Con promesa") return 3;
+          if ((e.annual_return_oos_pct || 0) > 0) return 4;
+          return 5;
+        };
+        const rankA = rank(a);
+        const rankB = rank(b);
+        if (rankA !== rankB) return sortAsc ? rankB - rankA : rankA - rankB;
+        return sortAsc
+          ? (a.annual_return_oos_pct || 0) - (b.annual_return_oos_pct || 0)
+          : (b.annual_return_oos_pct || 0) - (a.annual_return_oos_pct || 0);
+      }
+
       let valA: unknown = a[sortField];
       let valB: unknown = b[sortField];
 
@@ -693,8 +714,21 @@ export default function EstrategiasComparativaTable({
                       <td className="p-2.5 font-mono">
                         <div className="font-semibold text-neutral-100 hover:underline cursor-pointer">
                           {e.name}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[10px] text-neutral-500">
+                          {e.etiqueta === "Apta para operar" && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-emerald-950 text-emerald-300 border border-emerald-700">
+                              Apta para operar
+                            </span>
+                          )}
+                          {e.etiqueta === "Apta para mejorar" && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-amber-950 text-amber-300 border border-amber-700">
+                              Apta para mejorar
+                            </span>
+                          )}
+                          {e.etiqueta === "Con promesa" && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-blue-950 text-blue-300 border border-blue-700">
+                              Con promesa
+                            </span>
+                          )}
                           {e.pasa_criterio ? (
                             <span className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase bg-neutral-800 text-neutral-200 border border-neutral-700">
                               Candidata

@@ -186,6 +186,19 @@ def compute_financial_metrics(
     }
 
 
+def _obtener_bandas_calidad() -> dict:
+    try:
+        from services.api.app.config_motores_core import leer_config_motores
+        cfg = leer_config_motores()
+        return cfg.get("m1_strategyquant", {}).get("calidad_censo", {}).get("bandas", {})
+    except Exception:
+        return {
+            "apta_operar": {"ret_mes_pct_min": 2.0, "max_dd_pct_max": 6.0},
+            "apta_mejorar": {"ret_mes_pct_min": 2.0, "max_dd_pct_min": 6.0, "max_dd_pct_max": 12.0},
+            "con_promesa": {"ret_mes_pct_min": 1.0, "ret_mes_pct_max": 2.0, "max_dd_pct_max": 12.0},
+        }
+
+
 @candidates_router.get("/censo")
 def get_candidates_censo(
     limite: int = Query(250, ge=1, le=5000, description="Máximo número de estrategias a retornar"),
@@ -199,13 +212,16 @@ def get_candidates_censo(
     ).all()
     candidatos_count = db.query(CandidateModel).count()
 
+    bandas = _obtener_bandas_calidad()
+
     estrategias_list = []
-    for r in fondeo_rows[:limite]:
+    for r in fondeo_rows:
         dsl = json.loads(r.dsl_json) if r.dsl_json else {}
         source = dsl.get("source", {})
         market = dsl.get("market", {})
         periodo = dsl.get("periodo", {})
         raw_stats = dsl.get("raw_stats", {})
+        sz = dsl.get("sizing") or {}
 
         def _num(key: str) -> float | None:
             v = raw_stats.get(key)
@@ -239,6 +255,44 @@ def get_candidates_censo(
         p_hasta = periodo.get("periodo_hasta") or market.get("periodo_hasta")
         p_oos_desde = periodo.get("oos_desde") or market.get("oos_desde")
 
+        capital = float(sz.get("capital") or 50000)
+        ret_anual = annual_return_oos if annual_return_oos is not None else 0.0
+        ret_mes = ret_anual / 12.0
+        dd_usd = abs(drawdown_oos) if drawdown_oos is not None else 0.0
+        caida_pct = (dd_usd / capital * 100.0) if capital > 0 else 0.0
+
+        b_op = bandas.get("apta_operar", {})
+        b_mej = bandas.get("apta_mejorar", {})
+        b_prom = bandas.get("con_promesa", {})
+
+        etiqueta = None
+        etiqueta_codigo = ""
+        rank_prioridad = 5
+
+        # Bandas de Emilio (calculadas al vuelo para que respeten la configuración de A52)
+        if ret_mes >= b_op.get("ret_mes_pct_min", 2.0) and caida_pct < b_op.get("max_dd_pct_max", 6.0):
+            etiqueta = "Apta para operar"
+            etiqueta_codigo = "apta_operar"
+            rank_prioridad = 1
+        elif (
+            ret_mes >= b_mej.get("ret_mes_pct_min", 2.0)
+            and b_mej.get("max_dd_pct_min", 6.0) <= caida_pct <= b_mej.get("max_dd_pct_max", 12.0)
+        ):
+            etiqueta = "Apta para mejorar"
+            etiqueta_codigo = "apta_mejorar"
+            rank_prioridad = 2
+        elif (
+            b_prom.get("ret_mes_pct_min", 1.0) <= ret_mes < b_prom.get("ret_mes_pct_max", 2.0)
+            and caida_pct <= b_prom.get("max_dd_pct_max", 12.0)
+        ):
+            etiqueta = "Con promesa"
+            etiqueta_codigo = "con_promesa"
+            rank_prioridad = 3
+        elif ret_anual > 0:
+            rank_prioridad = 4
+        else:
+            rank_prioridad = 5
+
         estrategias_list.append({
             "strategy_id": r.strategy_id,
             "name": r.name,
@@ -270,9 +324,34 @@ def get_candidates_censo(
             "source_artifact_sha256": dsl.get("source_artifact_sha256"),
             "canonical_hash": r.canonical_hash,
             "pasa_criterio": dsl.get("pasa_criterio", False),
-            "sizing": dsl.get("sizing"),
+            "sizing": sz if sz else None,
+            "etiqueta": etiqueta,
+            "etiqueta_codigo": etiqueta_codigo,
+            "ret_mes_pct": round(ret_mes, 2),
+            "caida_pct": round(caida_pct, 2),
             "raw_stats": raw_stats,
+            "_rank": rank_prioridad,
         })
+
+    # Ordenar por calidad: primero Apta para operar, luego Apta para mejorar, luego Con promesa,
+    # y dentro de cada nivel, por rentabilidad OOS descendente
+    estrategias_list.sort(
+        key=lambda x: (
+            x["_rank"],
+            -(x["annual_return_oos_pct"] if x["annual_return_oos_pct"] is not None else -9999.0),
+        )
+    )
+    for e in estrategias_list:
+        e.pop("_rank", None)
+
+    total_estrategias = len(estrategias_list)
+    aptas_operar = sum(1 for e in estrategias_list if e.get("etiqueta") == "Apta para operar")
+    aptas_mejorar = sum(1 for e in estrategias_list if e.get("etiqueta") == "Apta para mejorar")
+    con_promesa = sum(1 for e in estrategias_list if e.get("etiqueta") == "Con promesa")
+    resumen_texto = (
+        f"{total_estrategias:,} estrategias · {aptas_operar} aptas para operar · "
+        f"{aptas_mejorar} aptas para mejorar · {con_promesa} con promesa"
+    ).replace(",", ".")
 
     celdas_conteo: Dict[str, int] = {}
     for r in fondeo_rows:
@@ -324,7 +403,15 @@ def get_candidates_censo(
 
     return {
         "status": "SUCCESS",
-        "estrategias": estrategias_list,
+        "resumen": {
+            "total_estrategias": total_estrategias,
+            "aptas_operar": aptas_operar,
+            "aptas_mejorar": aptas_mejorar,
+            "con_promesa": con_promesa,
+            "texto": resumen_texto,
+        },
+        "resumen_texto": resumen_texto,
+        "estrategias": estrategias_list[:limite],
         "fondeo_total": len(fondeo_rows),
         "otros_proyectos": len(otros_rows),
         "otros_sin_metricas": otros_sin_metricas,
