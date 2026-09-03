@@ -446,7 +446,7 @@ def verify_strategy_structural(strategy_id: str) -> Dict[str, Any]:
         ok, reason = _verify_strategy_structure(row)
         if ok:
             if row.validation_status == "EXTRACTED_UNVERIFIED":
-                row.validation_status = "STRUCTURALLY_VERIFIED"
+                row.validation_status = "METRICS_COMPLETE"
                 db.commit()
             return {"status": "SUCCESS", "strategy_id": strategy_id, "validation_status": row.validation_status, "reason": reason}
         else:
@@ -461,7 +461,7 @@ def verify_batch_structural(
     family: str | None = Query(None, description="Filtro opcional por familia, ej. sqx_extracted"),
     project: str | None = Query(None, description="Filtro opcional por proyecto, ej. FONDEO_MYM_H4")
 ) -> Dict[str, Any]:
-    """Verifica en lote estrategias en estado EXTRACTED_UNVERIFIED y las promueve si cumplen la integridad estructural."""
+    """Verifica en lote estrategias en estado EXTRACTED_UNVERIFIED y las promueve a METRICS_COMPLETE si cumplen la integridad de métricas."""
     db = SessionLocal()
     try:
         q = db.query(StrategyModel).filter(StrategyModel.validation_status == "EXTRACTED_UNVERIFIED")
@@ -478,7 +478,7 @@ def verify_batch_structural(
         for row in candidates:
             ok, reason = _verify_strategy_structure(row)
             if ok:
-                row.validation_status = "STRUCTURALLY_VERIFIED"
+                row.validation_status = "METRICS_COMPLETE"
                 promoted += 1
                 details.append({"strategy_id": row.strategy_id, "status": "PROMOTED", "reason": reason})
             else:
@@ -486,14 +486,14 @@ def verify_batch_structural(
                 details.append({"strategy_id": row.strategy_id, "status": "KEPT_UNVERIFIED", "reason": reason})
 
         db.commit()
-        total_structural = db.query(StrategyModel).filter(StrategyModel.validation_status.in_(["STRUCTURALLY_VERIFIED", "BACKTEST_VERIFIED", "CERTIFIED_CURRENT"])).count()
+        total_metrics_complete = db.query(StrategyModel).filter(StrategyModel.validation_status.in_(["METRICS_COMPLETE", "STRUCTURALLY_VERIFIED", "BACKTEST_VERIFIED", "CERTIFIED_CURRENT"])).count()
 
         return {
             "status": "SUCCESS",
             "evaluated": len(candidates),
             "promoted": promoted,
             "rejected": rejected,
-            "total_structurally_verified": total_structural,
+            "total_metrics_complete": total_metrics_complete,
             "details": details[:20]
         }
     finally:

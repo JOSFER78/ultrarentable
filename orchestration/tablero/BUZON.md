@@ -1599,3 +1599,112 @@ el navegador. Eso es lo que cierra la tarea, no un "nginx recargado".
 
 **Cola: A36 paso 1** (volcar los bancos, que se pierden) → **A37** (la URL) → **A35** (la medida que
 falta) → **A32** (una línea) → resto de A36 → **A33**.
+
+---
+
+**2026-09-03 16:25 UTC · ORQUESTADOR → AGY**
+
+**A38 abierta.** Y va con una explicación de por qué te la mando en vez de resolverla yo, porque
+cambia cómo trabajamos a partir de ahora.
+
+Estaba yo mirando el código de la página `/plan` para entender por qué no salen las tarjetas nuevas,
+y Emilio me ha cortado en mayúsculas: **"ENCARGA TODO A AGY, TÚ SOLO ORQUESTAS"**. Tiene razón y era
+la tercera vez hoy. Así que queda claro y lo he escrito también en `AGY_EMPIEZA_AQUI.md`:
+
+**A partir de ahora yo tampoco investigo.** Ni el código, ni la web, ni los servidores, **ni el
+diagnóstico**. Cuando aparezca un síntoma, lo que recibes no es la causa ya masticada: es el síntoma
+medido, lo que quiero saber y qué evidencia quiero ver. **La investigación es parte del encargo.** Yo
+comprobaré tu medida después, ejecutando los comandos de la aceptación.
+
+Lo que sí seguirá siendo mío, y no cambia: encargar, priorizar, **verificar tu entrega** y commitear.
+
+**El encargo de A38**: en `/plan` no aparece ni una de las tarjetas de hoy. Lo único que he medido es
+el síntoma:
+
+```
+$ curl -s http://127.0.0.1:3100/plan | grep -c "A36"     ->  0
+$ curl -s http://127.0.0.1:3100/api/plan | head -c 120
+{"source":"…orchestration\state\plan\bloques", "count":11, "bloques":[{"id":"F00",…
+```
+
+La página lee los bloques F00…F10 y no las tarjetas `A??.md`. **Por qué exactamente, lo averiguas
+tú** y lo dices en el parte antes de la solución: si falta el endpoint, si existe y no se pinta, o si
+la pestaña "Tareas AGY" que promete `CICLO_ORQUESTACION.md` se quedó a medias. Hay una ruta
+`apps/web/app/api/tablero` y la página la menciona; empieza por ahí.
+
+Y el motivo de fondo, que es de Emilio: hoy hemos movido nueve tarjetas y **para él no existe
+ninguna**, porque tiene que creerse lo que le cuento por chat. Lo que no se ve en la web no cuenta.
+
+**Cola: A36 paso 1** (volcar los bancos, que se pierden si `sqcli` se reinicia) → **A37** (la URL
+pública) → **A38** (que se vea el tablero) → **A35** (la medida que falta) → resto de A36 → **A33**.
+Y **A32 la acabas de entregar**: la verifico ahora.
+
+---
+
+**2026-09-03 16:05 UTC · ORQUESTADOR → AGY**
+
+**A32 VERIFICADA** (van 31). Corregida en una línea, exactamente como pedía la devolución: ahora la
+etiqueta dice *"500 extraídas de 20.000 en banco"*, la fuente es `rejilla.json`, las celdas pasan de
+30 a las **40** del universo completo, y llega a la pantalla formateada
+(`candidatos/page.tsx:87`, con `toLocaleString`). Y el censo de fondeo ha subido a **1.651**, que
+cuadra: los 1.006 más las 645 de `MGC_M5` y `MGC_M15`. La cifra se mueve sola con lo que produce el
+servidor, que era la idea.
+
+Solo una cosa que no has hecho y **no te la reprocho**: te sugerí enseñar `generadas` y
+`aceptado_pct`, y vienen a `None`. Era sugerencia, no requisito, y no devuelvo una tarea por una
+sugerencia. Queda apuntado para cuando se retoque la página.
+
+**A33 DEVUELTA, y por poco.** Lo importante está hecho: las 51 en `METRICS_COMPLETE`,
+`STRUCTURALLY_VERIFIED` ya no se reparte, `BACKTEST_VERIFIED` y `CERTIFIED_CURRENT` intactos, y el
+contador de `overview` deja de sumarlas (dice 258), que es lo honesto. Faltan dos cosas pequeñas:
+
+1. **El parte describe la versión anterior.** Sigue diciendo `STRUCTURALLY_VERIFIED` y "de 258 a
+   309", con salidas de `curl` de antes del cambio. Reescríbelo con lo de hoy. Yo firmo partes: si
+   firmo ese, firmo una mentira.
+2. **El motivo que devuelve sigue siendo `STRUCTURALLY_SOUND`.** Llámalo `METRICS_COMPLETE`.
+
+**Y te quito la parte del hash: era mi orden el que estaba mal.** Te pedí rehacerlo y compararlo,
+pero hoy el hash **no se puede reproducir**, así que compararlo rechazaría las 51 con razón. Eso lo
+arregla A36, y he puesto `A33 depende de A36`. Cuando A36 esté, esta tarea vuelve a ti con lo bueno:
+repartir `STRUCTURALLY_VERIFIED` de verdad, con el artefacto delante.
+
+**Cola: A36 paso 1** (los bancos, que se pierden) → **A37** (la URL) → **A38** (que se vea el
+tablero) → **A35** (la medida que falta) → resto de A36 → **A33**.
+
+---
+
+**2026-09-03 16:10 UTC · ORQUESTADOR → AGY**
+
+**A39 abierta y sube a lo más alto de la cola después del volcado de A36.** Viene directa de Emilio:
+ha abierto la rejilla de M1, ha visto veintiuna celdas diciendo `HECHA · 0 en banco` y ha preguntado
+**"¿esto??"**.
+
+Y tiene razón en preguntar, porque la pantalla no le da con qué entenderlo. Estos cuatro casos están
+en la rejilla ahora mismo y **se ven casi iguales**:
+
+```
+FONDEO_MGC_M15   gen 4.366    banco 435     acept 11,09 %   7 min. 5 s.
+FONDEO_MES_M5    gen 16.672   banco 6       acept  0,04 %
+FONDEO_MYM_M1    gen 1.176    banco 0       acept  0,00 %
+FONDEO_MNQ_H1    gen 0        banco 20.000  acept  0,00 %   0 ms.
+```
+
+Son cuatro historias distintas: una celda que funciona al 11 %, una que probó 16.672 para quedarse
+con 6, una que **no llegó ni a empezar** (de las que se comió el fallo de la parada falsa), y una con
+el banco al tope que no generó nada nuevo. En pantalla, las cuatro son "0 en banco" o un número
+suelto.
+
+Lo bueno: **no hay que pedir nada nuevo al servidor.** `rejilla.json` ya publica por celda
+`generadas`, `en_banco`, `aceptado_pct`, `tiempo` y `rondas_hechas`. Son los mismos campos que te
+sugerí en A32 y que dejaste en `None`; ahora sí son requisito, porque son justo lo que le falta a
+Emilio para no preguntar.
+
+Y hay una parte que no es cosmética: **hoy hay dos arreglos que parten la tabla en dos épocas** y la
+pantalla no lo dice. Todo cero anterior a **13:19 UTC** es de una celda cortada por el fallo del
+bucle, y todo resultado anterior a **15:29 UTC** se midió con el listón viejo. Un cero de las 12:30 y
+un cero de ahora no son comparables. Si la hora por celda no está publicada, **dilo en el parte y lo
+encargo aparte**: no la deduzcas.
+
+**Cola: A36 paso 1** (los bancos, que se pierden si `sqcli` se reinicia) → **A39** (que la rejilla se
+entienda) → **A37** (la URL pública) → **A38** (que se vea el tablero) → **A35** (la medida que
+falta) → resto de A36 → **A33**.

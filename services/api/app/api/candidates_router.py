@@ -202,25 +202,36 @@ def get_candidates_censo(db: Session = Depends(get_db)) -> Dict[str, Any]:
         celda = parts[1] if len(parts) > 1 else "OTRA"
         celdas_conteo[celda] = celdas_conteo.get(celda, 0) + 1
 
-    bancos_servidor: Dict[str, int] = {}
+    info_servidor: Dict[str, Dict[str, Any]] = {}
     try:
-        r = requests.get("http://127.0.0.1:5052/estado.json", timeout=3)
+        r = requests.get("http://127.0.0.1:5052/rejilla.json", timeout=3)
         if r.status_code == 200:
             data = r.json()
-            for k, v in data.get("celdas", {}).items():
-                bancos_servidor[k] = v.get("en_banco") or 0
+            for c in data.get("celdas", []):
+                p = c.get("proyecto")
+                if p:
+                    info_servidor[p] = {
+                        "en_banco": int(c.get("en_banco") or 0),
+                        "generadas": int(c.get("generadas") or 0),
+                        "aceptado_pct": float(c.get("aceptado_pct") or 0.0),
+                    }
     except Exception:
         pass
 
-    todas_celdas = sorted(list(set(list(celdas_conteo.keys()) + list(bancos_servidor.keys()))))
+    todas_celdas = sorted(list(set(list(celdas_conteo.keys()) + list(info_servidor.keys()))))
     detalle_celdas = []
     for c in todas_celdas:
         extraidas = celdas_conteo.get(c, 0)
-        en_banco = bancos_servidor.get(c, 0)
+        s_info = info_servidor.get(c, {})
+        en_banco = s_info.get("en_banco", 0)
+        generadas = s_info.get("generadas", 0)
+        aceptado_pct = s_info.get("aceptado_pct", 0.0)
         detalle_celdas.append({
             "celda": c,
             "extraidas_en_censo": extraidas,
             "en_banco_servidor": en_banco,
+            "generadas_servidor": generadas,
+            "aceptado_pct": aceptado_pct,
             "etiqueta": f"{extraidas} extraídas de {en_banco} en banco",
         })
 
