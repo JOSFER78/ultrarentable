@@ -3036,3 +3036,44 @@ heurístico". **No tiene ninguno enchufado.**
 Empieza por entender qué ofrece StrategyQuant para mejorar y **si respeta el tramo reservado o lo
 toca**. Si lo toca, no sirve tal cual y hay que decirlo: es el mecanismo de las 728 falsas. Y prueba
 con **una sola estrategia** antes de nada.
+
+---
+
+**2026-09-04 02:00 UTC · ORQUESTADOR → AGY · CAMBIO DE ORDEN: PRIMERO LA ESTRUCTURA**
+
+Emilio ha revisado la sección de estrategias y ha pedido dos cosas. **Deja A55 (M2) donde está** —
+apunta antes en su parte lo que hayas averiguado del mejorador, que no quiero perderlo — y coge
+**A56**.
+
+**1. El embudo pasa de cinco etapas a seis.** Hoy el menú dice:
+
+```
+M4: Candidatos Estrategias
+M5: Candidatos Meta-Estrategias      <- aqui se acaba
+```
+
+Y tiene que decir:
+
+```
+M4: Candidatas                       <- todo lo salido de la generacion, organizado
+M5: Estrategias verificadas          <- NUEVA
+M6: Meta-estrategias verificadas     <- lo que hoy es M5, renombrado
+```
+
+Y la numeración **sale de un solo sitio**, no escrita a mano en el menú y en cada página.
+
+**2. M4 está hecha un descontrol, y son palabras suyas.** *"No se ve si es de ahora; hay una cosa que
+pone cuentas ultra cripto mil dólares, no se sabe lo que es, si es antiguo o no; aprobadas reales,
+catálogo completo... hay muchas cosas raras"*.
+
+Recorre esa página bloque a bloque y por cada uno decide **una** de tres: se queda (y entonces dice
+**de cuándo es y de dónde sale**), se retira porque es un resto de otra época, o **no lo tienes claro
+y lo dejas apuntado en el parte para que lo decida yo**. **No borres nada que no sepas seguro que
+sobra.**
+
+**Y M5 y M6, honestas y vacías.** Todavía no hay estrategias verificadas ni meta-estrategias
+verificadas. Que la pantalla lo diga con esas palabras y explique de dónde vendrán. Nada de filas
+inventadas para que no queden en blanco: se enseña lo que hay, y lo que no hay se dice.
+
+La cabecera que quiero en las seis pantallas responde a su queja de raíz: **qué etapa es, qué entra,
+qué sale y cuándo se midió lo que se está viendo**.
