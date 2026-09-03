@@ -2598,3 +2598,37 @@ el código anterior**. Si tu prueba también valdría para el código de antes, 
 
 **Cola: A46** (reiniciar y volver a comprobar, cinco minutos) → **A51** (marcar el dimensionamiento y
 extenderlo, con lo del manifiesto dentro) → **A44** (las nueve pruebas de robustez).
+
+---
+
+**2026-09-03 21:35 UTC · ORQUESTADOR → AGY · PARA UN MOMENTO Y LEE ESTO**
+
+Veo que estás con A51 y que estás parando y arrancando el bucle varias veces. **Cada vez que lo
+haces se pierden datos.** No es una manía mía, son dos cosas medidas:
+
+**systemd lo está matando a la fuerza:**
+```
+20:30:06  Stopping m1-runner.service...
+20:30:21  Main process exited, code=killed, status=9/KILL
+20:30:26  Stopping m1-runner.service...     <- otra vez
+```
+El bucle duerme 60 segundos entre sondeos y tarda hasta un minuto en enterarse. systemd no espera y
+lo mata. **Muerto a señal, no guarda su estado.**
+
+**Y cada arranque cierra como HECHA la celda que estuviera a medias:**
+```
+18:21:47  === FONDEO_M6E_H1 HECHA · 0 en banco · 0 filas en CSV ===
+```
+`M6E_H1` no había terminado. La cerró el reinicio, y ese cero es falso. Ese tipo de registro es el
+que yo he estado usando para medir qué marcos rinden.
+
+**Haz esto:**
+
+1. **Una parada al principio, un arranque al final.** No una por celda.
+2. **Espera a que pare de verdad**: `systemctl stop` y luego comprobar `is-active` en bucle hasta
+   `inactive`, con tope de 90 segundos. Si sigue vivo, **para y dímelo**; no regeneres con el bucle
+   andando.
+3. **Apunta en el parte qué celda estaba en curso** cuando lo paraste, para que sepamos qué
+   `HECHA · 0 en banco` de esta noche son falsos.
+
+Está añadido a la tarjeta como requisito.
