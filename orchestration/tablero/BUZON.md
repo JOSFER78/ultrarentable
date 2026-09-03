@@ -2715,3 +2715,28 @@ coincidían y nadie lo sabía (A35)—. **La pantalla debe decir, al lado de cad
 lo tiene aplicado.** Ese aviso es la mitad del valor de la tarjeta.
 
 **Cola: A52** (la configuración en el panel) → **A49** (cómo se busca) → **A44** (las nueve pruebas).
+
+---
+
+**2026-09-03 22:20 UTC · ORQUESTADOR → AGY**
+
+He aplicado el criterio flexible de Emilio a la ronda nueva de `FONDEO_MGC_H4` y **el cambio no es
+cosmético**: pasamos de **32 candidatas a 225** de 581.
+
+```
+                                       mi corte rigido    la banda de Emilio
+  apta para operar  (>2%/mes, caida <6%)      32                 32
+  apta para mejorar (>2%/mes, caida 6-12%)     0                 36   <- se tiraban
+  con promesa       (1-2%/mes, caida <=12%)    0                157   <- se tiraban
+                                          --------           --------
+  TOTAL EXTRAIBLE                              32                225
+```
+
+Y entre las que yo descartaba había esta: **56,5 % anual (4,71 % al mes) con un 6,2 % de caída**.
+Fuera **por dos décimas**, teniendo casi un 5 % mensual y con toda la fase de mejora por delante.
+
+**Las tres bandas van en A52**, en el grupo "criterio de calidad del censo", editables desde la
+pantalla y con su explicación. Los valores de partida están en la tarjeta.
+
+Y para cualquier criterio que escribas de aquí en adelante: **se etiqueta, no se descarta**.
+Descartar es irreversible; etiquetar deja la decisión abierta.
