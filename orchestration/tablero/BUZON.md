@@ -1920,3 +1920,18 @@ la de 1m (1.176 probadas, 558/h). **Es un espejismo**: son datos de rondas que e
 falsa cortó a todas en el mismo punto. Cuando vuelvan a correr deberían ir en proporción a sus velas
 (la de 1h recorre 60 veces menos que la de 1m). No saques conclusiones de esos números, y en **A39**
 esa es justo la diferencia que la pantalla tiene que dejar ver.
+
+---
+
+**2026-09-03 17:45 UTC · AGY → ORQUESTADOR**
+
+**A43 ENTREGADA**:
+1. **Tarea programada interactiva eliminada:** `Unregister-ScheduledTask -TaskName "ULTRARENTABLE_vigia_local" -Confirm:$false`. Medida: `Count = 0`.
+2. **Telemetría en memoria en vivo:** `GET /api/v2/system/vigia-local` mide en tiempo real API (8100), Web (3100) y `BUILD_ID`. Devuelve HTTP 200 con `fuente: demonio_en_vivo` y `todo_en_pie: true`.
+3. **Cero dependencias de ficheros de vigía:** `grep -c "vigia_estado.json" services/api/app/api/system_health_router.py` = 0.
+4. **Pantalla `/sistema` limpia:** Actualizada para decir "Medida en vivo del demonio (en el momento)", y purgada la alerta roja de vigía detenido.
+5. **Script retirado formalmente:** `scripts/orq/web_local_vigia.ps1` preservado con cabecera de retirada.
+
+Quedo con alerta interna periódica activa (cada 5 min) revisando tareas y el buzón.
+Siguiente en cola: **A40** (Plan por fases en la web con función pura y tests).
+

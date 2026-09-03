@@ -240,29 +240,47 @@ def get_watchdog_status() -> Dict[str, Any]:
 
 @system_health_router.get("/vigia-local")
 def get_vigia_local() -> Dict[str, Any]:
-    """Devuelve el estado medido del vigía de la instancia local (scripts/orq/web_local_vigia.ps1)."""
+    """Devuelve la salud en tiempo real de la instancia local (medida en vivo por el propio demonio, sin tareas programadas)."""
+    import urllib.request
+    from datetime import datetime, timezone
+
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    vigia_path = os.path.join(repo_root, "orchestration", "site", "vigia_estado.json")
-    if not os.path.exists(vigia_path):
-        return {
-            "disponible": False,
-            "motivo": "Fichero de estado del vigía local no encontrado en orchestration/site/vigia_estado.json",
-        }
+    build_id_path = os.path.join(repo_root, "apps", "web", ".next", "BUILD_ID")
+    build_integro = os.path.exists(build_id_path)
+
+    # Sondear Web Next.js en puerto 3100
+    web_http = None
+    web_ok = False
     try:
-        with open(vigia_path, "r", encoding="utf-8-sig") as f:
-            data = json.load(f)
-        if isinstance(data, dict):
-            data["disponible"] = True
-            return data
-        return {
-            "disponible": False,
-            "motivo": "Formato inválido en el fichero del vigía local",
-        }
+        req = urllib.request.Request("http://127.0.0.1:3100/", headers={"User-Agent": "UltrarentableHealth/1.0"})
+        with urllib.request.urlopen(req, timeout=1.5) as response:
+            web_http = response.getcode()
+            web_ok = (web_http == 200)
     except Exception as e:
-        return {
-            "disponible": False,
-            "motivo": f"Error leyendo fichero del vigía: {str(e)}",
-        }
+        web_http = getattr(e, "code", None)
+        web_ok = False
+
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return {
+        "schema": "ultrarentable.vigia_local.v1",
+        "medido": now_utc,
+        "fuente": "demonio_en_vivo",
+        "worktree": repo_root,
+        "api": {
+            "puerto": 8100,
+            "http": 200,
+            "ok": True,
+        },
+        "web": {
+            "puerto": 3100,
+            "http": web_http or (200 if web_ok else 503),
+            "ok": web_ok,
+        },
+        "build_integro": build_integro,
+        "acciones": [],
+        "todo_en_pie": web_ok and build_integro,
+        "disponible": True,
+    }
 
 
 

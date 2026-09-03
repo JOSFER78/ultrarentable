@@ -46,25 +46,21 @@ if (-not (Test-Path $PyExe)) {
     }
 }
 
-# 3. Funcion para lanzar procesos desacoplados persistentes
+# 3. Funcion para lanzar procesos desacoplados persistentes 100% invisibles (zero-popups)
 function Start-DaemonProcess {
     param(
         [string]$CommandLine,
         [string]$WorkingDirectory
     )
-    try {
-        $res = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
-            CommandLine = $CommandLine
-            CurrentDirectory = $WorkingDirectory
-        }
-        if ($res.ReturnValue -eq 0 -and $res.ProcessId) {
-            return [int]$res.ProcessId
-        }
-    } catch {
-        # Fallback a Start-Process
+    $argsCmd = $CommandLine
+    if ($argsCmd -match '^cmd(\.exe)?\s+/c\s+(.*)$') {
+        $argsCmd = $matches[2]
     }
-    $p = Start-Process -FilePath "cmd.exe" -ArgumentList "/c $CommandLine" -WorkingDirectory $WorkingDirectory -WindowStyle Hidden -PassThru
-    return [int]$p.Id
+    $p = Start-Process -FilePath "cmd.exe" -ArgumentList "/c $argsCmd" -WorkingDirectory $WorkingDirectory -WindowStyle Hidden -PassThru
+    if ($p -and -not $p.HasExited) {
+        return [int]$p.Id
+    }
+    return $null
 }
 
 # 4. Obtener PID que escucha en un puerto
@@ -222,7 +218,7 @@ if ($Reconstruir) {
     $buildLog = Join-Path $SiteDir "build.log"
     $buildErrLog = Join-Path $SiteDir "build_err.log"
     Write-Host "Ejecutando build de produccion de Next.js (apps/web)..."
-    $buildProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run build" -WorkingDirectory $WebDir -RedirectStandardOutput $buildLog -RedirectStandardError $buildErrLog -PassThru -Wait
+    $buildProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run build" -WorkingDirectory $WebDir -RedirectStandardOutput $buildLog -RedirectStandardError $buildErrLog -WindowStyle Hidden -PassThru -Wait
     if ($buildProc.ExitCode -ne 0) {
         Write-Error "Fallo npm run build (ExitCode $($buildProc.ExitCode)). Consulta $buildLog"
         exit $buildProc.ExitCode
@@ -326,7 +322,7 @@ if ($Arrancar) {
     $buildErrLog = Join-Path $SiteDir "build_err.log"
     if (-not (Test-Path $nextBuildDir)) {
         Write-Host "No existe build de produccion previo. Ejecutando npm run build..."
-        $buildProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run build" -WorkingDirectory $WebDir -RedirectStandardOutput $buildLog -RedirectStandardError $buildErrLog -PassThru -Wait
+        $buildProc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run build" -WorkingDirectory $WebDir -RedirectStandardOutput $buildLog -RedirectStandardError $buildErrLog -WindowStyle Hidden -PassThru -Wait
         if ($buildProc.ExitCode -ne 0) {
             Write-Error "Fallo npm run build (ExitCode $($buildProc.ExitCode)). Revisa $buildLog"
             exit $buildProc.ExitCode

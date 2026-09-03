@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-# VIGIA DE LA INSTANCIA LOCAL (API :8100 + Web :3100)
+# ==============================================================================
+# SCRIPT RETIRADO Y DESACTIVADO (2026-09-03 · DIRECTIVA ZERO-POPUPS & ARCHIVOS DIRECTOS)
+# ==============================================================================
+# Motivo: Directiva permanente de Emilio ("PROHIBIDO ABRIR O DEPENDER DE TERMINALES
+# VISIBLES EN WINDOWS"). Este script se ejecutaba mediante una tarea programada cada 3 min
+# en la sesión interactiva del usuario de Windows.
 #
-# Comprueba que la instancia local de Ultrarentable responde y, si no, la vuelve a levantar.
-# Pensado para ejecutarse cada pocos minutos desde una tarea programada de Windows
-# (ULTRARENTABLE_vigia_local): hace UNA pasada y termina; no se queda vivo.
+# Estado actual: RETIRADO. La tarea programada ULTRARENTABLE_vigia_local ha sido eliminada.
+# La salud de la instancia local ahora la publica directamente el propio demonio
+# en el endpoint GET /api/v2/system/vigia-local midiendo en vivo (memoria y socket),
+# sin ficheros intermedios, sin consolas emergentes y sin tareas programadas de Windows.
 #
-# Regla del proyecto (D8): nada se lanza "a mano y ya"; lo que se deja corriendo resucita solo.
-#
-# Uso:
-#   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\orq\web_local_vigia.ps1
-#   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\orq\web_local_vigia.ps1 -Instalar
-#   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\orq\web_local_vigia.ps1 -Desinstalar
+# NO PROGRAMAR NI EJECUTAR ESTE SCRIPT DE FORMA PERIÓDICA EN WINDOWS.
+# ==============================================================================
 
 param(
     [switch]$Instalar,

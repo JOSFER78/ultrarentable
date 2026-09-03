@@ -316,19 +316,7 @@ export default function SistemaTelemetryPage() {
           </div>
 
           <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-3)]">
-            {vigiaLocal?.medido && (() => {
-              const diffMin = Math.max(0, Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000));
-              const vigiaParado = diffMin > 10;
-              return vigiaParado ? (
-                <span className="text-[var(--loss)] font-semibold">
-                  Última pasada del vigía: hace {diffMin} min (vigía parado)
-                </span>
-              ) : (
-                <span>
-                  Última pasada del vigía: hace {diffMin === 0 ? "menos de 1" : diffMin} min
-                </span>
-              );
-            })()}
+            <span>Medida en vivo del demonio (en el momento)</span>
             <button
               onClick={() => void fetchVigiaLocal()}
               disabled={vigiaLocalLoading}
@@ -342,7 +330,7 @@ export default function SistemaTelemetryPage() {
 
         {vigiaLocalLoading && !vigiaLocal && (
           <div className="py-6 text-center text-xs font-mono text-[var(--text-3)]">
-            Consultando estado del vigía local (/api/v2/system/vigia-local)…
+            Consultando estado del demonio local (/api/v2/system/vigia-local)…
           </div>
         )}
 
@@ -350,7 +338,7 @@ export default function SistemaTelemetryPage() {
           <div className="px-3.5 py-3 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] text-xs font-mono flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[var(--loss)] shrink-0" />
-              <span>No se pudo conectar con el vigía local ({vigiaLocalError}).</span>
+              <span>No se pudo conectar con el demonio local ({vigiaLocalError}).</span>
             </div>
             <button
               onClick={() => void fetchVigiaLocal()}
@@ -363,23 +351,12 @@ export default function SistemaTelemetryPage() {
 
         {vigiaLocal && !vigiaLocal.disponible && (
           <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-2)]/40 text-xs font-mono text-[var(--text-2)]">
-            No hay parte del vigía local disponible: {vigiaLocal.motivo || "Fichero de vigía no encontrado"}
+            Telemetría local no disponible: {vigiaLocal.motivo || "Demonio local no responde"}
           </div>
         )}
 
         {vigiaLocal && vigiaLocal.disponible && (
           <div className="space-y-3">
-            {/* Alerta si el vigía lleva más de 10 min sin correr */}
-            {vigiaLocal.medido &&
-              Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000) > 10 && (
-                <div className="p-3 rounded-lg border border-[var(--loss)] bg-[var(--loss-dim)] flex items-start gap-2.5 text-xs text-[var(--loss)]">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="font-semibold">Alerta de supervisión:</strong> El vigía local no está corriendo. Han pasado {Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000)} minutos desde la última medición registrada.
-                  </div>
-                </div>
-              )}
-
             {/* Grid de servicios locales: API, Web y Build */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {/* API 8100 */}
