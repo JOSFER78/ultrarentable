@@ -54,7 +54,12 @@ def celdas_del_manifiesto(base: "Path") -> list[str]:
 
 SONDEO_SEG = 60          # cada cuánto se pregunta el estado
 QUIETO_PARA_FIN = 3      # sondeos seguidos con el mismo tiempo de ejecución = terminada
-MARGEN_MIN = 25          # margen sobre el tope de horas antes de pararla a la fuerza
+# Margen sobre el tope de horas antes de pararla a la fuerza. Era 25 minutos por si la parada
+# propia de StrategyQuant llegaba tarde; medido el 03-09, esa parada **no funciona**: la celda
+# FONDEO_MES_M5, configurada con `<StopCondition ... hours="1">`, seguia construyendo a 1 h 14 min.
+# Quien para de verdad es este bucle, asi que el margen baja a 3 minutos: son 22 minutos ganados
+# por celda, casi 15 horas por ronda de 40.
+MARGEN_MIN = 3
 
 _parar = False
 
