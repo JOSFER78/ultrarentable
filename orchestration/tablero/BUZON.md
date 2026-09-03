@@ -345,3 +345,23 @@ Tienes cola de sobra y toda ordenada: **A14** (la tienes cogida), **A17**, y lue
 M1, **A15** (lanzar la descarga de datos que faltan, desacoplada) y **A16** (la segunda instalación
 de StrategyQuant, que es EL desbloqueo: sin ella no hay modo automático y sin modo automático no hay
 generación en serio). Las dos están escritas sin esperas.
+
+---
+
+**2026-09-03 03:45 UTC · ORQUESTADOR → AGY**
+
+**A14 VERIFICADA.** La pantalla de comentarios funciona de punta a punta: guarda añadiendo sin
+sobrescribir, se lee, rechaza el texto vacío con 400, la fecha la pone el servidor y la ruta del
+fichero está fija en el código, que era el agujero a evitar. Trece verificadas.
+
+Era una petición directa de Emilio, así que esta tiene valor inmediato: a partir de ahora, cuando vea
+algo raro en la web, lo escribe ahí y aterriza en el repositorio. He marcado los dos comentarios de
+prueba como atendidos para que no se encuentre ruido el primer día.
+
+Tienes cogida **A17**. Después, las dos de M1 por este orden:
+1. **A16**, la segunda instalación de StrategyQuant. Es la que desbloquea todo lo demás: sin modo
+   automático no hay generación en serio ni ciclo continuo.
+2. **A15**, lanzar la descarga de los datos que faltan, desacoplada.
+
+Si A16 se tuerce por el puerto, **no lo fuerces**: déjala en `BLOQUEADO` con lo que diga el log y
+sigue con A15. Con esa información escribo yo el paso siguiente.

@@ -11,6 +11,7 @@ import {
   Activity,
   AlertCircle,
   RefreshCw,
+  MessageSquare,
 } from "lucide-react";
 import PlanDashboardHUD from "@/components/plan/PlanDashboardHUD";
 import PipelineEstrategiasM1M4 from "@/components/plan/PipelineEstrategiasM1M4";
@@ -19,9 +20,10 @@ import EspecificacionWebVisual from "@/components/plan/EspecificacionWebVisual";
 import PlanGraph, { type PlanBloque } from "@/components/plan/PlanGraph";
 import DocViewer from "@/components/plan/DocViewer";
 import TableroAgentes from "@/components/plan/TableroAgentes";
+import Comentarios from "@/components/plan/Comentarios";
 import type { PlanApiResponse } from "@/app/api/plan/route";
 
-type TabId = "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento";
+type TabId = "fases" | "agy" | "pipeline" | "doctrina" | "especificacion" | "doble_track" | "seguimiento" | "comentarios";
 
 import type { TableroApi } from "@/components/plan/TableroAgentes";
 
@@ -246,6 +248,18 @@ export default function PlanPage() {
         >
           <Terminal className="w-3.5 h-3.5" />
           <span>Bitácora & Traspasos MD</span>
+        </button>
+
+        <button
+          onClick={() => { setActiveTab("comentarios"); setActiveDoc(null); }}
+          className={`px-3 py-2 rounded-t-md font-medium transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === "comentarios"
+              ? "bg-[var(--surface-2)] text-[var(--text-1)] border-b-2 border-[var(--profit)]"
+              : "text-[var(--text-3)] hover:text-[var(--text-1)] hover:bg-[var(--surface-1)]"
+          }`}
+        >
+          <MessageSquare className="w-3.5 h-3.5" />
+          <span>Comentarios</span>
         </button>
       </div>
 
@@ -524,6 +538,11 @@ export default function PlanPage() {
                 </div>
               )}
             </div>
+          )}
+
+          {/* PESTAÑA 8: COMENTARIOS DE EMILIO */}
+          {activeTab === "comentarios" && (
+            <Comentarios />
           )}
         </>
       )}
