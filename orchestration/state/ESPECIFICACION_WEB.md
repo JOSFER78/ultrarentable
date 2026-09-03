@@ -51,6 +51,11 @@ pero vive un clic más allá y se llama archivo técnico.
 5. **Lenguaje llano.** Las siglas se explican o no se usan. Nada de "OOS", "PF" o "DSR" sueltos en
    la vista principal.
 
+6. **Un solo menú, el de la izquierda (03-09).** La aplicación ocupa todo el ancho y alto. La cabecera
+   lleva solo la miga de pan, el estado del motor y el usuario. Ninguna barra, tira de pestañas o
+   "anterior/siguiente" arriba que repita el menú lateral; ningún bloque a toda pantalla que empuje
+   los datos. Las subpáginas van como desplegable del menú lateral.
+
 ## 4. Mapa del sitio: qué hace cada página
 
 ### 4.1 Portada `/`

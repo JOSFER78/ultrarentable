@@ -145,3 +145,23 @@ una tarea.
   headless"). El dato de al lado era correcto en los tres casos, y por eso la etiqueta falsa colaba.
   **Una etiqueta que afirma un estado es una afirmación y necesita su medición**, igual que una
   cifra. Si no se ha medido, se describe lo que se sabe y punto.
+
+## Cuánto verificas tú antes de entregar (regla del 03-09, pedida por Emilio)
+
+- **Sí, siempre:** ejecuta los comandos del bloque *Aceptación* de la tarea y pega su salida cruda
+  en el parte. Es un minuto y evita una ida y vuelta entera.
+- **No, salvo que la tarea lo pida con las palabras "a ojo":** recorridos por el navegador, capturas
+  de pantalla, comprobar cada pestaña una a una. Esa comprobación la hace el orquestador de forma
+  independiente; si tú la repites, se paga dos veces y tú tardas el doble.
+- Si al ejecutar la aceptación algo falla y no es tuyo, **no lo arregles**: entrégalo igual y dilo
+  en el parte con la salida (como los tres tests de A07). Decidir qué se hace con lo ajeno es del
+  orquestador.
+
+## Regla de pantalla (Emilio, 03-09): un solo menú, el de la izquierda
+
+La aplicación ocupa todo el ancho y alto. **El menú es el lateral izquierdo.** En la cabecera solo va
+la miga de pan (ULTRARENTABLE › SECCIÓN › PÁGINA), el estado del motor y el usuario. Nunca una tira
+de pestañas, chips o "anterior/siguiente" arriba que repita lo que ya está a la izquierda, ni
+bloques a toda pantalla que empujen los datos hacia abajo. Si una página necesita subpáginas, van
+como desplegable del menú lateral (como "1. Estrategias"). Emilio lo ha pedido para toda la web:
+*"lo hace siempre, no sé por qué; que lo solucione"*.
