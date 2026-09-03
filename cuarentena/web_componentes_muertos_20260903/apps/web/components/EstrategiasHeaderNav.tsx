@@ -124,10 +124,10 @@ export default function EstrategiasHeaderNav({ currentPhase }: EstrategiasHeader
             <Link
               key={p.id}
               href={p.href}
-              className={`group relative flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-1.5 font-mono text-xs transition-all duration-200 flex-shrink-0 cursor-pointer ${
+              className={`group relative flex items-center gap-2 whitespace-nowrap rounded-md px-2.5 py-1 font-mono text-xs transition-all flex-shrink-0 cursor-pointer ${
                 isActive
-                  ? "border border-[var(--border)] bg-[var(--surface-1)]    text-[var(--text-1)] shadow-[0_0_15px_rgba(255,255,255,0.06)]"
-                  : "border border-transparent text-[var(--text-2)] hover:border-[var(--border)] hover:bg-[var(--surface-1)] hover:text-[var(--text-1)]"
+                  ? "border border-[var(--border-strong)] bg-[var(--surface-3)] text-[var(--text-1)] font-bold"
+                  : "border border-transparent text-[var(--text-2)] hover:border-[var(--border)] hover:bg-[var(--surface-2)] hover:text-[var(--text-1)]"
               }`}
             >
               <span

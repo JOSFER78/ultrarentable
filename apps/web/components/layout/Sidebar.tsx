@@ -2,11 +2,12 @@
 
 /**
  * apps/web/components/layout/Sidebar.tsx
- * Reescrito 2026-09-01 (AG-11, T2 del contrato de poda web) conforme a
- * docs/19_UI_STYLE_SPEC.md §3 (Sidebar) y al plan de obra de
- * orchestration/reviews/investigacion_I5_web.md (paso 1): 8 entradas de la
- * misión FONDEO + Ultra, atenuada, siempre visible. Ningún enlace apunta a
- * una ruta puesta en cuarentena (ver cuarentena/web_poda_20260901/MOTIVO.md).
+ * Submenús desplegables (acordeón) con auto-desplegado según la ruta activa y control manual
+ * con Chevron; Ultra al pie, siempre visible, nunca se oculta.
+ *
+ * La mecánica del acordeón se conserva tal cual se reorganizó el 2026-09-02. Lo que cambió el
+ * 2026-09-03 es QUÉ se enlaza: ver el comentario sobre NAV_ITEMS, con las tres reglas de la
+ * poda y su verificación.
  */
 
 import React, { useState, useEffect } from "react";
@@ -15,7 +16,6 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   Zap,
-  Database,
   ShieldCheck,
   Building2,
   Layers,
@@ -26,29 +26,95 @@ import {
   BookOpen,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 
-interface NavItem {
+export interface SubNavItem {
+  code: string;
+  label: string;
+  href: string;
+  badge?: string;
+}
+
+export interface NavItem {
   code: string;
   label: string;
   href: string;
   icon: React.ComponentType<{ style?: React.CSSProperties; className?: string }>;
+  subItems?: SubNavItem[];
 }
 
 /**
- * Entradas de la misión FONDEO (docs/19 §3) más las dos que Emilio mandó recuperar el
- * 2026-09-02: Trading Desk (mesa de ejecución CME, hoy sin motor conectado pero necesaria
- * en cuanto haya estrategia certificada) y Tradesfera (tratado M01-M16 con la comparativa
- * de prop firms). Ambas salieron de cuarentena/web_poda_20260901 con su hash verificado.
+ * Podado el 2026-09-03 por mandato de Emilio ("hay páginas antiguas mezcladas con nuevas,
+ * deja solo lo nuevo y funcional"). Tres reglas, todas verificables:
+ *
+ * 1. Solo se enlaza lo que existe EN HEAD. Las 22 entradas que enlazaban a rutas presentes
+ *    en el disco pero sin commitear (`/tradesfera/01-ecosistema` … `/tradesfera/modulos`,
+ *    `/estrategias/candidatos`) salen del menú: en un build de producción desde el repo
+ *    darían 404. Vuelven en cuanto sus ficheros entren en un commit.
+ * 2. Ningún número escrito a mano. Se retiran los badges "578" (candidatas), "70 Cuentas",
+ *    "11", "36 Col", "(16)", "SQX" y "LIVE". El de 578 estaba además desmentido: la API
+ *    (`/api/v1/candidates?include_rejected=true&limit=1000`) devuelve 728. Un contador en el
+ *    menú solo puede venir de la API, nunca de una constante.
+ * 3. Vuelven al menú Inicio, Gates, Fondeo y Sistema, que la reorganización anterior había
+ *    dejado fuera. Las tres últimas sirven datos reales, medido contra la API local :8100:
+ *    `/api/v2/certified/strategies`, `/api/v1/execution/sessions?route=FONDEO` y
+ *    `/api/v1/telemetry/health` responden 200. Fondeo es además la misión del producto.
+ *
+ * `/candidatos` (ruta antigua) queda viva pero fuera del menú: renderiza el mismo
+ * `CandidatesExcelExplorer` que el M4 nuevo y el contrato sellado de `/estrategias`
+ * (README_STRATEGIES_PAGE.md) la declara "archivo técnico de uso interno, un clic más allá".
+ * Se llega desde la portada y desde /estrategias.
+ *
+ * Trading Desk, Tradesfera y Ultra NO se tocan: los tres están aquí por orden expresa de
+ * Emilio (ver la reversión parcial de cuarentena/web_poda_20260901/MOTIVO.md).
  */
 const NAV_ITEMS: NavItem[] = [
   { code: "HOME", label: "Inicio", href: "/", icon: Home },
-  { code: "STRAT", label: "Estrategias", href: "/estrategias", icon: Zap },
-  { code: "CAND", label: "Candidatos", href: "/candidatos", icon: Database },
+  {
+    code: "STRAT",
+    label: "Estrategias",
+    href: "/estrategias",
+    icon: Zap,
+    subItems: [
+      { code: "STRAT_CAT", label: "Listas para FONDEO", href: "/estrategias" },
+      { code: "STRAT_M1", label: "1. Generación", href: "/estrategias/generacion" },
+      { code: "STRAT_M2", label: "2. Mejora", href: "/estrategias/mejora" },
+      { code: "STRAT_M3", label: "3. Valoración", href: "/estrategias/valoracion" },
+      { code: "STRAT_M5", label: "5. Meta-Estrategias", href: "/estrategias/meta" },
+    ],
+  },
   { code: "GATES", label: "Gates", href: "/gates", icon: ShieldCheck },
   { code: "FONDEO", label: "Fondeo", href: "/fondeo", icon: Building2 },
-  { code: "PROPS", label: "Prop-firms", href: "/prop-firms", icon: Layers },
-  { code: "DESK", label: "Trading Desk", href: "/trading-desk", icon: Gauge },
+  {
+    code: "PROPS",
+    label: "Prop-firms",
+    href: "/prop-firms",
+    icon: Layers,
+    subItems: [
+      { code: "PROP_CAT", label: "Catálogo", href: "/prop-firms?view=table" },
+      { code: "PROP_COMP", label: "Comparador cara a cara", href: "/prop-firms?view=comparator" },
+      { code: "PROP_FIND", label: "Buscador 3 clics", href: "/prop-firms?view=finder" },
+      { code: "PROP_ROI", label: "Calculadora ROI", href: "/prop-firms?view=roi" },
+      { code: "PROP_DEALS", label: "Cupones y ofertas", href: "/prop-firms?view=deals" },
+      { code: "PROP_MEGA", label: "Mega-matriz", href: "/prop-firms?view=mega" },
+      { code: "PROP_AUDIT", label: "Auditoría SourceRef", href: "/prop-firms?view=audit" },
+    ],
+  },
+  {
+    code: "DESK",
+    label: "Trading Desk",
+    href: "/trading-desk",
+    icon: Gauge,
+    subItems: [
+      { code: "DESK_TERM", label: "Terminal y DOM", href: "/trading-desk" },
+      { code: "DESK_POS", label: "Posiciones y brackets", href: "/trading-desk/posiciones" },
+      { code: "DESK_STRAT", label: "Estrategias activas", href: "/trading-desk/estrategias" },
+      { code: "DESK_RISK", label: "Sentinel de riesgo", href: "/trading-desk/riesgo" },
+      { code: "DESK_AUDIT", label: "Auditoría forense", href: "/trading-desk/auditoria" },
+      { code: "DESK_CONF", label: "Conexión gateway", href: "/trading-desk/configuracion" },
+    ],
+  },
   { code: "TSFERA", label: "Tradesfera", href: "/tradesfera", icon: BookOpen },
   { code: "PLAN", label: "Plan", href: "/plan", icon: ClipboardList },
   { code: "SIST", label: "Sistema", href: "/sistema", icon: Radio },
@@ -61,14 +127,35 @@ export default function Sidebar() {
   const pathname = usePathname() || "/";
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
+  // Secciones abiertas manualmente o por auto-detección
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    STRAT: false,
+    PROPS: false,
+    DESK: false,
+    TSFERA: false,
+  });
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("ur_sidebar_collapsed");
       if (saved !== null) setCollapsed(saved === "true");
     } catch {
-      /* localStorage no disponible (SSR/privado): se mantiene el valor por defecto */
+      /* localStorage no disponible */
     }
   }, []);
+
+  // Auto-expandir la sección correspondiente si la ruta actual coincide
+  useEffect(() => {
+    if (pathname.startsWith("/estrategias")) {
+      setOpenSections((prev) => ({ ...prev, STRAT: true }));
+    } else if (pathname.startsWith("/prop-firms")) {
+      setOpenSections((prev) => ({ ...prev, PROPS: true }));
+    } else if (pathname.startsWith("/trading-desk")) {
+      setOpenSections((prev) => ({ ...prev, DESK: true }));
+    } else if (pathname.startsWith("/tradesfera")) {
+      setOpenSections((prev) => ({ ...prev, TSFERA: true }));
+    }
+  }, [pathname]);
 
   const toggleCollapse = () => {
     const next = !collapsed;
@@ -80,8 +167,37 @@ export default function Sidebar() {
     }
   };
 
-  const isActive = (href: string): boolean => {
+  const toggleSection = (code: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setOpenSections((prev) => ({ ...prev, [code]: !prev[code] }));
+  };
+
+  const [currentView, setCurrentView] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      setCurrentView(sp.get("view"));
+    }
+  }, [pathname]);
+
+  const isRouteActive = (href: string, exact = false): boolean => {
     if (href === "/") return pathname === "/";
+    if (href.includes("?")) {
+      const [path, query] = href.split("?");
+      const params = new URLSearchParams(query);
+      const view = params.get("view");
+      if (pathname !== path) return false;
+      if (!currentView && view === "table") return true;
+      return currentView === view;
+    }
+    if (pathname === "/prop-firms" && !currentView && href.startsWith("/prop-firms")) {
+      return href === "/prop-firms?view=table";
+    }
+    if (exact) return pathname === href;
     return pathname === href || pathname.startsWith(href + "/");
   };
 
@@ -89,9 +205,9 @@ export default function Sidebar() {
     <aside
       suppressHydrationWarning
       style={{
-        width: collapsed ? "60px" : "220px",
-        minWidth: collapsed ? "60px" : "220px",
-        maxWidth: collapsed ? "60px" : "220px",
+        width: collapsed ? "60px" : "240px",
+        minWidth: collapsed ? "60px" : "240px",
+        maxWidth: collapsed ? "60px" : "240px",
         height: "100vh",
         background: "var(--bg)",
         borderRight: "1px solid var(--border)",
@@ -202,7 +318,7 @@ export default function Sidebar() {
         </button>
       )}
 
-      {/* ENTRADAS DE LA MISIÓN */}
+      {/* NAVEGACIÓN PRINCIPAL JERÁRQUICA */}
       <nav
         style={{
           flex: 1,
@@ -215,31 +331,140 @@ export default function Sidebar() {
         }}
       >
         {NAV_ITEMS.map((item) => {
-          const active = isActive(item.href);
+          const hasSubs = Array.isArray(item.subItems) && item.subItems.length > 0;
+          const isParentActive = isRouteActive(item.href, false);
+          const isOpen = Boolean(openSections[item.code]);
           const Icon = item.icon;
+
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={collapsed ? item.label : undefined}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "9px",
-                padding: collapsed ? "8px 0" : "7px 9px",
-                justifyContent: collapsed ? "center" : "flex-start",
-                borderRadius: "6px",
-                textDecoration: "none",
-                background: active ? "var(--surface-3)" : "transparent",
-                color: active ? "var(--text-1)" : "var(--text-2)",
-                fontWeight: active ? 600 : 500,
-                fontSize: "12.5px",
-                transition: "background 0.1s ease, color 0.1s ease",
-              }}
-            >
-              <Icon style={{ width: "15px", height: "15px", flexShrink: 0, color: active ? "var(--text-1)" : "var(--text-2)" }} />
-              {!collapsed && <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.label}</span>}
-            </Link>
+            <div key={item.code} style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  borderRadius: "6px",
+                  background: isParentActive && !hasSubs ? "var(--surface-3)" : isParentActive ? "var(--surface-2)" : "transparent",
+                  color: isParentActive ? "var(--text-1)" : "var(--text-2)",
+                  transition: "background 0.1s ease, color 0.1s ease",
+                }}
+              >
+                <Link
+                  href={item.href}
+                  title={collapsed ? item.label : undefined}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "9px",
+                    padding: collapsed ? "8px 0" : "7px 9px",
+                    justifyContent: collapsed ? "center" : "flex-start",
+                    textDecoration: "none",
+                    color: "inherit",
+                    fontWeight: isParentActive ? 600 : 500,
+                    fontSize: "12.5px",
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  <Icon
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      flexShrink: 0,
+                      color: isParentActive ? "var(--profit)" : "var(--text-2)",
+                    }}
+                  />
+                  {!collapsed && (
+                    <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {item.label}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Botón de acordeón si tiene subpáginas */}
+                {!collapsed && hasSubs && (
+                  <button
+                    onClick={(e) => toggleSection(item.code, e)}
+                    title={isOpen ? "Plegar submenú" : "Desplegar submenú"}
+                    style={{
+                      padding: "4px 6px",
+                      background: "transparent",
+                      border: "none",
+                      color: "var(--text-3)",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {isOpen ? (
+                      <ChevronDown style={{ width: "13px", height: "13px", color: "var(--text-1)" }} />
+                    ) : (
+                      <ChevronRight style={{ width: "13px", height: "13px" }} />
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* LISTA DE SUB-ITEMS DESPLEGABLES */}
+              {!collapsed && hasSubs && isOpen && (
+                <div
+                  style={{
+                    marginLeft: "18px",
+                    paddingLeft: "10px",
+                    borderLeft: "1px solid var(--border)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1px",
+                    marginTop: "2px",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {item.subItems!.map((sub) => {
+                    const isSubActive = isRouteActive(sub.href, true);
+                    return (
+                      <Link
+                        key={sub.href}
+                        href={sub.href}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "5px 7px",
+                          borderRadius: "4px",
+                          textDecoration: "none",
+                          fontSize: "11px",
+                          fontFamily: "var(--font-mono, monospace)",
+                          background: isSubActive ? "var(--surface-3)" : "transparent",
+                          color: isSubActive ? "var(--profit)" : "var(--text-3)",
+                          fontWeight: isSubActive ? 700 : 400,
+                          transition: "color 0.1s ease, background 0.1s ease",
+                        }}
+                      >
+                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {sub.label}
+                        </span>
+                        {sub.badge && (
+                          <span
+                            style={{
+                              fontSize: "9px",
+                              padding: "1px 4px",
+                              borderRadius: "3px",
+                              background: isSubActive ? "var(--profit-dim)" : "var(--surface-2)",
+                              border: isSubActive ? "1px solid var(--profit)" : "1px solid var(--border)",
+                              color: isSubActive ? "var(--profit)" : "var(--text-3)",
+                              marginLeft: "4px",
+                            }}
+                          >
+                            {sub.badge}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
@@ -257,7 +482,7 @@ export default function Sidebar() {
             justifyContent: collapsed ? "center" : "flex-start",
             borderRadius: "6px",
             textDecoration: "none",
-            background: isActive(ULTRA_ITEM.href) ? "var(--surface-2)" : "transparent",
+            background: isRouteActive(ULTRA_ITEM.href) ? "var(--surface-2)" : "transparent",
             color: "var(--text-3)",
             fontSize: "11.5px",
           }}
