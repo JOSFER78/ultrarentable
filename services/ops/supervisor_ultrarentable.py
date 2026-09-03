@@ -85,14 +85,17 @@ def _escribir(ruta: Path, datos: dict) -> None:
     os.replace(tmp, ruta)
 
 
-SIMBOLOS = ["MES", "MNQ", "MYM", "MGC", "MCL"]
+SIMBOLOS = ["MES", "MNQ", "MYM", "M2K", "MGC", "MCL", "UB", "M6E"]
 MARCOS = ["M1", "M5", "M15", "H1", "H4"]
 NOMBRES = {
     "MES": ("Micro E-mini S&P 500", "ES"),
     "MNQ": ("Micro E-mini Nasdaq 100", "NQ"),
     "MYM": ("Micro E-mini Dow Jones", "YM"),
+    "M2K": ("Micro E-mini Russell 2000", "RTY"),
     "MGC": ("Micro Oro", "GC"),
     "MCL": ("Micro Petróleo WTI", "CL"),
+    "UB": ("Bono del Tesoro a 30 años", "ZB"),
+    "M6E": ("Micro Euro FX", "6E"),
 }
 ETIQUETA_TF = {"M1": "1m", "M5": "5m", "M15": "15m", "H1": "1h", "H4": "4h"}
 
@@ -145,7 +148,7 @@ def _rejilla(base_url: str, estado: dict, salud: dict, lista_proyectos: str | No
     filas = []
     for simbolo in SIMBOLOS:
         nombre, grande = NOMBRES[simbolo]
-        d = simbolos.get(simbolo)
+        d = simbolos.get(simbolo)  # None mientras ese activo no tenga datos cargados
         for tf in MARCOS:
             proyecto = f"FONDEO_{simbolo}_{tf}"
             ce = celdas_estado.get(proyecto, {})

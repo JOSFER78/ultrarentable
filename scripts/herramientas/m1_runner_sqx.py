@@ -36,9 +36,21 @@ import time
 import urllib.request
 from pathlib import Path
 
-SIMBOLOS = ["MES", "MNQ", "MYM", "MGC", "MCL"]
-MARCOS = ["M1", "M5", "M15", "H1", "H4"]
-CELDAS = [f"FONDEO_{s}_{tf}" for s in SIMBOLOS for tf in MARCOS]
+def celdas_del_manifiesto(base: "Path") -> list[str]:
+    """La lista de celdas sale del manifiesto que escribe el generador, no de una constante.
+
+    Así, cuando entra un activo nuevo (se descargan sus datos y se regeneran los proyectos), el
+    bucle lo recoge en la siguiente vuelta sin tocar este fichero ni perder lo ya hecho.
+    """
+    try:
+        m = json.loads((base / "manifiesto.json").read_text(encoding="utf-8"))
+        celdas = [p["proyecto"] for p in m.get("proyectos", [])]
+        if celdas:
+            return celdas
+    except Exception:  # noqa: BLE001
+        pass
+    return [f"FONDEO_{s}_{tf}" for s in ["MES", "MNQ", "MYM", "MGC", "MCL"]
+            for tf in ["M1", "M5", "M15", "H1", "H4"]]
 
 SONDEO_SEG = 60          # cada cuánto se pregunta el estado
 QUIETO_PARA_FIN = 3      # sondeos seguidos con el mismo tiempo de ejecución = terminada
@@ -122,7 +134,7 @@ def guardar(estado: dict, ruta: Path) -> None:
     os.replace(tmp, ruta)
 
 
-def estado_inicial(horas: int) -> dict:
+def estado_inicial(horas: int, CELDAS: list) -> dict:
     return {
         "schema": "ultrarentable.m1.runner.v1",
         "creado": dt.datetime.now(dt.UTC).isoformat(),
@@ -183,12 +195,20 @@ def main() -> int:
     ruta_estado = args.base / "estado.json"
     log = Registro(args.base / "m1_runner.log")
 
-    estado = json.loads(ruta_estado.read_text(encoding="utf-8")) if ruta_estado.exists() else estado_inicial(args.horas)
+    CELDAS = celdas_del_manifiesto(args.base)
+    estado = json.loads(ruta_estado.read_text(encoding="utf-8")) if ruta_estado.exists() else estado_inicial(args.horas, CELDAS)
+    # Celdas nuevas (activo recién descargado) entran como PENDIENTE sin tocar lo ya hecho.
+    nuevas = [c for c in CELDAS if c not in estado["celdas"]]
+    if nuevas:
+        for c in nuevas:
+            estado["celdas"][c] = {"estado": "PENDIENTE", "rondas": []}
+        guardar(estado, ruta_estado)
 
     if args.informe:
         print(json.dumps({
             "ronda": estado["ronda"],
             "en_curso": estado["celda_en_curso"],
+            "celdas": len(estado["celdas"]),
             "hechas": sum(1 for c in estado["celdas"].values() if c["estado"] == "HECHA"),
             "pendientes": sum(1 for c in estado["celdas"].values() if c["estado"] == "PENDIENTE"),
             "celdas": {k: {"estado": v["estado"], "rondas": len(v["rondas"]),
@@ -199,7 +219,9 @@ def main() -> int:
 
     horas = estado["horas_por_celda"]
     tope_seg = horas * 3600 + MARGEN_MIN * 60
-    log(f"=== runner M1 arrancado · ronda {estado['ronda']} · {horas} h por celda · tope duro {tope_seg // 60} min ===")
+    log(f"=== runner M1 arrancado · ronda {estado['ronda']} · {len(CELDAS)} celdas · {horas} h por celda · tope duro {tope_seg // 60} min ===")
+    if nuevas:
+        log(f"celdas nuevas en el universo: {', '.join(nuevas)}")
 
     while not _parar:
         # 1) ¿Había una celda a medias (reinicio del proceso o de la máquina)?
@@ -272,7 +294,7 @@ def main() -> int:
         estado["celda_en_curso"] = None
         guardar(estado, ruta_estado)
         hechas = sum(1 for c in estado["celdas"].values() if c["estado"] == "HECHA")
-        log(f"=== {celda} HECHA · {fila['en_banco']} en banco · {fila['csv_filas']} filas en CSV · {hechas}/25 en esta ronda ===")
+        log(f"=== {celda} HECHA · {fila['en_banco']} en banco · {fila['csv_filas']} filas en CSV · {hechas}/{len(CELDAS)} en esta ronda ===")
 
     log("runner M1 detenido")
     return 0

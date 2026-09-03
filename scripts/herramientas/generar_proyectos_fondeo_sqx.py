@@ -38,7 +38,9 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-SIMBOLOS = ["MES", "MNQ", "MYM", "MGC", "MCL"]
+# Universo FONDEO: 8 activos x 5 marcos = 40 celdas (Emilio, 03-09). Cada símbolo micro se genera
+# solo si StrategyQuant ya tiene sus datos cargados; los que no, se saltan avisando.
+SIMBOLOS = ["MES", "MNQ", "MYM", "M2K", "MGC", "MCL", "UB", "M6E"]
 MARCOS = ["M1", "M5", "M15", "H1", "H4"]
 
 # Costes por símbolo: spread y deslizamiento en TICKS; comisión en USD por contrato y operación
@@ -49,16 +51,26 @@ COSTES = {
     "MES": {"spread": 1, "slippage": 2, "comision": 2.00},
     "MNQ": {"spread": 1, "slippage": 2, "comision": 2.00},
     "MYM": {"spread": 1, "slippage": 2, "comision": 2.00},
+    "M2K": {"spread": 1, "slippage": 2, "comision": 2.00},
     "MGC": {"spread": 1, "slippage": 2, "comision": 2.40},
     "MCL": {"spread": 1, "slippage": 2, "comision": 2.40},
+    "UB": {"spread": 1, "slippage": 2, "comision": 2.60},
+    "M6E": {"spread": 1, "slippage": 2, "comision": 2.00},
 }
 
-# Condición de aceptación permisiva por marco: operaciones medias al mes (para que no sobrevivan
-# estrategias de 3 operaciones al año). El resto de umbrales es común y laxo.
-MIN_OPS_MES = {"M1": 30, "M5": 15, "M15": 8, "H1": 3, "H4": 1}
-MIN_PF = 1.2
-MIN_RET_DD = 2
-MIN_WIN_PCT = 30
+# Condiciones de aceptación DELIBERADAMENTE PERMISIVAS (orden de Emilio: "no te pongas tan exquisito
+# con los filtros en SQX, luego depuramos en M2/M3"). El criterio 1.1 lo aplica el motor propio.
+#
+# Medido el 03-09 con los umbrales anteriores (factor de beneficio 1,2 · retorno/caída 2 · aciertos
+# 30 %): en 1 hora StrategyQuant aceptaba el 16 % (Nasdaq 1h, 20.000 en banco), pero en 1 minuto y en
+# 5 minutos rechazaba el **100 %** (2.158 y 56 probadas, cero aceptadas). Con la fricción real de un
+# micro (1 tick de diferencial, 2 de deslizamiento, ~2 USD por contrato ida y vuelta), los marcos
+# rápidos casi no dejan margen bruto. Bajar el listón aquí no relaja nada: solo evita que la celda
+# entregue un banco vacío y deja que sea M2, con el criterio sellado, quien decida.
+MIN_OPS_MES = {"M1": 20, "M5": 10, "M15": 5, "H1": 2, "H4": 1}
+MIN_PF = 1.05
+MIN_RET_DD = 0.5
+MIN_WIN_PCT = 20
 
 FECHA_DESDE = "2023.01.02"
 FECHA_HASTA = "2026.08.30"
@@ -207,14 +219,19 @@ def main() -> int:
     en_sqx = simbolos_en_sqx(args.cli)
     faltan = [s for s in SIMBOLOS if s not in en_sqx]
     if faltan:
-        raise SystemExit(f"NO DATA: símbolos sin datos en SQX: {faltan}. No genero nada.")
-    for s, (tfb, d0, d1) in en_sqx.items():
+        # No es un error: es el estado real del universo mientras se completan las descargas.
+        # Se generan las celdas de los símbolos que SÍ tienen datos y se dice cuáles quedan.
+        print(f"AVISO: sin datos en StrategyQuant todavía -> {faltan} ({len(faltan) * 5} celdas pendientes)")
+    presentes = [s for s in SIMBOLOS if s in en_sqx]
+    if not presentes:
+        raise SystemExit("NO DATA: ningún símbolo del universo tiene datos en SQX. No genero nada.")
+    for s, (tfb, d0, d1) in ((k, v) for k, v in en_sqx.items() if k in SIMBOLOS):
         if tfb != "M1":
             raise SystemExit(f"{s}: base {tfb}, esperaba M1 (SQX solo deriva marcos superiores a la base)")
         if d0 != FECHA_DESDE or d1 != FECHA_HASTA:
             print(f"AVISO {s}: rango en SQX {d0}->{d1} distinto del esperado {FECHA_DESDE}->{FECHA_HASTA}; uso el de SQX")
 
-    celdas = [(s, tf) for s in SIMBOLOS for tf in MARCOS]
+    celdas = [(s, tf) for s in presentes for tf in MARCOS]
     if args.solo:
         s, tf = args.solo.split("_")
         celdas = [(s, tf)]
@@ -229,6 +246,8 @@ def main() -> int:
         "aceptacion": {"min_ops_mes": MIN_OPS_MES, "min_pf": MIN_PF, "min_ret_dd": MIN_RET_DD, "min_win_pct": MIN_WIN_PCT},
         "oos_fraccion": OOS_FRACCION,
         "horas_tope": args.horas,
+        "universo": SIMBOLOS,
+        "sin_datos_todavia": faltan,
         "proyectos": [],
     }
     for s, tf in celdas:

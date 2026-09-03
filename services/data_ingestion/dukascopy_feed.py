@@ -107,6 +107,15 @@ SYMBOLS: Dict[str, SymbolSpec] = {
     "USA500IDXUSD": SymbolSpec("USA500IDXUSD", "USA500IDXUSD", 1e3, 1_000, 30_000, "ES/MES", "index"),
     "USATECHIDXUSD": SymbolSpec("USATECHIDXUSD", "USATECHIDXUSD", 1e3, 3_000, 100_000, "NQ/MNQ", "index"),
     "USA30IDXUSD": SymbolSpec("USA30IDXUSD", "USA30IDXUSD", 1e3, 10_000, 200_000, "YM/MYM", "index"),
+    # Anadidos el 2026-09-03 para completar los 8 activos del universo FONDEO que pidio Emilio
+    # (8 activos x 5 marcos = 40 celdas). Su existencia en el datafeed esta COMPROBADA desde el
+    # servidor Oracle el mismo dia: USSC2000IDXUSD devolvio 52.808 bytes y USTBONDTRUSD 1.065 para
+    # la hora 2026-06-15 14h (USA2000IDXUSD, en cambio, da 404: no es ese el codigo).
+    # El divisor 1e3 es el mismo de los otros indices; el rango de cordura es DELIBERADAMENTE
+    # amplio y el feed aborta si el precio cae fuera, que es justo lo que protege de un divisor
+    # equivocado (desplazaria el precio x100 sin que nada fallase).
+    "USSC2000IDXUSD": SymbolSpec("USSC2000IDXUSD", "USSC2000IDXUSD", 1e3, 500, 10_000, "RTY/M2K", "index"),
+    "USTBONDTRUSD": SymbolSpec("USTBONDTRUSD", "USTBONDTRUSD", 1e3, 40, 300, "ZB/UB", "bond"),
     # --- Metales y energia ---
     "XAUUSD": SymbolSpec("XAUUSD", "XAUUSD", 1e3, 500, 20_000, "GC/MGC", "metal"),
     "XAGUSD": SymbolSpec("XAGUSD", "XAGUSD", 1e3, 5, 500, "SI", "metal"),
