@@ -133,3 +133,9 @@ nada se da por sentado sin comprobarlo; comunicación con Emilio breve y en llan
   sin entrada/salida), `hermes serve` de la sesión SSH de Emilio, `sqcli` (servidor SQX en :5050 con log
   activo hoy). Disco al 93 %: `~/workspace` 62 GB, `.hermes` 18 GB, imágenes Docker 14,9 GB (11,9 reclamables
   con `prune -a`, decisión de Emilio), `/var/www` 7 GB.
+- **Error mío a corregir por escrito (00:50 UTC)**: el commit `c4a703d1f` (auditoría + F09 + traspaso) arrastró
+  **11 componentes de `apps/web/app/prop-firms/components/`** que el agente de Antigravity había dejado en el
+  índice (`git add`) sin commitear. No son míos ni los revisé; compilan (`tsc` rc=0 a las 00:41) pero entran en
+  `main` sin mensaje propio. No se reescribe el historial: Antigravity los commitea/corrige en su siguiente
+  pasada. Regla para no repetirlo: `git diff --cached --name-only` antes de cada commit y commitear con
+  pathspec (`git commit -- <rutas>`), nunca el índice entero.
