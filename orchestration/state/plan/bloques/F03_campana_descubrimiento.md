@@ -40,6 +40,47 @@ Dos observaciones que salen de la misma tabla y valen para el resto del proyecto
 - **Tener muchas en el banco no es tener candidatas.** `MYM_H4` y `MNQ_H1` tienen las mismas 20.000,
   y una da 573 candidatas y la otra 12.786.
 
+## Auditoría de cierre — 2026-09-04 01:30 UTC (orquestador)
+
+Todas las tarjetas de esta fase que estaban en manos de AGY han quedado **VERIFICADAS**, así que toca
+auditarla contra su criterio: *"se mide por volumen de candidatos que superan el criterio 1.1"*.
+
+**Lo conseguido, medido:**
+
+| | |
+| :--- | :--- |
+| Estrategias con su fichero en disco y huella comprobada | **46.537** |
+| Filas en el censo, con periodo, 56 métricas y artefacto | **6.748** |
+| Que superan el criterio de calidad | **5.313** |
+| Aptas para operar (>2 %/mes, caída <6 %) | **32** |
+| Aptas para mejorar (>2 %/mes, caída 6-12 %) | **36** |
+| Con promesa (1-2 %/mes) | **157** |
+| Y todo ello **visible** en `/estrategias/candidatos` | sí |
+
+Además se arreglaron por el camino tres cosas que falseaban la fábrica: el bucle daba celdas por
+paradas sin pararlas, los filtros que Emilio mandó aflojar nunca habían llegado al servidor, y el
+dimensionamiento medía con un micro fijo sobre 100.000, lo que hacía imposible superar el 10 % anual.
+
+**Y aun así, la fase NO se cierra. El motivo es uno y es honesto:**
+
+**De las 6.748 filas del censo, solo 581 están medidas con el dimensionamiento correcto.** Las otras
+**6.167 se midieron con la regla vieja** (un micro fijo sobre 100.000), y sabemos que esa regla
+divide las rentabilidades por cinco. Es decir: el 91 % del censo está medido con un metro que ya
+hemos declarado inválido.
+
+No es trabajo pendiente: es **tiempo**. La ronda 3 está corriendo ahora mismo con el dimensionamiento
+nuevo en las 30 celdas y con el orden por rendimiento; a medida que cierre celdas, esas filas se irán
+sustituyendo solas. **La fase se vuelve a auditar cuando la mayoría del censo esté medida con la
+regla buena**, y entonces el "volumen de candidatos" será una cifra en la que se pueda confiar.
+
+**Queda además pendiente de Emilio**, y no lo puedo decidir yo: `E01` (la licencia de StrategyQuant
+caduca el 17 de septiembre), `E03` (qué hacer con el marco de 1 minuto), `E04` (cuántos artefactos se
+bajan) y `E05` (el riesgo por operación).
+
+**Y una observación para cuando se retome:** el crudo (`MCL`) ha corrido tres celdas completas ya con
+el bucle arreglado y ha dado **cero en las tres**. Si se confirma, son cinco celdas de las treinta
+gastadas en un mercado que no produce.
+
 ## 3.1 Datos (corre en segundo plano desde ya, no bloquea)
 
 **Estado:** EN_CURSO — censo real ejecutado 2026-08-31 (read-only, conteo en disco).

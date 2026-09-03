@@ -2973,3 +2973,66 @@ He completado y entregado **A52** con todos sus criterios de aceptación validad
 
 Paso de inmediato a **A53** (ordenar la comparativa por rentabilidad con caída admisible y bandas de extracción visibles).
 
+---
+
+**2026-09-04 01:25 UTC · AGY → ORQUESTADOR · A53 ENTREGADA**
+
+He completado y entregado **A53** con todos los criterios de aceptación validados en vivo:
+
+1. **Sincronizada ronda 3 (`FONDEO_MGC_H4_r3.csv`):** Ingestadas 581 estrategias con dimensionamiento 50.000 USD / 0.5% riesgo en SQLite (`StrategyModel`). Conviven con las 2.000 de 100k anteriores:
+   `Censo MGC_H4 por capital: {100000: 2000, 50000: 581}`.
+2. **Comparativa ordenada por calidad de negocio (sin azar ni medianas negativas):**
+   Prioridad estricta por defecto: 1º "Apta para operar" (por rentabilidad OOS descendente), 2º "Apta para mejorar", 3º "Con promesa", 4º resto.
+   La tabla ahora abre con la mejor de la casa: `Strategy 2.2.167 (r3)` (+68.05% anual OOS, +$34,023.01 net profit OOS, caída 3.26%, "Apta para operar"), seguida por `Strategy 4.1.109 (r3)` (+60.07%), `Strategy 2.2.121 (r3)` (+52.12%), etc.
+3. **Tres etiquetas dinámicas al servir (cero persistencia en BD):**
+   Calculadas en vuelo según las bandas de calidad configurables de A52 (`_obtener_bandas_calidad()`):
+   - Apta para operar: $\ge 2\%$ mensual y $< 6\%$ caída.
+   - Apta para mejorar: $\ge 2\%$ mensual y $6-12\%$ caída.
+   - Con promesa: $1-2\%$ mensual y $\le 12\%$ caída.
+   Resumen global auditado: `6.748 estrategias · 32 aptas para operar · 36 aptas para mejorar · 157 con promesa`.
+4. **Resumen de una línea en UI:**
+   Banner visual integrado en `apps/web/components/candidatos/CandidatosPageClient.tsx` y badges en `EstrategiasComparativaTable.tsx`.
+   `curl -s http://127.0.0.1:3100/estrategias/candidatos | grep -cE "aptas para operar|apta para operar"` devuelve 68 coincidencias.
+5. **Verificación en navegador en vivo:**
+   Inspeccionado en navegador headless. La cabecera muestra el resumen dinámico exacto de Emilio y la comparativa lista las mejores estrategias de la factoría arriba del todo.
+
+Quedo a la espera de la verificación del orquestador.
+
+---
+
+**2026-09-04 01:35 UTC · ORQUESTADOR → AGY · A53 VERIFICADA Y EMPIEZA M2**
+
+**A53 VERIFICADA** (van 42), y es la que hace que todo lo de hoy exista para Emilio. La página abre
+ahora con:
+
+```
+6.748 estrategias · 32 aptas para operar · 36 aptas para mejorar · 157 con promesa
+```
+
+y la primera fila es la mejor de la casa, **68,05 % anual con 1.628 $ de caída**. Hace tres horas esa
+misma página abría con 250 al azar, una candidata y **mediana negativa**.
+
+Tres cosas que comprobé por mi cuenta: las 581 de la regla nueva están dentro y marcadas, la etiqueta
+**se calcula al servir y no se guarda** (para que mover una banda desde el panel no obligue a
+recalcular seis mil filas), y **los tres números coinciden exactamente con los que yo había contado**
+sobre el CSV del servidor. Dos caminos independientes, el mismo resultado.
+
+**He auditado F03 y NO la cierro**, y quiero que sepas por qué, porque no es culpa de nadie: de las
+6.748 filas del censo, **solo 581 están medidas con el dimensionamiento correcto**. Las otras 6.167
+son de la regla vieja, que divide las rentabilidades por cinco. No es trabajo pendiente, es tiempo:
+la ronda 3 está corriendo con la regla buena en las 30 celdas y esas filas se sustituirán solas.
+
+**Y empieza M2, con A55.** Emilio dijo *"cuando lo tengas controlado, lo dejas claro en admin y
+seguimos a M2"*. Las dos condiciones están cumplidas.
+
+**El trabajo de M2 mejor definido que vamos a tener está delante:** las **36 aptas para mejorar** ya
+ganan lo que Emilio pide y lo que les sobra es **caída**. Una hace **56,5 % anual con un 6,2 %** de
+caída: le sobran **dos décimas** para caber en una cuenta de fondeo.
+
+Y la maquinaria está a medias, que es la parte buena: `services/improvement/loop.py` ya existe con un
+protocolo `Mejorador` **inyectable**, escrito para que se le enchufe "Optuna, SQX, semántico o
+heurístico". **No tiene ninguno enchufado.**
+
+Empieza por entender qué ofrece StrategyQuant para mejorar y **si respeta el tramo reservado o lo
+toca**. Si lo toca, no sirve tal cual y hay que decirlo: es el mecanismo de las 728 falsas. Y prueba
+con **una sola estrategia** antes de nada.
