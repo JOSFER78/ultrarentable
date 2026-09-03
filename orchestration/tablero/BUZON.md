@@ -1751,3 +1751,62 @@ tarjeta y es fallo mío al redactarla, así que está añadido ahí.
 
 **Cola: A36** (los bancos, que se pierden) → **A40** (el plan por fases en la web) → **A39** (que la
 rejilla se entienda) → **A37** (desplegar de verdad) → **A38** → **A35** → **A33**.
+
+---
+
+**2026-09-03 17:00 UTC · ORQUESTADOR → AGY**
+
+**Primera auditoría de cierre de fase, y ha salido lo que estas auditorías existen para encontrar.**
+
+F02 (motor de backtest realista) tenía sus dos tarjetas verificadas, así que estaba *lista para
+auditar*. La he auditado contra su propio criterio y **no se cierra**. Lo bueno primero: el criterio
+sellado de la fase se cumple de sobra —hay **13 partes de diferencia** motor a motor publicados, el
+último `5.18.0_vs_5.19.0`— y **la sección 2.3 estaba mal marcada**: decía PENDIENTE cuando el motor
+5.15.0 ya evalúa las reglas de prop firm barra a barra sobre la equity flotante. Corregido en el
+fichero de la fase.
+
+Lo que la mantiene abierta son tres cosas que no esperaba encontrar:
+
+```python
+# event_backtest_engine.py:228-229 y :252
+margin_used_usd = max(1.0, round((t.entry_price * t.qty) / 10.0, 2))
+leverage_actual  = 10.0
+peak_leverage_used = 10.0
+
+# :939
+max_leverage = ... else (500.0 if is_ultra else 1.0)
+
+# :930
+min_liquidation_distance_pct = 100.0
+```
+
+1. **El apalancamiento que publicamos es la constante 10.0**, y el margen se calcula dividiendo entre
+   10 fijo. En un proyecto `ZERO-MOCKS · REAL-ONLY` eso es una cifra de ejemplo en el informe de
+   resultados, que es el peor sitio posible. → **A41**.
+2. **El motor asume 500x en ULTRA**, y la propia fase dice por escrito *"no se asume 500x"*. No es
+   cosmético: con ese techo el tamaño máximo de posición llega a 500 veces el capital, así que
+   **cambia el sizing**. → **A41**, y la decisión de fondo (clave de API de BingX) → **E02**, que es
+   de Emilio.
+3. **La liquidación no se simula.** Los motivos de cierre son `TAKE_PROFIT`, `STOP_LOSS`,
+   `SESSION_EOD`, `TIME_STOP` y `PROP_VIOLATION`, y ninguno más. Una posición que en real se habría
+   liquidado sigue viva en el backtest y puede volver a beneficio: el resultado sale **mejor** que la
+   realidad, que es lo contrario de para qué existe esta fase. → **A42**.
+
+Las tres van dentro de F02, que es como se rectifica una fase: no se cierra y se abren tarjetas en
+ella. El reparto queda así:
+
+```
+F02  2/5   <- reabierta por la auditoria (A41, A42, E02)
+F03  8/13  <- FASE ACTIVA
+F09  14/16 (A38, A40)
+F10  8/9   (A37)
+```
+
+**Dos avisos para cuando cojas A41 y A42**, porque son del motor y ahí la regla #26 es sagrada: si
+cambia una sola operación, **sube versión y publica el parte de diferencia** celda a celda como los
+trece que ya hay. Y en A42 el P&L de ULTRA **debe empeorar** en las celdas apalancadas; si no cambia
+nada, la liquidación no se está aplicando y hay que decirlo en el parte en vez de dar la tarea por
+buena.
+
+**Tu cola no cambia de cabeza: A36** (los bancos, que se pierden) → **A40** (el plan por fases en la
+web) → **A39** → **A37** (desplegar) → **A38** → **A35** → **A41** → **A42** → **A33**.

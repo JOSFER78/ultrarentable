@@ -5,7 +5,7 @@ estado: PARCIAL
 depende_de: ["F00"]
 desbloquea: ["F03"]
 verificacion_global: "Re-ejecutar una estrategia conocida con motor viejo y nuevo y publicar la diferencia. Si el P&L no baja, el motor nuevo no está modelando fricción de verdad."
-actualizado: "2026-09-01"
+actualizado: "2026-09-03"
 ---
 
 # FASE 2 — MOTOR DE BACKTEST REALISTA
@@ -49,6 +49,44 @@ Cambios de diseño (cada uno sube versión de motor si altera las operaciones �
 
 **Verificación sellada de la fase:** re-ejecutar una estrategia conocida con motor viejo y
 nuevo y publicar la diferencia; si el P&L no baja, el modelado de fricción no es real.
+
+## Auditoría de cierre de fase — 2026-09-03 (orquestador)
+
+Las dos minitareas de esta fase en el tablero (`A07`, `A23`) están **VERIFICADAS**, así que la fase
+quedaba *lista para auditar*. La he auditado contra su propio criterio y **NO se cierra**. Lo que he
+medido:
+
+**Lo que sí está cumplido:**
+
+- El criterio sellado de la fase —*"re-ejecutar una estrategia conocida con motor viejo y nuevo y
+  publicar la diferencia"*— se cumple y con creces: hay **13 partes de diferencia** publicados en
+  `orchestration/results/verificacion_f02_diff_*.md`, el último `5.18.0_vs_5.19.0`, con su tabla
+  celda a celda.
+- **La sección 2.3 (fricción de FONDEO) está HECHA**, no pendiente como decía su texto: el motor
+  5.15.0 evalúa las reglas de prop firm barra a barra sobre la equity flotante y cierra con
+  `PROP_VIOLATION` indicando la regla exacta (comprobado en el código). **Corregido el estado de esa
+  sección más abajo.**
+
+**Lo que impide cerrarla, y no era lo que yo esperaba encontrar:**
+
+1. **El apalancamiento que publica el motor es una constante.** `leverage_actual = 10.0` y
+   `peak_leverage_used = 10.0` escritos a mano (`event_backtest_engine.py:229` y `:252`), y
+   `margin_used_usd` calculado dividiendo el nocional entre 10 fijo (`:228`). En un proyecto
+   `ZERO-MOCKS · REAL-ONLY`, eso es una cifra de ejemplo en el informe de resultados. → **A41**.
+2. **El motor asume 500x en ULTRA**, que es literalmente lo que esta fase prohíbe: `:939`
+   `(500.0 if is_ultra else 1.0)`. Y no es cosmético: con ese techo el tamaño máximo de posición sale
+   hasta 500 veces el capital, así que afecta al sizing. → **A41**, y la decisión de fondo → **E02**.
+3. **La liquidación no se simula.** Se publica una distancia (que además arranca de la constante
+   `100.0`, `:930`) pero no hay ningún cierre por liquidación: los motivos de cierre son
+   `TAKE_PROFIT`, `STOP_LOSS`, `SESSION_EOD`, `TIME_STOP` y `PROP_VIOLATION`, y ninguno más. Una
+   posición que en real se habría liquidado sigue viva en el backtest y puede volver a beneficio.
+   → **A42**.
+
+**Rectificación abierta dentro de esta misma fase:** `A41` (apalancamiento medido y fallo cerrado),
+`A42` (liquidación con margen aislado) y `E02` (decisión de Emilio sobre la clave de API de BingX
+para leer el tope real por par).
+
+La fase se volverá a auditar cuando esas tres estén cerradas.
 
 ## 2.1 Fricción medida, no asumida
 
@@ -108,7 +146,9 @@ liquidación).
 
 ## 2.3 Fricción específica de FONDEO
 
-**Estado:** PENDIENTE.
+**Estado:** HECHO en el motor 5.15.0 (corregido el 2026-09-03 al auditar la fase: este
+apartado seguía diciendo PENDIENTE cuando el motor ya evalúa las tres reglas barra a barra sobre la
+equity flotante y cierra con `PROP_VIOLATION`).
 
 - **Trailing DD intradiario**, no de cierre. Es la regla que mata las cuentas.
 - Pérdida diaria, regla de consistencia, cierre obligatorio intradía.
