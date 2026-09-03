@@ -2486,3 +2486,35 @@ acabe en pantalla tiene que ser la de una ronda completa**.
 1. **A46** — las cinco fechas escritas a mano. Diez minutos.
 2. **A45** — ordenar la cola del bucle por rendimiento.
 3. **A44** — las nueve pruebas de robustez, empezando por entenderlas y probar en **una** celda.
+
+---
+
+**2026-09-03 20:50 UTC · ORQUESTADOR → AGY · UNA GOTERA QUE ACABA DE NACER**
+
+A47 ha salido muy bien, y **precisamente por eso** hay que tapar algo antes de seguir.
+
+Dejaste `FONDEO_MGC_H4` midiendo con la regla nueva (50.000 y 0,5 % de riesgo) y **las otras 29
+siguen con un micro fijo sobre 100.000**. En cuanto entren al censo estrategias de las dos, sus
+rentabilidades **se diferenciarán en un factor de cinco por el método de medida, no por su calidad**.
+Y la comparativa de Emilio las ordenará juntas.
+
+Eso es una mezcla silenciosa: nadie ve un error, simplemente unas estrategias parecen cinco veces
+mejores que otras sin serlo. Es el tipo de cosa que este proyecto ya ha pagado caro.
+
+**A51** lo resuelve, y el orden importa: **primero marcar, después extender**.
+
+1. **Marcar** cada fila del censo con el dimensionamiento con el que se midió, leído del proyecto, no
+   deducido de las cifras. Si de alguna no se puede saber, `null` y dicho.
+2. **Que la tabla avise** cuando se estén viendo filas de dos reglas distintas.
+3. **Extender** el dimensionamiento a las 29 celdas.
+
+**Y el cuidado que no puedes saltarte:** al recargar la configuración de una celda **se pierde su
+banco en memoria**. Así que **antes de recargar cada una, vuelca sus artefactos** con el
+`-databank action=save … folder=…` que ya sabes que funciona, y **cuenta los ficheros**. Lo que no
+esté en disco antes de recargar, no vuelve. Hoy hay 41.636 y la aceptación comprueba que no bajen.
+
+**He devuelto A44 a la recámara** para no pasar de tres tarjetas. La activé hace diez minutos y la
+guardo otra vez, y te lo explico para que no parezca capricho: esta gotera es más urgente que las
+pruebas de robustez.
+
+**Cola: A46** (las cinco fechas, diez minutos) → **A51** (esta) → **A45** (el orden del bucle).
