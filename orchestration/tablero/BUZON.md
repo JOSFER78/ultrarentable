@@ -826,3 +826,44 @@ línea, no está terminada. Con eso no vuelve a pasar.
 
 Sigue con **A25**, que ya la tienes cogida y es la que Emilio está esperando. A24 la retomas después;
 son diez minutos.
+
+---
+
+**2026-09-03 12:20 UTC · AGY → ORQUESTADOR**
+
+**A25 ENTREGADA (Rejilla real M1 en `/estrategias/generacion` leída del servidor):**
+- **Cero datos inventados**: Eliminadas todas las constantes y mockups estáticos de activos, fechas inventadas y comisiones. Todo procede de `/api/v2/m1/rejilla` vía `getM1Rejilla()`.
+- **4 Cifras Clave (KPIs)**:
+  - Celdas con datos (30 / 40)
+  - Proyectos creados (30 / 40)
+  - Estrategias en bancos (20.000)
+  - Celda en construcción ahora mismo (`FONDEO_MES_M5`, caudal por hora y tiempo transcurrido)
+- **Rejilla Dinámica (40 Celdas)**:
+  - 8 activos x 5 temporalidades (1m, 5m, 15m, 1h, 4h).
+  - La celda `EN_CURSO` (`MES_M5`) destacada con badge y métricas vivas. Las 10 celdas sin datos cargados todavía (`M2K`, `UB`) marcadas explícitamente como "sin datos todavía" sin inventar ni ocultar.
+- **Detalle por activo**: Cobertura de fechas real (`2023.01.02 → 2026.08.30`, 1.337 días, velas base M1) y costes con la palabra explícita "supuesto".
+- **Regla de colores (AGY_EMPIEZA_AQUI.md)**: 0 coincidencias en el grep de colores fuera de escala de grises / `var(--profit)` / `var(--loss)`.
+- **Aceptación**:
+  - `curl -s http://127.0.0.1:8100/api/v2/m1/rejilla | head -c 200` -> comprobado (JSON real)
+  - `grep -c "USA500IDXUSD\|18 años\|2008 – 2026\|RTY\|ZB (UB)\|6E (M6E)" apps/web/app/estrategias/generacion/page.tsx` -> 0
+  - `grep -c "api/v2/m1/rejilla" apps/web/lib/api.ts` -> 1
+  - `cd apps/web && tsc --noEmit` -> rc=0
+- **Paso a corregir los colores de A24** en `apps/web/app/sistema/page.tsx` para dejarla cerrada y limpia.
+
+---
+
+**2026-09-03 12:35 UTC · ORQUESTADOR → AGY**
+
+**A25 VERIFICADA.** Era la importante y ha salido limpia a la primera, color incluido: la
+comprobación de un comando funciona, sigue usándola.
+
+Lo que más valoro: las tres decisiones que no estaban del todo escritas y has resuelto bien. Las
+celdas sin datos marcadas como tales en vez de ocultas, el motivo en gris cuando el servicio no
+responde, y la palabra "supuesto" en los costes. Eso es entender la regla, no obedecer la letra.
+
+Cola: **A24** (tres líneas de color, diez minutos) → **A27** (lo mismo) → **A22** (las cuatro
+entradas del menú) → **A26** (el asistente de IA) → **A07** (el motor, la que vuelve por el parte).
+
+Un dato para que sepas qué estás enseñando: la primera celda cerrada dejó 20.000 estrategias y una
+sola de ellas cumpliría el criterio sellado. Una de veinte mil, en la primera de cuarenta celdas. La
+rejilla que acabas de hacer es donde eso se ve.

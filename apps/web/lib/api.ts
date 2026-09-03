@@ -84,34 +84,131 @@ export interface SQXProject { name: string; }
 export interface SQXStatus { status: string; base_url?: string; session_id?: string; server_info?: { name: string; version: string }; error?: string; }
 export interface SQXDatabank { name: string; [key: string]: unknown; }
 export interface PrepareEthResponse { datasets: unknown[]; sourcePages: number; [key: string]: unknown; }
-const BASE_URL = typeof window !== "undefined" ? "" : (process.env.BACKEND_URL || process.env.ULTRARENTABLE_API_URL || "http://127.0.0.1:8000");
-async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(options.headers || {})
-    }
-  });
-  if (!response.ok) {
-    let errorDetail = response.statusText;
-    try {
-      const errJson = await response.json();
-      errorDetail = errJson.detail || errJson.message || JSON.stringify(errJson);
-    } catch {}
-    throw new Error(`API Request Error (${response.status} ${endpoint}): ${errorDetail}`);
-  }
-  const text = await response.text();
-  if (!text || !text.trim()) {
-    throw new Error(`Respuesta vacía o JSON inválido de ${endpoint}`);
-  }
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new Error(`Respuesta vacía o JSON inválido de ${endpoint}`);
-  }
+
+export interface PiezaSaludM1 {
+  descripcion?: string;
+  ok: boolean;
+  detalle: string;
 }
+
+export interface SaludM1Response {
+  schema?: string;
+  medido?: string;
+  todo_en_pie: boolean;
+  piezas: Record<string, PiezaSaludM1>;
+  ultimas_acciones?: Array<{ cuando: string; que: string; rc: number }>;
+  disponible?: boolean;
+  origen?: string;
+}
+
+const BASE_URL = typeof window !== "undefined" ? "" : (process.env.BACKEND_URL || process.env.ULTRARENTABLE_API_URL || "http://127.0.0.1:8000");
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function fetchJson<T>(endpoint: string, options: RequestInit = {}, maxRetries = 2): Promise<T> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...(options.headers || {})
+        }
+      });
+
+      if (!response.ok) {
+        let errorDetail = response.statusText;
+        try {
+          const errJson = await response.json();
+          errorDetail = errJson.detail || errJson.message || JSON.stringify(errJson);
+        } catch {}
+        throw new Error(`El servicio no responde correctamente (${response.status}): ${errorDetail}`);
+      }
+
+      const text = await response.text();
+      if (!text || !text.trim()) {
+        throw new Error(`Respuesta vacía o JSON inválido de ${endpoint}`);
+      }
+
+      return JSON.parse(text) as T;
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      if (attempt < maxRetries) {
+        await sleep(350 * Math.pow(2, attempt));
+      }
+    }
+  }
+
+  throw lastError || new Error(`El servicio no responde ahora mismo. Se está reintentando solo.`);
+}
+
+export async function getM1Salud(): Promise<SaludM1Response> {
+  return fetchJson<SaludM1Response>("/api/v2/m1/salud");
+}
+
+export interface CeldaRejillaM1 {
+  celda: string;
+  simbolo: string;
+  contrato_grande?: string | null;
+  nombre: string;
+  tf: string;
+  tf_etiqueta: string;
+  proyecto: string;
+  proyecto_en_sqx: boolean;
+  datos?: {
+    tf_base: string;
+    desde: string;
+    hasta: string;
+    dias: number;
+    velas_base: number;
+  } | null;
+  estado: "SIN_EMPEZAR" | "PENDIENTE" | "EN_CURSO" | "HECHA" | string;
+  rondas_hechas?: number;
+  generadas?: number | null;
+  en_banco?: number | null;
+  por_hora?: string | number | null;
+  aceptado_pct?: string | number | null;
+  tiempo?: string | null;
+  csv_filas?: number | null;
+  csv_sha256?: string | null;
+  costes?: {
+    spread?: number;
+    slippage?: number;
+    comision?: number;
+  } | null;
+}
+
+export interface RejillaM1Response {
+  schema?: string;
+  medido?: string;
+  disponible: boolean;
+  motivo_no_disponible?: string;
+  bucle?: {
+    activo: boolean;
+    celda_en_curso: string | null;
+    ronda: number;
+    horas_por_celda: number;
+  };
+  resumen?: {
+    celdas: number;
+    con_datos: number;
+    con_proyecto: number;
+    con_al_menos_una_ronda: number;
+    estrategias_en_bancos: number;
+  };
+  celdas: CeldaRejillaM1[];
+  origen?: string;
+}
+
+export async function getM1Rejilla(): Promise<RejillaM1Response> {
+  return fetchJson<RejillaM1Response>("/api/v2/m1/rejilla");
+}
+
 export async function executeBacktest(params: BacktestParams): Promise<BacktestResult> { if (!params.dataset_id?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id"); const payload: Record<string, unknown> = { strategy_id: params.strategy_id, dataset_id: params.dataset_id }; if (params.initial_capital !== undefined) payload.initial_capital = params.initial_capital; if (params.slippage_ticks !== undefined) payload.slippage_ticks = params.slippage_ticks; if (params.commission_per_order !== undefined) payload.commission_per_order = params.commission_per_order; if (params.start_timestamp_utc_ms !== undefined) payload.start_timestamp_utc_ms = params.start_timestamp_utc_ms; if (params.end_timestamp_utc_ms !== undefined) payload.end_timestamp_utc_ms = params.end_timestamp_utc_ms; if (params.ast !== undefined) payload.ast = params.ast; if (params.parameters !== undefined) payload.parameters = params.parameters; return fetchJson<BacktestResult>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) }); }
 export async function getCertifiedStrategies(): Promise<CertifiedStrategy[]> { return fetchJson<CertifiedStrategy[]>("/api/v2/certified/strategies"); }
 export async function getCertifiedMetaStrategies(): Promise<CertifiedMetaStrategy[]> { return fetchJson<CertifiedMetaStrategy[]>("/api/v2/certified/meta-strategies"); }
