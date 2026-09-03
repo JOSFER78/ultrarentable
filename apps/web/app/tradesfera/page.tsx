@@ -26,7 +26,6 @@ import {
   Check,
   Target,
   Sparkles,
-  X,
 } from "lucide-react";
 
 interface ModuleMeta {
@@ -39,6 +38,7 @@ interface ModuleMeta {
   keyRule: string;
   filePath: string;
   highlights: string[];
+  href: string;
 }
 
 const TRADESFERA_MODULES: ModuleMeta[] = [
@@ -51,6 +51,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Arquitectura de las 4 Puertas, fundador Vicente Pons, Public Ledger auditado de 167K€ y estructura de partners.",
     keyRule: "Una cuenta de fondeo no es un patrimonio: es un vehículo asimétrico de extracción con vida útil finita.",
     filePath: "docs/tradesfera/01_ECOSISTEMA_TRADESFERA_Y_MODELO_DE_NEGOCIO.md",
+    href: "/tradesfera/01-ecosistema",
     highlights: [
       "Modelo de las 4 Puertas: Descuentos, Ticks, Comunidad y Ledger.",
       "Diferenciación radical: Extracción asimétrica vs inversión tradicional.",
@@ -66,6 +67,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Formulación de munición (N disparos), Esperanza Matemática Positiva (EV), distribución binomial y regla de cosecha 50/30/20.",
     keyRule: "P(Aprobación >= 1) = 1 - (1 - p)^N. Con 10 balas y p=26.6%, la probabilidad de cobrar supera el 95%.",
     filePath: "docs/tradesfera/02_MATEMATICA_BANKROLL_Y_CAPITAL_MUNICION.md",
+    href: "/tradesfera/02-matematica-bankroll",
     highlights: [
       "Cálculo estocástico de disparos con bankroll finito.",
       "Esperanza matemática neta: EV = P(Éxito) * Payout - Bankroll.",
@@ -81,6 +83,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Curvas de drawdown intradía vs EOD, cálculo de Ruina Absoluta y mitigación de rachas negativas consecutivas.",
     keyRule: "El trailing intradía aumenta la probabilidad de quiebra un 340% frente al trailing EOD a cierre de sesión.",
     filePath: "docs/tradesfera/03_TEORIA_VARIANZA_Y_CONTROL_DE_RACHAS.md",
+    href: "/tradesfera/03-teoria-varianza",
     highlights: [
       "Modelado de drawdown intra-trade vs End-of-Day (EOD).",
       "Matriz de supervivencia frente a rachas de pérdidas de 5 a 10 trades.",
@@ -96,6 +99,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Fases de evaluación, gestión de microcontratos (MES/MNQ) y timing óptimo para superar el profit target sin sobreexposición.",
     keyRule: "Nunca operar contratos grandes en fase de examen: 2 micros arriesgando $60-$80 por operación garantizan longevidad.",
     filePath: "docs/tradesfera/04_PROTOCOLO_INTELIGENTE_APROBACION_CUENTAS.md",
+    href: "/tradesfera/04-protocolo-aprobacion",
     highlights: [
       "Dimensionamiento óptimo de micro-lotes para mantener el riesgo < 3% del DD.",
       "Ventanas de alta probabilidad de aprobación en 5 a 10 sesiones.",
@@ -111,6 +115,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Topología master-slave con NinjaTrader / Rithmic / Tradovate. Desincronización de milisegundos para evitar flags de copytrading.",
     keyRule: "Diversificar 20 cuentas entre 4 empresas (5 por firma) elimina el riesgo de impago individual de un prop broker.",
     filePath: "docs/tradesfera/05_SISTEMA_MULTICUENTA_Y_COPYTRADING.md",
+    href: "/tradesfera/05-sistema-multicuenta",
     highlights: [
       "Topología de replicación 1:N en NinjaTrader y Tradovate.",
       "Control de deslizamiento (slippage) cruzado en contratos múltiples.",
@@ -126,6 +131,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Calendario de transferencias bancarias semanales rotativas entre 4 a 6 firmas complementarias.",
     keyRule: "Regla 80/20: 80% del payout va a patrimonio bancario seguro; 20% a la Caja de Munición para recomprar exámenes.",
     filePath: "docs/tradesfera/06_CICLO_OPTIMO_RETIROS_Y_PAYOUTS.md",
+    href: "/tradesfera/06-ciclo-retiros",
     highlights: [
       "Calendario escalonado de solicitudes de retiro semanales y quincenales.",
       "Mantenimiento del colchón mínimo de seguridad antes de solicitar el payout.",
@@ -141,6 +147,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Neurobiología del trader, erradicación de la falacia de los $50,000 nominales y protocolos de reseteo del córtex prefrontal.",
     keyRule: "Una cuenta de $50k con drawdown de $2,000 tiene SOLO $2,000 de capital real. Tu apalancamiento real es 25x mayor.",
     filePath: "docs/tradesfera/07_PSICOLOGIA_DEL_FONDEO_Y_SESGOS_OPERATIVOS.md",
+    href: "/tradesfera/07-psicologia-fondeo",
     highlights: [
       "Desmitificación del capital nominal: el capital real es el colchón de DD.",
       "Erradicación del sesgo de anclaje y aversión a la pérdida.",
@@ -156,6 +163,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Análisis forense de MyFundedFutures, Tradeify, TradeDay, BluSky, Lucid, Apex, Topstep, TakeProfitTrader y Bulenox.",
     keyRule: "Priorizar firmas con trailing EOD estricto y sin activación oculta: Tradeify y MyFundedFutures lideran el ranking.",
     filePath: "docs/tradesfera/08_COMPARATIVA_PROP_FIRMS_FUTUROS_CME.md",
+    href: "/tradesfera/08-comparativa-prop-firms",
     highlights: [
       "Desglose de costes ocultos: cuotas de activación y data feeds.",
       "Evaluación del modelo de negocio de cada prop firm (B-Book vs Real).",
@@ -171,6 +179,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "VPS de baja latencia en Chicago (CME Aurora), configuración de brackets automáticos y conexión multi-gateway.",
     keyRule: "Configuración obligatoria de Hard Stop Loss en el servidor del broker antes de enviar la orden de mercado.",
     filePath: "docs/tradesfera/09_INFRAESTRUCTURA_TECNICA_NINJATRADER_TOOLS.md",
+    href: "/tradesfera/09-infraestructura-ninjatrader",
     highlights: [
       "VPS en Chicago < 2ms de latencia hacia servidores CME Aurora.",
       "ATM Strategies con Brackets OCO incondicionales del lado del servidor.",
@@ -186,6 +195,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Tratado general que unifica los 16 módulos: microestructura cuantitativa, psicoterapia y marco de ejecución.",
     keyRule: "El sistema cuantitativo Tradesfera eleva la tasa de fondeo de la industria del 2.5% a un 26.6% auditado.",
     filePath: "docs/tradesfera/10_DOSSIER_MAESTRO_TRADESFERA_FONDEO_FUTUROS.md",
+    href: "/tradesfera/10-dossier-maestro",
     highlights: [
       "Compendio maestro que integra la matemática, psicología y operativa.",
       "Estadísticas agregadas de 1,200+ traders auditados.",
@@ -201,6 +211,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Ventanas de liquidez institucional CME (08:30–11:00 EST / 14:30–17:00 CET), aperturas de sesión y patrones de absorción.",
     keyRule: "El 80% del profit se produce en los primeros 45 minutos tras la campana de Wall Street. Prohibido operar fuera de ventana.",
     filePath: "docs/tradesfera/11_ESTRATEGIAS_Y_HORARIOS_GERARD_GARCIA_FUTUROS.md",
+    href: "/tradesfera/11-estrategias-horarios",
     highlights: [
       "Patrón de Apertura ORB (Opening Range Breakout) de 15 minutos en NQ.",
       "Gestión de noticias económicas de alto impacto (NFP, CPI, FOMC).",
@@ -216,6 +227,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Protocolos clínicos de Víctor Corrales (@Elpsicologodeltrading): parada de pensamiento, desensibilización sistemática y diario de tilt.",
     keyRule: "Ante 2 pérdidas consecutivas en el día: cierre automático de plataforma por 24 horas sin excepción.",
     filePath: "docs/tradesfera/12_MAESTRIA_PSICOLOGICA_Y_PROTOCOLOS_EL_PSICOLOGO_DEL_TRADING.md",
+    href: "/tradesfera/12-maestria-psicologica",
     highlights: [
       "Técnica de parada de pensamiento ante el impulso de revancha (Revenge Trading).",
       "Registro de estado fisiológico y nivel de estrés pre-sesión.",
@@ -231,6 +243,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Secuencia matemática de cobros por niveles, amortización del colchón de seguridad y transición a cuenta live real.",
     keyRule: "Cosechar el primer payout en cuanto se desbloquee el umbral mínimo; nunca dejar acumular capital en un prop broker.",
     filePath: "docs/tradesfera/13_SISTEMA_TACTICO_MAXIMA_EXTRACCION_POR_EMPRESA.md",
+    href: "/tradesfera/13-sistema-tactico",
     highlights: [
       "Estrategia de amortización del coste de compra en el primer retiro.",
       "Reglas de escalado de contratos según colchón acumulado.",
@@ -246,6 +259,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Cheat sheet de 25 reglas anti-descalificación: gestión de noticias NFP/FOMC, consistencia del 30% y micro-pips.",
     keyRule: "Comprobar el calendario económico 15 minutos antes de la sesión; cancelar todas las órdenes 2 minutos antes de noticias de alto impacto.",
     filePath: "docs/tradesfera/14_HACKS_SHORTS_Y_REGLAS_RAPIDAS_DE_FONDEO.md",
+    href: "/tradesfera/14-hacks-reglas-rapidas",
     highlights: [
       "Checklist de 25 reglas rápidas para evitar la descalificación instantánea.",
       "Regla de consistencia: ningún día puede superar el 30%-40% del profit total.",
@@ -261,6 +275,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Aprovechamiento de cupones del 80%-90%, deducción del coste de exámenes y tributación óptima como facturación de servicios.",
     keyRule: "Los payouts de prop firms se tributan como rendimiento de actividad económica / prestación de servicios, no como ganancia patrimonial directa.",
     filePath: "docs/tradesfera/15_ARBITRAJE_DE_NEGOCIO_PROMOS_Y_FISCALIDAD.md",
+    href: "/tradesfera/15-arbitraje-promos-fiscalidad",
     highlights: [
       "Estructuración fiscal de cobros internacionales vía Wise / Deel / Cripto.",
       "Deducción de costes de exámenes, herramientas y datos de mercado.",
@@ -276,6 +291,7 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
     summary: "Checklist de 7 pasos antes del primer click: conexión ping, sincronización de cuentas esclavas, nivel de drawdown y estado mental.",
     keyRule: "Si el checklist falla en un solo punto, la sesión queda cancelada automáticamente.",
     filePath: "docs/tradesfera/16_PLAYBOOK_OPERATIVO_DIARIO_Y_CHECKLIST_EJECUCION.md",
+    href: "/tradesfera/16-playbook-diario",
     highlights: [
       "7 pasos de verificación técnica antes del campanazo de apertura.",
       "Comprobación de conectividad Rithmic / Tradovate / CQG.",
@@ -285,11 +301,8 @@ const TRADESFERA_MODULES: ModuleMeta[] = [
 ];
 
 export default function TradesferaPortalPage() {
-  const [selectedModule, setSelectedModule] = useState<ModuleMeta>(TRADESFERA_MODULES[0]);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
-  const [copiedPath, setCopiedPath] = useState<boolean>(false);
 
   // Bankroll Calculator state
   const [bankroll, setBankroll] = useState<number>(3000);
@@ -314,21 +327,8 @@ export default function TradesferaPortalPage() {
     }
   };
 
-  const handleCopyPath = (path: string) => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(path);
-      setCopiedPath(true);
-      setTimeout(() => setCopiedPath(false), 2000);
-    }
-  };
-
-  const handleOpenModule = (mod: ModuleMeta) => {
-    setSelectedModule(mod);
-    setIsModalOpen(true);
-  };
-
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-8 pb-24 text-[var(--text-1)]">
+    <div className="w-full space-y-4 pb-10 text-[var(--text-1)]">
       {/* 1. HERO INSTITUCIONAL TRADESFERA */}
       <div className="bg-[var(--surface-1)] border border-white/[0.08] backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -646,10 +646,10 @@ export default function TradesferaPortalPage() {
             <div
               className={`h-full transition-all duration-500 rounded-full ${
                 passProb >= 0.9
-                  ? "bg-[var(--surface-1)]   shadow-sm "
+                  ? "bg-[var(--profit)]"
                   : passProb >= 0.7
-                  ? "bg-[var(--surface-1)]  "
-                  : "bg-[var(--surface-1)]  "
+                  ? "bg-[var(--text-2)]"
+                  : "bg-[var(--surface-3)]"
               }`}
               style={{ width: `${Math.min(100, Math.max(2, passProb * 100))}%` }}
             />
@@ -693,16 +693,11 @@ export default function TradesferaPortalPage() {
         {/* Modules Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredModules.map((mod) => {
-            const isSelected = selectedModule.id === mod.id;
             return (
-              <div
+              <Link
                 key={mod.id}
-                onClick={() => handleOpenModule(mod)}
-                className={`bg-[var(--surface-1)] border backdrop-blur-xl rounded-2xl p-5 shadow-lg transition-all cursor-pointer flex flex-col justify-between space-y-4 group ${
-                  isSelected
-                    ? "border-[var(--border)]  ring-1 ring-[var(--border-strong)]"
-                    : "border-white/[0.08] hover:border-[var(--border)] hover:shadow-xl hover:"
-                }`}
+                href={mod.href}
+                className="bg-[var(--surface-1)] border border-white/[0.08] hover:border-[var(--border)] hover:bg-[var(--surface-2)] backdrop-blur-xl rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between space-y-4 group text-left"
               >
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
@@ -732,115 +727,17 @@ export default function TradesferaPortalPage() {
 
                   <div className="flex items-center justify-between text-[11px] font-mono text-[var(--text-3)] pt-2 border-t border-[var(--border)]">
                     <span className="text-[var(--text-2)]">{mod.category}</span>
-                    <span className="group-hover:text-[var(--text-1)] flex items-center gap-1 transition">
-                      <span>Ver Ficha</span>
+                    <span className="group-hover:text-[var(--text-1)] text-[var(--text-2)] flex items-center gap-1 transition font-bold font-mono">
+                      <span>Abrir Módulo</span>
                       <ChevronRight className="w-3 h-3" />
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
       </div>
-
-      {/* 5. MODAL DETALLE DE MÓDULO */}
-      {isModalOpen && selectedModule && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--surface-1)] backdrop-blur-md">
-          <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-6">
-            <div className="flex items-start justify-between border-b border-[var(--border)] pb-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] text-xs font-mono font-bold">
-                    {selectedModule.number}
-                  </span>
-                  <span className="text-xs font-mono text-[var(--text-2)] uppercase tracking-wider">
-                    {selectedModule.category} · {selectedModule.readTime}
-                  </span>
-                </div>
-                <h3 className="text-lg font-black text-[var(--text-1)]">
-                  {selectedModule.title}
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-[var(--text-2)] hover:text-[var(--text-1)] p-1 rounded-lg hover:bg-[var(--surface-1)] transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Summary */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--text-2)]">
-                Resumen Ejecutivo:
-              </h4>
-              <p className="text-sm text-[var(--text-1)] leading-relaxed">
-                {selectedModule.summary}
-              </p>
-            </div>
-
-            {/* Key Rule */}
-            <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-xl p-4 space-y-1">
-              <span className="text-xs font-mono font-black text-[var(--text-2)] uppercase tracking-wider block">
-                Regla de Oro Inquebrantable:
-              </span>
-              <p className="text-xs text-[var(--text-1)] italic font-medium leading-relaxed">
-                &quot;{selectedModule.keyRule}&quot;
-              </p>
-            </div>
-
-            {/* Highlights Checklist */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--text-2)]">
-                Conceptos Clave & Protocolos:
-              </h4>
-              <div className="space-y-1.5">
-                {selectedModule.highlights.map((h, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs text-[var(--text-1)]">
-                    <CheckCircle2 className="w-4 h-4 text-[var(--profit)] shrink-0 mt-0.5" />
-                    <span>{h}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* File Path Reference */}
-            <div className="bg-[var(--surface-1)] rounded-xl border border-[var(--border)] p-3.5 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono text-[var(--text-2)]">Ruta de Documento en Disco:</span>
-                <button
-                  onClick={() => handleCopyPath(selectedModule.filePath)}
-                  className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-[var(--text-2)] hover:text-[var(--text-1)] transition"
-                >
-                  {copiedPath ? <Check className="w-3 h-3 text-[var(--profit)]" /> : <Copy className="w-3 h-3" />}
-                  <span>{copiedPath ? "Copiado" : "Copiar Ruta"}</span>
-                </button>
-              </div>
-              <code className="text-xs text-[var(--profit)] font-mono block overflow-x-auto p-2 bg-[var(--bg)] rounded border border-[var(--border)]">
-                {selectedModule.filePath}
-              </code>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[var(--surface-1)] hover:bg-[var(--surface-1)] text-[var(--text-1)] transition"
-              >
-                Cerrar Ficha
-              </button>
-              <Link
-                href="/prop-firms"
-                className="px-4 py-2 rounded-xl text-xs font-mono font-black bg-[var(--surface-3)] hover:bg-[var(--surface-3)] text-[var(--text-1)] transition shadow-lg  inline-flex items-center gap-1.5"
-              >
-                <span>Aplicar en Prop Firms</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

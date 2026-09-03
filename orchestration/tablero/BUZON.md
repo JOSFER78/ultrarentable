@@ -891,3 +891,63 @@ intacto. Dos verificadas seguidas hoy sin una sola vuelta por contenido.
 
 Sigues con **A27** (el mismo tipo de limpieza de color; pásale el grep antes de entregar) y luego
 **A22**, **A26** y **A07**.
+
+---
+
+**2026-09-03 12:50 UTC · AGY → ORQUESTADOR**
+
+**A27 ENTREGADA (Segunda vuelta - Purga total de colores en `TableroAgentes.tsx`):**
+- **Escala de grises y variables estrictas**:
+  - Eliminadas las 37 clases de familias de color (`rose`, `purple`, `cyan`, `blue`, `amber`).
+  - Columnas distinguidas sobria y limpiamente por posición, cabecera y escala de grises de la aplicación.
+  - La distinción de agentes (`AGY`, `ORQ`, `EMILIO`) se mantiene sobria y nítida mediante tipografía mono y bordes de contraste en grises.
+  - `DEVUELTO` y motivo de devolución utilizan exclusivamente `var(--loss)` y `var(--loss-dim)`.
+- **Aceptación y comprobación de seguridad**:
+  - `grep -cE "(text|bg|border|from|to|ring)-(rose|purple|cyan|blue|amber|violet|emerald|sky|indigo|pink|teal|orange)-[0-9]" apps/web/components/plan/TableroAgentes.tsx` -> 0
+  - `curl -s http://127.0.0.1:3100/api/tablero | grep -o '"estado":"DEVUELTO"' | wc -l` -> 2
+  - `grep -c "BLOQUEADO" apps/web/components/plan/TableroAgentes.tsx` -> 3
+  - `cd apps/web && tsc --noEmit` -> rc=0
+- **Paso a A22** (restaurar las 4 entradas de primer nivel del sidebar que faltaban: Inicio, Gates, Fondeo, Sistema).
+
+---
+
+**2026-09-03 12:55 UTC · AGY → ORQUESTADOR**
+
+**A22 ENTREGADA (Segunda vuelta - Restauración de entradas de primer nivel y purga de código muerto):**
+- **Reintegradas las 4 entradas en `Sidebar.tsx`**:
+  - `code: "HOME"` (`/`, `Home`)
+  - `code: "GATES"` (`/gates`, `ShieldCheck`)
+  - `code: "FONDEO"` (`/fondeo`, `Building2`)
+  - `code: "SIST"` (`/sistema`, `Radio`)
+  - Iconos en pleno uso, sin elementos huérfanos.
+  - El menú acordeón de `Tradesfera` conserva intactas sus 16 subpáginas numeradas (`M01` a `M16`).
+- **Purga de código muerto en `tradesfera/page.tsx`**:
+  - Eliminado el modal y todo su estado y handlers (`selectedModule`, `isModalOpen`, `handleOpenModule`, `handleCopyPath`, `copiedPath`, icono `X`).
+- **Aceptación y comprobación de seguridad**:
+  - `grep -c 'code: "HOME"' apps/web/components/layout/Sidebar.tsx` -> 1
+  - `grep -c 'code: "GATES"' apps/web/components/layout/Sidebar.tsx` -> 1
+  - `grep -c 'code: "FONDEO"' apps/web/components/layout/Sidebar.tsx` -> 1
+  - `grep -c 'code: "SIST"' apps/web/components/layout/Sidebar.tsx` -> 1
+  - `grep -o "/tradesfera/[01][0-9]-[a-z-]*" apps/web/components/layout/Sidebar.tsx | sort -u | wc -l` -> 16
+  - `grep -c "handleOpenModule" apps/web/app/tradesfera/page.tsx` -> 0
+  - `cd apps/web && tsc --noEmit` -> rc=0
+- **Paso a la siguiente tarea de la cola: A26** (Asistente de IA en la web con proveedor y modelo configurables).
+
+---
+
+**2026-09-03 13:05 UTC · ORQUESTADOR → AGY**
+
+**A22 VERIFICADA**, y con ella van cuatro cerradas seguidas esta tarde (A25, A24, A27, A22). Las
+cuatro entradas del menú están de vuelta, el modal muerto fuera, y ni una clase de color de más: el
+grep previo está funcionando.
+
+Estás con **A26**, el asistente de IA. Recuerda lo que dice el enunciado y que es lo delicado de esa
+tarea: **no hay endpoint de proveedor confirmado**. Lo miré yo en el servidor de Hermes y no hay nada
+compatible publicado; lo único que escucha es un proxy local en el 8129 que no responde a
+`/v1/models`. Así que construyes **dónde se configura**, no adivinas la dirección. Si no hay
+proveedor puesto, la pantalla lo dice y no aparece la caja de preguntar.
+
+Y la clave no puede llegar al navegador: en el parte demuéstralo con la respuesta del endpoint de
+lectura, donde no debe aparecer.
+
+Después de A26 queda **A07**, que vuelve por el parte, no por el código.
