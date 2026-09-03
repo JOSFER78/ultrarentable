@@ -100,3 +100,36 @@ ha tocado. Decisiones de Emilio: `VENTANA_EMILIO.md` §0 (censo, saturación, do
 REAL-ONLY / zero-mocks; criterio 1.1 sellado; regla #26; nunca `rm` (cuarentena con SHA-256); un pesado a la
 vez vía `gobernanza_recursos`; web siempre en build de producción; máximo 2 agentes en el PC de Emilio;
 nada se da por sentado sin comprobarlo; comunicación con Emilio breve y en llano.
+
+## 7. Madrugada del 03-09 (00:00-00:45 UTC): lo que cambió después de escribir lo de arriba
+
+- **Rediseño commiteado**: `a6acd91f3` (portada, `/estrategias` + 4 subpáginas, `GO_B23.md`). Sin build.
+- **Tercer editor**: Emilio trabaja en **VS Code con Antigravity**; su agente del IDE edita `apps/web` en
+  vivo (Sidebar, Header, `/plan`, `/api/plan`, gates, prop-firms, y también mis páginas de `/estrategias`)
+  y sirve la web con `npx next dev -p 3100` (lanzado por el IDE a las 20:30 UTC). Ese `next dev` escribe en
+  `apps/web/.next`, así que **`next build` falla** mientras viva (`PageNotFoundError /_document`): no
+  reconstruir ni desplegar hasta que Antigravity commitee; entonces build en copia limpia y copia al VPS (§3).
+- **Auditoría del `/plan` de Antigravity**: `AUDITORIA_WEB_ANTIGRAVITY_2026-09-03.md` (HUD con valores a
+  mano, "578" a mano, rutas `IMPLEMENTADA` a mano, 5 módulos en vez de 4, menú que promete lo no implementado)
+  con la instrucción lista para pegar. `ESPECIFICACION_WEB.md` = fuente de verdad de la web (§3 la reescribió
+  el agente del IDE; la auditoría §2.9 pide volver a los 4 módulos). Tareas W9.x en `F09_front_limpio.md`.
+- **Otra sesión Claude** (`ultrarentablepc-12`, sucesora de `-30`): en pausa y solo lectura sobre `apps/web`
+  mientras Antigravity edita; sigue con la unidad de `net_profit_oos` en `candidates_router.py`.
+- **Orca**: la abrí por error siguiendo `/orquesta`; Emilio: "Orca es cuando estamos bajo la app de Orca, ahora
+  estamos en VS Code". Cerrada. Regla: no arrancar Orca sin que él lo pida.
+- **B23 (motor 5.19.0)**: el agente Sonnet cayó por límite de sesión (se reinicia 01:40 Madrid) dejando el
+  punto 1 hecho en `event_backtest_engine.py` (diff verificado: usa `_spec.cme_exchange_fee_per_contract`,
+  que es el campo real, `instrument_registry.py:131`; fail-closed si ≤ 0). Faltan test, bump, F02. Mi
+  intento de lanzar `agy` no interactivo lo bloqueó el guardián de permisos: lo ejecuta Antigravity con
+  `GO_B23.md` o se reanuda el agente Sonnet.
+- **Censo criterio 1.1 `--aplicar`**: bloqueado dos veces por el guardián (escritura en la base canónica).
+  Emilio debe ejecutarlo él (comando en `VENTANA_EMILIO.md` §0.1) o autorizar la regla.
+- **Hermes en el VPS (orden de Emilio: "limpia Hermes inteligentemente")**: parado `hermes-field-guide-api`
+  (bucle de reinicio por `ImportError` en `hermes_backup_engine.py`); `docker image prune` y `journalctl
+  --vacuum` no liberaron nada; 268 sesiones logind en estado `closing` sin procesos (restos de sshd) que ni
+  `terminate-session` ni `systemctl stop session-N.scope` eliminan (no existen los scopes): inofensivas, se
+  quedan. **No tocado a propósito**: el puente `antigravity_bridge.py` (cada `agy --print` arranca 4 MCP y
+  deja zombis: es diseño del puente, no un proceso muerto), Brave headless (memoria no es el cuello: swap
+  sin entrada/salida), `hermes serve` de la sesión SSH de Emilio, `sqcli` (servidor SQX en :5050 con log
+  activo hoy). Disco al 93 %: `~/workspace` 62 GB, `.hermes` 18 GB, imágenes Docker 14,9 GB (11,9 reclamables
+  con `prune -a`, decisión de Emilio), `/var/www` 7 GB.
