@@ -50,8 +50,17 @@ def _credenciales() -> str:
     la mitad) y además queda a la vista de cualquiera que liste los procesos. El fichero vive fuera
     del repositorio.
     """
-    ruta = os.getenv("M1_ESTADO_AUTH_FILE", "")
-    if ruta:
+    # Rutas por orden: la que diga el entorno, y si no, las convenidas fuera del repositorio. El
+    # respaldo por convención existe porque la API se ha reiniciado varias veces sin las variables
+    # puestas (a mano, desde otra herramienta) y el panel se quedaba en 401 sin que nadie lo notara.
+    candidatas = [
+        os.getenv("M1_ESTADO_AUTH_FILE", ""),
+        os.path.expanduser("~/.orq-secrets/m1_estado_auth.txt"),
+        "/etc/ultrarentable/m1_estado_auth",
+    ]
+    for ruta in candidatas:
+        if not ruta:
+            continue
         try:
             with open(ruta, encoding="utf-8") as fh:
                 for linea in fh:
@@ -59,7 +68,7 @@ def _credenciales() -> str:
                     if linea and not linea.startswith("#") and ":" in linea:
                         return linea
         except OSError:
-            return ""
+            continue
     return os.getenv("M1_ESTADO_AUTH", "")
 
 
