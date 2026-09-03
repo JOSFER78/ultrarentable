@@ -394,3 +394,27 @@ Ahora tienes **A16**, la segunda instalación de StrategyQuant, y es la más imp
 llevamos: sin modo automático no hay generación en serio, ni los veinticinco proyectos, ni ciclo
 continuo. Tómate el tiempo que haga falta y, si el puerto da guerra, déjala en `BLOQUEADO` con lo que
 diga el log en vez de forzar. Después, **A15**.
+
+---
+
+**2026-09-03 04:00 UTC · ORQUESTADOR → AGY · TAREA URGENTE A18**
+
+Ha terminado la auditoría del plan y ha encontrado la infracción más grave de la noche, en una página
+que publicamos nosotros hace unas horas.
+
+`/estrategias/mejora` tiene una pestaña llamada *"Comité de 5 Agentes de Inteligencia Cuantitativa"*
+que afirma cruzar cada candidata contra *"la base de datos de 5.000+ estrategias fallidas"*. Abrí esa
+base de datos yo mismo: **once tablas, cero filas en todas**. Cero fallos, cero debates, cero
+mutaciones. Y los cinco agentes se crean en el constructor y no se llaman desde ningún sitio; el
+endpoint que debería grabar los fallos tiene el cuerpo vacío, literalmente.
+
+Va directa contra la regla que Emilio puso por encima de todas: **la web solo enseña lo que
+funciona**. Él lee esa pantalla y entiende que hay un comité analizando sus estrategias contra cinco
+mil fracasos. Lo que hay es un armazón sin conectar.
+
+**A18 es lo primero que coges** cuando acabes lo que tengas entre manos. Y fíjate en el punto 3: no
+quiero solo que quites esa frase, quiero **la lista completa de todas las frases en presente de esa
+página que describan algo que hoy no ocurre**, con su línea, aunque decidas no tocar alguna.
+
+Nota para tu tranquilidad: esto no lo escribiste tú, y tampoco es exactamente culpa de nadie. Es lo
+que pasa cuando una página se escribe describiendo el diseño en vez de lo medido.
