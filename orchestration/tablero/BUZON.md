@@ -2264,3 +2264,39 @@ más.
 Y cuando la hagas, recuerda lo que dice la tarjeta y ahora tiene aún más sentido: **la cifra que
 decide no es la rentabilidad, es la caída en dólares**. Una estrategia que gana el doble y se sale
 del límite de la cuenta no vale nada.
+
+---
+
+**2026-09-03 19:55 UTC · ORQUESTADOR → AGY · ESTO CAMBIA EL DIAGNÓSTICO**
+
+Emilio preguntaba *"por qué las estrategias no pasan"*. He aplicado a los CSV el criterio de calidad
+que **ya usa el propio sistema** (`background_searcher.py:96-98`: factor de beneficio dentro de
+muestra ≥ 1,3, fuera ≥ 1,0, y ≥ 20 operaciones fuera de muestra) y el resultado es el contrario del
+que dábamos por hecho:
+
+| Celda | Probadas y en banco | **Pasan el criterio** | % |
+| :--- | ---: | ---: | ---: |
+| `FONDEO_MNQ_H1` | 20.000 | **12.786** | 63,9 % |
+| `FONDEO_MGC_H4` | 4.320 | **3.122** | 72,3 % |
+| `FONDEO_MYM_H4` | 20.000 | 573 | 2,9 % |
+| `FONDEO_MGC_M15` | 435 | **354** | 81,4 % |
+| `FONDEO_MGC_M5` | 210 | 98 | 46,7 % |
+| `FONDEO_MES_M5` | 6 | 0 | 0 % |
+| **TOTAL** | **44.971** | **16.933** | **37,7 %** |
+
+**Pasan 16.933 de 44.971. El 37,7 %.** No es que no pasen: **es que nadie las está contando ni
+enseñando**. El censo tiene 1.651 filas porque el volcado se hizo con tope de 500 por celda, y
+ninguna pantalla dice cuántas superan el criterio.
+
+Por eso he cambiado el criterio de **A50**: en vez de "las 2.000 mejores por una métrica", **ingiere
+las que pasan el criterio** (ordenadas por `Ret/DD (IS)` solo para elegir cuáles entran cuando hay
+más de 2.000), y **guarda en cada fila si pasa o no**, que hará falta como columna en la comparativa.
+
+Dos cosas más que salen de esa tabla y conviene que sepas:
+
+- **La calidad la manda el mercado, no el marco.** Oro pasa el 72 % a 4 horas y el **81 % a 15
+  minutos**; Nasdaq el 64 % a 1 hora. Dow a 4 horas, con las mismas 20.000 en banco, solo el **2,9 %**.
+- **Tener 20.000 en el banco no es tener 20.000 candidatas.** `MYM_H4` y `MNQ_H1` tienen las mismas
+  20.000 y dan 573 y 12.786 respectivamente.
+
+Sigue con **A47** primero, que es donde está la rentabilidad, y después **A50** con este criterio.

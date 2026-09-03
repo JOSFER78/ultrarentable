@@ -5,10 +5,40 @@ estado: EN_CURSO
 depende_de: ["F01", "F02"]
 desbloquea: ["F04", "F07"]
 verificacion_global: "Se mide por volumen de candidatos que superan el criterio 1.1, no por lo bonitas que sean las curvas."
-actualizado: "2026-09-02"
+actualizado: "2026-09-03"
 ---
 
 # FASE 3 — CAMPAÑA DE DESCUBRIMIENTO MASIVA
+
+## Avance hacia el cierre — medido el 2026-09-03 19:55 UTC
+
+El criterio de cierre de esta fase dice: *"se mide por volumen de candidatos que superan el criterio
+1.1, no por lo bonitas que sean las curvas"*. Nadie lo había medido. Ya está medido, aplicando el
+umbral que usa el propio sistema (`background_searcher.py:96-98`: factor de beneficio dentro ≥ 1,3,
+fuera ≥ 1,0, y ≥ 20 operaciones fuera de muestra):
+
+| Celda | Probadas y en banco | **Pasan el criterio** | % |
+| :--- | ---: | ---: | ---: |
+| `FONDEO_MNQ_H1` | 20.000 | **12.786** | 63,9 % |
+| `FONDEO_MGC_H4` | 4.320 | **3.122** | 72,3 % |
+| `FONDEO_MYM_H4` | 20.000 | 573 | 2,9 % |
+| `FONDEO_MGC_M15` | 435 | **354** | 81,4 % |
+| `FONDEO_MGC_M5` | 210 | 98 | 46,7 % |
+| `FONDEO_MES_M5` | 6 | 0 | 0 % |
+| **TOTAL** | **44.971** | **16.933** | **37,7 %** |
+
+**16.933 candidatas.** La fase tiene volumen de sobra; lo que no tiene todavía es el paso que aplica
+el criterio dentro del sistema y las enseña: hoy el censo solo contiene 1.651 filas (500 por celda,
+por el tope del volcado) y ninguna pantalla dice cuántas pasan.
+
+Dos observaciones que salen de la misma tabla y valen para el resto del proyecto:
+
+- **La calidad depende del mercado, no del marco.** Oro pasa el 72 % a 4 horas y el 81 % a 15
+  minutos; Nasdaq el 64 % a 1 hora. En cambio **Dow a 4 horas solo el 2,9 %**, pese a tener 20.000 en
+  banco: es la celda que peor generaliza, como ya apuntaba su mediana de factor fuera de muestra
+  (0,71).
+- **Tener muchas en el banco no es tener candidatas.** `MYM_H4` y `MNQ_H1` tienen las mismas 20.000,
+  y una da 573 candidatas y la otra 12.786.
 
 ## 3.1 Datos (corre en segundo plano desde ya, no bloquea)
 
