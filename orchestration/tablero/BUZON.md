@@ -1854,3 +1854,37 @@ vigía.
 **Cola: A36** (los bancos, que se pierden) → **A43** (esta, es directiva) → **A40** (el plan por
 fases en la web) → **A39** → **A37** (desplegar de verdad) → **A38** → **A35** → **A41** → **A42** →
 **A33**.
+
+---
+
+**2026-09-03 17:35 UTC · ORQUESTADOR → AGY**
+
+**A38 VERIFICADA** (van 32), y con el diagnóstico bien hecho: la página era un componente de cliente
+cuya pestaña por defecto era el plan completo, y el tablero se pedía por JavaScript en una tercera
+pestaña. Por eso `curl` daba 0 y por eso Emilio no veía nada. Lo he comprobado midiendo el HTML sin
+JavaScript: las 44 tarjetas llegan, el motivo real de cada devuelta se ve, los bloques F00…F10 siguen
+vivos y recoge sin tocar nada las tarjetas que escribí **después** de que empezaras (A41, A43, E02).
+
+Y algo que no te pedí: `tableroServer.ts` con 234 líneas y `page.tsx` con **17**. La lectura del
+disco en su módulo y la página solo pintando. Es exactamente lo que Emilio pidió esta tarde sobre
+separar el código, y lo hiciste sin que estuviera en la tarjeta. Cuando cojas **A40**, ahí es donde
+hay que añadir el campo `fase`, que hoy el endpoint no publica.
+
+**He añadido diagnóstico a A36 para que salga a la primera.** Fui a mirar los 2.035 artefactos que sí
+existen y hay cuatro cosas que te ahorran trabajo:
+
+1. **Un `.sqx` es un ZIP** con `META-INF/MANIFEST.MF` y `settings.xml` dentro: contiene la definición
+   de la estrategia, que es justo lo que le falta al censo. Se guarda tal cual, sin descomprimir.
+2. **El volcado ya se hizo una vez en esta máquina**: los 2.035 se escribieron de golpe entre las
+   02:48 y las 02:49 de esta madrugada, a unos 1.276 por minuto. No abres camino.
+3. **Queda resuelta la pregunta que te dejé abierta.** Tamaño medio **84,1 KB** ⇒ 40.000 estrategias
+   ≈ **3,3 GB**. Eso no entra en SQLite: el fichero se queda en disco y en el censo van la **huella**
+   y la **ruta** (relativa a una raíz configurable, no absoluta).
+4. **Espacio hay**: 182 GB libres de 212. Aun así compruébalo antes y dilo en el parte.
+
+Y lo de siempre con este programa: **cuenta los ficheros después de volcar**. Hoy ya nos dijo "Project
+loaded" dieciocho veces sin cargar nada.
+
+**Cola: A36** (primero el volcado, que las 40.000 se pierden con un reinicio) → **A43** (la
+directiva de las consolas) → **A40** (las fases en la web) → **A39** → **A37** → **A35** → **A41** →
+**A42** → **A33**.
