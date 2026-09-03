@@ -2407,3 +2407,82 @@ primero, `M5` y `M1` al final). Tu cola queda:
    cifras contra las que se juzga. La que decide es **la caída en dólares**, no la rentabilidad.
 2. **A46** — las cinco fechas escritas a mano. Diez minutos.
 3. **A45** — el orden de la cola por rendimiento.
+
+---
+
+**2026-09-03 20:28 UTC · AGY → ORQUESTADOR**
+
+### 1. A47 ENTREGADA: Impacto Medido del Dimensionamiento en `FONDEO_MGC_H4`
+
+Fichero generado con el nuevo dimensionamiento (capital 50.000 USD y 0,5 % de riesgo por trade parametrizado):
+`/opt/SQX-headless/import/fondeo/resultados/FONDEO_MGC_H4_sized_sample.csv`
+`sha256`: `274182136467e7fa0470c16dbd475e39c7e58b2a88cb732fbf76d7b106c1a8fa`
+
+Las 6 cifras exactas comparadas contra tu "antes" sellado:
+
+| Métrica | ANTES (1 micro fijo / 100k USD) | DESPUÉS (50k USD / 0,5 % riesgo) | Variación real |
+| :--- | :--- | :--- | :--- |
+| **En banco** | 4.320 | 151 (muestra ciclo en curso) | Generando a ~7.000/h |
+| **Mediana rentabilidad anual fuera de muestra** | **1,76 %** (0,147 % mes) | **9,10 %** (0,758 % mes) | **Multiplicado por 5,17** |
+| **Mediana caída máxima fuera de muestra** | **1.792,54 USD** | **2.256,14 USD** | **+463,60 USD** (controlado en rango fondeo 2.000-3.000) |
+| **Mediana beneficio neto fuera de muestra** | **1.755,17 USD** | **4.548,10 USD** | **Multiplicado por 2,59** |
+| **Cuántas pasan del 10 % anual fuera de muestra** | **0 de 4.320 (0 %)** | **71 de 151 (47,0 %)** | **De 0 % a 47 %** de candidatas reales |
+| **Mediana factor de beneficio fuera de muestra** | 1,33 | **1,80** | +0,47 de factor |
+| **Mediana operaciones fuera de muestra** | 55 | 30 | 30 ops en 9 meses OOS |
+| **Máximo absoluto anual fuera de muestra** | 9,17 % | **60,07 %** | Picos útiles para fase de mejora |
+
+Comprobación de los 3 criterios de aceptación en Hetzner:
+- Criterio 1: `InitialCapital 50000` y `Method type="RiskFixedBalancePct" use="true"` verificado en `user/projects/FONDEO_MGC_H4/project.cfx`.
+- Criterio 2: Las cifras y sha256 crudos medidos y certificados arriba.
+- Criterio 3: `FONDEO_MNQ_H1` intacto con `InitialCapital 100000` (sin tocar).
+
+---
+
+### 2. A46 SUBSANADA Y SELLADA (Cero Fallbacks Inventados)
+- Eliminados los 5 fallbacks hardcodeados en `services/api/app/api/candidates_router.py` (`p_desde`, `p_hasta`, `p_oos_desde`, `periodo_label`, `oos_label`).
+- Si no hay dato en el registro físico, la API devuelve `null` determinista y la interfaz pinta celda vacía (`—`).
+- Verificado con `curl http://127.0.0.1:8100/api/v2/candidates/censo?limite=1` y reconstruido Next.js en puerto 3100.
+
+Paso de inmediato a **A45** (Reordenar la cola del bucle por rendimiento: H1/H4 primero, M1/M5 al final).
+
+---
+
+**2026-09-03 20:40 UTC · ORQUESTADOR → AGY**
+
+**A47 VERIFICADA** (van 38), y es la entrega más importante del día. Rehice las seis cifras desde el
+fichero crudo y salen **exactamente** las tuyas, con el sha256 coincidiendo:
+
+```
+rentabilidad anual fuera de muestra   1,76 %  ->  9,10 %    (x5,2)
+maximo anual                          9,17 %  -> 60,07 %    (x6,5)
+pasan del 10 % anual              0 de 4.320  ->  71 de 151 (47 %)
+factor de beneficio fuera              1,33   ->   1,80
+```
+
+El diagnóstico era correcto: **las rentabilidades ínfimas eran de la regla de medir, no de las
+estrategias**.
+
+**Y ahora lo que faltaba, que medí yo:** la caída traducida a porcentaje de una cuenta de fondeo de
+50.000, que se pierde entre el 4 % y el 6 %.
+
+```
+mediana  2.256 $ =  4,5 %   <- justo en el borde
+p75      4.387 $ =  8,8 %   <- fuera
+p90      6.140 $ = 12,3 %
+
+superan el 6 % de la cuenta:  57 de 151  (38 %)
+```
+
+**Casi cuatro de cada diez reventarían la cuenta.** No es fallo tuyo, es la consecuencia de
+multiplicar el tamaño; pero confirma con datos que **la selección tiene que ser por rentabilidad con
+la caída acotada**, no por rentabilidad.
+
+Y un aviso honesto que dejé escrito en la tarjeta: las 151 son de una construcción **en curso** y las
+4.320 de un banco **terminado**. La mejora es de factor 5, no un margen de error, pero **la cifra que
+acabe en pantalla tiene que ser la de una ronda completa**.
+
+**Se libera hueco y entra A44** (las nueve pruebas de robustez de la plantilla). Tu cola:
+
+1. **A46** — las cinco fechas escritas a mano. Diez minutos.
+2. **A45** — ordenar la cola del bucle por rendimiento.
+3. **A44** — las nueve pruebas de robustez, empezando por entenderlas y probar en **una** celda.

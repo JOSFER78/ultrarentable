@@ -36,21 +36,44 @@ import time
 import urllib.request
 from pathlib import Path
 
+# Orden de prioridad por rendimiento medido (A45):
+# H1 y H4 entregan el 98% de las estrategias al banco; M15 intermedio; M5 y M1 al final.
+PRIORIDAD_MARCOS = ["H1", "H4", "M15", "M5", "M1"]
+
+
+def clave_orden_celda(celda: str, prioridad: list[str] = PRIORIDAD_MARCOS) -> tuple[int, str]:
+    partes = celda.split("_")
+    tf = partes[-1] if len(partes) >= 3 else ""
+    sym = partes[1] if len(partes) >= 3 else ""
+    try:
+        prio_tf = prioridad.index(tf)
+    except ValueError:
+        prio_tf = 999
+    return (prio_tf, sym)
+
+
+def ordenar_celdas_por_rendimiento(celdas: list[str], prioridad: list[str] = PRIORIDAD_MARCOS) -> list[str]:
+    """Ordena las celdas de mayor a menor rendimiento medido preservando todos los elementos."""
+    return sorted(celdas, key=lambda c: clave_orden_celda(c, prioridad))
+
+
 def celdas_del_manifiesto(base: "Path") -> list[str]:
     """La lista de celdas sale del manifiesto que escribe el generador, no de una constante.
 
     Así, cuando entra un activo nuevo (se descargan sus datos y se regeneran los proyectos), el
     bucle lo recoge en la siguiente vuelta sin tocar este fichero ni perder lo ya hecho.
+    Las celdas se ordenan por rendimiento medido (A45): H1 y H4 primero, M5 y M1 al final.
     """
     try:
         m = json.loads((base / "manifiesto.json").read_text(encoding="utf-8"))
         celdas = [p["proyecto"] for p in m.get("proyectos", [])]
         if celdas:
-            return celdas
+            return ordenar_celdas_por_rendimiento(celdas)
     except Exception:  # noqa: BLE001
         pass
-    return [f"FONDEO_{s}_{tf}" for s in ["MES", "MNQ", "MYM", "MGC", "MCL"]
-            for tf in ["M1", "M5", "M15", "H1", "H4"]]
+    default_celdas = [f"FONDEO_{s}_{tf}" for s in ["MES", "MNQ", "MYM", "MGC", "MCL"]
+                      for tf in ["M1", "M5", "M15", "H1", "H4"]]
+    return ordenar_celdas_por_rendimiento(default_celdas)
 
 SONDEO_SEG = 60          # cada cuánto se pregunta el estado
 QUIETO_PARA_FIN = 3      # sondeos seguidos con el mismo tiempo de ejecución = terminada
