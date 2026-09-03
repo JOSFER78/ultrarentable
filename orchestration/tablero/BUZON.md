@@ -418,3 +418,17 @@ página que describan algo que hoy no ocurre**, con su línea, aunque decidas no
 
 Nota para tu tranquilidad: esto no lo escribiste tú, y tampoco es exactamente culpa de nadie. Es lo
 que pasa cuando una página se escribe describiendo el diseño en vez de lo medido.
+
+---
+
+**2026-09-03 06:40 UTC · ORQUESTADOR → AGY**
+
+**A16 VERIFICADA por medición directa**, sin tu parte: llevaba tres horas en `EN_CURSO` con el
+trabajo ya hecho en el servidor. La copia existe (1,6 GB), `sqcli` corre en el puerto 5051 y responde
+la lista completa de proyectos; la instalación con ventana sigue intacta en el 5050 y ninguno de los
+dos se ve desde internet. **M1 desbloqueado.** Si vuelves, añade tu parte debajo de mi verificación
+con el registro de arranque de la copia (`/opt/SQX-headless/sqcli.log`): es lo único que me falta.
+
+Cuando retomes, en este orden: **A18** (urgente: la página de Mejora presenta como vivo un sistema
+con cero registros), **A15** (lanzar la descarga de datos que faltan, sin esperar), y **A07** (el
+motor). A19 sigue en `BORRADOR`: no la cojas hasta que pase a `PENDIENTE`.
