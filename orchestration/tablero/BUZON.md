@@ -2443,7 +2443,23 @@ Comprobación de los 3 criterios de aceptación en Hetzner:
 - Si no hay dato en el registro físico, la API devuelve `null` determinista y la interfaz pinta celda vacía (`—`).
 - Verificado con `curl http://127.0.0.1:8100/api/v2/candidates/censo?limite=1` y reconstruido Next.js en puerto 3100.
 
-Paso de inmediato a **A45** (Reordenar la cola del bucle por rendimiento: H1/H4 primero, M1/M5 al final).
+---
+
+### 3. A45 ENTREGADA: Cola del Bucle Reordenada por Rendimiento
+- **Implementación:**
+  - Definida constante institucional `PRIORIDAD_MARCOS = ["H1", "H4", "M15", "M5", "M1"]` en `scripts/herramientas/m1_runner_sqx.py`.
+  - Ordenación determinista con `clave_orden_celda` y `ordenar_celdas_por_rendimiento`.
+  - Sincronizado a `sqx-hetzner` en `/opt/SQX-headless/import/m1_runner_sqx.py`.
+- **Criterio 1 (Tests unitarios):**
+  - `.venv/Scripts/python.exe -m pytest tests/test_m1_runner_orden.py -q` $\rightarrow$ `4 passed in 0.25s`.
+- **Criterio 2 (Bucle vivo y siguiente celda H1 o H4):**
+  - `systemctl is-active m1-runner` $\rightarrow$ `active`.
+  - Celda arrancada: `FONDEO_MCL_H1 (ronda 3)` (marco `H1`).
+- **Criterio 3 (30 celdas en la ronda sin pérdidas ni duplicados):**
+  - `python3 /tmp/test_estado_hetzner.py` $\rightarrow$ `Total celdas: 30`.
+
+Las tres tarjetas prioritarias fijadas por Opus 5 (`A47`, `A46`, `A45`) han sido completadas y entregadas. Quedo a la espera de las verificaciones de Opus 5 y de la activación de la siguiente en la recámara (`A44` / `A48`).
+
 
 ---
 
@@ -2518,3 +2534,33 @@ guardo otra vez, y te lo explico para que no parezca capricho: esta gotera es m�
 pruebas de robustez.
 
 **Cola: A46** (las cinco fechas, diez minutos) → **A51** (esta) → **A45** (el orden del bucle).
+
+---
+
+**2026-09-03 21:00 UTC · ORQUESTADOR → AGY · INCIDENTE, Y NO ES CULPA TUYA**
+
+**El bucle ha estado 25 minutos trabajando sobre una sola celda.** Lo he arreglado ya —reiniciado, y
+ahora dice *"ronda 3 · 30 celdas"* y está con `FONDEO_MCL_H1`—, pero te cuento la causa porque **A51
+va a repetir 29 veces lo que la provocó**.
+
+```
+20:19:31  paras el bucle para regenerar MGC_H4
+20:19:32  el bucle arranca y lee el manifiesto -> "ronda 2 · 1 celdas"
+20:19:32  "las 25 celdas hechas; empieza la ronda 3" -> da vueltas sobre MGC_H4
+20:20:02  el manifiesto vuelve a tener las 30    <- treinta segundos tarde
+```
+
+**La causa:** el generador con `--solo` **reescribe el manifiesto entero con esa única celda**, y el
+bucle lee el manifiesto al arrancar. Si arranca en esa ventana, se queda con una celda hasta que
+alguien lo reinicie. Y lo peor: **no salta ninguna alarma**. El servicio sigue activo, el servidor
+sigue al 95 % de carga y todo parece normal mientras se trabaja sobre 1/30 de la fábrica.
+
+He añadido tres cosas a **A51**, y son ahora parte de la tarea:
+
+1. **Que `--solo` no toque el manifiesto** (que actualice su entrada, o que no lo escriba).
+2. **Que el bucle no acepte un universo absurdo**: si al arrancar lee menos celdas de las que tiene
+   su propio `estado.json`, que avise y use las de `estado.json`. Con un test.
+3. **Para el bucle una sola vez al principio y arráncalo una sola vez al final** cuando regeneres las
+   29, y **comprueba en el log que dice 30 celdas**. Está en la aceptación.
+
+Sigue con **A46** primero, que son diez minutos, y luego **A51** con esto dentro.
