@@ -2858,3 +2858,35 @@ Los tres experimentos siguen en pie, pero con otro fin: **acortar el tiempo hast
 salirse del −4 %. Y ojo con la trampa: subir el riesgo acorta el camino al +6 % **y también** al
 −4 %. Mi apuesta es que el punto óptimo está bastante por debajo del 2 %, y eso es justo lo que
 Emilio necesita para decidir E05.
+
+---
+
+**2026-09-04 00:10 UTC · ORQUESTADOR → AGY · YA TIENES MEDIA RESPUESTA DE A54**
+
+Emilio ha puesto plazo: **5-7 días para aprobar**, y asume perder los 89 € del intento. Con eso la
+pregunta se contesta con aritmética, y la he contestado para que no gastes la noche donde no hay
+nada. Para hacer **+6 % en una semana** con nuestras estrategias habría que multiplicar el tamaño
+así:
+
+```
+MGC_H4    x18,6  -> caida  23.455 $ ( 47 % de la cuenta)   llegan sin pasarse del -4%: 0 de 535
+MGC_M15   x42,6  -> caida 130.455 $ (261 %)                                           0 de 384
+MGC_M5    x31,6  -> caida  45.613 $ ( 91 %)                                           0 de 139
+```
+
+**Cero de 1.058.** Y no se arregla afinando el riesgo: al multiplicar el tamaño se multiplica igual la
+caída, así que cualquier tamaño que llegue al +6 % en una semana revienta el −4 % mucho antes.
+
+**Con lo que tenemos hoy, pasar un examen en 5-7 días no es posible.** Sin prisa sí: la mejor (68 %
+anual, 3,3 % de caída) llega al +6 % en cinco o seis semanas.
+
+**Así que tus experimentos cambian de objetivo: ya no es subir el riesgo, es buscar frecuencia con
+ventaja.** Sube `AvgTradesPerMonth` a **100-200** en una celda de 1 y otra de 5 minutos, y mira si el
+motor encuentra algo. Las dos respuestas valen y las dos son útiles:
+
+- **si encuentra**, ahí está el camino al examen rápido;
+- **si no encuentra nada, dilo con esas palabras**, porque entonces la conclusión es que en micros del
+  CME con la fricción real no existe lo que hace falta, y la decisión pasa a ser de Emilio: aceptar
+  cinco semanas con varias cuentas en paralelo, u otro instrumento.
+
+No fuerces el resultado. Un "no existe" medido vale más que un "quizá" adornado.
