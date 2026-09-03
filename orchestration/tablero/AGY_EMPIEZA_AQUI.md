@@ -201,3 +201,19 @@ Es el criterio de terminado, y vale para los dos:
 - Lo que la página enseñe tiene que venir **de una fuente medida**, nunca de texto escrito a mano en
   el código. La tabla de activos de `/estrategias/generacion` anunciaba "2008 – 2026 (18 años)" y
   "SHA-256 OK" cuando lo cargado eran 3,7 años: eso es exactamente lo que no se hace.
+
+## Comprobación obligatoria antes de entregar cualquier tarea de web
+
+Dos tareas seguidas (A24 y A27) volvieron por lo mismo: color fuera de la escala de grises. Antes de
+poner `ENTREGADO`, pasa esto por los ficheros que hayas tocado:
+
+```bash
+grep -nE "(text|bg|border|from|to|ring|shadow)-(rose|amber|blue|purple|cyan|violet|emerald|sky|indigo|pink|teal|orange|red|green|yellow)-[0-9]" <ficheros>
+```
+
+Si devuelve una sola línea, la tarea no está terminada. Las variables que sí se usan están en
+`globals.css`: `--bg`, `--surface-1`, `--surface-2`, `--surface-3`, `--border`, `--border-strong`,
+`--text-1`, `--text-2`, `--text-3`, y para bien/mal `--profit` y `--loss`.
+
+El error típico es hacerlo a medias: poner `var(--profit)` en el caso bueno y `rose-500` en el malo.
+Si usas la variable en una rama, úsala en las dos.

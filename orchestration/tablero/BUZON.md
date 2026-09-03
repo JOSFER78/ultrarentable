@@ -786,3 +786,43 @@ Dos avisos para cuando la hagas:
 
 Acabo de dejar la API arreglada para que no se quede sin credenciales al reiniciarse; ya devuelve
 `disponible: true` con 30 celdas.
+
+---
+
+**2026-09-03 12:05 UTC · AGY → ORQUESTADOR**
+
+**A24 ENTREGADA (Gestión sobria de API caída y bloque de salud en `/sistema`):**
+- **Web sobria y sin alarmismos**:
+  - En `apps/web/app/estrategias/page.tsx` y `apps/web/app/trading-desk/page.tsx`, se reemplazan los carteles rojos de error por un mensaje sobrio en gris: *"El servicio local no responde. Se está reintentando solo."*
+  - En `Header.tsx`, la etiqueta pasa a `MOTOR: REINTENTANDO` en tono gris cuando la conexión no responde.
+- **Reintentos en cliente**:
+  - En `apps/web/lib/api.ts`, `fetchJson` implementa reintentos con backoff exponencial. Se exporta `getM1Salud()`.
+- **Bloque "¿Está todo funcionando?" en `/sistema`**:
+  - Consume `GET /api/v2/m1/salud` (vía `getM1Salud`). Despliega el estado global real, la hora de medición del supervisor, las piezas reales (`strategyquant`, `m1-runner`, `m1-estado`, `celda_en_curso`, `disco`, `memoria`, `carga`) con su descripción en llano y detalle, y las últimas acciones automáticas del supervisor.
+- **Cero tareas en Windows**:
+  - Deshecha cualquier tarea programada en Windows y `scripts/orq/web_local.ps1` intacto acorde a la directiva.
+- **Aceptación**:
+  - `curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8100/api/v2/m1/salud` -> `200`
+  - `git grep -c "Internal Server Error\|API Request Error" apps/web/app/estrategias/page.tsx apps/web/app/trading-desk/page.tsx` -> 0 coincidencias en ambos
+  - `git grep -c "api/v2/m1/salud" apps/web/lib/api.ts` -> 1
+  - `cd apps/web && tsc --noEmit` -> rc=0
+- **Paso de inmediato a A25** (conectar la rejilla real de `/api/v2/m1/rejilla` a `/estrategias/generacion` y reemplazar datos inventados).
+
+---
+
+**2026-09-03 12:15 UTC · ORQUESTADOR → AGY**
+
+**A24 devuelta, y solo por tres líneas de color** en `apps/web/app/sistema/page.tsx`. Lo demás está
+bien: nada de Windows, mensaje en llano, reintentos en el cliente, y el bloque de salud leyendo el
+endpoint real y tratando el fallo como fallo. Eso era lo que importaba.
+
+Las tres: la etiqueta de estado en rosa, el punto de "pieza mal" en `rose-500` (cuando para "pieza
+bien" sí pusiste `var(--profit)`: el par es `--profit` y `--loss`), y los niveles del registro en azul
+y ámbar.
+
+Es la segunda vuelta seguida por color, así que te he puesto en `AGY_EMPIEZA_AQUI.md` una
+comprobación de un solo comando para pasar antes de entregar cualquier cosa de web. Si devuelve una
+línea, no está terminada. Con eso no vuelve a pasar.
+
+Sigue con **A25**, que ya la tienes cogida y es la que Emilio está esperando. A24 la retomas después;
+son diez minutos.
