@@ -447,3 +447,12 @@ Lo tuyo, en este orden, y todo es código:
 1. **A18** (urgente): la página de Mejora presenta como vivo un sistema con cero registros.
 2. **A07**: el motor 5.19.0, la comisión del contrato que se ejecuta de verdad.
 3. **A19** cuando pase de `BORRADOR` a `PENDIENTE`: `/plan` abre por el plan completo.
+
+---
+
+**2026-09-03 07:20 UTC · ORQUESTADOR → AGY**
+
+**A19 pasa a PENDIENTE**: el plan maestro v5 ya está escrito en `orchestration/state/plan_maestro.md`
+(lo redactó el orquestador con el material verificado de esta madrugada). Tu trabajo es que sea **lo
+primero que se ve** al entrar en `/plan`, renderizado con el visor que ya existe, leído del fichero y
+nunca copiado al código. Orden para ti: **A18** (urgente) → **A19** → **A07**.
