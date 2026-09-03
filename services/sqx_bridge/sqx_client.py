@@ -9,6 +9,7 @@ Protocol (verified live against sqcli headless, see skill sqx-headless-workflow)
 from __future__ import annotations
 
 import csv
+import io
 import os
 import re
 import tempfile
@@ -21,19 +22,21 @@ class SQXMCPError(Exception):
     pass
 
 
-DEFAULT_SQX_API_URL = os.getenv("SQX_API_URL", "http://localhost:5050")
+DEFAULT_SQX_API_URL = os.getenv("SQX_API_URL", "http://127.0.0.1:5051")
+DEFAULT_SQX_RESULTS_URL = os.getenv("SQX_RESULTS_URL", "http://127.0.0.1:5052")
 SQX_TIMEOUT = int(os.getenv("SQX_TIMEOUT", "10"))
 
 
 class SQXMCPClient:
     """Minimal real client for the sqcli HTTP API (`/call?cmd=...`)."""
 
-    def __init__(self, base_url: Optional[str] = None, timeout: int = SQX_TIMEOUT):
-        raw = base_url or os.getenv("SQX_MCP_URL", "") or DEFAULT_SQX_API_URL
+    def __init__(self, base_url: Optional[str] = None, timeout: int = SQX_TIMEOUT, results_url: Optional[str] = None):
+        raw = base_url or os.getenv("SQX_MCP_URL", "") or os.getenv("SQX_API_URL", "") or DEFAULT_SQX_API_URL
         # Legacy MCP URLs are dead; map any /mcp host:port to the real sqcli API.
         if raw.rstrip("/").endswith("/mcp"):
             raw = raw.rstrip("/")[: -len("/mcp")]
         self.base_url = raw.rstrip("/")
+        self.results_url = (results_url or os.getenv("SQX_RESULTS_URL", "") or DEFAULT_SQX_RESULTS_URL).rstrip("/")
         self.timeout = timeout
 
     # ── transport ────────────────────────────────────────────────
@@ -110,36 +113,67 @@ class SQXMCPClient:
         return self._parse_databank_list(self.call(f"-databank action=list project={project_name}"))
 
     def databank_count(self, project_name: str, databank_name: str) -> int:
-        db_arg = f'"{databank_name}"' if " " in databank_name or '"' not in databank_name else databank_name
-        text = self.call_cli(f"-databank action=count project={project_name} name={db_arg}")
-        m = re.search(r"Records:\s*(\d+)", text)
-        return int(m.group(1)) if m else 0
+        for db in self.list_databanks(project_name):
+            if db.get("name") == databank_name:
+                return int(db.get("records", 0))
+        return 0
 
     def export_databank(self, project_name: str, databank_name: str, max_rows: int = 500) -> List[Dict[str, Any]]:
-        """Export databank to a temp CSV and parse rows (semicolon-separated, quoted)."""
-        fd, path = tempfile.mkstemp(prefix="sqx_export_", suffix=".csv")
-        os.close(fd)
-        try:
-            db_arg = f'"{databank_name}"' if " " in databank_name or '"' not in databank_name else databank_name
-            text = self.call_cli(
-                f"-databank action=export project={project_name} name={db_arg} file={path}",
-                timeout=120,
-            )
-            if "exported" not in text.lower():
-                raise SQXMCPError(f"SQX export failed: {text[:200]}")
-            if not os.path.exists(path) or os.path.getsize(path) == 0:
-                return []
-            with open(path, newline="", encoding="utf-8-sig", errors="replace") as fh:
-                sample = fh.read(4096)
-                fh.seek(0)
-                delim = ";" if sample.count(";") >= sample.count(",") else ","
-                rows = list(csv.DictReader(fh, delimiter=delim))
-            return rows[:max_rows]
-        finally:
+        """Export databank and parse rows (semicolon-separated, quoted).
+
+        Uses direct HTTP serving via port 5052 from /opt/SQX-headless/import/fondeo/resultados/,
+        supporting pre-calculated M1 runner CSVs and ad-hoc remote exports with 0 cross-OS path failures.
+        """
+        # 1. Si es el banco 'Results' y existe un CSV de rondas M1 ya consolidado, leerlo directamente
+        if databank_name == "Results":
+            for r in [4, 3, 2, 1]:
+                candidate_url = f"{self.results_url}/resultados/{project_name}_r{r}.csv"
+                try:
+                    head_resp = requests.head(candidate_url, timeout=3)
+                    if head_resp.status_code == 200:
+                        resp = requests.get(candidate_url, timeout=60)
+                        if resp.status_code == 200 and len(resp.text) > 50:
+                            sample = resp.text[:4096]
+                            delim = ";" if sample.count(";") >= sample.count(",") else ","
+                            rows = list(csv.DictReader(io.StringIO(resp.text), delimiter=delim))
+                            if rows:
+                                return rows[:max_rows]
+                except Exception:
+                    pass
+
+        # 2. Exportación bajo demanda en el servidor remoto
+        safe_db = re.sub(r"[^a-zA-Z0-9_-]", "_", databank_name)
+        filename = f"sqx_export_{project_name}_{safe_db}.csv"
+        remote_path = f"/opt/SQX-headless/import/fondeo/resultados/{filename}"
+
+        if " " in databank_name or '"' in databank_name:
+            cmd_content = f'-databank action=export project={project_name} name="{databank_name}" file={remote_path}'
+            ssh_cmd = f"echo '{cmd_content}' > /tmp/sqx_cmd.txt && curl -s 'http://127.0.0.1:5051/call?cmd=-run%20file=/tmp/sqx_cmd.txt'"
             try:
-                os.remove(path)
-            except OSError:
-                pass
+                import subprocess
+                subprocess.check_output(['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', 'sqx-hetzner', ssh_cmd], timeout=120)
+            except Exception as exc:
+                raise SQXMCPError(f"Error al ejecutar exportación remota en SQX: {exc}") from exc
+        else:
+            cmd = f"-databank action=export project={project_name} name={databank_name} file={remote_path}"
+            out = self.call(cmd, timeout=120)
+            if "exported" not in out.lower():
+                raise SQXMCPError(f"SQX export failed: {out[:200]}")
+
+        # 3. Descarga y parsing vía puerto 5052
+        download_url = f"{self.results_url}/resultados/{filename}"
+        try:
+            dl_resp = requests.get(download_url, timeout=60)
+            if dl_resp.status_code != 200:
+                raise SQXMCPError(f"No se pudo descargar CSV exportado desde {download_url}: HTTP {dl_resp.status_code}")
+            sample = dl_resp.text[:4096]
+            delim = ";" if sample.count(";") >= sample.count(",") else ","
+            rows = list(csv.DictReader(io.StringIO(dl_resp.text), delimiter=delim))
+            return rows[:max_rows]
+        except Exception as exc:
+            if isinstance(exc, SQXMCPError):
+                raise
+            raise SQXMCPError(f"Error descargando datos exportados de SQX: {exc}") from exc
 
     def list_strategies(self, project_name: str, databank_name: str) -> List[Dict[str, Any]]:
         return self.export_databank(project_name, databank_name)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import time
 import socket
@@ -235,5 +236,33 @@ def get_watchdog_status() -> Dict[str, Any]:
         "engine_mode": "FASTENGINE_24_7_AUTONOMOUS" if ha_watchdog.failover_active else "HYBRID_SQX_FASTENGINE",
         "recent_recoveries": ha_watchdog.recovery_history,
     }
+
+
+@system_health_router.get("/vigia-local")
+def get_vigia_local() -> Dict[str, Any]:
+    """Devuelve el estado medido del vigía de la instancia local (scripts/orq/web_local_vigia.ps1)."""
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+    vigia_path = os.path.join(repo_root, "orchestration", "site", "vigia_estado.json")
+    if not os.path.exists(vigia_path):
+        return {
+            "disponible": False,
+            "motivo": "Fichero de estado del vigía local no encontrado en orchestration/site/vigia_estado.json",
+        }
+    try:
+        with open(vigia_path, "r", encoding="utf-8-sig") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            data["disponible"] = True
+            return data
+        return {
+            "disponible": False,
+            "motivo": "Formato inválido en el fichero del vigía local",
+        }
+    except Exception as e:
+        return {
+            "disponible": False,
+            "motivo": f"Error leyendo fichero del vigía: {str(e)}",
+        }
+
 
 

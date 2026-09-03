@@ -29,6 +29,7 @@ from services.api.app.api.legacy_compat_router import router as legacy_routes
 from services.api.app.api.discovery_router import router as discovery_router
 from services.api.app.api.sqx_router import sqx_router
 from services.api.app.api.m1_router import router as m1_router
+from services.api.app.api.ia_router import router as ia_router
 from services.api.app.api.providers_router import providers_router
 from services.api.app.api.candidates_router import candidates_router
 from services.api.app.api.execution_router import execution_router
@@ -166,6 +167,8 @@ app.include_router(gateways_router, prefix="/api/v1", tags=["v1-gateways"])
 # V2
 app.include_router(strategy_lab_router, prefix="/api/v2", tags=["v2-strategy-lab"])
 app.include_router(m1_router, prefix="/api/v2/m1", tags=["v2-m1-rejilla"])
+app.include_router(ia_router, prefix="/api/v2/ia", tags=["v2-ia"])
+app.include_router(system_health_router, prefix="/api/v2", tags=["v2-health"])
 app.include_router(strategy_binding_router, prefix="/api/v2", tags=["v2-strategy-binding"])
 app.include_router(telemetry_router, prefix="/api/v2/telemetry", tags=["v2-telemetry"])
 app.include_router(validation_router, prefix="/api/v2/validation", tags=["v2-validation"])

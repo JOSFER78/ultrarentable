@@ -11,9 +11,10 @@ import {
   Terminal,
   CheckCircle2,
   AlertCircle,
+  Monitor,
 } from "lucide-react";
 
-import { getM1Salud, SaludM1Response } from "@/lib/api";
+import { getM1Salud, SaludM1Response, getVigiaLocal, VigiaLocalResponse } from "@/lib/api";
 
 interface WorkerData {
   worker_id: string;
@@ -48,7 +49,12 @@ export default function SistemaTelemetryPage() {
   const [saludM1Loading, setSaludM1Loading] = useState<boolean>(true);
   const [saludM1Error, setSaludM1Error] = useState<string | null>(null);
 
-  // 2. Estado de telemetría de workers
+  // 2. Estado de telemetría del vigía local (este PC) (/api/v2/system/vigia-local)
+  const [vigiaLocal, setVigiaLocal] = useState<VigiaLocalResponse | null>(null);
+  const [vigiaLocalLoading, setVigiaLocalLoading] = useState<boolean>(true);
+  const [vigiaLocalError, setVigiaLocalError] = useState<string | null>(null);
+
+  // 3. Estado de telemetría de workers
   const [telemetry, setTelemetry] = useState<TelemetryHealth | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [logs, setLogs] = useState<Array<{ ts: string; level: string; msg: string }>>([]);
@@ -65,6 +71,19 @@ export default function SistemaTelemetryPage() {
       setSaludM1Error(e.message || "El servicio no responde ahora mismo. Se está reintentando solo.");
     } finally {
       setSaludM1Loading(false);
+    }
+  }, []);
+
+  const fetchVigiaLocal = useCallback(async () => {
+    try {
+      const data = await getVigiaLocal();
+      setVigiaLocal(data);
+      setVigiaLocalError(null);
+    } catch (err: any) {
+      setVigiaLocal(null);
+      setVigiaLocalError(err.message || "No se pudo consultar el vigía local");
+    } finally {
+      setVigiaLocalLoading(false);
     }
   }, []);
 
@@ -106,16 +125,19 @@ export default function SistemaTelemetryPage() {
 
   useEffect(() => {
     void fetchSaludM1();
+    void fetchVigiaLocal();
     void fetchHealth();
 
     const m1Interval = setInterval(fetchSaludM1, 15000);
+    const vigiaInterval = setInterval(fetchVigiaLocal, 10000);
     const healthInterval = setInterval(fetchHealth, 3000);
 
     return () => {
       clearInterval(m1Interval);
+      clearInterval(vigiaInterval);
       clearInterval(healthInterval);
     };
-  }, [fetchSaludM1]);
+  }, [fetchSaludM1, fetchVigiaLocal]);
 
   async function handleRestartAll() {
     setRestarting(true);
@@ -262,6 +284,202 @@ export default function SistemaTelemetryPage() {
                 Última acción: <strong className="text-[var(--text-1)]">{saludM1.ultimas_acciones[0].que}</strong> ({saludM1.ultimas_acciones[0].cuando.replace("T", " ").slice(0, 19)} UTC, rc={saludM1.ultimas_acciones[0].rc})
               </span>
             )}
+          </div>
+        )}
+      </div>
+
+      {/* BLOQUE A30: Instancia local (este PC) */}
+      <div className="bg-[var(--surface-1)] border border-[var(--border)] rounded-lg p-4 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--border)] pb-3">
+          <div className="flex items-center gap-2">
+            <Monitor className="w-5 h-5 text-[var(--text-2)]" />
+            <h2 className="text-base font-bold text-[var(--text-1)] tracking-tight">
+              Instancia local (este PC)
+            </h2>
+            {vigiaLocal && vigiaLocal.disponible && (
+              <span
+                className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold ${
+                  vigiaLocal.todo_en_pie &&
+                  (!vigiaLocal.medido ||
+                    Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000) <= 10)
+                    ? "bg-[var(--profit)]/15 text-[var(--profit)] border border-[var(--profit)]/30"
+                    : "bg-[var(--loss-dim)] text-[var(--loss)] border border-[var(--loss)]"
+                }`}
+              >
+                {vigiaLocal.todo_en_pie &&
+                (!vigiaLocal.medido ||
+                  Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000) <= 10)
+                  ? "TODO EN PIE"
+                  : "INCIDENCIA"}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-3)]">
+            {vigiaLocal?.medido && (() => {
+              const diffMin = Math.max(0, Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000));
+              const vigiaParado = diffMin > 10;
+              return vigiaParado ? (
+                <span className="text-[var(--loss)] font-semibold">
+                  Última pasada del vigía: hace {diffMin} min (vigía parado)
+                </span>
+              ) : (
+                <span>
+                  Última pasada del vigía: hace {diffMin === 0 ? "menos de 1" : diffMin} min
+                </span>
+              );
+            })()}
+            <button
+              onClick={() => void fetchVigiaLocal()}
+              disabled={vigiaLocalLoading}
+              className="px-2.5 py-1 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-3)] border border-[var(--border)] text-[var(--text-2)] hover:text-[var(--text-1)] transition cursor-pointer flex items-center gap-1 text-[11px]"
+            >
+              <RotateCcw className={`w-3 h-3 ${vigiaLocalLoading ? "animate-spin" : ""}`} />
+              <span>Refrescar</span>
+            </button>
+          </div>
+        </div>
+
+        {vigiaLocalLoading && !vigiaLocal && (
+          <div className="py-6 text-center text-xs font-mono text-[var(--text-3)]">
+            Consultando estado del vigía local (/api/v2/system/vigia-local)…
+          </div>
+        )}
+
+        {vigiaLocalError && !vigiaLocal && (
+          <div className="px-3.5 py-3 rounded-md bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-2)] text-xs font-mono flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--loss)] shrink-0" />
+              <span>No se pudo conectar con el vigía local ({vigiaLocalError}).</span>
+            </div>
+            <button
+              onClick={() => void fetchVigiaLocal()}
+              className="px-2.5 py-1 rounded bg-[var(--surface-3)] hover:bg-[var(--surface-1)] border border-[var(--border)] text-[var(--text-1)] text-xs font-semibold cursor-pointer transition"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+
+        {vigiaLocal && !vigiaLocal.disponible && (
+          <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-2)]/40 text-xs font-mono text-[var(--text-2)]">
+            No hay parte del vigía local disponible: {vigiaLocal.motivo || "Fichero de vigía no encontrado"}
+          </div>
+        )}
+
+        {vigiaLocal && vigiaLocal.disponible && (
+          <div className="space-y-3">
+            {/* Alerta si el vigía lleva más de 10 min sin correr */}
+            {vigiaLocal.medido &&
+              Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000) > 10 && (
+                <div className="p-3 rounded-lg border border-[var(--loss)] bg-[var(--loss-dim)] flex items-start gap-2.5 text-xs text-[var(--loss)]">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="font-semibold">Alerta de supervisión:</strong> El vigía local no está corriendo. Han pasado {Math.floor((Date.now() - new Date(vigiaLocal.medido).getTime()) / 60000)} minutos desde la última medición registrada.
+                  </div>
+                </div>
+              )}
+
+            {/* Grid de servicios locales: API, Web y Build */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {/* API 8100 */}
+              <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-2)]/40 flex flex-col justify-between space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[var(--text-1)]">
+                    API FastAPI (:{vigiaLocal.api?.puerto || 8100})
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10.5px] font-mono font-bold ${
+                      vigiaLocal.api?.ok
+                        ? "bg-[var(--profit)]/15 text-[var(--profit)]"
+                        : "bg-[var(--loss-dim)] text-[var(--loss)]"
+                    }`}
+                  >
+                    {vigiaLocal.api?.ok ? "EN PIE" : "CAÍDA"}
+                  </span>
+                </div>
+                <div className="pt-2 border-t border-[var(--border)]/60 flex items-center justify-between font-mono text-[11px] text-[var(--text-2)]">
+                  <span>Código HTTP:</span>
+                  <span className="font-semibold text-[var(--text-1)]">
+                    {vigiaLocal.api?.http ? `HTTP ${vigiaLocal.api.http}` : "Sin respuesta"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Web 3100 */}
+              <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-2)]/40 flex flex-col justify-between space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[var(--text-1)]">
+                    Web Next.js (:{vigiaLocal.web?.puerto || 3100})
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10.5px] font-mono font-bold ${
+                      vigiaLocal.web?.ok
+                        ? "bg-[var(--profit)]/15 text-[var(--profit)]"
+                        : "bg-[var(--loss-dim)] text-[var(--loss)]"
+                    }`}
+                  >
+                    {vigiaLocal.web?.ok ? "EN PIE" : "CAÍDA"}
+                  </span>
+                </div>
+                <div className="pt-2 border-t border-[var(--border)]/60 flex items-center justify-between font-mono text-[11px] text-[var(--text-2)]">
+                  <span>Código HTTP:</span>
+                  <span className="font-semibold text-[var(--text-1)]">
+                    {vigiaLocal.web?.http ? `HTTP ${vigiaLocal.web.http}` : "Sin respuesta"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Build Integro */}
+              <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-2)]/40 flex flex-col justify-between space-y-2 sm:col-span-2 lg:col-span-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-[var(--text-1)]">
+                    Build de Producción
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10.5px] font-mono font-bold ${
+                      vigiaLocal.build_integro
+                        ? "bg-[var(--profit)]/15 text-[var(--profit)]"
+                        : "bg-[var(--loss-dim)] text-[var(--loss)]"
+                    }`}
+                  >
+                    {vigiaLocal.build_integro ? "ÍNTEGRO" : "INCOMPLETO"}
+                  </span>
+                </div>
+                <div className="pt-2 border-t border-[var(--border)]/60 text-[11px] text-[var(--text-2)] font-mono">
+                  {vigiaLocal.build_integro
+                    ? "Manifiestos verificados en disco"
+                    : "El build de producción está incompleto"}
+                </div>
+              </div>
+            </div>
+
+            {/* Acciones del vigía */}
+            <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-2)]/20 text-xs">
+              <span className="font-mono font-semibold text-[var(--text-2)] mr-2">
+                Intervención del vigía:
+              </span>
+              {vigiaLocal.acciones && vigiaLocal.acciones.length > 0 ? (
+                <ul className="mt-1.5 space-y-1">
+                  {vigiaLocal.acciones.map((acc, i) => {
+                    let desc = `El vigía ejecutó la acción: ${acc}`;
+                    if (acc === "arrancar-api") desc = "el vigía tuvo que relanzar la API (:8100)";
+                    if (acc === "arrancar-web") desc = "el vigía tuvo que relanzar la web (:3100)";
+                    if (acc === "reconstruir-web") desc = "el vigía tuvo que reconstruir el build, estaba a medias";
+                    return (
+                      <li key={i} className="text-[var(--text-1)] font-mono flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-2)]" />
+                        {desc}
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <span className="text-[var(--text-3)] font-mono">
+                  no ha hecho falta resucitar nada; todo en pie.
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>

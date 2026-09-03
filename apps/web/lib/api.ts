@@ -151,6 +151,31 @@ export async function getM1Salud(): Promise<SaludM1Response> {
   return fetchJson<SaludM1Response>("/api/v2/m1/salud");
 }
 
+export interface VigiaLocalResponse {
+  disponible: boolean;
+  motivo?: string;
+  schema?: string;
+  medido?: string;
+  worktree?: string;
+  api?: {
+    puerto: number;
+    http: number;
+    ok: boolean;
+  };
+  web?: {
+    puerto: number;
+    http: number;
+    ok: boolean;
+  };
+  build_integro?: boolean;
+  acciones?: string[];
+  todo_en_pie?: boolean;
+}
+
+export async function getVigiaLocal(): Promise<VigiaLocalResponse> {
+  return fetchJson<VigiaLocalResponse>("/api/v2/system/vigia-local");
+}
+
 export interface CeldaRejillaM1 {
   celda: string;
   simbolo: string;
@@ -207,6 +232,58 @@ export interface RejillaM1Response {
 
 export async function getM1Rejilla(): Promise<RejillaM1Response> {
   return fetchJson<RejillaM1Response>("/api/v2/m1/rejilla");
+}
+
+export interface IAProveedorConfig {
+  configurado: boolean;
+  nombre: string;
+  endpoint: string;
+  modelo: string;
+  tiene_clave: boolean;
+  origen_almacenamiento?: string;
+}
+
+export interface IAProveedorGuardar {
+  nombre: string;
+  endpoint: string;
+  modelo: string;
+  api_key?: string;
+}
+
+export interface IAProbarResultado {
+  ok: boolean;
+  status_code: number;
+  detalle: string;
+}
+
+export interface IACompletarRespuesta {
+  respuesta: string;
+  modelo: string;
+  proveedor: string;
+}
+
+export async function getIAProveedor(): Promise<IAProveedorConfig> {
+  return fetchJson<IAProveedorConfig>("/api/v2/ia/proveedor");
+}
+
+export async function saveIAProveedor(config: IAProveedorGuardar): Promise<IAProveedorConfig> {
+  return fetchJson<IAProveedorConfig>("/api/v2/ia/proveedor", {
+    method: "POST",
+    body: JSON.stringify(config),
+  });
+}
+
+export async function probarIAProveedor(): Promise<IAProbarResultado> {
+  return fetchJson<IAProbarResultado>("/api/v2/ia/probar", {
+    method: "POST",
+  });
+}
+
+export async function completarIA(prompt: string): Promise<IACompletarRespuesta> {
+  return fetchJson<IACompletarRespuesta>("/api/v2/ia/completar", {
+    method: "POST",
+    body: JSON.stringify({ prompt }),
+  });
 }
 
 export async function executeBacktest(params: BacktestParams): Promise<BacktestResult> { if (!params.dataset_id?.trim()) throw new Error("REAL_ONLY_DATASET_REQUIRED: executeBacktest requires an existing canonical dataset_id"); const payload: Record<string, unknown> = { strategy_id: params.strategy_id, dataset_id: params.dataset_id }; if (params.initial_capital !== undefined) payload.initial_capital = params.initial_capital; if (params.slippage_ticks !== undefined) payload.slippage_ticks = params.slippage_ticks; if (params.commission_per_order !== undefined) payload.commission_per_order = params.commission_per_order; if (params.start_timestamp_utc_ms !== undefined) payload.start_timestamp_utc_ms = params.start_timestamp_utc_ms; if (params.end_timestamp_utc_ms !== undefined) payload.end_timestamp_utc_ms = params.end_timestamp_utc_ms; if (params.ast !== undefined) payload.ast = params.ast; if (params.parameters !== undefined) payload.parameters = params.parameters; return fetchJson<BacktestResult>("/api/v1/backtest", { method: "POST", body: JSON.stringify(payload) }); }

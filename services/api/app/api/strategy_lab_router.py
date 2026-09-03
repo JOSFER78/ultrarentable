@@ -18,6 +18,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from services.api.app.db.database import SessionLocal, StrategyModel, BacktestModel, DatasetModel
 import os
+import requests
 from services.sqx_bridge.sqx_client import SQXMCPClient, SQXMCPError
 from services.sqx_bridge.ingest_sqx_results import extract_stats
 
@@ -171,15 +172,22 @@ def extract_from_sqx(
     if not project_name:
         raise HTTPException(status_code=422, detail="PROJECT_NAME_REQUIRED")
     
-    target_databank = (databank or os.environ.get("SQX_EXTRACT_DATABANK", "Last generation")).strip()
-    if not target_databank:
-        target_databank = "Last generation"
+    target_databank = (databank or os.environ.get("SQX_EXTRACT_DATABANK", "")).strip()
 
     client = SQXMCPClient()
     try:
         if not client.project_exists(project_name):
             raise SQXMCPError(f"Project '{project_name}' does not exist in SQX")
         databanks = client.list_databanks(project_name)
+        if not target_databank:
+            # Auto-selección inteligente de banco con estrategias reales (records > 0)
+            con_datos = [db for db in databanks if int(db.get("records", 0)) > 0]
+            if con_datos:
+                preferidos = [d["name"] for d in con_datos if d["name"] in ("Results", "ToImprove")]
+                target_databank = preferidos[0] if preferidos else con_datos[0]["name"]
+            else:
+                target_databank = "Results" if any(db.get("name") == "Results" for db in databanks) else (databanks[0]["name"] if databanks else "Results")
+
         if not any(db.get("name") == target_databank for db in databanks):
             available = [db.get("name") for db in databanks]
             raise SQXMCPError(f"Databank '{target_databank}' not found in project '{project_name}'. Disponibles: {available}")
@@ -264,5 +272,130 @@ def organic_improvement_plan(strategy_id: str) -> Dict[str, Any]:
         dsl = json.loads(row.dsl_json) if row.dsl_json else {}
         raw_stats = dsl.get("raw_stats") or {}
         return {"status": "NO_MUTATION_PERFORMED", "strategy_id": strategy_id, "parent_hash": row.canonical_hash, "evidence": {"has_real_dataset": bool(dsl.get("market", {}).get("dataset_id")), "has_dataset_hash": bool(dsl.get("market", {}).get("dataset_hash")), "source_engine": dsl.get("source", {}).get("engine"), "has_source_rules": bool(dsl.get("source_payload")), "raw_metric_fields": sorted(raw_stats.keys())}, "organic_next_steps": ["Obtain complete source rules from SQX/export/plugin; statistics alone are insufficient.", "Bind an approved real dataset matching the explicit symbol/timeframe.", "Run the canonical deterministic backtest without parameter changes.", "Measure failure modes and regime dependence.", "Only then propose the smallest evidence-backed mutation.", "Re-backtest the child from scratch and preserve parent/child lineage."]}
+    finally:
+        db.close()
+
+
+@router.post("/sync-m1-completed")
+def sync_m1_completed(
+    max_per_cell: int = Query(500, ge=1, le=5000, description="Máximo de estrategias a sincronizar por celda")
+) -> Dict[str, Any]:
+    """Sincroniza en lote todas las celdas terminadas de M1 hacia SQLite.
+
+    Lee http://127.0.0.1:5052/estado.json, busca celdas con estado HECHA o con csv_filas > 0,
+    y para cada celda vuelca las estrategias en SQLite bajo StrategyModel con métricas IS/OOS reales.
+    """
+    client = SQXMCPClient()
+    estado_url = f"{client.results_url}/estado.json"
+    try:
+        r = requests.get(estado_url, timeout=10)
+        if r.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"No se pudo consultar {estado_url}: HTTP {r.status_code}")
+        estado_data = r.json()
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Error conectando al vigía M1 en {estado_url}: {exc}") from exc
+
+    celdas = estado_data.get("celdas", {})
+    celdas_procesadas = []
+    total_encontradas = 0
+    total_insertadas = 0
+    total_actualizadas = 0
+
+    db = SessionLocal()
+    try:
+        for nombre_celda, info in celdas.items():
+            rondas = info.get("rondas", [])
+            # Buscar rondas con filas CSV > 0 o estado HECHA
+            tiene_datos = any(r.get("csv_filas", 0) > 0 for r in rondas)
+            if not tiene_datos and info.get("estado") != "HECHA":
+                continue
+
+            try:
+                items = client.export_databank(nombre_celda, "Results", max_rows=max_per_cell)
+            except Exception:
+                continue
+
+            if not items:
+                continue
+
+            celda_insertadas = 0
+            celda_actualizadas = 0
+            target_databank = "Results"
+
+            for raw in items:
+                name = _strategy_name(raw)
+                if not name:
+                    continue
+                metrics = extract_stats(raw) or {}
+                symbol, timeframe = _explicit_market_identity(raw)
+                strategy_id = f"sqx:{nombre_celda}:{target_databank}:{name}"
+                payload = _canonical_payload(nombre_celda, target_databank, name, raw)
+                strategy_hash = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+                encoded = json.dumps(
+                    {
+                        "schema": "ultrarentable.strategy-source.v1",
+                        "source": {
+                            "engine": "StrategyQuantX",
+                            "project": nombre_celda,
+                            "databank": target_databank,
+                            "strategy_name": name,
+                            "extracted_at_utc": _utc_now(),
+                        },
+                        "market": {"symbol": symbol, "timeframe": timeframe, "dataset_id": None, "dataset_hash": None},
+                        "source_payload": None,
+                        "source_artifact_sha256": None,
+                        "raw_stats": metrics,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+
+                existing = db.query(StrategyModel).filter(StrategyModel.strategy_id == strategy_id).first()
+                if existing:
+                    if existing.canonical_hash != strategy_hash or existing.dsl_json != encoded:
+                        existing.canonical_hash = strategy_hash
+                        existing.dsl_json = encoded
+                        celda_actualizadas += 1
+                else:
+                    db.add(
+                        StrategyModel(
+                            strategy_id=strategy_id,
+                            name=name,
+                            version="SOURCE-1",
+                            family="sqx_extracted",
+                            author="StrategyQuantX",
+                            canonical_hash=strategy_hash,
+                            generation=0,
+                            dsl_json=encoded,
+                            validation_status="EXTRACTED_UNVERIFIED",
+                            created_at=datetime.utcnow(),
+                        )
+                    )
+                    celda_insertadas += 1
+
+            db.commit()
+            total_encontradas += len(items)
+            total_insertadas += celda_insertadas
+            total_actualizadas += celda_actualizadas
+            celdas_procesadas.append(
+                {
+                    "celda": nombre_celda,
+                    "encontradas": len(items),
+                    "insertadas": celda_insertadas,
+                    "actualizadas": celda_actualizadas,
+                }
+            )
+
+        total_en_db = db.query(StrategyModel).count()
+        return {
+            "status": "SUCCESS",
+            "celdas_procesadas": len(celdas_procesadas),
+            "total_encontradas": total_encontradas,
+            "total_insertadas": total_insertadas,
+            "total_actualizadas": total_actualizadas,
+            "total_estrategias_db": total_en_db,
+            "detalle": celdas_procesadas,
+        }
     finally:
         db.close()

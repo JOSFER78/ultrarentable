@@ -45,7 +45,16 @@ def extract_stats(stats: dict[str, Any] | str) -> dict[str, float]:
     columns = stats.get("columns") or []
     values = stats.get("values") or []
     if not columns or not values:
-        return {}
+        # Soporte para filas planas de exportación CSV (sqcli export)
+        out: dict[str, float] = {}
+        for col_name, key in COLUMN_MAP.items():
+            raw = stats.get(col_name)
+            if raw is not None and str(raw).strip() != "":
+                try:
+                    out[key] = float(str(raw).strip())
+                except (TypeError, ValueError):
+                    pass
+        return out
 
     # SQX commonly prefixes the metric array with source name/group. Preserve the
     # documented offset only when the shape proves it; never invent missing values.
