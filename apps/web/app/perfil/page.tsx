@@ -20,8 +20,17 @@ import {
   UserX,
   Crown,
   RefreshCw,
+  Bot,
 } from "lucide-react";
-import { useAuth, UserProfile } from "@/context/AuthContext";
+import { useAuth, UserProfile, isSuperAdminEmail, SUPERADMIN_EMAIL } from "@/context/AuthContext";
+import {
+  getIAProveedor,
+  saveIAProveedor,
+  probarIAProveedor,
+  type IAProveedorConfig,
+  type IAProbarResultado,
+} from "@/lib/api";
+import AsistenteIA from "@/components/ia/AsistenteIA";
 
 export default function PerfilPage() {
   const {
@@ -56,6 +65,29 @@ export default function PerfilPage() {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [adminActionMsg, setAdminActionMsg] = useState<string | null>(null);
 
+  // Super Admin IA Provider state
+  const [iaNombre, setIaNombre] = useState<string>("");
+  const [iaEndpoint, setIaEndpoint] = useState<string>("");
+  const [iaModelo, setIaModelo] = useState<string>("");
+  const [iaApiKey, setIaApiKey] = useState<string>("");
+  const [iaTieneClave, setIaTieneClave] = useState<boolean>(false);
+  const [iaGuardando, setIaGuardando] = useState<boolean>(false);
+  const [iaProbando, setIaProbando] = useState<boolean>(false);
+  const [iaPruebaResultado, setIaPruebaResultado] = useState<IAProbarResultado | null>(null);
+  const [iaMensaje, setIaMensaje] = useState<string | null>(null);
+
+  const cargarConfigIA = React.useCallback(async () => {
+    try {
+      const data = await getIAProveedor();
+      if (data) {
+        setIaNombre(data.nombre || "");
+        setIaEndpoint(data.endpoint || "");
+        setIaModelo(data.modelo || "");
+        setIaTieneClave(data.tiene_clave);
+      }
+    } catch {}
+  }, []);
+
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.displayName || user?.displayName || "");
@@ -72,8 +104,47 @@ export default function PerfilPage() {
   useEffect(() => {
     if (isSuperAdmin) {
       loadRegisteredUsers();
+      void cargarConfigIA();
     }
-  }, [isSuperAdmin]);
+  }, [isSuperAdmin, cargarConfigIA]);
+
+  const handleGuardarIA = async () => {
+    setIaGuardando(true);
+    setIaMensaje(null);
+    setIaPruebaResultado(null);
+    try {
+      const guardado = await saveIAProveedor({
+        nombre: iaNombre,
+        endpoint: iaEndpoint,
+        modelo: iaModelo,
+        api_key: iaApiKey || undefined,
+      });
+      setIaTieneClave(guardado.tiene_clave);
+      setIaApiKey("");
+      setIaMensaje("Configuración guardada en el servidor sin exponer la clave.");
+    } catch (err: any) {
+      setIaMensaje(`Error al guardar: ${err?.message || err}`);
+    } finally {
+      setIaGuardando(false);
+    }
+  };
+
+  const handleProbarIA = async () => {
+    setIaProbando(true);
+    setIaPruebaResultado(null);
+    try {
+      const res = await probarIAProveedor();
+      setIaPruebaResultado(res);
+    } catch (err: any) {
+      setIaPruebaResultado({
+        ok: false,
+        status_code: 500,
+        detalle: err?.message || "Error al conectar con la API local.",
+      });
+    } finally {
+      setIaProbando(false);
+    }
+  };
 
   const loadRegisteredUsers = async () => {
     setLoadingUsers(true);
@@ -176,26 +247,25 @@ export default function PerfilPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-12">
+    <div className="w-full space-y-4 pb-8">
       {/* Header Banner */}
-      <div className="p-6 bg-[var(--surface-1)] from-[var(--surface-1)] to-[var(--surface-2)] border border-white/[0.08] rounded-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--surface-2)] rounded-full blur-3xl pointer-events-none" />
+      <div className="p-5 bg-[var(--surface-1)] border border-[var(--border)] rounded-lg relative overflow-hidden">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3.5">
             {user.photoURL ? (
               <img
                 src={user.photoURL}
                 alt={displayName || "User"}
-                className="w-14 h-14 rounded-2xl object-cover border-2 border-[var(--border)] shadow-lg"
+                className="w-12 h-12 rounded-lg object-cover border border-[var(--border-strong)]"
               />
             ) : (
-              <div className="w-14 h-14 rounded-2xl bg-[var(--surface-1)]    text-[var(--text-1)] font-bold text-xl flex items-center justify-center shadow-lg">
-                {isSuperAdmin ? <Crown className="w-7 h-7 text-[var(--text-1)]" /> : (displayName || user.email || "U").charAt(0).toUpperCase()}
+              <div className="w-12 h-12 rounded-lg bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-1)] font-bold text-lg flex items-center justify-center">
+                {isSuperAdmin ? <Crown className="w-6 h-6 text-[var(--text-1)]" /> : (displayName || user.email || "U").charAt(0).toUpperCase()}
               </div>
             )}
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-bold text-[var(--text-1)] tracking-tight">
+                <h1 className="text-lg font-bold text-[var(--text-1)] tracking-tight">
                   {displayName || "Trader"}
                 </h1>
                 {isSuperAdmin ? (
@@ -238,7 +308,7 @@ export default function PerfilPage() {
           <div className="space-y-1 font-sans">
             <p className="font-bold text-[var(--text-1)]">Cuenta en Espera de Autorización</p>
             <p className="text-xs text-[var(--text-1)]">
-              Tu cuenta está registrada en Firebase. Por política de gobernanza Zero-Trust, el Super Administrador (<strong className="text-[var(--text-1)]">josferestudio@gmail.com</strong>) debe autorizar tu acceso para operar en los módulos de Trading Desk y Bóveda Cuantitativa.
+              Tu cuenta está registrada en Firebase. Por política de gobernanza Zero-Trust, el Super Administrador (<strong className="text-[var(--text-1)]">{SUPERADMIN_EMAIL}</strong>) debe autorizar tu acceso para operar en los módulos de Trading Desk y Bóveda Cuantitativa.
             </p>
           </div>
         </div>
@@ -261,11 +331,11 @@ export default function PerfilPage() {
 
       {/* SECTION: SUPER ADMIN USER MANAGEMENT PANEL (ONLY VISIBLE TO JOSFERESTUDIO) */}
       {isSuperAdmin && (
-        <div className="p-5 bg-[var(--surface-1)] border border-[var(--border)] rounded-2xl space-y-4 shadow-xl">
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <div className="p-4 bg-[var(--surface-1)] border border-[var(--border)] rounded-lg space-y-3">
+          <div className="flex items-center justify-between border-b border-[var(--border)] pb-2.5">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-[var(--text-2)]" />
-              <h2 className="text-sm font-bold text-[var(--text-1)] tracking-wide">
+              <h2 className="text-xs font-bold text-[var(--text-1)] uppercase tracking-wider font-mono">
                 Panel de Gobernanza Super Admin: Autorización de Usuarios Firebase
               </h2>
             </div>
@@ -306,7 +376,7 @@ export default function PerfilPage() {
                   </tr>
                 ) : (
                   managedUsers.map((u) => {
-                    const isSelf = (u.email || "").toLowerCase() === "josferestudio@gmail.com";
+                    const isSelf = isSuperAdminEmail(u.email);
                     const isAuth = u.status === "AUTHORIZED" || u.is_authorized === true;
 
                     return (
@@ -364,8 +434,129 @@ export default function PerfilPage() {
               </tbody>
             </table>
           </div>
+
+          {/* PANEL DE CONFIGURACIÓN DEL PROVEEDOR DE IA (SUPER ADMIN) */}
+          <div id="config-ia" className="mt-4 pt-4 border-t border-[var(--border)] space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--border)] pb-2.5">
+              <div className="flex items-center gap-2">
+                <Bot className="w-4 h-4 text-[var(--profit)]" />
+                <h2 className="text-xs font-bold text-[var(--text-1)] uppercase tracking-wider font-mono">
+                  Proveedor de IA (Hermes / Antigravity / OpenAI-Compatible)
+                </h2>
+              </div>
+              <span className="text-[10px] text-[var(--text-3)] font-mono">
+                Almacenado seguro en servidor (~/.ultrarentable/ia_config.json)
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
+              <div>
+                <label className="block text-[11px] text-[var(--text-3)] mb-1">
+                  Nombre del Proveedor (para reconocerlo)
+                </label>
+                <input
+                  type="text"
+                  value={iaNombre}
+                  onChange={(e) => setIaNombre(e.target.value)}
+                  placeholder="Ej. Hermes 3.8 Flash / Antigravity Flash"
+                  className="w-full px-3 py-1.5 bg-[var(--surface-2)] border border-[var(--border)] focus:border-[var(--border-strong)] rounded text-xs text-[var(--text-1)] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-[var(--text-3)] mb-1">
+                  Dirección del Endpoint (URL)
+                </label>
+                <input
+                  type="text"
+                  value={iaEndpoint}
+                  onChange={(e) => setIaEndpoint(e.target.value)}
+                  placeholder="Ej. http://127.0.0.1:8129/v1 o https://..."
+                  className="w-full px-3 py-1.5 bg-[var(--surface-2)] border border-[var(--border)] focus:border-[var(--border-strong)] rounded text-xs text-[var(--text-1)] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-[var(--text-3)] mb-1">
+                  Modelo
+                </label>
+                <input
+                  type="text"
+                  value={iaModelo}
+                  onChange={(e) => setIaModelo(e.target.value)}
+                  placeholder="Ej. gemini-2.0-flash / qwen-turbo"
+                  className="w-full px-3 py-1.5 bg-[var(--surface-2)] border border-[var(--border)] focus:border-[var(--border-strong)] rounded text-xs text-[var(--text-1)] outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-[var(--text-3)] mb-1">
+                  Clave API (se guarda en el servidor, no viaja al navegador)
+                </label>
+                <input
+                  type="password"
+                  value={iaApiKey}
+                  onChange={(e) => setIaApiKey(e.target.value)}
+                  placeholder={iaTieneClave ? "•••••••••••• (clave ya configurada en el servidor)" : "Clave secreta"}
+                  className="w-full px-3 py-1.5 bg-[var(--surface-2)] border border-[var(--border)] focus:border-[var(--border-strong)] rounded text-xs text-[var(--text-1)] outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[var(--border)]">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleGuardarIA}
+                  disabled={iaGuardando}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-xs text-[var(--text-1)] font-bold transition cursor-pointer disabled:opacity-50"
+                >
+                  {iaGuardando ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                  <span>Guardar configuración</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleProbarIA}
+                  disabled={iaProbando || !iaEndpoint}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-3)] border border-[var(--border)] text-xs text-[var(--text-2)] hover:text-[var(--text-1)] font-bold transition cursor-pointer disabled:opacity-50"
+                >
+                  {iaProbando ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                  <span>Probar conexión</span>
+                </button>
+              </div>
+
+              {iaMensaje && (
+                <span className="text-[11px] text-[var(--profit)] font-mono">
+                  {iaMensaje}
+                </span>
+              )}
+            </div>
+
+            {/* Resultado de la Prueba de Conexión Real */}
+            {iaPruebaResultado && (
+              <div
+                className={`p-3 rounded border text-xs leading-relaxed space-y-1 font-mono ${
+                  iaPruebaResultado.ok
+                    ? "bg-[var(--profit-dim)] border-[var(--profit)] text-[var(--profit)]"
+                    : "bg-[var(--loss-dim)] border-[var(--loss)] text-[var(--loss)]"
+                }`}
+              >
+                <div className="flex items-center gap-2 font-bold">
+                  <span>Resultado de llamada real: HTTP {iaPruebaResultado.status_code}</span>
+                  <span>({iaPruebaResultado.ok ? "Conectado correctamente" : "Fallo de conexión"})</span>
+                </div>
+                <p className="text-[11px] text-[var(--text-1)] break-all whitespace-pre-wrap">
+                  {iaPruebaResultado.detalle}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       )}
+
+      {/* Asistente de IA (Antigravity / Hermes) */}
+      <AsistenteIA />
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Section 1: Preferencias de Usuario */}
@@ -497,16 +688,16 @@ export default function PerfilPage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 py-2.5 px-6 bg-[var(--surface-1)]   hover: hover: text-[var(--text-1)] text-xs font-bold rounded-xl shadow-lg  disabled:opacity-50 transition-all cursor-pointer"
+            className="flex items-center gap-2 py-2 px-5 bg-[var(--surface-3)] hover:bg-[var(--surface-2)] border border-[var(--border-strong)] text-[var(--text-1)] text-xs font-semibold rounded-md transition-all cursor-pointer disabled:opacity-50"
           >
             {saving ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 <span>Guardando en Firestore...</span>
               </>
             ) : (
               <>
-                <Save className="w-4 h-4" />
+                <Save className="w-3.5 h-3.5" />
                 <span>Guardar Cambios</span>
               </>
             )}

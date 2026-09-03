@@ -94,9 +94,16 @@ from typing import Any, Dict, List, Optional, Tuple
 #   en invierno, corrigiendo el 33.4% de dias en horario estandar. Ventanas diferenciadas:
 #   RTH (09:30-16:00 ET) para ancladas a sesion; Globex (18:00-17:00 ET) con flat 15:10 CT
 #   (America/Chicago) para familias continuas de fondeo (Topstep).
+# 5.19.0 (2026-09-02, B23): comision por contrato dependiente del simbolo de EJECUCION real.
+#   Hasta 5.18.0 todo futuro CME pagaba la comision del constructor (cme_fee=2.50 USD, la de
+#   un contrato completo como ES/NQ/GC), independientemente del simbolo. Con FONDEO_MICRO_MAP
+#   (scripts/mine.py) las campanas ejecutan el contrato MICRO (MES/MNQ/MYM/MGC/MCL), pagando
+#   3.80 USD de sobrecoste por operacion (2 lados x (2.50-0.60)). Desde 5.19.0 la comision
+#   por contrato sale de InstrumentRegistry.get(strategy.symbol).cme_exchange_fee_per_contract
+#   (MES 0.60 USD, ES 2.50 USD, etc.), fail-closed ante comision <= 0 no verificada.
 # Las certificaciones anteriores NO son comparables: se marcan LEGACY_MOTOR_* (regla #26).
-CURRENT_ENGINE_VERSION: str = "5.18.0"
-CURRENT_ENGINE_NAME: str = "Ultrarentable V5.18.0 (Sesiones conscientes de DST por vela + ventanas por familia y flat obligatorio 15:10 CT)"
+CURRENT_ENGINE_VERSION: str = "5.19.0"
+CURRENT_ENGINE_NAME: str = "Ultrarentable V5.19.0 (Comisión por contrato según símbolo de ejecución: MES 0.60 USD, ES 2.50 USD)"
 CURRENT_PIPELINE_VERSION: str = "5.4.0"
 CURRENT_VALIDATION_PIPELINE_VERSION: str = "5.4.0"
 VALIDATION_PIPELINE_VERSION: str = "5.4.0"
@@ -110,10 +117,23 @@ CANONICAL_AUTHOR: str = "Ultrarentable Core Quantitative Team"
 
 VERSION_HISTORY: List[Dict[str, Any]] = [
     {
-        "version": "5.18.0",
+        "version": "5.19.0",
         "name": CURRENT_ENGINE_NAME,
         "date": "2026-09-02",
         "status": "CURRENT_RECOMMENDED",
+        "changes": [
+            "B23 (regla #26): comisión de futuros CME por contrato leída directamente de la especificación del símbolo de ejecución en InstrumentRegistry (cme_exchange_fee_per_contract) en vez de un valor por defecto fijo del constructor.",
+            "MES/MNQ/MYM/M2K/MGC/MCL pagan 0.60 USD por contrato y por lado; ES/NQ/YM/RTY/GC/CL pagan 2.50 USD.",
+            "Elimina el sobrecoste sistemático de 3.80 USD por operación ida-y-vuelta en contratos micro de fondeo.",
+            "Fail-closed estricto: si la especificación en InstrumentRegistry no trae cme_exchange_fee_per_contract > 0 verificado para CME_FUTURES, el motor aborta con ValueError (doctrina REAL-ONLY, sin defaults complacientes).",
+            "El parámetro del constructor cme_fee_per_contract_usd se conserva por compatibilidad de firma pero deja de decidir la fricción en futuros CME.",
+        ],
+    },
+    {
+        "version": "5.18.0",
+        "name": "Ultrarentable V5.18.0 (Sesiones conscientes de DST por vela + ventanas por familia y flat obligatorio 15:10 CT)",
+        "date": "2026-09-02",
+        "status": "STALE",
         "changes": [
             "W2.9 (regla #26, D10): sesiones conscientes de DST por vela con zoneinfo (America/New_York para indices CME; apertura RTH 09:30 ET cae a las 13:30 UTC en verano y 14:30 UTC en invierno, corrigiendo el 33.4% de dias en horario estandar con sesion fija).",
             "Ventana de sesion por familia: RTH 09:30-16:00 ET para ancladas a sesion (SESSION_MOMENTUM, OPENING_RANGE_BREAKOUT, VWAP_REVERSION); ventana Globex 18:00-17:00 ET con flat obligatorio a las 15:10 America/Chicago (Topstep / firmas verificadas) para REVERSION_ATR, SQUEEZE_BREAKOUT, STREAK_EDGE y resto de familias FONDEO CME.",

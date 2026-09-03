@@ -6,12 +6,15 @@ Market Data Event -> Signal -> Order -> Fill -> Friction (Fees & Slippage) -> Po
 
 from __future__ import annotations
 
+import logging
 import math
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 import numpy as np
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 from contracts.canonical_execution import (
     CanonicalExecutionLedger,
@@ -293,6 +296,14 @@ class EventBacktestEngine:
         taker_fee_pct: float = 0.05,
         maker_fee_pct: float = 0.02,
         slippage_bps: float = 2.0,
+        # 5.19.0: se conserva por compatibilidad de firma (nada rompe si algun caller sigue
+        # pasando este argumento), pero DEJA DE DECIDIR la comision de futuros CME. Desde
+        # 5.19.0 esa comision sale de InstrumentRegistry.get(strategy.symbol).cme_exchange_fee_per_contract
+        # (MES 0.60 USD, ES 2.50 USD, cada uno por contrato y por lado) dentro de run_backtest,
+        # fail-closed si la spec no trae una comision > 0 verificada. self.cme_fee (este valor)
+        # solo sobrevive como default interno hasta que run_backtest lo resuelve; en la practica
+        # nunca se usa sin resolver porque _comision() solo se cobra en la rama es_futuro, que
+        # siempre pasa por esa resolucion.
         cme_fee_per_contract_usd: float = 2.50,
         funding_rate_8h: float = 0.0001,
     ):
@@ -876,6 +887,31 @@ class EventBacktestEngine:
             )
             point_value, es_futuro = 1.0, False
 
+        # --- COMISION DE FUTUROS CME: SALE DE LA SPEC DEL SIMBOLO DE EJECUCION (5.19.0) -----
+        # Hasta 5.18.0 TODO futuro CME pagaba la MISMA comision fija (self.cme_fee, parametro
+        # del constructor, default 2.50 USD -- la de un contrato COMPLETO) sin mirar el simbolo.
+        # Con FONDEO_MICRO_MAP (scripts/mine.py) el snapshot llega con symbol=MICRO (MES, no
+        # ES), asi que un futuro MES (5 USD/punto, comision real 0.60 USD) pagaba la comision de
+        # un ES (50 USD/punto, 2.50 USD): 3.80 USD de sobrecoste por operacion y contrato (2
+        # lados x (2.50-0.60)). Fix: cuando es_futuro (CME_FUTURES), la comision por contrato y
+        # lado sale de `_spec.cme_exchange_fee_per_contract` -- el mismo catalogo verificado que
+        # ya resuelve point_value un poco mas arriba, no un valor inventado aqui. Fail-closed:
+        # si la spec no trae una comision > 0 verificada, no se asume el default del constructor
+        # en silencio -- se aborta (doctrina REAL-ONLY). Este bloque va DELIBERADAMENTE fuera
+        # del try/except de arriba: ese except atrapa fallos de RESOLUCION de instrumento con un
+        # fallback silencioso (point_value=1.0); un fallo de COMISION no puede caer en la misma
+        # rama o dejaria de ser fail-closed.
+        _cme_fee_efectivo = self.cme_fee
+        if es_futuro:
+            _cme_fee_efectivo = float(getattr(_spec, "cme_exchange_fee_per_contract", 0.0) or 0.0)
+            if _cme_fee_efectivo <= 0.0:
+                raise ValueError(
+                    f"NO DATA: '{strategy.symbol}' es CME_FUTURES pero su especificacion en "
+                    f"InstrumentRegistry no trae 'cme_exchange_fee_per_contract' > 0 "
+                    f"verificado. Doctrina REAL-ONLY: sin comision por contrato verificada no "
+                    f"se calcula la friccion con un valor por defecto (fail-closed)."
+                )
+
         if not candles or len(candles) < 35:
             return EventBacktestResult(
                 strategy_id=strategy.strategy_id,
@@ -968,8 +1004,10 @@ class EventBacktestEngine:
             return precio
 
         def _comision(precio_fill: float, qty: float) -> float:
-            # Futuros: comision fija por contrato y POR LADO. Cripto: porcentual taker.
-            return (self.cme_fee * qty) if es_futuro else (precio_fill * qty * self.taker_fee)
+            # Futuros: comision fija por contrato y POR LADO -- desde 5.19.0, la de la spec del
+            # simbolo de EJECUCION (_cme_fee_efectivo: MES 0.60 USD, ES 2.50 USD; ya no un
+            # unico default de constructor para todo CME). Cripto: porcentual taker.
+            return (_cme_fee_efectivo * qty) if es_futuro else (precio_fill * qty * self.taker_fee)
 
         def _slip_salida(precio_fill: float, qty: float) -> float:
             # Modo medido (por barra o por par): el coste ya esta embebido en el fill, no se

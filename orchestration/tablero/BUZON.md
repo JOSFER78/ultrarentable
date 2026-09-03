@@ -951,3 +951,98 @@ Y la clave no puede llegar al navegador: en el parte demuéstralo con la respues
 lectura, donde no debe aparecer.
 
 Después de A26 queda **A07**, que vuelve por el parte, no por el código.
+
+---
+
+**2026-09-03 13:10 UTC · AGY → ORQUESTADOR**
+
+**A26 ENTREGADA (Asistente de IA con proveedor y modelo configurables en superadmin):**
+- **1. Dónde se guarda la clave:**
+  - Almacenamiento seguro en el servidor en `~/.ultrarentable/ia_config.json` (`C:\Users\yo\.ultrarentable\ia_config.json`).
+  - Totalmente fuera del árbol de Git, de variables públicas y de almacenamiento del navegador.
+- **2. Demostración de que la clave NO llega al navegador:**
+  - Petición HTTP al endpoint de lectura:
+    ```bash
+    $ curl.exe -s http://127.0.0.1:8100/api/v2/ia/proveedor
+    {"configurado":false,"nombre":"","endpoint":"","modelo":"","tiene_clave":false,"origen_almacenamiento":"servidor (~/.ultrarentable/ia_config.json)"}
+    ```
+  - La clave jamás se expone; el frontend únicamente recibe el booleano `tiene_clave`.
+- **3. Panel de Superadmin (`/perfil`):**
+  - Sección **"Proveedor de IA (Hermes / Antigravity / OpenAI-Compatible)"** visible para el superadmin (`josferestudio@gmail.com`).
+  - Campos: Nombre del proveedor, Dirección del endpoint (URL), Modelo, Clave API (password).
+  - Botón **"Guardar configuración"** (`POST /api/v2/ia/proveedor`).
+  - Botón **"Probar conexión"** (`POST /api/v2/ia/probar`): llamada real al upstream que devuelve código HTTP y salida cruda sin inventos ni adornos.
+- **4. Asistente en la web (`apps/web/components/ia/AsistenteIA.tsx`):**
+  - Si no está configurado: muestra aviso sobrio en gris (*"Falta configurar el proveedor de IA en el panel de superadmin"*) con enlace directo a `#config-ia`. Cero caja de texto inventada.
+  - Si está configurado: habilita la consulta real vía backend (`POST /api/v2/ia/completar`).
+- **5. Aceptación ejecutada:**
+  - `grep -rn "api/v2/ia\|proveedor" apps/web/lib/api.ts | head -3` -> OK
+  - `curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8100/api/v2/ia/proveedor` -> 200
+  - `cd apps/web && tsc --noEmit` -> rc=0
+  - `git grep -nE "(text|bg|border|from|to|ring|shadow)-(rose|purple|cyan|blue|amber|violet|emerald|sky|indigo|pink|teal|orange)-[0-9]" apps/web/app/perfil/page.tsx apps/web/components/ia/AsistenteIA.tsx apps/web/lib/api.ts services/api/app/api/ia_router.py` -> 0 matches (exit code 1)
+- **Paso a la siguiente y última tarea de la cola: A07** (Informe de verificación del motor de backtest).
+
+---
+
+**2026-09-03 13:15 UTC · AGY → ORQUESTADOR**
+
+**A07 ENTREGADA (Subsanación completa del parte de verificación del motor 5.19.0):**
+- **1. Salida de tests 100% real y ejecutada sin inventos**:
+  - Salida cruda y literal de `.venv/Scripts/python.exe -m pytest tests/test_event_backtest_comision_por_simbolo.py tests/test_event_backtest_deterministic.py tests/test_canonical_backtest_and_bundle.py -q`:
+    - 4 passed en `test_event_backtest_comision_por_simbolo.py`.
+    - 5 passed en `test_canonical_backtest_and_bundle.py`.
+    - 2 failed en `test_event_backtest_deterministic.py` (`test_event_backtest_runs_deterministically_on_real_candles` y `test_event_backtest_interprets_exact_snapshot_parameters` por ruta absoluta no portable `/home/ubuntu/.../ds_binance_btcusdt_1h`).
+    - Nombres reales de los tests en el parte.
+- **2. Corrección 98->99 por 97->98 y desgloses medidos de los JSON**:
+  - `fondeo ES 4h c2`: **97 -> 98** operaciones.
+    - Ahorro de comisiones: $485.00 - 117.60 = \mathbf{+367.40\text{ USD}}$.
+    - Variación de deslizamiento: $1214.66 - 1229.72 = \mathbf{-15.06\text{ USD}}$.
+    - Resto bruto: $\mathbf{+225.00\text{ USD}}$.
+    - Total: $\mathbf{+577.34\text{ USD}}$.
+  - `fondeo GC 4h c2`: **44 -> 45** operaciones.
+    - Ahorro de comisiones: $230.00 - 56.40 = \mathbf{+173.60\text{ USD}}$.
+    - Variación de deslizamiento: $524.35 - 537.59 = \mathbf{-13.24\text{ USD}}$.
+    - Resto bruto: $\mathbf{+621.00\text{ USD}}$.
+    - Total: $\mathbf{+781.36\text{ USD}}$.
+- **3. Citas de líneas del motor del mecanismo causal**:
+  - Citadas `:1360`, `:1319`, `:1320`, `:1340`, `:1345`, `:1346` de `services/validation/engine/event_backtest_engine.py`.
+- **Cola de tareas completada**: Todas las tareas asignadas a AGY (`A25`, `A24`, `A27`, `A22`, `A26`, `A07`) entregadas y listas en el tablero. Quedo en escucha activa en el buzón.
+
+---
+
+**2026-09-03 13:25 UTC · ORQUESTADOR → AGY**
+
+**A26 devuelta por un fallo pequeño con consecuencia grande**: el botón de probar la conexión monta
+la dirección añadiendo `/models` al endpoint, así que con un endpoint normal de tipo OpenAI
+(`.../v1/chat/completions`) pide `.../v1/chat/completions/models` y siempre da 404. Un comprobador
+que da falso negativo es peor que no tenerlo. Que haga una llamada real, como pedía el enunciado.
+
+**Lo demás está bien y es lo difícil**: la clave fuera del repositorio, el endpoint de lectura sin
+revelarla, y no haberte inventado ninguna dirección.
+
+**Buena noticia: ya tienes proveedor real configurado para probar.** El endpoint que Emilio quería
+existía desde hace tiempo dentro del propio repositorio, en `providers_router.py:355-360`. Es el
+puente de Antigravity, `http://127.0.0.1:8742/v1/chat/completions`, modelo `gemini-3.7-flash-high`.
+Le he preguntado y responde. Lo he dejado guardado en tu panel y con el túnel abierto.
+
+Y **abierta A29**: en ese mismo fichero hay tres claves escritas dentro del repositorio, duplicadas
+además en `apps/web/app/api/prop-firms/chat/route.ts`. No es tuyo el fallo y no lo toques desde A26:
+va en su tarea.
+
+Orden: **A26** (diez minutos) → **A07** (que acabas de entregar, la verifico ahora) → **A29**.
+
+---
+
+**2026-09-03 13:40 UTC · ORQUESTADOR → AGY**
+
+**A07 VERIFICADA.** He reproducido yo la comparación de los dos JSON y sale exactamente lo que dice
+tu parte: ES 4h c2 de 97 a 98 con las comisiones bajando de 485,00 a 117,60, GC 4h c2 de 44 a 45, y
+las nueve celdas de cripto idénticas. Cuadra al céntimo.
+
+Esta es la diferencia entre un parte que sirve y uno que no: con este, cualquiera reproduce la
+corrección en cinco minutos. Gracias por rehacerlo entero en vez de parchear las frases.
+
+Con A07 queda cerrada la regla #26 para el cambio del motor. Van **26 verificadas**.
+
+Sigues con **A26** (el botón de probar, diez minutos) y luego **A29** (las tres claves en el
+repositorio).
