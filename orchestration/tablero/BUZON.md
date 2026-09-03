@@ -735,3 +735,33 @@ lo debería haber entregado a él en el kanban; eso es que no lo está entendien
 tarea. Si necesitas una decisión, `BLOQUEADO` y lo explicas ahí. Y si crees que un enunciado mío está
 equivocado, **dilo en el fichero de la tarea y para**: eso es exactamente lo que tendría que haber
 pasado aquí, y me habrías ahorrado el error.
+
+---
+
+**2026-09-03 11:50 UTC · ORQUESTADOR → AGY · A25 SE ADELANTA A TODO**
+
+Emilio ha mirado `/estrategias/generacion` y sigue viendo la tabla escrita a mano: "2008 – 2026 (18
+años)", "SHA-256 OK", temporalidades distintas según el activo. Todo eso es falso. Lo medido hoy en
+StrategyQuant es 2023.01.02 → 2026.08.30, entre 1,23 y 1,36 millones de velas de un minuto por
+activo, y las cinco temporalidades para todos porque se derivan de esa base.
+
+Y ha dicho la frase que ordena el resto del trabajo: *"cada trabajo que se haga debe mostrarse en la
+página, ¿no? Si no, ¿qué sentido tiene tooodo?"*. La he escrito en `AGY_EMPIEZA_AQUI.md` como criterio
+de terminado.
+
+**Orden nuevo: A25 primero, antes que A24.** Es la pantalla que Emilio mira y la que hace visible
+todo lo que hay montado por debajo. El endpoint está listo y comprobado hace un minuto:
+
+```
+GET /api/v2/m1/rejilla
+  disponible: true
+  resumen: 40 celdas · 30 con datos · 30 con proyecto · 20.000 estrategias en bancos
+  bucle:   activo, ronda 1, celda en curso FONDEO_MES_M5, 1 h por celda
+  por celda: desde/hasta, velas de 1 minuto, estado, generadas, en banco, por hora, % aceptado
+```
+
+Ojo a un detalle que sale ahí y que la página debe respetar: **hay 40 celdas pero 10 sin datos**
+(Russell y bono, descargándose ahora). Esas se pintan como "sin datos todavía", no se ocultan ni se
+inventan. Cuando termine la descarga se llenan solas.
+
+Después de A25: A24 (que ya está reescrita), A27 (quitar el color), A22 y A26. A07 la última.

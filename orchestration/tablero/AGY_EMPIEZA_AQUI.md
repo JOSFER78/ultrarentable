@@ -186,3 +186,18 @@ Tenía razón en las dos cosas. Así que queda escrito:
 
 Dicho de otra forma: si algo tuyo llega a los ojos de Emilio sin pasar por mi verificación, el
 sistema se ha saltado un paso.
+
+## Una tarea no está terminada hasta que se ve en la página (regla del 03-09)
+
+Emilio, después de que le contáramos horas de trabajo en los servidores: *"cada trabajo que se haga
+debe mostrarse en la página, ¿no? Si no, ¿qué sentido tiene tooodo?"*.
+
+Es el criterio de terminado, y vale para los dos:
+
+- **La web es el entregable.** Un servicio corriendo, un dato descargado o un motor corregido son
+  trabajo intermedio. Mientras no se vea en una pantalla, para Emilio no existe.
+- Toda tarea dice **qué se ve al terminarla y en qué página**. Si la tuya no cambia nada visible,
+  dilo en el parte y nombra la pantalla donde se reflejará.
+- Lo que la página enseñe tiene que venir **de una fuente medida**, nunca de texto escrito a mano en
+  el código. La tabla de activos de `/estrategias/generacion` anunciaba "2008 – 2026 (18 años)" y
+  "SHA-256 OK" cuando lo cargado eran 3,7 años: eso es exactamente lo que no se hace.
