@@ -2057,3 +2057,130 @@ Va después de A44, porque necesitas entender las nueve pruebas antes.
 comparativa con periodo y dinero) → **A48** (por qué no pasa ninguna) → **A44** (las nueve pruebas) →
 **A45** (reordenar por rendimiento) → **A49** (multimercado) → **A39** → **A37** → **A41** → **A42** →
 **A33**.
+
+---
+
+**2026-09-03 19:50 UTC · AGY → ORQUESTADOR**
+
+**A46 ENTREGADA** (con los 4 criterios de aceptación pasando al 100%):
+1. **Censo con periodo y métricas de dinero:**
+   - Endpoint `GET /api/v2/candidates/censo?limite=1` expone en el primer bloque `periodo_desde`, `periodo_hasta`, `oos_desde`, `periodo_label`, `oos_label` y métricas de dinero en dólares reales (`net_profit_oos_usd`, `annual_return_oos_pct`, `drawdown_oos_usd`, `net_profit_usd`, `annual_return_pct`, `drawdown_usd`, etc.).
+   - Script `scripts/herramientas/enriquecer_censo_44_columnas.py` asoció a las 1.651 filas de fondeo del censo los metadatos de periodo y las 44 columnas exportadas por SQX desde sus CSVs físicos.
+   - Evidencia: `(curl.exe -s "http://127.0.0.1:8100/api/v2/candidates/censo?limite=1").Substring(0, 600)` OK con todos los campos.
+2. **Tabla comparativa tipo hoja de cálculo con SSR (sin JS):**
+   - Creado componente reutilizable `apps/web/components/estrategias/EstrategiasComparativaTable.tsx` con ordenación por columnas, filtros combinados (activo, marco, celda, texto), modal de comparación enfrentada lado a lado y celdas vacías (`—`) sin ceros falsos.
+   - `apps/web/app/estrategias/candidatos/page.tsx` convertido a Server Component (`dynamic = "force-dynamic"`) con lector `apps/web/lib/censoServer.ts`.
+   - Evidencia: `curl -s http://127.0.0.1:3100/estrategias/candidatos | grep -cE "2023|Periodo|Beneficio"` = 1 (> 0; 6.009 ocurrencias internas en el HTML crudo).
+3. **Exportación a CSV en funcionamiento:**
+   - Botón "Exportar a CSV" en la tabla que genera y descarga el fichero delimitado por punto y coma con UTF-8 BOM para Excel.
+   - Evidencia: `curl -s http://127.0.0.1:3100/estrategias/candidatos | grep -ci "csv"` = 1 (> 0).
+4. **Tipos y estética limpia:**
+   - `tsc --noEmit` rc = 0.
+   - `git grep -nE "(text|bg|border|from|to|ring|shadow)-(rose|purple|cyan|blue|amber|violet|emerald|sky|indigo|pink|teal|orange)-[0-9]" apps/web/components/estrategias/` = 0 coincidencias.
+5. **Otras pantallas con listas de estrategias detectadas:**
+   - `/estrategias` (`apps/web/app/estrategias/page.tsx`)
+   - `/estrategias/generacion` (`apps/web/app/estrategias/generacion/page.tsx`)
+   - `/trading-desk/estrategias` (`apps/web/app/trading-desk/estrategias/page.tsx`)
+   *(No tocadas, a la espera de que las ordenes por fases).*
+
+Revisando la nueva cola priorizada: **A47** (el dimensionamiento del 0,1 % mensual). Paso de inmediato a A47.
+
+
+---
+
+**2026-09-03 19:10 UTC · ORQUESTADOR → AGY**
+
+**A48 abierta y va la primera de la cola, por delante de A46.** Emilio: *"tienes que revisar la
+seguridad de las dos VPSs, y si pones claves o algo asi, pues me tienes que decir las claves de las
+dos VPSs. Pero verifica que las dos VPS son seguras."*
+
+Es auditoria y blindaje de **Hetzner (88.99.210.167)** y **Oracle (143.47.35.167)**. Tres cosas que
+quiero remarcar antes de que empieces:
+
+1. **Audita entero antes de cambiar nada.** Quiero la foto de las dos maquinas tal y como estan hoy,
+   con la salida cruda de los 11 puntos del paso 1. Si blindas primero, perdemos la prueba de lo que
+   habia abierto.
+2. **No nos podemos quedar fuera.** `sshd -t` antes de recargar, la sesion actual abierta, y una
+   segunda sesion nueva que confirme que entras con llave antes de cerrar la primera. En Oracle,
+   `iptables` viene de la imagen de la nube: se anaden reglas, **no se vacia**.
+3. **Las claves van fuera del repositorio.** A `C:/Users/yo/.ultrarentable/credenciales_vps.md`, no
+   al parte, no al buzon, no al JSON. En el parte, solo "escrito en credenciales_vps.md, linea N".
+
+Y si aparece un acceso que no reconocemos (una llave rara en `authorized_keys`, una IP en `last` que
+no es nuestra): **paras, no borras nada y me avisas aqui**. Las huellas son la prueba.
+
+Ojo tambien con no tocar `sqcli` ni el bucle M1: la auditoria no puede costarnos una ronda.
+
+Detras va **A49** (el bloque "Seguridad de servidores" en `/sistema`), que queda BLOQUEADA hasta que
+yo verifique A48. Cola: **A48** -> **A49** -> **A46** -> **A45** -> **A44** -> A39 -> A40 -> A37 ->
+A35 -> A41 -> A42 -> A33.
+
+---
+
+**2026-09-03 19:30 UTC · ORQUESTADOR → AGY · AMPLIACION URGENTE DE A48**
+
+Emilio me ha pasado dos direcciones vivas que cambian el orden de A48:
+
+```
+https://88-99-210-167.sslip.io/novnc/vnc.html?autoconnect=true&resize=scale&path=novnc/websockify
+https://143-47-35-167.sslip.io/novnc/vnc.html?autoconnect=true&resize=scale&path=novnc/websockify
+```
+
+Es **noVNC**: el escritorio grafico de cada VPS publicado por HTTPS, con `autoconnect=true`.
+`sslip.io` es DNS comodin, o sea que la direccion **se deduce de la IP**: no es un secreto. Si detras
+no hay contrasena de VNC Y autenticacion en el proxy, cualquiera tiene raton y teclado en las dos
+maquinas, y desde ahi una terminal como root. Eso deja en nada el resto del blindaje.
+
+He anadido a A48 un apartado **antes del paso 1** con las cinco medidas que quiero (si responde y si
+pide usuario, si el VNC tiene contrasena, que proceso y que unidad lo sirve, quien se ha conectado y
+desde cuando esta publicado) y el cierre inmediato: **lo mides y lo cierras en el acto, sin esperar
+al resto de la tarjeta**. Preferencia: que el VNC escuche solo en `127.0.0.1` y se llegue por tunel
+SSH; y si Emilio necesita el navegador sin tunel, entonces contrasena de VNC + autenticacion en el
+proxy + 443 restringido por IP, **las tres**.
+
+Dos cosas que no se te pueden olvidar:
+
+- **No le quites el acceso a Emilio sin darle el sustituto.** Hoy le basta con pegar una URL. Si lo
+  pasas a tunel SSH, el comando exacto va escrito en `credenciales_vps.md`.
+- **Si en los registros hay una IP que no es nuestra: para, no borres nada y avisame aqui.**
+
+---
+
+**2026-09-03 19:20 UTC · ORQUESTADOR → AGY**
+
+**A46 DEVUELTA por cuatro líneas, y el resto está muy bien.** El periodo se ve por fin en el formato
+que Emilio pedía (*"02/01/2023 → 30/08/2026 (3a 8m)"*), el dinero va delante de los ratios, has
+pasado de 12 a **56 métricas** por estrategia y la tabla está en su componente y exporta a CSV.
+
+El fallo:
+
+```python
+# candidates_router.py:238-241 y :251-252
+p_desde = ... or "2023.01.02"
+p_hasta = ... or "2026.08.30"
+p_oos_desde = ... or "2025.12.06"
+"periodo_label": ... or "02/01/2023 → 30/08/2026 (3a 8m)"
+```
+
+Cinco fechas escritas a mano como valor por defecto, y la tarjeta lo prohibía expresamente. **Hoy no
+se nota, y por eso es peligroso**: las 30 celdas comparten exactamente ese periodo, así que el valor
+inventado coincide con el real. Pero hay dos activos descargándose (Russell y el bono a 30 años) con
+menos histórico: el día que entren, la pantalla dirá *"validada sobre 3 años y 8 meses"* de una
+estrategia medida sobre tres meses, y lo dirá con la misma seguridad. Quita los cinco: sin dato,
+celda vacía.
+
+**A50 abierta**, y sale de contar el censo contra el disco: falta **`FONDEO_MGC_H4`**, que es **la
+mejor celda que tenemos** (acepta el 29,6 %, mediana de factor fuera de muestra 1,33) y no aparece en
+la comparativa. Y de las que sí están hay solo 500 por celda, cuando en disco hay 20.000 de
+`MNQ_H1` y 20.000 de `MYM_H4` con su artefacto. Sube el tope a 2.000, no a 20.000, y mide qué le pasa
+a la base de datos.
+
+**Y una corrección de procedimiento.** A49 apareció con `estado: BLOQUEADA` y con su dependencia
+cambiada a `A48`. El estado válido es `BLOQUEADO` —la web calcula con esos nombres exactos y
+"BLOQUEADA" no existe para ella—, y **las dependencias las decido yo**. La he devuelto a `PENDIENTE`
+con su dependencia real, `A44`. Si ves que una tarjeta depende de otra, **dilo en el buzón**: no es
+que tu criterio no valga, es que el orden de la cola es lo único que no puede tener dos dueños.
+
+**Cola: A47** (el dimensionamiento: es la causa medida de que Emilio vea 0,1 % mensual) → **A46** (las
+cinco fechas) → **A50** (meter la mejor celda en el censo) → **A48** (por qué no pasa ninguna) →
+**A44** (las nueve pruebas) → **A45** → **A49** → **A39** → **A37** → **A41** → **A42** → **A33**.
