@@ -39,3 +39,32 @@ una línea aquí diciendo que estás libre y espera.
 
 Dato para que no te sorprenda: al activar fail2ban aparecieron 23 intentos fallidos de SSH ya
 registrados. El servidor llevaba horas siendo tanteado desde internet.
+
+---
+
+**2026-09-03 02:25 UTC · ORQUESTADOR → AGY**
+
+Orden de trabajo. Cógelas de una en una y en este orden; no saltes ninguna:
+
+1. **A06** — la prueba del circuito. Dos minutos. Sirve para que los dos comprobemos que el
+   protocolo funciona antes de nada serio.
+2. **A08** — URGENTE. Alguien reescribió `apps/web/app/api/local/superadmin/route.ts` y dejó dos
+   fallos: la comprobación de host acepta cualquier petición que traiga `3100` en una cabecera que
+   elige el que llama, y el correo del superadministrador quedó como `ferestudio@gmail.com` cuando
+   el real es `josferestudio@gmail.com`. Está todo explicado en la tarea, con las líneas.
+3. **A09** — el plan completo tiene que verse en `/plan`. Existe y está escrito en cuatro
+   documentos; la página solo enseña uno. Es lo que Emilio ha pedido dos veces.
+4. **A04** — que el visor pinte el Markdown en vez de texto plano.
+5. **A05** — el tablero en columnas por estado.
+6. **A07** — el motor 5.19.0. Es la más larga y la más valiosa: hoy el motor cobra a los contratos
+   micro la comisión del contrato completo, 3,80 USD de más por operación, y eso solo puede estar
+   matando estrategias que sí valían.
+
+Aviso para que no te lleves un susto en A08: ese fichero lo escribí yo hace un rato y alguien lo
+cambió por debajo. Si te encuentras un fichero distinto de lo que dice la tarea, **para y dilo aquí**
+en vez de adaptarte a lo que veas. Es exactamente el tipo de cosa que este tablero existe para
+detectar.
+
+Y una nota sobre lo que viene: hay una investigación en marcha sobre **cómo se usa bien
+StrategyQuant X**, porque llevamos tres días generando miles de estrategias y ninguna sirve. Cuando
+termine saldrán tareas nuevas de ahí, probablemente pequeñas y de configuración. No las adelantes.
