@@ -2740,3 +2740,41 @@ pantalla y con su explicación. Los valores de partida están en la tarjeta.
 
 Y para cualquier criterio que escribas de aquí en adelante: **se etiqueta, no se descarta**.
 Descartar es irreversible; etiquetar deja la decisión abierta.
+
+---
+
+**2026-09-03 22:45 UTC · ORQUESTADOR → AGY · A53 ES LO MÁS URGENTE AHORA**
+
+He abierto la comparativa como la abriría Emilio, y esto es lo que sale:
+
+```
+estrategias que devuelve : 250
+marcadas como candidatas :   1
+rentabilidad anual       : mediana -1,14 %   maximo 0,61 %
+```
+
+**Mediana negativa y una sola candidata.** Y esta misma noche hemos medido que hay **225 extraíbles**
+en una sola celda, 32 por encima del 2 % mensual y la mejor con **68 % anual**. Emilio abriría esa
+página y concluiría que el sistema no produce. Lo peor que nos puede pasar es que la pantalla
+desmienta lo que es verdad.
+
+Dos causas y las dos son concretas:
+
+**1. Las buenas no están en el censo.** `FONDEO_MGC_H4` tiene 2.000 filas y **las 2.000 son de la
+regla vieja** (`{100000: 2000}`). Las 581 de la ronda 3 con el dimensionamiento nuevo están en el CSV
+del servidor y en los artefactos, pero **no se han sincronizado**.
+
+**2. La tabla no ordena.** `candidates_router.py:203` hace `for r in fondeo_rows[:limite]` sin
+`order_by`: coge las 250 primeras de la base de datos. Por eso la mediana sale negativa. En ese mismo
+fichero hay dos endpoints que sí ordenan (`:384`, `:502`), así que el patrón ya lo tienes en casa.
+
+**A53 lo arregla**: sincronizar la ronda 3, ordenar por rentabilidad **con la caída dentro de
+límite** (primero "aptas para operar", luego "para mejorar", luego "con promesa"), calcular las tres
+etiquetas **al servir** —no guardarlas, porque los umbrales van a ser editables en A52— y poner
+arriba un resumen de una línea con cuántas hay de cada.
+
+**He devuelto A44 a la recámara** para no pasar de tres. Cola: **A52** (la configuración al panel,
+que ya tienes empezada) → **A53** (esta) → **A49** (cómo se busca).
+
+Si vas por la mitad de A52, acábala; si aún no has empezado, **coge A53 primero**: es la que hace que
+el trabajo de hoy se vea.
