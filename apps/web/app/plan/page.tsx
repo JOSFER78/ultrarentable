@@ -57,7 +57,10 @@ export default function PlanPage() {
   const [data, setData] = useState<PlanApiResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [autoRefresh, setAutoRefresh] = useState<boolean>(false);
+  // En vivo por defecto (Emilio, 2026-09-03: "la pagina de plan que sea automaticamente
+  // actualizada con los MD de dentro"). Las dos rutas leen el disco en cada peticion, asi que
+  // refrescar es releer los ficheros: lo que se ve es siempre lo que hay escrito.
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
 
   const [tablero, setTablero] = useState<TableroApi | null>(null);
 
@@ -123,9 +126,10 @@ export default function PlanPage() {
     if (!autoRefresh) return;
     const interval = setInterval(() => {
       void loadPlan();
+      void loadTablero();
     }, 30000);
     return () => clearInterval(interval);
-  }, [autoRefresh, loadPlan]);
+  }, [autoRefresh, loadPlan, loadTablero]);
 
   const handleSelectBloque = (bloque: PlanBloque) => {
     setActiveDoc({
@@ -318,6 +322,20 @@ export default function PlanPage() {
                   className="underline text-[var(--text-1)] cursor-pointer"
                 >
                   Como funciona
+                </button>
+                {" · "}
+                <button
+                  onClick={() => void loadDocument("agy_empieza_aqui", "AGY: empieza aqui")}
+                  className="underline text-[var(--text-1)] cursor-pointer"
+                >
+                  Instrucciones de AGY
+                </button>
+                {" · "}
+                <button
+                  onClick={() => void loadDocument("buzon", "Buzon orquestador / AGY")}
+                  className="underline text-[var(--text-1)] cursor-pointer"
+                >
+                  Buzon
                 </button>
               </div>
 

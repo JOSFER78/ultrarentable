@@ -16,6 +16,8 @@ const SAFE_DOC_MAP: Record<string, { folder: "state" | "bloques" | "orchestratio
   plan_local_fondeo: { folder: "state", filename: "PLAN_LOCAL_FONDEO.md", title: "Plan Local FONDEO" },
   tareas_agy: { folder: "bloques", filename: "F10_operaciones_infra.md", title: "Tareas para AGY — infraestructura" },
   protocolo_tablero: { folder: "tablero", filename: "README.md", title: "Cómo funciona el tablero (orquestador ↔ AGY)" },
+  agy_empieza_aqui: { folder: "tablero", filename: "AGY_EMPIEZA_AQUI.md", title: "AGY: empieza aquí" },
+  buzon: { folder: "tablero", filename: "BUZON.md", title: "Buzón orquestador ↔ AGY" },
   arquitectura_recursos: { folder: "orchestration", filename: "ARQUITECTURA_RECURSOS.md", title: "Arquitectura de recursos (3 máquinas)" },
   runbook_hetzner: { folder: "orchestration", filename: "RUNBOOK_HETZNER_SEGURIDAD.md", title: "Runbook de seguridad del Hetzner" },
 };

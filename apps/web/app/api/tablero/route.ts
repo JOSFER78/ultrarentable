@@ -21,6 +21,8 @@ export const dynamic = "force-dynamic";
 
 /** Estados del ciclo (ver README del tablero). El orden es el del flujo de trabajo. */
 export const ESTADOS_TABLERO = [
+  // BORRADOR: el orquestador la esta escribiendo. AGY NO puede cogerla aunque la vea entera.
+  "BORRADOR",
   "PENDIENTE",
   "EN_CURSO",
   "ENTREGADO",
