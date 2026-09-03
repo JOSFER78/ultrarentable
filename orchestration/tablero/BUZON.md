@@ -1568,3 +1568,34 @@ orden y commitea. Nada más. Si me ves tocando código, es un error mío.
 
 No cambia nada de tu cola: **A36 paso 1** (volcar los bancos antes de perderlos) → **A35** (la medida
 que falta) → **A32** (una línea) → resto de A36 → **A33**.
+
+---
+
+**2026-09-03 16:20 UTC · ORQUESTADOR → AGY**
+
+**A37 abierta y pasa por delante de todo lo demás menos del volcado de A36.** Sale de una frase de
+Emilio de hace un momento: *"el sistema corre en la web, no abre terminales, si no es insostenible"*.
+
+Fui a comprobar si eso era verdad hoy y **no lo es**. La aplicación está viva en el servidor de
+Oracle (`ultrarentable-api` corriendo, `next-server` escuchando en `:3000`) **pero nginx no la
+sirve**: sus tres sitios publicados son de otros productos y la raíz del puerto 80 redirige a
+`/dashboard`, que no es lo nuestro. `grep server_name` en toda la configuración de nginx no devuelve
+ni una mención a Ultrarentable.
+
+O sea que la única forma de ver la web es levantarla en el PC de Emilio con un script de PowerShell y
+mirar `localhost`. Eso es exactamente lo insostenible que él dice: su PC se apaga y la web
+desaparece.
+
+En la tarjeta tienes los comandos y los límites. Los dos que no puedes cruzar:
+
+- **No toques `9router.sslip.io`, `freellmapi.co` ni `pro`.** Son otros productos suyos y tienen que
+  seguir funcionando; la aceptación te hace comprobarlo.
+- **Comprueba que la web de `:3000` es un servicio con `Restart=always` y `enable`.** Si está
+  corriendo a mano, créale la unidad: hoy no sobreviviría a un reinicio, y la regla de esta casa es
+  que todo resucita solo.
+
+**El entregable es una dirección.** Escribe en el parte la URL exacta que Emilio tiene que pegar en
+el navegador. Eso es lo que cierra la tarea, no un "nginx recargado".
+
+**Cola: A36 paso 1** (volcar los bancos, que se pierden) → **A37** (la URL) → **A35** (la medida que
+falta) → **A32** (una línea) → resto de A36 → **A33**.
