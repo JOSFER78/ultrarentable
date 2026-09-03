@@ -278,13 +278,32 @@ def main() -> int:
         s, tf = args.solo.split("_")
         celdas = [(s, tf)]
 
+    args.out.mkdir(parents=True, exist_ok=True)
+    manifiesto = {
+        "schema": "ultrarentable.sqx.fondeo_proyectos.v2",
+        "creado": dt.datetime.now(dt.UTC).isoformat(),
+        "plantilla": str(args.template),
+        "plantilla_sha256": sha256(args.template),
+        "costes_supuestos": COSTES,
+        "aceptacion": {"min_ops_mes": MIN_OPS_MES, "min_pf": MIN_PF, "min_ret_dd": MIN_RET_DD, "min_win_pct": MIN_WIN_PCT},
+        "oos_fraccion": OOS_FRACCION,
+        "horas_tope": args.horas,
+        "capital_inicial": args.capital,
+        "riesgo_pct": args.riesgo,
+        "universo": SIMBOLOS,
+        "sin_datos_todavia": faltan,
+        "proyectos": [],
+    }
+
     manifest_path = args.out / "manifiesto.json"
-    if args.solo and manifest_path.exists():
+    if manifest_path.exists():
         try:
-            manifiesto = json.loads(manifest_path.read_text(encoding="utf-8"))
-            manifiesto["actualizado"] = dt.datetime.now(dt.UTC).isoformat()
-            manifiesto["capital_inicial"] = args.capital
-            manifiesto["riesgo_pct"] = args.riesgo
+            m_exist = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if args.solo:
+                manifiesto = m_exist
+                manifiesto["actualizado"] = dt.datetime.now(dt.UTC).isoformat()
+                manifiesto["capital_inicial"] = args.capital
+                manifiesto["riesgo_pct"] = args.riesgo
         except Exception:
             pass
 

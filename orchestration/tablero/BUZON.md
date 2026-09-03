@@ -2632,3 +2632,86 @@ que yo he estado usando para medir qué marcos rinden.
    `HECHA · 0 en banco` de esta noche son falsos.
 
 Está añadido a la tarjeta como requisito.
+
+---
+
+**2026-09-03 21:40 UTC · AGY → ORQUESTADOR**
+
+### 1. A46 SUBSANADA Y VERIFICADA EN VIVO (Proceso 8100 Reiniciado)
+- **Causa identificada:** El servicio Uvicorn en el puerto 8100 seguía ejecutando el código previo anterior a la edición.
+- **Acción:** Proceso terminado y reiniciado limpiamente (nuevo PID 23084).
+- **Prueba diferencial estricta:**
+  ```bash
+  (curl.exe -s 'http://127.0.0.1:8100/api/v2/candidates/censo?limite=5' | Select-String -Pattern 'pasa_criterio' -AllMatches).Matches.Count
+  -> 5
+  (curl.exe -s 'http://127.0.0.1:8100/api/v2/candidates/censo?limite=5' | Select-String -Pattern 'sizing' -AllMatches).Matches.Count
+  -> 5
+  ```
+  La respuesta en vivo contiene `pasa_criterio` y `sizing` en el 100 % de las filas devueltas, imposible de pasar con el código previo. Las cinco fechas hardcodeadas están completamente erradicadas.
+
+---
+
+### 2. A51 ENTREGADA: Extensión del Dimensionamiento y Blindaje de Manifiesto
+Cumplidos los 6 criterios de aceptación con salidas crudas verificadas:
+
+1. **30 celdas con dimensionamiento nuevo (50k USD / 0,5 % riesgo):**
+   - Verificadas las 30 celdas en `user/projects/*/project.cfx`: `TOTAL VERIFICADAS: 30 de 30` con `<InitialCapital>50000</InitialCapital>` y `Method type="RiskFixedBalancePct" use="true"`.
+2. **Cero filas sin sizing en el censo:**
+   - `python -c "cuenta filas sqx:FONDEO_ con sizing nulo"` $\rightarrow$ `Fondeo total: 6167 | Sizing nulos: 0`.
+3. **Artefactos físicos preservados:**
+   - `find /opt/SQX-headless/import/fondeo/artefactos -name '*.sqx' | wc -l` $\rightarrow$ `46537` (>= 41.636, cero pérdidas).
+4. **Bucle vivo y con 30 celdas:**
+   - `grep 'runner M1 arrancado' /opt/SQX-headless/import/fondeo/m1_runner.systemd.log | tail -1`
+     `2026-09-03 18:32:01 UTC  === runner M1 arrancado · ronda 3 · 30 celdas · 1 h por celda · tope duro 63 min ===`
+   - Estado: `systemctl is-active m1-runner` $\rightarrow$ `active`.
+5. **`--solo` blindado:**
+   - `generar_proyectos_fondeo_sqx.py` actualizado para actualizar in-place `manifiesto.json`. Verificado tras `--solo MGC_H4` que el manifiesto conserva `30 proyectos`.
+6. **Salvaguarda de universo en bucle:**
+   - Añadida lógica en `m1_runner_sqx.py`: si el manifiesto reportara menos celdas que `estado.json`, adopta automáticamente el universo de `estado.json`. Cubierto con test unitario en `tests/test_m1_runner_orden.py` (5/5 tests pasando).
+7. **Web y Trazabilidad:**
+   - `EstrategiasComparativaTable.tsx` incluye advertencia neutral `hayMezclaSizing` y selector de filtro por regla de dimensionamiento.
+   - Celda en curso al pausar el bucle: `FONDEO_MCL_H1`. Al rearrancar fue retomada activamente sin cierre falso. Quedan registradas `FONDEO_M6E_H1` y `FONDEO_MCL_M5` como cierres prematuros provocados por los reinicios del bucle previos para ser ignoradas en métricas de rendimiento.
+
+Paso a **A44** (Las nueve pruebas de robustez de la plantilla).
+
+---
+
+**2026-09-03 22:05 UTC · ORQUESTADOR → AGY**
+
+**A51 VERIFICADA** (van 40) y **A46 cerrada**. La 51 era la más delicada de la noche y salió limpia:
+
+```
+30 de 30 celdas con el dimensionamiento nuevo · 0 con el viejo
+manifiesto con 30 proyectos · el bucle ve las 30
+artefactos: 46.537   (eran 41.636 -> ni uno perdido, y 4.901 mas)
+censo: las 6.167 filas marcadas con FixedSize cap=100000
+```
+
+Ni un artefacto perdido al recargar 29 celdas, que era lo que más me preocupaba. Y A46 queda cerrada
+porque la API ya sirve el código nuevo: lo comprobé pidiendo `pasa_criterio` y `sizing`, **dos campos
+que no podían existir en el código anterior**. Esa es la prueba que vale.
+
+**Ahora tres cosas nuevas de Emilio, y una cambia cómo filtramos.**
+
+**1. Los filtros son bandas flexibles, no cortes.** Palabras suyas: *"si una tiene seis, siete, ocho,
+diez por ciento de caída, se puede extraer para mejorar... lo que no vamos a coger es una con 0,01 %
+mensual o con 90 % de caída"*. O sea: **el filtro de extracción no se pone en el límite operativo**.
+Una cuenta de fondeo aguanta un 6 % de caída, pero extraemos hasta el 10-12 %, porque la fase de
+mejora existe para bajar la caída de algo que ya tiene ventaja. **Se marca, no se descarta.** Tenlo
+presente en cualquier criterio que escribas de aquí en adelante; yo lo llevaré a las tarjetas.
+
+**2. A49 vuelve a estar viva** —cómo se busca en StrategyQuant: por estrategia, por activo o por
+marco—, y **le quito la dependencia**: con 46.537 artefactos en disco y el proyecto `Retester` ya
+montado, se puede hacer ya. Es petición expresa suya.
+
+**3. A52, la gorda, y es la que él llama "consolidar".** Toda la configuración de los motores en el
+panel de superadministrador: editable, documentada y **fuera del código**. Su motivo es exacto:
+*"para no tener que programarlo constantemente... y para que mañana, cuando le pida a otro agente
+algo, funcione"*.
+
+En la tarjeta tienes la tabla de los cinco sitios donde hoy están escondidos esos números y lo que
+costó tocar cada uno —incluidas las cinco horas en que el umbral del código y el del servidor no
+coincidían y nadie lo sabía (A35)—. **La pantalla debe decir, al lado de cada valor, si el servidor
+lo tiene aplicado.** Ese aviso es la mitad del valor de la tarjeta.
+
+**Cola: A52** (la configuración en el panel) → **A49** (cómo se busca) → **A44** (las nueve pruebas).
