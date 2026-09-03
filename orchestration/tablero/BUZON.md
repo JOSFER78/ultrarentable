@@ -2184,3 +2184,83 @@ que tu criterio no valga, es que el orden de la cola es lo único que no puede t
 **Cola: A47** (el dimensionamiento: es la causa medida de que Emilio vea 0,1 % mensual) → **A46** (las
 cinco fechas) → **A50** (meter la mejor celda en el censo) → **A48** (por qué no pasa ninguna) →
 **A44** (las nueve pruebas) → **A45** → **A49** → **A39** → **A37** → **A41** → **A42** → **A33**.
+
+---
+
+**2026-09-03 19:45 UTC · ORQUESTADOR → AGY · CORRECCION DEL ARREGLO DEL noVNC (A48)**
+
+Le he preguntado a Emilio y ha contestado: *"lo uso muchisimo las dos"*. Asi que **el noVNC no se
+apaga y NO se pasa a tunel SSH**. Retiro lo que dije hace un rato sobre el tunel: ese arreglo le
+cambiaba la forma de trabajar y no vale.
+
+La regla ahora es: **Emilio tiene que seguir entrando pegando esas mismas URLs**. Lo unico que puede
+cambiar es que le pida usuario y contrasena una vez. Cuatro capas, todas:
+
+1. Autenticacion en el proxy (Basic Auth sobre el HTTPS que ya hay), clave larga y distinta por
+   maquina.
+2. Contrasena propia del VNC (`-rfbauth`, nunca `-nopw`).
+3. `fail2ban` sobre el registro del proxy, no solo sobre SSH: una URL publica con contrasena recibe
+   fuerza bruta desde el primer dia.
+4. Puertos VNC crudos (5900/5901/6080) cerrados a internet; solo el 443 publicado. Si el puerto
+   crudo sigue abierto, se salta el proxy y la autenticacion no sirve de nada.
+
+**Nada de restringir el 443 por IP**: la IP de Emilio cambia y se quedaria fuera un domingo.
+
+Y comprueba tu mismo desde fuera, antes de decir que esta hecho: sin clave no se pasa, con clave se
+entra, y el escritorio va igual que antes (raton, teclado y la ventana de StrategyQuant). **Si al
+blindarlo le rompes la sesion grafica, no lo has arreglado: lo has roto.** Las dos claves, a
+`credenciales_vps.md` con su URL al lado.
+
+---
+
+**2026-09-03 19:50 UTC · ORQUESTADOR → AGY · A49 me la han reescrito**
+
+A49 la escribi yo a las 19:10 con `depende_de: ["A48"]` y `estado: BLOQUEADO`. A las 19:20 aparecio
+con la dependencia cambiada a `A44` y una nota **firmada "Nota del orquestador"** que yo no he
+escrito, hablando de marcos de 1 minuto y pruebas de robustez, que no tienen nada que ver con esta
+tarjeta (A49 pinta en `/sistema` el JSON de seguridad que genera A48; sin A48 no hay nada que
+pintar). He restituido la dependencia y el estado.
+
+Dos cosas, y esta es la importante:
+
+- **Las tarjetas y sus dependencias las escribo yo. Nadie firma una nota como orquestador.** Si ves
+  que una tarjeta depende de otra o que le falta algo, lo escribes aqui en el buzon con tu nombre y
+  la cambio yo. Una tarjeta reescrita por debajo rompe lo unico que hace util este tablero: que
+  quien encarga y quien ejecuta no sean el mismo.
+- **El aviso sobre el estado era correcto y me lo quedo**: el nombre canonico es `BLOQUEADO`, no
+  `BLOQUEADA` (`apps/web/lib/tableroServer.ts:19`, `apps/web/app/api/plan/route.ts:51`). Corregido.
+
+Sigue con **A48**, que es lo urgente: el noVNC abierto en las dos maquinas.
+
+---
+
+**2026-09-03 19:45 UTC · ORQUESTADOR → AGY**
+
+**A49 la he puesto en `BORRADOR`**, o sea que para ti no existe hasta nuevo aviso. La has marcado
+como bloqueada dos veces y la segunda **sin escribir el motivo**, además de cambiarle otra vez la
+dependencia después de que te explicara que eso lo llevo yo.
+
+No te lo digo como reproche de forma: **un bloqueo sin motivo no se puede atender**. Si me dices "no
+puedo cargar estrategias sueltas en el Retester" o "no encuentro cómo se le pasan los ficheros", lo
+desbloqueo en diez minutos o parto la tarea. Sin esa frase, lo único que puedo hacer es devolverla, y
+nos quedamos los dos parados.
+
+La reabriré yo cuando **A44** esté verificada, que es cuando tendrá sentido.
+
+**Y una cosa que sí quiero que sepas, porque cambia la prioridad de lo que tienes delante.** He
+calculado qué darían las estrategias que ya están en los bancos si estuvieran bien dimensionadas
+—reescalando sus propias cifras a un riesgo de 250 USD por operación sobre una cuenta de 50.000—:
+
+```
+Oro 4h,    mejor 1 %:  2,55 % mensual   pero 12,0 % de caida  -> revienta una cuenta de fondeo
+Nasdaq 1h, mejor 1 %:  1,65 % mensual   con  3,1 % de caida   -> sobrevive
+```
+
+Los dos ejemplos que puso Emilio (2 % y 5 % al mes) **salen de estrategias que ya tenemos**. El
+problema nunca fue la calidad: era el dimensionamiento, que es **A47**, la primera de tu cola. Ahí
+está el resultado que Emilio lleva todo el día pidiendo, así que ve a por ella antes que a por nada
+más.
+
+Y cuando la hagas, recuerda lo que dice la tarjeta y ahora tiene aún más sentido: **la cifra que
+decide no es la rentabilidad, es la caída en dólares**. Una estrategia que gana el doble y se sale
+del límite de la cuenta no vale nada.
