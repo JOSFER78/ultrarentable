@@ -174,19 +174,24 @@ def compact_sample(sample: dict, hide_segments: bool = False) -> dict:
     if hide_segments:
         for table in SEGMENT_TABLES:
             keep.pop(table, None)
+        # Tampoco los recuentos por dirección del resumen: con dos segmentos bastarían para deducir cuál pierde.
+        keep['summary'] = {k: v for k, v in keep['summary'].items() if not k.startswith(('long_', 'short_'))}
         keep['segment_tables_hidden'] = 'Las tablas por hora, día y dirección de esta muestra no se muestran: el OOS es la comprobación de desarrollo y no se ajusta sobre él.'
     return keep
 
 
 def visible_findings(findings: list[dict]) -> list[dict]:
-    """Hallazgos del dosier: en OOS, los de segmento conservan el código pero no el segmento concreto."""
-    out = []
+    """Hallazgos del dosier: los de segmento en OOS se colapsan en uno solo, sin dimensión ni segmento."""
+    out, hidden = [], 0
     for finding in findings:
         if finding.get('sample') == 'OOS' and finding.get('code') in SEGMENT_FINDING_CODES:
-            evidence = {k: v for k, v in (finding.get('evidence') or {}).items() if k in ('dimension',)}
-            out.append({**finding, 'evidence': {**evidence, 'segment': 'oculto (no ajustar sobre OOS)'}, 'segment_hidden': True})
-        else:
-            out.append(finding)
+            hidden += 1
+            continue
+        out.append(finding)
+    if hidden:
+        out.append({'code': 'LOSS_CONCENTRATED_SEGMENT', 'sample': 'OOS', 'severity': 'medium', 'segment_hidden': True,
+                    'evidence': {'segments_hidden': hidden},
+                    'note': 'Hay segmentos OOS (hora, día o dirección) con pérdidas concentradas; no se muestran cuáles para no ajustar sobre desarrollo.'})
     return out
 
 

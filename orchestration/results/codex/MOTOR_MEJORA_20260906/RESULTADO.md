@@ -305,6 +305,23 @@ hipótesis; su evidencia está en `mecanismo_filtros_20260906.zip` (manifiesto c
   ±3 días de los extremos. Coherente con `trading_day()`; dos pruebas mías se adaptan (258 días de
   negociación en el OOS 2025, y el 1-1-2024 pertenece al OOS que termina el domingo 31-12-2023).
 
+### Revisión adversarial del vocabulario (subagente, 19:47–19:59 CEST) y correcciones
+
+Nueve hallazgos, todos verificados con código sobre las reglas reales; corregidos con prueba los
+siete que eran defectos: (1) un `If` sin AND raíz se envuelve en un AND nuevo y la variante se
+rechazaba por "alterar condiciones"; ahora el traslado se verifica por forma canónica y se atribuye
+al filtro; (2) la atribución por prefijo de regla se tragaba cambios `param_path` legítimos dentro
+del mismo `If` (reajustar un `#Hour#` existente junto a un filtro de día); ahora solo cuentan como
+filtro las adiciones bajo el bloque exacto añadido; (3) un bloque de hora dentro de un `Not` se
+listaba como filtro activo; ahora solo se recorre la conjunción; (4) combinaciones sin sentido que
+gastarían un recálculo (las dos direcciones desactivadas, cambios sobre una dirección desactivada);
+(5) cambios con claves mezcladas (filtro + salida) que se aplicaban a medias; (6) un `Boolean true`
+contaba como dirección desactivada; (7) fuga OOS por dirección en el dosier (`long_trades`/
+`short_trades` del resumen y la `dimension` de los hallazgos ocultos); ahora los hallazgos de segmento
+OOS se colapsan en uno sin dimensión y el resumen OOS no lleva recuentos por dirección. El octavo
+(el filtro de día "no se había recalculado") era anterior al segundo recálculo de mecanismo; el
+noveno, código muerto, se sustituyó por la regla "máximo dos días laborables excluidos".
+
 ### Ciclo 04: debate con la IA de Claude sobre el vocabulario nuevo (19:44–19:53 CEST)
 
 Por indicación de Emilio las pruebas usan mi IA (`claude-cli`, Claude Opus 5; 2,32 $, 6,3 min); el

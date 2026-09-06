@@ -22,7 +22,7 @@ import json
 import xml.etree.ElementTree as ET
 from decimal import Decimal
 
-from sqx_strategy_contract import compare_rules, semantic_rules_sha256
+from sqx_strategy_contract import canonical, compare_rules, semantic_rules_sha256
 
 ENTRY_RULES = {'long': 'Long entry', 'short': 'Short entry'}
 EXIT_KEYS = {
@@ -232,41 +232,84 @@ def boolean_false_item() -> ET.Element:
                            main='Other', category='other', notFirstValue='true', ignoreInBuilder='true')
 
 
-def _append_condition(rule: ET.Element, item: ET.Element) -> None:
-    """Añade `item` como condición AND al If de la regla sin mover las condiciones existentes."""
+def _plain_block(node: ET.Element) -> bool:
+    # Etiqueta "Block" sin índice de clave en param_paths (los atributos name se eliminan en la copia semántica).
+    return node.tag == 'Block' and not node.get('key') and not node.get('variable')
+
+
+def _append_condition(rule: ET.Element, item: ET.Element) -> tuple[str, bool]:
+    """Añade `item` como condición AND al If de la regla y devuelve (sufijo de ruta semántica del
+    bloque nuevo, envuelto). Si el If no era un AND raíz, se envuelve la condición existente en un
+    AND nuevo sin alterarla (se comprueba por forma canónica) y se declara `envuelto`."""
     if_node = rule.find('If')
     if if_node is None:
         raise ValueError(f'La regla "{rule.get("name")}" no tiene bloque If')
     children = list(if_node)
     block = ET.Element('Block')
     block.append(item)
+    wrapped = False
     if len(children) == 1 and children[0].get('key') == 'AND':
-        children[0].append(block)
-        return
-    wrapper = ET.Element('Item', {'key': 'AND'})
-    for child in children:
-        if_node.remove(child)
-        inner = ET.Element('Block')
-        inner.append(child)
-        wrapper.append(inner)
-    wrapper.append(block)
-    if_node.append(wrapper)
+        root_and = children[0]
+    else:
+        before = [canonical(child) for child in children]
+        root_and = ET.Element('Item', {'key': 'AND'})
+        for child in children:
+            if_node.remove(child)
+            inner = ET.Element('Block')
+            inner.append(child)
+            root_and.append(inner)
+        if_node.append(root_and)
+        after = [canonical(inner[0]) for inner in root_and]
+        if before != after:
+            raise ValueError('Al envolver la condición existente en un AND cambió su forma; se aborta el filtro')
+        wrapped = True
+    index = sum(1 for c in root_and if _plain_block(c))
+    root_and.append(block)
+    return 'Item[AND]/Block' + (f'#{index}' if index else ''), wrapped
+
+
+def conjunction_items(if_node: ET.Element):
+    """Condiciones que forman la conjunción del If: AND raíz y AND anidados. No entra en Not, OR ni comparaciones."""
+    def walk(item):
+        if item.get('key') == 'AND':
+            for block in item.findall('Block'):
+                for child in block.findall('Item'):
+                    yield from walk(child)
+        else:
+            yield item
+    if if_node is not None:
+        for child in if_node.findall('Item'):
+            yield from walk(child)
 
 
 def entry_filters(rule: ET.Element) -> list[dict]:
-    """Filtros de entrada ya presentes en el If de una regla (bloques de hora, día y Boolean)."""
+    """Filtros de entrada activos en la conjunción del If de una regla (bloques de hora, día y Boolean false)."""
     found = []
-    if_node = rule.find('If')
-    for item in ([] if if_node is None else if_node.iter('Item')):
+    for item in conjunction_items(rule.find('If')):
         key = item.get('key')
         if key not in FILTER_BLOCK_KEYS:
             continue
         params = {p.get('key').strip('#'): (p.text or '').strip() for p in item.findall('Param') if p.get('key') != '#Chart#'}
+        if key == 'Boolean' and params.get('Value') != 'false':
+            continue  # un Boolean true en la conjunción no filtra nada
         entry = {'block': key, **params}
         if key == 'BarDayOfWeekIsNot' and params.get('Day', '').isdigit():
             entry['day_name'] = WEEKDAY_NAMES[int(params['Day'])]
         found.append(entry)
     return found
+
+
+def disabled_directions(rules_xml: bytes) -> set:
+    root = ET.fromstring(rules_xml)
+    out = set()
+    for direction in ENTRY_RULES:
+        try:
+            rule = _entry_rule(root, direction)
+        except ValueError:
+            continue
+        if any(f['block'] == 'Boolean' for f in entry_filters(rule)):
+            out.add(direction)
+    return out
 
 
 def normalize_weekday(value) -> int:
@@ -311,7 +354,8 @@ def apply_filter(rules_xml: bytes, change: dict) -> tuple[bytes, dict]:
         raise ValueError(f'Dirección no válida para un filtro: {direction!r}')
     directions = ('long', 'short') if direction == 'both' else (direction,)
     root = ET.fromstring(rules_xml)
-    record = {'filter': kind, 'direction': direction, 'before': None, 'effective_fields': 0, 'blocks_added': [], 'scope_prefixes': []}
+    record = {'filter': kind, 'direction': direction, 'before': None, 'effective_fields': 0, 'blocks_added': [],
+              'scope_prefixes': [], 'added_paths': [], 'wrapped_prefixes': []}
     if kind == 'hour_range':
         start, end = _int_hour(change.get('from'), 'from'), _int_hour(change.get('to'), 'to')
         if start >= end:
@@ -327,8 +371,8 @@ def apply_filter(rules_xml: bytes, change: dict) -> tuple[bytes, dict]:
         days = sorted({normalize_weekday(d) for d in raw})
         if len(days) > 3:
             raise ValueError('exclude_weekdays admite como máximo tres días')
-        if set(days) >= {1, 2, 3, 4, 5}:
-            raise ValueError('exclude_weekdays no puede excluir todos los días laborables')
+        if len([d for d in days if 1 <= d <= 5]) > 2:
+            raise ValueError('exclude_weekdays admite como máximo dos días laborables (quedarían menos de tres sesiones por semana)')
         record['days'] = [WEEKDAY_NAMES[d] for d in days]
         items = [weekday_not_item(d) for d in days]
     else:
@@ -348,7 +392,11 @@ def apply_filter(rules_xml: bytes, change: dict) -> tuple[bytes, dict]:
                 raise ValueError(f'La regla "{rule.get("name")}" ya tiene un filtro {key}: cámbialo por param_path (#Hour#) en vez de apilar otro')
             if kind == 'disable_direction' and any(e['block'] == 'Boolean' for e in existing):
                 raise ValueError(f'La dirección {target} ya está desactivada')
-            _append_condition(rule, copy.deepcopy(item))
+            suffix, wrapped = _append_condition(rule, copy.deepcopy(item))
+            scope = _rule_scope(root, rule)
+            record['added_paths'].append(scope + '/' + suffix)
+            if wrapped:
+                record['wrapped_prefixes'].append(scope)
             record['blocks_added'].append({'direction': target, 'block': key, **new_params})
         record['scope_prefixes'].append(_rule_scope(root, rule))
     after_xml = ET.tostring(root, encoding='utf-8', xml_declaration=True)
@@ -366,11 +414,39 @@ def describe_filter(change: dict) -> str:
     return f'{direction}: dirección desactivada'
 
 
+CHANGE_GROUPS = {
+    'filter': {'filter', 'direction', 'from', 'to', 'days'},
+    'param_path': {'param_path', 'value'},
+    'exit': {'direction', 'exit', 'value', 'atr_period'},
+}
+
+
+def change_group(change: dict) -> str:
+    if not isinstance(change, dict):
+        raise ValueError(f'Cambio no válido: {change!r}')
+    group = 'filter' if 'filter' in change else 'param_path' if 'param_path' in change else 'exit'
+    extra = set(change) - CHANGE_GROUPS[group]
+    if extra:
+        raise ValueError(f'Cambio con claves mezcladas {sorted(extra)}: un cambio es una salida, un param_path o un filtro, no varios a la vez')
+    return group
+
+
+def change_directions(change: dict) -> set:
+    """Direcciones a las que apunta un cambio (para detectar cambios sobre direcciones desactivadas)."""
+    group = change_group(change)
+    if group == 'param_path':
+        path = change['param_path']
+        return {d for d, name in ENTRY_RULES.items() if f'Rule[{name}]' in path}
+    direction = change.get('direction', 'both' if group == 'filter' else None)
+    return {'long', 'short'} if direction == 'both' else {direction} if direction in ENTRY_RULES else set()
+
+
 def apply_change(rules_xml: bytes, change: dict) -> tuple[bytes, dict]:
     """Aplica un cambio {direction, exit, value?, atr_period?}, {param_path, value} o {filter, ...} y devuelve (xml, registro)."""
-    if 'filter' in change:
+    group = change_group(change)
+    if group == 'filter':
         return apply_filter(rules_xml, change)
-    if 'param_path' in change:
+    if group == 'param_path':
         return apply_path_change(rules_xml, change['param_path'], change['value'])
     direction, exit_name = change['direction'], change['exit']
     if direction not in ENTRY_RULES or exit_name not in EXIT_KEYS:
@@ -465,18 +541,40 @@ def build_variant(rules_xml: bytes, changes: list[dict]) -> dict:
     if comparison['classification'] != 'RULES_CHANGED':
         raise ValueError('La variante no cambia el comportamiento: ' + comparison['classification'])
     touched = [c for c in comparison['changed_params'] if c.get('param') != 'structure']
-    scopes = [prefix for r in records for prefix in r.get('scope_prefixes', [])]
-    in_scope = [c for c in touched if any(c['param'].startswith(prefix + '/') for prefix in scopes)]
-    free = [c for c in touched if c not in in_scope]
-    expected = sum(r.get('effective_fields', 1) for r in records if not r.get('scope_prefixes'))
+    added_paths = [p for r in records for p in r.get('added_paths', [])]
+    wrapped = [p for r in records for p in r.get('wrapped_prefixes', [])]
+
+    def attributed_to_filters(c):
+        # Solo cuentan como filtro las adiciones bajo el bloque exacto que añadió, y, si hubo que envolver la
+        # condición existente en un AND, el traslado de esa condición (retirada de su ruta antigua y alta en el
+        # primer bloque del AND nuevo, con forma canónica comprobada al envolver).
+        if c.get('change') == 'added' and any(c['param'].startswith(p + '/') for p in added_paths):
+            return True
+        for prefix in wrapped:
+            if c.get('change') == 'removed' and c['param'].startswith(prefix + '/'):
+                return True
+            if c.get('change') == 'added' and c['param'].startswith(prefix + '/Item[AND]/Block/'):
+                return True
+        return False
+    in_scope = [c for c in touched if attributed_to_filters(c)]
+    free = [c for c in touched if not attributed_to_filters(c)]
+    expected = sum(r.get('effective_fields', 1) for r in records if 'filter' not in r)
     if len(free) != expected:
         raise ValueError(f'Cambios detectados fuera de filtros ({len(free)}) distintos de los previstos ({expected}): {free}')
     for record in records:
-        for prefix in record.get('scope_prefixes', []):
-            if not any(c['param'].startswith(prefix + '/') and c.get('change') == 'added' for c in in_scope):
-                raise ValueError(f'El filtro {record["filter"]} no añadió ninguna condición en {prefix}')
-            if any(c['param'].startswith(prefix + '/') and c.get('change') != 'added' for c in in_scope):
-                raise ValueError(f'El filtro {record["filter"]} alteró condiciones existentes en {prefix}')
+        for path in record.get('added_paths', []):
+            if not any(c['param'].startswith(path + '/') and c.get('change') == 'added' for c in in_scope):
+                raise ValueError(f'El filtro {record["filter"]} no añadió ninguna condición en {path}')
+    # Combinaciones sin sentido que gastarían un recálculo.
+    disabled = disabled_directions(current)
+    if disabled >= set(ENTRY_RULES):
+        raise ValueError('La variante desactiva las dos direcciones: la estrategia no operaría nunca')
+    for change in changes:
+        if change.get('filter') == 'disable_direction':
+            continue
+        hit = change_directions(change) & disabled
+        if hit:
+            raise ValueError(f'El cambio {change} apunta a una dirección desactivada ({", ".join(sorted(hit))})')
     return {'rules': current, 'changes': records, 'comparison': comparison,
             'semantic_rules_sha256': semantic_rules_sha256(current)}
 

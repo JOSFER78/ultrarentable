@@ -183,6 +183,97 @@ class EntryFilters(unittest.TestCase):
                     self.assertEqual(contract_module.compare_rules(rules, archive.read('strategy_Portfolio.xml'))['classification'], 'RULES_CHANGED')
 
 
+class ReviewFindings(unittest.TestCase):
+    """Casos señalados por la revisión adversarial del 2026-09-06."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.rules = real_rules()
+
+    @staticmethod
+    def with_single_condition(rules: bytes, direction: str) -> bytes:
+        # Sustituye el AND raíz del If por su primera condición (un Item[AND] anidado) para simular un If sin AND raíz.
+        root = ET.fromstring(rules)
+        rule = mutations._entry_rule(root, direction)
+        if_node = rule.find('If')
+        # El segundo bloque del AND raíz real es un Item[Not]: al dejarlo solo, el If ya no tiene AND raíz.
+        single = if_node.find('Item').findall('Block')[1].find('Item')
+        assert single.get('key') == 'Not'
+        for child in list(if_node):
+            if_node.remove(child)
+        if_node.append(single)
+        return ET.tostring(root, encoding='utf-8', xml_declaration=True)
+
+    def test_filter_on_if_without_root_and_wraps_without_altering_existing_conditions(self):
+        base = self.with_single_condition(self.rules, 'long')
+        before = contract_module.canonical(ET.fromstring(base).find("Strategy/Rules/Events/Event/Rule[@name='Long entry']/If/Item"))
+        built = mutations.build_variant(base, [{'filter': 'hour_range', 'direction': 'long', 'from': 8, 'to': 13}])
+        if_node = ET.fromstring(built['rules']).find("Strategy/Rules/Events/Event/Rule[@name='Long entry']/If")
+        root_and = if_node.find('Item')
+        self.assertEqual(root_and.get('key'), 'AND')
+        self.assertEqual(contract_module.canonical(root_and.find('Block').find('Item')), before)
+        self.assertEqual([i['block'] for i in filter_items(built['rules'], 'long')], ['BarHourIsBigger', 'BarHourIsSmaller'])
+        self.assertTrue(built['changes'][0]['wrapped_prefixes'])
+        # Con el AND raíz intacto en la regla corta, un filtro allí no se envuelve.
+        built2 = mutations.build_variant(base, [{'filter': 'hour_range', 'direction': 'short', 'from': 8, 'to': 13}])
+        self.assertFalse(built2['changes'][0]['wrapped_prefixes'])
+
+    def test_filter_combined_with_parameter_change_inside_the_same_if(self):
+        with_hours = mutations.build_variant(self.rules, [{'filter': 'hour_range', 'direction': 'long', 'from': 8, 'to': 13}])['rules']
+        hour_path = next(c['path'] for c in mutations.mutable_parameters(with_hours) if c['key'] == 'Hour' and 'Smaller' in c['path'])
+        built = mutations.build_variant(with_hours, [{'filter': 'exclude_weekdays', 'direction': 'long', 'days': ['Monday']},
+                                                     {'param_path': hour_path, 'value': '12'}])
+        self.assertEqual([f['Hour'] for f in filter_items(built['rules'], 'long') if 'Hour' in f], ['7', '12'])
+        free = [c for c in built['comparison']['changed_params'] if c.get('change') not in ('added', 'removed')]
+        self.assertEqual(len(free), 1)
+
+    def test_negated_filter_block_is_not_an_active_filter(self):
+        with_hours = mutations.build_variant(self.rules, [{'filter': 'hour_range', 'direction': 'long', 'from': 0, 'to': 13}])['rules']
+        root = ET.fromstring(with_hours)
+        rule = mutations._entry_rule(root, 'long')
+        block = rule.find('If').find('Item').findall('Block')[-1]
+        item = block.find('Item')
+        block.remove(item)
+        negation = ET.SubElement(block, 'Item', {'key': 'Not'})
+        inner = ET.SubElement(negation, 'Block', {'key': '#Value#'})
+        inner.append(item)
+        negated = ET.tostring(root, encoding='utf-8', xml_declaration=True)
+        self.assertEqual(filter_items(negated, 'long'), [])
+        self.assertEqual(contract_module.describe_rules(negated)['entries'][0]['entry_filters'], [])
+        built = mutations.build_variant(negated, [{'filter': 'hour_range', 'direction': 'long', 'from': 13, 'to': 24}])
+        self.assertEqual([i['block'] for i in filter_items(built['rules'], 'long')], ['BarHourIsBigger'])
+
+    def test_nonsense_combinations_are_rejected(self):
+        cases = {
+            'dos direcciones desactivadas': [{'filter': 'disable_direction', 'direction': 'long'}, {'filter': 'disable_direction', 'direction': 'short'}],
+            'salida sobre dirección desactivada': [{'filter': 'disable_direction', 'direction': 'short'}, {'direction': 'short', 'exit': 'stop_loss', 'value': '80'}],
+            'filtro sobre dirección desactivada': [{'filter': 'disable_direction', 'direction': 'long'}, {'filter': 'hour_range', 'direction': 'both', 'from': 8, 'to': 13}],
+            'claves mezcladas filtro+salida': [{'filter': 'hour_range', 'direction': 'long', 'from': 8, 'to': 13, 'exit': 'profit_target', 'value': '2.5'}],
+            'claves mezcladas salida+filtro': [{'direction': 'long', 'exit': 'profit_target', 'value': '2.5', 'from': 8, 'to': 13}],
+            'tres días laborables': [{'filter': 'exclude_weekdays', 'days': ['Mon', 'Tue', 'Wed']}],
+        }
+        for label, changes in cases.items():
+            with self.assertRaises(ValueError, msg=label):
+                mutations.build_variant(self.rules, changes)
+        disabled = mutations.build_variant(self.rules, [{'filter': 'disable_direction', 'direction': 'short'}])['rules']
+        with self.assertRaises(ValueError):
+            mutations.build_variant(disabled, [{'direction': 'short', 'exit': 'stop_loss', 'value': '80'}])
+        ok = mutations.build_variant(self.rules, [{'filter': 'exclude_weekdays', 'days': ['Sunday', 'Mon', 'Fri']}])
+        self.assertEqual(ok['changes'][0]['days'], ['Sunday', 'Monday', 'Friday'])
+
+    def test_boolean_true_in_conjunction_is_not_a_disabled_direction(self):
+        root = ET.fromstring(self.rules)
+        rule = mutations._entry_rule(root, 'short')
+        item = mutations.boolean_false_item()
+        item.find("Param[@key='#Value#']").text = 'true'
+        mutations._append_condition(rule, item)
+        with_true = ET.tostring(root, encoding='utf-8', xml_declaration=True)
+        self.assertEqual(filter_items(with_true, 'short'), [])
+        self.assertEqual(mutations.disabled_directions(with_true), set())
+        built = mutations.build_variant(with_true, [{'filter': 'disable_direction', 'direction': 'short'}])
+        self.assertEqual(mutations.disabled_directions(built['rules']), {'short'})
+
+
 class DebateVocabulary(unittest.TestCase):
     def test_dossier_offers_filters_and_hides_oos_segment_tables(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -199,10 +290,13 @@ class DebateVocabulary(unittest.TestCase):
             for table in debate.SEGMENT_TABLES:
                 self.assertNotIn(table, dossier['diagnosis']['samples']['OOS'])
             self.assertIn('segment_tables_hidden', dossier['diagnosis']['samples']['OOS'])
-            for finding in dossier['diagnosis']['findings']:
-                if finding['sample'] == 'OOS' and finding['code'] in debate.SEGMENT_FINDING_CODES:
-                    self.assertTrue(finding.get('segment_hidden'))
-                    self.assertNotIn('net', finding['evidence'])
+            oos_segments = [f for f in dossier['diagnosis']['findings'] if f['sample'] == 'OOS' and f['code'] in debate.SEGMENT_FINDING_CODES]
+            self.assertLessEqual(len(oos_segments), 1)
+            for finding in oos_segments:
+                self.assertTrue(finding.get('segment_hidden'))
+                self.assertEqual(set(finding['evidence']), {'segments_hidden'})
+            self.assertFalse([k for k in dossier['diagnosis']['samples']['OOS']['summary'] if k.startswith(('long_', 'short_'))])
+            self.assertTrue([k for k in dossier['diagnosis']['samples']['IS']['summary'] if k.startswith(('long_', 'short_'))])
 
     def test_filter_proposals_validate_and_flow_into_plan_and_registry_keys(self):
         rules = real_rules()

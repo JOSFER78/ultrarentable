@@ -160,15 +160,30 @@ FILTER_BLOCK_KEYS = ('BarHourIsBigger', 'BarHourIsSmaller', 'BarDayOfWeekIsNot',
 WEEKDAY_NAMES = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
 
 
+def conjunction_items(if_node):
+    """Condiciones de la conjunción del If (AND raíz y anidados); no entra en Not, OR ni comparaciones."""
+    def walk(item):
+        if item.get('key') == 'AND':
+            for block in item.findall('Block'):
+                for child in block.findall('Item'):
+                    yield from walk(child)
+        else:
+            yield item
+    if if_node is not None:
+        for child in if_node.findall('Item'):
+            yield from walk(child)
+
+
 def entry_filters(rule: ET.Element) -> list:
-    """Filtros de hora/día/dirección presentes en el If de una regla de entrada (legibles para el dosier)."""
+    """Filtros de hora/día/dirección activos en la conjunción del If de una regla de entrada (legibles para el dosier)."""
     found = []
-    if_node = rule.find('If')
-    for item in ([] if if_node is None else if_node.iter('Item')):
+    for item in conjunction_items(rule.find('If')):
         key = item.get('key')
         if key not in FILTER_BLOCK_KEYS:
             continue
         params = {p.get('key').strip('#'): (p.text or '').strip() for p in item.findall('Param') if p.get('key') != '#Chart#'}
+        if key == 'Boolean' and params.get('Value') != 'false':
+            continue
         entry = {'block': key, **params}
         if key == 'BarHourIsBigger':
             entry['meaning'] = f"hora de barra > {params.get('Hour')}"
