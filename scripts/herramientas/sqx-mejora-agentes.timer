@@ -1,9 +1,9 @@
 [Unit]
-Description=Ejecuta el motor de mejora con agentes cada hora (una estrategia, un experimento)
+Description=Ejecuta el motor de mejora con agentes cada 15 minutos (varios experimentos por ejecución, estrategias extraídas de SQX)
 
 [Timer]
 OnBootSec=5min
-OnUnitInactiveSec=1h
+OnUnitInactiveSec=15min
 Unit=sqx-mejora-agentes.service
 
 [Install]

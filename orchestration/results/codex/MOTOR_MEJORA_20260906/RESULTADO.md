@@ -359,6 +359,53 @@ Registro de la estrategia tras el ciclo: 13 variantes, 9 experimentos, cero cand
   con verificación de que solo cambia esa salida), porque es la hipótesis que los agentes más repiten y
   hoy no se puede recalcular.
 
+## 12. Fase 5 el mismo día: todas las estrategias extraídas, mejoradas todo lo posible (20:05–21:00 CEST)
+
+Emilio: *"la idea es que con las estrategias que tenemos extraídas de SQX, mejorarlas todo lo posible"*.
+
+**Inventario de lo extraído (VPS, 20:10 CEST).** El catálogo de la API en la VPS está vacío (0 estrategias en
+`/api/v2/candidates/censo`; las 7 686 "extraídas" y 735 candidatas viven en la base SQLite del PC, alimentada
+desde CSV de métricas, sin archivos `.sqx`). Los archivos reales están en la VPS:
+
+| Conjunto | Archivos | Datos | Veredicto para el motor |
+| --- | --- | --- | --- |
+| `fondeo/preseleccion/*/selected` (rondas r6–r7 del generador) | 125 únicas en 23 celdas (M6E, MCL, MES, MGC, MNQ, MYM × M1…H4) | 2023-01 → 2026-08-30; OOS desde 2025-12-06 (≈ 20 %); todos alias CFD salvo M6E | **Entran** (prioridad 1) |
+| `fondeo/entrega_fase5/strategies` (triaje de la fase 5, otro proceso) | 5 (MGC M1 y otras) | como arriba | **Entran** (prioridad 0) |
+| `Ultra_Matrix/databanks/ToImprove` | 2 034, todas AUDUSD H1 | OOS de tres días (decorativo) | No evaluable: fuera |
+| `export1`, bancos `artefactos/*` y `recovery_bank` | 20 000 por celda | bruto del generador | Fuera (no son extraídas) |
+
+**Qué cambió en el servicio (`sqx_improvement_service.py` v2).** Admisión desde las fuentes con procedencia y sin
+repetir archivos; reparto de cada ejecución entre varias estrategias (la menos atendida primero) con presupuesto
+de tiempo; presupuesto medido en experimentos sin progreso; linaje desde variantes aceptadas con evidencia OOS
+exigida creciente con la profundidad; temporizador cada 15 minutos con hasta 6 experimentos en 12 minutos.
+Detalle en `docs/Laboratorio/07_MOTOR_MEJORA_CICLO.md`. Pruebas: 8 nuevas (admisión, reparto, presupuesto de
+tiempo, progreso, linaje de tres generaciones, variante idéntica, evidencia por profundidad).
+
+**Rendimiento esperado.** Un experimento cuesta 80–100 s de debate por omnirouter más 25–70 s de recálculo (el
+generador de fondeo ocupa SQX al 440 % de CPU): unos 16–20 experimentos por hora, 130 estrategias × 3–4
+experimentos ≈ 1–1,5 días para la primera pasada completa, más los linajes.
+
+### Primera ejecución real con las extraídas (temporizador, 20:28–20:37 CEST)
+
+Al reiniciar el temporizador, systemd lanzó la unidad de inmediato (la ejecución manual quedó `SKIPPED` por el
+cerrojo, como debe ser). En 531 s: admisión de 125 archivos nuevos (cinco de la fase 5 coinciden por hash con
+la preselección, por eso 125 y no 130) y seis experimentos en seis estrategias distintas, sin fallos ni
+reconciliaciones; cola de 126 estrategias (119 en espera, 7 en curso), cero linajes todavía.
+
+| Estrategia (origen) | Variantes de los agentes (omnirouter) | Clases | Recálculo |
+| --- | --- | --- | --- |
+| 1.3.162 (fase 5) | 2 | REJECTED_WORSE, REJECTED_WORSE | 24 s |
+| 2.1.121 (fase 5) | 2 | HISTORICAL_FIT_ONLY, REJECTED_WORSE | 23 s |
+| 2.2.129 (fase 5) | 1 | INCONCLUSIVE | 24 s |
+| 3.1.132 (fase 5) | 2 | REJECTED_WORSE, REJECTED_WORSE | 25 s |
+| 3.7.186 (fase 5) | 1 | REJECTED_WORSE | 24 s |
+| 1.1.176 (preselección) | 2 | INCONCLUSIVE, NO_EFFECT_IN_SAMPLE | 20 s |
+
+Ritmo medido: 88 s por experimento con el generador de fondeo ocupando SQX; con el temporizador de 15 minutos,
+unos 24 experimentos por hora. Ninguna candidata en la primera pasada: es la primera vez que estas estrategias
+reciben hipótesis, y el registro ya impide repetirlas. Lo que sigue lo hace el servicio solo: primera pasada
+completa por las 126 en unas cinco horas, después segundas y terceras rondas, y linajes si algo progresa.
+
 ## 9 (antes). Siguiente paso más pequeño y útil
 
 La fase 2 (debate de agentes integrado, con hipótesis que se recalculan de verdad) quedó ejecutada

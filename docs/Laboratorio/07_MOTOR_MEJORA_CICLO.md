@@ -17,12 +17,38 @@ Cada programa tiene una responsabilidad y un contrato de ficheros; se puede modi
 | `sqx_native_improvement.py` | Recálculo nativo en SQX (motor existente): proyecto Retest dedicado, evidencia, órdenes | experimento preparado → `retest.csv`, `retested/*.sqx`, órdenes, `assessment.json` | cambie SQX o su CLI |
 | `sqx_variant_evaluation.py` | Política de evaluación: comparación emparejada por día, relevancia por destino, clases; criterios registrados antes | experimento recalculado + contrato + `criteria.json` → `evaluation.json` | cambien los criterios de aceptación o los destinos |
 | `sqx_improvement_cycle.py` | Orquestación de UN experimento y entrega: `dossier`, `prepare-local`, `run`, `evaluate`; paquete `entrega.json`; registro por estrategia | ficheros del ciclo → `entrega.json`, `improvement_registry/<reglas>.json` | cambie el formato de entrega o el registro |
-| `sqx_improvement_service.py` | Servicio autónomo: cola persistente, presupuesto por estrategia, reintentos limitados, reconciliación; una estrategia y un experimento por ejecución | `mejora/inbox/*.sqx` → `mejora/strategies/<slug>/ciclo_NN/`, `queue.json`, `status.json`, `outbox/` | cambie la política de presupuesto o de continuidad |
+| `sqx_improvement_service.py` | Servicio autónomo (v2): admisión desde las fuentes de estrategias extraídas, cola persistente, reparto de cada ejecución entre varias estrategias, presupuesto por falta de progreso, linaje desde variantes aceptadas con evidencia creciente, reintentos limitados | fuentes (`fondeo/entrega_fase5/strategies`, `fondeo/preseleccion/*/selected`) → `mejora/inbox/*.sqx` + `.json` → `mejora/strategies/<slug>/ciclo_NN/`, `queue.json`, `status.json`, `outbox/` | cambie qué fuentes se admiten, la política de presupuesto, de prioridad o de linaje |
 | `sqx_fixed_hypotheses_scaffold.py` | Andamio de hipótesis fijas SOLO para pruebas del mecanismo | — | nunca en producción (Emilio: los agentes piensan) |
 
-## Servicio autónomo en la VPS
+## Servicio autónomo en la VPS (v2, 2026-09-06: todas las extraídas, todo lo posible)
 
-`sqx-mejora-agentes.timer` ejecuta cada hora `sqx_improvement_service.py --once` (unidad `sqx-mejora-agentes.service`). Para encolar una estrategia: dejar su `.sqx` (y un `.json` opcional con procedencia y destino) en `/opt/SQX-headless/import/mejora/inbox/`. El servicio la contrata, exporta sus órdenes heredadas (o usa las del último recálculo), diagnostica, convoca el debate por el omnirouter, construye y verifica las variantes, recalcula en SQX, evalúa, registra y empaqueta. Estados por estrategia: `QUEUED` → `IN_PROGRESS` → `CANDIDATE_FOR_VALIDATION` (entrega copiada a `outbox/`) | `EXHAUSTED` (presupuesto de experimentos o debates vacíos agotado) | `NEEDS_ATTENTION` (fallo técnico repetido, con diagnóstico) | `REJECTED_INPUT` (contrato incompleto o archivo corrupto). `--inspect` muestra la cola; `status.json` la última ejecución. Comprobaciones previas: sin reclamación activa de recálculo, memoria y disco. El temporizador antiguo `sqx-improvement.timer` (recetas MYM/MNQ) sigue existiendo; ambos se excluyen por la reclamación del motor.
+Objetivo fijado por Emilio: *"con las estrategias que tenemos extraídas de SQX, mejorarlas todo lo posible"*. Las
+estrategias extraídas son las que el generador de fondeo (`m1_runner_sqx.py`) selecciona en cada ronda
+(`/opt/SQX-headless/import/fondeo/preseleccion/<celda>_r<N>_<fecha>/selected/*.sqx`; 125 únicas el 2026-09-06 en
+23 celdas de M6E, MCL, MES, MGC, MNQ y MYM; periodo 2023-01 → 2026-08-30 con OOS desde 2025-12-06) y las que la
+fase 5 de triaje entrega al motor (`fondeo/entrega_fase5/strategies/*.sqx`, prioridad más alta). Los bancos
+brutos de 20 000 estrategias, `export1` y el `ToImprove` de `Ultra_Matrix` (2 034 estrategias AUDUSD H1 con OOS
+de tres días, no evaluable) no entran. Excepto M6E, los datos de esas celdas son alias CFD de futuros
+(`known_proxy_alias` en el contrato): el cribado provisional de examen no es elegible y la relevancia la aporta
+el criterio Ultra (expectativa R, cola); queda anotado en cada entrada (`data_is_known_cfd_proxy`).
+
+`sqx-mejora-agentes.timer` ejecuta cada 15 minutos `sqx_improvement_service.py --once --max-experiments-per-run 6
+--time-budget-minutes 12`. Cada ejecución: (1) **admisión**: copia al inbox los `.sqx` nuevos de las fuentes con su
+procedencia (`origin`, celda, ronda, métricas de la selección); un archivo ya visto (mismo SHA-256) no vuelve a
+entrar y los orígenes no se tocan; (2) **reparto**: la estrategia activa de mayor prioridad y menos atendida
+primero, así todas avanzan en paralelo; un experimento por estrategia y ejecución, hasta agotar el tiempo; (3)
+**presupuesto por falta de progreso**: `max_experiments_without_progress` (3 seguidos sin ninguna clase
+`DEV_FAVORABLE_*`), `max_experiments` (6, tope duro), `max_empty_debates` (2), `max_failed_attempts` (2); (4)
+**linaje**: una variante `DEV_FAVORABLE_RELEVANT` se entrega a `outbox/` y además pasa a ser una estrategia hija
+(su `.sqx` recalculado como fuente, sus órdenes frescas como base, prioridad más alta, las variantes probadas por
+sus antecesoras en el dosier); la madre queda `IMPROVED_CONTINUED`. La evidencia OOS emparejada exigida crece con
+la profundidad (`required_oos_evidence`: MODERATE en las dos primeras generaciones, STRONG después; tope
+`max_lineage_depth` 3, y entonces `CANDIDATE_FOR_VALIDATION`), porque iterar sobre el mismo OOS de desarrollo
+aumenta el riesgo de descubrimiento falso. Estados: `QUEUED` → `IN_PROGRESS` → `IMPROVED_CONTINUED` |
+`CANDIDATE_FOR_VALIDATION` | `EXHAUSTED` | `NEEDS_ATTENTION` | `REJECTED_INPUT`. `--inspect` muestra la cola con
+resumen por estado y linajes; `status.json` la última ejecución (`runs`, `queue`). Comprobaciones previas por
+experimento: sin reclamación activa de recálculo, memoria y disco. Ninguna clase acredita rentabilidad: toda
+candidata exige validación con datos no consultados.
 
 ## Filtros de entrada (comprobados en SQX el 2026-09-06, 19:33–19:41 CEST)
 

@@ -183,6 +183,12 @@
       "fecha": "2026-09-06",
       "titulo": "Motor de mejora: filtros de hora, día y dirección comprobados en SQX",
       "detalle": "Vocabulario nuevo en sqx_variant_mutations.py (hour_range, exclude_weekdays, disable_direction) como bloques nativos de SQX en la regla de entrada, con verificación de alcance. Semántica medida con dos recálculos de mecanismo en la VPS: el filtro acota la barra de señal (rellenos en la hora siguiente) y no la orden pendiente. Dosier del debate sin tablas OOS por segmento. Nueve módulos iguales en PC y VPS; 187 pruebas. Pruebas de debate con la IA de Claude; el servicio sigue con omniroute. Ciclo 04 con debate de Claude: dos variantes recalculadas, ninguna candidata (13 variantes, 9 experimentos en el registro). Siguiente hueco: activar move_sl_to_be desde None."
+    },
+    {
+      "id": "motor-mejora-fase-5-todas-las-extraidas",
+      "fecha": "2026-09-06",
+      "titulo": "Motor de mejora: todas las estrategias extraídas de SQX, mejoradas todo lo posible",
+      "detalle": "Servicio v2 en la VPS: admite las 125 estrategias seleccionadas por el generador de fondeo y las 5 de la fase 5 (sin repetir archivos), reparte cada ejecución entre varias estrategias, mide el presupuesto en experimentos sin progreso y continúa desde cada variante aceptada como estrategia hija con evidencia OOS creciente. Temporizador cada 15 minutos, hasta 6 experimentos en 12 minutos. ToImprove (AUDUSD, OOS de 3 días) y bancos brutos quedan fuera."
     }
   ],
   "fase_activa": null,

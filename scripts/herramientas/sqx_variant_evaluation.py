@@ -229,10 +229,13 @@ def classify(variant_name: str, base_metrics: dict, var_metrics: dict, base_diag
         klass, reason = 'REJECTED_WORSE', 'Empeora las métricas de desarrollo.'
     elif is_v == 'BETTER' and oos_v == 'BETTER' or (oos_v == 'BETTER' and is_v == 'EQUIVALENT') or (is_v == 'BETTER' and oos_v == 'EQUIVALENT'):
         oos_strength = paired.get('OOS', paired).get('evidence_strength', paired.get('evidence_strength'))
-        if (fondeo_relevant or ultra_relevant) and oos_strength in ('MODERATE', 'STRONG'):
+        # La evidencia OOS exigida crece con la profundidad del linaje (criteria.required_oos_evidence):
+        # iterar sobre el mismo OOS de desarrollo aumenta el riesgo de descubrimiento falso.
+        acceptable = ('STRONG',) if criteria.get('required_oos_evidence') == 'STRONG' else ('MODERATE', 'STRONG')
+        if (fondeo_relevant or ultra_relevant) and oos_strength in acceptable:
             klass, reason = 'DEV_FAVORABLE_RELEVANT', 'Mejora en ambas muestras, relevante para un destino y con evidencia OOS por encima del ruido.'
         elif fondeo_relevant or ultra_relevant:
-            klass, reason = 'INCONCLUSIVE', f'Relevante para un destino pero la evidencia OOS emparejada es {oos_strength}: el intervalo incluye el cero o hay pocos días con cambio.'
+            klass, reason = 'INCONCLUSIVE', f'Relevante para un destino pero la evidencia OOS emparejada es {oos_strength} (exigida: {acceptable[0]}): el intervalo incluye el cero o hay pocos días con cambio.'
         elif fondeo_worse:
             klass, reason = 'INCONCLUSIVE', 'Mejora métricas generales pero empeora el cribado de examen.'
         else:
