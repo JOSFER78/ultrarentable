@@ -1,0 +1,67 @@
+{
+  "strategy": "Strategy 1.1.27_BASE",
+  "variants": {
+    "50815cf338080d36bd8619b53132cff582c0abb2f04da29c0aa456aeb2bfdea5": {
+      "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+      "class": "HISTORICAL_FIT_ONLY",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_prev_sl_20260906",
+      "utc": "2026-09-06T13:27:51.676257+00:00"
+    },
+    "2396b93ce57d3add54eed46643a977551e939d6c26cee4d9329e2b33cf311f95": {
+      "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+      "class": "INCONCLUSIVE",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_prev_sl_20260906",
+      "utc": "2026-09-06T13:27:51.676277+00:00"
+    },
+    "26c9cf96a0da79a89009cfb39de9d71bc9f919c7ea214be4a9f22ce25f147837": {
+      "hypothesis": "H_PT_NEAR",
+      "class": "INCONCLUSIVE",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_01",
+      "utc": "2026-09-06T13:27:53.362931+00:00"
+    },
+    "4ce066250877deb472f377ac19625d994b7c38e85b46244008c721dde5a8fd7c": {
+      "hypothesis": "H_TS_TIGHT",
+      "class": "INCONCLUSIVE",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_01",
+      "utc": "2026-09-06T13:27:53.362947+00:00"
+    }
+  },
+  "experiments": [
+    {
+      "project": "UR_IMPROVE_EW_SL_20260906",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_prev_sl_20260906",
+      "utc": "2026-09-06T13:15:39.707317+00:00",
+      "classes": {
+        "Strategy 1.1.27_EXIT90": "HISTORICAL_FIT_ONLY",
+        "Strategy 1.1.27_EXIT110": "INCONCLUSIVE"
+      }
+    },
+    {
+      "project": "UR_IMPROVE_CICLO_EW_20260906_01",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_01",
+      "utc": "2026-09-06T13:15:41.355382+00:00",
+      "classes": {
+        "Strategy 1.1.27_BASE_VPT_NEAR": "INCONCLUSIVE",
+        "Strategy 1.1.27_BASE_VTS_TIGHT": "INCONCLUSIVE"
+      }
+    },
+    {
+      "project": "UR_IMPROVE_EW_SL_20260906",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_prev_sl_20260906",
+      "utc": "2026-09-06T13:27:51.676283+00:00",
+      "classes": {
+        "Strategy 1.1.27_EXIT90": "HISTORICAL_FIT_ONLY",
+        "Strategy 1.1.27_EXIT110": "INCONCLUSIVE"
+      }
+    },
+    {
+      "project": "UR_IMPROVE_CICLO_EW_20260906_01",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_01",
+      "utc": "2026-09-06T13:27:53.362953+00:00",
+      "classes": {
+        "Strategy 1.1.27_BASE_VPT_NEAR": "INCONCLUSIVE",
+        "Strategy 1.1.27_BASE_VTS_TIGHT": "INCONCLUSIVE"
+      }
+    }
+  ]
+}

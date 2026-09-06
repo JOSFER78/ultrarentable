@@ -1,0 +1,247 @@
+{
+  "revision": 18,
+  "responsable": "Codex",
+  "etapa": "PREPARACION",
+  "idea": "Hacer funcionar Estrategias para buscar, crear, evaluar, mejorar y seleccionar estrategias reales útiles para exámenes de fondeo de una semana como máximo. El 20 % mensual sobre saldo nominal es orientativo.",
+  "preparacion": {
+    "titulo": "Cimientos: entender, sanear y organizar",
+    "criterio": "Contrastar el mapa de código y front, resolver las contradicciones y duplicidades identificadas y comprobar la base antes de iniciar la fase 00.",
+    "tareas": [
+      {
+        "id": "PREP-ARCHIVO",
+        "titulo": "Aparcar y guardar la orquestación Astra–AGY",
+        "estado": "VERIFICADO",
+        "evidencia": "Copia de 4.426 archivos con SHA256 y anexo de adaptadores en ASTRA&AGY/archivo-20260905-080057. MANIFIESTO.json, ANEXO_HOST.json y PARADA_VERIFICADA.json conservan la comprobación de copia y cancelación nativa del cron."
+      },
+      {
+        "id": "PREP-VISTA",
+        "titulo": "Corregir el seguimiento visible y separar el historial",
+        "estado": "VERIFICADO",
+        "evidencia": "Compilación correcta, 9 pruebas de fases y 12 de comentarios aprobadas; navegación de las nueve secciones y tablero comprobados en localhost. Registro: orchestration/results/codex/PLAN_ACTUAL_01/VERIFICACION.md."
+      },
+      {
+        "id": "PREP-MAPA",
+        "titulo": "Contrastar arquitectura, duplicidades y código antiguo",
+        "estado": "EN_CURSO",
+        "evidencia": "Fuentes del resumen y M2 contrastadas y conectadas; cabeceras comunes sin mediciones históricas. Queda contrastar contratos de clasificación y motores. docs/ESTRATEGIAS_FUENTES_ACTUALES.md."
+      },
+      {
+        "id": "PREP-BASE",
+        "titulo": "Sanear los cimientos y verificar código y front",
+        "estado": "PENDIENTE",
+        "evidencia": ""
+      },
+      {
+        "id": "PREP-ESTRATEGIAS-DATOS",
+        "titulo": "Estrategias: retirar cifras y éxitos fijos; distinguir datos ausentes",
+        "estado": "VERIFICADO",
+        "evidencia": "Compilación y tipos correctos; 735 registros reales observados y prueba de fallo de certificaciones en navegador sin falsos ceros. Alcance: resumen y contadores de navegación. Registro: orchestration/results/codex/PLAN_ACTUAL_01/ESTRATEGIAS_DATOS_01.md."
+      },
+      {
+        "id": "PREP-CENSO-CONEXION",
+        "titulo": "Unificar fuente del resumen y M2; actualizar cabeceras y errores",
+        "estado": "VERIFICADO",
+        "evidencia": "7 pruebas aprobadas, build correcto y navegador: resumen y M2 coinciden; error, conservación identificada y recuperación comprobados. Registro: orchestration/results/codex/CENSO_CONEXION_01/VERIFICACION.md."
+      },
+      {
+        "id": "PREP-BASELINE-Y-CONTROLES",
+        "titulo": "Corregir comparación de mejoras y aprobados sin ejecución independiente",
+        "estado": "VERIFICADO",
+        "evidencia": "Código corregido: baseline real utilizado, contrato explícito de diez controles y retirado el aprobado aritmético que se presentaba como Nautilus. 22 pruebas de contrato/evidencia y regresión independiente del selector aprobadas. No desplegado en la API ni rendimiento acreditado. orchestration/results/codex/GATES_BASELINE_01/VERIFICACION.md."
+      },
+      {
+        "id": "PREP-REPLAY-SQX",
+        "titulo": "Comprobar importación fiel y reproducción de una candidata SQX real",
+        "estado": "EN_CURSO",
+        "evidencia": "Importador corregido y 34 pruebas aprobadas: sizing efectivo, resultado Main y órdenes stop. Histórico exacto de 1.295.202 barras identificado como proxy XAUUSD, no futuros MGC. Próxima prueba nativa en SQX de la VPS alemana; sin replay ni rendimiento acreditados. orchestration/results/codex/SQX_SOURCE_RUNTIME_01/VERIFICACION.md."
+      },
+      {
+        "id": "PREP-API-RECUPERACION",
+        "titulo": "Desplegar web y API de Estrategias en Alemania",
+        "estado": "EN_CURSO",
+        "evidencia": "Aclaración de Emilio: runtime solo en Alemania, PC sin servicios; Oracle reservado para Hermes futuro. Inventario alemán: SQX, nginx y supervisor activos; falta checkout completo, entorno FastAPI/npm y servicios web/API. Cambios de contrato y build previo verificados; no equivalen a despliegue. Puente5051→5050 comprobado por NAT y GET200; no es avería. Se prepara despliegue aislado sin sobrescribir supervisor ni asumir que SQLite local sea autoridad remota."
+      }
+    ]
+  },
+  "bitacora": [
+    {
+      "id": "cambio-responsable",
+      "fecha": "2026-09-05",
+      "titulo": "Codex asume el desarrollo directamente",
+      "detalle": "Por indicación de Emilio se aparca la coordinación Astra–AGY. Se conserva su material para retomarlo después."
+    },
+    {
+      "id": "vista-actual",
+      "fecha": "2026-09-05",
+      "titulo": "Vista del plan comprobada en localhost",
+      "detalle": "Nueve secciones separadas, historial aparte, preparación antes de 00 y tablero por fase. Compilación correcta, 21 pruebas aprobadas y navegación comprobada en el navegador."
+    },
+    {
+      "id": "prioridad-estrategias",
+      "fecha": "2026-09-05",
+      "titulo": "Prioridad siguiente: Estrategias",
+      "detalle": "Emilio prioriza preparar y reparar la página de Estrategias. Se avisará al comenzar ese trabajo; los módulos no se dan por operativos."
+    },
+    {
+      "id": "inicio-estrategias",
+      "fecha": "2026-09-05",
+      "titulo": "Comienza la reparación de Estrategias",
+      "detalle": "Primera corrección acotada: contadores fijos, éxitos sin evidencia y respuesta visible cuando una fuente no está disponible. No cambia las reglas de validación ni acredita los motores."
+    },
+    {
+      "id": "aprendizaje-herramientas",
+      "fecha": "2026-09-05",
+      "titulo": "Aprender y comprobar cada herramienta antes de escalar",
+      "detalle": "Mandato de Emilio: reutilizar investigación previa, contrastar documentación oficial y probar un recorrido mínimo real de SQX, Nautilus o cualquier componente antes de uso intensivo. Procedimiento registrado en docs/APRENDIZAJE_HERRAMIENTAS.md."
+    },
+    {
+      "id": "primer-arreglo-estrategias",
+      "fecha": "2026-09-05",
+      "titulo": "Primera corrección de Estrategias comprobada",
+      "detalle": "Resumen y navegación sin cantidades fijas ni éxitos inventados. Consulta real y fallo aislado de certificaciones comprobados. Queda contrastar las fuentes del censo y el funcionamiento de cada módulo."
+    },
+    {
+      "id": "fuentes-estrategias",
+      "fecha": "2026-09-05",
+      "titulo": "Contraste del resumen y el censo M2",
+      "detalle": "Son fuentes distintas: candidatas evaluadas y estrategias SQX del censo. Se ha documentado la diferencia y el siguiente bloque de corrección de fuentes y cabeceras."
+    },
+    {
+      "id": "censo-conectado",
+      "fecha": "2026-09-05",
+      "titulo": "Resumen y M2 conectados al mismo censo",
+      "detalle": "Fuente compartida, cabeceras sin mediciones antiguas, actualización periódica y recuperación ante error comprobadas. No acredita el funcionamiento de los motores."
+    },
+    {
+      "id": "criterios-revisables",
+      "fecha": "2026-09-05",
+      "titulo": "El objetivo manda; herramientas y controles son revisables",
+      "detalle": "Emilio confirma diez controles actuales y aclara que nada es inamovible ni se presume comprobado. Mantener, cambiar, quitar o incorporar piezas según evidencia hacia estrategias de examen con objetivo de 20 % mensual. No convertir ese objetivo en rendimiento demostrado."
+    },
+    {
+      "id": "baseline-y-evidencia",
+      "fecha": "2026-09-05",
+      "titulo": "Corregidos selector de mejoras y falso aprobado Nautilus en el código",
+      "detalle": "La comparación conserva la original cuando la variante empeora. Dos rutas aprobaban con 536 PnL cerrados sin ejecutar Nautilus: regresión reproducida y aprobado retirado. Pendiente adaptador de reproducción independiente y despliegue controlado de la API."
+    },
+    {
+      "id": "sqx-source-runtime",
+      "fecha": "2026-09-05",
+      "titulo": "Fuente y configuración SQX comprobadas; reproducción en VPS pendiente",
+      "detalle": "Se corrigieron selecciones de sizing y resultados, conversiones silenciosas y pérdida de órdenes stop; 34 pruebas aprobadas. El histórico es XAUUSD usado como proxy MGC. Emilio confirma ejecución SQX en la VPS alemana; comprobación local cerrada. Nada se presume inamovible ni rentable."
+    },
+    {
+      "id": "objetivo-estrategias-semana",
+      "fecha": "2026-09-05",
+      "titulo": "Objetivo actualizado: solo Estrategias y exámenes de una semana",
+      "detalle": "20 % mensual nominal queda orientativo. Propuesta de cuatro fases en docs/PLAN_ESTRATEGIAS_PROPUESTO.md; fase00 pendiente de aprobación. Se conservan investigaciones y pruebas; otras páginas y operación de cuentas quedan fuera."
+    },
+    {
+      "id": "contrato-api-frontend-comprobado",
+      "fecha": "2026-09-05",
+      "titulo": "Contrato API y frontend coherentes; compilación aislada comprobada",
+      "detalle": "Retirado otro consumidor histórico de once controles; respuestas por ID y tabla alineada. Pruebas de contrato y build aprobados. Despliegue y arranque de API pendientes; no se acredita ninguna estrategia ni se inicia fase00."
+    },
+    {
+      "id": "autonomia-delegada-estrategias",
+      "fecha": "2026-09-05",
+      "titulo": "Emilio delega las decisiones para conseguir el objetivo",
+      "detalle": "Responde a la autorización pendiente: decide Codex. Se elige recuperar API sin workers, desplegar frontend corregido y ejecutar fase00 de una candidata trazable en SQX Alemania. Avance por fases comprobadas; sin trading real ni otros productos. La preparación sigue abierta hasta recuperar conexión."
+    },
+    {
+      "id": "runtime-alemania-exclusivo",
+      "fecha": "2026-09-05",
+      "titulo": "Runtime de Ultrarentable exclusivamente en Alemania",
+      "detalle": "Emilio excluye este PC como servidor y reserva Oracle para Hermes futuro. Se cancela petición de arranque local. Se corrige despliegue real de web/API/datos en Alemania reutilizando SQX/nginx y manteniendo preparación abierta hasta comprobar servicio."
+    },
+    {
+      "id": "plan-v6-bloques-e01-e09",
+      "fecha": "2026-09-05",
+      "titulo": "Fases del plan v6 generadas desde los bloques E01-E09",
+      "detalle": "Las fases de este seguimiento se generan con scripts/plan/sincronizar_plan_actual.py a partir de orchestration/state/plan/bloques/E??_*.md (fuente de verdad por fase) e índice en orchestration/state/plan_maestro.md. El plan v4 (F00-F11) queda en orchestration/state/archive/bloques_v4_2026-09-05 y sigue visible en /plan/historial. Las tareas E00-* pasan a E04 (fuentes SQX de extremo a extremo). plan_confirmado vuelve a false hasta que Emilio apruebe la fase E01."
+    },
+    {
+      "id": "motor-mejora-entrega-1",
+      "fecha": "2026-09-06",
+      "titulo": "Motor propio de mejora: primera entrega comprobada con Strategy 1.1.27 (@EW H1)",
+      "detalle": "Ciclo completo en la VPS: contrato de entrada, diagnóstico de órdenes, hipótesis pre-registradas, dos variantes reales recalculadas en SQX, comparación emparejada y entrega (entrega_ciclo_01.json). Ambas variantes INCONCLUSIVE, variante de metadatos rechazada antes de recalcular, experimento previo de stops reclasificado, referencia reproducida exactamente. Cero estrategias acreditadas para fondeo; sin muestra final reservada. Resultado y límites: orchestration/results/codex/MOTOR_MEJORA_20260906/RESULTADO.md; guía: docs/Laboratorio/07_MOTOR_MEJORA_CICLO.md. Rama motor-mejora-entrega-1."
+    }
+  ],
+  "fase_activa": null,
+  "plan_confirmado": false,
+  "fases": [
+    {
+      "numero": "00",
+      "titulo": "E01 · Datos y calendario CME con fidelidad medida por celda",
+      "objetivo": "Las 25 celdas (ES/NQ/YM/GC/CL × 1m/5m/15m/1h/4h) tienen en Hetzner dataset consolidado con SHA-256, calendario CME aplicado (trade_date, sesión, festivos) y ficha de fidelidad con veredicto; ninguna celda de 5m-4h está SIN_DATOS.",
+      "tareas": []
+    },
+    {
+      "numero": "01",
+      "titulo": "E02 · Motor realista (tick, cutoff, congelación al colchón, día CME) y particiones selladas con embargo",
+      "objetivo": "Motor con versión nueva (regla #26) que redondea a tick, aplica trade_date CME a DD/DLL, congela al colchón según política y ejecuta sobre particiones selladas IS/VAL/BLIND con embargo; verificacion_f02 --comparar entre versiones publica el diff de 15 celdas y el P&L baja al añadir fricción.",
+      "tareas": []
+    },
+    {
+      "numero": "02",
+      "titulo": "E03 · Suite única de puertas versionada (retira las otras cuatro)",
+      "objetivo": "Una sola implementación en services/validation/suite_v2 gobernada por contracts/gate_policy.py (GATE_SUITE_VERSION); DSR único; persistencia por mitades y embargo implementados; las cuatro suites paralelas en cuarentena con manifiesto; gates_router y el censo leen la suite única; el criterio 1.1 deja de ser inaprobable.",
+      "tareas": []
+    },
+    {
+      "numero": "03",
+      "titulo": "E04 · Fuentes: catálogo de familias propias + SQX en Hetzner cerrado de extremo a extremo",
+      "objetivo": "Una .sqx real preseleccionada en Hetzner recorre .sqx → StrategySpec → intérprete SQX_RULES del motor → suite v2 → ficha con hash, sin intervención manual; paridad con la réplica nativa de SQX dentro de tolerancia (operaciones ±2 %, PnL ±5 %); SQX sólo recibe IS+VAL; el catálogo de familias propias está conectado a la misma suite.",
+      "tareas": [
+        {
+          "id": "E00-VENTANA",
+          "titulo": "Comprobar una ventana segura y reanudable en SQX Alemania",
+          "estado": "PENDIENTE",
+          "evidencia": "Control actual del runner analizado; no tiene pausa segura entre celdas. Preparación en SQX_NATIVE_REPLAY_01/vps/CONTROLLED_WINDOW.md."
+        },
+        {
+          "id": "E00-REPLAY",
+          "titulo": "Reproducir una candidata con configuración y datos identificados",
+          "estado": "PENDIENTE",
+          "evidencia": "CFX nativo VPS preparado y revisado; no ejecutado. Histórico XAUUSD proxy identificado; no acredita futuros MGC."
+        },
+        {
+          "id": "E00-FICHA",
+          "titulo": "Conectar resultado, límites y pruebas con la ficha de Estrategias",
+          "estado": "PENDIENTE",
+          "evidencia": ""
+        }
+      ]
+    },
+    {
+      "numero": "04",
+      "titulo": "E05 · Motor 24 h: trabajador separado, cola durable y productores automáticos",
+      "objetivo": "ultrarentable-worker.service activo en Hetzner, separado de la API; un trabajo pesado a la vez bajo gobernanza_recursos; productores P1 (SQX), P2 (familias), P5 (datos) encolando solos; reanudación tras reinicio sin perder trabajos; /api/v2/motor24h/estado publica admisión, cola y última evidencia; techos systemd de SQX y del trabajador aplicados.",
+      "tareas": []
+    },
+    {
+      "numero": "05",
+      "titulo": "E06 · Examen v2 (bootstrap por días CME, plan de cuenta, P(pasar ≤ 5 d)) y catálogo único de firmas",
+      "objetivo": "examen_v2 expuesto en /api/v2/examen; bootstrap por bloques de trade_date con festivos excluidos; política de cuenta simulada (contratos por día, cutoff, congelación al colchón); salidas P(pasar ≤ 5 d), P(pasar ≤ 10 d), P(romper), días mediana/p90, P(romper 6 m) sobre la mediana; un solo catálogo de firmas (catalogo_firmas_v2) con las 11 discrepancias de I4 integradas; los otros cuatro catálogos en cuarentena; G11 conectada a la suite.",
+      "tareas": []
+    },
+    {
+      "numero": "06",
+      "titulo": "E07 · Mejora con agentes por OmniRoute y panel de IA por rol",
+      "objetivo": "Cliente único OpenAI-compatible (httpx, Bearer desde runtime.env) contra OmniRoute; cuatro roles (Analista, Proponente, Crítico, Redactor) con salida JSON validada; modelo por rol elegible en /perfil?tab=motores (pestaña IA) con presupuesto diario y consumo; trabajos MEJORAR que producen variantes re-arbitradas por el motor y contadas en DSR; los dos puentes antiguos y los bridges hardcodeados en cuarentena; ningún SDK de proveedor.",
+      "tareas": []
+    },
+    {
+      "numero": "07",
+      "titulo": "E08 · Re-prueba: forward sobre datos nuevos, banda esperada y deterioro",
+      "objetivo": "Trabajo REPROBAR nocturno para todo lo APTA_EXAMEN/VERIFICADA y inmediato al cambiar el motor; forward calculado sólo sobre datos posteriores al sellado; banda P5-P95 por bloques de 20 operaciones a partir del bootstrap de BLIND; estado DEGRADADA al romper la banda; LEGACY_MOTOR_x automático por regla #26; /api/v2/reprueba/{id} publica forward, banda y estado.",
+      "tareas": []
+    },
+    {
+      "numero": "08",
+      "titulo": "E09 · Web: /plan con bloques, /estrategias v2 (datos, fuentes, puertas, examen, mejora, verificadas, cartera), renombrados y limpieza",
+      "objetivo": "next build de producción sin errores; /plan muestra los bloques E01-E09 con estado, dependencias, verificación y decisiones; /plan/historial sigue mostrando el plan v4 desde el archivo; cada pantalla nueva de /estrategias sólo existe con su endpoint real detrás y muestra 'sin evidencia' donde no hay ficha; cero '?? 0' en /estrategias y /; duplicadas y huérfanas en cuarentena.",
+      "tareas": []
+    }
+  ]
+}

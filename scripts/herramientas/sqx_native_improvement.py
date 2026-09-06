@@ -219,7 +219,14 @@ def transplant_native_exits(original, candidate):
     return xml(base)
 
 
-def prepare(source, template, output, remote_dir, project, gid=None, expected=None, step=None, integer_contracts=False, precision=2, percent_pt_original=None, conservative_utc_session=False, session_end_utc=19, native_variants=None, funding_profile=None):
+def prepare(source, template, output, remote_dir, project, gid=None, expected=None, step=None, integer_contracts=False, precision=2, percent_pt_original=None, conservative_utc_session=False, session_end_utc=19, native_variants=None, funding_profile=None, custom_variants=None, hypothesis=None):
+    """Create control + variants and a dedicated Retest project.
+
+    custom_variants: optional {LABEL: strategy_Portfolio.xml bytes} prepared by
+    a reviewed mutation (sqx_variant_mutations). Labels are upper-case tokens;
+    each variant must differ from the control and from the others. It cannot be
+    combined with the fixed-exit or native-transplant recipes.
+    """
     if not re.fullmatch(r"UR_IMPROVE_[A-Z0-9_]+", project):
         raise ValueError("Dedicated improvement project name required")
     if not re.fullmatch(r"/opt/SQX-headless/import/[A-Za-z0-9_/-]+", remote_dir) or '..' in remote_dir:
@@ -241,7 +248,22 @@ def prepare(source, template, output, remote_dir, project, gid=None, expected=No
     base_name = settings.attrib["ResultName"]
     strategy_name = "strategy_Portfolio.xml"
     native_rules, native_sources = {}, []
-    if native_variants is not None:
+    if custom_variants is not None:
+        if native_variants is not None or any(v is not None for v in (gid, expected, step, percent_pt_original)):
+            raise ValueError('Custom variants cannot be combined with other recipes')
+        if not 1 <= len(custom_variants) <= 2:
+            raise ValueError('Custom comparison requires one or two variants')
+        for label, rules in custom_variants.items():
+            if not re.fullmatch(r'[A-Z][A-Z0-9_]{1,30}', label) or label == 'BASE':
+                raise ValueError(f'Invalid custom variant label: {label}')
+            if not isinstance(rules, bytes) or rules == original[strategy_name]:
+                raise ValueError(f'Custom variant {label} must be distinct strategy rules bytes')
+            ET.fromstring(rules)
+            native_rules[label] = rules
+        if len({sha(v) for v in native_rules.values()}) != len(native_rules):
+            raise ValueError('Duplicate custom variants')
+        exit_values = dict(BASE=None, **{name: None for name in native_rules})
+    elif native_variants is not None:
         if len(native_variants) not in (1, 2) or any(v is not None for v in (gid, expected, step, percent_pt_original)):
             raise ValueError('Native comparison requires one or two variants and no fixed mutation')
         for index, path in enumerate(native_variants, 1):
@@ -258,7 +280,7 @@ def prepare(source, template, output, remote_dir, project, gid=None, expected=No
     mutation_source = original[strategy_name]
     if percent_pt_original is not None:
         mutation_source = replace_reviewed_percent_pt(mutation_source, gid, percent_pt_original, expected)
-    if not native_variants:
+    if not native_variants and custom_variants is None:
         mutate_exit(mutation_source, gid, expected, expected)
     with zipfile.ZipFile(template) as archive:
         task = ET.fromstring(archive.read("Retest-Task1.xml"))
@@ -327,6 +349,9 @@ def prepare(source, template, output, remote_dir, project, gid=None, expected=No
     if native_variants:
         manifest.update(native_exit_sources=native_sources,
                         hypothesis='Transfer up to two native exit recipes to the unchanged original entry program and compare under identical fresh retest conditions. Native historical results are not reused.')
+    if custom_variants is not None:
+        manifest.update(recipe='custom_reviewed_mutation',
+                        hypothesis=hypothesis or 'Reviewed explicit rule mutation compared with the unchanged control under identical fresh retest conditions.')
     for label in exit_values:
         value = exit_values[label]
         name = f"{base_name}_{label}"
@@ -335,13 +360,13 @@ def prepare(source, template, output, remote_dir, project, gid=None, expected=No
         renamed.set("ResultName", name)
         payload["settings.xml"] = xml(renamed)
         if label != "BASE":
-            payload[strategy_name] = native_rules[label] if native_variants else mutate_exit(mutation_source, gid, expected, value)
+            payload[strategy_name] = native_rules[label] if (native_variants or custom_variants is not None) else mutate_exit(mutation_source, gid, expected, value)
         path = output / "input" / f"{name}.sqx"
         with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
             for key, data in payload.items():
                 archive.writestr(key, data)
         manifest["entries"].append({"name": name, "file": str(path.name), "exit_value": percent_pt_original if label == 'BASE' and percent_pt_original is not None else value,
-                                    "exit_unit": 'native_recipe' if native_variants else ('percent' if label == 'BASE' and percent_pt_original is not None else 'fixed'),
+                                    "exit_unit": 'native_recipe' if native_variants else 'custom_change' if custom_variants is not None else ('percent' if label == 'BASE' and percent_pt_original is not None else 'fixed'),
                                     "sha256": sha(path.read_bytes()),
                                     "rules_sha256": sha(payload[strategy_name])})
     config_path = output / "project.cfx"
@@ -653,7 +678,9 @@ def run_reviewed(manifest_path):
         with urllib.request.urlopen('http://127.0.0.1:5050/call?cmd=-project%20action=list', timeout=30) as response:
             projects = response.read().decode('utf-8')
         (root / 'projects_before.txt').write_text(projects, encoding='utf-8')
-        if project in projects:
+        # The list response may omit names (observed 2026-09-06); the project
+        # directory is the durable evidence that a name is already taken.
+        if project in projects or (Path('/opt/SQX-headless/user/projects') / project).exists():
             raise ValueError('Dedicated project already exists; reconcile before any load')
         command = f'-project action=loadconfig name={project} file={root}/project.cfx'
         with urllib.request.urlopen('http://127.0.0.1:5050/call?cmd=' + command.replace(' ', '%20'), timeout=30) as response:
@@ -705,11 +732,38 @@ def run_native(manifest_path, *, evidence_only=False):
         with urllib.request.urlopen('http://127.0.0.1:5050/call?cmd=' + cmd.replace(' ', '%20'), timeout=30) as response:
             return response.read().decode('utf-8')
     def count(bank, expected):
-        result = call(f'-databank action=count project={project} name={bank}')
-        match = re.search(r'Records:\s*(\d+)', result)
-        if not match or int(match[1]) != expected:
-            raise ValueError(f'{bank}: expected {expected} records; got {result}')
-        return result
+        # Right after loadconfig, SQX 144.2953 answers the first count with a
+        # file synchronization report ("Loaded N strategies to databank X")
+        # instead of "Records: N" (observed 2026-09-06). Both are native counts.
+        result = None
+        for attempt in range(2):
+            result = call(f'-databank action=count project={project} name={bank}')
+            match = (re.search(r'Records:\s*(\d+)', result)
+                     or re.search(rf'Loaded (\d+) strategies to databank {re.escape(bank)}\b', result))
+            if match:
+                if int(match[1]) != expected:
+                    raise ValueError(f'{bank}: expected {expected} records; got {result}')
+                return result
+            time.sleep(1)
+        # Since 12:02 CEST 2026-09-06 the installed SQX answers count/list without
+        # data lines at all. Export still works: count the exported rows instead
+        # and record that provenance in the evidence string (one Records: line).
+        probe = root / f'count_probe_{bank}.csv'
+        probe.unlink(missing_ok=True)
+        export = call(f'-databank action=export project={project} name={bank} file={probe}')
+        deadline, last_size = time.time() + 30, -1
+        while time.time() < deadline:
+            if probe.is_file() and probe.stat().st_size > 0 and probe.stat().st_size == last_size:
+                break
+            last_size = probe.stat().st_size if probe.is_file() else -1
+            time.sleep(1)
+        if not probe.is_file() or probe.stat().st_size == 0:
+            raise ValueError(f'{bank}: expected {expected} records; count unavailable and export failed: {result} / {export}')
+        rows = list(csv.DictReader(probe.read_text(encoding='utf-8-sig').splitlines(), delimiter=';'))
+        evidence = f'{result}[export-count fallback] file={probe.name} sha256={sha(probe.read_bytes())}\nRecords: {len(rows)}\n'
+        if len(rows) != expected:
+            raise ValueError(f'{bank}: expected {expected} records; got {evidence}')
+        return evidence
     count('Input', 0)
     count('RetestResults', 0)
     for entry in manifest['entries']:

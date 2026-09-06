@@ -1,0 +1,42 @@
+{
+  "schema": "ultrarentable.improvement_criteria.v1",
+  "development_samples": [
+    "IS",
+    "OOS"
+  ],
+  "note": "OOS es la muestra de desarrollo (se consulta para decidir). No existe prueba final reservada en el conjunto de datos actual; ver contract.period.",
+  "technical": {
+    "rules_must_change_semantically": true,
+    "orders_must_differ_in_at_least_one_sample": true,
+    "min_changed_days_for_conclusion": 5
+  },
+  "not_worse_tolerance": {
+    "net_profit_relative": 0.02,
+    "profit_factor_absolute": 0.03,
+    "ret_dd_relative": 0.05,
+    "note": "Diferencias dentro de la tolerancia se consideran equivalentes, no mejoras ni empeoramientos."
+  },
+  "evidence": {
+    "bootstrap_resamples": 4000,
+    "seed": 20260906,
+    "strong": "IC 90 % de la suma de deltas diarios OOS por encima de cero",
+    "moderate": "IC 80 % por encima de cero",
+    "weak": "media positiva sin IC por encima de cero"
+  },
+  "fondeo": {
+    "primary_scenario": "PROV_50K_OBJ6_TRAIL4",
+    "horizon_days": 5,
+    "relevant_target_rate_gain_pp": 5.0,
+    "max_breach_rate_increase_pp": 1.0,
+    "note": "Relevante si sube \u22655 puntos la tasa de objetivo a 5 d\u00edas en IS y OOS sin subir la ruptura m\u00e1s de 1 punto. Escenario provisional, no una empresa."
+  },
+  "ultra": {
+    "exploratory": true,
+    "min_expectancy_r_change": -0.02,
+    "relevant_tail_share_gain_pp": 5.0,
+    "relevant_mfe2r_gain_pp": 5.0,
+    "note": "Ultra en construcci\u00f3n: se mide convexidad (beneficio de operaciones \u22653R y frecuencia de MFE \u22652R). Exploratorio."
+  },
+  "registered_utc": "2026-09-06T13:07:45.783613+00:00",
+  "plan_sha256": "560f3fc3e9897a2f41c14f5b058c4125cab2ab045ce6a4594924d305dab1b8ae"
+}

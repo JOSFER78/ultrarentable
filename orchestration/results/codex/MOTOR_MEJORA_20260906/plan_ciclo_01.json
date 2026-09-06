@@ -1,0 +1,213 @@
+{
+  "schema": "ultrarentable.improvement_plan.v1",
+  "generated_utc": "2026-09-06T13:07:45.767051+00:00",
+  "strategy": "Strategy 1.1.27_BASE",
+  "semantic_rules_sha256": "85544c4be48b8589e6c1d32465634895c3d5aa6d365f6e142dae96acef22aa52",
+  "destinations": {
+    "fondeo": {
+      "evaluate": true,
+      "mode": "PROVISIONAL_SCENARIOS",
+      "reason": "Elegible para un cribado provisional de examen; la admisi\u00f3n real depende de las reglas fechadas de cada modalidad."
+    },
+    "ultra": {
+      "evaluate": true,
+      "mode": "EXPLORATORY",
+      "reason": "Criterios Ultra en construcci\u00f3n; cualquier evaluaci\u00f3n es exploratoria."
+    }
+  },
+  "findings_by_sample": {
+    "TIME_EXIT_DOMINATED": [
+      "IS",
+      "OOS"
+    ],
+    "PT_RARELY_HIT": [
+      "IS",
+      "OOS"
+    ],
+    "HIGH_GIVEBACK_FROM_MFE": [
+      "IS",
+      "OOS"
+    ],
+    "LOW_FREQUENCY_FOR_SHORT_EXAM": [
+      "IS",
+      "OOS"
+    ],
+    "LOW_EXAM_TARGET_RATE_5D": [
+      "IS",
+      "OOS"
+    ],
+    "SL_HIT_SHARE_HIGH": [
+      "OOS"
+    ],
+    "PROFIT_DEPENDS_ON_FEW_TRADES": [
+      "OOS"
+    ],
+    "LOSS_CONCENTRATED_SEGMENT": [
+      "OOS"
+    ]
+  },
+  "hypotheses": [
+    {
+      "id": "H_PT_NEAR",
+      "status": "PLANNED",
+      "support": {
+        "PT_RARELY_HIT": [
+          "IS",
+          "OOS"
+        ],
+        "HIGH_GIVEBACK_FROM_MFE": [
+          "IS",
+          "OOS"
+        ]
+      },
+      "title": "Acercar el objetivo de beneficio",
+      "problem": "El objetivo casi nunca se alcanza y se devuelve gran parte del recorrido favorable.",
+      "change": "Multiplicador ATR del objetivo \u00d7 0.6 en ambas direcciones.",
+      "expected": "M\u00e1s salidas por objetivo, menor devoluci\u00f3n, mayor tasa de acierto; riesgo de recortar las operaciones grandes.",
+      "destination_expectation": {
+        "fondeo": "sube la tasa de objetivo a 5 d\u00edas",
+        "ultra": "probablemente reduce la convexidad"
+      },
+      "requires": [
+        "PT_RARELY_HIT",
+        "HIGH_GIVEBACK_FROM_MFE"
+      ],
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "profit_target",
+          "value": "1.20",
+          "before": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "20"
+          },
+          "after": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "1.2",
+            "AtrPeriod": "20"
+          }
+        },
+        {
+          "direction": "short",
+          "exit": "profit_target",
+          "value": "1.44",
+          "before": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.4",
+            "AtrPeriod": "25"
+          },
+          "after": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "1.44",
+            "AtrPeriod": "25"
+          }
+        }
+      ],
+      "semantic_rules_sha256": "26c9cf96a0da79a89009cfb39de9d71bc9f919c7ea214be4a9f22ce25f147837",
+      "label": "VPT_NEAR"
+    },
+    {
+      "id": "H_TS_TIGHT",
+      "status": "PLANNED",
+      "support": {
+        "HIGH_GIVEBACK_FROM_MFE": [
+          "IS",
+          "OOS"
+        ]
+      },
+      "title": "Activar antes y ce\u00f1ir el stop din\u00e1mico",
+      "problem": "Las operaciones ganadoras devuelven una parte grande de su m\u00e1ximo recorrido favorable.",
+      "change": "Nivel de activaci\u00f3n del trailing \u00d7 0.5 y distancia del trailing \u00d7 0.5 en ambas direcciones.",
+      "expected": "Menor devoluci\u00f3n desde el MFE conservando las operaciones largas cuando la tendencia contin\u00faa.",
+      "destination_expectation": {
+        "fondeo": "menos d\u00edas perdedores tras un recorrido favorable",
+        "ultra": "conserva cola derecha con menor devoluci\u00f3n"
+      },
+      "requires": [
+        "HIGH_GIVEBACK_FROM_MFE"
+      ],
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "trailing_activation",
+          "value": "0.70",
+          "before": {
+            "formula": "SQ.Formulas.Range.ATRBasedValue",
+            "Value": "1.4",
+            "AtrPeriod": "105"
+          },
+          "after": {
+            "formula": "SQ.Formulas.Range.ATRBasedValue",
+            "Value": "0.7",
+            "AtrPeriod": "105"
+          }
+        },
+        {
+          "direction": "long",
+          "exit": "trailing_stop",
+          "value": "45.00",
+          "before": {
+            "formula": "SQ.Formulas.RangeLevel.FixedValue",
+            "Value": "90.0"
+          },
+          "after": {
+            "formula": "SQ.Formulas.RangeLevel.FixedValue",
+            "Value": "45.0"
+          }
+        },
+        {
+          "direction": "short",
+          "exit": "trailing_activation",
+          "value": "25.00",
+          "before": {
+            "formula": "SQ.Formulas.Range.FixedValue",
+            "Value": "50.0"
+          },
+          "after": {
+            "formula": "SQ.Formulas.Range.FixedValue",
+            "Value": "25.0"
+          }
+        },
+        {
+          "direction": "short",
+          "exit": "trailing_stop",
+          "value": "0.55",
+          "before": {
+            "formula": "SQ.Formulas.RangeLevel.ATRBasedValue",
+            "Value": "1.1",
+            "AtrPeriod": "50"
+          },
+          "after": {
+            "formula": "SQ.Formulas.RangeLevel.ATRBasedValue",
+            "Value": "0.55",
+            "AtrPeriod": "50"
+          }
+        }
+      ],
+      "semantic_rules_sha256": "4ce066250877deb472f377ac19625d994b7c38e85b46244008c721dde5a8fd7c",
+      "label": "VTS_TIGHT"
+    },
+    {
+      "id": "H_SL_TIGHT",
+      "status": "NOT_SUPPORTED_IN_BOTH_SAMPLES",
+      "support": {
+        "SL_HIT_SHARE_HIGH": [
+          "OOS"
+        ]
+      }
+    }
+  ],
+  "planned_labels": [
+    "VPT_NEAR",
+    "VTS_TIGHT"
+  ],
+  "unsupported_hypothesis_types": [
+    "Filtros de horario o d\u00eda (requieren a\u00f1adir bloques de condici\u00f3n; no implementado en esta versi\u00f3n).",
+    "Cambios de entrada (BarsValid, periodos de indicador): cambian la muestra de operaciones y exigen otra pol\u00edtica de comparaci\u00f3n."
+  ],
+  "budget": {
+    "max_variants_per_experiment": 2,
+    "max_experiments_this_phase": 2
+  }
+}

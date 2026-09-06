@@ -1,0 +1,459 @@
+{
+  "schema": "ultrarentable.improvement_delivery.v1",
+  "generated_utc": "2026-09-06T13:27:51.690418+00:00",
+  "strategy": {
+    "name": "Strategy 1.1.27_BASE",
+    "symbol": "@EW",
+    "timeframe": "H1",
+    "semantic_rules_sha256": "85544c4be48b8589e6c1d32465634895c3d5aa6d365f6e142dae96acef22aa52",
+    "contract_state": "CONTRACT_COMPLETE",
+    "data_provenance_state": "DECLARED_NOT_INDEPENDENTLY_VERIFIED"
+  },
+  "destinations": {
+    "fondeo": {
+      "evaluate": true,
+      "mode": "PROVISIONAL_SCENARIOS"
+    },
+    "ultra": {
+      "evaluate": true,
+      "mode": "EXPLORATORY"
+    }
+  },
+  "reference": {
+    "name": "Strategy 1.1.27_BASE",
+    "metrics": {
+      "IS": {
+        "net": 40503.0,
+        "profit_factor": 1.57,
+        "ret_dd": 2.19,
+        "trades": 173,
+        "drawdown": 18457.0,
+        "win_loss": 0.97
+      },
+      "OOS": {
+        "net": 7706.0,
+        "profit_factor": 1.32,
+        "ret_dd": 1.19,
+        "trades": 56,
+        "drawdown": 6501.0,
+        "win_loss": 0.87
+      }
+    },
+    "orders_sha256": "ede352e3c1db0af13f865554d268553a93b39ddeef2a21e5ae10d6ce20007b4a"
+  },
+  "findings": [
+    {
+      "code": "TIME_EXIT_DOMINATED",
+      "sample": "IS",
+      "severity": "medium",
+      "evidence": {
+        "share": 0.59,
+        "close_types": {
+          "EOD": 1,
+          "EOD_TIME": 101,
+          "PT": 13,
+          "SL": 58
+        }
+      },
+      "note": "La mayor\u00eda de las salidas las decide el reloj, no el objetivo ni el stop."
+    },
+    {
+      "code": "PT_RARELY_HIT",
+      "sample": "IS",
+      "severity": "medium",
+      "evidence": {
+        "pt_share": 0.075
+      },
+      "note": "El objetivo de beneficio casi nunca se alcanza: puede estar demasiado lejos."
+    },
+    {
+      "code": "LOW_FREQUENCY_FOR_SHORT_EXAM",
+      "sample": "IS",
+      "severity": "high",
+      "evidence": {
+        "trades_per_week": 1.106,
+        "share_of_days_with_trades": 0.1905,
+        "longest_gap_days": 29
+      },
+      "note": "Opera menos de uno de cada tres d\u00edas: en una ventana de 1\u20135 d\u00edas suele no haber oportunidad."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "IS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ6_TRAIL4",
+        "target_rate_5d": 0.0746,
+        "breach_rate_5d": 0.0861,
+        "windows": 778,
+        "disjoint_windows": 156
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "IS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ8_TRAIL5_DLL2",
+        "target_rate_5d": 0.0296,
+        "breach_rate_5d": 0.2198,
+        "windows": 778,
+        "disjoint_windows": 156
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    },
+    {
+      "code": "TIME_EXIT_DOMINATED",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "share": 0.536,
+        "close_types": {
+          "EOD_TIME": 30,
+          "PT": 5,
+          "SL": 21
+        }
+      },
+      "note": "La mayor\u00eda de las salidas las decide el reloj, no el objetivo ni el stop."
+    },
+    {
+      "code": "PT_RARELY_HIT",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "pt_share": 0.089
+      },
+      "note": "El objetivo de beneficio casi nunca se alcanza: puede estar demasiado lejos."
+    },
+    {
+      "code": "SL_HIT_SHARE_HIGH",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "sl_share": 0.375,
+        "sl_net": -20589.0
+      }
+    },
+    {
+      "code": "LOSERS_AFTER_FAVOURABLE_EXCURSION",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "losers_after_mfe_ge_1r": 7,
+        "share_of_losers": 0.2333
+      },
+      "note": "Una de cada cinco perdedoras o m\u00e1s lleg\u00f3 a estar 1R a favor antes de perder."
+    },
+    {
+      "code": "PROFIT_DEPENDS_ON_FEW_TRADES",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "net": 7706.0,
+        "net_without_top_3_winners": -1837.0
+      }
+    },
+    {
+      "code": "LOSS_CONCENTRATED_SEGMENT",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "dimension": "by_entry_hour_local",
+        "segment": "10",
+        "trades": 10,
+        "net": -2890.0
+      },
+      "note": "Un segmento identificable pierde de forma consistente."
+    },
+    {
+      "code": "LOSS_CONCENTRATED_SEGMENT",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "dimension": "by_weekday",
+        "segment": "1-Mon",
+        "trades": 11,
+        "net": -4149.0
+      },
+      "note": "Un segmento identificable pierde de forma consistente."
+    },
+    {
+      "code": "LOW_FREQUENCY_FOR_SHORT_EXAM",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "trades_per_week": 1.073,
+        "share_of_days_with_trades": 0.1801,
+        "longest_gap_days": 43
+      },
+      "note": "Opera menos de uno de cada tres d\u00edas: en una ventana de 1\u20135 d\u00edas suele no haber oportunidad."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ6_TRAIL4",
+        "target_rate_5d": 0.0311,
+        "breach_rate_5d": 0.0428,
+        "windows": 257,
+        "disjoint_windows": 52
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ8_TRAIL5_DLL2",
+        "target_rate_5d": 0.0233,
+        "breach_rate_5d": 0.2218,
+        "windows": 257,
+        "disjoint_windows": 52
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    }
+  ],
+  "hypotheses_tested": [
+    {
+      "id": "H_SL_PM10",
+      "status": "PLANNED",
+      "label": "EXIT90/EXIT110",
+      "title": "Stop largo \u00b110 % (experimento previo)"
+    }
+  ],
+  "hypotheses_not_tested": [],
+  "screened_candidates": [],
+  "variants": [
+    {
+      "name": "Strategy 1.1.27_EXIT90",
+      "class": "HISTORICAL_FIT_ONLY",
+      "reason": "Mejora o iguala en construcci\u00f3n pero empeora en desarrollo.",
+      "next_action": "Descartar: sobreajuste probable. No optimizar sobre el OOS.",
+      "development": {
+        "IS": "BETTER",
+        "OOS": "WORSE"
+      },
+      "oos_evidence": "NONE",
+      "destinations": {
+        "fondeo": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "target_rate_base": 0.0746,
+              "target_rate_variant": 0.0746,
+              "delta_target_pp": 0.0,
+              "breach_rate_base": 0.0861,
+              "breach_rate_variant": 0.0874,
+              "delta_breach_pp": 0.13
+            },
+            "OOS": {
+              "available": true,
+              "target_rate_base": 0.0311,
+              "target_rate_variant": 0.0311,
+              "delta_target_pp": 0.0,
+              "breach_rate_base": 0.0428,
+              "breach_rate_variant": 0.0623,
+              "delta_breach_pp": 1.95
+            }
+          }
+        },
+        "ultra": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "delta_expectancy_r": -0.0023,
+              "delta_tail_share_pp": 0.2,
+              "delta_mfe2r_pp": -0.78,
+              "skewness_base": 0.8332,
+              "skewness_variant": 0.8738
+            },
+            "OOS": {
+              "available": true,
+              "delta_expectancy_r": -0.0276,
+              "delta_tail_share_pp": 0.0,
+              "delta_mfe2r_pp": -1.27,
+              "skewness_base": 1.1554,
+              "skewness_variant": 1.2651
+            }
+          }
+        }
+      },
+      "metrics": {
+        "IS": {
+          "net": 40585.0,
+          "profit_factor": 1.58,
+          "ret_dd": 2.4,
+          "trades": 175,
+          "drawdown": 16927.0,
+          "win_loss": 0.94
+        },
+        "OOS": {
+          "net": 6619.0,
+          "profit_factor": 1.27,
+          "ret_dd": 0.93,
+          "trades": 59,
+          "drawdown": 7102.0,
+          "win_loss": 0.79
+        }
+      }
+    },
+    {
+      "name": "Strategy 1.1.27_EXIT110",
+      "class": "INCONCLUSIVE",
+      "reason": "Resultado mixto (IS WORSE, OOS BETTER).",
+      "next_action": "No concluir; una nueva muestra o m\u00e1s operaciones podr\u00edan decidir. No ajustar sobre OOS.",
+      "development": {
+        "IS": "WORSE",
+        "OOS": "BETTER"
+      },
+      "oos_evidence": "WEAK",
+      "destinations": {
+        "fondeo": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "target_rate_base": 0.0746,
+              "target_rate_variant": 0.0681,
+              "delta_target_pp": -0.65,
+              "breach_rate_base": 0.0861,
+              "breach_rate_variant": 0.0874,
+              "delta_breach_pp": 0.13
+            },
+            "OOS": {
+              "available": true,
+              "target_rate_base": 0.0311,
+              "target_rate_variant": 0.0389,
+              "delta_target_pp": 0.78,
+              "breach_rate_base": 0.0428,
+              "breach_rate_variant": 0.0506,
+              "delta_breach_pp": 0.78
+            }
+          }
+        },
+        "ultra": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "delta_expectancy_r": -0.0114,
+              "delta_tail_share_pp": 0.04,
+              "delta_mfe2r_pp": -0.48,
+              "skewness_base": 0.8332,
+              "skewness_variant": 0.8051
+            },
+            "OOS": {
+              "available": true,
+              "delta_expectancy_r": 0.0183,
+              "delta_tail_share_pp": -0.19,
+              "delta_mfe2r_pp": 0.45,
+              "skewness_base": 1.1554,
+              "skewness_variant": 1.0764
+            }
+          }
+        }
+      },
+      "metrics": {
+        "IS": {
+          "net": 38522.0,
+          "profit_factor": 1.53,
+          "ret_dd": 1.91,
+          "trades": 172,
+          "drawdown": 20127.0,
+          "win_loss": 0.98
+        },
+        "OOS": {
+          "net": 8485.0,
+          "profit_factor": 1.37,
+          "ret_dd": 1.24,
+          "trades": 55,
+          "drawdown": 6821.0,
+          "win_loss": 0.96
+        }
+      }
+    }
+  ],
+  "accepted_for_validation": [],
+  "consumed_evidence": {
+    "period": {
+      "from": "2022.01.03",
+      "to": "2025.12.31"
+    },
+    "development_oos_ranges": [
+      {
+        "from": "2025.01.01",
+        "to": "2025.12.31"
+      }
+    ],
+    "samples": {
+      "IS": {
+        "from": "2022-01-03",
+        "to": "2024-12-31",
+        "weekdays": 782
+      },
+      "OOS": {
+        "from": "2025-01-01",
+        "to": "2025-12-31",
+        "weekdays": 261
+      }
+    },
+    "reserved_final_sample": null,
+    "note": "No hay muestra final reservada en los datos actuales; cualquier validaci\u00f3n independiente exige datos no consultados."
+  },
+  "cost": {
+    "wall_seconds_total": null,
+    "native_task_seconds": 24,
+    "strategies_retested": 3,
+    "measured_utc": "2026-09-06T10:02:25+00:00",
+    "note": "experimento previo (12:02 CEST); coste nativo tomado del registro"
+  },
+  "evidence_files": {
+    "contract.json": "731835f025487f4ae684ce0c9a9792948e57595f53559304a15809388a62f03c",
+    "criteria.json": "12254a70dcc0651e94c5744c0b624536b62bfc710114352f5be571d4c9d6e770",
+    "diagnosis_EXIT110.json": "f2ee5b69f9756f4c63dd46e43532894b98b28a84ec837710c2059c7fdc23d0ff",
+    "diagnosis_EXIT90.json": "67e04e17ae9d18a0ce5183dcfa49a407b05a0a45a58c4df2e7bbd848ce712561",
+    "diagnosis_base_fresh.json": "6fbbcd5a88cdc57edb82768022fdfcc00113d4d98f8b89d00fa7ddab7e51bb24",
+    "evaluate_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evaluate_stdout.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evaluation.json": "a6ee4714e603caab8ca26ec143cc00299e8a3203943c47c616b179ab3338ea54",
+    "experiment/Strategy 1.1.27_BASE_orders.csv": "ede352e3c1db0af13f865554d268553a93b39ddeef2a21e5ae10d6ce20007b4a",
+    "experiment/Strategy 1.1.27_EXIT110_orders.csv": "a8e38013758490f9ec46808a13733cac97bc1b376543db09831e43eb38f097e8",
+    "experiment/Strategy 1.1.27_EXIT90_orders.csv": "5c92ac0ab7d4f0527845409f119269d380f1c8013e9a526ca3c367d540c79714",
+    "experiment/assessment.json": "6bee18c2054a21b93f5dec41a70d802d572b92d87862c0601ac96702375f1d13",
+    "experiment/collect.cli": "eb320b14b99f3b76e18f9225269eea933dbce409149099dacb17fb0412bebe49",
+    "experiment/collect_response.txt": "a80dbad22fc0dc2bef6d66589e95e38c4c28fa030c8755d641f2dbad07515c57",
+    "experiment/comparison.json": "5f02ac5342be4be06998612cf4e6f8c7119945ed425a1013dfb06fa6fe833fa0",
+    "experiment/cost.json": "cf3d84d4ee77a247ba6ef5c0dd93462c7d3fe309abb6d542bbac84967d378825",
+    "experiment/import.cli": "98d75e81ce7c84608306f2399145718646bac318c7bb6d5c99348e575ccd2c51",
+    "experiment/import_response.txt": "cbdaf70fba3f9316c94bcd099f593820876a4eff2dfa86d09b3ca58c7f45dc86",
+    "experiment/input/Strategy 1.1.27_BASE.sqx": "041456eee69174aff01b4ff4b636f0cb99f482ca8f8d94aa3cec671aa82943c6",
+    "experiment/input/Strategy 1.1.27_EXIT110.sqx": "7280a38b7053a44b12541d41f5820c9f5f82eb34d641f6a2bb7dc9d37a67aa15",
+    "experiment/input/Strategy 1.1.27_EXIT90.sqx": "3a674efad96f811034bafb185e06106631ff177f673977dc139c62cdab4607f0",
+    "experiment/load.cli": "f68ca2c412a9c74111650ac06d2f8cfc9a01a2e23f7e10dabd0c951bf479d8a8",
+    "experiment/load_response.txt": "2012eec22db421dd967aba414a9d6532ab5311db4e7315f233056ded2641884a",
+    "experiment/manifest.json": "20691cbe9eb1dbb47452def73a768be66a458537290575d2ee6d51acc942b5c0",
+    "experiment/native_retest.log": "cbf09dfd9473a72318bf053904d12e3c6b6ef9fd4f6fe7739f4cb5946fec6206",
+    "experiment/orders_diagnostic.json": "a4e5c1f23f90bd6677512802409ff7ad6d1ed6c39a0ae0895d6b838ffd0aa791",
+    "experiment/orders_export.json": "524fb73677f52274fbc8d2450417d5ca3b379004b47fc0a1a750322721dc22fe",
+    "experiment/project.cfx": "d2648f40eddaf41fa32a660c27413b58c2892c5dc3ce2403881449f4cbc10805",
+    "experiment/projects_before.txt": "1b46696707d1330e47337f923316cb8434c00ba7fdd94b47f9d38e211981b210",
+    "experiment/retest.csv": "f5e59cd5cd2b488f039bf06e9dbb8bd180da76ec232709ecdbce733c11bd04bf",
+    "experiment/retested/Strategy 1.1.27_BASE.sqx": "c2772610e33f187b391c3ec667026917eafb5e584ec256ef4d961639207e0e5e",
+    "experiment/retested/Strategy 1.1.27_EXIT110.sqx": "98ec44fbe6db7ddd0e8a0fd3692bd4b97a3150a9ae7df0762276c9df91dc07e8",
+    "experiment/retested/Strategy 1.1.27_EXIT90.sqx": "28f0b6f5977cd8ea6e59908b6d2ee83967da6b00e74854c5bce305068c47b144",
+    "experiment/verified_start.json": "596312877b6cdc6417d4105677c2dec65a3c4e2f425ed9db077098ff8ab619f0",
+    "plan.json": "9316b1b68febe1ab9132827db9f57b085e155e7d69e51bcc77e5c447d21f07a1"
+  },
+  "validated": false,
+  "levels": {
+    "mechanism_works": true,
+    "useful_progress": false,
+    "candidate_for_validation": false,
+    "validated_result": false
+  }
+}
