@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-09-05T23:22:35.316850+00:00",
+  "engine_sha256": "f16a95bfd525ee97286b6b5fad725d71d2a8f0199aff74879150cbc052e71b4b",
+  "backup_sha256": "370eb1cb86ee59346b97c86cb7d52c91edec79a2869afc1b2e90756639ddacc8",
+  "assessment_state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "decisions": [
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Baseline: Insufficient OOS trades",
+        "Variant: Insufficient OOS trades",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Worse Ret/DD Ratio OOS"
+      ],
+      "incompatible_orders": {
+        "IS": 1,
+        "OOS": 0
+      },
+      "orders_sha256": "c6d920fd3684e4fbaef2038f520a9dc8a3634a1dfc1b5d123c36b61227cc6aa3",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Baseline: Insufficient OOS trades",
+        "Variant: Insufficient OOS trades"
+      ],
+      "incompatible_orders": {
+        "IS": 1,
+        "OOS": 0
+      },
+      "orders_sha256": "92d20d6580e5e7f044f51876324530f855292c7bd18d8950005f583f260b156c",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "funding_windows_sha256": "acb429491c2f5dfed1a0f684c6b34967efac05431ecbd33e382327297ff68ab2",
+  "services": {
+    "m1-runner": "active",
+    "sqx-headless": "active",
+    "ultrarentable-supervisor": "active"
+  },
+  "runner_tail": [
+    "2026-09-05 22:14:33 UTC  --- arranco FONDEO_M6E_M15 (ronda 6)",
+    "2026-09-05 22:24:38 UTC    FONDEO_M6E_M15: 9 min. 58 s., 12347 generadas, 17 en banco, 74329/h",
+    "2026-09-05 22:35:07 UTC    FONDEO_M6E_M15: 20 min. 33 s., 25906 generadas, 331 en banco, 75631/h",
+    "2026-09-05 22:45:07 UTC    FONDEO_M6E_M15: 30 min. 33 s., 40123 generadas, 717 en banco, 78797/h",
+    "2026-09-05 22:55:25 UTC    FONDEO_M6E_M15: 40 min. 45 s., 53498 generadas, 801 en banco, 78775/h",
+    "2026-09-05 23:04:46 UTC    FONDEO_M6E_M15: 50 min. 12 s., 65060 generadas, 1106 en banco, 77764/h",
+    "2026-09-05 23:14:46 UTC    FONDEO_M6E_M15: 1 hr., 76897 generadas, 1629 en banco, 76643/h",
+    "2026-09-05 23:17:46 UTC    FONDEO_M6E_M15: alcanzado el tope duro (63 min); la paro yo",
+    "2026-09-05 23:20:26 UTC    FONDEO_M6E_M15: 5 preseleccionadas de 1711; 8 superan filtro preliminar; NO VALIDADAS",
+    "2026-09-05 23:20:26 UTC    FONDEO_M6E_M15: conservo banco en VPS y libero memoria tras verificar copia",
+    "2026-09-05 23:20:53 UTC  === FONDEO_M6E_M15 HECHA \u00b7 5 preseleccionadas \u00b7 memoria RELEASED ===",
+    "2026-09-05 23:20:53 UTC  --- arranco FONDEO_MCL_M15 (ronda 6)"
+  ]
+}

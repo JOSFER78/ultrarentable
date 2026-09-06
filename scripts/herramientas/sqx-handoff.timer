@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh SQX research handoff every two minutes
+
+[Timer]
+OnBootSec=90s
+OnUnitInactiveSec=2min
+Unit=sqx-handoff.service
+
+[Install]
+WantedBy=timers.target

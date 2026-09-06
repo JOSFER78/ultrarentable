@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_H4_20260906_15",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "DIAGNOSTIC_NOT_FUNDING_EVIDENCE",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Same BASE: unchanged, lower date bound, upper date bound",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "5",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE_CONTROL",
+      "file": "Strategy 3.3.135_BASE_CONTROL.sqx",
+      "arm": "CONTROL",
+      "gate_dates": null,
+      "rules_sha256": "4f28d27cb7f437a54a8ba0cf7b5dbd14ac7fba7dea7170884c7240a99d2f9f40",
+      "sha256": "e331a26857c436a258ff149e6001287699ec39de31fd016e18db421e5fb35dc0"
+    },
+    {
+      "name": "Strategy 3.3.135_BASE_LOWER",
+      "file": "Strategy 3.3.135_BASE_LOWER.sqx",
+      "arm": "LOWER",
+      "gate_dates": [
+        "2026-05-04",
+        "2100-12-31"
+      ],
+      "rules_sha256": "bfc7bcfa0729b68ecbae54ec6a2383840a0234f168282b11fd65ceec0e93107f",
+      "sha256": "cb2c252ef5c90f48bbdeab45d5dc6a47aa72a5b5c3e04bc0bb2650183fa89f1b"
+    },
+    {
+      "name": "Strategy 3.3.135_BASE_UPPER",
+      "file": "Strategy 3.3.135_BASE_UPPER.sqx",
+      "arm": "UPPER",
+      "gate_dates": [
+        "1900-01-01",
+        "2026-05-08"
+      ],
+      "rules_sha256": "76b2f1328b42add71358c8b0e6f62cac467addd5ebd274366ecb9cc814cdff8c",
+      "sha256": "be9662ce68dab02e1293eed30db097c4f146b16fa3d8fcc32e5c8098f2456039"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "session_experiment": {
+    "params": {
+      "LimitTimeRange": "true",
+      "SignalTimeRangeFrom": "0",
+      "SignalTimeRangeTo": "57600",
+      "ExitAtEndOfRange": "true",
+      "OrderTypeToExit": "0",
+      "DontTradeOnWeekends": "true",
+      "FridayCloseTime": "57600",
+      "SundayOpenTime": "82800",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "57600"
+    },
+    "timezone": "Etc/UTC",
+    "scope": "All three retests including BASE use the changed session; BASE is not the unrestricted original.",
+    "limitations": "Conservative UTC 00:00-16:00; native TS exits depend on bar close. Check actual orders, holidays and early closes separately."
+  },
+  "config_sha256": "72b868bc29c88bc8324b5badc2958f86bbc561f6e3753b17decc81e439e10398",
+  "source_input_sha256": "466a552db5692c20660f1c2612ef6ba2da7c50c48540461b366f3cb1c26c79f6"
+}

@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_H4_20260906_17",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_FRESH_ACCOUNT_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "5",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": "315",
+      "exit_unit": "fixed",
+      "sha256": "9e6d82651da7c5c2368e32ba1d2349c76b3496d6fd60732088bb4728e4db5fda",
+      "rules_sha256": "27552ad4c8805b07567a403b3884b35a258e42c31e256519c7125f73ff8a150b",
+      "parent_input_sha256": "466a552db5692c20660f1c2612ef6ba2da7c50c48540461b366f3cb1c26c79f6"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "file": "Strategy 3.3.135_EXIT90.sqx",
+      "exit_value": "285",
+      "exit_unit": "fixed",
+      "sha256": "d3a2193d7fe101031888f7e7ef3aa3bbd6e4aebe8de6a6a4cd79c4a983c16ee0",
+      "rules_sha256": "500b3f1894f0e9b126991f9aa267189bb80d3b259ee46dc9656f570a2fb74b5b",
+      "parent_input_sha256": "674617c98e9ae715a4385bb7d0599850b90aa8a837586af4ac5d230f4f16e09a"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "file": "Strategy 3.3.135_EXIT110.sqx",
+      "exit_value": "345",
+      "exit_unit": "fixed",
+      "sha256": "3b0a43638458b9f851d3ed77067511c9addad2a89d473fdb1a0fa44b969a798c",
+      "rules_sha256": "e11950430c1896fed66586a518e7e7cee1c2ceb81e4eb307fb14c65e55181dea",
+      "parent_input_sha256": "e1f159586b602ba1264c5119500ffc7c36483d1e1d68469d1cc6457be8857327"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "session_experiment": {
+    "params": {
+      "LimitTimeRange": "true",
+      "SignalTimeRangeFrom": "0",
+      "SignalTimeRangeTo": "57600",
+      "ExitAtEndOfRange": "true",
+      "OrderTypeToExit": "0",
+      "DontTradeOnWeekends": "true",
+      "FridayCloseTime": "57600",
+      "SundayOpenTime": "82800",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "57600"
+    },
+    "timezone": "Etc/UTC",
+    "scope": "All three retests including BASE use the changed session; BASE is not the unrestricted original.",
+    "limitations": "Conservative UTC 00:00-16:00; native TS exits depend on bar close. Check actual orders, holidays and early closes separately."
+  },
+  "config_sha256": "3d007e518c9d034411f86a90a9a1e99b32617fb4b029b3f164f423303c4610e2",
+  "fresh_attempt": {
+    "start": "2026-05-04",
+    "end": "2026-05-08",
+    "initial_capital": "50000",
+    "parent_manifest_sha256": "542d3f2c672dc91f9011ad7563c806d6d3eaf71b74d15d5fff22110c966a4fb7",
+    "parent_project": "UR_IMPROVE_MNQ_H4_20260906_10",
+    "selection": "Known development window; diagnostic, not held-out evidence",
+    "strategy_rules_changed": true,
+    "warmup_start": "2023-01-02",
+    "entry_gate": "NATIVE_BAR_DATE_INCLUSIVE",
+    "date_source": "BarDate",
+    "date_encoding": "NATIVE_GET_DATE"
+  }
+}

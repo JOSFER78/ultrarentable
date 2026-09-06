@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MYM_H1_20260905_07",
+  "source_name": "Strategy 4.41.106",
+  "source_sha256": "0eabe05f4ea8acb099e689939edf1c303b01001a814338b7fdcfdae64d7d3c41",
+  "source_rules_sha256": "a5295ad359b38d2fda949047fc3be7be6362245e02d2485f562d0cee0a7194d4",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Keep original percent PT control; test two fixed-distance PT alternatives with unchanged initial stop protection. This changes the strategy and is not an equivalent conversion.",
+  "max_variants": 2,
+  "gid": "6e83a3f7-8cd0-4b90-97d3-515a11283a6e",
+  "exit_unit_step": "1",
+  "entries": [
+    {
+      "name": "Strategy 4.41.106_BASE",
+      "file": "Strategy 4.41.106_BASE.sqx",
+      "exit_value": "0.9",
+      "exit_unit": "percent",
+      "sha256": "a0063b403ae8d8996022cc75316467e65ee6b2c290369cd9e818a49e9442bd10",
+      "rules_sha256": "a5295ad359b38d2fda949047fc3be7be6362245e02d2485f562d0cee0a7194d4"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "file": "Strategy 4.41.106_EXIT90.sqx",
+      "exit_value": "270",
+      "exit_unit": "fixed",
+      "sha256": "64b46686c4496228ba78c513fb1cf5ed9e2ee272021ccbf9f34c816854cca0b7",
+      "rules_sha256": "091babadf64b6b918535ac001737c4a5f3c9f047c1252dd2cb756637ee304013"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "file": "Strategy 4.41.106_EXIT110.sqx",
+      "exit_value": "330",
+      "exit_unit": "fixed",
+      "sha256": "f7b4b1297c3ea90522e1e7871c83e9d17b58892620a41e300eed8b2d7d1ca4e5",
+      "rules_sha256": "136bbf13c3f52c108a99064ed68ec10ec183ba464b2335ec2234f668d04e9778"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "percent_pt_replacement": {
+    "original_percent": "0.9",
+    "fixed_center_points": "300"
+  },
+  "session_experiment": {
+    "params": {
+      "LimitTimeRange": "true",
+      "SignalTimeRangeFrom": "0",
+      "SignalTimeRangeTo": "68400",
+      "ExitAtEndOfRange": "true",
+      "OrderTypeToExit": "0",
+      "DontTradeOnWeekends": "true",
+      "FridayCloseTime": "68400",
+      "SundayOpenTime": "82800",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "68400"
+    },
+    "timezone": "Etc/UTC",
+    "scope": "All three retests including BASE use the changed session; BASE is not the unrestricted original.",
+    "limitations": "Conservative UTC 00:00-19:00; native TS exits depend on bar close. Check actual orders, holidays and early closes separately."
+  },
+  "config_sha256": "cdd52d84b7807e0b05b98293f2c33a9956d2c07b04861135699add2abaef556a"
+}

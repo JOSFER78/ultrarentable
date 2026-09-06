@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "state": "NATIVE_COMPARISON_NOT_FUNDING_CERTIFICATION",
+  "project": "UR_IMPROVE_MYM_H1_20260905_02",
+  "metrics_sha256": "3f4ce76305f36f6f7803954a8f6b63c52691fb0d5412ca15a543a94ea4e5bd02",
+  "native_evidence": {
+    "start_sha256": "f6f774fda47ccbe212152b9936da8fb13afd5708caf1055d180a723702ca08d0",
+    "log_sha256": "a24b455bba8ad951da95fdfccca07b0e8d135bae1807e850f5cc8ed4a82aeb0d",
+    "artifacts": [
+      {
+        "name": "Strategy 4.41.106_BASE",
+        "sha256": "18eeaefbd408b4eda456d460990cb7304a4357dc85d97e638b38927b9caf578e"
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT90",
+        "sha256": "6bc8d05e1d36c8317176276dcfd9540673c136a1f72be9952f8003ccc825c1aa"
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT110",
+        "sha256": "f2df5bdbaabac09a9e60c3df9162b3d432c7732ea3da21747c5e5e0cb003103b"
+      }
+    ]
+  },
+  "baseline": {
+    "Net profit (IS)": "8972.25",
+    "Net profit (OOS)": "3448.99",
+    "Profit factor (IS)": "3.12",
+    "Profit factor (OOS)": "3.96",
+    "Ret/DD Ratio (IS)": "7.35",
+    "Ret/DD Ratio (OOS)": "10.01",
+    "# of trades (IS)": "114",
+    "# of trades (OOS)": "31"
+  },
+  "decisions": [
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "metrics": {
+        "Net profit (IS)": "8826.91",
+        "Net profit (OOS)": "3885.31",
+        "Profit factor (IS)": "3.08",
+        "Profit factor (OOS)": "4.33",
+        "Ret/DD Ratio (IS)": "7.19",
+        "Ret/DD Ratio (OOS)": "11.27",
+        "# of trades (IS)": "114",
+        "# of trades (OOS)": "31"
+      }
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "decision": "REJECT",
+      "reasons": [
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "metrics": {
+        "Net profit (IS)": "9170.71",
+        "Net profit (OOS)": "3732.54",
+        "Profit factor (IS)": "3.16",
+        "Profit factor (OOS)": "4.19",
+        "Ret/DD Ratio (IS)": "7.48",
+        "Ret/DD Ratio (OOS)": "10.83",
+        "# of trades (IS)": "114",
+        "# of trades (OOS)": "31"
+      }
+    }
+  ],
+  "funding_verdict": "NO_EVALUABLE",
+  "probada_para_fondeo": false
+}

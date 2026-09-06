@@ -1,0 +1,28 @@
+{
+  "state": "COMPLETED_NOT_FUNDING_CERTIFIED",
+  "recovered_without_native_rerun": true,
+  "assessment_sha256": "0a0bbd09bc429c9b76d2f87e5ed2bd664e406216b8223ae13c8833e3781f107c",
+  "decisions": [
+    {
+      "name": "Strategy 1.17.118_NATIVE1",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit OOS",
+        "Worse Ret/DD Ratio OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 95,
+        "OOS": 18
+      },
+      "orders_sha256": "76f9ca4fbb5e20ef6dd36383376294551874a00854706a76b7254fa5240feffa",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "next_stage_candidates": [],
+  "archived_files": 25,
+  "active_claim_exists": false
+}

@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_SESSION_V2_20260906_16UTC",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Transfer up to two native exit recipes to the unchanged original entry program and compare under identical fresh retest conditions. Native historical results are not reused.",
+  "max_variants": 2,
+  "gid": null,
+  "exit_unit_step": null,
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "4c5d55c97cce8304ea9162dde61bb4e491a0aed7f5eb631157972741d9a6e896",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_NATIVE1",
+      "file": "Strategy 3.3.135_NATIVE1.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "4020bd7a12bba057e2231c5e1759db1c2ea0b2430e61ec85026543264171bbed",
+      "rules_sha256": "0eb42690fda31070046219d93a39c6570c62354d9092f16181e6ccd2a118ceef"
+    },
+    {
+      "name": "Strategy 3.3.135_NATIVE2",
+      "file": "Strategy 3.3.135_NATIVE2.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "315c71565481e1137ec579ab13f0c5e14a0e19cc1be344710d9b8039d4f30c96",
+      "rules_sha256": "02b88b5a32b61fd5833c57c23df295430b54ea30a2e78554941bc6040f276c14"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "session_experiment": {
+    "params": {
+      "LimitTimeRange": "true",
+      "SignalTimeRangeFrom": "0",
+      "SignalTimeRangeTo": "57600",
+      "ExitAtEndOfRange": "true",
+      "OrderTypeToExit": "0",
+      "DontTradeOnWeekends": "true",
+      "FridayCloseTime": "57600",
+      "SundayOpenTime": "82800",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "57600"
+    },
+    "timezone": "Etc/UTC",
+    "scope": "All retests including BASE use the changed session; BASE is not the unrestricted original.",
+    "limitations": "Conservative UTC 00:00-16:00; native TS exits depend on bar close. Check actual orders, holidays and early closes separately."
+  },
+  "native_exit_sources": [
+    {
+      "file": "Strategy 3.3.135 - Improved 1.1.16.sqx",
+      "sha256": "7002cc42b7ebb2c4c66047a951fa339db372f43fdd9766f7fea6499a0dd4589c"
+    },
+    {
+      "file": "Strategy 3.3.135 - Improved 1.2.19.sqx",
+      "sha256": "ad350ee0a58693d510e2a17eb62978937263a6d16f45d8018911ebe10d35eeb9"
+    }
+  ],
+  "config_sha256": "735128a1ed2ba77147df5edc80941adac936267310269c0eb35df3cee26ff49c"
+}

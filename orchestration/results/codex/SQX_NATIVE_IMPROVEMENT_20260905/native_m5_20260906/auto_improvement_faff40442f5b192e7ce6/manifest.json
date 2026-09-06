@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_AUTO_FAFF40442F5B192E7CE6",
+  "source_name": "Strategy 1.17.118",
+  "source_sha256": "a976a756735ffe80cd5632412da7839bc8a2c6ffce3989922743a35d83f77a84",
+  "source_rules_sha256": "4d99a874df0b4c3e4017de77b1c00f7282d88499f09ff7da9fce119e817c0528",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Transfer up to two native exit recipes to the unchanged original entry program and compare under identical fresh retest conditions. Native historical results are not reused.",
+  "max_variants": 2,
+  "gid": null,
+  "exit_unit_step": null,
+  "entries": [
+    {
+      "name": "Strategy 1.17.118_BASE",
+      "file": "Strategy 1.17.118_BASE.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "47c1ea950996727fb413c4f02d8e738018d3dbac17e5b05c433f20079ac0f3bc",
+      "rules_sha256": "4d99a874df0b4c3e4017de77b1c00f7282d88499f09ff7da9fce119e817c0528"
+    },
+    {
+      "name": "Strategy 1.17.118_NATIVE1",
+      "file": "Strategy 1.17.118_NATIVE1.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "cd92b9707935bf3afe35dce7ea6cee77eedef741f1c6b09001e9334a38ceca63",
+      "rules_sha256": "1c778aedc6835af645dabb56e6a5eb512491f01400a20a4212706baf5d8ef2ce"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "native_exit_sources": [
+    {
+      "file": "Strategy 1.17.118 - Improved 1.1.15.sqx",
+      "sha256": "bd666681b73e2f0b3e7cc5dd477331c9b952121ae2f8dc159688fbbbf5ac6fe4"
+    }
+  ],
+  "config_sha256": "100afad783c01e38bcada5d4eaf2b02159ce235b65f58caf336f9f156017c092"
+}

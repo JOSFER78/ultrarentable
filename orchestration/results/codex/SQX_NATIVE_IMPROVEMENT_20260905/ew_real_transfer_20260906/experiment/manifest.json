@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_EW_REAL_H4_20260906",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "915f08badc958f7a22fdeecb4cd3922008b3a200f246f1a70ac681ea9e27dbd6",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": 1,
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": "315",
+      "exit_unit": "fixed",
+      "sha256": "a5e016e521304efb5e22ae45d256f953c3637ff48b42fd8a5b6453e33866f40f",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "file": "Strategy 3.3.135_EXIT90.sqx",
+      "exit_value": "284",
+      "exit_unit": "fixed",
+      "sha256": "dfeeb5c90f99fadbd7f03e3badf3160d230f60607b1fc7ea4f776fa4bd1039e4",
+      "rules_sha256": "a202ac97499223ff04f12250304ad7cb261dc535331f5d0ca2b55f59d2d452cc"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "file": "Strategy 3.3.135_EXIT110.sqx",
+      "exit_value": "346",
+      "exit_unit": "fixed",
+      "sha256": "a055b4f2cfbc93ac35f820a00fb143306f1dee4f5e819e3349e388127790d5c5",
+      "rules_sha256": "e65ea53665599d702f838418763ecbab1bd181d925968d6195a5a0dd45bf60bd"
+    }
+  ],
+  "integer_contracts_requested": false,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "config_sha256": "c048eba97d38a629c174d12674681bccd9c089775827d8359385ab63692f00f1"
+}

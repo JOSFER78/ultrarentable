@@ -1,0 +1,40 @@
+{
+  "state": "DIAGNOSTIC_COMPLETE",
+  "probada": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "results": [
+    {
+      "arm": "CONTROL",
+      "order_rows": 170,
+      "orders_sha256": "8db7f2a2889a923c05c43ed02a8bff6e7d3aaee16175945fdc1d6731940769de"
+    },
+    {
+      "arm": "BROAD",
+      "order_rows": 170,
+      "orders_sha256": "8db7f2a2889a923c05c43ed02a8bff6e7d3aaee16175945fdc1d6731940769de"
+    },
+    {
+      "arm": "FIVE_DAYS",
+      "order_rows": 0,
+      "orders_sha256": "6f9cc99df88ada76868ebd2829cc4140b5df9b901abbe2123c8705ef5cecd0fa"
+    }
+  ],
+  "evidence": {
+    "start_sha256": "7efb673130ed6768669201cdbef8ae4c6d373bf072833dff8d6f10eda3bb3ec4",
+    "log_sha256": "5246b95ef351980e8246b5a434677dcbd6eabecb1d63ca546bd34d502d11b8bf",
+    "artifacts": [
+      {
+        "name": "Strategy 3.3.135_BASE_CONTROL",
+        "sha256": "a2f2fde899033e7606df119ab4fe1123838a2104d60f278bf7f89a86989b87a9"
+      },
+      {
+        "name": "Strategy 3.3.135_BASE_BROAD",
+        "sha256": "64b51c70f4bca0038779d902d8eb225b150c210f2c3c8dfa25a79994fa5f9c32"
+      },
+      {
+        "name": "Strategy 3.3.135_BASE_FIVE_DAYS",
+        "sha256": "9eb968704270479507979b829fe28aaf5a396cda819ac0762d936c1bb4d520b6"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "state": "COMPLETED_NOT_FUNDING_CERTIFIED",
+  "recipe": "fixed_pt_first_exit_inward_10pct_integer_m1_v1",
+  "candidate": {
+    "identity": "b3759bbecb952595a4372d557d2a2791944dbc1aa417cd333becf72dcbb2dce2",
+    "source": "/opt/SQX-headless/import/fondeo/preseleccion/FONDEO_MNQ_H4_r6_20260905T210137067625Z/selected/Strategy 3.3.135.sqx",
+    "name": "Strategy 3.3.135",
+    "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+    "selection_manifest": "/opt/SQX-headless/import/fondeo/preseleccion/FONDEO_MNQ_H4_r6_20260905T210137067625Z/selected/manifest.json",
+    "selection_manifest_sha256": "96a6835fad7d40de0903c06c535cdcccba89b34b0ac3b901814a6b41d2652606",
+    "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+    "expected": "315.0",
+    "symbol": "MNQ",
+    "rank": 5.69
+  },
+  "utc": "2026-09-06T03:33:22.726481+00:00",
+  "experiment": "/opt/SQX-headless/import/auto_improvement_b3759bbecb952595a437",
+  "probada_para_fondeo": false,
+  "assessment": "/opt/SQX-headless/import/auto_improvement_b3759bbecb952595a437/assessment.json",
+  "assessment_sha256": "d2068c9766fb94c20d5d2d2d0b71ca284349d286706422dab6988607d2014846",
+  "decisions": [
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 36,
+        "OOS": 5
+      },
+      "orders_sha256": "16691c407ee453a3ad9e72cfed0aabd5945e06d1ce57e159ba8ef206ef0111d4",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Worse Ret/DD Ratio OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 40,
+        "OOS": 6
+      },
+      "orders_sha256": "ce3858f8fb6f9b1738ab5645d4e6102c2a405b3316fb3180371942ef0a978c40",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "next_stage_candidates": [],
+  "completed_utc": "2026-09-06T03:33:41.900806+00:00"
+}

@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_M15_20260906_18",
+  "source_name": "Strategy 1.18.140",
+  "source_sha256": "0bd1b29062a2a1d8d5582ddee03fd4b6cdd95575193b83fbe902772afe795867",
+  "source_rules_sha256": "ce1410fa0bb7753fb7c031cd4b50b6ab27057fb1e3bdcba27516dc950fa3c48c",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "97abc9ea-58f7-4346-a911-c7aa4ea451d4",
+  "exit_unit_step": "0.5",
+  "entries": [
+    {
+      "name": "Strategy 1.18.140_BASE",
+      "file": "Strategy 1.18.140_BASE.sqx",
+      "exit_value": "545",
+      "exit_unit": "fixed",
+      "sha256": "69b619660d59f5b6e173821a48e6e05ab52c67e537cb0cd564a9696c40a3221e",
+      "rules_sha256": "ce1410fa0bb7753fb7c031cd4b50b6ab27057fb1e3bdcba27516dc950fa3c48c"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT90",
+      "file": "Strategy 1.18.140_EXIT90.sqx",
+      "exit_value": "490.5",
+      "exit_unit": "fixed",
+      "sha256": "2de5c9f459496abfa32381e00f49f2b6a6507e85fc981dba7a33e72154b91de2",
+      "rules_sha256": "a8581d5f84213ccabd358184e66b92d8a5e127f2fcf87590fcac5d7306d71564"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT110",
+      "file": "Strategy 1.18.140_EXIT110.sqx",
+      "exit_value": "599.5",
+      "exit_unit": "fixed",
+      "sha256": "ba6fc36808e9197c11b12b597a829b5387df73b9ac90b2a14a82e5ac16ebfb10",
+      "rules_sha256": "72e4f3b9b6866d239384454c9693600a315bd3a3569769e904bb725b2ae26bca"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "config_sha256": "14b7d0ac98d509385fe83d6b7474fcd68b0f20efdfe430cb10ab20d98d4d82ca"
+}

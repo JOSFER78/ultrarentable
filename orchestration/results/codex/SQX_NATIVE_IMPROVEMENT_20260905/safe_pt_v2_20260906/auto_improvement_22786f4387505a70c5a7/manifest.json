@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_AUTO_22786F4387505A70C5A7",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Transfer up to two native exit recipes to the unchanged original entry program and compare under identical fresh retest conditions. Native historical results are not reused.",
+  "max_variants": 2,
+  "gid": null,
+  "exit_unit_step": null,
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "c0d9c889fc52f92f243bc964cf85b4813178ebb541b7dbf2b98cc86a5d345151",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_NATIVE1",
+      "file": "Strategy 3.3.135_NATIVE1.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "1b3b74bb1328db47f05980666205f3521e406e6ca32a0358e7d07cc12d0e548b",
+      "rules_sha256": "02b88b5a32b61fd5833c57c23df295430b54ea30a2e78554941bc6040f276c14"
+    },
+    {
+      "name": "Strategy 3.3.135_NATIVE2",
+      "file": "Strategy 3.3.135_NATIVE2.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "a0fb7cfd7ec6e647907c576364c3f1e9bd487c3f895ee3c70435da4a77dba9b3",
+      "rules_sha256": "0eb42690fda31070046219d93a39c6570c62354d9092f16181e6ccd2a118ceef"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "native_exit_sources": [
+    {
+      "file": "Strategy 3.3.135 - Improved 1.2.19.sqx",
+      "sha256": "ad350ee0a58693d510e2a17eb62978937263a6d16f45d8018911ebe10d35eeb9"
+    },
+    {
+      "file": "Strategy 3.3.135 - Improved 1.1.16.sqx",
+      "sha256": "7002cc42b7ebb2c4c66047a951fa339db372f43fdd9766f7fea6499a0dd4589c"
+    }
+  ],
+  "config_sha256": "8e6418881cde5ca73caabe1c43348afe2fe04027665f6d896a352dc9a248f2e6"
+}

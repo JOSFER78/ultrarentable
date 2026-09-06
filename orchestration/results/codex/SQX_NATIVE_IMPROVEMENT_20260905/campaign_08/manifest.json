@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_H4_20260905_08",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "5",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": "315",
+      "exit_unit": "fixed",
+      "sha256": "7ca329cd3460c1d2a72e4534f5efed104637b5f6736f8a6ce77101285c930848",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "file": "Strategy 3.3.135_EXIT90.sqx",
+      "exit_value": "285",
+      "exit_unit": "fixed",
+      "sha256": "ff22ab04be53aba33ac63b6ad0800bf8059a444373d87f2ee8156ddb60f7c484",
+      "rules_sha256": "910c2f39872ee0b9d3a1840ff8cafb00b224c69d879e7341bf601963a571170f"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "file": "Strategy 3.3.135_EXIT110.sqx",
+      "exit_value": "345",
+      "exit_unit": "fixed",
+      "sha256": "35ce995a456c8cfd5d963491ef5624a053cdb0bcd0f501c9b4b599367df3323c",
+      "rules_sha256": "e81bb82c5bb84db87f2af2827e013b5a451808f5f8a217cbe8e42721b3880718"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "config_sha256": "59c8e9c50f982b33951ae682e8d733fb60232c72c97ed62b3af784123bf37a04"
+}

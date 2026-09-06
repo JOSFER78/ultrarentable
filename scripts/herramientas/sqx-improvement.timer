@@ -1,0 +1,10 @@
+[Unit]
+Description=Check new selective SQX exports for one bounded improvement job
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=1h
+Unit=sqx-improvement.service
+
+[Install]
+WantedBy=timers.target

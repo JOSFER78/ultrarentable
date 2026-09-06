@@ -1,0 +1,158 @@
+{
+  "state": "NATIVE_WINDOW_EXECUTED_FUNDING_UNVERIFIED",
+  "strategies": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "initial_capital": "50000",
+      "initialization": {
+        "state": "NATIVE_HISTORY_CONFIGURED_INITIALIZATION_NOT_VERIFIED",
+        "observed_extrema_period_lower_bound": 455,
+        "timeframe": "H4",
+        "window_bars_upper_bound": 30,
+        "window_alone_too_short": true,
+        "interpretation": "Native orders occur inside the requested window with prior history configured; full indicator convergence remains unverified.",
+        "history_start": "2023-01-02",
+        "orders_before_exam": 0,
+        "entry_gate_runtime": "OBSERVED_IN_WINDOW_ORDERS"
+      },
+      "fresh_account_sizing": "NATIVE_RETEST_FROM_INITIAL_CAPITAL",
+      "orders_sha256": "b4f49f2e6426a64e706db041f30dd810e95c26bb7ab99d501ccdad1eddf11bfa",
+      "trades": 8,
+      "sizes": [
+        "5.0"
+      ],
+      "net_profit": "8173.38",
+      "daily_net_profit": [
+        "0",
+        "817.73",
+        "3156.1",
+        "509.5",
+        "3690.05"
+      ],
+      "screen": {
+        "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+        "day": 5,
+        "profit": "8173.38",
+        "required_target": "7380.1",
+        "trading_days": 4
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "initial_capital": "50000",
+      "initialization": {
+        "state": "NATIVE_HISTORY_CONFIGURED_INITIALIZATION_NOT_VERIFIED",
+        "observed_extrema_period_lower_bound": 455,
+        "timeframe": "H4",
+        "window_bars_upper_bound": 30,
+        "window_alone_too_short": true,
+        "interpretation": "Native orders occur inside the requested window with prior history configured; full indicator convergence remains unverified.",
+        "history_start": "2023-01-02",
+        "orders_before_exam": 0,
+        "entry_gate_runtime": "OBSERVED_IN_WINDOW_ORDERS"
+      },
+      "fresh_account_sizing": "NATIVE_RETEST_FROM_INITIAL_CAPITAL",
+      "orders_sha256": "b262c90fdf53206bd93a925c61bb0b327e090caf685900111ad3c838c5a2c85e",
+      "trades": 8,
+      "sizes": [
+        "5.0"
+      ],
+      "net_profit": "7948.38",
+      "daily_net_profit": [
+        "0",
+        "742.73",
+        "3156.1",
+        "434.5",
+        "3615.05"
+      ],
+      "screen": {
+        "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+        "day": 5,
+        "profit": "7948.38",
+        "required_target": "7230.1",
+        "trading_days": 4
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "initial_capital": "50000",
+      "initialization": {
+        "state": "NATIVE_HISTORY_CONFIGURED_INITIALIZATION_NOT_VERIFIED",
+        "observed_extrema_period_lower_bound": 455,
+        "timeframe": "H4",
+        "window_bars_upper_bound": 30,
+        "window_alone_too_short": true,
+        "interpretation": "Native orders occur inside the requested window with prior history configured; full indicator convergence remains unverified.",
+        "history_start": "2023-01-02",
+        "orders_before_exam": 0,
+        "entry_gate_runtime": "OBSERVED_IN_WINDOW_ORDERS"
+      },
+      "fresh_account_sizing": "NATIVE_RETEST_FROM_INITIAL_CAPITAL",
+      "orders_sha256": "942750ae9e79737061d8952d9cfb35ba07d2316c3f29a441814aa26ce8a5bf0b",
+      "trades": 8,
+      "sizes": [
+        "5.0"
+      ],
+      "net_profit": "8398.38",
+      "daily_net_profit": [
+        "0",
+        "892.73",
+        "3156.1",
+        "584.5",
+        "3765.05"
+      ],
+      "screen": {
+        "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+        "day": 5,
+        "profit": "8398.38",
+        "required_target": "7530.1",
+        "trading_days": 4
+      }
+    }
+  ],
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "next_stage_candidates": [],
+  "project": "UR_IMPROVE_MNQ_H4_20260906_17",
+  "window": {
+    "start": "2026-05-04",
+    "end": "2026-05-08",
+    "initial_capital": "50000",
+    "parent_manifest_sha256": "542d3f2c672dc91f9011ad7563c806d6d3eaf71b74d15d5fff22110c966a4fb7",
+    "parent_project": "UR_IMPROVE_MNQ_H4_20260906_10",
+    "selection": "Known development window; diagnostic, not held-out evidence",
+    "strategy_rules_changed": true,
+    "warmup_start": "2023-01-02",
+    "entry_gate": "NATIVE_BAR_DATE_INCLUSIVE",
+    "date_source": "BarDate",
+    "date_encoding": "NATIVE_GET_DATE"
+  },
+  "profile": {
+    "id": "topstep_50k_optional_dll_off_screen_2026-09-06",
+    "checked_on": "2026-09-06",
+    "nominal": "50000",
+    "target": "3000",
+    "eod_trailing_loss": "2000",
+    "best_day_fraction": "0.5",
+    "minimum_trading_days": 2,
+    "max_micro_contracts": 50,
+    "sources": [
+      "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit",
+      "https://help.topstep.com/en/articles/8284208-consistency-at-topstep",
+      "https://help.topstep.com/en/articles/8284197-trading-combine-parameters",
+      "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade"
+    ],
+    "scope": "Historical diagnostic for one example exam; holidays and exact intraday replay still missing."
+  },
+  "manifest_sha256": "115e9f6f169e08a68069b48a12f373e7d4080bfae45a4f2dffa83a84c70499e7",
+  "metrics_sha256": "06b3485af19d5dc52947709537e25f7a08939554c7b55df82f69033f321b68fa",
+  "engine_sha256": "3319511e0b08180210959c5484a14ec035ca60f0879183d03fe4202e417dd27b",
+  "limitations": [
+    "Native execution is observed, but a selected development week cannot establish funding suitability.",
+    "Known development window selected for diagnosis; not held-out evidence or a success probability.",
+    "Monday UTC entry gate omits the preceding Sunday evening; indicator convergence requires separate validation.",
+    "Exact intraday equity, data provenance, exceptional closures and complete exam rules remain unverified.",
+    "MAE cost inclusion is unknown; excursion flags are conservative screening only.",
+    "All variants retain their prior development rejection; this diagnostic cannot promote them."
+  ]
+}

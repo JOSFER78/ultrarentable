@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "state": "NATIVE_COMPARISON_NOT_FUNDING_CERTIFICATION",
+  "project": "UR_IMPROVE_MYM_H1_20260905_06",
+  "metrics_sha256": "d2afc178515d86e66fd73322779051b96f503c7d01dc69ed192cb8b7dd57535c",
+  "native_evidence": {
+    "start_sha256": "d896a893b17418fe6f7e518c96181913ef36b1bf90d692ce7c634e1396699511",
+    "log_sha256": "231457c91ab2952ffa8b01e5263853d8c11ba132e1183e248bbdae52b4208961",
+    "artifacts": [
+      {
+        "name": "Strategy 4.41.106_BASE",
+        "sha256": "f650c4f9c058fbee2df4776f5dde9d68f781453f819183f24a279be92b854fda"
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT90",
+        "sha256": "d5c21c142fcb371b2a4ebfd4c61eb66207ffd30b57cf88c676bdfa9b211929f0"
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT110",
+        "sha256": "ffe9d864a7d4d55fc5797e4732489b13cb9eb6942c4ec64ac5dbe038356c105b"
+      }
+    ]
+  },
+  "orders_diagnostic": {
+    "schema": 1,
+    "state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+    "target_days": [
+      1,
+      5
+    ],
+    "probada_para_fondeo": false,
+    "strategies": [
+      {
+        "name": "Strategy 4.41.106_BASE",
+        "orders_sha256": "fd024c30f3e69c924a9e5ebbece033786edcf07aff6e788ce0ce5ed2226f080c",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "3.0",
+          "4.0",
+          "5.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 114,
+            "net_profit": "7640.69"
+          },
+          "OOS": {
+            "trades": 31,
+            "net_profit": "3601.16"
+          }
+        },
+        "directional": {
+          "long": {
+            "trades": 52,
+            "zero_duration": 2,
+            "net_profit": "12281.85",
+            "winners": 32
+          },
+          "short": {
+            "trades": 93,
+            "zero_duration": 93,
+            "net_profit": "-1040.0",
+            "winners": 0
+          }
+        },
+        "execution_review": [
+          "All short orders close immediately; cause not established."
+        ],
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT90",
+        "orders_sha256": "0e796dae40162c6f4d665ad985732df9267aee9de7fca36c3040df1431105482",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "3.0",
+          "4.0",
+          "5.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 103,
+            "net_profit": "11874.98"
+          },
+          "OOS": {
+            "trades": 27,
+            "net_profit": "431.70"
+          }
+        },
+        "directional": {
+          "long": {
+            "trades": 52,
+            "zero_duration": 2,
+            "net_profit": "12850.38",
+            "winners": 32
+          },
+          "short": {
+            "trades": 78,
+            "zero_duration": 3,
+            "net_profit": "-543.70",
+            "winners": 32
+          }
+        },
+        "execution_review": [],
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT110",
+        "orders_sha256": "aa1c82a5a7c10e0c442fbcb0f644083dda64bcdd0983a5298c0ca6fc5e0064c5",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "3.0",
+          "4.0",
+          "5.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 101,
+            "net_profit": "10897.77"
+          },
+          "OOS": {
+            "trades": 27,
+            "net_profit": "71.70"
+          }
+        },
+        "directional": {
+          "long": {
+            "trades": 52,
+            "zero_duration": 2,
+            "net_profit": "12696.03",
+            "winners": 32
+          },
+          "short": {
+            "trades": 76,
+            "zero_duration": 3,
+            "net_profit": "-1726.56",
+            "winners": 28
+          }
+        },
+        "execution_review": [],
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      }
+    ]
+  },
+  "baseline": {
+    "Net profit (IS)": "7640.69",
+    "Net profit (OOS)": "3601.16",
+    "Profit factor (IS)": "2.93",
+    "Profit factor (OOS)": "4.08",
+    "Ret/DD Ratio (IS)": "6.82",
+    "Ret/DD Ratio (OOS)": "10.27",
+    "# of trades (IS)": "114",
+    "# of trades (OOS)": "31"
+  },
+  "decisions": [
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "decision": "REJECT",
+      "reasons": [
+        "Baseline requires execution review before promotion",
+        "Worse Profit factor IS",
+        "Insufficient OOS trades",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Worse Ret/DD Ratio OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "metrics": {
+        "Net profit (IS)": "11874.98",
+        "Net profit (OOS)": "431.7",
+        "Profit factor (IS)": "2.01",
+        "Profit factor (OOS)": "1.06",
+        "Ret/DD Ratio (IS)": "8.89",
+        "Ret/DD Ratio (OOS)": "0.13",
+        "# of trades (IS)": "103",
+        "# of trades (OOS)": "27"
+      }
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "decision": "REJECT",
+      "reasons": [
+        "Baseline requires execution review before promotion",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Insufficient OOS trades",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Worse Ret/DD Ratio OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "metrics": {
+        "Net profit (IS)": "10897.77",
+        "Net profit (OOS)": "71.7",
+        "Profit factor (IS)": "1.88",
+        "Profit factor (OOS)": "1.01",
+        "Ret/DD Ratio (IS)": "6.61",
+        "Ret/DD Ratio (OOS)": "0.02",
+        "# of trades (IS)": "101",
+        "# of trades (OOS)": "27"
+      }
+    }
+  ],
+  "funding_verdict": "NO_EVALUABLE",
+  "probada_para_fondeo": false
+}

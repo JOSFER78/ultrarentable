@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-06T02:31:35.864944+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 1.18.140_EXIT90",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Baseline requires execution review before promotion",
+        "Variant requires execution review before promotion",
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 39,
+        "OOS": 8
+      },
+      "orders_sha256": "2001310998649be2c157e8a643c43caaa406c2873fcc7bff9304e7643162cf16",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT110",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Baseline requires execution review before promotion",
+        "Variant requires execution review before promotion",
+        "Worse Ret/DD Ratio OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 41,
+        "OOS": 9
+      },
+      "orders_sha256": "f9e70b066afb0e60b63bdb466c05acdfdc6eadf2751aa9fe4e633108ada69ec7",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_MNQ_M15_20260906_18",
+  "manifest_sha256": "995d421c3fc0737cf983048daf1430b77b06818abca8f18463e0a4a6e1e5bcb5",
+  "metrics_sha256": "b020a92b3f9f9bd96da4a207ba576a06910e04750d4b873c4f94d70dbade1498",
+  "comparison_sha256": "5b8256d0d817bc0d3b66e9e7f2aeab9ed0293b6c6ea2434761aba7b52d2e6f5a",
+  "session_screen_sha256": "423d7e633bc00a9ae661b5ec987e0700af39c17cd4847ebeed34dbb6e62835dd",
+  "funding_windows_sha256": "7d7907f1de8dfe6c6d0758599c46017ff6bdbbb9f0adf65d3a9afc667efce32b",
+  "engine_sha256": "a759c3b887ca7dfcc97243404e6935bedad21fa3ba962f352074f074d928c73a",
+  "missing_exam_evidence": [
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

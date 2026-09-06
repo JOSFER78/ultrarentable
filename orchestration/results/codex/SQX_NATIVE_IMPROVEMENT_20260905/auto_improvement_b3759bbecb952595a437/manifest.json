@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_AUTO_B3759BBECB952595A437",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "1",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": "315.0",
+      "exit_unit": "fixed",
+      "sha256": "8b00f87f397c99f407d80fbbddbfe3a404b3e365c4e0d5157c2571d157d22cbf",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "file": "Strategy 3.3.135_EXIT90.sqx",
+      "exit_value": "284",
+      "exit_unit": "fixed",
+      "sha256": "8be4233a90a90fa59ee73552c45a077495b59c235b2d56bd3ca22383ac47d6e0",
+      "rules_sha256": "a202ac97499223ff04f12250304ad7cb261dc535331f5d0ca2b55f59d2d452cc"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "file": "Strategy 3.3.135_EXIT110.sqx",
+      "exit_value": "346",
+      "exit_unit": "fixed",
+      "sha256": "5f94165cc06bbe4b213c7163c7d6c4d0f8ba4e9b99e24947c0cb83c4ac334aa1",
+      "rules_sha256": "e65ea53665599d702f838418763ecbab1bd181d925968d6195a5a0dd45bf60bd"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "config_sha256": "b3d09fd1d3e5dc6e4c5de0b783d3f166a6820756516099da99335a726c241397"
+}

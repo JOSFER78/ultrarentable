@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MYM_H1_20260905_06",
+  "source_name": "Strategy 4.41.106",
+  "source_sha256": "0eabe05f4ea8acb099e689939edf1c303b01001a814338b7fdcfdae64d7d3c41",
+  "source_rules_sha256": "a5295ad359b38d2fda949047fc3be7be6362245e02d2485f562d0cee0a7194d4",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Keep original percent PT control; test two fixed-distance PT alternatives with unchanged initial stop protection. This changes the strategy and is not an equivalent conversion.",
+  "max_variants": 2,
+  "gid": "6e83a3f7-8cd0-4b90-97d3-515a11283a6e",
+  "exit_unit_step": "1",
+  "entries": [
+    {
+      "name": "Strategy 4.41.106_BASE",
+      "file": "Strategy 4.41.106_BASE.sqx",
+      "exit_value": "0.9",
+      "exit_unit": "percent",
+      "sha256": "902c2490bca3936122de2b2bfd3280d246b869f5f2c39f7ced44f7c6aaf77618",
+      "rules_sha256": "a5295ad359b38d2fda949047fc3be7be6362245e02d2485f562d0cee0a7194d4"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "file": "Strategy 4.41.106_EXIT90.sqx",
+      "exit_value": "270",
+      "exit_unit": "fixed",
+      "sha256": "1a8cdbc570889d254e7cecbee9cc93c26f3b3e30c3542cead0ff027c91b58ebe",
+      "rules_sha256": "091babadf64b6b918535ac001737c4a5f3c9f047c1252dd2cb756637ee304013"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "file": "Strategy 4.41.106_EXIT110.sqx",
+      "exit_value": "330",
+      "exit_unit": "fixed",
+      "sha256": "330cb55bdc07d86f4828d16abbb81f1909150f820b40fffdf88cf6f82e63a117",
+      "rules_sha256": "136bbf13c3f52c108a99064ed68ec10ec183ba464b2335ec2234f668d04e9778"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "percent_pt_replacement": {
+    "original_percent": "0.9",
+    "fixed_center_points": "300"
+  },
+  "config_sha256": "c2965e8cbc33c5c699149d61431b5eeaf24e269fe220162c9b754ac1dabd3adb"
+}

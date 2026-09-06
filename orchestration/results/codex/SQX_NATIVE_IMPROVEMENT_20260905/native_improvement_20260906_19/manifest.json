@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_M15_20260906_19",
+  "source_name": "Strategy 1.18.140",
+  "source_sha256": "0bd1b29062a2a1d8d5582ddee03fd4b6cdd95575193b83fbe902772afe795867",
+  "source_rules_sha256": "ce1410fa0bb7753fb7c031cd4b50b6ab27057fb1e3bdcba27516dc950fa3c48c",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Keep original percent PT control; test two fixed-distance PT alternatives with unchanged initial stop protection. This changes the strategy and is not an equivalent conversion.",
+  "max_variants": 2,
+  "gid": "6ca24135-184d-4864-9fac-9527156ffcc2",
+  "exit_unit_step": "0.5",
+  "entries": [
+    {
+      "name": "Strategy 1.18.140_BASE",
+      "file": "Strategy 1.18.140_BASE.sqx",
+      "exit_value": "1.6",
+      "exit_unit": "percent",
+      "sha256": "b096f4a8766d7df5c445561a3745e5eec2c497d5029e96f7b7544793df95ae03",
+      "rules_sha256": "ce1410fa0bb7753fb7c031cd4b50b6ab27057fb1e3bdcba27516dc950fa3c48c"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT90",
+      "file": "Strategy 1.18.140_EXIT90.sqx",
+      "exit_value": "297.0",
+      "exit_unit": "fixed",
+      "sha256": "603f70df007687ae342151d3cc8c01811705241222ac5150b06700d3f26e0991",
+      "rules_sha256": "84f80665f7855570197db815f90914a0f4be760d9e03739292ca2b0591086e1d"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT110",
+      "file": "Strategy 1.18.140_EXIT110.sqx",
+      "exit_value": "363.0",
+      "exit_unit": "fixed",
+      "sha256": "fdb92e2cc5183700b9bd1fffb6da1d4c31c775c15c8210d7e07d22589ea80b25",
+      "rules_sha256": "15e4716b43e7c519373d7c603799f57c4bdb907cde430a2926fa093a9ebc39bf"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "percent_pt_replacement": {
+    "original_percent": "1.6",
+    "fixed_center_points": "330"
+  },
+  "config_sha256": "f1712975cf82102f3c28d921bfa845a38d5fc0b0041c85f174d318c0ebc0c0a8"
+}

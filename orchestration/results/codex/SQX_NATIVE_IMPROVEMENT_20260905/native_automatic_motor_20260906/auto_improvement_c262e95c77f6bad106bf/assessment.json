@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-06T06:23:30.106754+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 1.18.140_NATIVE1",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Baseline requires execution review before promotion",
+        "Variant requires execution review before promotion",
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 41,
+        "OOS": 9
+      },
+      "orders_sha256": "02659f3dd73d94b8e51335b9ef335db7d6158f5c4b8f9c316d2fac5d53c2dab2",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_AUTO_C262E95C77F6BAD106BF",
+  "manifest_sha256": "76f081673129806ab9393983e546b81f9b869b5e58091ef1f7ac928c7585aa26",
+  "metrics_sha256": "dc7cc99b74ae61347728833aa9623a5244763582b9b252e630b540452e72cba9",
+  "comparison_sha256": "1a7b88e8a2cf2e64ff7efc317c8e60cce277ad798b168f299c4a0abd198b8882",
+  "session_screen_sha256": "431b3a6dec5bbbaa7717c5ebb71dfa9820cc2680b8d42167908bd07083723494",
+  "funding_windows_sha256": "fed988f255d1dbd75f985f1f180e24494c20e944b8a890e1c223ba7ce5b204c0",
+  "engine_sha256": "8133100f26168c9b34ebe7e5c628fa36cb1f365b8e0b95cb4fc6ae78710f3092",
+  "missing_exam_evidence": [
+    "Verified market-data provenance bound to the tested dataset: provider, actual traded instrument, timezone, file hashes and futures contract/roll policy. A proxy imported under a futures symbol does not establish futures performance.",
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

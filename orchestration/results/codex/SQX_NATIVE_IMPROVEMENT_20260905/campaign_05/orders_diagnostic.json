@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+  "target_days": [
+    1,
+    5
+  ],
+  "probada_para_fondeo": false,
+  "strategies": [
+    {
+      "name": "Strategy 4.41.106_BASE",
+      "orders_sha256": "fd024c30f3e69c924a9e5ebbece033786edcf07aff6e788ce0ce5ed2226f080c",
+      "fractional_orders": 0,
+      "integer_contracts": true,
+      "sizes": [
+        "3.0",
+        "4.0",
+        "5.0"
+      ],
+      "samples": {
+        "IS": {
+          "trades": 114,
+          "net_profit": "7640.69"
+        },
+        "OOS": {
+          "trades": 31,
+          "net_profit": "3601.16"
+        }
+      },
+      "directional": {
+        "long": {
+          "trades": 52,
+          "zero_duration": 2,
+          "net_profit": "12281.85",
+          "winners": 32
+        },
+        "short": {
+          "trades": 93,
+          "zero_duration": 93,
+          "net_profit": "-1040.0",
+          "winners": 0
+        }
+      },
+      "execution_review": [
+        "All short orders close immediately; cause not established."
+      ],
+      "funding_verdict": "NO_EVALUABLE",
+      "blockers": [
+        "No independent intraday equity replay: trailing loss survival is unknown.",
+        "No complete versioned exam profile with calendar and session checks.",
+        "Data provenance and execution precision not independently validated.",
+        "Development OOS reused for comparison; final holdout still required."
+      ]
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "orders_sha256": "84d58fb3fd8d530a74280dcd06802e2f1ced72242b067448fed8de848272f84a",
+      "fractional_orders": 0,
+      "integer_contracts": true,
+      "sizes": [
+        "3.0",
+        "4.0",
+        "5.0"
+      ],
+      "samples": {
+        "IS": {
+          "trades": 114,
+          "net_profit": "7650.69"
+        },
+        "OOS": {
+          "trades": 31,
+          "net_profit": "3848.66"
+        }
+      },
+      "directional": {
+        "long": {
+          "trades": 52,
+          "zero_duration": 2,
+          "net_profit": "12539.35",
+          "winners": 32
+        },
+        "short": {
+          "trades": 93,
+          "zero_duration": 93,
+          "net_profit": "-1040.0",
+          "winners": 0
+        }
+      },
+      "execution_review": [
+        "All short orders close immediately; cause not established."
+      ],
+      "funding_verdict": "NO_EVALUABLE",
+      "blockers": [
+        "No independent intraday equity replay: trailing loss survival is unknown.",
+        "No complete versioned exam profile with calendar and session checks.",
+        "Data provenance and execution precision not independently validated.",
+        "Development OOS reused for comparison; final holdout still required."
+      ]
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "orders_sha256": "31df5542fe8b3e5e966443847df463be2f94aff05e8a34ba9db5ff2ee6253095",
+      "fractional_orders": 0,
+      "integer_contracts": true,
+      "sizes": [
+        "3.0",
+        "4.0",
+        "5.0"
+      ],
+      "samples": {
+        "IS": {
+          "trades": 114,
+          "net_profit": "7692.69"
+        },
+        "OOS": {
+          "trades": 31,
+          "net_profit": "3896.16"
+        }
+      },
+      "directional": {
+        "long": {
+          "trades": 52,
+          "zero_duration": 2,
+          "net_profit": "12628.85",
+          "winners": 32
+        },
+        "short": {
+          "trades": 93,
+          "zero_duration": 93,
+          "net_profit": "-1040.0",
+          "winners": 0
+        }
+      },
+      "execution_review": [
+        "All short orders close immediately; cause not established."
+      ],
+      "funding_verdict": "NO_EVALUABLE",
+      "blockers": [
+        "No independent intraday equity replay: trailing loss survival is unknown.",
+        "No complete versioned exam profile with calendar and session checks.",
+        "Data provenance and execution precision not independently validated.",
+        "Development OOS reused for comparison; final holdout still required."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+ "schema": "ultrarentable.sqx.fondeo_proyectos.v2",
+ "creado": "2026-09-06T07:44:05.797379+00:00",
+ "plantilla": "/opt/SQX-headless/import/NQ_TS.cfx",
+ "plantilla_sha256": "d30caf4d32ec630737b78ea2ae786fe19261a8c124561fcbc2bac678b8a402a7",
+ "costes_supuestos": {
+  "MES": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.0
+  },
+  "MNQ": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.0
+  },
+  "MYM": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.0
+  },
+  "M2K": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.0
+  },
+  "MGC": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.4
+  },
+  "MCL": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.4
+  },
+  "UB": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.6
+  },
+  "M6E": {
+   "spread": 1,
+   "slippage": 2,
+   "comision": 2.0
+  }
+ },
+ "aceptacion": {
+  "min_ops_mes": {
+   "M1": 20,
+   "M5": 10,
+   "M15": 5,
+   "H1": 2,
+   "H4": 1
+  },
+  "min_pf": 1.05,
+  "min_ret_dd": 0.5,
+  "min_win_pct": 20.0
+ },
+ "oos_fraccion": 0.2,
+ "horas_tope": 2,
+ "capital_inicial": 50000,
+ "riesgo_pct": 0.5,
+ "universo": [
+  "MES",
+  "MNQ",
+  "MYM",
+  "M2K",
+  "MGC",
+  "MCL",
+  "UB",
+  "M6E"
+ ],
+ "sin_datos_todavia": [
+  "M2K",
+  "UB"
+ ],
+ "proyectos": [
+  {
+   "proyecto": "FONDEO_MNQ_H4",
+   "simbolo": "MNQ",
+   "tf": "H4",
+   "desde": "2023.01.02",
+   "hasta": "2026.08.30",
+   "oos_desde": "2025.12.06",
+   "cfx": "/opt/SQX-headless/import/generator_safe_pt_v2_20260906/FONDEO_MNQ_H4.cfx",
+   "sha256": "95c7cb4a1b6e26b3959e8c4149dc695b634c0436db7ebb0de65a03d8ae2fde4e",
+   "cargado": null,
+   "excluded_recipes": [
+    "PTPercent"
+   ],
+   "recipe": "preserved_initial_protection_no_percent_pt_v2"
+  }
+ ]
+}

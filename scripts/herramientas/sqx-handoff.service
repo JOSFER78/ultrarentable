@@ -1,0 +1,19 @@
+[Unit]
+# Retired draft: depends on full-bank exports, forbidden by current output policy.
+# Do not enable. Native selection and robustness evidence must precede export.
+Description=Extract native SQX research candidates from completed exports
+After=local-fs.target
+ConditionPathExists=/opt/SQX-headless/import/ALLOW_RETIRED_BULK_HANDOFF
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/SQX-headless/import/sqx_handoff.py --base /opt/SQX-headless/import/fondeo --output /opt/SQX-headless/import/fondeo/handoff --limit 20 --min-trades 30 --max-batches 2
+Nice=15
+IOSchedulingClass=idle
+CPUQuota=25%
+MemoryMax=256M
+TimeoutStartSec=180
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/SQX-headless/import/fondeo/handoff

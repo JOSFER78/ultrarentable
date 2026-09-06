@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_H4_20260906_09",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "5",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": "315",
+      "exit_unit": "fixed",
+      "sha256": "6c0fe51a2856e71fb922afb3de6f47362fccbbf3c552f2d21b7e3815ce38421f",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "file": "Strategy 3.3.135_EXIT90.sqx",
+      "exit_value": "285",
+      "exit_unit": "fixed",
+      "sha256": "ecbcfba38562b2bc42f84e9041d2c9a843830e79ba63dd23fba4f3a2e5abc770",
+      "rules_sha256": "910c2f39872ee0b9d3a1840ff8cafb00b224c69d879e7341bf601963a571170f"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "file": "Strategy 3.3.135_EXIT110.sqx",
+      "exit_value": "345",
+      "exit_unit": "fixed",
+      "sha256": "2d498f6d568565362e3653e54ebae5da7a6bf91f07d96de944dcc0e75e09b424",
+      "rules_sha256": "e81bb82c5bb84db87f2af2827e013b5a451808f5f8a217cbe8e42721b3880718"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "session_experiment": {
+    "params": {
+      "LimitTimeRange": "true",
+      "SignalTimeRangeFrom": "0",
+      "SignalTimeRangeTo": "68400",
+      "ExitAtEndOfRange": "true",
+      "OrderTypeToExit": "0",
+      "DontTradeOnWeekends": "true",
+      "FridayCloseTime": "68400",
+      "SundayOpenTime": "82800",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "68400"
+    },
+    "timezone": "Etc/UTC",
+    "scope": "All three retests including BASE use the changed session; BASE is not the unrestricted original.",
+    "limitations": "Conservative UTC 00:00-19:00; native TS exits depend on bar close. Check actual orders, holidays and early closes separately."
+  },
+  "config_sha256": "6674a6a0914bdc5205f5fb9b61888df537d42379efd735bc5f8ef16f895d0ee8"
+}

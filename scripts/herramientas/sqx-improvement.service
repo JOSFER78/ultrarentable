@@ -1,0 +1,13 @@
+[Unit]
+Description=SQX bounded improvement of selectively exported strategies
+After=network.target sqx-headless.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/SQX-headless/import
+ExecStart=/usr/bin/python3 /opt/SQX-headless/import/sqx_improvement_stage.py --template /opt/SQX-headless/import/native_improvement_20260906_19/project.cfx --search-template /opt/SQX-headless/import/native_exit_search_20260906_02/project.cfx
+TimeoutStartSec=600
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+UMask=0077

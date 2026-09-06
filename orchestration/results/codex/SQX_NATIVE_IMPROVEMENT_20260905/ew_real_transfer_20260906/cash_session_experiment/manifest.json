@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_EW_CASH_H4_20260906",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "5bdb77aa70f9abb6ff057568d03be9d76a8d9935bf6bdb9bc1d7a9e70d159d41",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "1",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "file": "Strategy 3.3.135_BASE.sqx",
+      "exit_value": "315",
+      "exit_unit": "fixed",
+      "sha256": "60a785157ad51ec97c26c0041decee0802e2a22b8344e83ad85d503564731875",
+      "rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "file": "Strategy 3.3.135_EXIT90.sqx",
+      "exit_value": "284",
+      "exit_unit": "fixed",
+      "sha256": "80cfb481c0da3891ce7b433b183501cccb10fd2985763e44055c7bc1ba6d0474",
+      "rules_sha256": "a202ac97499223ff04f12250304ad7cb261dc535331f5d0ca2b55f59d2d452cc"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "file": "Strategy 3.3.135_EXIT110.sqx",
+      "exit_value": "346",
+      "exit_unit": "fixed",
+      "sha256": "10bfa8e794eb329cbb430f9f78c06f744352642881d462f46d9bec9d37473e1c",
+      "rules_sha256": "e65ea53665599d702f838418763ecbab1bd181d925968d6195a5a0dd45bf60bd"
+    }
+  ],
+  "integer_contracts_requested": false,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "config_sha256": "fd6bf01a1ed49da11f6fd5488f759af792230ce19a1835692a6788e10e5fad3b"
+}

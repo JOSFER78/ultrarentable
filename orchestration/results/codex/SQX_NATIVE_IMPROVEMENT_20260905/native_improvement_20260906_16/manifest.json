@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MNQ_H4_20260906_16",
+  "source_name": "Strategy 3.3.135",
+  "source_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "source_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "state": "DIAGNOSTIC_NOT_FUNDING_EVIDENCE",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Same BASE: unchanged, previous-month bound, explicit bar date",
+  "max_variants": 2,
+  "gid": "d7a81830-585d-4faf-8740-d1f18c86fcce",
+  "exit_unit_step": "5",
+  "entries": [
+    {
+      "name": "Strategy 3.3.135_BASE_CONTROL",
+      "file": "Strategy 3.3.135_BASE_CONTROL.sqx",
+      "arm": "CONTROL",
+      "gate_dates": null,
+      "rules_sha256": "4f28d27cb7f437a54a8ba0cf7b5dbd14ac7fba7dea7170884c7240a99d2f9f40",
+      "sha256": "4d784f305fbc2acaf48d0165ebe0df0b4d3fb9eb809525aceae407422123df65"
+    },
+    {
+      "name": "Strategy 3.3.135_BASE_MONTH_MINUS_ONE",
+      "file": "Strategy 3.3.135_BASE_MONTH_MINUS_ONE.sqx",
+      "arm": "MONTH_MINUS_ONE",
+      "gate_dates": [
+        "2026-04-04",
+        "2026-04-08"
+      ],
+      "rules_sha256": "489ab87fa2ee9187a5743250fc3ea7acd48456db2f053e33838e7d8517a9a69a",
+      "sha256": "fc39d8cfa1040f434559c5408ffd338da51b98558c26902638c433c8c6603d3d"
+    },
+    {
+      "name": "Strategy 3.3.135_BASE_BAR_DATE",
+      "file": "Strategy 3.3.135_BASE_BAR_DATE.sqx",
+      "arm": "BAR_DATE",
+      "gate_dates": [
+        "2026-05-04",
+        "2026-05-08"
+      ],
+      "rules_sha256": "27552ad4c8805b07567a403b3884b35a258e42c31e256519c7125f73ff8a150b",
+      "sha256": "76404feaae08c6c98166a9a5d2926e073df976febae484a354683546da993d95"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "session_experiment": {
+    "params": {
+      "LimitTimeRange": "true",
+      "SignalTimeRangeFrom": "0",
+      "SignalTimeRangeTo": "57600",
+      "ExitAtEndOfRange": "true",
+      "OrderTypeToExit": "0",
+      "DontTradeOnWeekends": "true",
+      "FridayCloseTime": "57600",
+      "SundayOpenTime": "82800",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "57600"
+    },
+    "timezone": "Etc/UTC",
+    "scope": "All three retests including BASE use the changed session; BASE is not the unrestricted original.",
+    "limitations": "Conservative UTC 00:00-16:00; native TS exits depend on bar close. Check actual orders, holidays and early closes separately."
+  },
+  "config_sha256": "f4c36cb4e8e60273495f2788bf4227db0a79837839b8223bfc3256d527153082",
+  "source_input_sha256": "466a552db5692c20660f1c2612ef6ba2da7c50c48540461b366f3cb1c26c79f6"
+}

@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-06T07:11:22.579602+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 3.3.135_NATIVE1",
+      "decision": "NEEDS_SESSION_REPAIR",
+      "development_decision": "RESEARCH_PROMOTION_ONLY",
+      "reasons": [
+        "Recorded positions violate the selected exam regular sessions"
+      ],
+      "incompatible_orders": {
+        "IS": 34,
+        "OOS": 6
+      },
+      "orders_sha256": "ce94df03c0c8ad8395c734862b64f409215da887980e4845afc3636cf6b715af",
+      "next_action": "Change execution/session rules and run a fresh bounded native comparison; do not trim past trades.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 3.3.135_NATIVE2",
+      "decision": "NEEDS_SESSION_REPAIR",
+      "development_decision": "RESEARCH_PROMOTION_ONLY",
+      "reasons": [
+        "Recorded positions violate the selected exam regular sessions"
+      ],
+      "incompatible_orders": {
+        "IS": 33,
+        "OOS": 6
+      },
+      "orders_sha256": "e1932f2b94c403d3972f311290bd6c00c7481821624d279a6c6943961cd7516a",
+      "next_action": "Change execution/session rules and run a fresh bounded native comparison; do not trim past trades.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_AUTO_22786F4387505A70C5A7",
+  "manifest_sha256": "a718e2e0b62247d9292ffe26834d8bf569b829bd639fa22788c80278ac064f87",
+  "metrics_sha256": "083f223dafec050ac9700ed4b45eb9c63e30acb9e6805e71ecf62129f9bcb292",
+  "comparison_sha256": "4ca883dc8cfd4ea3662267c78e291f348ed15f19c68000d45188a558e397593a",
+  "session_screen_sha256": "103540b5fa6588286d3e2bda72d9a45df984b72b97c06c4845d9c5f84bf38d85",
+  "funding_windows_sha256": "037b67c7dfa55ff15563e16cd1f5b055c2d16abf529a77fb4f4d07cf4cf9681e",
+  "engine_sha256": "71986d8e347dcc65649d70a488bf42c060848c13a6f858ef429def907ee39c43",
+  "missing_exam_evidence": [
+    "Verified market-data provenance bound to the tested dataset: provider, actual traded instrument, timezone, file hashes and futures contract/roll policy. A proxy imported under a futures symbol does not establish futures performance.",
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

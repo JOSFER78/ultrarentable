@@ -1,0 +1,271 @@
+{
+  "schema": 1,
+  "state": "NATIVE_COMPARISON_NOT_FUNDING_CERTIFICATION",
+  "project": "UR_IMPROVE_EW_CASH_H4_20260906",
+  "metrics_sha256": "7cc613a26592e1433b48eafc6cdff147ff8fd9b5657dc22a75a7eace9a39902d",
+  "native_evidence": {
+    "start_sha256": "21dd682d7f690c6f66e8736ece8d1ffab3e3934709ad5697a928f40ca57499c4",
+    "log_sha256": "8bfba9ad004d848e6d3ecc0f529e139b85794dcfe28ea34dea83f7afdee6c996",
+    "artifacts": [
+      {
+        "name": "Strategy 3.3.135_BASE",
+        "sha256": "cec314d3bfc1a1fdd3c5d69c1081b4ce0c4efa25d22867807c461625b37f8e5d"
+      },
+      {
+        "name": "Strategy 3.3.135_EXIT90",
+        "sha256": "36c3ea77b6976388600477c7192e41fbc89c70f7c8b85e0775c58f9ad5dabe40"
+      },
+      {
+        "name": "Strategy 3.3.135_EXIT110",
+        "sha256": "4c6349cb8724d4aad7b7b092b981ec501d088808be13254de7de2087a77fd969"
+      }
+    ]
+  },
+  "orders_diagnostic": {
+    "schema": 1,
+    "state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+    "target_days": [
+      1,
+      5
+    ],
+    "probada_para_fondeo": false,
+    "strategies": [
+      {
+        "name": "Strategy 3.3.135_BASE",
+        "orders_sha256": "95b3bb51303e39e25effc336675b7b326019c0d05d9e027c299195a0fe902c47",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "1.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 40,
+            "net_profit": "-10080.0"
+          },
+          "OOS": {
+            "trades": 1,
+            "net_profit": "-1069.0"
+          }
+        },
+        "directional": {
+          "long": {
+            "trades": 39,
+            "zero_duration": 3,
+            "net_profit": "-12741.0",
+            "winners": 13,
+            "native_exits": {
+              "state": "NATIVE_EXIT_FIELDS_INSPECTED",
+              "close_types": {
+                "2": 23,
+                "16": 8,
+                "3": 8
+              },
+              "pt_fills_with_nonpositive_target_distance": 0
+            }
+          },
+          "short": {
+            "trades": 2,
+            "zero_duration": 0,
+            "net_profit": "1592.0",
+            "winners": 1,
+            "native_exits": {
+              "state": "NATIVE_EXIT_FIELDS_INSPECTED",
+              "close_types": {
+                "2": 1,
+                "16": 1
+              },
+              "pt_fills_with_nonpositive_target_distance": 0
+            }
+          }
+        },
+        "execution_review": [],
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      },
+      {
+        "name": "Strategy 3.3.135_EXIT90",
+        "orders_sha256": "d89b91b6c8ddfbd779df2da63ef29a3876c60695163f9efadaf95ef0ccf25b35",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "1.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 40,
+            "net_profit": "-9770.0"
+          },
+          "OOS": {
+            "trades": 1,
+            "net_profit": "-1069.0"
+          }
+        },
+        "directional": {
+          "long": {
+            "trades": 39,
+            "zero_duration": 2,
+            "net_profit": "-12431.0",
+            "winners": 15,
+            "native_exits": {
+              "state": "NATIVE_EXIT_FIELDS_INSPECTED",
+              "close_types": {
+                "2": 22,
+                "16": 9,
+                "3": 8
+              },
+              "pt_fills_with_nonpositive_target_distance": 0
+            }
+          },
+          "short": {
+            "trades": 2,
+            "zero_duration": 0,
+            "net_profit": "1592.0",
+            "winners": 1,
+            "native_exits": {
+              "state": "NATIVE_EXIT_FIELDS_INSPECTED",
+              "close_types": {
+                "2": 1,
+                "16": 1
+              },
+              "pt_fills_with_nonpositive_target_distance": 0
+            }
+          }
+        },
+        "execution_review": [],
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      },
+      {
+        "name": "Strategy 3.3.135_EXIT110",
+        "orders_sha256": "4090db55d9dbdea59f31dfc05dfb08a37e1d2d735d3cd9d0c319980e9de753a0",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "1.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 39,
+            "net_profit": "-8131.0"
+          },
+          "OOS": {
+            "trades": 1,
+            "net_profit": "-1069.0"
+          }
+        },
+        "directional": {
+          "long": {
+            "trades": 38,
+            "zero_duration": 3,
+            "net_profit": "-10792.0",
+            "winners": 13,
+            "native_exits": {
+              "state": "NATIVE_EXIT_FIELDS_INSPECTED",
+              "close_types": {
+                "2": 22,
+                "16": 9,
+                "3": 7
+              },
+              "pt_fills_with_nonpositive_target_distance": 0
+            }
+          },
+          "short": {
+            "trades": 2,
+            "zero_duration": 0,
+            "net_profit": "1592.0",
+            "winners": 1,
+            "native_exits": {
+              "state": "NATIVE_EXIT_FIELDS_INSPECTED",
+              "close_types": {
+                "2": 1,
+                "16": 1
+              },
+              "pt_fills_with_nonpositive_target_distance": 0
+            }
+          }
+        },
+        "execution_review": [],
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      }
+    ]
+  },
+  "baseline": {
+    "Net profit (IS)": "-10080.0",
+    "Net profit (OOS)": "-1069.0",
+    "Profit factor (IS)": "0.77",
+    "Profit factor (OOS)": "0.0",
+    "Ret/DD Ratio (IS)": "-0.73",
+    "Ret/DD Ratio (OOS)": "-1.0",
+    "# of trades (IS)": "40",
+    "# of trades (OOS)": "1"
+  },
+  "decisions": [
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "decision": "REJECT",
+      "reasons": [
+        "Baseline: Insufficient IS trades",
+        "Baseline: Non-positive development edge IS",
+        "Variant: Insufficient IS trades",
+        "Variant: Non-positive development edge IS",
+        "Baseline: Insufficient OOS trades",
+        "Baseline: Non-positive development edge OOS",
+        "Variant: Insufficient OOS trades",
+        "Variant: Non-positive development edge OOS"
+      ],
+      "metrics": {
+        "Net profit (IS)": "-9770.0",
+        "Net profit (OOS)": "-1069.0",
+        "Profit factor (IS)": "0.77",
+        "Profit factor (OOS)": "0.0",
+        "Ret/DD Ratio (IS)": "-0.7",
+        "Ret/DD Ratio (OOS)": "-1.0",
+        "# of trades (IS)": "40",
+        "# of trades (OOS)": "1"
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "decision": "REJECT",
+      "reasons": [
+        "Baseline: Insufficient IS trades",
+        "Baseline: Non-positive development edge IS",
+        "Variant: Insufficient IS trades",
+        "Variant: Non-positive development edge IS",
+        "Baseline: Insufficient OOS trades",
+        "Baseline: Non-positive development edge OOS",
+        "Variant: Insufficient OOS trades",
+        "Variant: Non-positive development edge OOS"
+      ],
+      "metrics": {
+        "Net profit (IS)": "-8131.0",
+        "Net profit (OOS)": "-1069.0",
+        "Profit factor (IS)": "0.81",
+        "Profit factor (OOS)": "0.0",
+        "Ret/DD Ratio (IS)": "-0.58",
+        "Ret/DD Ratio (OOS)": "-1.0",
+        "# of trades (IS)": "39",
+        "# of trades (OOS)": "1"
+      }
+    }
+  ],
+  "funding_verdict": "NO_EVALUABLE",
+  "probada_para_fondeo": false
+}

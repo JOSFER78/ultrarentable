@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_MYM_H1_20260905_05",
+  "source_name": "Strategy 4.41.106",
+  "source_sha256": "0eabe05f4ea8acb099e689939edf1c303b01001a814338b7fdcfdae64d7d3c41",
+  "source_rules_sha256": "a5295ad359b38d2fda949047fc3be7be6362245e02d2485f562d0cee0a7194d4",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+  "max_variants": 2,
+  "gid": "a866bb74-b97a-404f-ba4f-ddc00f1553f9",
+  "exit_unit_step": "1",
+  "entries": [
+    {
+      "name": "Strategy 4.41.106_BASE",
+      "file": "Strategy 4.41.106_BASE.sqx",
+      "exit_value": "595",
+      "sha256": "5b11640e3d586ce9ecfaf73e61a69bb07873a1792ee1a69e729f4ff359048d5e",
+      "rules_sha256": "a5295ad359b38d2fda949047fc3be7be6362245e02d2485f562d0cee0a7194d4"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "file": "Strategy 4.41.106_EXIT90.sqx",
+      "exit_value": "536",
+      "sha256": "903263c1faf8882a8d0af0d906e6ed7a0ee8d9fcbc1a1e1e1b3e2b9d954b5b38",
+      "rules_sha256": "2eb0b6bdfe33248c2ddb451297d7ed038ea28d615da5aed8da997cace01b62fe"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "file": "Strategy 4.41.106_EXIT110.sqx",
+      "exit_value": "654",
+      "sha256": "01b012c4bbc7d450414c41ba0da3924f04281a3cb8cad6c478249f95efacffd8",
+      "rules_sha256": "600ab76851a7b4a088e34cccd3363bd734d0b9be8f282f40252e4d05935dfc0f"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "config_sha256": "126d42f0ac35207d3910f04a27b61e1dfb85935077a1c32340961212ab8d6227"
+}

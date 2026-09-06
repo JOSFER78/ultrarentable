@@ -1,0 +1,50 @@
+{
+  "state": "COMPLETED_NOT_FUNDING_CERTIFIED",
+  "recipe": "native_exit_search_preserved_entries_integer_m1_v1",
+  "candidate": {
+    "identity": "c262e95c77f6bad106bf943a8b964118084c3cfa73fc3aadb5e47ae5fae1d216",
+    "source": "/opt/SQX-headless/import/fondeo/preseleccion/FONDEO_MNQ_M15_r6_20260906T013934401202Z/selected/Strategy 1.18.140.sqx",
+    "name": "Strategy 1.18.140",
+    "source_sha256": "0bd1b29062a2a1d8d5582ddee03fd4b6cdd95575193b83fbe902772afe795867",
+    "selection_manifest": "/opt/SQX-headless/import/fondeo/preseleccion/FONDEO_MNQ_M15_r6_20260906T013934401202Z/selected/manifest.json",
+    "selection_manifest_sha256": "c36fad87d754e192a5dfda24d9921f26639b315f8a5ffc5791921db65c041ba2",
+    "gid": "97abc9ea-58f7-4346-a911-c7aa4ea451d4",
+    "expected": null,
+    "symbol": "MNQ",
+    "rank": 13.62
+  },
+  "utc": "2026-09-06T06:09:50.588801+00:00",
+  "experiment": "/opt/SQX-headless/import/auto_improvement_c262e95c77f6bad106bf",
+  "probada_para_fondeo": false,
+  "search": "/opt/SQX-headless/import/auto_exit_search_c262e95c77f6bad106bf",
+  "next_stage_candidates": [],
+  "reconciliation": "Reuse verified single native variant after count correction; no repeated search",
+  "assessment": "/opt/SQX-headless/import/auto_improvement_c262e95c77f6bad106bf/assessment.json",
+  "assessment_sha256": "18f66d5bbd8390107488babcc698c9ef515ba9ecab8fbc8bc391595b4791a152",
+  "decisions": [
+    {
+      "name": "Strategy 1.18.140_NATIVE1",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Baseline requires execution review before promotion",
+        "Variant requires execution review before promotion",
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 41,
+        "OOS": 9
+      },
+      "orders_sha256": "02659f3dd73d94b8e51335b9ef335db7d6158f5c4b8f9c316d2fac5d53c2dab2",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "completed_utc": "2026-09-06T06:23:33.986173+00:00"
+}

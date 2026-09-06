@@ -1,0 +1,18 @@
+{
+  "engine_matches_deployed": true,
+  "reader_matches_deployed": true,
+  "assessment_hash_matches_deployed": true,
+  "independent_local_decisions_match": true,
+  "improvement_suite": {
+    "tests": 51,
+    "result": "PASS",
+    "seconds": 28.458,
+    "output": "test_results_native_pt_final.txt"
+  },
+  "broader_unittest_discovery": {
+    "result": "INCOMPLETE",
+    "passed": 73,
+    "import_errors": 3,
+    "reason": "Earlier broad check: pytest unavailable; not rerun."
+  }
+}

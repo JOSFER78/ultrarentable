@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-06T06:51:43.764616+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 3.3.135_NATIVE1",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 31,
+        "OOS": 6
+      },
+      "orders_sha256": "6ddbfff63f0b9d2791c8f93949ea3efd744670125570e73b19f3f9ab671d4985",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 3.3.135_NATIVE2",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 37,
+        "OOS": 6
+      },
+      "orders_sha256": "827934e4f92c23fcbb76ba9dcb1e28fef82f1e3bcd11c42ca4f451d135871ef0",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_AUTO_A2B595B131A17703FBAE",
+  "manifest_sha256": "e6cd7445ed5174feda857b23e38801ebec12c367013f2948bf015f3eb806be07",
+  "metrics_sha256": "fe9a2438af4e1fa8df78f7f1fb10f9835bd35f08439722e03667fce855979c2e",
+  "comparison_sha256": "6d890f89d078e0095e3c96b2223ce34e6166b32bafafff59ee02df78327edfaa",
+  "session_screen_sha256": "0c50c9570e4049343d1b1f18e6d59a61f8e2e2a6b2e8babcca368246fc2a7ae0",
+  "funding_windows_sha256": "54fd4b312e64ca168b0a2c8ac089a745851535139f3b3205e33e5feaa825150f",
+  "engine_sha256": "71986d8e347dcc65649d70a488bf42c060848c13a6f858ef429def907ee39c43",
+  "missing_exam_evidence": [
+    "Verified market-data provenance bound to the tested dataset: provider, actual traded instrument, timezone, file hashes and futures contract/roll policy. A proxy imported under a futures symbol does not establish futures performance.",
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

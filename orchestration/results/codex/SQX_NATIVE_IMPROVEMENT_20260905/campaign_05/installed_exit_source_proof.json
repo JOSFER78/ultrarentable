@@ -1,0 +1,258 @@
+[
+  {
+    "path": "/opt/SQX-headless/internal/extend/Snippets/SQ/Formulas/SLPT/PctValue.java",
+    "sha256": "fa77eaabb6c38cb98afa316b73b6c2b70bbc3676e70afe6ef168016f71524df4",
+    "lines": [
+      {
+        "line": 18,
+        "text": "\t//------------------------------------------------------------------------"
+      },
+      {
+        "line": 19,
+        "text": "\t"
+      },
+      {
+        "line": 20,
+        "text": "\t@Override"
+      },
+      {
+        "line": 21,
+        "text": "\tpublic double evaluateFormula(StrategyBase strategy, String symbol, double price, int direction) throws TradingException {"
+      },
+      {
+        "line": 22,
+        "text": "\t\t"
+      },
+      {
+        "line": 23,
+        "text": "\t\t// we have to compute SL or PT for this order"
+      },
+      {
+        "line": 24,
+        "text": "\t\tdouble pctValue = (price / 100d) * Value;"
+      },
+      {
+        "line": 25,
+        "text": "\t\t\t\t"
+      },
+      {
+        "line": 26,
+        "text": "\t\tif(direction > 0) {"
+      },
+      {
+        "line": 27,
+        "text": "\t\t\treturn price + pctValue;"
+      },
+      {
+        "line": 28,
+        "text": ""
+      }
+    ]
+  },
+  {
+    "path": "/opt/SQX-headless/internal/extend/Snippets/SQ/ExitMethods/ProfitTarget.java",
+    "sha256": "9c557e019fb6f10359fc124ba9ebd2cbd46c8b210de05b43937eccf6547c3bd7",
+    "lines": [
+      {
+        "line": 47,
+        "text": "\t\t\tsetOrderPTValue(order, strategy);"
+      },
+      {
+        "line": 48,
+        "text": "\t\t}"
+      },
+      {
+        "line": 49,
+        "text": "\t\telse {"
+      },
+      {
+        "line": 50,
+        "text": "\t\t\tboolean isTSMCEngine = strategy.getEngine() == Engines.Tradestation || strategy.getEngine() == Engines.MultiCharts;"
+      },
+      {
+        "line": 51,
+        "text": ""
+      },
+      {
+        "line": 52,
+        "text": "\t\t\tif(isTSMCEngine && isInitialSLPTApplied(strategy)) {"
+      },
+      {
+        "line": 53,
+        "text": "\t\t\t\tif(order.isMarketOrder()) {"
+      },
+      {
+        "line": 54,
+        "text": "\t\t\t\t\tsetOrderPTValue(order, strategy);"
+      },
+      {
+        "line": 66,
+        "text": "\t\tint direction = order.isLong() ? 1 : -1;"
+      },
+      {
+        "line": 67,
+        "text": ""
+      },
+      {
+        "line": 68,
+        "text": "\t\tdouble openPrice = order.isNettingMode() ? order.getLastOpenPrice(): order.getOpenPrice();"
+      },
+      {
+        "line": 69,
+        "text": "\t\tdouble pt = ProfitTarget.evaluateFormula(strategy, order.getSymbol(), openPrice, direction);"
+      },
+      {
+        "line": 70,
+        "text": ""
+      },
+      {
+        "line": 71,
+        "text": "\t\tif(pt == openPrice || pt == Order.NOT_DEFINED) {"
+      },
+      {
+        "line": 72,
+        "text": "\t\t\treturn;"
+      },
+      {
+        "line": 73,
+        "text": "\t\t}"
+      },
+      {
+        "line": 88,
+        "text": "\tpublic double computeValue(byte orderType, StrategyBase strategy, String symbol, double price) throws TradingException {"
+      },
+      {
+        "line": 89,
+        "text": "\t\tint direction = OrderTypes.isLongOrder(orderType) ? 1 : -1;"
+      },
+      {
+        "line": 90,
+        "text": ""
+      },
+      {
+        "line": 91,
+        "text": "\t\tdouble pt = ProfitTarget.evaluateFormula(strategy, symbol, price, direction);"
+      },
+      {
+        "line": 92,
+        "text": "\t\tif(pt == Order.NOT_DEFINED) return Order.NOT_DEFINED;"
+      },
+      {
+        "line": 93,
+        "text": "\t\t"
+      },
+      {
+        "line": 94,
+        "text": "\t\tdouble tickSize = strategy.getInstrumentInfo().tickSize;"
+      },
+      {
+        "line": 95,
+        "text": "\t\t"
+      },
+      {
+        "line": 99,
+        "text": "\t//------------------------------------------------------------------------"
+      },
+      {
+        "line": 100,
+        "text": ""
+      },
+      {
+        "line": 101,
+        "text": "\t/** "
+      },
+      {
+        "line": 102,
+        "text": "\t * used in Tradestation. SL, PT and other exits are not tied "
+      },
+      {
+        "line": 103,
+        "text": "\t * with the exact orders but they are placed separately."
+      },
+      {
+        "line": 104,
+        "text": "\t * @throws TradingException "
+      },
+      {
+        "line": 105,
+        "text": "\t */"
+      },
+      {
+        "line": 106,
+        "text": "\t@Override"
+      },
+      {
+        "line": 107,
+        "text": "\tpublic boolean setExit(ILiveOrder order, StrategyBase strategy) throws TradingException {"
+      },
+      {
+        "line": 108,
+        "text": "\t\tint direction = order.isLong() ? 1 : -1;"
+      },
+      {
+        "line": 109,
+        "text": "\t\t"
+      },
+      {
+        "line": 110,
+        "text": "\t\tdouble pt = ProfitTarget.evaluateFormula(strategy, order.getSymbol(), order.getOpenPrice(), direction);"
+      },
+      {
+        "line": 111,
+        "text": "\t\tif(pt == Order.NOT_DEFINED) {"
+      },
+      {
+        "line": 112,
+        "text": "\t\t\treturn false;"
+      },
+      {
+        "line": 113,
+        "text": "\t\t}"
+      },
+      {
+        "line": 114,
+        "text": "\t\t"
+      },
+      {
+        "line": 141,
+        "text": "//\t\t\treturn false;"
+      },
+      {
+        "line": 142,
+        "text": "//\t\t}"
+      },
+      {
+        "line": 143,
+        "text": ""
+      },
+      {
+        "line": 144,
+        "text": "\t\tdouble pt = ProfitTarget.evaluateFormula(strategy, order.getSymbol(), 0, -1);"
+      },
+      {
+        "line": 145,
+        "text": ""
+      },
+      {
+        "line": 146,
+        "text": "\t\tboolean isTSMCEngine = strategy.getEngine() == Engines.Tradestation || strategy.getEngine() == Engines.MultiCharts;"
+      },
+      {
+        "line": 147,
+        "text": "\t\tif(isTSMCEngine) {"
+      },
+      {
+        "line": 148,
+        "text": ""
+      },
+      {
+        "line": 149,
+        "text": "\t\t\tif (pt == Order.NOT_DEFINED) { // || pt <= 0) {"
+      },
+      {
+        "line": 150,
+        "text": "\t\t\t\treturn false;"
+      }
+    ]
+  }
+]

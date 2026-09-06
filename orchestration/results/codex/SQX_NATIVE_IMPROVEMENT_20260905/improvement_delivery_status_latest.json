@@ -1,0 +1,45 @@
+{
+  "checked_at": "2026-09-06T04:48:51.534818+00:00",
+  "hashes": {
+    "/opt/SQX-headless/import/sqx_native_improvement.py": "996ec9ff2a177b6168e0a87aa859e34527f64573d240eafee1027c536dee6140",
+    "/opt/SQX-headless/import/sqx_improvement_stage.py": "601a35ef6f9c1bfa77e751586cb0af31843ddea5aed7b0dc65a54f389679604d",
+    "/etc/systemd/system/sqx-improvement.service": "fa8ce6c6293d70ecec331af19130b870e4b377be50a06441785e18105b832427",
+    "/etc/systemd/system/sqx-improvement.timer": "7147f5ba0374049a2ba317103972486387645c25140329a222d72b77456877df"
+  },
+  "funding_qualified": 0,
+  "accepted_improvements": 0,
+  "services": {
+    "returncode": 0,
+    "stdout": "active\nactive\nactive\n",
+    "stderr": ""
+  },
+  "timer": {
+    "returncode": 0,
+    "stdout": "NEXT                          LEFT LAST                          PASSED UNIT                  ACTIVATES\nSun 2026-09-06 07:48:11 CEST 59min Sun 2026-09-06 06:48:08 CEST 42s ago sqx-improvement.timer sqx-improvement.service\n\n1 timers listed.\nPass --all to see loaded but inactive timers, too.\n",
+    "stderr": ""
+  },
+  "last_improvement": {
+    "returncode": 0,
+    "stdout": "Result=success\nExecMainStatus=0\n",
+    "stderr": ""
+  },
+  "generation_log_tail": [
+    "2026-09-06 04:24:33 UTC    FONDEO_MCL_M5: AVISO, le he mandado parar y sigue avanzando; lo repito",
+    "2026-09-06 04:25:04 UTC    FONDEO_MCL_M5: NO PARA. Sigue construyendo y le robara hilos a la siguiente celda.",
+    "2026-09-06 04:25:13 UTC  === runner M1 arrancado \u00b7 ronda 6 \u00b7 30 celdas \u00b7 1 h por celda \u00b7 tope duro 63 min ===",
+    "2026-09-06 04:25:13 UTC  retomo FONDEO_MCL_M5, que qued\u00f3 a medias",
+    "2026-09-06 04:26:33 UTC  === FONDEO_MCL_M5 ERROR_SIN_GENERACION \u00b7 0 preseleccionadas \u00b7 memoria RETENIDA_SIN_SELECCION ===",
+    "2026-09-06 04:26:33 UTC  --- arranco FONDEO_MES_M5 (ronda 6)",
+    "2026-09-06 04:36:33 UTC    FONDEO_MES_M5: 9 min. 59 s., 5208 generadas, 529 en banco, 31394/h",
+    "2026-09-06 04:46:33 UTC    FONDEO_MES_M5: 20 min., 10343 generadas, 1393 en banco, 31097/h"
+  ],
+  "automatic_stage": {
+    "state": "WAITING_FOR_SUPPORTED_SELECTED_STRATEGY",
+    "invalid_manifests": []
+  },
+  "ew_trial": {
+    "comparison": "/opt/SQX-headless/import/ew_real_transfer_20260906/cash_session_experiment/comparison.json",
+    "archive_sha256": "0bcca4dc53e8fa627102c4e42bfd546718ce0f97db043e56419488c7360672b2",
+    "state": "REJECTED_NOT_FUNDING_CERTIFIED"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+  "target_days": [
+    1,
+    5
+  ],
+  "probada_para_fondeo": false,
+  "strategies": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "orders_sha256": "9ce6ac0c02d97a5d267958870049e0ef3a08c024aae0cdd3f8cd66218607beba",
+      "fractional_orders": 0,
+      "integer_contracts": true,
+      "sizes": [
+        "3.0",
+        "5.0"
+      ],
+      "samples": {
+        "IS": {
+          "trades": 154,
+          "net_profit": "9844.98"
+        },
+        "OOS": {
+          "trades": 26,
+          "net_profit": "8520.23"
+        }
+      },
+      "directional": {
+        "long": {
+          "trades": 175,
+          "zero_duration": 6,
+          "net_profit": "17117.21",
+          "winners": 75
+        },
+        "short": {
+          "trades": 5,
+          "zero_duration": 0,
+          "net_profit": "1248.00",
+          "winners": 3
+        }
+      },
+      "execution_review": [],
+      "funding_verdict": "NO_EVALUABLE",
+      "blockers": [
+        "No independent intraday equity replay: trailing loss survival is unknown.",
+        "No complete versioned exam profile with calendar and session checks.",
+        "Data provenance and execution precision not independently validated.",
+        "Development OOS reused for comparison; final holdout still required."
+      ]
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "orders_sha256": "c6d920fd3684e4fbaef2038f520a9dc8a3634a1dfc1b5d123c36b61227cc6aa3",
+      "fractional_orders": 0,
+      "integer_contracts": true,
+      "sizes": [
+        "3.0",
+        "5.0"
+      ],
+      "samples": {
+        "IS": {
+          "trades": 156,
+          "net_profit": "9751.83"
+        },
+        "OOS": {
+          "trades": 26,
+          "net_profit": "8070.23"
+        }
+      },
+      "directional": {
+        "long": {
+          "trades": 177,
+          "zero_duration": 6,
+          "net_profit": "16574.06",
+          "winners": 78
+        },
+        "short": {
+          "trades": 5,
+          "zero_duration": 0,
+          "net_profit": "1248.00",
+          "winners": 3
+        }
+      },
+      "execution_review": [],
+      "funding_verdict": "NO_EVALUABLE",
+      "blockers": [
+        "No independent intraday equity replay: trailing loss survival is unknown.",
+        "No complete versioned exam profile with calendar and session checks.",
+        "Data provenance and execution precision not independently validated.",
+        "Development OOS reused for comparison; final holdout still required."
+      ]
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "orders_sha256": "92d20d6580e5e7f044f51876324530f855292c7bd18d8950005f583f260b156c",
+      "fractional_orders": 0,
+      "integer_contracts": true,
+      "sizes": [
+        "3.0",
+        "5.0"
+      ],
+      "samples": {
+        "IS": {
+          "trades": 153,
+          "net_profit": "9945.49"
+        },
+        "OOS": {
+          "trades": 26,
+          "net_profit": "8970.23"
+        }
+      },
+      "directional": {
+        "long": {
+          "trades": 174,
+          "zero_duration": 7,
+          "net_profit": "17667.72",
+          "winners": 72
+        },
+        "short": {
+          "trades": 5,
+          "zero_duration": 0,
+          "net_profit": "1248.00",
+          "winners": 3
+        }
+      },
+      "execution_review": [],
+      "funding_verdict": "NO_EVALUABLE",
+      "blockers": [
+        "No independent intraday equity replay: trailing loss survival is unknown.",
+        "No complete versioned exam profile with calendar and session checks.",
+        "Data provenance and execution precision not independently validated.",
+        "Development OOS reused for comparison; final holdout still required."
+      ]
+    }
+  ]
+}

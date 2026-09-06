@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-06T08:11:43.876898+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 1.17.118_NATIVE1",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit OOS",
+        "Worse Ret/DD Ratio OOS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "incompatible_orders": {
+        "IS": 95,
+        "OOS": 18
+      },
+      "orders_sha256": "76f9ca4fbb5e20ef6dd36383376294551874a00854706a76b7254fa5240feffa",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_AUTO_FAFF40442F5B192E7CE6",
+  "manifest_sha256": "f602bec01ce892d65e1c0083725ac51d8eec15eacdcaab965437e00771cb85bf",
+  "metrics_sha256": "1cf41ccc4bab65d936845e8ee5244857c80aa93d89f9af0ee2649f594d666d03",
+  "comparison_sha256": "ac33e3f58733112f4c5725b4f62e74df250b492fc7717d2339fcd337375623fa",
+  "session_screen_sha256": "d21bb9d02baf4e5ff83d5e81575fb5c0c483e1f82ddf631836a1e4a3d73132f8",
+  "funding_windows_sha256": "fc031ad37b296ab519c5c03399af8d30038b381e4de0110f56ad5a6652fa24a0",
+  "engine_sha256": "e1f5bb97fa72847784466cf61288524baa7d6d0b6bb835acff32f042b108d8bc",
+  "missing_exam_evidence": [
+    "Verified market-data provenance bound to the tested dataset: provider, actual traded instrument, timezone, file hashes and futures contract/roll policy. A proxy imported under a futures symbol does not establish futures performance.",
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

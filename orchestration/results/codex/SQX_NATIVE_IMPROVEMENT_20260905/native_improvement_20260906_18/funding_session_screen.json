@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "state": "SESSION_SCREEN_ONLY_NOT_EXAM_VALIDATION",
+  "profile": {
+    "id": "topstep_mnq_regular_session_2026-09-06",
+    "scope": "Example profile: MNQ regular sessions only, not a complete exam profile",
+    "source": "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade",
+    "source_updated": "2026-07-13",
+    "checked_on": "2026-09-06",
+    "timezone": "America/Chicago",
+    "instrument": "MNQ",
+    "flat_by": "15:10",
+    "reopen": "17:00",
+    "weekend": "Friday 15:10 through Sunday 17:00"
+  },
+  "profile_sha256": "3bb40e216a605368cb93a879088902526cab62c8e93c106590553a02b86aa3eb",
+  "native_orders_state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+  "strategies": [
+    {
+      "name": "Strategy 1.18.140_BASE",
+      "orders_sha256": "e6fde2360d815e9d7ac629f7a07bbdf8859d773e474b1d8736f84a784b2a7b2a",
+      "orders": 394,
+      "incompatible_orders": {
+        "IS": 41,
+        "OOS": 8
+      },
+      "session_verdict": "INCOMPATIBLE_RECORDED_SESSIONS",
+      "examples": [
+        {
+          "ticket": "30",
+          "sample": "11",
+          "open_utc": "2023-01-11T17:53:00+00:00",
+          "close_utc": "2023-01-12T13:29:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "819",
+          "sample": "11",
+          "open_utc": "2023-02-15T18:20:00+00:00",
+          "close_utc": "2023-02-16T09:00:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "1182",
+          "sample": "11",
+          "open_utc": "2023-03-16T16:46:00+00:00",
+          "close_utc": "2023-03-17T11:35:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        }
+      ],
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT90",
+      "orders_sha256": "6a14dc465b6309c0d73dd2b146c5ed7bfb52b45517b175cec0fe0a9a3c92d59c",
+      "orders": 402,
+      "incompatible_orders": {
+        "IS": 39,
+        "OOS": 8
+      },
+      "session_verdict": "INCOMPATIBLE_RECORDED_SESSIONS",
+      "examples": [
+        {
+          "ticket": "27",
+          "sample": "11",
+          "open_utc": "2023-01-11T17:53:00+00:00",
+          "close_utc": "2023-01-12T13:29:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "814",
+          "sample": "11",
+          "open_utc": "2023-02-15T18:20:00+00:00",
+          "close_utc": "2023-02-16T01:12:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "1138",
+          "sample": "11",
+          "open_utc": "2023-03-16T16:46:00+00:00",
+          "close_utc": "2023-03-17T11:35:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        }
+      ],
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT110",
+      "orders_sha256": "d3db8f339efa68ee0e533a307bc051702e3c357c868f7c10037a6f0d9f4d9f23",
+      "orders": 384,
+      "incompatible_orders": {
+        "IS": 41,
+        "OOS": 9
+      },
+      "session_verdict": "INCOMPATIBLE_RECORDED_SESSIONS",
+      "examples": [
+        {
+          "ticket": "30",
+          "sample": "11",
+          "open_utc": "2023-01-11T17:53:00+00:00",
+          "close_utc": "2023-01-12T13:29:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "821",
+          "sample": "11",
+          "open_utc": "2023-02-15T18:20:00+00:00",
+          "close_utc": "2023-02-16T09:00:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "1184",
+          "sample": "11",
+          "open_utc": "2023-03-16T16:46:00+00:00",
+          "close_utc": "2023-03-17T11:35:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        }
+      ],
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "limitations": [
+    "Current regular rules applied retrospectively, not historical rule certification.",
+    "Holiday and exceptional early-close calendar not verified.",
+    "No independent intraday equity replay or complete exam evaluation.",
+    "Adding daily flatten changes the strategy and requires a fresh native retest."
+  ]
+}

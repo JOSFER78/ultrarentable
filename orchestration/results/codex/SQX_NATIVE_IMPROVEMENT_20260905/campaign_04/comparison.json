@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "state": "NATIVE_COMPARISON_NOT_FUNDING_CERTIFICATION",
+  "project": "UR_IMPROVE_MYM_H1_20260905_04",
+  "metrics_sha256": "80408d631495fee31e4952ace05610c5a44727d0c8eb6b8adac995af8f12cc1c",
+  "native_evidence": {
+    "start_sha256": "2216f87eda7a82266df4465a98e76aec9a68ba914d22697d92115c8082fb2dc6",
+    "log_sha256": "ad9a9cc3cbc9e5806d7d04e5f0a3b13fbb03fffd010ea01d2eb284642cb1e630",
+    "artifacts": [
+      {
+        "name": "Strategy 4.41.106_BASE",
+        "sha256": "c3a3c68c30213e397e79d522c7f19081d7205754a8de737842a25db4ad93c3d1"
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT90",
+        "sha256": "914ff2edb84afbebaf0f9b1db3a0afa4a08c4e2b5b3d96051a477528f94c8f01"
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT110",
+        "sha256": "975549fc95e147f5f4172733549e94d06a2b9ae1dcc24743317817887eeecabe"
+      }
+    ]
+  },
+  "baseline": {
+    "Net profit (IS)": "8573.2",
+    "Net profit (OOS)": "3618.66",
+    "Profit factor (IS)": "3.13",
+    "Profit factor (OOS)": "4.02",
+    "Ret/DD Ratio (IS)": "7.65",
+    "Ret/DD Ratio (OOS)": "10.32",
+    "# of trades (IS)": "114",
+    "# of trades (OOS)": "31"
+  },
+  "decisions": [
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS",
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "metrics": {
+        "Net profit (IS)": "8435.7",
+        "Net profit (OOS)": "4071.16",
+        "Profit factor (IS)": "3.09",
+        "Profit factor (OOS)": "4.4",
+        "Ret/DD Ratio (IS)": "7.53",
+        "Ret/DD Ratio (OOS)": "11.61",
+        "# of trades (IS)": "114",
+        "# of trades (OOS)": "31"
+      }
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "decision": "REJECT",
+      "reasons": [
+        "Less than 5% improvement in weakest development Ret/DD"
+      ],
+      "metrics": {
+        "Net profit (IS)": "8749.7",
+        "Net profit (OOS)": "3913.66",
+        "Profit factor (IS)": "3.17",
+        "Profit factor (OOS)": "4.27",
+        "Ret/DD Ratio (IS)": "7.81",
+        "Ret/DD Ratio (OOS)": "11.16",
+        "# of trades (IS)": "114",
+        "# of trades (OOS)": "31"
+      }
+    }
+  ],
+  "funding_verdict": "NO_EVALUABLE",
+  "probada_para_fondeo": false,
+  "orders_diagnostic": {
+    "schema": 1,
+    "state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+    "target_days": [
+      1,
+      5
+    ],
+    "probada_para_fondeo": false,
+    "strategies": [
+      {
+        "name": "Strategy 4.41.106_BASE",
+        "orders_sha256": "4931c9af910dd6290b28dc0da3a18b3213ce2624c8ee1402b55393c445ba6274",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "3.0",
+          "4.0",
+          "5.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 114,
+            "net_profit": "8573.20"
+          },
+          "OOS": {
+            "trades": 31,
+            "net_profit": "3618.66"
+          }
+        },
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT90",
+        "orders_sha256": "673c3c968aeb421817ba2b408409e29e5a4f90265a256879c0aa1edce40bbec3",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "3.0",
+          "4.0",
+          "5.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 114,
+            "net_profit": "8435.70"
+          },
+          "OOS": {
+            "trades": 31,
+            "net_profit": "4071.16"
+          }
+        },
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      },
+      {
+        "name": "Strategy 4.41.106_EXIT110",
+        "orders_sha256": "c8b1d361f65fbad04fc31ede92b10542917e227d92cb79bb8804d70ea6bc2ed9",
+        "fractional_orders": 0,
+        "integer_contracts": true,
+        "sizes": [
+          "3.0",
+          "4.0",
+          "5.0"
+        ],
+        "samples": {
+          "IS": {
+            "trades": 114,
+            "net_profit": "8749.70"
+          },
+          "OOS": {
+            "trades": 31,
+            "net_profit": "3913.66"
+          }
+        },
+        "funding_verdict": "NO_EVALUABLE",
+        "blockers": [
+          "No independent intraday equity replay: trailing loss survival is unknown.",
+          "No complete versioned exam profile with calendar and session checks.",
+          "Data provenance and execution precision not independently validated.",
+          "Development OOS reused for comparison; final holdout still required."
+        ]
+      }
+    ]
+  }
+}

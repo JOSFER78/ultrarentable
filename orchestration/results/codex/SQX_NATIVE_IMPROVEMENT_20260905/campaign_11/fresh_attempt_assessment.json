@@ -1,0 +1,132 @@
+{
+  "state": "BLOCKED_UNVERIFIED_INDICATOR_INITIALIZATION",
+  "strategies": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "initial_capital": "50000",
+      "initialization": {
+        "state": "PRIOR_INDICATOR_HISTORY_NOT_VERIFIED",
+        "observed_extrema_period_lower_bound": 455,
+        "timeframe": "H4",
+        "window_bars_upper_bound": 30,
+        "window_alone_too_short": true,
+        "interpretation": "No inference about strategy quality or fresh-account viability without verified warmup."
+      },
+      "fresh_account_sizing": "NATIVE_RETEST_FROM_INITIAL_CAPITAL",
+      "orders_sha256": "6f9cc99df88ada76868ebd2829cc4140b5df9b901abbe2123c8705ef5cecd0fa",
+      "trades": 0,
+      "sizes": [],
+      "net_profit": "0",
+      "daily_net_profit": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "screen": {
+        "outcome": "NO_TRADES",
+        "profit": "0",
+        "trading_days": 0
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "initial_capital": "50000",
+      "initialization": {
+        "state": "PRIOR_INDICATOR_HISTORY_NOT_VERIFIED",
+        "observed_extrema_period_lower_bound": 455,
+        "timeframe": "H4",
+        "window_bars_upper_bound": 30,
+        "window_alone_too_short": true,
+        "interpretation": "No inference about strategy quality or fresh-account viability without verified warmup."
+      },
+      "fresh_account_sizing": "NATIVE_RETEST_FROM_INITIAL_CAPITAL",
+      "orders_sha256": "6f9cc99df88ada76868ebd2829cc4140b5df9b901abbe2123c8705ef5cecd0fa",
+      "trades": 0,
+      "sizes": [],
+      "net_profit": "0",
+      "daily_net_profit": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "screen": {
+        "outcome": "NO_TRADES",
+        "profit": "0",
+        "trading_days": 0
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "initial_capital": "50000",
+      "initialization": {
+        "state": "PRIOR_INDICATOR_HISTORY_NOT_VERIFIED",
+        "observed_extrema_period_lower_bound": 455,
+        "timeframe": "H4",
+        "window_bars_upper_bound": 30,
+        "window_alone_too_short": true,
+        "interpretation": "No inference about strategy quality or fresh-account viability without verified warmup."
+      },
+      "fresh_account_sizing": "NATIVE_RETEST_FROM_INITIAL_CAPITAL",
+      "orders_sha256": "6f9cc99df88ada76868ebd2829cc4140b5df9b901abbe2123c8705ef5cecd0fa",
+      "trades": 0,
+      "sizes": [],
+      "net_profit": "0",
+      "daily_net_profit": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "screen": {
+        "outcome": "NO_TRADES",
+        "profit": "0",
+        "trading_days": 0
+      }
+    }
+  ],
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "next_stage_candidates": [],
+  "project": "UR_IMPROVE_MNQ_H4_20260906_11",
+  "window": {
+    "start": "2026-05-04",
+    "end": "2026-05-08",
+    "initial_capital": "50000",
+    "parent_manifest_sha256": "542d3f2c672dc91f9011ad7563c806d6d3eaf71b74d15d5fff22110c966a4fb7",
+    "parent_project": "UR_IMPROVE_MNQ_H4_20260906_10",
+    "selection": "Known development window; diagnostic, not held-out evidence",
+    "strategy_rules_changed": false
+  },
+  "profile": {
+    "id": "topstep_50k_optional_dll_off_screen_2026-09-06",
+    "checked_on": "2026-09-06",
+    "nominal": "50000",
+    "target": "3000",
+    "eod_trailing_loss": "2000",
+    "best_day_fraction": "0.5",
+    "minimum_trading_days": 2,
+    "max_micro_contracts": 50,
+    "sources": [
+      "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit",
+      "https://help.topstep.com/en/articles/8284208-consistency-at-topstep",
+      "https://help.topstep.com/en/articles/8284197-trading-combine-parameters",
+      "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade"
+    ],
+    "scope": "Historical diagnostic for one example exam; holidays and exact intraday replay still missing."
+  },
+  "manifest_sha256": "31a0968a89695862f0f1d33ec9323d17dd4862cf4e815d8fb66425c2b2b60be7",
+  "metrics_sha256": "7181f3a799f1520e65e18a3978b7900c6ae9dd567963aa737eca4d2c64d31848",
+  "engine_sha256": "37acec92400888a32fc2c2c95c3750f13bf6bea3074887d6f06bf0e8c65d4594",
+  "limitations": [
+    "Known development window selected for diagnosis; not held-out evidence or a success probability.",
+    "Monday UTC start omits the preceding Sunday evening; indicator warmup and entry state require validation.",
+    "Exact intraday equity, data provenance, exceptional closures and complete exam rules remain unverified.",
+    "MAE cost inclusion is unknown; excursion flags are conservative screening only.",
+    "All variants retain their prior development rejection; this diagnostic cannot promote them."
+  ]
+}

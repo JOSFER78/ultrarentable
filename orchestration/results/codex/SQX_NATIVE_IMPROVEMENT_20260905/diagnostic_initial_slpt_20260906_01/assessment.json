@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-06T06:41:05.721256+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 1.18.140_NATIVE1",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Worse Profit factor IS",
+        "Worse Ret/DD Ratio IS"
+      ],
+      "incompatible_orders": {
+        "IS": 54,
+        "OOS": 11
+      },
+      "orders_sha256": "9f1540c82d4daad5ecb71382dad962c5f7577ffe783913d8840576c83ff7da0b",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_AUTO_D1A60000000000000001",
+  "manifest_sha256": "4a10dcee508f71440fdf182dbff62f730fb450913a95e78b31f6e3f1ea1f9fd5",
+  "metrics_sha256": "c4362ff51b460b431c9b001d763bfa473f05776ffd759624d2663927e0bf6156",
+  "comparison_sha256": "303c1f42537e8c440fb521a7bad65fd5dc9e9b4382ca16d92d28ad531a09bf9d",
+  "session_screen_sha256": "a6825757113326622ad261d6ac1b4a379dd40dc6d222629aef75cc141554731f",
+  "funding_windows_sha256": "c74f1def7c23651b79a0c58f376e62995f408d0bcfe235662dff1d03b4993624",
+  "engine_sha256": "71986d8e347dcc65649d70a488bf42c060848c13a6f858ef429def907ee39c43",
+  "missing_exam_evidence": [
+    "Verified market-data provenance bound to the tested dataset: provider, actual traded instrument, timezone, file hashes and futures contract/roll policy. A proxy imported under a futures symbol does not establish futures performance.",
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

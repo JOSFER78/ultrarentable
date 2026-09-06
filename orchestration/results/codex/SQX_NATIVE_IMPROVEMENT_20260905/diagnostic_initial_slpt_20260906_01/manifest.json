@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_AUTO_D1A60000000000000001",
+  "source_name": "Strategy 1.18.140",
+  "source_sha256": "0bd1b29062a2a1d8d5582ddee03fd4b6cdd95575193b83fbe902772afe795867",
+  "source_rules_sha256": "ce1410fa0bb7753fb7c031cd4b50b6ab27057fb1e3bdcba27516dc950fa3c48c",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "Diagnostic only: percent PT may evaluate from zero for TS pending orders with UseInitialSLPT. Disable this option to test causality, not for deployment: protection would start next bar.",
+  "max_variants": 2,
+  "gid": null,
+  "exit_unit_step": null,
+  "entries": [
+    {
+      "name": "Strategy 1.18.140_BASE",
+      "file": "Strategy 1.18.140_BASE.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "4171cb18b98e449ec1a51e4fba7f2a6f4ed4c502ff9220a759e5f6a48d0013c5",
+      "rules_sha256": "ce1410fa0bb7753fb7c031cd4b50b6ab27057fb1e3bdcba27516dc950fa3c48c"
+    },
+    {
+      "name": "Strategy 1.18.140_NATIVE1",
+      "file": "Strategy 1.18.140_NATIVE1.sqx",
+      "exit_value": null,
+      "exit_unit": "native_recipe",
+      "sha256": "22154efc4cf4791f83ff8cef015c79ac3b118140e1ce437e6e523f6b18d7c6b9",
+      "rules_sha256": "1ab19fe91fb880a829eddd99f5e9bfe626d686352fd0a92e40e7a0b725668953"
+    }
+  ],
+  "integer_contracts_requested": true,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "native_exit_sources": [
+    {
+      "file": "Strategy 1.18.140 - Improved 1.1.15.sqx",
+      "sha256": "0253b21e11ca2aa06e06968e92a8bd436e5d486d0aa1926e1c4a154683aab9ce"
+    }
+  ],
+  "config_sha256": "152ef287488d199bec8b0624b2d1ff02430e21c5d140832d862862353a323409",
+  "diagnostic_only": true,
+  "parent_manifest_sha256": "76f081673129806ab9393983e546b81f9b869b5e58091ef1f7ac928c7585aa26"
+}

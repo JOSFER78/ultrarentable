@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "state": "SESSION_SCREEN_ONLY_NOT_EXAM_VALIDATION",
+  "profile": {
+    "id": "topstep_mym_regular_session_2026-09-05",
+    "scope": "Example profile: MYM regular sessions only, not a complete exam profile",
+    "source": "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade",
+    "source_updated": "2026-07-13",
+    "checked_on": "2026-09-05",
+    "timezone": "America/Chicago",
+    "instrument": "MYM",
+    "flat_by": "15:10",
+    "reopen": "17:00",
+    "weekend": "Friday 15:10 through Sunday 17:00"
+  },
+  "profile_sha256": "20641074b6179207b8391b9659bf9981375cc39f51cfe379c87c4c480e88e6d9",
+  "native_orders_state": "NATIVE_ORDERS_RECONCILED_NOT_FUNDING_VALIDATION",
+  "strategies": [
+    {
+      "name": "Strategy 4.41.106_BASE",
+      "orders_sha256": "6c3ba0c22e42c6aaef68668924324a704989f9b89b3d40d09dbf7f55ad9cf278",
+      "orders": 143,
+      "incompatible_orders": {
+        "IS": 0,
+        "OOS": 1
+      },
+      "session_verdict": "INCOMPATIBLE_RECORDED_SESSIONS",
+      "examples": [
+        {
+          "ticket": "1701",
+          "sample": "21",
+          "open_utc": "2025-12-24T17:00:00+00:00",
+          "close_utc": "2025-12-26T00:00:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        }
+      ],
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT90",
+      "orders_sha256": "1c1c4ed492df38dff99ea71d802a714b8d8d8fbaa39e341f68e28a68714b591b",
+      "orders": 133,
+      "incompatible_orders": {
+        "IS": 0,
+        "OOS": 1
+      },
+      "session_verdict": "INCOMPATIBLE_RECORDED_SESSIONS",
+      "examples": [
+        {
+          "ticket": "2253",
+          "sample": "21",
+          "open_utc": "2025-12-24T17:00:00+00:00",
+          "close_utc": "2025-12-26T00:00:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        }
+      ],
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 4.41.106_EXIT110",
+      "orders_sha256": "77d9567ff2ba49ba97daeece0a579f50997667c9d8fdeedb3a66884060986e80",
+      "orders": 132,
+      "incompatible_orders": {
+        "IS": 1,
+        "OOS": 1
+      },
+      "session_verdict": "INCOMPATIBLE_RECORDED_SESSIONS",
+      "examples": [
+        {
+          "ticket": "1819",
+          "sample": "11",
+          "open_utc": "2025-06-19T07:05:00+00:00",
+          "close_utc": "2025-06-19T23:00:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        },
+        {
+          "ticket": "2268",
+          "sample": "21",
+          "open_utc": "2025-12-24T17:00:00+00:00",
+          "close_utc": "2025-12-26T00:00:00+00:00",
+          "reasons": [
+            "POSITION_HELD_DURING_REGULAR_CLOSURE"
+          ]
+        }
+      ],
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "limitations": [
+    "Current regular rules applied retrospectively, not historical rule certification.",
+    "Holiday and exceptional early-close calendar not verified.",
+    "No independent intraday equity replay or complete exam evaluation.",
+    "Adding daily flatten changes the strategy and requires a fresh native retest."
+  ]
+}

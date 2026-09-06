@@ -1,0 +1,40 @@
+{
+  "state": "DIAGNOSTIC_COMPLETE",
+  "probada": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "results": [
+    {
+      "arm": "CONTROL",
+      "order_rows": 170,
+      "orders_sha256": "8db7f2a2889a923c05c43ed02a8bff6e7d3aaee16175945fdc1d6731940769de"
+    },
+    {
+      "arm": "LOWER",
+      "order_rows": 0,
+      "orders_sha256": "6f9cc99df88ada76868ebd2829cc4140b5df9b901abbe2123c8705ef5cecd0fa"
+    },
+    {
+      "arm": "UPPER",
+      "order_rows": 170,
+      "orders_sha256": "8db7f2a2889a923c05c43ed02a8bff6e7d3aaee16175945fdc1d6731940769de"
+    }
+  ],
+  "evidence": {
+    "start_sha256": "1bcd11e4d11e8589cb03a42a34b19597921e3dae630dc8f724f1d6f7cc99b52f",
+    "log_sha256": "56823ada38857437f8c14bcd86bcc33387e57cb7bedc0aed507a3bc12e6c94dc",
+    "artifacts": [
+      {
+        "name": "Strategy 3.3.135_BASE_CONTROL",
+        "sha256": "72ca48bd074049f0bfd24e16325f3713abaaac28edaf99fb8e08c202126b3261"
+      },
+      {
+        "name": "Strategy 3.3.135_BASE_LOWER",
+        "sha256": "49cd1bb85967bab37bc2d820c1e790503289832368984322593d17e59cfa09ed"
+      },
+      {
+        "name": "Strategy 3.3.135_BASE_UPPER",
+        "sha256": "5f76f110ed3aea19668c5f1631d99ae6fccb994ed6e0ae5c82f78c6be57803ed"
+      }
+    ]
+  }
+}

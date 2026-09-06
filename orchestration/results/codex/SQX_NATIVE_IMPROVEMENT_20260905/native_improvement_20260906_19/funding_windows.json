@@ -1,0 +1,385 @@
+{
+  "schema": 1,
+  "state": "NATIVE_WINDOWS_SCREENED_NOT_EXAM_VALIDATION",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "strategies": [
+    {
+      "name": "Strategy 1.18.140_BASE",
+      "sizing_method": "RiskFixedBalancePct",
+      "fresh_account_sizing": "NOT_RETESTED",
+      "balance_dependent_sizing": true,
+      "orders_sha256": "f8ad4417af2be4531917d441ae2fc36b8629c1d108a1e6452aa5fe5f02785b5b",
+      "settings_sha256": "e94e5ad76a0ff059dfef5cc37c56bc15a168b6165fb5096863a7caed576e6cb2",
+      "samples": {
+        "IS": {
+          "complete_weekday_sessions": 764,
+          "sessions_with_orders": 274,
+          "horizons": {
+            "1": {
+              "all_windows": 764,
+              "outcomes": {
+                "NO_TRADES": 490,
+                "NO_TARGET_WITHIN_HORIZON": 136,
+                "UNSUPPORTED_NATIVE_WINDOW": 138
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 763,
+              "outcomes": {
+                "NO_TRADES": 319,
+                "NO_TARGET_WITHIN_HORIZON": 221,
+                "UNSUPPORTED_NATIVE_WINDOW": 223
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 762,
+              "outcomes": {
+                "NO_TRADES": 208,
+                "NO_TARGET_WITHIN_HORIZON": 251,
+                "UNSUPPORTED_NATIVE_WINDOW": 303
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 761,
+              "outcomes": {
+                "NO_TRADES": 140,
+                "NO_TARGET_WITHIN_HORIZON": 245,
+                "UNSUPPORTED_NATIVE_WINDOW": 376
+              },
+              "target_examples": []
+            },
+            "5": {
+              "all_windows": 760,
+              "outcomes": {
+                "NO_TRADES": 93,
+                "NO_TARGET_WITHIN_HORIZON": 233,
+                "UNSUPPORTED_NATIVE_WINDOW": 434
+              },
+              "target_examples": []
+            }
+          }
+        },
+        "DEVELOPMENT_OOS": {
+          "complete_weekday_sessions": 190,
+          "sessions_with_orders": 55,
+          "horizons": {
+            "1": {
+              "all_windows": 190,
+              "outcomes": {
+                "NO_TRADES": 135,
+                "UNSUPPORTED_NATIVE_WINDOW": 32,
+                "NO_TARGET_WITHIN_HORIZON": 23
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 189,
+              "outcomes": {
+                "NO_TRADES": 96,
+                "UNSUPPORTED_NATIVE_WINDOW": 54,
+                "NO_TARGET_WITHIN_HORIZON": 39
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 188,
+              "outcomes": {
+                "NO_TRADES": 67,
+                "UNSUPPORTED_NATIVE_WINDOW": 74,
+                "NO_TARGET_WITHIN_HORIZON": 47
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 187,
+              "outcomes": {
+                "NO_TRADES": 49,
+                "UNSUPPORTED_NATIVE_WINDOW": 92,
+                "NO_TARGET_WITHIN_HORIZON": 46
+              },
+              "target_examples": []
+            },
+            "5": {
+              "all_windows": 186,
+              "outcomes": {
+                "NO_TRADES": 34,
+                "UNSUPPORTED_NATIVE_WINDOW": 108,
+                "NO_TARGET_WITHIN_HORIZON": 44
+              },
+              "target_examples": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT90",
+      "sizing_method": "RiskFixedBalancePct",
+      "fresh_account_sizing": "NOT_RETESTED",
+      "balance_dependent_sizing": true,
+      "orders_sha256": "df5eaf6c30ceb046f7a0a81cc179b5fdc319a071a154b1989886126d3b941417",
+      "settings_sha256": "e94e5ad76a0ff059dfef5cc37c56bc15a168b6165fb5096863a7caed576e6cb2",
+      "samples": {
+        "IS": {
+          "complete_weekday_sessions": 764,
+          "sessions_with_orders": 277,
+          "horizons": {
+            "1": {
+              "all_windows": 764,
+              "outcomes": {
+                "NO_TRADES": 487,
+                "NO_TARGET_WITHIN_HORIZON": 187,
+                "UNSUPPORTED_NATIVE_WINDOW": 90
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 763,
+              "outcomes": {
+                "NO_TRADES": 316,
+                "NO_TARGET_WITHIN_HORIZON": 315,
+                "UNSUPPORTED_NATIVE_WINDOW": 132
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 762,
+              "outcomes": {
+                "NO_TRADES": 205,
+                "NO_TARGET_WITHIN_HORIZON": 383,
+                "UNSUPPORTED_NATIVE_WINDOW": 174
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 761,
+              "outcomes": {
+                "NO_TRADES": 138,
+                "NO_TARGET_WITHIN_HORIZON": 410,
+                "UNSUPPORTED_NATIVE_WINDOW": 213
+              },
+              "target_examples": []
+            },
+            "5": {
+              "all_windows": 760,
+              "outcomes": {
+                "NO_TRADES": 93,
+                "NO_TARGET_WITHIN_HORIZON": 420,
+                "UNSUPPORTED_NATIVE_WINDOW": 247
+              },
+              "target_examples": []
+            }
+          }
+        },
+        "DEVELOPMENT_OOS": {
+          "complete_weekday_sessions": 190,
+          "sessions_with_orders": 55,
+          "horizons": {
+            "1": {
+              "all_windows": 190,
+              "outcomes": {
+                "NO_TRADES": 135,
+                "NO_TARGET_WITHIN_HORIZON": 35,
+                "UNSUPPORTED_NATIVE_WINDOW": 18,
+                "LOSS_LIMIT_AT_CLOSE": 2
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 189,
+              "outcomes": {
+                "NO_TRADES": 96,
+                "NO_TARGET_WITHIN_HORIZON": 63,
+                "UNSUPPORTED_NATIVE_WINDOW": 26,
+                "LOSS_LIMIT_AT_CLOSE": 4
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 188,
+              "outcomes": {
+                "NO_TRADES": 67,
+                "NO_TARGET_WITHIN_HORIZON": 81,
+                "UNSUPPORTED_NATIVE_WINDOW": 34,
+                "LOSS_LIMIT_AT_CLOSE": 6
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 187,
+              "outcomes": {
+                "NO_TRADES": 49,
+                "NO_TARGET_WITHIN_HORIZON": 87,
+                "UNSUPPORTED_NATIVE_WINDOW": 42,
+                "LOSS_LIMIT_AT_CLOSE": 9
+              },
+              "target_examples": []
+            },
+            "5": {
+              "all_windows": 186,
+              "outcomes": {
+                "NO_TRADES": 34,
+                "NO_TARGET_WITHIN_HORIZON": 90,
+                "UNSUPPORTED_NATIVE_WINDOW": 50,
+                "LOSS_LIMIT_AT_CLOSE": 12
+              },
+              "target_examples": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Strategy 1.18.140_EXIT110",
+      "sizing_method": "RiskFixedBalancePct",
+      "fresh_account_sizing": "NOT_RETESTED",
+      "balance_dependent_sizing": true,
+      "orders_sha256": "0c5541d5c31d0ed0b74c5fee437407529e91daaffa35bd374221b85067e198b1",
+      "settings_sha256": "e94e5ad76a0ff059dfef5cc37c56bc15a168b6165fb5096863a7caed576e6cb2",
+      "samples": {
+        "IS": {
+          "complete_weekday_sessions": 764,
+          "sessions_with_orders": 277,
+          "horizons": {
+            "1": {
+              "all_windows": 764,
+              "outcomes": {
+                "NO_TRADES": 487,
+                "NO_TARGET_WITHIN_HORIZON": 187,
+                "UNSUPPORTED_NATIVE_WINDOW": 90
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 763,
+              "outcomes": {
+                "NO_TRADES": 316,
+                "NO_TARGET_WITHIN_HORIZON": 315,
+                "UNSUPPORTED_NATIVE_WINDOW": 132
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 762,
+              "outcomes": {
+                "NO_TRADES": 205,
+                "NO_TARGET_WITHIN_HORIZON": 383,
+                "UNSUPPORTED_NATIVE_WINDOW": 174
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 761,
+              "outcomes": {
+                "NO_TRADES": 138,
+                "NO_TARGET_WITHIN_HORIZON": 410,
+                "UNSUPPORTED_NATIVE_WINDOW": 213
+              },
+              "target_examples": []
+            },
+            "5": {
+              "all_windows": 760,
+              "outcomes": {
+                "NO_TRADES": 93,
+                "NO_TARGET_WITHIN_HORIZON": 420,
+                "UNSUPPORTED_NATIVE_WINDOW": 247
+              },
+              "target_examples": []
+            }
+          }
+        },
+        "DEVELOPMENT_OOS": {
+          "complete_weekday_sessions": 190,
+          "sessions_with_orders": 55,
+          "horizons": {
+            "1": {
+              "all_windows": 190,
+              "outcomes": {
+                "NO_TRADES": 135,
+                "NO_TARGET_WITHIN_HORIZON": 35,
+                "UNSUPPORTED_NATIVE_WINDOW": 18,
+                "LOSS_LIMIT_AT_CLOSE": 2
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 189,
+              "outcomes": {
+                "NO_TRADES": 96,
+                "NO_TARGET_WITHIN_HORIZON": 63,
+                "UNSUPPORTED_NATIVE_WINDOW": 26,
+                "LOSS_LIMIT_AT_CLOSE": 4
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 188,
+              "outcomes": {
+                "NO_TRADES": 67,
+                "NO_TARGET_WITHIN_HORIZON": 81,
+                "UNSUPPORTED_NATIVE_WINDOW": 34,
+                "LOSS_LIMIT_AT_CLOSE": 6
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 187,
+              "outcomes": {
+                "NO_TRADES": 49,
+                "NO_TARGET_WITHIN_HORIZON": 87,
+                "UNSUPPORTED_NATIVE_WINDOW": 42,
+                "LOSS_LIMIT_AT_CLOSE": 9
+              },
+              "target_examples": []
+            },
+            "5": {
+              "all_windows": 186,
+              "outcomes": {
+                "NO_TRADES": 34,
+                "NO_TARGET_WITHIN_HORIZON": 90,
+                "UNSUPPORTED_NATIVE_WINDOW": 50,
+                "LOSS_LIMIT_AT_CLOSE": 12
+              },
+              "target_examples": []
+            }
+          }
+        }
+      }
+    }
+  ],
+  "project": "UR_IMPROVE_MNQ_M15_20260906_19",
+  "profile": {
+    "id": "topstep_50k_optional_dll_off_screen_2026-09-06",
+    "checked_on": "2026-09-06",
+    "nominal": "50000",
+    "target": "3000",
+    "eod_trailing_loss": "2000",
+    "best_day_fraction": "0.5",
+    "minimum_trading_days": 2,
+    "max_micro_contracts": 50,
+    "sources": [
+      "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit",
+      "https://help.topstep.com/en/articles/8284208-consistency-at-topstep",
+      "https://help.topstep.com/en/articles/8284197-trading-combine-parameters",
+      "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade"
+    ],
+    "scope": "Historical diagnostic for one example exam; holidays and exact intraday replay still missing."
+  },
+  "profile_sha256": "6b687cf483fdbb23ce91db8feb3e123a35b839865af9505c604d24a15fe1497c",
+  "manifest_sha256": "2b0eba03507a4bfe1625907d0a48acca13283d427e747c657e9dcd855ee3c7ec",
+  "metrics_sha256": "be6fedb111f4221b63b8ba7b86aaaaa2d401db4634e4cab3ffcc141897e67d62",
+  "engine_sha256": "8657b822dd94c57c633eb91a5f15d8ccaf2c8168685348c83e1b6047d44a1def",
+  "limitations": [
+    "Frozen native entries and sizes; fresh-account risk sizing and entry state require new retests.",
+    "Overlapping rolling windows are dependent observations, not estimated success probabilities.",
+    "Weekdays include holidays; exceptional closures and data completeness are not verified.",
+    "MAE cost inclusion unverified; conservative excursion flags are not exact intraday equity.",
+    "Current example rules applied retrospectively; development OOS is not an untouched holdout.",
+    "Zero-duration, overlapping and cross-session orders are unsupported where encountered.",
+    "No screen outcome authorizes promotion as a funding-proven strategy."
+  ]
+}

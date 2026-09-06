@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "state": "ASSESSED_NOT_FUNDING_CERTIFIED",
+  "utc": "2026-09-05T23:21:52.556109+00:00",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "target_days": [
+    1,
+    5
+  ],
+  "next_stage_candidates": [],
+  "decisions": [
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Worse Net profit IS",
+        "Baseline: Insufficient OOS trades",
+        "Variant: Insufficient OOS trades",
+        "Worse Net profit OOS",
+        "Worse Profit factor OOS",
+        "Worse Ret/DD Ratio OOS"
+      ],
+      "incompatible_orders": {
+        "IS": 1,
+        "OOS": 0
+      },
+      "orders_sha256": "c6d920fd3684e4fbaef2038f520a9dc8a3634a1dfc1b5d123c36b61227cc6aa3",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "decision": "DROP_VARIANT",
+      "development_decision": "REJECT",
+      "reasons": [
+        "Baseline: Insufficient OOS trades",
+        "Variant: Insufficient OOS trades"
+      ],
+      "incompatible_orders": {
+        "IS": 1,
+        "OOS": 0
+      },
+      "orders_sha256": "92d20d6580e5e7f044f51876324530f855292c7bd18d8950005f583f260b156c",
+      "next_action": "Preserve the failure; do not spend final validation data on this variant.",
+      "probada_para_fondeo": false,
+      "funding_verdict": "NO_EVALUABLE"
+    }
+  ],
+  "project": "UR_IMPROVE_MNQ_H4_20260906_10",
+  "manifest_sha256": "542d3f2c672dc91f9011ad7563c806d6d3eaf71b74d15d5fff22110c966a4fb7",
+  "metrics_sha256": "6e65cfee60d1e8fc23e2f181f362a4c6dc3d7e91b7ba856697140ea0a9920e5f",
+  "comparison_sha256": "23ab96834468d1f93bd26e8788c2ba8d9b7a899c7248c6589e2c1177de757b8a",
+  "session_screen_sha256": "4010ad79519b2c8c802d481ef13e3bcbae110e9fca0b28b74e6219ad888e00b3",
+  "funding_windows_sha256": "cf7cd0d4d14bcd32577d233ecb2ab21563b74b8fc49e280095aaa72e6ec6ae53",
+  "engine_sha256": "f16a95bfd525ee97286b6b5fad725d71d2a8f0199aff74879150cbc052e71b4b",
+  "missing_exam_evidence": [
+    "Dated complete rules for the chosen firm and exam, including allowed minimum trading days.",
+    "Native-equivalent independent intraday equity, costs and contract sizing.",
+    "Verified holidays and exceptional early closes.",
+    "Untouched final data and rolling 1-5-day outcomes including failed attempts."
+  ]
+}

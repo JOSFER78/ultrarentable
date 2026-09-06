@@ -1,0 +1,19 @@
+{
+  "verified_at_utc": "2026-09-06T08:51:51.000625+00:00",
+  "sqx_pid": "305818",
+  "runner_pid": "307606",
+  "restart_client_timeout_seconds": 40,
+  "restart_reconciled_by_systemd_and_persisted_state": true,
+  "runner_sha256": "b7e3bf48972d31230f0580f7c0719746cbd8948dbc5e9d5371b87ac23ec429d4",
+  "runner_state": {
+    "celda_en_curso": "FONDEO_MCL_M1",
+    "runner_control": {
+      "pause_requested": false,
+      "paused_at_boundary": false,
+      "paused_at_utc": "2026-09-06T08:36:34.217737+00:00",
+      "resumed_at_utc": "2026-09-06T08:51:24.328063+00:00"
+    }
+  },
+  "native_status": "10:51:51 Estado del proyecto FONDEO_MCL_M1\n--------------------------------------------------\nEstrategias generadas                          689\nTiempo por estrategia                      550 ms.\nTiempo por estrategia aceptada               0 ms.\nRechazado                                 100.00 %\nAceptado                                    0.00 %\nFallido                                          0\n\u00c9xito                                            0\nEstrategias por hora                          6542\nEstrategias aceptadas por hora                0.00\nTiempo de funcionamiento hasta ahora  6 min. 26 s.\nEn la base de datos                              0\n",
+  "runner_log": "2026-09-06 08:36:34 UTC    FONDEO_M6E_M1: 0 preseleccionadas de 0; 0 superan filtro preliminar; NO VALIDADAS\n2026-09-06 08:36:34 UTC    FONDEO_M6E_M1: conservo banco en VPS y libero memoria tras verificar copia\n2026-09-06 08:36:34 UTC  === FONDEO_M6E_M1 HECHA \u00b7 0 preseleccionadas \u00b7 memoria RELEASED ===\n2026-09-06 08:36:34 UTC  cola aparcada en frontera por /opt/SQX-headless/import/fondeo/pause_after_current_cell.request\n2026-09-06 08:39:19 UTC  runner M1 detenido\n2026-09-06 08:45:22 UTC  === runner M1 arrancado \u00b7 ronda 6 \u00b7 30 celdas \u00b7 1 h por celda \u00b7 tope duro 63 min ===\n2026-09-06 08:45:24 UTC  --- arranco FONDEO_MCL_M1 (ronda 6)\n2026-09-06 08:51:24 UTC  apagado solicitado; conservo FONDEO_MCL_M1 EN_CURSO para reanudaci\u00f3n segura\n2026-09-06 08:51:24 UTC  runner M1 detenido\n2026-09-06 08:51:24 UTC  === runner M1 arrancado \u00b7 ronda 6 \u00b7 30 celdas \u00b7 1 h por celda \u00b7 tope duro 63 min ===\n2026-09-06 08:51:24 UTC  cola reanudada: solicitud de pausa retirada durante el reinicio\n2026-09-06 08:51:24 UTC  retomo FONDEO_MCL_M1, que qued\u00f3 a medias\n"
+}

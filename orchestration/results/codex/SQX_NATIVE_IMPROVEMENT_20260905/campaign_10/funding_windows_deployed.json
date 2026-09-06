@@ -1,0 +1,697 @@
+{
+  "schema": 1,
+  "state": "NATIVE_WINDOWS_SCREENED_NOT_EXAM_VALIDATION",
+  "probada_para_fondeo": false,
+  "funding_verdict": "NO_EVALUABLE",
+  "strategies": [
+    {
+      "name": "Strategy 3.3.135_BASE",
+      "sizing_method": "RiskFixedBalancePct",
+      "fresh_account_sizing": "NOT_RETESTED",
+      "balance_dependent_sizing": true,
+      "orders_sha256": "9ce6ac0c02d97a5d267958870049e0ef3a08c024aae0cdd3f8cd66218607beba",
+      "settings_sha256": "46a4daf8680f05b9beb3258ef1c3177106a2a937a9531a6fab3bc4caed255dd7",
+      "samples": {
+        "IS": {
+          "complete_weekday_sessions": 764,
+          "sessions_with_orders": 131,
+          "horizons": {
+            "1": {
+              "all_windows": 764,
+              "outcomes": {
+                "NO_TRADES": 633,
+                "NO_TARGET_WITHIN_HORIZON": 122,
+                "UNSUPPORTED_NATIVE_WINDOW": 5,
+                "LOSS_LIMIT_AT_CLOSE": 1,
+                "POSSIBLE_INTRATRADE_BREACH": 3
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 763,
+              "outcomes": {
+                "NO_TRADES": 579,
+                "NO_TARGET_WITHIN_HORIZON": 167,
+                "UNSUPPORTED_NATIVE_WINDOW": 9,
+                "LOSS_LIMIT_AT_CLOSE": 3,
+                "POSSIBLE_INTRATRADE_BREACH": 5
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 762,
+              "outcomes": {
+                "NO_TRADES": 536,
+                "NO_TARGET_WITHIN_HORIZON": 199,
+                "UNSUPPORTED_NATIVE_WINDOW": 13,
+                "LOSS_LIMIT_AT_CLOSE": 5,
+                "POSSIBLE_INTRATRADE_BREACH": 7,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 2
+              },
+              "target_examples": [
+                {
+                  "start": "2025-06-25",
+                  "end": "2025-06-27",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 3,
+                  "profit": "3275.96",
+                  "required_target": "3094.38",
+                  "trading_days": 3
+                },
+                {
+                  "start": "2025-10-27",
+                  "end": "2025-10-29",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 3,
+                  "profit": "3273.05",
+                  "required_target": "3092.36",
+                  "trading_days": 3
+                }
+              ]
+            },
+            "4": {
+              "all_windows": 761,
+              "outcomes": {
+                "NO_TRADES": 501,
+                "NO_TARGET_WITHIN_HORIZON": 224,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 4,
+                "UNSUPPORTED_NATIVE_WINDOW": 17,
+                "LOSS_LIMIT_AT_CLOSE": 7,
+                "POSSIBLE_INTRATRADE_BREACH": 8
+              },
+              "target_examples": [
+                {
+                  "start": "2023-07-12",
+                  "end": "2023-07-17",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3238.23",
+                  "required_target": "3021.26",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2025-06-24",
+                  "end": "2025-06-27",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3686.41",
+                  "required_target": "3094.38",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2025-06-25",
+                  "end": "2025-06-30",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 3,
+                  "profit": "3275.96",
+                  "required_target": "3094.38",
+                  "trading_days": 3
+                }
+              ]
+            },
+            "5": {
+              "all_windows": 760,
+              "outcomes": {
+                "NO_TRADES": 471,
+                "NO_TARGET_WITHIN_HORIZON": 242,
+                "LOSS_LIMIT_AT_CLOSE": 10,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 7,
+                "UNSUPPORTED_NATIVE_WINDOW": 21,
+                "POSSIBLE_INTRATRADE_BREACH": 9
+              },
+              "target_examples": [
+                {
+                  "start": "2023-07-11",
+                  "end": "2023-07-17",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "3238.23",
+                  "required_target": "3021.26",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2023-07-12",
+                  "end": "2023-07-18",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3238.23",
+                  "required_target": "3021.26",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2023-07-13",
+                  "end": "2023-07-19",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "3238.23",
+                  "required_target": "3021.26",
+                  "trading_days": 4
+                }
+              ]
+            }
+          }
+        },
+        "DEVELOPMENT_OOS": {
+          "complete_weekday_sessions": 190,
+          "sessions_with_orders": 19,
+          "horizons": {
+            "1": {
+              "all_windows": 190,
+              "outcomes": {
+                "NO_TRADES": 171,
+                "NO_TARGET_WITHIN_HORIZON": 15,
+                "UNSUPPORTED_NATIVE_WINDOW": 3,
+                "POSSIBLE_INTRATRADE_BREACH": 1
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 189,
+              "outcomes": {
+                "NO_TRADES": 164,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 6,
+                "POSSIBLE_INTRATRADE_BREACH": 2
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 188,
+              "outcomes": {
+                "NO_TRADES": 160,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 9,
+                "POSSIBLE_INTRATRADE_BREACH": 2
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 187,
+              "outcomes": {
+                "NO_TRADES": 156,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 12,
+                "POSSIBLE_INTRATRADE_BREACH": 1,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 1
+              },
+              "target_examples": [
+                {
+                  "start": "2026-05-05",
+                  "end": "2026-05-08",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "8173.38",
+                  "required_target": "7380.1",
+                  "trading_days": 4
+                }
+              ]
+            },
+            "5": {
+              "all_windows": 186,
+              "outcomes": {
+                "NO_TRADES": 152,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 15,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 2
+              },
+              "target_examples": [
+                {
+                  "start": "2026-05-04",
+                  "end": "2026-05-08",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "8173.38",
+                  "required_target": "7380.1",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2026-05-05",
+                  "end": "2026-05-11",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "8173.38",
+                  "required_target": "7380.1",
+                  "trading_days": 4
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT90",
+      "sizing_method": "RiskFixedBalancePct",
+      "fresh_account_sizing": "NOT_RETESTED",
+      "balance_dependent_sizing": true,
+      "orders_sha256": "c6d920fd3684e4fbaef2038f520a9dc8a3634a1dfc1b5d123c36b61227cc6aa3",
+      "settings_sha256": "46a4daf8680f05b9beb3258ef1c3177106a2a937a9531a6fab3bc4caed255dd7",
+      "samples": {
+        "IS": {
+          "complete_weekday_sessions": 764,
+          "sessions_with_orders": 131,
+          "horizons": {
+            "1": {
+              "all_windows": 764,
+              "outcomes": {
+                "NO_TRADES": 633,
+                "NO_TARGET_WITHIN_HORIZON": 122,
+                "UNSUPPORTED_NATIVE_WINDOW": 5,
+                "LOSS_LIMIT_AT_CLOSE": 1,
+                "POSSIBLE_INTRATRADE_BREACH": 3
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 763,
+              "outcomes": {
+                "NO_TRADES": 579,
+                "NO_TARGET_WITHIN_HORIZON": 167,
+                "UNSUPPORTED_NATIVE_WINDOW": 9,
+                "LOSS_LIMIT_AT_CLOSE": 3,
+                "POSSIBLE_INTRATRADE_BREACH": 5
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 762,
+              "outcomes": {
+                "NO_TRADES": 536,
+                "NO_TARGET_WITHIN_HORIZON": 200,
+                "UNSUPPORTED_NATIVE_WINDOW": 13,
+                "LOSS_LIMIT_AT_CLOSE": 5,
+                "POSSIBLE_INTRATRADE_BREACH": 7,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 1
+              },
+              "target_examples": [
+                {
+                  "start": "2025-10-27",
+                  "end": "2025-10-29",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 3,
+                  "profit": "3064.75",
+                  "required_target": "3000",
+                  "trading_days": 3
+                }
+              ]
+            },
+            "4": {
+              "all_windows": 761,
+              "outcomes": {
+                "NO_TRADES": 501,
+                "NO_TARGET_WITHIN_HORIZON": 225,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 3,
+                "UNSUPPORTED_NATIVE_WINDOW": 17,
+                "LOSS_LIMIT_AT_CLOSE": 7,
+                "POSSIBLE_INTRATRADE_BREACH": 8
+              },
+              "target_examples": [
+                {
+                  "start": "2023-07-12",
+                  "end": "2023-07-17",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3088.23",
+                  "required_target": "3000",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2025-06-24",
+                  "end": "2025-06-27",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3386.41",
+                  "required_target": "3000",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2025-10-27",
+                  "end": "2025-10-30",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 3,
+                  "profit": "3064.75",
+                  "required_target": "3000",
+                  "trading_days": 3
+                }
+              ]
+            },
+            "5": {
+              "all_windows": 760,
+              "outcomes": {
+                "NO_TRADES": 471,
+                "NO_TARGET_WITHIN_HORIZON": 244,
+                "LOSS_LIMIT_AT_CLOSE": 10,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 5,
+                "UNSUPPORTED_NATIVE_WINDOW": 21,
+                "POSSIBLE_INTRATRADE_BREACH": 9
+              },
+              "target_examples": [
+                {
+                  "start": "2023-07-11",
+                  "end": "2023-07-17",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "3088.23",
+                  "required_target": "3000",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2023-07-12",
+                  "end": "2023-07-18",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3088.23",
+                  "required_target": "3000",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2025-06-23",
+                  "end": "2025-06-27",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "3386.41",
+                  "required_target": "3000",
+                  "trading_days": 4
+                }
+              ]
+            }
+          }
+        },
+        "DEVELOPMENT_OOS": {
+          "complete_weekday_sessions": 190,
+          "sessions_with_orders": 19,
+          "horizons": {
+            "1": {
+              "all_windows": 190,
+              "outcomes": {
+                "NO_TRADES": 171,
+                "NO_TARGET_WITHIN_HORIZON": 15,
+                "UNSUPPORTED_NATIVE_WINDOW": 3,
+                "POSSIBLE_INTRATRADE_BREACH": 1
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 189,
+              "outcomes": {
+                "NO_TRADES": 164,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 6,
+                "POSSIBLE_INTRATRADE_BREACH": 2
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 188,
+              "outcomes": {
+                "NO_TRADES": 160,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 9,
+                "POSSIBLE_INTRATRADE_BREACH": 2
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 187,
+              "outcomes": {
+                "NO_TRADES": 156,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 12,
+                "POSSIBLE_INTRATRADE_BREACH": 1,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 1
+              },
+              "target_examples": [
+                {
+                  "start": "2026-05-05",
+                  "end": "2026-05-08",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "7948.38",
+                  "required_target": "7230.1",
+                  "trading_days": 4
+                }
+              ]
+            },
+            "5": {
+              "all_windows": 186,
+              "outcomes": {
+                "NO_TRADES": 152,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 15,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 2
+              },
+              "target_examples": [
+                {
+                  "start": "2026-05-04",
+                  "end": "2026-05-08",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "7948.38",
+                  "required_target": "7230.1",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2026-05-05",
+                  "end": "2026-05-11",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "7948.38",
+                  "required_target": "7230.1",
+                  "trading_days": 4
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Strategy 3.3.135_EXIT110",
+      "sizing_method": "RiskFixedBalancePct",
+      "fresh_account_sizing": "NOT_RETESTED",
+      "balance_dependent_sizing": true,
+      "orders_sha256": "92d20d6580e5e7f044f51876324530f855292c7bd18d8950005f583f260b156c",
+      "settings_sha256": "46a4daf8680f05b9beb3258ef1c3177106a2a937a9531a6fab3bc4caed255dd7",
+      "samples": {
+        "IS": {
+          "complete_weekday_sessions": 764,
+          "sessions_with_orders": 131,
+          "horizons": {
+            "1": {
+              "all_windows": 764,
+              "outcomes": {
+                "NO_TRADES": 633,
+                "NO_TARGET_WITHIN_HORIZON": 121,
+                "UNSUPPORTED_NATIVE_WINDOW": 6,
+                "LOSS_LIMIT_AT_CLOSE": 1,
+                "POSSIBLE_INTRATRADE_BREACH": 3
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 763,
+              "outcomes": {
+                "NO_TRADES": 579,
+                "NO_TARGET_WITHIN_HORIZON": 165,
+                "UNSUPPORTED_NATIVE_WINDOW": 11,
+                "LOSS_LIMIT_AT_CLOSE": 3,
+                "POSSIBLE_INTRATRADE_BREACH": 5
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 762,
+              "outcomes": {
+                "NO_TRADES": 536,
+                "NO_TARGET_WITHIN_HORIZON": 198,
+                "UNSUPPORTED_NATIVE_WINDOW": 16,
+                "LOSS_LIMIT_AT_CLOSE": 5,
+                "POSSIBLE_INTRATRADE_BREACH": 7
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 761,
+              "outcomes": {
+                "NO_TRADES": 501,
+                "NO_TARGET_WITHIN_HORIZON": 222,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 1,
+                "UNSUPPORTED_NATIVE_WINDOW": 21,
+                "LOSS_LIMIT_AT_CLOSE": 7,
+                "POSSIBLE_INTRATRADE_BREACH": 9
+              },
+              "target_examples": [
+                {
+                  "start": "2023-07-12",
+                  "end": "2023-07-17",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3388.23",
+                  "required_target": "3171.26",
+                  "trading_days": 4
+                }
+              ]
+            },
+            "5": {
+              "all_windows": 760,
+              "outcomes": {
+                "NO_TRADES": 471,
+                "NO_TARGET_WITHIN_HORIZON": 240,
+                "LOSS_LIMIT_AT_CLOSE": 10,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 3,
+                "UNSUPPORTED_NATIVE_WINDOW": 26,
+                "POSSIBLE_INTRATRADE_BREACH": 10
+              },
+              "target_examples": [
+                {
+                  "start": "2023-07-11",
+                  "end": "2023-07-17",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "3388.23",
+                  "required_target": "3171.26",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2023-07-12",
+                  "end": "2023-07-18",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "3388.23",
+                  "required_target": "3171.26",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2023-07-13",
+                  "end": "2023-07-19",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "3388.23",
+                  "required_target": "3171.26",
+                  "trading_days": 4
+                }
+              ]
+            }
+          }
+        },
+        "DEVELOPMENT_OOS": {
+          "complete_weekday_sessions": 190,
+          "sessions_with_orders": 19,
+          "horizons": {
+            "1": {
+              "all_windows": 190,
+              "outcomes": {
+                "NO_TRADES": 171,
+                "NO_TARGET_WITHIN_HORIZON": 15,
+                "UNSUPPORTED_NATIVE_WINDOW": 3,
+                "POSSIBLE_INTRATRADE_BREACH": 1
+              },
+              "target_examples": []
+            },
+            "2": {
+              "all_windows": 189,
+              "outcomes": {
+                "NO_TRADES": 164,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 6,
+                "POSSIBLE_INTRATRADE_BREACH": 2
+              },
+              "target_examples": []
+            },
+            "3": {
+              "all_windows": 188,
+              "outcomes": {
+                "NO_TRADES": 160,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 9,
+                "POSSIBLE_INTRATRADE_BREACH": 2
+              },
+              "target_examples": []
+            },
+            "4": {
+              "all_windows": 187,
+              "outcomes": {
+                "NO_TRADES": 156,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 12,
+                "POSSIBLE_INTRATRADE_BREACH": 1,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 1
+              },
+              "target_examples": [
+                {
+                  "start": "2026-05-05",
+                  "end": "2026-05-08",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "8398.38",
+                  "required_target": "7530.1",
+                  "trading_days": 4
+                }
+              ]
+            },
+            "5": {
+              "all_windows": 186,
+              "outcomes": {
+                "NO_TRADES": 152,
+                "NO_TARGET_WITHIN_HORIZON": 17,
+                "UNSUPPORTED_NATIVE_WINDOW": 15,
+                "TARGET_REACHED_IN_NATIVE_SCREEN": 2
+              },
+              "target_examples": [
+                {
+                  "start": "2026-05-04",
+                  "end": "2026-05-08",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 5,
+                  "profit": "8398.38",
+                  "required_target": "7530.1",
+                  "trading_days": 4
+                },
+                {
+                  "start": "2026-05-05",
+                  "end": "2026-05-11",
+                  "outcome": "TARGET_REACHED_IN_NATIVE_SCREEN",
+                  "day": 4,
+                  "profit": "8398.38",
+                  "required_target": "7530.1",
+                  "trading_days": 4
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "project": "UR_IMPROVE_MNQ_H4_20260906_10",
+  "profile": {
+    "id": "topstep_50k_optional_dll_off_screen_2026-09-06",
+    "checked_on": "2026-09-06",
+    "nominal": "50000",
+    "target": "3000",
+    "eod_trailing_loss": "2000",
+    "best_day_fraction": "0.5",
+    "minimum_trading_days": 2,
+    "max_micro_contracts": 50,
+    "sources": [
+      "https://help.topstep.com/en/articles/8284204-what-is-the-maximum-loss-limit",
+      "https://help.topstep.com/en/articles/8284208-consistency-at-topstep",
+      "https://help.topstep.com/en/articles/8284197-trading-combine-parameters",
+      "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade"
+    ],
+    "scope": "Historical diagnostic for one example exam; holidays and exact intraday replay still missing."
+  },
+  "profile_sha256": "6b687cf483fdbb23ce91db8feb3e123a35b839865af9505c604d24a15fe1497c",
+  "manifest_sha256": "542d3f2c672dc91f9011ad7563c806d6d3eaf71b74d15d5fff22110c966a4fb7",
+  "metrics_sha256": "6e65cfee60d1e8fc23e2f181f362a4c6dc3d7e91b7ba856697140ea0a9920e5f",
+  "engine_sha256": "f16a95bfd525ee97286b6b5fad725d71d2a8f0199aff74879150cbc052e71b4b",
+  "limitations": [
+    "Frozen native entries and sizes; fresh-account risk sizing and entry state require new retests.",
+    "Overlapping rolling windows are dependent observations, not estimated success probabilities.",
+    "Weekdays include holidays; exceptional closures and data completeness are not verified.",
+    "MAE cost inclusion unverified; conservative excursion flags are not exact intraday equity.",
+    "Current example rules applied retrospectively; development OOS is not an untouched holdout.",
+    "Zero-duration, overlapping and cross-session orders are unsupported where encountered.",
+    "No screen outcome authorizes promotion as a funding-proven strategy."
+  ]
+}

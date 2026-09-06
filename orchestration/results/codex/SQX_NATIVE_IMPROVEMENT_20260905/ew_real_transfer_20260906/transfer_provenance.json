@@ -1,0 +1,39 @@
+{
+  "state": "REAL_NATIVE_DATA_REGISTERED_TRANSFER_RESEARCH_ONLY",
+  "original_source": "/opt/SQX-headless/import/fondeo/preseleccion/FONDEO_MNQ_H4_r6_20260905T210137067625Z/selected/Strategy 3.3.135.sqx",
+  "original_sha256": "026f1fbb7dc1cc440e6f0bb77ebddd62cd7b93ef07b5d97e7855bd89dead44ff",
+  "transferred_sha256": "915f08badc958f7a22fdeecb4cd3922008b3a200f246f1a70ac681ea9e27dbd6",
+  "strategy_rules_sha256": "33a8764f8ab17cbbd373c009d52a30094f9933d0372b459ff573c0dcbd02267b",
+  "data_metadata": {
+    "ID": 139,
+    "SOURCEDATA_ID": 0,
+    "CONNECTION": "History",
+    "SYMBOL": "@EW",
+    "INSTRUMENT": "EW - CME",
+    "TIMEFRAME": "M1",
+    "TIMEZONE": "Exchange",
+    "FILENAME": null,
+    "DATEFROM": 1230854400000,
+    "DATETO": 1788537600000,
+    "DATATYPE": 2,
+    "ROWS": 2705661,
+    "DECIMALS": 1,
+    "SOURCE": 6,
+    "SECONDS_RECORDS": 162339660,
+    "USYMBOL": "@EW",
+    "USYMBOLNAME": "@EW - E-Mini S&P MidCap 400 Index (EMD) - Continuous contracts [Sep26]",
+    "REMOVE_WEEKENDS": 0,
+    "SHOW": 1,
+    "BASKET_ID": -1,
+    "BROKER_ID": -1
+  },
+  "changes": [
+    "MNQ proxy to @EW actual futures: new transfer hypothesis, not equivalent strategy",
+    "H4 retained; native M1 precision",
+    "Fixed 1 contract; 5 per contract native commission setting; slippage 2; spread 0. Cost assumptions not broker verified",
+    "Development 2022-2025; OOS 2025; no 2026 bars requested"
+  ],
+  "funding_verdict": "NO_EVALUABLE",
+  "probada_para_fondeo": false,
+  "provider_url": "https://strategyquant.com/data-subscription"
+}
