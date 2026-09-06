@@ -1,0 +1,81 @@
+{
+  "schema": "ultrarentable.hypotheses.v1",
+  "source": "AGENT_DEBATE",
+  "generated_utc": "2026-09-06T14:30:20.411428+00:00",
+  "hypotheses": [
+    {
+      "id": "H_LONG_BARSVALID_est2",
+      "title": "Igualar la validez de la orden larga a la corta (BarsValid 4 → 8) para no perder señales que caducan",
+      "problem": "La estrategia opera menos de uno de cada tres días (19,05 % IS, 18,01 % OOS), 1,106 y 1,073 trades/semana, con huecos de hasta 29 y 43 días. Eso deja 328/778 ventanas de 5 días sin ninguna operación en IS y 103/257 en OOS, y por eso la tasa de objetivo provisional es 0,0746 y 0,0311.",
+      "change": "parameters: Long entry > EnterAtStop > BarsValid de 4 a 8 (mismo valor que el corto), dentro del rango declarado 0–1000. Sin cambios de salida ni de tamaño.",
+      "expected": "Más operaciones largas y más días con operación en ambas muestras (partiendo de 149/782 y 47/261 días), con menor hueco máximo (29 y 43 días). El riesgo es que las entradas añadidas sean peores: hay que ver si el PF largo (1,491 IS / 1,229 OOS) se mantiene o se degrada, y si el neto sube más que proporcionalmente al drawdown (18457 IS / 6501 OOS).",
+      "acceptance": "Aceptar si: (a) hay ≥5 días cambiados y las órdenes difieren; (b) en IS y OOS el neto, el PF y el ret/DD no empeoran fuera de tolerancia (2 % / 0,03 / 5 %) — es decir, la frecuencia sube sin pagar calidad; y (c) para declararla relevante para fondeo, la tasa de objetivo a 5 días sube ≥5 pp en IS y en OOS con la ruptura subiendo ≤1 pp. Rechazar si el PF de la pata larga cae fuera de tolerancia en cualquiera de las dos muestras, o si la frecuencia sube pero el neto OOS empeora: sería más operaciones peores, no una mejora. Si mejora frecuencia y no empeora nada pero no llega a los 5 pp, clasificar como neutra-útil, no como aceptada para fondeo.",
+      "evidence_codes": [
+        "LOW_FREQUENCY_FOR_SHORT_EXAM",
+        "LOW_EXAM_TARGET_RATE_5D",
+        "TIME_EXIT_DOMINATED"
+      ],
+      "destination_expectation": {
+        "fondeo": "Es la única palanca del vocabulario que ataca la causa medida del bajo target_rate: las ventanas sin operaciones. Si la frecuencia sube de forma apreciable, la tasa de objetivo a 5 días de PROV_50K_OBJ6_TRAIL4 debería subir desde 0,0746 (IS) y 0,0311 (OOS); el criterio pide ≥5 puntos porcentuales en ambas muestras sin subir la ruptura más de 1 punto sobre 0,0861 y 0,0428, lo que es exigente y probablemente no se alcance con este cambio solo.",
+        "ultra": "Exploratorio: más operaciones del mismo tipo no cambian por sí mismas la convexidad. Vigilar que expectancy_r no baje más de 0,02 respecto a 0,2527 (IS) y 0,1496 (OOS) y que la fracción de MFE≥2R (0,1792 / 0,25) no se diluya con entradas tardías de peor calidad."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#BarsValid#]",
+          "value": "8"
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "ACEPTAR",
+      "critic_reasons": [
+        "Es la única propuesta que ataca el hallazgo de severidad alta y repetido en ambas muestras: LOW_FREQUENCY_FOR_SHORT_EXAM (1,106 y 1,073 op/semana; 19,05 % y 18,01 % de días con operación; huecos de 29 y 43 días) y LOW_EXAM_TARGET_RATE_5D, cuya causa medida son las 328/778 y 103/257 ventanas NO_TRADES.",
+        "Mecanismo coherente y no explorado: no toca la condición de señal ni las salidas, solo la ventana de ejecución de la orden EnterAtStop; ninguna de las cuatro variantes previas (EXIT90, EXIT110, VPT_NEAR, VTS_TIGHT) toca entradas, así que no es duplicado.",
+        "La asimetría es del propio contrato y verificable: BarsValid 4 en largo frente a 8 en corto; igualar al valor ya presente no es introducir un parámetro nuevo ajustado a la muestra, lo que mantiene bajo el riesgo de minería.",
+        "Aplicabilidad verificada: validation.applicable=true, un único campo efectivo, dentro del rango declarado 0–1000.",
+        "Efecto medible en la pata mayoritaria (140/173 IS, 48/56 OOS), a diferencia de los cambios en el corto (33 y 8 operaciones)."
+      ],
+      "confidence": "media"
+    },
+    {
+      "id": "H_PT_MID_ASIM_est1",
+      "title": "Acercar el objetivo a la zona donde sí llega el precio (PT ≈1,6 ATR largo, 2,0 ATR corto)",
+      "problem": "El objetivo casi nunca se toca y el reloj decide la mayoría de los cierres, devolviendo recorrido ya ganado: PT 13/173 (7,5 %) en IS y 5/56 (8,9 %) en OOS; EOD_TIME 101 (0,59) y 30 (0,536). La devolución media con MFE es 784,09 (IS) y 1029,26 (OOS), y 12/7 ganadoras cierran por debajo de la mitad de su MFE.",
+      "change": "exits: profit_target largo de 2,0 a 1,6 ATR(20); profit_target corto de 2,4 a 2,0 ATR(25). Sin cambios en stops, trailing ni tamaño.",
+      "expected": "Más cierres en PT y menos en EOD_TIME (el share de PT debería subir desde 7,5 % IS / 8,9 % OOS), menor devolución media de recorrido y menos perdedoras tras MFE≥1R (hoy 9 en IS, 7 en OOS). El payoff bajará algo desde 1,628 (IS) / 1,527 (OOS); la tesis es que el aumento de tasa de acierto y la menor devolución lo compensen en ret/DD.",
+      "acceptance": "Aceptar si, con los criterios registrados: (a) las órdenes difieren en al menos una muestra y hay ≥5 días cambiados (technical); (b) en IS y en OOS ni el neto, ni el profit factor, ni ret/DD empeoran fuera de la tolerancia (2 % neto, 0,03 PF, 5 % ret/DD); y (c) la evidencia OOS es al menos 'moderate' (IC 80 % de la suma de deltas diarios OOS por encima de cero, 4000 remuestreos, semilla 20260906). Rechazar si el patrón se repite como en VPT_NEAR y VTS_TIGHT (IS peor fuera de tolerancia y OOS mejor solo con evidencia 'weak'): eso sería INCONCLUSIVE, no una mejora. Rechazar también si expectancy_r cae más de 0,02 y la ganancia sólo aparece en una muestra.",
+      "evidence_codes": [
+        "PT_RARELY_HIT",
+        "TIME_EXIT_DOMINATED",
+        "LOSERS_AFTER_FAVOURABLE_EXCURSION"
+      ],
+      "destination_expectation": {
+        "fondeo": "No cambia la frecuencia (1,106 y 1,073 trades/semana siguen igual), así que no espero mover materialmente la tasa de objetivo a 5 días de PROV_50K_OBJ6_TRAIL4 (0,0746 IS / 0,0311 OOS): el cuello de botella son las 328/778 y 103/257 ventanas sin operaciones. Como mucho, ganancia marginal por cerrar antes las ganadoras dentro de la ventana; sí debería no empeorar la ruptura (0,0861 IS / 0,0428 OOS).",
+        "ultra": "Exploratorio y probablemente adverso a la convexidad: recortar el PT reduce la cola, y hoy el 34,71 % (IS) y 31,49 % (OOS) del beneficio viene de operaciones ≥3R. Hay que vigilar que expectancy_r (0,2527 IS / 0,1496 OOS) no caiga más de 0,02 y que la cuota de beneficio ≥3R no se hunda."
+      },
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "profit_target",
+          "value": "1.6",
+          "atr_period": "20"
+        },
+        {
+          "direction": "short",
+          "exit": "profit_target",
+          "value": "2.0",
+          "atr_period": "25"
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "REVISAR",
+      "critic_reasons": [
+        "El diagnóstico es sólido y citado: PT 13/173 (7,5 % IS) y 5/56 (8,9 % OOS) frente a EOD_TIME 101 (0,59) y 30 (0,536); la banda de MFE apoya que el objetivo está por encima de la masa (MFE≥2R solo 0,1792 IS / 0,25 OOS).",
+        "Pero es la misma dirección que VPT_NEAR (PT ×0,6), que empeoró IS en -2143 de neto y quedó INCONCLUSIVE con evidencia WEAK. Aquí el recorte es ×0,8/×0,83: no es un mecanismo nuevo, es la misma palanca con menor magnitud, y el riesgo de estar simplemente buscando el multiplicador que le sienta bien a esta muestra es real.",
+        "Contradicción interna con el destino: la propia propuesta reconoce que recortar el PT ataca la cola que aporta el 34,71 % (IS) y 31,49 % (OOS) del beneficio en operaciones ≥3R, y que en OOS el neto es -1837 sin las tres mejores ganadoras. Es decir, propone recortar precisamente lo que sostiene el resultado.",
+        "Interacción no controlada, admitida por el proponente: al acercar el PT, parte del trailing (activación a 1,4 ATR105 en largo) deja de activarse, lo que hace inatribuible el efecto.",
+        "Irrelevante para el criterio de fondeo registrado: no cambia frecuencia (1,106 / 1,073 op/semana), y con 328/778 y 103/257 ventanas sin operaciones no puede subir los 5 pp exigidos."
+      ],
+      "confidence": "media"
+    }
+  ]
+}

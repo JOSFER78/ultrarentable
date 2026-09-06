@@ -1,0 +1,65 @@
+{
+  "schema": "ultrarentable.hypotheses.v1",
+  "source": "AGENT_DEBATE",
+  "generated_utc": "2026-09-06T14:38:26.711273+00:00",
+  "hypotheses": [
+    {
+      "id": "PROP_02_EXIT_AFTER_BARS_sal2",
+      "title": "Limitación de tiempo en mercado mediante Exit After Bars",
+      "problem": "Las salidas de la estrategia están dominadas por el reloj al final del día (TIME_EXIT_DOMINATED: 59.0% en IS y 53.6% en OOS), con una duración media de 3.37 y 3.38 barras respectivamente, lo que deja operaciones estancadas expuestas hasta el cierre EOD_TIME (54000).",
+      "change": "Modificar el parámetro ExitAfterBars.ExitAfterBars a 5 en la regla de entrada Long y Short.",
+      "expected": "Disminución del porcentaje de salidas por EOD_TIME y reducción del giveback total acumulado al no mantener posiciones estancadas en mercado.",
+      "acceptance": "Aceptación si el Return over Drawdown en OOS supera el 1.185 actual sin degradar el Profit Factor OOS (1.323) más allá de la tolerancia de 0.03.",
+      "evidence_codes": [
+        "TIME_EXIT_DOMINATED"
+      ],
+      "destination_expectation": {
+        "fondeo": "Estabilización de los resultados en las ventanas de 5 días al cerrar operaciones sin impulso antes de sufrir caídas en el tramo final de la sesión.",
+        "ultra": "Mejora en el ratio Retorno / Drawdown (actualmente 1.185 en OOS) al acotar el tiempo de exposición al riesgo por operación."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#ExitAfterBars.ExitAfterBars#]",
+          "value": "5"
+        },
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#ExitAfterBars.ExitAfterBars#]",
+          "value": "5"
+        }
+      ],
+      "proposer": "proponente_salidas_riesgo",
+      "critic_verdict": "ACEPTAR",
+      "critic_reasons": [
+        "Aborda de forma directa el hallazgo TIME_EXIT_DOMINATED (59.0% en IS, 53.6% en OOS) fijando ExitAfterBars en 5 barras H1, alineado con la duración media de operaciones (3.37 IS / 3.38 OOS)."
+      ],
+      "confidence": "media"
+    },
+    {
+      "id": "PROP_03_REDUCE_SHORT_SL_sal3",
+      "title": "Ajuste del Stop Loss fijo en Short para simetrizar y acotar el riesgo unitario",
+      "problem": "El Stop Loss fijo para posiciones cortas es de 115.0 USD (frente a 90.0 USD en Long). En OOS las salidas por SL representan el 37.5% de los cierres (SL_HIT_SHARE_HIGH) generando una pérdida acumulada de -20589.0 USD.",
+      "change": "Establecer la fórmula StopLoss.StopLoss en Short a 90.0.",
+      "expected": "Reducción de la pérdida promedio por operación perdedora (-794.67 USD en OOS) y disminución del Drawdown máximo cerrado (6501.0 USD en OOS).",
+      "acceptance": "Aceptación si el Max Drawdown OOS disminuye desde 6501.0 USD y la ganancia neta OOS (7706.0 USD) no se degrada en más del 2% (tolerancia no-empeoramiento).",
+      "evidence_codes": [
+        "SL_HIT_SHARE_HIGH"
+      ],
+      "destination_expectation": {
+        "fondeo": "Reducir la tasa de ruptura del límite diario y máximo drawdown en los escenarios provisionales de examen (PROV_50K_OBJ8_TRAIL5_DLL2 breach rate: 0.2218 en OOS).",
+        "ultra": "Elevación de la expectativa por R (expectancy_r 0.1496 OOS) y mejora del ratio Payoff OOS (1.527)."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#StopLoss.StopLoss#]/Formula[SQ.Formulas.SLPT.FixedValue]/Param[#Value#]",
+          "value": "90.0"
+        }
+      ],
+      "proposer": "proponente_salidas_riesgo",
+      "critic_verdict": "ACEPTAR",
+      "critic_reasons": [
+        "Aborda SL_HIT_SHARE_HIGH (37.5% en OOS, sl_net -20589.0 USD) simetrizando el Stop Loss de Short de 115.0 a 90.0 USD, igualando el riesgo unitario con Long (90.0 USD)."
+      ],
+      "confidence": "media"
+    }
+  ]
+}

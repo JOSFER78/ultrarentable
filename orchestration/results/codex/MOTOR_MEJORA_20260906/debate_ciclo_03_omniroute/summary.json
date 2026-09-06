@@ -1,0 +1,89 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "finished_utc": "2026-09-06T14:38:26.711273+00:00",
+  "provider": "omniroute",
+  "models": [
+    "gemini-3-flash via auto/best-reasoning (fallback)"
+  ],
+  "search_budget": {
+    "proposed": 6,
+    "applicable": 4,
+    "refuted_by_critic": 4,
+    "selected": 2,
+    "previously_tested": 6
+  },
+  "cost_usd_total": 0,
+  "seconds_total": 69.3,
+  "dissent": [
+    "Se registra reserva respecto a PROP_03_REDUCE_SHORT_SL_sal3 por la reducida muestra de operaciones cortas en OOS (solo 8 trades de un total de 56), lo que introduce riesgo de variabilidad estadística en los resultados.",
+    "Se señala discrepancia metodológica en la fijación del límite temporal de barras entre PROP_02_EXIT_AFTER_BARS_sal2 (5 barras) y PROP_2_est2 (10 barras), existiendo riesgo de interrupción prematura en movimientos con menor velocidad inicial."
+  ],
+  "rationale": "Se seleccionan 2 propuestas aplicables (validation.applicable=true) y no refutadas por la crítica, las cuales emplean mecanismos completamente diferenciados entre sí y se apoyan en datos observados tanto en IS como en OOS. PROP_02_EXIT_AFTER_BARS_sal2 aborda de forma directa el hallazgo TIME_EXIT_DOMINATED (59.0% en IS y 53.6% en OOS) fijando el tiempo máximo de permanencia en 5 barras H1 para evitar la exposición pasiva hasta el cierre EOD_TIME (54000). PROP_03_REDUCE_SHORT_SL_sal3 atiende el hallazgo SL_HIT_SHARE_HIGH (37.5% de cierres por SL en OOS y pérdida acumulada de -20589.0 USD) reduciendo el Stop Loss en Short de 115.0 a 90.0 USD para simetrizar el riesgo unitario con Long (90.0 USD), buscando recortar la pérdida promedio perdedora (-794.67 USD en OOS) y el Max Drawdown OOS (6501.0 USD).",
+  "next_round_if_all_fail": "Si ambas propuestas son rechazadas determinísticamente por degradar el Profit Factor OOS por debajo de la tolerancia de 0.03 respecto a 1.323, o decaer el beneficio neto OOS (7706.0 USD) más del 2%, la siguiente ronda deberá enfocarse en reestructurar la frecuencia operacional para resolver LOW_FREQUENCY_FOR_SHORT_EXAM (1.106 trades/semana en IS y 1.073 en OOS) o revisar los objetivos de beneficio (PT_RARELY_HIT), asegurando utilizar mutaciones compatibles con el esquema técnico sin superar el máximo de 2 variantes.",
+  "general_objections": [
+    "La muestra OOS es reducida (56 operaciones totales y solo 8 en dirección short), lo que eleva el riesgo de inestabilidad en las métricas.",
+    "El hallazgo LOW_FREQUENCY_FOR_SHORT_EXAM (1.106 trades/semana IS, 1.073 OOS) limita estructuralmente la capacidad de superar las pruebas de fondeo de 5 días (target rate 0.0746 IS / 0.0311 OOS en PROV_50K_OBJ6_TRAIL4).",
+    "Dos propuestas (PROP_01_MOVE_SL_TO_BE_sal1 y PROP_1_est1) son inválidas técnicamente al intentar mutar la fórmula no soportada SQ.Formulas.RangeLevel.None."
+  ],
+  "capability_gaps": [
+    "Filtrado de entradas por franja horaria o día de la semana (necesario para corregir el hallazgo LOSS_CONCENTRATED_SEGMENT en hora 10 local con -2890.0 USD OOS y en lunes 1-Mon con -4149.0 USD OOS, no soportado en mutation_vocabulary).",
+    "Filtro de exclusión por horario local de entrada (ej. bloquear operaciones a las 10:00 local que generan net -$2890.0 en OOS).",
+    "Filtro de exclusión por día de la semana (ej. desactivar entradas los lunes que registran net -$4149.0 en OOS)."
+  ],
+  "proposals": [
+    {
+      "id": "PROP_01_MOVE_SL_TO_BE_sal1",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Activación de Move SL to BE para mitigar reversiones tras MFE favorable",
+      "applicable": false,
+      "validation_error": "Fórmula no soportada para mutación: SQ.Formulas.RangeLevel.None",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_02_EXIT_AFTER_BARS_sal2",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Limitación de tiempo en mercado mediante Exit After Bars",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "ACEPTAR",
+      "selected": true
+    },
+    {
+      "id": "PROP_03_REDUCE_SHORT_SL_sal3",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Ajuste del Stop Loss fijo en Short para simetrizar y acotar el riesgo unitario",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "ACEPTAR",
+      "selected": true
+    },
+    {
+      "id": "PROP_1_est1",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Protección de avance favorable mediante Move SL to Breakeven",
+      "applicable": false,
+      "validation_error": "Fórmula no soportada para mutación: SQ.Formulas.RangeLevel.None",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_2_est2",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Limitación de permanencia máxima en barras (exit_after_bars)",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_3_est3",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Reducción del periodo del canal de entrada Highest/Lowest a 30 barras",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    }
+  ]
+}

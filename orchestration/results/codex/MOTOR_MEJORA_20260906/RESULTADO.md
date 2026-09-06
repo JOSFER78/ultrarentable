@@ -23,7 +23,8 @@ resultados futuros.
 | Recálculo nativo con evidencia (SQX 144.2953, precisión M1, un contrato) | `verified_start.json`, `native_retest.log` ("Éxito: 3, Fallido: 0"), órdenes exportadas con el lector Java de SQX, hashes |
 | Comparación emparejada por día y clasificación honesta | `evaluation.json`: sumas de deltas, IC bootstrap 80/90 %, prueba de signos, tolerancias de equivalencia, cribado por destino |
 | Registro por estrategia para no repetir variantes | `improvement_registry/<reglas>.json` con cuatro variantes ya exploradas y dos experimentos |
-| Pruebas | 164 pruebas de `tests/sqx_runtime` correctas en 86 s (14 nuevas en `test_improvement_cycle.py`, sobre la evidencia real) |
+| Pruebas | 170 pruebas de `tests/sqx_runtime` correctas (15 en `test_improvement_cycle.py`, 5 en `test_hypothesis_debate.py`, sobre la evidencia real y con respuestas de agentes grabadas) |
+| Debate de agentes (fase 2, §8 bis y §8 ter) | Tres debates reales (dos por Claude Code, uno por el omnirouter del sistema) y dos ciclos recalculados en SQX con hipótesis nacidas del debate |
 | Revisión adversarial del código nuevo | Doce hallazgos (subagente revisor); los confirmados se corrigieron antes de cerrar y se re-evaluó todo con el código corregido (sección 4 bis) |
 
 ## 2. Qué cambió y por qué
@@ -117,12 +118,103 @@ Consecuencia: la biblioteca fija de hipótesis (`HYPOTHESIS_LIBRARY`) queda como
 
 El ciclo ya admite esa entrada: `prepare-local --hypotheses <json>` toma las hipótesis de los agentes (`{id, title, problem, change, expected, changes:[…]}`), las valida (el cambio nulo se rechaza, el cambio real se construye y se verifica) y marca el plan como `AGENT_DEBATE`. Probado localmente con dos hipótesis de ejemplo (una válida, una nula) sin recalcular.
 
+## 8 bis. Fase 2 ejecutada el mismo día: debate de agentes real y ciclo 02 (16:15–16:35 CEST)
+
+Emilio pidió investigar si el debate semántico tiene sentido y, en ese caso, implementarlo. La
+investigación está en `INVESTIGACION_DEBATE_SEMANTICO.md` (respuesta: sí para proponer y criticar,
+no para medir ni aceptar; el "debate" que ya existía en la API era un guion pregrabado sin modelo).
+Implementado en `scripts/herramientas/sqx_hypothesis_debate.py` e integrado en el ciclo.
+
+**Debate real sobre la misma estrategia** (dos rondas con Claude Opus 5 vía Claude Code desde el
+PC; la primera se conserva porque destapó un defecto del validador, corregido antes de la segunda):
+
+| Ronda | Propuestas | Aplicables | Refutadas por el crítico | Seleccionadas | Coste | Tiempo |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 (validador v1) | 5 | 2 | 3 | 1 | 2,07 USD | 342 s |
+| 2 (validador corregido, registro con cambios) | 5 | 4 | 2 | 2 | 1,89 USD | 316 s |
+
+Las hipótesis nacieron del dosier, no de una biblioteca: el crítico refutó la repetición de ejes ya
+explorados (trailing, objetivo) y el árbitro seleccionó `BarsValid` largo 4→8 (único eje nuevo,
+ataca la baja frecuencia) y, con desacuerdo registrado, un objetivo intermedio 1,6/2,0 ATR.
+El árbitro dejó escrito que 5 puntos de tasa de objetivo sobre 52 ventanas disjuntas OOS son ruido
+y que, si el objetivo intermedio repetía el perfil de `VPT_NEAR`, había que cerrar la familia de
+objetivos. Carencias de capacidad señaladas por los agentes: filtros de hora y día, filtro por
+dirección, salidas parciales, hora de cierre forzado, relajar entradas.
+
+**Ciclo 02** (recálculo nativo de 3 estrategias en 28 s con SQX ocioso; ciclo completo en 52 s):
+
+| Variante (hipótesis de agente) | IS neto / FB / R:DD | OOS neto / FB / R:DD | Órdenes que cambian | Clase |
+| --- | --- | --- | --- | --- |
+| `VLONG_BARSVALID_EST2` (validez orden larga 4→8) | 40 503 / 1,57 / 2,19 (idéntico) | 7 706 / 1,32 / 1,19 (idéntico) | 0 de 229 | **NO_EFFECT_IN_SAMPLE** |
+| `VPT_MID_ASIM_EST1` (objetivo 1,6 / 2,0 ATR) | 40 480 / 1,55 / 2,13 (equivalente) | 6 059 / 1,25 / 0,93 (peor) | 29 distintas, 15 nuevas, 5 perdidas | **HISTORICAL_FIT_ONLY** |
+
+Lectura: el cambio que los agentes consideraron más prometedor es real en las reglas pero inerte
+en estos datos (ninguna orden larga sobrevive más de 4 barras sin ejecutarse o cancelarse), y el
+motor lo detecta sin declarar nada; el objetivo intermedio confirma la advertencia del árbitro
+(familia de objetivos cerrada para esta estrategia: dos multiplicadores probados, ambos sin
+progreso útil). El registro por estrategia acumula ya seis variantes y tres experimentos; los
+próximos debates las reciben con sus cambios y su resultado.
+
+Niveles: mecanismo funciona = sí (incluido el debate); progreso útil = no; candidatas = ninguna;
+validadas = ninguna.
+
+**Endpoint de IA del sistema.** Al cierre Emilio fijó que las llamadas de IA vayan por el
+omnirouter de su VPS de Oracle, con la elección de modelo por tarea en el panel de superadmin.
+Comprobado: la API compatible con OpenAI responde en
+`https://omniroute.143-47-35-167.sslip.io/pro/omniroute/api/v1` (el proxy `/v1` de nginx apunta a
+una ruta inexistente y devuelve 404), sin clave, con 1 727 modelos y combos; `auto` enruta a
+OpenRouter, que hoy responde "sin créditos"; `auto/best-reasoning` responde vía Antigravity
+(Gemini 3 Flash). El proveedor `omniroute` del debate pide los alias de tarea
+`ultrarentable-mejora-proponente|critico|arbitro` (para definirlos en el panel) y cae a
+`auto/best-reasoning` dejando constancia mientras no existan. Ver §8 ter para el resultado de
+la ejecución por ese endpoint.
+
+## 8 ter. Debate por el endpoint del sistema (omnirouter) y ciclo 03
+
+Tercer debate, esta vez por el omnirouter de Oracle (proveedor `omniroute`), con el registro de
+seis variantes ya exploradas: cuatro llamadas en 69 s, ~47 000 tokens de entrada, coste cero para
+este proyecto (enrutado por Antigravity a Gemini 3 Flash porque los alias de tarea aún no existen
+en el panel; el fallback y la conexión TLS degradada quedan anotados en cada llamada de
+`debate_ciclo_03_omniroute/log.json`). Seis propuestas, cuatro aplicables, cuatro refutadas, dos
+seleccionadas con mecanismos nuevos para esta estrategia: salida por tiempo (`ExitAfterBars` 5
+barras en ambas direcciones, contra la dominancia del cierre por reloj) y stop corto 115→90
+(simetría con el largo, con la reserva del árbitro por solo 8 operaciones cortas OOS). Las dos
+propuestas de "mover el stop a break-even" quedaron no aplicables: la fórmula `RangeLevel.None`
+no está en el vocabulario de mutaciones (carencia registrada). Resultado del ciclo 03 (recálculo nativo en 27 s; ciclo completo en 50 s; `entrega_ciclo_03.json`,
+`ciclo_ew_20260906_03.zip`):
+
+| Variante (hipótesis por omnirouter) | IS neto / FB / R:DD | OOS neto / FB / R:DD | Órdenes que cambian | Días con cambio IS/OOS | Clase |
+| --- | --- | --- | --- | --- | --- |
+| `EXIT_AFTER_BARS` (salida a las 5 barras, ambas direcciones) | 37 975 / 1,53 / 1,99 (peor; IC 90 % de la suma de deltas [−5 055, −189]) | 10 079 / 1,43 / 1,59 (mejor; IC incluye el cero) | 39 distintas, 6 nuevas | 30 / 11 | **INCONCLUSIVE** |
+| `REDUCE_SHORT_SL` (stop corto 115→90) | 39 965 / 1,56 / 2,21 (equivalente) | 8 316 / 1,36 / 1,28 (mejor) | 14 distintas, 2 nuevas | 11 / 3 | **INCONCLUSIVE** (solo 3 días OOS cambian) |
+
+La salida por tiempo convierte 30 cierres por reloj en cierres a las 5 barras en IS y 11 en OOS,
+y repite el patrón de todas las variantes de salida probadas hoy: peor en 2022–2024, mejor en
+2025. Con cinco variantes de salida en la misma dirección (`VPT_NEAR`, `VTS_TIGHT`, `VPT_MID`,
+`EXIT_AFTER_BARS`, `EXIT110`) el árbitro de la ronda 2 ya lo había dicho: la superficie de salidas
+de esta estrategia está saturada de ajuste y no se debe seguir gastando en ella. El registro por
+estrategia cierra el día con ocho variantes y cinco experimentos; el próximo debate los recibe con
+sus cambios y resultados.
+
+Coste de la fase 2 completa: tres debates (2,07 + 1,89 USD de Claude Code y coste cero por el
+omnirouter) y dos ciclos en SQX (28 + 27 s de recálculo). Cero mejoras aceptadas: el coste por
+mejora aceptada sigue sin ser calculable, y ésa es la respuesta honesta para esta estrategia.
+
 ## 9. Siguiente paso más pequeño y útil
 
-Fase 2: el debate de agentes como servicio en la VPS (sin conversación abierta con la IA, según la directriz de que la autonomía vive en el backend):
+La fase 2 (debate de agentes integrado, con hipótesis que se recalculan de verdad) quedó ejecutada
+el mismo día (§8 bis). Lo siguiente, en orden de valor:
 
-1. `sqx_hypothesis_debate.py`: tres roles con llamadas a la API del modelo, salida JSON estricta en el formato que el ciclo ya acepta, presupuesto por estrategia (máximo de hipótesis y de rondas), registro de cada propuesta y de cada rechazo del crítico.
-2. Mutaciones más generales para lo que los agentes propongan (parámetros de indicador, filtros de horario y día, validez de la orden, tamaño), siempre con verificación de que el cambio es exactamente el declarado; y la política de comparación para variantes que cambian la muestra de operaciones.
-3. Verificación de la fase: mismo caso EW, un ciclo completo con hipótesis nacidas del debate, mismo paquete `entrega.json`, misma clasificación; los agentes reciben el resultado y proponen la ronda siguiente sin repetir lo registrado.
-
-Requisitos que debe decidir Emilio antes de la fase 2: qué proveedor y clave de API del modelo usa la VPS para el debate, y si la suscripción de datos de SQX permite traer @EW de 2026 (enero–agosto) para reservarlo como prueba final. Sin esa muestra el motor solo puede producir candidatas, nunca resultados validados.
+1. **Emilio, en el panel de superadmin del omnirouter:** definir los combos
+   `ultrarentable-mejora-proponente`, `ultrarentable-mejora-critico` y `ultrarentable-mejora-arbitro`
+   con la IA que quiera para cada tarea (hoy caen a `auto/best-reasoning`); y reponer créditos o
+   cambiar el destino del combo `auto`, que hoy falla por falta de créditos en OpenRouter.
+2. **Vocabulario de cambios que los agentes ya han pedido** (carencias registradas en ambas rondas):
+   filtros de hora y de día de la semana, filtro por dirección y salidas parciales, con la política
+   de comparación para variantes que cambian la muestra de operaciones. Es la palanca que ataca la
+   causa medida de la baja tasa de examen sin repetir multiplicadores.
+3. **Servicio persistente en la VPS:** encadenar `dossier` → debate por omnirouter → `prepare-local`
+   → `run` → `evaluate` como unidad `systemd` con presupuesto por estrategia (máximo de experimentos,
+   parada cuando el registro muestra estancamiento) y las mismas reconciliaciones que ya existen.
+4. **Muestra final reservada:** confirmar si la suscripción de datos de SQX permite traer @EW de 2026
+   (enero–agosto). Sin ella el motor solo produce candidatas, nunca resultados validados.

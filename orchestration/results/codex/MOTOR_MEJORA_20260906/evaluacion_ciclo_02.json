@@ -1,0 +1,423 @@
+{
+  "schema": "ultrarentable.improvement_evaluation.v1",
+  "generated_utc": "2026-09-06T14:34:01.637934+00:00",
+  "project": "UR_IMPROVE_CICLO_EW_20260906_02",
+  "base": {
+    "name": "Strategy 1.1.27_BASE_BASE",
+    "metrics": {
+      "IS": {
+        "net": 40503.0,
+        "profit_factor": 1.57,
+        "ret_dd": 2.19,
+        "trades": 173,
+        "drawdown": 18457.0,
+        "win_loss": 0.97
+      },
+      "OOS": {
+        "net": 7706.0,
+        "profit_factor": 1.32,
+        "ret_dd": 1.19,
+        "trades": 56,
+        "drawdown": 6501.0,
+        "win_loss": 0.87
+      }
+    },
+    "orders_sha256": "ede352e3c1db0af13f865554d268553a93b39ddeef2a21e5ae10d6ce20007b4a"
+  },
+  "criteria_sha256": "a25944dcd4ed71a177ff1bf952fd31bd1d1ae2d685ed933ec3b647f058bdbb2d",
+  "variants": [
+    {
+      "name": "Strategy 1.1.27_BASE_VLONG_BARSVALID_EST2",
+      "class": "NO_EFFECT_IN_SAMPLE",
+      "reason": "El cambio es real pero no altera ninguna operaci\u00f3n en los datos disponibles.",
+      "next_action": "Conservar como no evaluable en esta muestra; probar solo si otra muestra lo activa.",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "EQUIVALENT",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 0.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.0,
+              "trades": 0,
+              "drawdown": 0.0
+            }
+          },
+          "OOS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 0.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.0,
+              "trades": 0,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "paired_daily": {
+        "days_with_activity": 47,
+        "days_changed": 0,
+        "positive_changed_days": 0,
+        "sum_delta": 0.0,
+        "mean_delta_changed_days": null,
+        "bootstrap_sum_ci80": [
+          0.0,
+          0.0
+        ],
+        "bootstrap_sum_ci90": [
+          0.0,
+          0.0
+        ],
+        "sign_test_p_value": null,
+        "evidence_strength": "NONE",
+        "IS": {
+          "days_with_activity": 149,
+          "days_changed": 0,
+          "positive_changed_days": 0,
+          "sum_delta": 0.0,
+          "mean_delta_changed_days": null,
+          "bootstrap_sum_ci80": [
+            0.0,
+            0.0
+          ],
+          "bootstrap_sum_ci90": [
+            0.0,
+            0.0
+          ],
+          "sign_test_p_value": null,
+          "evidence_strength": "NONE"
+        },
+        "OOS": {
+          "days_with_activity": 47,
+          "days_changed": 0,
+          "positive_changed_days": 0,
+          "sum_delta": 0.0,
+          "mean_delta_changed_days": null,
+          "bootstrap_sum_ci80": [
+            0.0,
+            0.0
+          ],
+          "bootstrap_sum_ci90": [
+            0.0,
+            0.0
+          ],
+          "sign_test_p_value": null,
+          "evidence_strength": "NONE"
+        }
+      },
+      "orders": {
+        "orders_identical": true,
+        "base_trades": 229,
+        "variant_trades": 229,
+        "shared_entries": 229,
+        "shared_with_different_outcome": 0,
+        "only_in_base": 0,
+        "only_in_variant": 0
+      },
+      "destinations": {
+        "fondeo": {
+          "relevant": false,
+          "worse": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "target_rate_base": 0.0746,
+              "target_rate_variant": 0.0746,
+              "delta_target_pp": 0.0,
+              "breach_rate_base": 0.0861,
+              "breach_rate_variant": 0.0861,
+              "delta_breach_pp": 0.0
+            },
+            "OOS": {
+              "available": true,
+              "target_rate_base": 0.0311,
+              "target_rate_variant": 0.0311,
+              "delta_target_pp": 0.0,
+              "breach_rate_base": 0.0428,
+              "breach_rate_variant": 0.0428,
+              "delta_breach_pp": 0.0
+            }
+          },
+          "mode": "PROVISIONAL_SCENARIOS"
+        },
+        "ultra": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "delta_expectancy_r": 0.0,
+              "delta_tail_share_pp": 0.0,
+              "delta_mfe2r_pp": 0.0,
+              "skewness_base": 0.8332,
+              "skewness_variant": 0.8332
+            },
+            "OOS": {
+              "available": true,
+              "delta_expectancy_r": 0.0,
+              "delta_tail_share_pp": 0.0,
+              "delta_mfe2r_pp": 0.0,
+              "skewness_base": 1.1554,
+              "skewness_variant": 1.1554
+            }
+          },
+          "mode": "EXPLORATORY"
+        }
+      },
+      "validated": false,
+      "funding_verdict": "NO_EVALUABLE",
+      "hypothesis": {
+        "label": "VLONG_BARSVALID_EST2",
+        "hypothesis": "H_LONG_BARSVALID_est2",
+        "changes": [
+          {
+            "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#BarsValid#]",
+            "value": "8",
+            "before": "4",
+            "after": "8",
+            "effective_fields": 1
+          }
+        ],
+        "semantic_rules_sha256": "5d44a9abe178face597663dd17630351a7157ae02b987c7cf168639ec7abf0a4",
+        "source": "reviewed_mutation"
+      },
+      "metrics": {
+        "IS": {
+          "net": 40503.0,
+          "profit_factor": 1.57,
+          "ret_dd": 2.19,
+          "trades": 173,
+          "drawdown": 18457.0,
+          "win_loss": 0.97
+        },
+        "OOS": {
+          "net": 7706.0,
+          "profit_factor": 1.32,
+          "ret_dd": 1.19,
+          "trades": 56,
+          "drawdown": 6501.0,
+          "win_loss": 0.87
+        }
+      }
+    },
+    {
+      "name": "Strategy 1.1.27_BASE_VPT_MID_ASIM_EST1",
+      "class": "HISTORICAL_FIT_ONLY",
+      "reason": "Mejora o iguala en construcci\u00f3n pero empeora en desarrollo.",
+      "next_action": "Descartar: sobreajuste probable. No optimizar sobre el OOS.",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": -23.0,
+              "profit_factor": -0.02,
+              "ret_dd": -0.06,
+              "trades": 7,
+              "drawdown": 529.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -1647.0,
+              "profit_factor": -0.07,
+              "ret_dd": -0.26,
+              "trades": 3,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "paired_daily": {
+        "days_with_activity": 47,
+        "days_changed": 7,
+        "positive_changed_days": 2,
+        "sum_delta": -1647.0,
+        "mean_delta_changed_days": -235.29,
+        "bootstrap_sum_ci80": [
+          -3194.0,
+          -129.0
+        ],
+        "bootstrap_sum_ci90": [
+          -3685.0,
+          132.0
+        ],
+        "sign_test_p_value": 0.4531,
+        "evidence_strength": "NONE",
+        "IS": {
+          "days_with_activity": 150,
+          "days_changed": 21,
+          "positive_changed_days": 9,
+          "sum_delta": -23.0,
+          "mean_delta_changed_days": -1.1,
+          "bootstrap_sum_ci80": [
+            -3722.0,
+            3852.0
+          ],
+          "bootstrap_sum_ci90": [
+            -4777.0,
+            5011.0
+          ],
+          "sign_test_p_value": 0.6636,
+          "evidence_strength": "NONE"
+        },
+        "OOS": {
+          "days_with_activity": 47,
+          "days_changed": 7,
+          "positive_changed_days": 2,
+          "sum_delta": -1647.0,
+          "mean_delta_changed_days": -235.29,
+          "bootstrap_sum_ci80": [
+            -3194.0,
+            -129.0
+          ],
+          "bootstrap_sum_ci90": [
+            -3685.0,
+            132.0
+          ],
+          "sign_test_p_value": 0.4531,
+          "evidence_strength": "NONE"
+        }
+      },
+      "orders": {
+        "orders_identical": false,
+        "base_trades": 229,
+        "variant_trades": 239,
+        "shared_entries": 224,
+        "shared_with_different_outcome": 29,
+        "only_in_base": 5,
+        "only_in_variant": 15
+      },
+      "destinations": {
+        "fondeo": {
+          "relevant": false,
+          "worse": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "target_rate_base": 0.0746,
+              "target_rate_variant": 0.0656,
+              "delta_target_pp": -0.9,
+              "breach_rate_base": 0.0861,
+              "breach_rate_variant": 0.0861,
+              "delta_breach_pp": 0.0
+            },
+            "OOS": {
+              "available": true,
+              "target_rate_base": 0.0311,
+              "target_rate_variant": 0.0272,
+              "delta_target_pp": -0.39,
+              "breach_rate_base": 0.0428,
+              "breach_rate_variant": 0.0428,
+              "delta_breach_pp": 0.0
+            }
+          },
+          "mode": "PROVISIONAL_SCENARIOS"
+        },
+        "ultra": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "delta_expectancy_r": -0.0082,
+              "delta_tail_share_pp": -10.54,
+              "delta_mfe2r_pp": -0.7,
+              "skewness_base": 0.8332,
+              "skewness_variant": 0.644
+            },
+            "OOS": {
+              "available": true,
+              "delta_expectancy_r": -0.0381,
+              "delta_tail_share_pp": -11.23,
+              "delta_mfe2r_pp": -1.27,
+              "skewness_base": 1.1554,
+              "skewness_variant": 0.8856
+            }
+          },
+          "mode": "EXPLORATORY"
+        }
+      },
+      "validated": false,
+      "funding_verdict": "NO_EVALUABLE",
+      "hypothesis": {
+        "label": "VPT_MID_ASIM_EST1",
+        "hypothesis": "H_PT_MID_ASIM_est1",
+        "changes": [
+          {
+            "direction": "long",
+            "exit": "profit_target",
+            "value": "1.6",
+            "atr_period": "20",
+            "before": {
+              "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+              "Value": "2.0",
+              "AtrPeriod": "20"
+            },
+            "after": {
+              "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+              "Value": "1.6",
+              "AtrPeriod": "20"
+            },
+            "effective_fields": 1
+          },
+          {
+            "direction": "short",
+            "exit": "profit_target",
+            "value": "2.0",
+            "atr_period": "25",
+            "before": {
+              "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+              "Value": "2.4",
+              "AtrPeriod": "25"
+            },
+            "after": {
+              "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+              "Value": "2.0",
+              "AtrPeriod": "25"
+            },
+            "effective_fields": 1
+          }
+        ],
+        "semantic_rules_sha256": "a39365de472b8129b9fdbe886b79e0af824038f62259052c46f22b3744d232cc",
+        "source": "reviewed_mutation"
+      },
+      "metrics": {
+        "IS": {
+          "net": 40480.0,
+          "profit_factor": 1.55,
+          "ret_dd": 2.13,
+          "trades": 180,
+          "drawdown": 18986.0,
+          "win_loss": 0.96
+        },
+        "OOS": {
+          "net": 6059.0,
+          "profit_factor": 1.25,
+          "ret_dd": 0.93,
+          "trades": 59,
+          "drawdown": 6501.0,
+          "win_loss": 0.97
+        }
+      }
+    }
+  ],
+  "accepted_for_validation": [],
+  "limitations": [
+    "El OOS es de desarrollo: se ha consultado para clasificar; no es una prueba final reservada.",
+    "El cribado de examen usa escenarios provisionales; no acredita compatibilidad con ninguna empresa.",
+    "Ultra es exploratorio: sus criterios est\u00e1n en construcci\u00f3n."
+  ]
+}

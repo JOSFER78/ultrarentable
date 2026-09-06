@@ -127,6 +127,14 @@ class VariantMutations(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'no altera nada'):
             mutations.build_variant(self.rules, [{'direction': 'long', 'exit': 'stop_loss', 'value': '90'}])
 
+    def test_restating_the_unchanged_atr_period_does_not_invalidate_a_single_change(self):
+        # Caso real del debate del 2026-09-06: el agente repitió AtrPeriod=105 sin variarlo.
+        variant = mutations.build_variant(self.rules, [{'direction': 'long', 'exit': 'trailing_activation', 'value': '0.9', 'atr_period': '105'}])
+        self.assertEqual(len(variant['comparison']['changed_params']), 1)
+        self.assertEqual(variant['changes'][0]['after'], {'formula': 'SQ.Formulas.Range.ATRBasedValue', 'Value': '0.9', 'AtrPeriod': '105'})
+        with self.assertRaisesRegex(ValueError, 'no altera nada'):
+            mutations.build_variant(self.rules, [{'direction': 'long', 'exit': 'trailing_activation', 'value': '1.4', 'atr_period': '105'}])
+
     def test_duplicate_and_negative_changes_are_rejected(self):
         with self.assertRaisesRegex(ValueError, 'duplicado'):
             mutations.build_variant(self.rules, [{'direction': 'long', 'exit': 'stop_loss', 'value': '80'},

@@ -165,6 +165,12 @@
       "fecha": "2026-09-06",
       "titulo": "Motor propio de mejora: primera entrega comprobada con Strategy 1.1.27 (@EW H1)",
       "detalle": "Ciclo completo en la VPS: contrato de entrada, diagnóstico de órdenes, hipótesis pre-registradas, dos variantes reales recalculadas en SQX, comparación emparejada y entrega (entrega_ciclo_01.json). Ambas variantes INCONCLUSIVE, variante de metadatos rechazada antes de recalcular, experimento previo de stops reclasificado, referencia reproducida exactamente. Cero estrategias acreditadas para fondeo; sin muestra final reservada. Resultado y límites: orchestration/results/codex/MOTOR_MEJORA_20260906/RESULTADO.md; guía: docs/Laboratorio/07_MOTOR_MEJORA_CICLO.md. Rama motor-mejora-entrega-1."
+    },
+    {
+      "id": "motor-mejora-fase-2-debate",
+      "fecha": "2026-09-06",
+      "titulo": "Motor de mejora, fase 2: debate de agentes integrado y ciclo 02 con hipótesis de agentes",
+      "detalle": "Investigación (INVESTIGACION_DEBATE_SEMANTICO.md): el debate semántico tiene sentido para proponer y criticar hipótesis, no para medir; el \"debate\" previo de la API era un guion pregrabado sin modelo. Implementado sqx_hypothesis_debate.py (dos proponentes ciegos, validación determinista, crítico, árbitro sin consenso forzado, presupuesto de búsqueda) e integrado en el ciclo. Dos debates reales con Claude Opus 5 y un ciclo 02 recalculado en SQX: BarsValid 4→8 NO_EFFECT_IN_SAMPLE, objetivo 1,6/2,0 ATR HISTORICAL_FIT_ONLY. Endpoint de IA del sistema fijado por Emilio: omnirouter de Oracle con alias por tarea en el panel de superadmin. Cero estrategias acreditadas."
     }
   ],
   "fase_activa": null,

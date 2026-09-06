@@ -1,0 +1,32 @@
+{
+  "estrategia": "Strategy 1.1.27_BASE",
+  "intervenciones": [
+    {
+      "agente": "proponente_salidas_riesgo",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "El análisis del dosier de la estrategia 'Strategy 1.1.27_BASE' (@EW H1) centrado en la lente de salidas y gestión del riesgo revela deficiencias estructurales claras en la preservación de beneficios y el control de pérdidas. En el periodo IS, 101 de 173 salidas (58.38%) ocurren por EOD_TIME (TIME_EXIT_DOMINATED), mientras que el Profit Target solo se alcanza en 13 operaciones (7.5%, PT_RARELY_HIT). En OOS, el patrón se mantiene: 30 de 56 operaciones (53.57%) salen por EOD_TIME y solo 5 por PT (8.93%). Además, en OOS el 37.5% de los cierres se deben a Stop Loss (21 operaciones con una pérdida acumulada de -20589.0 USD, SL_HIT_SHARE_HIGH) y 7 operaciones perdedoras (23.33% de los perdedores) sufrieron reversión tras haber alcanzado una excursión favorable MFE >= 1R (LOSERS_AFTER_FAVOURABLE_EXCURSION). Las propuestas presentadas buscan activar mecanismos de breakeven, acotar la duración de la exposición y simetrizar los niveles de stop loss para reducir el drawdown y mejorar la retención de beneficios.",
+      "utc": "2026-09-06T14:37:36.304071+00:00"
+    },
+    {
+      "agente": "proponente_estructura_frecuencia",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "La estrategia 1.1.27_BASE sobre @EW H1 muestra una degradación de rendimiento entre el periodo IS (173 operaciones, net $40503.0, PF 1.572, Ret/DD 2.194) y OOS (56 operaciones, net $7706.0, PF 1.323, Ret/DD 1.185). El análisis de la estructura de la señal revela tres limitaciones principales: 1) Dominio de salidas por tiempo (TIME_EXIT_DOMINATED: 59% en IS con 101 EOD_TIME; 53.6% en OOS con 30 EOD_TIME) y muy pocos objetivos alcanzados (PT_RARELY_HIT: 7.5% en IS, 8.9% en OOS), indicando que las órdenes PT no gestionan activamente las salidas de beneficio; 2) Excursiones favorables desaprovechadas (LOSERS_AFTER_FAVOURABLE_EXCURSION: 7 operaciones perdedoras en OOS, el 23.33%, alcanzaron al menos 1R a favor antes de caer en SL); 3) Baja frecuencia operativa (LOW_FREQUENCY_FOR_SHORT_EXAM: 1.106 trades/semana en IS, 1.073 en OOS) que limita severamente las tasas de éxito en ventanas de examen de 5 días (PROV_50K_OBJ6_TRAIL4 presenta solo 7.46% en IS y 3.11% en OOS). Adicionalmente, existen sesgos negativos en el lunes (-$4149.0 en OOS) y en la hora 10 local (-$2890.0 en OOS).",
+      "utc": "2026-09-06T14:37:55.325127+00:00"
+    },
+    {
+      "agente": "critico",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "La muestra OOS es reducida (56 operaciones totales y solo 8 en dirección short), lo que eleva el riesgo de inestabilidad en las métricas. | El hallazgo LOW_FREQUENCY_FOR_SHORT_EXAM (1.106 trades/semana IS, 1.073 OOS) limita estructuralmente la capacidad de superar las pruebas de fondeo de 5 días (target rate 0.0746 IS / 0.0311 OOS en PROV_50K_OBJ6_TRAIL4). | Dos propuestas (PROP_01_MOVE_SL_TO_BE_sal1 y PROP_1_est1) son inválidas técnicamente al intentar mutar la fórmula no soportada SQ.Formulas.RangeLevel.None.",
+      "utc": "2026-09-06T14:38:20.208426+00:00"
+    },
+    {
+      "agente": "arbitro",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "Se seleccionan 2 propuestas aplicables (validation.applicable=true) y no refutadas por la crítica, las cuales emplean mecanismos completamente diferenciados entre sí y se apoyan en datos observados tanto en IS como en OOS. PROP_02_EXIT_AFTER_BARS_sal2 aborda de forma directa el hallazgo TIME_EXIT_DOMINATED (59.0% en IS y 53.6% en OOS) fijando el tiempo máximo de permanencia en 5 barras H1 para evitar la exposición pasiva hasta el cierre EOD_TIME (54000). PROP_03_REDUCE_SHORT_SL_sal3 atiende el hallazgo SL_HIT_SHARE_HIGH (37.5% de cierres por SL en OOS y pérdida acumulada de -20589.0 USD) reduciendo el Stop Loss en Short de 115.0 a 90.0 USD para simetrizar el riesgo unitario con Long (90.0 USD), buscando recortar la pérdida promedio perdedora (-794.67 USD en OOS) y el Max Drawdown OOS (6501.0 USD).",
+      "utc": "2026-09-06T14:38:26.705265+00:00"
+    }
+  ],
+  "veredicto_colegiado": "2 hipótesis seleccionadas de 6 propuestas",
+  "puntuacion_consenso": null,
+  "nota": "Debate real registrado; ninguna hipótesis está validada hasta recalcularse y evaluarse."
+}

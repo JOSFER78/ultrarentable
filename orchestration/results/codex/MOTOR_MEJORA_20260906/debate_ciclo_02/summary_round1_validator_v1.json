@@ -1,0 +1,95 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "finished_utc": "2026-09-06T14:23:26.073445+00:00",
+  "provider": "claude-cli",
+  "models": [
+    "claude-opus-5"
+  ],
+  "search_budget": {
+    "proposed": 5,
+    "applicable": 2,
+    "refuted_by_critic": 3,
+    "selected": 1,
+    "previously_tested": 4
+  },
+  "cost_usd_total": 2.0739,
+  "seconds_total": 342.0,
+  "dissent": [
+    "Desacuerdo con el proponente de est2 sobre la expectativa para Fondeo: el criterio de relevancia (+5 pp de tasa de objetivo a 5 días en IS y OOS) se mide sobre ventanas solapadas (778 y 257) cuyo tamaño efectivo es 156 y 52 disjuntas; 5 pp sobre 52 ventanas disjuntas son ~2,6 ventanas. Debería leerse sobre disjoint_target_rate (0,0705 IS / 0,0385 OOS) o se declarará relevante lo que es ruido. Registro que, aun ganando frecuencia, es poco probable que est2 alcance el umbral y entonces debe clasificarse como no relevante para Fondeo, no como mejora.",
+    "Desacuerdo con la crítica en un punto: refuta H_TRAIL_ACT_EARLY_LONG_sal1 también por solapamiento con H_TS_TIGHT, cuando el propio dosier no acredita qué probó esa variante y el cambio es de activación (1,4→0,9) y no de distancia del trailing (90,0). La refutación válida es la automática (validation.applicable=false por declarar AtrPeriod 105 como cambio cuando no cambia); el solapamiento no está demostrado con lo que hay en el dosier y no debería usarse para cerrar ese espacio de forma permanente.",
+    "Dejo la segunda plaza sin usar en lugar de forzar consenso hacia est3. Un árbitro que quisiera agotar el presupuesto tendría el argumento de que est3 es aplicable, no refutada y de mecanismo distinto (filtro de señal frente a vigencia de la orden); lo registro como desacuerdo legítimo. Mi razón para no elegirla: overfitting_risk alto, confianza baja, autodeclarada reserva y mismo destino que est2, con lo que competiría por atribución sobre la misma escasez de operaciones.",
+    "H_PT_LONG_TO_REACHABLE_sal2 y H_TRIGGER_NEAR_45_TO_25_est1 podrían ser rescatables tras corrección de especificación, pero no en esta ronda: sal2 tiene confianza baja declarada por su propio proponente y ataca justo las operaciones ≥3R (share_of_profit_from_trades_ge_3r 0,3471 IS / 0,3149 OOS, max_r 4,757 / 4,356); est1 mezcla largos y cortos, y con 33 cortos en IS y 8 en OOS ese lado es inevaluable por tamaño de muestra."
+  ],
+  "rationale": "Solo dos propuestas tienen validation.applicable=true: H_LONG_BARSVALID_4_TO_8_est2 y H_REGIME_FILTER_188_TO_100_est3. Las otras tres quedan refutadas automáticamente por el validador (sal1 y sal2 declaran 2 cambios cuando solo se detecta 1 —AtrPeriod invariable declarado como cambio—; est1 usa una ruta no mutable, Block[#Shift#], además de un cambio inerte a Shift=1), y el veredicto de la crítica es REFUTAR en las tres, así que no son elegibles. De las dos aplicables selecciono est2: cambio único y verificado (Long entry BarsValid 4→8, before 4 / after 8, dentro de min 0 / max 1000), riesgo de sobreajuste bajo según la crítica porque el valor 8 no se ajusta a los datos sino que se toma del lado corto ya presente en la estrategia, no duplica ninguna de las cuatro hipótesis ya exploradas (todas de salidas: H_PT_NEAR, H_TS_TIGHT y dos de salida fija) y ataca el hallazgo dominante LOW_FREQUENCY_FOR_SHORT_EXAM / LOW_EXAM_TARGET_RATE_5D (1,106 op/sem IS y 1,073 OOS; 19,05 % y 18,01 % de días con operativa; 328/778 y 103/257 ventanas NO_TRADES; target_rate 0,0746 IS / 0,0311 OOS) sin tocar salidas ni tamaño y aislado a una sola dirección, que es donde hay muestra (140 de 173 operaciones IS y 48 de 56 OOS). No ocupo la segunda plaza del presupuesto: el único candidato restante, est3 (BBBarOpensBelowDown Period 188→100), comparte con est2 el mismo destino —subir frecuencia— pero con riesgo de sobreajuste alto según la crítica (salto de -47 % no justificado por ninguna cifra del dosier, redefine el régimen que puede ser lo que sostiene PF 1,572 IS / 1,323 OOS), su propio proponente lo declara reserva fuera del presupuesto y con confianza baja, y la crítica dice expresamente 'no ejecutar en este experimento'. Gastar la segunda variante en un mecanismo no suficientemente distinto y con la mayor superficie de minería sobre un OOS de 56 operaciones y un solo año no compra información: prefiero dejar la plaza libre. Advertencia de lectura que la crítica impone y comparto: la conclusión se toma solo por el intervalo bootstrap pre-registrado (4000 remuestreos, semilla 20260906, plan_sha256 560f3fc3…), nunca por el neto OOS, que pasa de 7.706 a -1.837 sin las tres mejores ganadoras; y antes de leer nada debe pasarse la puerta técnica (reglas cambian semánticamente, órdenes distintas en al menos una muestra, ≥5 días cambiados), porque un BarsValid mayor puede resultar inerte si ninguna señal larga caducaba —el dosier no cuantifica cuántas caducan—. La decisión de aceptación corresponde a los programas deterministas con criteria tal como está registrado.",
+  "next_round_if_all_fail": "Si est2 falla o resulta inerte (<5 días con órdenes cambiadas), el orden de la siguiente ronda es: (1) Corregir especificaciones antes que inventar hipótesis nuevas: reformular H_TRIGGER_NEAR_45_TO_25_est1 a un único parámetro mutable y aislado por dirección (Highest.Period de Long entry, dejando Lowest/corto intacto y sin declarar Shift, que ya vale 1), y reformular H_TRAIL_ACT_EARLY_LONG_sal1 declarando exactamente un cambio verificado (long trailing_activation 1,4→0,9, con AtrPeriod 105 como contexto, no como cambio); ambas deben volver con validation.applicable=true antes de consumir presupuesto. (2) Si el fallo de est2 es por inercia y no por empeoramiento, la lectura es que BarsValid no era la restricción: entonces la única palanca de frecuencia dentro del vocabulario permitido es el filtro de régimen, y procede ejecutar est3 con el endurecimiento que pide la crítica —IC 90 % de la suma de deltas diarios OOS por encima de cero, estabilidad por años en IS (2022, 2023 y con 2024 hoy en -3.613), breach ≤+1 pp también en PROV_50K_OBJ8_TRAIL5_DLL2 (0,2198 IS / 0,2218 OOS)— y con un salto menos agresivo que -47 % si el catálogo lo permite. (3) Si también falla, la conclusión honesta a registrar no es 'no encontramos la mutación buena' sino la objeción general de la crítica: el margen de mejora dentro del vocabulario permitido es estructuralmente estrecho para el destino Fondeo, porque el cuello de botella es LOW_FREQUENCY_FOR_SHORT_EXAM (severity high en ambas muestras, huecos de 29 y 43 días) y las palancas reales —filtros de horario y día, que arreglarían los segmentos perdedores de OOS (hora local 10: 10 op, -2.890 $; lunes: 11 op, -4.149 $), y el tamaño de posición— están en not_supported_yet o se tratan aparte como exposición. La acción entonces no es seguir mutando esta estrategia, sino (a) elevar como requisito la ampliación del vocabulario de cambios a filtros de sesión/día, y (b) devolver esta estrategia al buscador por insuficiencia de frecuencia para un examen de una semana, en vez de gastar más presupuesto sobre 56 operaciones OOS de un solo año cuyo neto depende de tres operaciones.",
+  "general_objections": [
+    "Tres de las cinco propuestas (H_TRAIL_ACT_EARLY_LONG_sal1, H_PT_LONG_TO_REACHABLE_sal2, H_TRIGGER_NEAR_45_TO_25_est1) traen validation.applicable=false y quedan refutadas automáticamente: dos por declarar 2 cambios cuando solo se detecta 1 (incluir AtrPeriod invariable como cambio) y una por ruta no mutable más un cambio inerte (Shift ya vale 1). El proponente debe declarar únicamente parámetros que efectivamente cambian de valor y solo rutas del catálogo.",
+    "El presupuesto es max_variants=2 y ya hay 4 hipótesis probadas para esta estrategia; con solo dos propuestas aplicables (est2 y est3) y est3 autodeclarada como reserva, el experimento debería ejecutar est2 y, a lo sumo, una segunda variante corregida y no solapada con H_PT_NEAR ni H_TS_TIGHT.",
+    "Ninguna propuesta ataca el hallazgo dominante de forma creíble: LOW_FREQUENCY_FOR_SHORT_EXAM (severity high en IS y OOS: 1,106 y 1,073 op/sem, 19,05 % y 18,01 % de días con operativa, huecos de 29 y 43 días) y LOW_EXAM_TARGET_RATE_5D (0,0746/0,0311). Con 328/778 y 103/257 ventanas sin operaciones, ninguna mutación de salida puede mover la tasa de objetivo; las palancas reales —filtros de horario/día y tamaño de posición— están en not_supported_yet o se estudian aparte como exposición. Conviene registrar que el margen de mejora dentro del vocabulario permitido es estructuralmente estrecho para el destino Fondeo.",
+    "Todas las propuestas se juzgan sobre un OOS de 56 operaciones y un solo año (2025) cuyo neto pasa de 7.706 a -1.837 sin las tres mejores ganadoras (PROFIT_DEPENDS_ON_FEW_TRADES, severity high). Ninguna conclusión debe leerse del neto; solo del intervalo bootstrap pre-registrado (4000 remuestreos, semilla 20260906). Y el propio dosier advierte (limitations) que el OOS es muestra de desarrollo: nada de lo que se acepte aquí es prueba final.",
+    "El lado corto tiene 33 operaciones en IS y 8 en OOS: cualquier propuesta que lo toque, o que mezcle largos y cortos en un mismo cambio, es inevaluable por tamaño de muestra. Los cambios deben aislarse por dirección.",
+    "Las tasas de examen se miden sobre ventanas solapadas (778 y 257) cuyo tamaño efectivo es 156 y 52 ventanas disjuntas: un movimiento de 5 pp sobre 52 ventanas disjuntas equivale a unas 2,6 ventanas. El criterio de relevancia de Fondeo debe leerse sobre disjoint_target_rate (0,0705 IS / 0,0385 OOS) y no solo sobre target_rate, o se declarará relevante lo que es ruido.",
+    "Varias propuestas justifican el mecanismo con giveback y MFE (mean_giveback_all_with_mfe 784,09 IS / 1029,26 OOS) sin recordar que el dosier no tiene trayectoria intradía completa (limitations): las inferencias sobre cuándo se habría activado un trailing o tocado un objetivo no son verificables con los datos disponibles y no deben presentarse como mecanismo establecido.",
+    "Los criterios de aceptación redactados por los proponentes reinterpretan el pre-registro (mezclan umbrales de Ultra, de Fondeo y de tolerancia con umbrales propios). La decisión corresponde a los programas deterministas con criteria tal como está registrado (plan_sha256 560f3fc3…); cualquier umbral adicional debe tratarse como comentario, no como criterio."
+  ],
+  "capability_gaps": [
+    "El dosier no detalla los valores concretos ni el lado de las variantes ya exploradas H_PT_NEAR y H_TS_TIGHT: sin eso no puedo garantizar que H_PT_LONG_TO_REACHABLE no sea una repetición. Se necesita que explored_variants incluya los cambios aplicados (dirección, salida, valor) y su resultado medido.",
+    "No hay forma soportada de atacar el hallazgo dominante LOW_FREQUENCY_FOR_SHORT_EXAM (1,106 op/semana IS, 1,073 OOS; 328 y 103 ventanas de 5 días sin operaciones): el vocabulario no permite añadir o quitar condiciones ni relajar las entradas, y cambiar BarsValid o los periodos de las señales altera las entradas fuera del lente de salidas encargado.",
+    "Los segmentos perdedores identificados en OOS (hora local 10: 10 operaciones, -2.890; lunes: 11 operaciones, -4.149; LOSS_CONCENTRATED_SEGMENT) no son accionables: los filtros de horario y de día de la semana figuran en not_supported_yet.",
+    "No existe una mutación de tipo 'salida parcial' o 'escalado de salida' en el vocabulario. Es la herramienta natural para el patrón medido aquí (mucha excursión ≥1R, poca ≥3R, giveback alto) porque permitiría capturar la banda 1R–2R sin truncar la cola de la que depende el neto OOS.",
+    "No hay trayectoria intradía completa (solo MAE/MFE por operación), por lo que no puedo estimar previamente cuántas operaciones habrían tocado un objetivo o un trailing intermedio; toda la estimación queda a cargo de la re-simulación determinista.",
+    "No se puede modificar la hora de salida forzada (EODExitTime/ExitAtEndOfDay, 54000), que es la que gobierna el 59 % de los cierres en IS y el 53,6 % en OOS; si esa opción fuera mutable sería la palanca más directa para TIME_EXIT_DOMINATED.",
+    "Filtros de horario y de día de la semana (not_supported_yet): OOS muestra pérdidas concentradas en la hora local 10 (10 operaciones, -2.890 $) y en lunes (11 operaciones, -4.149 $), y en IS también son negativas las horas 09 (-2.306 $) y 12 (-2.658 $) y el lunes (-2.259 $). Sin poder expresar un filtro temporal, no puede probarse la hipótesis LOSS_CONCENTRATED_SEGMENT, que es la mejora de calidad más evidente del dosier y la única que subiría la tasa de objetivo sin añadir operaciones.",
+    "Filtro o desactivación por dirección: los cortos rinden mejor que los largos en ambas muestras (PF 1,927 IS / 1,901 OOS frente a 1,491 / 1,229) pero solo son 33 y 8 operaciones. No hay forma en el vocabulario de reequilibrar direcciones salvo por vigencia de orden; se necesitaría poder habilitar/deshabilitar o ponderar una dirección para contrastarlo limpiamente.",
+    "Ajuste del horario de salida por reloj: EOD_TIME decide 101 de 173 cierres en IS y 30 de 56 en OOS (TIME_EXIT_DOMINATED), pero EODExitTime/FridayExitTime (54000) están en options y no son mutables por el catálogo de parámetros ni por el vocabulario de salidas; sin ellos no se puede separar cuánto del giveback (333,76 $ IS / 521,54 $ OOS en ganadoras) lo causa el corte horario.",
+    "Estudio de exposición vacío (exposure_study_fondeo: {}) y tamaño de posición no mutable: las tasas de objetivo a 5 días (0,0746/0,0311) se miden con 1 contrato, de modo que no puede distinguirse cuánta parte del fallo de examen es de estructura de señal y cuánta de tamaño. Debería resolverse en el estudio de exposición aparte, no forzando cambios de estrategia.",
+    "Ausencia de prueba final reservada (limitations): OOS se consulta para decidir, así que ninguna aceptación aquí acredita robustez fuera de muestra; haría falta un tramo reservado o validación walk-forward para confirmar las hipótesis que pasen."
+  ],
+  "proposals": [
+    {
+      "id": "H_TRAIL_ACT_EARLY_LONG_sal1",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Adelantar la activación del trailing en largos para rescatar la excursión de 1R que hoy se devuelve",
+      "applicable": false,
+      "validation_error": "Cambios detectados (1) distintos de los previstos (2): [{'param': 'Strategy/Rules/Events/Event[OnBarUpdate]/Rule#1/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#Value#]', 'before': '1.4', 'after': '0.9'}]",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "H_PT_LONG_TO_REACHABLE_sal2",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Acercar el objetivo de los largos al rango de excursión realmente observado",
+      "applicable": false,
+      "validation_error": "Cambios detectados (1) distintos de los previstos (2): [{'param': 'Strategy/Rules/Events/Event[OnBarUpdate]/Rule#1/Then/Item[EnterAtStop]/Param[#ProfitTarget.ProfitTarget#]/Formula[SQ.Formulas.SLPT.ATRBasedValue]/Param[#Value#]', 'before': '2.0', 'after': '1.5'}]",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "H_TRIGGER_NEAR_45_TO_25_est1",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Acercar el nivel de disparo del breakout: Highest/Lowest de 45 a 25 barras",
+      "applicable": false,
+      "validation_error": "Ruta no mutable: StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Shift#]",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "H_LONG_BARSVALID_4_TO_8_est2",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Igualar la validez de la orden larga a la corta: BarsValid 4 → 8 en Long entry",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REVISAR",
+      "selected": true
+    },
+    {
+      "id": "H_REGIME_FILTER_188_TO_100_est3",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Aflojar el filtro de régimen lento: BBBarOpensBelowDown Period 188 → 100 (reserva, fuera del presupuesto de 2)",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REVISAR",
+      "selected": false
+    }
+  ]
+}

@@ -1,0 +1,595 @@
+{
+  "schema": "ultrarentable.improvement_delivery.v1",
+  "generated_utc": "2026-09-06T14:34:01.671443+00:00",
+  "strategy": {
+    "name": "Strategy 1.1.27_BASE",
+    "symbol": "@EW",
+    "timeframe": "H1",
+    "semantic_rules_sha256": "85544c4be48b8589e6c1d32465634895c3d5aa6d365f6e142dae96acef22aa52",
+    "contract_state": "CONTRACT_COMPLETE",
+    "data_provenance_state": "DECLARED_NOT_INDEPENDENTLY_VERIFIED"
+  },
+  "destinations": {
+    "fondeo": {
+      "evaluate": true,
+      "mode": "PROVISIONAL_SCENARIOS",
+      "reason": "Elegible para un cribado provisional de examen; la admisi\u00f3n real depende de las reglas fechadas de cada modalidad."
+    },
+    "ultra": {
+      "evaluate": true,
+      "mode": "EXPLORATORY",
+      "reason": "Criterios Ultra en construcci\u00f3n; cualquier evaluaci\u00f3n es exploratoria."
+    }
+  },
+  "reference": {
+    "name": "Strategy 1.1.27_BASE_BASE",
+    "metrics": {
+      "IS": {
+        "net": 40503.0,
+        "profit_factor": 1.57,
+        "ret_dd": 2.19,
+        "trades": 173,
+        "drawdown": 18457.0,
+        "win_loss": 0.97
+      },
+      "OOS": {
+        "net": 7706.0,
+        "profit_factor": 1.32,
+        "ret_dd": 1.19,
+        "trades": 56,
+        "drawdown": 6501.0,
+        "win_loss": 0.87
+      }
+    },
+    "orders_sha256": "ede352e3c1db0af13f865554d268553a93b39ddeef2a21e5ae10d6ce20007b4a"
+  },
+  "findings": [
+    {
+      "code": "TIME_EXIT_DOMINATED",
+      "sample": "IS",
+      "severity": "medium",
+      "evidence": {
+        "share": 0.59,
+        "close_types": {
+          "EOD": 1,
+          "EOD_TIME": 101,
+          "PT": 13,
+          "SL": 58
+        }
+      },
+      "note": "La mayor\u00eda de las salidas las decide el reloj, no el objetivo ni el stop."
+    },
+    {
+      "code": "PT_RARELY_HIT",
+      "sample": "IS",
+      "severity": "medium",
+      "evidence": {
+        "pt_share": 0.075
+      },
+      "note": "El objetivo de beneficio casi nunca se alcanza: puede estar demasiado lejos."
+    },
+    {
+      "code": "LOW_FREQUENCY_FOR_SHORT_EXAM",
+      "sample": "IS",
+      "severity": "high",
+      "evidence": {
+        "trades_per_week": 1.106,
+        "share_of_days_with_trades": 0.1905,
+        "longest_gap_days": 29
+      },
+      "note": "Opera menos de uno de cada tres d\u00edas: en una ventana de 1\u20135 d\u00edas suele no haber oportunidad."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "IS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ6_TRAIL4",
+        "target_rate_5d": 0.0746,
+        "breach_rate_5d": 0.0861,
+        "windows": 778,
+        "disjoint_windows": 156
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "IS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ8_TRAIL5_DLL2",
+        "target_rate_5d": 0.0296,
+        "breach_rate_5d": 0.2198,
+        "windows": 778,
+        "disjoint_windows": 156
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    },
+    {
+      "code": "TIME_EXIT_DOMINATED",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "share": 0.536,
+        "close_types": {
+          "EOD_TIME": 30,
+          "PT": 5,
+          "SL": 21
+        }
+      },
+      "note": "La mayor\u00eda de las salidas las decide el reloj, no el objetivo ni el stop."
+    },
+    {
+      "code": "PT_RARELY_HIT",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "pt_share": 0.089
+      },
+      "note": "El objetivo de beneficio casi nunca se alcanza: puede estar demasiado lejos."
+    },
+    {
+      "code": "SL_HIT_SHARE_HIGH",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "sl_share": 0.375,
+        "sl_net": -20589.0
+      }
+    },
+    {
+      "code": "LOSERS_AFTER_FAVOURABLE_EXCURSION",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "losers_after_mfe_ge_1r": 7,
+        "share_of_losers": 0.2333
+      },
+      "note": "Una de cada cinco perdedoras o m\u00e1s lleg\u00f3 a estar 1R a favor antes de perder."
+    },
+    {
+      "code": "PROFIT_DEPENDS_ON_FEW_TRADES",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "net": 7706.0,
+        "net_without_top_3_winners": -1837.0
+      }
+    },
+    {
+      "code": "LOSS_CONCENTRATED_SEGMENT",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "dimension": "by_entry_hour_local",
+        "segment": "10",
+        "trades": 10,
+        "net": -2890.0
+      },
+      "note": "Un segmento identificable pierde de forma consistente."
+    },
+    {
+      "code": "LOSS_CONCENTRATED_SEGMENT",
+      "sample": "OOS",
+      "severity": "medium",
+      "evidence": {
+        "dimension": "by_weekday",
+        "segment": "1-Mon",
+        "trades": 11,
+        "net": -4149.0
+      },
+      "note": "Un segmento identificable pierde de forma consistente."
+    },
+    {
+      "code": "LOW_FREQUENCY_FOR_SHORT_EXAM",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "trades_per_week": 1.073,
+        "share_of_days_with_trades": 0.1801,
+        "longest_gap_days": 43
+      },
+      "note": "Opera menos de uno de cada tres d\u00edas: en una ventana de 1\u20135 d\u00edas suele no haber oportunidad."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ6_TRAIL4",
+        "target_rate_5d": 0.0311,
+        "breach_rate_5d": 0.0428,
+        "windows": 257,
+        "disjoint_windows": 52
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    },
+    {
+      "code": "LOW_EXAM_TARGET_RATE_5D",
+      "sample": "OOS",
+      "severity": "high",
+      "evidence": {
+        "scenario": "PROV_50K_OBJ8_TRAIL5_DLL2",
+        "target_rate_5d": 0.0233,
+        "breach_rate_5d": 0.2218,
+        "windows": 257,
+        "disjoint_windows": 52
+      },
+      "note": "Con el tama\u00f1o actual, menos del 10 % de las ventanas de cinco d\u00edas alcanza el objetivo provisional."
+    }
+  ],
+  "hypotheses_tested": [
+    {
+      "id": "H_LONG_BARSVALID_est2",
+      "status": "PLANNED",
+      "support": {},
+      "title": "Igualar la validez de la orden larga a la corta (BarsValid 4 \u2192 8) para no perder se\u00f1ales que caducan",
+      "problem": "La estrategia opera menos de uno de cada tres d\u00edas (19,05 % IS, 18,01 % OOS), 1,106 y 1,073 trades/semana, con huecos de hasta 29 y 43 d\u00edas. Eso deja 328/778 ventanas de 5 d\u00edas sin ninguna operaci\u00f3n en IS y 103/257 en OOS, y por eso la tasa de objetivo provisional es 0,0746 y 0,0311.",
+      "change": "parameters: Long entry > EnterAtStop > BarsValid de 4 a 8 (mismo valor que el corto), dentro del rango declarado 0\u20131000. Sin cambios de salida ni de tama\u00f1o.",
+      "expected": "M\u00e1s operaciones largas y m\u00e1s d\u00edas con operaci\u00f3n en ambas muestras (partiendo de 149/782 y 47/261 d\u00edas), con menor hueco m\u00e1ximo (29 y 43 d\u00edas). El riesgo es que las entradas a\u00f1adidas sean peores: hay que ver si el PF largo (1,491 IS / 1,229 OOS) se mantiene o se degrada, y si el neto sube m\u00e1s que proporcionalmente al drawdown (18457 IS / 6501 OOS).",
+      "acceptance": "Aceptar si: (a) hay \u22655 d\u00edas cambiados y las \u00f3rdenes difieren; (b) en IS y OOS el neto, el PF y el ret/DD no empeoran fuera de tolerancia (2 % / 0,03 / 5 %) \u2014 es decir, la frecuencia sube sin pagar calidad; y (c) para declararla relevante para fondeo, la tasa de objetivo a 5 d\u00edas sube \u22655 pp en IS y en OOS con la ruptura subiendo \u22641 pp. Rechazar si el PF de la pata larga cae fuera de tolerancia en cualquiera de las dos muestras, o si la frecuencia sube pero el neto OOS empeora: ser\u00eda m\u00e1s operaciones peores, no una mejora. Si mejora frecuencia y no empeora nada pero no llega a los 5 pp, clasificar como neutra-\u00fatil, no como aceptada para fondeo.",
+      "evidence_codes": [
+        "LOW_FREQUENCY_FOR_SHORT_EXAM",
+        "LOW_EXAM_TARGET_RATE_5D",
+        "TIME_EXIT_DOMINATED"
+      ],
+      "destination_expectation": {
+        "fondeo": "Es la \u00fanica palanca del vocabulario que ataca la causa medida del bajo target_rate: las ventanas sin operaciones. Si la frecuencia sube de forma apreciable, la tasa de objetivo a 5 d\u00edas de PROV_50K_OBJ6_TRAIL4 deber\u00eda subir desde 0,0746 (IS) y 0,0311 (OOS); el criterio pide \u22655 puntos porcentuales en ambas muestras sin subir la ruptura m\u00e1s de 1 punto sobre 0,0861 y 0,0428, lo que es exigente y probablemente no se alcance con este cambio solo.",
+        "ultra": "Exploratorio: m\u00e1s operaciones del mismo tipo no cambian por s\u00ed mismas la convexidad. Vigilar que expectancy_r no baje m\u00e1s de 0,02 respecto a 0,2527 (IS) y 0,1496 (OOS) y que la fracci\u00f3n de MFE\u22652R (0,1792 / 0,25) no se diluya con entradas tard\u00edas de peor calidad."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#BarsValid#]",
+          "value": "8",
+          "before": "4",
+          "after": "8",
+          "effective_fields": 1
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "ACEPTAR",
+      "critic_reasons": [
+        "Es la \u00fanica propuesta que ataca el hallazgo de severidad alta y repetido en ambas muestras: LOW_FREQUENCY_FOR_SHORT_EXAM (1,106 y 1,073 op/semana; 19,05 % y 18,01 % de d\u00edas con operaci\u00f3n; huecos de 29 y 43 d\u00edas) y LOW_EXAM_TARGET_RATE_5D, cuya causa medida son las 328/778 y 103/257 ventanas NO_TRADES.",
+        "Mecanismo coherente y no explorado: no toca la condici\u00f3n de se\u00f1al ni las salidas, solo la ventana de ejecuci\u00f3n de la orden EnterAtStop; ninguna de las cuatro variantes previas (EXIT90, EXIT110, VPT_NEAR, VTS_TIGHT) toca entradas, as\u00ed que no es duplicado.",
+        "La asimetr\u00eda es del propio contrato y verificable: BarsValid 4 en largo frente a 8 en corto; igualar al valor ya presente no es introducir un par\u00e1metro nuevo ajustado a la muestra, lo que mantiene bajo el riesgo de miner\u00eda.",
+        "Aplicabilidad verificada: validation.applicable=true, un \u00fanico campo efectivo, dentro del rango declarado 0\u20131000.",
+        "Efecto medible en la pata mayoritaria (140/173 IS, 48/56 OOS), a diferencia de los cambios en el corto (33 y 8 operaciones)."
+      ],
+      "confidence": "media",
+      "requires": [],
+      "source": "AGENT_DEBATE",
+      "semantic_rules_sha256": "5d44a9abe178face597663dd17630351a7157ae02b987c7cf168639ec7abf0a4",
+      "label": "VLONG_BARSVALID_EST2"
+    },
+    {
+      "id": "H_PT_MID_ASIM_est1",
+      "status": "PLANNED",
+      "support": {},
+      "title": "Acercar el objetivo a la zona donde s\u00ed llega el precio (PT \u22481,6 ATR largo, 2,0 ATR corto)",
+      "problem": "El objetivo casi nunca se toca y el reloj decide la mayor\u00eda de los cierres, devolviendo recorrido ya ganado: PT 13/173 (7,5 %) en IS y 5/56 (8,9 %) en OOS; EOD_TIME 101 (0,59) y 30 (0,536). La devoluci\u00f3n media con MFE es 784,09 (IS) y 1029,26 (OOS), y 12/7 ganadoras cierran por debajo de la mitad de su MFE.",
+      "change": "exits: profit_target largo de 2,0 a 1,6 ATR(20); profit_target corto de 2,4 a 2,0 ATR(25). Sin cambios en stops, trailing ni tama\u00f1o.",
+      "expected": "M\u00e1s cierres en PT y menos en EOD_TIME (el share de PT deber\u00eda subir desde 7,5 % IS / 8,9 % OOS), menor devoluci\u00f3n media de recorrido y menos perdedoras tras MFE\u22651R (hoy 9 en IS, 7 en OOS). El payoff bajar\u00e1 algo desde 1,628 (IS) / 1,527 (OOS); la tesis es que el aumento de tasa de acierto y la menor devoluci\u00f3n lo compensen en ret/DD.",
+      "acceptance": "Aceptar si, con los criterios registrados: (a) las \u00f3rdenes difieren en al menos una muestra y hay \u22655 d\u00edas cambiados (technical); (b) en IS y en OOS ni el neto, ni el profit factor, ni ret/DD empeoran fuera de la tolerancia (2 % neto, 0,03 PF, 5 % ret/DD); y (c) la evidencia OOS es al menos 'moderate' (IC 80 % de la suma de deltas diarios OOS por encima de cero, 4000 remuestreos, semilla 20260906). Rechazar si el patr\u00f3n se repite como en VPT_NEAR y VTS_TIGHT (IS peor fuera de tolerancia y OOS mejor solo con evidencia 'weak'): eso ser\u00eda INCONCLUSIVE, no una mejora. Rechazar tambi\u00e9n si expectancy_r cae m\u00e1s de 0,02 y la ganancia s\u00f3lo aparece en una muestra.",
+      "evidence_codes": [
+        "PT_RARELY_HIT",
+        "TIME_EXIT_DOMINATED",
+        "LOSERS_AFTER_FAVOURABLE_EXCURSION"
+      ],
+      "destination_expectation": {
+        "fondeo": "No cambia la frecuencia (1,106 y 1,073 trades/semana siguen igual), as\u00ed que no espero mover materialmente la tasa de objetivo a 5 d\u00edas de PROV_50K_OBJ6_TRAIL4 (0,0746 IS / 0,0311 OOS): el cuello de botella son las 328/778 y 103/257 ventanas sin operaciones. Como mucho, ganancia marginal por cerrar antes las ganadoras dentro de la ventana; s\u00ed deber\u00eda no empeorar la ruptura (0,0861 IS / 0,0428 OOS).",
+        "ultra": "Exploratorio y probablemente adverso a la convexidad: recortar el PT reduce la cola, y hoy el 34,71 % (IS) y 31,49 % (OOS) del beneficio viene de operaciones \u22653R. Hay que vigilar que expectancy_r (0,2527 IS / 0,1496 OOS) no caiga m\u00e1s de 0,02 y que la cuota de beneficio \u22653R no se hunda."
+      },
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "profit_target",
+          "value": "1.6",
+          "atr_period": "20",
+          "before": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "20"
+          },
+          "after": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "1.6",
+            "AtrPeriod": "20"
+          },
+          "effective_fields": 1
+        },
+        {
+          "direction": "short",
+          "exit": "profit_target",
+          "value": "2.0",
+          "atr_period": "25",
+          "before": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.4",
+            "AtrPeriod": "25"
+          },
+          "after": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "25"
+          },
+          "effective_fields": 1
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "REVISAR",
+      "critic_reasons": [
+        "El diagn\u00f3stico es s\u00f3lido y citado: PT 13/173 (7,5 % IS) y 5/56 (8,9 % OOS) frente a EOD_TIME 101 (0,59) y 30 (0,536); la banda de MFE apoya que el objetivo est\u00e1 por encima de la masa (MFE\u22652R solo 0,1792 IS / 0,25 OOS).",
+        "Pero es la misma direcci\u00f3n que VPT_NEAR (PT \u00d70,6), que empeor\u00f3 IS en -2143 de neto y qued\u00f3 INCONCLUSIVE con evidencia WEAK. Aqu\u00ed el recorte es \u00d70,8/\u00d70,83: no es un mecanismo nuevo, es la misma palanca con menor magnitud, y el riesgo de estar simplemente buscando el multiplicador que le sienta bien a esta muestra es real.",
+        "Contradicci\u00f3n interna con el destino: la propia propuesta reconoce que recortar el PT ataca la cola que aporta el 34,71 % (IS) y 31,49 % (OOS) del beneficio en operaciones \u22653R, y que en OOS el neto es -1837 sin las tres mejores ganadoras. Es decir, propone recortar precisamente lo que sostiene el resultado.",
+        "Interacci\u00f3n no controlada, admitida por el proponente: al acercar el PT, parte del trailing (activaci\u00f3n a 1,4 ATR105 en largo) deja de activarse, lo que hace inatribuible el efecto.",
+        "Irrelevante para el criterio de fondeo registrado: no cambia frecuencia (1,106 / 1,073 op/semana), y con 328/778 y 103/257 ventanas sin operaciones no puede subir los 5 pp exigidos."
+      ],
+      "confidence": "media",
+      "requires": [],
+      "source": "AGENT_DEBATE",
+      "semantic_rules_sha256": "a39365de472b8129b9fdbe886b79e0af824038f62259052c46f22b3744d232cc",
+      "label": "VPT_MID_ASIM_EST1"
+    }
+  ],
+  "hypotheses_not_tested": [],
+  "screened_candidates": [],
+  "variants": [
+    {
+      "name": "Strategy 1.1.27_BASE_VLONG_BARSVALID_EST2",
+      "class": "NO_EFFECT_IN_SAMPLE",
+      "reason": "El cambio es real pero no altera ninguna operaci\u00f3n en los datos disponibles.",
+      "next_action": "Conservar como no evaluable en esta muestra; probar solo si otra muestra lo activa.",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "EQUIVALENT"
+      },
+      "oos_evidence": "NONE",
+      "destinations": {
+        "fondeo": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "target_rate_base": 0.0746,
+              "target_rate_variant": 0.0746,
+              "delta_target_pp": 0.0,
+              "breach_rate_base": 0.0861,
+              "breach_rate_variant": 0.0861,
+              "delta_breach_pp": 0.0
+            },
+            "OOS": {
+              "available": true,
+              "target_rate_base": 0.0311,
+              "target_rate_variant": 0.0311,
+              "delta_target_pp": 0.0,
+              "breach_rate_base": 0.0428,
+              "breach_rate_variant": 0.0428,
+              "delta_breach_pp": 0.0
+            }
+          }
+        },
+        "ultra": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "delta_expectancy_r": 0.0,
+              "delta_tail_share_pp": 0.0,
+              "delta_mfe2r_pp": 0.0,
+              "skewness_base": 0.8332,
+              "skewness_variant": 0.8332
+            },
+            "OOS": {
+              "available": true,
+              "delta_expectancy_r": 0.0,
+              "delta_tail_share_pp": 0.0,
+              "delta_mfe2r_pp": 0.0,
+              "skewness_base": 1.1554,
+              "skewness_variant": 1.1554
+            }
+          }
+        }
+      },
+      "metrics": {
+        "IS": {
+          "net": 40503.0,
+          "profit_factor": 1.57,
+          "ret_dd": 2.19,
+          "trades": 173,
+          "drawdown": 18457.0,
+          "win_loss": 0.97
+        },
+        "OOS": {
+          "net": 7706.0,
+          "profit_factor": 1.32,
+          "ret_dd": 1.19,
+          "trades": 56,
+          "drawdown": 6501.0,
+          "win_loss": 0.87
+        }
+      }
+    },
+    {
+      "name": "Strategy 1.1.27_BASE_VPT_MID_ASIM_EST1",
+      "class": "HISTORICAL_FIT_ONLY",
+      "reason": "Mejora o iguala en construcci\u00f3n pero empeora en desarrollo.",
+      "next_action": "Descartar: sobreajuste probable. No optimizar sobre el OOS.",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "WORSE"
+      },
+      "oos_evidence": "NONE",
+      "destinations": {
+        "fondeo": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "target_rate_base": 0.0746,
+              "target_rate_variant": 0.0656,
+              "delta_target_pp": -0.9,
+              "breach_rate_base": 0.0861,
+              "breach_rate_variant": 0.0861,
+              "delta_breach_pp": 0.0
+            },
+            "OOS": {
+              "available": true,
+              "target_rate_base": 0.0311,
+              "target_rate_variant": 0.0272,
+              "delta_target_pp": -0.39,
+              "breach_rate_base": 0.0428,
+              "breach_rate_variant": 0.0428,
+              "delta_breach_pp": 0.0
+            }
+          }
+        },
+        "ultra": {
+          "relevant": false,
+          "by_sample": {
+            "IS": {
+              "available": true,
+              "delta_expectancy_r": -0.0082,
+              "delta_tail_share_pp": -10.54,
+              "delta_mfe2r_pp": -0.7,
+              "skewness_base": 0.8332,
+              "skewness_variant": 0.644
+            },
+            "OOS": {
+              "available": true,
+              "delta_expectancy_r": -0.0381,
+              "delta_tail_share_pp": -11.23,
+              "delta_mfe2r_pp": -1.27,
+              "skewness_base": 1.1554,
+              "skewness_variant": 0.8856
+            }
+          }
+        }
+      },
+      "metrics": {
+        "IS": {
+          "net": 40480.0,
+          "profit_factor": 1.55,
+          "ret_dd": 2.13,
+          "trades": 180,
+          "drawdown": 18986.0,
+          "win_loss": 0.96
+        },
+        "OOS": {
+          "net": 6059.0,
+          "profit_factor": 1.25,
+          "ret_dd": 0.93,
+          "trades": 59,
+          "drawdown": 6501.0,
+          "win_loss": 0.97
+        }
+      }
+    }
+  ],
+  "accepted_for_validation": [],
+  "consumed_evidence": {
+    "period": {
+      "from": "2022.01.03",
+      "to": "2025.12.31"
+    },
+    "development_oos_ranges": [
+      {
+        "from": "2025.01.01",
+        "to": "2025.12.31"
+      }
+    ],
+    "samples": {
+      "IS": {
+        "from": "2022-01-03",
+        "to": "2024-12-31",
+        "weekdays": 782
+      },
+      "OOS": {
+        "from": "2025-01-01",
+        "to": "2025-12-31",
+        "weekdays": 261
+      }
+    },
+    "reserved_final_sample": null,
+    "note": "No hay muestra final reservada en los datos actuales; cualquier validaci\u00f3n independiente exige datos no consultados."
+  },
+  "cost": {
+    "wall_seconds_total": 51.5,
+    "native_task_seconds": 28,
+    "strategies_retested": 3,
+    "measured_utc": "2026-09-06T14:33:59.979336+00:00"
+  },
+  "evidence_files": {
+    "contract.json": "a03ad16f29df692ce08d7f7978610e80ffccc4e8299d4186f41f48f37c7a50ea",
+    "criteria.json": "a25944dcd4ed71a177ff1bf952fd31bd1d1ae2d685ed933ec3b647f058bdbb2d",
+    "debate/arbitro.json": "bac37b9fcf0fe47e6b9f40107c221eb9922b3ac6ef1b36568d2bdd9dfb923733",
+    "debate/critico.json": "439bde24bd7fb77765308cdfea2cf8339ddd762e197609affc141c353414d8ab",
+    "debate/dossier.json": "7ab57e81d1ae1971f6159e79a57b7f2b41a810b91c3ce9a3217132258088d7cb",
+    "debate/hypotheses.json": "fea1b6ca2a3e3fb96c35c9dc9678c4ea9712f96402f43a2414b3bdafef0f40af",
+    "debate/intervenciones.json": "c10bf62093f473b0b747068c511ff5add40007545d8c30c113d67183147345d6",
+    "debate/log.json": "b2f882545ac96d18b8220f043267d1c907844ee29b086bde15606f6a98508c19",
+    "debate/proponente_estructura_frecuencia.json": "95c24c7ba0de3191c13e6a6a9d41b950f4079be2929973b7b381c99b1fcb7781",
+    "debate/proponente_salidas_riesgo.json": "aac94fcfb7efaa875ea96b03462e61e22911de2f380efdf173f4ca81bab93dc9",
+    "debate/summary.json": "1956276862a542d29aecd4e394c62e13797a3f3912865c56e65ef0546471a878",
+    "debate_round1_validator_v1/arbitro.json": "fbb4ac50b3efa32e9b2f43d4b3d6a22a03088eebe4fea3e677a90424e88ed291",
+    "debate_round1_validator_v1/critico.json": "9e72341dc6876a830036d83caa87f8d7663a8ca3f9e937fcd8047aaaf3e3f0e0",
+    "debate_round1_validator_v1/dossier.json": "2c8dad7357c8e2b60a5fba114e3b13c333312537d9799b10a7a61f3af506ad2d",
+    "debate_round1_validator_v1/hypotheses.json": "a135677e1b63bae48499694f3040820612be739f8b7d4f1c525639fddcf62b33",
+    "debate_round1_validator_v1/intervenciones.json": "b18cf1a1f40173794db46833d29b6a312c1d9833952a0c6123308a1f286650eb",
+    "debate_round1_validator_v1/log.json": "187304acf3dc8ac666c35a50dcab003117330a8c620b84087c1c583457abde96",
+    "debate_round1_validator_v1/proponente_estructura_frecuencia.json": "b20d01e354ca21d869ef7de9fe1de418dbc757aa7dd278e2a6b640142a7b19cf",
+    "debate_round1_validator_v1/proponente_salidas_riesgo.json": "59f94a3e4537431ad50f08d89f95d1a678e7b4deb56e3186bf8742aeae18bbff",
+    "debate_round1_validator_v1/stderr.txt": "19eaf43821a7660ec323a87c8457bf74823beb296c39f5e01aa8a683aa50f061",
+    "debate_round1_validator_v1/stdout.json": "60424c66684d5fe67ba0a01f405db84355651b156238bbfb669a00642aca995a",
+    "debate_round1_validator_v1/summary.json": "d63cfab1aa7d5c7eed208ab7f414e2f5bbfb79951367f90add19dae1636b7f33",
+    "debate_stderr.txt": "19eaf43821a7660ec323a87c8457bf74823beb296c39f5e01aa8a683aa50f061",
+    "debate_stdout.json": "7d4c87d1712e17a735ce129ebb20a25d66d2293cb8b5f346372bc7ab51a38557",
+    "diagnosis_VLONG_BARSVALID_EST2.json": "d40d443015788826102eb2bb13be0808ee62a5004cf1a051a6eff42b7f77f6fc",
+    "diagnosis_VPT_MID_ASIM_EST1.json": "c756f661d0f8770ae8db228d5aac96eac4fecfa97d5ca1ccbc4b7ce1deac27a6",
+    "diagnosis_base.json": "990a260ddc042e0d382f520e43940cc1ddd4055243ed421b8835cdb1fb5c4944",
+    "diagnosis_base_fresh.json": "bbac017b80e5ae6a462f3f8ac2e2d99738cf66a7b8b582090f6e5e4cf41568ba",
+    "evaluate_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evaluate_stdout.json": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evaluation.json": "7fc5a8209c1fd79548c9b4ae069c156f401b3f92954b604d4a6b56f68c5c64ea",
+    "experiment/Strategy 1.1.27_BASE_BASE_orders.csv": "ede352e3c1db0af13f865554d268553a93b39ddeef2a21e5ae10d6ce20007b4a",
+    "experiment/Strategy 1.1.27_BASE_VLONG_BARSVALID_EST2_orders.csv": "ede352e3c1db0af13f865554d268553a93b39ddeef2a21e5ae10d6ce20007b4a",
+    "experiment/Strategy 1.1.27_BASE_VPT_MID_ASIM_EST1_orders.csv": "66d1e5eb273f572cb0ac459dc2b96cbc1e0695b769e8e241c5d93d9e397eec08",
+    "experiment/assessment.json": "f418b62eee8aa8d3d2d2e2b97bffb3e6c289f7cba5341692f6c9ccdbdabeab80",
+    "experiment/collect.cli": "9003e61d58b807fb553b936342683f76e64aeb92c2e8272e31e5cf4aca2e01a6",
+    "experiment/collect_response.txt": "87d7798576d66d4aec8d3be7ddc9c4a06363e4dac04ee93dc7de66f447db1033",
+    "experiment/comparison.json": "9ba2d3a7f74916327488e8dbb85c7a066223fd3cd76c5e5a8ddf8e1068502a6e",
+    "experiment/cost.json": "4052c024804acd4d2e0bcc43d8f7217fbeb8fbcf9cf7b9452f46e66bdc8bc308",
+    "experiment/count_probe_Input.csv": "59424b698ebfed151a9f2d3d2c387f5a653f49539485f77ff342ee7799c3a6fc",
+    "experiment/count_probe_RetestResults.csv": "80b24c141bfab8e980f0f9882e2b6ab4ac2b87c11e52b278bdfc03e7cd1848ea",
+    "experiment/import.cli": "116a9af91573e8b8c0ae6d879d8427c0eaf3cb3d8ca98370364226c9ec00e7a4",
+    "experiment/import_response.txt": "9225c8427d3ee5f47c47ddd2ce5a20682de8d6f6cfa28b3bc67cb60c874eb7c3",
+    "experiment/input/Strategy 1.1.27_BASE_BASE.sqx": "b02f098e68eb3853a619dd66a9765d0dc690f29833f5a0d37d8551c5408110ac",
+    "experiment/input/Strategy 1.1.27_BASE_VLONG_BARSVALID_EST2.sqx": "7e96ba922bb94cf9a1429364dff507f4fb1dd9985407878dce7ad417159deca9",
+    "experiment/input/Strategy 1.1.27_BASE_VPT_MID_ASIM_EST1.sqx": "87a8822165b542d233ef2d382602b27a594690e929c4efda1c51b4bfb0a47ba9",
+    "experiment/load.cli": "3a71d7553e58bc6fabf25b69dd2e39f275093428682c1178edc85acc94d8ff3a",
+    "experiment/load_response.txt": "8ee53aa429e287cd5ff9d5bb37dec2b32d4d72bb3790c43b6da442b5f6a1ada5",
+    "experiment/manifest.json": "6285d63fadb820d2fc8606d8808601a5200b4aad44b8225b6df4da0ac3ffd761",
+    "experiment/native_retest.log": "a5c70b77268e361a4f39c927837879ad11314e38f490c2155b5051a65f0953c8",
+    "experiment/orders_diagnostic.json": "2deb1c5dc16757a5aa167f9ef22c72b991a95199edf924691788e92fce5874b8",
+    "experiment/orders_export.json": "64a9361fd9d1cb57a1ecd6020f161dec86572d00afc7418dd1566047f625663e",
+    "experiment/project.cfx": "e40afd39b33f5338d7b3ae1382a9302178eb27a42b53a60c9fc987d9758c73f6",
+    "experiment/projects_before.txt": "270c53cfb5e6e12ad624679f3a4e761250777a5a3b8557aeab7da2e86af5e9d6",
+    "experiment/retest.csv": "80b24c141bfab8e980f0f9882e2b6ab4ac2b87c11e52b278bdfc03e7cd1848ea",
+    "experiment/retested/Strategy 1.1.27_BASE_BASE.sqx": "5decbda09eab1e3e1560681b4d5fcaebd003aea98d92a1260cd1baf3c96f0360",
+    "experiment/retested/Strategy 1.1.27_BASE_VLONG_BARSVALID_EST2.sqx": "c5995bd485b80cfa1582e213af3c8d1d86a04db78d464fa7aa0c17f76e9ab134",
+    "experiment/retested/Strategy 1.1.27_BASE_VPT_MID_ASIM_EST1.sqx": "64033d3f687945ccd2dcd116364844b5b610d23d44028baadb3078d31a115b6b",
+    "experiment/verified_start.json": "630cc3a382675eecbf8e33b6b8771e5e6bf106e9504d7ac6a98fecc7e9295f88",
+    "explored.json": "144925aee894920a0be3f89cadcbb4ca1e634fb22001690cac4d70991e064a40",
+    "plan.json": "f9ac8c389430f815b166f5bddf02ce6d01a6220366b4bc3c1bb91e48e60f1925",
+    "prepare_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "prepare_stdout.json": "bda1b9311c9861cb2b51ffea6891c8f19f9967035cda93854e193f550e36066c",
+    "run_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "run_stdout.json": "40df21c47dc3127e2a258005d5734f6c339b21536c1f97fae06682096262c630"
+  },
+  "validated": false,
+  "levels": {
+    "mechanism_works": true,
+    "useful_progress": false,
+    "candidate_for_validation": false,
+    "validated_result": false
+  }
+}

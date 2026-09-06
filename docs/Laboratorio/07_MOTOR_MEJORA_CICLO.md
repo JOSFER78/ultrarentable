@@ -18,6 +18,13 @@ describe el recorrido que ya se ejecutó de verdad; no acredita rentabilidad ni 
 
 Los agentes piensan: analizan cada estrategia (contrato, diagnóstico, reglas, registro de lo probado), debaten y proponen pocas hipótesis con cambio concreto y criterio de aceptación. Los programas de esta guía ejecutan y miden; no deciden qué probar. La biblioteca fija `HYPOTHESIS_LIBRARY` es solo un andamio de pruebas del mecanismo.
 
+## Recorrido con debate de agentes (flujo previsto)
+
+0. `sqx_improvement_cycle.py dossier --source <original.sqx> --orders <órdenes_base.csv> --cycle <dir> [--registry <dir>]` → `contract.json`, `diagnosis_base.json`, `criteria.json`, `explored.json`.
+0b. `sqx_hypothesis_debate.py --cycle <dir> --provider anthropic|claude-cli [--model …] [--max-variants 2]` → `debate/{dossier,proponente_*,critico,arbitro,summary,log,intervenciones}.json` y `debate/hypotheses.json`. Dos proponentes ciegos entre sí, validación determinista de cada cambio, crítico, árbitro sin consenso forzado; el desacuerdo y el presupuesto de búsqueda quedan registrados. Motivación y guardas en `orchestration/results/codex/MOTOR_MEJORA_20260906/INVESTIGACION_DEBATE_SEMANTICO.md`.
+   Proveedor del sistema: `omniroute` (por defecto) = el omnirouter de la VPS de Oracle, `https://omniroute.143-47-35-167.sslip.io/pro/omniroute/api/v1` (OpenAI-compatible; la ruta `/v1` del proxy nginx no funciona). El módulo pide los alias de tarea `ultrarentable-mejora-proponente|critico|arbitro`, que Emilio define en el panel de superadmin del omnirouter; si no existen cae a `auto/best-reasoning` (`--model` o `OMNIROUTE_DEFAULT_MODEL`) y lo anota. Variables: `OMNIROUTE_URL`, `OMNIROUTE_API_KEY` (si se activan claves en el panel), `OMNIROUTE_INSECURE=1` (certificado sslip no reconocido; si no, se degrada solo y queda registrado). Respaldos de prueba: `anthropic` (SDK oficial), `claude-cli` (Claude Code `-p` desde el PC; sin `--bare`, que falla en 2.1.259), `replay` (pruebas).
+1. Después, el recorrido de abajo con `--hypotheses <dir>/debate/hypotheses.json`.
+
 ## Recorrido
 
 1. `prepare-local --source <original.sqx> --orders <órdenes_base.csv> --template <project.cfx de un retest verificado> --cycle <dir> --remote-dir /opt/SQX-headless/import/<dir>/experiment --project UR_IMPROVE_<NOMBRE> --hypotheses <hipótesis_de_los_agentes.json> [--candidate ETIQUETA=<variante externa.sqx>] [--registry <dir>]`

@@ -61,8 +61,93 @@ def read_exit(rules_xml: bytes, direction: str, exit_name: str) -> dict:
     return {'formula': formula.get('key'), **{k.strip('#'): v for k, v in values.items()}}
 
 
+# Parámetros numéricos que un agente puede proponer cambiar por ruta estructural.
+# Claves de SQX que expresan comportamiento (periodos, desviaciones, desfases,
+# validez de la orden). Todo lo demás queda fuera del catálogo.
+GENERIC_PARAM_KEYS = ('#Period#', '#Deviation#', '#Shift#', '#BarsValid#', '#Multiplier#',
+                      '#Level#', '#Value#', '#AtrPeriod#', '#ExitAfterBars.ExitAfterBars#')
+
+
+def _raw_paths(root: ET.Element) -> dict:
+    """Ruta estructural → nodo, sobre el XML tal cual (sin quitar metadatos)."""
+    result = {}
+
+    def walk(node, path):
+        counters = {}
+        for child in node:
+            label = child.tag
+            for attr in ('key', 'name', 'variable'):
+                if child.get(attr):
+                    label += f"[{child.get(attr)}]"
+                    break
+            index = counters.get(label, 0)
+            counters[label] = index + 1
+            child_path = f"{path}/{label}" + (f"#{index}" if index else '')
+            result[child_path] = child
+            walk(child, child_path)
+    walk(root, 'StrategyFile')
+    return result
+
+
+def _is_number(text: str) -> bool:
+    try:
+        Decimal(text)
+        return True
+    except Exception:
+        return False
+
+
+def mutable_parameters(rules_xml: bytes) -> list[dict]:
+    """Catálogo de parámetros numéricos con contexto legible, para que los agentes
+    propongan cambios concretos sin conocer el XML de SQX."""
+    root = ET.fromstring(rules_xml)
+    catalogue = []
+    for path, node in _raw_paths(root).items():
+        if node.tag != 'Param' or node.get('key') not in GENERIC_PARAM_KEYS:
+            continue
+        if len(node) or not _is_number((node.text or '').strip()):
+            continue
+        context = []
+        parent_path = path
+        for segment in path.split('/')[1:-1]:
+            if segment.startswith(('Rule[', 'Item[', 'Formula[')):
+                context.append(segment.split('[', 1)[1].rstrip('#0123456789').rstrip(']'))
+        catalogue.append({'path': path, 'key': node.get('key').strip('#'), 'current': (node.text or '').strip(),
+                          'type': node.get('type') or ('int' if node.get('key') in ('#Period#', '#Shift#', '#BarsValid#', '#AtrPeriod#') else 'double'),
+                          'context': ' > '.join(context[-4:]), 'min': node.get('minValue'), 'max': node.get('maxValue')})
+    return catalogue
+
+
+def apply_path_change(rules_xml: bytes, path: str, value) -> tuple[bytes, dict]:
+    """Cambia un parámetro numérico identificado por su ruta del catálogo."""
+    root = ET.fromstring(rules_xml)
+    node = _raw_paths(root).get(path)
+    if node is None or node.tag != 'Param' or node.get('key') not in GENERIC_PARAM_KEYS or len(node):
+        raise ValueError(f'Ruta no mutable: {path}')
+    before = (node.text or '').strip()
+    new = Decimal(str(value))
+    if not new.is_finite():
+        raise ValueError('Valor no finito')
+    is_int = node.get('type') == 'int' or node.get('key') in ('#Period#', '#Shift#', '#BarsValid#', '#AtrPeriod#', '#ExitAfterBars.ExitAfterBars#')
+    if is_int and new != new.to_integral_value():
+        raise ValueError(f'{path} exige un entero')
+    if new < 0 or (is_int and new == 0 and node.get('key') in ('#Period#', '#AtrPeriod#')):
+        raise ValueError(f'{path}: valor fuera de rango')
+    for bound, op in (('minValue', lambda a, b: a < b), ('maxValue', lambda a, b: a > b)):
+        limit = node.get(bound)
+        if limit and _is_number(limit) and op(new, Decimal(limit)):
+            raise ValueError(f'{path}: {value} fuera del límite {bound}={limit} declarado por SQX')
+    node.text = str(int(new)) if is_int else str(new.normalize()) if new != new.to_integral_value() else str(int(new)) + '.0'
+    after_xml = ET.tostring(root, encoding='utf-8', xml_declaration=True)
+    if before == (node.text or '').strip() or Decimal(before) == new:
+        raise ValueError(f'El cambio no altera nada: {path}={value}')
+    return after_xml, {'param_path': path, 'value': str(value), 'before': before, 'after': node.text, 'effective_fields': 1}
+
+
 def apply_change(rules_xml: bytes, change: dict) -> tuple[bytes, dict]:
-    """Aplica un cambio {direction, exit, value?, atr_period?} y devuelve (xml, registro)."""
+    """Aplica un cambio {direction, exit, value?, atr_period?} o {param_path, value} y devuelve (xml, registro)."""
+    if 'param_path' in change:
+        return apply_path_change(rules_xml, change['param_path'], change['value'])
     direction, exit_name = change['direction'], change['exit']
     if direction not in ENTRY_RULES or exit_name not in EXIT_KEYS:
         raise ValueError(f'Cambio no soportado: {change}')
@@ -101,14 +186,19 @@ def apply_change(rules_xml: bytes, change: dict) -> tuple[bytes, dict]:
                 raise ValueError('Los valores de salida deben ser positivos y finitos')
             if key == '#AtrPeriod#' and new != new.to_integral_value():
                 raise ValueError('El periodo ATR debe ser entero')
+            # Repetir el valor vigente (p. ej. el periodo ATR que no cambia) no es un cambio:
+            # se ignora y solo cuentan los campos que realmente varían.
+            if Decimal((targets[0].text or '0').strip() or '0') == new:
+                continue
             targets[0].text = str(int(new)) if key == '#AtrPeriod#' else str(new.normalize()) if new != new.to_integral_value() else str(int(new)) + '.0'
             applied = True
         if not applied:
-            raise ValueError('El cambio no especifica value ni atr_period')
+            raise ValueError(f'El cambio no altera nada: {change}')
     after_xml = ET.tostring(root, encoding='utf-8', xml_declaration=True)
     record = {**change, 'before': before, 'after': read_exit(after_xml, direction, exit_name)}
     if record['before'] == record['after']:
         raise ValueError(f'El cambio no altera nada: {change}')
+    record['effective_fields'] = sum(1 for k in ('formula', 'Value', 'AtrPeriod', 'value') if (record['before'] or {}).get(k) != (record['after'] or {}).get(k))
     return after_xml, record
 
 
@@ -119,7 +209,7 @@ def build_variant(rules_xml: bytes, changes: list[dict]) -> dict:
     seen = set()
     current, records = rules_xml, []
     for change in changes:
-        key = (change['direction'], change['exit'])
+        key = change['param_path'] if 'param_path' in change else (change['direction'], change['exit'])
         if key in seen:
             raise ValueError(f'Cambio duplicado sobre {key}')
         seen.add(key)
@@ -129,7 +219,7 @@ def build_variant(rules_xml: bytes, changes: list[dict]) -> dict:
     if comparison['classification'] != 'RULES_CHANGED':
         raise ValueError('La variante no cambia el comportamiento: ' + comparison['classification'])
     touched = [c for c in comparison['changed_params'] if c.get('param') != 'structure']
-    expected = sum(len([k for k in ('value', 'atr_period') if k in c]) for c in changes)
+    expected = sum(r.get('effective_fields', 1) for r in records)
     if len(touched) != expected:
         raise ValueError(f'Cambios detectados ({len(touched)}) distintos de los previstos ({expected}): {touched}')
     return {'rules': current, 'changes': records, 'comparison': comparison,

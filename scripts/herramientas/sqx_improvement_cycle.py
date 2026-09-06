@@ -297,7 +297,7 @@ def step_prepare(cycle: Path, contract: dict, plan: dict, template: Path, remote
     for hypothesis in plan['hypotheses']:
         if hypothesis['status'] != 'PLANNED':
             continue
-        built = mutations.build_variant(rules, [{k: c[k] for k in ('direction', 'exit', 'value', 'atr_period') if k in c}
+        built = mutations.build_variant(rules, [{k: c[k] for k in ('direction', 'exit', 'value', 'atr_period', 'param_path') if k in c}
                                                 for c in hypothesis['changes']])
         variants[hypothesis['label']] = built['rules']
         records.append({'label': hypothesis['label'], 'hypothesis': hypothesis['id'], 'changes': built['changes'],
@@ -620,11 +620,19 @@ def update_registry(registry: Path, cycle: Path, contract: dict, evaluation: dic
          'semantic_rules_sha256': contract_module.semantic_rules_sha256(rules_of(cycle / 'experiment' / 'input' / entry['file']))}
         for entry in manifest['entries'][1:]]
     for variant in variants:
-        klass = next((v['class'] for v in evaluation['variants'] if v['name'].endswith('_' + variant['label'])), None)
-        record['variants'][variant['semantic_rules_sha256']] = {'hypothesis': variant['hypothesis'], 'class': klass,
-                                                                'cycle': str(cycle), 'utc': now()}
-    record['experiments'].append({'project': manifest['project'], 'cycle': str(cycle), 'utc': now(),
-                                  'classes': {v['name']: v['class'] for v in evaluation['variants']}})
+        result = next((v for v in evaluation['variants'] if v['name'].endswith('_' + variant['label'])), None)
+        # Los agentes necesitan saber QUÉ se cambió y qué pasó, no solo la etiqueta.
+        record['variants'][variant['semantic_rules_sha256']] = {
+            'hypothesis': variant['hypothesis'], 'label': variant['label'], 'class': result['class'] if result else None,
+            'changes': [{k: c.get(k) for k in ('direction', 'exit', 'param_path', 'value', 'before', 'after') if c.get(k) is not None}
+                        for c in variant.get('changes', [])],
+            'development': result['development'] if result else None,
+            'oos_evidence': result['paired_daily'].get('evidence_strength') if result else None,
+            'cycle': str(cycle), 'utc': now()}
+    entry = {'project': manifest['project'], 'cycle': str(cycle), 'utc': now(),
+             'hypothesis_source': manifest.get('recipe'), 'classes': {v['name']: v['class'] for v in evaluation['variants']}}
+    # Re-evaluar un ciclo no es un experimento nuevo: se sustituye la entrada del mismo proyecto.
+    record['experiments'] = [e for e in record['experiments'] if e.get('project') != entry['project']] + [entry]
     write_json(path, record)
     return record
 
@@ -634,6 +642,12 @@ def update_registry(registry: Path, cycle: Path, contract: dict, evaluation: dic
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='action', required=True)
+    dg = sub.add_parser('dossier', help='contrato, diagnóstico, criterios y variantes exploradas: la entrada del debate de agentes (sin SQX)')
+    dg.add_argument('--source', type=Path, required=True)
+    dg.add_argument('--orders', type=Path, required=True)
+    dg.add_argument('--orders-provenance', default='FRESH_RETEST')
+    dg.add_argument('--cycle', type=Path, required=True)
+    dg.add_argument('--registry', type=Path)
     p = sub.add_parser('prepare-local', help='contrato, diagnóstico, plan, criterios y variantes (sin SQX)')
     p.add_argument('--source', type=Path, required=True)
     p.add_argument('--orders', type=Path, required=True, help='CSV de órdenes de la base (fresco o heredado)')
@@ -651,7 +665,21 @@ def main():
     e.add_argument('--cycle', type=Path, required=True)
     e.add_argument('--registry', type=Path)
     args = parser.parse_args()
-    if args.action == 'prepare-local':
+    if args.action == 'dossier':
+        cycle = args.cycle
+        cycle.mkdir(parents=True, exist_ok=True)
+        contract = step_contract(cycle, args.source)
+        if contract['state'] != 'CONTRACT_COMPLETE':
+            raise SystemExit('Contrato incompleto: ' + ', '.join(contract['essentials_missing']))
+        step_diagnose(cycle, contract, args.orders, args.orders_provenance)
+        if not (cycle / 'criteria.json').exists():
+            write_json(cycle / 'criteria.json', {**DEFAULT_CRITERIA, 'registered_utc': now()})
+        key = contract['identity']['semantic_rules_sha256']
+        explored = read_json(args.registry / f'{key}.json') if args.registry and (args.registry / f'{key}.json').exists() else {'variants': {}, 'experiments': []}
+        write_json(cycle / 'explored.json', explored)
+        print(json.dumps({'cycle': str(cycle), 'strategy': contract['identity']['name'], 'findings': len(read_json(cycle / 'diagnosis_base.json')['findings']),
+                          'explored_variants': len(explored['variants']), 'next': 'sqx_hypothesis_debate.py --cycle <cycle> --provider anthropic|claude-cli'}, indent=2, ensure_ascii=False))
+    elif args.action == 'prepare-local':
         cycle = args.cycle
         cycle.mkdir(parents=True, exist_ok=True)
         contract = step_contract(cycle, args.source)

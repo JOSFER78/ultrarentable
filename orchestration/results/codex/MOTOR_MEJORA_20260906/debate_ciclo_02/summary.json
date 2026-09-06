@@ -1,0 +1,96 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "finished_utc": "2026-09-06T14:30:20.411428+00:00",
+  "provider": "claude-cli",
+  "models": [
+    "claude-opus-5"
+  ],
+  "search_budget": {
+    "proposed": 5,
+    "applicable": 4,
+    "refuted_by_critic": 2,
+    "selected": 2,
+    "previously_tested": 4
+  },
+  "cost_usd_total": 1.8864,
+  "seconds_total": 316.1,
+  "dissent": [
+    "Desacuerdo registrado sobre H_PT_MID_ASIM_est1: la crítica la marca REVISAR y señala que es la misma palanca que VPT_NEAR (PT ×0,6, IS net -2143, INCONCLUSIVE con evidencia WEAK) con menor magnitud (×0,8 largo, ×0,83 corto), es decir, riesgo de estar buscando el multiplicador que le sienta bien a estas 173+56 operaciones. La selecciono aun así porque es el mecanismo elegible más distinto al de est2 y su diagnóstico está apoyado en ambas muestras, pero el desacuerdo queda anotado: si el resultado repite el perfil de VPT_NEAR (IS peor fuera de tolerancia y OOS mejor con evidencia WEAK), se cierra la familia PT y no se prueba un tercer multiplicador.",
+    "Contradicción interna de est1 asumida a conciencia: recorta el objetivo y con ello presiona la cola que aporta el 34,71 % (IS) y 31,49 % (OOS) del beneficio en operaciones ≥3R, en una muestra OOS cuyo neto pasa de 7706 a -1837 sin las tres mejores ganadoras (PROFIT_DEPENDS_ON_FEW_TRADES).",
+    "est1 mueve largo y corto a la vez; el lado corto tiene 33 operaciones en IS y 8 en OOS. Cualquier lectura del efecto sobre el corto debe declararse NO concluyente para esa pata.",
+    "Interacción no controlada admitida por el proponente de est1: al acercar el PT, parte del trailing largo (activación 1,4 ATR105) deja de activarse, lo que dificulta atribuir el efecto a un único mecanismo.",
+    "Objeción general vigente que no resuelvo aquí: cuatro de las cinco propuestas admiten que no moverán el criterio de fondeo registrado, porque 328/778 (IS) y 103/257 (OOS) ventanas son NO_TRADES y un cambio de salida no crea ventanas con operaciones. Solo est2 ataca esa causa.",
+    "Discrepancia con la crítica sobre est3: coincido en no gastarle variante ahora, pero no la considero cerrada, sino aplazada por presupuesto (max_variants=2) y por falta del desglose de cierres por trailing.",
+    "OOS es muestra de desarrollo (56 operaciones, un solo año): ninguna de las dos variantes seleccionadas, aunque pase, acredita robustez fuera de muestra, porque no existe prueba final reservada en el conjunto de datos actual."
+  ],
+  "rationale": "Solo hay tres candidatas elegibles (applicable=true y no refutadas por la crítica): est2, est1 y est3; sal1 queda fuera por validation.applicable=false ('Fórmula no soportada para mutación: SQ.Formulas.RangeLevel.None') y sal2 por REFUTAR (duplicado material de VTS_TIGHT, que movió el mismo eje 1,4→0,7 y 50→25, con riesgo de sobreajuste alto y confianza declarada baja). Primera selección: H_LONG_BARSVALID_est2, único ACEPTAR de la crítica y única propuesta que ataca el hallazgo de severidad alta LOW_FREQUENCY_FOR_SHORT_EXAM / LOW_EXAM_TARGET_RATE_5D en las dos muestras (1,106 op/semana IS y 1,073 OOS; 19,05 % y 18,01 % de días con operación; 328/778 y 103/257 ventanas de 5 días sin operaciones); su mecanismo —ventana de ejecución de la orden EnterAtStop, BarsValid 4→8 igualando el valor ya presente en el corto— no lo toca ninguna de las cuatro hipótesis ya probadas (EXIT90, EXIT110, VPT_NEAR, VTS_TIGHT), tiene un solo campo efectivo verificado, riesgo de sobreajuste bajo y actúa sobre la pata mayoritaria (140/173 IS, 48/56 OOS). Segunda selección: H_PT_MID_ASIM_est1, elegida por mecanismo DISTINTO al primero (nivel del objetivo frente a ventana de ejecución de la entrada) y con apoyo en ambas muestras del diagnóstico que lo motiva: PT alcanzado 13/173 (7,5 % IS) y 5/56 (8,9 % OOS) frente a EOD_TIME 101 (0,59) y 30 (0,536), con la masa de MFE por debajo del objetivo actual (MFE≥2R 0,1792 IS / 0,25 OOS). Descarto est3 como segunda: aunque está mejor aislada que sal2, la crítica la marca REVISAR con riesgo de sobreajuste alto, misma familia que VTS_TIGHT (IS net -4364 frente a OOS net +4522, signos opuestos), premisa no medida —exit_types solo reporta EOD, EOD_TIME, PT y SL, sin recuento de cierres por trailing— y el propio proponente la declara reserva con confianza baja. Aplico a est1 la aceptación revisada de la crítica: además de los criterios registrados (órdenes distintas en al menos una muestra, ≥5 días cambiados, tolerancia 2 % neto / 0,03 PF / 5 % ret-DD en IS y OOS, evidencia OOS al menos moderada con IC 80 %, bootstrap 4000 y semilla 20260906), exigir que share_of_profit_from_trades_ge_3r no caiga más de 3 pp sobre 0,3471 (IS) y 0,3149 (OOS) y que expectancy_r no baje más de 0,02 sobre 0,2527 (IS) y 0,1496 (OOS). Para est2 aplico también su aceptación revisada: no empeorar fuera de tolerancia en ambas muestras, drawdown cerrado sin degradarse fuera de tolerancia sobre 18457 (IS) y 6501 (OOS) y SL share sin dispararse sobre 0,375 (OOS); si sube frecuencia sin degradar calidad pero no alcanza +5 pp de target_rate a 5 días sobre 0,0746 (IS) y 0,0311 (OOS) con ruptura ≤+1 pp sobre 0,0861 y 0,0428, se clasifica neutra-útil, nunca aceptada para fondeo. La decisión de aceptación la toman los programas deterministas con esos criterios pre-registrados; aquí solo se fija qué se recalcula.",
+  "next_round_if_all_fail": "Si ambas fallan (o quedan INCONCLUSIVE), no gastar la siguiente ronda en un tercer multiplicador de PT ni de trailing sobre las mismas 173+56 operaciones: el patrón dominante del expediente son deltas de signo opuesto entre IS y OOS (VPT_NEAR: IS -2143 / OOS +1877; VTS_TIGHT: IS -4364 / OOS +4522), señal de superficie de salidas saturada de ajuste. Orden propuesto: (1) pedir instrumentación antes que variantes — añadir al dosier el desglose de cierres por trailing (hoy exit_types solo reporta EOD, EOD_TIME, PT y SL), sin el cual tres hipótesis razonan sobre un mecanismo que el dosier no observa, y una estimación del momento de excursión favorable, hoy imposible por la limitación declarada de no haber trayectoria intradía completa; (2) con esa instrumentación, ejecutar H_TRAIL_ACT_LONG_est3, que es la reserva mejor aislada (un solo campo, solo la pata larga, distancia de arrastre intacta en 90), exigiéndole coincidencia de signo del delta en IS y OOS, share_of_profit_from_trades_ge_3r sin caída superior a 3 pp y expectancy_r no por debajo de -0,02, y descartando la familia trailing si vuelve a salir INCONCLUSIVE; (3) ampliar el vocabulario de cambios en las dos direcciones que el expediente ha demostrado necesarias y hoy no están soportadas: permitir crear move_sl_to_be desde SQ.Formulas.RangeLevel.None con umbral expresado en múltiplos del riesgo inicial (lo que rehabilitaría H_BE_AFTER_1R_sal1 correctamente especificado, hoy refutada por aplicabilidad y por confundir la distancia del stop con el disparador), y desbloquear los filtros de horario y día que siguen en not_supported_yet, pertinentes por LOSS_CONCENTRADO (hora 10: 10 op, -2890; lunes: 11 op, -4149 en OOS) — sin colar ese razonamiento por la puerta de atrás mediante cambios de salida que casualmente afecten a esos segmentos; (4) si el objetivo sigue siendo el examen de una semana, seguir la única causa medida del bajo target_rate, las ventanas NO_TRADES, con más palancas del lado de la entrada y su ventana de ejecución, no de las salidas; (5) si tras eso ninguna variante mejora o queda dentro de tolerancia en ambas muestras a la vez, registrar la conclusión de que esta estrategia está saturada para el vocabulario disponible y devolverla al buscador en lugar de seguir refinándola, dado que con 56 operaciones OOS y dependencia de tres ganadoras cualquier mejora medida cabe dentro del ruido.",
+  "general_objections": [
+    "Presupuesto: max_variants=2 y hypotheses_already_tested_for_this_strategy=4. Tres de las cinco propuestas (sal2, est1, est3) reescalan ejes ya explorados (trailing y PT). Probar terceras y cuartas magnitudes del mismo parámetro sobre las mismas 173+56 operaciones es minería de datos, no mejora: recomiendo gastar las dos variantes en ejes distintos, y solo est2 aporta un eje nuevo (ventana de ejecución de la entrada).",
+    "OOS es muestra de desarrollo (criteria.note y limitations): 56 operaciones, un solo año (2025), y net 7706 que pasa a -1837 sin las tres mejores ganadoras (PROFIT_DEPENDS_ON_FEW_TRADES, severidad alta). Cualquier \"mejora OOS\" de estas magnitudes cabe dentro de la variación de dos o tres operaciones; ninguna propuesta debería aceptarse con evidencia WEAK, y ninguna acredita robustez fuera de muestra porque no hay prueba final reservada.",
+    "Cuatro de las cinco propuestas admiten explícitamente que no moverán el criterio de fondeo registrado (+5 pp de target_rate a 5 días en IS y OOS sobre 0,0746 y 0,0311, con ruptura ≤+1 pp sobre 0,0861 y 0,0428). Un cambio de salida no puede crear ventanas con operaciones: 328/778 (IS) y 103/257 (OOS) ventanas son NO_TRADES. Optimizar salidas es, para el destino fondeo declarado, un efecto de segundo orden sobre la ruptura, no sobre la admisión.",
+    "El lado corto no admite conclusiones propias: 33 operaciones IS y 8 OOS. Cualquier propuesta que mueva simultáneamente largo y corto (sal2, est1) mezcla un efecto medible con uno no medible; si se toca el corto, debe declararse explícitamente como no concluyente para ese lado.",
+    "Ninguna de las hipótesis basadas en \"el trailing llega tarde\" está medida: exit_types solo reporta EOD, EOD_TIME, PT y SL. Falta el recuento de cierres por trailing en el dosier; sin él, tres propuestas razonan sobre un mecanismo que el dosier no observa. Pedir ese desglose antes de gastar variantes en esa familia es más rentable que probar otra magnitud.",
+    "Riesgo de deriva por segmentos: LOSS_CONCENTRADO en hora 10 (10 op, -2890) y lunes (11 op, -4149) en OOS invita a filtros, pero los filtros de horario y día están en not_supported_yet. No debe colarse ese razonamiento por la puerta de atrás con cambios de salida que casualmente afecten a esos segmentos.",
+    "Las deltas de IS y OOS con signos opuestos (VPT_NEAR: IS -2143 / OOS +1877; VTS_TIGHT: IS -4364 / OOS +4522) son el patrón dominante de este expediente. Es la señal de que la superficie de salidas de esta estrategia está saturada de ajuste; conviene registrar esa conclusión y dejar de refinar salidas para esta estrategia salvo que una variante mejore o quede dentro de tolerancia en ambas muestras a la vez."
+  ],
+  "capability_gaps": [
+    "Filtro horario o de día de la semana: el dosier identifica segmentos perdedores consistentes en OOS (hora local 10 con 10 operaciones y -2890; lunes con 11 operaciones y -4149) y en IS la hora 12 (-2658) y el lunes (-2259), pero el vocabulario declara no soportados los filtros de horario o día de la semana, así que no se propone ningún cambio por esa vía.",
+    "Adelantar o parametrizar el corte horario de salida (EODExitTime = 54000, ExitAtEndOfRange) no está en el catálogo de parámetros ni en el vocabulario de salidas, pese a que el reloj decide el 59 % (IS) y el 53,6 % (OOS) de los cierres; sin esa palanca solo se puede actuar indirectamente sobre PT y trailing.",
+    "Aumentar la frecuencia de operación es imposible con el vocabulario actual (no se pueden añadir o quitar condiciones), y sin ello LOW_FREQUENCY_FOR_SHORT_EXAM (1,106 op/semana IS, 1,073 OOS; NO_TRADES en 328 de 778 ventanas IS y 103 de 257 OOS) impide alcanzar la ganancia de 5 puntos de target_rate a 5 días exigida por el criterio de fondeo.",
+    "Falta trayectoria intradía completa (solo MAE/MFE por operación cerrada), por lo que el efecto de un break-even o de una activación de trailing más temprana no se puede estimar antes de reejecutar; tampoco existe una prueba final reservada, dado que OOS es muestra de desarrollo.",
+    "exposure_study_fondeo llega vacío en el dosier: no hay base para separar cuantitativamente mejora de estrategia frente a aumento de exposición; ambas propuestas mantienen deliberadamente FixedSize 1 y no tocan el tamaño.",
+    "Filtro horario o de día de la semana: los dos LOSS_CONCENTRATED_SEGMENT de OOS son accionables conceptualmente (hora local 10 con 10 trades y -2890; lunes con 11 trades y -4149; en IS la hora 12 acumula -2658 y el lunes -2259), pero excluir segmentos está en not_supported_yet. Haría falta soporte para condiciones de sesión/día en las reglas de entrada.",
+    "Asimetría por dirección en la señal: el corto rinde mucho mejor (PF 1,927 IS / 1,901 OOS con solo 33 y 8 trades) que el largo (1,491 / 1,229 con 140 y 48). No hay forma en el vocabulario de reequilibrar la generación de señales por dirección sin tocar tamaño (que se estudia aparte como exposición) ni añadir condiciones.",
+    "Aumento de frecuencia por relajación de condiciones: la causa raíz de LOW_EXAM_TARGET_RATE_5D son las ventanas sin operaciones (328/778 IS, 103/257 OOS). Los parámetros de Bollinger (Period 20/188, Deviation 2,0/0,8) sí están en el catálogo, pero relajarlos cambia la naturaleza de la señal, no solo su calibración; convendría una capacidad explícita de 'barrido de umbral de señal con control de sobreajuste' en lugar de tratarlo como una mutación de parámetro más.",
+    "Trayectoria intradía: las limitations advierten de que solo hay MAE/MFE por operación. Sin la curva intradía no se puede evaluar con rigor POSSIBLE_INTRADAY_BREACH (17 ventanas IS y 7 OOS en el escenario principal; 68 y 32 en el escenario con límite diario), lo que deja la tasa de ruptura con una banda de incertidumbre no cuantificada.",
+    "Muestra final reservada: criteria.note declara que OOS es muestra de desarrollo y que no existe prueba final. Con 4 hipótesis ya probadas y OOS consultado en todas, cualquier aceptación arrastra riesgo de selección; haría falta un tramo de datos reservado o validación walk-forward para distinguir mejora de ajuste."
+  ],
+  "proposals": [
+    {
+      "id": "H_BE_AFTER_1R_sal1",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Proteger a break-even las operaciones que ya estuvieron a favor",
+      "applicable": false,
+      "validation_error": "Fórmula no soportada para mutación: SQ.Formulas.RangeLevel.None",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "H_TRAIL_ACT_EARLIER_MODERATE_sal2",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Adelantar moderadamente la activación del trailing, sin estrechar su anchura",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "H_PT_MID_ASIM_est1",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Acercar el objetivo a la zona donde sí llega el precio (PT ≈1,6 ATR largo, 2,0 ATR corto)",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REVISAR",
+      "selected": true
+    },
+    {
+      "id": "H_LONG_BARSVALID_est2",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Igualar la validez de la orden larga a la corta (BarsValid 4 → 8) para no perder señales que caducan",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "ACEPTAR",
+      "selected": true
+    },
+    {
+      "id": "H_TRAIL_ACT_LONG_est3",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Reserva: activar antes el trailing largo (1,4 → 1,0 ATR) manteniendo la distancia de 90 puntos",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REVISAR",
+      "selected": false
+    }
+  ]
+}
