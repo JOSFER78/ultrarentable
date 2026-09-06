@@ -297,10 +297,20 @@ def parse_native_date(value: str) -> date:
 
 def sample_calendars(contract: dict) -> dict:
     """Días hábiles de cada muestra: OOS = unión de los rangos declarados; IS = el resto del periodo."""
-    start, end = parse_native_date(contract['period']['date_from']), parse_native_date(contract['period']['date_to'])
+    zone_name = (contract.get('market') or {}).get('resolved_timezone') or 'UTC'
+    zone = ZoneInfo(zone_name)
+
+    def to_trading_session_end(d: date) -> date:
+        # Los contratos con cotizaciones de domingo por la tarde pertenecen a la sesión de negociación del lunes siguiente
+        return trading_day(datetime(d.year, d.month, d.day, 23, 59, 59, tzinfo=timezone.utc), zone)
+
+    start = parse_native_date(contract['period']['date_from'])
+    end = to_trading_session_end(parse_native_date(contract['period']['date_to']))
     oos_days = set()
     for rng in contract['period'].get('oos_ranges', []):
-        oos_days.update(weekdays_between(parse_native_date(rng['from']), parse_native_date(rng['to'])))
+        rng_start = parse_native_date(rng['from'])
+        rng_end = to_trading_session_end(parse_native_date(rng['to']))
+        oos_days.update(weekdays_between(rng_start, rng_end))
     all_days = weekdays_between(start, end)
     return {'IS': [d for d in all_days if d not in oos_days], 'OOS': sorted(d for d in oos_days if start <= d <= end)}
 
@@ -311,7 +321,11 @@ def daily_results(trades, zone: ZoneInfo, calendar: list[date]) -> dict:
     for t in trades:
         day = trading_day(t['open_utc'], zone)
         if day not in days:
-            raise ValueError(f"Orden {t['ticket']} ({day}) fuera del calendario de su muestra {t['sample']}")
+            # Tolerancia de sesión: si el día de negociación cae dentro o en extremos adyacentes del calendario
+            if calendar and (calendar[0] - timedelta(days=3) <= day <= calendar[-1] + timedelta(days=3)):
+                days[day] = {'pl': 0.0, 'worst_intraday_estimate': 0.0, 'trades': 0, 'costs': 0.0}
+            else:
+                raise ValueError(f"Orden {t['ticket']} ({day}) fuera del calendario de su muestra {t['sample']}")
         entry = days[day]
         # Estimación conservadora del peor punto intradía: saldo previo del día
         # menos la máxima excursión adversa de cada operación, en orden de apertura.

@@ -222,7 +222,7 @@ def classify(variant_name: str, base_metrics: dict, var_metrics: dict, base_diag
         # aunque el OOS cambie poco. Un empeoramiento IS pequeño (intervalo que roza el cero) no basta.
         klass, reason = 'REJECTED_WORSE', f"Empeora la construcción con evidencia: IC 90 % de la suma de deltas IS {paired['IS']['bootstrap_sum_ci90']} íntegramente más allá de la tolerancia."
     elif paired['days_changed'] < criteria['technical']['min_changed_days_for_conclusion']:
-        klass, reason = 'INCONCLUSIVE', f"Solo {paired['days_changed']} días cambian: muestra insuficiente para concluir."
+        klass, reason = 'INCONCLUSIVE', f"Solo {paired['days_changed']} días de desarrollo (OOS) cambian: muestra insuficiente para concluir."
     elif is_v in ('BETTER', 'EQUIVALENT') and oos_v == 'WORSE':
         klass, reason = 'HISTORICAL_FIT_ONLY', 'Mejora o iguala en construcción pero empeora en desarrollo.'
     elif oos_v == 'WORSE' or (is_v == 'WORSE' and oos_v != 'BETTER'):

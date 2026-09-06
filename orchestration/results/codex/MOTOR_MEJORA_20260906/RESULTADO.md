@@ -255,6 +255,93 @@ sabe parar cuando una estrategia se estanca; no ha producido todavía ninguna me
 vocabulario actual esta estrategia no dará más de sí. Ocho experimentos en total sobre `Strategy
 1.1.27`, doce variantes registradas, cero candidatas.
 
+## 11. Fase 4 el mismo día: filtros de hora, día y dirección (19:30–20:30 CEST)
+
+Encargo de Emilio: "dedícate solo a que el motor nuevo funcione; para pruebas usa tu IA, luego el
+sistema usará otra de omniroute". La carencia que los agentes registraron en las tres rondas
+anteriores (y otra vez en el ciclo 03 del servicio, 18:31 CEST: "filtros de horario para la hora 10",
+"filtros por día para los lunes", citando cifras OOS) era el vocabulario: no había forma de expresar
+un filtro de hora o de día.
+
+### Qué se construyó y cómo se verificó
+
+- **Dónde viven los filtros.** No en las opciones de trading de `lastSettings.xml`
+  (`LimitTimeRange`, `ExitAtEndOfDay`…): el motor copia esas opciones al proyecto `Retest` con
+  `customSettings="true"` y son comunes a control y variantes. Los filtros van como condiciones `AND`
+  en el `If` de la regla de entrada de cada dirección, con los bloques nativos de SQX
+  `BarHourIsBigger`, `BarHourIsSmaller`, `BarDayOfWeekIsNot` (`SQ.Blocks.BarAndTime`) y `Boolean`
+  (`SQ.Blocks.Other`), copiando la forma XML de la plantilla propia de SQX
+  `highest_breakout_template_daily_filter.sqx` (única estrategia de las 2 342 de la VPS que los usa).
+- **Verificación estructural nueva** (`build_variant`): cada filtro declara el alcance
+  `…/Rule#N/If`; todo cambio detectado ahí debe ser una adición y nada existente puede cambiar;
+  fuera de los filtros, el número de parámetros que cambian sigue siendo exactamente el previsto.
+  Un filtro de hora presente no se apila: `#Hour#` entra en el catálogo y se reajusta por `param_path`.
+- **Semántica medida en SQX** con dos recálculos de mecanismo, sin registro de la estrategia
+  (`UR_IMPROVE_MECANISMO_FILTROS_01`, 19:33 CEST, y `_02`, 19:40 CEST; 20 s cada uno, tarea nativa
+  de 0,5 s con los datos cargados):
+
+| Variante de mecanismo | Operaciones IS / OOS (control 173 / 56) | Qué se observó |
+| --- | --- | --- |
+| `hour_range` 8–13, ambas direcciones | 121 / 42 | Rellenos entre las 10 y las 14 h; desaparecen los de las 08 y 09 h. |
+| `hour_range` 10–11 (solo la barra de las 10) | 47 / 20 | 45 de 47 rellenos IS a las 11 h y 2 a las 12 h: **el filtro lee la barra que acaba de cerrar y el primer relleno cae en la hora siguiente**. Para permitir primeros rellenos entre las A y las B: `from=A-1, to=B-1`. |
+| `exclude_weekdays` lunes y viernes | 113 / 34 | Cero rellenos en lunes; en viernes quedan 16 de 60, todos en la apertura de las 08:30, de órdenes de la víspera aún válidas (`BarsValid` 4/8). El filtro acota la señal, no la orden pendiente. |
+| `disable_direction` cortos | 140 / 48 | Sin cortos; las largas idénticas al control (188 órdenes compartidas, ninguna con distinto resultado). |
+
+Las cuatro dieron `REJECTED_WORSE` o `INCONCLUSIVE`, como corresponde a filtros elegidos sin
+hipótesis; su evidencia está en `mecanismo_filtros_20260906.zip` (manifiesto con SHA-256 al lado).
+
+- **Dosier del debate contra la minería de datos:** las tablas por hora, día y dirección se muestran
+  solo de la muestra de construcción; en OOS quedan los agregados y el código del hallazgo de
+  concentración sin el segmento concreto. El crítico recibe la instrucción explícita de refutar
+  filtros justificados solo por una celda perdedora. Los proponentes deben dar una razón estructural
+  (apertura, cierre, liquidez) y declarar cuántas celdas miraron.
+- **Módulos afectados:** `sqx_variant_mutations.py` (vocabulario y verificación), `sqx_strategy_contract.py`
+  (filtros visibles en el contrato), `sqx_hypothesis_debate.py` (esquema, dosier, prompts),
+  `sqx_improvement_cycle.py` (claves de cambio, registro, duración en ms). Nueve módulos con hashes
+  iguales en el PC y en la VPS; 187 pruebas correctas (11 nuevas en `test_variant_filters.py`).
+- **Cambio ajeno conservado:** `sqx_trade_diagnosis.py` apareció modificado en el árbol de trabajo a
+  las 18:07 CEST (después del commit de la fase 3) y ya desplegado en la VPS: el calendario de cada
+  muestra termina en la sesión que abre la tarde del último día, y `daily_results` tolera órdenes a
+  ±3 días de los extremos. Coherente con `trading_day()`; dos pruebas mías se adaptan (258 días de
+  negociación en el OOS 2025, y el 1-1-2024 pertenece al OOS que termina el domingo 31-12-2023).
+
+### Ciclo 04: debate con la IA de Claude sobre el vocabulario nuevo (19:44–19:53 CEST)
+
+Por indicación de Emilio las pruebas usan mi IA (`claude-cli`, Claude Opus 5; 2,32 $, 6,3 min); el
+servicio de la VPS sigue con omniroute. Dosier con las once variantes ya registradas y el vocabulario
+de filtros. Resultado del debate: cinco propuestas, tres aplicables, dos refutadas automáticamente
+(`move_sl_to_be` está en `SQ.Formulas.RangeLevel.None` y el motor no sabe activarla: hueco de
+vocabulario, registrado), dos seleccionadas con desacuerdo anotado. **Ninguna de las cinco usó
+filtros**: con las tablas OOS por segmento ocultas y la exigencia de razón estructural, los agentes
+prefirieron otras palancas. Recálculo en la VPS (`UR_IMPROVE_CICLO_EW_20260906_04`, 20 s de ciclo,
+0,5 s de tarea nativa), evaluación con el registro de la estrategia:
+
+| Variante (agentes, Claude) | IS neto / FB / R:DD | OOS neto / FB / R:DD | Órdenes que cambian | Clase registrada |
+| --- | --- | --- | --- | --- |
+| `P3_SENAL_MENOS_RETRASO` (Shift de "banda inferior cayendo" 4→2) | 21 670 / 1,27 / 1,02 (peor) | 5 172 / 1,20 / 0,64 (peor) | 112 entradas perdidas, 105 nuevas; 27 días OOS | **REJECTED_WORSE** |
+| `PROP_SAL_02_TS_LONG_55` (arrastre largo 90→55) | 39 974 / 1,56 / 2,17 (equivalente) | idéntico al control | 3 órdenes IS; 0 días OOS | **INCONCLUSIVE** (sin efecto en desarrollo) |
+
+Registro de la estrategia tras el ciclo: 13 variantes, 9 experimentos, cero candidatas. Evidencia:
+`ciclo_ew_20260906_04.zip`, `debate_ciclo_04_claude/`, `entrega_ciclo_04.json`, `evaluacion_ciclo_04.json`,
+`improvement_registry/` (instantánea del registro de la VPS).
+
+### Qué sigue sin demostrarse y siguiente paso más pequeño
+
+- El motor **funciona** de extremo a extremo con el vocabulario ampliado (cuatro recálculos de mecanismo
+  y un ciclo con agentes hoy, sin errores ni reconciliaciones), pero **no ha producido progreso útil**:
+  la estrategia `1.1.27` sigue sin candidatas tras nueve experimentos. Es un resultado, no un fallo del
+  motor; la palanca que falta es otra estrategia de entrada o un vocabulario que cambie la estructura.
+- Los agentes todavía no han propuesto un filtro real con el vocabulario nuevo: hace falta al menos una
+  ronda en la que lo hagan para saber si el filtro de horas sobrevive a la evaluación (el servicio de la
+  VPS lo intentará cada hora con omniroute).
+- Huecos de vocabulario registrados por los agentes en esta ronda, por orden de valor: activar
+  `move_sl_to_be` cuando está en `None` (cambio de fórmula, no solo de valor; cinco de las siete
+  propuestas de break-even de hoy murieron ahí), desplazamiento del break-even para cubrir costes,
+  salidas parciales (no expresable en el `Retest` compartido), salida por tiempo condicionada.
+- Siguiente paso más pequeño: `move_sl_to_be` activable (`RangeLevel.None` → `FixedValue`/`ATRBasedValue`
+  con verificación de que solo cambia esa salida), porque es la hipótesis que los agentes más repiten y
+  hoy no se puede recalcular.
+
 ## 9 (antes). Siguiente paso más pequeño y útil
 
 La fase 2 (debate de agentes integrado, con hipótesis que se recalculan de verdad) quedó ejecutada

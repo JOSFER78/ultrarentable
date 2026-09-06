@@ -1,0 +1,1957 @@
+{
+  "strategy": {
+    "name": "Strategy 1.1.27",
+    "symbol": "@EW",
+    "timeframe": "H1",
+    "instrument": "@EW - E-Mini S&P MidCap 400 Index (EMD) - Continuous contracts [Sep26]",
+    "period": {
+      "date_from": "2022.01.03",
+      "date_to": "2025.12.31",
+      "oos_ranges": [
+        {
+          "from": "2025.01.01",
+          "to": "2025.12.31"
+        }
+      ],
+      "test_precision": "2",
+      "session": "US_Index_Futures"
+    },
+    "costs": {
+      "commission_method": "SizeBased",
+      "commission_params": {
+        "Commission": "5.0"
+      },
+      "slippage": "2",
+      "spread": "0",
+      "swap_used": "false"
+    },
+    "sizing": {
+      "method": "FixedSize",
+      "params": {
+        "Size": "1"
+      },
+      "initial_capital": "50000",
+      "risk_management_max_drawdown": "30"
+    },
+    "options": {
+      "ExitAtEndOfDay": "true",
+      "EODExitTime": "54000",
+      "ExitOnFriday": "true",
+      "FridayExitTime": "54000",
+      "DontTradeOnWeekends": "false",
+      "LimitTimeRange": "false",
+      "SignalTimeRangeFrom": "54000",
+      "SignalTimeRangeTo": "79200",
+      "ExitAtEndOfRange": "true",
+      "UseInitialSLPT": "true",
+      "Session": "US_Index_Futures",
+      "MarketOpenSession": "No Session"
+    },
+    "rules": {
+      "signals": [
+        {
+          "slot": 0,
+          "variable": "33333333-1111-1111-3333-333333333333",
+          "items": [
+            {
+              "key": "BBLowerFalling",
+              "params": {
+                "ComputedFrom": "0",
+                "Period": "20",
+                "Deviation": "2.0",
+                "Shift": "4"
+              }
+            }
+          ],
+          "empty": false
+        },
+        {
+          "slot": 1,
+          "variable": "33333333-2222-1111-3333-333333333333",
+          "items": [
+            {
+              "key": "AND",
+              "children": [
+                {
+                  "key": "BBBarOpensBelowDown",
+                  "params": {
+                    "Period": "188",
+                    "Deviation": "0.8",
+                    "ComputedFrom": "3",
+                    "Shift": "3"
+                  }
+                },
+                {
+                  "key": "IsGreater",
+                  "children": [
+                    {
+                      "key": "Low",
+                      "params": {
+                        "Shift": "4"
+                      }
+                    },
+                    {
+                      "key": "Close",
+                      "params": {
+                        "Shift": "1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "empty": false
+        },
+        {
+          "slot": 2,
+          "variable": "33333333-1111-2222-3333-333333333333",
+          "items": [],
+          "empty": true
+        },
+        {
+          "slot": 3,
+          "variable": "33333333-2222-2222-3333-333333333333",
+          "items": [],
+          "empty": true
+        }
+      ],
+      "entries": [
+        {
+          "rule": "Long entry",
+          "action": "EnterAtStop",
+          "direction": "long",
+          "price": {
+            "kind": "SQ.Formulas.Price.UseFormula"
+          },
+          "bars_valid": "4",
+          "size": {
+            "kind": "SQ.Formulas.Size.UseGlobalMM"
+          },
+          "exits": {
+            "ExitAfterBars.ExitAfterBars": {
+              "gid": null,
+              "kind": "value",
+              "value": "0"
+            },
+            "MoveSL2BE.MoveSL2BE": {
+              "gid": null,
+              "kind": "SQ.Formulas.RangeLevel.None"
+            },
+            "MoveSL2BE.SL2BEAddPips": {
+              "gid": null,
+              "kind": "SQ.Formulas.Range.None"
+            },
+            "ProfitTarget.ProfitTarget": {
+              "gid": "052cd7ba-d4e6-4b3c-bd1c-07e56bc51200",
+              "kind": "SQ.Formulas.SLPT.ATRBasedValue",
+              "Value": "2.0",
+              "AtrPeriod": "20"
+            },
+            "StopLoss.StopLoss": {
+              "gid": "006b17c6-6c2b-4814-a305-2a1694ed2f30",
+              "kind": "SQ.Formulas.SLPT.FixedValue",
+              "Value": "90.0"
+            },
+            "TrailingStop.TrailingStop": {
+              "gid": "870b05dc-6cbd-4ddd-9c8d-a1305d3bb467",
+              "kind": "SQ.Formulas.RangeLevel.FixedValue",
+              "Value": "90.0"
+            },
+            "TrailingStop.TrailingActivation": {
+              "gid": "1d23a1f2-ddcc-49e7-84da-b0a17b8b8853",
+              "kind": "SQ.Formulas.Range.ATRBasedValue",
+              "Value": "1.4",
+              "AtrPeriod": "105"
+            }
+          },
+          "entry_filters": []
+        },
+        {
+          "rule": "Short entry",
+          "action": "EnterAtStop",
+          "direction": "short",
+          "price": {
+            "kind": "SQ.Formulas.Price.UseFormula"
+          },
+          "bars_valid": "8",
+          "size": {
+            "kind": "SQ.Formulas.Size.UseGlobalMM"
+          },
+          "exits": {
+            "ExitAfterBars.ExitAfterBars": {
+              "gid": null,
+              "kind": "value",
+              "value": "0"
+            },
+            "MoveSL2BE.MoveSL2BE": {
+              "gid": null,
+              "kind": "SQ.Formulas.RangeLevel.None"
+            },
+            "MoveSL2BE.SL2BEAddPips": {
+              "gid": null,
+              "kind": "SQ.Formulas.Range.None"
+            },
+            "ProfitTarget.ProfitTarget": {
+              "gid": "76b4f445-96c1-48f1-bb1a-39c0af614d35",
+              "kind": "SQ.Formulas.SLPT.ATRBasedValue",
+              "Value": "2.4",
+              "AtrPeriod": "25"
+            },
+            "StopLoss.StopLoss": {
+              "gid": "5ebd8d39-31f9-4e34-b3ec-9520e297afe8",
+              "kind": "SQ.Formulas.SLPT.FixedValue",
+              "Value": "115.0"
+            },
+            "TrailingStop.TrailingStop": {
+              "gid": "cb765a2d-4830-43ac-ac64-557a514420d1",
+              "kind": "SQ.Formulas.RangeLevel.ATRBasedValue",
+              "Value": "1.1",
+              "AtrPeriod": "50"
+            },
+            "TrailingStop.TrailingActivation": {
+              "gid": "4299a4b2-5a73-46c3-a665-42018fc85826",
+              "kind": "SQ.Formulas.Range.FixedValue",
+              "Value": "50.0"
+            }
+          },
+          "entry_filters": []
+        }
+      ],
+      "exit_rules": [
+        {
+          "rule": "Long exit",
+          "action": "ClosePosition"
+        },
+        {
+          "rule": "Short exit",
+          "action": "ClosePosition"
+        }
+      ],
+      "rule_names": [
+        "Trading signals",
+        "Long entry",
+        "Short entry",
+        "Long exit",
+        "Short exit"
+      ]
+    },
+    "destination_hints": {
+      "fondeo": {
+        "instrument_is_futures_contract": true,
+        "data_is_known_cfd_proxy": false,
+        "flat_at_end_of_day": true,
+        "eligible_for_provisional_exam_screen": true,
+        "note": "Elegible para un cribado provisional de examen; la admisión real depende de las reglas fechadas de cada modalidad."
+      },
+      "ultra": {
+        "timeframe_in_canonical_set": true,
+        "intraday_only": true,
+        "note": "Criterios Ultra en construcción; cualquier evaluación es exploratoria."
+      }
+    }
+  },
+  "diagnosis": {
+    "timezone": "America/Chicago",
+    "point_value": {
+      "point_value": 100.0,
+      "observations": 229,
+      "max_abs_deviation": 0.0,
+      "consistent": true,
+      "matches_reference_table": true
+    },
+    "samples": {
+      "IS": {
+        "summary": {
+          "trades": 173,
+          "net": 40503.0,
+          "gross": 42060.0,
+          "costs": 1557.0,
+          "profit_factor": 1.572,
+          "win_rate": 0.4913,
+          "avg_win": 1309.24,
+          "avg_loss": -804.34,
+          "payoff": 1.628,
+          "expectancy": 234.12,
+          "max_drawdown_closed": 18457.0,
+          "return_over_drawdown": 2.194,
+          "largest_win": 5461.0,
+          "largest_loss": -2679.0,
+          "pl_std": 1353.99,
+          "long_trades": 140,
+          "short_trades": 33,
+          "sizes": [
+            1.0
+          ]
+        },
+        "concentration": {
+          "top_5pct_count": 9,
+          "top_5pct_share_of_gross_profit": 0.2932,
+          "net_without_top_3_winners": 27250.0,
+          "net_without_worst_3_losers": 47280.0,
+          "net_without_top_3_and_worst_3": 34027.0
+        },
+        "exit_types": {
+          "EOD": 1,
+          "EOD_TIME": 101,
+          "PT": 13,
+          "SL": 58
+        },
+        "exit_efficiency": {
+          "mean_mfe": 1028.55,
+          "mean_mae": 683.18,
+          "mean_giveback_winners": 333.76,
+          "mean_giveback_all_with_mfe": 784.09,
+          "winners_closed_below_half_mfe": 12,
+          "trades_with_mfe_over_2x_final_loss": 11,
+          "mean_bars_in_trade": 3.37,
+          "zero_duration_trades": 6
+        },
+        "r_multiples": {
+          "available": true,
+          "trades_with_initial_risk": 173,
+          "risk_source": "OWN_INITIAL_STOP",
+          "matched_to_reference": null,
+          "expectancy_r": 0.2527,
+          "std_r": 1.4354,
+          "skewness_r": 0.8332,
+          "payoff_ratio_r": 1.642,
+          "share_of_profit_from_trades_ge_3r": 0.3471,
+          "fraction_mfe_ge_1r": 0.3815,
+          "fraction_mfe_ge_2r": 0.1792,
+          "fraction_mfe_ge_3r": 0.0809,
+          "losers_after_mfe_ge_1r": 9,
+          "share_of_losers_after_mfe_ge_1r": 0.1023,
+          "max_r": 4.757,
+          "min_r": -2.967
+        },
+        "by_entry_hour_local": {
+          "08": [
+            33,
+            30043.0
+          ],
+          "09": [
+            4,
+            -2306.0
+          ],
+          "10": [
+            41,
+            331.0
+          ],
+          "11": [
+            22,
+            3332.0
+          ],
+          "12": [
+            12,
+            -2658.0
+          ],
+          "13": [
+            29,
+            10489.0
+          ],
+          "14": [
+            26,
+            676.0
+          ],
+          "15": [
+            6,
+            596.0
+          ]
+        },
+        "by_weekday": {
+          "1-Mon": [
+            21,
+            -2259.0
+          ],
+          "2-Tue": [
+            32,
+            23712.0
+          ],
+          "3-Wed": [
+            39,
+            3699.0
+          ],
+          "4-Thu": [
+            35,
+            5055.0
+          ],
+          "5-Fri": [
+            46,
+            10296.0
+          ]
+        },
+        "by_direction": {
+          "long": [
+            140,
+            28310.0,
+            1.491
+          ],
+          "short": [
+            33,
+            12193.0,
+            1.927
+          ]
+        },
+        "by_year": {
+          "2022": [
+            51,
+            15701.0
+          ],
+          "2023": [
+            65,
+            28415.0
+          ],
+          "2024": [
+            57,
+            -3613.0
+          ]
+        },
+        "frequency": {
+          "weekdays_in_sample": 782,
+          "days_with_trades": 149,
+          "share_of_days_with_trades": 0.1905,
+          "trades_per_week": 1.106,
+          "longest_gap_days": 29,
+          "median_gap_days": 5.0
+        },
+        "exam_screen_5d": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "windows": 778,
+            "disjoint_windows": 156,
+            "outcomes": {
+              "DAILY_LOSS_BREACH": 0,
+              "MAX_LOSS_BREACH_AT_CLOSE": 50,
+              "NO_TARGET_NO_BREACH": 325,
+              "NO_TRADES": 328,
+              "POSSIBLE_INTRADAY_BREACH": 17,
+              "TARGET": 58,
+              "TARGET_WITH_POSSIBLE_INTRADAY_BREACH": 0
+            },
+            "target_rate": 0.0746,
+            "target_rate_including_possible_breach": 0.0746,
+            "breach_rate": 0.0861,
+            "disjoint_target_rate": 0.0705
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "windows": 778,
+            "disjoint_windows": 156,
+            "outcomes": {
+              "DAILY_LOSS_BREACH": 102,
+              "MAX_LOSS_BREACH_AT_CLOSE": 0,
+              "NO_TARGET_NO_BREACH": 256,
+              "NO_TRADES": 328,
+              "POSSIBLE_INTRADAY_BREACH": 68,
+              "TARGET": 23,
+              "TARGET_WITH_POSSIBLE_INTRADAY_BREACH": 1
+            },
+            "target_rate": 0.0296,
+            "target_rate_including_possible_breach": 0.0308,
+            "breach_rate": 0.2198,
+            "disjoint_target_rate": 0.0321
+          }
+        }
+      },
+      "OOS": {
+        "summary": {
+          "trades": 56,
+          "net": 7706.0,
+          "gross": 8210.0,
+          "costs": 504.0,
+          "profit_factor": 1.323,
+          "win_rate": 0.4643,
+          "avg_win": 1213.31,
+          "avg_loss": -794.67,
+          "payoff": 1.527,
+          "expectancy": 137.61,
+          "max_drawdown_closed": 6501.0,
+          "return_over_drawdown": 1.185,
+          "largest_win": 3911.0,
+          "largest_loss": -1339.0,
+          "pl_std": 1262.63,
+          "long_trades": 48,
+          "short_trades": 8,
+          "sizes": [
+            1.0
+          ]
+        },
+        "concentration": {
+          "top_5pct_count": 3,
+          "top_5pct_share_of_gross_profit": 0.3025,
+          "net_without_top_3_winners": -1837.0,
+          "net_without_worst_3_losers": 11433.0,
+          "net_without_top_3_and_worst_3": 1890.0
+        },
+        "exit_types": {
+          "EOD_TIME": 30,
+          "PT": 5,
+          "SL": 21
+        },
+        "exit_efficiency": {
+          "mean_mfe": 1179.46,
+          "mean_mae": 672.5,
+          "mean_giveback_winners": 521.54,
+          "mean_giveback_all_with_mfe": 1029.26,
+          "winners_closed_below_half_mfe": 7,
+          "trades_with_mfe_over_2x_final_loss": 6,
+          "mean_bars_in_trade": 3.38,
+          "zero_duration_trades": 4
+        },
+        "r_multiples": {
+          "available": true,
+          "trades_with_initial_risk": 56,
+          "risk_source": "OWN_INITIAL_STOP",
+          "matched_to_reference": null,
+          "expectancy_r": 0.1496,
+          "std_r": 1.3641,
+          "skewness_r": 1.1554,
+          "payoff_ratio_r": 1.535,
+          "share_of_profit_from_trades_ge_3r": 0.3149,
+          "fraction_mfe_ge_1r": 0.4643,
+          "fraction_mfe_ge_2r": 0.25,
+          "fraction_mfe_ge_3r": 0.0893,
+          "losers_after_mfe_ge_1r": 7,
+          "share_of_losers_after_mfe_ge_1r": 0.2333,
+          "max_r": 4.356,
+          "min_r": -1.478
+        },
+        "by_year": {
+          "2025": [
+            56,
+            7706.0
+          ]
+        },
+        "frequency": {
+          "weekdays_in_sample": 262,
+          "days_with_trades": 47,
+          "share_of_days_with_trades": 0.1794,
+          "trades_per_week": 1.069,
+          "longest_gap_days": 43,
+          "median_gap_days": 5.0
+        },
+        "exam_screen_5d": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "windows": 258,
+            "disjoint_windows": 52,
+            "outcomes": {
+              "DAILY_LOSS_BREACH": 0,
+              "MAX_LOSS_BREACH_AT_CLOSE": 4,
+              "NO_TARGET_NO_BREACH": 135,
+              "NO_TRADES": 104,
+              "POSSIBLE_INTRADAY_BREACH": 7,
+              "TARGET": 8,
+              "TARGET_WITH_POSSIBLE_INTRADAY_BREACH": 0
+            },
+            "target_rate": 0.031,
+            "target_rate_including_possible_breach": 0.031,
+            "breach_rate": 0.0426,
+            "disjoint_target_rate": 0.0385
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "windows": 258,
+            "disjoint_windows": 52,
+            "outcomes": {
+              "DAILY_LOSS_BREACH": 25,
+              "MAX_LOSS_BREACH_AT_CLOSE": 0,
+              "NO_TARGET_NO_BREACH": 91,
+              "NO_TRADES": 104,
+              "POSSIBLE_INTRADAY_BREACH": 32,
+              "TARGET": 6,
+              "TARGET_WITH_POSSIBLE_INTRADAY_BREACH": 0
+            },
+            "target_rate": 0.0233,
+            "target_rate_including_possible_breach": 0.0233,
+            "breach_rate": 0.2209,
+            "disjoint_target_rate": 0.0192
+          }
+        },
+        "segment_tables_hidden": "Las tablas por hora, día y dirección de esta muestra no se muestran: el OOS es la comprobación de desarrollo y no se ajusta sobre él."
+      }
+    },
+    "findings": [
+      {
+        "code": "TIME_EXIT_DOMINATED",
+        "sample": "IS",
+        "severity": "medium",
+        "evidence": {
+          "share": 0.59,
+          "close_types": {
+            "EOD": 1,
+            "EOD_TIME": 101,
+            "PT": 13,
+            "SL": 58
+          }
+        },
+        "note": "La mayoría de las salidas las decide el reloj, no el objetivo ni el stop."
+      },
+      {
+        "code": "PT_RARELY_HIT",
+        "sample": "IS",
+        "severity": "medium",
+        "evidence": {
+          "pt_share": 0.075
+        },
+        "note": "El objetivo de beneficio casi nunca se alcanza: puede estar demasiado lejos."
+      },
+      {
+        "code": "LOW_FREQUENCY_FOR_SHORT_EXAM",
+        "sample": "IS",
+        "severity": "high",
+        "evidence": {
+          "trades_per_week": 1.106,
+          "share_of_days_with_trades": 0.1905,
+          "longest_gap_days": 29
+        },
+        "note": "Opera menos de uno de cada tres días: en una ventana de 1–5 días suele no haber oportunidad."
+      },
+      {
+        "code": "LOW_EXAM_TARGET_RATE_5D",
+        "sample": "IS",
+        "severity": "high",
+        "evidence": {
+          "scenario": "PROV_50K_OBJ6_TRAIL4",
+          "target_rate_5d": 0.0746,
+          "breach_rate_5d": 0.0861,
+          "windows": 778,
+          "disjoint_windows": 156
+        },
+        "note": "Con el tamaño actual, menos del 10 % de las ventanas de cinco días alcanza el objetivo provisional."
+      },
+      {
+        "code": "LOW_EXAM_TARGET_RATE_5D",
+        "sample": "IS",
+        "severity": "high",
+        "evidence": {
+          "scenario": "PROV_50K_OBJ8_TRAIL5_DLL2",
+          "target_rate_5d": 0.0296,
+          "breach_rate_5d": 0.2198,
+          "windows": 778,
+          "disjoint_windows": 156
+        },
+        "note": "Con el tamaño actual, menos del 10 % de las ventanas de cinco días alcanza el objetivo provisional."
+      },
+      {
+        "code": "TIME_EXIT_DOMINATED",
+        "sample": "OOS",
+        "severity": "medium",
+        "evidence": {
+          "share": 0.536,
+          "close_types": {
+            "EOD_TIME": 30,
+            "PT": 5,
+            "SL": 21
+          }
+        },
+        "note": "La mayoría de las salidas las decide el reloj, no el objetivo ni el stop."
+      },
+      {
+        "code": "PT_RARELY_HIT",
+        "sample": "OOS",
+        "severity": "medium",
+        "evidence": {
+          "pt_share": 0.089
+        },
+        "note": "El objetivo de beneficio casi nunca se alcanza: puede estar demasiado lejos."
+      },
+      {
+        "code": "SL_HIT_SHARE_HIGH",
+        "sample": "OOS",
+        "severity": "medium",
+        "evidence": {
+          "sl_share": 0.375,
+          "sl_net": -20589.0
+        }
+      },
+      {
+        "code": "LOSERS_AFTER_FAVOURABLE_EXCURSION",
+        "sample": "OOS",
+        "severity": "medium",
+        "evidence": {
+          "losers_after_mfe_ge_1r": 7,
+          "share_of_losers": 0.2333
+        },
+        "note": "Una de cada cinco perdedoras o más llegó a estar 1R a favor antes de perder."
+      },
+      {
+        "code": "PROFIT_DEPENDS_ON_FEW_TRADES",
+        "sample": "OOS",
+        "severity": "high",
+        "evidence": {
+          "net": 7706.0,
+          "net_without_top_3_winners": -1837.0
+        }
+      },
+      {
+        "code": "LOSS_CONCENTRATED_SEGMENT",
+        "sample": "OOS",
+        "severity": "medium",
+        "evidence": {
+          "dimension": "by_entry_hour_local",
+          "segment": "oculto (no ajustar sobre OOS)"
+        },
+        "note": "Un segmento identificable pierde de forma consistente.",
+        "segment_hidden": true
+      },
+      {
+        "code": "LOSS_CONCENTRATED_SEGMENT",
+        "sample": "OOS",
+        "severity": "medium",
+        "evidence": {
+          "dimension": "by_weekday",
+          "segment": "oculto (no ajustar sobre OOS)"
+        },
+        "note": "Un segmento identificable pierde de forma consistente.",
+        "segment_hidden": true
+      },
+      {
+        "code": "LOW_FREQUENCY_FOR_SHORT_EXAM",
+        "sample": "OOS",
+        "severity": "high",
+        "evidence": {
+          "trades_per_week": 1.069,
+          "share_of_days_with_trades": 0.1794,
+          "longest_gap_days": 43
+        },
+        "note": "Opera menos de uno de cada tres días: en una ventana de 1–5 días suele no haber oportunidad."
+      },
+      {
+        "code": "LOW_EXAM_TARGET_RATE_5D",
+        "sample": "OOS",
+        "severity": "high",
+        "evidence": {
+          "scenario": "PROV_50K_OBJ6_TRAIL4",
+          "target_rate_5d": 0.031,
+          "breach_rate_5d": 0.0426,
+          "windows": 258,
+          "disjoint_windows": 52
+        },
+        "note": "Con el tamaño actual, menos del 10 % de las ventanas de cinco días alcanza el objetivo provisional."
+      },
+      {
+        "code": "LOW_EXAM_TARGET_RATE_5D",
+        "sample": "OOS",
+        "severity": "high",
+        "evidence": {
+          "scenario": "PROV_50K_OBJ8_TRAIL5_DLL2",
+          "target_rate_5d": 0.0233,
+          "breach_rate_5d": 0.2209,
+          "windows": 258,
+          "disjoint_windows": 52
+        },
+        "note": "Con el tamaño actual, menos del 10 % de las ventanas de cinco días alcanza el objetivo provisional."
+      }
+    ],
+    "exposure_study_fondeo": {
+      "IS": {
+        "1": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0128,
+              "breach_rate": 0.0115,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0256,
+              "breach_rate": 0.0269,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.0423,
+              "breach_rate": 0.0462,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.0591,
+              "breach_rate": 0.0668,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.0746,
+              "breach_rate": 0.0861,
+              "windows": 778
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0051,
+              "breach_rate": 0.0512,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0102,
+              "breach_rate": 0.0986,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.0167,
+              "breach_rate": 0.1397,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.0231,
+              "breach_rate": 0.1797,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.0296,
+              "breach_rate": 0.2198,
+              "windows": 778
+            }
+          }
+        },
+        "2": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0307,
+              "breach_rate": 0.0512,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0602,
+              "breach_rate": 0.1024,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.0872,
+              "breach_rate": 0.1474,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.1117,
+              "breach_rate": 0.19,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.1337,
+              "breach_rate": 0.2365,
+              "windows": 778
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0179,
+              "breach_rate": 0.1049,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0333,
+              "breach_rate": 0.1921,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.0513,
+              "breach_rate": 0.2628,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.0668,
+              "breach_rate": 0.3325,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.0797,
+              "breach_rate": 0.3907,
+              "windows": 778
+            }
+          }
+        },
+        "3": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.046,
+              "breach_rate": 0.0934,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0807,
+              "breach_rate": 0.1665,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.1103,
+              "breach_rate": 0.2244,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.1361,
+              "breach_rate": 0.2811,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.1594,
+              "breach_rate": 0.3265,
+              "windows": 778
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0256,
+              "breach_rate": 0.1253,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0435,
+              "breach_rate": 0.2228,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.0603,
+              "breach_rate": 0.2974,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.0757,
+              "breach_rate": 0.3671,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.09,
+              "breach_rate": 0.428,
+              "windows": 778
+            }
+          }
+        },
+        "4": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0486,
+              "breach_rate": 0.1049,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0845,
+              "breach_rate": 0.1869,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.1141,
+              "breach_rate": 0.25,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.1386,
+              "breach_rate": 0.3119,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.1607,
+              "breach_rate": 0.3612,
+              "windows": 778
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0281,
+              "breach_rate": 0.1381,
+              "windows": 782
+            },
+            "2": {
+              "target_rate": 0.0448,
+              "breach_rate": 0.2433,
+              "windows": 781
+            },
+            "3": {
+              "target_rate": 0.0615,
+              "breach_rate": 0.3218,
+              "windows": 780
+            },
+            "4": {
+              "target_rate": 0.0757,
+              "breach_rate": 0.3954,
+              "windows": 779
+            },
+            "5": {
+              "target_rate": 0.0887,
+              "breach_rate": 0.455,
+              "windows": 778
+            }
+          }
+        }
+      },
+      "OOS": {
+        "1": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0076,
+              "breach_rate": 0.0038,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0115,
+              "breach_rate": 0.0077,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0154,
+              "breach_rate": 0.0154,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.0232,
+              "breach_rate": 0.0309,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.031,
+              "breach_rate": 0.0426,
+              "windows": 258
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0,
+              "breach_rate": 0.0458,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0038,
+              "breach_rate": 0.092,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0077,
+              "breach_rate": 0.1385,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.0154,
+              "breach_rate": 0.1815,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.0233,
+              "breach_rate": 0.2209,
+              "windows": 258
+            }
+          }
+        },
+        "2": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0305,
+              "breach_rate": 0.0458,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0536,
+              "breach_rate": 0.0958,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0769,
+              "breach_rate": 0.1423,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.0965,
+              "breach_rate": 0.1853,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.1124,
+              "breach_rate": 0.2209,
+              "windows": 258
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0191,
+              "breach_rate": 0.1221,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0345,
+              "breach_rate": 0.2107,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.05,
+              "breach_rate": 0.2885,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.0656,
+              "breach_rate": 0.3552,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.0775,
+              "breach_rate": 0.4147,
+              "windows": 258
+            }
+          }
+        },
+        "3": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0267,
+              "breach_rate": 0.1031,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0536,
+              "breach_rate": 0.1877,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0808,
+              "breach_rate": 0.2615,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.1042,
+              "breach_rate": 0.3243,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.124,
+              "breach_rate": 0.3798,
+              "windows": 258
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0153,
+              "breach_rate": 0.1374,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0268,
+              "breach_rate": 0.2414,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0385,
+              "breach_rate": 0.3308,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.0502,
+              "breach_rate": 0.4093,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.062,
+              "breach_rate": 0.4767,
+              "windows": 258
+            }
+          }
+        },
+        "4": {
+          "PROV_50K_OBJ6_TRAIL4": {
+            "1": {
+              "target_rate": 0.0305,
+              "breach_rate": 0.1221,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.0575,
+              "breach_rate": 0.2031,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0846,
+              "breach_rate": 0.2731,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.1081,
+              "breach_rate": 0.332,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.1279,
+              "breach_rate": 0.3876,
+              "windows": 258
+            }
+          },
+          "PROV_50K_OBJ8_TRAIL5_DLL2": {
+            "1": {
+              "target_rate": 0.0115,
+              "breach_rate": 0.145,
+              "windows": 262
+            },
+            "2": {
+              "target_rate": 0.023,
+              "breach_rate": 0.2529,
+              "windows": 261
+            },
+            "3": {
+              "target_rate": 0.0346,
+              "breach_rate": 0.3462,
+              "windows": 260
+            },
+            "4": {
+              "target_rate": 0.0463,
+              "breach_rate": 0.4247,
+              "windows": 259
+            },
+            "5": {
+              "target_rate": 0.0581,
+              "breach_rate": 0.4922,
+              "windows": 258
+            }
+          }
+        }
+      }
+    },
+    "limitations": [
+      "Órdenes cerradas con MAE/MFE por operación; no hay trayectoria intradía completa.",
+      "El cribado de examen usa escenarios provisionales explícitos, no reglas de una empresa.",
+      "Las ventanas solapadas dependen entre sí; ver disjoint_windows como tamaño efectivo.",
+      "La muestra OOS es de desarrollo si se consulta para decidir; no es una prueba final reservada."
+    ]
+  },
+  "mutation_vocabulary": {
+    "exits": {
+      "description": "Cambios de salida por dirección: {\"direction\": \"long|short\", \"exit\": <nombre>, \"value\": \"<número>\"} o \"atr_period\". Nombres: profit_target, stop_loss, trailing_stop, trailing_activation, move_sl_to_be, exit_after_bars",
+      "current": {
+        "long": {
+          "profit_target": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "20"
+          },
+          "stop_loss": {
+            "formula": "SQ.Formulas.SLPT.FixedValue",
+            "Value": "90.0"
+          },
+          "trailing_stop": {
+            "formula": "SQ.Formulas.RangeLevel.FixedValue",
+            "Value": "90.0"
+          },
+          "trailing_activation": {
+            "formula": "SQ.Formulas.Range.ATRBasedValue",
+            "Value": "1.4",
+            "AtrPeriod": "105"
+          },
+          "move_sl_to_be": {
+            "formula": "SQ.Formulas.RangeLevel.None"
+          },
+          "exit_after_bars": {
+            "formula": null,
+            "value": "0"
+          }
+        },
+        "short": {
+          "profit_target": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.4",
+            "AtrPeriod": "25"
+          },
+          "stop_loss": {
+            "formula": "SQ.Formulas.SLPT.FixedValue",
+            "Value": "115.0"
+          },
+          "trailing_stop": {
+            "formula": "SQ.Formulas.RangeLevel.ATRBasedValue",
+            "Value": "1.1",
+            "AtrPeriod": "50"
+          },
+          "trailing_activation": {
+            "formula": "SQ.Formulas.Range.FixedValue",
+            "Value": "50.0"
+          },
+          "move_sl_to_be": {
+            "formula": "SQ.Formulas.RangeLevel.None"
+          },
+          "exit_after_bars": {
+            "formula": null,
+            "value": "0"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "description": "Cambios de parámetro numérico por ruta: {\"param_path\": \"<path>\", \"value\": \"<número>\"}. Solo rutas de este catálogo; respeta min/max declarados.",
+      "catalogue": [
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-1111-1111-3333-333333333333]/Item[BBLowerFalling]/Param[#Period#]",
+          "key": "Period",
+          "current": "20",
+          "type": "int",
+          "context": "Trading signals > BBLowerFalling",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-1111-1111-3333-333333333333]/Item[BBLowerFalling]/Param[#Deviation#]",
+          "key": "Deviation",
+          "current": "2.0",
+          "type": "double",
+          "context": "Trading signals > BBLowerFalling",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-1111-1111-3333-333333333333]/Item[BBLowerFalling]/Param[#Shift#]",
+          "key": "Shift",
+          "current": "4",
+          "type": "int",
+          "context": "Trading signals > BBLowerFalling",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Period#]",
+          "key": "Period",
+          "current": "188",
+          "type": "int",
+          "context": "Trading signals > AND > BBBarOpensBelowDown",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Deviation#]",
+          "key": "Deviation",
+          "current": "0.8",
+          "type": "double",
+          "context": "Trading signals > AND > BBBarOpensBelowDown",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Shift#]",
+          "key": "Shift",
+          "current": "3",
+          "type": "int",
+          "context": "Trading signals > AND > BBBarOpensBelowDown",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[IsGreater]/Block[#Left#]/Item[Low]/Param[#Shift#]",
+          "key": "Shift",
+          "current": "4",
+          "type": "int",
+          "context": "Trading signals > AND > IsGreater > Low",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[IsGreater]/Block[#Right#]/Item[Close]/Param[#Shift#]",
+          "key": "Shift",
+          "current": "1",
+          "type": "int",
+          "context": "Trading signals > AND > IsGreater > Close",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Value#]/Item[Highest]/Param[#Period#]",
+          "key": "Period",
+          "current": "45",
+          "type": "int",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.Price.UseFormula > Highest",
+          "min": "1",
+          "max": "10000"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Value#]/Item[Highest]/Param[#Shift#]",
+          "key": "Shift",
+          "current": "1",
+          "type": "int",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.Price.UseFormula > Highest",
+          "min": "0",
+          "max": "1000"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#BarsValid#]",
+          "key": "BarsValid",
+          "current": "4",
+          "type": "int",
+          "context": "Long entry > EnterAtStop",
+          "min": "0",
+          "max": "1000"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#ExitAfterBars.ExitAfterBars#]",
+          "key": "ExitAfterBars.ExitAfterBars",
+          "current": "0",
+          "type": "int",
+          "context": "Long entry > EnterAtStop",
+          "min": "0",
+          "max": "99999"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#ProfitTarget.ProfitTarget#]/Formula[SQ.Formulas.SLPT.ATRBasedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "2.0",
+          "type": "double",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.SLPT.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#ProfitTarget.ProfitTarget#]/Formula[SQ.Formulas.SLPT.ATRBasedValue]/Param[#AtrPeriod#]",
+          "key": "AtrPeriod",
+          "current": "20",
+          "type": "int",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.SLPT.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#StopLoss.StopLoss#]/Formula[SQ.Formulas.SLPT.FixedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "90.0",
+          "type": "double",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.SLPT.FixedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingStop#]/Formula[SQ.Formulas.RangeLevel.FixedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "90.0",
+          "type": "double",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.RangeLevel.FixedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "1.4",
+          "type": "double",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.Range.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#AtrPeriod#]",
+          "key": "AtrPeriod",
+          "current": "105",
+          "type": "int",
+          "context": "Long entry > EnterAtStop > SQ.Formulas.Range.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Value#]/Item[Lowest]/Param[#Period#]",
+          "key": "Period",
+          "current": "45",
+          "type": "int",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.Price.UseFormula > Lowest",
+          "min": "1",
+          "max": "10000"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Value#]/Item[Lowest]/Param[#Shift#]",
+          "key": "Shift",
+          "current": "1",
+          "type": "int",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.Price.UseFormula > Lowest",
+          "min": "0",
+          "max": "1000"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#BarsValid#]",
+          "key": "BarsValid",
+          "current": "8",
+          "type": "int",
+          "context": "Short entry > EnterAtStop",
+          "min": "0",
+          "max": "1000"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#ExitAfterBars.ExitAfterBars#]",
+          "key": "ExitAfterBars.ExitAfterBars",
+          "current": "0",
+          "type": "int",
+          "context": "Short entry > EnterAtStop",
+          "min": "0",
+          "max": "99999"
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#ProfitTarget.ProfitTarget#]/Formula[SQ.Formulas.SLPT.ATRBasedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "2.4",
+          "type": "double",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.SLPT.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#ProfitTarget.ProfitTarget#]/Formula[SQ.Formulas.SLPT.ATRBasedValue]/Param[#AtrPeriod#]",
+          "key": "AtrPeriod",
+          "current": "25",
+          "type": "int",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.SLPT.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#StopLoss.StopLoss#]/Formula[SQ.Formulas.SLPT.FixedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "115.0",
+          "type": "double",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.SLPT.FixedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingStop#]/Formula[SQ.Formulas.RangeLevel.ATRBasedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "1.1",
+          "type": "double",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.RangeLevel.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingStop#]/Formula[SQ.Formulas.RangeLevel.ATRBasedValue]/Param[#AtrPeriod#]",
+          "key": "AtrPeriod",
+          "current": "50",
+          "type": "int",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.RangeLevel.ATRBasedValue",
+          "min": null,
+          "max": null
+        },
+        {
+          "path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.FixedValue]/Param[#Value#]",
+          "key": "Value",
+          "current": "50.0",
+          "type": "double",
+          "context": "Short entry > EnterAtStop > SQ.Formulas.Range.FixedValue",
+          "min": null,
+          "max": null
+        }
+      ]
+    },
+    "filters": {
+      "description": "Filtros de entrada añadidos como condiciones nativas de SQX a la regla de entrada de la dirección indicada (\"direction\": \"long\"|\"short\"|\"both\"). {\"filter\": \"hour_range\", \"direction\": ..., \"from\": H1, \"to\": H2}: la señal solo se toma si H1 <= hora de la barra < H2 (horas enteras 0-24, zona horaria de los datos = la misma de by_entry_hour_local). {\"filter\": \"exclude_weekdays\", \"direction\": ..., \"days\": [\"Monday\", ...]}: sin señal esos días (máximo tres; nombres en inglés o español). {\"filter\": \"disable_direction\", \"direction\": \"long\"|\"short\"}: esa dirección deja de operar. Semántica comprobada en SQX (2026-09-06): la hora filtrada es la de apertura de la barra que acaba de cerrar y genera la señal; la orden stop queda activa desde la barra siguiente, así que en H1 el primer relleno posible cae en la hora from+1 y el último primer relleno en la hora to (para permitir primeros rellenos entre las A y las B, usa from=A-1, to=B-1; la tabla by_entry_hour_local está en horas de relleno). La orden sigue válida BarsValid barras ({'long': '4', 'short': '8'}), así que puede rellenarse después de la ventana, y una orden de la víspera puede rellenarse en un día excluido (observado en la apertura de las 08:30). Un filtro cambia la muestra de operaciones: la evaluación emparejada por día lo admite, pero exige mejora en construcción Y en desarrollo.",
+      "current": {
+        "long": [],
+        "short": []
+      },
+      "timeframe": "H1",
+      "guard": "Un filtro elegido solo porque una celda de la tabla IS pierde es minería de datos: exige una razón estructural (apertura/cierre de sesión, liquidez, publicación de datos) y declara en risks cuántas celdas de hora/día miraste."
+    },
+    "not_supported_yet": [
+      "añadir o quitar indicadores",
+      "salidas parciales",
+      "cambiar la hora de salida EOD u otras opciones de trading (son comunes a control y variantes en el recálculo)",
+      "cambiar tamaño de posición (se estudia aparte como exposición)",
+      "cambiar datos o periodo"
+    ]
+  },
+  "explored_variants": [
+    {
+      "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+      "label": null,
+      "changes": null,
+      "class": "HISTORICAL_FIT_ONLY",
+      "development": null,
+      "oos_evidence": null
+    },
+    {
+      "hypothesis": "A modest change to the selected fixed exit may improve return/drawdown without changing entries.",
+      "label": null,
+      "changes": null,
+      "class": "INCONCLUSIVE",
+      "development": null,
+      "oos_evidence": null
+    },
+    {
+      "hypothesis": "H_PT_NEAR",
+      "label": null,
+      "changes": null,
+      "class": "INCONCLUSIVE",
+      "development": null,
+      "oos_evidence": null
+    },
+    {
+      "hypothesis": "H_TS_TIGHT",
+      "label": null,
+      "changes": null,
+      "class": "INCONCLUSIVE",
+      "development": null,
+      "oos_evidence": null
+    },
+    {
+      "hypothesis": "H_LONG_BARSVALID_est2",
+      "label": "VLONG_BARSVALID_EST2",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#BarsValid#]",
+          "value": "8",
+          "before": "4",
+          "after": "8"
+        }
+      ],
+      "class": "NO_EFFECT_IN_SAMPLE",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "EQUIVALENT",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 0.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.0,
+              "trades": 0,
+              "drawdown": 0.0
+            }
+          },
+          "OOS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 0.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.0,
+              "trades": 0,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE"
+    },
+    {
+      "hypothesis": "H_PT_MID_ASIM_est1",
+      "label": "VPT_MID_ASIM_EST1",
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "profit_target",
+          "value": "1.6",
+          "before": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "20"
+          },
+          "after": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "1.6",
+            "AtrPeriod": "20"
+          }
+        },
+        {
+          "direction": "short",
+          "exit": "profit_target",
+          "value": "2.0",
+          "before": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.4",
+            "AtrPeriod": "25"
+          },
+          "after": {
+            "formula": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "25"
+          }
+        }
+      ],
+      "class": "HISTORICAL_FIT_ONLY",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": -23.0,
+              "profit_factor": -0.02,
+              "ret_dd": -0.06,
+              "trades": 7,
+              "drawdown": 529.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -1647.0,
+              "profit_factor": -0.07,
+              "ret_dd": -0.26,
+              "trades": 3,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE"
+    },
+    {
+      "hypothesis": "PROP_02_EXIT_AFTER_BARS_sal2",
+      "label": "PROP_02_EXIT_AFTER_BARS_SAL2",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#ExitAfterBars.ExitAfterBars#]",
+          "value": "5",
+          "before": "0",
+          "after": "5"
+        },
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#ExitAfterBars.ExitAfterBars#]",
+          "value": "5",
+          "before": "0",
+          "after": "5"
+        }
+      ],
+      "class": "INCONCLUSIVE",
+      "development": {
+        "IS": "WORSE",
+        "OOS": "BETTER",
+        "detail": {
+          "IS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -2528.0,
+              "profit_factor": -0.04,
+              "ret_dd": -0.2,
+              "trades": 2,
+              "drawdown": 629.0
+            }
+          },
+          "OOS": {
+            "net": "BETTER",
+            "profit_factor": "BETTER",
+            "ret_dd": "BETTER",
+            "delta": {
+              "net": 2373.0,
+              "profit_factor": 0.11,
+              "ret_dd": 0.4,
+              "trades": 3,
+              "drawdown": -160.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "WEAK"
+    },
+    {
+      "hypothesis": "PROP_03_REDUCE_SHORT_SL_sal3",
+      "label": "PROP_03_REDUCE_SHORT_SL_SAL3",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Short entry]/Then/Item[EnterAtStop]/Param[#StopLoss.StopLoss#]/Formula[SQ.Formulas.SLPT.FixedValue]/Param[#Value#]",
+          "value": "90.0",
+          "before": "115.0",
+          "after": "90.0"
+        }
+      ],
+      "class": "INCONCLUSIVE",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "BETTER",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": -538.0,
+              "profit_factor": -0.01,
+              "ret_dd": 0.02,
+              "trades": 2,
+              "drawdown": -380.0
+            }
+          },
+          "OOS": {
+            "net": "BETTER",
+            "profit_factor": "BETTER",
+            "ret_dd": "BETTER",
+            "delta": {
+              "net": 610.0,
+              "profit_factor": 0.04,
+              "ret_dd": 0.09,
+              "trades": 0,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "WEAK"
+    },
+    {
+      "hypothesis": "PROP_01_TA_LONG_TIGHT_est1",
+      "label": "PROP_01_TA_LONG_TIGHT_EST1",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#Value#]",
+          "value": "1.0",
+          "before": "1.4",
+          "after": "1.0"
+        }
+      ],
+      "class": "INCONCLUSIVE",
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 121.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.01,
+              "trades": 1,
+              "drawdown": 0.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -899.0,
+              "profit_factor": -0.03,
+              "ret_dd": -0.14,
+              "trades": 1,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE"
+    },
+    {
+      "hypothesis": "PROP_03_SHORT_BB_PERIOD_REDUCE_est3",
+      "label": "PROP_03_SHORT_BB_PERIOD_REDUCE",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Period#]",
+          "value": "100",
+          "before": "188",
+          "after": "100"
+        }
+      ],
+      "class": "INCONCLUSIVE",
+      "development": {
+        "IS": "WORSE",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -10436.0,
+              "profit_factor": -0.18,
+              "ret_dd": -0.73,
+              "trades": 4,
+              "drawdown": 2145.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -2279.0,
+              "profit_factor": -0.09,
+              "ret_dd": -0.45,
+              "trades": 1,
+              "drawdown": 878.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE"
+    },
+    {
+      "hypothesis": "PROP_01_HIGHEST_PERIOD_LONG_est1",
+      "label": "PROP_01_HIGHEST_PERIOD_LONG_ES",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Value#]/Item[Highest]/Param[#Period#]",
+          "value": "20",
+          "before": "45",
+          "after": "20"
+        }
+      ],
+      "class": "REJECTED_WORSE",
+      "development": {
+        "IS": "WORSE",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -2667.0,
+              "profit_factor": -0.18,
+              "ret_dd": -0.16,
+              "trades": 53,
+              "drawdown": 186.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -5885.0,
+              "profit_factor": -0.27,
+              "ret_dd": -1.02,
+              "trades": 25,
+              "drawdown": 4243.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE"
+    }
+  ],
+  "criteria": {
+    "schema": "ultrarentable.improvement_criteria.v1",
+    "development_samples": [
+      "IS",
+      "OOS"
+    ],
+    "note": "OOS es la muestra de desarrollo (se consulta para decidir). No existe prueba final reservada en el conjunto de datos actual; ver contract.period.",
+    "technical": {
+      "rules_must_change_semantically": true,
+      "orders_must_differ_in_at_least_one_sample": true,
+      "min_changed_days_for_conclusion": 5
+    },
+    "not_worse_tolerance": {
+      "net_profit_relative": 0.02,
+      "profit_factor_absolute": 0.03,
+      "ret_dd_relative": 0.05,
+      "note": "Diferencias dentro de la tolerancia se consideran equivalentes, no mejoras ni empeoramientos."
+    },
+    "evidence": {
+      "bootstrap_resamples": 4000,
+      "seed": 20260906,
+      "strong": "IC 90 % de la suma de deltas diarios OOS por encima de cero",
+      "moderate": "IC 80 % por encima de cero",
+      "weak": "media positiva sin IC por encima de cero"
+    },
+    "fondeo": {
+      "primary_scenario": "PROV_50K_OBJ6_TRAIL4",
+      "horizon_days": 5,
+      "relevant_target_rate_gain_pp": 5.0,
+      "max_breach_rate_increase_pp": 1.0,
+      "note": "Relevante si sube ≥5 puntos la tasa de objetivo a 5 días en IS y OOS sin subir la ruptura más de 1 punto. Escenario provisional, no una empresa."
+    },
+    "ultra": {
+      "exploratory": true,
+      "min_expectancy_r_change": -0.02,
+      "relevant_tail_share_gain_pp": 5.0,
+      "relevant_mfe2r_gain_pp": 5.0,
+      "note": "Ultra en construcción: se mide convexidad (beneficio de operaciones ≥3R y frecuencia de MFE ≥2R). Exploratorio."
+    },
+    "registered_utc": "2026-09-06T17:43:42.317943+00:00",
+    "max_variants": 2
+  },
+  "search_budget": {
+    "max_variants_this_experiment": 2,
+    "hypotheses_already_tested_for_this_strategy": 11
+  }
+}

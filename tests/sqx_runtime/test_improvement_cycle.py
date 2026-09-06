@@ -185,7 +185,8 @@ class TradeDiagnosis(unittest.TestCase):
         self.assertIn(('LOW_EXAM_TARGET_RATE_5D', 'OOS'), codes)
         self.assertIn(('LOW_FREQUENCY_FOR_SHORT_EXAM', 'IS'), codes)
         screen = oos['exam_screen_provisional']['PROV_50K_OBJ6_TRAIL4']['horizons']['5']
-        self.assertEqual(screen['windows'], 257)
+        # 258 días de negociación: el calendario incluye la sesión que abre la tarde del último día (sample_calendars, sesión de bolsa).
+        self.assertEqual(screen['windows'], 258)
         self.assertLess(screen['target_rate'], 0.10)
         # Todas las operaciones IS entran en el calendario diario (ningún día perdido en silencio).
         self.assertEqual(round(sum(is_sample['daily_pl'].values()), 2), is_sample['summary']['net'])
@@ -196,7 +197,9 @@ class TradeDiagnosis(unittest.TestCase):
             contract = contract_module.extract_contract(experiment / 'input' / 'Strategy 1.1.27_BASE.sqx')
             calendars = diagnosis_module.sample_calendars({**contract, 'period': {**contract['period'], 'oos_ranges': [{'from': '2023.01.01', 'to': '2023.12.31'}]}})
             self.assertTrue(all(d.year != 2023 for d in calendars['IS']))
-            self.assertTrue(all(d.year == 2023 for d in calendars['OOS']))
+            # El 31-12-2023 es domingo: sus barras de la tarde pertenecen a la sesión del lunes 1-1-2024, que queda en OOS.
+            self.assertTrue(all(d.year == 2023 or d == date(2024, 1, 1) for d in calendars['OOS']))
+            self.assertIn(date(2024, 1, 1), calendars['OOS'])
             self.assertEqual(len(calendars['IS']) + len(calendars['OOS']), len(diagnosis_module.weekdays_between(calendars['IS'][0], calendars['IS'][-1])))
 
     def test_variant_r_multiples_use_control_risk(self):

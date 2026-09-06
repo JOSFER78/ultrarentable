@@ -41,6 +41,9 @@ from sqx_variant_evaluation import (  # noqa: E402,F401  (re-exportado: polític
 )
 from sqx_fixed_hypotheses_scaffold import HYPOTHESIS_LIBRARY, hypothesis_changes  # noqa: E402,F401
 
+# Claves que describen un cambio en el vocabulario de mutaciones (salidas, parámetros por ruta, filtros).
+CHANGE_KEYS = ('direction', 'exit', 'value', 'atr_period', 'param_path', 'filter', 'from', 'to', 'days')
+
 
 SCHEMA = 'ultrarentable.improvement_cycle.v1'
 def now():
@@ -116,8 +119,9 @@ def external_hypotheses(path: Path) -> dict:
     """Hipótesis propuestas por agentes (debate por estrategia), no por la biblioteca fija.
 
     Formato: lista de objetos {id, title, problem, change, expected, changes:[{direction, exit,
-    value|atr_period}], destination_expectation?, evidence?}. El programa solo valida que el
-    cambio es aplicable y exacto; la decisión de qué probar es de los agentes.
+    value|atr_period} | {param_path, value} | {filter, direction, from, to | days}],
+    destination_expectation?, evidence?}. El programa solo valida que el cambio es aplicable y
+    exacto; la decisión de qué probar es de los agentes.
     """
     items = read_json(path)
     if isinstance(items, dict):
@@ -182,9 +186,11 @@ def step_plan(cycle: Path, contract: dict, diagnosis: dict, explored: dict, crit
         'destinations': destinations, 'findings_by_sample': present,
         'hypotheses': candidates, 'planned_labels': [c['label'] for c in planned],
         'unsupported_hypothesis_types': [
-            'Filtros de horario o día (requieren añadir bloques de condición; no implementado en esta versión).',
-            'Cambios de entrada (BarsValid, periodos de indicador): cambian la muestra de operaciones y exigen otra política de comparación.',
+            'Salidas parciales, cambio de la hora de salida EOD y otras opciones de trading: son opciones del proyecto de recálculo, comunes a control y variantes.',
+            'Cambios de datos, periodo o tamaño de posición.',
         ],
+        'sample_changing_changes_note': 'Filtros de entrada, BarsValid y periodos de indicador cambian la muestra de operaciones: '
+                                        'la comparación emparejada por día sigue siendo válida (días sin operación cuentan 0) y la clase exige mejora en ambas muestras.',
         'budget': {'max_variants_per_experiment': 2, 'max_experiments_this_phase': 2},
     }
     write_json(cycle / 'plan.json', plan)
@@ -213,8 +219,7 @@ def step_prepare(cycle: Path, contract: dict, plan: dict, template: Path, remote
     for hypothesis in plan['hypotheses']:
         if hypothesis['status'] != 'PLANNED':
             continue
-        built = mutations.build_variant(rules, [{k: c[k] for k in ('direction', 'exit', 'value', 'atr_period', 'param_path') if k in c}
-                                                for c in hypothesis['changes']])
+        built = mutations.build_variant(rules, [{k: c[k] for k in CHANGE_KEYS if k in c} for c in hypothesis['changes']])
         variants[hypothesis['label']] = built['rules']
         records.append({'label': hypothesis['label'], 'hypothesis': hypothesis['id'], 'changes': built['changes'],
                         'semantic_rules_sha256': built['semantic_rules_sha256'], 'source': 'reviewed_mutation'})
@@ -256,8 +261,8 @@ def step_run(cycle: Path) -> dict:
     elapsed = time.monotonic() - started
     log = (cycle / 'experiment' / 'native_retest.log').read_text(encoding='utf-8', errors='replace')
     import re
-    native = re.search(r'TAREA TERMINADA .* en (?:(\d+) min\. )?(\d+) s\.', log)
-    native_seconds = (int(native[1] or 0) * 60 + int(native[2])) if native else None
+    native = re.search(r'TAREA TERMINADA .* en (?:(\d+) min\. )?(\d+) (ms|s)\.', log)
+    native_seconds = (round(int(native[2]) / 1000, 3) if native[3] == 'ms' else int(native[1] or 0) * 60 + int(native[2])) if native else None
     cost = {'wall_seconds_total': round(elapsed, 1), 'native_task_seconds': native_seconds,
             'strategies_retested': len(manifest_path and read_json(manifest_path)['entries']),
             'measured_utc': now()}
@@ -323,7 +328,7 @@ def update_registry(registry: Path, cycle: Path, contract: dict, evaluation: dic
         # Los agentes necesitan saber QUÉ se cambió y qué pasó, no solo la etiqueta.
         record['variants'][variant['semantic_rules_sha256']] = {
             'hypothesis': variant['hypothesis'], 'label': variant['label'], 'class': result['class'] if result else None,
-            'changes': [{k: c.get(k) for k in ('direction', 'exit', 'param_path', 'value', 'before', 'after') if c.get(k) is not None}
+            'changes': [{k: c.get(k) for k in CHANGE_KEYS + ('before', 'after', 'blocks_added') if c.get(k) is not None}
                         for c in variant.get('changes', [])],
             'development': result['development'] if result else None,
             'oos_evidence': result['paired_daily'].get('evidence_strength') if result else None,

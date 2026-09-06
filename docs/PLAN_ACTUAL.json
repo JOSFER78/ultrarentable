@@ -177,6 +177,12 @@
       "fecha": "2026-09-06",
       "titulo": "Motor de mejora, fase 3: programas independientes y servicio autónomo con agentes en la VPS",
       "detalle": "El motor queda como nueve programas con contrato de ficheros (contrato, diagnóstico, mutaciones, debate, recálculo, evaluación separada, orquestación/entrega, servicio, andamio de pruebas). sqx_improvement_service.py + sqx-mejora-agentes.timer: cola persistente por estrategia, inbox/outbox, presupuesto (3 experimentos, 2 debates vacíos, 2 fallos), estados con diagnóstico, cerrojo y comprobaciones previas; una estrategia y un experimento por hora; debate por el omnirouter de Oracle. Guía: docs/Laboratorio/07_MOTOR_MEJORA_CICLO.md."
+    },
+    {
+      "id": "motor-mejora-fase-4-filtros",
+      "fecha": "2026-09-06",
+      "titulo": "Motor de mejora: filtros de hora, día y dirección comprobados en SQX",
+      "detalle": "Vocabulario nuevo en sqx_variant_mutations.py (hour_range, exclude_weekdays, disable_direction) como bloques nativos de SQX en la regla de entrada, con verificación de alcance. Semántica medida con dos recálculos de mecanismo en la VPS: el filtro acota la barra de señal (rellenos en la hora siguiente) y no la orden pendiente. Dosier del debate sin tablas OOS por segmento. Nueve módulos iguales en PC y VPS; 187 pruebas. Pruebas de debate con la IA de Claude; el servicio sigue con omniroute. Ciclo 04 con debate de Claude: dos variantes recalculadas, ninguna candidata (13 variantes, 9 experimentos en el registro). Siguiente hueco: activar move_sl_to_be desde None."
     }
   ],
   "fase_activa": null,

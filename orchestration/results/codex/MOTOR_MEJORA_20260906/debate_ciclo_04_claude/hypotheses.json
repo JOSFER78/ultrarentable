@@ -1,0 +1,72 @@
+{
+  "schema": "ultrarentable.hypotheses.v1",
+  "source": "AGENT_DEBATE",
+  "generated_utc": "2026-09-06T17:51:16.262811+00:00",
+  "hypotheses": [
+    {
+      "id": "P3_SENAL_MENOS_RETRASO_est3",
+      "title": "Acortar el retraso de la condición de Bollinger que fecha la señal cuatro barras atrás",
+      "problem": "La frecuencia es el hallazgo de severidad alta y estable en las dos muestras: 1.106 y 1.069 operaciones por semana, 0.1905 y 0.1794 de días con operación, huecos máximos de 29 y 43 días; en una ventana de examen de cinco días lo más frecuente es no tener oportunidad (NO_TRADES 328 de 778 ventanas en IS y 104 de 258 en OOS).",
+      "change": "Shift de BBLowerFalling en Trading signals: 4 → 2.",
+      "expected": "Más operaciones por semana que 1.106 (IS) y 1.069 (OOS) y mayor share_of_days_with_trades, manteniendo PF dentro de tolerancia respecto a 1.572 y 1.323; si el aumento de frecuencia viniera acompañado de una caída clara de PF, la señal extra sería ruido y la hipótesis queda rechazada.",
+      "acceptance": "Aceptar si el número de operaciones sube en ambas muestras y net y PF no empeoran fuera de tolerancia en IS ni en OOS, con ≥5 días cambiados y evidencia al menos moderada en el bootstrap de deltas diarios OOS. Rechazar si repite el patrón de PROP_01_HIGHEST_PERIOD_LONG_ES (más operaciones, PF -0.18 IS y -0.27 OOS), es decir, si la frecuencia sube a costa de la calidad.",
+      "evidence_codes": [
+        "LOW_FREQUENCY_FOR_SHORT_EXAM",
+        "LOW_EXAM_TARGET_RATE_5D"
+      ],
+      "destination_expectation": {
+        "fondeo": "Es la única de las tres con mecanismo plausible para mover el cribado: menos ventanas NO_TRADES puede subir la tasa de objetivo a 5 días desde 0.0746 (IS) y 0.031 (OOS); se declara relevante solo si sube ≥5 puntos en ambas muestras sin subir la ruptura más de 1 punto sobre 0.0861 y 0.0426 en PROV_50K_OBJ6_TRAIL4. Más operaciones también pueden subir la ruptura, y eso sería exposición, no mejora.",
+        "ultra": "Exploratorio: vigilar que expectancy_R no caiga más de 0.02 respecto a 0.2527 (IS) y 0.1496 (OOS) y que fraction_mfe_ge_2r (0.1792 / 0.25) no se diluya con señales de menor calidad."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-1111-1111-3333-333333333333]/Item[BBLowerFalling]/Param[#Shift#]",
+          "value": "2"
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "REVISAR",
+      "critic_reasons": [
+        "Aplicable (Shift de BBLowerFalling 4→2, un campo efectivo) y no duplica ninguna variante registrada; es la única propuesta que ataca los dos hallazgos de severidad alta (LOW_FREQUENCY_FOR_SHORT_EXAM y LOW_EXAM_TARGET_RATE_5D), presentes en IS y OOS.",
+        "Objeción principal: cambia la muestra de operaciones por completo, y el precedente de la propia estrategia es adverso — PROP_01_HIGHEST_PERIOD_LONG_ES abrió la señal (+53 operaciones IS, +25 OOS) y empeoró ambas muestras (PF -0,18 IS, -0,27 OOS, ret/dd -1,02 OOS); PROP_03_SHORT_BB_PERIOD_REDUCE (188→100) también empeoró ambas (neto -10436 IS, -2279 OOS).",
+        "Aritmética del destino: aunque la frecuencia subiera, el estudio de exposición muestra que multiplicar la actividad sube la ruptura más deprisa que el objetivo (tamaño 2 en IS: objetivo 0,0746→0,1337 = +5,9 pp, pero ruptura 0,0861→0,2365 = +15,0 pp). Más señales sin mejor calidad es exposición, no mejora.",
+        "El mecanismo ('la banda medida 2 barras antes en vez de 4') no está respaldado por ninguna cifra del dosier: es plausible, no demostrado, y el dosier no da la distribución de señales por shift."
+      ],
+      "confidence": "baja"
+    },
+    {
+      "id": "PROP_SAL_02_TS_LONG_55_sal2",
+      "title": "Estrechar la distancia de arrastre en largo de 90,0 a 55,0, sin tocar su activación",
+      "problem": "En largo el trailing arrastra a 90,0 unidades fijas, aproximadamente el riesgo inicial completo (stop_loss fijo 90,0), y solo se activa tras 1,4×ATR(105). Con una permanencia media de 3,37 barras y el 59 % de cierres por reloj (101 EOD_TIME + 1 EOD de 173 en IS; 30 de 56 en OOS), ese arrastre casi nunca llega a apretar: la devolución media de las ganadoras es 333,76 en IS y 521,54 en OOS, y 12 ganadoras IS y 7 OOS cierran por debajo de la mitad de su MFE.",
+      "change": "trailing_stop en largo: de 90,0 fijo a 55,0. Sin cambios en trailing_activation, objetivo ni stop.",
+      "expected": "Menor devolución media en ganadoras largas (hoy 333,76 IS / 521,54 OOS) y menos ganadoras cerradas por debajo de la mitad de su MFE. Contrapartida esperable: algunas operaciones que hoy llegan a objetivo o al cierre horario con beneficio mayor se cortarán antes, y podría bajar el payoff (1,628 IS / 1,527 OOS) aunque suba la tasa de acierto (0,4913 / 0,4643).",
+      "acceptance": "Se acepta si no es peor en IS y es mejor en OOS fuera de tolerancia (neto 2 %, PF 0,03, ret/dd 5 %) con evidencia al menos moderada (IC 80 % de la suma de deltas diarios OOS sobre cero, 4000 remuestreos, semilla 20260906) y ≥5 días cambiados. Se rechaza si el neto OOS cae fuera de tolerancia, si el resultado queda EQUIVALENT en ambas muestras, o si mejora en una muestra y empeora en la otra (INCONCLUSIVE, como pasó con PROP_02_EXIT_AFTER_BARS_sal2).",
+      "evidence_codes": [
+        "TIME_EXIT_DOMINATED",
+        "PT_RARELY_HIT",
+        "LOSERS_AFTER_FAVOURABLE_EXCURSION"
+      ],
+      "destination_expectation": {
+        "fondeo": "Neutro en frecuencia; el valor sería un ret/dd más alto (2,194 IS / 1,185 OOS) y menor drawdown cerrada. No espero que mueva la tasa de objetivo a 5 días los 5 puntos requeridos.",
+        "ultra": "Es la propuesta con más riesgo para la convexidad: si recorta las colas, bajarán share_of_profit_from_trades_ge_3r (0,3471 IS / 0,3149 OOS) y fraction_mfe_ge_3r (0,0809 / 0,0893). Se rechazará como mejora Ultra si expectancy_r cae más de 0,02 respecto a 0,2527 IS / 0,1496 OOS."
+      },
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "trailing_stop",
+          "value": "55.0"
+        }
+      ],
+      "proposer": "proponente_salidas_riesgo",
+      "critic_verdict": "REVISAR",
+      "critic_reasons": [
+        "Aplicable (validation.applicable=true, un campo efectivo: RangeLevel.FixedValue 90,0 → 55,0) y no duplica ninguna de las 11 hipótesis con cambios anotados; PROP_01_TA_LONG_TIGHT_EST1 tocó el múltiplo de activación (1,4→1,0), no la distancia.",
+        "Riesgo de solape declarado por el propio proponente: la hipótesis H_TS_TIGHT figura como INCONCLUSIVE sin changes ni deltas; el dosier no permite descartar que sea esta misma ruta. Antes de gastar uno de los 2 cupos hay que resolver ese duplicado.",
+        "Mecanismo parcialmente incoherente con los tipos de cierre: con 59 % de salidas por reloj y activación intacta en 1,4×ATR(105), el arrastre solo actúa en el subconjunto que supera esa activación; fraction_mfe_ge_2r es 0,1792 IS / 0,25 OOS, así que el cambio puede quedar EQUIVALENT.",
+        "Riesgo directo sobre la cola: el 34,71 % (IS) y 31,49 % (OOS) del beneficio viene de operaciones ≥3R y en OOS el neto sin las 3 mejores es -1837; un arrastre a 0,6R en largo (140/173 y 48/56 operaciones) es exactamente el cambio que puede recortar esas ganadoras.",
+        "Irrelevante para el destino declarado: no mueve la frecuencia (1,106/1,069 op./semana) ni previsiblemente los 5 puntos de tasa de objetivo a 5 días desde 0,0746 IS / 0,0310 OOS."
+      ],
+      "confidence": "baja"
+    }
+  ]
+}

@@ -12,7 +12,7 @@ Cada programa tiene una responsabilidad y un contrato de ficheros; se puede modi
 | --- | --- | --- | --- |
 | `sqx_strategy_contract.py` | Contrato de entrada; hash semántico; comparación de reglas | `.sqx` → `contract.json`; dos `.sqx` → `IDENTICAL_BYTES` / `METADATA_ONLY_NO_BEHAVIOUR_CHANGE` / `RULES_CHANGED` | cambie el formato de SQX o qué se considera metadato |
 | `sqx_trade_diagnosis.py` | Diagnóstico determinista de órdenes; cribado provisional de examen; estudio de exposición | CSV de órdenes + contrato → perfil IS/OOS, hallazgos, ventanas 1–5 días | se añadan análisis o escenarios de examen |
-| `sqx_variant_mutations.py` | Vocabulario de cambios y verificación de que la variante cambia exactamente lo declarado | reglas XML + cambios → reglas nuevas + registro; catálogo `mutable_parameters` | los agentes pidan una palanca nueva (filtros de hora/día, salidas parciales…) |
+| `sqx_variant_mutations.py` | Vocabulario de cambios (salidas, parámetros por ruta, filtros de hora/día/dirección como bloques nativos de SQX) y verificación de que la variante cambia exactamente lo declarado | reglas XML + cambios → reglas nuevas + registro; catálogo `mutable_parameters` | los agentes pidan una palanca nueva (salidas parciales, indicadores…) |
 | `sqx_hypothesis_debate.py` | Debate de agentes: dosier, proponentes ciegos, validación, crítico, árbitro; proveedores (`omniroute` del sistema, `anthropic`, `claude-cli`, `replay`) | ciclo con contrato/diagnóstico/criterios/explorados → `debate/hypotheses.json` + registro | cambien los roles, los prompts o el endpoint de IA |
 | `sqx_native_improvement.py` | Recálculo nativo en SQX (motor existente): proyecto Retest dedicado, evidencia, órdenes | experimento preparado → `retest.csv`, `retested/*.sqx`, órdenes, `assessment.json` | cambie SQX o su CLI |
 | `sqx_variant_evaluation.py` | Política de evaluación: comparación emparejada por día, relevancia por destino, clases; criterios registrados antes | experimento recalculado + contrato + `criteria.json` → `evaluation.json` | cambien los criterios de aceptación o los destinos |
@@ -23,6 +23,32 @@ Cada programa tiene una responsabilidad y un contrato de ficheros; se puede modi
 ## Servicio autónomo en la VPS
 
 `sqx-mejora-agentes.timer` ejecuta cada hora `sqx_improvement_service.py --once` (unidad `sqx-mejora-agentes.service`). Para encolar una estrategia: dejar su `.sqx` (y un `.json` opcional con procedencia y destino) en `/opt/SQX-headless/import/mejora/inbox/`. El servicio la contrata, exporta sus órdenes heredadas (o usa las del último recálculo), diagnostica, convoca el debate por el omnirouter, construye y verifica las variantes, recalcula en SQX, evalúa, registra y empaqueta. Estados por estrategia: `QUEUED` → `IN_PROGRESS` → `CANDIDATE_FOR_VALIDATION` (entrega copiada a `outbox/`) | `EXHAUSTED` (presupuesto de experimentos o debates vacíos agotado) | `NEEDS_ATTENTION` (fallo técnico repetido, con diagnóstico) | `REJECTED_INPUT` (contrato incompleto o archivo corrupto). `--inspect` muestra la cola; `status.json` la última ejecución. Comprobaciones previas: sin reclamación activa de recálculo, memoria y disco. El temporizador antiguo `sqx-improvement.timer` (recetas MYM/MNQ) sigue existiendo; ambos se excluyen por la reclamación del motor.
+
+## Filtros de entrada (comprobados en SQX el 2026-09-06, 19:33–19:41 CEST)
+
+Vocabulario nuevo, pedido por los agentes en todas las rondas anteriores. Cada filtro se añade como
+condición `AND` al `If` de la regla de entrada de la dirección indicada, con los bloques nativos
+`SQ.Blocks.BarAndTime` (`BarHourIsBigger`, `BarHourIsSmaller`, `BarDayOfWeekIsNot`) o `Boolean`
+(`SQ.Blocks.Other`), en la forma XML de la plantilla propia de SQX
+`user/settings/StrategyTemplates/highest_breakout_template_daily_filter.sqx`. No se usan las opciones
+de trading de `lastSettings.xml` (`LimitTimeRange`, `ExitAtEndOfDay`…) porque el proyecto de recálculo
+las copia al `Retest` con `customSettings="true"` y son comunes a control y variantes: solo lo que
+está en las reglas varía por variante.
+
+| Cambio | Efecto verificado (proyectos `UR_IMPROVE_MECANISMO_FILTROS_01/02`, sin registro) |
+| --- | --- |
+| `{"filter": "hour_range", "direction": "long\|short\|both", "from": H1, "to": H2}` | Señal solo si `H1 <= hora de apertura de la barra que acaba de cerrar < H2` (zona de los datos, `Shift 0`). La orden stop queda activa desde la barra siguiente: con `from=10, to=11` los rellenos cayeron a las 11 h (45 de 47 en IS) y 12 h; con `8–13`, rellenos entre las 10 y las 14 h. Para permitir primeros rellenos entre las A y las B: `from=A-1, to=B-1`. La orden sigue válida `BarsValid` barras (4 largos, 8 cortos en esta estrategia), así que puede rellenarse después de la ventana. |
+| `{"filter": "exclude_weekdays", "direction": ..., "days": ["Monday", "Friday"]}` | Sin señal en esos días (máximo tres; nombres en inglés o español; 0 = domingo). Con lunes y viernes excluidos: cero rellenos en lunes; en viernes quedaron 16 de 60 rellenos, todos en la apertura de las 08:30, procedentes de órdenes de la víspera aún válidas. El filtro acota la señal, no la orden pendiente. |
+| `{"filter": "disable_direction", "direction": "long\|short"}` | La regla de entrada recibe `AND Boolean(false)` y nunca se cumple: sin cortos, 140/48 operaciones (IS/OOS) frente a 173/56 del control; las largas no cambian. |
+
+Verificación estructural (`build_variant`): todo cambio detectado dentro del `If` de la regla filtrada
+debe ser una adición; nada existente puede cambiar; fuera de los filtros el número de parámetros que
+cambian sigue siendo exactamente el previsto. Un filtro de hora ya presente no se apila: se reajusta
+por `param_path` (`#Hour#` entra en el catálogo). El dosier del debate muestra las tablas por hora,
+día y dirección **solo de la muestra de construcción** y oculta el segmento concreto de los hallazgos
+OOS de concentración: elegir un filtro mirando el OOS convertiría la comprobación de desarrollo en
+ajuste. Las cuatro variantes de mecanismo dieron `REJECTED_WORSE` o `INCONCLUSIVE`, como corresponde a
+filtros elegidos sin hipótesis.
 
 ## Reparto decidido por Emilio (2026-09-06)
 
@@ -38,7 +64,7 @@ Los agentes piensan: analizan cada estrategia (contrato, diagnóstico, reglas, r
 ## Recorrido
 
 1. `prepare-local --source <original.sqx> --orders <órdenes_base.csv> --template <project.cfx de un retest verificado> --cycle <dir> --remote-dir /opt/SQX-headless/import/<dir>/experiment --project UR_IMPROVE_<NOMBRE> --hypotheses <hipótesis_de_los_agentes.json> [--candidate ETIQUETA=<variante externa.sqx>] [--registry <dir>]`
-   Produce `contract.json`, `diagnosis_base.json`, `plan.json`, `criteria.json` (criterios registrados antes de recalcular) y `experiment/` (control + hasta dos variantes, proyecto `.cfx`, `manifest.json`). Formato de `--hypotheses`: `{"hypotheses": [{"id", "title", "problem", "change", "expected", "changes": [{"direction": "long|short", "exit": "profit_target|stop_loss|trailing_stop|trailing_activation|move_sl_to_be|exit_after_bars", "value"|"atr_period"}]}]}`; una hipótesis cuyo cambio no altera las reglas queda `NOT_APPLICABLE` y no se recalcula. Los candidatos externos que solo cambian metadatos se rechazan aquí. Repetir el paso no reescribe criterios ni experimento. En Windows, ejecutar con `MSYS_NO_PATHCONV=1` para que Git Bash no reescriba `/opt/...`.
+   Produce `contract.json`, `diagnosis_base.json`, `plan.json`, `criteria.json` (criterios registrados antes de recalcular) y `experiment/` (control + hasta dos variantes, proyecto `.cfx`, `manifest.json`). Formato de `--hypotheses`: `{"hypotheses": [{"id", "title", "problem", "change", "expected", "changes": [{"direction": "long|short", "exit": "profit_target|stop_loss|trailing_stop|trailing_activation|move_sl_to_be|exit_after_bars", "value"|"atr_period"} | {"param_path", "value"} | {"filter": "hour_range|exclude_weekdays|disable_direction", "direction": "long|short|both", "from", "to" | "days"}]}]}`; una hipótesis cuyo cambio no altera las reglas queda `NOT_APPLICABLE` y no se recalcula. Los candidatos externos que solo cambian metadatos se rechazan aquí. Repetir el paso no reescribe criterios ni experimento. En Windows, ejecutar con `MSYS_NO_PATHCONV=1` para que Git Bash no reescriba `/opt/...`.
 2. Copiar el directorio del ciclo a la VPS exactamente en `<remote-dir>` (tar por ssh; comprobar SHA-256 de `project.cfx` y de `input/*.sqx`).
 3. En la VPS: `python3 sqx_improvement_cycle.py run --cycle /opt/SQX-headless/import/<dir>`. Usa `run_reviewed` del motor: reclama el experimento (`reviewed_improvement_jobs/active.json`), carga el proyecto, importa, arranca, espera `TAREA TERMINADA`, exporta métricas, archivos y órdenes, y escribe `assessment.json` y `cost.json`. Comprobar antes: memoria disponible ≥ 8 GiB, sin `active.json`, sin directorio `user/projects/<proyecto>`.
 4. `evaluate --cycle <dir> --registry /opt/SQX-headless/import/improvement_registry` → `evaluation.json`, `entrega.json` y registro por estrategia.
@@ -55,3 +81,4 @@ Los agentes piensan: analizan cada estrategia (contrato, diagnóstico, reglas, r
 - Un intento fallido deja `active.json` y un registro `NEEDS_RECONCILIATION`: se mueven a `reconciliation_N/` del ciclo con la causa escrita, nunca se borran.
 - Con el generador activo el recálculo de tres estrategias tarda ~66 s (24 s ocioso). El motor espera hasta 120 s.
 - El OOS que se consulta para clasificar es desarrollo. Sin datos posteriores reservados no hay validación independiente.
+- Los calendarios de muestra (`sample_calendars`) terminan en la sesión que abre la tarde del último día del rango (las barras de domingo pertenecen al lunes siguiente): 258 días de negociación en el OOS 2025, no 257; las órdenes de esa sesión no quedan fuera del calendario.

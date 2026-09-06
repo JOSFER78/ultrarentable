@@ -238,6 +238,243 @@
       "oos_evidence": "WEAK",
       "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_03",
       "utc": "2026-09-06T14:40:13.332836+00:00"
+    },
+    "1be276947199a23c029847cbc7ffee873509619b1b814c7343b6fd778d4fedb3": {
+      "hypothesis": "PROP_01_TA_LONG_TIGHT_est1",
+      "label": "PROP_01_TA_LONG_TIGHT_EST1",
+      "class": "INCONCLUSIVE",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#Value#]",
+          "value": "1.0",
+          "before": "1.4",
+          "after": "1.0"
+        }
+      ],
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 121.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.01,
+              "trades": 1,
+              "drawdown": 0.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -899.0,
+              "profit_factor": -0.03,
+              "ret_dd": -0.14,
+              "trades": 1,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE",
+      "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_02",
+      "utc": "2026-09-06T15:31:50.244666+00:00"
+    },
+    "c88b42ec629b3488eb28db758b139705658d4e1adfa0b82c2d79b7ade8eac4c6": {
+      "hypothesis": "PROP_03_SHORT_BB_PERIOD_REDUCE_est3",
+      "label": "PROP_03_SHORT_BB_PERIOD_REDUCE",
+      "class": "INCONCLUSIVE",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Period#]",
+          "value": "100",
+          "before": "188",
+          "after": "100"
+        }
+      ],
+      "development": {
+        "IS": "WORSE",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -10436.0,
+              "profit_factor": -0.18,
+              "ret_dd": -0.73,
+              "trades": 4,
+              "drawdown": 2145.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -2279.0,
+              "profit_factor": -0.09,
+              "ret_dd": -0.45,
+              "trades": 1,
+              "drawdown": 878.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE",
+      "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_02",
+      "utc": "2026-09-06T15:31:50.244688+00:00"
+    },
+    "2de80128eb8ad883b2f649b1b03f45c087c3d8195e11aff426d341f1b24baff5": {
+      "hypothesis": "PROP_01_HIGHEST_PERIOD_LONG_est1",
+      "label": "PROP_01_HIGHEST_PERIOD_LONG_ES",
+      "class": "REJECTED_WORSE",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#Price#]/Formula[SQ.Formulas.Price.UseFormula]/Block[#Value#]/Item[Highest]/Param[#Period#]",
+          "value": "20",
+          "before": "45",
+          "after": "20"
+        }
+      ],
+      "development": {
+        "IS": "WORSE",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -2667.0,
+              "profit_factor": -0.18,
+              "ret_dd": -0.16,
+              "trades": 53,
+              "drawdown": 186.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -5885.0,
+              "profit_factor": -0.27,
+              "ret_dd": -1.02,
+              "trades": 25,
+              "drawdown": 4243.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE",
+      "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_03",
+      "utc": "2026-09-06T16:33:54.956673+00:00"
+    },
+    "849aada0f49c7f20812632d2fdb678b2cfff418be726f3a29303272f0062365a": {
+      "hypothesis": "P3_SENAL_MENOS_RETRASO_est3",
+      "label": "P3_SENAL_MENOS_RETRASO_EST3",
+      "class": "REJECTED_WORSE",
+      "changes": [
+        {
+          "value": "2",
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-1111-1111-3333-333333333333]/Item[BBLowerFalling]/Param[#Shift#]",
+          "before": "4",
+          "after": "2"
+        }
+      ],
+      "development": {
+        "IS": "WORSE",
+        "OOS": "WORSE",
+        "detail": {
+          "IS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -18833.0,
+              "profit_factor": -0.3,
+              "ret_dd": -1.17,
+              "trades": -3,
+              "drawdown": 2788.0
+            }
+          },
+          "OOS": {
+            "net": "WORSE",
+            "profit_factor": "WORSE",
+            "ret_dd": "WORSE",
+            "delta": {
+              "net": -2534.0,
+              "profit_factor": -0.12,
+              "ret_dd": -0.55,
+              "trades": -4,
+              "drawdown": 1566.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_04",
+      "utc": "2026-09-06T17:52:56.774519+00:00"
+    },
+    "dd3dd61728e097e9b8be8cd632449717772745bc8f87b545596d9db48b13cbc3": {
+      "hypothesis": "PROP_SAL_02_TS_LONG_55_sal2",
+      "label": "PROP_SAL_02_TS_LONG_55_SAL2",
+      "class": "INCONCLUSIVE",
+      "changes": [
+        {
+          "direction": "long",
+          "exit": "trailing_stop",
+          "value": "55.0",
+          "before": {
+            "formula": "SQ.Formulas.RangeLevel.FixedValue",
+            "Value": "90.0"
+          },
+          "after": {
+            "formula": "SQ.Formulas.RangeLevel.FixedValue",
+            "Value": "55.0"
+          }
+        }
+      ],
+      "development": {
+        "IS": "EQUIVALENT",
+        "OOS": "EQUIVALENT",
+        "detail": {
+          "IS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": -529.0,
+              "profit_factor": -0.01,
+              "ret_dd": -0.02,
+              "trades": 1,
+              "drawdown": -40.0
+            }
+          },
+          "OOS": {
+            "net": "EQUIVALENT",
+            "profit_factor": "EQUIVALENT",
+            "ret_dd": "EQUIVALENT",
+            "delta": {
+              "net": 0.0,
+              "profit_factor": 0.0,
+              "ret_dd": 0.0,
+              "trades": 0,
+              "drawdown": 0.0
+            }
+          }
+        }
+      },
+      "oos_evidence": "NONE",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_04",
+      "utc": "2026-09-06T17:52:56.774542+00:00"
     }
   },
   "experiments": [
@@ -293,6 +530,35 @@
       "classes": {
         "Strategy 1.1.27_BASE_PROP_02_EXIT_AFTER_BARS_SAL2": "INCONCLUSIVE",
         "Strategy 1.1.27_BASE_PROP_03_REDUCE_SHORT_SL_SAL3": "INCONCLUSIVE"
+      }
+    },
+    {
+      "project": "UR_IMPROVE_STRATEGY_1_1_27_85544C4B_02",
+      "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_02",
+      "utc": "2026-09-06T15:31:50.244694+00:00",
+      "hypothesis_source": "custom_reviewed_mutation",
+      "classes": {
+        "Strategy 1.1.27_PROP_01_TA_LONG_TIGHT_EST1": "INCONCLUSIVE",
+        "Strategy 1.1.27_PROP_03_SHORT_BB_PERIOD_REDUCE": "INCONCLUSIVE"
+      }
+    },
+    {
+      "project": "UR_IMPROVE_STRATEGY_1_1_27_85544C4B_03",
+      "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_03",
+      "utc": "2026-09-06T16:33:54.956685+00:00",
+      "hypothesis_source": "custom_reviewed_mutation",
+      "classes": {
+        "Strategy 1.1.27_PROP_01_HIGHEST_PERIOD_LONG_ES": "REJECTED_WORSE"
+      }
+    },
+    {
+      "project": "UR_IMPROVE_CICLO_EW_20260906_04",
+      "cycle": "/opt/SQX-headless/import/ciclo_ew_20260906_04",
+      "utc": "2026-09-06T17:52:56.774548+00:00",
+      "hypothesis_source": "custom_reviewed_mutation",
+      "classes": {
+        "Strategy 1.1.27_P3_SENAL_MENOS_RETRASO_EST3": "REJECTED_WORSE",
+        "Strategy 1.1.27_PROP_SAL_02_TS_LONG_55_SAL2": "INCONCLUSIVE"
       }
     }
   ]

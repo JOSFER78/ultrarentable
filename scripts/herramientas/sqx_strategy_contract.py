@@ -155,6 +155,33 @@ def _formula(param: ET.Element) -> dict:
     return {'kind': formula.get('key'), **values}
 
 
+# Bloques de condición que el motor de mejora añade como filtros de entrada (ver sqx_variant_mutations).
+FILTER_BLOCK_KEYS = ('BarHourIsBigger', 'BarHourIsSmaller', 'BarDayOfWeekIsNot', 'Boolean')
+WEEKDAY_NAMES = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
+
+
+def entry_filters(rule: ET.Element) -> list:
+    """Filtros de hora/día/dirección presentes en el If de una regla de entrada (legibles para el dosier)."""
+    found = []
+    if_node = rule.find('If')
+    for item in ([] if if_node is None else if_node.iter('Item')):
+        key = item.get('key')
+        if key not in FILTER_BLOCK_KEYS:
+            continue
+        params = {p.get('key').strip('#'): (p.text or '').strip() for p in item.findall('Param') if p.get('key') != '#Chart#'}
+        entry = {'block': key, **params}
+        if key == 'BarHourIsBigger':
+            entry['meaning'] = f"hora de barra > {params.get('Hour')}"
+        elif key == 'BarHourIsSmaller':
+            entry['meaning'] = f"hora de barra < {params.get('Hour')}"
+        elif key == 'BarDayOfWeekIsNot' and params.get('Day', '').isdigit():
+            entry['meaning'] = f"no opera el {WEEKDAY_NAMES[int(params['Day'])]}"
+        elif key == 'Boolean' and params.get('Value') == 'false':
+            entry['meaning'] = 'dirección desactivada'
+        found.append(entry)
+    return found
+
+
 def describe_rules(rules_xml: bytes) -> dict:
     root = ET.fromstring(rules_xml)
     strategy = root.find('Strategy')
@@ -199,6 +226,7 @@ def describe_rules(rules_xml: bytes) -> dict:
                     'bars_valid': (params['#BarsValid#'].text or '').strip() if '#BarsValid#' in params else None,
                     'size': _formula(params['#Size#']) if '#Size#' in params else None,
                     'exits': exits,
+                    'entry_filters': entry_filters(rule),
                 })
             elif key in ('ClosePosition', 'CloseOrder', 'ExitPosition'):
                 summary['exit_rules'].append({'rule': rule.get('name'), 'action': key})

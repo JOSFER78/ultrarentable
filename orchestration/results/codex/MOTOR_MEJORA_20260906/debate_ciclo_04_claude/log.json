@@ -1,0 +1,85 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "started_utc": "2026-09-06T17:44:57.390985+00:00",
+  "provider": "claude-cli",
+  "cycle": "C:\\Users\\yo\\AppData\\Local\\Temp\\claude\\c--Users-yo-Pictures-Descargaspc-pro-UltrarentablePC-ultrarentable\\668b2bc2-c207-4f74-9f3d-97b3e650f254\\scratchpad\\ciclo_ew_20260906_04",
+  "dossier_sha256": "d9896b2d63065db9102f861b4cf68b4526bf20c1eec0c07c000a3d671fe0bc80",
+  "calls": [
+    {
+      "role": "proponente_salidas_riesgo",
+      "model": "claude-opus-5",
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 8033,
+        "cache_read_input_tokens": 0
+      },
+      "cost_usd": 0.7628849999999999,
+      "routing_decision": null,
+      "tls": null,
+      "fallback_reason": null,
+      "seconds": 119.2,
+      "prompt_sha256": "765786316a561ecec4bea10c341758b16d5b8ad581b9fe5f8aa749f399a6029a",
+      "utc": "2026-09-06T17:46:56.632912+00:00"
+    },
+    {
+      "role": "proponente_estructura_frecuencia",
+      "model": "claude-opus-5",
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 9819,
+        "cache_read_input_tokens": 19332
+      },
+      "cost_usd": 0.624241,
+      "routing_decision": null,
+      "tls": null,
+      "fallback_reason": null,
+      "seconds": 144.5,
+      "prompt_sha256": "c02c0fcdce4bac65277267697e89ad80da425bc7ddc92e3244a2b4b9284fdc72",
+      "utc": "2026-09-06T17:49:21.126940+00:00"
+    },
+    {
+      "role": "critico",
+      "model": "claude-opus-5",
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 4160,
+        "cache_read_input_tokens": 19332
+      },
+      "cost_usd": 0.565586,
+      "routing_decision": null,
+      "tls": null,
+      "fallback_reason": null,
+      "seconds": 62.0,
+      "prompt_sha256": "92ca94f7f2351439bf9681f7fcfc9b6fc66b1e64de55db6b87331633a425ff27",
+      "utc": "2026-09-06T17:50:23.404186+00:00"
+    },
+    {
+      "role": "arbitro",
+      "model": "claude-opus-5",
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 3361,
+        "cache_read_input_tokens": 19332
+      },
+      "cost_usd": 0.369851,
+      "routing_decision": null,
+      "tls": null,
+      "fallback_reason": null,
+      "seconds": 52.9,
+      "prompt_sha256": "af3973e0d80b4660d743c5557f573bf091070d4fb9fc99906038b1d8f9da6a10",
+      "utc": "2026-09-06T17:51:16.259807+00:00"
+    }
+  ],
+  "capability_gaps": [
+    "Salidas parciales: el diagnóstico apunta justo a eso (fraction_mfe_ge_1r 0,3815 IS / 0,4643 OOS frente a fraction_mfe_ge_3r 0,0809 / 0,0893). Cerrar una fracción a 1R y dejar correr el resto atacaría a la vez LOSERS_AFTER_FAVOURABLE_EXCURSION y la conservación de colas, sin el efecto todo-o-nada del break-even. Figura en not_supported_yet.",
+    "Mover el stop a break-even con desplazamiento (MoveSL2BE con SL2BEAddPips distinto de None) para cubrir comisión y deslizamiento: con costes de 1557 en IS y 504 en OOS sobre 173 y 56 operaciones (≈9 por operación), un break-even exacto deja la operación ligeramente negativa. El vocabulario expone move_sl_to_be pero no el desplazamiento asociado.",
+    "Salida por tiempo condicionada al estado de la operación (por ejemplo, cerrar tras N barras solo si la operación no ha alcanzado 0,5R): el ExitAfterBars actual es incondicional y ya salió INCONCLUSIVE en PROP_02_EXIT_AFTER_BARS_sal2 (IS -2528 / OOS +2373).",
+    "Ajustar la hora de salida EOD (EODExitTime 54000) para medir cuánto del 59 % de cierres por reloj es corte prematuro: declarado no soportado porque es común a control y variantes.",
+    "Tablas de MFE/MAE por franja horaria o por dirección en IS: con la trayectoria intradía ausente (limitations) no puedo distinguir si la devolución se concentra antes o después del corte horario, lo que obliga a proponer cambios de arrastre a ciegas sobre el momento de la excursión.",
+    "No se puede cambiar la hora de salida EOD (54000) ni las opciones de trading, pero el hallazgo dominante en ambas muestras es TIME_EXIT_DOMINATED (101 de 173 cierres EOD_TIME en IS, 30 de 56 en OOS): la hipótesis más directa —comprobar cuánto del resultado lo impone el corte de las 15:00 local frente a la señal— no es expresable con el vocabulario actual.",
+    "No hay salidas parciales: con PT_RARELY_HIT (0.075 IS, 0.089 OOS) y fraction_mfe_ge_1r 0.3815/0.4643, la respuesta natural sería cerrar una parte en 1R y dejar correr el resto, y no se puede formular.",
+    "No se pueden añadir indicadores ni condiciones estructurales de sesión (apertura del cash, publicación de datos): sin eso, cualquier filtro de hora queda apoyado solo en celdas ganadoras o perdedoras de la tabla IS, que es exactamente lo que el guard prohíbe.",
+    "No hay trayectoria intradía completa (solo MAE/MFE por operación), así que POSSIBLE_INTRADAY_BREACH (17 ventanas IS y 7 OOS en el escenario principal) no puede resolverse y las tasas de ruptura del cribado tienen una franja de incertidumbre que ninguna variante puede reducir.",
+    "No existe una prueba final reservada: OOS es muestra de desarrollo y ya se ha consultado en 11 hipótesis para esta estrategia, por lo que cualquier aceptación en OOS está contaminada por selección múltiple y sería deseable un mecanismo de reserva o corrección declarado en los criterios."
+  ]
+}

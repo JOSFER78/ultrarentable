@@ -42,11 +42,15 @@ DEFAULT_MODEL = 'claude-opus-5'
 CHANGE_SCHEMA = {
     'type': 'object',
     'properties': {
-        'direction': {'type': 'string', 'enum': ['long', 'short']},
+        'direction': {'type': 'string', 'enum': ['long', 'short', 'both']},
         'exit': {'type': 'string', 'enum': list(mutations.EXIT_KEYS)},
         'value': {'type': 'string'},
         'atr_period': {'type': 'string'},
         'param_path': {'type': 'string'},
+        'filter': {'type': 'string', 'enum': list(mutations.FILTER_KINDS)},
+        'from': {'type': 'integer'},
+        'to': {'type': 'integer'},
+        'days': {'type': 'array', 'items': {'type': 'string'}},
     },
     'additionalProperties': False,
 }
@@ -122,8 +126,14 @@ SYSTEM_COMMON = (
 )
 LENSES = {
     'proponente_salidas_riesgo': 'Lente: salidas y gestión del riesgo por operación (objetivo, stop, trailing, tiempo en mercado).',
-    'proponente_estructura_frecuencia': 'Lente: estructura de la señal, frecuencia de oportunidades y relevancia para el destino (parámetros de indicadores, validez de la orden, sesgos por segmento).',
+    'proponente_estructura_frecuencia': 'Lente: estructura de la señal, frecuencia de oportunidades y relevancia para el destino (parámetros de '
+                                        'indicadores, validez de la orden, filtros de hora o día con justificación estructural de la sesión, '
+                                        'dirección operada).',
 }
+# Tablas por segmento (hora, día, dirección) que solo se muestran de la muestra de construcción:
+# elegir un filtro mirando el OOS convertiría la comprobación de desarrollo en ajuste.
+SEGMENT_TABLES = ('by_entry_hour_local', 'by_weekday', 'by_direction')
+SEGMENT_FINDING_CODES = ('LOSS_CONCENTRATED_SEGMENT',)
 
 
 def now():
@@ -147,7 +157,7 @@ def write_json(path: Path, data):
 
 # ----------------------------------------------------------------- dosier
 
-def compact_sample(sample: dict) -> dict:
+def compact_sample(sample: dict, hide_segments: bool = False) -> dict:
     keep = {
         'summary': sample['summary'],
         'concentration': sample['concentration'],
@@ -161,14 +171,36 @@ def compact_sample(sample: dict) -> dict:
         'frequency': sample['frequency'],
         'exam_screen_5d': {sid: s['horizons']['5'] for sid, s in sample['exam_screen_provisional'].items()},
     }
+    if hide_segments:
+        for table in SEGMENT_TABLES:
+            keep.pop(table, None)
+        keep['segment_tables_hidden'] = 'Las tablas por hora, día y dirección de esta muestra no se muestran: el OOS es la comprobación de desarrollo y no se ajusta sobre él.'
     return keep
+
+
+def visible_findings(findings: list[dict]) -> list[dict]:
+    """Hallazgos del dosier: en OOS, los de segmento conservan el código pero no el segmento concreto."""
+    out = []
+    for finding in findings:
+        if finding.get('sample') == 'OOS' and finding.get('code') in SEGMENT_FINDING_CODES:
+            evidence = {k: v for k, v in (finding.get('evidence') or {}).items() if k in ('dimension',)}
+            out.append({**finding, 'evidence': {**evidence, 'segment': 'oculto (no ajustar sobre OOS)'}, 'segment_hidden': True})
+        else:
+            out.append(finding)
+    return out
 
 
 def build_dossier(contract: dict, diagnosis: dict, rules_xml: bytes, explored: dict, criteria: dict) -> dict:
     catalogue = mutations.mutable_parameters(rules_xml)
-    exits = {}
+    exits, current_filters = {}, {}
+    root = mutations.ET.fromstring(rules_xml)
     for direction in ('long', 'short'):
         exits[direction] = {name: mutations.read_exit(rules_xml, direction, name) for name in mutations.EXIT_KEYS}
+        try:
+            current_filters[direction] = mutations.entry_filters(mutations._entry_rule(root, direction))
+        except ValueError as error:
+            current_filters[direction] = {'error': str(error)}
+    bars_valid = {e.get('direction'): e.get('bars_valid') for e in contract['rules'].get('entries', [])}
     return {
         'strategy': {
             'name': contract['identity']['name'], 'symbol': contract['market']['symbol'],
@@ -179,8 +211,8 @@ def build_dossier(contract: dict, diagnosis: dict, rules_xml: bytes, explored: d
         },
         'diagnosis': {
             'timezone': diagnosis['timezone'], 'point_value': diagnosis['point_value'],
-            'samples': {k: compact_sample(v) for k, v in diagnosis['samples'].items()},
-            'findings': diagnosis['findings'],
+            'samples': {k: compact_sample(v, hide_segments=(k != 'IS')) for k, v in diagnosis['samples'].items()},
+            'findings': visible_findings(diagnosis['findings']),
             'exposure_study_fondeo': {k: v.get('by_contracts') for k, v in (diagnosis.get('exposure_study_fondeo') or {}).items()},
             'limitations': diagnosis['limitations'],
         },
@@ -191,8 +223,28 @@ def build_dossier(contract: dict, diagnosis: dict, rules_xml: bytes, explored: d
             'parameters': {'description': 'Cambios de parámetro numérico por ruta: {"param_path": "<path>", "value": "<número>"}. '
                                           'Solo rutas de este catálogo; respeta min/max declarados.',
                            'catalogue': catalogue},
-            'not_supported_yet': ['añadir o quitar condiciones/indicadores', 'filtros de horario o día de la semana',
-                                  'cambiar tamaño de posición (se estudia aparte como exposición)', 'cambiar datos o periodo'],
+            'filters': {
+                'description': 'Filtros de entrada añadidos como condiciones nativas de SQX a la regla de entrada de la dirección indicada '
+                               '("direction": "long"|"short"|"both"). '
+                               '{"filter": "hour_range", "direction": ..., "from": H1, "to": H2}: la señal solo se toma si H1 <= hora de la barra < H2 '
+                               '(horas enteras 0-24, zona horaria de los datos = la misma de by_entry_hour_local). '
+                               '{"filter": "exclude_weekdays", "direction": ..., "days": ["Monday", ...]}: sin señal esos días (máximo tres; nombres en inglés o español). '
+                               '{"filter": "disable_direction", "direction": "long"|"short"}: esa dirección deja de operar. '
+                               'Semántica comprobada en SQX (2026-09-06): la hora filtrada es la de apertura de la barra que acaba de cerrar y '
+                               'genera la señal; la orden stop queda activa desde la barra siguiente, así que en H1 el primer relleno posible cae '
+                               'en la hora from+1 y el último primer relleno en la hora to (para permitir primeros rellenos entre las A y las B, '
+                               'usa from=A-1, to=B-1; la tabla by_entry_hour_local está en horas de relleno). La orden sigue válida BarsValid '
+                               f'barras ({bars_valid}), así que puede rellenarse después de la ventana, y una orden de la víspera puede '
+                               'rellenarse en un día excluido (observado en la apertura de las 08:30). Un filtro cambia la muestra de operaciones: '
+                               'la evaluación emparejada por día lo admite, pero exige mejora en construcción Y en desarrollo.',
+                'current': current_filters,
+                'timeframe': contract['market'].get('timeframe'),
+                'guard': 'Un filtro elegido solo porque una celda de la tabla IS pierde es minería de datos: exige una razón estructural '
+                         '(apertura/cierre de sesión, liquidez, publicación de datos) y declara en risks cuántas celdas de hora/día miraste.',
+            },
+            'not_supported_yet': ['añadir o quitar indicadores', 'salidas parciales', 'cambiar la hora de salida EOD u otras opciones de trading '
+                                  '(son comunes a control y variantes en el recálculo)', 'cambiar tamaño de posición (se estudia aparte como exposición)',
+                                  'cambiar datos o periodo'],
         },
         'explored_variants': [{'hypothesis': v.get('hypothesis'), 'label': v.get('label'), 'changes': v.get('changes'),
                                'class': v.get('class'), 'development': v.get('development'), 'oos_evidence': v.get('oos_evidence')}
@@ -402,11 +454,13 @@ def validate_proposals(proposals: list[dict], rules_xml: bytes) -> list[dict]:
 def proposer_prompt(dossier: dict, lens: str) -> str:
     return (
         f'{lens}\n\nAnaliza la estrategia del dosier y propón como máximo tres hipótesis de mejora, cada una con un '
-        'cambio concreto expresado en el vocabulario de mutaciones (mutation_vocabulary). Reglas: cita los códigos de '
-        'hallazgo (diagnosis.findings) y cifras del dosier; solo hipótesis con apoyo en IS y en OOS; no repitas variantes '
-        'ya exploradas (explored_variants); declara qué resultado, medido con los criterios del dosier, aceptaría o '
-        'rechazaría la hipótesis (acceptance); si necesitas una capacidad no soportada, anótala en capability_gaps en '
-        'lugar de forzar un cambio. Distingue mejora de la estrategia y aumento de exposición.\n\nDOSIER:\n'
+        'cambio concreto expresado en el vocabulario de mutaciones (mutation_vocabulary: salidas, parámetros por ruta y '
+        'filtros de hora/día/dirección). Reglas: cita los códigos de hallazgo (diagnosis.findings) y cifras del dosier; '
+        'apoya cada hipótesis en la muestra de construcción (IS) y en los agregados OOS disponibles, sin pedir tablas OOS por '
+        'segmento (no existen a propósito); no repitas variantes ya exploradas (explored_variants); declara qué resultado, '
+        'medido con los criterios del dosier, aceptaría o rechazaría la hipótesis (acceptance); si necesitas una capacidad no '
+        'soportada, anótala en capability_gaps en lugar de forzar un cambio. Un filtro de hora o día necesita una razón '
+        'estructural, no solo una celda perdedora. Distingue mejora de la estrategia y aumento de exposición.\n\nDOSIER:\n'
         + json.dumps(dossier, ensure_ascii=False)
     )
 
@@ -416,6 +470,9 @@ def critic_prompt(dossier: dict, proposals: list[dict]) -> str:
         'Eres el crítico. Intenta refutar cada propuesta con el dosier: riesgo de sobreajuste o minería de datos, muestra '
         'insuficiente, mecanismo incoherente con los tipos de cierre y los múltiplos R, efecto irrelevante para el destino, '
         'duplicado de una variante explorada, o cambio no aplicable (validation.applicable=false es refutación automática). '
+        'Para filtros de hora, día o dirección: refuta si la única razón es una celda perdedora de la tabla IS (minería de '
+        'datos con muchas celdas comparadas), si el segmento excluido tiene pocas operaciones, o si el filtro deja la '
+        'frecuencia por debajo de lo que exige el destino; acepta solo con razón estructural y muestra suficiente. '
         'Sé concreto y cita cifras. Emite ACEPTAR, REFUTAR o REVISAR por propuesta, y objeciones generales.\n\nDOSIER:\n'
         + json.dumps(dossier, ensure_ascii=False) + '\n\nPROPUESTAS:\n' + json.dumps(proposals, ensure_ascii=False)
     )
