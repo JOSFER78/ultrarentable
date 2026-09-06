@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "project": "UR_IMPROVE_STRATEGY_1_1_27_85544C4B_02",
+  "source_name": "Strategy 1.1.27",
+  "source_sha256": "6057da1d351613be9b9d4d18399be65764f386e15a6ca0d12177f142c11baa38",
+  "source_rules_sha256": "03fb4eb589430115a4cdea04d5349abd8dacd55b92d6488f73b97a98c94b86b5",
+  "state": "PREPARED_NOT_RECALCULATED",
+  "funding_verdict": "NO_EVALUABLE",
+  "selection_data_is_development": true,
+  "hypothesis": "PROP_01_TA_LONG_TIGHT_EST1: PROP_01_TA_LONG_TIGHT_est1; PROP_03_SHORT_BB_PERIOD_REDUCE: PROP_03_SHORT_BB_PERIOD_REDUCE_est3",
+  "max_variants": 2,
+  "gid": null,
+  "exit_unit_step": null,
+  "entries": [
+    {
+      "name": "Strategy 1.1.27_BASE",
+      "file": "Strategy 1.1.27_BASE.sqx",
+      "exit_value": null,
+      "exit_unit": "custom_change",
+      "sha256": "6e6c1d035cf67afdcc7c9cc240212df37381be145da8bde1ec14c0d88567d4d9",
+      "rules_sha256": "03fb4eb589430115a4cdea04d5349abd8dacd55b92d6488f73b97a98c94b86b5"
+    },
+    {
+      "name": "Strategy 1.1.27_PROP_01_TA_LONG_TIGHT_EST1",
+      "file": "Strategy 1.1.27_PROP_01_TA_LONG_TIGHT_EST1.sqx",
+      "exit_value": null,
+      "exit_unit": "custom_change",
+      "sha256": "d4562751859f57b1db7cc879099f67f1e1912052518c83f6176d49f30fa612d8",
+      "rules_sha256": "d300ceeddb13f8a0229b60008f2669e9df14f1382880e072d31b8e3836fda526"
+    },
+    {
+      "name": "Strategy 1.1.27_PROP_03_SHORT_BB_PERIOD_REDUCE",
+      "file": "Strategy 1.1.27_PROP_03_SHORT_BB_PERIOD_REDUCE.sqx",
+      "exit_value": null,
+      "exit_unit": "custom_change",
+      "sha256": "22ae8270297efd7eb6dc08095da50e3a2de8992881907afe470059e33ebd2df1",
+      "rules_sha256": "da09bebd8289b842447e76f21076f574011759af4185ac11ad5707aeb1c7cb08"
+    }
+  ],
+  "integer_contracts_requested": false,
+  "precision_requested": 2,
+  "limitations": [
+    "Input archives contain inherited historical results; only fresh RetestResults count.",
+    "Development OOS is not a final holdout.",
+    "No intraday equity path, exam session checks, or integer-contract proof yet."
+  ],
+  "recipe": "custom_reviewed_mutation",
+  "config_sha256": "2c30c1fe17f4cda9b6a0b991c2753d739a8427813110613b84041ef37bbf0a6a",
+  "variants": [
+    {
+      "label": "PROP_01_TA_LONG_TIGHT_EST1",
+      "hypothesis": "PROP_01_TA_LONG_TIGHT_est1",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#Value#]",
+          "value": "1.0",
+          "before": "1.4",
+          "after": "1.0",
+          "effective_fields": 1
+        }
+      ],
+      "semantic_rules_sha256": "1be276947199a23c029847cbc7ffee873509619b1b814c7343b6fd778d4fedb3",
+      "source": "reviewed_mutation"
+    },
+    {
+      "label": "PROP_03_SHORT_BB_PERIOD_REDUCE",
+      "hypothesis": "PROP_03_SHORT_BB_PERIOD_REDUCE_est3",
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Period#]",
+          "value": "100",
+          "before": "188",
+          "after": "100",
+          "effective_fields": 1
+        }
+      ],
+      "semantic_rules_sha256": "c88b42ec629b3488eb28db758b139705658d4e1adfa0b82c2d79b7ade8eac4c6",
+      "source": "reviewed_mutation"
+    }
+  ],
+  "screened_candidates": [],
+  "cycle_schema": "ultrarentable.improvement_cycle.v1",
+  "criteria_sha256": "307c1a4f8910f4e45069f3289621008ffa3177b9c09745b6f16f477e9d66cd8e"
+}

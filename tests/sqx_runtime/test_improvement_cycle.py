@@ -292,6 +292,16 @@ class ImprovementCycleEvaluation(unittest.TestCase):
         few = {**paired, 'days_changed': 2}
         self.assertEqual(cycle.classify('v', base, better, diag(), diag(), orders, few, criteria, 'RULES_CHANGED')['class'],
                          'INCONCLUSIVE')
+        # Caso real del servicio (2026-09-06): IS destruido (−26 %) con IC 90 % íntegramente más allá de la
+        # tolerancia y solo 2 días OOS → rechazo, no inconcluso. Un IS peor cuyo intervalo roza el cero sigue inconcluso.
+        destroyed = {'IS': metrics(7400, 1.3, 1.4), 'OOS': metrics(2600, 1.25, 1.0)}
+        strong_is = {**few, 'IS': {'bootstrap_sum_ci90': [-4900.0, -900.0]}}
+        self.assertEqual(cycle.classify('v', base, destroyed, diag(), diag(), orders, strong_is, criteria, 'RULES_CHANGED')['class'],
+                         'REJECTED_WORSE')
+        slightly = {'IS': metrics(9500, 1.4, 1.7), 'OOS': metrics(2600, 1.25, 1.0)}
+        grazing = {**few, 'IS': {'bootstrap_sum_ci90': [-1200.0, -13.0]}}
+        self.assertEqual(cycle.classify('v', base, slightly, diag(), diag(), orders, grazing, criteria, 'RULES_CHANGED')['class'],
+                         'INCONCLUSIVE')
 
 
 if __name__ == '__main__':

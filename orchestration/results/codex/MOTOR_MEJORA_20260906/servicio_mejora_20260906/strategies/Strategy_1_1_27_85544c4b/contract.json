@@ -1,0 +1,293 @@
+{
+  "schema": "ultrarentable.strategy_contract.v1",
+  "generated_utc": "2026-09-06T15:28:08.571412+00:00",
+  "identity": {
+    "name": "Strategy 1.1.27",
+    "archive_sha256": "6057da1d351613be9b9d4d18399be65764f386e15a6ca0d12177f142c11baa38",
+    "archive_bytes": 45414,
+    "rules_sha256": "03fb4eb589430115a4cdea04d5349abd8dacd55b92d6488f73b97a98c94b86b5",
+    "semantic_rules_sha256": "85544c4be48b8589e6c1d32465634895c3d5aa6d365f6e142dae96acef22aa52",
+    "sqx_file_version": "3.9.133",
+    "sqx_app_version": "SQX Build 144.2953",
+    "strategy_engine": "MetaTrader",
+    "setup_engine": "Tradestation"
+  },
+  "market": {
+    "symbol": "@EW",
+    "timeframe": "H1",
+    "instrument_name": "@EW - E-Mini S&P MidCap 400 Index (EMD) - Continuous contracts [Sep26]",
+    "data_source_id": "6",
+    "bar_type": "2",
+    "declared_timezone": "Exchange",
+    "resolved_timezone": "America/Chicago",
+    "data_precision": "M1",
+    "resource_date_from": "2022-01-03",
+    "resource_date_to": "2025-12-31",
+    "reference_contract": {
+      "exchange": "CME",
+      "description": "E-mini S&P MidCap 400 (EMD)",
+      "point_value": 100.0,
+      "tick_size": 0.1,
+      "timezone": "America/Chicago"
+    },
+    "known_proxy_alias": null
+  },
+  "period": {
+    "date_from": "2022.01.03",
+    "date_to": "2025.12.31",
+    "oos_ranges": [
+      {
+        "from": "2025.01.01",
+        "to": "2025.12.31"
+      }
+    ],
+    "test_precision": "2",
+    "session": "US_Index_Futures"
+  },
+  "costs": {
+    "commission_method": "SizeBased",
+    "commission_params": {
+      "Commission": "5.0"
+    },
+    "slippage": "2",
+    "spread": "0",
+    "swap_used": "false"
+  },
+  "sizing": {
+    "method": "FixedSize",
+    "params": {
+      "Size": "1"
+    },
+    "initial_capital": "50000",
+    "risk_management_max_drawdown": "30"
+  },
+  "options": {
+    "ExitAtEndOfDay": "true",
+    "EODExitTime": "54000",
+    "ExitOnFriday": "true",
+    "FridayExitTime": "54000",
+    "DontTradeOnWeekends": "false",
+    "LimitTimeRange": "false",
+    "SignalTimeRangeFrom": "54000",
+    "SignalTimeRangeTo": "79200",
+    "ExitAtEndOfRange": "true",
+    "UseInitialSLPT": "true",
+    "Session": "US_Index_Futures",
+    "MarketOpenSession": "No Session"
+  },
+  "rules": {
+    "signals": [
+      {
+        "slot": 0,
+        "variable": "33333333-1111-1111-3333-333333333333",
+        "items": [
+          {
+            "key": "BBLowerFalling",
+            "params": {
+              "ComputedFrom": "0",
+              "Period": "20",
+              "Deviation": "2.0",
+              "Shift": "4"
+            }
+          }
+        ],
+        "empty": false
+      },
+      {
+        "slot": 1,
+        "variable": "33333333-2222-1111-3333-333333333333",
+        "items": [
+          {
+            "key": "AND",
+            "children": [
+              {
+                "key": "BBBarOpensBelowDown",
+                "params": {
+                  "Period": "188",
+                  "Deviation": "0.8",
+                  "ComputedFrom": "3",
+                  "Shift": "3"
+                }
+              },
+              {
+                "key": "IsGreater",
+                "children": [
+                  {
+                    "key": "Low",
+                    "params": {
+                      "Shift": "4"
+                    }
+                  },
+                  {
+                    "key": "Close",
+                    "params": {
+                      "Shift": "1"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "empty": false
+      },
+      {
+        "slot": 2,
+        "variable": "33333333-1111-2222-3333-333333333333",
+        "items": [],
+        "empty": true
+      },
+      {
+        "slot": 3,
+        "variable": "33333333-2222-2222-3333-333333333333",
+        "items": [],
+        "empty": true
+      }
+    ],
+    "entries": [
+      {
+        "rule": "Long entry",
+        "action": "EnterAtStop",
+        "direction": "long",
+        "price": {
+          "kind": "SQ.Formulas.Price.UseFormula"
+        },
+        "bars_valid": "4",
+        "size": {
+          "kind": "SQ.Formulas.Size.UseGlobalMM"
+        },
+        "exits": {
+          "ExitAfterBars.ExitAfterBars": {
+            "gid": null,
+            "kind": "value",
+            "value": "0"
+          },
+          "MoveSL2BE.MoveSL2BE": {
+            "gid": null,
+            "kind": "SQ.Formulas.RangeLevel.None"
+          },
+          "MoveSL2BE.SL2BEAddPips": {
+            "gid": null,
+            "kind": "SQ.Formulas.Range.None"
+          },
+          "ProfitTarget.ProfitTarget": {
+            "gid": "052cd7ba-d4e6-4b3c-bd1c-07e56bc51200",
+            "kind": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.0",
+            "AtrPeriod": "20"
+          },
+          "StopLoss.StopLoss": {
+            "gid": "006b17c6-6c2b-4814-a305-2a1694ed2f30",
+            "kind": "SQ.Formulas.SLPT.FixedValue",
+            "Value": "90.0"
+          },
+          "TrailingStop.TrailingStop": {
+            "gid": "870b05dc-6cbd-4ddd-9c8d-a1305d3bb467",
+            "kind": "SQ.Formulas.RangeLevel.FixedValue",
+            "Value": "90.0"
+          },
+          "TrailingStop.TrailingActivation": {
+            "gid": "1d23a1f2-ddcc-49e7-84da-b0a17b8b8853",
+            "kind": "SQ.Formulas.Range.ATRBasedValue",
+            "Value": "1.4",
+            "AtrPeriod": "105"
+          }
+        }
+      },
+      {
+        "rule": "Short entry",
+        "action": "EnterAtStop",
+        "direction": "short",
+        "price": {
+          "kind": "SQ.Formulas.Price.UseFormula"
+        },
+        "bars_valid": "8",
+        "size": {
+          "kind": "SQ.Formulas.Size.UseGlobalMM"
+        },
+        "exits": {
+          "ExitAfterBars.ExitAfterBars": {
+            "gid": null,
+            "kind": "value",
+            "value": "0"
+          },
+          "MoveSL2BE.MoveSL2BE": {
+            "gid": null,
+            "kind": "SQ.Formulas.RangeLevel.None"
+          },
+          "MoveSL2BE.SL2BEAddPips": {
+            "gid": null,
+            "kind": "SQ.Formulas.Range.None"
+          },
+          "ProfitTarget.ProfitTarget": {
+            "gid": "76b4f445-96c1-48f1-bb1a-39c0af614d35",
+            "kind": "SQ.Formulas.SLPT.ATRBasedValue",
+            "Value": "2.4",
+            "AtrPeriod": "25"
+          },
+          "StopLoss.StopLoss": {
+            "gid": "5ebd8d39-31f9-4e34-b3ec-9520e297afe8",
+            "kind": "SQ.Formulas.SLPT.FixedValue",
+            "Value": "115.0"
+          },
+          "TrailingStop.TrailingStop": {
+            "gid": "cb765a2d-4830-43ac-ac64-557a514420d1",
+            "kind": "SQ.Formulas.RangeLevel.ATRBasedValue",
+            "Value": "1.1",
+            "AtrPeriod": "50"
+          },
+          "TrailingStop.TrailingActivation": {
+            "gid": "4299a4b2-5a73-46c3-a665-42018fc85826",
+            "kind": "SQ.Formulas.Range.FixedValue",
+            "Value": "50.0"
+          }
+        }
+      }
+    ],
+    "exit_rules": [
+      {
+        "rule": "Long exit",
+        "action": "ClosePosition"
+      },
+      {
+        "rule": "Short exit",
+        "action": "ClosePosition"
+      }
+    ],
+    "rule_names": [
+      "Trading signals",
+      "Long entry",
+      "Short entry",
+      "Long exit",
+      "Short exit"
+    ]
+  },
+  "provenance": {
+    "archive_path": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/source/Strategy 1.1.27.sqx",
+    "origin": {
+      "origin": "generador SQX UR_EW_BUILDER_20260906 (E-mini S&P MidCap 400, datos de futuros continuos SQX)",
+      "destino": "fondeo+ultra",
+      "encolado_por": "Claude, 2026-09-06"
+    },
+    "inherited_results_present": true,
+    "inherited_results_policy": "Los resultados heredados del archivo sirven para diagnosticar; la referencia comparable es siempre un rec\u00e1lculo fresco.",
+    "data_provenance_state": "DECLARED_NOT_INDEPENDENTLY_VERIFIED"
+  },
+  "essentials_missing": [],
+  "warnings": [],
+  "state": "CONTRACT_COMPLETE",
+  "destination_hints": {
+    "fondeo": {
+      "instrument_is_futures_contract": true,
+      "data_is_known_cfd_proxy": false,
+      "flat_at_end_of_day": true,
+      "eligible_for_provisional_exam_screen": true,
+      "note": "Elegible para un cribado provisional de examen; la admisi\u00f3n real depende de las reglas fechadas de cada modalidad."
+    },
+    "ultra": {
+      "timeframe_in_canonical_set": true,
+      "intraday_only": true,
+      "note": "Criterios Ultra en construcci\u00f3n; cualquier evaluaci\u00f3n es exploratoria."
+    }
+  }
+}

@@ -171,6 +171,12 @@
       "fecha": "2026-09-06",
       "titulo": "Motor de mejora, fase 2: debate de agentes integrado y ciclo 02 con hipótesis de agentes",
       "detalle": "Investigación (INVESTIGACION_DEBATE_SEMANTICO.md): el debate semántico tiene sentido para proponer y criticar hipótesis, no para medir; el \"debate\" previo de la API era un guion pregrabado sin modelo. Implementado sqx_hypothesis_debate.py (dos proponentes ciegos, validación determinista, crítico, árbitro sin consenso forzado, presupuesto de búsqueda) e integrado en el ciclo. Dos debates reales con Claude Opus 5 y un ciclo 02 recalculado en SQX: BarsValid 4→8 NO_EFFECT_IN_SAMPLE, objetivo 1,6/2,0 ATR HISTORICAL_FIT_ONLY. Endpoint de IA del sistema fijado por Emilio: omnirouter de Oracle con alias por tarea en el panel de superadmin. Cero estrategias acreditadas."
+    },
+    {
+      "id": "motor-mejora-fase-3-servicio",
+      "fecha": "2026-09-06",
+      "titulo": "Motor de mejora, fase 3: programas independientes y servicio autónomo con agentes en la VPS",
+      "detalle": "El motor queda como nueve programas con contrato de ficheros (contrato, diagnóstico, mutaciones, debate, recálculo, evaluación separada, orquestación/entrega, servicio, andamio de pruebas). sqx_improvement_service.py + sqx-mejora-agentes.timer: cola persistente por estrategia, inbox/outbox, presupuesto (3 experimentos, 2 debates vacíos, 2 fallos), estados con diagnóstico, cerrojo y comprobaciones previas; una estrategia y un experimento por hora; debate por el omnirouter de Oracle. Guía: docs/Laboratorio/07_MOTOR_MEJORA_CICLO.md."
     }
   ],
   "fase_activa": null,

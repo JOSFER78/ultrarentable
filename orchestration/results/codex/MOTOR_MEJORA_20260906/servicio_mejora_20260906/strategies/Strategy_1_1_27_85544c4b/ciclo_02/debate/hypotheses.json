@@ -1,0 +1,67 @@
+{
+  "schema": "ultrarentable.hypotheses.v1",
+  "source": "AGENT_DEBATE",
+  "generated_utc": "2026-09-06T15:31:22.767342+00:00",
+  "hypotheses": [
+    {
+      "id": "PROP_01_TA_LONG_TIGHT_est1",
+      "title": "Adelantar la activación del Trailing Stop en posiciones largas para asegurar excursiones favorables",
+      "problem": "En OOS, 7 operaciones perdedoras (23.33% del total de perdedoras) alcanzaron MFE >= 1R antes de cerrar con pérdidas, evidenciando una protección insuficiente de las ganancias acumuladas intradía.",
+      "change": "Cambiar parámetro TrailingActivation Value en Long de 1.4 a 1.0",
+      "expected": "Reducción en la tasa de operaciones perdedoras tras excursión favorable en OOS (por debajo del 23.33%) y mejora de la expectativa de beneficio por operación R (actualmente 0.1496 en OOS).",
+      "acceptance": "Se aceptará si en IS y OOS la delta de Profit Factor supera +0.03 o Return/Drawdown mejora en al menos 5.0% respecto a la base (2.194 IS / 1.185 OOS), manteniendo el beneficio neto dentro de la tolerancia de no empeoramiento (2%). Se rechazará si el profit factor disminuye más de 0.03.",
+      "evidence_codes": [
+        "LOSERS_AFTER_FAVOURABLE_EXCURSION",
+        "TIME_EXIT_DOMINATED"
+      ],
+      "destination_expectation": {
+        "fondeo": "Disminución de la tasa de ruptura (breach_rate de 0.0428 en OOS) al recortar pérdidas tras avances significativos.",
+        "ultra": "Aumento en la proporción de operaciones cerradas con conservación de MFE >= 1R (share_of_losers_after_mfe_ge_1r menor a 0.10)."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Long entry]/Then/Item[EnterAtStop]/Param[#TrailingStop.TrailingActivation#]/Formula[SQ.Formulas.Range.ATRBasedValue]/Param[#Value#]",
+          "value": "1.0"
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "REVISAR",
+      "critic_reasons": [
+        "Mecanismo coherente para abordar la objeción LOSERS_AFTER_FAVOURABLE_EXCURSION (7 perdedoras en OOS alcanzaron MFE >= 1R, 23.33%).",
+        "Establecer TrailingActivation en 1.0 ATR inicia la protección dinámicamente justo al cubrir el riesgo inicial de 1R sin ser tan restrictivo como 0.9 ATR.",
+        "Requiere validación determinista para confirmar que no degrade el beneficio neto OOS (7706.0 USD) ni el Profit Factor (1.323)."
+      ],
+      "confidence": "media"
+    },
+    {
+      "id": "PROP_03_SHORT_BB_PERIOD_REDUCE_est3",
+      "title": "Reducir el periodo de Bollinger Bar Opens Below Down en la señal Short",
+      "problem": "Baja frecuencia de entrada global (1.106 ops/semana IS, 1.073 OOS) con un sesgo asimétrico notable hacia posiciones Long (140 long vs 33 short en IS; 48 long vs 8 short en OOS).",
+      "change": "Cambiar parámetro Period de BBBarOpensBelowDown en señal Short de 188 a 100",
+      "expected": "Aumento en el número de operaciones Short por año (actualmente solo 8 en OOS 2025) y mayor frecuencia general sin deteriorar el Profit Factor de Short (1.927 IS / 1.901 OOS).",
+      "acceptance": "Se aceptará si el número de operaciones por semana aumenta a >= 1.4 y el Beneficio Neto OOS mejora o se mantiene dentro de la tolerancia de +-2%, con un Profit Factor de la dirección Short >= 1.50. Se rechazará si el Profit Factor global OOS cae más de 0.03.",
+      "evidence_codes": [
+        "LOW_FREQUENCY_FOR_SHORT_EXAM",
+        "LOW_EXAM_TARGET_RATE_5D"
+      ],
+      "destination_expectation": {
+        "fondeo": "Mejora de la tasa de objetivo en ventanas de 5 días al incrementar las oportunidades de operación por semana a más de 1.5.",
+        "ultra": "Evaluación del equilibrio en la frecuencia entre largos y cortos para mejorar la consistencia intradía."
+      },
+      "changes": [
+        {
+          "param_path": "StrategyFile/Strategy/Rules/Events/Event[OnBarUpdate]/Rule[Trading signals]/signals/signal[33333333-2222-1111-3333-333333333333]/Item[AND]/Item[BBBarOpensBelowDown]/Param[#Period#]",
+          "value": "100"
+        }
+      ],
+      "proposer": "proponente_estructura_frecuencia",
+      "critic_verdict": "REVISAR",
+      "critic_reasons": [
+        "Aborda de manera directa la baja frecuencia y asimetría reportadas en LOW_FREQUENCY_FOR_SHORT_EXAM (1.073 ops/sem en OOS, solo 8 ops Short frente a 48 Long en 2025).",
+        "Las operaciones Short vigentes muestran un alto Profit Factor (1.927 en IS y 1.901 en OOS), por lo que aumentar la reactividad de la banda disminuyendo el periodo de 188 a 100 es mecánicamente sólido.",
+        "Requiere prueba determinista para verificar que las nuevas entradas Short mantengan un PF >= 1.50 sin disparar cierres por SL."
+      ],
+      "confidence": "baja"
+    }
+  ]
+}

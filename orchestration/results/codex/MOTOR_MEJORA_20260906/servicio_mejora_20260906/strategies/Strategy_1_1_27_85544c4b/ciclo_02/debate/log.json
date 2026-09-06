@@ -1,0 +1,74 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "started_utc": "2026-09-06T15:30:04.930159+00:00",
+  "provider": "omniroute",
+  "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_02",
+  "dossier_sha256": "d752e1f0ad6c8bd29714995202c15d709ae43e6a15edacb7dd08c103d82a0267",
+  "calls": [
+    {
+      "role": "proponente_salidas_riesgo",
+      "model": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "usage": {
+        "input_tokens": 16520,
+        "output_tokens": 1988
+      },
+      "cost_usd": null,
+      "routing_decision": "strategy=auto; provider=antigravity; latency_ms=11812",
+      "tls": "unverified (certificado no reconocido; degradado)",
+      "fallback_reason": "HTTP 400 para ultrarentable-mejora-proponente: {\"error\":{\"message\":\"Unable to determine provider for model 'ultrarentable-mejora-proponente'. Use a provider/model prefix (e.g. openai/ultrarentable-mejora-pro",
+      "seconds": 17.3,
+      "prompt_sha256": "4c8e93e3463e02c50b6956dba5544358872899694639d0a50d9df9ed72ef13a5",
+      "utc": "2026-09-06T15:30:22.251498+00:00"
+    },
+    {
+      "role": "proponente_estructura_frecuencia",
+      "model": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "usage": {
+        "input_tokens": 16532,
+        "output_tokens": 2003
+      },
+      "cost_usd": null,
+      "routing_decision": "strategy=auto; provider=antigravity; latency_ms=9996",
+      "tls": "unverified (certificado no reconocido; degradado)",
+      "fallback_reason": "HTTP 400 para ultrarentable-mejora-proponente: {\"error\":{\"message\":\"Unable to determine provider for model 'ultrarentable-mejora-proponente'. Use a provider/model prefix (e.g. openai/ultrarentable-mejora-pro",
+      "seconds": 14.2,
+      "prompt_sha256": "df1edb768f9fa5e7cf510d92755199b47bb8352ee9b0d2ce09af3ef0f1af21bb",
+      "utc": "2026-09-06T15:30:36.499040+00:00"
+    },
+    {
+      "role": "critico",
+      "model": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "usage": {
+        "input_tokens": 20573,
+        "output_tokens": 1324
+      },
+      "cost_usd": null,
+      "routing_decision": "strategy=auto; provider=antigravity; latency_ms=11617",
+      "tls": "unverified (certificado no reconocido; degradado)",
+      "fallback_reason": "HTTP 400 para ultrarentable-mejora-critico: {\"error\":{\"message\":\"Unable to determine provider for model 'ultrarentable-mejora-critico'. Use a provider/model prefix (e.g. openai/ultrarentable-mejora-critic",
+      "seconds": 16.8,
+      "prompt_sha256": "bbd6b991f543287877ee51d6f5622ab96743d190e4165f3ff55b3261f20a39df",
+      "utc": "2026-09-06T15:30:53.678486+00:00"
+    },
+    {
+      "role": "arbitro",
+      "model": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "usage": {
+        "input_tokens": 6841,
+        "output_tokens": 691
+      },
+      "cost_usd": null,
+      "routing_decision": "strategy=auto; provider=antigravity; latency_ms=23938",
+      "tls": "unverified (certificado no reconocido; degradado)",
+      "fallback_reason": "HTTP 400 para ultrarentable-mejora-arbitro: {\"error\":{\"message\":\"Unable to determine provider for model 'ultrarentable-mejora-arbitro'. Use a provider/model prefix (e.g. openai/ultrarentable-mejora-arbitr",
+      "seconds": 29.1,
+      "prompt_sha256": "afadb587e702dcc56f839492866779e6441ba93889dea893634f50b2e2dfaca0",
+      "utc": "2026-09-06T15:31:22.766859+00:00"
+    }
+  ],
+  "capability_gaps": [
+    "Falta de soporte para configurar salidas de horario intradía específicas o ventanas temporales personalizadas por día de la semana dentro del catálogo de parámetros.",
+    "Falta de trayectoria intradía tick-by-tick completa para simular cierres breakeven precisos en simulación sin sesgo de MAE/MFE de vela completada.",
+    "Filtros de horario o día de la semana para excluir tramos sistemáticamente perdedores como las 10:00 local (neto -2890.0 en OOS) o los lunes (-4149.0 en OOS)."
+  ]
+}

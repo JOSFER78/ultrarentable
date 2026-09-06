@@ -1,0 +1,32 @@
+{
+  "estrategia": "Strategy 1.1.27",
+  "intervenciones": [
+    {
+      "agente": "proponente_salidas_riesgo",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "El análisis del dosier de Strategy 1.1.27 en la lente de salidas y gestión del riesgo muestra deficiencias clave en ambos periodos (IS: 173 trades, Net 40503.0, Max DD 18457.0; OOS: 56 trades, Net 7706.0, Max DD 6501.0). El comportamiento está dominado por la hora de salida intradía (TIME_EXIT_DOMINATED: 59% de salidas en IS con 101 EOD_TIME; 53.6% en OOS con 30 EOD_TIME), mientras que el Profit Target raramente se alcanza (PT_RARELY_HIT: 7.5% en IS, 8.9% en OOS). En OOS, 7 perdedoras (23.33% del total) tuvieron MFE >= 1R antes de cerrar con pérdidas (LOSERS_AFTER_FAVOURABLE_EXCURSION) y el Stop Loss generó pérdidas elevadas (SL_HIT_SHARE_HIGH: 37.5% de salidas en OOS).",
+      "utc": "2026-09-06T15:28:40.106081+00:00"
+    },
+    {
+      "agente": "proponente_estructura_frecuencia",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "El análisis del dosier de la Estrategia 1.1.27 sobre @EW (H1) revela una frecuencia baja (1.106 trad/sem en IS y 1.073 en OOS, LOW_FREQUENCY_FOR_SHORT_EXAM), lo que penaliza la tasa de éxito en ventanas de 5 días de fondeo (0.0746 en IS y 0.0311 en OOS para PROV_50K_OBJ6_TRAIL4, LOW_EXAM_TARGET_RATE_5D). Las salidas están dominadas por el reloj (59% en IS y 53.6% en OOS son EOD_TIME, TIME_EXIT_DOMINATED) y el Profit Target rara vez se alcanza (7.5% en IS y 8.9% en OOS, PT_RARELY_HIT). Además, en OOS un 23.33% de los perdedores llegaron a estar >= 1R a favor (LOSERS_AFTER_FAVOURABLE_EXCURSION) y existe concentración de pérdidas en lunes (-4149.0 USD OOS) y a las 10:00 (-2890.0 USD OOS, LOSS_CONCENTRATED_SEGMENT). Se proponen mutaciones válidas para abordar estas ineficiencias de salida y validez de señal.",
+      "utc": "2026-09-06T15:29:06.291386+00:00"
+    },
+    {
+      "agente": "critico",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "Duplicidad estricta entre proponente_salidas_riesgo y proponente_estructura_frecuencia: PROP_01_LONG_TA_REDUCE_sal1 es idéntica a PROP_01_TS_ACTIVATION_LONG_est1, y PROP_03_REDUCE_LONG_PT_sal3 es idéntica a PROP_02_PT_LONG_REDUCE_est2. | Variantes sobre el Profit Target (PT 1.5 ATR) ignoran la evidencia previa del dosier: la variante explorada VPT_MID_ASIM_EST1 (PT 1.6 ATR) ya demostró ser HISTORICAL_FIT_ONLY con una degradación neta de -1647.0 en OOS. | La estrategia padece de PROFIT_DEPENDS_ON_FEW_TRADES (net OOS sin top 3 ganadores cae a -1837.0). Recortar PT o SL fijos destruye la convexidad necesaria para mantener la esperanza matemática positiva (expectancy_r OOS = 0.1496). | El presupuesto de búsqueda está acotado (max_variants_this_experiment: 2, con 8 hipótesis ya evaluadas para Strategy 1.1.27), y ninguna de las 6 propuestas aporta un cambio estructural válido y no explorado previamente.",
+      "utc": "2026-09-06T15:29:22.238295+00:00"
+    },
+    {
+      "agente": "arbitro",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "No se selecciona ninguna propuesta para recalcular debido a que las 6 propuestas presentadas han sido refutadas en la crítica previa y ninguna cumple simultáneamente los criterios de ser aplicable (validation.applicable=true) y no estar refutada. PROP_01_LONG_TA_REDUCE_sal1 y PROP_01_TS_ACTIVATION_LONG_est1 (activación de trailing stop a 1.0 ATR para mitigar LOSERS_AFTER_FAVOURABLE_EXCURSION y TIME_EXIT_DOMINATED) son idénticas e incoherentes con la distancia fija de 90.0 puntos del trailing stop. PROP_03_REDUCE_LONG_PT_sal3 y PROP_02_PT_LONG_REDUCE_est2 (reducción de PT a 1.5 ATR para atender PT_RARELY_HIT) son duplicadas y constituyen una variante directa de la hipótesis explorada VPT_MID_ASIM_EST1, la cual resultó en HISTORICAL_FIT_ONLY con degradación de beneficio neto OOS de -1647.0. PROP_02_REDUCE_LONG_SL_sal2 (reducción de SL a 75.0 puntos ante SL_HIT_SHARE_HIGH) incrementaría los cierres por ruido sobre una tasa actual del 37.5% en OOS (21 de 56 operaciones, -20589.0 USD). Finalmente, PROP_03_SHORT_BARS_VALID_est3 (BarsValid de 8 a 4 en cortas ante LOSS_CONCENTRATED_SEGMENT) se basa en una muestra insuficiente de solo 8 operaciones cortas en OOS (short_trades = 8, net = 3008.0 USD), con alto riesgo de sobreajuste.",
+      "utc": "2026-09-06T15:29:33.318576+00:00"
+    }
+  ],
+  "veredicto_colegiado": "0 hipótesis seleccionadas de 6 propuestas",
+  "puntuacion_consenso": null,
+  "nota": "Debate real registrado; ninguna hipótesis está validada hasta recalcularse y evaluarse."
+}

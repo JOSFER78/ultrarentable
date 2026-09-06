@@ -1,0 +1,69 @@
+{
+  "schema": "ultrarentable.improvement_service.v1",
+  "strategies": {
+    "Strategy_1_1_27_85544c4b": {
+      "slug": "Strategy_1_1_27_85544c4b",
+      "name": "Strategy 1.1.27",
+      "symbol": "@EW",
+      "timeframe": "H1",
+      "semantic_rules_sha256": "85544c4be48b8589e6c1d32465634895c3d5aa6d365f6e142dae96acef22aa52",
+      "source": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/source/Strategy 1.1.27.sqx",
+      "source_sha256": "6057da1d351613be9b9d4d18399be65764f386e15a6ca0d12177f142c11baa38",
+      "origin": {
+        "origin": "generador SQX UR_EW_BUILDER_20260906 (E-mini S&P MidCap 400, datos de futuros continuos SQX)",
+        "destino": "fondeo+ultra",
+        "encolado_por": "Claude, 2026-09-06"
+      },
+      "state": "IN_PROGRESS",
+      "reason": null,
+      "budget": {
+        "max_experiments": 3,
+        "max_failed_attempts": 2,
+        "max_empty_debates": 2,
+        "max_variants": 2
+      },
+      "experiments": [
+        {
+          "outcome": "NO_HYPOTHESES",
+          "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_01",
+          "debate": {
+            "proposed": 6,
+            "applicable": 6,
+            "refuted_by_critic": 6,
+            "selected": 0,
+            "previously_tested": 8
+          },
+          "next_round": "En caso de fallo general de este lote de propuestas, en la siguiente ronda se deber\u00e1n formular hip\u00f3tesis no duplicadas que act\u00faen sobre el filtro horario directo del segmento de p\u00e9rdida (hora 10: -2890.0 USD) o sobre la distancia fija de Stop Loss/Trailing Stop (90.0 puntos) en lugar de la activaci\u00f3n ATR, protegiendo siempre la cola derecha de la distribuci\u00f3n para no degradar el beneficio neto OOS (7706.0 USD) ni romper la dependencia en operaciones >= 3R ( share_of_profit_from_trades_ge_3r = 0.3149).",
+          "capability_gaps": [
+            "Incapacidad de aplicar filtros expl\u00edcitos de d\u00eda de la semana o franja horaria para excluir segmentos perdedores conocidos (lunes y hora local 10)."
+          ],
+          "utc": "2026-09-06T15:29:33.320155+00:00"
+        },
+        {
+          "outcome": "EVALUATED",
+          "cycle": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_02",
+          "project": "UR_IMPROVE_STRATEGY_1_1_27_85544C4B_02",
+          "classes": {
+            "Strategy 1.1.27_PROP_01_TA_LONG_TIGHT_EST1": "INCONCLUSIVE",
+            "Strategy 1.1.27_PROP_03_SHORT_BB_PERIOD_REDUCE": "INCONCLUSIVE"
+          },
+          "accepted_for_validation": [],
+          "cost": {
+            "wall_seconds_total": 25.6,
+            "native_task_seconds": 3,
+            "strategies_retested": 3,
+            "measured_utc": "2026-09-06T15:31:48.682364+00:00"
+          },
+          "entrega": "/opt/SQX-headless/import/mejora/strategies/Strategy_1_1_27_85544c4b/ciclo_02/entrega.json",
+          "utc": "2026-09-06T15:31:50.267884+00:00"
+        }
+      ],
+      "failed_attempts": 0,
+      "empty_debates": 0,
+      "last_error": null,
+      "created_utc": "2026-09-06T15:28:08.591648+00:00",
+      "updated_utc": "2026-09-06T15:31:50.267907+00:00"
+    }
+  },
+  "updated_utc": "2026-09-06T15:31:50.267913+00:00"
+}

@@ -1,0 +1,32 @@
+{
+  "estrategia": "Strategy 1.1.27",
+  "intervenciones": [
+    {
+      "agente": "proponente_salidas_riesgo",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "El análisis de la estrategia 1.1.27 en @EW (H1) revela serias ineficiencias en la gestión de salidas y el control de riesgo en operaciones abiertas. En primer lugar, la salida por tiempo domina las operaciones (TIME_EXIT_DOMINATED), representando el 59% de las salidas en IS (101 de 173 trades EOD_TIME) y el 53.6% en OOS (30 de 56 trades EOD_TIME). Esto se debe a un objetivo de beneficio (ProfitTarget) excesivamente lejano que casi nunca se alcanza (PT_RARELY_HIT), representando apenas el 7.5% de las salidas en IS (13 trades) y el 8.9% en OOS (5 trades). En segundo lugar, existe una importante degradación de beneficios no protegidos (LOSERS_AFTER_FAVOURABLE_EXCURSION), donde en OOS 7 operaciones perdedoras (23.33% de los perdedores) alcanzaron un MFE >= 1R antes de terminar en pérdida. Asimismo, las pérdidas por Stop Loss representan el 37.5% de las salidas en OOS (21 trades, SL_HIT_SHARE_HIGH). Estas limitaciones perjudican la tasa de éxito en el cribado provisional de examen de 5 días (LOW_EXAM_TARGET_RATE_5D), situando el target_rate en 0.0746 (7.46%) en IS y 0.0311 (3.11%) en OOS bajo el escenario PROV_50K_OBJ6_TRAIL4.",
+      "utc": "2026-09-06T15:30:22.251498+00:00"
+    },
+    {
+      "agente": "proponente_estructura_frecuencia",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "La estrategia Strategy 1.1.27 presenta una frecuencia operativa reducida (1.106 ops/semana en IS y 1.073 en OOS) y una fuerte dominancia de salidas por tiempo EOD_TIME (59% en IS y 53.6% en OOS). El objetivo de beneficio fijado se alcanza muy raras veces (7.5% IS, 8.9% OOS), mientras que un 23.33% de las operaciones perdedoras en OOS (7 operaciones) llegaron a registrar una excursión favorable (MFE) >= 1R antes de girarse y cerrar en negativo. Asimismo, el rendimiento en fondeo en ventanas de 5 días es bajo (tasa de objetivo del 7.46% en IS y 3.11% en OOS para PROV_50K_OBJ6_TRAIL4). Existen sesgos de pérdidas concentradas en tramos específicos como las 10:00 (neto -2890.0 en OOS) y los lunes (-4149.0 en OOS), cuya eliminación directa requiere capacidades no soportadas en el catálogo de mutaciones actual.",
+      "utc": "2026-09-06T15:30:36.499040+00:00"
+    },
+    {
+      "agente": "critico",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "La estrategia presenta una concentración crítica de beneficios en pocos ganadores (PROFIT_DEPENDS_ON_FEW_TRADES): el beneficio neto OOS es de 7706.0 USD, pero sin los 3 mejores trades cae a -1837.0 USD. | Fuerte sesgo de asimetría entre direcciones en OOS (48 operaciones Long frente a solo 8 Short), lo que causa una frecuencia operativa insuficiente para pruebas cortas de fondeo (LOW_FREQUENCY_FOR_SHORT_EXAM, 1.073 trades/semana). | Las salidas están dominadas por el reloj (TIME_EXIT_DOMINATED, 53.6% EOD_TIME en OOS) debido a Profit Targets lejanos que rara vez se alcanzan (PT_RARELY_HIT, 8.9% en OOS). | Tasa de superación de exámen a 5 días excesivamente baja (LOW_EXAM_TARGET_RATE_5D) en OOS: 3.11% en el escenario PROV_50K_OBJ6_TRAIL4 y 2.33% en PROV_50K_OBJ8_TRAIL5_DLL2 (este último con una tasa de ruptura de 22.18%).",
+      "utc": "2026-09-06T15:30:53.678486+00:00"
+    },
+    {
+      "agente": "arbitro",
+      "modelo": "gemini-3-flash via auto/best-reasoning (fallback)",
+      "texto": "Se seleccionan las únicas dos propuestas que cumplen con ser aplicables (validation.applicable=true) y que no han sido refutadas en la crítica (veredicto REVISAR). Además, representan dos mecanismos complementarios y totalmente distintos: PROP_01_TA_LONG_TIGHT_est1 ajusta la gestión de salida/riesgo dinámico en Long (reducir TrailingActivation de 1.4 a 1.0 ATR) para mitigar el hallazgo LOSERS_AFTER_FAVOURABLE_EXCURSION (23.33% de perdedoras en OOS alcanzaron >= 1R) sin ser tan agresiva como la versión refutada de 0.9 ATR; por su parte, PROP_03_SHORT_BB_PERIOD_REDUCE_est3 actúa sobre la lógica de entrada ajustando el indicador BBBarOpensBelowDown de 188 a 100 periodos para atacar la baja frecuencia y asimetría reportadas en LOW_FREQUENCY_FOR_SHORT_EXAM (solo 8 ops Short frente a 48 Long en OOS). Ambas cuentan con respaldo y métricas evaluables tanto en IS como en OOS.",
+      "utc": "2026-09-06T15:31:22.766859+00:00"
+    }
+  ],
+  "veredicto_colegiado": "2 hipótesis seleccionadas de 6 propuestas",
+  "puntuacion_consenso": null,
+  "nota": "Debate real registrado; ninguna hipótesis está validada hasta recalcularse y evaluarse."
+}

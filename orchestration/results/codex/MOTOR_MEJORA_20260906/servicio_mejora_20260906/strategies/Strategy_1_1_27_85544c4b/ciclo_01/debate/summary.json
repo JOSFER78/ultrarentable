@@ -1,0 +1,88 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "finished_utc": "2026-09-06T15:29:33.318875+00:00",
+  "provider": "omniroute",
+  "models": [
+    "gemini-3-flash via auto/best-reasoning (fallback)"
+  ],
+  "search_budget": {
+    "proposed": 6,
+    "applicable": 6,
+    "refuted_by_critic": 6,
+    "selected": 0,
+    "previously_tested": 8
+  },
+  "cost_usd_total": 0,
+  "seconds_total": 83.1,
+  "dissent": [
+    "Desacuerdo entre los proponentes (proponente_salidas_riesgo y proponente_estructura_frecuencia) y la crítica sobre el impacto de reducir el Profit Target a 1.5 ATR: mientras los proponentes argumentaban un incremento en la tasa de acierto y aceleración de monetización frente a TIME_EXIT_DOMINATED, la crítica evidencia que recortar el objetivo compromete la convexidad de la estrategia, la cual depende de grandes ganadores (net OOS pasa de 7706.0 a -1837.0 sin los 3 mejores ganadores).",
+    "Desacuerdo respecto a PROP_03_SHORT_BARS_VALID_est3: proponente_estructura_frecuencia pretendía subsanar pérdidas en el segmento de la hora 10 (LOSS_CONCENTRATED_SEGMENT: -2890.0 USD), pero la crítica objeta que 48 de las 56 operaciones OOS son largas y modificar el parámetro sobre 8 operaciones cortas carece de significación estadística."
+  ],
+  "rationale": "No se selecciona ninguna propuesta para recalcular debido a que las 6 propuestas presentadas han sido refutadas en la crítica previa y ninguna cumple simultáneamente los criterios de ser aplicable (validation.applicable=true) y no estar refutada. PROP_01_LONG_TA_REDUCE_sal1 y PROP_01_TS_ACTIVATION_LONG_est1 (activación de trailing stop a 1.0 ATR para mitigar LOSERS_AFTER_FAVOURABLE_EXCURSION y TIME_EXIT_DOMINATED) son idénticas e incoherentes con la distancia fija de 90.0 puntos del trailing stop. PROP_03_REDUCE_LONG_PT_sal3 y PROP_02_PT_LONG_REDUCE_est2 (reducción de PT a 1.5 ATR para atender PT_RARELY_HIT) son duplicadas y constituyen una variante directa de la hipótesis explorada VPT_MID_ASIM_EST1, la cual resultó en HISTORICAL_FIT_ONLY con degradación de beneficio neto OOS de -1647.0. PROP_02_REDUCE_LONG_SL_sal2 (reducción de SL a 75.0 puntos ante SL_HIT_SHARE_HIGH) incrementaría los cierres por ruido sobre una tasa actual del 37.5% en OOS (21 de 56 operaciones, -20589.0 USD). Finalmente, PROP_03_SHORT_BARS_VALID_est3 (BarsValid de 8 a 4 en cortas ante LOSS_CONCENTRATED_SEGMENT) se basa en una muestra insuficiente de solo 8 operaciones cortas en OOS (short_trades = 8, net = 3008.0 USD), con alto riesgo de sobreajuste.",
+  "next_round_if_all_fail": "En caso de fallo general de este lote de propuestas, en la siguiente ronda se deberán formular hipótesis no duplicadas que actúen sobre el filtro horario directo del segmento de pérdida (hora 10: -2890.0 USD) o sobre la distancia fija de Stop Loss/Trailing Stop (90.0 puntos) en lugar de la activación ATR, protegiendo siempre la cola derecha de la distribución para no degradar el beneficio neto OOS (7706.0 USD) ni romper la dependencia en operaciones >= 3R ( share_of_profit_from_trades_ge_3r = 0.3149).",
+  "general_objections": [
+    "Duplicidad estricta entre proponente_salidas_riesgo y proponente_estructura_frecuencia: PROP_01_LONG_TA_REDUCE_sal1 es idéntica a PROP_01_TS_ACTIVATION_LONG_est1, y PROP_03_REDUCE_LONG_PT_sal3 es idéntica a PROP_02_PT_LONG_REDUCE_est2.",
+    "Variantes sobre el Profit Target (PT 1.5 ATR) ignoran la evidencia previa del dosier: la variante explorada VPT_MID_ASIM_EST1 (PT 1.6 ATR) ya demostró ser HISTORICAL_FIT_ONLY con una degradación neta de -1647.0 en OOS.",
+    "La estrategia padece de PROFIT_DEPENDS_ON_FEW_TRADES (net OOS sin top 3 ganadores cae a -1837.0). Recortar PT o SL fijos destruye la convexidad necesaria para mantener la esperanza matemática positiva (expectancy_r OOS = 0.1496).",
+    "El presupuesto de búsqueda está acotado (max_variants_this_experiment: 2, con 8 hipótesis ya evaluadas para Strategy 1.1.27), y ninguna de las 6 propuestas aporta un cambio estructural válido y no explorado previamente."
+  ],
+  "capability_gaps": [
+    "Incapacidad de aplicar filtros explícitos de día de la semana o franja horaria para excluir segmentos perdedores conocidos (lunes y hora local 10)."
+  ],
+  "proposals": [
+    {
+      "id": "PROP_01_LONG_TA_REDUCE_sal1",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Reducción del umbral de activación del Trailing Stop en Long",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_02_REDUCE_LONG_SL_sal2",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Ajuste del Stop Loss fijo en posiciones Long",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_03_REDUCE_LONG_PT_sal3",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Ajuste del Profit Target en posiciones Long",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_01_TS_ACTIVATION_LONG_est1",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Adelantar la activación del Trailing Stop en posiciones largas para proteger excursiones favorables",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_02_PT_LONG_REDUCE_est2",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Ajustar el objetivo de beneficio a un nivel de ATR más alcanzable en posiciones largas",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_03_SHORT_BARS_VALID_est3",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Reducir la validez en barras de la orden de entrada Stop para posiciones cortas",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    }
+  ]
+}

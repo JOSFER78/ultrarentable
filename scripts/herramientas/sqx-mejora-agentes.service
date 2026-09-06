@@ -1,0 +1,15 @@
+[Unit]
+Description=Ultrarentable: motor de mejora con debate de agentes (un experimento por ejecución; estado en /opt/SQX-headless/import/mejora)
+After=network-online.target sqx-headless.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/SQX-headless/import
+EnvironmentFile=-/etc/ultrarentable/mejora.env
+ExecStart=/usr/bin/python3 /opt/SQX-headless/import/sqx_improvement_service.py --once --base /opt/SQX-headless/import/mejora --template /opt/SQX-headless/import/ew_native_sl_retest_20260906/project.cfx --registry /opt/SQX-headless/import/improvement_registry --provider omniroute
+TimeoutStartSec=1500
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+UMask=0077

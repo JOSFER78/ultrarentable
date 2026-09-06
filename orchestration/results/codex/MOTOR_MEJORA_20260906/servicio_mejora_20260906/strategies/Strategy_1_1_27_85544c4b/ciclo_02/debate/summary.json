@@ -1,0 +1,91 @@
+{
+  "schema": "ultrarentable.hypothesis_debate.v1",
+  "finished_utc": "2026-09-06T15:31:22.767290+00:00",
+  "provider": "omniroute",
+  "models": [
+    "gemini-3-flash via auto/best-reasoning (fallback)"
+  ],
+  "search_budget": {
+    "proposed": 6,
+    "applicable": 5,
+    "refuted_by_critic": 4,
+    "selected": 2,
+    "previously_tested": 8
+  },
+  "cost_usd_total": 0,
+  "seconds_total": 77.4,
+  "dissent": [
+    "Existe desacuerdo respecto a la gestión del Profit Target y Trailing Stop: los proponentes de riesgo buscaban reducir el PT (PROP_02_LOWER_PROFIT_TARGET_LONG_sal2 y PROP_02_PT_LONG_REDUCE_est2) para atajar PT_RARELY_HIT y TIME_EXIT_DOMINATED, pero la crítica refuta firmemente recortar los PTs al advertir sobre la alta dependencia de pocas operaciones de cola (PROFIT_DEPENDS_ON_FEW_TRADES, 31.49% de beneficio en OOS proviene de trades >= 3R) respaldado por la evidencia previa desfavorable de H_PT_MID_ASIM_est1.",
+    "Existe recelo respecto al riesgo de salidas prematuras por ruido de mercado en PROP_01_TA_LONG_TIGHT_est1 justo al alcanzar 1R de beneficio flotante.",
+    "Se registra baja confianza y desacuerdo sobre el riesgo de falsas señales intradía en fases de consolidación al reducir el periodo de Bollinger en PROP_03_SHORT_BB_PERIOD_REDUCE_est3."
+  ],
+  "rationale": "Se seleccionan las únicas dos propuestas que cumplen con ser aplicables (validation.applicable=true) y que no han sido refutadas en la crítica (veredicto REVISAR). Además, representan dos mecanismos complementarios y totalmente distintos: PROP_01_TA_LONG_TIGHT_est1 ajusta la gestión de salida/riesgo dinámico en Long (reducir TrailingActivation de 1.4 a 1.0 ATR) para mitigar el hallazgo LOSERS_AFTER_FAVOURABLE_EXCURSION (23.33% de perdedoras en OOS alcanzaron >= 1R) sin ser tan agresiva como la versión refutada de 0.9 ATR; por su parte, PROP_03_SHORT_BB_PERIOD_REDUCE_est3 actúa sobre la lógica de entrada ajustando el indicador BBBarOpensBelowDown de 188 a 100 periodos para atacar la baja frecuencia y asimetría reportadas en LOW_FREQUENCY_FOR_SHORT_EXAM (solo 8 ops Short frente a 48 Long en OOS). Ambas cuentan con respaldo y métricas evaluables tanto en IS como en OOS.",
+  "next_round_if_all_fail": "Si ambas propuestas fallan las pruebas deterministas (si PROP_01 degrada el beneficio neto/PF por salidas prematuras y PROP_03 genera pérdidas por falsas entradas Short), la siguiente ronda deberá abandonar la alteración de parámetros de salida fijos (PT/SL/BE) para no perjudicar la captura de operaciones de cola (PROFIT_DEPENDS_ON_FEW_TRADES) y enfocarse en: 1) explorar filtros de tendencia o volatilidad globales que mejoren la calidad de entradas en ambas direcciones sin acortar la duración esperada de los trades; 2) evaluar condiciones alternativas de salida por tiempo o sesión (EOD) que reduzcan la cesión de beneficio sin asfixiar la excursión de la posición.",
+  "general_objections": [
+    "La estrategia presenta una concentración crítica de beneficios en pocos ganadores (PROFIT_DEPENDS_ON_FEW_TRADES): el beneficio neto OOS es de 7706.0 USD, pero sin los 3 mejores trades cae a -1837.0 USD.",
+    "Fuerte sesgo de asimetría entre direcciones en OOS (48 operaciones Long frente a solo 8 Short), lo que causa una frecuencia operativa insuficiente para pruebas cortas de fondeo (LOW_FREQUENCY_FOR_SHORT_EXAM, 1.073 trades/semana).",
+    "Las salidas están dominadas por el reloj (TIME_EXIT_DOMINATED, 53.6% EOD_TIME en OOS) debido a Profit Targets lejanos que rara vez se alcanzan (PT_RARELY_HIT, 8.9% en OOS).",
+    "Tasa de superación de exámen a 5 días excesivamente baja (LOW_EXAM_TARGET_RATE_5D) en OOS: 3.11% en el escenario PROV_50K_OBJ6_TRAIL4 y 2.33% en PROV_50K_OBJ8_TRAIL5_DLL2 (este último con una tasa de ruptura de 22.18%)."
+  ],
+  "capability_gaps": [
+    "Falta de soporte para configurar salidas de horario intradía específicas o ventanas temporales personalizadas por día de la semana dentro del catálogo de parámetros.",
+    "Falta de trayectoria intradía tick-by-tick completa para simular cierres breakeven precisos en simulación sin sesgo de MAE/MFE de vela completada.",
+    "Filtros de horario o día de la semana para excluir tramos sistemáticamente perdedores como las 10:00 local (neto -2890.0 en OOS) o los lunes (-4149.0 en OOS)."
+  ],
+  "proposals": [
+    {
+      "id": "PROP_01_REDUCE_TRAILING_ACTIVATION_LONG_",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Adelantar la activación del Trailing Stop en posiciones Long",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_02_LOWER_PROFIT_TARGET_LONG_sal2",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Ajustar Profit Target de Long a un nivel alcanzable (1.3 ATR)",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_03_ENABLE_MOVE_SL_TO_BE_sal3",
+      "proposer": "proponente_salidas_riesgo",
+      "title": "Activar protección Move SL to Breakeven para Long y Short",
+      "applicable": false,
+      "validation_error": "Fórmula no soportada para mutación: SQ.Formulas.RangeLevel.None",
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_01_TA_LONG_TIGHT_est1",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Adelantar la activación del Trailing Stop en posiciones largas para asegurar excursiones favorables",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REVISAR",
+      "selected": true
+    },
+    {
+      "id": "PROP_02_PT_LONG_REDUCE_est2",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Ajustar Profit Target en Long a un nivel de ATR más cercano al MFE medio",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REFUTAR",
+      "selected": false
+    },
+    {
+      "id": "PROP_03_SHORT_BB_PERIOD_REDUCE_est3",
+      "proposer": "proponente_estructura_frecuencia",
+      "title": "Reducir el periodo de Bollinger Bar Opens Below Down en la señal Short",
+      "applicable": true,
+      "validation_error": null,
+      "critic": "REVISAR",
+      "selected": true
+    }
+  ]
+}

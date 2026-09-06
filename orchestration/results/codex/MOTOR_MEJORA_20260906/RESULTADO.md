@@ -200,7 +200,62 @@ Coste de la fase 2 completa: tres debates (2,07 + 1,89 USD de Claude Code y cost
 omnirouter) y dos ciclos en SQX (28 + 27 s de recálculo). Cero mejoras aceptadas: el coste por
 mejora aceptada sigue sin ser calculable, y ésa es la respuesta honesta para esta estrategia.
 
-## 9. Siguiente paso más pequeño y útil
+## 10. Fase 3 el mismo día: módulos independientes y servicio autónomo en la VPS
+
+Emilio pidió meter los agentes "en el sistema" y dejar todo como programas independientes
+modificables por partes. Tiene sentido por dos razones: el encargo exige continuidad en la VPS sin
+conversación abierta, y la fase 2 demostró que las piezas cambian a ritmos distintos (criterios y
+vocabulario mucho más que el recálculo). Hecho:
+
+- **Nueve programas con contrato de ficheros** (tabla en `docs/Laboratorio/07_MOTOR_MEJORA_CICLO.md`):
+  contrato, diagnóstico, mutaciones, debate, recálculo (motor existente), **evaluación separada en
+  `sqx_variant_evaluation.py`** (la política de aceptación vive sola), orquestación de un experimento
+  y entrega, **servicio autónomo `sqx_improvement_service.py`**, y un andamio de hipótesis fijas que
+  solo usan las pruebas. Las pruebas existentes siguen verdes tras la separación.
+- **Servicio autónomo** (`sqx-mejora-agentes.timer`, cada hora): cola persistente `queue.json` por
+  hash semántico de reglas; `inbox/` como entrada (un `.sqx` y su procedencia); presupuesto por
+  estrategia (3 experimentos, 2 debates vacíos, 2 fallos técnicos); estados `QUEUED` →
+  `IN_PROGRESS` → `CANDIDATE_FOR_VALIDATION` (entrega a `outbox/`) | `EXHAUSTED` |
+  `NEEDS_ATTENTION` (fallo repetido con diagnóstico, sin reintentos infinitos) | `REJECTED_INPUT`;
+  comprobaciones previas de reclamación activa, memoria y disco; cerrojo contra ejecuciones
+  solapadas; `status.json` con la última ejecución para que la web o la API lo lean. Seis pruebas
+  de cola, presupuesto y reconciliación (`test_improvement_service.py`).
+
+**Primera ejecución autónoma en la VPS (17:28–17:30 CEST, sin intervención):** el servicio tomó
+`Strategy 1.1.27.sqx` del `inbox/`, lo contrató, exportó sus órdenes heredadas con el lector Java
+de SQX, lo diagnosticó, convocó el debate por el omnirouter (seis propuestas en 83 s) y el crítico
+refutó las seis: todas reescalaban ejes ya probados (el registro ya tenía ocho variantes de esta
+estrategia). Resultado `NO_HYPOTHESES`, cero recálculos gastados, estrategia `IN_PROGRESS` con un
+debate vacío contado; al segundo pasará a `EXHAUSTED` y el servicio quedará `IDLE` hasta que entre
+otra estrategia. La única carencia señalada por los agentes vuelve a ser el filtro de hora y día de
+la semana. Evidencia: `servicio_mejora_20260906/` (cola, estado, debate). El temporizador
+`sqx-mejora-agentes.timer` queda activado (cada hora; siguiente ejecución dentro de una hora).
+
+**Segunda ejecución, disparada por el propio temporizador (17:30–17:32 CEST):** esta vez el
+árbitro seleccionó dos propuestas de ejes nuevos (activación del trailing largo 1,4→1,0 ATR y
+periodo de la banda de Bollinger de la señal corta 188→100), el servicio preparó, recalculó en SQX
+(3 s de tarea nativa con los datos ya cargados; 26 s de ciclo), evaluó, registró y empaquetó sin
+intervención:
+
+| Variante (agentes, por omnirouter) | IS neto / FB / R:DD | OOS neto / FB / R:DD | Órdenes que cambian | Clase registrada |
+| --- | --- | --- | --- | --- |
+| `TA_LONG_TIGHT` (activación 1,4→1,0 ATR) | 40 624 / 1,57 / 2,20 (equivalente) | 6 807 / 1,29 / 1,05 (peor) | 4 distintas, 2 nuevas; 1 día OOS | **INCONCLUSIVE** (muestra insuficiente) |
+| `SHORT_BB_PERIOD_REDUCE` (periodo 188→100) | 30 067 / 1,39 / 1,46 (peor; IC 90 % de la suma de deltas [−19 965, −1 758]) | 5 427 / 1,23 / 0,74 (peor) | 12 entradas perdidas, 17 nuevas | **INCONCLUSIVE** (2 días OOS) |
+
+La segunda clase es demasiado benévola: una variante que destruye la construcción con evidencia
+(IC 90 % íntegramente más allá de la tolerancia registrada) no debe quedar "inconclusa" porque el
+OOS cambie poco. Corregido en `sqx_variant_evaluation.py` (esa condición → `REJECTED_WORSE`,
+antes de la regla de días mínimos; un empeoramiento IS pequeño cuyo intervalo roza el cero, como el
+stop +10 % de la mañana, sigue inconcluso) con pruebas; la clase registrada en la VPS se conserva
+tal cual se emitió y el registro de la estrategia ya impide repetir esa variante.
+
+Lo que esto demuestra y lo que no: el sistema funciona de extremo a extremo sin el PC y sin una IA
+conversando (dos ejecuciones, una manual y una por temporizador, sin errores ni reconciliaciones);
+sabe parar cuando una estrategia se estanca; no ha producido todavía ninguna mejora útil, y con el
+vocabulario actual esta estrategia no dará más de sí. Ocho experimentos en total sobre `Strategy
+1.1.27`, doce variantes registradas, cero candidatas.
+
+## 9 (antes). Siguiente paso más pequeño y útil
 
 La fase 2 (debate de agentes integrado, con hipótesis que se recalculan de verdad) quedó ejecutada
 el mismo día (§8 bis). Lo siguiente, en orden de valor:
